@@ -1,0 +1,826 @@
+#!/usr/bin/env perl
+
+use strict;
+use Mysql;
+use Getopt::Long;
+use File::Copy;
+use Term::ANSIColor;
+
+sub getDataset;
+sub dbUpdate;
+sub dbUpdateOther;
+sub dbDelete;
+sub dbDeleteOther;
+sub addSlashes;
+sub uploadRelease;
+sub downloadRelease;
+sub datasetExists;
+sub uploadConfig;
+sub locationExists;
+sub getLocation;
+
+our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
+
+my %opt;
+Getopt::Long::Configure ("bundling");
+GetOptions (\%opt, "comment|c=s", "format|f=s", "pyConfig|p=s", "crabCfg|b=s", "jsonFile|j=s", "lumiSummary|s=s", "location|l=s", "name|n=s", "fileList|t=s", "release|r=s", "other|o", "recipe|e=s", "globalTag|g=s", "configName|i=s", "xSection|x=s", "higherOrderXSec|y=s", "help|h");
+my $argc = @ARGV;
+
+printHelp ($ARGV[0]) if $opt{"help"};
+printHelp () if $argc != 2 && $ARGV[0] ne "createOther";
+printHelp () if $ARGV[0] ne "create" && $ARGV[0] ne "createOther" && $ARGV[0] ne "update" && $ARGV[0] ne "finish" && $ARGV[0] ne "deprecate" && $ARGV[0] ne "uploadRelease" && $ARGV[0] ne "downloadRelease" && $ARGV[0] ne "deleteEntry" && $ARGV[0] ne "uploadConfig";
+if ($ARGV[0] eq "create" && !$opt{"location"})
+  {
+    print "The directory containing the ntuples must be given!\n";
+    exit;
+  }
+if ($ARGV[0] eq "uploadRelease" && (!$opt{"pyConfig"} || !$opt{"release"} || !$opt{"recipe"}))
+  {
+    print "The Python config, CMSSW release directory, and recipe file must be given!\n";
+    exit;
+  }
+if ($ARGV[0] eq "uploadConfig" && (!$opt{"pyConfig"} || !$opt{"release"}))
+  {
+    print "The Python config and ntuple release must be given!\n";
+    exit;
+  }
+if ($ARGV[0] eq "uploadRelease")
+  {
+    my $parentDir = "./$opt{'release'}";
+    $parentDir =~ s/CMSSW_[^\/]*//g;
+    $parentDir =~ s/\/\/*/\//g;
+    my $cmsswRelease = $opt{'release'};
+    $cmsswRelease =~ s/^.*CMSSW_([^\/]*).*$/CMSSW_$1/;
+    `tar -C $parentDir -czf $ARGV[1].tar.gz $opt{"release"}`;
+    $opt{"format"} = "BEAN" if !$opt{"format"};
+    uploadRelease ($opt{"format"}, $cmsswRelease, "$ARGV[1].tar.gz", $opt{"pyConfig"}, $ARGV[1], "$ENV{'USER'}", $opt{"comment"}, $opt{"recipe"});
+  }
+elsif ($ARGV[0] eq "downloadRelease")
+  {
+    downloadRelease ($ARGV[1], $opt{"pyConfig"});
+  }
+elsif ($ARGV[0] eq "uploadConfig")
+  {
+    uploadConfig ($ARGV[1], $ENV{"USER"}, $opt{"pyConfig"}, $opt{"release"}, $opt{"comment"});
+  }
+elsif ($ARGV[0] eq "createOther")
+  {
+    my @listOfFiles = @ARGV;
+    @listOfFiles = reverse (@listOfFiles);
+    pop (@listOfFiles);
+    @listOfFiles = reverse (@listOfFiles);
+    dbOtherCreate ("$ENV{'USER'}\@$ENV{'HOSTNAME'}", \@listOfFiles, $opt{"comment"});
+  }
+else
+  {
+    my $id = -1;
+    my $fullDataset;
+    ($id, $fullDataset) = getDataset ($ARGV[0], $ARGV[1]) if $ARGV[0] ne "create" && ($ARGV[0] ne "update" || !$opt{"other"}) && ($ARGV[0] ne "deleteEntry" || !$opt{"other"});
+    $id = $ARGV[1] if ($ARGV[0] eq "update" && $opt{"other"}) || ($ARGV[0] eq "deleteEntry" && $opt{"other"});
+    $fullDataset = $ARGV[1] if $id < 0;
+    $ARGV[0] = "create" if $id < 0;
+    my $status = "present";
+    $status = "" if $ARGV[0] eq "update";
+    $status = "deprecated" if $ARGV[0] eq "deprecate";
+    $opt{"format"} = "BEAN" if $ARGV[0] eq "create" && !$opt{"format"};
+    $opt{"lumiSummary"} = "/dev/null" if $ARGV[0] eq "finish" && !$opt{"lumiSummary"};
+    if ($ARGV[0] eq "finish" && (!$opt{"location"} && !getLocation ($id)))
+      {
+        print "The directory containing the ntuples must be given!\n";
+        exit;
+      }
+    if ($opt{"location"} && locationExists ($id, $opt{"location"}))
+      {
+        print "This location is already registered in the database!\n";
+        exit;
+      }
+    dbUpdate ($id, $fullDataset, "$ENV{'USER'}\@$ENV{'HOSTNAME'}", $opt{"format"}, $opt{"location"}, $opt{"name"}, $opt{"fileList"}, $status, $opt{"comment"}, $opt{"pyConfig"}, $opt{"crabCfg"}, $opt{"jsonFile"}, $opt{"lumiSummary"}, $opt{"release"}, $opt{"globalTag"}, $opt{"configName"}, $opt{"xSection"}, $opt{"higherOrderXSec"}) if $ARGV[0] ne "deleteEntry" && !$opt{"other"};
+    dbUpdateOther ($id, $opt{"comment"}, "$ENV{'USER'}\@$ENV{'HOSTNAME'}") if $ARGV[0] ne "deleteEntry" && $opt{"other"};
+    dbDelete ($id) if $ARGV[0] eq "deleteEntry" && !$opt{"other"};
+    dbDeleteOther ($id) if $ARGV[0] eq "deleteEntry" && $opt{"other"};
+  }
+
+sub
+addSlashes
+{
+  my $string = shift;
+
+  $string =~ s/\\/\\\\/g;
+  $string =~ s/'/\\'/g;
+  $string =~ s/"/\\"/g;
+  $string =~ s/\\0/\\\\0/g;
+
+  return $string;
+}
+
+sub
+getDataset
+{
+  my $command = shift;
+  my $dataset = shift;
+
+  my $results;
+  my $queryDataset = $dataset;
+  $queryDataset =~ s/\*/%/g;
+  $queryDataset =~ s/(.*)/%$1%/g;
+  my $query = "select id,dataset,user,creationTime,status from ntuple where dataset like '$queryDataset' order by creationTime";
+  $db->selectdb ("ntuple");
+  $results = $db->query ($query);
+  if ($results->numrows () == 1)
+    {
+      my @row = $results->fetchrow ();
+      return ($row[0], $row[1]);
+    }
+  if ($results->numrows () == 0)
+    {
+      if ($command ne "deleteEntry" && $command ne "deprecate")
+        {
+          print "Database entry does not exist. Create it? (Y/n): ";
+          my $response = <STDIN>;
+          $response =~ s/\n//g;
+          $response = "y" if !$response;
+          exit if substr (lc ($response), 0, 1) ne 'y';
+          return (-1, "");
+        }
+      else
+        {
+          print "Database entry does not exist.\n";
+          exit;
+        }
+    }
+  my %id;
+  my %fullDataset;
+  print "Found multiple database entries matching\n";
+  print "\"$dataset\":\n";
+  print "( 0) new\n" if $command ne "deleteEntry" && $command ne "deprecate";
+  for (my $i = 1; $i <= $results->numrows (); $i++)
+    {
+      my @row = $results->fetchrow ();
+      $row[3] =~ s/([^ ]*) [^ ]*/$1/g;
+      $id{"$i"} = $row[0];
+      $fullDataset{"$i"} = $row[1];
+      printf "(%2d) $row[1]\n", $i;
+      print "     (";
+      print color "green" if $row[4] eq "present";
+      print color "bold yellow" if $row[4] eq "submitted";
+      print color "bold red" if $row[4] eq "created" or $row[4] eq "cancelled" or $row[4] eq "deprecated";
+      print $row[4];
+      print color "reset";
+      print ") created by $row[2] on $row[3]\n";
+    }
+  print "\nWhich entry would you like to modify?";
+  if ($command ne "deleteEntry" && $command ne "deprecate")
+    {
+      print " (Select 0 to create a new entry): "
+    }
+  else
+    {
+      print ": ";
+    }
+  my $response = <STDIN>;
+  $response =~ s/[ \t\n]//g;
+  return (-1, "") if $response == 0 && $command ne "deleteEntry" && $command ne "deprecate";
+  if (!(exists $id{$response}))
+    {
+      print "Your selection \"$response\" was not a valid option! Quitting.\n";
+      exit;
+    }
+
+  return ($id{$response}, $fullDataset{$response});
+}
+
+sub
+dbUpdate
+{
+  my $id = shift;
+  my $dataset = shift;
+  my $userAndHost = shift;
+  my $format = shift;
+  my $location = shift;
+  my $name = shift;
+  my $fileListName = shift;
+  my $status = shift;
+  my $comment = shift;
+  my $psetName = shift;
+  my $crabCfgName = shift;
+  my $jsonFileName = shift;
+  my $lumiSummaryName = shift;
+  my $release = shift;
+  my $globalTag = shift;
+  my $configName = shift;
+  my $xSection = shift;
+  my $ySection = shift;
+
+  $location = getLocation ($id) if $id > 0
+                               && !$crabCfgName
+                               && !$comment
+                               && !$format
+                               && !$globalTag
+                               && !$configName
+                               && !$jsonFileName
+                               && !$location
+                               && !$name
+                               && !$psetName
+                               && !$release
+                               && !$lumiSummaryName
+                               && !$xSection
+                               && !$ySection;
+
+  my $user = $userAndHost;
+  $user =~ s/@.*$//g;
+
+  my $fileList;
+  my $pset;
+  my $crabCfg;
+  my $jsonFile;
+  my $lumiSummary;
+  my $size = 0;
+  my $nFiles = 0;
+  if ($fileListName)
+    {
+      if (!(-e $fileListName))
+        {
+          print "$fileListName does not exist!\n";
+          exit;
+        }
+      open (FILE_LIST, "<$fileListName");
+      my @fileList = <FILE_LIST>;
+      close (FILE_LIST);
+      $fileList = join ("", @fileList);
+    }
+  if ($psetName)
+    {
+      if (!(-e $psetName))
+        {
+          print "$psetName does not exist!\n";
+          exit;
+        }
+      open (PY_CONFIG, "<$psetName");
+      my @pset = <PY_CONFIG>;
+      close (PY_CONFIG);
+      $pset = join ("", @pset);
+    }
+  if ($crabCfgName)
+    {
+      if (!(-e $crabCfgName))
+        {
+          print "$crabCfgName does not exist!\n";
+          exit;
+        }
+      open (CRAB_CONFIG, "<$crabCfgName");
+      my @crabCfg = <CRAB_CONFIG>;
+      close (CRAB_CONFIG);
+      $crabCfg = join ("", @crabCfg);
+    }
+  if ($jsonFileName)
+    {
+      if (!(-e $jsonFileName))
+        {
+          print "$jsonFileName does not exist!\n";
+          exit;
+        }
+      open (JSON_FILE, "<$jsonFileName");
+      my @jsonFile = <JSON_FILE>;
+      close (JSON_FILE);
+      $jsonFile = join ("", @jsonFile);
+    }
+  if ($lumiSummaryName)
+    {
+      if (!(-e $lumiSummaryName))
+        {
+          print "$lumiSummaryName does not exist!\n";
+          exit;
+        }
+      open (LUMI_SUMMARY, "<$lumiSummaryName");
+      my @lumiSummary = <LUMI_SUMMARY>;
+      close (LUMI_SUMMARY);
+      $lumiSummary = join ("", @lumiSummary);
+    }
+  $release .= ".$configName" if $configName;
+  ($nFiles, $size) = sizeOfDataset ($location, $fileList);
+  my $fullLocation = $location;
+  $fullLocation = "$ENV{'PWD'}/$location" if !($location =~ m/^\//);
+
+  $dataset = addSlashes ($dataset);
+  $user = addSlashes ($user);
+  $format = addSlashes ($format);
+  $pset = addSlashes ($pset);
+  $crabCfg = addSlashes ($crabCfg);
+  $jsonFile = addSlashes ($jsonFile);
+  $lumiSummary = addSlashes ($lumiSummary);
+  $fullLocation = addSlashes ($fullLocation);
+  $name = addSlashes ($name);
+  $fileList = addSlashes ($fileList);
+  $status = addSlashes ($status);
+  $comment = addSlashes ($comment);
+  $release = addSlashes ($release);
+  $globalTag = addSlashes ($globalTag);
+
+  my $results;
+  my $query;
+  if ($id < 0)
+    {
+      $query = "select id from ntuple where dataset='$dataset'";
+      $db->selectdb ("ntuple");
+      $results = $db->query ($query);
+      if ($results->numrows ())
+        {
+          print "This dataset already exists in the database. Create anyway? (y/N): ";
+          my $response = <STDIN>;
+          $response =~ s/\n//g;
+          $response = "n" if !$response;
+          exit if substr (lc ($response), 0, 1) ne 'y';
+        }
+
+      $query = "select max(id) from ntuple";
+      $db->selectdb ("ntuple");
+      $results = $db->query ($query);
+      my @row = $results->fetchrow ();
+      my $id = 1;
+      $id = $row[0] + 1 if $results->numrows ();
+
+      my $columns = "(id, dataset, creationTime, lastUpdateTime, lastUpdateUser, user, format, location, fileList, nFiles, sizeInGB, status, comment, pset, crabCfg, jsonFile, lumiSummary, version, globalTag";
+      $columns .= ", crossSectionInPicobarn" if $xSection;
+      $columns .= ", higherOrderCrossSectionInPicobarn" if $ySection;
+      $columns .= ")";
+      my $values = "($id, '$dataset', now(), now(), '$userAndHost', '$user', '$format', '$fullLocation', '$fileList', $nFiles, $size, '$status', '$comment', '$pset', '$crabCfg', '$jsonFile', '$lumiSummary', '$release', '$globalTag'";
+      $values .= ", $xSection" if $xSection;
+      $values .= ", $ySection" if $ySection;
+      $values .= ")";
+      $query = "insert into ntuple $columns values $values";
+    }
+  if ($id > 0)
+    {
+      my $fields;
+      my $values;
+
+      if ($name)
+        {
+          $query = "select id from ntuple where dataset='$name'";
+          $db->selectdb ("ntuple");
+          $results = $db->query ($query);
+          if ($results->numrows ())
+            {
+              print "This dataset already exists in the database. Use this name anyway? (y/N): ";
+              my $response = <STDIN>;
+              $response =~ s/\n//g;
+              $response = "n" if !$response;
+              exit if substr (lc ($response), 0, 1) ne 'y';
+            }
+          $values .= ", dataset='$name'";
+        }
+
+      $values .= ", lastUpdateTime=now()";
+      $values .= ", lastUpdateUser='$user'";
+      $values .= ", format='$format'" if $format;
+      $values .= ", location='$fullLocation'" if $location;
+      $values .= ", fileList='$fileList'" if $fileListName;
+      $values .= ", nFiles=$nFiles" if $nFiles;
+      $values .= ", sizeInGB=$size" if $size;
+      $values .= ", status='$status'" if $status;
+      $values .= ", comment='$comment'" if $comment;
+      $values .= ", pset='$pset'" if $psetName;
+      $values .= ", crabCfg='$crabCfg'" if $crabCfgName;
+      $values .= ", jsonFile='$jsonFile'" if $jsonFileName;
+      $values .= ", lumiSummary='$lumiSummary'" if $lumiSummaryName;
+      $values .= ", version='$release'" if $release;
+      $values .= ", globalTag='$globalTag'" if $globalTag;
+      $values .= ", crossSectionInPicobarn=$xSection" if $xSection;
+      $values .= ", higherOrderCrossSectionInPicobarn=$ySection" if $ySection;
+
+      $values =~ s/^, //;
+      $query = "update ntuple set $values where id=$id";
+    }
+  $results = $db->query ($query);
+
+  return $results;
+}
+
+sub
+dbUpdateOther
+{
+  my $id = shift;
+  my $comment = shift;
+  my $user = shift;
+
+  $comment = addSlashes ($comment);
+
+  my $query = "update other set lastUpdateTime=now(), lastUpdateUser='$user', comment='$comment'  where id=$id";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+
+  return $results;
+}
+
+sub
+dbDelete
+{
+  my $id = shift;
+
+  my $query = "delete from ntuple where id=$id";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+}
+
+sub
+dbDeleteOther
+{
+  my $id = shift;
+
+  my $query = "delete from other where id=$id";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+}
+
+sub
+printHelp
+{
+  my $command = shift;
+
+  my $exeName = $0;
+  $exeName =~ s/^.*\/([^\/]*)$/$1/;
+
+  if ($command eq "create")
+    {
+      print "Usage: $exeName -l DIRECTORY [OPTION]... create NAME\n";
+      print "Creates an entry in the database for dataset NAME. The ntuples are assumed to\n";
+      print "be present on the Tier 3, with the status being set accordingly.\n";
+      print "\n";
+      print "Mandatory arguments to long options are mandatory for short options too.\n";
+      printf "%-29s%s\n", "  -b, --crabCfg FILE", "CRAB config used to submit ntuple jobs";
+      printf "%-29s%s\n", "  -c, --comment COMMENT", "comment for the database entry";
+      printf "%-29s%s\n", "  -f, --format FORMAT", "ntuple format (default: BEAN)";
+      printf "%-29s%s\n", "  -g, --globalTag TAG", "global tag";
+      printf "%-29s%s\n", "  -i, --configName NAME", "name of config used to produce ntuples";
+      printf "%-29s%s\n", "  -j, --jsonFile FILE", "JSON file used for this dataset";
+      printf "%-29s%s\n", "  -l, --location DIRECTORY", "directory containing the ntuples";
+      printf "%-29s%s\n", "  -p, --pyConfig FILE", "Python config used to produce ntuples";
+      printf "%-29s%s\n", "  -r, --release NAME", "ntuple release used to produce ntuples";
+      printf "%-29s%s\n", "  -s, --lumiSummary FILE", "lumiSummary.json reported by CRAB";
+      printf "%-29s%s\n", "  -x, --xSection XSEC", "cross section in picobarns from PREP";
+      printf "%-29s%s\n", "  -y, --higherOrderXSec XSEC", "higher-order cross section in picobarns";
+    }
+  elsif ($command eq "createOther")
+    {
+      print "Usage: $exeName [OPTION]... createOther DIRECTORIES_AND_FILES\n";
+      print "Creates an entry in the database for non-ntuple data.\n";
+      print "\n";
+      print "Mandatory arguments to long options are mandatory for short options too.\n";
+      printf "%-29s%s\n", "  -c, --comment COMMENT", "comment for the database entry";
+    }
+  elsif ($command eq "update")
+    {
+      print "Usage: $exeName [OPTION]... update NAME\n";
+      print "Updates an existing database entry for dataset NAME. If no options are given,\n";
+      print "updates the number of files and the size on disk of the dataset using the\n";
+      print "location in the database.\n";
+      print "\n";
+      print "Mandatory arguments to long options are mandatory for short options too.\n";
+      printf "%-29s%s\n", "  -b, --crabCfg FILE", "CRAB config used to submit ntuple jobs";
+      printf "%-29s%s\n", "  -c, --comment COMMENT", "comment for the database entry";
+      printf "%-29s%s\n", "  -f, --format FORMAT", "ntuple format";
+      printf "%-29s%s\n", "  -g, --globalTag TAG", "global tag";
+      printf "%-29s%s\n", "  -i, --configName NAME", "name of config used to produce ntuples";
+      printf "%-29s%s\n", "  -j, --jsonFile FILE", "JSON file used for this dataset";
+      printf "%-29s%s\n", "  -l, --location DIRECTORY", "directory containing the ntuples";
+      printf "%-29s%s\n", "  -n, --name NAME", "rename the entry";
+      printf "%-29s%s\n", "  -o, --other", "update an entry in the non-ntuple database";
+      printf "%-29s%s\n", "  -p, --pyConfig FILE", "Python config used to produce ntuples";
+      printf "%-29s%s\n", "  -r, --release NAME", "ntuple release used to produce ntuples";
+      printf "%-29s%s\n", "  -s, --lumiSummary FILE", "lumiSummary.json reported by CRAB";
+      printf "%-29s%s\n", "  -x, --xSection XSEC", "cross section in picobarns from PREP";
+      printf "%-29s%s\n", "  -y, --higherOrderXSec XSEC", "higher-order cross section in picobarns";
+    }
+  elsif ($command eq "finish")
+    {
+      print "Usage: $exeName -l DIRECTORY finish NAME\n";
+      print "Finalizes the database entry for dataset NAME, changing its status to\n";
+      print "\"present\".  This is intended to be the final step in command-line based ntuple\n";
+      print "production.\n";
+      print "\n";
+      print "Mandatory arguments to long options are mandatory for short options too.\n";
+      printf "%-29s%s\n", "  -l, --location DIRECTORY", "directory containing the ntuples";
+    }
+  elsif ($command eq "deleteEntry")
+    {
+      print "Usage: $exeName [OPTION]... deleteEntry NAME\n";
+      print "Deletes the database entry for dataset NAME. This is intended primarily for\n";
+      print "mistaken database entries. If you wish to actually delete a set of ntuples,\n";
+      print "please use the \"deprecate\" command instead.\n";
+      print "\n";
+      printf "%-29s%s\n", "  -o, --other", "update an entry in the non-ntuple database";
+    }
+  elsif ($command eq "deprecate")
+    {
+      print "Usage: $exeName deprecate NAME\n";
+      print "Marks the dataset NAME for deletion. WARNING: The dataset will be deleted from\n";
+      print "the Tier 3 within one week of this action. If you wish to simply delete a\n";
+      print "mistaken database entry, use the \"deleteEntry\" command instead.\n";
+    }
+  elsif ($command eq "uploadRelease")
+    {
+      print "Usage: $exeName -e FILE -p FILE -r DIRECTORY [OPTION]... uploadRelease NAME\n";
+      print "Copies an ntuple release to the appropriate area on the Tier 3, and creates a\n";
+      print "database entry for it, with NAME being the name of the release. An ntuple\n";
+      print "release is a CMSSW release with all the necessary packages added for creating\n";
+      print "ntuples, along with a default Python config file.\n";
+      print "\n";
+      print "Mandatory arguments to long options are mandatory for short options too.\n";
+      printf "%-29s%s\n", "  -c, --comment COMMENT", "comment for the database entry";
+      printf "%-29s%s\n", "  -e, --recipe FILE", "file containing the recipe for the release";
+      printf "%-29s%s\n", "  -f, --format FORMAT", "ntuple format (default: BEAN)";
+      printf "%-29s%s\n", "  -p, --pyConfig FILE", "default Python config for the release";
+      printf "%-29s%s\n", "  -r, --release DIRECTORY", "CMSSW release containing ntuple packages";
+    }
+  elsif ($command eq "downloadRelease")
+    {
+      print "Usage: $exeName [OPTION]... downloadRelease NAME\n";
+      print "Copies an ntuple release to the current directory on the Tier 3. Optionally\n";
+      print "copies the corresponding Python configuration file registered in the database.\n";
+      print "\n";
+      print "Mandatory arguments to long options are mandatory for short options too.\n";
+      printf "%-29s%s\n", "  -p, --pyConfig FILE", "Python configuration file name";
+    }
+  elsif ($command eq "uploadConfig")
+    {
+      print "Usage: $exeName -p FILE -r RELEASE [OPTION]... uploadConfig NAME\n";
+      print "Creates an entry in the database for a customized Python configuration file.\n";
+      print "\n";
+      print "Mandatory arguments to long options are mandatory for short options too.\n";
+      printf "%-29s%s\n", "  -c, --comment COMMENT", "comment for the database entry";
+      printf "%-29s%s\n", "  -p, --pyConfig FILE", "Python config file";
+      printf "%-29s%s\n", "  -r, --release NAME", "ntuple release with which to use this config";
+    }
+  else
+    {
+      print "Usage: $exeName [OPTION]... COMMAND NAME\n";
+      print "Manipulates entry in the OSU Tier 3 ntuple database given by NAME.\n";
+      print "\n";
+      print "Mandatory arguments to long options are mandatory for short options too.\n";
+      printf "%-29s%s\n", "  -h, --help", "print help. If COMMAND is present, print help";
+      printf "%-29s%s\n", " ", "specific to COMMAND.";
+      print "\n";
+      print "COMMAND may be one of the following:\n";
+      printf "%-29s%s\n", "  create", "creates the entry";
+      printf "%-29s%s\n", "  createOther", "creates an entry for non-ntuple data";
+      printf "%-29s%s\n", "  update", "updates the entry";
+      printf "%-29s%s\n", "  finish", "finalizes the database entry";
+      printf "%-29s%s\n", "  deleteEntry", "removes the database entry";
+      printf "%-29s%s\n", "  deprecate", "marks the dataset for deletion";
+      printf "%-29s%s\n", "  uploadRelease", "upload an ntuple release";
+      printf "%-29s%s\n", "  downloadRelease", "download an ntuple release";
+      printf "%-29s%s\n", "  uploadConfig", "upload an ntuple config";
+    }
+
+  exit;
+}
+
+sub
+sizeOfDataset
+{
+  my $location = shift;
+  my $fileList = shift;
+
+  my $size = 0.0;
+  my $nFiles = 0;
+  if ($location && !$fileList)
+    {
+      if (!(-e $location))
+        {
+          print "$location does not exist!\n";
+          exit;
+        }
+      $nFiles = `ls $location | wc -l`;
+      $size = `du -s $location`;
+      $size =~ s/([^ ]*) .*/$1/;
+      $size /= 1024 * 1024;
+      $size = sprintf "%.2f", $size;
+    }
+  elsif ($fileList)
+    {
+      foreach my $file (split (/\n/, $fileList))
+        {
+          $nFiles++;
+          my $fileSize = `du -s $file`;
+          $fileSize =~ s/([^ ]*) .*/$1/;
+          $size += $fileSize;
+        }
+      $size /= 1024 * 1024;
+      $size = sprintf "%.2f", $size;
+    }
+
+  return ($nFiles, $size);
+}
+
+sub
+uploadRelease
+{
+  my $format = shift;
+  my $cmsswRelease = shift;
+  my $release = shift;
+  my $psetName = shift;
+  my $name = shift;
+  my $user = shift;
+  my $comment = shift;
+  my $recipeName = shift;
+
+  if (!(-e $psetName))
+    {
+      print "$psetName does not exist!\n";
+      exit;
+    }
+  if (!(-e $recipeName))
+    {
+      print "$recipeName does not exist!\n";
+      exit;
+    }
+  move ($release, "/home/osucms/public_html/releases/$name.tar.gz") or die "Ntuple releases may only be uploaded on the Tier 3, stopped";
+  open (PY_CONFIG, "<$psetName");
+  my @pset = <PY_CONFIG>;
+  close (PY_CONFIG);
+  my $pset = join ("", @pset);
+  open (RECIPE, "<$recipeName");
+  my @recipe = <RECIPE>;
+  close (RECIPE);
+  my $recipe = join ("", @recipe);
+
+  my $query = "select max(id) from ntupleRelease";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+  my @row = $results->fetchrow ();
+  my $id = 1;
+  $id = $row[0] + 1 if $results->numrows ();
+
+  $name = addSlashes ($name);
+  $pset = addSlashes ($pset);
+  $user = addSlashes ($user);
+  $format = addSlashes ($format);
+  $cmsswRelease = addSlashes ($cmsswRelease);
+  $comment = addSlashes ($comment);
+  $recipe = addSlashes ($recipe);
+
+  my $query = "insert into ntupleRelease (id, name, pset, user, pending, format, cmsswRelease, comment, recipe) values ($id, '$name', '$pset', '$user', 1, '$format', '$cmsswRelease', '$comment', '$recipe')";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+}
+
+sub
+downloadRelease
+{
+  my $release = shift;
+  my $pyConfigName = shift;
+
+  my $query = "select id,pset from ntupleRelease where name='$release'";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+  if ($results->numrows () != 1)
+    {
+      print "Ntuple release \"$release\" not found!\n";
+      exit;
+    }
+  if ($pyConfigName)
+    {
+      my @row = $results->fetchrow ();
+      open (PY_CONFIG, ">$pyConfigName");
+      print PY_CONFIG $row[1];
+      close (PY_CONFIG);
+    }
+  `wget "http://cmshead.mps.ohio-state.edu/~osucms/releases/$release.tar.gz"`;
+}
+
+sub
+dbOtherCreate
+{
+  my $userAndHost = shift;
+  my $listOfFiles = shift;
+  my $comment = shift;
+
+  my $user = $userAndHost;
+  $user =~ s/@.*$//g;
+
+  my $size = 0.0;
+  my $nFiles = 0.0;
+  for (my $i = 0; $i < @$listOfFiles; $i++)
+    {
+      if (!(-e $$listOfFiles[$i]))
+        {
+          print "$$listOfFiles[$i] does not exist!\n";
+          exit;
+        }
+      $nFiles += `ls -R $$listOfFiles[$i] | grep -v ':\$' | grep -v '^\$' | wc -l`;
+      my $fileSize = `du -s $$listOfFiles[$i]`;
+      $fileSize =~ s/([^ ]*) .*/$1/;
+      $fileSize /= 1024 * 1024;
+      $size += $fileSize;
+      $$listOfFiles[$i] = "$ENV{'PWD'}/$$listOfFiles[$i]" if !($$listOfFiles[$i] =~ m/^\//);
+    }
+  $size = sprintf "%.2f", $size;
+  my $location = join ("<br />", @$listOfFiles);
+
+  my $query = "select max(id) from other";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+  my @row = $results->fetchrow ();
+  my $id = 1;
+  $id = $row[0] + 1 if $results->numrows ();
+
+  $user = addSlashes ($user);
+  $location = addSlashes ($location);
+  $comment = addSlashes ($comment);
+
+  $query = "insert into other (id, creationTime, lastUpdateTime, lastUpdateUser, user, location, nFiles, sizeInGB, comment) values ($id, now(), now(), '$userAndHost', '$user', '$location', $nFiles, $size, '$comment')";
+  $db->selectdb ("ntuple");
+  $results = $db->query ($query);
+
+  print "ID $id\n";
+}
+
+sub
+uploadConfig
+{
+  my $name = shift;
+  my $user = shift;
+  my $psetName = shift;
+  my $release = shift;
+  my $comment = shift;
+
+  if (!(-e $psetName))
+    {
+      print "$psetName does not exist!\n";
+      exit;
+    }
+  if ($release)
+    {
+      my $query = "select id from ntupleRelease where name='$release'";
+      $db->selectdb ("ntuple");
+      my $results = $db->query ($query);
+      if ($results->numrows () != 1)
+        {
+          print "Ntuple release \"$release\" not found!\n";
+          exit;
+        }
+    }
+  open (PSET, "<$psetName");
+  my @pset = <PSET>;
+  close (PSET);
+  my $pset = join ("", @pset);
+
+  my $query = "select max(id) from ntupleConfig";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+  my @row = $results->fetchrow ();
+  my $id = 1;
+  $id = $row[0] + 1 if $results->numrows ();
+
+  $name = addSlashes ($name);
+  $user = addSlashes ($user);
+  $pset = addSlashes ($pset);
+  $release = addSlashes ($release);
+  $comment = addSlashes ($comment);
+
+  my $query = "insert into ntupleConfig (id, name, pset, user, pending, ntupleRelease, comment) values ($id, '$name', '$pset', '$user', 1, '$release', '$comment')";
+  $db->selectdb ("ntuple");
+  $results = $db->query ($query);
+}
+
+sub
+locationExists
+{
+  my $id = shift;
+  my $location = shift;
+
+  $location =~ s/^(.*)\/+$/$1/;
+  my $query = "select id from ntuple where location like '$location%' and id!=$id";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+  return 1 if $results->numrows ();
+
+  if ($location =~ m/^\/store\/.*$/)
+    {
+      $location =~ s/^\/store\/(.*)$/\/data\/se\/store\/$1/;
+    }
+  elsif ($location =~ m/^\/data\/se\/store\/.*$/)
+    {
+      $location =~ s/^\/data\/se\/store\/(.*)$/\/store\/$1/;
+    }
+
+  my $query = "select id from ntuple where location like '$location%' and id!=$id";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+  return 1 if $results->numrows ();
+
+  return 0;
+}
+
+sub
+getLocation
+{
+  my $id = shift;
+
+  my $query = "select location from ntuple where id=$id";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+  my @row = $results->fetchrow ();
+
+  return $row[0];
+}

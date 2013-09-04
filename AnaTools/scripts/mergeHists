@@ -1,0 +1,366 @@
+#!/usr/bin/env perl
+
+use strict;
+use Getopt::Long;
+use POSIX;
+
+sub processArgs;
+sub printHelp;
+sub getRunList;
+sub countEvents;
+sub isEDM;
+
+my %opt;
+Getopt::Long::Configure ("bundling");
+GetOptions (\%opt, "cutflow|c=s", "luminosity|l=s", "prefix|p=s", "weight|w=s", "xsection|x=s", "help|h");
+
+printHelp () if $opt{"help"} || !$opt{"prefix"};
+my $files = processArgs (\@ARGV);
+my %rootFiles;
+my %nTotalEvents;
+my $nTotalEvents = 0;
+my %skimEventCounts;
+my %weights;
+my @weights;
+my $nGoodJobs = 0;
+my $nBadJobs = 0;
+my $nIncompleteJobs = 0;
+my $counting = 0;
+my %exitCodes;
+my %signals;
+my %partial;
+my %crossSections;
+my %dirs;
+my %channels;
+my $integratedLuminosity = 10000;
+$integratedLuminosity = $opt{"luminosity"} if $opt{"luminosity"};
+my $cutFlow = "cutFlow";
+$cutFlow = $opt{"cutflow"} if $opt{"cutflow"};
+foreach my $file (@$files)
+  {
+    next if $file eq ".";
+    next if $file eq "..";
+    my $dir = $file;
+    $dir =~ s/^(.*)\/[^\/]*$/$1/;
+    if ($file =~ m/^.*\/condor_[^_]*\.log$/)
+      {
+        my $jobNumber = $file;
+        $jobNumber =~ s/^.*\/condor_([^_]*)\.log$/$1/;
+        open (FILE, "<$file");
+        my @fileContents = <FILE>;
+        close (FILE);
+        my $fileContents = join ("", @fileContents);
+        $fileContents =~ s/\n/ /g;
+        $counting = 1;
+        if ($fileContents =~ m/return value/)
+          {
+            $fileContents =~ s/.*\(return value ([^)]*)\).*/$1/g;
+            $nGoodJobs++;
+            print "WARNING: Nonzero exit code for job $jobNumber. (return value $fileContents)\n" if $fileContents != 0;
+            $exitCodes{$dir}{$jobNumber} = $fileContents;
+          }
+        elsif ($fileContents =~ m/signal/)
+          {
+            $fileContents =~ s/.*\(signal ([^)]*)\).*/$1/g;
+            $nBadJobs++;
+            print "WARNING: Skipping job $jobNumber. (signal $fileContents)\n";
+            $signals{$dir}{$jobNumber} = $fileContents;
+          }
+        else
+          {
+            $nIncompleteJobs++;
+            $partial{$dir}{$jobNumber} = 1;
+          }
+      }
+    if ($file =~ m/^.*\/crossSectionInPicobarn\.txt$/)
+      {
+        open (CROSS_SECTION, "<$file");
+        my $crossSection = <CROSS_SECTION>;
+        close (CROSS_SECTION);
+        $crossSections{$dir} = $crossSection;
+      }
+  }
+foreach my $file (@$files)
+  {
+    next if $file eq ".";
+    next if $file eq "..";
+    my $dir = $file;
+    $dir =~ s/^(.*)\/[^\/]*$/$1/;
+    my $badJob = 0;
+    my $jobNumber;
+    my $fileIsEDM = 0;
+    $fileIsEDM = isEDM ($file) if $file =~ m/^.*\.root$/;
+    if ($fileIsEDM < 0)
+      {
+        unlink ($file);
+        next;
+      }
+    if ($file =~ m/^.*_[^_]*\.root$/ && !$fileIsEDM)
+      {
+        $jobNumber = $file;
+        $jobNumber =~ s/^.*_([^_]*)\.root$/$1/;
+        $badJob = (defined $signals{$dir} && defined $signals{$dir}{$jobNumber}) || (defined $partial{$dir} && defined $partial{$dir}{$jobNumber});
+      }
+    next if $badJob;
+    if ($file =~ m/^.*\.root$/ && !$fileIsEDM)
+      {
+        foreach my $arg (@ARGV)
+          {
+            if (substr ($file, 0, length ($arg)) eq $arg)
+              {
+                $dirs{$arg} = $dir;
+                my $count = countEvents ($file, $cutFlow);
+                if ($count->{$cutFlow} < 0)
+                  {
+                    $nGoodJobs--;
+                    $nBadJobs++;
+                    print "WARNING: Skipping job $jobNumber. (bad ROOT file)\n";
+                    last;
+                  }
+                $nTotalEvents{$arg} += $count->{$cutFlow} if defined $nTotalEvents{$arg};
+                $nTotalEvents{$arg} = $count->{$cutFlow} if !(defined $nTotalEvents{$arg});
+                $nTotalEvents += $count->{$cutFlow};
+                push (@{$rootFiles{$arg}}, $file);
+                if ($opt{"weight"})
+                  {
+                    push (@weights, $opt{"weight"}) if !($opt{"weight"} =~ m/,/);
+                    push (@weights, 1.0) if $opt{"weight"} =~ m/,/;
+                  }
+                push (@weights, $opt{"xsection"} * $integratedLuminosity) if !$opt{"weight"} && $opt{"xsection"};
+                push (@weights, $crossSections{$dir} * $integratedLuminosity) if !$opt{"weight"} && !$opt{"xsection"} && defined $crossSections{$dir};
+                push (@weights, 1.0) if !$opt{"weight"} && !$opt{"xsection"} && !(defined $crossSections{$dir});
+                $weights{$arg} = $weights[-1];
+
+                foreach my $channelCutFlow (keys %{$count})
+                  {
+                    my $channel = substr ($channelCutFlow, 0, length ($channelCutFlow) - length ($cutFlow));
+                    next if !length ($channel);
+                    $skimEventCounts{$arg} = {} if !(defined $skimEventCounts{$arg});
+                    $skimEventCounts{$arg}{$channel} += $count->{$channelCutFlow} if defined $skimEventCounts{$arg};
+                    $skimEventCounts{$arg}{$channel} = $count->{$channelCutFlow} if !(defined $skimEventCounts{$arg});
+                  }
+              }
+          }
+      }
+  }
+if (!%rootFiles)
+  {
+    print "Found no ROOT files to merge!\n";
+    exit;
+  }
+my @mergedFiles;
+my @mergedWeights;
+foreach my $arg (@ARGV)
+  {
+    my $rootFiles = join (" ", @{$rootFiles{$arg}});
+    my $tmpName = "." . $arg . "_" . "$opt{'prefix'}.root";
+    $tmpName =~ s/\//_/g;
+    system ("mergeTFileServiceHistograms -i $rootFiles -o $tmpName");
+    my $count = $nTotalEvents{$arg};
+    system ("cutFlowLimits $tmpName");
+    if ($count)
+      {
+        $weights{$arg} /= $count if !$opt{"weight"} && $opt{"xsection"};
+        $weights{$arg} /= $count if !$opt{"weight"} && !$opt{"xsection"} && defined $crossSections{$dirs{$arg}};
+      }
+    else
+      {
+        $weights{$arg} *= $count if !$opt{"weight"} && $opt{"xsection"};
+        $weights{$arg} *= $count if !$opt{"weight"} && !$opt{"xsection"} && defined $crossSections{$dirs{$arg}};
+      }
+    push (@mergedFiles, $tmpName);
+    push (@mergedWeights, $weights{$arg});
+    foreach my $rootFile (@{$rootFiles{$arg}})
+      {
+        my $weight = $weights{$arg};
+        system ("weightTrees $rootFile $weight");
+      }
+    open (EVENT_COUNT, ">$dirs{$arg}/numberOfEvents.txt");
+    print EVENT_COUNT sprintf ("%.16g", $count) . "\n";
+    close (EVENT_COUNT);
+    foreach my $channel (keys %{$skimEventCounts{$arg}})
+      {
+        open (SKIM_COUNT, ">$dirs{$arg}/$channel/skimNumberOfEvents.txt");
+        print SKIM_COUNT sprintf ("%.16g", $skimEventCounts{$arg}{$channel}) . "\n";
+        close (SKIM_COUNT);
+      }
+  }
+my $mergedFiles = join (" ", @mergedFiles);
+my $mergedWeights = join (",", @mergedWeights);
+$mergedWeights = $opt{"weight"} if $opt{"weight"} && $opt{"weight"} =~ m/,/;
+system ("mergeTFileServiceHistograms -i $mergedFiles -o $opt{'prefix'}.root -w $mergedWeights");
+foreach my $mergedFile (@mergedFiles)
+  {
+    unlink ("$mergedFile");
+  }
+print "=============================================\n";
+my $output = sprintf "Cross-section of samples:\n";
+my $printOutput = 0;
+foreach my $arg (keys %weights)
+{
+    my $shortArg = $arg;
+    $shortArg =~ s/^.*\/([^\/]*)$/$1/;
+    $output = sprintf "%s  $shortArg: %.5g pb\n", $output, ($crossSections{$dirs{$arg}});
+    $printOutput = 1 if $weights{$arg} != 1;
+}
+print $output if $printOutput;
+
+my $output = sprintf "Effective luminosities of samples:\n";
+my $printOutput = 0;
+foreach my $arg (keys %weights)
+  {
+    my $shortArg = $arg;
+    $shortArg =~ s/^.*\/([^\/]*)$/$1/;
+    $output = sprintf "%s  $shortArg: %.5g/fb\n", $output, ($integratedLuminosity / (1000.0 * $weights{$arg})) if $weights{$arg} != 1 && $weights{$arg} != 0;
+    $printOutput = 1 if $weights{$arg} != 1;
+  }
+print $output if $printOutput;
+
+$output = sprintf "Weights for target luminosity of %g/fb:\n", ($integratedLuminosity / 1000.0);
+$printOutput = 0;
+foreach my $arg (keys %weights)
+  {
+    my $shortArg = $arg;
+    $shortArg =~ s/^.*\/([^\/]*)$/$1/;
+    $output = sprintf "%s  $shortArg: %.5g\n", $output, $weights{$arg} if $weights{$arg} != 1 && $weights{$arg} != 0;
+    $printOutput = 1 if $weights{$arg} != 1;
+  }
+print $output if $printOutput;
+
+my $goodEvents = countEvents ("$opt{'prefix'}.root", $cutFlow);
+printf "$nGoodJobs jobs ran successfully over %.1f (%.1f weighted) events.\n", $nTotalEvents, $goodEvents->{$cutFlow} if $counting;
+print "$nBadJobs jobs failed to run.\n" if $counting;
+print "$nIncompleteJobs jobs have not finished.\n" if $counting;
+print "=============================================\n";
+
+sub
+processArgs
+{
+  my $argv = shift;
+
+  my @files;
+  foreach my $arg (@$argv)
+    {
+      $arg =~ s/\/*$//;
+      if (!(-e $arg))
+        {
+          print "$arg does not exist!\n";
+          exit;
+        }
+      next if ($arg =~ m/\/\.$/ || $arg =~ m/\/\.\.$/);
+      if (-d $arg)
+        {
+          opendir (DIR, $arg);
+          my @dirContents = readdir (DIR);
+          closedir (DIR);
+          for (my $i = 0; $i < @dirContents; $i++)
+            {
+              $dirContents[$i] = "$arg/$dirContents[$i]";
+            }
+          my $newFiles = processArgs (\@dirContents);
+          push (@files, @$newFiles);
+        }
+      else
+        {
+          push (@files, $arg);
+        }
+    }
+
+  return \@files;
+}
+
+sub
+printHelp
+{
+  my $exeName = $0;
+  $exeName =~ s/^.*\/([^\/]*)$/$1/;
+
+  print "Usage: $exeName [OPTION]... -p PREFIX DIRECTORIES_AND_FILES\n";
+  print "Merges ROOT files containing histograms. If there are Condor logs in the\n";
+  print "specified directories, checks for nonzero return values. If the directories\n";
+  print "where created by \"osusub\", uses the cross section from the database to weight\n";
+  print "all histograms.\n";
+  print "\n";
+  print "Mandatory arguments to long options are mandatory for short options too.\n";
+  printf "%-29s%s\n", "  -c, --cutflow HISTOGRAM", "name of histogram to use for the cutflow (default:";
+  printf "%-29s%s\n", "                  ", "cutFlow)";
+  printf "%-29s%s\n", "  -h, --help", "print this help message";
+  printf "%-29s%s\n", "  -l, --luminosity", "integrated luminosity to which the histograms are";
+  printf "%-29s%s\n", "                  ", "weighted (default: 10000/pb)";
+  printf "%-29s%s\n", "  -p, --prefix PREFIX", "output is  named PREFIX.root";
+  printf "%-29s%s\n", "  -w, --weight WEIGHT", "scale the output by WEIGHT, overriding the";
+  printf "%-29s%s\n", "                     ", "automatic weighting using the cross section from";
+  printf "%-29s%s\n", "                     ", "the database; WEIGHT may be a single number or a";
+  printf "%-29s%s\n", "                     ", "comma-separated list, one for each input file";
+  printf "%-29s%s\n", "  -x, --xsection XSECTION", "use XSECTION to weight the histograms instead of";
+  printf "%-29s%s\n", "                     ", "the value in the database";
+
+  exit;
+}
+
+sub
+getRunList
+{
+  my $runListFile = shift;
+
+  open (RUN_LIST, "<$runListFile");
+  my @runList0 = <RUN_LIST>;
+  close (RUN_LIST);
+  my @runList;
+  foreach my $file (@runList0)
+    {
+      next if !($file =~ m/^.*file:.*\.root.*/);
+      $file =~ s/.*file:(.*)\.root.*/$1.root/;
+      push (@runList, $file);
+    }
+
+  return \@runList;
+}
+
+sub
+countEvents
+{
+  my $file = shift;
+  my $cutFlow = shift;
+
+  my @output = `getEventsFromCutFlow $file $cutFlow`;
+  if ($output[0] =~ m/Did not find a histogram named/ || $output[0] =~ m/appears to be empty/ || $output[0] =~ m/Failed to open/)
+    {
+      print $output[0];
+      return {$cutFlow => -1};
+    }
+  my %weight;
+  my %count;
+  foreach my $line (@output)
+    {
+      my $cutFlowName = $line;
+      my $weight = $line;
+      my $count = $line;
+      $cutFlowName =~ s/(.*): .* \/ .*\n*/$1/;
+      $weight =~ s/.*: .* \/ (.*)\n*/$1/;
+      $count =~ s/.*: (.*) \/ .*\n*/$1/;
+      $count{$cutFlowName} = $count + 0;
+      $weight{$cutFlowName} = $weight + 0;
+    }
+  foreach my $cutFlowName (keys %count)
+    {
+      $count{$cutFlowName} *= $count{$cutFlow} / $weight{$cutFlowName} if $weight{$cutFlowName};
+      $count{$cutFlowName} *= $count{$cutFlow} * $weight{$cutFlowName} if !$weight{$cutFlowName};
+    }
+
+  return \%count;
+}
+
+sub
+isEDM
+{
+  my $file = shift;
+
+  my $output = `edmFileUtil $file 2>&1`;
+  return 0 if $output =~ m/appears to be missing/ || $output =~ m/not a ROOT file/;
+  $output =~ s/[\f\n\r]//g;
+  $output =~ s/^.*, ([^,]*) events,.*$/$1/;
+  $output += 0;
+  $output-- if $output == 0;
+  return $output;
+}

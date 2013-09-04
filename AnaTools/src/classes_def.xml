@@ -1,0 +1,11 @@
+<lcgdict>
+  <class name="BNstop" />
+  <class name="std::vector<BNstop>" />
+  <class pattern="edm::Wrapper<BNstop>"/>
+  <class name="edm::Wrapper<std::vector<BNstop> >" />
+
+  <class name="BNPFChgHad" />
+  <class name="std::vector<BNPFChgHad>" />
+  <class pattern="edm::Wrapper<BNPFChgHad>"/>
+  <class name="edm::Wrapper<std::vector<BNPFChgHad> >" />
+</lcgdict>

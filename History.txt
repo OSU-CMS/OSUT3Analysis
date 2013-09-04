@@ -1,0 +1,59 @@
+History.txt
+
+Documentation of tags of OSUT3Analysis
+
+*** Add most recent version to the top ***
+
+Tag naming convention:  VXX-YY-ZZ, where XX is incremented for substantial revisions.
+
+V02-04-00
+=============
+2013-07-24 Wells
+Add verbose option, change isVeto behavior for cuts.  Fix bug in which
+histograms to fill (use objectsToPlot, not objectsToCut).  Do not
+apply single-object cuts in the fill{1,2}DHistograms() functions;
+these should be set correctly for the paired collection in the
+setObjectFlags() function.  
+
+V02-03-02
+=============
+2013-07-16 Wells
+New variables in OSUAnalysis; other script fixes.  
+
+
+V02-03-01
+=============
+2013-07-03 Wells
+Andrew fixed submitToCondor.py and osusub, to enable option to merge datasets when done.  
+
+V02-03-00
+=============
+2013-07-02 Wells
+Many new features added to OSUAnalysis, including slimmed BEANs, some new variables and collections.
+
+
+V02-02-00
+=============
+2013-05-31 Wells
+Add option to fill BNTree with events passing the selection.  Turned
+on by default.  
+Allow vetoing triggers.  
+
+V02-01-01
+=============
+2013-05-28 Wells
+Added option for making plots after each step of cutflow.
+Added secondary jets collection.  
+
+ 
+V02-01-00
+=============
+2013-05-15 Wells
+Seg fault fixed in OSUAnalysis.cc.  
+
+
+V00-01-00
+=============
+2013-05-12 Wells
+Stable tag.  
+

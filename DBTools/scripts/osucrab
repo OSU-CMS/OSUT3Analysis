@@ -1,0 +1,326 @@
+#!/usr/bin/env perl
+
+use strict;
+use Mysql;
+
+sub getWorkingDir;
+sub dbUpdate;
+sub dbStatus;
+sub dbReport;
+sub dbInsert;
+sub addSlashes;
+sub getOption;
+sub deleteEntry;
+
+our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
+
+my $arg = join (" ", @ARGV);
+if ($arg =~ m/-create/)
+  {
+    my $crabCfgName = $arg;
+    $crabCfgName =~ s/.*-cfg  *([^ \t\n]*).*/$1/;
+    open (CRAB_CFG, "<$crabCfgName");
+    my @crabCfg = <CRAB_CFG>;
+    close (CRAB_CFG);
+    my $dataset = getOption (\@crabCfg, "datasetpath");
+    my $psetName = getOption (\@crabCfg, "pset");
+    my $jsonFileName = getOption (\@crabCfg, "lumi_mask");
+    my $workingDir = getOption (\@crabCfg, "ui_working_dir");
+    my $publishName = "";
+    $publishName = getOption (\@crabCfg, "publish_data_name") if getOption (\@crabCfg, "publish_data") eq "1";
+    my $stageOutLocation = getOption (\@crabCfg, "storage_element");
+
+    print "Ntuple format (BEAN): ";
+    my $format = <STDIN>;
+    $format =~ s/\n//g;
+    $format = "BEAN" if !$format;
+    print "Comment for the ntuple database: ";
+    my $comment = <STDIN>;
+    $comment =~ s/\n//g;
+
+    system ("rm -f .crabSubmit.log ; crab $arg 2>&1 | tee .crabSubmit.log");
+
+    my $status = "created";
+    $status = "submitted" if $arg =~ m/-submit/;
+    my $hostname = `/bin/hostname`;
+    $hostname =~ s/[\f\n\r]//g;
+    my $results = dbInsert ($dataset, "$ENV{'USER'}\@$hostname", $format, "", 0, 0, $status, $comment, $psetName, $crabCfgName, $jsonFileName, $workingDir, $publishName, $stageOutLocation);
+  }
+elsif ($arg =~ m/-submit/)
+  {
+    my $workingDir = getWorkingDir (\@ARGV);
+    my $id = -1;
+    if (-e "$workingDir/log/.osuID")
+      {
+        open (ID_FILE, "<$workingDir/log/.osuID");
+        $id = <ID_FILE>;
+        close (ID_FILE);
+        $id =~ s/(.*)\n/$1/;
+      }
+    my $logFile = $workingDir . "/log/crabSubmit.log";
+
+    system ("crab $arg 2>&1 | tee -a .crabSubmit.log ; if [ -e \"$workingDir/log/crabSubmit.log\" ] ; then rm -f .crabSubmit.log ; else mv -f .crabSubmit.log $workingDir/log/crabSubmit.log ; fi");
+
+    my $hostname = `/bin/hostname`;
+    $hostname =~ s/[\f\n\r]//g;
+    my $results = dbUpdate ($id, "submitted", "$ENV{'USER'}\@$hostname", $logFile) if $id > -1;
+  }
+elsif ($arg =~ m/-report/)
+  {
+    my $workingDir = getWorkingDir (\@ARGV);
+    my $id = -1;
+    if (-e "$workingDir/log/.osuID")
+      {
+        open (ID_FILE, "<$workingDir/log/.osuID");
+        $id = <ID_FILE>;
+        close (ID_FILE);
+        $id =~ s/(.*)\n/$1/;
+      }
+    my $lumiSummaryName = $workingDir . "/res/lumiSummary.json";
+
+    system ("crab $arg");
+
+    my $hostname = `/bin/hostname`;
+    $hostname =~ s/[\f\n\r]//g;
+    my $results = dbReport ($id, $lumiSummaryName, "$ENV{'USER'}\@$hostname") if $id > -1;
+  }
+elsif ($arg =~ m/-status/)
+  {
+    my $workingDir = getWorkingDir (\@ARGV);
+    my $id = -1;
+    if (-e "$workingDir/log/.osuID")
+      {
+        open (ID_FILE, "<$workingDir/log/.osuID");
+        $id = <ID_FILE>;
+        close (ID_FILE);
+        $id =~ s/(.*)\n/$1/;
+      }
+    my $currentStatusName = "$workingDir/log/.currentStatus";
+    unlink ($currentStatusName) if -e $currentStatusName;
+    system ("crab $arg | tee $currentStatusName");
+    my $hostname = `/bin/hostname`;
+    $hostname =~ s/[\f\n\r]//g;
+    my $results = dbStatus ($id, $currentStatusName, "$ENV{'USER'}\@$hostname") if $id > -1;
+    unlink ($currentStatusName);
+  }
+elsif ($arg =~ m/-kill/)
+  {
+    my $workingDir = getWorkingDir (\@ARGV);
+    my $id = -1;
+    if (-e "$workingDir/log/.osuID")
+      {
+        open (ID_FILE, "<$workingDir/log/.osuID");
+        $id = <ID_FILE>;
+        close (ID_FILE);
+        $id =~ s/(.*)\n/$1/;
+      }
+
+    print "Are you cancelling this task? (y/N): ";
+    my $response = <STDIN>;
+    $response =~ s/\n//g;
+    deleteEntry ($id) if lc ($response) eq "y";
+    system ("crab $arg");
+  }
+else
+  {
+    system ("crab $arg");
+  }
+
+sub
+getWorkingDir
+{
+  my $argv = shift;
+
+  my $workingDir;
+  my $nextToLast = 0;
+  foreach my $argument (@$argv)
+    {
+      if ($nextToLast)
+        {
+          $workingDir = $argument;
+          last;
+        }
+      $nextToLast = 1 if ($argument eq "-c" || $argument eq "-continue");
+    }
+
+  return $workingDir;
+}
+
+sub
+getOption
+{
+  my $file = shift;
+  my $option = shift;
+
+  my $optionValue;
+  foreach my $line (@$file)
+    {
+      next if ($line =~ m/^[ \t\n]*#/);
+      next if (!($line =~ m/$option  *=  *[^ \t\n]*/));
+      $optionValue = $line;
+      $optionValue =~ s/.*$option  *=  *([^ \t\n]*).*\n/$1/;
+    }
+
+  return $optionValue;
+}
+
+sub
+addSlashes
+{
+  my $string = shift;
+
+  $string =~ s/\\/\\\\/g;
+  $string =~ s/'/\\'/g;
+  $string =~ s/"/\\"/g;
+  $string =~ s/\\0/\\\\0/g;
+
+  return $string;
+}
+
+sub
+dbInsert
+{
+  my $dataset = shift;
+  my $userAndHost = shift;
+  my $format = shift;
+  my $location = shift;
+  my $nFiles = shift;
+  my $sizeInGB = shift;
+  my $status = shift;
+  my $comment = shift;
+  my $psetName = shift;
+  my $crabCfgName = shift;
+  my $jsonFileName = shift;
+  my $workingDir = shift;
+  my $publishName = shift;
+  my $stageOutLocation = shift;
+
+  my $user = $userAndHost;
+  $user =~ s/@.*$//;
+
+  open (PY_CONFIG, "<$psetName");
+  my @pset = <PY_CONFIG>;
+  close (PY_CONFIG);
+  my $pset = join ("", @pset);
+  open (CRAB_CONFIG, "<$crabCfgName");
+  my @crabCfg = <CRAB_CONFIG>;
+  close (CRAB_CONFIG);
+  my $crabCfg = join ("", @crabCfg);
+  open (JSON_FILE, "<$jsonFileName");
+  my @jsonFile = <JSON_FILE>;
+  close (JSON_FILE);
+  my $jsonFile = join ("", @jsonFile);
+
+  $dataset = addSlashes ($dataset);
+  $user = addSlashes ($user);
+  $format = addSlashes ($format);
+  $pset = addSlashes ($pset);
+  $crabCfg = addSlashes ($crabCfg);
+  $jsonFile = addSlashes ($jsonFile);
+  $location = addSlashes ($location);
+  $status = addSlashes ($status);
+  $comment = addSlashes ($comment);
+  $publishName = addSlashes ($publishName);
+  $stageOutLocation = addSlashes ($stageOutLocation);
+
+  my $results;
+  my $query = "select max(id) from ntuple";
+  $db->selectdb ("ntuple");
+  $results = $db->query ($query);
+  my @row = $results->fetchrow ();
+  my $id = 1;
+  $id = $row[0] + 1 if $results->numrows ();
+
+  open (ID_FILE, ">$workingDir/log/.osuID");
+  print ID_FILE "$id\n";
+  close (ID_FILE);
+
+  $query = "insert into ntuple (id, dataset, creationTime, lastUpdateTime, lastUpdateUser, user, format, location, nFiles, sizeInGB, status, comment, pset, crabCfg, jsonFile, publishName, stageOutLocation, published) values ($id, '$dataset', now(), now(), '$userAndHost', '$user', '$format', '$location', $nFiles, $sizeInGB, '$status', '$comment', '$pset', '$crabCfg', '$jsonFile', '$publishName', '$stageOutLocation', 0)";
+  $results = $db->query ($query);
+
+  return $results;
+}
+
+sub
+dbUpdate
+{
+  my $id = shift;
+  my $status = shift;
+  my $user = shift;
+  my $logName = shift;
+
+  open (LOG, "<$logName");
+  my @log = <LOG>;
+  close (LOG);
+  my $log = join ("", @log);
+
+  $status = addSlashes ($status);
+  $user = addSlashes ($user);
+  $log = addSlashes ($log);
+
+  my $results;
+  my $query = "update ntuple set lastUpdateTime=now(), lastUpdateUser='$user', status='$status', submissionLog='$log' where id=$id";
+  $db->selectdb ("ntuple");
+  $results = $db->query ($query);
+
+  return $results;
+}
+
+sub
+dbStatus
+{
+  my $id = shift;
+  my $currentStatusName = shift;
+  my $user = shift;
+
+  open (CURRENT_STATUS, "<$currentStatusName");
+  my @currentStatus = <CURRENT_STATUS>;
+  close (CURRENT_STATUS);
+  my $currentStatus = join ("", @currentStatus);
+
+  $currentStatus = addSlashes ($currentStatus);
+  $user = addSlashes ($user);
+
+  my $results;
+  my $query = "update ntuple set lastUpdateTime=now(), lastUpdateUser='$user', currentStatus='$currentStatus' where id=$id";
+  $db->selectdb ("ntuple");
+  $results = $db->query ($query);
+
+  return $results;
+}
+
+sub
+dbReport
+{
+  my $id = shift;
+  my $lumiSummaryName = shift;
+  my $user = shift;
+
+  open (LUMI_SUMMARY, "<$lumiSummaryName");
+  my @lumiSummary = <LUMI_SUMMARY>;
+  close (LUMI_SUMMARY);
+  my $lumiSummary = join ("", @lumiSummary);
+
+  $lumiSummary = addSlashes ($lumiSummary);
+  $user = addSlashes ($user);
+
+  my $results;
+  my $query = "update ntuple set lastUpdateTime=now(), lastUpdateUser='$user', lumiSummary='$lumiSummary' where id=$id";
+  $db->selectdb ("ntuple");
+  $results = $db->query ($query);
+
+  return $results;
+}
+
+sub
+deleteEntry
+{
+  my $id = shift;
+
+  my $results;
+  my $query = "delete from ntuple where id=$id";
+  $db->selectdb ("ntuple");
+  $results = $db->query ($query);
+
+  return $results;
+}

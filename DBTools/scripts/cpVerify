@@ -1,0 +1,154 @@
+#!/usr/bin/env perl
+
+use strict;
+
+sub makeFailedFilesScript;
+sub makeFilesToRemoveScript;
+sub makeFilesToCopyScript;
+
+my $src = $ARGV[0];
+my $dest = $ARGV[1];
+$src =~ s/^([^\/]*)\/*$/$1/;
+$dest =~ s/^([^\/]*)\/*$/$1/;
+my @fileList = `find $src -type f`;
+my @filesToRemove;
+my @filesToCopy;
+my @failedFiles;
+foreach my $file (@fileList)
+  {
+    $file =~ s/^$src\/*(.*)$/$1/;
+    $file =~ s/\n//g;
+    if (!(-e "$dest/$file"))
+      {
+        push (@filesToCopy, $file);
+        next;
+      }
+    my $srcFileSize = `ls -l $src/$file`;
+    my $destFileSize = `ls -l $dest/$file`;
+    $srcFileSize =~ s/^[^ ]* *[^ ]* *[^ ]* *[^ ]* *([^ ]*) *.*$/$1/;
+    $destFileSize =~ s/^[^ ]* *[^ ]* *[^ ]* *[^ ]* *([^ ]*) *.*$/$1/;
+    $srcFileSize =~ s/\n//g;
+    $destFileSize =~ s/\n//g;
+    if ($srcFileSize == $destFileSize)
+      {
+        push (@filesToRemove, $file) if $srcFileSize == $destFileSize;
+      }
+    else
+      {
+        print "$src/$file failed to copy:\n";
+        print "  source size: $srcFileSize, destination size: $destFileSize\n";
+        push (@failedFiles, $file);
+      }
+  }
+my $nFilesToRemove = @filesToRemove;
+my $nFilesToCopy = @filesToCopy;
+my $nFailedFiles = @failedFiles;
+my $response;
+print "\n$nFailedFiles files failed verification\n";
+print "$nFilesToRemove files passed verification\n";
+print "$nFilesToCopy files are missing\n\n";
+if ($nFailedFiles > 0)
+  {
+    print "Create a script to copy failed files? (Y/n): ";
+    $response = <STDIN>;
+    $response =~ s/\n//g;
+    $response = "y" if !$response;
+    makeFailedFilesScript (\@failedFiles, $src, $dest) if lc (substr ($response, 0, 1)) eq "y";
+  }
+if ($nFilesToRemove > 0 && $nFailedFiles == 0 && $nFilesToCopy == 0)
+  {
+    print "Create a script to remove passed files? (Y/n): ";
+    $response = <STDIN>;
+    $response =~ s/\n//g;
+    $response = "y" if !$response;
+    makeFilesToRemoveScript (\@filesToRemove, $src, $dest) if lc (substr ($response, 0, 1)) eq "y";
+  }
+if ($nFilesToCopy > 0 && ($nFilesToRemove != 0 || $nFailedFiles != 0))
+  {
+    print "Create a script to copy missing files? (Y/n): ";
+    $response = <STDIN>;
+    $response =~ s/\n//g;
+    $response = "y" if !$response;
+    makeFilesToCopyScript (\@filesToCopy, $src, $dest) if lc (substr ($response, 0, 1)) eq "y";
+  }
+
+sub
+makeFailedFilesScript
+{
+  my $fileList = shift;
+  my $src = shift;
+  my $dest = shift;
+
+  my $postfix;
+  do
+    {
+      $postfix = int (rand (32767));
+    }
+  while (-e "cpCopyFailed_$postfix.sh");
+  open (SCRIPT, ">cpCopyFailed_$postfix.sh");
+  print SCRIPT "#!/usr/bin/env bash\n\n";
+  foreach my $file (@$fileList)
+    {
+      my $tmpDest = $dest . "/" . $file;
+      my @tmpDest = split ("/", $tmpDest);
+      delete $tmpDest[-1];
+      $tmpDest = join ("/", @tmpDest);
+      print SCRIPT "rm -f $tmpDest/$file\n";
+      print SCRIPT "cp $src/$file $tmpDest/\n"
+    }
+  close (SCRIPT);
+  chmod (0755, "cpCopyFailed_$postfix.sh");
+  print "Created cpCopyFailed_$postfix.sh\n";
+}
+
+sub
+makeFilesToRemoveScript
+{
+  my $fileList = shift;
+  my $src = shift;
+  my $dest = shift;
+
+  my $postfix;
+  do
+    {
+      $postfix = int (rand (32767));
+    }
+  while (-e "cpRemove_$postfix.sh");
+  open (SCRIPT, ">cpRemove_$postfix.sh");
+  print SCRIPT "#!/usr/bin/env bash\n\n";
+  foreach my $file (@$fileList)
+    {
+      print SCRIPT "rm -f $src/$file\n";
+    }
+  close (SCRIPT);
+  chmod (0755, "cpRemove_$postfix.sh");
+  print "Created cpRemove_$postfix.sh\n";
+}
+
+sub
+makeFilesToCopyScript
+{
+  my $fileList = shift;
+  my $src = shift;
+  my $dest = shift;
+
+  my $postfix;
+  do
+    {
+      $postfix = int (rand (32767));
+    }
+  while (-e "cpCopyMissing_$postfix.sh");
+  open (SCRIPT, ">cpCopyMissing_$postfix.sh");
+  print SCRIPT "#!/usr/bin/env bash\n\n";
+  foreach my $file (@$fileList)
+    {
+      my $tmpDest = $dest . "/" . $file;
+      my @tmpDest = split ("/", $tmpDest);
+      delete $tmpDest[-1];
+      $tmpDest = join ("/", @tmpDest);
+      print SCRIPT "cp $src/$file $tmpDest/\n";
+    }
+  close (SCRIPT);
+  chmod (0755, "cpCopyMissing_$postfix.sh");
+  print "Created cpCopyMissing_$postfix.sh\n";
+}

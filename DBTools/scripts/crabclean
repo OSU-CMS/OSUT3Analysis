@@ -1,0 +1,222 @@
+#!/usr/bin/env perl
+
+use strict;
+use Getopt::Long;
+use Mysql;
+use Term::ANSIColor;
+
+sub printHelp;
+sub parseCrabDir;
+
+our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
+
+my %opt;
+Getopt::Long::Configure ("bundling");
+GetOptions (\%opt, "dumb|d", "force|f", "destination|o=s", "print|p", "dataset|s", "help|h");
+
+printHelp () if $opt{"help"} || !$ARGV[0] || (!$opt{"dumb"} && !$opt{"dataset"} && !$opt{"print"} && !$ARGV[1]);
+my $crabDir = $ARGV[0];
+my $outputDir = $ARGV[0];
+my $dataset = $ARGV[0];
+$outputDir = $ARGV[1] if !$opt{"dumb"} && !$opt{"dataset"};
+
+if ($opt{"dataset"})
+  {
+    my $queryDataset = $dataset;
+    $queryDataset =~ s/\*/%/g;
+    $queryDataset =~ s/(.*)/%$1%/g;
+    my $query = "select workingDirectory,location,dataset,user,creationTime,status from ntuple where dataset like '$queryDataset' order by creationTime";
+    $db->selectdb ("ntuple");
+    my $results = $db->query ($query);
+    if ($results->numrows () == 1)
+      {
+        my @row = $results->fetchrow ();
+        $crabDir = "$row[0]/ntuple";
+        $outputDir = $row[1];
+      }
+    die "Database entry does not exist, stopped" if $results->numrows () == 0;
+    if ($results->numrows () > 1)
+      {
+        my %workingDir;
+        my %location;
+        print "Found multiple database entries matching\n";
+        print "\"$dataset\":\n";
+        for (my $i = 1; $i <= $results->numrows (); $i++)
+          {
+            my @row = $results->fetchrow ();
+            $row[4] =~ s/([^ ]*) [^ ]*/$1/g;
+            $workingDir{"$i"} = $row[0];
+            $location{"$i"} = $row[1];
+            printf "(%2d) $row[2]\n", $i;
+            print "     (";
+            print color "green" if $row[5] eq "present";
+            print color "bold yellow" if $row[5] eq "submitted";
+            print color "bold red" if $row[5] eq "created" or $row[5] eq "cancelled" or $row[5] eq "deprecated";
+            print $row[5];
+            print color "reset";
+            print ") created by $row[3] on $row[4]\n";
+          }
+        print "\nWhich entry would you like to use?: ";
+        my $response = <STDIN>;
+        $response =~ s/[ \t\n]//g;
+        die "Your selection was not a valid option, stopped" if !(exists $workingDir{$response});
+        $crabDir = "$workingDir{$response}/ntuple";
+        $outputDir = $location{$response};
+      }
+  }
+
+die "Output directory does not exist, stopped" if !$opt{"print"} && (!(-e $outputDir) || !(-d $outputDir));
+my @crabOutput;
+if (!$opt{"print"})
+  {
+    opendir (CRAB_OUTPUT, "$outputDir");
+    @crabOutput = readdir (CRAB_OUTPUT);
+    closedir (CRAB_OUTPUT);
+  }
+my %filesToKeep;
+if (!$opt{"dumb"})
+  {
+    die "CRAB directory does not exist, stopped" if !(-e $crabDir) || !(-d $crabDir);
+    parseCrabDir ($crabDir, \%filesToKeep);
+  }
+else
+  {
+    foreach my $file (@crabOutput)
+      {
+        next if ($file eq "." || $file eq "..");
+        next if !($file =~ m/^.*_[^_]*_[^_]*_[^_]*\.root$/);
+        my $jobNumber = $file;
+        my $submissionNumber = $file;
+        $jobNumber =~ s/^.*_([^_]*)_[^_]*_[^_]*\.root$/$1/;
+        $submissionNumber =~ s/^.*_[^_]*_([^_]*)_[^_]*\.root$/$1/;
+        if (!(defined $filesToKeep{$jobNumber})
+         || $filesToKeep{$jobNumber} < $submissionNumber)
+          {
+            $filesToKeep{$jobNumber} = $submissionNumber;
+          }
+      }
+  }
+if ($opt{"destination"})
+  {
+    mkdir $opt{"destination"} or die "Failed to create destination directory, stopped" if !(-e $opt{"destination"});
+    die "Destination is not a directory, stopped" if !(-d $opt{"destination"});
+    open (TEST_FILE, ">$opt{'destination'}/.crabCleanTest") or die "Unable to write to destination directory, stopped";
+    close (TEST_FILE);
+    unlink "$opt{'destination'}/.crabCleanTest";
+  }
+if (!$opt{"print"})
+  {
+    opendir (CRAB_OUTPUT, "$outputDir");
+    my @crabOutput = readdir (CRAB_OUTPUT);
+    closedir (CRAB_OUTPUT);
+    my $nFiles = @crabOutput - 2;
+    print "Before cleaning: $nFiles files\n";
+  }
+foreach my $file (@crabOutput)
+  {
+    next if ($file eq "." || $file eq "..");
+    next if !($file =~ m/^.*_[^_]*_[^_]*_[^_]*\.root$/);
+    my $jobNumber = $file;
+    my $submissionNumber = $file;
+    $jobNumber =~ s/^.*_([^_]*)_[^_]*_[^_]*\.root$/$1/;
+    $submissionNumber =~ s/^.*_[^_]*_([^_]*)_[^_]*\.root$/$1/;
+    if (!(defined $filesToKeep{$jobNumber}))
+      {
+        print "No information found for job $jobNumber!\n";
+      }
+    elsif ((($opt{"dumb"} && $filesToKeep{$jobNumber} != $submissionNumber)
+        || (!$opt{"dumb"} && $filesToKeep{$jobNumber} ne $file))
+        && !$opt{"destination"} && !$opt{"print"})
+      {
+        system ("rm -f $outputDir/$file") if $opt{"force"};
+        system ("rm -i $outputDir/$file") if !$opt{"force"};
+      }
+    elsif ((($opt{"dumb"} && $filesToKeep{$jobNumber} == $submissionNumber)
+        || (!$opt{"dumb"} && $filesToKeep{$jobNumber} eq $file))
+        && $opt{"destination"} && !$opt{"print"})
+      {
+        system ("mv -f $outputDir/$file $opt{'destination'}/$file") if $opt{"force"};
+        system ("mv -i $outputDir/$file $opt{'destination'}/$file") if !$opt{"force"};
+      }
+  }
+if (!$opt{"print"})
+  {
+    opendir (CRAB_OUTPUT, "$outputDir");
+    my @crabOutput = readdir (CRAB_OUTPUT);
+    closedir (CRAB_OUTPUT);
+    opendir (CRAB_OUTPUT, "$opt{'destination'}");
+    my @crabOutputInDestination = readdir (CRAB_OUTPUT);
+    closedir (CRAB_OUTPUT);
+    my $nFiles = @crabOutput - 2;
+    $nFiles = @crabOutputInDestination - 2 if $opt{"destination"};
+    print "After cleaning:  $nFiles files\n";
+  }
+else
+  {
+    foreach my $file (keys %filesToKeep)
+      {
+        print $filesToKeep{$file} . "\n";
+      }
+  }
+
+sub
+printHelp
+{
+  my $exeName = $0;
+  $exeName =~ s/^.*\/([^\/]*)$/$1/;
+
+  print "Usage: $exeName [OPTION]... CRAB_DIR OUTPUT_DIR\n";
+  print "  or: $exeName -d [OPTION]... OUTPUT_DIR\n";
+  print "  or: $exeName -p [OPTION]... CRAB_DIR\n";
+  print "  or: $exeName -s [OPTION]... DATASET\n";
+  print "Deletes excess EDM output caused by multiple CRAB submissions using the results\n";
+  print "contained in the CRAB working directory provided.\n";
+  print "\n";
+  print "Mandatory arguments to long options are mandatory for short options too.\n";
+  printf "%-29s%s\n", "  -d, --dumb", "tries to use the filenames of the output instead of";
+  printf "%-29s%s\n", "            ", "the results from the CRAB working directory; useful";
+  printf "%-29s%s\n", "            ", "if the working directory has been lost";
+  printf "%-29s%s\n", "  -f, --force", "never prompt (default is to prompt before any";
+  printf "%-29s%s\n", "             ", "removal)";
+  printf "%-29s%s\n", "  -h, --help", "print this help message";
+  printf "%-29s%s\n", "  -o, --destination DIR", "do not remove excess output and move the good files";
+  printf "%-29s%s\n", " ", "to DIR";
+  printf "%-29s%s\n", "  -p, --print", "do not remove any files, just print the names of";
+  printf "%-29s%s\n", " ", "the good files to the screen";
+  printf "%-29s%s\n", "  -s, --dataset", "tells the script to expect a dataset name instead";
+  printf "%-29s%s\n", "               ", "of a directory";
+
+  exit;
+}
+
+sub
+parseCrabDir
+{
+  my $crabDir = shift;
+  my $filesToKeep = shift;
+
+  opendir (CRAB_RESULTS, "$crabDir/res");
+  my @crabResults = readdir (CRAB_RESULTS);
+  closedir (CRAB_RESULTS);
+  for my $file (@crabResults)
+    {
+      next if !($file =~ m/^crab_fjr_[^\.]*\.xml$/);
+      my $jobNumber = $file;
+      $jobNumber =~ s/^crab_fjr_([^\.]*)\.xml$/$1/;
+      my @status = `grep 'ExitStatus' $crabDir/res/$file`;
+      my $wrapperStatus = $status[0];
+      $wrapperStatus =~ s/^.*ExitStatus="([^"]*)".*$/$1/;
+      $wrapperStatus =~ s/\n//g;
+      if ($wrapperStatus != 0)
+        {
+          print "Job $jobNumber failed (return value $wrapperStatus). Skipping.\n";
+          next;
+        }
+      my @surlForGrid = `grep -A 1 '<SurlForGrid' $crabDir/res/$file`;
+      my $fileName = $surlForGrid[1];
+      $fileName = $surlForGrid[0] if $surlForGrid[0] =~ m/Value=/;
+      $fileName =~ s/^.*\/([^\/]*)\n/$1/ if !($fileName =~ m/Value=/);
+      $fileName =~ s/^.*\/([^\/]*)"\/>\n/$1/ if $fileName =~ m/Value=/;
+      $filesToKeep->{$jobNumber} = $fileName;
+    }
+}
