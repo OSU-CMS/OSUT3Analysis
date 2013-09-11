@@ -2197,6 +2197,7 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
   else if(variable == "tkD0err") value = object->tkD0err;
   else if(variable == "mva") value = object->mva;
   else if(variable == "mvaTrigV0") value = object->mvaTrigV0;
+  //else if(variable == "mvaTrigNoIPV0") value = object->mvaTrigNoIPV0;
   else if(variable == "mvaNonTrigV0") value = object->mvaNonTrigV0;
   else if(variable == "dist") value = object->dist;
   else if(variable == "dcot") value = object->dcot;
@@ -4331,7 +4332,40 @@ OSUAnalysis::valueLookup (const BNstop* object, string variable, string function
 
   double value = 0.0;
 
-  if(variable == "ctau") value = object->ctau;
+  if(variable == "pt") value= object->pt;
+  else if(variable == "eta") value= object->eta;
+  else if(variable == "phi") value= object->phi;
+  else if(variable == "px") value= object->px;
+  else if(variable == "py") value= object->py;
+  else if(variable == "pz") value= object->pz;
+  else if(variable == "energy") value= object->energy;
+  else if(variable == "mass") value= object->mass;
+  else if(variable == "beta") value= object->beta;
+  else if(variable == "gamma") value= object->gamma;
+  else if(variable == "vx") value= object->vx;
+  else if(variable == "vy") value= object->vy;
+  else if(variable == "vz") value= object->vz;
+  else if(variable == "decayVx") value= object->decayVx;
+  else if(variable == "decayVy") value= object->decayVy;
+  else if(variable == "decayVz") value= object->decayVz;
+  else if(variable == "decayLength") value= object->decayLength;
+  else if(variable == "ctau") value= object->ctau;
+  else if(variable == "daughter0Id") value= object->daughter0Id;
+  else if(variable == "daughter0Status") value= object->daughter0Status;
+  else if(variable == "daughter0PT") value= object->daughter0PT;
+  else if(variable == "daughter0Phi") value= object->daughter0Phi;
+  else if(variable == "daughter0Eta") value= object->daughter0Eta;
+  else if(variable == "daughter1Id") value= object->daughter1Id;
+  else if(variable == "daughter1Status") value= object->daughter1Status;
+  else if(variable == "daughter1PT") value= object->daughter1PT;
+  else if(variable == "daughter1Phi") value= object->daughter1Phi;
+  else if(variable == "daughter1Eta") value= object->daughter1Eta;
+  else if(variable == "charge") value= object->charge;
+  else if(variable == "threeCharge") value= object->threeCharge;
+  else if(variable == "daughter0Charge") value= object->daughter0Charge;
+  else if(variable == "daughter0ThreeCharge") value= object->daughter0ThreeCharge;
+  else if(variable == "daughter1Charge") value= object->daughter1Charge;
+  else if(variable == "daughter1ThreeCharge") value= object->daughter1ThreeCharge;
 
   else if (variable == "d0"){
     double vx = object->vx - chosenVertex ()->x,
