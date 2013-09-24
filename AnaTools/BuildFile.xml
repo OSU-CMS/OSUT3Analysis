@@ -1,6 +1,6 @@
 <use   name="root"/>
 <use   name="rootrflx"/>
-<use   name="ProductArea/BNcollections"/>
+<use   name="BEAN/Collections"/>
 <use   name="FWCore/Framework"/>
 <use   name="FWCore/ParameterSet"/>
 <use   name="FWCore/ServiceRegistry"/>

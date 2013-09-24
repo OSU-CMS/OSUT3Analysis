@@ -1,6 +1,6 @@
 <library   file="*.cc" name="OSUAnalysisAnaToolsPlugins">
 <flags   EDM_PLUGIN="1"/>
-<use   name="ProductArea/BNcollections"/>
+<use   name="BEAN/Collections"/>
 <use   name="FWCore/Framework"/>
 <use   name="FWCore/ParameterSet"/>
 <use   name="FWCore/ServiceRegistry"/>
