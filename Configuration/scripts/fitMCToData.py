@@ -30,6 +30,10 @@ parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
                   help="maximum error used in rebinning the ratio histogram")
 parser.add_option("-P", "--parametricErrors", action="store_true", dest="parametricErrors", default=False,
                   help="calculate parametric errors and display on histograms")
+parser.add_option("-Y", "--showFittedYields", action="store_true", dest="showFittedYields", default=False,
+                  help="show yields of fitted samples instead of ratios")
+
+
 
 (arguments, args) = parser.parse_args()
 
@@ -271,6 +275,12 @@ def MakeOneDHist(pathToDir,distribution):
     targetIntegral = Target.Integral()
     if(arguments.normalizeToUnitArea and Target.Integral() > 0):
         Target.Scale(1./Target.Integral())
+    if arguments.rebinFactor:
+        RebinFactor = int(arguments.rebinFactor)
+        #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
+        if Target.GetNbinsX() >= RebinFactor*5 and Target.GetName().find("GenMatch") is -1:
+            Target.Rebin(RebinFactor)
+
 
     ### formatting target histogram and adding to legend
     legendIndex = 0
@@ -344,8 +354,8 @@ def MakeOneDHist(pathToDir,distribution):
             Histogram.SetLineColor(colors[sample])
             Histogram.SetLineStyle(1)
             Histogram.SetLineWidth(2)
-            if(arguments.normalizeToUnitArea and Histogram.Integral() > 0):
-                Histogram.Scale(1./Histogram.Integral())
+        if(arguments.normalizeToUnitArea and Histogram.Integral() > 0):
+            Histogram.Scale(1./Histogram.Integral())
 
         HistogramsToFit.append(Histogram)
         FittingHistogramDatasets.append(sample)
@@ -470,6 +480,7 @@ def MakeOneDHist(pathToDir,distribution):
 
     for i in range (0, 2): # 0 => before, 1 => after
 
+        integrals = []
         ratios = []
         errors = []
         parErrors = []
@@ -477,6 +488,7 @@ def MakeOneDHist(pathToDir,distribution):
         if i == 1:
             for j in range (0, len (HistogramsToFit)):
 
+                integrals.append(HistogramsToFit[j].Integral())
                 HistogramsToFit[j].Scale (func.GetParameter (j))
                 ratios.append(func.GetParameter (j))
                 errors.append(func.GetParError(j))
@@ -635,9 +647,17 @@ def MakeOneDHist(pathToDir,distribution):
                 YieldsLabel.AddText ("After Fit to Data")
             YieldsLabel.AddText ("data yield: " + '%.1f' % dataYield)
             YieldsLabel.AddText ("MC yield: " + '%.1f' % mcYield)
+            YieldsLabel.AddText ("data/MC: " + '%.2f' % (dataYield/mcYield))
             if i == 1:
                 for j in range(0,len(FittingLegendEntries)):
-                    text = FittingLegendEntries[j]+" ratio: " + '%.2f' % ratios[j] + ' #pm %.2f' % errors[j]
+                    if abs(ratios[j]-1) < 0.001 and abs(errors[j]) < 0.001: #then it probably was held fixed
+                        continue
+                    if arguments.showFittedYields:
+                        yield_ = ratios[j]*integrals[j]
+                        yielderror_ = errors[j]*yield_
+                        text = FittingLegendEntries[j]+" yield: " + '%.0f' % yield_ + ' #pm %.0f' % yielderror_
+                    else:
+                        text = FittingLegendEntries[j]+" ratio: " + '%.2f' % ratios[j] + ' #pm %.2f' % errors[j]
                     if arguments.parametricErrors:
                         text += ' #pm %.2f' % parErrors[j]
                     RatiosLabel.AddText (text)

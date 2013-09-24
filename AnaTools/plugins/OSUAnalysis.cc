@@ -33,6 +33,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   plotAllObjectsInPassingEvents_ (cfg.getParameter<bool> ("plotAllObjectsInPassingEvents")),
   doPileupReweighting_ (cfg.getParameter<bool> ("doPileupReweighting")),
   doTopPtReweighting_  (cfg.getParameter<bool> ("doTopPtReweighting")),
+  applyTriggerSF_ (cfg.getParameter<bool> ("applyTriggerSF")),
+  triggerScaleFactor_ (cfg.getParameter<double> ("triggerScaleFactor")),
   applyLeptonSF_ (cfg.getParameter<bool> ("applyLeptonSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
@@ -899,6 +901,11 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
   eventScaleFactor_ = 1.0;
 
+
+  //apply trigger efficiency                                                                                                                                                                            
+  if (!applyTriggerSF_) triggerScaleFactor_ = 1.0; //reset the variable to 1 if we're not applying it, so it will take that value in its histogram
+  if (applyTriggerSF_ && datasetType_ != "data") eventScaleFactor_ *= triggerScaleFactor_;
+
   //get pile-up event weight
   if (doPileupReweighting_ && datasetType_ != "data") {
     //for "data" datasets, the numTruePV is always set to -1
@@ -1448,7 +1455,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
   } // end loop over channel
 
-  masterCutFlow_->fillCutFlow(eventScaleFactor_);
+  masterCutFlow_->fillCutFlow();
 
   event.put (channelDecisions, "channelDecisions");
 
@@ -2197,7 +2204,6 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
   else if(variable == "tkD0err") value = object->tkD0err;
   else if(variable == "mva") value = object->mva;
   else if(variable == "mvaTrigV0") value = object->mvaTrigV0;
-  //else if(variable == "mvaTrigNoIPV0") value = object->mvaTrigNoIPV0;
   else if(variable == "mvaNonTrigV0") value = object->mvaNonTrigV0;
   else if(variable == "dist") value = object->dist;
   else if(variable == "dcot") value = object->dcot;
@@ -2654,6 +2660,7 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "stopCTauScaleFactor") value = stopCTauScaleFactor_;
   else if(variable == "bTagScaleFactor") value = bTagScaleFactor_;
   else if(variable == "topPtScaleFactor") value = topPtScaleFactor_;
+  else if(variable == "triggerScaleFactor") value = triggerScaleFactor_;
   else if(variable == "eventScaleFactor") value = eventScaleFactor_;
   else if(variable == "unfilteredHt") value = getHt(jets.product()); 
   else if(variable == "ht") value = chosenHT ();
@@ -3878,6 +3885,30 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNmuon* object2, stri
   else if(variable == "muonRelPFdBetaIso"){
     value = (object2->pfIsoR04SumChargedHadronPt + max(0.0, object2->pfIsoR04SumNeutralHadronEt + object2->pfIsoR04SumPhotonEt - 0.5*object2->pfIsoR04SumPUPt)) / object2->pt;
   }
+  else if(variable == "electronPt"){
+    value = object1->pt;
+  }
+  else if(variable == "muonPt"){
+    value = object2->pt;
+  }
+  else if(variable == "electronEta"){
+    value = object1->eta;
+  }
+  else if(variable == "muonEta"){
+    value = object2->eta;
+  }
+  else if(variable == "electronMetMT"){
+    string dummy = "";
+    value = valueLookup(object1,string("metMT"),string(""),dummy);
+  }
+  else if(variable == "muonMetMT"){
+    string dummy = "";
+    value = valueLookup(object2,string("metMT"),string(""),dummy);
+  }
+
+
+
+
   else{clog << "WARNING: invalid electron-muon pair variable '" << variable << "'\n"; value = -999;}
   value = applyFunction(function, value);
 
@@ -4332,40 +4363,7 @@ OSUAnalysis::valueLookup (const BNstop* object, string variable, string function
 
   double value = 0.0;
 
-  if(variable == "pt") value= object->pt;
-  else if(variable == "eta") value= object->eta;
-  else if(variable == "phi") value= object->phi;
-  else if(variable == "px") value= object->px;
-  else if(variable == "py") value= object->py;
-  else if(variable == "pz") value= object->pz;
-  else if(variable == "energy") value= object->energy;
-  else if(variable == "mass") value= object->mass;
-  else if(variable == "beta") value= object->beta;
-  else if(variable == "gamma") value= object->gamma;
-  else if(variable == "vx") value= object->vx;
-  else if(variable == "vy") value= object->vy;
-  else if(variable == "vz") value= object->vz;
-  else if(variable == "decayVx") value= object->decayVx;
-  else if(variable == "decayVy") value= object->decayVy;
-  else if(variable == "decayVz") value= object->decayVz;
-  else if(variable == "decayLength") value= object->decayLength;
-  else if(variable == "ctau") value= object->ctau;
-  else if(variable == "daughter0Id") value= object->daughter0Id;
-  else if(variable == "daughter0Status") value= object->daughter0Status;
-  else if(variable == "daughter0PT") value= object->daughter0PT;
-  else if(variable == "daughter0Phi") value= object->daughter0Phi;
-  else if(variable == "daughter0Eta") value= object->daughter0Eta;
-  else if(variable == "daughter1Id") value= object->daughter1Id;
-  else if(variable == "daughter1Status") value= object->daughter1Status;
-  else if(variable == "daughter1PT") value= object->daughter1PT;
-  else if(variable == "daughter1Phi") value= object->daughter1Phi;
-  else if(variable == "daughter1Eta") value= object->daughter1Eta;
-  else if(variable == "charge") value= object->charge;
-  else if(variable == "threeCharge") value= object->threeCharge;
-  else if(variable == "daughter0Charge") value= object->daughter0Charge;
-  else if(variable == "daughter0ThreeCharge") value= object->daughter0ThreeCharge;
-  else if(variable == "daughter1Charge") value= object->daughter1Charge;
-  else if(variable == "daughter1ThreeCharge") value= object->daughter1ThreeCharge;
+  if(variable == "ctau") value = object->ctau;
 
   else if (variable == "d0"){
     double vx = object->vx - chosenVertex ()->x,

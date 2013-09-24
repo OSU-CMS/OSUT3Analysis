@@ -1,0 +1,6 @@
+*.pyc
+*__init__*
+*mergeDaemon*
+hist.root
+mergeOutput.py.out*
+*~

@@ -2087,6 +2087,12 @@ EventHistograms = cms.PSet(
             inputVariables = cms.vstring("topPtScaleFactor"),
         ),
         cms.PSet (
+            name = cms.string("triggerScaleFactor"),
+            title = cms.string("Trigger Efficiency Reweighting Factor; trigger SF weight "),
+            bins = cms.untracked.vdouble(100, 0.5, 1.5),
+            inputVariables = cms.vstring("triggerScaleFactor"),
+        ),
+        cms.PSet (
             name = cms.string("muonScaleFactor"),
             title = cms.string("Muon Scale Factor;muon weight"),
             bins = cms.untracked.vdouble(100, 0.5, 1.5),

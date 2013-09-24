@@ -39,7 +39,7 @@ parser.add_option("-w", "--weight", action="store_true", dest="showWeight", defa
 
 #other options
 parser.add_option("-r", "--replace", action="append", dest="replacements",
-                  help="specify strings to be replaced by askterisks and moved into the caption ")
+                  help="specify strings to be replaced by askterisks and moved into the caption.  the syntax more multiple replacements is '-r STRING1 -r STRING2' etc.")
 
 #initialize parser
 (arguments, args) = parser.parse_args()
@@ -57,7 +57,8 @@ outputFileName = "bgMCTable.tex"
 if arguments.outputFileName:
     outputFileName = arguments.outputFileName
 
-outputFile = condor_dir + "/" + outputFileName
+#outputFile = condor_dir + "/" + outputFileName
+outputFile = outputFileName
 
 from ROOT import TFile
 
@@ -66,21 +67,29 @@ endLine = " \\\\ "
 newLine = " \n"
 
 
+def makeReplacements(line):
+    if arguments.replacements:
+        filler = "*"
+        for replacement in arguments.replacements:
+            line = line.replace(replacement,filler)
+            filler = filler + "*"
+    return line
+
 
 #### check which bgMC input datasets have valid output files
-processed_datasets = []
-for dataset in datasets:
-    if types[dataset] is not "bgMC":
-        continue
-    fileName = condor_dir + "/" + dataset + ".root"
-    if not os.path.exists(fileName):
-        continue
-    testFile = TFile(fileName)
-    if not (testFile.IsZombie()):
-        processed_datasets.append(dataset)
+## processed_datasets = []
+## for dataset in datasets:
+##     if types[dataset] is not "bgMC":
+##         continue
+##     fileName = condor_dir + "/" + dataset + ".root"
+##     if not os.path.exists(fileName):
+##         continue
+##     testFile = TFile(fileName)
+##     if not (testFile.IsZombie()):
+##         processed_datasets.append(dataset)
 
-if len(processed_datasets) is 0:
-    sys.exit("Can't find any output root files for the given list of datasets")
+## if len(processed_datasets) is 0:
+##     sys.exit("Can't find any output root files for the given list of datasets")
 
 
 #set the text for the luminosity label
@@ -147,7 +156,11 @@ if arguments.showWeight:
 fout.write (headerLine.rstrip(" & ")+endLine+newLine+hLine)
 
 
-for dataset in processed_datasets:
+# for dataset in processed_datasets:
+for dataset in datasets:
+    if types[dataset] is not "bgMC":
+        continue
+
     datasetLines = ""
     numComponents = 1
     component_datasets = []
@@ -181,19 +194,19 @@ for dataset in processed_datasets:
         if arguments.showShortNames:
             datasetLines = datasetLines + "$" + labels[component].replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ").replace("Pt","\\pt") + "$" + " & "
         if arguments.showFullNames:
-            datasetLines = datasetLines + "\\texttt{" + formatString(dataset_names[component]).lstrip("/").replace("/","_").replace("_","\_") + "}" + " & "
+            datasetLines = datasetLines + "\\texttt{" + makeReplacements(dataset_names[component]).lstrip("/").replace("/","_").replace("_","\_") + "}" + " & "
         if arguments.showNumEvents:
             fileName = condor_dir + "/" + component + "/numberOfEvents.txt"
             with open(fileName) as numEventsFile:
                     content = numEventsFile.readlines()
                     numEvents = content[0].strip("\n")
-            datasetLines = datasetLines + formatNumber(numEvents) + " & "
+            datasetLines = datasetLines + formatNumber(str(round_sigfigs(float(numEvents),4))) + " & "
         if arguments.showXsections:
             fileName = condor_dir + "/" + component + "/crossSectionInPicobarn.txt"
             with open(fileName) as crossSectionFile:
                     content = crossSectionFile.readlines()
                     crossSection = content[0].strip("\n")
-            datasetLines = datasetLines + formatNumber(crossSection) + " & "
+            datasetLines = datasetLines + formatNumber(str(round_sigfigs(float(crossSection),4))) + " & "
         if arguments.showEffLumi:
             fileName = condor_dir + "/" + component + "/numberOfEvents.txt"
             with open(fileName) as numEventsFile:

@@ -28,14 +28,16 @@ datasets = [
    'BTag',
 
    #SM Backgrounds
+   'Top',
    'TTbar',
    'TTbar_Inclusive', 
-   'SingleTop', 
+   'SingleTop',
    'Diboson',
    'DY',
    'DY_PtZ100',
    'Wjets',
    'WjetsHighPt',
+   'WNjets',
    'ZJetsToNuNu',
    'EWK', 
    'QCD',
@@ -208,6 +210,17 @@ composite_dataset_definitions = {
         'DYToMuMu_20',
         'DYToTauTau_20',
     ],
+    'Top' : [
+        'TTbar_Had',
+        'TTbar_SemiLep',
+        'TTbar_Lep',
+        'SingleT_s',
+        'SingleTbar_s', 
+        'SingleT_t',
+        'SingleTbar_t', 
+        'SingleT_tW',
+        'SingleTbar_tW', 
+    ],
     'TTbar' : [
         'TTbar_Had',
         'TTbar_SemiLep',
@@ -230,6 +243,12 @@ composite_dataset_definitions = {
     ],
     'WjetsHighPt' : [
         'Wjets_PtW100',
+        'W4jets',
+    ],
+    'WNjets' : [
+        'W1jets',
+        'W2jets',
+        'W3jets',
         'W4jets',
     ],
     'ZJetsToNuNu' : [
@@ -552,6 +571,9 @@ dataset_names = {
    'DY_PtZ100'      : "/DYJetsToLL_PtZ-100_TuneZ2star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM", 
    'Wjets'          : "/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM",
    'Wjets_PtW100'   : "/WJetsToLNu_PtW-100_TuneZ2star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'W1jets'         : "/W1JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'W2jets'         : "/W2JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'W3jets'         : "/W3JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
    'W4jets'         : "/W4JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
    'ZJetsToNuNu_50to100'  : "/ZJetsToNuNu_50_HT_100_TuneZ2Star_8TeV_madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
    'ZJetsToNuNu_100to200' : "/ZJetsToNuNu_100_HT_200_TuneZ2Star_8TeV_madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
@@ -861,6 +883,9 @@ nJobs = {
 
    'Wjets'          : 200,
    'Wjets_PtW100'   : 200,
+   'W1jets'         : 200,
+   'W2jets'         : 200,
+   'W3jets'         : 200,
    'W4jets'         : 200,
 
    'WW'             : 20,
@@ -1131,6 +1156,9 @@ maxEvents = {
 
    'Wjets'          : -1,
    'Wjets_PtW100'   : -1,
+   'W1jets'         : -1,
+   'W2jets'         : -1,
+   'W3jets'         : -1,
    'W4jets'         : -1,
 
    'WW'             : -1,
@@ -1401,7 +1429,9 @@ types = {
    'ZJetsToNuNu_100to200' : "bgMC",
    'ZJetsToNuNu_200to400' : "bgMC",
    'ZJetsToNuNu_400toInf' : "bgMC",
-   
+    
+   'Top'            : "bgMC",
+
    'TTbar'          : "bgMC",
    'TTbar_Had'      : "bgMC",
    'TTbar_SemiLep'  : "bgMC",
@@ -1424,6 +1454,9 @@ types = {
    'Wjets'          : "bgMC",
    'WjetsHighPt'    : "bgMC",
    'Wjets_PtW100'   : "bgMC",
+   'W1jets'         : "bgMC",
+   'W2jets'         : "bgMC",
+   'W3jets'         : "bgMC",
    'W4jets'         : "bgMC",
 
    'Diboson'        : "bgMC",
@@ -1726,6 +1759,8 @@ colors = {
    'Background'        : 872,
    'Background_NoQCD'  : 872,
 
+   'Top'               : 876,
+
    'TTbar'             : 872,
    'TTbar_Had'         : 871,
    'TTbar_SemiLep'     : 872,
@@ -1743,6 +1778,9 @@ colors = {
    'Wjets'             : 852,
    'WjetsHighPt'       : 852,
    'Wjets_PtW100'      : 852,
+   'W1jets'            : 852,
+   'W2jets'            : 852,
+   'W3jets'            : 852,
    'W4jets'            : 852,
 
    'ZJetsToNuNu'           : 831,
@@ -2061,6 +2099,8 @@ labels = {
    'Background'       : "SM Background",
    'Background_NoQCD' : "SM Background, No QCD",
 
+   'Top'           : "top",
+   
    'TTbar'         : "t#bar{t}",
    'TTbar_Had'     : "t#bar{t} (hadronic)",
    'TTbar_SemiLep' : "t#bar{t} (semi-leptonic)",
