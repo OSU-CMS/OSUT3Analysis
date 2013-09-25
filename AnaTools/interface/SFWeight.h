@@ -9,11 +9,14 @@
 #include <vector>
 #include <cmath>
 
+
 #include "TH1D.h"
+#include "TH2D.h"
 #include "TGraphAsymmErrors.h"
 #include "TFile.h"
 
 using namespace std;
+
 
 class MuonSFWeight
   {
@@ -22,12 +25,13 @@ class MuonSFWeight
       MuonSFWeight (const string &, const string &);
       MuonSFWeight (const string &, const string &, const string &);
       ~MuonSFWeight ();
-      double operator[] (const double &eta) { return muonSFWeight_->FindBin (eta) > muonSFWeight_->GetNbinsX () ? 0.0 : muonSFWeight_->GetBinContent (muonSFWeight_->FindBin (eta)); };
-      double at (const double &eta) { return (*this)[eta]; };
+      double at (const double &, const double &);
 
     private:
-      TH1D *muonSFWeight_;
+      TH2 *muonSFWeight_;
   };
+
+
 
 class ElectronSFWeight
   {

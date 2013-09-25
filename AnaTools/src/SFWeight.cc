@@ -1,71 +1,42 @@
 #include "OSUT3Analysis/AnaTools/interface/SFWeight.h"
 
+
 MuonSFWeight::MuonSFWeight (const string &sfFile, const string &dataOverMC)
 {
-
   TFile *fin = TFile::Open (sfFile.c_str ());
-  TGraphAsymmErrors *data = (TGraphAsymmErrors *) fin->Get (dataOverMC.c_str ());
-
-  double bins[data->GetN () + 1];
-  for (int i = 0; i < data->GetN (); i++)
-    {
-      double x, y, exl, exh;
-
-      data->GetPoint (i, x, y);
-      exl = data->GetErrorXlow (i);
-      exh = data->GetErrorXhigh (i);
-      if (i == 0)
-        bins[i] = x - exl;
-      bins[i + 1] = x + exh;
-    }
-
-  muonSFWeight_ = new TH1D ("muonSFWeight", "", data->GetN (), bins);
-  muonSFWeight_->SetDirectory (0);
-  for (int i = 0; i < data->GetN (); i++)
-    {
-      double dataX, dataY;
-
-      data->GetPoint (i, dataX, dataY);
-      muonSFWeight_->SetBinContent (i + 1, dataY);
-    }
-
+  TH2F* SF_Combined_TOT = (TH2F *) fin->Get(dataOverMC.c_str ());
+  muonSFWeight_ = (TH2F*)SF_Combined_TOT->Clone();
+  muonSFWeight_->GetEntries();// to avoid the crashing warning
+  delete SF_Combined_TOT;
   fin->Close ();
-  delete data;
-}
+ }
 
-MuonSFWeight::MuonSFWeight (const string &sfFile, const string &dataEff, const string &mcEff)
+ 
+double
+MuonSFWeight::at(const double &eta, const double &pt) 
 {
-  TFile *fin = TFile::Open (sfFile.c_str ());
-  TGraphAsymmErrors *mc = (TGraphAsymmErrors *) fin->Get (mcEff.c_str ());
-  TGraphAsymmErrors *data = (TGraphAsymmErrors *) fin->Get (dataEff.c_str ());
-
-  double bins[mc->GetN () + 1];
-  for (int i = 0; i < mc->GetN (); i++)
+  double pt_hist= pt;
+  double eta_hist= eta;
+  // to give a non null SF for muons being out of eta and/or pt range of the input histo
+  if (pt > 300 && abs(eta) < muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetLast()) )
     {
-      double x, y, exl, exh;
-
-      mc->GetPoint (i, x, y);
-      exl = mc->GetErrorXlow (i);
-      exh = mc->GetErrorXhigh (i);
-      if (i == 0)
-        bins[i] = x - exl;
-      bins[i + 1] = x + exh;
+      pt_hist =( muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 1) + muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 2))/2;
+      if (pt > 300 && abs(eta) < 0.9) 
+	{
+	  pt_hist =( muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins()) + muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 1))/2;
+	}
     }
-
-  muonSFWeight_ = new TH1D ("muonSFWeight", "", mc->GetN (), bins);
-  muonSFWeight_->SetDirectory (0);
-  for (int i = 0; i < mc->GetN (); i++)
+  else if (pt < 300 && abs(eta) > muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetLast()))
     {
-      double mcX, mcY, dataX, dataY;
-
-      mc->GetPoint (i, mcX, mcY);
-      data->GetPoint (i, dataX, dataY);
-      muonSFWeight_->SetBinContent (i + 1, dataY / mcY);
+      eta_hist =(muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetLast()) + muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetNbins() - 1))/2;
     }
-
-  fin->Close ();
-  delete mc;
-  delete data;
+  else if (pt > 300 && abs(eta) > muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetLast()))
+    {
+      pt_hist =( muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 1) + muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 2))/2;
+      eta_hist =(muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetLast()) + muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetNbins() - 1))/2;
+    }
+  
+  return muonSFWeight_->GetBinContent(muonSFWeight_->FindBin(abs(eta_hist),pt_hist)); 
 }
 
 MuonSFWeight::~MuonSFWeight ()
@@ -293,3 +264,43 @@ ElectronSFWeight::at (const double &eta, const double &pt)
 ElectronSFWeight::~ElectronSFWeight ()
 {
 }
+
+
+
+/*
+--- Used previously
+
+MuonSFWeight::MuonSFWeight (const string &sfFile, const string &dataOverMC)
+{
+
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  TGraphAsymmErrors *data = (TGraphAsymmErrors *) fin->Get (dataOverMC.c_str ());
+
+  double bins[data->GetN () + 1];
+  for (int i = 0; i < data->GetN (); i++)
+    {
+      double x, y, exl, exh;
+
+      data->GetPoint (i, x, y);
+      exl = data->GetErrorXlow (i);
+      exh = data->GetErrorXhigh (i);
+      if (i == 0)
+        bins[i] = x - exl;
+      bins[i + 1] = x + exh;
+    }
+
+  muonSFWeight_ = new TH1D ("muonSFWeight", "", data->GetN (), bins);
+  muonSFWeight_->SetDirectory (0);
+  for (int i = 0; i < data->GetN (); i++)
+    {
+      double dataX, dataY;
+
+      data->GetPoint (i, dataX, dataY);
+      muonSFWeight_->SetBinContent (i + 1, dataY);
+    }
+
+  fin->Close ();
+  delete data;
+}
+--- Used previously 
+*/

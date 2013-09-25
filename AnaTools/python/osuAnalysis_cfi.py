@@ -58,10 +58,10 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
 
     puFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/pu.root'),
     deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/DeadEcalChannels.txt'),
-    muonSFFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/Muon_ID_iso_Efficiencies_Run_2012ABCD_53X.root'),
+muonSFFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/MuonSF_ID_ISO_2D.root'),
     dataPU = cms.string ('PU_data_190456_208686_69300xSec'),
     electronSFID = cms.string ('tight'),
-    muonSF = cms.string ('DATA_over_MC_combRelIsoPF04dBeta<012_Tight_eta_pt20-500_2012ABCD'),
+    muonSF = cms.string ('Combined_TOT'),
     dataset = cms.string ('TTbar_Lep'),#dummy variable
     datasetType = cms.string ('bgMC'),#dummy variable
     applyTriggerSF = cms.bool(False),

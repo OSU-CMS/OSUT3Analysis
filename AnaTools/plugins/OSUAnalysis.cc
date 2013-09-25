@@ -1085,7 +1085,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 	//apply the weight for each of those objects
         for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
           if(!muonFlags.at(muonIndex).second) continue;
-          muonScaleFactor_ *= muonSFWeight_->at (muons->at(muonIndex).eta);
+	  muonScaleFactor_ *= muonSFWeight_->at (muons->at(muonIndex).eta, muons->at(muonIndex).pt);
         }
       }
       //only apply SFs if we've cut on this object
