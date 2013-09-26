@@ -2071,8 +2071,20 @@ EventHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("unfilteredHt"),
             title = cms.string("Unfiltered H_{T}; #Sigma p_{T} all jets [GeV]"),
-            bins = cms.untracked.vdouble(100, 0, 500),
+            bins = cms.untracked.vdouble(150, 0, 750),
             inputVariables = cms.vstring("unfilteredHt"),
+        ),
+        cms.PSet (
+            name = cms.string("st"),
+            title = cms.string("S_{T}; #Sigma p_{T} selected e/#mu/jets [GeV]"),
+            bins = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("st"),
+        ),
+        cms.PSet (
+            name = cms.string("unfilteredSt"),
+            title = cms.string("Unfiltered S_{T}; #Sigma p_{T} all e/#mu/jets [GeV]"),
+            bins = cms.untracked.vdouble(150, 0, 750),
+            inputVariables = cms.vstring("unfilteredSt"),
         ),
         cms.PSet (
             name = cms.string("puScaleFactor"),

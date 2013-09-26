@@ -2664,6 +2664,8 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "eventScaleFactor") value = eventScaleFactor_;
   else if(variable == "unfilteredHt") value = getHt(jets.product()); 
   else if(variable == "ht") value = chosenHT ();
+  else if(variable == "unfilteredSt") value = getSt(electrons.product(),muons.product(),jets.product()); 
+  else if(variable == "st") value = chosenST ();
 
   else if(variable == "leadMuPairInvMass"){
     pair<const BNmuon *, const BNmuon *> muPair = leadMuonPair ();
@@ -4503,6 +4505,24 @@ OSUAnalysis::getHt (const BNjetCollection* jetColl){
   return Ht;
 }
 
+//calculate the scalar sum of Electron, Muon, and Jet Pt in the event.
+double
+OSUAnalysis::getSt (const BNelectronCollection* electronColl, const BNmuonCollection* muonColl, const BNjetCollection* jetColl){
+  double St = 0;
+  for(BNelectronCollection::const_iterator electron = electronColl->begin(); electron !=electronColl->end(); electron++){
+    St += abs(electron->pt);
+  }
+  for(BNmuonCollection::const_iterator muon = muonColl->begin(); muon !=muonColl->end(); muon++){
+    St += abs(muon->pt);
+  }
+  for(BNjetCollection::const_iterator jet = jetColl->begin(); jet !=jetColl->end(); jet++){
+    St += abs(jet->pt);
+  }
+
+  return St;
+}
+
+
 double
 OSUAnalysis::getTrkPtRes (const BNtrack* track1){
 
@@ -5349,6 +5369,56 @@ OSUAnalysis::chosenHT ()
 
   return chosenHT;
 }
+
+double
+OSUAnalysis::chosenST ()
+{
+  double chosenST = 0.0;
+  if(cumulativeFlags.find ("electrons") != cumulativeFlags.end ()){
+    flagPair electronFlags;
+    for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
+      if (cumulativeFlags.at("electrons").at(i).size()){
+        electronFlags = cumulativeFlags.at("electrons").at(i);
+        break;
+      }
+    }
+    for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
+      if(!electronFlags.at(electronIndex).first) continue;
+      chosenST += electrons->at(electronIndex).pt;
+    }
+  }
+
+  if(cumulativeFlags.find ("muons") != cumulativeFlags.end ()){
+    flagPair muonFlags;
+    for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
+      if (cumulativeFlags.at("muons").at(i).size()){
+        muonFlags = cumulativeFlags.at("muons").at(i);
+        break;
+      }
+    }
+    for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
+      if(!muonFlags.at(muonIndex).first) continue;
+      chosenST += muons->at(muonIndex).pt;
+    }
+  }
+
+  if(cumulativeFlags.find ("jets") != cumulativeFlags.end ()){
+    flagPair jetFlags;
+    for (int i = cumulativeFlags.at("jets").size() - 1; i >= 0; i--){
+      if (cumulativeFlags.at("jets").at(i).size()){
+        jetFlags = cumulativeFlags.at("jets").at(i);
+        break;
+      }
+    }
+    for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++){
+      if(!jetFlags.at(jetIndex).first) continue;
+      chosenST += jets->at(jetIndex).pt;
+    }
+  }
+
+  return chosenST;
+}
+
 
 pair<const BNmuon *, const BNmuon *>
 OSUAnalysis::leadMuonPair ()

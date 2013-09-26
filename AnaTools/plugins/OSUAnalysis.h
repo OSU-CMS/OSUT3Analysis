@@ -117,6 +117,7 @@ class OSUAnalysis : public edm::EDProducer
       int getTrkIsIso (const BNtrack* track1, const BNtrackCollection* trackColl);
       double getTrkPtTrue (const BNtrack* track1, const BNmcparticleCollection* genPartColl);
       double getHt (const BNjetCollection* jetColl);
+      double getSt (const BNelectronCollection* electronColl, const BNmuonCollection* muonColl, const BNjetCollection* jetColl);
       double getTrkPtRes (const BNtrack* track1);
       double getTrkIsIso (const BNtrack* track1);
       double getTrkCaloTotRhoCorr(const BNtrack* track);
@@ -332,6 +333,7 @@ class OSUAnalysis : public edm::EDProducer
       const BNelectron *chosenElectron ();
       const BNmuon *chosenMuon ();
       double chosenHT ();
+      double chosenST ();
 
       pair<const BNmuon *, const BNmuon*> leadMuonPair ();
       pair<const BNelectron *, const BNelectron*> leadElectronPair ();
