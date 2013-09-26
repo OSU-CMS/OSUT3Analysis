@@ -2134,7 +2134,7 @@ labels = {
    'Wjets'          : "W#rightarrowl#nu",
    'WjetsHighPt'    : "W#rightarrowl#nu (W_{p_{T}} 100 GeV)",
    'Wjets_PtW100'   : "W#rightarrowl#nu (high p_{T})",
-   'WNjets'         : "W#rightarrowl#nu (1+2+3+4 Jets)",
+   'WNjets'         : "W#rightarrowl#nu (0+1+2+3+4 Jets)",
    'W0jets'         : "W#rightarrowl#nu (0 Jet)",
    'W1jets'         : "W#rightarrowl#nu (1 Jet)",
    'W2jets'         : "W#rightarrowl#nu (2 Jets)",
