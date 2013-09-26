@@ -1,6 +1,6 @@
 #include "OSUT3Analysis/AnaTools/plugins/OSUAnalysis.h"
 OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
-  // Retrieve parameters from the configuration file.
+  /// Retrieve parameters from the configuration file.
   jets_ (cfg.getParameter<edm::InputTag> ("jets")),
   muons_ (cfg.getParameter<edm::InputTag> ("muons")),
   secMuons_ (cfg.getParameter<edm::InputTag> ("secMuons")),
