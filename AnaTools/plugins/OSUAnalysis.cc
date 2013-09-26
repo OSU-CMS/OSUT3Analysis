@@ -2592,6 +2592,7 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "alphaQED") value = object->alphaQED;
   else if(variable == "scalePDF") value = object->scalePDF;
   else if(variable == "x1") value = object->x1;
+  else if(variable == "nExtraPartons") value = GetNumExtraPartons(mcparticles.product());
   else if(variable == "x2") value = object->x2;
   else if(variable == "xPDF1") value = object->xPDF1;
   else if(variable == "xPDF2") value = object->xPDF2;
@@ -4503,6 +4504,36 @@ OSUAnalysis::getHt (const BNjetCollection* jetColl){
     Ht += abs(jet->pt);
   }
   return Ht;
+}
+
+
+unsigned int OSUAnalysis::GetNumExtraPartons(const BNmcparticleCollection* genPartColl){
+
+  int nList = 0;
+  unsigned int nPartons = 0;
+  for( BNmcparticleCollection::const_iterator mcparticle = genPartColl->begin(); mcparticle != genPartColl->end(); mcparticle++)
+   {
+     nList ++;
+    int id = mcparticle->id;
+    int motherID = mcparticle->motherId;
+    int status = mcparticle->status;
+    int aid = abs(id);
+
+    if(status == 3){//only status 3 particles (which are listed first)
+      if(nList>6){//dont look at first 6 (incomming event)
+        if( (aid>0 && aid<6) || aid ==21 || aid ==9){//udscb gluon
+          if(abs(motherID) !=23 && abs(motherID) !=24 && abs(motherID) != 25 && abs(motherID)!=6 ){ //not from WZHt
+            nPartons++;
+          }
+        }
+      }
+    }else{
+      break; //break when you run out of stat==3
+    }
+  }
+
+  return nPartons;
+
 }
 
 //calculate the scalar sum of Electron, Muon, and Jet Pt in the event.
