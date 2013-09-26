@@ -246,6 +246,7 @@ composite_dataset_definitions = {
         'W4jets',
     ],
     'WNjets' : [
+        'W0jets',
         'W1jets',
         'W2jets',
         'W3jets',
@@ -883,6 +884,7 @@ nJobs = {
 
    'Wjets'          : 200,
    'Wjets_PtW100'   : 200,
+   'W0jets'         : 200,
    'W1jets'         : 200,
    'W2jets'         : 200,
    'W3jets'         : 200,
@@ -1156,6 +1158,7 @@ maxEvents = {
 
    'Wjets'          : -1,
    'Wjets_PtW100'   : -1,
+   'W0jets'         : -1,
    'W1jets'         : -1,
    'W2jets'         : -1,
    'W3jets'         : -1,
@@ -1454,6 +1457,7 @@ types = {
    'Wjets'          : "bgMC",
    'WjetsHighPt'    : "bgMC",
    'Wjets_PtW100'   : "bgMC",
+   'W0jets'         : "bgMC",
    'W1jets'         : "bgMC",
    'WNjets'         : "bgMC",
    'W2jets'         : "bgMC",
@@ -1780,6 +1784,7 @@ colors = {
    'WjetsHighPt'       : 852,
    'Wjets_PtW100'      : 852,
    'WNjets'            : 852,
+   'W0jets'            : 852,
    'W1jets'            : 852,
    'W2jets'            : 852,
    'W3jets'            : 852,
@@ -2130,6 +2135,7 @@ labels = {
    'WjetsHighPt'    : "W#rightarrowl#nu (W_{p_{T}} 100 GeV)",
    'Wjets_PtW100'   : "W#rightarrowl#nu (high p_{T})",
    'WNjets'         : "W#rightarrowl#nu (1+2+3+4 Jets)",
+   'W0jets'         : "W#rightarrowl#nu (0 Jet)",
    'W1jets'         : "W#rightarrowl#nu (1 Jet)",
    'W2jets'         : "W#rightarrowl#nu (2 Jets)",
    'W3jets'         : "W#rightarrowl#nu (3 Jets)",
