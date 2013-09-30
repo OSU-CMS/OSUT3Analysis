@@ -38,6 +38,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   applyLeptonSF_ (cfg.getParameter<bool> ("applyLeptonSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
+  electronSFShift_ (cfg.getParameter<string> ("electronSFShift")),
   printEventInfo_      (cfg.getParameter<bool> ("printEventInfo")),
   printAllTriggers_    (cfg.getParameter<bool> ("printAllTriggers")),
   useTrackCaloRhoCorr_ (cfg.getParameter<bool> ("useTrackCaloRhoCorr")),
@@ -1101,7 +1102,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 	//apply the weight for each of those objects
         for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
           if(!electronFlags.at(electronIndex).second) continue;
-          electronScaleFactor_ *= electronSFWeight_->at (electrons->at(electronIndex).eta, electrons->at(electronIndex).pt);
+          int shiftUpDown = 0;
+          if (electronSFShift_ == "up") shiftUpDown = 1;
+          if (electronSFShift_ == "down") shiftUpDown = -1;
+          electronScaleFactor_ *= electronSFWeight_->at (electrons->at(electronIndex).scEta, electrons->at(electronIndex).pt, shiftUpDown);
         }
       }
     }
