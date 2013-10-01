@@ -572,6 +572,7 @@ dataset_names = {
    'DY_PtZ100'      : "/DYJetsToLL_PtZ-100_TuneZ2star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM", 
    'Wjets'          : "/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM",
    'Wjets_PtW100'   : "/WJetsToLNu_PtW-100_TuneZ2star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'W0jets'         : "", # placeholder since this is a skimmed dataset
    'W1jets'         : "/W1JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
    'W2jets'         : "/W2JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
    'W3jets'         : "/W3JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
@@ -2135,7 +2136,7 @@ labels = {
    'WjetsHighPt'    : "W#rightarrowl#nu (W_{p_{T}} 100 GeV)",
    'Wjets_PtW100'   : "W#rightarrowl#nu (high p_{T})",
    'WNjets'         : "W#rightarrowl#nu (0+1+2+3+4 Jets)",
-   'W0jets'         : "W#rightarrowl#nu (0 Jet)",
+   'W0jets'         : "W#rightarrowl#nu (0 Jets)",
    'W1jets'         : "W#rightarrowl#nu (1 Jet)",
    'W2jets'         : "W#rightarrowl#nu (2 Jets)",
    'W3jets'         : "W#rightarrowl#nu (3 Jets)",
