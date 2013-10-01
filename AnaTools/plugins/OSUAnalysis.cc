@@ -923,10 +923,13 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     topPtScaleFactor_ = getTopPtWeight();
   eventScaleFactor_ *= topPtScaleFactor_;
 
+  double factor = eventScaleFactor_;
   //loop over all channels
 
   auto_ptr<map<string, bool> > channelDecisions (new map<string, bool>);
   for(uint currentChannelIndex = 0; currentChannelIndex != channels.size(); currentChannelIndex++){
+    eventScaleFactor_ = factor;
+
     channel currentChannel = channels.at(currentChannelIndex);
     if (verbose_>1) clog << " Processing channel " << currentChannel.name << endl;
 
