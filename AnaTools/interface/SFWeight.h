@@ -39,7 +39,7 @@ class ElectronSFWeight
       ElectronSFWeight () {};
       ElectronSFWeight (const string &, const string &);
       ~ElectronSFWeight ();
-      double at (const double &, const double &);
+      double at (const double &, const double &, const int &);
 
     private:
       string cmsswRelease_;
