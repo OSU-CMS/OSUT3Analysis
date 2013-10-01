@@ -4,3 +4,4 @@
 hist.root
 mergeOutput.py.out*
 *~
+*condor
