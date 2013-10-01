@@ -51,10 +51,10 @@ ElectronSFWeight::ElectronSFWeight (const string &cmsswRelease, const string &id
 }
 
 double
-ElectronSFWeight::at (const double &eta, const double &pt)
+ElectronSFWeight::at (const double &eta, const double &pt, const int &shiftUpDown = 0)
 {
-  //cout << eta << " " << pt << endl;
-  //cout << "doing it\n";
+  double scaleFactor = 1.0, minus = 0.0, plus = 0.0;
+
   if (cmsswRelease_ == "53X")
     {
       if (id_ == "loose")
@@ -62,77 +62,77 @@ ElectronSFWeight::at (const double &eta, const double &pt)
           if (fabs (eta) < 0.8)
             {
               if (pt < 15.0 && pt >= 10.0)
-                return 0.855;
+                scaleFactor = 0.855;
               if (pt < 20.0 && pt >= 15.0)
-                return 0.962;
+                scaleFactor = 0.962;
               if (pt < 30.0 && pt >= 20.0)
-                return 1.005;
+                scaleFactor = 1.005;
               if (pt < 40.0 && pt >= 30.0)
-                return 1.004;
+                scaleFactor = 1.004;
               if (pt < 50.0 && pt >= 40.0)
-                return 1.008;
+                scaleFactor = 1.008;
               if (pt >= 50.0)
-                return 1.008;
+                scaleFactor = 1.008;
             }
           if (fabs (eta) < 1.442 && fabs (eta) >= 0.8)
             {
               if (pt < 15.0 && pt >= 10.0)
-                return 0.858;
+                scaleFactor = 0.858;
               if (pt < 20.0 && pt >= 15.0)
-                return 0.962;
+                scaleFactor = 0.962;
               if (pt < 30.0 && pt >= 20.0)
-                return 0.981;
+                scaleFactor = 0.981;
               if (pt < 40.0 && pt >= 30.0)
-                return 0.991;
+                scaleFactor = 0.991;
               if (pt < 50.0 && pt >= 40.0)
-                return 0.994;
+                scaleFactor = 0.994;
               if (pt >= 50.0)
-                return 0.999;
+                scaleFactor = 0.999;
             }
           if (fabs (eta) < 1.556 && fabs (eta) >= 1.442)
             {
               if (pt < 15.0 && pt >= 10.0)
-                return 1.109;
+                scaleFactor = 1.109;
               if (pt < 20.0 && pt >= 15.0)
-                return 0.903;
+                scaleFactor = 0.903;
               if (pt < 30.0 && pt >= 20.0)
-                return 1.044;
+                scaleFactor = 1.044;
               if (pt < 40.0 && pt >= 30.0)
-                return 0.998;
+                scaleFactor = 0.998;
               if (pt < 50.0 && pt >= 40.0)
-                return 0.989;
+                scaleFactor = 0.989;
               if (pt >= 50.0)
-                return 0.994;
+                scaleFactor = 0.994;
             }
           if (fabs (eta) < 2.0 && fabs (eta) >= 1.556)
             {
               if (pt < 15.0 && pt >= 10.0)
-                return 0.838;
+                scaleFactor = 0.838;
               if (pt < 20.0 && pt >= 15.0)
-                return 0.939;
+                scaleFactor = 0.939;
               if (pt < 30.0 && pt >= 20.0)
-                return 0.980;
+                scaleFactor = 0.980;
               if (pt < 40.0 && pt >= 30.0)
-                return 0.992;
+                scaleFactor = 0.992;
               if (pt < 50.0 && pt >= 40.0)
-                return 1.004;
+                scaleFactor = 1.004;
               if (pt >= 50.0)
-                return 1.006;
+                scaleFactor = 1.006;
             }
           if (fabs (eta) < 2.5 && fabs (eta) >= 2.0)
             {
               if (pt < 15.0 && pt >= 10.0)
-                return 1.034;
+                scaleFactor = 1.034;
               if (pt < 20.0 && pt >= 15.0)
-                return 0.970;
+                scaleFactor = 0.970;
               if (pt < 30.0 && pt >= 20.0)
-                return 1.017;
+                scaleFactor = 1.017;
               if (pt < 40.0 && pt >= 30.0)
-                return 1.019;
+                scaleFactor = 1.019;
               if (pt < 50.0 && pt >= 40.0)
-                return 1.005;
+                scaleFactor = 1.005;
               if (pt >= 50.0)
-                return 1.009;
+                scaleFactor = 1.009;
             }
         }
       if (id_ == "tight")
@@ -140,125 +140,167 @@ ElectronSFWeight::at (const double &eta, const double &pt)
           if (fabs (eta) < 0.8)
             {
               if (pt < 15.0 && pt >= 10.0)
-                return 0.818;
+                scaleFactor = 0.818;
               if (pt < 20.0 && pt >= 15.0)
-                return 0.928;
+                scaleFactor = 0.928;
               if (pt < 30.0 && pt >= 20.0)
-                return 0.973;
+                scaleFactor = 0.973;
               if (pt < 40.0 && pt >= 30.0)
-                return 0.979;
+                scaleFactor = 0.979;
               if (pt < 50.0 && pt >= 40.0)
-                return 0.984;
+                scaleFactor = 0.984;
               if (pt >= 50.0)
-                return 0.983;
+                scaleFactor = 0.983;
             }
           if (fabs (eta) < 1.442 && fabs (eta) >= 0.8)
             {
               if (pt < 15.0 && pt >= 10.0)
-                return 0.840;
+                scaleFactor = 0.840;
               if (pt < 20.0 && pt >= 15.0)
-                return 0.914;
+                scaleFactor = 0.914;
               if (pt < 30.0 && pt >= 20.0)
-                return 0.948;
+                scaleFactor = 0.948;
               if (pt < 40.0 && pt >= 30.0)
-                return 0.961;
+                scaleFactor = 0.961;
               if (pt < 50.0 && pt >= 40.0)
-                return 0.972;
+                scaleFactor = 0.972;
               if (pt >= 50.0)
-                return 0.977;
+                scaleFactor = 0.977;
             }
           if (fabs (eta) < 1.556 && fabs (eta) >= 1.442)
             {
               if (pt < 15.0 && pt >= 10.0)
-                return 1.008;
+                scaleFactor = 1.008;
               if (pt < 20.0 && pt >= 15.0)
-                return 0.877;
+                scaleFactor = 0.877;
               if (pt < 30.0 && pt >= 20.0)
-                return 0.983;
+                scaleFactor = 0.983;
               if (pt < 40.0 && pt >= 30.0)
-                return 0.983;
+                scaleFactor = 0.983;
               if (pt < 50.0 && pt >= 40.0)
-                return 0.957;
+                scaleFactor = 0.957;
               if (pt >= 50.0)
-                return 0.978;
+                scaleFactor = 0.978;
             }
           if (fabs (eta) < 2.0 && fabs (eta) >= 1.556)
             {
               if (pt < 15.0 && pt >= 10.0)
-                return 0.906;
+                scaleFactor = 0.906;
               if (pt < 20.0 && pt >= 15.0)
-                return 0.907;
+                scaleFactor = 0.907;
               if (pt < 30.0 && pt >= 20.0)
-                return 0.957;
+                scaleFactor = 0.957;
               if (pt < 40.0 && pt >= 30.0)
-                return 0.962;
+                scaleFactor = 0.962;
               if (pt < 50.0 && pt >= 40.0)
-                return 0.985;
+                scaleFactor = 0.985;
               if (pt >= 50.0)
-                return 0.986;
+                scaleFactor = 0.986;
             }
           if (fabs (eta) < 2.5 && fabs (eta) >= 2.0)
             {
               if (pt < 15.0 && pt >= 10.0)
-                return 0.991;
+                scaleFactor = 0.991;
               if (pt < 20.0 && pt >= 15.0)
-                return 0.939;
+                scaleFactor = 0.939;
               if (pt < 30.0 && pt >= 20.0)
-                return 1.001;
+                scaleFactor = 1.001;
               if (pt < 40.0 && pt >= 30.0)
-                return 1.002;
+                scaleFactor = 1.002;
               if (pt < 50.0 && pt >= 40.0)
-                return 0.999;
+                scaleFactor = 0.999;
               if (pt >= 50.0)
-                return 0.995;
+                scaleFactor = 0.995;
             }
         }
-      if (id_ == "mvaNonTrig")
+      if (id_ == "mvaTrig0p9") // https://twiki.cern.ch/twiki/bin/view/CMS/KoPFAElectronTagAndProbe
         {
-	  //cout << "mvaNonTrig\n";
           if (fabs (eta) < 0.8)
             {
-              if (pt < 20.0)
-                return 1.0;
               if (pt < 30.0 && pt >= 20.0)
-                return 0.994;
+                {
+                  scaleFactor = 0.953;
+                  plus = 0.185;
+                  minus = 0.007;
+                }
               if (pt < 40.0 && pt >= 30.0)
-                return 0.974;
+                {
+                  scaleFactor = 0.945;
+                  plus = 0.003;
+                  minus = 0.003;
+                }
               if (pt < 50.0 && pt >= 40.0)
-                return 0.988;
+                {
+                  scaleFactor = 0.948;
+                  plus = 0.001;
+                  minus = 0.001;
+                }
               if (pt >= 50.0)
-                return 0.999;
+                {
+                  scaleFactor = 0.960;
+                  plus = 0.001;
+                  minus = 0.001;
+                }
             }
           if (fabs (eta) < 1.478 && fabs (eta) >= 0.8)
             {
-              if (pt < 20.0)
-                return 1.0;
               if (pt < 30.0 && pt >= 20.0)
-                return 0.971;
+                {
+                  scaleFactor = 0.904;
+                  plus = 0.010;
+                  minus = 0.010;
+                }
               if (pt < 40.0 && pt >= 30.0)
-                return 0.967;
+                {
+                  scaleFactor = 0.916;
+                  plus = 0.002;
+                  minus = 0.001;
+                }
               if (pt < 50.0 && pt >= 40.0)
-                return 0.984;
+                {
+                  scaleFactor = 0.959;
+                  plus = 0.001;
+                  minus = 0.001;
+                }
               if (pt >= 50.0)
-                return 0.998;
+                {
+                  scaleFactor = 0.957;
+                  plus = 0.002;
+                  minus = 0.002;
+                }
             }
           if (fabs (eta) <= 2.5 && fabs (eta) >= 1.478)
             {
-              if (pt < 20.0)
-                return 1.0;
               if (pt < 30.0 && pt >= 20.0)
-                return 0.921;
+                {
+                  scaleFactor = 0.863;
+                  plus = 0.008;
+                  minus = 0.008;
+                }
               if (pt < 40.0 && pt >= 30.0)
-                return 0.932;
+                {
+                  scaleFactor = 0.896;
+                  plus = 0.004;
+                  minus = 0.004;
+                }
               if (pt < 50.0 && pt >= 40.0)
-                return 0.968;
+                {
+                  scaleFactor = 0.944;
+                  plus = 0.002;
+                  minus = 0.005;
+                }
               if (pt >= 50.0)
-                return 0.983;
+                {
+                  scaleFactor = 0.953;
+                  plus = 0.008;
+                  minus = 0.007;
+                }
             }
         }
     }
 
-  return 0.0;
+  double error = shiftUpDown > 0 ? plus : minus;
+  return scaleFactor + shiftUpDown * error;
 }
 
 ElectronSFWeight::~ElectronSFWeight ()

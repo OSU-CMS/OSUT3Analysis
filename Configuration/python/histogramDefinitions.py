@@ -2069,6 +2069,12 @@ EventHistograms = cms.PSet(
             inputVariables = cms.vstring("ht"),
         ),
         cms.PSet (
+            name = cms.string("nExtraPartons"),
+            title = cms.string("Number of Extra Partons; # Extra Partons"),
+            bins = cms.untracked.vdouble(6, 0, 6),
+            inputVariables = cms.vstring("nExtraPartons"),
+        ),
+        cms.PSet (
             name = cms.string("unfilteredHt"),
             title = cms.string("Unfiltered H_{T}; #Sigma p_{T} all jets [GeV]"),
             bins = cms.untracked.vdouble(150, 0, 750),
