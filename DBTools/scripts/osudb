@@ -84,7 +84,8 @@ else
     $status = "deprecated" if $ARGV[0] eq "deprecate";
     $opt{"format"} = "BEAN" if $ARGV[0] eq "create" && !$opt{"format"};
     $opt{"lumiSummary"} = "/dev/null" if $ARGV[0] eq "finish" && !$opt{"lumiSummary"};
-    if ($ARGV[0] eq "finish" && (!$opt{"location"} && !getLocation ($id)))
+    $opt{"location"} = getLocation ($id) if $ARGV[0] eq "finish" && !$opt{"location"};
+    if ($ARGV[0] eq "finish" && !$opt{"location"})
       {
         print "The directory containing the ntuples must be given!\n";
         exit;
