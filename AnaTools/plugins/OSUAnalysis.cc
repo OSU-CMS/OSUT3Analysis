@@ -34,6 +34,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   doPileupReweighting_ (cfg.getParameter<bool> ("doPileupReweighting")),
   doTopPtReweighting_  (cfg.getParameter<bool> ("doTopPtReweighting")),
   applyTriggerSF_ (cfg.getParameter<bool> ("applyTriggerSF")),
+  applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   triggerScaleFactor_ (cfg.getParameter<double> ("triggerScaleFactor")),
   applyLeptonSF_ (cfg.getParameter<bool> ("applyLeptonSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
@@ -906,6 +907,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   //apply trigger efficiency                                                                                                                                                                            
   if (!applyTriggerSF_) triggerScaleFactor_ = 1.0; //reset the variable to 1 if we're not applying it, so it will take that value in its histogram
   if (applyTriggerSF_ && datasetType_ != "data") eventScaleFactor_ *= triggerScaleFactor_;
+
+  //apply tracking efficiency                          
+ if (!applyTrackingSF_) trackingScaleFactor_ = 1.0;
+ if (applyTrackingSF_ && datasetType_ != "data") eventScaleFactor_ *= trackingScaleFactor_;
 
   //get pile-up event weight
   if (doPileupReweighting_ && datasetType_ != "data") {
