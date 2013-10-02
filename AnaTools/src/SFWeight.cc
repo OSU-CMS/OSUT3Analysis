@@ -51,7 +51,7 @@ ElectronSFWeight::ElectronSFWeight (const string &cmsswRelease, const string &id
 }
 
 double
-ElectronSFWeight::at (const double &eta, const double &pt, const int &shiftUpDown = 0)
+ElectronSFWeight::at (const double &eta, const double &pt, const int &shiftUpDown)
 {
   double scaleFactor = 1.0, minus = 0.0, plus = 0.0;
 
