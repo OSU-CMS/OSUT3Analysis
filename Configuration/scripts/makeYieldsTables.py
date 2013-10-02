@@ -32,6 +32,8 @@ parser.remove_option("-p")
 parser.add_option("-s", "--standAlone", action="store_true", dest="standAlone", default=False,
                   help="adds the necessary header to be able to compile it")
 
+parser.add_option("-S", "--systematics", action="store_true", dest="includeSystematics", default=False,
+                                    help="also lists the systematic uncertainties")
 
 (arguments, args) = parser.parse_args()
 
@@ -39,6 +41,12 @@ parser.add_option("-s", "--standAlone", action="store_true", dest="standAlone", 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+
+if arguments.includeSystematics:
+    sys.path.append(os.getcwd())
+    exec("from " + systematics_file.rstrip('.py') + " import *")
+
+
 
 #set condor directory
 condor_dir = set_condor_output_dir(arguments)
@@ -51,6 +59,43 @@ hLine = "\\hline\n"
 endLine = " \\\\ "
 newLine = " \n"
 
+
+def getSystematicError(sample):
+    errorSquared = 0.0
+    if types[sample] is "data":
+        return 0.0
+
+    # add uncertainty on normalization method
+    if sample in background_normalization_uncertainties:
+        error = float(background_normalization_uncertainties[sample]['value']) - 1
+        errorSquared = errorSquared + error * error
+
+    # add global uncertainties
+    for uncertainty in global_systematic_uncertainties:
+        if sample in global_systematic_uncertainties[uncertainty]['applyList']:
+            error = float(global_systematic_uncertainties[uncertainty]['value']) -1
+            errorSquared = errorSquared + error * error
+
+    # add sample-specific uncertainties from text files
+    for uncertainty in external_systematic_uncertainties:
+        input_file = open(os.environ['CMSSW_BASE']+"/src/DisplacedSUSY/Configuration/data/systematic_values__" + uncertainty + ".txt")
+        for line in input_file:
+            line = line.rstrip("\n").split(" ")
+            dataset = line[0]
+            if dataset != sample:
+                continue
+            if len(line) is 2: #just one error
+                error = float(line[1]) - 1
+            elif len(line) is 3: #asymmetric +- errors (we'll take the bigger one)
+                minus_error = float(line[1]) - 1
+                plus_error = float(line[2]) - 1
+                if abs(minus_error) > abs(plus_error):
+                    error = minus_error
+                else:
+                    error = plus_error
+            errorSquared = errorSquared + error * error
+            
+    return math.sqrt(errorSquared)
 
 #### check which input datasets have valid output files
 processed_datasets = []
@@ -82,19 +127,23 @@ for key in gDirectory.GetListOfKeys():
 
 #get and store the yields and errors for each dataset                                                
 yields = {}
-errors = {}
+stat_errors = {}
+sys_errors = {}
 bgMCSum = {}
-bgMCErrSquared = {}
+bgMCStatErrSquared = {}
+bgMCSysErrSquared = {}
 processed_datasets_channels = {}
 
 for channel in channels:
     bgMCSum[channel] = 0
-    bgMCErrSquared[channel] = 0
+    bgMCStatErrSquared[channel] = 0
+    bgMCSysErrSquared[channel] = 0
     processed_datasets_channels[channel] = []
 
 for sample in processed_datasets:
     yields[sample] = {}
-    errors[sample] = {}
+    stat_errors[sample] = {}
+    sys_errors[sample] = {}
     dataset_file = "%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     for channel in channels:
@@ -105,13 +154,22 @@ for sample in processed_datasets:
         processed_datasets_channels[channel].append(sample)
 
         yield_ = cutFlowHistogram.GetBinContent(cutFlowHistogram.GetNbinsX())
-        error_ = cutFlowHistogram.GetBinError(cutFlowHistogram.GetNbinsX())
+        statError_ = cutFlowHistogram.GetBinError(cutFlowHistogram.GetNbinsX())
+ 
+        if arguments.includeSystematics:
+            fractionalSysError_ = getSystematicError(sample)
+            sysError_ = fractionalSysError_ * yield_
+        else:
+            sysError_ = 0.0
+
         yields[sample][channel] = formatNumber(str(round_sigfigs(yield_,3)).rstrip("0").rstrip("."))
-        errors[sample][channel] = formatNumber(str(round_sigfigs(error_,3)).rstrip("0").rstrip("."))
+        stat_errors[sample][channel] = formatNumber(str(round_sigfigs(statError_,3)).rstrip("0").rstrip("."))
+        sys_errors[sample][channel] = formatNumber(str(round_sigfigs(sysError_,3)).rstrip("0").rstrip("."))
 
         if types[sample] is "bgMC":
             bgMCSum[channel] = bgMCSum[channel] + yield_
-            bgMCErrSquared[channel] = bgMCErrSquared[channel] + error_*error_
+            bgMCStatErrSquared[channel] = bgMCStatErrSquared[channel] + statError_*statError_
+            bgMCSysErrSquared[channel] = bgMCSysErrSquared[channel] + sysError_*sysError_
 
     inputFile.Close()
 
@@ -125,7 +183,11 @@ for channel in channels:
         fout.write("\\documentclass{article}"+newLine+"\\begin{document}"+newLine)
     fout.write ("\\makebox[0pt]{\\renewcommand{\\arraystretch}{1.2}\\begin{tabular}{lr}"+newLine+hLine)
 
-    fout.write("Event Source & Event Yield $\pm$ 1$\sigma$ (stat.)"+endLine+newLine+hLine)
+    line = "Event Source & Event Yield $\pm$ 1$\sigma$ (stat.)"
+    if arguments.includeSystematics:
+        line = line + " $\pm$ 1$\sigma$ (sys.)"
+    line = line +endLine+newLine+hLine
+    fout.write(line)
 
     #write a line for each background sample
     bgMCcounter = 0
@@ -135,15 +197,23 @@ for channel in channels:
         bgMCcounter = bgMCcounter + 1
         rawlabel = "$" + labels[sample] + "$"
         label = rawlabel.replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ")
-        fout.write(label + " & " + yields[sample][channel] + " $\pm$ " + errors[sample][channel] + endLine + newLine)
+        line = label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel]
+        if arguments.includeSystematics:
+            line = line + " $\pm$ " + sys_errors[sample][channel]
+        line = line + endLine + newLine
+        fout.write(line)
 
     #write a line with the sum of the backgrounds
     if bgMCcounter is not 0:
 
         bgMCSum_ = formatNumber(str(round_sigfigs(bgMCSum[channel],3)).rstrip("0").rstrip("."))
-        bgMCErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCErrSquared[channel]),3)).rstrip("0").rstrip("."))
-
-        fout.write(hLine+"background sum & " + bgMCSum_ + " $\pm$ " + bgMCErr_ + endLine + newLine + hLine)
+        bgMCStatErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCStatErrSquared[channel]),3)).rstrip("0").rstrip("."))
+        bgMCSysErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCSysErrSquared[channel]),3)).rstrip("0").rstrip("."))
+        line = hLine+"background sum & " + bgMCSum_ + " $\pm$ " + bgMCStatErr_
+        if arguments.includeSystematics:
+            line = line + " $\pm$ " + bgMCSysErr_
+        line = line + endLine + newLine + hLine
+        fout.write(line)
 
     #write a line for each data sample
     for sample in processed_datasets_channels[channel]:
@@ -151,7 +221,7 @@ for channel in channels:
             continue
         rawlabel = "$" + labels[sample] + "$"
         label = rawlabel.replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ")
-        fout.write(label + " & " + yields[sample][channel] + " $\pm$ " + errors[sample][channel] + endLine + newLine)
+        fout.write(label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel] + endLine + newLine)
                                             
     fout.write("\\end{tabular}}"+newLine)
     if(arguments.standAlone):
