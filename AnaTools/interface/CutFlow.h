@@ -29,8 +29,7 @@ class CutFlow
       bool pass () const;
       operator boolType () const { return pass () ? &CutFlow::thisTypeDoesNotSupportComparisons : 0; };
 
-      void fillCutFlow (double);
-      void fillCutFlow () { fillCutFlow (1.0); };
+      void fillCutFlow (double w = 1.0, double wForLastCut = 1.0);
       void outputTime ();
       void outputCutFlow ();
 
