@@ -37,16 +37,28 @@ CutFlow::operator[] (const string &cutName)
 {
   if (!cuts_.count (cutName))
     {
+      if (cuts_.size ())
+        {
+          map<string, bool>::const_iterator lastCut = cuts_.end ();
+          lastCut--;
+          cuts_.erase (lastCut);
+          cutNames_.pop_back ();
+        }
       cutNames_.push_back (cutName);
-      cuts_[cutName] = false;
+      cutNames_.push_back ("Weighted Yield");
+      cuts_[cutName] = cuts_["Weighted Yield"] = false;
 
       cutFlow_->SetBins (cutNames_.size () + 1, 0.0, cutNames_.size () + 1.0);
       selection_->SetBins (cutNames_.size () + 1, 0.0, cutNames_.size () + 1.0);
       minusOne_->SetBins (cutNames_.size () + 1, 0.0, cutNames_.size () + 1.0);
 
-      cutFlow_->GetXaxis ()->SetBinLabel (cutNames_.size () + 1, cutName.c_str ());
-      selection_->GetXaxis ()->SetBinLabel (cutNames_.size () + 1, cutName.c_str ());
-      minusOne_->GetXaxis ()->SetBinLabel (cutNames_.size () + 1, cutName.c_str ());
+      cutFlow_->GetXaxis ()->SetBinLabel (cutNames_.size (), cutName.c_str ());
+      selection_->GetXaxis ()->SetBinLabel (cutNames_.size (), cutName.c_str ());
+      minusOne_->GetXaxis ()->SetBinLabel (cutNames_.size (), cutName.c_str ());
+
+      cutFlow_->GetXaxis ()->SetBinLabel (cutNames_.size () + 1, "Weighted Yield");
+      selection_->GetXaxis ()->SetBinLabel (cutNames_.size () + 1, "Weighted Yield");
+      minusOne_->GetXaxis ()->SetBinLabel (cutNames_.size () + 1, "Weighted Yield");
     }
 
   return cuts_[cutName];
@@ -55,7 +67,9 @@ CutFlow::operator[] (const string &cutName)
 bool
 CutFlow::pass () const
 {
-  for (map<string, bool>::const_iterator cut = cuts_.begin (); cut != cuts_.end (); cut++)
+  map<string, bool>::const_iterator nextToLast = cuts_.end ();
+  nextToLast--;
+  for (map<string, bool>::const_iterator cut = cuts_.begin (); cut != nextToLast; cut++)
     {
       if (!cut->second)
         return false;
@@ -64,7 +78,7 @@ CutFlow::pass () const
 }
 
 void
-CutFlow::fillCutFlow (double w)
+CutFlow::fillCutFlow (double w, double wForLastCut)
 {
   bool fillCumulative = true, fillComplement = true;
   double complement = -1.0;
@@ -72,15 +86,25 @@ CutFlow::fillCutFlow (double w)
   cutFlow_->Fill (0.5, w);
   selection_->Fill (0.5, w);
   minusOne_->Fill (0.5, w);
+  if (cuts_.size () >= 2)
+    {
+      string lastCut = cutNames_.at (cutNames_.size () - 2);
+      cuts_["Weighted Yield"] = cuts_[lastCut];
+    }
   for (vector<string>::const_iterator cut = cutNames_.begin (); cut != cutNames_.end (); cut++)
     {
       if (cuts_[*cut])
         {
-          double binCenter = selection_->GetBinCenter (cut - cutNames_.begin () + 2);
+          double binCenter = cutFlow_->GetBinCenter (cut - cutNames_.begin () + 2);
 
-          selection_->Fill (binCenter, w);
           if (fillCumulative)
-            cutFlow_->Fill (binCenter, w);
+            {
+              if (cut + 1 != cutNames_.end ())
+                cutFlow_->Fill (binCenter, w);
+              else
+                cutFlow_->Fill (binCenter, w * wForLastCut);
+            }
+          selection_->Fill (binCenter, w);
         }
       else
         {
@@ -91,14 +115,10 @@ CutFlow::fillCutFlow (double w)
             fillComplement = false;
         }
     }
-  if (fillCumulative)
+  for (vector<string>::const_iterator cut = cutNames_.begin (); fillCumulative && cut != cutNames_.end (); cut++)
     {
-      for (vector<string>::const_iterator cut = cutNames_.begin (); cut != cutNames_.end (); cut++)
-        {
-          double binCenter = minusOne_->GetBinCenter (cut - cutNames_.begin () + 2);
-
-          minusOne_->Fill (binCenter, w);
-        }
+      double binCenter = minusOne_->GetBinCenter (cut - cutNames_.begin () + 2);
+      minusOne_->Fill (binCenter, w);
     }
   if (!fillCumulative && fillComplement)
     minusOne_->Fill (complement, w);
@@ -189,8 +209,8 @@ CutFlow::outputCutFlow ()
              minusOne = minusOne_->GetBinContent (cut - cutNames_.begin () + 2);
 
       clog << setw (longestCutName) << left << (*cut + ":") << right << setw (10) << setprecision(1) << cutFlow << setw (15) << setprecision(3) << 100.0 * (cutFlow / (double) totalEvents) << "%"
-	   << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
-	   << setw (15) << setprecision(3) << 100.0 * (minusOne / (double) totalEvents) << "%" << endl;
+           << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
+           << setw (15) << setprecision(3) << 100.0 * (minusOne / (double) totalEvents) << "%" << endl;
     }
   clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
 }
