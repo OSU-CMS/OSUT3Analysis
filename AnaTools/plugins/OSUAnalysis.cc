@@ -36,6 +36,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   applyTriggerSF_ (cfg.getParameter<bool> ("applyTriggerSF")),
   applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   triggerScaleFactor_ (cfg.getParameter<double> ("triggerScaleFactor")),
+  trackingScaleFactor_ (cfg.getParameter<double> ("trackingScaleFactor")),
   applyLeptonSF_ (cfg.getParameter<bool> ("applyLeptonSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
