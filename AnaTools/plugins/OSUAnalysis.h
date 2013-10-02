@@ -188,7 +188,9 @@ class OSUAnalysis : public edm::EDProducer
       bool doPileupReweighting_;
       bool doTopPtReweighting_;
       bool applyTriggerSF_;
+      bool applyTrackingSF_;
       double triggerScaleFactor_;
+      double trackingScaleFactor_;
       bool applyLeptonSF_;
       bool applyBtagSF_;
       int  minBtag_;
