@@ -308,6 +308,8 @@ class OSUAnalysis : public edm::EDProducer
       StopCTauWeight *stopCTauWeight_;
       double stopCTauScaleFactor_;
 
+      double globalScaleFactor_;
+      double channelScaleFactor_;
       double eventScaleFactor_;
 
       ofstream* findEventsLog; 
