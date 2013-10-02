@@ -45,12 +45,12 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   printAllTriggers_    (cfg.getParameter<bool> ("printAllTriggers")),
   useTrackCaloRhoCorr_ (cfg.getParameter<bool> ("useTrackCaloRhoCorr")),
   stopCTau_ (cfg.getParameter<vector<double> > ("stopCTau")),
-  GetPlotsAfterEachCut_ (cfg.getParameter<bool> ("GetPlotsAfterEachCut")), 
+  GetPlotsAfterEachCut_ (cfg.getParameter<bool> ("GetPlotsAfterEachCut")),
   verbose_ (cfg.getParameter<int> ("verbose"))
  {
 
-  if (verbose_) printEventInfo_ = true;  
-  if (verbose_) clog << "Beginning OSUAnalysis::OSUAnalysis constructor." << endl;  
+  if (verbose_) printEventInfo_ = true;
+  if (verbose_) clog << "Beginning OSUAnalysis::OSUAnalysis constructor." << endl;
 
   TH1::SetDefaultSumw2();
 
@@ -102,7 +102,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       TString newName = TString(br.inputCollection) + "_" + TString(br.inputVariable);
       br.name = string(newName.Data());
       treeBranches_.push_back(br);
-      if (verbose_>3) clog << "   Adding branch to BNTree: " << br.name << endl;  
+      if (verbose_>3) clog << "   Adding branch to BNTree: " << br.name << endl;
     }
 
   } // end   for (uint iBranchSet = 0; iBranchSet<treeBranchSets_.size(); iBranchSet++)
@@ -133,13 +133,13 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
     if(tempInputCollection.find("pairs")==string::npos){ //just a single object
       if(tempInputCollection.find("secondary")!=string::npos){//secondary object
-	if(tempInputCollection.find("secondary muons")!=string::npos){//treat secondary muons differently; allow for a different input collection 
-	  objectsToGet.push_back("secondary muons");  
-	} else {
-	  int spaceIndex = tempInputCollection.find(" ");
-	  int secondWordLength = tempInputCollection.size() - spaceIndex;
-	  objectsToGet.push_back(tempInputCollection.substr(spaceIndex+1,secondWordLength));
-	}
+        if(tempInputCollection.find("secondary muons")!=string::npos){//treat secondary muons differently; allow for a different input collection
+          objectsToGet.push_back("secondary muons");
+        } else {
+          int spaceIndex = tempInputCollection.find(" ");
+          int secondWordLength = tempInputCollection.size() - spaceIndex;
+          objectsToGet.push_back(tempInputCollection.substr(spaceIndex+1,secondWordLength));
+        }
       } else{
         objectsToGet.push_back(tempInputCollection);
       }
@@ -162,8 +162,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     } // end else
     if (find(objectsToPlot.begin(), objectsToPlot.end(), "events") != objectsToPlot.end())
       objectsToGet.push_back("jets");
-    
-    
+
+
     vector<edm::ParameterSet> histogramList_  (histogramSets_.at(currentHistogramSet).getParameter<vector<edm::ParameterSet> >("histograms"));
 
     for(uint currentHistogram = 0; currentHistogram != histogramList_.size(); currentHistogram++){
@@ -181,14 +181,14 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       tempHistogram.inputVariables = histogramList_.at(currentHistogram).getParameter<vector<string> >("inputVariables");
 
       bool histExists = false;
-      for (uint i=0; i<histograms.size(); i++) { 
-	if (histograms.at(i).name == tempHistogram.name) { histExists = true; break; } 
-      }  
+      for (uint i=0; i<histograms.size(); i++) {
+        if (histograms.at(i).name == tempHistogram.name) { histExists = true; break; }
+      }
       if (histExists) {
-	clog << "Warning:  histogram " << tempHistogram.name << " already exists; will not book an additional instance." << endl;  
+        clog << "Warning:  histogram " << tempHistogram.name << " already exists; will not book an additional instance." << endl;
       } else {
-	histograms.push_back(tempHistogram);
-      } 
+        histograms.push_back(tempHistogram);
+      }
 
     }
   } //   for(uint currentHistogramSet = 0; currentHistogramSet != histogramSets_.size(); currentHistogramSet++)
@@ -203,17 +203,17 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   for(uint currentObjectIndex = 0; currentObjectIndex != objectsToPlot.size(); currentObjectIndex++){
 
     string currentObject = objectsToPlot.at(currentObjectIndex);
-    if(currentObject != "muons" && 
+    if(currentObject != "muons" &&
        currentObject != "secondary muons" &&
-       currentObject != "secondary electrons" && 
-       currentObject != "electrons" && 
-       currentObject != "taus" && 
-       currentObject != "tracks" && 
-       currentObject != "photons" && 
-       currentObject != "secondary photons" && 
+       currentObject != "secondary electrons" &&
+       currentObject != "electrons" &&
+       currentObject != "taus" &&
+       currentObject != "tracks" &&
+       currentObject != "photons" &&
+       currentObject != "secondary photons" &&
        currentObject != "superclusters" &&
-       currentObject != "mcparticles" && 
-       currentObject != "secondary mcparticles") 
+       currentObject != "mcparticles" &&
+       currentObject != "secondary mcparticles")
       continue;
 
     histogram tempIdHisto;
@@ -286,7 +286,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     string channelName  (channels_.at(currentChannel).getParameter<string>("name"));
     tempChannel.name = channelName;
     TString channelLabel = channelName;
-    if (verbose_) clog << "Processing channel:  " << channelName << endl;  
+    if (verbose_) clog << "Processing channel:  " << channelName << endl;
 
     //set triggers for this channel
     vector<string> triggerNames;
@@ -347,13 +347,13 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       tempCut.inputCollection = tempInputCollection;
       if(tempInputCollection.find("pairs")==string::npos){ //just a single object
         if(tempInputCollection.find("secondary")!=string::npos){//secondary object
-	  if(tempInputCollection.find("secondary muons")!=string::npos){//treat secondary muons differently; allow for a different input collection 
-	    objectsToGet.push_back("secondary muons");  
-	  } else {
-	    int spaceIndex = tempInputCollection.find(" ");
-	    int secondWordLength = tempInputCollection.size() - spaceIndex;
-	    objectsToGet.push_back(tempInputCollection.substr(spaceIndex+1,secondWordLength));
-	  }
+          if(tempInputCollection.find("secondary muons")!=string::npos){//treat secondary muons differently; allow for a different input collection
+            objectsToGet.push_back("secondary muons");
+          } else {
+            int spaceIndex = tempInputCollection.find(" ");
+            int secondWordLength = tempInputCollection.size() - spaceIndex;
+            objectsToGet.push_back(tempInputCollection.substr(spaceIndex+1,secondWordLength));
+          }
         }
         else{
           objectsToGet.push_back(tempInputCollection);
@@ -437,11 +437,11 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       tempCut.isVeto = false;
       if(cuts_.at(currentCut).exists("isVeto")){
         bool isVeto = cuts_.at(currentCut).getParameter<bool> ("isVeto");
-	if (isVeto == true) tempCut.isVeto = true;
+        if (isVeto == true) tempCut.isVeto = true;
       }
       subSubDirNames.push_back(subSubDirName);
       tempCut.name = tempCutName;
-      if (verbose_) clog << "Setting up cut, index: " << currentCut << ", input collection: " << tempInputCollection<< ", name: " << tempCut.name << endl;  
+      if (verbose_) clog << "Setting up cut, index: " << currentCut << ", input collection: " << tempInputCollection<< ", name: " << tempCut.name << endl;
 
       tempChannel.cuts.push_back(tempCut);
 
@@ -482,9 +482,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     for(uint currentDir = 0; !useEDMFormat_ && currentDir != treeDirectories.size(); currentDir++){
       TTree* newTree = treeDirectories.at(currentDir).make<TTree> (TString("BNTree_"+channelLabel), TString("BNTree_"+channelLabel));
       BNTrees_.push_back(newTree);
-      BNTrees_.back()->Branch("event_runInt",  &BNTreeBranchVals_runInt_,  "event_runInt/I");      
-      BNTrees_.back()->Branch("event_lumiInt", &BNTreeBranchVals_lumiInt_, "event_lumiInt/I");      
-      BNTrees_.back()->Branch("event_evtLong", &BNTreeBranchVals_evtLong_, "event_evtLong/L");      
+      BNTrees_.back()->Branch("event_runInt",  &BNTreeBranchVals_runInt_,  "event_runInt/I");
+      BNTrees_.back()->Branch("event_lumiInt", &BNTreeBranchVals_lumiInt_, "event_lumiInt/I");
+      BNTrees_.back()->Branch("event_evtLong", &BNTreeBranchVals_evtLong_, "event_evtLong/L");
       for (uint iBranch = 0; iBranch < treeBranches_.size(); iBranch++){
         BranchSpecs currentVar = treeBranches_.at(iBranch);
         vector<float> newVec;
@@ -667,37 +667,37 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       }
 
       if (verbose_) {
-	clog << "List of 1D histograms booked for channel " << channelName << " and directory " << currentDir << ":" << endl;
-	for(map<string, TH1D*>::iterator 
-	      iter = oneDHists_.at(currentChannel).at(currentDir).begin(); 
-	    iter  != oneDHists_.at(currentChannel).at(currentDir).end(); 
-	    iter++) {
-	  clog << " " << iter->first 
-	       << ":  name=" << iter->second->GetName() 
-	       << ", title=" << iter->second->GetTitle() 
-	       << ", bins=(" << iter->second->GetNbinsX()
-	       << "," << iter->second->GetXaxis()->GetXmin() 
-	       << "," << iter->second->GetXaxis()->GetXmax() 
-	       << ")" << endl;
-	}  
-	clog << "List of 2D histograms booked for channel " << channelName << " and directory " << currentDir << ":" << endl;
-	for(map<string, TH2D*>::iterator 
-	      iter = twoDHists_.at(currentChannel).at(currentDir).begin(); 
-	    iter  != twoDHists_.at(currentChannel).at(currentDir).end(); 
-	    iter++) {
-	  clog << " " << iter->first 
-	       << ":  name=" << iter->second->GetName() 
-	       << ", title=" << iter->second->GetTitle() 
-	       << ", binsX=(" << iter->second->GetNbinsX()
-	       << "," << iter->second->GetXaxis()->GetXmin() 
-	       << "," << iter->second->GetXaxis()->GetXmax() 
-	       << ")" 
-	       << ", binsY=(" << iter->second->GetNbinsY()
-	       << "," << iter->second->GetYaxis()->GetXmin() 
-	       << "," << iter->second->GetYaxis()->GetXmax() 
-	       << ")" 
-	       << endl;
-	}  
+        clog << "List of 1D histograms booked for channel " << channelName << " and directory " << currentDir << ":" << endl;
+        for(map<string, TH1D*>::iterator
+              iter = oneDHists_.at(currentChannel).at(currentDir).begin();
+            iter  != oneDHists_.at(currentChannel).at(currentDir).end();
+            iter++) {
+          clog << " " << iter->first
+               << ":  name=" << iter->second->GetName()
+               << ", title=" << iter->second->GetTitle()
+               << ", bins=(" << iter->second->GetNbinsX()
+               << "," << iter->second->GetXaxis()->GetXmin()
+               << "," << iter->second->GetXaxis()->GetXmax()
+               << ")" << endl;
+        }
+        clog << "List of 2D histograms booked for channel " << channelName << " and directory " << currentDir << ":" << endl;
+        for(map<string, TH2D*>::iterator
+              iter = twoDHists_.at(currentChannel).at(currentDir).begin();
+            iter  != twoDHists_.at(currentChannel).at(currentDir).end();
+            iter++) {
+          clog << " " << iter->first
+               << ":  name=" << iter->second->GetName()
+               << ", title=" << iter->second->GetTitle()
+               << ", binsX=(" << iter->second->GetNbinsX()
+               << "," << iter->second->GetXaxis()->GetXmin()
+               << "," << iter->second->GetXaxis()->GetXmax()
+               << ")"
+               << ", binsY=(" << iter->second->GetNbinsY()
+               << "," << iter->second->GetYaxis()->GetXmin()
+               << "," << iter->second->GetYaxis()->GetXmax()
+               << ")"
+               << endl;
+        }
       }
 
     }//end of loop over directories
@@ -706,17 +706,17 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   }//end loop over channels
 
 
-  // Create the cutflow histogram and fill with 0 weight, in case no events are found in the input file.  
+  // Create the cutflow histogram and fill with 0 weight, in case no events are found in the input file.
   for(uint currentChannelIndex = 0; currentChannelIndex != channels.size(); currentChannelIndex++){
     channel currentChannel = channels.at(currentChannelIndex);
     if(currentChannel.triggers.size() != 0 || currentChannel.triggersToVeto.size() != 0){  //triggers specified
-      cutFlows_.at(currentChannelIndex)->at("trigger") = true;  
+      cutFlows_.at(currentChannelIndex)->at("trigger") = true;
     }
     for(uint currentCutIndex = 0; currentCutIndex != currentChannel.cuts.size(); currentCutIndex++){
       cut currentCut = currentChannel.cuts.at(currentCutIndex);
       cutFlows_.at(currentChannelIndex)->at (currentCut.name) = true;
     }
-    cutFlows_.at(currentChannelIndex)->fillCutFlow(0);  // fill cutflow with 0 weight, just to create the cutflow histograms  
+    cutFlows_.at(currentChannelIndex)->fillCutFlow(0);  // fill cutflow with 0 weight, just to create the cutflow histograms
   }
 
   //make unique vector of objects we need to get from the event
@@ -729,11 +729,11 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   sort( objectsToFlag.begin(), objectsToFlag.end() );
   objectsToFlag.erase( unique( objectsToFlag.begin(), objectsToFlag.end() ), objectsToFlag.end() );
 
-  // Move all paired objects to the end of the list, so that the flags for single objects are always set before those of paired objects.  
+  // Move all paired objects to the end of the list, so that the flags for single objects are always set before those of paired objects.
   for (uint i=0; i<objectsToFlag.size(); i++) {
     if (objectsToFlag.at(i).find("pairs")!=string::npos) { // if it contains "pairs"
-      objectsToFlag.push_back(objectsToFlag.at(i));  
-      objectsToFlag.erase(objectsToFlag.begin()+i);  
+      objectsToFlag.push_back(objectsToFlag.at(i));
+      objectsToFlag.erase(objectsToFlag.begin()+i);
     }
   }
 
@@ -763,16 +763,16 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   produces<map<string, bool> > ("channelDecisions");
 
   if (printEventInfo_) {
-    findEventsLog = new ofstream();  
-    findEventsLog->open("findEvents.txt");  
-    clog << "Listing run:lumi:event in file findEvents.txt for events that pass full selection (of any channel)." << endl;  
+    findEventsLog = new ofstream();
+    findEventsLog->open("findEvents.txt");
+    clog << "Listing run:lumi:event in file findEvents.txt for events that pass full selection (of any channel)." << endl;
   } else {
     findEventsLog = 0;
-  }  
+  }
 
-  isFirstEvent_ = true;  
+  isFirstEvent_ = true;
 
-  if (verbose_) clog << "Finished OSUAnalysis::OSUAnalysis constructor." << endl;  
+  if (verbose_) clog << "Finished OSUAnalysis::OSUAnalysis constructor." << endl;
 
 
   } // end constructor OSUAnalysis::OSUAnalysis()
@@ -781,7 +781,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 OSUAnalysis::~OSUAnalysis ()
 {
 
-  if (verbose_) clog << "Beginning OSUAnalysis::OSUAnalysis destructor." << endl;  
+  if (verbose_) clog << "Beginning OSUAnalysis::OSUAnalysis destructor." << endl;
 
   // Destroying the CutFlow objects causes the cut flow numbers and time
   // information to be printed to standard output.
@@ -789,13 +789,13 @@ OSUAnalysis::~OSUAnalysis ()
     delete cutFlows_.at(currentChannel);
   }
 
-  if (printEventInfo_ && findEventsLog) findEventsLog->close();  
+  if (printEventInfo_ && findEventsLog) findEventsLog->close();
 
-  clog << "=============================================" << endl;  
-  clog << "Successfully completed OSUAnalysis." << endl;  
-  clog << "=============================================" << endl;  
+  clog << "=============================================" << endl;
+  clog << "Successfully completed OSUAnalysis." << endl;
+  clog << "=============================================" << endl;
 
-  if (verbose_) clog << "Finished OSUAnalysis::OSUAnalysis destructor." << endl;  
+  if (verbose_) clog << "Finished OSUAnalysis::OSUAnalysis destructor." << endl;
 
 }
 
@@ -804,92 +804,92 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   // Retrieve necessary collections from the event.
 
-  if (verbose_) clog << "Beginning OSUAnalysis::produce." << endl;  
+  if (verbose_) clog << "Beginning OSUAnalysis::produce." << endl;
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "triggers") != objectsToGet.end()) {
     event.getByLabel (triggers_, triggers);
-    if (!triggers.product()) clog << "ERROR:  could not get triggers input collection" << endl;  
+    if (!triggers.product()) clog << "ERROR:  could not get triggers input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "trigobjs") != objectsToGet.end()) {
     event.getByLabel (trigobjs_, trigobjs);
-    if (!trigobjs.product()) clog << "ERROR:  could not get trigobjs input collection" << endl;  
+    if (!trigobjs.product()) clog << "ERROR:  could not get trigobjs input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "jets") != objectsToGet.end()) {
     event.getByLabel (jets_, jets);
-    if (!jets.product()) clog << "ERROR:  could not get jets input collection" << endl;  
+    if (!jets.product()) clog << "ERROR:  could not get jets input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "muons") != objectsToGet.end()) {
     event.getByLabel (muons_, muons);
-    if (!muons.product()) clog << "ERROR:  could not get muons input collection" << endl;  
+    if (!muons.product()) clog << "ERROR:  could not get muons input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "secondary muons") != objectsToGet.end()) {
     event.getByLabel (secMuons_, secMuons);
-    if (!secMuons.product()) clog << "ERROR:  could not get secMuons input collection" << endl;  
+    if (!secMuons.product()) clog << "ERROR:  could not get secMuons input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "electrons") != objectsToGet.end()) {
     event.getByLabel (electrons_, electrons);
-    if (!electrons.product()) clog << "ERROR:  could not get electrons input collection" << endl;  
+    if (!electrons.product()) clog << "ERROR:  could not get electrons input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "events") != objectsToGet.end()) {
     event.getByLabel (events_, events);
-    if (!events.product()) clog << "ERROR:  could not get events input collection" << endl;  
+    if (!events.product()) clog << "ERROR:  could not get events input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "taus") != objectsToGet.end()) {
     event.getByLabel (taus_, taus);
-    if (!taus.product()) clog << "ERROR:  could not get taus input collection" << endl;  
+    if (!taus.product()) clog << "ERROR:  could not get taus input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "mets") != objectsToGet.end()) {
     event.getByLabel (mets_, mets);
-    if (!mets.product()) clog << "ERROR:  could not get mets input collection" << endl;  
+    if (!mets.product()) clog << "ERROR:  could not get mets input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "tracks") != objectsToGet.end()) {
     event.getByLabel (tracks_, tracks);
-    if (!tracks.product()) clog << "ERROR:  could not get tracks input collection" << endl;  
+    if (!tracks.product()) clog << "ERROR:  could not get tracks input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "genjets") != objectsToGet.end()) {
     event.getByLabel (genjets_, genjets);
-    if (!genjets.product()) clog << "ERROR:  could not get genjets input collection" << endl;  
+    if (!genjets.product()) clog << "ERROR:  could not get genjets input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "mcparticles") != objectsToGet.end()) {
     event.getByLabel (mcparticles_, mcparticles);
-    if (!mcparticles.product()) clog << "ERROR:  could not get mcparticles input collection" << endl;  
+    if (!mcparticles.product()) clog << "ERROR:  could not get mcparticles input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "primaryvertexs") != objectsToGet.end()) {
     event.getByLabel (primaryvertexs_, primaryvertexs);
-    if (!primaryvertexs.product()) clog << "ERROR:  could not get primaryvertexs input collection" << endl;  
+    if (!primaryvertexs.product()) clog << "ERROR:  could not get primaryvertexs input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "bxlumis") != objectsToGet.end()) {
     event.getByLabel (bxlumis_, bxlumis);
-    if (!bxlumis.product()) clog << "ERROR:  could not get bxlumis input collection" << endl;  
-  } 
+    if (!bxlumis.product()) clog << "ERROR:  could not get bxlumis input collection" << endl;
+  }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "photons") != objectsToGet.end()) {
     event.getByLabel (photons_, photons);
-    if (!photons.product()) clog << "ERROR:  could not get photons input collection" << endl;  
+    if (!photons.product()) clog << "ERROR:  could not get photons input collection" << endl;
   }
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "superclusters") != objectsToGet.end()) {
     event.getByLabel (superclusters_, superclusters);
-    if (!superclusters.product()) clog << "ERROR:  could not get superclusters input collection" << endl;  
+    if (!superclusters.product()) clog << "ERROR:  could not get superclusters input collection" << endl;
   }
 
   if (datasetType_ == "signalMC"){
     if (find(objectsToGet.begin(), objectsToGet.end(), "stops") != objectsToGet.end()) {
       event.getByLabel (stops_, stops);
-      if (!stops.product()) clog << "ERROR:  could not get stops input collection" << endl;  
+      if (!stops.product()) clog << "ERROR:  could not get stops input collection" << endl;
     }
   }
 
@@ -899,43 +899,49 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     // For description of rho values for different jet reconstruction algorithms, see
     // https://twiki.cern.ch/twiki/bin/view/CMS/JetAlgorithms#Algorithms
     event.getByLabel ("kt6CaloJets","rho", rhokt6CaloJetsHandle_);
-    if (!rhokt6CaloJetsHandle_.product()) clog << "ERROR:  could not get kt6CaloJets input collection" << endl;  
+    if (!rhokt6CaloJetsHandle_.product()) clog << "ERROR:  could not get kt6CaloJets input collection" << endl;
   }
 
-  eventScaleFactor_ = 1.0;
 
 
-  //apply trigger efficiency                                                                                                                                                                            
+  // ///////////////////////////////////////////////////////////
+  // start application of various scale factors
+  // some are applied equally to all channels,
+  // while others can vary from channel to channel
+  // ///////////////////////////////////////////////////////////
+
+  globalScaleFactor_ = 1.0; //this variable holds the product of all SFs applied equally to all channels
+
+  //apply trigger efficiency
   if (!applyTriggerSF_) triggerScaleFactor_ = 1.0; //reset the variable to 1 if we're not applying it, so it will take that value in its histogram
-  if (applyTriggerSF_ && datasetType_ != "data") eventScaleFactor_ *= triggerScaleFactor_;
+  if (applyTriggerSF_ && datasetType_ != "data") globalScaleFactor_ *= triggerScaleFactor_;
 
-  //apply tracking efficiency                          
- if (!applyTrackingSF_) trackingScaleFactor_ = 1.0;
- if (applyTrackingSF_ && datasetType_ != "data") eventScaleFactor_ *= trackingScaleFactor_;
+  //apply tracking efficiency
+  if (!applyTrackingSF_) trackingScaleFactor_ = 1.0;
+  if (applyTrackingSF_ && datasetType_ != "data") eventScaleFactor_ *= trackingScaleFactor_;
 
   //get pile-up event weight
   if (doPileupReweighting_ && datasetType_ != "data") {
     //for "data" datasets, the numTruePV is always set to -1
     if (events->at(0).numTruePV < 0 && isFirstEvent_) clog << "WARNING[OSUAnalysis::analyze]: Event has numTruePV<0.  Turning off pile-up reweighting." << endl;
-    else eventScaleFactor_ *= puWeight_->at (events->at (0).numTruePV);
+    else globalScaleFactor_ *= puWeight_->at (events->at (0).numTruePV);
   }
 
   stopCTauScaleFactor_ = 1.0;
   if (datasetType_ == "signalMC" && regex_match (dataset_, regex ("stop.*to.*_.*mm.*")))
     stopCTauScaleFactor_ = stopCTauWeight_->at (event);
-  eventScaleFactor_ *= stopCTauScaleFactor_;
+  globalScaleFactor_ *= stopCTauScaleFactor_;
 
   topPtScaleFactor_ = 1.0;
   if (doTopPtReweighting_ && dataset_.find("TTbar_")!=string::npos)
     topPtScaleFactor_ = getTopPtWeight();
-  eventScaleFactor_ *= topPtScaleFactor_;
+  globalScaleFactor_ *= topPtScaleFactor_;
 
-  double factor = eventScaleFactor_;
+
   //loop over all channels
-
   auto_ptr<map<string, bool> > channelDecisions (new map<string, bool>);
+
   for(uint currentChannelIndex = 0; currentChannelIndex != channels.size(); currentChannelIndex++){
-    eventScaleFactor_ = factor;
 
     channel currentChannel = channels.at(currentChannelIndex);
     if (verbose_>1) clog << " Processing channel " << currentChannel.name << endl;
@@ -958,7 +964,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     //loop over all cuts
     for(uint currentCutIndex = 0; currentCutIndex != currentChannel.cuts.size(); currentCutIndex++){
       cut currentCut = currentChannel.cuts.at(currentCutIndex);
-      if (verbose_>2) clog << "  Processing cut, index: " << currentCutIndex << ", input collection: " << currentCut.inputCollection << ", name: " << currentCut.name << endl;  
+      if (verbose_>2) clog << "  Processing cut, index: " << currentCutIndex << ", input collection: " << currentCut.inputCollection << ", name: " << currentCut.name << endl;
 
       for(uint currentObjectIndex = 0; currentObjectIndex != objectsToFlag.size(); currentObjectIndex++){
         string currentObject = objectsToFlag.at(currentObjectIndex);
@@ -971,12 +977,13 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
       //set flags for all relevant objects
       for(int currentObjectIndex = -1; currentObjectIndex != int(objectsToFlag.size()); currentObjectIndex++){
-	string currentObject;  
-	if (currentObjectIndex < 0) currentObject = currentCut.inputCollection;  // In the first loop, set the flags for the collection that the cut is acting on.  That way other paired collections can access the correct flag for the current cut.  
+        string currentObject;
+        if (currentObjectIndex < 0) currentObject = currentCut.inputCollection;  // In the first loop, set the flags for the collection that the cut is acting on.
+                                                                                 // That way other paired collections can access the correct flag for the current cut.
         else currentObject = objectsToFlag.at(currentObjectIndex);
-	if (currentObjectIndex >= 0 && currentObject == currentCut.inputCollection) continue;  // Flags have already been set for the inputCollection object, so should not be set again.  
+        if (currentObjectIndex >= 0 && currentObject == currentCut.inputCollection) continue;  // Flags have already been set for the inputCollection object, so should not be set again.
 
-	// single object collections
+        // single object collections
         if     (currentObject == "jets")                setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),"jets");
         else if(currentObject == "secondary jets")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),"secondary jets");
         else if(currentObject == "secondary photons")   setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,photons.product(),"secondary photons");
@@ -998,7 +1005,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "trigobjs")            setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,trigobjs.product(),"trigobjs");
 
 
-	// paired object collections  
+        // paired object collections
         else if(currentObject == "muon-muon pairs")                   setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),muons.product(), "muon-muon pairs");
         else if(currentObject == "muon-secondary muon pairs")         setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),secMuons.product(), "muon-secondary muon pairs");
 
@@ -1018,7 +1025,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "muon-jet pairs")          setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),jets.product(), "muon-jet pairs");
         else if(currentObject == "muon-event pairs")        setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),events.product(), "muon-event pairs");
         else if(currentObject == "met-jet pairs")           setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,mets.product(),jets.product(), "met-jet pairs");
-	else if(currentObject == "track-jet pairs")         setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),jets.product(), "track-jet pairs");
+        else if(currentObject == "track-jet pairs")         setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),jets.product(), "track-jet pairs");
         else if(currentObject == "muon-photon pairs")       setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),photons.product(), "muon-photon pairs");
         else if(currentObject == "track-event pairs")       setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),events.product(), "track-event pairs");
         else if(currentObject == "electron-track pairs")    setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),tracks.product(),"electron-track pairs");
@@ -1039,7 +1046,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
 
     //use cumulative flags to apply cuts at event level
-    vector<bool> eventPassedPreviousCuts;    //a vector to store cumulative cut descisions after each cut.
+    vector<bool> eventPassedPreviousCuts;    //a vector to store cumulative cut decisions after each cut.
     bool eventPassedAllCuts = true;
     eventPassedAllCuts = eventPassedAllCuts && triggerDecision;    //apply trigger (true if none were specified)
 
@@ -1055,60 +1062,65 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
       }
       bool cutDecision;
       if (!currentCut.isVeto) {
-	cutDecision = evaluateComparison(numberPassing,currentCut.eventComparativeOperator,currentCut.numberRequired);
+        cutDecision = evaluateComparison(numberPassing,currentCut.eventComparativeOperator,currentCut.numberRequired);
       } else {
-	int prevCutIndex = currentCutIndex - 1; 
-	if (prevCutIndex<0) {
-	  numberPassingPrev = cumulativeFlags.at(currentCut.inputCollection).at(currentCutIndex).size();  // count all objects in collection if cut is the first 
-	} else {
-	  for (uint object = 0; object != cumulativeFlags.at(currentCut.inputCollection).at(prevCutIndex).size() ; object++){
-	    if (cumulativeFlags.at(currentCut.inputCollection).at(prevCutIndex).at(object).first) { 
-	      numberPassingPrev++;
-	      if (verbose_>1) clog << " object passed previous cut" << endl;  
-	    }
-	  }  
-	}  
-	int numberFailCut = numberPassingPrev - numberPassing;
-	cutDecision = evaluateComparison(numberFailCut,currentCut.eventComparativeOperator,currentCut.numberRequired);  
+        int prevCutIndex = currentCutIndex - 1;
+        if (prevCutIndex<0) {
+          numberPassingPrev = cumulativeFlags.at(currentCut.inputCollection).at(currentCutIndex).size();  // count all objects in collection if cut is the first
+        } else {
+          for (uint object = 0; object != cumulativeFlags.at(currentCut.inputCollection).at(prevCutIndex).size() ; object++){
+            if (cumulativeFlags.at(currentCut.inputCollection).at(prevCutIndex).at(object).first) {
+              numberPassingPrev++;
+              if (verbose_>1) clog << " object passed previous cut" << endl;
+            }
+          }
+        }
+        int numberFailCut = numberPassingPrev - numberPassing;
+        cutDecision = evaluateComparison(numberFailCut,currentCut.eventComparativeOperator,currentCut.numberRequired);
       }
 
       cutFlows_.at(currentChannelIndex)->at (currentCut.name) = cutDecision;
       eventPassedAllCuts = eventPassedAllCuts && cutDecision;
       eventPassedPreviousCuts.push_back(eventPassedAllCuts);
-      if (verbose_>1) clog << " Event passed cuts up to cut index " << currentCutIndex << endl;  
+      if (verbose_>1) clog << " Event passed cuts up to cut index " << currentCutIndex << endl;
 
     }
+
     //applying all appropriate scale factors for individual objects
+
+    channelScaleFactor_ = 1.0; //this variable holds the product of all SFs calculated separately for each channel
+
     muonScaleFactor_ = electronScaleFactor_ = bTagScaleFactor_ = 1.0;
 
     if(applyLeptonSF_ && datasetType_ != "data"){
       //only apply SFs if we've cut on this object
       if(find(objectsToCut.begin(),objectsToCut.end(),"muons") != objectsToCut.end ()){
         flagPair muonFlags;
-	//get the last valid flags in the flag map
+        //get the last valid flags in the flag map
         for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
           if (cumulativeFlags.at("muons").at(i).size()){
             muonFlags = cumulativeFlags.at("muons").at(i);
             break;
           }
         }
-	//apply the weight for each of those objects
+        //apply the weight for each of those objects
         for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
           if(!muonFlags.at(muonIndex).second) continue;
-	  muonScaleFactor_ *= muonSFWeight_->at (muons->at(muonIndex).eta, muons->at(muonIndex).pt);
+          muonScaleFactor_ *= muonSFWeight_->at (muons->at(muonIndex).eta, muons->at(muonIndex).pt);
         }
       }
+
       //only apply SFs if we've cut on this object
       if(find(objectsToCut.begin(),objectsToCut.end(),"electrons") != objectsToCut.end ()){
         flagPair electronFlags;
-	//get the last valid flags in the flag map
+        //get the last valid flags in the flag map
         for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
           if (cumulativeFlags.at("electrons").at(i).size()){
             electronFlags = cumulativeFlags.at("electrons").at(i);
             break;
           }
         }
-	//apply the weight for each of those objects
+        //apply the weight for each of those objects
         for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
           if(!electronFlags.at(electronIndex).second) continue;
           int shiftUpDown = 0;
@@ -1118,19 +1130,20 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         }
       }
     }
+
     if(applyBtagSF_ && datasetType_ != "data"){
       //only apply SFs if we've cut on this object
       if(find(objectsToCut.begin(),objectsToCut.end(),"jets") != objectsToCut.end ()){
-	flagPair jetFlags;
+        flagPair jetFlags;
         vector<double> jetSFs;
-	//get the last valid flags in the flag map
+        //get the last valid flags in the flag map
         for (int i = cumulativeFlags.at("jets").size() - 1; i >= 0; i--){
           if (cumulativeFlags.at("jets").at(i).size()){
             jetFlags = cumulativeFlags.at("jets").at(i);
             break;
           }
         }
-	//apply the weight for each of those objects
+        //apply the weight for each of those objects
         for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++){
           if(!jetFlags.at(jetIndex).second) continue;
           double jetSFTmp = bTagSFWeight_->sflookup(jets->at(jetIndex).btagCombinedSecVertex, jets->at(jetIndex).pt, jets->at(jetIndex).flavour, jets->at(jetIndex).eta);
@@ -1139,17 +1152,23 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         bTagScaleFactor_ *= bTagSFWeight_->weight( jetSFs, minBtag_);
       }
     }
-    eventScaleFactor_ *= muonScaleFactor_;
-    eventScaleFactor_ *= electronScaleFactor_;
-    eventScaleFactor_ *= bTagScaleFactor_;
-    cutFlows_.at(currentChannelIndex)->fillCutFlow(eventScaleFactor_);
-    if (verbose_>1) clog << " Scale factors applied:  "
-			 << " muonScaleFactor_ = " << muonScaleFactor_ 
-			 << ", electronScaleFactor_ = " << electronScaleFactor_
-			 << ", bTagScaleFactor_ = " << bTagScaleFactor_
-			 << ", total scale factor = " << eventScaleFactor_
-			 << endl;   
 
+    channelScaleFactor_ *= muonScaleFactor_;
+    channelScaleFactor_ *= electronScaleFactor_;
+    channelScaleFactor_ *= bTagScaleFactor_;
+
+
+    //calculate the total scale factor for the event and fill the cutflow for each channel
+    eventScaleFactor_ = globalScaleFactor_ * channelScaleFactor_;
+
+    cutFlows_.at(currentChannelIndex)->fillCutFlow(globalScaleFactor_, channelScaleFactor_);
+
+    if (verbose_>1) clog << " Scale factors applied:  "
+                         << " muonScaleFactor_ = " << muonScaleFactor_
+                         << ", electronScaleFactor_ = " << electronScaleFactor_
+                         << ", bTagScaleFactor_ = " << bTagScaleFactor_
+                         << ", total scale factor = " << eventScaleFactor_
+                         << endl;
 
     if (printEventInfo_ && eventPassedAllCuts) {
       // Write information about event to screen, for testing purposes.
@@ -1158,10 +1177,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
            << ":" << events->at(0).lumi
            << ":" << events->at(0).evt
            << endl;
-      if (findEventsLog) { 
-	(*findEventsLog) << events->at(0).run
-			 << ":" << events->at(0).lumi
-			 << ":" << events->at(0).evt << endl;
+      if (findEventsLog) {
+        (*findEventsLog) << events->at(0).run
+                         << ":" << events->at(0).lumi
+                         << ":" << events->at(0).evt << endl;
       }
 
     }
@@ -1170,7 +1189,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     //filling histograms
     for(uint currentCut = 0; currentCut != oneDHists_.at(currentChannelIndex).size(); currentCut++){//loop over all the cuts in each channel; if GetPlotsAfterEachCut_ is false, only the last cut will be used.
 
-      if (verbose_>2) clog << "  Filling histograms for currentcut = " << currentCut << endl;  
+      if (verbose_>2) clog << "  Filling histograms for currentcut = " << currentCut << endl;
 
       uint currentDir;
       if (!GetPlotsAfterEachCut_) { currentDir =  currentChannel.cuts.size() - oneDHists_.at(currentChannelIndex).size(); } //if GetPlotsAfterEachCut_ is false, set currentDir point to the last cut.
@@ -1186,28 +1205,28 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
           if (cumulativeFlags.count(currentHistogram.inputCollection) == 0) clog << "Error: no flags found for collection:  " << currentHistogram.inputCollection << ", will cause a seg fault" << endl;
 
-	  if (verbose_>1) clog << " Filling histogram " << currentHistogram.name << " for collection " << currentHistogram.inputCollection << endl;  
+          if (verbose_>1) clog << " Filling histogram " << currentHistogram.name << " for collection " << currentHistogram.inputCollection << endl;
 
           if(currentHistogram.inputVariables.size() == 1){
             TH1D* histo;
             histo = oneDHists_.at(currentChannelIndex).at(currentCut).at(currentHistogram.name);
-	    if     (currentHistogram.inputCollection == "jets")            fill1DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("jets").at(currentDir),eventScaleFactor_);
+            if     (currentHistogram.inputCollection == "jets")            fill1DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("jets").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary jets")  fill1DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("secondary jets").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary photons")  fill1DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("secondary photons").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muons")           fill1DHistogram(histo,currentHistogram,muons.product(),cumulativeFlags.at("muons").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary muons") fill1DHistogram(histo,currentHistogram,secMuons.product(),cumulativeFlags.at("secondary muons").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary electrons") fill1DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("secondary electrons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-muon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),muons.product(), 
+            else if(currentHistogram.inputCollection == "muon-muon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),muons.product(),
                                                                                            cumulativeFlags.at("muon-muon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-secondary muon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),secMuons.product(), 
+            else if(currentHistogram.inputCollection == "muon-secondary muon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),secMuons.product(),
                                                                                                      cumulativeFlags.at("muon-secondary muon pairs").at(currentDir),eventScaleFactor_);
-             else if(currentHistogram.inputCollection == "muon-secondary photon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),photons.product(), 
+             else if(currentHistogram.inputCollection == "muon-secondary photon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),photons.product(),
                                                                                                      cumulativeFlags.at("muon-secondary photon pairs").at(currentDir),eventScaleFactor_);
-             else if(currentHistogram.inputCollection == "muon-secondary jet pairs") fill1DHistogram(histo,currentHistogram,muons.product(),jets.product(), 
+             else if(currentHistogram.inputCollection == "muon-secondary jet pairs") fill1DHistogram(histo,currentHistogram,muons.product(),jets.product(),
                                                                                                      cumulativeFlags.at("muon-secondary jet pairs").at(currentDir),eventScaleFactor_);
-             else if(currentHistogram.inputCollection == "photon-secondary jet pairs") fill1DHistogram(histo,currentHistogram,photons.product(),jets.product(), 
+             else if(currentHistogram.inputCollection == "photon-secondary jet pairs") fill1DHistogram(histo,currentHistogram,photons.product(),jets.product(),
                                                                                                      cumulativeFlags.at("photon-secondary jet pairs").at(currentDir),eventScaleFactor_);
-             else if(currentHistogram.inputCollection == "electron-secondary jet pairs") fill1DHistogram(histo,currentHistogram,electrons.product(),jets.product(), 
+             else if(currentHistogram.inputCollection == "electron-secondary jet pairs") fill1DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
                                                                                                      cumulativeFlags.at("electron-secondary jet pairs").at(currentDir),eventScaleFactor_);
 
             else if(currentHistogram.inputCollection == "electrons") fill1DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("electrons").at(currentDir),eventScaleFactor_);
@@ -1215,28 +1234,28 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                                    cumulativeFlags.at("electron-electron pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "jet-jet pairs") fill1DHistogram(histo,currentHistogram,jets.product(),jets.product(),
                                                                                          cumulativeFlags.at("jet-jet pairs").at(currentDir),eventScaleFactor_);
-             else if(currentHistogram.inputCollection == "jet-secondary jet pairs") fill1DHistogram(histo,currentHistogram,jets.product(),jets.product(), 
+             else if(currentHistogram.inputCollection == "jet-secondary jet pairs") fill1DHistogram(histo,currentHistogram,jets.product(),jets.product(),
                                                                                                      cumulativeFlags.at("jet-secondary jet pairs").at(currentDir),eventScaleFactor_);
 
-            else if(currentHistogram.inputCollection == "electron-secondary electron pairs") fill1DHistogram(histo,currentHistogram,electrons.product(),electrons.product(), 
+            else if(currentHistogram.inputCollection == "electron-secondary electron pairs") fill1DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
                                                                                                              cumulativeFlags.at("electron-secondary electron pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-muon pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),muons.product(), 
+            else if(currentHistogram.inputCollection == "electron-muon pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),muons.product(),
                                                                                                cumulativeFlags.at("electron-muon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-jet pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "electron-jet pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),jets.product(),
                                                                                               cumulativeFlags.at("electron-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "photon-jet pairs") fill1DHistogram(histo,currentHistogram, photons.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "photon-jet pairs") fill1DHistogram(histo,currentHistogram, photons.product(),jets.product(),
                                                                                               cumulativeFlags.at("photon-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-jet pairs") fill1DHistogram(histo,currentHistogram, muons.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "muon-jet pairs") fill1DHistogram(histo,currentHistogram, muons.product(),jets.product(),
                                                                                           cumulativeFlags.at("muon-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-event pairs") fill1DHistogram(histo,currentHistogram, muons.product(),events.product(), 
+            else if(currentHistogram.inputCollection == "muon-event pairs") fill1DHistogram(histo,currentHistogram, muons.product(),events.product(),
                                                                                           cumulativeFlags.at("muon-event pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "met-jet pairs")  fill1DHistogram(histo,currentHistogram, mets.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "met-jet pairs")  fill1DHistogram(histo,currentHistogram, mets.product(),jets.product(),
                                                                                           cumulativeFlags.at("met-jet pairs").at(currentDir),eventScaleFactor_);
-	    else if(currentHistogram.inputCollection == "track-jet pairs")  fill1DHistogram(histo,currentHistogram,tracks.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "track-jet pairs")  fill1DHistogram(histo,currentHistogram,tracks.product(),jets.product(),
                                                                                           cumulativeFlags.at("track-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-photon pairs") fill1DHistogram(histo,currentHistogram, muons.product(),photons.product(), 
+            else if(currentHistogram.inputCollection == "muon-photon pairs") fill1DHistogram(histo,currentHistogram, muons.product(),photons.product(),
                                                                                           cumulativeFlags.at("muon-photon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-photon pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),photons.product(), 
+            else if(currentHistogram.inputCollection == "electron-photon pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),photons.product(),
                                                                                           cumulativeFlags.at("electron-photon pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-track pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),tracks.product(),
                                                                                                 cumulativeFlags.at("electron-track pairs").at(currentDir),eventScaleFactor_);
@@ -1254,8 +1273,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                                   cumulativeFlags.at("electron-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-trigobj pairs") fill1DHistogram(histo,currentHistogram, muons.product(),trigobjs.product(),
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
-
+            // fill the histograms of weighting factors with 1, to see the shape of a SF without any weight applied
+            else if(currentHistogram.inputCollection == "events" && currentHistogram.name.find("ScaleFactor")!=string::npos) fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),1.0);
             else if(currentHistogram.inputCollection == "events") fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
+
             else if(currentHistogram.inputCollection == "taus") fill1DHistogram(histo,currentHistogram,taus.product(),cumulativeFlags.at("taus").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "mets") fill1DHistogram(histo,currentHistogram,mets.product(),cumulativeFlags.at("mets").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "tracks") fill1DHistogram(histo,currentHistogram,tracks.product(),cumulativeFlags.at("tracks").at(currentDir),eventScaleFactor_);
@@ -1277,43 +1298,43 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
             else if(currentHistogram.inputCollection == "secondary photons")  fill2DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("secondary photons").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muons")           fill2DHistogram(histo,currentHistogram,muons.product(),cumulativeFlags.at("muons").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary muons") fill2DHistogram(histo,currentHistogram,secMuons.product(),cumulativeFlags.at("secondary muons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-muon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),muons.product(), 
+            else if(currentHistogram.inputCollection == "muon-muon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),muons.product(),
                                                                                            cumulativeFlags.at("muon-muon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-secondary muon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),secMuons.product(), 
+            else if(currentHistogram.inputCollection == "muon-secondary muon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),secMuons.product(),
                                                                                                      cumulativeFlags.at("muon-secondary muon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-secondary photon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),photons.product(), 
+            else if(currentHistogram.inputCollection == "muon-secondary photon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),photons.product(),
                                                                                                      cumulativeFlags.at("muon-secondary photon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-secondary jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "muon-secondary jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(),
                                                                                                      cumulativeFlags.at("muon-secondary jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-secondary jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "electron-secondary jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
                                                                                                      cumulativeFlags.at("electron-secondary jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "photon-secondary jet pairs") fill2DHistogram(histo,currentHistogram,photons.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "photon-secondary jet pairs") fill2DHistogram(histo,currentHistogram,photons.product(),jets.product(),
                                                                                                      cumulativeFlags.at("photon-secondary jet pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electrons") fill2DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("electrons").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary electrons") fill2DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("secondary electrons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-electron pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),electrons.product(), 
+            else if(currentHistogram.inputCollection == "electron-electron pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
                                                                                                    cumulativeFlags.at("electron-electron pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "jet-jet pairs") fill2DHistogram(histo,currentHistogram,jets.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "jet-jet pairs") fill2DHistogram(histo,currentHistogram,jets.product(),jets.product(),
                                                                                          cumulativeFlags.at("jet-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-secondary electron pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),electrons.product(), 
+            else if(currentHistogram.inputCollection == "electron-secondary electron pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
                                                                                                              cumulativeFlags.at("electron-secondary electron pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-muon pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),muons.product(), 
+            else if(currentHistogram.inputCollection == "electron-muon pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),muons.product(),
                                                                                                cumulativeFlags.at("electron-muon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "electron-jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
                                                                                               cumulativeFlags.at("electron-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-photon pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),photons.product(), 
+            else if(currentHistogram.inputCollection == "electron-photon pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),photons.product(),
                                                                                               cumulativeFlags.at("electron-photon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "muon-jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(),
                                                                                           cumulativeFlags.at("muon-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-event pairs") fill2DHistogram(histo,currentHistogram,muons.product(),events.product(), 
+            else if(currentHistogram.inputCollection == "muon-event pairs") fill2DHistogram(histo,currentHistogram,muons.product(),events.product(),
                                                                                           cumulativeFlags.at("muon-event pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "met-jet pairs") fill2DHistogram(histo,currentHistogram,mets.product(),jets.product(), 
-											 cumulativeFlags.at("met-jet pairs").at(currentDir),eventScaleFactor_);
-	    else if(currentHistogram.inputCollection == "track-jet pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "met-jet pairs") fill2DHistogram(histo,currentHistogram,mets.product(),jets.product(),
+                                                                                         cumulativeFlags.at("met-jet pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "track-jet pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),jets.product(),
                                                                                          cumulativeFlags.at("track-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "photon-jet pairs") fill2DHistogram(histo,currentHistogram,photons.product(),jets.product(), 
+            else if(currentHistogram.inputCollection == "photon-jet pairs") fill2DHistogram(histo,currentHistogram,photons.product(),jets.product(),
                                                                                           cumulativeFlags.at("photon-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-photon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),photons.product(), 
+            else if(currentHistogram.inputCollection == "muon-photon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),photons.product(),
                                                                                           cumulativeFlags.at("muon-photon pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-track pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),tracks.product(),
                                                                                                 cumulativeFlags.at("electron-track pairs").at(currentDir),eventScaleFactor_);
@@ -1357,7 +1378,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           string currentObject = objectsToPlot.at(currentObjectIndex);
           string objectToPlot = "";
 
-	  if (verbose_) clog << "Filling histogram of number of selected objects in collection: " << currentObject << endl;  
+          if (verbose_) clog << "Filling histogram of number of selected objects in collection: " << currentObject << endl;
 
           // Name of objectToPlot here must match the name specified in OSUAnalysis::OSUAnalysis().
           if(currentObject == "muon-muon pairs")                         objectToPlot = "dimuonPairs";
@@ -1403,11 +1424,11 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           if(find(objectsToPlot.begin(), objectsToPlot.end(), currentObject) != objectsToPlot.end()) {
             flagPair lastCutFlags = cumulativeFlags.at(currentObject).at(currentDir);
             int numToPlot = 0;
-            for (uint iObj = 0; iObj != lastCutFlags.size(); iObj++){  // loop over all the objects  
+            for (uint iObj = 0; iObj != lastCutFlags.size(); iObj++){  // loop over all the objects
               if(lastCutFlags.at(iObj).second) {
-		numToPlot++;  
-		if (verbose_>3) clog << "   Found object " << iObj << " in collection " << currentObject << " to plot." << endl;
-	      }
+                numToPlot++;
+                if (verbose_>3) clog << "   Found object " << iObj << " in collection " << currentObject << " to plot." << endl;
+              }
             }
 
             if(objectToPlot == "primaryvertexs"){
@@ -1415,7 +1436,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
               oneDHists_.at(currentChannelIndex).at(currentCut).at(histoName+"AfterPileupCorrection")->Fill(primaryvertexs->size(),eventScaleFactor_);
             }
             else {
-	      if (printEventInfo_) clog << "Number of selected " << objectToPlot << " to plot:  " << numToPlot << endl;  
+              if (printEventInfo_) clog << "Number of selected " << objectToPlot << " to plot:  " << numToPlot << endl;
               oneDHists_.at(currentChannelIndex).at(currentCut).at(histoName)->Fill(numToPlot,eventScaleFactor_);
             }
           }
@@ -1455,10 +1476,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(coll == "stops"
                 && datasetType_ == "signalMC") assignTreeBranch(brSpecs,stops.product(),         cumulativeFlags.at(coll).back());
       } // end loop over branches
-      // set the evtLong, runInt, and lumiInt variables separately, since they are not type float  
-      BNTreeBranchVals_evtLong_ = events->at(0).evt; 
-      BNTreeBranchVals_runInt_  = events->at(0).run; 
-      BNTreeBranchVals_lumiInt_ = events->at(0).lumi; 
+      // set the evtLong, runInt, and lumiInt variables separately, since they are not type float
+      BNTreeBranchVals_evtLong_ = events->at(0).evt;
+      BNTreeBranchVals_runInt_  = events->at(0).run;
+      BNTreeBranchVals_lumiInt_ = events->at(0).lumi;
 
       if (!BNTrees_.at(currentChannelIndex)) { clog << "ERROR:  Undefined BNTree.  Will likely seg fault." << endl; }
       BNTrees_.at(currentChannelIndex)->Fill();  // only fill if event has passed cuts
@@ -1472,9 +1493,9 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
   event.put (channelDecisions, "channelDecisions");
 
-  isFirstEvent_ = false;  
+  isFirstEvent_ = false;
 
-  if (verbose_) clog << "Finished OSUAnalysis::produce." << endl;  
+  if (verbose_) clog << "Finished OSUAnalysis::produce." << endl;
 
 } // end void OSUAnalysis::produce (const edm::Event &event, const edm::EventSetup &setup)
 
@@ -1721,8 +1742,8 @@ OSUAnalysis::valueLookup (const BNjet* object, string variable, string function,
 
   //user defined variable
   else if(variable == "disappTrkLeadingJetID") {
-    value = object->pt > 110 
-      && fabs(object->eta) < 2.4 
+    value = object->pt > 110
+      && fabs(object->eta) < 2.4
       && object->chargedHadronEnergyFraction > 0.2
       && object->neutralHadronEnergyFraction < 0.7
       && object->chargedEmEnergyFraction < 0.5
@@ -1920,7 +1941,7 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
   }
 
   else if(variable == "looseIDGlobalMuon") {
-    value = object->pt > 10 && 
+    value = object->pt > 10 &&
       object->isGlobalMuon  > 0;
   }
   else if(variable == "correctedD0VertexErr") value =  hypot (object->tkD0err, hypot (chosenVertex ()->xError, chosenVertex ()->yError));
@@ -1940,15 +1961,15 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
       value = -999;
   }
   else if(variable == "ptPlusMet") {
-    // Calculate the magnitude of the vector sum of the muon pT and the Met.  
+    // Calculate the magnitude of the vector sum of the muon pT and the Met.
     if (const BNmet *met = chosenMET ())
       {
-	TVector2 p2Met;
-	TVector2 p2Muon;
-	p2Met. SetMagPhi(   met->pt,    met->phi);
-	p2Muon.SetMagPhi(object->pt, object->phi);  
-	TVector2 p2MetElec = p2Met + p2Muon;
-        value = p2MetElec.Mod();  
+        TVector2 p2Met;
+        TVector2 p2Muon;
+        p2Met. SetMagPhi(   met->pt,    met->phi);
+        p2Muon.SetMagPhi(object->pt, object->phi);
+        TVector2 p2MetElec = p2Met + p2Muon;
+        value = p2MetElec.Mod();
       }
     else
       value = -999;
@@ -2325,15 +2346,15 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
   }
 
   else if(variable == "ptPlusMet") {
-    // Calculate the magnitude of the vector sum of the electron pT and the Met.  
+    // Calculate the magnitude of the vector sum of the electron pT and the Met.
     if (const BNmet *met = chosenMET ())
       {
-	TVector2 p2Met;
-	TVector2 p2Elec;
-	p2Met. SetMagPhi(   met->pt,    met->phi);
-	p2Elec.SetMagPhi(object->pt, object->phi);  
-	TVector2 p2MetElec = p2Met + p2Elec;
-        value = p2MetElec.Mod();  
+        TVector2 p2Met;
+        TVector2 p2Elec;
+        p2Met. SetMagPhi(   met->pt,    met->phi);
+        p2Elec.SetMagPhi(object->pt, object->phi);
+        TVector2 p2MetElec = p2Met + p2Elec;
+        value = p2MetElec.Mod();
       }
     else
       value = -999;
@@ -2451,7 +2472,7 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
   }
 
   else if(variable == "looseID_MVA"){
-    value = object->pt > 10 
+    value = object->pt > 10
       && object->mvaNonTrigV0 > 0;
       }
   else if(variable == "correctedD0VertexInEBPositiveCharge"){
@@ -2675,10 +2696,12 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "bTagScaleFactor") value = bTagScaleFactor_;
   else if(variable == "topPtScaleFactor") value = topPtScaleFactor_;
   else if(variable == "triggerScaleFactor") value = triggerScaleFactor_;
+  else if(variable == "globalScaleFactor") value = globalScaleFactor_;
+  else if(variable == "channelScaleFactor") value = channelScaleFactor_;
   else if(variable == "eventScaleFactor") value = eventScaleFactor_;
-  else if(variable == "unfilteredHt") value = getHt(jets.product()); 
+  else if(variable == "unfilteredHt") value = getHt(jets.product());
   else if(variable == "ht") value = chosenHT ();
-  else if(variable == "unfilteredSt") value = getSt(electrons.product(),muons.product(),jets.product()); 
+  else if(variable == "unfilteredSt") value = getSt(electrons.product(),muons.product(),jets.product());
   else if(variable == "st") value = chosenST ();
 
   else if(variable == "leadMuPairInvMass"){
@@ -2763,10 +2786,10 @@ OSUAnalysis::valueLookup (const BNtau* object, string variable, string function,
 
   else if (variable == "looseHadronicID") {
     //criteria taken from http://cms.cern.ch/iCMS/jsp/db_notes/showNoteDetails.jsp?noteID=CMS%20AN-2011/019
-    value = object->pt > 30 
-      && fabs(object->eta) < 2.3 
+    value = object->pt > 30
+      && fabs(object->eta) < 2.3
       && object->HPSbyLooseCombinedIsolationDeltaBetaCorr > 0
-      && object->HPSdecayModeFinding > 0 
+      && object->HPSdecayModeFinding > 0
       && object->HPSagainstElectronLoose > 0
       && object->HPSagainstMuonTight > 0;
   }
@@ -2936,7 +2959,7 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
   else if(variable == "nHitsMissingMiddle") value = object->nHitsMissingMiddle;
   else if(variable == "depTrkRp3")          value = object->depTrkRp3;
   else if(variable == "trkRelIsoRp3")     { value = (object->depTrkRp3 - object->pt) / object->pt; if (value<0) value = 0; }
-  else if(variable == "trkRelIsoRp5")     { value = (object->depTrkRp5 - object->pt) / object->pt; if (value<0) value = 0; } 
+  else if(variable == "trkRelIsoRp5")     { value = (object->depTrkRp5 - object->pt) / object->pt; if (value<0) value = 0; }
   else if(variable == "depEcalRp3")         value = object->depEcalRp3;
   else if(variable == "depHcalRp3")         value = object->depHcalRp3;
   else if(variable == "depHoRp3")           value = object->depHoRp3;
@@ -2952,8 +2975,8 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
   else if(variable == "nTracksRp5")         value = object->nTracksRp5;
   else if(variable == "trackerVetoPtRp5")   value = object->trackerVetoPtRp5;
   else if(variable == "emVetoEtRp5")        value = object->emVetoEtRp5;
-  else if(variable == "hadVetoEtRp5")       value = object->hadVetoEtRp5; 
-  else if(variable == "hoVetoEtRp5")        value = object->hoVetoEtRp5; 
+  else if(variable == "hadVetoEtRp5")       value = object->hadVetoEtRp5;
+  else if(variable == "hoVetoEtRp5")        value = object->hoVetoEtRp5;
 
   //user defined variables
   else if(variable == "d0wrtBS") value = (object->vx-events->at(0).BSx)*object->py/object->pt - (object->vy-events->at(0).BSy)*object->px/object->pt;
@@ -2961,12 +2984,12 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
   else if(variable == "depTrkRp5MinusPt"){
     if ( (object->depTrkRp5 - object->pt) < 0 ) {
 //       clog << "Warning:  found track with depTrkRp5 < pt:  depTrkRp5=" << object->depTrkRp5
-// 	   << "; pt=" << object->pt 
-// 	   << "; object->depTrkRp5 - object->pt = " << object->depTrkRp5 - object->pt
-// 	   << endl;  
-	   value = 0;
-	 }
-	 else value =  (object->depTrkRp5 - object->pt);
+//            << "; pt=" << object->pt
+//            << "; object->depTrkRp5 - object->pt = " << object->depTrkRp5 - object->pt
+//            << endl;
+           value = 0;
+         }
+         else value =  (object->depTrkRp5 - object->pt);
   }
   else if(variable == "depTrkRp3MinusPt"){
     if ( (object->depTrkRp3 - object->pt) < 0 ) {
@@ -2980,8 +3003,8 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
       value = deltaPhi (object->phi, met->phi);
     } else value = -999;
   }
-  
-  
+
+
   else if(variable == "caloTotDeltaRp5")            value =  (object->caloHadDeltaRp5 + object->caloEMDeltaRp5);
   else if(variable == "caloTotDeltaRp5ByP")         value = ((object->caloHadDeltaRp5 + object->caloEMDeltaRp5)/pMag);
   else if(variable == "caloTotDeltaRp5RhoCorr")     value = getTrkCaloTotRhoCorr(object);
@@ -2993,8 +3016,8 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
     if ( (getTrkDepTrkRp5RhoCorr(object) - object->pt) < 0 ) value = 0;
     else {value = (getTrkDepTrkRp5RhoCorr(object) - object->pt );}
   }
-  
-  else if(variable == "depTrkRp3MinusPtRhoCorr")    
+
+  else if(variable == "depTrkRp3MinusPtRhoCorr")
     {
       if ( (getTrkDepTrkRp3RhoCorr(object) - object->pt) < 0 ) value = 0;
       else {value = (getTrkDepTrkRp3RhoCorr(object) - object->pt );}
@@ -3025,89 +3048,89 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
   }
 
   else if(variable == "deltaRMinSubLeadJet") {
-    // calculate minimum deltaR between track and any other subleading jet  
-    double trkJetDeltaRMin = 99.;  
+    // calculate minimum deltaR between track and any other subleading jet
+    double trkJetDeltaRMin = 99.;
     if (!jets.product()) clog << "ERROR:  cannot find deltaRMinSubLeadJet because jets collection is not initialized." << endl;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
-      string empty = "";  
-      double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID", "", empty);  
-      if (!isSubLeadingJet) continue;  // only consider jets that pass the subleading jet ID criteria  
-      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty); 
-      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty); 
-      double trkJetDeltaR = deltaR(object->eta, object->phi, jetEta, jetPhi);  
+      string empty = "";
+      double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID", "", empty);
+      if (!isSubLeadingJet) continue;  // only consider jets that pass the subleading jet ID criteria
+      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty);
+      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
+      double trkJetDeltaR = deltaR(object->eta, object->phi, jetEta, jetPhi);
       if (trkJetDeltaR < trkJetDeltaRMin) trkJetDeltaRMin = trkJetDeltaR;
     }
-    value = trkJetDeltaRMin;  
-  }  
-  
+    value = trkJetDeltaRMin;
+  }
+
   else if(variable == "deltaRMinElecLooseMvaId") {
     // calculate minimum deltaR between track and any other electron passing loose mva ID, i.e., mvaNonTrigV0 > 0
-    double trkElecDeltaRMin = 99.;  
+    double trkElecDeltaRMin = 99.;
     if (!electrons.product()) clog << "ERROR:  cannot find deltaRMinElecLooseMvaId because electrons collection is not initialized." << endl;
     for (uint ielec = 0; ielec<electrons->size(); ielec++) {
-      string empty = "";  
-      double mvaNonTrigV0 = valueLookup(&electrons->at(ielec), "mvaNonTrigV0", "", empty);  
-      if (mvaNonTrigV0 < 0) continue;  // only consider electrons with mvaNonTrigV0 > 0  
-      double elecEta = valueLookup(&electrons->at(ielec), "eta", "", empty); 
-      double elecPhi = valueLookup(&electrons->at(ielec), "phi", "", empty); 
-      double trkElecDeltaR = deltaR(object->eta, object->phi, elecEta, elecPhi);  
+      string empty = "";
+      double mvaNonTrigV0 = valueLookup(&electrons->at(ielec), "mvaNonTrigV0", "", empty);
+      if (mvaNonTrigV0 < 0) continue;  // only consider electrons with mvaNonTrigV0 > 0
+      double elecEta = valueLookup(&electrons->at(ielec), "eta", "", empty);
+      double elecPhi = valueLookup(&electrons->at(ielec), "phi", "", empty);
+      double trkElecDeltaR = deltaR(object->eta, object->phi, elecEta, elecPhi);
       if (trkElecDeltaR < trkElecDeltaRMin) trkElecDeltaRMin = trkElecDeltaR;
     }
-    value = trkElecDeltaRMin;  
-  }  
+    value = trkElecDeltaRMin;
+  }
 
   else if(variable == "deltaRMinMuonLooseId") {
     // calculate minimum deltaR between track and any other loose-Id muon
-    double trkMuonDeltaRMin = 99.;  
+    double trkMuonDeltaRMin = 99.;
     if (!muons.product()) clog << "ERROR:  cannot find deltaRMinMuonLooseId because muons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<muons->size(); imuon++) {
-      string empty = "";  
-      double isLooseIdMuon = valueLookup(&muons->at(imuon), "looseID", "", empty);  
-      if (!isLooseIdMuon) continue;  // only consider muons that pass the looseID criteria  
-      double muonEta = valueLookup(&muons->at(imuon), "eta", "", empty); 
-      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty); 
-      double trkMuonDeltaR = deltaR(object->eta, object->phi, muonEta, muonPhi);  
+      string empty = "";
+      double isLooseIdMuon = valueLookup(&muons->at(imuon), "looseID", "", empty);
+      if (!isLooseIdMuon) continue;  // only consider muons that pass the looseID criteria
+      double muonEta = valueLookup(&muons->at(imuon), "eta", "", empty);
+      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty);
+      double trkMuonDeltaR = deltaR(object->eta, object->phi, muonEta, muonPhi);
       if (trkMuonDeltaR < trkMuonDeltaRMin) trkMuonDeltaRMin = trkMuonDeltaR;
     }
-    value = trkMuonDeltaRMin;  
-  }  
+    value = trkMuonDeltaRMin;
+  }
   else if(variable == "isPassMuonLooseID") {
     string empty = "";
     double trkMuonDeltaRMin = valueLookup(object, "deltaRMinMuonLooseId", "", empty);
-    if (trkMuonDeltaRMin  < 0.15) value = 1;  
-    else                          value = 0;     
+    if (trkMuonDeltaRMin  < 0.15) value = 1;
+    else                          value = 0;
   }
   else if(variable == "deltaRMinSecMuonLooseIdGlobal") {
     // calculate minimum deltaR between track and any other loose-Id muon
-    double trkMuonDeltaRMin = 99.;  
+    double trkMuonDeltaRMin = 99.;
     if (!secMuons.product()) clog << "ERROR:  cannot find deltaRMinSecMuonLooseIdGlobal because secMuons collection is not initialized." << endl;
-    for (uint imuon = 0; imuon<secMuons->size(); imuon++) {  
-      string empty = "";  
-      double isLooseIdMuon = valueLookup(&secMuons->at(imuon), "looseIDGlobalMuon", "", empty);  
-      if (!isLooseIdMuon) continue;  // only consider muons that pass the looseIDGlobal criteria  
-      double muonEta = valueLookup(&secMuons->at(imuon), "eta", "", empty); 
-      double muonPhi = valueLookup(&secMuons->at(imuon), "phi", "", empty); 
-      double trkMuonDeltaR = deltaR(object->eta, object->phi, muonEta, muonPhi);  
+    for (uint imuon = 0; imuon<secMuons->size(); imuon++) {
+      string empty = "";
+      double isLooseIdMuon = valueLookup(&secMuons->at(imuon), "looseIDGlobalMuon", "", empty);
+      if (!isLooseIdMuon) continue;  // only consider muons that pass the looseIDGlobal criteria
+      double muonEta = valueLookup(&secMuons->at(imuon), "eta", "", empty);
+      double muonPhi = valueLookup(&secMuons->at(imuon), "phi", "", empty);
+      double trkMuonDeltaR = deltaR(object->eta, object->phi, muonEta, muonPhi);
       if (trkMuonDeltaR < trkMuonDeltaRMin) trkMuonDeltaRMin = trkMuonDeltaR;
     }
-    value = trkMuonDeltaRMin;  
-  }  
-  
+    value = trkMuonDeltaRMin;
+  }
+
   else if(variable == "deltaRMinTauLooseHadronicId") {
-    // calculate minimum deltaR between track and any other tau passing loose hadronic ID  
-    double trkTauDeltaRMin = 99.;  
+    // calculate minimum deltaR between track and any other tau passing loose hadronic ID
+    double trkTauDeltaRMin = 99.;
     if (!taus.product()) clog << "ERROR:  cannot find deltaRMinTauLooseHadronicId because taus collection is not initialized." << endl;
     for (uint itau = 0; itau<taus->size(); itau++) {
-      string empty = "";  
-      double isIdTau = valueLookup(&taus->at(itau), "looseHadronicID", "", empty);  
-      if (!isIdTau) continue;  // only consider taus that pass the loose hadronic ID criteria  
-      double tauEta = valueLookup(&taus->at(itau), "eta", "", empty); 
-      double tauPhi = valueLookup(&taus->at(itau), "phi", "", empty); 
-      double trkTauDeltaR = deltaR(object->eta, object->phi, tauEta, tauPhi);  
+      string empty = "";
+      double isIdTau = valueLookup(&taus->at(itau), "looseHadronicID", "", empty);
+      if (!isIdTau) continue;  // only consider taus that pass the loose hadronic ID criteria
+      double tauEta = valueLookup(&taus->at(itau), "eta", "", empty);
+      double tauPhi = valueLookup(&taus->at(itau), "phi", "", empty);
+      double trkTauDeltaR = deltaR(object->eta, object->phi, tauEta, tauPhi);
       if (trkTauDeltaR < trkTauDeltaRMin) trkTauDeltaRMin = trkTauDeltaR;
     }
-    value = trkTauDeltaRMin;  
-  }  
+    value = trkTauDeltaRMin;
+  }
 
   else if(variable == "genDeltaRLowest") value = getGenDeltaRLowest(object);
 
@@ -3931,7 +3954,7 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNmuon* object2, stri
   return value;
 } // end electron-muon pair valueLookup
 
- 
+
 //!electron-jet pair valueLookup
 double
 OSUAnalysis::valueLookup (const BNelectron* object1, const BNjet* object2, string variable, string function, string &stringValue){
@@ -4064,7 +4087,7 @@ OSUAnalysis::valueLookup (const BNmet* object1, const BNjet* object2, string var
 
   return value;
 
-}  
+}
 
 
 
@@ -4083,7 +4106,7 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNjet* object2, string va
   else if(variable == "muonEta") value = object1->eta;
   else if(variable == "muonPt") value = object1->pt;
   else if(variable == "muonPhi") value = object1->phi;
-  else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);          
+  else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "invMass"){
     TLorentzVector fourVector1(object1->px, object1->py, object1->pz, object1->energy);
@@ -4176,10 +4199,10 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNtrack* object2, str
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "deltaRLooseMvaId") {
-    // only consider electrons that pass "loose MVA id", i.e., mvaNonTrigV0 > 0; 
-    // otherwise return very large value (99)  
+    // only consider electrons that pass "loose MVA id", i.e., mvaNonTrigV0 > 0;
+    // otherwise return very large value (99)
     if (object1->mvaNonTrigV0>0) value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
-    else                         value = 99.;  
+    else                         value = 99.;
   }
   else if(variable == "invMass"){
     fourVector1.SetPtEtaPhiM(object1->pt, object1->eta, object1->phi, electronMass);
@@ -4205,16 +4228,16 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNtrack* object2, string 
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "deltaRLooseID") {
-    // only consider muons that pass looseId criteria; otherwise return very large value (99.)  
-    string empty = "";  
-    double isLooseId = valueLookup(object1, "looseID", "", empty);    
+    // only consider muons that pass looseId criteria; otherwise return very large value (99.)
+    string empty = "";
+    double isLooseId = valueLookup(object1, "looseID", "", empty);
     if (isLooseId) value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
-    else           value = 99.;  
+    else           value = 99.;
   }
   else if(variable == "deltaRGlobalMuon") {
-    // only consider muons that pass looseId criteria; otherwise return very large value (99.)  
+    // only consider muons that pass looseId criteria; otherwise return very large value (99.)
     if (object1->isGlobalMuon) value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
-    else                       value = 99.;  
+    else                       value = 99.;
   }
   else if(variable == "invMass"){
     double pionMass = 0.140;
@@ -4285,17 +4308,17 @@ OSUAnalysis::valueLookup (const BNtau* object1, const BNtrack* object2, string v
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "deltaRLooseHadronicID") {
-    // only consider tau's that pass the loose hadronic ID criteria; otherwise return very large value (99)  
-    string empty = "";  
-    double isLooseHadronicID = valueLookup(object1, "looseHadronicID", "", empty);    
-  
+    // only consider tau's that pass the loose hadronic ID criteria; otherwise return very large value (99)
+    string empty = "";
+    double isLooseHadronicID = valueLookup(object1, "looseHadronicID", "", empty);
+
     if (isLooseHadronicID) value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
-    else                   value = 99.;  
+    else                   value = 99.;
   }
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
   else if(variable == "invMass"){
-    double tauMass = 1.777;  // PDG 2010 
-    double pionMass = 0.140; // PDG 2010  
+    double tauMass = 1.777;  // PDG 2010
+    double pionMass = 0.140; // PDG 2010
     TLorentzVector fourVector1(0, 0, 0, 0);
     TLorentzVector fourVector2(0, 0, 0, 0);
     fourVector1.SetPtEtaPhiM(object1->pt, object1->eta, object1->phi, tauMass);
@@ -4616,14 +4639,14 @@ OSUAnalysis::getTrkCaloTotRhoCorr(const BNtrack* track) {
 
 double
 OSUAnalysis::getTrkDepTrkRp5RhoCorr(const BNtrack* track) {
-  // Return the pile-up (rho) corrected isolation energy, i.e., the total calorimeter energy around the candidate track.               
+  // Return the pile-up (rho) corrected isolation energy, i.e., the total calorimeter energy around the candidate track.
   if (!useTrackCaloRhoCorr_) return -99;
-  // if (!rhokt6CaloJetsHandle_) {                                                                                                     
-  //   clog << "ERROR [getTrkCaloTotRhoCorr]:  The collection rhokt6CaloJetsHandle is not available!" << endl;                         
-  //   return -99;                                                                                                                     
-  // }                                                                                                                                 
+  // if (!rhokt6CaloJetsHandle_) {
+  //   clog << "ERROR [getTrkCaloTotRhoCorr]:  The collection rhokt6CaloJetsHandle is not available!" << endl;
+  //   return -99;
+  // }
   double radDeltaRCone = 0.5;
-  double rhoCorr_kt6CaloJets = *rhokt6CaloJetsHandle_ * TMath::Pi() * pow(radDeltaRCone, 2);  // Define effective area as pi*r^2, where r is radius of DeltaR cone.                                                                                                          
+  double rhoCorr_kt6CaloJets = *rhokt6CaloJetsHandle_ * TMath::Pi() * pow(radDeltaRCone, 2);  // Define effective area as pi*r^2, where r is radius of DeltaR cone.
   double rawDepTrkRp5 = track->depTrkRp5;
  double depTrkRp5RhoCorr = TMath::Max(0., rawDepTrkRp5 - rhoCorr_kt6CaloJets);
  return depTrkRp5RhoCorr;
@@ -4632,19 +4655,19 @@ OSUAnalysis::getTrkDepTrkRp5RhoCorr(const BNtrack* track) {
 
 double
 OSUAnalysis::getTrkDepTrkRp3RhoCorr(const BNtrack* track) {
-  // Return the pile-up (rho) corrected isolation energy, i.e., the total calorimeter energy around the candidate track.                                                 
+  // Return the pile-up (rho) corrected isolation energy, i.e., the total calorimeter energy around the candidate track.
   if (!useTrackCaloRhoCorr_) return -99;
-  // if (!rhokt6CaloJetsHandle_) {                                                                                                                                       
-  //   clog << "ERROR [getTrkCaloTotRhoCorr]:  The collection rhokt6CaloJetsHandle is not available!" << endl;                                                           
-  //   return -99;                                                                                                                                                       
-  // }                                                                                                                                                                   
+  // if (!rhokt6CaloJetsHandle_) {
+  //   clog << "ERROR [getTrkCaloTotRhoCorr]:  The collection rhokt6CaloJetsHandle is not available!" << endl;
+  //   return -99;
+  // }
   double radDeltaRCone = 0.3;
 // Define effective area as pi*r^2, where r is radius of DeltaR cone
-  double rhoCorr_kt6CaloJets = *rhokt6CaloJetsHandle_ * TMath::Pi() * pow(radDeltaRCone, 2);  
+  double rhoCorr_kt6CaloJets = *rhokt6CaloJetsHandle_ * TMath::Pi() * pow(radDeltaRCone, 2);
   double rawDepTrkRp3 = track->depTrkRp3;
   double depTrkRp3RhoCorr = TMath::Max(0., rawDepTrkRp3 - rhoCorr_kt6CaloJets);
   return depTrkRp3RhoCorr;
-  
+
 }
 
 
@@ -4724,8 +4747,8 @@ template <class InputCollection>
 void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap &individualFlags, flagMap &cumulativeFlags, InputCollection inputCollection, string inputType){
 
   if (verbose_>2) clog << "  Beginning setObjectFlags for cut " << currentCutIndex << ": " << currentCut.name
-		       << ", inputType=" << inputType
-		       << endl;  
+                       << ", inputType=" << inputType
+                       << endl;
   if (currentCut.inputCollection.find("pair")!=string::npos)  {
     string obj1, obj2;
     getTwoObjs(currentCut.inputCollection, obj1, obj2);
@@ -4741,7 +4764,7 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
     }
   }
 
-  if (!inputCollection) clog << "ERROR:  invalid input collection for inputType=" << inputType << endl;  
+  if (!inputCollection) clog << "ERROR:  invalid input collection for inputType=" << inputType << endl;
 
   if (verbose_>3) clog << "   Collection size:  " << inputCollection->size() << endl;
 
@@ -4764,14 +4787,14 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
       }
       if(currentCut.numSubcuts == 1) cutDecision = subcutDecisions.at(0);
       else{
-	bool tempDecision = subcutDecisions.at(0);
-	for( int subcutIndex = 1; subcutIndex < currentCut.numSubcuts; subcutIndex++){
-	  if(currentCut.logicalOperators.at(subcutIndex-1) == "&" || currentCut.logicalOperators.at(subcutIndex-1) == "&&")
-	    tempDecision = tempDecision && subcutDecisions.at(subcutIndex);
-	  else if(currentCut.logicalOperators.at(subcutIndex-1) == "|"|| currentCut.logicalOperators.at(subcutIndex-1) == "||")
-	    tempDecision = tempDecision || subcutDecisions.at(subcutIndex);
-	}
-	cutDecision = tempDecision;
+        bool tempDecision = subcutDecisions.at(0);
+        for( int subcutIndex = 1; subcutIndex < currentCut.numSubcuts; subcutIndex++){
+          if(currentCut.logicalOperators.at(subcutIndex-1) == "&" || currentCut.logicalOperators.at(subcutIndex-1) == "&&")
+            tempDecision = tempDecision && subcutDecisions.at(subcutIndex);
+          else if(currentCut.logicalOperators.at(subcutIndex-1) == "|"|| currentCut.logicalOperators.at(subcutIndex-1) == "||")
+            tempDecision = tempDecision || subcutDecisions.at(subcutIndex);
+        }
+        cutDecision = tempDecision;
       }
       //invert the cut if this cut is a veto
       if(currentCut.isVeto) cutDecision = !cutDecision;
@@ -4804,18 +4827,18 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
 
 
 template <class InputCollection1, class InputCollection2>
-void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap &individualFlags, flagMap &cumulativeFlags, 
+void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap &individualFlags, flagMap &cumulativeFlags,
                                  InputCollection1 inputCollection1, InputCollection2 inputCollection2, string inputType){
-  // This function sets the flags for the paired object collection.  
+  // This function sets the flags for the paired object collection.
   // If the cut is applying on the given paired object collection, then the flags for the single object collections are also set.
-  // If not, then the flags for the paired object collection are taken as the AND of the flags for each single object collection.  
+  // If not, then the flags for the paired object collection are taken as the AND of the flags for each single object collection.
 
   if (verbose_>2) clog << "  Beginning setObjectFlags for cut=" << currentCut.name
-		       << ", inputType=" << inputType
-		       << endl;  
+                       << ", inputType=" << inputType
+                       << endl;
 
   bool sameObjects = false;
-  if(typeid(InputCollection1).name() == typeid(InputCollection2).name()) sameObjects = true;  // FIXME:  is sameObjects just the not of isTwoTypesOfObject?  If so, it's redundant.  
+  if(typeid(InputCollection1).name() == typeid(InputCollection2).name()) sameObjects = true;  // FIXME:  is sameObjects just the not of isTwoTypesOfObject?  If so, it's redundant.
 
   // Get the strings for the two objects that make up the pair.
   string obj1Type, obj2Type;
@@ -4833,7 +4856,7 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
     if (isTwoTypesOfObject) { // Only initialize the second object if it is different from the first.
       for (uint object2 = 0; object2 != inputCollection2->size(); object2++)  {
         individualFlags.at(obj2Type).at(currentCutIndex).push_back(make_pair(false,false));
-	cumulativeFlags.at(obj2Type).at(currentCutIndex).push_back(make_pair(false,false));
+        cumulativeFlags.at(obj2Type).at(currentCutIndex).push_back(make_pair(false,false));
       }
     }
   }
@@ -4849,15 +4872,15 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
       bool cutDecision  = true;//object passes if this cut doesn't cut on that type of object
       bool plotDecision = true;
 
-      // Determine whether each pair passes the cut, only if inputCollection is the same as the inputType.  
+      // Determine whether each pair passes the cut, only if inputCollection is the same as the inputType.
       if(currentCut.inputCollection == inputType){
 
         vector<bool> subcutDecisions;
         for( int subcutIndex = 0; subcutIndex != currentCut.numSubcuts; subcutIndex++){
           string stringValue = "";
           double value = valueLookup(&inputCollection1->at(object1), &inputCollection2->at(object2), currentCut.variables.at(subcutIndex), currentCut.functions.at(subcutIndex), stringValue);
-	  if (verbose_>1) clog << currentCut.variables.at(subcutIndex) << " = " << value 
-			       << endl;  
+          if (verbose_>1) clog << currentCut.variables.at(subcutIndex) << " = " << value
+                               << endl;
           if (stringValue == "") subcutDecisions.push_back(evaluateComparison(value,currentCut.comparativeOperators.at(subcutIndex),currentCut.cutValues.at(subcutIndex)));
           else subcutDecisions.push_back(evaluateComparison(stringValue,currentCut.comparativeOperators.at(subcutIndex),currentCut.cutStringValues.at(subcutIndex)));
         }
@@ -4873,31 +4896,31 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
           }
           cutDecision = tempDecision;
         }
-	//invert the cut if this cut is a veto
-	if (currentCut.isVeto) cutDecision = !cutDecision;
-	plotDecision = cutDecision;
+        //invert the cut if this cut is a veto
+        if (currentCut.isVeto) cutDecision = !cutDecision;
+        plotDecision = cutDecision;
 
-	if (verbose_>1)	clog << " cutDecision = " << cutDecision 
-			     << "; for currentCut.inputCollection = " << currentCut.inputCollection
-			     << "; object1 (" << obj1Type << ") = " << object1
-			     << "; object2 (" << obj2Type << ") = " << object2
-			     << endl;  
-	
-	if (cutDecision) {  // only set the flags for the individual objects if the pair object is being cut on
-	  individualFlags.at(obj1Type).at(currentCutIndex).at(object1).first = true;
-	  individualFlags.at(obj2Type).at(currentCutIndex).at(object2).first = true;
-	}
-	if (plotDecision) {  // only set the flags for the individual objects if the pair object is being cut on
-	  individualFlags.at(obj1Type).at(currentCutIndex).at(object1).second = true;
-	  individualFlags.at(obj2Type).at(currentCutIndex).at(object2).second = true;
-	} 
-	
+        if (verbose_>1)        clog << " cutDecision = " << cutDecision
+                             << "; for currentCut.inputCollection = " << currentCut.inputCollection
+                             << "; object1 (" << obj1Type << ") = " << object1
+                             << "; object2 (" << obj2Type << ") = " << object2
+                             << endl;
+
+        if (cutDecision) {  // only set the flags for the individual objects if the pair object is being cut on
+          individualFlags.at(obj1Type).at(currentCutIndex).at(object1).first = true;
+          individualFlags.at(obj2Type).at(currentCutIndex).at(object2).first = true;
+        }
+        if (plotDecision) {  // only set the flags for the individual objects if the pair object is being cut on
+          individualFlags.at(obj1Type).at(currentCutIndex).at(object1).second = true;
+          individualFlags.at(obj2Type).at(currentCutIndex).at(object2).second = true;
+        }
+
 
       } // if(currentCut.inputCollection == inputType){
 
       // The individualFlags will be true if the inputCollection is not the same as the inputType.
-      // They are also independent of the previous flags on the single objects.  
-      individualFlags.at(inputType).at(currentCutIndex).push_back(make_pair(cutDecision,plotDecision));  
+      // They are also independent of the previous flags on the single objects.
+      individualFlags.at(inputType).at(currentCutIndex).push_back(make_pair(cutDecision,plotDecision));
 
 
 
@@ -4907,32 +4930,32 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
       // determine whether this paired object passes this cut AND all previous cuts
       bool previousCumulativeCutFlag = true;
       for(uint previousCutIndex = 0; previousCutIndex != currentCutIndex; previousCutIndex++){
-     	if(previousCumulativeCutFlag && individualFlags.at(inputType).at(previousCutIndex).at(counter).first) previousCumulativeCutFlag = true;
-     	else{ previousCumulativeCutFlag = false; break;}
+             if(previousCumulativeCutFlag && individualFlags.at(inputType).at(previousCutIndex).at(counter).first) previousCumulativeCutFlag = true;
+             else{ previousCumulativeCutFlag = false; break;}
       }
       previousCumulativeCutFlag = previousCumulativeCutFlag && cutDecision;
 
       bool previousCumulativePlotFlag = true;
       for(uint previousCutIndex = 0; previousCutIndex != currentCutIndex; previousCutIndex++){
-	if(previousCumulativePlotFlag && individualFlags.at(inputType).at(previousCutIndex).at(counter).second) previousCumulativePlotFlag = true;
-	else{ previousCumulativePlotFlag = false; break;}
+        if(previousCumulativePlotFlag && individualFlags.at(inputType).at(previousCutIndex).at(counter).second) previousCumulativePlotFlag = true;
+        else{ previousCumulativePlotFlag = false; break;}
       }
       previousCumulativePlotFlag = previousCumulativePlotFlag && plotDecision;
-      
-      // Get the index for the flags of each of the single objects in the pair.  Usually this is the index of the previous cut, i.e., currentCutIndex-1.    
-      int cutIdxFlagsObj1 = max(int(currentCutIndex-1),0); 
-      int cutIdxFlagsObj2 = max(int(currentCutIndex-1),0); 
+
+      // Get the index for the flags of each of the single objects in the pair.  Usually this is the index of the previous cut, i.e., currentCutIndex-1.
+      int cutIdxFlagsObj1 = max(int(currentCutIndex-1),0);
+      int cutIdxFlagsObj2 = max(int(currentCutIndex-1),0);
       // If the inputCollection of the cut is not equal to the inputType but the inputCollection includes objects that are contained in inputType, then use the currentCutIndex for those collections.
-      // For example, if the inputType is jet-jet pairs, and the inputCollection is track-jet pairs, then use currentCutIndex for cutIdxFlagsObj{1,2}, i.e., for both jets.  
-      // For example, if the inputType is jets, and the inputCollection is track-jet pairs, then use currentCutIndex for cutIdxFlagsObj2 (jets) and currentCutIndex-1 for cutIdxFlagsObj1 (tracks).  
-      if (currentCut.inputCollection != inputType) {  
-      	if (currentCut.inputCollection.find(obj1Type)!=string::npos) cutIdxFlagsObj1 = currentCutIndex; 
-      	if (currentCut.inputCollection.find(obj2Type)!=string::npos) cutIdxFlagsObj2 = currentCutIndex; 
-      }  
+      // For example, if the inputType is jet-jet pairs, and the inputCollection is track-jet pairs, then use currentCutIndex for cutIdxFlagsObj{1,2}, i.e., for both jets.
+      // For example, if the inputType is jets, and the inputCollection is track-jet pairs, then use currentCutIndex for cutIdxFlagsObj2 (jets) and currentCutIndex-1 for cutIdxFlagsObj1 (tracks).
+      if (currentCut.inputCollection != inputType) {
+              if (currentCut.inputCollection.find(obj1Type)!=string::npos) cutIdxFlagsObj1 = currentCutIndex;
+              if (currentCut.inputCollection.find(obj2Type)!=string::npos) cutIdxFlagsObj2 = currentCutIndex;
+      }
       flagPair flags1 = cumulativeFlags.at(obj1Type).at(cutIdxFlagsObj1);  // flag for input collection 1
       flagPair flags2 = cumulativeFlags.at(obj2Type).at(cutIdxFlagsObj2);  // flag for input collection 2
-      
-      // The cumulative flag is only true if the paired object cumulative flag is true, and if the single object cumulative flags are true.  
+
+      // The cumulative flag is only true if the paired object cumulative flag is true, and if the single object cumulative flags are true.
       bool currentCumulativeCutFlag = true;
       bool currentCumulativePlotFlag = true;
       if(flags1.size() == 0 && flags2.size() == 0) currentCumulativeCutFlag = previousCumulativeCutFlag;
@@ -4948,14 +4971,14 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
       cumulativeFlags.at(inputType).at(currentCutIndex).push_back(make_pair(currentCumulativeCutFlag,currentCumulativePlotFlag));  // Set the flag for the paired object
 
 
-      if (currentCumulativeCutFlag && currentCut.inputCollection == inputType) {  // Set the flags for the individual objects if the paired object is being cut on.  
+      if (currentCumulativeCutFlag && currentCut.inputCollection == inputType) {  // Set the flags for the individual objects if the paired object is being cut on.
         cumulativeFlags.at(obj1Type).at(currentCutIndex).at(object1).first  = true && getPreviousCumulativeFlags(currentCutIndex, individualFlags, obj1Type, object1, "cut");
         cumulativeFlags.at(obj2Type).at(currentCutIndex).at(object2).first  = true && getPreviousCumulativeFlags(currentCutIndex, individualFlags, obj2Type, object2, "cut");
         cumulativeFlags.at(obj1Type).at(currentCutIndex).at(object1).second = true && getPreviousCumulativeFlags(currentCutIndex, individualFlags, obj1Type, object1, "plot");
         cumulativeFlags.at(obj2Type).at(currentCutIndex).at(object2).second = true && getPreviousCumulativeFlags(currentCutIndex, individualFlags, obj2Type, object2, "plot");
 
-	if (verbose_>1) clog << " previousCumulativeCutFlag for object1 = " << getPreviousCumulativeFlags(currentCutIndex, individualFlags, obj2Type, object1, "cut") << endl;  
-	if (verbose_>1) clog << " previousCumulativeCutFlag for object2 = " << getPreviousCumulativeFlags(currentCutIndex, individualFlags, obj2Type, object2, "cut") << endl;  
+        if (verbose_>1) clog << " previousCumulativeCutFlag for object1 = " << getPreviousCumulativeFlags(currentCutIndex, individualFlags, obj2Type, object1, "cut") << endl;
+        if (verbose_>1) clog << " previousCumulativeCutFlag for object2 = " << getPreviousCumulativeFlags(currentCutIndex, individualFlags, obj2Type, object2, "cut") << endl;
 
       }
 
@@ -5009,7 +5032,7 @@ void OSUAnalysis::assignTreeBranch(BranchSpecs parameters, InputCollection input
 template <class InputCollection>
 void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollection inputCollection, flagPair flags, double scaleFactor){
 
-  if (verbose_>2) clog << "  Filling histogram for " << parameters.name << endl;  
+  if (verbose_>2) clog << "  Filling histogram for " << parameters.name << endl;
 
   for (uint object = 0; object != inputCollection->size(); object++){
 
@@ -5040,8 +5063,8 @@ void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollect
 }
 
 template <class InputCollection1, class InputCollection2>
-void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollection1 inputCollection1, InputCollection2 inputCollection2, 
-				  flagPair pairFlags, double scaleFactor){
+void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollection1 inputCollection1, InputCollection2 inputCollection2,
+                                  flagPair pairFlags, double scaleFactor){
 
   bool sameObjects = false;
   if(typeid(InputCollection1).name() == typeid(InputCollection2).name()) sameObjects = true;
@@ -5072,13 +5095,13 @@ void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollect
       histo->Fill(value,scaleFactor);
 
       if (printEventInfo_) {
-	// Write information about event to screen, for testing purposes.
-	clog << "  Info for event:  value for histogram " << histo->GetName() << ":  " << value 
-	     << " (object1 number " << object1 << "), " 
-	     << " (object2 number " << object2 << ")" 
-	     << endl;
+        // Write information about event to screen, for testing purposes.
+        clog << "  Info for event:  value for histogram " << histo->GetName() << ":  " << value
+             << " (object1 number " << object1 << "), "
+             << " (object2 number " << object2 << ")"
+             << endl;
       }
-      
+
     }
   }
 
@@ -5127,8 +5150,8 @@ void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollect
 }
 
 template <class InputCollection1, class InputCollection2>
-void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollection1 inputCollection1, InputCollection2 inputCollection2, 
-				  flagPair pairFlags, double scaleFactor){
+void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollection1 inputCollection1, InputCollection2 inputCollection2,
+                                  flagPair pairFlags, double scaleFactor){
 
   bool sameObjects = false;
   if(typeid(InputCollection1).name() == typeid(InputCollection2).name()) sameObjects = true;
@@ -5555,8 +5578,8 @@ OSUAnalysis::getTopPtWeight()
   double topPt = -1.0;
 
   for(BNmcparticleCollection::const_iterator mcparticle = mcparticles->begin (); mcparticle != mcparticles->end (); mcparticle++){
-    if(mcparticle->status == 3 && mcparticle->id == 6){ 
-      topPt = mcparticle->pt; 
+    if(mcparticle->status == 3 && mcparticle->id == 6){
+      topPt = mcparticle->pt;
       break;
     }
   }
