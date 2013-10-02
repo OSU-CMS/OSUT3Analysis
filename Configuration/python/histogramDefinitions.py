@@ -2135,6 +2135,18 @@ EventHistograms = cms.PSet(
             inputVariables = cms.vstring("stopCTauScaleFactor"),
         ),
         cms.PSet (
+            name = cms.string("globalScaleFactor"),
+            title = cms.string("Global Scale Factor; event weight"),
+            bins = cms.untracked.vdouble(1000, 0, 2),
+            inputVariables = cms.vstring("globalScaleFactor"),
+        ),
+        cms.PSet (
+            name = cms.string("channelScaleFactor"),
+            title = cms.string("Channel Scale Factor; event weight"),
+            bins = cms.untracked.vdouble(1000, 0, 2),
+            inputVariables = cms.vstring("channelScaleFactor"),
+        ),
+        cms.PSet (
             name = cms.string("eventScaleFactor"),
             title = cms.string("Event Scale Factor; event weight"),
             bins = cms.untracked.vdouble(100, 0, 2),
