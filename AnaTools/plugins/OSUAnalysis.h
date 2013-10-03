@@ -195,6 +195,7 @@ class OSUAnalysis : public edm::EDProducer
       bool applyBtagSF_;
       int  minBtag_;
       string electronSFShift_;
+      string muonSFShift_;
       bool printEventInfo_;
       bool printAllTriggers_;
       bool useTrackCaloRhoCorr_;  // to use the calo-based rho correction for the by-hand calculation of the track isolation energy

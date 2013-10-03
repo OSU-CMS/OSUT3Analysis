@@ -23,9 +23,8 @@ class MuonSFWeight
     public:
       MuonSFWeight () {};
       MuonSFWeight (const string &, const string &);
-      MuonSFWeight (const string &, const string &, const string &);
       ~MuonSFWeight ();
-      double at (const double &, const double &);
+      double at (const double &, const double &, const int &shiftUpDown = 0);
 
     private:
       TH2 *muonSFWeight_;

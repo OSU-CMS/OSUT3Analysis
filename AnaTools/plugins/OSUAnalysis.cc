@@ -41,6 +41,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
   electronSFShift_ (cfg.getParameter<string> ("electronSFShift")),
+  muonSFShift_ (cfg.getParameter<string> ("muonSFShift")),
   printEventInfo_      (cfg.getParameter<bool> ("printEventInfo")),
   printAllTriggers_    (cfg.getParameter<bool> ("printAllTriggers")),
   useTrackCaloRhoCorr_ (cfg.getParameter<bool> ("useTrackCaloRhoCorr")),
@@ -1106,7 +1107,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         //apply the weight for each of those objects
         for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
           if(!muonFlags.at(muonIndex).second) continue;
-          muonScaleFactor_ *= muonSFWeight_->at (muons->at(muonIndex).eta, muons->at(muonIndex).pt);
+          int shiftUpDown = 0;
+          if (muonSFShift_ == "up") shiftUpDown = 1;
+          if (muonSFShift_ == "down") shiftUpDown = -1;
+          muonScaleFactor_ *= muonSFWeight_->at (muons->at(muonIndex).eta, muons->at(muonIndex).pt,shiftUpDown);
         }
       }
 

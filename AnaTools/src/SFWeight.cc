@@ -13,7 +13,7 @@ MuonSFWeight::MuonSFWeight (const string &sfFile, const string &dataOverMC)
 
  
 double
-MuonSFWeight::at(const double &eta, const double &pt) 
+MuonSFWeight::at(const double &eta, const double &pt, const int &shiftUpDown) 
 {
   double pt_hist= pt;
   double eta_hist= eta;
@@ -36,7 +36,7 @@ MuonSFWeight::at(const double &eta, const double &pt)
       eta_hist =(muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetLast()) + muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetNbins() - 1))/2;
     }
   
-  return muonSFWeight_->GetBinContent(muonSFWeight_->FindBin(abs(eta_hist),pt_hist)); 
+  return muonSFWeight_->GetBinContent(muonSFWeight_->FindBin(abs(eta_hist),pt_hist)) + shiftUpDown * muonSFWeight_->GetBinError(muonSFWeight_->FindBin(abs(eta_hist),pt_hist)); 
 }
 
 MuonSFWeight::~MuonSFWeight ()
