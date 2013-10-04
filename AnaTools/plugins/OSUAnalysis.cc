@@ -1968,12 +1968,12 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
     // Calculate the magnitude of the vector sum of the muon pT and the Met.
     if (const BNmet *met = chosenMET ())
       {
-        TVector2 p2Met;
-        TVector2 p2Muon;
-        p2Met. SetMagPhi(   met->pt,    met->phi);
-        p2Muon.SetMagPhi(object->pt, object->phi);
-        TVector2 p2MetElec = p2Met + p2Muon;
-        value = p2MetElec.Mod();
+	TVector2 p2Met;
+	TVector2 p2Muon;
+	p2Met. SetMagPhi(   met->pt,    met->phi);
+	p2Muon.SetMagPhi(object->pt, object->phi);  
+	TVector2 p2MetMuon = p2Met + p2Muon;
+        value = p2MetMuon.Mod();  
       }
     else
       value = -999;
@@ -2917,6 +2917,24 @@ OSUAnalysis::valueLookup (const BNmet* object, string variable, string function,
   else if(variable == "pfT1jet10pt") value = object->pfT1jet10pt;
   else if(variable == "pfT1jet10phi") value = object->pfT1jet10phi;
 
+  else if(variable == "metNoMu") { 
+    // Calculate the MET, without including muons in the sum of E_T  
+    TVector2 p2Met;
+    TVector2 p2Muon;
+    p2Met. SetMagPhi(object->pt, object->phi);
+    p2Muon.SetMagPhi(0, 0);  
+    if (!muons.product()) clog << "ERROR: cannot find metNoMu because muons collection is not initialized." << endl;
+    for (uint imuon = 0; imuon<muons->size(); imuon++) {  
+      string empty = "";
+      double muonPt  = valueLookup(&muons->at(imuon), "pt",  "", empty);
+      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty);
+      TVector2 p2MuonTmp;
+      p2MuonTmp.SetMagPhi(muonPt, muonPhi);  
+      p2Muon += p2MuonTmp;  
+    }
+    TVector2 p2MetNoMu = p2Met + p2Muon;
+    value = p2MetNoMu.Mod();
+  }
   else{clog << "WARNING: invalid met variable '" << variable << "'\n"; value = -999;}
 
   value = applyFunction(function, value);
