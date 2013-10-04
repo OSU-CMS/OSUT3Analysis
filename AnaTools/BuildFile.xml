@@ -1,0 +1,11 @@
+<use   name="root"/>
+<use   name="rootrflx"/>
+<use   name="BEAN/Collections"/>
+<use   name="FWCore/Framework"/>
+<use   name="FWCore/ParameterSet"/>
+<use   name="FWCore/ServiceRegistry"/>
+<use   name="DataFormats/Common"/>
+<use   name="CommonTools/UtilAlgos"/>
+<export>
+  <lib   name="1"/>
+</export>

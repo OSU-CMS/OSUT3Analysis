@@ -1,0 +1,10 @@
+<use   name="root"/>
+<use   name="boost_program_options"/>
+
+<environment>
+  <bin   file="cutFlowLimits.cpp"></bin>
+  <bin   file="cutFlowTable.cpp"></bin>
+  <bin   file="getEventsFromCutFlow.cpp"></bin>
+  <bin   file="weightTrees.cpp"></bin>
+  <bin   file="mergeTFileServiceHistograms.cpp"></bin>
+</environment>
