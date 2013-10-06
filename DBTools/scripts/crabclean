@@ -50,8 +50,8 @@ if ($opt{"dataset"})
             printf "(%2d) $row[2]\n", $i;
             print "     (";
             print color "green" if $row[5] eq "present";
-            print color "bold yellow" if $row[5] eq "submitted";
-            print color "bold red" if $row[5] eq "created" or $row[5] eq "cancelled" or $row[5] eq "deprecated";
+            print color "bold yellow" if $row[5] eq "submitted" or $row[5] eq "finishing";
+            print color "bold red" if $row[5] eq "created" or $row[5] eq "cancelled" or $row[5] eq "deprecated" or $row[5] eq "finished";
             print $row[5];
             print color "reset";
             print ") created by $row[3] on $row[4]\n";
