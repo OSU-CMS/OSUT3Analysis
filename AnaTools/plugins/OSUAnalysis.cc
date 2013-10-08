@@ -4248,6 +4248,7 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNtrack* object2, string 
   double value = 0.0;
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "deltaPt")  value = fabs(object1->pt - object2->pt);  
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "deltaRLooseID") {
     // only consider muons that pass looseId criteria; otherwise return very large value (99.)

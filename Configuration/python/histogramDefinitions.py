@@ -2016,6 +2016,12 @@ MuonTrackHistograms = cms.PSet(
         bins = cms.untracked.vdouble(100, 0, 1),
         inputVariables = cms.vstring("deltaR"),
         ),
+    cms.PSet (
+        name = cms.string("MuonTrackDeltaPt"),
+        title = cms.string("Muon-Track #DeltaPt; p_{T}^{#mu} - p_{T}^{trk} [GeV]"),
+        bins = cms.untracked.vdouble(100, -50, 50),
+        inputVariables = cms.vstring("deltaPt"),
+        ),
     )
 )
 
