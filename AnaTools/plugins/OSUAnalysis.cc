@@ -2475,6 +2475,49 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
       }
   }
 
+  else if(variable == "mvaNonTrig_HtoZZto4l"){ // https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentification#Non_triggering_MVA
+    value = false;
+    if (object->pt > 7.0 && object->pt < 10.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaNonTrigV0 > 0.47)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaNonTrigV0 > 0.004)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaNonTrigV0 > 0.295)
+          value = true;
+      }
+    else if (object->pt >= 10.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaNonTrigV0 > -0.34)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaNonTrigV0 > -0.65)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaNonTrigV0 > 0.60)
+          value = true;
+      }
+  }
+  else if(variable == "mvaTrig_HtoWWto2l2nu"){ // https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentification#Triggering_MVA
+    value = false;
+    if (object->pt > 10.0 && object->pt < 20.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaTrigV0 > 0.00)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaTrigV0 > 0.10)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaTrigV0 > 0.62)
+          value = true;
+      }
+    else if (object->pt >= 20.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaTrigV0 > 0.94)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaTrigV0 > 0.85)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaTrigV0 > 0.92)
+          value = true;
+      }
+  }
+
   else if(variable == "looseID_MVA"){
     value = object->pt > 10
       && object->mvaNonTrigV0 > 0;
