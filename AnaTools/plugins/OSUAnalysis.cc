@@ -20,9 +20,11 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   trigobjs_ (cfg.getParameter<edm::InputTag> ("trigobjs")),
   puFile_ (cfg.getParameter<string> ("puFile")),
   deadEcalFile_ (cfg.getParameter<string> ("deadEcalFile")),
+  electronSFFile_ (cfg.getParameter<string> ("electronSFFile")),
   muonSFFile_ (cfg.getParameter<string> ("muonSFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
   electronSFID_ (cfg.getParameter<string> ("electronSFID")),
+  electronSF_ (cfg.getParameter<string> ("electronSF")),
   muonSF_ (cfg.getParameter<string> ("muonSF")),
   dataset_ (cfg.getParameter<string> ("dataset")),
   datasetType_ (cfg.getParameter<string> ("datasetType")),
@@ -60,7 +62,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(doPileupReweighting_) puWeight_ = new PUWeight (puFile_, dataPU_, dataset_);
     if (applyLeptonSF_){
       muonSFWeight_ = new MuonSFWeight (muonSFFile_, muonSF_);
-      electronSFWeight_ = new ElectronSFWeight ("53X", electronSFID_);
+      electronSFWeight_ = new ElectronSFWeight ("53X", electronSFID_, electronSFFile_, electronSF_);
     }
     if (applyBtagSF_){
       bTagSFWeight_ = new BtagSFWeight;
