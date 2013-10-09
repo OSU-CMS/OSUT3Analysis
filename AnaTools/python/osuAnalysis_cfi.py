@@ -58,10 +58,10 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
 
     puFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/pu.root'),
     deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/DeadEcalChannels.txt'),
-    electronSFFile = cms.string (''), # if blank, will attempt to use the SFs hard-coded in SFWeight.h
+    electronSFFile = cms.string (''), # if blank, will attempt to use the SFs hard-coded in SFWeight.cc
     muonSFFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/MuonSF_ID_ISO_2D.root'),
     dataPU = cms.string ('PU_data_190456_208686_69300xSec'),
-    electronSFID = cms.string ('mvaTrig0p9'), # ID label for using hard-coded SFs in SFWeight.h
+    electronSFID = cms.string ('mvaTrig0p9'), # ID label for using hard-coded SFs in SFWeight.cc
     electronSF = cms.string (''), # histogram name if using SFs from a histogram
     muonSF = cms.string ('Combined_TOT'),
     dataset = cms.string ('TTbar_Lep'),#dummy variable
