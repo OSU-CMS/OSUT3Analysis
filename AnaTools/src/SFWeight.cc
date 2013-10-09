@@ -44,10 +44,18 @@ MuonSFWeight::~MuonSFWeight ()
   delete muonSFWeight_;
 }
 
-ElectronSFWeight::ElectronSFWeight (const string &cmsswRelease, const string &id) :
+ElectronSFWeight::ElectronSFWeight (const string &cmsswRelease, const string &id, const string &sfFile, const string &dataOverMC) :
   cmsswRelease_ (cmsswRelease),
-  id_ (id)
+  id_ (id),
+  electronSFWeight_ (NULL)
 {
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  if (fin)
+    {
+      electronSFWeight_ = (TH2F *) fin->Get (dataOverMC.c_str ());
+      electronSFWeight_->SetDirectory (0);
+      fin->Close ();
+    }
 }
 
 double
@@ -55,7 +63,25 @@ ElectronSFWeight::at (const double &eta, const double &pt, const int &shiftUpDow
 {
   double scaleFactor = 1.0, minus = 0.0, plus = 0.0;
 
-  if (cmsswRelease_ == "53X")
+  if (electronSFWeight_)
+    {
+      double x = eta, y = pt;
+      if (strcasestr (electronSFWeight_->GetYaxis ()->GetTitle (), "eta"))
+        {
+          x = pt;
+          y = eta;
+        }
+      int xBin = electronSFWeight_->GetXaxis ()->FindBin (x),
+          yBin = electronSFWeight_->GetYaxis ()->FindBin (y);
+      xBin = min (xBin, electronSFWeight_->GetXaxis ()->GetNbins ());
+      xBin = max (xBin, 1);
+      yBin = min (yBin, electronSFWeight_->GetYaxis ()->GetNbins ());
+      yBin = max (yBin, 1);
+
+      scaleFactor = electronSFWeight_->GetBinContent (xBin, yBin);
+      minus = plus = electronSFWeight_->GetBinError (xBin, yBin);
+    }
+  else if (cmsswRelease_ == "53X")
     {
       if (id_ == "loose")
         {
