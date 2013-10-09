@@ -3,6 +3,7 @@
 #define SF_WEIGHT
 
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <map>
 #include <string>
