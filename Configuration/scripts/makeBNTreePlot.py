@@ -104,6 +104,8 @@ parser.add_option("-D", "--dataset", dest="datasetName",
                   help="Name of dataset (overrides value from local configuration file)")	 
 parser.add_option("-C", "--runOnCondor",  action="store_true", dest="runOnCondor", default=False,	 
                   help="Run on condor instead of interactively")	 
+parser.add_option("-q", "--quickMerge",  action="store_true", dest="quickMerge", default=False,	 
+                  help="Run merge only")	 
 parser.add_option("-S", "--splitCondorJobs", action="store_true", dest="splitCondorJobs", default=False,	 	 
                   help="Split condor jobs to have one for each file, rather than one for each dataset")	 
 parser.add_option("-p", "--condorProcessNum", dest="condorProcessNum", default=-1,	 
