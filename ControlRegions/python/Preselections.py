@@ -64,6 +64,19 @@ Electron_Preselection = cms.PSet(
         cutString = cms.string("pt > 25"),
         numberRequired = cms.string(">= 1")
       ),
+      # ELECTRON CRACK VETO
+      cms.PSet (
+        inputCollection = cms.string("electrons"),
+        cutString = cms.string("abs(eta) < 1.444 | abs(eta) > 1.566 "),
+        numberRequired = cms.string(">= 1"),
+        alias = cms.string("electron ECAL crack veto")
+      ),
+      # PHOTON CONVERSION VETO
+      cms.PSet (
+        inputCollection = cms.string("electrons"),
+        cutString = cms.string("passConvVeto > 0"),
+        numberRequired = cms.string(">= 1")
+      ),
       cms.PSet (
         inputCollection = cms.string("electrons"),
         cutString = cms.string("mvaTrigV0 > 0.9"),
