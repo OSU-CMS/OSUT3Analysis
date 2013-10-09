@@ -49,13 +49,14 @@ ElectronSFWeight::ElectronSFWeight (const string &cmsswRelease, const string &id
   id_ (id),
   electronSFWeight_ (NULL)
 {
+  ifstream finStream (sfFile);
+  if (!finStream)
+    return;
+  finStream.close ();
   TFile *fin = TFile::Open (sfFile.c_str ());
-  if (fin)
-    {
-      electronSFWeight_ = (TH2F *) fin->Get (dataOverMC.c_str ());
-      electronSFWeight_->SetDirectory (0);
-      fin->Close ();
-    }
+  electronSFWeight_ = (TH2F *) fin->Get (dataOverMC.c_str ());
+  electronSFWeight_->SetDirectory (0);
+  fin->Close ();
 }
 
 double
