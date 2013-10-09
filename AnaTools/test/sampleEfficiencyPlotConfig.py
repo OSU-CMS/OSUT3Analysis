@@ -28,6 +28,7 @@ intLumi = 19800
 ## 'hollow'
 ## default: 'solid'
 
+cutName = 'trigger'
 
 input_sources = [
     { 'condor_dir' : 'triggerEfficiencyTest',

@@ -1968,12 +1968,12 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
     // Calculate the magnitude of the vector sum of the muon pT and the Met.
     if (const BNmet *met = chosenMET ())
       {
-        TVector2 p2Met;
-        TVector2 p2Muon;
-        p2Met. SetMagPhi(   met->pt,    met->phi);
-        p2Muon.SetMagPhi(object->pt, object->phi);
-        TVector2 p2MetElec = p2Met + p2Muon;
-        value = p2MetElec.Mod();
+	TVector2 p2Met;
+	TVector2 p2Muon;
+	p2Met. SetMagPhi(   met->pt,    met->phi);
+	p2Muon.SetMagPhi(object->pt, object->phi);  
+	TVector2 p2MetMuon = p2Met + p2Muon;
+        value = p2MetMuon.Mod();  
       }
     else
       value = -999;
@@ -2475,6 +2475,49 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
       }
   }
 
+  else if(variable == "mvaNonTrig_HtoZZto4l"){ // https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentification#Non_triggering_MVA
+    value = false;
+    if (object->pt > 7.0 && object->pt < 10.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaNonTrigV0 > 0.47)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaNonTrigV0 > 0.004)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaNonTrigV0 > 0.295)
+          value = true;
+      }
+    else if (object->pt >= 10.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaNonTrigV0 > -0.34)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaNonTrigV0 > -0.65)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaNonTrigV0 > 0.60)
+          value = true;
+      }
+  }
+  else if(variable == "mvaTrig_HtoWWto2l2nu"){ // https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentification#Triggering_MVA
+    value = false;
+    if (object->pt > 10.0 && object->pt < 20.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaTrigV0 > 0.00)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaTrigV0 > 0.10)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaTrigV0 > 0.62)
+          value = true;
+      }
+    else if (object->pt >= 20.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaTrigV0 > 0.94)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaTrigV0 > 0.85)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaTrigV0 > 0.92)
+          value = true;
+      }
+  }
+
   else if(variable == "looseID_MVA"){
     value = object->pt > 10
       && object->mvaNonTrigV0 > 0;
@@ -2917,6 +2960,24 @@ OSUAnalysis::valueLookup (const BNmet* object, string variable, string function,
   else if(variable == "pfT1jet10pt") value = object->pfT1jet10pt;
   else if(variable == "pfT1jet10phi") value = object->pfT1jet10phi;
 
+  else if(variable == "metNoMu") { 
+    // Calculate the MET, without including muons in the sum of E_T  
+    TVector2 p2Met;
+    TVector2 p2Muon;
+    p2Met. SetMagPhi(object->pt, object->phi);
+    p2Muon.SetMagPhi(0, 0);  
+    if (!muons.product()) clog << "ERROR: cannot find metNoMu because muons collection is not initialized." << endl;
+    for (uint imuon = 0; imuon<muons->size(); imuon++) {  
+      string empty = "";
+      double muonPt  = valueLookup(&muons->at(imuon), "pt",  "", empty);
+      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty);
+      TVector2 p2MuonTmp;
+      p2MuonTmp.SetMagPhi(muonPt, muonPhi);  
+      p2Muon += p2MuonTmp;  
+    }
+    TVector2 p2MetNoMu = p2Met + p2Muon;
+    value = p2MetNoMu.Mod();
+  }
   else{clog << "WARNING: invalid met variable '" << variable << "'\n"; value = -999;}
 
   value = applyFunction(function, value);
@@ -4230,6 +4291,7 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNtrack* object2, string 
   double value = 0.0;
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "deltaPt")  value = fabs(object1->pt - object2->pt);  
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "deltaRLooseID") {
     // only consider muons that pass looseId criteria; otherwise return very large value (99.)

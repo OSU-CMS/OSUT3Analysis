@@ -166,6 +166,7 @@ outputRunList
     }
   open (RUNLIST, ">$workingDir/runList.py");
   print RUNLIST "runList = [\n";
+  $nFiles -= $nFiles;
   for (my $i = 0; $i < @files; $i++)
     {
       next if $files[$i] eq ".";
@@ -174,6 +175,7 @@ outputRunList
       print RUNLIST "'file:" . abs_path ("$location/$files[$i]") . "'";
       print RUNLIST "," if $i + 1 != @files;
       print RUNLIST "\n";
+      $nFiles++;
     }
   print RUNLIST "]";
   close (RUNLIST);
@@ -223,8 +225,8 @@ getLocation
       printf "(%2d) $row[0]\n", $i;
       print "     (";
       print color "green" if $row[5] eq "present";
-      print color "bold yellow" if $row[5] eq "submitted";
-      print color "bold red" if $row[5] eq "created" or $row[5] eq "cancelled" or $row[5] eq "deprecated";
+      print color "bold yellow" if $row[5] eq "submitted" or $row[5] eq "finishing";
+      print color "bold red" if $row[5] eq "created" or $row[5] eq "cancelled" or $row[5] eq "deprecated" or $row[5] eq "finished";
       print $row[5];
       print color "reset";
       print ") created by $row[1] on $row[2]\n";

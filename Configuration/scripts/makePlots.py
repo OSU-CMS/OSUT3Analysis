@@ -28,13 +28,18 @@ parser.add_option("--ymax", dest="setYMax",
                   help="Maximum of y axis")	 
 parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
                   help="maximum error used in rebinning the ratio histogram")  
-
+parser.add_option("-S", "--systematics", action="store_true", dest="includeSystematics", default=False,
+                  help="also lists the systematic uncertainties")
 (arguments, args) = parser.parse_args()
 
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+
+if arguments.includeSystematics:
+    sys.path.append(os.getcwd())
+    exec("from " + systematics_file.rstrip('.py') + " import *")
 
 #### deal with conflicting arguments
 if arguments.normalizeToData and arguments.normalizeToUnitArea:
@@ -120,6 +125,63 @@ header_y_bottom  = 0.9479866
 header_y_top     = 0.9947552
 
 
+
+
+##########################################################################################################################################
+##########################################################################################################################################
+##########################################################################################################################################
+
+def getSystematicError(sample):
+    errorSquared = 0.0
+    if types[sample] is "data":
+        return 0.0
+
+    # add uncertainty on normalization method
+    if sample in background_normalization_uncertainties:
+        error = float(background_normalization_uncertainties[sample]['value']) - 1
+        errorSquared = errorSquared + error * error
+
+    # add global uncertainties
+    for uncertainty in global_systematic_uncertainties:
+        if sample in global_systematic_uncertainties[uncertainty]['applyList']:
+            error = float(global_systematic_uncertainties[uncertainty]['value']) -1
+            errorSquared = errorSquared + error * error
+
+    # add sample-specific uncertainties from text files
+    for uncertainty in external_systematic_uncertainties:
+        input_file = open(os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "/systematic_values__" + uncertainty + ".txt")
+        for line in input_file:
+            line = line.rstrip("n").split(" ")
+            dataset = line[0]
+            if dataset != sample:
+                continue
+            if len(line) is 2: #just one error
+                error = float(line[1]) - 1
+            elif len(line) is 3: #asymmetric +- errors (we'll take the bigger one)
+                minus_error = float(line[1]) - 1
+                plus_error = float(line[2]) - 1
+                if abs(minus_error) > abs(plus_error):
+                    error = minus_error
+                else:
+                    error = plus_error
+            errorSquared = errorSquared + error * error
+
+    return math.sqrt(errorSquared)
+
+##########################################################################################################################################
+##########################################################################################################################################
+##########################################################################################################################################
+
+def addSystematicError(histogram, fractionalSysError):
+
+    for bin in range(histogram.GetNbinsX()):
+        binContent = histogram.GetBinContent(bin)
+        statError = histogram.GetBinError(bin)
+        sysError = fractionalSysError * binContent
+        totalError = math.sqrt(statError * statError + sysError * sysError)
+        histogram.SetBinError(bin,totalError)
+
+    return histogram
 
 ##########################################################################################################################################
 ##########################################################################################################################################
@@ -245,17 +307,20 @@ def MakeOneDHist(pathToDir,histogramName):
     outputFile.cd(pathToDir)
     Canvas = TCanvas(histogramName)
     BgMCHistograms = []
+    BgMCUncertainties = []
     BgMCLegendEntries = []
     SignalMCHistograms = []
     SignalMCLegendEntries = []
     DataHistograms = []
     DataLegendEntries = []
+
+
     
     
     backgroundIntegral = 0
     dataIntegral = 0
     scaleFactor = 1
-    
+
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
         inputFile = TFile(dataset_file)
@@ -268,9 +333,20 @@ def MakeOneDHist(pathToDir,histogramName):
         inputFile.Close()
         if arguments.rebinFactor:
             RebinFactor = int(arguments.rebinFactor)
-            #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
-            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetName().find("GenMatch") is -1:
+            print Histogram.GetName()
+            #don't rebin any gen-matching or cutflow histograms, or numObject type histograms
+            if (Histogram.GetName().find("num") is -1 and
+               Histogram.GetName().find("Primaryvertexs") is -1 and
+               Histogram.GetName().find("CutFlow")  is -1 and
+               Histogram.GetName().find("cutFlow")  is -1 and                
+               Histogram.GetName().find("Selection")  is -1 and
+               Histogram.GetName().find("selection")  is -1 and                
+               Histogram.GetName().find("MinusOne")  is -1 and
+               Histogram.GetName().find("minusOne")  is -1 and                                
+               Histogram.GetName().find("GenMatch") is -1): 
+
                 Histogram.Rebin(RebinFactor)
+                
 
         xAxisLabel = Histogram.GetXaxis().GetTitle()
         unitBeginIndex = xAxisLabel.find("[")
@@ -311,6 +387,8 @@ def MakeOneDHist(pathToDir,histogramName):
             BgMCLegendEntries.append(legLabel) 
             BgMCHistograms.append(Histogram)
 
+            if arguments.includeSystematics:
+                BgMCUncertainties.append(getSystematicError(sample))
                     
         elif( types[sample] == "signalMC"):
             
@@ -369,14 +447,21 @@ def MakeOneDHist(pathToDir,histogramName):
 
     ### creating the histogram to represent the statistical errors on the stack
     if numBgMCSamples is not 0 and not arguments.noStack: 
+        if arguments.includeSystematics:
+            addSystematicError(BgMCHistograms[0],BgMCUncertainties[0])
         ErrorHisto = BgMCHistograms[0].Clone("errors")
         ErrorHisto.SetFillStyle(3001)
         ErrorHisto.SetFillColor(13)
         ErrorHisto.SetLineWidth(0)
-        BgMCLegend.AddEntry(ErrorHisto,"Stat. Errors","F")
-        for Histogram in BgMCHistograms:
-            if Histogram is not BgMCHistograms[0]:
-                ErrorHisto.Add(Histogram)
+        for index in range(1,len(BgMCHistograms)):
+            if arguments.includeSystematics:
+                addSystematicError(BgMCHistograms[index],BgMCUncertainties[index])
+            ErrorHisto.Add(BgMCHistograms[index])
+
+        if arguments.includeSystematics:
+            BgMCLegend.AddEntry(ErrorHisto,"Stat. & Sys. Errors","F")
+        else:
+            BgMCLegend.AddEntry(ErrorHisto,"Stat. Errors","F")            
 
 
     ### formatting bgMC histograms and adding to legend
@@ -840,6 +925,7 @@ condor_dir = set_condor_output_dir(arguments)
 for sample in datasets:
     fileName = condor_dir + "/" + sample + ".root"
     if not os.path.exists(fileName):
+        print "WARNING: didn't find ",fileName
         continue
     testFile = TFile(fileName)
     if testFile.IsZombie() or not testFile.GetNkeys():

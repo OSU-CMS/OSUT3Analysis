@@ -163,8 +163,8 @@ getDataset
       printf "(%2d) $row[1]\n", $i;
       print "     (";
       print color "green" if $row[4] eq "present";
-      print color "bold yellow" if $row[4] eq "submitted";
-      print color "bold red" if $row[4] eq "created" or $row[4] eq "cancelled" or $row[4] eq "deprecated";
+      print color "bold yellow" if $row[4] eq "submitted" or $row[4] eq "finishing";
+      print color "bold red" if $row[4] eq "created" or $row[4] eq "cancelled" or $row[4] eq "deprecated" or $row[4] eq "finished";
       print $row[4];
       print color "reset";
       print ") created by $row[2] on $row[3]\n";
