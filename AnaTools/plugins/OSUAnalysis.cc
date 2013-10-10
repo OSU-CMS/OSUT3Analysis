@@ -20,9 +20,11 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   trigobjs_ (cfg.getParameter<edm::InputTag> ("trigobjs")),
   puFile_ (cfg.getParameter<string> ("puFile")),
   deadEcalFile_ (cfg.getParameter<string> ("deadEcalFile")),
+  electronSFFile_ (cfg.getParameter<string> ("electronSFFile")),
   muonSFFile_ (cfg.getParameter<string> ("muonSFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
   electronSFID_ (cfg.getParameter<string> ("electronSFID")),
+  electronSF_ (cfg.getParameter<string> ("electronSF")),
   muonSF_ (cfg.getParameter<string> ("muonSF")),
   dataset_ (cfg.getParameter<string> ("dataset")),
   datasetType_ (cfg.getParameter<string> ("datasetType")),
@@ -60,7 +62,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(doPileupReweighting_) puWeight_ = new PUWeight (puFile_, dataPU_, dataset_);
     if (applyLeptonSF_){
       muonSFWeight_ = new MuonSFWeight (muonSFFile_, muonSF_);
-      electronSFWeight_ = new ElectronSFWeight ("53X", electronSFID_);
+      electronSFWeight_ = new ElectronSFWeight ("53X", electronSFID_, electronSFFile_, electronSF_);
     }
     if (applyBtagSF_){
       bTagSFWeight_ = new BtagSFWeight;
@@ -2472,6 +2474,49 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
           && fabs (object->correctedDZ) < 0.1 \
           && object->absInvEMinusInvPin < 0.05 \
           && object->passConvVeto;
+      }
+  }
+
+  else if(variable == "mvaNonTrig_HtoZZto4l"){ // https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentification#Non_triggering_MVA
+    value = false;
+    if (object->pt > 7.0 && object->pt < 10.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaNonTrigV0 > 0.47)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaNonTrigV0 > 0.004)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaNonTrigV0 > 0.295)
+          value = true;
+      }
+    else if (object->pt >= 10.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaNonTrigV0 > -0.34)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaNonTrigV0 > -0.65)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaNonTrigV0 > 0.60)
+          value = true;
+      }
+  }
+  else if(variable == "mvaTrig_HtoWWto2l2nu"){ // https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentification#Triggering_MVA
+    value = false;
+    if (object->pt > 10.0 && object->pt < 20.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaTrigV0 > 0.00)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaTrigV0 > 0.10)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaTrigV0 > 0.62)
+          value = true;
+      }
+    else if (object->pt >= 20.0)
+      {
+        if (abs (object->scEta) < 0.8 && object->mvaTrigV0 > 0.94)
+          value = true;
+        else if (abs (object->scEta) < 1.479 && object->mvaTrigV0 > 0.85)
+          value = true;
+        else if (abs (object->scEta) < 2.5 && object->mvaTrigV0 > 0.92)
+          value = true;
       }
   }
 

@@ -174,9 +174,11 @@ class OSUAnalysis : public edm::EDProducer
       edm::InputTag trigobjs_;
       string puFile_;
       string deadEcalFile_;
+      string electronSFFile_;
       string muonSFFile_;
       string dataPU_;
       string electronSFID_;
+      string electronSF_;
       string muonSF_;
       string dataset_;
       string datasetType_;

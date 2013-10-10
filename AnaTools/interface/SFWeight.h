@@ -3,6 +3,7 @@
 #define SF_WEIGHT
 
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <map>
 #include <string>
@@ -36,13 +37,15 @@ class ElectronSFWeight
   {
     public:
       ElectronSFWeight () {};
-      ElectronSFWeight (const string &, const string &);
+      ElectronSFWeight (const string &, const string &, const string &sfFile = "", const string &dataOverMC = "");
       ~ElectronSFWeight ();
       double at (const double &, const double &, const int &shiftUpDown = 0);
 
     private:
       string cmsswRelease_;
       string id_;
+
+      TH2F *electronSFWeight_;
   };
 
 #endif
