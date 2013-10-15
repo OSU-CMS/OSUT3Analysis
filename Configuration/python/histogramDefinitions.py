@@ -2075,12 +2075,6 @@ EventHistograms = cms.PSet(
             inputVariables = cms.vstring("ht"),
         ),
         cms.PSet (
-            name = cms.string("nExtraPartons"),
-            title = cms.string("Number of Extra Partons; # Extra Partons"),
-            bins = cms.untracked.vdouble(6, 0, 6),
-            inputVariables = cms.vstring("nExtraPartons"),
-        ),
-        cms.PSet (
             name = cms.string("unfilteredHt"),
             title = cms.string("Unfiltered H_{T}; #Sigma p_{T} all jets [GeV]"),
             bins = cms.untracked.vdouble(150, 0, 750),
@@ -2097,6 +2091,12 @@ EventHistograms = cms.PSet(
             title = cms.string("Unfiltered S_{T}; #Sigma p_{T} all e/#mu/jets [GeV]"),
             bins = cms.untracked.vdouble(150, 0, 750),
             inputVariables = cms.vstring("unfilteredSt"),
+        ),
+        cms.PSet (
+            name = cms.string("nExtraPartons"),
+            title = cms.string("Number of Extra Partons; # Extra Partons"),
+            bins = cms.untracked.vdouble(6, 0, 6),
+            inputVariables = cms.vstring("nExtraPartons"),
         ),
         cms.PSet (
             name = cms.string("puScaleFactor"),
@@ -2143,13 +2143,13 @@ EventHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("globalScaleFactor"),
             title = cms.string("Global Scale Factor; event weight"),
-            bins = cms.untracked.vdouble(1000, 0, 2),
+            bins = cms.untracked.vdouble(100, 0, 2),
             inputVariables = cms.vstring("globalScaleFactor"),
         ),
         cms.PSet (
             name = cms.string("channelScaleFactor"),
             title = cms.string("Channel Scale Factor; event weight"),
-            bins = cms.untracked.vdouble(1000, 0, 2),
+            bins = cms.untracked.vdouble(100, 0, 2),
             inputVariables = cms.vstring("channelScaleFactor"),
         ),
         cms.PSet (
