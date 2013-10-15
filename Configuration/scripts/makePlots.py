@@ -131,14 +131,26 @@ header_y_top     = 0.9947552
 ##########################################################################################################################################
 ##########################################################################################################################################
 
-def getSystematicError(sample):
+def getSystematicError(sample,channel):
     errorSquared = 0.0
     if types[sample] is "data":
+        return 0.0
+    if len(channel) is 0:
         return 0.0
 
     # add uncertainty on normalization method
     if sample in background_normalization_uncertainties:
-        error = float(background_normalization_uncertainties[sample]['value']) - 1
+        input_error = background_normalization_uncertainties[sample]['value']
+        if '/' in input_error:
+            line = input_error.split('/')
+            minus_error = float(line[0]) - 1
+            plus_error = float(line[1]) - 1
+            if abs(minus_error) > abs(plus_error):
+                error = minus_error
+            else:
+                error = plus_error
+        else:
+            error = float(input_error) - 1
         errorSquared = errorSquared + error * error
 
     # add global uncertainties
@@ -149,7 +161,17 @@ def getSystematicError(sample):
 
     # add sample-specific uncertainties from text files
     for uncertainty in external_systematic_uncertainties:
-        input_file = open(os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "/systematic_values__" + uncertainty + ".txt")
+        input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
+        if not os.path.exists(input_file_path):
+            print "WARNING: didn't find ",input_file_path
+            input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__Blinded_Preselection" + ".txt"
+            if not os.path.exists(input_file_path):
+                print "   skipping",uncertainty,"systematic for the",channel,"channel"
+                return 0
+            else:
+                print "   using default",uncertainty,"systematic for the",channel,"channel"
+
+        input_file = open(input_file_path)
         for line in input_file:
             line = line.rstrip("n").split(" ")
             dataset = line[0]
@@ -244,6 +266,8 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.1):
 
 def MakeOneDHist(pathToDir,histogramName): 
 
+    channel = pathToDir.lstrip(rootDirectory).lstrip('/')
+
     blindData = False
     # To blind histograms, define a list of histsToBlind in the localOptions.py file  
     try:  # Use "try" in case histsToBlind does not exist
@@ -333,7 +357,6 @@ def MakeOneDHist(pathToDir,histogramName):
         inputFile.Close()
         if arguments.rebinFactor:
             RebinFactor = int(arguments.rebinFactor)
-            print Histogram.GetName()
             #don't rebin any gen-matching or cutflow histograms, or numObject type histograms
             if (Histogram.GetName().find("num") is -1 and
                Histogram.GetName().find("Primaryvertexs") is -1 and
@@ -388,7 +411,7 @@ def MakeOneDHist(pathToDir,histogramName):
             BgMCHistograms.append(Histogram)
 
             if arguments.includeSystematics:
-                BgMCUncertainties.append(getSystematicError(sample))
+                BgMCUncertainties.append(getSystematicError(sample,channel))
                     
         elif( types[sample] == "signalMC"):
             
@@ -832,7 +855,6 @@ def MakeTwoDHist(pathToDir,histogramName):
             BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             DataHistograms.append(Histogram)
 
-
     outputFile.cd(pathToDir)        
 
     if(numBgMCSamples is not 0):
@@ -990,7 +1012,7 @@ for key in inputFile.GetListOfKeys():
             for key3 in gDirectory.GetListOfKeys():
                 if re.match ('TH1', key3.GetClassName()): # found a 1-D histogram
                     MakeOneDHist(level2Directory,key3.GetName())
-                elif re.match ('TH2', key3.GetClassName()) and arguments.draw2DPlots: # found a 2-D histogram        
+                elif re.match ('TH2', key3.GetClassName()) and arguments.draw2DPlots: # found a 2-D histogram
                     MakeTwoDHist(level2Directory,key3.GetName())
 
                 elif (key3.GetClassName() == "TDirectoryFile"): # found a directory, cd there and look for histograms
@@ -1010,7 +1032,7 @@ for key in inputFile.GetListOfKeys():
                     for key3 in gDirectory.GetListOfKeys():
                         if re.match ('TH1', key3.GetClassName()): # found a 1-D histogram
                             MakeOneDHist(level3Directory,key3.GetName())
-                        elif re.match ('TH2', key3.GetClassName()) and arguments.draw2DPlots: # found a 2-D histogram        
+                        elif re.match ('TH2', key3.GetClassName()) and arguments.draw2DPlots: # found a 2-D histogram
                             MakeTwoDHist(level3Directory,key3.GetName())
 
 

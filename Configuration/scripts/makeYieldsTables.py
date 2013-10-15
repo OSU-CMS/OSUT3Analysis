@@ -60,14 +60,26 @@ endLine = " \\\\ "
 newLine = " \n"
 
 
-def getSystematicError(sample):
+def getSystematicError(sample,channel):
     errorSquared = 0.0
     if types[sample] is "data":
+        return 0.0
+    if len(channel) is 0:
         return 0.0
 
     # add uncertainty on normalization method
     if sample in background_normalization_uncertainties:
-        error = float(background_normalization_uncertainties[sample]['value']) - 1
+        input_error = background_normalization_uncertainties[sample]['value']
+        if '/' in input_error:
+            line = input_error.split('/')
+            minus_error = float(line[0]) - 1
+            plus_error = float(line[1]) - 1
+            if abs(minus_error) > abs(plus_error):
+                error = minus_error
+            else:
+                error = plus_error
+        else:
+            error = float(input_error) - 1
         errorSquared = errorSquared + error * error
 
     # add global uncertainties
@@ -78,9 +90,19 @@ def getSystematicError(sample):
 
     # add sample-specific uncertainties from text files
     for uncertainty in external_systematic_uncertainties:
-        input_file = open(os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "/systematic_values__" + uncertainty + ".txt")
+        input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
+        if not os.path.exists(input_file_path):
+            print "WARNING: didn't find ",input_file_path
+            input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__Blinded_Preselection" + ".txt"
+            if not os.path.exists(input_file_path):
+                print "   skipping",uncertainty,"systematic for the",channel,"channel"
+                return 0
+            else:
+                print "   using default",uncertainty,"systematic for the",channel,"channel"
+                
+        input_file = open(input_file_path)
         for line in input_file:
-            line = line.rstrip("\n").split(" ")
+            line = line.rstrip("n").split(" ")
             dataset = line[0]
             if dataset != sample:
                 continue
@@ -94,7 +116,7 @@ def getSystematicError(sample):
                 else:
                     error = plus_error
             errorSquared = errorSquared + error * error
-            
+
     return math.sqrt(errorSquared)
 
 #### check which input datasets have valid output files
@@ -104,6 +126,7 @@ for dataset in datasets:
         continue
     fileName = condor_dir + "/" + dataset + ".root"
     if not os.path.exists(fileName):
+        "input file not found for ",dataset,"dataset"
         continue
     testFile = TFile(fileName)
     if not (testFile.IsZombie()):
@@ -111,6 +134,7 @@ for dataset in datasets:
 
 #### exit if no datasets found        
 if len(processed_datasets) is 0:
+    print datasets
     sys.exit("Can't find any output root files for the given list of datasets")
 
 
@@ -157,7 +181,7 @@ for sample in processed_datasets:
         statError_ = cutFlowHistogram.GetBinError(cutFlowHistogram.GetNbinsX())
  
         if arguments.includeSystematics:
-            fractionalSysError_ = getSystematicError(sample)
+            fractionalSysError_ = getSystematicError(sample,channel)
             sysError_ = fractionalSysError_ * yield_
         else:
             sysError_ = 0.0
@@ -181,7 +205,7 @@ for channel in channels:
     fout = open (outputFile, "w")
     if(arguments.standAlone):
         fout.write("\\documentclass{article}"+newLine+"\\begin{document}"+newLine)
-    fout.write ("\\makebox[0pt]{\\renewcommand{\\arraystretch}{1.2}\\begin{tabular}{lr}"+newLine+hLine)
+    fout.write ("\\renewcommand{\\arraystretch}{1.2}\\begin{tabular}{lr}"+newLine+hLine)
 
     line = "Event Source & Event Yield $\pm$ 1$\sigma$ (stat.)"
     if arguments.includeSystematics:
@@ -223,7 +247,7 @@ for channel in channels:
         label = rawlabel.replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ")
         fout.write(label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel] + endLine + newLine)
                                             
-    fout.write("\\end{tabular}}"+newLine)
+    fout.write("\\end{tabular}"+newLine)
     if(arguments.standAlone):
         fout.write("\\end{document}"+newLine)
 
