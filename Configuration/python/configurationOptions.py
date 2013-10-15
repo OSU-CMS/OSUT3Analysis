@@ -1762,8 +1762,8 @@ colors = {
 
    'ElectronHad_2012A' : 1,
 
-   'Background'        : 872,
-   'Background_NoQCD'  : 872,
+   'Background'        : 625,
+   'Background_NoQCD'  : 625,
 
    'Top'               : 876,
 
