@@ -2980,6 +2980,24 @@ OSUAnalysis::valueLookup (const BNmet* object, string variable, string function,
     TVector2 p2MetNoMu = p2Met + p2Muon;
     value = p2MetNoMu.Mod();
   }
+  else if(variable == "metNoElec") { 
+    // Calculate the MET, without including electrons in the sum of E_T  
+    TVector2 p2Met;
+    TVector2 p2Elec;
+    p2Met. SetMagPhi(object->pt, object->phi);
+    p2Elec.SetMagPhi(0, 0);  
+    if (!electrons.product()) clog << "ERROR: cannot find metNoElec because electron collection is not initialized." << endl;
+    for (uint ielec = 0; ielec<electrons->size(); ielec++) {  
+      string empty = "";  
+      double elecPt  = valueLookup(&electrons->at(ielec), "pt",  "", empty);
+      double elecPhi = valueLookup(&electrons->at(ielec), "phi", "", empty);
+      TVector2 p2ElecTmp;
+      p2ElecTmp.SetMagPhi(elecPt, elecPhi);  
+      p2Elec += p2ElecTmp;  
+    }
+    TVector2 p2MetNoElec = p2Met + p2Elec;
+    value =  p2MetNoElec.Mod();
+  }
   else{clog << "WARNING: invalid met variable '" << variable << "'\n"; value = -999;}
 
   value = applyFunction(function, value);

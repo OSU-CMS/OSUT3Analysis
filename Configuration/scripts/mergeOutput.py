@@ -43,6 +43,9 @@ composite_datasets = get_composite_datasets(datasets, composite_dataset_definiti
 #save a list of datasets with composite datasets split up
 split_datasets = split_composite_datasets(datasets, composite_dataset_definitions)
 
+if arguments.compositeOnly:  # Do not merge any individual datasets; only merge composite datasets
+    split_datasets = []
+
 # Remove duplicates
 split_datasets     = list(set(split_datasets))
 composite_datasets = list(set(composite_datasets))
