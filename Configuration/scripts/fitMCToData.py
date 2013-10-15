@@ -658,8 +658,15 @@ def MakeOneDHist(pathToDir,distribution):
                         text = FittingLegendEntries[j]+" yield: " + '%.0f' % yield_ + ' #pm %.0f' % yielderror_
                     else:
                         text = FittingLegendEntries[j]+" ratio: " + '%.2f' % ratios[j] + ' #pm %.2f' % errors[j]
+                    text = text + " (stat)"
                     if arguments.parametricErrors:
-                        text += ' #pm %.2f' % parErrors[j]
+                        yield_ = ratios[j]*integrals[j]
+                        yieldParError_ = parErrors[j]*yield_
+                        if arguments.showFittedYields:
+                            text += ' #pm %.2f' % yieldParError_
+                        else:
+                            text += ' #pm %.2f' % parErrors[j]
+                        text = text + " (sys)"
                     RatiosLabel.AddText (text)
             YieldsLabel.Draw()
             RatiosLabel.Draw()
