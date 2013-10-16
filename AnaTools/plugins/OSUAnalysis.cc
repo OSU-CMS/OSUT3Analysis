@@ -3180,10 +3180,14 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
     value = trkMuonDeltaRMin;
   }
   else if(variable == "isPassMuonLooseID") {
+    // boolean for whether track is loosely identified with a muon, 
+    // i.e., true if it is DeltaR-matched to a member of either of the muon or secondary muon collections
     string empty = "";
-    double trkMuonDeltaRMin = valueLookup(object, "deltaRMinMuonLooseId", "", empty);
-    if (trkMuonDeltaRMin  < 0.15) value = 1;
-    else                          value = 0;
+    double trkMuonDeltaRMin    = valueLookup(object, "deltaRMinMuonLooseId",          "", empty);
+    double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseIdGlobal", "", empty); 
+    value = 0;                                  // initialize to be false 
+    if (trkMuonDeltaRMin    < 0.15) value = 1;  // true if matched to muon 
+    if (trkSecMuonDeltaRMin < 0.15) value = 1;  // true if matched to secondary muon 
   }
   else if(variable == "deltaRMinSecMuonLooseIdGlobal") {
     // calculate minimum deltaR between track and any other loose-Id muon
