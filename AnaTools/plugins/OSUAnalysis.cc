@@ -926,7 +926,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   //get pile-up event weight
   if (doPileupReweighting_ && datasetType_ != "data") {
     //for "data" datasets, the numTruePV is always set to -1
-    if (events->at(0).numTruePV < 0 && isFirstEvent_) clog << "WARNING[OSUAnalysis::analyze]: Event has numTruePV<0.  Turning off pile-up reweighting." << endl;
+    if (events->at(0).numTruePV < 0 && isFirstEvent_) {
+      clog << "WARNING[OSUAnalysis::analyze]: Event has numTruePV<0.  Turning off pile-up reweighting." << endl;
+      doPileupReweighting_ = false;
+    }
     else globalScaleFactor_ *= puWeight_->at (events->at (0).numTruePV);
   }
 
@@ -4666,6 +4669,7 @@ unsigned int OSUAnalysis::GetNumExtraPartons(const BNmcparticleCollection* genPa
 double
 OSUAnalysis::getSt (const BNelectronCollection* electronColl, const BNmuonCollection* muonColl, const BNjetCollection* jetColl){
   double St = 0;
+  if (!electronColl || !muonColl || !jetColl) return -999.0;
   for(BNelectronCollection::const_iterator electron = electronColl->begin(); electron !=electronColl->end(); electron++){
     St += abs(electron->pt);
   }
