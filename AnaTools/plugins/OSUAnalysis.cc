@@ -926,7 +926,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   //get pile-up event weight
   if (doPileupReweighting_ && datasetType_ != "data") {
     //for "data" datasets, the numTruePV is always set to -1
-    if (events->at(0).numTruePV < 0 && isFirstEvent_) clog << "WARNING[OSUAnalysis::analyze]: Event has numTruePV<0.  Turning off pile-up reweighting." << endl;
+    if (events->at(0).numTruePV < 0 && isFirstEvent_) {
+      clog << "WARNING[OSUAnalysis::analyze]: Event has numTruePV<0.  Turning off pile-up reweighting." << endl;
+      doPileupReweighting_ = false;
+    }
     else globalScaleFactor_ *= puWeight_->at (events->at (0).numTruePV);
   }
 
@@ -3180,10 +3183,14 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
     value = trkMuonDeltaRMin;
   }
   else if(variable == "isPassMuonLooseID") {
+    // boolean for whether track is loosely identified with a muon, 
+    // i.e., true if it is DeltaR-matched to a member of either of the muon or secondary muon collections
     string empty = "";
-    double trkMuonDeltaRMin = valueLookup(object, "deltaRMinMuonLooseId", "", empty);
-    if (trkMuonDeltaRMin  < 0.15) value = 1;
-    else                          value = 0;
+    double trkMuonDeltaRMin    = valueLookup(object, "deltaRMinMuonLooseId",          "", empty);
+    double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseIdGlobal", "", empty); 
+    value = 0;                                  // initialize to be false 
+    if (trkMuonDeltaRMin    < 0.15) value = 1;  // true if matched to muon 
+    if (trkSecMuonDeltaRMin < 0.15) value = 1;  // true if matched to secondary muon 
   }
   else if(variable == "deltaRMinSecMuonLooseIdGlobal") {
     // calculate minimum deltaR between track and any other loose-Id muon
@@ -4662,6 +4669,7 @@ unsigned int OSUAnalysis::GetNumExtraPartons(const BNmcparticleCollection* genPa
 double
 OSUAnalysis::getSt (const BNelectronCollection* electronColl, const BNmuonCollection* muonColl, const BNjetCollection* jetColl){
   double St = 0;
+  if (!electronColl || !muonColl || !jetColl) return -999.0;
   for(BNelectronCollection::const_iterator electron = electronColl->begin(); electron !=electronColl->end(); electron++){
     St += abs(electron->pt);
   }
