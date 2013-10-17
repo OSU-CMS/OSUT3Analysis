@@ -1327,12 +1327,6 @@ JetSecondaryJetHistograms = cms.PSet(
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
-            name = cms.string("JetSecondaryJetDeltaPt"),
-            title = cms.string("Di-jet Transverse Momentum Difference; |p_{T}_{jet1}-p_{T}_{jet2}| [GeV] "),
-            bins = cms.untracked.vdouble(100, 0,500),
-            inputVariables = cms.vstring("absDeltaPt"),
-        ),
-        cms.PSet (
             name = cms.string("JetSecondaryJetThreeDAngle"),
             title = cms.string("Di-jet 3D angle; 3D angle"),
             bins = cms.untracked.vdouble(100, 0, 3.15),
@@ -1534,13 +1528,13 @@ MuonSecondaryJetHistograms = cms.PSet(
             inputVariables = cms.vstring("deltaPhi","deltaR"),
         ),
         cms.PSet (
-            name = cms.string("muonEtavsJetEta "),
+            name = cms.string("muonEtavsSecondaryJetEta "),
             title = cms.string("Muon Eta.vs Jet Eta; Jet #eta; Muon #eta"),
             bins = cms.untracked.vdouble(100, -6, 6, 100, -6 ,6),
             inputVariables = cms.vstring("jetEta","muonEta"),
         ),
         cms.PSet (
-            name = cms.string("muonPhivsJetPhi "),
+            name = cms.string("muonPhivsSecondaryJetPhi "),
             title = cms.string("Muon Phi.vs Jet Phi; Jet #phi; Muon #phi"),
             bins = cms.untracked.vdouble(100, -3.15, 3.15, 100, -3.15 ,3.15),
             inputVariables = cms.vstring("jetPhi","muonPhi"),
@@ -1606,13 +1600,13 @@ ElectronSecondaryJetHistograms = cms.PSet(
             inputVariables = cms.vstring("deltaPhi","deltaR"),
         ),
         cms.PSet (
-            name = cms.string("electronEtavsJetEta "),
+            name = cms.string("electronEtavsSecondaryJetEta "),
             title = cms.string("Electron Eta.vs Jet Eta; Jet #eta; Electron #eta"),
             bins = cms.untracked.vdouble(100, -6, 6, 100, -6 ,6),
             inputVariables = cms.vstring("jetEta","electronEta"),
         ),
         cms.PSet (
-            name = cms.string("electronPhivsJetPhi "),
+            name = cms.string("electronPhivsSecondaryJetPhi "),
             title = cms.string("Electron Phi.vs Jet Phi; Jet #phi; Electron #phi"),
             bins = cms.untracked.vdouble(100, -3.15, 3.15, 100, -3.15 ,3.15),
             inputVariables = cms.vstring("jetPhi","electronPhi"),
@@ -1672,13 +1666,13 @@ PhotonSecondaryJetHistograms = cms.PSet(
             inputVariables = cms.vstring("deltaPhi","deltaR"),
         ),
         cms.PSet (
-            name = cms.string("photonEtavsJetEta "),
+            name = cms.string("photonEtavsSecondaryJetEta "),
             title = cms.string("Photon Eta.vs Jet Eta; Jet #eta; Photon #eta"),
             bins = cms.untracked.vdouble(100, -6, 6, 100, -6 ,6),
             inputVariables = cms.vstring("jetEta","photonEta"),
         ),
         cms.PSet (
-            name = cms.string("photonPhivsJetPhi "),
+            name = cms.string("photonPhivsSecondaryJetPhi "),
             title = cms.string("Photon Phi.vs Jet Phi; Jet #phi; Photon #phi"),
             bins = cms.untracked.vdouble(100, -3.15, 3.15, 100, -3.15 ,3.15),
             inputVariables = cms.vstring("jetPhi","photonPhi"),
