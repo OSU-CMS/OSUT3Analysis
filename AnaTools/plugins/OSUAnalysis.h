@@ -81,6 +81,7 @@ class OSUAnalysis : public edm::EDProducer
 
       double valueLookup (const BNmuon* object1, const BNphoton* object2, string variable, string function, string &stringValue);
       double valueLookup (const BNmuon* object1, const BNevent* object2, string variable, string function, string &stringValue);
+      double valueLookup (const BNelectron* object1, const BNevent* object2, string variable, string function, string &stringValue);
 
       double valueLookup (const BNphoton* object1, const BNjet* object2, string variable, string function, string &stringValue);
 
@@ -341,6 +342,7 @@ class OSUAnalysis : public edm::EDProducer
       const BNmet *chosenMET ();
       const BNelectron *chosenElectron ();
       const BNmuon *chosenMuon ();
+      template<typename T0, typename T1> const T1 *closest (const T0 *, const edm::Handle<vector<T1> > &, const string &);
       double chosenHT ();
       double chosenST ();
 
