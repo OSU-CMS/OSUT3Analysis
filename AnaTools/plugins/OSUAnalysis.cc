@@ -3187,11 +3187,28 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
     // i.e., true if it is DeltaR-matched to a member of either of the muon or secondary muon collections
     string empty = "";
     double trkMuonDeltaRMin    = valueLookup(object, "deltaRMinMuonLooseId",          "", empty);
-    double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseIdGlobal", "", empty); 
+    double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseId",       "", empty); 
     value = 0;                                  // initialize to be false 
     if (trkMuonDeltaRMin    < 0.15) value = 1;  // true if matched to muon 
     if (trkSecMuonDeltaRMin < 0.15) value = 1;  // true if matched to secondary muon 
   }
+
+  else if(variable == "deltaRMinSecMuonLooseId") {
+    // calculate minimum deltaR between track and any other loose-Id muon                                       
+    double trkMuonDeltaRMin = 99.;
+    if (!secMuons.product()) clog << "ERROR:  cannot find deltaRMinSecMuonLooseId because secMuons collection is not initialized." << endl;
+    for (uint imuon = 0; imuon<secMuons->size(); imuon++) {
+      string empty = "";
+      double isLooseIdMuon = valueLookup(&secMuons->at(imuon), "looseID", "", empty);
+      if (!isLooseIdMuon) continue;  // only consider muons that pass the looseID criteria                  
+      double muonEta = valueLookup(&secMuons->at(imuon), "eta", "", empty);
+      double muonPhi = valueLookup(&secMuons->at(imuon), "phi", "", empty);
+      double trkMuonDeltaR = deltaR(object->eta, object->phi, muonEta, muonPhi);
+      if (trkMuonDeltaR < trkMuonDeltaRMin) trkMuonDeltaRMin = trkMuonDeltaR;
+    }
+    value = trkMuonDeltaRMin;
+  }
+
   else if(variable == "deltaRMinSecMuonLooseIdGlobal") {
     // calculate minimum deltaR between track and any other loose-Id muon
     double trkMuonDeltaRMin = 99.;
