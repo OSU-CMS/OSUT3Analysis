@@ -186,7 +186,7 @@ for sample in processed_datasets:
         else:
             sysError_ = 0.0
 
-        yields[sample][channel] = formatNumber(str(round_sigfigs(yield_,3)).rstrip("0").rstrip("."))
+        yields[sample][channel] = formatNumber(str(round_sigfigs(int(yield_),5)).rstrip("0").rstrip("."))
         stat_errors[sample][channel] = formatNumber(str(round_sigfigs(statError_,3)).rstrip("0").rstrip("."))
         sys_errors[sample][channel] = formatNumber(str(round_sigfigs(sysError_,3)).rstrip("0").rstrip("."))
 
@@ -230,7 +230,7 @@ for channel in channels:
     #write a line with the sum of the backgrounds
     if bgMCcounter is not 0:
 
-        bgMCSum_ = formatNumber(str(round_sigfigs(bgMCSum[channel],3)).rstrip("0").rstrip("."))
+        bgMCSum_ = formatNumber(str(round_sigfigs(int(bgMCSum[channel]),5)).rstrip("0").rstrip("."))
         bgMCStatErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCStatErrSquared[channel]),3)).rstrip("0").rstrip("."))
         bgMCSysErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCSysErrSquared[channel]),3)).rstrip("0").rstrip("."))
         line = hLine+"background sum & " + bgMCSum_ + " $\pm$ " + bgMCStatErr_
@@ -245,7 +245,8 @@ for channel in channels:
             continue
         rawlabel = "$" + labels[sample] + "$"
         label = rawlabel.replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ")
-        fout.write(label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel] + endLine + newLine)
+#        fout.write(label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel] + endLine + newLine)
+        fout.write(label + " & " + yields[sample][channel] + endLine + newLine)        
                                             
     fout.write("\\end{tabular}"+newLine)
     if(arguments.standAlone):
