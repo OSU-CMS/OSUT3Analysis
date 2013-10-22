@@ -176,7 +176,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
             ratio.SetBinContent(i+1,groupR(g))
             ratio.SetBinError(i+1,groupErr(g))
 
-    ratio.GetYaxis().SetTitle("#frac{Data-MC}{MC}")
+    ratio.GetYaxis().SetTitle("#frac{Data-Bkgd}{Bkgd}")
     ratio.SetLineColor(1)
     ratio.SetLineWidth(2)
     return ratio
@@ -646,8 +646,8 @@ def MakeOneDHist(pathToDir,distribution):
             if i == 1:
                 YieldsLabel.AddText ("After Fit to Data")
             YieldsLabel.AddText ("data yield: " + '%.1f' % dataYield)
-            YieldsLabel.AddText ("MC yield: " + '%.1f' % mcYield)
-            YieldsLabel.AddText ("data/MC: " + '%.2f' % (dataYield/mcYield))
+            YieldsLabel.AddText ("bkgd yield: " + '%.1f' % mcYield)
+            YieldsLabel.AddText ("data/bkgd: " + '%.2f' % (dataYield/mcYield))
             if i == 1:
                 for j in range(0,len(FittingLegendEntries)):
                     if abs(ratios[j]-1) < 0.001 and abs(errors[j]) < 0.001: #then it probably was held fixed
@@ -658,7 +658,7 @@ def MakeOneDHist(pathToDir,distribution):
                         text = FittingLegendEntries[j]+" yield: " + '%.0f' % yield_ + ' #pm %.0f' % yielderror_
                     else:
                         text = FittingLegendEntries[j]+" ratio: " + '%.2f' % ratios[j] + ' #pm %.2f' % errors[j]
-                    text = text + " (stat)"
+                    #text = text + " (stat)"
                     if arguments.parametricErrors:
                         yield_ = ratios[j]*integrals[j]
                         yieldParError_ = parErrors[j]*yield_
@@ -684,7 +684,7 @@ def MakeOneDHist(pathToDir,distribution):
                 Comparison = Target.Clone("diff")
                 Comparison.Add(BgSum,-1)
                 Comparison.SetTitle("")
-                Comparison.GetYaxis().SetTitle("Data-MC")
+                Comparison.GetYaxis().SetTitle("Data-Bkgd")
             Comparison.GetXaxis().SetTitle(xAxisLabel)
             Comparison.GetYaxis().CenterTitle()
             Comparison.GetYaxis().SetTitleSize(0.1)
