@@ -620,6 +620,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         int maxNum = 10;
         if(currentObject == "mcparticles" || currentObject == "secondary mcparticles") maxNum = 50;
         else if(currentObject == "primaryvertexs") maxNum = 50;
+        else if(currentObject == "jets") maxNum = 25;
 
         if(currentObject == "muon-muon pairs")                currentObject = "dimuonPairs";
         else if(currentObject == "electron-electron pairs")   currentObject = "dielectronPairs";
@@ -916,7 +917,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   globalScaleFactor_ = 1.0; //this variable holds the product of all SFs applied equally to all channels
 
   //apply trigger efficiency
-  if (!applyTriggerSF_) triggerScaleFactor_ = 1.0; //reset the variable to 1 if we're not applying it, so it will take that value in its histogram
+  if (!applyTriggerSF_ || datasetType_ != "data") triggerScaleFactor_ = 1.0; //reset the variable to 1 if we're not applying it, so it will take that value in its histogram
   if (applyTriggerSF_ && datasetType_ != "data") globalScaleFactor_ *= triggerScaleFactor_;
 
   //apply tracking efficiency
