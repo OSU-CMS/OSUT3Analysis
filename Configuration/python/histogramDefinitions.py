@@ -567,6 +567,18 @@ ElectronHistograms = cms.PSet(
             bins = cms.untracked.vdouble(100, 0, 200),
             inputVariables = cms.vstring("metMT"),
         ),
+        cms.PSet (
+            name = cms.string("electronNumberOfLostHits"),
+            title = cms.string("Electon Number of Lost Hits; # lost hits"),
+            bins = cms.untracked.vdouble(10, 0, 10),
+            inputVariables = cms.vstring("numberOfLostHits"),
+        ),
+        cms.PSet (
+            name = cms.string("electronNumberOfExpectedInnerHits"),
+            title = cms.string("Electron Number of Expected Inner Hits; # exp. inner hits"),
+            bins = cms.untracked.vdouble(10, 0, 10),
+            inputVariables = cms.vstring("numberOfExpectedInnerHits"),
+        ),
     )
 )
 
