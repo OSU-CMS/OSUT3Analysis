@@ -384,6 +384,8 @@ dbUpdate
       $values .= ", crabCfg='$crabCfg'" if $crabCfgName;
       $values .= ", jsonFile='$jsonFile'" if $jsonFileName;
       $values .= ", lumiSummary='$lumiSummary'" if $lumiSummaryName;
+      $values .= ", hfLumiInInversePicobarn=NULL" if $lumiSummaryName;
+      $values .= ", pixelLumiInInversePicobarn=NULL" if $lumiSummaryName;
       $values .= ", version='$release'" if $release;
       $values .= ", globalTag='$globalTag'" if $globalTag;
       $values .= ", crossSectionInPicobarn=$xSection" if $xSection;

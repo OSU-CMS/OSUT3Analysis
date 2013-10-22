@@ -803,6 +803,7 @@ TrackBranches = cms.PSet(
         "deltaRMinElecLooseMvaId",
         "deltaRMinMuonLooseId",
         "isPassMuonLooseID",
+        "deltaRMinSecMuonLooseId",
         "deltaRMinSecMuonLooseIdGlobal",
         "deltaRMinTauLooseHadronicId",
         "genDeltaRLowest",					 

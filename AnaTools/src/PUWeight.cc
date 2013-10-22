@@ -4,7 +4,7 @@ PUWeight::PUWeight (const string &puFile, const string &dataPU, const string &mc
 {
   TFile *fin = TFile::Open (puFile.c_str ());
   if (!fin || fin->IsZombie()) {
-    cout << "ERROR [PUWeight]: Could not find file: " << puFile 
+    clog << "ERROR [PUWeight]: Could not find file: " << puFile 
 	 << "; will cause a seg fault." << endl;
     exit(1);
   }  
@@ -13,12 +13,12 @@ PUWeight::PUWeight (const string &puFile, const string &dataPU, const string &mc
   fin->GetObject(mcPU.c_str(), mc);  
   fin->GetObject(dataPU.c_str(), puWeight_);
   if (!mc) {
-    cout << "ERROR [PUWeight]: Could not find histogram: " << mcPU
+    clog << "ERROR [PUWeight]: Could not find histogram: " << mcPU
 	 << "; will cause a seg fault." << endl;
     exit(1);
   }
   if (!puWeight_) {
-    cout << "ERROR [PUWeight]: Could not find histogram: " << dataPU
+    clog << "ERROR [PUWeight]: Could not find histogram: " << dataPU
 	 << "; will cause a seg fault." << endl;
     exit(1);
   }
