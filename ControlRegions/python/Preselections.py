@@ -79,7 +79,7 @@ Electron_Preselection = cms.PSet(
       ),
       cms.PSet (
         inputCollection = cms.string("electrons"),
-        cutString = cms.string("mvaTrigV0 > 0.9"),
+        cutString = cms.string("mvaNonTrig_HtoZZto4l > 0"),
         numberRequired = cms.string(">= 1")
       ),
       cms.PSet (
