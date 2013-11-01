@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <sstream>
 
 #include <fstream>
 #include <iostream>
@@ -285,6 +286,12 @@ class OSUAnalysis : public edm::EDProducer
 
       struct channel {
         string name;
+	vector<int> inStatus3Outgoing;
+	vector<int> notInStatus3Outgoing;
+	vector<int> absInStatus3Outgoing;
+	vector<int> absNotInStatus3Outgoing;
+        string inStatus3OutgoingCutName;
+        string notInStatus3OutgoingCutName;
         vector<string> triggers;
         vector<string> triggersToVeto;
         vector<cut> cuts;
@@ -325,6 +332,7 @@ class OSUAnalysis : public edm::EDProducer
       template <class InputCollection> void assignTreeBranch(BranchSpecs brSpecs, InputCollection inputCollection, flagPair flags);  
       template <class InputCollection> void fill1DHistogram(TH1*, histogram, InputCollection, flagPair, double);
       template <class InputCollection1, class InputCollection2> void fill1DHistogram(TH1*, histogram, InputCollection1, InputCollection2, flagPair, double);
+      void fill1DStatus3Histogram(TH1* histo, const BNmcparticleCollection *inputCollection, double scaleFactor);
       template <class InputCollection> void fill2DHistogram(TH2*, histogram, InputCollection, flagPair, double);
       template <class InputCollection1, class InputCollection2> void fill2DHistogram(TH2*, histogram, InputCollection1, InputCollection2, flagPair, double);
       bool getPreviousCumulativeFlags(uint currentCutIndex, flagMap &individualFlags, string obj1Type, uint object1, string flagType);
