@@ -23,7 +23,7 @@ our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") o
 
 my %opt;
 Getopt::Long::Configure ("bundling");
-GetOptions (\%opt, "comment|c=s", "format|f=s", "pyConfig|p=s", "crabCfg|b=s", "jsonFile|j=s", "lumiSummary|s=s", "location|l=s", "name|n=s", "fileList|t=s", "release|r=s", "other|o", "recipe|e=s", "globalTag|g=s", "configName|i=s", "xSection|x=s", "higherOrderXSec|y=s", "help|h");
+GetOptions (\%opt, "append|a", "comment|c=s", "format|f=s", "pyConfig|p=s", "crabCfg|b=s", "jsonFile|j=s", "lumiSummary|s=s", "location|l=s", "name|n=s", "fileList|t=s", "release|r=s", "other|o", "recipe|e=s", "globalTag|g=s", "configName|i=s", "xSection|x=s", "higherOrderXSec|y=s", "help|h");
 my $argc = @ARGV;
 
 printHelp ($ARGV[0]) if $opt{"help"};
@@ -95,7 +95,7 @@ else
         print "This location is already registered in the database!\n";
         exit;
       }
-    dbUpdate ($id, $fullDataset, "$ENV{'USER'}\@$ENV{'HOSTNAME'}", $opt{"format"}, $opt{"location"}, $opt{"name"}, $opt{"fileList"}, $status, $opt{"comment"}, $opt{"pyConfig"}, $opt{"crabCfg"}, $opt{"jsonFile"}, $opt{"lumiSummary"}, $opt{"release"}, $opt{"globalTag"}, $opt{"configName"}, $opt{"xSection"}, $opt{"higherOrderXSec"}) if $ARGV[0] ne "deleteEntry" && !$opt{"other"};
+    dbUpdate ($id, $fullDataset, "$ENV{'USER'}\@$ENV{'HOSTNAME'}", $opt{"format"}, $opt{"location"}, $opt{"name"}, $opt{"fileList"}, $status, $opt{"comment"}, $opt{"pyConfig"}, $opt{"crabCfg"}, $opt{"jsonFile"}, $opt{"lumiSummary"}, $opt{"release"}, $opt{"globalTag"}, $opt{"configName"}, $opt{"xSection"}, $opt{"higherOrderXSec"}, $opt{"append"}) if $ARGV[0] ne "deleteEntry" && !$opt{"other"};
     dbUpdateOther ($id, $opt{"comment"}, "$ENV{'USER'}\@$ENV{'HOSTNAME'}") if $ARGV[0] ne "deleteEntry" && $opt{"other"};
     dbDelete ($id) if $ARGV[0] eq "deleteEntry" && !$opt{"other"};
     dbDeleteOther ($id) if $ARGV[0] eq "deleteEntry" && $opt{"other"};
@@ -211,21 +211,26 @@ dbUpdate
   my $configName = shift;
   my $xSection = shift;
   my $ySection = shift;
+  my $append = shift;
 
-  $location = getLocation ($id) if $id > 0
-                               && !$crabCfgName
-                               && !$comment
-                               && !$format
-                               && !$globalTag
-                               && !$configName
-                               && !$jsonFileName
-                               && !$location
-                               && !$name
-                               && !$psetName
-                               && !$release
-                               && !$lumiSummaryName
-                               && !$xSection
-                               && !$ySection;
+  my $oldLocation;
+  my $oldNFiles;
+  my $oldSize;
+  ($oldLocation, $oldNFiles, $oldSize) = getLocation ($id) if $id > 0;
+  $location = $oldLocation if $oldLocation
+                           && !$crabCfgName
+                           && !$comment
+                           && !$format
+                           && !$globalTag
+                           && !$configName
+                           && !$jsonFileName
+                           && !$location
+                           && !$name
+                           && !$psetName
+                           && !$release
+                           && !$lumiSummaryName
+                           && !$xSection
+                           && !$ySection;
 
   my $user = $userAndHost;
   $user =~ s/@.*$//g;
@@ -370,11 +375,17 @@ dbUpdate
             }
           $values .= ", dataset='$name'";
         }
+      if ($location && $append && $location ne $oldLocation)
+        {
+          $fullLocation = $oldLocation . ":" . $fullLocation;
+          $nFiles += $oldNFiles;
+          $size += $oldSize;
+        }
 
       $values .= ", lastUpdateTime=now()";
       $values .= ", lastUpdateUser='$user'";
       $values .= ", format='$format'" if $format;
-      $values .= ", location='$fullLocation'" if $location;
+      $values .= ", location='$fullLocation'";
       $values .= ", fileList='$fileList'" if $fileListName;
       $values .= ", nFiles=$nFiles" if $nFiles;
       $values .= ", sizeInGB=$size" if $size;
@@ -479,6 +490,8 @@ printHelp
       print "location in the database.\n";
       print "\n";
       print "Mandatory arguments to long options are mandatory for short options too.\n";
+      printf "%-29s%s\n", "  -a, --append", "append the location given by -l to the list of";
+      printf "%-29s%s\n", " ", "locations, instead of replacing it";
       printf "%-29s%s\n", "  -b, --crabCfg FILE", "CRAB config used to submit ntuple jobs";
       printf "%-29s%s\n", "  -c, --comment COMMENT", "comment for the database entry";
       printf "%-29s%s\n", "  -f, --format FORMAT", "ntuple format";
@@ -593,7 +606,7 @@ sizeOfDataset
           print "$location does not exist!\n";
           exit;
         }
-      $nFiles = `ls $location | wc -l`;
+      $nFiles = `ls $location/*.root 2>/dev/null | wc -l`;
       $size = `du -s $location`;
       $size =~ s/([^ ]*) .*/$1/;
       $size /= 1024 * 1024;
@@ -754,7 +767,7 @@ uploadConfig
     }
   if ($release)
     {
-      my $query = "select id from ntupleRelease where name='$release'";
+      my $query = "select id from ntupleRelease where name='$release' and pending=0 and available=1";
       $db->selectdb ("ntuple");
       my $results = $db->query ($query);
       if ($results->numrows () != 1)
@@ -820,10 +833,10 @@ getLocation
 {
   my $id = shift;
 
-  my $query = "select location from ntuple where id=$id";
+  my $query = "select location,nFiles,sizeInGB from ntuple where id=$id";
   $db->selectdb ("ntuple");
   my $results = $db->query ($query);
   my @row = $results->fetchrow ();
 
-  return $row[0];
+  return ($row[0], $row[1], $row[2]);
 }
