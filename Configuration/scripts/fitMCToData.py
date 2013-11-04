@@ -260,8 +260,6 @@ def MakeOneDHist(pathToDir,distribution):
     if inputFile.IsZombie() or not inputFile.GetNkeys():
         return
 
-
-
     Target = inputFile.Get("OSUAnalysis/"+distribution['channel']+"/"+distribution['name']).Clone()
     Target.SetDirectory(0)
     inputFile.Close()
@@ -298,7 +296,7 @@ def MakeOneDHist(pathToDir,distribution):
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+distribution['channel']+"/"+distribution['name'])
         if not HistogramObj:
-            print "WARNING:  Could not find histogram " + pathToDir + "/" + distribution['name'] + " in file " + dataset_file + ".  Will skip it and continue."
+            print "WARNING:  Could not find histogram " + pathToDir + "/" + distribution['channel'] + "/" + distribution['name'] + " in file " + dataset_file + ".  Will skip it and continue."
             continue
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
@@ -396,16 +394,24 @@ def MakeOneDHist(pathToDir,distribution):
             func.FixParameter (i, 1.0)
         else:
             func.SetParameter (i, 1.0)
-            func.SetParLimits (i, 0.0, 1.0e2)
+#            func.SetParLimits (i, 0.0, 1.0e2) # comment this out so we don't have to pre-normalize the QCD input sample
         func.SetParName (i, labels[FittingHistogramDatasets[i]])
 
-    parErrorRanges = {}
+    shiftedScaleFactors = []
     if arguments.parametricErrors:
+        # loop over all input histograms and shift them +- 1 sigma
         for i in range (0, len (HistogramsToFit)):
+            sfs = []
+
+            # -1 => -1 sigma, +1 => +1 sigma
             for j in [-1, 1]:
+                # loop over the parameters holding the errors for each dataset, fixing all to 0
                 for k in range (len (HistogramsToFit), 2 * len (HistogramsToFit)):
                     func.FixParameter (k, 0)
+                # fix the error of the dataset of interest to +-1
                 func.FixParameter (i + len (HistogramsToFit), j)
+
+                # perform new fit
                 for k in range (0, distribution['iterations'] - 1):
                     if j == -1:
                         print "Scale down " + labels[FittingHistogramDatasets[i]] + " iteration " + str (k + 1) + "..."
@@ -413,17 +419,38 @@ def MakeOneDHist(pathToDir,distribution):
                         print "Scale up " + labels[FittingHistogramDatasets[i]] + " iteration " + str (k + 1) + "..."
                     Target.Fit ("fit", "QEMR0")
                 Target.Fit ("fit", "VEMR0")
-                if j == -1:
-                    parErrorRanges[labels[FittingHistogramDatasets[i]]] = [func.GetParameter (i)]
-                if j == 1:
-                    parErrorRanges[labels[FittingHistogramDatasets[i]]].append (func.GetParameter (i))
+                
+                # save the new scale factors for each dataset
+                for k in range(0, len(HistogramsToFit)):
+                    sfs.append(func.GetParameter(k))
 
+            shiftedScaleFactors.append(sfs)
+                    
+
+    # reset the parameters with the errors of each dataset to 0
     for i in range (len (HistogramsToFit), 2 * len (HistogramsToFit)):
         func.FixParameter (i, 0)
+    # do the fit to get the central values
     for i in range (0, distribution['iterations'] - 1):
         print "Iteration " + str (i + 1) + "..."
         Target.Fit ("fit", "QEMR0")
     Target.Fit ("fit", "VEMR0")
+
+    if arguments.parametricErrors:
+        # make a list of the largest errors on each contribution by shifting any other contribution
+        parErrors = []
+        # loop over all the datasets
+        for i in range (0, len(HistogramsToFit)):
+            centralValue = func.GetParameter(i)
+            maxError = 0
+            # find the maximum deviation from the central value and save that
+            for shiftedScaleFactor in shiftedScaleFactors[i]:
+                currentError = abs(shiftedScaleFactor - centralValue)
+                if currentError > maxError:
+                    maxError = currentError
+
+            parErrors.append(maxError)
+
 
     finalMax = 0
     if not arguments.noStack:
@@ -483,19 +510,16 @@ def MakeOneDHist(pathToDir,distribution):
         integrals = []
         ratios = []
         errors = []
-        parErrors = []
 
         if i == 1:
+            # loop over each dataset, saving it's yield and the errors on it
             for j in range (0, len (HistogramsToFit)):
 
                 integrals.append(HistogramsToFit[j].Integral())
                 HistogramsToFit[j].Scale (func.GetParameter (j))
                 ratios.append(func.GetParameter (j))
                 errors.append(func.GetParError(j))
-                if arguments.parametricErrors:
-                    scaleDown = parErrorRanges[labels[FittingHistogramDatasets[j]]][0]
-                    scaleUp = parErrorRanges[labels[FittingHistogramDatasets[j]]][1]
-                    parErrors.append (abs (scaleUp - scaleDown))
+
 
         for fittingHist in HistogramsToFit:
             if not arguments.noStack:
@@ -658,7 +682,7 @@ def MakeOneDHist(pathToDir,distribution):
                         text = FittingLegendEntries[j]+" yield: " + '%.0f' % yield_ + ' #pm %.0f' % yielderror_
                     else:
                         text = FittingLegendEntries[j]+" ratio: " + '%.2f' % ratios[j] + ' #pm %.2f' % errors[j]
-                    #text = text + " (stat)"
+                    text = text + " (fit)"
                     if arguments.parametricErrors:
                         yield_ = ratios[j]*integrals[j]
                         yieldParError_ = parErrors[j]*yield_
