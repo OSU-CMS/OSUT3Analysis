@@ -133,18 +133,29 @@ outputRunList
           $response =~ s/\n//g;
           exit if !$response || lc ($response) ne "y";
         }
-      if (!(-e $location))
-        {
-          print "The database does not know where this dataset is!\n";
-          exit;
-        }
     }
   my @files;
   if (!$isRunList)
     {
-      opendir (LOCATION, $location);
-      @files = readdir (LOCATION);
-      closedir (LOCATION);
+      my @locations = split (":", $location);
+      foreach my $dir (@locations)
+        {
+          if (!(-e $dir))
+            {
+              print "The database does not know where this dataset is!\n";
+              exit;
+            }
+          opendir (LOCATION, $dir);
+          my @filesInDir = readdir (LOCATION);
+          closedir (LOCATION);
+          foreach my $file (@filesInDir)
+            {
+              next if $file eq ".";
+              next if $file eq "..";
+              next if !($file =~ m/\.root$/);
+              push (@files, abs_path ("$dir/$file"));
+            }
+        }
     }
   else
     {
@@ -155,8 +166,8 @@ outputRunList
         }
       close (RUNLIST);
     }
-  $nFiles = @files - 2 if $isLocation || $isRunList;
-  if (@files - 2 != $nFiles)
+  $nFiles = @files if $isLocation || $isRunList;
+  if (@files != $nFiles)
     {
       print "Number of files does not match database entry!\n";
       print "Continue anyway? (y/N): ";
@@ -172,7 +183,7 @@ outputRunList
       next if $files[$i] eq ".";
       next if $files[$i] eq "..";
       next if !($files[$i] =~ m/\.root$/);
-      print RUNLIST "'file:" . abs_path ("$location/$files[$i]") . "'";
+      print RUNLIST "'file:" . $files[$i] . "'";
       print RUNLIST "," if $i + 1 != @files;
       print RUNLIST "\n";
       $nFiles++;

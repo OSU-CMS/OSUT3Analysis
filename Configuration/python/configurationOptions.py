@@ -441,8 +441,14 @@ composite_dataset_definitions = {
 
 
     'Background' : [
+        # w+n jets 
+        'W0jets',
+        'W1jets',
+        'W2jets',
+        'W3jets',
+        'W4jets',
         # w+jets
-        'Wjets',
+        #'Wjets',
         # ttbar
         'TTbar_Had',
         'TTbar_SemiLep',

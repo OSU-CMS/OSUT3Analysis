@@ -135,6 +135,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "secondary electron-electron pairs")   tempInputCollection = "electron-secondary electron pairs";
     if(tempInputCollection == "trigobj-electron pairs")   tempInputCollection = "electron-trigobj pairs";
     if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
+    if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
     if(tempInputCollection.find("pairs")==string::npos){ //just a single object
       if(tempInputCollection.find("secondary")!=string::npos){//secondary object
         if(tempInputCollection.find("secondary muons")!=string::npos){//treat secondary muons differently; allow for a different input collection
@@ -204,6 +205,21 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 
 
   //add histograms with the gen-matched id, mother id, and grandmother id
+  histogram tempStatus3Histo, tempStatus3Histo2;
+  tempStatus3Histo.inputCollection = "mcparticles";
+  tempStatus3Histo.name = "status3OutgoingID";
+  tempStatus3Histo.title = "Status 3 Outgoing Particle IDs;Outgoing Particle ID";
+
+  int maxNum = 25;
+  vector<double> binVector;
+  binVector.push_back(maxNum);
+  binVector.push_back(0);
+  binVector.push_back(maxNum);
+
+  tempStatus3Histo.bins = binVector;
+  tempStatus3Histo.inputVariables.push_back("status3OutgoingID");
+  histograms.push_back(tempStatus3Histo);
+
   for(uint currentObjectIndex = 0; currentObjectIndex != objectsToPlot.size(); currentObjectIndex++){
 
     string currentObject = objectsToPlot.at(currentObjectIndex);
@@ -292,24 +308,36 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     TString channelLabel = channelName;
     if (verbose_) clog << "Processing channel:  " << channelName << endl;
 
-    //set triggers for this channel
-    vector<string> triggerNames;
-    triggerNames.clear();
-    vector<string> triggerToVetoNames;
-    triggerToVetoNames.clear();
+    tempChannel.inStatus3Outgoing.clear ();
+    tempChannel.notInStatus3Outgoing.clear ();
+    tempChannel.absInStatus3Outgoing.clear ();
+    tempChannel.absNotInStatus3Outgoing.clear ();
+    if(channels_.at(currentChannel).exists("inStatus3Outgoing")){
+      tempChannel.inStatus3Outgoing = channels_.at(currentChannel).getParameter<vector<int> >("inStatus3Outgoing");
+      tempChannel.inStatus3OutgoingCutName = "status 3 outgoing inclusion";
+    }
+    if(channels_.at(currentChannel).exists("notInStatus3Outgoing")){
+      tempChannel.notInStatus3Outgoing = channels_.at(currentChannel).getParameter<vector<int> >("notInStatus3Outgoing");
+      tempChannel.notInStatus3OutgoingCutName = "status 3 outgoing exclusion";
+    }
+    if(channels_.at(currentChannel).exists("absInStatus3Outgoing")){
+      tempChannel.absInStatus3Outgoing = channels_.at(currentChannel).getParameter<vector<int> >("absInStatus3Outgoing");
+      tempChannel.inStatus3OutgoingCutName = "status 3 outgoing inclusion";
+    }
+    if(channels_.at(currentChannel).exists("absNotInStatus3Outgoing")){
+      tempChannel.absNotInStatus3Outgoing = channels_.at(currentChannel).getParameter<vector<int> >("absNotInStatus3Outgoing");
+      tempChannel.notInStatus3OutgoingCutName = "status 3 outgoing exclusion";
+    }
 
+    //set triggers for this channel
     tempChannel.triggers.clear();
     tempChannel.triggersToVeto.clear();
     if(channels_.at(currentChannel).exists("triggers")){
-      triggerNames   = channels_.at(currentChannel).getParameter<vector<string> >("triggers");
-      for(uint trigger = 0; trigger!= triggerNames.size(); trigger++)
-        tempChannel.triggers.push_back(triggerNames.at(trigger));
+      tempChannel.triggers = channels_.at(currentChannel).getParameter<vector<string> >("triggers");
       objectsToGet.push_back("triggers");
     }
     if(channels_.at(currentChannel).exists("triggersToVeto")){
-      triggerToVetoNames = channels_.at(currentChannel).getParameter<vector<string> >("triggersToVeto");
-      for(uint trigger = 0; trigger!= triggerToVetoNames.size(); trigger++)
-        tempChannel.triggersToVeto.push_back(triggerToVetoNames.at(trigger));
+      tempChannel.triggersToVeto = channels_.at(currentChannel).getParameter<vector<string> >("triggersToVeto");
       objectsToGet.push_back("triggers");
     }
 
@@ -349,6 +377,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       if(tempInputCollection == "secondary electron-electron pairs")   tempInputCollection = "electron-secondary electron pairs";
       if(tempInputCollection == "trigobj-electron pairs")   tempInputCollection = "electron-trigobj pairs";
       if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
+      if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
       tempCut.inputCollection = tempInputCollection;
       if(tempInputCollection.find("pairs")==string::npos){ //just a single object
         if(tempInputCollection.find("secondary")!=string::npos){//secondary object
@@ -440,10 +469,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       }
 
       tempCut.isVeto = false;
-      if(cuts_.at(currentCut).exists("isVeto")){
-        bool isVeto = cuts_.at(currentCut).getParameter<bool> ("isVeto");
-        if (isVeto == true) tempCut.isVeto = true;
-      }
+      if(cuts_.at(currentCut).exists("isVeto"))
+        tempCut.isVeto = cuts_.at(currentCut).getParameter<bool> ("isVeto");
       subSubDirNames.push_back(subSubDirName);
       tempCut.name = tempCutName;
       if (verbose_) clog << "Setting up cut, index: " << currentCut << ", input collection: " << tempInputCollection<< ", name: " << tempCut.name << endl;
@@ -541,7 +568,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         }
 
 
-        if(currentHistogram.name.find("GenMatch")==string::npos) continue;
+        if(currentHistogram.name.find("GenMatch")==string::npos && currentHistogram.name.find("status3")==string::npos) continue;
 
         // bin      particle type
         // ---      -------------
@@ -598,16 +625,17 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         labelArray.push_back("QCD string");
         labelArray.push_back("other");
 
+        bool is2D = currentHistogram.name.find("GenMatchIdVsMotherId")!=string::npos
+                 || currentHistogram.name.find("GenMatchIdVsGrandmotherId")!=string::npos;
         for(int bin = 0; bin !=currentHistogram.bins.at(0); bin++){
-          if(currentHistogram.name.find("GenMatchIdVsMotherId")==string::npos && currentHistogram.name.find("GenMatchIdVsGrandmotherId")==string::npos) {
+          if(!is2D)
             oneDHists_.at(currentChannel).at(currentDir)[currentHistogram.name]->GetXaxis()->SetBinLabel(bin+1,labelArray.at(bin));
-          }
           else {
             twoDHists_.at(currentChannel).at(currentDir)[currentHistogram.name]->GetYaxis()->SetBinLabel(bin+1,labelArray.at(currentHistogram.bins.at(0)-bin-1));
             twoDHists_.at(currentChannel).at(currentDir)[currentHistogram.name]->GetXaxis()->SetBinLabel(bin+1,labelArray.at(bin));
           }
         }
-        if(currentHistogram.name.find("GenMatchIdVsMotherId")!=string::npos || currentHistogram.name.find("GenMatchIdVsGrandmotherId")!=string::npos) {
+        if(is2D) {
           twoDHists_.at(currentChannel).at(currentDir)[currentHistogram.name]->GetXaxis()->CenterTitle();
           twoDHists_.at(currentChannel).at(currentDir)[currentHistogram.name]->GetYaxis()->CenterTitle();
         }
@@ -716,6 +744,12 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   // Create the cutflow histogram and fill with 0 weight, in case no events are found in the input file.
   for(uint currentChannelIndex = 0; currentChannelIndex != channels.size(); currentChannelIndex++){
     channel currentChannel = channels.at(currentChannelIndex);
+    if(currentChannel.inStatus3Outgoing.size () || currentChannel.absInStatus3Outgoing.size ()){
+      cutFlows_.at(currentChannelIndex)->at(currentChannel.inStatus3OutgoingCutName) = true;
+    }
+    if(currentChannel.notInStatus3Outgoing.size () || currentChannel.absNotInStatus3Outgoing.size ()){
+      cutFlows_.at(currentChannelIndex)->at(currentChannel.notInStatus3OutgoingCutName) = true;
+    }
     if(currentChannel.triggers.size() != 0 || currentChannel.triggersToVeto.size() != 0){  //triggers specified
       cutFlows_.at(currentChannelIndex)->at("trigger") = true;
     }
@@ -810,7 +844,6 @@ void
 OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   // Retrieve necessary collections from the event.
-
   if (verbose_) clog << "Beginning OSUAnalysis::produce." << endl;
 
   if (find(objectsToGet.begin(), objectsToGet.end(), "triggers") != objectsToGet.end()) {
@@ -971,6 +1004,62 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
       cutFlows_.at(currentChannelIndex)->at ("trigger") = triggerDecision;
     }
 
+    bool notInStatus3Decision = true;
+    vector<int> inStatus3Outgoing (currentChannel.inStatus3Outgoing),
+                absInStatus3Outgoing (currentChannel.absInStatus3Outgoing);
+    unsigned count = 0;
+    for (BNmcparticleCollection::const_iterator mcparticle = mcparticles->begin () + 6; mcparticle < mcparticles->end (); mcparticle++, count++)
+      {
+        if (mcparticle->status != 3)
+          break;
+        bool erased = false;
+        for (vector<int>::iterator id = inStatus3Outgoing.begin (); id != inStatus3Outgoing.end (); id++)
+          {
+            if (mcparticle->id == *id)
+              {
+                inStatus3Outgoing.erase (id);
+                erased = true;
+                break;
+              }
+          }
+        for (vector<int>::iterator id = absInStatus3Outgoing.begin (); id != absInStatus3Outgoing.end () && !erased; id++)
+          {
+            if (abs (mcparticle->id) == abs (*id))
+              {
+                absInStatus3Outgoing.erase (id);
+                break;
+              }
+          }
+        for (vector<int>::const_iterator id = currentChannel.notInStatus3Outgoing.begin (); id != currentChannel.notInStatus3Outgoing.end () && notInStatus3Decision; id++)
+          {
+            if (mcparticle->id == *id)
+              notInStatus3Decision = false;
+          }
+        for (vector<int>::const_iterator id = currentChannel.absNotInStatus3Outgoing.begin (); id != currentChannel.absNotInStatus3Outgoing.end () && notInStatus3Decision; id++)
+          {
+            if (abs (mcparticle->id) == abs (*id))
+              notInStatus3Decision = false;
+          }
+      }
+    if (!count && mcparticles->size ()
+     && (currentChannel.inStatus3Outgoing.size () || currentChannel.notInStatus3Outgoing.size ()
+     || currentChannel.absInStatus3Outgoing.size () || currentChannel.absNotInStatus3Outgoing.size ()))
+      {
+        clog << "WARNING[OSUAnalysis::analyze]: mcparticle collection has no status 3 particles." << endl;
+        clog << "WARNING[OSUAnalysis::analyze]: turning off status 3 inclusion/exclusion cuts." << endl;
+        channels.at (currentChannelIndex).inStatus3Outgoing.clear ();
+        channels.at (currentChannelIndex).notInStatus3Outgoing.clear ();
+        channels.at (currentChannelIndex).absInStatus3Outgoing.clear ();
+        channels.at (currentChannelIndex).absNotInStatus3Outgoing.clear ();
+        notInStatus3Decision = true;
+        inStatus3Outgoing.clear ();
+        absInStatus3Outgoing.clear ();
+      }
+    if (currentChannel.inStatus3Outgoing.size () || currentChannel.absInStatus3Outgoing.size ())
+      cutFlows_.at(currentChannelIndex)->at (currentChannel.inStatus3OutgoingCutName) = !inStatus3Outgoing.size () && !absInStatus3Outgoing.size ();
+    if (currentChannel.notInStatus3Outgoing.size () || currentChannel.absNotInStatus3Outgoing.size ())
+      cutFlows_.at(currentChannelIndex)->at (currentChannel.notInStatus3OutgoingCutName) = notInStatus3Decision;
+
     //loop over all cuts
     for(uint currentCutIndex = 0; currentCutIndex != currentChannel.cuts.size(); currentCutIndex++){
       cut currentCut = currentChannel.cuts.at(currentCutIndex);
@@ -1059,7 +1148,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     //use cumulative flags to apply cuts at event level
     vector<bool> eventPassedPreviousCuts;    //a vector to store cumulative cut decisions after each cut.
     bool eventPassedAllCuts = true;
-    eventPassedAllCuts = eventPassedAllCuts && triggerDecision;    //apply trigger (true if none were specified)
+    eventPassedAllCuts = eventPassedAllCuts && !inStatus3Outgoing.size () && !absInStatus3Outgoing.size () && notInStatus3Decision && triggerDecision;    //apply trigger (true if none were specified)
 
     for(uint currentCutIndex = 0; currentCutIndex != currentChannel.cuts.size(); currentCutIndex++){
 
@@ -1217,14 +1306,16 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         for (uint histogramIndex = 0; histogramIndex != histograms.size(); histogramIndex++){
           histogram currentHistogram = histograms.at(histogramIndex);
 
-          if (cumulativeFlags.count(currentHistogram.inputCollection) == 0) clog << "Error: no flags found for collection:  " << currentHistogram.inputCollection << ", will cause a seg fault" << endl;
+          if (cumulativeFlags.count(currentHistogram.inputCollection) == 0 && currentHistogram.name.find ("status3") == string::npos)
+            clog << "Error: no flags found for collection:  " << currentHistogram.inputCollection << ", will cause a seg fault" << endl;
 
           if (verbose_>1) clog << " Filling histogram " << currentHistogram.name << " for collection " << currentHistogram.inputCollection << endl;
 
           if(currentHistogram.inputVariables.size() == 1){
             TH1D* histo;
             histo = oneDHists_.at(currentChannelIndex).at(currentCut).at(currentHistogram.name);
-            if     (currentHistogram.inputCollection == "jets")            fill1DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("jets").at(currentDir),eventScaleFactor_);
+            if     (currentHistogram.name.find ("status3") != string::npos) fill1DStatus3Histogram(histo,mcparticles.product(),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "jets")            fill1DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("jets").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary jets")  fill1DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("secondary jets").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary photons")  fill1DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("secondary photons").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muons")           fill1DHistogram(histo,currentHistogram,muons.product(),cumulativeFlags.at("muons").at(currentDir),eventScaleFactor_);
@@ -1289,6 +1380,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                                   cumulativeFlags.at("electron-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-trigobj pairs") fill1DHistogram(histo,currentHistogram, muons.product(),trigobjs.product(),
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
             // fill the histograms of weighting factors with 1, to see the shape of a SF without any weight applied
             else if(currentHistogram.inputCollection == "events" && currentHistogram.name.find("ScaleFactor")!=string::npos) fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),1.0);
             else if(currentHistogram.inputCollection == "events") fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
@@ -1309,7 +1402,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentHistogram.inputVariables.size() == 2){
             TH2D* histo;
             histo = twoDHists_.at(currentChannelIndex).at(currentCut).at(currentHistogram.name);
-            if     (currentHistogram.inputCollection == "jets")            fill2DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("jets").at(currentDir),eventScaleFactor_);
+            if(currentHistogram.inputCollection == "jets")            fill2DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("jets").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary jets")  fill2DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("secondary jets").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary photons")  fill2DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("secondary photons").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muons")           fill2DHistogram(histo,currentHistogram,muons.product(),cumulativeFlags.at("muons").at(currentDir),eventScaleFactor_);
@@ -1370,6 +1463,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                                   cumulativeFlags.at("electron-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-trigobj pairs") fill2DHistogram(histo,currentHistogram,muons.product(),trigobjs.product(),
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "events") fill2DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "taus") fill2DHistogram(histo,currentHistogram,taus.product(),cumulativeFlags.at("taus").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "mets") fill2DHistogram(histo,currentHistogram,mets.product(),cumulativeFlags.at("mets").at(currentDir),eventScaleFactor_);
@@ -1406,7 +1501,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "electron-jet pairs")                 objectToPlot = "electronJetPairs";
           else if(currentObject == "muon-jet pairs")                     objectToPlot = "muonJetPairs";
           else if(currentObject == "muon-event pairs")                   objectToPlot = "muonEventPairs";
-          else if(currentObject == "electron-event pairs")                   objectToPlot = "electronEventPairs";
+          else if(currentObject == "electron-event pairs")               objectToPlot = "electronEventPairs";
           else if(currentObject == "muon-photon pairs")                  objectToPlot = "muonPhotonPairs";
           else if(currentObject == "photon-jet pairs")                   objectToPlot = "photonJetPairs";
           else if(currentObject == "met-jet pairs")                      objectToPlot = "metJetPairs";
@@ -3182,14 +3277,23 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
     value = trkElecDeltaRMin;
   }
 
+  else if(variable == "isPassMuonLooseID") {
+    // boolean for whether track is loosely identified with a muon, 
+    // i.e., true if it is DeltaR-matched to a member of either of the muon or secondary muon collections
+    string empty = "";
+    double trkMuonDeltaRMin    = valueLookup(object, "deltaRMinMuonLooseId",    "", empty);
+    double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseId", "", empty); 
+    value = 0;                                  // initialize to be false 
+    if (trkMuonDeltaRMin    < 0.15) value = 1;  // true if matched to muon 
+    if (trkSecMuonDeltaRMin < 0.15) value = 1;  // true if matched to secondary muon 
+  }
+
   else if(variable == "deltaRMinMuonLooseId") {
-    // calculate minimum deltaR between track and any other loose-Id muon
+    // calculate minimum deltaR between track and any muon
     double trkMuonDeltaRMin = 99.;
     if (!muons.product()) clog << "ERROR:  cannot find deltaRMinMuonLooseId because muons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<muons->size(); imuon++) {
       string empty = "";
-      double isLooseIdMuon = valueLookup(&muons->at(imuon), "looseID", "", empty);
-      if (!isLooseIdMuon) continue;  // only consider muons that pass the looseID criteria
       double muonEta = valueLookup(&muons->at(imuon), "eta", "", empty);
       double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty);
       double trkMuonDeltaR = deltaR(object->eta, object->phi, muonEta, muonPhi);
@@ -3197,25 +3301,12 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
     }
     value = trkMuonDeltaRMin;
   }
-  else if(variable == "isPassMuonLooseID") {
-    // boolean for whether track is loosely identified with a muon, 
-    // i.e., true if it is DeltaR-matched to a member of either of the muon or secondary muon collections
-    string empty = "";
-    double trkMuonDeltaRMin    = valueLookup(object, "deltaRMinMuonLooseId",          "", empty);
-    double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseId",       "", empty); 
-    value = 0;                                  // initialize to be false 
-    if (trkMuonDeltaRMin    < 0.15) value = 1;  // true if matched to muon 
-    if (trkSecMuonDeltaRMin < 0.15) value = 1;  // true if matched to secondary muon 
-  }
-
   else if(variable == "deltaRMinSecMuonLooseId") {
-    // calculate minimum deltaR between track and any other loose-Id muon                                       
+    // calculate minimum deltaR between track and any secondary muon                                       
     double trkMuonDeltaRMin = 99.;
     if (!secMuons.product()) clog << "ERROR:  cannot find deltaRMinSecMuonLooseId because secMuons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<secMuons->size(); imuon++) {
       string empty = "";
-      double isLooseIdMuon = valueLookup(&secMuons->at(imuon), "looseID", "", empty);
-      if (!isLooseIdMuon) continue;  // only consider muons that pass the looseID criteria                  
       double muonEta = valueLookup(&secMuons->at(imuon), "eta", "", empty);
       double muonPhi = valueLookup(&secMuons->at(imuon), "phi", "", empty);
       double trkMuonDeltaR = deltaR(object->eta, object->phi, muonEta, muonPhi);
@@ -3519,14 +3610,12 @@ OSUAnalysis::valueLookup (const BNmcparticle* object, string variable, string fu
     value = object->vz - chosenVertex ()->z;
   }
 
-
   else{clog << "WARNING: invalid mcparticle variable '" << variable << "'\n"; value = -999;}
 
   value = applyFunction(function, value);
 
   return value;
 } // end mcparticle valueLookup
-
 
 //!primaryvertex valueLookup
 double
@@ -4135,6 +4224,29 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNjet* object2, strin
     if (!closestJet) value = -999;
     else value = closestJet->pt;
   }
+  else if(variable == "massOfClosestJetByDeltaR"){
+    const BNjet *closestJet = closest<BNelectron, BNjet> (object1, jets, "jets");
+    if (!closestJet) value = -999;
+    else value = closestJet->mass;
+  }
+  else if(variable == "areaOfClosestJetByDeltaR"){
+    const BNjet *closestJet = closest<BNelectron, BNjet> (object1, jets, "jets");
+    if (!closestJet) value = -999;
+    else value = closestJet->area;
+  }
+  else if(variable == "pTransverseToClosestJetByDeltaR"){
+    const BNjet *closestJet = closest<BNelectron, BNjet> (object1, jets, "jets");
+    if (!closestJet) value = -999;
+    else{
+      TVector3 jetP (closestJet->px, closestJet->py, closestJet->pz),
+               leptonP (object1->px, object1->py, object1->pz),
+               projection, rejection;
+      projection = jetP.Unit ();
+      projection *= (leptonP * projection);
+      rejection = leptonP - projection;
+      value = rejection.Mag ();
+    }
+  }
 
   else{clog << "WARNING: invalid electron-jet pair variable '" << variable << "'\n"; value = -999;}
   value = applyFunction(function, value);
@@ -4279,6 +4391,29 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNjet* object2, string va
     const BNjet *closestJet = closest<BNmuon, BNjet> (object1, jets, "jets");
     if (!closestJet) value = -999;
     else value = closestJet->pt;
+  }
+  else if(variable == "massOfClosestJetByDeltaR"){
+    const BNjet *closestJet = closest<BNmuon, BNjet> (object1, jets, "jets");
+    if (!closestJet) value = -999;
+    else value = closestJet->mass;
+  }
+  else if(variable == "areaOfClosestJetByDeltaR"){
+    const BNjet *closestJet = closest<BNmuon, BNjet> (object1, jets, "jets");
+    if (!closestJet) value = -999;
+    else value = closestJet->area;
+  }
+  else if(variable == "pTransverseToClosestJetByDeltaR"){
+    const BNjet *closestJet = closest<BNmuon, BNjet> (object1, jets, "jets");
+    if (!closestJet) value = -999;
+    else{
+      TVector3 jetP (closestJet->px, closestJet->py, closestJet->pz),
+               leptonP (object1->px, object1->py, object1->pz),
+               projection, rejection;
+      projection = jetP.Unit ();
+      projection *= (leptonP * projection);
+      rejection = leptonP - projection;
+      value = rejection.Mag ();
+    }
   }
 
   else{clog << "WARNING: invalid muon-jet pair variable '" << variable << "'\n"; value = -999;}
@@ -5277,6 +5412,24 @@ void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollect
 
 }
 
+void OSUAnalysis::fill1DStatus3Histogram(TH1* histo, const BNmcparticleCollection *inputCollection, double scaleFactor){
+
+  if (verbose_>2) clog << "  Filling histogram for status 3 outgoing" << endl;
+
+  for (unsigned i = 6; i < inputCollection->size (); i++)
+    {
+      if (inputCollection->at (i).status != 3)
+        break;
+      unsigned value = abs (inputCollection->at (i).id);
+      value = getPdgIdBinValue (value);
+      histo->Fill (value, scaleFactor);
+
+      if (printEventInfo_) {
+        // Write information about event to screen, for testing purposes.
+        clog << "  Info for event:  value for histogram " << histo->GetName() << ":  " << value << " (object number " << i << ")" << endl;
+      }
+    }
+}
 
 template <class InputCollection>
 void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollection inputCollection, flagPair flags, double scaleFactor){
@@ -5370,7 +5523,6 @@ void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollect
   }
 
 }
-
 
 template <class InputObject>
 int OSUAnalysis::getGenMatchedParticleIndex(InputObject object){
