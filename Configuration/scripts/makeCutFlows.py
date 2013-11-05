@@ -28,6 +28,8 @@ parser.add_option("-r", "--ratio", action="store_true", dest="makeRatioPlots", d
                   help="add a colunn for (data-MC)/MC to the tables")
 parser.add_option("-s", "--sToB", action="store_true", dest="signalToBackground", default=False,
                   help="add a column for S/sqrt(S+B) to the tables")
+parser.add_option("-t", "--totBkgd", action="store_true", dest="totalBkgd", default=False,
+                  help="add a column for total background to the tables")
 parser.add_option("-o", "--output-file", dest="outputFileName",
                   help="specify an output file base name for the cutflow table (suffix will be appended), default is 'cutFlow'")
 
@@ -152,7 +154,7 @@ for channel in channels: # loop over final states, which each have their own dir
     for dataset in processed_datasets:
             dataset_file = "%s/%s.root" % (condor_dir,dataset)
             #print dataset_file
-            if arguments.makeDiffPlots or arguments.makeRatioPlots:
+            if arguments.makeDiffPlots or arguments.makeRatioPlots or arguments.totalBkgd:
               if types[dataset] == "data":
                 dataset_file = "\"<" + dataset_file + "\""
               elif types[dataset] == "bgMC":
@@ -186,13 +188,15 @@ for channel in channels: # loop over final states, which each have their own dir
       cutFlowTable += " -d \"Data - MC\""
     if arguments.makeRatioPlots:
       cutFlowTable += " -r \"(Data - MC) / MC\""
+    if arguments.totalBkgd:
+      cutFlowTable += " -t \"Total Bkgd\""
     if arguments.signalToBackground:
       cutFlowTable += " -s \"$\\mathrm{S} / \\sqrt{\\mathrm{S} + \\mathrm{B}}$\""
     firstChannel = False
     fout.write ("\\section*{" + formatted_channel + " channel}\n\n")
     fout.write ("\\subsection*{Cut flow}\n\n")
     fout.close ()
-    #    print "Debug:  running command:  %s -l %g -m %s >> %s" % (cutFlowTable, intLumi,cutFlowArgs,texfile)
+#    print "Debug:  running command:  %s -l %g -m %s >> %s" % (cutFlowTable, intLumi,cutFlowArgs,texfile)
     os.system("%s -l %g -m %s >> %s" % (cutFlowTable, intLumi,cutFlowArgs,texfile))
     fout = open (texfile, "a")
     fout.write ("\\pagebreak\n\n")
