@@ -4,7 +4,7 @@ import sys
 import fcntl
 import datetime
 from optparse import OptionParser
-from multiprocessing import Process, Queue, cpu_count
+from multiprocessing import Process, Semaphore, cpu_count
 
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
@@ -66,7 +66,9 @@ flags.GetXaxis ().SetBinLabel (1, "noWeights")
 if arguments.noWeights:
     flags.SetBinContent (1, 1)
 
-def mergeDataset (dataset, q):
+def mergeDataset (dataset, sema):
+    sema.acquire ()
+
     os.nice (arguments.increment)
     dataset_dir = "%s/%s" % (condor_dir,dataset)  
     command = "mkdir -p %s/logMerge" % condor_dir # Create logMerge directory if it does not already exist  
@@ -98,28 +100,21 @@ def mergeDataset (dataset, q):
     flags.Write ()
     fout.Close ()
 
-    q.put ("done")
+    sema.release ()
 
 processes = []
-q = Queue ()
-runningProcesses = 0
-
+sema = Semaphore (int (arguments.nJobs))
 for dataset in split_datasets:
-    p = Process (target = mergeDataset, args = (dataset, q))
+    p = Process (target = mergeDataset, args = (dataset, sema))
     p.start ()
     processes.append (p)
-    runningProcesses += 1
-    if runningProcesses == int (arguments.nJobs):
-        q.get ()
-        runningProcesses -= 1
 for p in processes:
     p.join ()
-while runningProcesses > 0:
-    q.get ()
-    runningProcesses -= 1
 
 #merge together components of composite datasets
-def mergeCompositeDataset (composite_dataset, q):
+def mergeCompositeDataset (composite_dataset, sema):
+    sema.acquire ()
+
     os.nice (arguments.increment)
     component_datasets_list = ""
     component_weights_list = ""
@@ -167,23 +162,15 @@ def mergeCompositeDataset (composite_dataset, q):
     flags.Write ()
     fout.Close ()
 
-    q.put ("done")
+    sema.release ()
 
 processes = []
-runningProcesses -= runningProcesses
 for composite_dataset in composite_datasets:
-    p = Process (target = mergeCompositeDataset, args = (composite_dataset, q))
+    p = Process (target = mergeCompositeDataset, args = (composite_dataset, sema))
     p.start ()
     processes.append (p)
-    runningProcesses += 1
-    if runningProcesses == int (arguments.nJobs):
-        q.get ()
-        runningProcesses -= 1
 for p in processes:
     p.join ()
-while runningProcesses > 0:
-    q.get ()
-    runningProcesses -= 1
 
 
 print "\n\nWrote logfile to: %s/mergeAll.out " %  condor_dir
