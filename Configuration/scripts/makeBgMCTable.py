@@ -200,7 +200,7 @@ for dataset in datasets:
             with open(fileName) as numEventsFile:
                     content = numEventsFile.readlines()
                     numEvents = content[0].strip("\n")
-            datasetLines = datasetLines + formatNumber(str(round_sigfigs(float(numEvents),4))) + " & "
+            datasetLines = datasetLines + formatNumber(str(int(numEvents))) + " & "
         if arguments.showXsections:
             fileName = condor_dir + "/" + component + "/crossSectionInPicobarn.txt"
             with open(fileName) as crossSectionFile:
