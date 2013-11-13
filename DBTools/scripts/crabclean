@@ -5,16 +5,21 @@ use Getopt::Long;
 use Mysql;
 use Term::ANSIColor;
 
+select ((select (STDOUT), $| = 1)[0]);
+
 sub printHelp;
 sub parseCrabDir;
+sub getRemoteFileList;
 
 our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
 
 my %opt;
 Getopt::Long::Configure ("bundling");
-GetOptions (\%opt, "dumb|d", "force|f", "destination|o=s", "print|p", "dataset|s", "help|h");
+GetOptions (\%opt, "copy|c=s", "dumb|d", "force|f", "destination|o=s", "print|p", "dataset|s", "help|h");
 
-printHelp () if $opt{"help"} || !$ARGV[0] || (!$opt{"dumb"} && !$opt{"dataset"} && !$opt{"print"} && !$ARGV[1]);
+printHelp () if $opt{"help"} || !$ARGV[0] || (!$opt{"dumb"} && !$opt{"dataset"} && !$opt{"print"} && !$opt{"copy"} && !$ARGV[1]);
+die "Copy script cannot be made in dumb mode, stopped" if $opt{"copy"} && $opt{"dumb"};
+die "Copy script cannot be made while printing the list of files, stopped" if $opt{"copy"} && $opt{"print"};
 my $crabDir = $ARGV[0];
 my $outputDir = $ARGV[0];
 my $dataset = $ARGV[0];
@@ -67,7 +72,7 @@ if ($opt{"dataset"})
 
 die "Output directory does not exist, stopped" if !$opt{"print"} && (!(-e $outputDir) || !(-d $outputDir));
 my @crabOutput;
-if (!$opt{"print"})
+if (!$opt{"print"} && !$opt{"copy"})
   {
     opendir (CRAB_OUTPUT, "$outputDir");
     @crabOutput = readdir (CRAB_OUTPUT);
@@ -78,6 +83,13 @@ if (!$opt{"dumb"})
   {
     die "CRAB directory does not exist, stopped" if !(-e $crabDir) || !(-d $crabDir);
     parseCrabDir ($crabDir, \%filesToKeep);
+    if (!$opt{"print"} && !$opt{"copy"})
+      {
+        foreach my $jobNumber (keys %filesToKeep)
+          {
+            $filesToKeep{$jobNumber} =~ s/.*\/([^\/]*)/$1/g;
+          }
+      }
   }
 else
   {
@@ -104,7 +116,7 @@ if ($opt{"destination"})
     close (TEST_FILE);
     unlink "$opt{'destination'}/.crabCleanTest";
   }
-if (!$opt{"print"})
+if (!$opt{"print"} && !$opt{"copy"})
   {
     opendir (CRAB_OUTPUT, "$outputDir");
     my @crabOutput = readdir (CRAB_OUTPUT);
@@ -126,20 +138,20 @@ foreach my $file (@crabOutput)
       }
     elsif ((($opt{"dumb"} && $filesToKeep{$jobNumber} != $submissionNumber)
         || (!$opt{"dumb"} && $filesToKeep{$jobNumber} ne $file))
-        && !$opt{"destination"} && !$opt{"print"})
+        && !$opt{"destination"} && !$opt{"print"} && !$opt{"copy"})
       {
         system ("rm -f $outputDir/$file") if $opt{"force"};
         system ("rm -i $outputDir/$file") if !$opt{"force"};
       }
     elsif ((($opt{"dumb"} && $filesToKeep{$jobNumber} == $submissionNumber)
         || (!$opt{"dumb"} && $filesToKeep{$jobNumber} eq $file))
-        && $opt{"destination"} && !$opt{"print"})
+        && $opt{"destination"} && !$opt{"print"} && !$opt{"copy"})
       {
         system ("mv -f $outputDir/$file $opt{'destination'}/$file") if $opt{"force"};
         system ("mv -i $outputDir/$file $opt{'destination'}/$file") if !$opt{"force"};
       }
   }
-if (!$opt{"print"})
+if (!$opt{"print"} && !$opt{"copy"})
   {
     opendir (CRAB_OUTPUT, "$outputDir");
     my @crabOutput = readdir (CRAB_OUTPUT);
@@ -151,11 +163,58 @@ if (!$opt{"print"})
     $nFiles = @crabOutputInDestination - 2 if $opt{"destination"};
     print "After cleaning:  $nFiles files\n";
   }
-else
+elsif ($opt{"print"})
   {
     foreach my $file (keys %filesToKeep)
       {
         print $filesToKeep{$file} . "\n";
+      }
+  }
+elsif ($opt{"copy"})
+  {
+    my %remoteFiles;
+    my $nFilesToCopy = 0;
+    my $nFilesValid = 0;
+    open (COPY_SCRIPT, ">$opt{'copy'}");
+    print COPY_SCRIPT "#!/usr/bin/env bash\n\n";
+    foreach my $file (keys %filesToKeep)
+      {
+        my $fileName = $filesToKeep{$file};
+        $fileName =~ s/.*\/([^\/]*)/$1/g;
+        if (!(-e "$outputDir/$fileName"))
+          {
+            print COPY_SCRIPT "lcg-cp -b -D srmv2 \"$filesToKeep{$file}\" file://$outputDir/$fileName\n";
+            $nFilesToCopy++;
+          }
+        else
+          {
+            getRemoteFileList ($filesToKeep{$file}, \%remoteFiles) if !%remoteFiles;
+            my $localSize = `ls -l $outputDir/$fileName`;
+            $localSize =~ s/[^ ]* +[^ ]* +[^ ]* +[^ ]* +([^ ]*) +.*\n/$1/g;
+            if ($remoteFiles{$filesToKeep{$file}} != $localSize)
+              {
+                unlink ("$outputDir/$fileName");
+                print COPY_SCRIPT "lcg-cp -b -D srmv2 \"$filesToKeep{$file}\" file://$outputDir/$fileName\n";
+                $nFilesToCopy++;
+              }
+            else
+              {
+                $nFilesValid++;
+              }
+          }
+      }
+    close (COPY_SCRIPT);
+    print "$nFilesValid file validated.\n" if $nFilesValid == 1;
+    print "$nFilesValid files validated.\n" if $nFilesValid > 1;
+    if ($nFilesToCopy > 0)
+      {
+        print "Copy script will copy $nFilesToCopy file.\n" if $nFilesToCopy == 1;
+        print "Copy script will copy $nFilesToCopy files.\n" if $nFilesToCopy > 1;
+      }
+    else
+      {
+        print "No files to copy.\n";
+        unlink ($opt{"copy"});
       }
   }
 
@@ -166,13 +225,16 @@ printHelp
   $exeName =~ s/^.*\/([^\/]*)$/$1/;
 
   print "Usage: $exeName [OPTION]... CRAB_DIR OUTPUT_DIR\n";
-  print "  or: $exeName -d [OPTION]... OUTPUT_DIR\n";
-  print "  or: $exeName -p [OPTION]... CRAB_DIR\n";
-  print "  or: $exeName -s [OPTION]... DATASET\n";
+  print "   or: $exeName -d [OPTION]... OUTPUT_DIR\n";
+  print "   or: $exeName -p [OPTION]... CRAB_DIR\n";
+  print "   or: $exeName -s [OPTION]... DATASET\n";
   print "Deletes excess EDM output caused by multiple CRAB submissions using the results\n";
   print "contained in the CRAB working directory provided.\n";
   print "\n";
   print "Mandatory arguments to long options are mandatory for short options too.\n";
+  printf "%-29s%s\n", "  -c, --copy SCRIPT_NAME", "creates a script to copy files to the location in";
+  printf "%-29s%s\n", "                        ", "the database while validating any existing files at";
+  printf "%-29s%s\n", "                        ", "that location";
   printf "%-29s%s\n", "  -d, --dumb", "tries to use the filenames of the output instead of";
   printf "%-29s%s\n", "            ", "the results from the CRAB working directory; useful";
   printf "%-29s%s\n", "            ", "if the working directory has been lost";
@@ -215,8 +277,31 @@ parseCrabDir
       my @surlForGrid = `grep -A 1 '<SurlForGrid' $crabDir/res/$file`;
       my $fileName = $surlForGrid[1];
       $fileName = $surlForGrid[0] if $surlForGrid[0] =~ m/Value=/;
-      $fileName =~ s/^.*\/([^\/]*)\n/$1/ if !($fileName =~ m/Value=/);
-      $fileName =~ s/^.*\/([^\/]*)"\/>\n/$1/ if $fileName =~ m/Value=/;
+      $fileName =~ s/^[ \t]*([^ \t]*)\n/$1/ if !($fileName =~ m/Value=/);
+      $fileName =~ s/.*Value=([^"]*)"\/>\n/$1/ if $fileName =~ m/Value=/;
+      $fileName =~ s/([^\/:])\/+/$1\//g;
       $filesToKeep->{$jobNumber} = $fileName;
+    }
+}
+
+sub
+getRemoteFileList
+{
+  my $file = shift;
+  my $remoteFiles = shift;
+
+  my $remoteDir = $file;
+  my $seHeader = $file;
+  $remoteDir =~ s/\/[^\/]*$//g;
+  $seHeader =~ s/(.*)=.*/$1/g;
+  my @remoteContents = `lcg-ls -b -D srmv2 -l \"$remoteDir\"`;
+  foreach my $remoteFile (@remoteContents)
+    {
+      $remoteFile =~ s/[\f\n\r]//g;
+      my $remoteSize = $remoteFile;
+      $remoteSize =~ s/[^ ]* +[^ ]* +[^ ]* +[^ ]* +([^ ]*) +.*/$1/g;
+      $remoteFile =~ s/.* ([^ ]*)$/$1/g;
+      $remoteFile = $seHeader . "=" . $remoteFile;
+      $remoteFiles->{$remoteFile} = $remoteSize;
     }
 }

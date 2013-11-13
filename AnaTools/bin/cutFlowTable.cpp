@@ -37,9 +37,9 @@ main (int argc, char *argv[])
     }
   bool sb = false;
   string sbLabel = "";
-  if ((opt.count ("diff") || opt.count ("ratio") || opt.count ("signalToBackground"))) {
+  if ((opt.count ("diff") || opt.count ("ratio") || opt.count ("signalToBackground") || opt.count ("totalBkgd") )) {
     if (argVector.size () <= 3) {
-      cerr << "ERROR[cutFlowTable.cpp]:  When using options diff, ratio, or signalToBackground, more than one dataset must be specified." << endl;
+      cerr << "ERROR[cutFlowTable.cpp]:  When using options diff, ratio, signalToBackground, or totalBkgd, more than one dataset must be specified." << endl;
       return 0;  
     }
     sb = true;
@@ -50,6 +50,8 @@ main (int argc, char *argv[])
     sbLabel = opt.at ("ratio");
   if (opt.count ("signalToBackground"))
     sbLabel = opt.at ("signalToBackground");
+  if (opt.count ("totalBkgd"))
+    sbLabel = opt.at ("totalBkgd");
   vector<vector<string> > table;
   vector<vector<string> > effTable;
   vector<vector<string> > marginalEffTable;
@@ -199,6 +201,11 @@ main (int argc, char *argv[])
         {
           binContent = (x - y) / y;
           binError = sqrt (x * x * dy * dy + y * y * dx * dx) / (y * y);
+        }
+      else if (opt.count ("totalBkgd"))
+        {
+          binContent = y; 
+          binError = dy;  
         }
       else if (opt.count ("signalToBackground"))
         {
@@ -437,6 +444,7 @@ printHelp (const string &exeName)
   printf ("%-29s%s\n", "  -l, --luminosity LUMI", "integrated luminosity in inverse picobarns");
   printf ("%-29s%s\n", "  -m, --marginal", "include a table of marginal efficiencies");
   printf ("%-29s%s\n", "  -r, --ratio LABEL", "add a column for (X-Y)/Y");
+  printf ("%-29s%s\n", "  -t, --total LABEL", "add a column for Y");
   printf ("%-29s%s\n", "  -s, --sToB LABEL", "add a column for X/sqrt(X+Y)");
   printf ("\n");
   printf ("For the \"-d\", \"-r\", and \"-s\" options, X is defined as the sum of those columns\n");
@@ -467,6 +475,7 @@ parseOptions (int argc, char *argv[], map<string, string> &opt, vector<string> &
           key = "signalToBackground";
           opt.erase ("diff");
           opt.erase ("ratio");
+          opt.erase ("totalBkgd");
         }
       if (key == "m")
         key = "marginal";
@@ -477,14 +486,23 @@ parseOptions (int argc, char *argv[], map<string, string> &opt, vector<string> &
           key = "diff";
           opt.erase ("ratio");
           opt.erase ("signalToBackground");
+          opt.erase ("totalBkgd");
         }
       if (key == "r")
         {
           key = "ratio";
           opt.erase ("diff");
           opt.erase ("signalToBackground");
+          opt.erase ("totalBkgd");
         }
-      if (key == "luminosity" || key == "signalToBackground" || key == "diff" || key == "ratio")
+      if (key == "t")
+        {
+          key = "totalBkgd";
+          opt.erase ("diff");
+          opt.erase ("signalToBackground");
+          opt.erase ("ratio");
+        }
+      if (key == "luminosity" || key == "signalToBackground" || key == "diff" || key == "ratio" || key == "totalBkgd")
         value = argv[i++ + 1];
       opt[key] = value;
     }
