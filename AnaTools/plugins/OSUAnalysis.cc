@@ -128,8 +128,10 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "event-track pairs")   tempInputCollection = "track-event pairs";
     if(tempInputCollection == "secondary muon-muon pairs")   tempInputCollection = "muon-secondary muon pairs";
     if(tempInputCollection == "secondary jet-muon pairs")   tempInputCollection = "muon-secondary jet pairs";
+    if(tempInputCollection == "jet-secondary muon pairs")   tempInputCollection = "secondary muon-jet pairs";
     if(tempInputCollection == "secondary photon-muon pairs")   tempInputCollection = "muon-secondary photon pairs";
     if(tempInputCollection == "secondary jet-electron pairs")   tempInputCollection = "electron-secondary jet pairs";
+    if(tempInputCollection == "jet-secondary electron pairs")   tempInputCollection = "secondary electron-jet pairs";
     if(tempInputCollection == "secondary jet-photon pairs")   tempInputCollection = "photon-secondary jet pairs";
     if(tempInputCollection == "secondary jet-jet pairs")   tempInputCollection = "jet-secondary jet pairs";
     if(tempInputCollection == "secondary electron-electron pairs")   tempInputCollection = "electron-secondary electron pairs";
@@ -374,6 +376,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       if(tempInputCollection == "secondary photon-muon pairs")   tempInputCollection = "muon-secondary photon pairs";
       if(tempInputCollection == "secondary jet-photon pairs")   tempInputCollection = "photon-secondary jet pairs";
       if(tempInputCollection == "secondary jet-electron pairs")   tempInputCollection = "electron-secondary jet pairs";
+      if(tempInputCollection == "jet-secondary muon pairs")   tempInputCollection = "secondary muon-jet pairs";
+      if(tempInputCollection == "jet-secondary electron pairs")   tempInputCollection = "secondary electron-jet pairs";
       if(tempInputCollection == "secondary electron-electron pairs")   tempInputCollection = "electron-secondary electron pairs";
       if(tempInputCollection == "trigobj-electron pairs")   tempInputCollection = "electron-trigobj pairs";
       if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
@@ -672,6 +676,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         else if(currentObject == "muon-secondary photon pairs")  currentObject = "muonSecondaryPhotonPairs";
         else if(currentObject == "photon-secondary jet pairs")  currentObject = "photonSecondaryJetPairs";
         else if(currentObject == "electron-secondary jet pairs")  currentObject = "electronSecondaryJetPairs";
+        else if(currentObject == "secondary electron-jet pairs")  currentObject = "secondaryElectronJetPairs";
+        else if(currentObject == "secondary muon-jet pairs")  currentObject = "secondaryMuonJetPairs";
         else if(currentObject == "track-event pairs")         currentObject = "trackEventPairs";
         else if(currentObject == "electron-track pairs")      currentObject = "electronTrackPairs";
         else if(currentObject == "muon-track pairs")          currentObject = "muonTrackPairs";
@@ -1119,6 +1125,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "jet-jet pairs")           setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),jets.product(), "jet-jet pairs");
         else if(currentObject == "jet-secondary jet pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),jets.product(), "jet-secondary jet pairs");
         else if(currentObject == "electron-jet pairs")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),jets.product(), "electron-jet pairs");
+        else if(currentObject == "secondary electron-jet pairs")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),jets.product(), "secondary electron-jet pairs");
+        else if(currentObject == "secondary muon-jet pairs")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),jets.product(), "secondary muon-jet pairs");
         else if(currentObject == "electron-photon pairs")   setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),photons.product(), "electron-photon pairs");
         else if(currentObject == "photon-jet pairs")        setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,photons.product(),jets.product(), "photon-jet pairs");
         else if(currentObject == "muon-jet pairs")          setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),jets.product(), "muon-jet pairs");
@@ -1348,6 +1356,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                                cumulativeFlags.at("electron-muon pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-jet pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),jets.product(),
                                                                                               cumulativeFlags.at("electron-jet pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "secondary electron-jet pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("secondary electron-jet pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "secondary muon-jet pairs") fill1DHistogram(histo,currentHistogram, muons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("secondary muon-jet pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "photon-jet pairs") fill1DHistogram(histo,currentHistogram, photons.product(),jets.product(),
                                                                                               cumulativeFlags.at("photon-jet pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-jet pairs") fill1DHistogram(histo,currentHistogram, muons.product(),jets.product(),
@@ -1431,6 +1443,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                                cumulativeFlags.at("electron-muon pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
                                                                                               cumulativeFlags.at("electron-jet pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "secondary electron-jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("secondary electron-jet pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "secondary muon-jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("secondary muon-jet pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-photon pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),photons.product(),
                                                                                               cumulativeFlags.at("electron-photon pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(),
@@ -1513,6 +1529,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "electron-track pairs")               objectToPlot = "electronTrackPairs";
           else if(currentObject == "muon-track pairs")                   objectToPlot = "muonTrackPairs";
           else if(currentObject == "secondary muon-track pairs")         objectToPlot = "secondaryMuonTrackPairs";
+          else if(currentObject == "secondary muon-jet pairs")           objectToPlot = "secondaryMuonJetPairs";
+          else if(currentObject == "secondary electron-jet pairs")       objectToPlot = "secondaryElectronJetPairs";
           else if(currentObject == "muon-tau pairs")                     objectToPlot = "muonTauPairs";
           else if(currentObject == "tau-tau pairs")                      objectToPlot = "ditauPairs";
           else if(currentObject == "tau-track pairs")                    objectToPlot = "tauTrackPairs";
@@ -1520,7 +1538,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "muon-secondary muon pairs")          objectToPlot = "muonSecondaryMuonPairs";
           else if(currentObject == "secondary muons")                    objectToPlot = "secondaryMuons";
           else if(currentObject == "muon-secondary jet pairs")           objectToPlot = "muonSecondaryJetPairs";
-          else if(currentObject == "muon-secondary photon pairs")        objectToPlot = "muonSecondaryJetPairs";
+          else if(currentObject == "muon-secondary photon pairs")        objectToPlot = "muonSecondaryPhotonPairs";
           else if(currentObject == "electron-secondary jet pairs")       objectToPlot = "electronSecondaryJetPairs";
           else if(currentObject == "photon-secondary jet pairs")         objectToPlot = "photonSecondaryJetPairs";
           else if(currentObject == "electron-secondary electron pairs")  objectToPlot = "electronSecondaryElectronPairs";
@@ -3909,11 +3927,11 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNmuon* object2, string v
   else if(variable == "muon2timeAtIpInOut"){
     value = object2->timeAtIpInOut;
   }
-  else if(variable == "muon1correctedD0")
+  else if(variable == "muon1CorrectedD0")
     {
       value = object1->correctedD0;
     }
-  else if(variable == "muon2correctedD0")
+  else if(variable == "muon2CorrectedD0")
     {
       value = object2->correctedD0;
     }
