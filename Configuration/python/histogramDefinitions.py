@@ -1493,6 +1493,158 @@ MuonJetHistograms = cms.PSet(
     )
 )
 
+
+##############################################################################################
+
+
+SecondaryElectronJetHistograms = cms.PSet(
+    inputCollection = cms.string("secondary electron-jet pairs"),
+    histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("secondaryElectronJetPt"),
+            title = cms.string("Secondary Electron-Jet Pair Transverse Momentum; p_{T} [GeV]"),
+            bins = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("pt"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryElectronJetInvMass"),
+            title = cms.string("Secondary Electron-Jet Invariant Mass; M_{e-jet} [GeV]"),
+            bins = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("invMass"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryElectronJetChargeProduct"),
+            title = cms.string("Secondary Electron-Jet Charge Product; charge_{e}*charge_{jet}"),
+            bins = cms.untracked.vdouble(3, -1.5, 1.5),
+            inputVariables = cms.vstring("chargeProduct"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryElectronJetDeltaPhi"),
+            title = cms.string("Secondary Electron-Jet Phi Difference; |#Delta(#phi)|"),
+            bins = cms.untracked.vdouble(100, 0, 3.15),
+            inputVariables = cms.vstring("deltaPhi"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryElectronJetDeltaEta"),
+            title = cms.string("Secondary Electron-Jet Eta Difference; |#Delta(#eta)|"),
+            bins = cms.untracked.vdouble(100, 0, 6),
+            inputVariables = cms.vstring("deltaEta"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryElectronJetDeltaRvselectronJetDeltaEta "),
+            title = cms.string("Secondary Electron-Jet #DeltaR.vs #Delta(#eta); |#Delta(#eta)|; #DeltaR"),
+            bins = cms.untracked.vdouble(100, 0, 6, 100, 0 ,6),
+            inputVariables = cms.vstring("deltaEta","deltaR"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryElectronJetDeltaRvselectronJetDeltaPhi "),
+            title = cms.string("Secondary Electron-Jet #DeltaR.vs #Delta(#phi); |#Delta(#phi)|; |#DeltaR"),
+            bins = cms.untracked.vdouble(100, 0, 3.15, 100, 0, 6),
+            inputVariables = cms.vstring("deltaPhi","deltaR"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryElectronEtavsJetEta "),
+            title = cms.string("Secondary Electron Eta.vs Jet Eta; Jet #eta; Secondary Electron #eta"),
+            bins = cms.untracked.vdouble(100, -6, 6, 100, -6 ,6),
+            inputVariables = cms.vstring("jetEta","electronEta"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryElectronPhivsJetPhi "),
+            title = cms.string("Secondary Electron Phi.vs Jet Phi; Jet #phi; Secondary Electron #phi"),
+            bins = cms.untracked.vdouble(100, -3.15, 3.15, 100, -3.15 ,3.15),
+            inputVariables = cms.vstring("jetPhi","electronPhi"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryElectronJetDeltaR"),
+            title = cms.string("Secondary Electron-Jet #DeltaR; #DeltaR"),
+            bins = cms.untracked.vdouble(100, 0, 6),
+            inputVariables = cms.vstring("deltaR"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryElectronJetThreeDAngle"),
+            title = cms.string("Secondary Electron-Jet 3D angle; 3D angle"),
+            bins = cms.untracked.vdouble(100, 0, 3.15),
+            inputVariables = cms.vstring("threeDAngle"),
+        ),
+    )
+)
+
+##############################################################################################
+
+SecondaryMuonJetHistograms = cms.PSet(
+    inputCollection = cms.string("secondary muon-jet pairs"),
+    histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("secondaryMuonJetPt"),
+            title = cms.string("Secondary Muon-Jet Pair Transverse Momentum; p_{T} [GeV]"),
+            bins = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("pt"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryMuonJetInvMass"),
+            title = cms.string("Secondary Muon-Jet Invariant Mass; M_{#mu-jet} [GeV]"),
+            bins = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("invMass"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryMuonJetChargeProduct"),
+            title = cms.string("Secondary Muon-Jet Charge Product; charge_{#mu}*charge_{jet}"),
+            bins = cms.untracked.vdouble(3, -1.5, 1.5),
+            inputVariables = cms.vstring("chargeProduct"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryMuonJetDeltaPhi"),
+            title = cms.string("Secondary Muon-Jet Phi Difference; |#Delta(#phi)|"),
+            bins = cms.untracked.vdouble(100, 0, 3.15),
+            inputVariables = cms.vstring("deltaPhi"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryMuonJetDeltaEta"),
+            title = cms.string("Secondary Muon-Jet Eta Difference; |#Delta(#eta)|"),
+            bins = cms.untracked.vdouble(100, 0, 6),
+            inputVariables = cms.vstring("deltaEta"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryMuonJetDeltaRvssecondaryMuonJetDeltaEta "),
+            title = cms.string("Secondary Muon-Jet #DeltaR.vs #Delta(eta); |#Delta(#eta)|; #DeltaR"),
+            bins = cms.untracked.vdouble(100, 0, 6, 100, 0 ,6),
+            inputVariables = cms.vstring("deltaEta","deltaR"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryMuonJetDeltaRvssecondaryMuonJetDeltaPhi "),
+            title = cms.string("Secondary Muon-Jet #DeltaR.vs #Delta(#phi); |#Delta(#phi)|; #DeltaR"),
+            bins = cms.untracked.vdouble(100, 0, 3.15, 100, 0 ,6),
+            inputVariables = cms.vstring("deltaPhi","deltaR"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryMuonEtavsJetEta "),
+            title = cms.string("Muon Eta.vs Jet Eta; Jet #eta; Secondary Muon #eta"),
+            bins = cms.untracked.vdouble(100, -6, 6, 100, -6 ,6),
+            inputVariables = cms.vstring("jetEta","muonEta"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryMuonPhivsJetPhi "),
+            title = cms.string("Muon Phi.vs Jet Phi; Jet #phi; Secondary Muon #phi"),
+            bins = cms.untracked.vdouble(100, -3.15, 3.15, 100, -3.15 ,3.15),
+            inputVariables = cms.vstring("jetPhi","muonPhi"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryMuonJetDeltaR"),
+            title = cms.string("Secondary Muon-Jet #DeltaR; #DeltaR"),
+            bins = cms.untracked.vdouble(100, 0, 6),
+            inputVariables = cms.vstring("deltaR"),
+        ),
+        cms.PSet (
+            name = cms.string("secondaryMuonJetThreeDAngle"),
+            title = cms.string("Secondary Muon-Jet 3D angle; 3D angle"),
+            bins = cms.untracked.vdouble(100, 0, 3.15),
+            inputVariables = cms.vstring("threeDAngle"),
+        ),
+    )
+)
+
+
+
 ##############################################################################################
 MuonSecondaryJetHistograms = cms.PSet(
     inputCollection = cms.string("muon-secondary jet pairs"),
