@@ -596,7 +596,7 @@ dataset_names = {
    'DY_PtZ100'      : "/DYJetsToLL_PtZ-100_TuneZ2star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM", 
    'Wjets'          : "/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM",
    'Wjets_PtW100'   : "/WJetsToLNu_PtW-100_TuneZ2star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
-   'W0jets'         : "non-empty_string", # placeholder since this is a skimmed dataset
+   'W0jets'         : "/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM", # just put parent dataset since this is a skimmed dataset
    'W1jets'         : "/W1JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
    'W2jets'         : "/W2JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
    'W3jets'         : "/W3JetsToLNu_TuneZ2Star_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
@@ -878,14 +878,14 @@ nJobs = {
 
    'MuEG_2012A_22Jan2013' : 50,
    'MuEG_2012B_22Jan2013' : 50,
-   'MuEG_2012C_22Jan2013' : 50,
-   'MuEG_2012D_22Jan2013' : 50,
+   'MuEG_2012C_22Jan2013' : 100,
+   'MuEG_2012D_22Jan2013' : 100,
    'MuEG_2012A_1'         : 50,
    'MuEG_2012A_2'         : 50,
    'MuEG_2012B'           : 50,
    'MuEG_2012C_1'         : 50,
    'MuEG_2012C_2'         : 50,
-   'MuEG_2012D'           : 50,
+   'MuEG_2012D'           : 100,
 
    'MET_2012A'    :  50,
    'MET_2012B'    :  50,
