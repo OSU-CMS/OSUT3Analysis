@@ -278,7 +278,7 @@ parseCrabDir
       my $fileName = $surlForGrid[1];
       $fileName = $surlForGrid[0] if $surlForGrid[0] =~ m/Value=/;
       $fileName =~ s/^[ \t]*([^ \t]*)\n/$1/ if !($fileName =~ m/Value=/);
-      $fileName =~ s/.*Value=([^"]*)"\/>\n/$1/ if $fileName =~ m/Value=/;
+      $fileName =~ s/.*Value="([^"]*)"\/>\n/$1/ if $fileName =~ m/Value=/;
       $fileName =~ s/([^\/:])\/+/$1\//g;
       $filesToKeep->{$jobNumber} = $fileName;
     }
