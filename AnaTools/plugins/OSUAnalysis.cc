@@ -1808,6 +1808,10 @@ OSUAnalysis::valueLookup (const BNjet* object, string variable, string function,
   else if(variable == "neutralHadronEnergyFraction") value = object->neutralHadronEnergyFraction;
   else if(variable == "chargedEmEnergyFraction") value = object->chargedEmEnergyFraction;
   else if(variable == "neutralEmEnergyFraction") value = object->neutralEmEnergyFraction;
+  else if(variable == "chargedHadronEnergy") value = object->chargedHadronEnergyFraction*object->pt;
+  else if(variable == "neutralHadronEnergy") value = object->neutralHadronEnergyFraction*object->pt;
+  else if(variable == "chargedEmEnergy") value = object->chargedEmEnergyFraction*object->pt;
+  else if(variable == "neutralEmEnergy") value = object->neutralEmEnergyFraction*object->pt;
   else if(variable == "fLong") value = object->fLong;
   else if(variable == "fShort") value = object->fShort;
   else if(variable == "etaetaMoment") value = object->etaetaMoment;
@@ -2082,6 +2086,11 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
   else if(variable == "correctedD0Sig") value =  object->correctedD0 / hypot (object->tkD0err, hypot (events->at (0).BSxError, events->at (0).BSyError));
   else if(variable == "detIso") value = (object->trackIsoDR03) / object->pt;
   else if(variable == "relPFdBetaIso") value = (object->pfIsoR04SumChargedHadronPt + max(0.0, object->pfIsoR04SumNeutralHadronEt + object->pfIsoR04SumPhotonEt - 0.5*object->pfIsoR04SumPUPt)) / object->pt;
+  else if(variable == "PUInrelPFdBetaIso") value = (object->pfIsoR04SumPUPt)/ object->pt;
+  else if(variable == "ChargedHadInrelPFdBetaIso") value = (object->pfIsoR04SumChargedHadronPt)/ object->pt;
+  else if(variable == "NeutralHadInrelPFdBetaIso") value = (object->pfIsoR04SumNeutralHadronEt)/ object->pt;
+  else if(variable == "PhotonInrelPFdBetaIso") value = (object->pfIsoR04SumPhotonEt)/ object->pt;
+  else if(variable == "relPFdBetaIsoNoPUSubtracted") value = (object->pfIsoR04SumChargedHadronPt + max(0.0, object->pfIsoR04SumNeutralHadronEt + object->pfIsoR04SumPhotonEt)) / object->pt;
   else if(variable == "relPFdBetaIsoNew") value = (object->chargedHadronIsoDR04 + max(0.0, object->neutralHadronIsoDR04 + object->photonIsoDR04 - 0.5*object->puChargedHadronIsoDR04)) / object->pt;
   else if(variable == "relPFdBetaIsoPseudo") value = (object->pfIsoR04SumChargedHadronPt + object->pfIsoR04SumNeutralHadronEt + object->pfIsoR04SumPhotonEt - 0.5*object->pfIsoR04SumPUPt) / object->pt;
   else if(variable == "relPFrhoIso") value = ( object->chargedHadronIso + max(0.0, object->neutralHadronIso + object->photonIso - object->AEffDr03*object->rhoPrime) ) / object->pt;
@@ -2470,6 +2479,11 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
   else if(variable == "correctedD0Sig") value =  object->correctedD0 / hypot (object->tkD0err, hypot (events->at (0).BSxError, events->at (0).BSyError));
   else if(variable == "detIso") value = (object->trackIso) / object->pt;
   else if(variable == "relPFrhoIso") value = ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03 - object->AEffDr03*object->rhoPrime) ) / object->pt;
+  else if(variable == "relPFrhoIsoNoPUSubtracted") value = ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03) ) / object->pt;
+  else if(variable == "PUInrelPFrhoIso") value = (object->AEffDr03*object->rhoPrime)/ object->pt;
+  else if(variable == "ChargedHadInrelPFrhoIso") value = (object->chargedHadronIsoDR03)/ object->pt;
+  else if(variable == "NeutralHadInrelPFrhoIso") value = (object->neutralHadronIsoDR03)/ object->pt;
+  else if(variable == "PhotonInrelPFrhoIso") value = (object->photonIsoDR03)/ object->pt;
   else if(variable == "relPFrhoIsoEB") value = object->isEB ? ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03 - object->AEffDr03*object->rhoPrime) ) / object->pt : -999;
   else if(variable == "relPFrhoIsoEE") value = object->isEE ? ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03 - object->AEffDr03*object->rhoPrime) ) / object->pt : -999;
   else if(variable == "metMT") {
@@ -4218,6 +4232,18 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNjet* object2, strin
   else if(variable == "electronPhi") value = object1->phi;
   else if(variable == "electronPt") value = object1->pt;
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
+  else if(variable == "relPFrhoIso") value = ( object1->chargedHadronIsoDR03 + max(0.0, object1->neutralHadronIsoDR03 + object1->photonIsoDR03 - object1->AEffDr03*object1->rhoPrime) ) / object1->pt;
+  else if(variable == "relPFrhoIsoNoPUSbtractedJet") value = (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt)) / object1->pt;
+  else if(variable == "relPFrhoIsoJet") value = (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt - object1->AEffDr03*object1->rhoPrime)) / object1->pt;
+  else if(variable == "PUInrelPFrhoIso") value = (object1->AEffDr03*object1->rhoPrime) / object1->pt;
+  else if(variable == "ChargedHadInrelPFrhoIsoDiff") value = (object2->chargedHadronEnergyFraction*object2->pt - object1->chargedHadronIsoDR03) / object1->pt;
+  else if(variable == "NeutralHadInrelPFrhoIsoDiff") value = (object2->neutralHadronEnergyFraction*object2->pt - object1->neutralHadronIsoDR03) / object1->pt;
+  else if(variable == "PhotonInrelPFrhoIsoDiff") value = (object2->neutralEmEnergyFraction*object2->pt - object1->photonIsoDR03) / object1->pt;
+  else if(variable == "ChargedHadInrelPFrhoIsoJet") value = (object2->chargedHadronEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "NeutralHadInrelPFrhoIsoJet") value = (object2->neutralHadronEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "PhotonInrelPFrhoIsoJet") value = (object2->neutralEmEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "relPFrhoIsoDiff") value =  ( object1->chargedHadronIsoDR03 + max(0.0, object1->neutralHadronIsoDR03 + object1->photonIsoDR03 - object1->AEffDr03*object1->rhoPrime) ) / object1->pt - (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt - object1->AEffDr03*object1->rhoPrime)) / object1->pt;
+  else if(variable == "relPFrhoIsoNoPUSubtractedDiff") value = ( object1->chargedHadronIsoDR03 + max(0.0, object1->neutralHadronIsoDR03 + object1->photonIsoDR03) ) / object1->pt - (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt)) / object1->pt;
   else if(variable == "invMass"){
     TLorentzVector fourVector1(object1->px, object1->py, object1->pz, object1->energy);
     TLorentzVector fourVector2(object2->px, object2->py, object2->pz, object2->energy);
@@ -4378,6 +4404,17 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNjet* object2, string va
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "jetEta") value = object2->eta;
   else if(variable == "relPFdBetaIso") value = (object1->pfIsoR04SumChargedHadronPt + max(0.0, object1->pfIsoR04SumNeutralHadronEt + object1->pfIsoR04SumPhotonEt - 0.5*object1->pfIsoR04SumPUPt)) / object1->pt;
+  else if(variable == "relPFdBetaIsoNoPUSbtractedJet") value = (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt)) / object1->pt;
+  else if(variable == "relPFdBetaIsoJet") value = (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt - 0.5*object1->pfIsoR04SumPUPt)) / object1->pt;
+  else if(variable == "PUInrelPFdBetaIso") value = (0.5*object1->pfIsoR04SumPUPt) / object1->pt;
+  else if(variable == "ChargedHadInrelPFdBetaIsoDiff") value = (object2->chargedHadronEnergyFraction*object2->pt - object1->pfIsoR04SumChargedHadronPt) / object1->pt;
+  else if(variable == "NeutralHadInrelPFdBetaIsoDiff") value = (object2->neutralHadronEnergyFraction*object2->pt - object1->pfIsoR04SumNeutralHadronEt) / object1->pt;
+  else if(variable == "PhotonInrelPFdBetaIsoDiff") value = (object2->neutralEmEnergyFraction*object2->pt - object1->pfIsoR04SumPhotonEt) / object1->pt;
+  else if(variable == "ChargedHadInrelPFdBetaIsoJet") value = (object2->chargedHadronEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "NeutralHadInrelPFdBetaIsoJet") value = (object2->neutralHadronEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "PhotonInrelPFdBetaIsoJet") value = (object2->neutralEmEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "relPFdBetaIsoDiff") value = (object1->pfIsoR04SumChargedHadronPt + max(0.0, object1->pfIsoR04SumNeutralHadronEt + object1->pfIsoR04SumPhotonEt - 0.5*object1->pfIsoR04SumPUPt))/ object1->pt - (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt- 0.5*object1->pfIsoR04SumPUPt)) / object1 -> pt;
+  else if(variable == "relPFdBetaIsoNoPUSubtractedDiff") value =(object1->pfIsoR04SumChargedHadronPt + max(0.0, object1->pfIsoR04SumNeutralHadronEt + object1->pfIsoR04SumPhotonEt))/ object1->pt - (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt)) / object1->pt;
   else if(variable == "jetPt") value = object2->pt;
   else if(variable == "jetPhi") value = object2->phi;
   else if(variable == "deltaPt") value = object1->pt - object2->pt;
