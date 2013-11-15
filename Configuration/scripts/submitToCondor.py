@@ -66,7 +66,7 @@ for dataset in split_datasets:
     if arguments.skimDir:
         skim_dir = "condor/" + arguments.skimDir + "/" + dataset
         skim_channel_dir = "condor/" + arguments.skimDir + "/" + dataset + "/" + arguments.skimChannel
-        if os.path.exists (skim_channel_dir) and os.path.exists (skim_channel_dir + "/skimNumberOfEvents.txt") and os.path.exists (skim_dir + "/numberOfEvents.txt") and os.path.exists (skim_dir + "/crossSectionInPicobarn.txt"):
+        if os.path.exists (skim_channel_dir) and (types[dataset] == "data" or (os.path.exists (skim_channel_dir + "/skimNumberOfEvents.txt") and os.path.exists (skim_dir + "/numberOfEvents.txt") and os.path.exists (skim_dir + "/crossSectionInPicobarn.txt"))):
             command = "osusub -d %s -l %s -m %d -p %s %s %s %s %s" % (dataset_names[dataset], dataset, maxEvents[dataset], short_condor_dir, skim_channel_dir, config_file, output_dir, nJobs[dataset])
         elif not os.path.exists (skim_channel_dir):
             print dataset + "/" + arguments.skimChannel + " not in skim directory. Skipping."
@@ -99,6 +99,7 @@ for dataset in split_datasets:
         clusters += " " + output
     else:
         submissionErrors = True
+    print "type: " + types[dataset]
     if arguments.skimDir and os.path.exists (skim_channel_dir + "/skimNumberOfEvents.txt") and os.path.exists (skim_dir + "/numberOfEvents.txt") and os.path.exists (skim_dir + "/crossSectionInPicobarn.txt"):
         shutil.copy (skim_channel_dir + "/skimNumberOfEvents.txt", output_dir + "/skimNumberOfEvents.txt")
         shutil.copy (skim_dir + "/numberOfEvents.txt", output_dir + "/originalNumberOfEvents.txt")
