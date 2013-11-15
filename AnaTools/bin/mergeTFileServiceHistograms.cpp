@@ -115,7 +115,6 @@ int main(int argc, char * argv[]) {
     return -1;  
   }
   
-  bool empty = true;
   for(size_t i = 0; i < fileNames.size(); ++i) {
     string fileName = fileNames[i];
     TFile file(fileName.c_str(), "read");
@@ -134,11 +133,31 @@ int main(int argc, char * argv[]) {
 	cerr <<"error: key " << name << " not found in file " << fileName << endl;
 	return -1;
       }
-      if(empty) make(out, obj);
+      make(out, obj);
+    }
+    file.Close();
+  }
+  for(size_t i = 0; i < fileNames.size(); ++i) {
+    string fileName = fileNames[i];
+    TFile file(fileName.c_str(), "read");
+    if(!file.IsOpen()) {
+      cerr << "can't open input file: " << fileName <<endl;
+      return -1;
+    }
+
+    TIter next(file.GetListOfKeys());
+    TKey *key;
+    while ((key = dynamic_cast<TKey*>(next()))) {
+      string className(key->GetClassName());
+      string name(key->GetName());
+      TObject * obj = file.Get(name.c_str());
+      if(obj == 0) {
+	cerr <<"error: key " << name << " not found in file " << fileName << endl;
+	return -1;
+      }
       fill(out, obj, weights[i]);
     }
     file.Close();
-    empty = false;
   }
 
   out.Write();
@@ -148,14 +167,21 @@ int main(int argc, char * argv[]) {
 }
 
 void make(TDirectory & out, TObject * o) {
-  TDirectory * dir;
+  TDirectory * dir = dynamic_cast<TDirectory*>(o);
+  bool exists = out.Get (o->GetName ());
   TH1F * th1f;
   TH1D * th1d;
   TH2F * th2f;
   TH2D * th2d;
   out.cd();
-  if((dir = dynamic_cast<TDirectory*>(o)) != 0) {
-    TDirectory * outDir = out.mkdir(dir->GetName(), dir->GetTitle());
+  if (!dir && exists)
+    return;
+  if(dir != 0) {
+    TDirectory * outDir;
+    if (!exists)
+      outDir = out.mkdir(dir->GetName(), dir->GetTitle());
+    else
+      outDir = (TDirectory *) out.Get(dir->GetName());
     TIter next(dir->GetListOfKeys());
     TKey *key;
     while( (key = dynamic_cast<TKey*>(next())) ) {
