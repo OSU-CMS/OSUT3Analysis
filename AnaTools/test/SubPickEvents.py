@@ -38,7 +38,6 @@ for sample in datasets:
         filename = './' + txtDirectory + '_findEvents/' + name + '.txt'
         os.system('touch ' + filename)
         command = 'grep "Event passed" ' + outputDirectory +'/' + name + '/*.err | awk \'{print $9}\' > ./' + txtDirectory + '_findEvents/' + name + '.txt 2>&1'
-        print command
         os.system(command)
         os.system('edmPickEvents.py "' + datasetPath + '" ' + filename + ' --crab')
         os.system('cp pickevents_runEvents.txt ' + filename)
@@ -62,9 +61,12 @@ for sample in datasets:
                        	ConfigTmp.write('[USER]\n')
                        	for string in UserString:
                        		ConfigTmp.write(string + '\n')
+               	elif 'scheduler' in line:
+			line = line[0:line.find('=') + 2] + 'remoteglidein' 
+                       	ConfigTmp.write(line + '\n')
                 elif 'use_server' in line:
                        	line = line[0:line.find('=') +2] + '0'
                        	ConfigTmp.write(line)
-               	else:
+                else:
                   	ConfigTmp.write(line)
         os.system('mv pickevents_crab.config.new ' + './' + ConfigDirectory+'/' + name + '_pickevents_crab.config')
