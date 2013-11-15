@@ -29,7 +29,10 @@ if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + arguments.localConfig.rstrip('.py') + " import *")
 
-from ROOT import TFile, TH1D
+from ROOT import TFile, TH1D, TStopwatch
+
+sw = TStopwatch ()
+sw.Start ()
 
 condor_dir = set_condor_output_dir(arguments)
 
@@ -102,6 +105,8 @@ def mergeDataset (dataset, sema):
 
     sema.release ()
 
+f = open ("/tmp/mergeOutput.lock", "w")
+fcntl.lockf (f, fcntl.LOCK_EX)
 processes = []
 sema = Semaphore (int (arguments.nJobs))
 for dataset in split_datasets:
@@ -110,6 +115,8 @@ for dataset in split_datasets:
     processes.append (p)
 for p in processes:
     p.join ()
+fcntl.lockf (f, fcntl.LOCK_UN)
+f.close ()
 
 #merge together components of composite datasets
 def mergeCompositeDataset (composite_dataset, sema):
@@ -164,6 +171,8 @@ def mergeCompositeDataset (composite_dataset, sema):
 
     sema.release ()
 
+f = open ("/tmp/mergeOutput.lock", "w")
+fcntl.lockf (f, fcntl.LOCK_EX)
 processes = []
 for composite_dataset in composite_datasets:
     p = Process (target = mergeCompositeDataset, args = (composite_dataset, sema))
@@ -171,10 +180,56 @@ for composite_dataset in composite_datasets:
     processes.append (p)
 for p in processes:
     p.join ()
+fcntl.lockf (f, fcntl.LOCK_UN)
+f.close ()
 
+
+sw.Stop ()
+cpu = sw.CpuTime ()
+real = sw.RealTime ()
+
+days = int (cpu / (60.0 * 60.0 * 24.0))
+cpu -= days * (60.0 * 60.0 * 24.0)
+hours = int (cpu / (60.0 * 60.0))
+cpu -= hours * (60.0 * 60.0)
+minutes = int (cpu / 60.0)
+cpu -= minutes * 60.0
+
+timeInfo = "\n\n\n=============================================\n\n"
+timeInfo += "CPU Time:  "
+if days > 0:
+    timeInfo += str (days) + " days, "
+if days > 0 or hours > 0:
+    timeInfo += str (hours) + " hours, "
+if days > 0 or hours > 0 or minutes > 0:
+    timeInfo += str (minutes) + " minutes, "
+if days > 0 or hours > 0 or minutes > 0 or cpu > 0:
+    timeInfo += str (cpu) + " seconds\n"
+
+days = int (real / (60.0 * 60.0 * 24.0))
+real -= days * (60.0 * 60.0 * 24.0)
+hours = int (real / (60.0 * 60.0))
+real -= hours * (60.0 * 60.0)
+minutes = int (real / 60.0)
+real -= minutes * 60.0
+
+timeInfo += "Real Time: "
+if days > 0:
+    timeInfo += str (days) + " days, "
+if days > 0 or hours > 0:
+    timeInfo += str (hours) + " hours, "
+if days > 0 or hours > 0 or minutes > 0:
+    timeInfo += str (minutes) + " minutes, "
+if days > 0 or hours > 0 or minutes > 0 or real > 0:
+    timeInfo += str (real) + " seconds\n"
+
+timeInfo += "\n=============================================\n"
+print timeInfo
+f = open (condor_dir + "/mergeAll.out", "a")
+f.write (timeInfo)
+f.close ()
 
 print "\n\nWrote logfile to: %s/mergeAll.out " %  condor_dir
-
 
 #recreate plots file with all datasets combined and in pretty colors
 args = "-c %s" % condor_dir.partition('/')[2]
