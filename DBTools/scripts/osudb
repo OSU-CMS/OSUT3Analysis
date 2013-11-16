@@ -390,6 +390,7 @@ dbUpdate
       $values .= ", nFiles=$nFiles" if $nFiles;
       $values .= ", sizeInGB=$size" if $size;
       $values .= ", status='$status'" if $status;
+      $values .= ", deprecateTime=now()" if $status == "deprecated";
       $values .= ", comment='$comment'" if $comment;
       $values .= ", pset='$pset'" if $psetName;
       $values .= ", crabCfg='$crabCfg'" if $crabCfgName;
