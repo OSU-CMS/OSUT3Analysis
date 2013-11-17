@@ -6,6 +6,7 @@ Arguments               = config_cfg.py True $nJobs $(Process) $dataset $label
 Output                  = condor_$(Process).out
 Error                   = condor_$(Process).err
 Log                     = condor_$(Process).log
+Transfer_Input_files    = config_cfg.py,userConfig_cfg.py,runList.py
 
 +IsLocalJob             = true
 Rank                    = TARGET.IsLocalSlot
