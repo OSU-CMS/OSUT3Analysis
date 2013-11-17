@@ -3,6 +3,7 @@ import os
 import sys
 import fcntl
 import datetime
+import re
 from optparse import OptionParser
 from multiprocessing import Process, Semaphore, cpu_count
 
@@ -27,7 +28,7 @@ parser.add_option("-i", "--nice", dest="increment", default=10,
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
-    exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 from ROOT import TFile, TH1D, TStopwatch
 

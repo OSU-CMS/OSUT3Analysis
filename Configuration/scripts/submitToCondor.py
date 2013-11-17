@@ -42,7 +42,7 @@ if (arguments.skimDir and not arguments.skimChannel) or (not arguments.skimDir a
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
-    exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 condor_dir = set_condor_submit_dir(arguments)
 short_condor_dir = condor_dir

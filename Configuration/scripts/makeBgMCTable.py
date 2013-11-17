@@ -2,6 +2,7 @@
 import sys
 import os
 import fileinput
+import re
 from array import *
 from optparse import OptionParser
 from OSUT3Analysis.Configuration.configurationOptions import *
@@ -47,7 +48,7 @@ parser.add_option("-r", "--replace", action="append", dest="replacements",
 #import from local config
 if arguments.localConfig:
     sys.path.append(os.getcwd())
-    exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 #set condor directory
 condor_dir = set_condor_output_dir(arguments)

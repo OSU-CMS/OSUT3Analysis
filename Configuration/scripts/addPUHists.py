@@ -32,7 +32,7 @@ parser = set_commandline_arguments(parser)
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
-    exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 UseExisting = False
 if arguments.condorDir:
