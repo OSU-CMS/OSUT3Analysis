@@ -16,7 +16,7 @@ sub outputRunList;
 sub getLocation;
 sub outputCondor;
 
-our $db = Mysql->connect ("cmshead", "ntuple", "osuT3User");
+our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
 
 my %opt;
 Getopt::Long::Configure ("bundling");
@@ -117,14 +117,16 @@ outputRunList
   my $nFiles;
   my $status;
   my $crossSection;
+  my $files;
   my $isLocation = 0;
   my $isRunList = 0;
   $isLocation = 1 if -d $dataset;
   $isRunList = 1 if -f $dataset;
   $location = $dataset if $isLocation;
+  my $isRemote = $ENV{"HOSTNAME"} ne "interactive-0-0.local" && $ENV{"HOSTNAME"} ne "interactive-0-1.local" && $ENV{"HOSTNAME"} ne "cmshead.mps.ohio-state.edu" && $ENV{"HOSTNAME"} ne "cms-0.mps.ohio-state.edu";
   if (!$isLocation && !$isRunList)
     {
-      ($location, $nFiles, $status, $crossSection) = getLocation ($dataset);
+      ($location, $nFiles, $status, $crossSection, $files) = getLocation ($dataset);
       if ($status ne "present")
         {
           print "This dataset is not marked as present on the Tier 3!\n";
@@ -134,57 +136,27 @@ outputRunList
           exit if !$response || lc ($response) ne "y";
         }
     }
-  my @files;
-  if (!$isRunList)
-    {
-      my @locations = split (":", $location);
-      foreach my $dir (@locations)
-        {
-          if (!(-e $dir))
-            {
-              print "The database does not know where this dataset is!\n";
-              exit;
-            }
-          opendir (LOCATION, $dir);
-          my @filesInDir = readdir (LOCATION);
-          closedir (LOCATION);
-          foreach my $file (@filesInDir)
-            {
-              next if $file eq ".";
-              next if $file eq "..";
-              next if !($file =~ m/\.root$/);
-              push (@files, abs_path ("$dir/$file"));
-            }
-        }
-    }
-  else
+  if (!$isRemote && $isRunList)
     {
       open (RUNLIST, $dataset);
       while (my $file = <RUNLIST>)
         {
-          push (@files, abs_path ($file));
+          push (@{$files}, abs_path ($file));
         }
       close (RUNLIST);
     }
-  $nFiles = @files if $isLocation || $isRunList;
-  if (@files != $nFiles)
-    {
-      print "Number of files does not match database entry!\n";
-      print "Continue anyway? (y/N): ";
-      my $response = <STDIN>;
-      $response =~ s/\n//g;
-      exit if !$response || lc ($response) ne "y";
-    }
+  my $prefix = "file:";
+  $prefix = "root://cms-0.mps.ohio-state.edu:1094//" if $isRemote;
   open (RUNLIST, ">$workingDir/runList.py");
   print RUNLIST "runList = [\n";
   $nFiles -= $nFiles;
-  for (my $i = 0; $i < @files; $i++)
+  for (my $i = 0; $i < @{$files}; $i++)
     {
-      next if $files[$i] eq ".";
-      next if $files[$i] eq "..";
-      next if !($files[$i] =~ m/\.root$/);
-      print RUNLIST "'file:" . $files[$i] . "'";
-      print RUNLIST "," if $i + 1 != @files;
+      next if $files->[$i] eq ".";
+      next if $files->[$i] eq "..";
+      next if !($files->[$i] =~ m/\.root$/);
+      print RUNLIST "'" . $prefix . $files->[$i] . "'";
+      print RUNLIST "," if $i + 1 != @{$files};
       print RUNLIST "\n";
       $nFiles++;
     }
@@ -209,15 +181,16 @@ getLocation
   my $queryDataset = $dataset;
   $queryDataset =~ s/\*/%/g;
   $queryDataset =~ s/(.*)/%$1%/g;
-  my $query = "select dataset,user,creationTime,location,nFiles,status,crossSectionInPicobarn,higherOrderCrossSectionInPicobarn from ntuple where dataset like '$queryDataset' order by creationTime";
+  my $query = "select dataset,user,creationTime,location,nFiles,status,crossSectionInPicobarn,higherOrderCrossSectionInPicobarn,fileList from ntuple where dataset like '$queryDataset' order by creationTime";
   $db->selectdb ("ntuple");
   $results = $db->query ($query);
   if ($results->numrows () == 1)
     {
       my @row = $results->fetchrow ();
+      my @files = split (/\n/, $row[8]);
       $row[7] += 0;
-      return ($row[3], $row[4], $row[5], $row[7]) if $row[7] > 0;
-      return ($row[3], $row[4], $row[5], $row[6]) if $row[7] <= 0;
+      return ($row[3], $row[4], $row[5], $row[7], \@files) if $row[7] > 0;
+      return ($row[3], $row[4], $row[5], $row[6], \@files) if $row[7] <= 0;
     }
   if ($results->numrows () == 0)
     {
@@ -230,9 +203,10 @@ getLocation
   for (my $i = 1; $i <= $results->numrows (); $i++)
     {
       my @row = $results->fetchrow ();
+      my @files = split (/\n/, $row[8]);
       $row[2] =~ s/([^ ]*) [^ ]*/$1/g;
-      $map{"$i"} = [$row[3], $row[4], $row[5], $row[7]] if $row[7];
-      $map{"$i"} = [$row[3], $row[4], $row[5], $row[6]] if !$row[7];
+      $map{"$i"} = [$row[3], $row[4], $row[5], $row[7], \@files] if $row[7];
+      $map{"$i"} = [$row[3], $row[4], $row[5], $row[6], \@files] if !$row[7];
       printf "(%2d) $row[0]\n", $i;
       print "     (";
       print color "green" if $row[5] eq "present";
@@ -251,7 +225,7 @@ getLocation
       exit;
     }
 
-  return ($map{$response}[0], $map{$response}[1], $map{$response}[2], $map{$response}[3]);
+  return ($map{$response}[0], $map{$response}[1], $map{$response}[2], $map{$response}[3], $map{$response}[4]);
 }
 
 sub
@@ -283,6 +257,7 @@ outputCondor
       $condorFile .= "Output                  = condor_\$(Process).out\n";
       $condorFile .= "Error                   = condor_\$(Process).err\n";
       $condorFile .= "Log                     = condor_\$(Process).log\n";
+      $condorFile .= "Transfer_Input_Files    = config_cfg.py,userConfig_cfg.py,runList.py\n";
       $condorFile .= "\n";
       $condorFile .= "+IsLocalJob             = true\n";
       $condorFile .= "Rank                    = TARGET.IsLocalSlot\n";
@@ -328,7 +303,7 @@ printHelp
   print "ntuple database, a LOCATION which exists on disk, or a text file containing a\n";
   print "LIST of files to run over. CONFIG must be a valid CMSSW python configuration\n";
   print "which can be used with cmsRun. DIRECTORY is a working directory that is created\n";
-  print "  and in which all output, both from the CMSSW jobs and from Condor, is placed.\n";
+  print "and in which all output, both from the CMSSW jobs and from Condor, is placed.\n";
   print "Finally, NJOBS is the number of Condor jobs that will be created.\n";
 
   exit;
