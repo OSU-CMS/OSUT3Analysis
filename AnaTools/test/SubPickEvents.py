@@ -24,6 +24,7 @@ datasets = split_composite_datasets(datasets, composite_dataset_definitions)
 
 os.system('mkdir ' + txtDirectory + '_findEvents')
 os.system('mkdir ' + ConfigDirectory)
+os.system('mkdir ' + MaskDirectory)
 
 def replaceName(Origin,String):
 	if Origin.find('e=') > 0:
@@ -41,7 +42,11 @@ for sample in datasets:
         os.system(command)
         os.system('edmPickEvents.py "' + datasetPath + '" ' + filename + ' --crab')
         os.system('cp pickevents_runEvents.txt ' + filename)
-        
+        Cfgname = './' + ConfigDirectory + '/' + name + '_pickevents_crab.config'
+        Maskname = './' + MaskDirectory + '/' + name + '_pickevents.json'
+        os.system('touch ' + Cfgname) 
+        os.system('touch ' + Maskname) 
+        os.system('mv pickevents.json ' + Maskname)
         Config = open('pickevents_crab.config','r')
         ConfigTmp = open('pickevents_crab.config.new','w')
         for line in Config:
@@ -55,8 +60,11 @@ for sample in datasets:
                 if 'output' in line and 'Process_load'not in line:
 			ConfigTmp.write(str(replaceName(line,name + '.root')))
                 elif 'Process_load' and 'output' in line:
-                        line = line[0:line.find('Process_load') + 13] + filename + ' ' + line[line.find('output'):]
+                        line = line[0:line.find('Process_load') + 13] +  filename + ' ' + line[line.find('output'):]
 			ConfigTmp.write(str(replaceName(line,name + '.root')))
+                elif 'lumi_mask' in line:
+                        line = line[0:line.find('=') + 2] +  Maskname + '\n'
+                       	ConfigTmp.write(line)
                	elif '[USER]' in line:
                        	ConfigTmp.write('[USER]\n')
                        	for string in UserString:
@@ -69,4 +77,4 @@ for sample in datasets:
                        	ConfigTmp.write(line)
                 else:
                   	ConfigTmp.write(line)
-        os.system('mv pickevents_crab.config.new ' + './' + ConfigDirectory+'/' + name + '_pickevents_crab.config')
+        os.system('mv pickevents_crab.config.new ' + Cfgname)
