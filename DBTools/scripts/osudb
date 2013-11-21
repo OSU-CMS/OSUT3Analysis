@@ -308,7 +308,7 @@ dbUpdate
   ($nFiles, $size, $fileList) = sizeOfDataset ($location, $fileList);
   $fileList = join ("\n", @{$fileList});
   my $fullLocation = $location;
-  $fullLocation = "$ENV{'PWD'}/$location" if !($location =~ m/^\//);
+  $fullLocation = "$ENV{'PWD'}/$location" if $location && !($location =~ m/^\//);
 
   $dataset = addSlashes ($dataset);
   $user = addSlashes ($user);
@@ -389,7 +389,7 @@ dbUpdate
       $values .= ", lastUpdateTime=now()";
       $values .= ", lastUpdateUser='$user'";
       $values .= ", format='$format'" if $format;
-      $values .= ", location='$fullLocation'";
+      $values .= ", location='$fullLocation'" if $location;
       $values .= ", fileList='$fileList'" if $nFiles;
       $values .= ", nFiles=$nFiles" if $nFiles;
       $values .= ", sizeInGB=$size" if $size;
