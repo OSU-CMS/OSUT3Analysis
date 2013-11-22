@@ -136,6 +136,28 @@ outputRunList
           exit if !$response || lc ($response) ne "y";
         }
     }
+  if ($isLocation)
+    {
+      my @locations = split (":", $location);
+      foreach my $dir (@locations)
+        {
+          if (!(-e $dir))
+            {
+              print "The location provided is not a valid directory!\n";
+              exit;
+            }
+          opendir (LOCATION, $dir);
+          my @filesInDir = readdir (LOCATION);
+          closedir (LOCATION);
+          foreach my $file (@filesInDir)
+            {
+              next if $file eq ".";
+              next if $file eq "..";
+              next if !($file =~ m/\.root$/);
+              push (@{$files}, abs_path ("$dir/$file"));
+            }
+        }
+    }
   if (!$isRemote && $isRunList)
     {
       open (RUNLIST, $dataset);
