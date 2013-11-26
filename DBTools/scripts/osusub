@@ -15,7 +15,6 @@ sub outputPset;
 sub outputRunList;
 sub getLocation;
 sub outputCondor;
-sub dumpConfig;
 
 our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
 
@@ -67,7 +66,6 @@ $dataset = $opt{"dataset"} if $opt{"dataset"};
 outputCondor ("$ENV{'CMSSW_BASE'}/src/OSUT3Analysis/DBTools/data/condor.sub", $directory, $realNJobs, $dataset, $opt{"label"});
 copy ($config, "$directory/userConfig_cfg.py");
 chdir $directory;
-dumpConfig ("userConfig_cfg.py", "userConfigDump_cfg.py");
 print "Submitting $realNJobs jobs to run on $realMaxEvents events in $nFiles files.\n" if $realMaxEvents >= 0;
 print "Submitting $realNJobs jobs to run on all events in $nFiles files.\n" if $realMaxEvents < 0;
 system ("LD_LIBRARY_PATH=/usr/lib64/condor:\$LD_LIBRARY_PATH condor_submit condor.sub");
@@ -88,7 +86,7 @@ outputPset
   print PSET "import FWCore.ParameterSet.Config as cms\n";
   print PSET "import OSUT3Analysis.DBTools.osusub_cfg as osusub\n";
   print PSET "import re\n";
-  print PSET "import userConfigDump_cfg as pset\n";
+  print PSET "import userConfig_cfg as pset\n";
   print PSET "\n";
   print PSET "fileName = pset.process.TFileService.fileName\n";
   print PSET "fileName = fileName.pythonValue ()\n";
@@ -281,7 +279,7 @@ outputCondor
       $condorFile .= "Output                  = condor_\$(Process).out\n";
       $condorFile .= "Error                   = condor_\$(Process).err\n";
       $condorFile .= "Log                     = condor_\$(Process).log\n";
-      $condorFile .= "Transfer_Input_Files    = config_cfg.py,userConfigDump_cfg.py,runList.py\n";
+      $condorFile .= "Transfer_Input_Files    = config_cfg.py,userConfig_cfg.py,runList.py\n";
       $condorFile .= "\n";
       $condorFile .= "+IsLocalJob             = true\n";
       $condorFile .= "Rank                    = TARGET.IsLocalSlot\n";
@@ -331,22 +329,4 @@ printHelp
   print "Finally, NJOBS is the number of Condor jobs that will be created.\n";
 
   exit;
-}
-
-sub
-dumpConfig
-{
-  my $inputFileName = shift;
-  my $outputFileName = shift;
-
-  open (CONFIG, "<$inputFileName");
-  my @config = <CONFIG>;
-  close (CONFIG);
-  push (@config, "\noutfile = open('$outputFileName','w'); print >> outfile,process.dumpPython(); outfile.close()\n");
-  my $config = join ("", @config);
-  open (CONFIG, ">$outputFileName.tmp");
-  print CONFIG $config;
-  close (CONFIG);
-  system ("python $outputFileName.tmp");
-  unlink ("$outputFileName.tmp");
 }
