@@ -66,8 +66,8 @@ outputPset ($directory, $dataset, $opt{"maxEvents"}, $eventsPerJob, $opt{"proces
 $dataset = $opt{"dataset"} if $opt{"dataset"};
 outputCondor ("$ENV{'CMSSW_BASE'}/src/OSUT3Analysis/DBTools/data/condor.sub", $directory, $realNJobs, $dataset, $opt{"label"});
 copy ($config, "$directory/userConfig_cfg.py");
-dumpConfig ("$directory/userConfig_cfg.py", "$directory/userConfigDump_cfg.py");
 chdir $directory;
+dumpConfig ("userConfig_cfg.py", "userConfigDump_cfg.py");
 print "Submitting $realNJobs jobs to run on $realMaxEvents events in $nFiles files.\n" if $realMaxEvents >= 0;
 print "Submitting $realNJobs jobs to run on all events in $nFiles files.\n" if $realMaxEvents < 0;
 system ("LD_LIBRARY_PATH=/usr/lib64/condor:\$LD_LIBRARY_PATH condor_submit condor.sub");
