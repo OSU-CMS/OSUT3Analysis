@@ -107,6 +107,9 @@ def mergeDataset (dataset, sema):
     sema.release ()
 
 f = open ("/tmp/mergeOutput.lock", "w")
+stat = os.stat ("/tmp/mergeOutput.lock")
+if stat.st_uid == os.getuid () and stat.st_gid == os.getgid ():
+    os.chmod ("/tmp/mergeOutput.lock", 0666)
 fcntl.lockf (f, fcntl.LOCK_EX)
 processes = []
 sema = Semaphore (int (arguments.nJobs))
@@ -173,6 +176,9 @@ def mergeCompositeDataset (composite_dataset, sema):
     sema.release ()
 
 f = open ("/tmp/mergeOutput.lock", "w")
+stat = os.stat ("/tmp/mergeOutput.lock")
+if stat.st_uid == os.getuid () and stat.st_gid == os.getgid ():
+    os.chmod ("/tmp/mergeOutput.lock", 0666)
 fcntl.lockf (f, fcntl.LOCK_EX)
 processes = []
 for composite_dataset in composite_datasets:
