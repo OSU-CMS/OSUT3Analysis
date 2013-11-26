@@ -138,6 +138,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "trigobj-electron pairs")   tempInputCollection = "electron-trigobj pairs";
     if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
     if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
+    if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
     if(tempInputCollection.find("pairs")==string::npos){ //just a single object
       if(tempInputCollection.find("secondary")!=string::npos){//secondary object
         if(tempInputCollection.find("secondary muons")!=string::npos){//treat secondary muons differently; allow for a different input collection
@@ -382,6 +383,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       if(tempInputCollection == "trigobj-electron pairs")   tempInputCollection = "electron-trigobj pairs";
       if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
       if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
+      if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
       tempCut.inputCollection = tempInputCollection;
       if(tempInputCollection.find("pairs")==string::npos){ //just a single object
         if(tempInputCollection.find("secondary")!=string::npos){//secondary object
@@ -691,7 +693,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         else if(currentObject == "secondary electrons")       currentObject = "secondaryElectrons";
         else if(currentObject == "electron-trigobj pairs")    currentObject = "electronTrigobjPairs";
         else if(currentObject == "muon-trigobj pairs")        currentObject = "muonTrigobjPairs";
-        else if(currentObject == "electron-mcparticle pairs")   currentObject = "electronMCparticlePairs";
+        else if(currentObject == "electron-mcparticle pairs") currentObject = "electronMCparticlePairs";
+        else if(currentObject == "track-mcparticle pairs")    currentObject = "trackMCparticlePairs";
 
 
         currentObject.at(0) = toupper(currentObject.at(0));
@@ -1145,6 +1148,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "electron-trigobj pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),trigobjs.product(),"electron-trigobj pairs");
         else if(currentObject == "muon-trigobj pairs")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),trigobjs.product(),"muon-trigobj pairs");
         else if(currentObject == "electron-mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),mcparticles.product(),"electron-mcparticle pairs");
+        else if(currentObject == "track-mcparticle pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),mcparticles.product(),"track-mcparticle pairs");
 
         if(currentObject == "stops" && datasetType_ == "signalMC") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,stops.product(),"stops");
       }
@@ -1394,6 +1398,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill1DHistogram(histo,currentHistogram, tracks.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
             // fill the histograms of weighting factors with 1, to see the shape of a SF without any weight applied
             else if(currentHistogram.inputCollection == "events" && currentHistogram.name.find("ScaleFactor")!=string::npos) fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),1.0);
             else if(currentHistogram.inputCollection == "events") fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
@@ -1481,6 +1487,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "events") fill2DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "taus") fill2DHistogram(histo,currentHistogram,taus.product(),cumulativeFlags.at("taus").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "mets") fill2DHistogram(histo,currentHistogram,mets.product(),cumulativeFlags.at("mets").at(currentDir),eventScaleFactor_);
@@ -1546,6 +1554,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "electron-trigobj pairs")             objectToPlot = "electronTrigobjPairs";
           else if(currentObject == "muon-trigobj pairs")                 objectToPlot = "muonTrigobjPairs";
           else if(currentObject == "electron-mcparticle pairs")          objectToPlot = "electronMCparticlePairs";
+          else if(currentObject == "track-mcparticle pairs")             objectToPlot = "trackMCparticlePairs";
           else objectToPlot = currentObject;
 
           string tempCurrentObject = objectToPlot;
@@ -4307,6 +4316,31 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNmcparticle* object2
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
+  else if(variable == "threeDAngle")
+    {
+      TVector3 threeVector1(object1->px, object1->py, object1->pz);
+      TVector3 threeVector2(object2->px, object2->py, object2->pz);
+      value = (threeVector1.Angle(threeVector2));
+    }
+  else if(variable == "chargeProduct"){
+    value = object1->charge*object2->charge;
+  }
+
+  else{clog << "WARNING: invalid electron-mcparticle variable '" << variable << "'\n"; value = -999;}
+  value = applyFunction(function, value);
+
+  return value;
+}
+
+//!track-mcparticle pair valueLookup
+double
+OSUAnalysis::valueLookup (const BNtrack* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+
+  double value = 0.0;
+
+  if     (variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
+  else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "deltaR")   value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "threeDAngle")
     {
       TVector3 threeVector1(object1->px, object1->py, object1->pz);
