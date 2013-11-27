@@ -5,6 +5,7 @@ use Mysql;
 use Getopt::Long;
 use File::Copy;
 use Term::ANSIColor;
+use Cwd 'abs_path';
 
 sub getDataset;
 sub dbUpdate;
@@ -216,7 +217,8 @@ dbUpdate
   my $oldLocation;
   my $oldNFiles;
   my $oldSize;
-  ($oldLocation, $oldNFiles, $oldSize) = getLocation ($id) if $id > 0;
+  my $oldFileList;
+  ($oldLocation, $oldNFiles, $oldSize, $oldFileList) = getLocation ($id) if $id > 0;
   $location = $oldLocation if $oldLocation
                            && !$crabCfgName
                            && !$comment
@@ -303,9 +305,10 @@ dbUpdate
       $lumiSummary = join ("", @lumiSummary);
     }
   $release .= ".$configName" if $configName;
-  ($nFiles, $size) = sizeOfDataset ($location, $fileList);
+  ($nFiles, $size, $fileList) = sizeOfDataset ($location, $fileList);
+  $fileList = join ("\n", @{$fileList});
   my $fullLocation = $location;
-  $fullLocation = "$ENV{'PWD'}/$location" if !($location =~ m/^\//);
+  $fullLocation = "$ENV{'PWD'}/$location" if $location && !($location =~ m/^\//);
 
   $dataset = addSlashes ($dataset);
   $user = addSlashes ($user);
@@ -316,7 +319,6 @@ dbUpdate
   $lumiSummary = addSlashes ($lumiSummary);
   $fullLocation = addSlashes ($fullLocation);
   $name = addSlashes ($name);
-  $fileList = addSlashes ($fileList);
   $status = addSlashes ($status);
   $comment = addSlashes ($comment);
   $release = addSlashes ($release);
@@ -378,15 +380,17 @@ dbUpdate
       if ($location && $append && $location ne $oldLocation)
         {
           $fullLocation = $oldLocation . ":" . $fullLocation;
+          $fileList = $oldFileList . "\n" . $fileList;
           $nFiles += $oldNFiles;
           $size += $oldSize;
         }
+      $fileList = addSlashes ($fileList);
 
       $values .= ", lastUpdateTime=now()";
       $values .= ", lastUpdateUser='$user'";
       $values .= ", format='$format'" if $format;
-      $values .= ", location='$fullLocation'";
-      $values .= ", fileList='$fileList'" if $fileListName;
+      $values .= ", location='$fullLocation'" if $location;
+      $values .= ", fileList='$fileList'" if $nFiles;
       $values .= ", nFiles=$nFiles" if $nFiles;
       $values .= ", sizeInGB=$size" if $size;
       $values .= ", status='$status'" if $status;
@@ -600,6 +604,8 @@ sizeOfDataset
 
   my $size = 0.0;
   my $nFiles = 0;
+  my @filesInDir;
+  my @files;
   if ($location && !$fileList)
     {
       if (!(-e $location))
@@ -607,26 +613,31 @@ sizeOfDataset
           print "$location does not exist!\n";
           exit;
         }
-      $nFiles = `ls $location/*.root 2>/dev/null | wc -l`;
-      $size = `du -s $location`;
-      $size =~ s/([^ ]*) .*/$1/;
-      $size /= 1024 * 1024;
-      $size = sprintf "%.2f", $size;
+      opendir (LOCATION, $location);
+      @filesInDir = readdir (LOCATION);
+      closedir (LOCATION);
+
     }
   elsif ($fileList)
     {
-      foreach my $file (split (/\n/, $fileList))
-        {
-          $nFiles++;
-          my $fileSize = `du -s $file`;
-          $fileSize =~ s/([^ ]*) .*/$1/;
-          $size += $fileSize;
-        }
-      $size /= 1024 * 1024;
-      $size = sprintf "%.2f", $size;
+      @filesInDir = split (/\n/, $fileList);
     }
+  foreach my $file (@filesInDir)
+    {
+      next if $file eq ".";
+      next if $file eq "..";
+      next if !($file =~ m/\.root$/);
+      $file = "$location/$file" if $location;
+      $nFiles++;
+      my $fileSize = `du -s $file`;
+      $fileSize =~ s/([^ ]*) .*/$1/;
+      $size += $fileSize;
+      push (@files, abs_path ("$file"));
+    }
+  $size /= 1024 * 1024;
+  $size = sprintf "%.2f", $size;
 
-  return ($nFiles, $size);
+  return ($nFiles, $size, \@files);
 }
 
 sub
@@ -834,10 +845,10 @@ getLocation
 {
   my $id = shift;
 
-  my $query = "select location,nFiles,sizeInGB from ntuple where id=$id";
+  my $query = "select location,nFiles,sizeInGB,fileList from ntuple where id=$id";
   $db->selectdb ("ntuple");
   my $results = $db->query ($query);
   my @row = $results->fetchrow ();
 
-  return ($row[0], $row[1], $row[2]);
+  return ($row[0], $row[1], $row[2], $row[3]);
 }

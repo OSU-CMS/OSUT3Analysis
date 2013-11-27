@@ -3,6 +3,7 @@ import os
 import sys
 import fcntl
 import datetime
+import re
 from optparse import OptionParser
 from multiprocessing import Process, Semaphore, cpu_count
 
@@ -27,7 +28,7 @@ parser.add_option("-i", "--nice", dest="increment", default=10,
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
-    exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 from ROOT import TFile, TH1D, TStopwatch
 
@@ -106,6 +107,9 @@ def mergeDataset (dataset, sema):
     sema.release ()
 
 f = open ("/tmp/mergeOutput.lock", "w")
+stat = os.stat ("/tmp/mergeOutput.lock")
+if stat.st_uid == os.getuid () and stat.st_gid == os.getgid ():
+    os.chmod ("/tmp/mergeOutput.lock", 0666)
 fcntl.lockf (f, fcntl.LOCK_EX)
 processes = []
 sema = Semaphore (int (arguments.nJobs))
@@ -172,6 +176,9 @@ def mergeCompositeDataset (composite_dataset, sema):
     sema.release ()
 
 f = open ("/tmp/mergeOutput.lock", "w")
+stat = os.stat ("/tmp/mergeOutput.lock")
+if stat.st_uid == os.getuid () and stat.st_gid == os.getgid ():
+    os.chmod ("/tmp/mergeOutput.lock", 0666)
 fcntl.lockf (f, fcntl.LOCK_EX)
 processes = []
 for composite_dataset in composite_datasets:

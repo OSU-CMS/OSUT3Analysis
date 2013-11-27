@@ -40,11 +40,11 @@ parser.add_option("-S", "--systematics", action="store_true", dest="includeSyste
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
-    exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 if arguments.includeSystematics:
     sys.path.append(os.getcwd())
-    exec("from " + systematics_file.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", systematics_file) + " import *")
 
 
 
