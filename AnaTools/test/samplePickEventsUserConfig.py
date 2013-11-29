@@ -1,24 +1,11 @@
 #!/usr/bin/env python
 
 from array import *
-from OSUT3Analysis.Configuration.configurationOptions import *
 
 
 ###################################
 #Give the dataset you want to get.#
 ###################################
-datasets = [
-         'QCD_MuEnriched',
-         'DoubleMu_22Jan2013',
-]
-
-
-
-txtDirectory = 'Nov_15' 
-ConfigDirectory = 'Nov_15_Cof' 
-MaskDirectory = 'Nov_15_Mask' 
-outputDirectory = "/home/bing/CMSSW_6_1_2/src/DisplacedSUSY/BackgroundStudies/test/condor/BbBarIsoStudyMuon_Nov_14_2"
-
 UserString = [
 	'return_data             = 0',
 	'email                   = bingxuan.liu@cern.ch',  # your email

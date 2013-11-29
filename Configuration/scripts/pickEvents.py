@@ -14,17 +14,20 @@ from OSUT3Analysis.Configuration.formattingUtilities import *
 
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
+parser.add_option("-U", "--UserConfig", dest="UserConfig",
+                  help="user configuration file")
 (arguments, args) = parser.parse_args()
+condorDir = set_condor_output_dir(arguments)
+
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+if arguments.UserConfig:
+    sys.path.append(os.getcwd())
+    exec("from " + arguments.UserConfig.rstrip('.py') + " import *")
 
 datasets = split_composite_datasets(datasets, composite_dataset_definitions)
-
-os.system('mkdir ' + txtDirectory + '_findEvents')
-os.system('mkdir ' + ConfigDirectory)
-os.system('mkdir ' + MaskDirectory)
 
 def replaceName(Origin,String):
 	if Origin.find('e=') > 0:
@@ -36,14 +39,14 @@ def replaceName(Origin,String):
 for sample in datasets:
         datasetPath = dataset_names[sample]
         name = str(sample)
-        filename = './' + txtDirectory + '_findEvents/' + name + '.txt'
+        filename = './' + condorDir + '/' + name + '/' + name + '_pickevents.txt'
         os.system('touch ' + filename)
-        command = 'grep "Event passed" ' + outputDirectory +'/' + name + '/*.err | awk \'{print $9}\' > ./' + txtDirectory + '_findEvents/' + name + '.txt 2>&1'
+        command = 'grep "Event passed" ' +'./' + condorDir + '/' + name + '/*.err | awk \'{print $9}\' >' + filename +' 2>&1'
         os.system(command)
-        os.system('edmPickEvents.py "' + datasetPath + '" ' + filename + ' --crab')
-        os.system('cp pickevents_runEvents.txt ' + filename)
-        Cfgname = './' + ConfigDirectory + '/' + name + '_pickevents_crab.config'
-        Maskname = './' + MaskDirectory + '/' + name + '_pickevents.json'
+        os.system('edmPickEvents.py "' + datasetPath +'" ' + filename + ' --crab')
+        os.system('mv pickevents_runEvents.txt ' + filename)
+        Cfgname = './' + condorDir + '/' + name + '/' + name + '_pickevents_crab.config'
+        Maskname = './' + condorDir + '/' + name + '/' + name + '_pickevents.json'
         os.system('touch ' + Cfgname) 
         os.system('touch ' + Maskname) 
         os.system('mv pickevents.json ' + Maskname)
@@ -77,4 +80,5 @@ for sample in datasets:
                        	ConfigTmp.write(line)
                 else:
                   	ConfigTmp.write(line)
-        os.system('mv pickevents_crab.config.new ' + Cfgname)
+        os.system('cp pickevents_crab.config.new ' + Cfgname)
+        os.system('rm pickevents_crab.config')
