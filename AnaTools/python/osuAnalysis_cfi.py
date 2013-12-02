@@ -58,6 +58,7 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
 
     puFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/pu.root'),
     deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/DeadEcalChannels.txt'),
+    badCSCFile   = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/BadCSCChambers.txt'),  
     electronSFFile = cms.string (''), # if blank, will attempt to use the SFs hard-coded in SFWeight.cc
     muonSFFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/MuonSF_ID_ISO_2D.root'),
     dataPU = cms.string ('PU_data_190456_208686_69300xSec'),
