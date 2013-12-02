@@ -3269,6 +3269,7 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
   else if(variable == "ptErrorByPt")                value = (object->ptError/object->pt);
   else if(variable == "ptError")                    value = object->ptError;
   else if(variable == "ptRes")                      value = getTrkPtRes(object);
+  else if(variable == "ptTrue")                     value = getTrkPtTrue(object, mcparticles.product());
   else if (variable == "d0wrtPV"){
     double vx = object->vx - chosenVertex ()->x,
       vy = object->vy - chosenVertex ()->y,
@@ -5006,7 +5007,7 @@ OSUAnalysis::getTrkPtTrue (const BNtrack* track1, const BNmcparticleCollection* 
     double genDeltaRtemp = deltaR(genPart->eta, genPart->phi,track1->eta, track1->phi);
     if (genDeltaRtemp < genDeltaRLowest) {
       genDeltaRLowest = genDeltaRtemp;
-      if (genDeltaRLowest < 0.05) {   // Only consider it truth-matched if DeltaR<0.15.
+      if (genDeltaRLowest < 0.15) {   // Only consider it truth-matched if DeltaR<0.15.
         double ptTrue = genPart->pt;
         value = ptTrue;
       }
