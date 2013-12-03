@@ -197,7 +197,7 @@ reSubmitDatasetArray = arguments.ResubmitBlocks
 reSubmitDatasets = []
 if len(reSubmitDatasetArray):
 	for n in reSubmitDatasetArray:
-		reSubmitDatasets.append(datasets[int(n)])
+		reSubmitDatasets.append(datasets[int(n)-1])
 	for dataset in reSubmitDatasets:
     		p = Process (target = reSubmitCrabJobs, args = (dataset, sema))
          	p.start ()
