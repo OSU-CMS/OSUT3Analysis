@@ -3391,6 +3391,50 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
     value = trkTauDeltaRMin;
   }
 
+  else if(variable == "deltaPhiMuMuPair") {
+    // delta phi between track and dimuon pair   
+    // Set to dummy value if there are not 2 muons with pT>25, opposite sign, and 80<m(mu-mu)<100 GeV.  
+    string empty = "";  
+
+    TLorentzVector p4muon0;  // first muon                                                                                                                                                             
+    TLorentzVector p4muon1;  // second muon                                                                                                                                                            
+    TLorentzVector p4mumu;   // dimuon pair                                                                                                                                                            
+    double mMuon = 0.105658;  // mass from PDG
+    int imuon0 = -1;
+    int imuon1 = -1;  
+    double phiMuMu = 0;  
+    for (uint imuon = 0; imuon<muons->size(); imuon++) {
+      double pt0   = valueLookup(&muons->at(imuon), "pt",     "", empty); 
+      double eta0  = valueLookup(&muons->at(imuon), "eta",    "", empty); 
+      double phi0  = valueLookup(&muons->at(imuon), "phi",    "", empty); 
+      double chg0  = valueLookup(&muons->at(imuon), "charge", "", empty); 
+      if (pt0<25) continue; 
+      for (uint jmuon = imuon+1; jmuon<muons->size(); jmuon++) {
+	double pt1   = valueLookup(&muons->at(jmuon), "pt",      "", empty); 
+	double eta1  = valueLookup(&muons->at(jmuon), "eta",     "", empty); 
+	double phi1  = valueLookup(&muons->at(jmuon), "phi",     "", empty); 
+	double chg1  = valueLookup(&muons->at(jmuon), "charge",  "", empty); 
+	if (pt1<25)          continue; 
+	if (chg0*chg1 != -1) continue;
+	p4muon0.SetPtEtaPhiM(pt0, eta0, phi0, mMuon); 
+	p4muon1.SetPtEtaPhiM(pt1, eta1, phi1, mMuon); 
+	p4mumu = p4muon0 + p4muon1;
+	if (p4mumu.M()<80 || 100<p4mumu.M()) continue;  
+	// Now two muons have passed the required criteria.  
+	if (imuon0>=0 || imuon1>=0) {
+	  cout << "Warning [OSUAnalysis::valueLookup()]: More than one dimuon pair passes criteria in deltaPhiMuMuPair calculation." << endl;    
+	}
+	imuon0 = imuon;
+	imuon1 = jmuon;  
+	phiMuMu = p4mumu.Phi();  
+      }
+    }
+
+    value = -99;                            // initialize to dummy value  
+    if (imuon0>=0 && imuon1>=0) value = deltaPhi(phiMuMu, object->phi);  // only set the value if two muons pass the given criteria  
+
+  }
+
   else if(variable == "genDeltaRLowest") value = getGenDeltaRLowest(object);
 
   else if(variable == "genMatchedPdgId"){
