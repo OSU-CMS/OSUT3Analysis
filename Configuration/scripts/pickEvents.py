@@ -19,9 +19,9 @@ parser = set_commandline_arguments(parser)
 #UserConfig file is what you use to specify your email and directory to use on T3,etc. 
 parser.add_option("-U", "--UserConfig", dest="UserConfig",
                   help="user configuration file")
-parser.add_option("--SU", "--SubmitCrabJobs", action="store_true", dest="SubmitCrabJobs",default=False,
+parser.add_option("--SU", "--SubmitCrabJobs", action = "store_true", dest="SubmitCrabJobs", default=False,
                   help="Will submit the Crab jobs")
-parser.add_option("--CR", "--CreateCrabJobs", action="store_true", dest="CreateCrabJobs",default=False,
+parser.add_option("--RS", "--ResubmitCrabJobs", dest="ResubmitBlocks",default=[],
                   help="Will submit the Crab jobs")
 parser.add_option("--SR", "--StatusReport", action="store_true", dest="StatusReport",default=False,
                   help="Will print out the status report of the Crab jobs")
@@ -48,9 +48,16 @@ def replaceName(Origin,String):
         else:
 		Origin = Origin[0:Origin.find('=') + 2] + String
         return  Origin     
-if arguments.CreateCrabJobs:
+
+#Create a new directory to store the crablog files. 
+if not os.path.exists('./pickEvents_crabLog'):
+	os.system('mkdir ' + 'pickEvents_crabLog')
+if not os.path.exists('./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:]):
+	os.system('mkdir pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:])
+
+if 1-1 == 0:
 	for sample in datasets:
-        	datasetPath = dataset_names[sample]
+                datasetPath = dataset_names[sample]
         	name = str(sample)
         	#Create a x_pickevents.txt file in the corresponding dataset directory.
         	filename = CMSSWDir + '/' + condorDir + '/' + name + '/' + name + '_pickevents.txt'
@@ -106,23 +113,30 @@ if arguments.CreateCrabJobs:
 		ConfigTmp.close()
         	os.system('mv pickevents_crab.config.new ' + Cfgname)
         	os.system('rm pickevents_crab.config')
-#Create a new directory to store the crablog files. 
-if not os.path.exists('./pickEvents_crabLog'):
-	os.system('mkdir ' + 'pickEvents_crabLog')
-if not os.path.exists('./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:]):
-	os.system('mkdir pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:])
-#Create Crab Jobs.
+	for sample in datasets:
+		print str(sample) + ' has ' + str(len(open(CMSSWDir + '/' + condorDir + '/' + str(sample) + '/' + str(sample) + '_pickevents.txt','rU').readlines())) + ' events passed all cuts.'
 def submitCrabJobs(dataset,sema):
 	sema.acquire()
 	name = str(dataset)
         ConfigPath = '/' + condorDir + '/' + name + '/' + name + '_pickevents_crab.config'       
-        os.system('mkdir ./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab')
+        if not os.path.exists('./pickEvents_crabLog' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab'):
+        	os.system('mkdir ./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab')
         fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
         os.chdir( CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab')
         command = 'crab -create -cfg ' + CMSSWDir + ConfigPath
         os.system(command)
         #Change the name of the crab log directory to be the name of the dataset.
         os.system('crab -submit -c ' + name)
+        fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
+        sema.release()
+
+def reSubmitCrabJobs(dataset,sema):
+	sema.acquire()
+	name = str(dataset)
+        fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
+        os.chdir( CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab')
+        #Change the name of the crab log directory to be the name of the dataset.
+        os.system('crab -forceResubmit all -c ' + name)
         fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
         sema.release()
 
@@ -160,10 +174,10 @@ processes = []
 sema = Semaphore(8)
 if arguments.SubmitCrabJobs:
 	for dataset in datasets:
-    		p = Process (target = submitCrabJobs, args = (dataset, sema))
-         	p.start ()
+                p = Process (target = submitCrabJobs, args = (dataset, sema))
+        	p.start ()
     		processes.append (p) 
-	for p in processes:
+        for p in processes:
     		p.join ()
 if arguments.StatusReport:
 	for dataset in datasets:
@@ -175,6 +189,17 @@ if arguments.StatusReport:
 if arguments.GetOutput:
 	for dataset in datasets:
     		p = Process (target = getOutput, args = (dataset, sema))
+         	p.start ()
+    		processes.append (p) 
+	for p in processes:
+    		p.join ()
+reSubmitDatasetArray = arguments.ResubmitBlocks 
+reSubmitDatasets = []
+if len(reSubmitDatasetArray):
+	for n in reSubmitDatasetArray:
+		reSubmitDatasets.append(datasets[int(n)])
+	for dataset in reSubmitDatasets:
+    		p = Process (target = reSubmitCrabJobs, args = (dataset, sema))
          	p.start ()
     		processes.append (p) 
 	for p in processes:
