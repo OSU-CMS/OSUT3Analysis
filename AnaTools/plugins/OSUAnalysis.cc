@@ -20,6 +20,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   trigobjs_ (cfg.getParameter<edm::InputTag> ("trigobjs")),
   puFile_ (cfg.getParameter<string> ("puFile")),
   deadEcalFile_ (cfg.getParameter<string> ("deadEcalFile")),
+  badCSCFile_ (cfg.getParameter<string> ("badCSCFile")),
   electronSFFile_ (cfg.getParameter<string> ("electronSFFile")),
   muonSFFile_ (cfg.getParameter<string> ("muonSFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
@@ -3264,9 +3265,11 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
 
   else if(variable == "isIso")                      value = getTrkIsIso(object, tracks.product());
   else if(variable == "isMatchedDeadEcal")          value = getTrkIsMatchedDeadEcal(object);
+  else if(variable == "isMatchedBadCSC")            value = getTrkIsMatchedBadCSC  (object);
   else if(variable == "ptErrorByPt")                value = (object->ptError/object->pt);
   else if(variable == "ptError")                    value = object->ptError;
   else if(variable == "ptRes")                      value = getTrkPtRes(object);
+  else if(variable == "ptTrue")                     value = getTrkPtTrue(object, mcparticles.product());
   else if (variable == "d0wrtPV"){
     double vx = object->vx - chosenVertex ()->x,
       vy = object->vy - chosenVertex ()->y,
@@ -3386,6 +3389,50 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
       if (trkTauDeltaR < trkTauDeltaRMin) trkTauDeltaRMin = trkTauDeltaR;
     }
     value = trkTauDeltaRMin;
+  }
+
+  else if(variable == "deltaPhiMuMuPair") {
+    // delta phi between track and dimuon pair   
+    // Set to dummy value if there are not 2 muons with pT>25, opposite sign, and 80<m(mu-mu)<100 GeV.  
+    string empty = "";  
+
+    TLorentzVector p4muon0;  // first muon                                                                                                                                                             
+    TLorentzVector p4muon1;  // second muon                                                                                                                                                            
+    TLorentzVector p4mumu;   // dimuon pair                                                                                                                                                            
+    double mMuon = 0.105658;  // mass from PDG
+    int imuon0 = -1;
+    int imuon1 = -1;  
+    double phiMuMu = 0;  
+    for (uint imuon = 0; imuon<muons->size(); imuon++) {
+      double pt0   = valueLookup(&muons->at(imuon), "pt",     "", empty); 
+      double eta0  = valueLookup(&muons->at(imuon), "eta",    "", empty); 
+      double phi0  = valueLookup(&muons->at(imuon), "phi",    "", empty); 
+      double chg0  = valueLookup(&muons->at(imuon), "charge", "", empty); 
+      if (pt0<25) continue; 
+      for (uint jmuon = imuon+1; jmuon<muons->size(); jmuon++) {
+	double pt1   = valueLookup(&muons->at(jmuon), "pt",      "", empty); 
+	double eta1  = valueLookup(&muons->at(jmuon), "eta",     "", empty); 
+	double phi1  = valueLookup(&muons->at(jmuon), "phi",     "", empty); 
+	double chg1  = valueLookup(&muons->at(jmuon), "charge",  "", empty); 
+	if (pt1<25)          continue; 
+	if (chg0*chg1 != -1) continue;
+	p4muon0.SetPtEtaPhiM(pt0, eta0, phi0, mMuon); 
+	p4muon1.SetPtEtaPhiM(pt1, eta1, phi1, mMuon); 
+	p4mumu = p4muon0 + p4muon1;
+	if (p4mumu.M()<80 || 100<p4mumu.M()) continue;  
+	// Now two muons have passed the required criteria.  
+	if (imuon0>=0 || imuon1>=0) {
+	  cout << "Warning [OSUAnalysis::valueLookup()]: More than one dimuon pair passes criteria in deltaPhiMuMuPair calculation." << endl;    
+	}
+	imuon0 = imuon;
+	imuon1 = jmuon;  
+	phiMuMu = p4mumu.Phi();  
+      }
+    }
+
+    value = -99;                            // initialize to dummy value  
+    if (imuon0>=0 && imuon1>=0) value = deltaPhi(phiMuMu, object->phi);  // only set the value if two muons pass the given criteria  
+
   }
 
   else if(variable == "genDeltaRLowest") value = getGenDeltaRLowest(object);
@@ -5004,7 +5051,7 @@ OSUAnalysis::getTrkPtTrue (const BNtrack* track1, const BNmcparticleCollection* 
     double genDeltaRtemp = deltaR(genPart->eta, genPart->phi,track1->eta, track1->phi);
     if (genDeltaRtemp < genDeltaRLowest) {
       genDeltaRLowest = genDeltaRtemp;
-      if (genDeltaRLowest < 0.05) {   // Only consider it truth-matched if DeltaR<0.15.
+      if (genDeltaRLowest < 0.15) {   // Only consider it truth-matched if DeltaR<0.15.
         double ptTrue = genPart->pt;
         value = ptTrue;
       }
@@ -5093,6 +5140,35 @@ OSUAnalysis::WriteDeadEcal (){
   if(DeadEcalVec.size() == 0) clog << "Warning: No dead Ecal channels have been found." << endl;
 }
 
+
+
+// Creates a map of the bad CSC chambers.  
+// The list of bad CSC chambers is taken from:  
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/CSCDPGConditions#CSC_bad_chambers_in_2012_30_05_2
+void
+OSUAnalysis::WriteBadCSC() {
+  double etaCSC, phiCSC;
+  ifstream BadCSCFile(badCSCFile_);
+  if (!BadCSCFile) {
+    clog << "Error: BadCSCFile has not been found." << endl;
+    return;
+  }
+  if (BadCSCVec.size()!= 0) {
+    clog << "Error: BadCSCVec has a nonzero size" << endl;
+    return;
+  }
+  while (!BadCSCFile.eof()) {
+    BadCSCFile >> etaCSC >> phiCSC;
+    BadCSC newChan;
+    newChan.etaCSC = etaCSC;
+    newChan.phiCSC = phiCSC;
+    BadCSCVec.push_back(newChan);
+    //    cout << "Debug:  Adding bad CSC with eta=" << etaCSC << ", phi=" << phiCSC << endl;  
+  }
+  if (BadCSCVec.size() == 0) clog << "Warning: No bad CSC chambers have been found." << endl;
+}  
+
+
 //if a track is found within dR<0.05 of a dead Ecal channel value = 1, otherwise value = 0
 int
 OSUAnalysis::getTrkIsMatchedDeadEcal (const BNtrack* track1){
@@ -5109,6 +5185,26 @@ OSUAnalysis::getTrkIsMatchedDeadEcal (const BNtrack* track1){
   else {value = 0;}
   return value;
 }
+
+
+// If a track is found within dR<0.25 of a bad CSC chamber, value = 1, otherwise value = 0.  
+// FIXME:  Instead of a deltaR cut, it would be better to use the boundaries of the chamber 
+int
+OSUAnalysis::getTrkIsMatchedBadCSC (const BNtrack* track1){
+  double deltaRLowest = 999;
+  int value = 0;
+  if (BadCSCVec.size() == 0) WriteBadCSC();
+  for(vector<BadCSC>::const_iterator csc = BadCSCVec.begin(); csc != BadCSCVec.end(); ++csc) {
+    double eta = csc->etaCSC;
+    double phi = csc->phiCSC;
+    double deltaRtemp = deltaR(eta, phi, track1->eta, track1->phi);
+    if(deltaRtemp < deltaRLowest) deltaRLowest = deltaRtemp;
+  }
+  if (deltaRLowest<0.25) { value = 1; }
+  else                  { value = 0; } 
+  return value;
+}
+
 
 // Returns the smallest DeltaR between the object and any generated true particle in the event.
 template <class InputObject>

@@ -7,4 +7,11 @@
 <use   name="DataFormats/Common"/>
 <use   name="CommonTools/UtilAlgos"/>
 <use   name="OSUT3Analysis/AnaTools"/>
+<use name="CondFormats/DataRecord"/>
+<use name="CondFormats/EcalObjects"/>
+<use name="DataFormats/EcalDetId"/>
+<use name="Geometry/CaloGeometry"/>
+<use name="Geometry/CaloTopology"/>
+<use name="Geometry/Records"/>
+
 </library>
