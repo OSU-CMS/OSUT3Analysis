@@ -2071,11 +2071,11 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
       (object->isGlobalMuon  > 0 ||
        object->isTrackerMuon > 0);
   }
-
   else if(variable == "looseIDGlobalMuon") {
     value = object->pt > 10 &&
       object->isGlobalMuon  > 0;
   }
+  else if(variable == "vertexDistZ") value = object->vz - chosenVertex()->z;
   else if(variable == "correctedD0VertexErr") value =  hypot (object->tkD0err, hypot (chosenVertex ()->xError, chosenVertex ()->yError));
   else if(variable == "correctedD0VertexSig") value =  object->correctedD0Vertex / hypot (object->tkD0err, hypot (chosenVertex ()->xError, chosenVertex ()->yError));
   else if(variable == "correctedD0Err") value =  hypot (object->tkD0err, hypot (events->at (0).BSxError, events->at (0).BSyError));
@@ -2091,6 +2091,12 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
         double dPhi = deltaPhi (object->phi, met->phi);
         value = sqrt (2 * object->pt * met->pt * (1 - cos (dPhi)));
       }
+    else
+      value = -999;
+  }
+  else if(variable == "metDeltaPhi") {
+    if (const BNmet *met = chosenMET ())
+      value = deltaPhi (object->phi, met->phi);
     else
       value = -999;
   }
@@ -2464,6 +2470,7 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
   else if(variable == "passConvVeto") value = object->passConvVeto;
 
   //user-defined variables
+  else if(variable == "vertexDistZ") value = object->vz - chosenVertex()->z;
   else if(variable == "correctedD0VertexErr") value =  hypot (object->tkD0err, hypot (chosenVertex ()->xError, chosenVertex ()->yError));
   else if(variable == "correctedD0VertexSig") value =  object->correctedD0Vertex / hypot (object->tkD0err, hypot (chosenVertex ()->xError, chosenVertex ()->yError));
   else if(variable == "correctedD0Err") value =  hypot (object->tkD0err, hypot (events->at (0).BSxError, events->at (0).BSyError));
@@ -2481,7 +2488,12 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
     else
       value = -999;
   }
-
+  else if(variable == "metDeltaPhi") {
+    if (const BNmet *met = chosenMET ())
+      value = deltaPhi (object->phi, met->phi);
+    else
+      value = -999;
+  }
   else if(variable == "ptPlusMet") {
     // Calculate the magnitude of the vector sum of the electron pT and the Met.
     if (const BNmet *met = chosenMET ())
@@ -4218,6 +4230,7 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNjet* object2, strin
   else if(variable == "electronPhi") value = object1->phi;
   else if(variable == "electronPt") value = object1->pt;
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
+  else if(variable == "deltaZ") value = object1->vz - object2->leadCandVz;
   else if(variable == "invMass"){
     TLorentzVector fourVector1(object1->px, object1->py, object1->pz, object1->energy);
     TLorentzVector fourVector2(object2->px, object2->py, object2->pz, object2->energy);
@@ -4386,6 +4399,7 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNjet* object2, string va
   else if(variable == "muonPhi") value = object1->phi;
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
+  else if(variable == "deltaZ") value = object1->vz - object2->leadCandVz;
   else if(variable == "invMass"){
     TLorentzVector fourVector1(object1->px, object1->py, object1->pz, object1->energy);
     TLorentzVector fourVector2(object2->px, object2->py, object2->pz, object2->energy);
