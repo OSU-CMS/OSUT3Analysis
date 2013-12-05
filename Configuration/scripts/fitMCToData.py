@@ -40,7 +40,7 @@ parser.add_option("-Y", "--showFittedYields", action="store_true", dest="showFit
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
-    exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 #### deal with conflicting arguments
 if arguments.normalizeToData and arguments.normalizeToUnitArea:

@@ -5,6 +5,13 @@
 <use   name="FWCore/ParameterSet"/>
 <use   name="FWCore/ServiceRegistry"/>
 <use   name="DataFormats/Common"/>
+<use   name="DataFormats/GeometrySurface"/>
 <use   name="CommonTools/UtilAlgos"/>
+<use name="Geometry/CaloGeometry"/>
+<use name="Geometry/CaloTopology"/>
+<use name="CondFormats/DataRecord"/>
+<use name="CondFormats/EcalObjects"/>
+<use name="DataFormats/EcalDetId"/>
 <use   name="OSUT3Analysis/AnaTools"/>
+<use name="Geometry/Records"/>
 </library>

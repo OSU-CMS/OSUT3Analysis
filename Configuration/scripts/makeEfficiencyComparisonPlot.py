@@ -51,7 +51,7 @@ parser.add_option("--pdf", action="store_true", dest="plot_savePdf", default=Fal
 
 if arguments.localConfig:
     sys.path.insert(0,os.getcwd())
-    exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 
 outputFileName = "efficiency_plot.root"
@@ -140,7 +140,7 @@ for histogram in input_histograms:
     Histograms.append(Numerator)
 
 
-Canvas = TCanvas(outputFileName.rstrip('.root'))
+Canvas = TCanvas(re.sub (r".root$", r"", outputFileName))
 
 counter = 0
 for Numerator in Histograms:

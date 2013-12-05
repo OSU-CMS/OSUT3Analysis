@@ -30,6 +30,7 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/GeometrySurface/interface/Line.h"
 
 #include "BEAN/Collections/interface/BNbxlumi.h"
 #include "BEAN/Collections/interface/BNelectron.h"
@@ -106,6 +107,8 @@ class OSUAnalysis : public edm::EDProducer
       double valueLookup (const BNmcparticle* object, string variable, string function, string &stringValue);
 
       double valueLookup (const BNelectron* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
+      double valueLookup (const BNtrack* object1,   const BNmcparticle* object2, string variable, string function, string &stringValue);  
+
 
       double valueLookup (const BNprimaryvertex* object, string variable, string function, string &stringValue);
       double valueLookup (const BNbxlumi* object, string variable, string function, string &stringValue);
@@ -126,8 +129,10 @@ class OSUAnalysis : public edm::EDProducer
       double getTrkCaloTotRhoCorr(const BNtrack* track);
       double getTrkDepTrkRp5RhoCorr(const BNtrack* track);
       double getTrkDepTrkRp3RhoCorr(const BNtrack* track);
-      void WriteDeadEcal ();
+      void WriteDeadEcal();
+      void WriteBadCSC();
       int getTrkIsMatchedDeadEcal (const BNtrack* track1);
+      int getTrkIsMatchedBadCSC   (const BNtrack* track1);  
 
       //BNskimbits
       //BNtrigobj
@@ -176,6 +181,7 @@ class OSUAnalysis : public edm::EDProducer
       edm::InputTag trigobjs_;
       string puFile_;
       string deadEcalFile_;
+      string badCSCFile_;
       string electronSFFile_;
       string muonSFFile_;
       string dataPU_;
@@ -211,8 +217,13 @@ class OSUAnalysis : public edm::EDProducer
         double etaEcal;
         double phiEcal;
       };
-
       vector<DeadEcal> DeadEcalVec;
+
+      struct BadCSC {
+        double etaCSC;
+        double phiCSC;
+      };
+      vector<BadCSC> BadCSCVec;
 
 
       //Collections

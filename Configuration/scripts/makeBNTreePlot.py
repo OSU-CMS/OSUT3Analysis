@@ -119,7 +119,7 @@ if not arguments.localConfig:
     sys.exit(" You must specify a localOptions.py file with -l")
 if arguments.localConfig:  
     sys.path.append(os.getcwd())
-    exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 if not arguments.condorDir:
     sys.exit(" You must specify a condor directory  with -c")
 if arguments.condorDir:

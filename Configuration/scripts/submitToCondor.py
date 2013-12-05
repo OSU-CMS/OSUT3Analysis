@@ -42,7 +42,7 @@ if (arguments.skimDir and not arguments.skimChannel) or (not arguments.skimDir a
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
-    exec("from " + arguments.localConfig.rstrip('.py') + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 condor_dir = set_condor_submit_dir(arguments)
 short_condor_dir = condor_dir
@@ -66,10 +66,14 @@ for dataset in split_datasets:
     if arguments.skimDir:
         skim_dir = "condor/" + arguments.skimDir + "/" + dataset
         skim_channel_dir = "condor/" + arguments.skimDir + "/" + dataset + "/" + arguments.skimChannel
-        if os.path.exists (skim_channel_dir):
+        if os.path.exists (skim_channel_dir) and (types[dataset] == "data" or (os.path.exists (skim_channel_dir + "/skimNumberOfEvents.txt") and os.path.exists (skim_dir + "/numberOfEvents.txt") and os.path.exists (skim_dir + "/crossSectionInPicobarn.txt"))):
             command = "osusub -d %s -l %s -m %d -p %s %s %s %s %s" % (dataset_names[dataset], dataset, maxEvents[dataset], short_condor_dir, skim_channel_dir, config_file, output_dir, nJobs[dataset])
-        else:
+        elif not os.path.exists (skim_channel_dir):
             print dataset + "/" + arguments.skimChannel + " not in skim directory. Skipping."
+            continue
+        elif os.path.exists (skim_channel_dir):
+            print dataset + " skim is missing required files. Skipping."
+            print "  Run mergeOutput.py to generate these files."
             continue
     print command
     pid = os.getpid ()

@@ -20,6 +20,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   trigobjs_ (cfg.getParameter<edm::InputTag> ("trigobjs")),
   puFile_ (cfg.getParameter<string> ("puFile")),
   deadEcalFile_ (cfg.getParameter<string> ("deadEcalFile")),
+  badCSCFile_ (cfg.getParameter<string> ("badCSCFile")),
   electronSFFile_ (cfg.getParameter<string> ("electronSFFile")),
   muonSFFile_ (cfg.getParameter<string> ("muonSFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
@@ -138,6 +139,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "trigobj-electron pairs")   tempInputCollection = "electron-trigobj pairs";
     if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
     if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
+    if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
     if(tempInputCollection.find("pairs")==string::npos){ //just a single object
       if(tempInputCollection.find("secondary")!=string::npos){//secondary object
         if(tempInputCollection.find("secondary muons")!=string::npos){//treat secondary muons differently; allow for a different input collection
@@ -382,6 +384,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       if(tempInputCollection == "trigobj-electron pairs")   tempInputCollection = "electron-trigobj pairs";
       if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
       if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
+      if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
       tempCut.inputCollection = tempInputCollection;
       if(tempInputCollection.find("pairs")==string::npos){ //just a single object
         if(tempInputCollection.find("secondary")!=string::npos){//secondary object
@@ -691,7 +694,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         else if(currentObject == "secondary electrons")       currentObject = "secondaryElectrons";
         else if(currentObject == "electron-trigobj pairs")    currentObject = "electronTrigobjPairs";
         else if(currentObject == "muon-trigobj pairs")        currentObject = "muonTrigobjPairs";
-        else if(currentObject == "electron-mcparticle pairs")   currentObject = "electronMCparticlePairs";
+        else if(currentObject == "electron-mcparticle pairs") currentObject = "electronMCparticlePairs";
+        else if(currentObject == "track-mcparticle pairs")    currentObject = "trackMCparticlePairs";
 
 
         currentObject.at(0) = toupper(currentObject.at(0));
@@ -1145,6 +1149,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "electron-trigobj pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),trigobjs.product(),"electron-trigobj pairs");
         else if(currentObject == "muon-trigobj pairs")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),trigobjs.product(),"muon-trigobj pairs");
         else if(currentObject == "electron-mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),mcparticles.product(),"electron-mcparticle pairs");
+        else if(currentObject == "track-mcparticle pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),mcparticles.product(),"track-mcparticle pairs");
 
         if(currentObject == "stops" && datasetType_ == "signalMC") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,stops.product(),"stops");
       }
@@ -1394,6 +1399,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill1DHistogram(histo,currentHistogram, tracks.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
             // fill the histograms of weighting factors with 1, to see the shape of a SF without any weight applied
             else if(currentHistogram.inputCollection == "events" && currentHistogram.name.find("ScaleFactor")!=string::npos) fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),1.0);
             else if(currentHistogram.inputCollection == "events") fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
@@ -1481,6 +1488,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "events") fill2DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "taus") fill2DHistogram(histo,currentHistogram,taus.product(),cumulativeFlags.at("taus").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "mets") fill2DHistogram(histo,currentHistogram,mets.product(),cumulativeFlags.at("mets").at(currentDir),eventScaleFactor_);
@@ -1546,6 +1555,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "electron-trigobj pairs")             objectToPlot = "electronTrigobjPairs";
           else if(currentObject == "muon-trigobj pairs")                 objectToPlot = "muonTrigobjPairs";
           else if(currentObject == "electron-mcparticle pairs")          objectToPlot = "electronMCparticlePairs";
+          else if(currentObject == "track-mcparticle pairs")             objectToPlot = "trackMCparticlePairs";
           else objectToPlot = currentObject;
 
           string tempCurrentObject = objectToPlot;
@@ -1808,6 +1818,10 @@ OSUAnalysis::valueLookup (const BNjet* object, string variable, string function,
   else if(variable == "neutralHadronEnergyFraction") value = object->neutralHadronEnergyFraction;
   else if(variable == "chargedEmEnergyFraction") value = object->chargedEmEnergyFraction;
   else if(variable == "neutralEmEnergyFraction") value = object->neutralEmEnergyFraction;
+  else if(variable == "chargedHadronEnergy") value = object->chargedHadronEnergyFraction*object->pt;
+  else if(variable == "neutralHadronEnergy") value = object->neutralHadronEnergyFraction*object->pt;
+  else if(variable == "chargedEmEnergy") value = object->chargedEmEnergyFraction*object->pt;
+  else if(variable == "neutralEmEnergy") value = object->neutralEmEnergyFraction*object->pt;
   else if(variable == "fLong") value = object->fLong;
   else if(variable == "fShort") value = object->fShort;
   else if(variable == "etaetaMoment") value = object->etaetaMoment;
@@ -2082,6 +2096,11 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
   else if(variable == "correctedD0Sig") value =  object->correctedD0 / hypot (object->tkD0err, hypot (events->at (0).BSxError, events->at (0).BSyError));
   else if(variable == "detIso") value = (object->trackIsoDR03) / object->pt;
   else if(variable == "relPFdBetaIso") value = (object->pfIsoR04SumChargedHadronPt + max(0.0, object->pfIsoR04SumNeutralHadronEt + object->pfIsoR04SumPhotonEt - 0.5*object->pfIsoR04SumPUPt)) / object->pt;
+  else if(variable == "PUInrelPFdBetaIso") value = (object->pfIsoR04SumPUPt)/ object->pt;
+  else if(variable == "ChargedHadInrelPFdBetaIso") value = (object->pfIsoR04SumChargedHadronPt)/ object->pt;
+  else if(variable == "NeutralHadInrelPFdBetaIso") value = (object->pfIsoR04SumNeutralHadronEt)/ object->pt;
+  else if(variable == "PhotonInrelPFdBetaIso") value = (object->pfIsoR04SumPhotonEt)/ object->pt;
+  else if(variable == "relPFdBetaIsoNoPUSubtracted") value = (object->pfIsoR04SumChargedHadronPt + max(0.0, object->pfIsoR04SumNeutralHadronEt + object->pfIsoR04SumPhotonEt)) / object->pt;
   else if(variable == "relPFdBetaIsoNew") value = (object->chargedHadronIsoDR04 + max(0.0, object->neutralHadronIsoDR04 + object->photonIsoDR04 - 0.5*object->puChargedHadronIsoDR04)) / object->pt;
   else if(variable == "relPFdBetaIsoPseudo") value = (object->pfIsoR04SumChargedHadronPt + object->pfIsoR04SumNeutralHadronEt + object->pfIsoR04SumPhotonEt - 0.5*object->pfIsoR04SumPUPt) / object->pt;
   else if(variable == "relPFrhoIso") value = ( object->chargedHadronIso + max(0.0, object->neutralHadronIso + object->photonIso - object->AEffDr03*object->rhoPrime) ) / object->pt;
@@ -2477,6 +2496,11 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
   else if(variable == "correctedD0Sig") value =  object->correctedD0 / hypot (object->tkD0err, hypot (events->at (0).BSxError, events->at (0).BSyError));
   else if(variable == "detIso") value = (object->trackIso) / object->pt;
   else if(variable == "relPFrhoIso") value = ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03 - object->AEffDr03*object->rhoPrime) ) / object->pt;
+  else if(variable == "relPFrhoIsoNoPUSubtracted") value = ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03) ) / object->pt;
+  else if(variable == "PUInrelPFrhoIso") value = (object->AEffDr03*object->rhoPrime)/ object->pt;
+  else if(variable == "ChargedHadInrelPFrhoIso") value = (object->chargedHadronIsoDR03)/ object->pt;
+  else if(variable == "NeutralHadInrelPFrhoIso") value = (object->neutralHadronIsoDR03)/ object->pt;
+  else if(variable == "PhotonInrelPFrhoIso") value = (object->photonIsoDR03)/ object->pt;
   else if(variable == "relPFrhoIsoEB") value = object->isEB ? ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03 - object->AEffDr03*object->rhoPrime) ) / object->pt : -999;
   else if(variable == "relPFrhoIsoEE") value = object->isEE ? ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03 - object->AEffDr03*object->rhoPrime) ) / object->pt : -999;
   else if(variable == "metMT") {
@@ -3253,9 +3277,11 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
 
   else if(variable == "isIso")                      value = getTrkIsIso(object, tracks.product());
   else if(variable == "isMatchedDeadEcal")          value = getTrkIsMatchedDeadEcal(object);
+  else if(variable == "isMatchedBadCSC")            value = getTrkIsMatchedBadCSC  (object);
   else if(variable == "ptErrorByPt")                value = (object->ptError/object->pt);
   else if(variable == "ptError")                    value = object->ptError;
   else if(variable == "ptRes")                      value = getTrkPtRes(object);
+  else if(variable == "ptTrue")                     value = getTrkPtTrue(object, mcparticles.product());
   else if (variable == "d0wrtPV"){
     double vx = object->vx - chosenVertex ()->x,
       vy = object->vy - chosenVertex ()->y,
@@ -3375,6 +3401,50 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
       if (trkTauDeltaR < trkTauDeltaRMin) trkTauDeltaRMin = trkTauDeltaR;
     }
     value = trkTauDeltaRMin;
+  }
+
+  else if(variable == "deltaPhiMuMuPair") {
+    // delta phi between track and dimuon pair   
+    // Set to dummy value if there are not 2 muons with pT>25, opposite sign, and 80<m(mu-mu)<100 GeV.  
+    string empty = "";  
+
+    TLorentzVector p4muon0;  // first muon                                                                                                                                                             
+    TLorentzVector p4muon1;  // second muon                                                                                                                                                            
+    TLorentzVector p4mumu;   // dimuon pair                                                                                                                                                            
+    double mMuon = 0.105658;  // mass from PDG
+    int imuon0 = -1;
+    int imuon1 = -1;  
+    double phiMuMu = 0;  
+    for (uint imuon = 0; imuon<muons->size(); imuon++) {
+      double pt0   = valueLookup(&muons->at(imuon), "pt",     "", empty); 
+      double eta0  = valueLookup(&muons->at(imuon), "eta",    "", empty); 
+      double phi0  = valueLookup(&muons->at(imuon), "phi",    "", empty); 
+      double chg0  = valueLookup(&muons->at(imuon), "charge", "", empty); 
+      if (pt0<25) continue; 
+      for (uint jmuon = imuon+1; jmuon<muons->size(); jmuon++) {
+	double pt1   = valueLookup(&muons->at(jmuon), "pt",      "", empty); 
+	double eta1  = valueLookup(&muons->at(jmuon), "eta",     "", empty); 
+	double phi1  = valueLookup(&muons->at(jmuon), "phi",     "", empty); 
+	double chg1  = valueLookup(&muons->at(jmuon), "charge",  "", empty); 
+	if (pt1<25)          continue; 
+	if (chg0*chg1 != -1) continue;
+	p4muon0.SetPtEtaPhiM(pt0, eta0, phi0, mMuon); 
+	p4muon1.SetPtEtaPhiM(pt1, eta1, phi1, mMuon); 
+	p4mumu = p4muon0 + p4muon1;
+	if (p4mumu.M()<80 || 100<p4mumu.M()) continue;  
+	// Now two muons have passed the required criteria.  
+	if (imuon0>=0 || imuon1>=0) {
+	  cout << "Warning [OSUAnalysis::valueLookup()]: More than one dimuon pair passes criteria in deltaPhiMuMuPair calculation." << endl;    
+	}
+	imuon0 = imuon;
+	imuon1 = jmuon;  
+	phiMuMu = p4mumu.Phi();  
+      }
+    }
+
+    value = -99;                            // initialize to dummy value  
+    if (imuon0>=0 && imuon1>=0) value = deltaPhi(phiMuMu, object->phi);  // only set the value if two muons pass the given criteria  
+
   }
 
   else if(variable == "genDeltaRLowest") value = getGenDeltaRLowest(object);
@@ -4223,6 +4293,16 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNjet* object2, strin
 
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "distance")
+   {
+      Line::PositionType pos(GlobalPoint(object1->vx, object1->vy, object1->vz));
+      Line::DirectionType dir(GlobalVector(object1->px, object1->py, object1->pz).unit());
+      Line electron(pos, dir);
+      Line::PositionType pos2(GlobalPoint(chosenVertex()->x, chosenVertex()->y, chosenVertex()->z));
+      Line::DirectionType dir2(GlobalVector(object2->px, object2->py, object2->pz).unit());
+      Line jet(pos2, dir2);
+      value = (jet.distance(electron)).mag();
+   }
   else if(variable == "jetEta") value = object2->eta;
   else if(variable == "jetPhi") value = object2->phi;
   else if(variable == "jetPt") value = object2->pt;
@@ -4231,6 +4311,18 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNjet* object2, strin
   else if(variable == "electronPt") value = object1->pt;
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "deltaZ") value = object1->vz - object2->leadCandVz;
+  else if(variable == "relPFrhoIso") value = ( object1->chargedHadronIsoDR03 + max(0.0, object1->neutralHadronIsoDR03 + object1->photonIsoDR03 - object1->AEffDr03*object1->rhoPrime) ) / object1->pt;
+  else if(variable == "relPFrhoIsoNoPUSbtractedJet") value = (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt)) / object1->pt;
+  else if(variable == "relPFrhoIsoJet") value = (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt - object1->AEffDr03*object1->rhoPrime)) / object1->pt;
+  else if(variable == "PUInrelPFrhoIso") value = (object1->AEffDr03*object1->rhoPrime) / object1->pt;
+  else if(variable == "ChargedHadInrelPFrhoIsoDiff") value = (object2->chargedHadronEnergyFraction*object2->pt - object1->chargedHadronIsoDR03) / object1->pt;
+  else if(variable == "NeutralHadInrelPFrhoIsoDiff") value = (object2->neutralHadronEnergyFraction*object2->pt - object1->neutralHadronIsoDR03) / object1->pt;
+  else if(variable == "PhotonInrelPFrhoIsoDiff") value = (object2->neutralEmEnergyFraction*object2->pt - object1->photonIsoDR03) / object1->pt;
+  else if(variable == "ChargedHadInrelPFrhoIsoJet") value = (object2->chargedHadronEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "NeutralHadInrelPFrhoIsoJet") value = (object2->neutralHadronEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "PhotonInrelPFrhoIsoJet") value = (object2->neutralEmEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "relPFrhoIsoDiff") value =  ( object1->chargedHadronIsoDR03 + max(0.0, object1->neutralHadronIsoDR03 + object1->photonIsoDR03 - object1->AEffDr03*object1->rhoPrime) ) / object1->pt - (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt - object1->AEffDr03*object1->rhoPrime)) / object1->pt;
+  else if(variable == "relPFrhoIsoNoPUSubtractedDiff") value = ( object1->chargedHadronIsoDR03 + max(0.0, object1->neutralHadronIsoDR03 + object1->photonIsoDR03) ) / object1->pt - (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt)) / object1->pt;
   else if(variable == "invMass"){
     TLorentzVector fourVector1(object1->px, object1->py, object1->pz, object1->energy);
     TLorentzVector fourVector2(object2->px, object2->py, object2->pz, object2->energy);
@@ -4294,6 +4386,31 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNmcparticle* object2
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
+  else if(variable == "threeDAngle")
+    {
+      TVector3 threeVector1(object1->px, object1->py, object1->pz);
+      TVector3 threeVector2(object2->px, object2->py, object2->pz);
+      value = (threeVector1.Angle(threeVector2));
+    }
+  else if(variable == "chargeProduct"){
+    value = object1->charge*object2->charge;
+  }
+
+  else{clog << "WARNING: invalid electron-mcparticle variable '" << variable << "'\n"; value = -999;}
+  value = applyFunction(function, value);
+
+  return value;
+}
+
+//!track-mcparticle pair valueLookup
+double
+OSUAnalysis::valueLookup (const BNtrack* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+
+  double value = 0.0;
+
+  if     (variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
+  else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "deltaR")   value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "threeDAngle")
     {
       TVector3 threeVector1(object1->px, object1->py, object1->pz);
@@ -4390,7 +4507,28 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNjet* object2, string va
 
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "jetEta") value = object2->eta;
+  else if(variable == "distance")
+   {
+      Line::PositionType pos(GlobalPoint(object1->vx, object1->vy, object1->vz));
+      Line::DirectionType dir(GlobalVector(object1->px, object1->py, object1->pz).unit());
+      Line muon(pos, dir);
+      Line::PositionType pos2(GlobalPoint(chosenVertex()->x, chosenVertex()->y, chosenVertex()->z));
+      Line::DirectionType dir2(GlobalVector(object2->px, object2->py, object2->pz).unit());
+      Line jet(pos2, dir2);
+      value = (jet.distance(muon)).mag();
+   }
   else if(variable == "relPFdBetaIso") value = (object1->pfIsoR04SumChargedHadronPt + max(0.0, object1->pfIsoR04SumNeutralHadronEt + object1->pfIsoR04SumPhotonEt - 0.5*object1->pfIsoR04SumPUPt)) / object1->pt;
+  else if(variable == "relPFdBetaIsoNoPUSbtractedJet") value = (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt)) / object1->pt;
+  else if(variable == "relPFdBetaIsoJet") value = (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt - 0.5*object1->pfIsoR04SumPUPt)) / object1->pt;
+  else if(variable == "PUInrelPFdBetaIso") value = (0.5*object1->pfIsoR04SumPUPt) / object1->pt;
+  else if(variable == "ChargedHadInrelPFdBetaIsoDiff") value = (object2->chargedHadronEnergyFraction*object2->pt - object1->pfIsoR04SumChargedHadronPt) / object1->pt;
+  else if(variable == "NeutralHadInrelPFdBetaIsoDiff") value = (object2->neutralHadronEnergyFraction*object2->pt - object1->pfIsoR04SumNeutralHadronEt) / object1->pt;
+  else if(variable == "PhotonInrelPFdBetaIsoDiff") value = (object2->neutralEmEnergyFraction*object2->pt - object1->pfIsoR04SumPhotonEt) / object1->pt;
+  else if(variable == "ChargedHadInrelPFdBetaIsoJet") value = (object2->chargedHadronEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "NeutralHadInrelPFdBetaIsoJet") value = (object2->neutralHadronEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "PhotonInrelPFdBetaIsoJet") value = (object2->neutralEmEnergyFraction*object2->pt) / object1->pt;
+  else if(variable == "relPFdBetaIsoDiff") value = (object1->pfIsoR04SumChargedHadronPt + max(0.0, object1->pfIsoR04SumNeutralHadronEt + object1->pfIsoR04SumPhotonEt - 0.5*object1->pfIsoR04SumPUPt))/ object1->pt - (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt- 0.5*object1->pfIsoR04SumPUPt)) / object1 -> pt;
+  else if(variable == "relPFdBetaIsoNoPUSubtractedDiff") value =(object1->pfIsoR04SumChargedHadronPt + max(0.0, object1->pfIsoR04SumNeutralHadronEt + object1->pfIsoR04SumPhotonEt))/ object1->pt - (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt)) / object1->pt;
   else if(variable == "jetPt") value = object2->pt;
   else if(variable == "jetPhi") value = object2->phi;
   else if(variable == "deltaPt") value = object1->pt - object2->pt;
@@ -4947,7 +5085,7 @@ OSUAnalysis::getTrkPtTrue (const BNtrack* track1, const BNmcparticleCollection* 
     double genDeltaRtemp = deltaR(genPart->eta, genPart->phi,track1->eta, track1->phi);
     if (genDeltaRtemp < genDeltaRLowest) {
       genDeltaRLowest = genDeltaRtemp;
-      if (genDeltaRLowest < 0.05) {   // Only consider it truth-matched if DeltaR<0.15.
+      if (genDeltaRLowest < 0.15) {   // Only consider it truth-matched if DeltaR<0.15.
         double ptTrue = genPart->pt;
         value = ptTrue;
       }
@@ -5036,6 +5174,35 @@ OSUAnalysis::WriteDeadEcal (){
   if(DeadEcalVec.size() == 0) clog << "Warning: No dead Ecal channels have been found." << endl;
 }
 
+
+
+// Creates a map of the bad CSC chambers.  
+// The list of bad CSC chambers is taken from:  
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/CSCDPGConditions#CSC_bad_chambers_in_2012_30_05_2
+void
+OSUAnalysis::WriteBadCSC() {
+  double etaCSC, phiCSC;
+  ifstream BadCSCFile(badCSCFile_);
+  if (!BadCSCFile) {
+    clog << "Error: BadCSCFile has not been found." << endl;
+    return;
+  }
+  if (BadCSCVec.size()!= 0) {
+    clog << "Error: BadCSCVec has a nonzero size" << endl;
+    return;
+  }
+  while (!BadCSCFile.eof()) {
+    BadCSCFile >> etaCSC >> phiCSC;
+    BadCSC newChan;
+    newChan.etaCSC = etaCSC;
+    newChan.phiCSC = phiCSC;
+    BadCSCVec.push_back(newChan);
+    //    cout << "Debug:  Adding bad CSC with eta=" << etaCSC << ", phi=" << phiCSC << endl;  
+  }
+  if (BadCSCVec.size() == 0) clog << "Warning: No bad CSC chambers have been found." << endl;
+}  
+
+
 //if a track is found within dR<0.05 of a dead Ecal channel value = 1, otherwise value = 0
 int
 OSUAnalysis::getTrkIsMatchedDeadEcal (const BNtrack* track1){
@@ -5052,6 +5219,26 @@ OSUAnalysis::getTrkIsMatchedDeadEcal (const BNtrack* track1){
   else {value = 0;}
   return value;
 }
+
+
+// If a track is found within dR<0.25 of a bad CSC chamber, value = 1, otherwise value = 0.  
+// FIXME:  Instead of a deltaR cut, it would be better to use the boundaries of the chamber 
+int
+OSUAnalysis::getTrkIsMatchedBadCSC (const BNtrack* track1){
+  double deltaRLowest = 999;
+  int value = 0;
+  if (BadCSCVec.size() == 0) WriteBadCSC();
+  for(vector<BadCSC>::const_iterator csc = BadCSCVec.begin(); csc != BadCSCVec.end(); ++csc) {
+    double eta = csc->etaCSC;
+    double phi = csc->phiCSC;
+    double deltaRtemp = deltaR(eta, phi, track1->eta, track1->phi);
+    if(deltaRtemp < deltaRLowest) deltaRLowest = deltaRtemp;
+  }
+  if (deltaRLowest<0.25) { value = 1; }
+  else                  { value = 0; } 
+  return value;
+}
+
 
 // Returns the smallest DeltaR between the object and any generated true particle in the event.
 template <class InputObject>
