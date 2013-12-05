@@ -61,6 +61,24 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("correctedD0Vertex"),
         ),
         cms.PSet (
+            name = cms.string("muonD0BeamSpotSig"),
+            title = cms.string("Muon d_{0} Sig wrt BS; #sigma_{d_{0}}"),
+            bins = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("correctedD0Sig"),
+        ),
+        cms.PSet (
+            name = cms.string("muonTkNormChi2"),
+            title = cms.string("Muon Track NormChi2; #chi^{2}"),
+            bins = cms.untracked.vdouble(50, 0, 50),
+            inputVariables = cms.vstring("tkNormChi2"),
+        ),
+        cms.PSet (
+            name = cms.string("muonTkValidHits"),
+            title = cms.string("Muon Track Number of Valid Hits; # Hits"),
+            bins = cms.untracked.vdouble(20, 0, 20),
+            inputVariables = cms.vstring("tkNumValidHits"),
+        ),
+        cms.PSet (
             name = cms.string("muonD0Beamspot"),
             title = cms.string("Muon d_{0} wrt Beamspot; d_{0} [cm]"),
             bins = cms.untracked.vdouble(100, -0.02, 0.02),
@@ -525,6 +543,24 @@ ElectronHistograms = cms.PSet(
             title = cms.string("Electron d_{0} wrt PV; d_{0} [cm]"),
             bins = cms.untracked.vdouble(100, -0.02, 0.02),
             inputVariables = cms.vstring("correctedD0Vertex"),
+        ),
+        cms.PSet (
+            name = cms.string("electronD0BeamSpotSig"),
+            title = cms.string("Electron d_{0} Sig wrt BS; #sigma_{d_{0}}"),
+            bins = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("correctedD0Sig"),
+        ),
+        cms.PSet (
+            name = cms.string("electronTkNormChi2"),
+            title = cms.string("Electron Track NormChi2; #chi^{2}"),
+            bins = cms.untracked.vdouble(50, 0, 50),
+            inputVariables = cms.vstring("tkNormChi2"),
+        ),
+        cms.PSet (
+            name = cms.string("electronTkValidHits"),
+            title = cms.string("Electron Track Number of Valid Hits; # Hits"),
+            bins = cms.untracked.vdouble(20, 0, 20),
+            inputVariables = cms.vstring("tkNumValidHits"),
         ),
         cms.PSet (
             name = cms.string("electronD0Beamspot"),
@@ -1030,6 +1066,18 @@ ElectronMuonHistograms = cms.PSet(
             title = cms.string("Electron d_{0} vs. Muon d_{0}; muon d_{0} [cm]; electron d_{0} [cm]"),
             bins = cms.untracked.vdouble(100, -0.02, 0.02, 100, -0.02, 0.02),
             inputVariables = cms.vstring("muonCorrectedD0Vertex","electronCorrectedD0Vertex"),
+        ),
+        cms.PSet (
+            name = cms.string("electronD0SigvsMuonD0Sig"),
+            title = cms.string("Electron d_{0} Sig vs. Muon d_{0} Sig; muon #sigma_{d_{0}}; electron #sigma_{d_{0}}"),
+            bins = cms.untracked.vdouble(100, 0, 100, 100, 0, 100),
+            inputVariables = cms.vstring("muonCorrectedD0Sig","electronCorrectedD0Sig"),
+        ),
+        cms.PSet (
+            name = cms.string("electronD0ErrvsMuonD0Err"),
+            title = cms.string("Electron d_{0} Err vs. Muon d_{0} Err; muon #delta_{d_{0}}; electron #delta_{d_{0}}"),
+            bins = cms.untracked.vdouble(10, 0, 0.01, 100, 0, 0.1),
+            inputVariables = cms.vstring("muonCorrectedD0Err","electronCorrectedD0Err"),
         ),
         cms.PSet (
             name = cms.string("electronAbsD0VertexVsMuonAbsD0Vertex"),
@@ -1566,6 +1614,12 @@ ElectronJetHistograms = cms.PSet(
             inputVariables = cms.vstring("invMass"),
         ),
         cms.PSet (
+            name = cms.string("electronJetDistance"),
+            title = cms.string("Distance Between Electron Track to Jet Axis; [cm]"),
+            bins = cms.untracked.vdouble(1000,0,10),
+            inputVariables = cms.vstring("distance"),
+        ),
+        cms.PSet (
             name = cms.string("electronJetChargeProduct"),
             title = cms.string("Electron-jet Charge Product; charge_{e}*charge_{jet}"),
             bins = cms.untracked.vdouble(3, -1.5, 1.5),
@@ -1717,6 +1771,12 @@ MuonJetHistograms = cms.PSet(
             inputVariables = cms.vstring("chargeProduct"),
         ),
         cms.PSet (
+            name = cms.string("muonJetDistance"),
+            title = cms.string("Distance Between Muon Track to Jet Axis; [cm]"),
+            bins = cms.untracked.vdouble(1000,0,10),
+            inputVariables = cms.vstring("distance"),
+        ),
+        cms.PSet (
             name = cms.string("muonJetDeltaPhi"),
             title = cms.string("Muon-jet Phi Difference; |#Delta(#phi)|"),
             bins = cms.untracked.vdouble(100, 0, 3.15),
@@ -1855,6 +1915,12 @@ MuonSecondaryJetHistograms = cms.PSet(
             inputVariables = cms.vstring("invMass"),
         ),
         cms.PSet (
+            name = cms.string("muonSecondaryJetDistance"),
+            title = cms.string("Distance Between Muon Track to Secondary Jet Axis; [cm]"),
+            bins = cms.untracked.vdouble(1000,0,10),
+            inputVariables = cms.vstring("distance"),
+        ),
+        cms.PSet (
             name = cms.string("muonSecondaryJetChargeProduct"),
             title = cms.string("Muon-jet Charge Product; charge_{#mu}*charge_{jet}"),
             bins = cms.untracked.vdouble(3, -1.5, 1.5),
@@ -1991,6 +2057,12 @@ ElectronSecondaryJetHistograms = cms.PSet(
             title = cms.string("Electron-Jet Pair Transverse Momentum; p_{T} [GeV]"),
             bins = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("pt"),
+        ),
+        cms.PSet (
+            name = cms.string("electronSecondaryJetDistance"),
+            title = cms.string("Distance Between Electron Track to Secondary Jet Axis; [cm]"),
+            bins = cms.untracked.vdouble(1000,0,10),
+            inputVariables = cms.vstring("distance"),
         ),
         cms.PSet (
             name = cms.string("electronSecondaryJetInvMass"),

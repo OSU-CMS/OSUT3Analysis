@@ -30,6 +30,7 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/GeometrySurface/interface/Line.h"
 
 #include "BEAN/Collections/interface/BNbxlumi.h"
 #include "BEAN/Collections/interface/BNelectron.h"

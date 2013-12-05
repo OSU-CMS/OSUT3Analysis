@@ -4281,6 +4281,16 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNjet* object2, strin
 
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "distance")
+   {
+      Line::PositionType pos(GlobalPoint(object1->vx, object1->vy, object1->vz));
+      Line::DirectionType dir(GlobalVector(object1->px, object1->py, object1->pz).unit());
+      Line electron(pos, dir);
+      Line::PositionType pos2(GlobalPoint(chosenVertex()->x, chosenVertex()->y, chosenVertex()->z));
+      Line::DirectionType dir2(GlobalVector(object2->px, object2->py, object2->pz).unit());
+      Line jet(pos2, dir2);
+      value = (jet.distance(electron)).mag();
+   }
   else if(variable == "jetEta") value = object2->eta;
   else if(variable == "jetPhi") value = object2->phi;
   else if(variable == "jetPt") value = object2->pt;
@@ -4484,6 +4494,16 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNjet* object2, string va
 
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "jetEta") value = object2->eta;
+  else if(variable == "distance")
+   {
+      Line::PositionType pos(GlobalPoint(object1->vx, object1->vy, object1->vz));
+      Line::DirectionType dir(GlobalVector(object1->px, object1->py, object1->pz).unit());
+      Line muon(pos, dir);
+      Line::PositionType pos2(GlobalPoint(chosenVertex()->x, chosenVertex()->y, chosenVertex()->z));
+      Line::DirectionType dir2(GlobalVector(object2->px, object2->py, object2->pz).unit());
+      Line jet(pos2, dir2);
+      value = (jet.distance(muon)).mag();
+   }
   else if(variable == "relPFdBetaIso") value = (object1->pfIsoR04SumChargedHadronPt + max(0.0, object1->pfIsoR04SumNeutralHadronEt + object1->pfIsoR04SumPhotonEt - 0.5*object1->pfIsoR04SumPUPt)) / object1->pt;
   else if(variable == "relPFdBetaIsoNoPUSbtractedJet") value = (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt)) / object1->pt;
   else if(variable == "relPFdBetaIsoJet") value = (object2->chargedHadronEnergyFraction*object2->pt + max(0.0, object2->neutralHadronEnergyFraction*object2->pt + object2->neutralEmEnergyFraction*object2->pt - 0.5*object1->pfIsoR04SumPUPt)) / object1->pt;
