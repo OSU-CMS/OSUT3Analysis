@@ -2,6 +2,7 @@
 
 import sys
 import os
+import glob
 import re
 import time
 from math import *
@@ -21,12 +22,18 @@ parser.add_option("-U", "--UserConfig", dest="UserConfig",
                   help="user configuration file")
 parser.add_option("--SU", "--SubmitCrabJobs", action = "store_true", dest="SubmitCrabJobs", default=False,
                   help="Will submit the Crab jobs")
+parser.add_option("-M", "--MergeFiles", action = "store_true", dest="MergeFiles", default=False,
+                  help="Will merge the output root file into a composite file")
 parser.add_option("--RS", "--ResubmitCrabJobs", dest="ResubmitBlocks",default=[],
                   help="Will submit the Crab jobs")
+parser.add_option("--CC", "--CleanCrabJobs", action = "store_true", dest="CleanCrabJobs",default=False,
+                  help="Will clean up the Crab jobs")
 parser.add_option("--SR", "--StatusReport", action="store_true", dest="StatusReport",default=False,
                   help="Will print out the status report of the Crab jobs")
 parser.add_option("--GO", "--GetOutput", action="store_true", dest="GetOutput",default=False,
                   help="will ge the output of Crab jobs")
+parser.add_option("-j", "--nJobs", dest="nJobs", default=cpu_count(),
+                  help="Set the number of processes to run simultaneously (default: number of CPUs)")
 (arguments, args) = parser.parse_args()
 condorDir = set_condor_output_dir(arguments)
 
@@ -40,6 +47,7 @@ if arguments.UserConfig:
     sys.path.append(os.getcwd())
     exec("from " + arguments.UserConfig.rstrip('.py') + " import *")
 
+compositeDatasets = get_composite_datasets(datasets, composite_dataset_definitions)
 datasets = split_composite_datasets(datasets, composite_dataset_definitions)
 
 def replaceName(Origin,String):
@@ -52,11 +60,16 @@ def replaceName(Origin,String):
 #Create a new directory to store the crablog files. 
 if not os.path.exists('./pickEvents_crabLog'):
 	os.system('mkdir ' + 'pickEvents_crabLog')
-if not os.path.exists('./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:]):
-	os.system('mkdir pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:])
 
-if 1-1 == 0:
-	for sample in datasets:
+if arguments.SubmitCrabJobs:
+	if os.path.exists('./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:]):
+                print 'Warning: ' + condorDir[condorDir.find('/')+1:] + ' already exists.'
+	        whatever = raw_input(" Do you want to submit these crab jobs anyway (Suggestion: Do --CC to clean up the old ones and then submit)? (y/n)")
+                if not whatever is "y":
+			sys.exit(0)
+        else:
+		os.system('mkdir pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:])
+        for sample in datasets:
                 datasetPath = dataset_names[sample]
         	name = str(sample)
         	#Create a x_pickevents.txt file in the corresponding dataset directory.
@@ -119,7 +132,7 @@ def submitCrabJobs(dataset,sema):
 	sema.acquire()
 	name = str(dataset)
         ConfigPath = '/' + condorDir + '/' + name + '/' + name + '_pickevents_crab.config'       
-        if not os.path.exists('./pickEvents_crabLog' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab'):
+        if not os.path.exists('./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab'):
         	os.system('mkdir ./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab')
         fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
         os.chdir( CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab')
@@ -163,6 +176,74 @@ def getOutput(dataset,sema):
         	fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
         	sema.release()
 
+def MergeFilesStep1(datasets):
+	for dataset in datasets:
+        	name = str(dataset)
+                print name
+         	LocalFileList = glob.glob(r'./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab/' + name + '/res/*.root')
+        	RemoteFileList = glob.glob(RemoteDirT3 + condorDir[condorDir.find('/')+1:] + '_' + name + '*.root')
+        	os.chdir(CMSSWDir)
+                if not os.path.exists('./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab'):
+        		print "You have not submitted the crab job for " + name
+        	elif len(LocalFileList):
+
+        		os.chdir( CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab/' + name + '/res/')
+        		os.system('ls *.root | perl -ne \'print "file:$_"\' > myFiles.txt')
+        	elif len(RemoteFileList):
+                	os.chdir(RemoteDirT3)
+                	os.system('ls ' + condorDir[condorDir.find('/')+1:] + '*' + name + '*root | perl -ne \'print "file:$_"\' > myFiles_' + condorDir[condorDir.find('/')+1:] + '_' + name + '.txt')
+        	else:
+			print 'No outputs of ' + name + ' are found.'
+
+def CleanCrabJobs(dataset,sema):
+		sema.acquire()
+        	name = str(dataset)
+                fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
+        	if os.path.exists(CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab'):
+                	os.chdir( CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab')
+                	os.system('crab -kill all -c ' + name)
+                fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
+                sema.release()	 
+
+
+def MergeFilesStep2(compositeDataset,sema):
+	sema.acquire()
+        fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
+	sema.acquire()
+	compositeName = str(compositeDataset)
+        print compositeName
+        compositeFilePath = CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + compositeName + '_Files.txt'
+        if os.path.exists(compositeFilePath):
+		os.system('rm ' + compositeFilePath)
+        copyData = False
+        for dataset in composite_dataset_definitions[compositeDataset]:
+        	name = str(dataset)
+                LocalFileList = glob.glob(r'./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' +  name + '_crab/' + name + '/res/*.root')
+        	RemoteFileList = glob.glob(RemoteDirT3 + condorDir[condorDir.find('/')+1:] + '_' + name + '*.root')
+        	if len(LocalFileList):
+        		os.chdir( CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab/' + name + '/res/')
+        		os.system('ls *.root | perl -ne \'print "file:$_"\' > myFiles.txt')
+		        splitFilePath = CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/'+ name + '_crab/' + name + '/res/myFiles.txt'
+                        os.system('touch ' + compositeFilePath)
+                        os.system('cat ' + splitFilePath + '>>' + compositeFilePath)
+        	elif len(RemoteFileList):
+                	os.chdir(RemoteDirT3)
+                	os.system('ls ' + condorDir[condorDir.find('/')+1:] + '*' + name + '*root | perl -ne \'print "file:$_"\' >' +  CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab/' + name + '_Files.txt')
+                	splitFilePath = CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab/' + name + '_Files.txt'
+                        os.system('touch ' + compositeFilePath)
+                        os.system('cat ' + splitFilePath + '>>' + compositeFilePath)
+                        copyData = True
+         	else:
+			print 'No outputs of ' + name + ' are found.'
+	if copyData:
+        	os.chdir(RemoteDirT3)
+                os.system('edmCopyPickMerge inputFiles_load=' + compositeFilePath +' outputFile=' + CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + compositeName +'_merged.root maxSize=1000000')
+	else:
+        	os.chdir(CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab/' + name + '/res/')
+                os.system('edmCopyPickMerge inputFiles_load=' + compositeFilePath +' outputFile=' + CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + compositeName +'_merged.root maxSize=1000000')
+        fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
+        sema.release()
+
 
 f = open ("/tmp/pickEvents.lock", "w")
 stat = os.stat ("/tmp/pickEvents.lock")
@@ -171,7 +252,7 @@ if stat.st_uid == os.getuid () and stat.st_gid == os.getgid ():
 fcntl.lockf (f, fcntl.LOCK_EX)
 
 processes = []
-sema = Semaphore(8)
+sema = Semaphore(arguments.nJobs)
 if arguments.SubmitCrabJobs:
 	for dataset in datasets:
                 p = Process (target = submitCrabJobs, args = (dataset, sema))
@@ -204,6 +285,26 @@ if len(reSubmitDatasetArray):
     		processes.append (p) 
 	for p in processes:
     		p.join ()
+if arguments.MergeFiles:
+	MergeFilesStep1(datasets)
+        for composite_dataset in compositeDatasets:
+                p = Process (target = MergeFilesStep2, args = (composite_dataset, sema))
+         	p.start ()
+    		processes.append (p) 
+	for p in processes:
+    		p.join ()
+if arguments.CleanCrabJobs:
+        delete = raw_input("  Do you really want to clean up all the crab jobs related to " + condorDir[condorDir.find('/')+1:] + " ?(y/n) ")
+  	if delete is "y":
+		os.system('rm -f ' + RemoteDirT3 + condorDir[condorDir.find('/')+1:] + '*')	
+        	for dataset in datasets:
+                	p = Process (target = CleanCrabJobs, args = (dataset, sema))
+                	p.start ()
+                	processes.append (p)
+        	for p in processes:  
+	                p.join ()
+		os.system('rm -rf ' + CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:])
+
 
 fcntl.lockf (f, fcntl.LOCK_UN)
 f.close ()
