@@ -254,7 +254,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.1):
             ratio.SetBinContent(i+1,groupR(g))
             ratio.SetBinError(i+1,groupErr(g))
 
-    ratio.GetYaxis().SetTitle("#frac{Data-MC}{MC}")
+    ratio.GetYaxis().SetTitle("#frac{Data-Bkgd}{Bkgd}")
     ratio.SetLineColor(1)
     ratio.SetLineWidth(2)
     return ratio
@@ -701,7 +701,7 @@ def MakeOneDHist(pathToDir,histogramName):
             Comparison = DataHistograms[0].Clone("diff")
             Comparison.Add(BgSum,-1)
             Comparison.SetTitle("")
-            Comparison.GetYaxis().SetTitle("Data-MC")
+            Comparison.GetYaxis().SetTitle("Data-Bkgd")
         Comparison.GetXaxis().SetTitle(xAxisLabel)
         Comparison.GetYaxis().CenterTitle()
         Comparison.GetYaxis().SetTitleSize(0.1)
