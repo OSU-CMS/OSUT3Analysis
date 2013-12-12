@@ -11,10 +11,7 @@ from array import *
 #pickEvents.py will creat a pickEvents_crablog directory which stores all the   #
 #log files. Each dataset will have a directory named as 'condor directory name  #
 #+ dataset name + crab' under pickEvents_crablog.                               #
-#This pickEvents.py scraipt would submit all the crab jobs for you but right now#
-#you have to check the status by yourself.                                      # 
 #################################################################################
-
 UserString = [
 	'return_data             = 0',
 	'email                   = bingxuan.liu@cern.ch',  # your email
@@ -25,4 +22,6 @@ UserString = [
 	'publish_data            = 0',
         'ui_working_dir          ='
 ]
+
+RemoteDirT3 = '/mnt/hadoop/se/store/user/biliu/displacedSUSY_pickEvts/'
 
