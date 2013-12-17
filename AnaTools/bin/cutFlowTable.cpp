@@ -99,12 +99,12 @@ main (int argc, char *argv[])
         }
       if (!cutFlow)
         {
-          cerr << "Did not find a histogram named " << histName << "!" << endl;
+          cerr << "Did not find a histogram named " << histName << " in " << fileToOpen << "!" << endl;
           return 0;
         }
       if (!upperLimit)
         {
-          cerr << "Did not find a histogram named " << (histName + "UpperLimit") << "!" << endl;
+          cerr << "Did not find a histogram named " << (histName + "UpperLimit") << " in " << fileToOpen << "!" << endl;
           return 0;
         }
       cutFlow->SetDirectory (0);
