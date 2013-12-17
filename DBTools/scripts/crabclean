@@ -15,7 +15,7 @@ our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") o
 
 my %opt;
 Getopt::Long::Configure ("bundling");
-GetOptions (\%opt, "copy|c=s", "dumb|d", "force|f", "destination|o=s", "print|p", "dataset|s", "help|h");
+GetOptions (\%opt, "copy|c=s", "dumb|d", "force|f", "destination|o=s", "print|p", "removeFailed|r", "dataset|s", "help|h");
 
 printHelp () if $opt{"help"} || !$ARGV[0] || (!$opt{"dumb"} && !$opt{"dataset"} && !$opt{"print"} && !$opt{"copy"} && !$ARGV[1]);
 die "Copy script cannot be made in dumb mode, stopped" if $opt{"copy"} && $opt{"dumb"};
@@ -82,7 +82,7 @@ my %filesToKeep;
 if (!$opt{"dumb"})
   {
     die "CRAB directory does not exist, stopped" if !(-e $crabDir) || !(-d $crabDir);
-    parseCrabDir ($crabDir, \%filesToKeep);
+    parseCrabDir ($crabDir, \%filesToKeep, $opt{"removeFailed"});
     if (!$opt{"print"} && !$opt{"copy"})
       {
         foreach my $jobNumber (keys %filesToKeep)
@@ -245,6 +245,7 @@ printHelp
   printf "%-29s%s\n", " ", "to DIR";
   printf "%-29s%s\n", "  -p, --print", "do not remove any files, just print the names of";
   printf "%-29s%s\n", " ", "the good files to the screen";
+  printf "%-29s%s\n", "  -r, --removeFailed", "remove all output from failed jobs";
   printf "%-29s%s\n", "  -s, --dataset", "tells the script to expect a dataset name instead";
   printf "%-29s%s\n", "               ", "of a directory";
 
@@ -256,6 +257,7 @@ parseCrabDir
 {
   my $crabDir = shift;
   my $filesToKeep = shift;
+  my $removeFailed = shift;
 
   opendir (CRAB_RESULTS, "$crabDir/res");
   my @crabResults = readdir (CRAB_RESULTS);
@@ -271,8 +273,17 @@ parseCrabDir
       $wrapperStatus =~ s/\n//g;
       if ($wrapperStatus != 0)
         {
-          print "Job $jobNumber failed (return value $wrapperStatus). Skipping.\n";
-          next;
+          if (!$removeFailed)
+            {
+              print "Job $jobNumber failed (return value $wrapperStatus). Skipping.\n";
+              next;
+            }
+          else
+            {
+              print "Job $jobNumber failed (return value $wrapperStatus). Deleting output.\n";
+              $filesToKeep->{$jobNumber} = "NULL";
+              next;
+            }
         }
       my @surlForGrid = `grep -A 1 '<SurlForGrid' $crabDir/res/$file`;
       my $fileName = $surlForGrid[1];
