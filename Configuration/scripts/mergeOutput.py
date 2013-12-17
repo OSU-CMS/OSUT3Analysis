@@ -24,6 +24,8 @@ parser.add_option("-j", "--nJobs", dest="nJobs", default=cpu_count(),
                   help="Set the number of processes to run simultaneously (default: number of CPUs)")
 parser.add_option("-i", "--nice", dest="increment", default=10,
                   help="Set the niceness increment for the processes that are forked (default: 10)")
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                  help="verbose output")
 (arguments, args) = parser.parse_args()
 
 if arguments.localConfig:
@@ -89,8 +91,9 @@ def mergeDataset (dataset, sema):
     output.write ("Merging output for " + dataset + " dataset\n")
     output.close ()
 
-#    print command
     os.system(command)
+    if verbose:
+        print "Finished executing:  " + command 
     fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
     output = open (logMerge, "r")
     sys.stdout.write (output.read ())
@@ -157,8 +160,9 @@ def mergeCompositeDataset (composite_dataset, sema):
     output.write ("Merging component datasets for " + composite_dataset + " dataset\n")
     output.close ()
 
-#    print command
     os.system(command)
+    if verbose:
+        print "Finished executing:  " + command 
     fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
     output = open (logMerge, "r")
     sys.stdout.write (output.read ())
