@@ -370,8 +370,7 @@ composite_dataset_definitions = {
     'SingleMu' : [
         'SingleMu_2012A',
         'SingleMu_2012B',
-        'SingleMu_2012C_1',
-        'SingleMu_2012C_2',
+        'SingleMu_2012C',
         'SingleMu_2012D',
     ],
     'SingleElectron' : [
@@ -527,10 +526,9 @@ composite_dataset_definitions = {
 dataset_names = {
 
     'SingleMu_2012A'       : "/SingleMu/Run2012A-22Jan2013-v1/AOD",
-    'SingleMu_2012B'       : "/SingleMu/Run2012B-13Jul2012-v1/AOD",
-    'SingleMu_2012C_1'     : "/SingleMu/Run2012C-PromptReco-v2/AOD",
-    'SingleMu_2012C_2'     : "/SingleMu/Run2012C-24Aug2012-v1/AOD",
-    'SingleMu_2012D'       : "/SingleMu/Run2012D-PromptReco-v1/AOD",
+    'SingleMu_2012B'       : "/SingleMu/Run2012B-22Jan2013-v1/AOD", 
+    'SingleMu_2012C'       : "/SingleMu/Run2012C-22Jan2013-v1/AOD", 
+    'SingleMu_2012D'       : "/SingleMu/Run2012D-22Jan2013-v1/AOD",  
 
    'SingleElectron_2012A'   : "/SingleElectron/Run2012A-22Jan2013-v1/AOD",  
    'SingleElectron_2012A_1' : "/SingleElectron/Run2012A-13Jul2012-v1/AOD",
@@ -845,10 +843,9 @@ dataset_names = {
 nJobs = {
 
    'SingleMu_2012A'       : 30,
-   'SingleMu_2012B'       : 30,
-   'SingleMu_2012C_1'     : 40,
-   'SingleMu_2012C_2'     : 10,
-   'SingleMu_2012D'       : 100,
+   'SingleMu_2012B'       : 300,
+   'SingleMu_2012C'       : 500,
+   'SingleMu_2012D'       : 500,
    
    'SingleElectron_2012A'   : 100,
    'SingleElectron_2012A_1' : 10,
@@ -1085,29 +1082,29 @@ nJobs = {
    'SingleMu_P1_Reco'    :  100,
    'SingleMu_P2_Reco'    :  100,
 
-   'AMSB_mGrav32K_0p5ns_Reco' : 5,
-   'AMSB_mGrav32K_1ns_Reco'   : 5,
-   'AMSB_mGrav32K_5ns_Reco'   : 5,
+   'AMSB_mGrav32K_0p5ns_Reco' : 1,
+   'AMSB_mGrav32K_1ns_Reco'   : 1,
+   'AMSB_mGrav32K_5ns_Reco'   : 1,
       
    'AMSB_mGrav50K_0p5ns_Reco' : 1,
    'AMSB_mGrav50K_1ns_Reco'   : 1,
    'AMSB_mGrav50K_5ns_Reco'   : 1,
 
-   'AMSB_mGrav75K_0p5ns_Reco' : 5,
-   'AMSB_mGrav75K_1ns_Reco'   : 5,
-   'AMSB_mGrav75K_5ns_Reco'   : 5,
+   'AMSB_mGrav75K_0p5ns_Reco' : 1,
+   'AMSB_mGrav75K_1ns_Reco'   : 1,
+   'AMSB_mGrav75K_5ns_Reco'   : 1,
 
-   'AMSB_mGrav100K_0p5ns_Reco' : 5,
-   'AMSB_mGrav100K_1ns_Reco'   : 5,
-   'AMSB_mGrav100K_5ns_Reco'   : 5,
+   'AMSB_mGrav100K_0p5ns_Reco' : 1,
+   'AMSB_mGrav100K_1ns_Reco'   : 1,
+   'AMSB_mGrav100K_5ns_Reco'   : 1,
 
-   'AMSB_mGrav125K_0p5ns_Reco' : 5,
-   'AMSB_mGrav125K_1ns_Reco'   : 5,
-   'AMSB_mGrav125K_5ns_Reco'   : 5,
+   'AMSB_mGrav125K_0p5ns_Reco' : 1,
+   'AMSB_mGrav125K_1ns_Reco'   : 1,
+   'AMSB_mGrav125K_5ns_Reco'   : 1,
 
-   'AMSB_mGrav150K_0p5ns_Reco' : 5,
-   'AMSB_mGrav150K_1ns_Reco'   : 5,
-   'AMSB_mGrav150K_5ns_Reco'   : 5,
+   'AMSB_mGrav150K_0p5ns_Reco' : 1,
+   'AMSB_mGrav150K_1ns_Reco'   : 1,
+   'AMSB_mGrav150K_5ns_Reco'   : 1,
 
    'AMSB_mGrav50K_0p5ns_RecoOld' : 1,
    'AMSB_mGrav50K_1ns_RecoOld'   : 1,
@@ -1140,8 +1137,7 @@ maxEvents = {
 
    'SingleMu_2012A'       : -1,
    'SingleMu_2012B'       : -1,
-   'SingleMu_2012C_1'     : -1,
-   'SingleMu_2012C_2'     : -1,
+   'SingleMu_2012C'       : -1,
    'SingleMu_2012D'       : -1,
 
    'SingleElectron_2012A'   : -1,
@@ -1438,8 +1434,7 @@ types = {
    'SingleMu'             : "data",
    'SingleMu_2012A'       : "data",
    'SingleMu_2012B'       : "data",
-   'SingleMu_2012C_1'     : "data",
-   'SingleMu_2012C_2'     : "data",
+   'SingleMu_2012C'       : "data",
    'SingleMu_2012D'       : "data",
 
    'SingleElectron'         : "data",
@@ -1795,8 +1790,7 @@ colors = {
    'SingleMu'               : 1,
    'SingleMu_2012A'         : 1,
    'SingleMu_2012B'         : 1,
-   'SingleMu_2012C_1'       : 1,
-   'SingleMu_2012C_2'       : 1,
+   'SingleMu_2012C'         : 1,
    'SingleMu_2012D'         : 1,
 
    'SingleElectron'         : 1,
@@ -2157,8 +2151,7 @@ labels = {
    'SingleMu'             : "Single Muon data",
    'SingleMu_2012A'       : "SingleMu 2012A data",
    'SingleMu_2012B'       : "SingleMu 2012B data",
-   'SingleMu_2012C_1'     : "SingleMu 2012C(1) data",
-   'SingleMu_2012C_2'     : "SingleMu 2012C(2) data",
+   'SingleMu_2012C'       : "SingleMu 2012C data",
    'SingleMu_2012D'       : "SingleMu 2012D data",
    
    'SingleElectron'         : "Single Electron data",
