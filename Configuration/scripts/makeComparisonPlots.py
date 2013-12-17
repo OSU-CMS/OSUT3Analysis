@@ -106,6 +106,7 @@ if arguments.line_width:
 
 #set the text for the luminosity label
 if(intLumi < 1000.):
+    LumiInPb = intLumi
     LumiText = "L_{int} = " + str(intLumi) + " pb^{-1}"
     LumiText = "L_{int} = " + str.format('{0:.1f}', LumiInPb) + " pb^{-1}"
 else:
