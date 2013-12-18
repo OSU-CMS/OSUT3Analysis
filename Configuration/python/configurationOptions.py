@@ -90,6 +90,10 @@ datasets = [
    'AMSB_mGrav50K_1ns',
    'AMSB_mGrav50K_5ns',
 
+   'AMSB_mGrav50K_0p5ns_Reco',
+   'AMSB_mGrav50K_1ns_Reco',
+   'AMSB_mGrav50K_5ns_Reco',
+
    'AMSB_mGrav75K_0p5ns',
    'AMSB_mGrav75K_1ns',
    'AMSB_mGrav75K_5ns',
@@ -1725,6 +1729,10 @@ types = {
    'AMSB_mGrav50K_1ns'   : "signalMC",
    'AMSB_mGrav50K_5ns'   : "signalMC",
 
+   'AMSB_mGrav50K_0p5ns_Reco' : "signalMC",
+   'AMSB_mGrav50K_1ns_Reco'   : "signalMC",
+   'AMSB_mGrav50K_5ns_Reco'   : "signalMC",
+
    'AMSB_mGrav75K_0p5ns' : "signalMC",
    'AMSB_mGrav75K_1ns'   : "signalMC",
    'AMSB_mGrav75K_5ns'   : "signalMC",
@@ -2080,6 +2088,10 @@ colors = {
    'AMSB_mGrav50K_0p5ns' : 628,
    'AMSB_mGrav50K_1ns'   : 596,
    'AMSB_mGrav50K_5ns'   : 923,
+
+   'AMSB_mGrav50K_0p5ns_Reco' : 628,
+   'AMSB_mGrav50K_1ns_Reco'   : 596,
+   'AMSB_mGrav50K_5ns_Reco'   : 923,
 
    'AMSB_mGrav75K_0p5ns' : 628,
    'AMSB_mGrav75K_1ns'   : 596,
@@ -2437,6 +2449,10 @@ labels = {
    'AMSB_mGrav50K_0p5ns' : "#chi_{1}^{#pm}, 164 GeV, 0.5 ns",
    'AMSB_mGrav50K_1ns'   : "#chi_{1}^{#pm}, 164 GeV, 1 ns",
    'AMSB_mGrav50K_5ns'   : "#chi_{1}^{#pm}, 164 GeV, 5 ns",
+
+   'AMSB_mGrav50K_0p5ns_Reco' : "#chi_{1}^{#pm}, 164 GeV, 0.5 ns",
+   'AMSB_mGrav50K_1ns_Reco'   : "#chi_{1}^{#pm}, 164 GeV, 1 ns",
+   'AMSB_mGrav50K_5ns_Reco'   : "#chi_{1}^{#pm}, 164 GeV, 5 ns",
 
    'AMSB_mGrav75K_0p5ns' : "#chi_{1}^{#pm}, 246 GeV, 0.5 ns",
    'AMSB_mGrav75K_1ns'   : "#chi_{1}^{#pm}, 246 GeV, 1 ns",
