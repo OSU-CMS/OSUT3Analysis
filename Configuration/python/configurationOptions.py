@@ -374,11 +374,9 @@ composite_dataset_definitions = {
         'SingleMu_2012D',
     ],
     'SingleElectron' : [
-        'SingleElectron_2012A_1',
-        'SingleElectron_2012A_2',
+        'SingleElectron_2012A',
         'SingleElectron_2012B',
-        'SingleElectron_2012C_1',
-        'SingleElectron_2012C_2',
+        'SingleElectron_2012C',
         'SingleElectron_2012D',
     ],
     'DoubleElectron_22Jan2013' : [
@@ -531,12 +529,9 @@ dataset_names = {
     'SingleMu_2012D'       : "/SingleMu/Run2012D-22Jan2013-v1/AOD",  
 
    'SingleElectron_2012A'   : "/SingleElectron/Run2012A-22Jan2013-v1/AOD",  
-   'SingleElectron_2012A_1' : "/SingleElectron/Run2012A-13Jul2012-v1/AOD",
-   'SingleElectron_2012A_2' : "/SingleElectron/Run2012A-recover-06Aug2012-v1/AOD",
-   'SingleElectron_2012B'   : "/SingleElectron/Run2012B-13Jul2012-v1/AOD",
-   'SingleElectron_2012C_1' : "/SingleElectron/Run2012C-24Aug2012-v1/AOD",
-   'SingleElectron_2012C_2' : "/SingleElectron/Run2012C-PromptReco-v2/AOD",
-   'SingleElectron_2012D'   : "/SingleElectron/Run2012D-PromptReco-v1/AOD",
+   'SingleElectron_2012B'   : "/SingleElectron/Run2012B-22Jan2013-v1/AOD",  
+   'SingleElectron_2012C'   : "/SingleElectron/Run2012C-22Jan2013-v1/AOD",  
+   'SingleElectron_2012D'   : "/SingleElectron/Run2012D-22Jan2013-v1/AOD",  
 
    'DoubleElectron_2012A_22Jan2013' : "/DoubleElectron/Run2012A-22Jan2013-v1/AOD",
    'DoubleElectron_2012B_22Jan2013' : "/DoubleElectron/Run2012B-22Jan2013-v1/AOD",
@@ -848,11 +843,8 @@ nJobs = {
    'SingleMu_2012D'       : 500,
    
    'SingleElectron_2012A'   : 100,
-   'SingleElectron_2012A_1' : 10,
-   'SingleElectron_2012A_2' : 10,
-   'SingleElectron_2012B'   : 50,
-   'SingleElectron_2012C_1' : 50,
-   'SingleElectron_2012C_2' : 300,
+   'SingleElectron_2012B'   : 300,
+   'SingleElectron_2012C'   : 300,
    'SingleElectron_2012D'   : 300,
 
    'DoubleElectron_2012A_22Jan2013' : 15,
@@ -1141,11 +1133,8 @@ maxEvents = {
    'SingleMu_2012D'       : -1,
 
    'SingleElectron_2012A'   : -1,
-   'SingleElectron_2012A_1' : -1,
-   'SingleElectron_2012A_2' : -1,
    'SingleElectron_2012B'   : -1,
-   'SingleElectron_2012C_1' : -1,
-   'SingleElectron_2012C_2' : -1,
+   'SingleElectron_2012C'   : -1,
    'SingleElectron_2012D'   : -1,
 
    'DoubleElectron_2012A_22Jan2013' :-1,
@@ -1439,11 +1428,8 @@ types = {
 
    'SingleElectron'         : "data",
    'SingleElectron_2012A'   : "data",
-   'SingleElectron_2012A_1' : "data",
-   'SingleElectron_2012A_2' : "data",
    'SingleElectron_2012B'   : "data",
-   'SingleElectron_2012C_1' : "data",
-   'SingleElectron_2012C_2' : "data",
+   'SingleElectron_2012C'   : "data",
    'SingleElectron_2012D'   : "data",
 
    'DoubleElectron_22Jan2013'       : "data",
@@ -1795,11 +1781,8 @@ colors = {
 
    'SingleElectron'         : 1,
    'SingleElectron_2012A'   : 1,
-   'SingleElectron_2012A_1' : 1,
-   'SingleElectron_2012A_2' : 1,
    'SingleElectron_2012B'   : 1,
-   'SingleElectron_2012C_1' : 1,
-   'SingleElectron_2012C_2' : 1,
+   'SingleElectron_2012C'   : 1,
    'SingleElectron_2012D'   : 1,
 
    'DoubleElectron_22Jan2013'       : 1,
@@ -2156,11 +2139,8 @@ labels = {
    
    'SingleElectron'         : "Single Electron data",
    'SingleElectron_2012A'   : "SingleElectron 2012A data",
-   'SingleElectron_2012A_1' : "SingleElectron 2012A data",
-   'SingleElectron_2012A_2' : "SingleElectron 2012A data",
    'SingleElectron_2012B'   : "SingleElectron 2012B data",
-   'SingleElectron_2012C_1' : "SingleElectron 2012C data",
-   'SingleElectron_2012C_2' : "SingleElectron 2012C data",
+   'SingleElectron_2012C'   : "SingleElectron 2012C data",
    'SingleElectron_2012D'   : "SingleElectron 2012D data",
 
    'DoubleElectron_22Jan2013'       : "Double Electron data ",
