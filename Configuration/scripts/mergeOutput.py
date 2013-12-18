@@ -92,7 +92,7 @@ def mergeDataset (dataset, sema):
     output.close ()
 
     os.system(command)
-    if verbose:
+    if arguments.verbose:
         print "Finished executing:  " + command 
     fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
     output = open (logMerge, "r")
@@ -161,7 +161,7 @@ def mergeCompositeDataset (composite_dataset, sema):
     output.close ()
 
     os.system(command)
-    if verbose:
+    if arguments.verbose:
         print "Finished executing:  " + command 
     fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
     output = open (logMerge, "r")
