@@ -138,7 +138,6 @@ def submitCrabJobs(dataset,sema):
         os.chdir( CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab')
         command = 'crab -create -cfg ' + CMSSWDir + ConfigPath
         os.system(command)
-        #Change the name of the crab log directory to be the name of the dataset.
         os.system('crab -submit -c ' + name)
         fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
         sema.release()
@@ -148,7 +147,6 @@ def reSubmitCrabJobs(dataset,sema):
 	name = str(dataset)
         fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
         os.chdir( CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab')
-        #Change the name of the crab log directory to be the name of the dataset.
         os.system('crab -forceResubmit all -c ' + name)
         fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
         sema.release()
@@ -164,6 +162,7 @@ def statusReport(dataset,sema):
         	os.system('crab -status -c ' + name)
         	fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
         	sema.release()
+
 def getOutput(dataset,sema):
 	sema.acquire()
 	name = str(dataset)
@@ -176,8 +175,9 @@ def getOutput(dataset,sema):
         	fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
         	sema.release()
 
-def MergeFilesStep1(datasets):
-	for dataset in datasets:
+def MergeFilesStep1(dataset,sema):
+	        sema.acquire()
+                fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
         	name = str(dataset)
                 print name
          	LocalFileList = glob.glob(r'./pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab/' + name + '/res/*.root')
@@ -189,11 +189,16 @@ def MergeFilesStep1(datasets):
 
         		os.chdir( CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '_crab/' + name + '/res/')
         		os.system('ls *.root | perl -ne \'print "file:$_"\' > myFiles.txt')
+                        os.system('edmCopyPickMerge inputFiles_load=myFiles.txt' + ' outputFile=' + CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '/' + name + '_merged.root maxSize=1000000')
         	elif len(RemoteFileList):
                 	os.chdir(RemoteDirT3)
-                	os.system('ls ' + condorDir[condorDir.find('/')+1:] + '*' + name + '*root | perl -ne \'print "file:$_"\' > myFiles_' + condorDir[condorDir.find('/')+1:] + '_' + name + '.txt')
+                        TxtFilePath = 'myFiles_' + condorDir[condorDir.find('/')+1:] + '_' + name + '.txt'
+                	os.system('ls ' + condorDir[condorDir.find('/')+1:] + '*' + name + '*root | perl -ne \'print "file:$_"\' > ' + TxtFilePath)
+                        os.system('edmCopyPickMerge inputFiles_load=' + TxtFilePath +' outputFile=' + CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + name + '/' + name + '_merged.root maxSize=1000000')
         	else:
 			print 'No outputs of ' + name + ' are found.'
+                fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
+                sema.release()	 
 
 def CleanCrabJobs(dataset,sema):
 		sema.acquire()
@@ -209,9 +214,8 @@ def CleanCrabJobs(dataset,sema):
 def MergeFilesStep2(compositeDataset,sema):
 	sema.acquire()
         fcntl.lockf (sys.stdout, fcntl.LOCK_EX)
-	sema.acquire()
 	compositeName = str(compositeDataset)
-        print compositeName
+        print 'Merging the ' + compositeName + ' dataset.' 
         compositeFilePath = CMSSWDir + '/pickEvents_crabLog/' + condorDir[condorDir.find('/')+1:] + '/' + compositeName + '_Files.txt'
         if os.path.exists(compositeFilePath):
 		os.system('rm ' + compositeFilePath)
@@ -286,13 +290,21 @@ if len(reSubmitDatasetArray):
 	for p in processes:
     		p.join ()
 if arguments.MergeFiles:
-	MergeFilesStep1(datasets)
-        for composite_dataset in compositeDatasets:
-                p = Process (target = MergeFilesStep2, args = (composite_dataset, sema))
+        
+        for dataset in datasets:
+                p = Process (target = MergeFilesStep1, args = (dataset, sema))
          	p.start ()
     		processes.append (p) 
 	for p in processes:
     		p.join ()
+        
+        if len(compositeDatasets):
+        	for composite_dataset in compositeDatasets:
+                	p = Process (target = MergeFilesStep2, args = (composite_dataset, sema))
+         		p.start ()
+    			processes.append (p) 
+		for p in processes:
+    			p.join ()
 if arguments.CleanCrabJobs:
         delete = raw_input("  Do you really want to clean up all the crab jobs related to " + condorDir[condorDir.find('/')+1:] + " ?(y/n) ")
   	if delete is "y":
