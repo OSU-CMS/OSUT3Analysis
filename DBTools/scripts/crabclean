@@ -134,7 +134,20 @@ foreach my $file (@crabOutput)
     $submissionNumber =~ s/^.*_[^_]*_([^_]*)_[^_]*\.root$/$1/;
     if (!(defined $filesToKeep{$jobNumber}))
       {
-        print "No information found for job $jobNumber!\n";
+        print "No information found for job $jobNumber!";
+        if ($opt{"removeFailed"})
+          {
+            $filesToKeep{$jobNumber} = "NULL";
+            print " Deleting output.\n";
+          }
+        else
+          {
+            print "\n";
+          }
+      }
+    if (!(defined $filesToKeep{$jobNumber}))
+      {
+        next;
       }
     elsif ((($opt{"dumb"} && $filesToKeep{$jobNumber} != $submissionNumber)
         || (!$opt{"dumb"} && $filesToKeep{$jobNumber} ne $file))
