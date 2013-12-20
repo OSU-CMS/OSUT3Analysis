@@ -19,6 +19,7 @@ sub datasetExists;
 sub uploadConfig;
 sub locationExists;
 sub getLocation;
+sub mergeDatasets;
 
 our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
 
@@ -28,8 +29,9 @@ GetOptions (\%opt, "append|a", "comment|c=s", "format|f=s", "pyConfig|p=s", "cra
 my $argc = @ARGV;
 
 printHelp ($ARGV[0]) if $opt{"help"};
-printHelp () if $argc != 2 && $ARGV[0] ne "createOther";
-printHelp () if $ARGV[0] ne "create" && $ARGV[0] ne "createOther" && $ARGV[0] ne "update" && $ARGV[0] ne "finish" && $ARGV[0] ne "deprecate" && $ARGV[0] ne "uploadRelease" && $ARGV[0] ne "downloadRelease" && $ARGV[0] ne "deleteEntry" && $ARGV[0] ne "uploadConfig";
+printHelp () if $argc != 2 && $ARGV[0] ne "createOther" && $ARGV[0] ne "merge";
+printHelp () if $argc != 3 && $ARGV[0] eq "merge";
+printHelp () if $ARGV[0] ne "create" && $ARGV[0] ne "createOther" && $ARGV[0] ne "update" && $ARGV[0] ne "finish" && $ARGV[0] ne "deprecate" && $ARGV[0] ne "uploadRelease" && $ARGV[0] ne "downloadRelease" && $ARGV[0] ne "deleteEntry" && $ARGV[0] ne "uploadConfig" && $ARGV[0] ne "merge";
 if ($ARGV[0] eq "create" && !$opt{"location"})
   {
     print "The directory containing the ntuples must be given!\n";
@@ -71,6 +73,10 @@ elsif ($ARGV[0] eq "createOther")
     pop (@listOfFiles);
     @listOfFiles = reverse (@listOfFiles);
     dbOtherCreate ("$ENV{'USER'}\@$ENV{'HOSTNAME'}", \@listOfFiles, $opt{"comment"});
+  }
+elsif ($ARGV[0] eq "merge")
+  {
+    mergeDatasets ($ARGV[1], $ARGV[2]);
   }
 else
   {
@@ -116,16 +122,16 @@ addSlashes
 }
 
 sub
-getDataset
+getDataset ($$;$)
 {
-  my $command = shift;
-  my $dataset = shift;
+  my ($command, $dataset, $idToExclude) = @_;
+  $idToExclude = -1 unless (defined $idToExclude);
 
   my $results;
   my $queryDataset = $dataset;
   $queryDataset =~ s/\*/%/g;
   $queryDataset =~ s/(.*)/%$1%/g;
-  my $query = "select id,dataset,user,creationTime,status from ntuple where dataset like '$queryDataset' order by creationTime";
+  my $query = "select id,dataset,user,creationTime,status from ntuple where dataset like '$queryDataset' and id!=$idToExclude order by creationTime";
   $db->selectdb ("ntuple");
   $results = $db->query ($query);
   if ($results->numrows () == 1)
@@ -135,7 +141,7 @@ getDataset
     }
   if ($results->numrows () == 0)
     {
-      if ($command ne "deleteEntry" && $command ne "deprecate")
+      if ($command ne "deleteEntry" && $command ne "deprecate" && $command ne "merge")
         {
           print "Database entry does not exist. Create it? (Y/n): ";
           my $response = <STDIN>;
@@ -154,7 +160,7 @@ getDataset
   my %fullDataset;
   print "Found multiple database entries matching\n";
   print "\"$dataset\":\n";
-  print "( 0) new\n" if $command ne "deleteEntry" && $command ne "deprecate";
+  print "( 0) new\n" if $command ne "deleteEntry" && $command ne "deprecate" && $command ne "merge";
   for (my $i = 1; $i <= $results->numrows (); $i++)
     {
       my @row = $results->fetchrow ();
@@ -171,7 +177,7 @@ getDataset
       print ") created by $row[2] on $row[3]\n";
     }
   print "\nWhich entry would you like to modify?";
-  if ($command ne "deleteEntry" && $command ne "deprecate")
+  if ($command ne "deleteEntry" && $command ne "deprecate" && $command ne "merge")
     {
       print " (Select 0 to create a new entry): "
     }
@@ -181,7 +187,7 @@ getDataset
     }
   my $response = <STDIN>;
   $response =~ s/[ \t\n]//g;
-  return (-1, "") if $response == 0 && $command ne "deleteEntry" && $command ne "deprecate";
+  return (-1, "") if $response == 0 && $command ne "deleteEntry" && $command ne "deprecate" && $command ne "merge";
   if (!(exists $id{$response}))
     {
       print "Your selection \"$response\" was not a valid option! Quitting.\n";
@@ -387,12 +393,12 @@ dbUpdate
       $fileList = addSlashes ($fileList);
 
       $values .= ", lastUpdateTime=now()";
-      $values .= ", lastUpdateUser='$user'";
+      $values .= ", lastUpdateUser='$userAndHost'";
       $values .= ", format='$format'" if $format;
       $values .= ", location='$fullLocation'" if $location;
       $values .= ", fileList='$fileList'" if $nFiles;
       $values .= ", nFiles=$nFiles" if $nFiles;
-      $values .= ", sizeInGB=$size" if $size;
+      $values .= ", sizeInGB=$size" if abs ($size) > 1.0e-6;
       $values .= ", status='$status'" if $status;
       $values .= ", deprecateTime=now()" if $status == "deprecated";
       $values .= ", comment='$comment'" if $comment;
@@ -478,6 +484,11 @@ printHelp
       printf "%-29s%s\n", "  -s, --lumiSummary FILE", "lumiSummary.json reported by CRAB";
       printf "%-29s%s\n", "  -x, --xSection XSEC", "cross section in picobarns from PREP";
       printf "%-29s%s\n", "  -y, --higherOrderXSec XSEC", "higher-order cross section in picobarns";
+    }
+  elsif ($command eq "merge")
+    {
+      print "Usage: $exeName merge NAME1 NAME2\n";
+      print "Merges database entry for NAME2 into NAME1.\n";
     }
   elsif ($command eq "createOther")
     {
@@ -586,6 +597,7 @@ printHelp
       printf "%-29s%s\n", "  createOther", "creates an entry for non-ntuple data";
       printf "%-29s%s\n", "  update", "updates the entry";
       printf "%-29s%s\n", "  finish", "finalizes the database entry";
+      printf "%-29s%s\n", "  merge", "merges two database entries";
       printf "%-29s%s\n", "  deleteEntry", "removes the database entry";
       printf "%-29s%s\n", "  deprecate", "marks the dataset for deletion";
       printf "%-29s%s\n", "  uploadRelease", "upload an ntuple release";
@@ -608,15 +620,22 @@ sizeOfDataset
   my @files;
   if ($location && !$fileList)
     {
-      if (!(-e $location))
+      my @locations = split (":", $location);
+      foreach my $loc (@locations)
         {
-          print "$location does not exist!\n";
-          exit;
+          if (!(-e $loc))
+            {
+              print "$loc does not exist!\n";
+              exit;
+            }
+          opendir (LOCATION, $loc);
+          my @tmpFiles = readdir (LOCATION);
+          closedir (LOCATION);
+          foreach my $file (@tmpFiles)
+            {
+              push (@filesInDir, "$loc/$file");
+            }
         }
-      opendir (LOCATION, $location);
-      @filesInDir = readdir (LOCATION);
-      closedir (LOCATION);
-
     }
   elsif ($fileList)
     {
@@ -627,7 +646,6 @@ sizeOfDataset
       next if $file eq ".";
       next if $file eq "..";
       next if !($file =~ m/\.root$/);
-      $file = "$location/$file" if $location;
       $nFiles++;
       my $fileSize = `du -s $file`;
       $fileSize =~ s/([^ ]*) .*/$1/;
@@ -851,4 +869,81 @@ getLocation
   my @row = $results->fetchrow ();
 
   return ($row[0], $row[1], $row[2], $row[3]);
+}
+
+sub
+getInfo
+{
+  my $id = shift;
+
+  my $query = "select status,comment,jsonFile,lumiSummary,currentStatus,workingDirectory from ntuple where id=$id";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+  my @row = $results->fetchrow ();
+
+  return ($row[0], $row[1], $row[2], $row[3], $row[4], $row[5]);
+}
+
+sub
+mergeDatasets
+{
+  my $dst = shift;
+  my $src = shift;
+
+  my ($dstID, $dstFullName) = getDataset ("merge", $dst);
+  my ($srcID, $srcFullName) = getDataset ("merge", $src, $dstID);
+  my ($dstLocation, $dstNFiles, $dstSize, $dstFileList) = getLocation ($dstID);
+  my ($srcLocation, $srcNFiles, $srcSize, $srcFileList) = getLocation ($srcID);
+  my ($dstStatus, $dstComment, $dstJSONFile, $dstLumiSummary, $dstCurrentStatus, $dstWorkingDirectory) = getInfo ($dstID);
+  my ($srcStatus, $srcComment, $srcJSONFile, $srcLumiSummary, $srcCurrentStatus, $srcWorkingDirectory) = getInfo ($srcID);
+
+  if ($dstStatus ne "present" || $srcStatus ne "present")
+    {
+      print "Only \"present\" datasets can be merged. Quitting.\n";
+      exit;
+    }
+
+  $dstLocation .= ":" . $srcLocation;
+  $dstFileList = $dstFileList . "\n" . $srcFileList;
+  $dstNFiles += $srcNFiles;
+  $dstSize += $srcSize;
+  $dstComment .= "\n" . $srcComment;
+  $dstCurrentStatus .= "\n" . $srcCurrentStatus;
+  $dstWorkingDirectory .= ":" . $srcWorkingDirectory;
+
+  system ("rm -rf /tmp/osudb");
+  mkdir ("/tmp/osudb");
+  open (JSON_FILE, ">/tmp/osudb/alpha.json");
+  print JSON_FILE $dstJSONFile;
+  close (JSON_FILE);
+  open (JSON_FILE, ">/tmp/osudb/beta.json");
+  print JSON_FILE $srcJSONFile;
+  close (JSON_FILE);
+  system ("compareJSON.py --or /tmp/osudb/alpha.json /tmp/osudb/beta.json /tmp/osudb/output.json 2>&1");
+  open (JSON_FILE, "</tmp/osudb/output.json");
+  my @dstJSONFile = <JSON_FILE>;
+  close (JSON_FILE);
+  system ("rm -rf /tmp/osudb");
+
+  mkdir ("/tmp/osudb");
+  open (LUMI_SUMMARY, ">/tmp/osudb/alpha.json");
+  print LUMI_SUMMARY $dstLumiSummary;
+  close (LUMI_SUMMARY);
+  open (LUMI_SUMMARY, ">/tmp/osudb/beta.json");
+  print LUMI_SUMMARY $srcLumiSummary;
+  close (LUMI_SUMMARY);
+  system ("compareJSON.py --or /tmp/osudb/alpha.json /tmp/osudb/beta.json /tmp/osudb/output.json 2>&1");
+  open (LUMI_SUMMARY, "</tmp/osudb/output.json");
+  my @dstLumiSummary = <LUMI_SUMMARY>;
+  close (LUMI_SUMMARY);
+  system ("rm -rf /tmp/osudb");
+
+  $dstJSONFile = addSlashes (join ("", @dstJSONFile));
+  $dstLumiSummary = addSlashes (join ("", @dstLumiSummary));
+
+  my $query = "update ntuple set location='$dstLocation',nFiles=$dstNFiles,sizeInGB=$dstSize,fileList='$dstFileList',comment='$dstComment',jsonFile='$dstJSONFile',lumiSummary='$dstLumiSummary',currentStatus='$dstCurrentStatus',workingDirectory='$dstWorkingDirectory',hfLumiInInversePicobarn=NULL,pixelLumiInInversePicobarn=NULL where id=$dstID";
+  $db->selectdb ("ntuple");
+  my $results = $db->query ($query);
+  $query = "delete from ntuple where id=$srcID";
+  my $results = $db->query ($query);
 }
