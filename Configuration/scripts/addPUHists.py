@@ -45,12 +45,18 @@ else:
 	sys.exit(0)
     
 
-def copyOneFile(fin, fout, dataset):  
-    print "Copying histogram " + dataset 
+def copyOneFile(dataset):  
+    # If the input and output files are defined outside the loop, histograms after the first instance are not found.
+    # I did not track down what the cause of this behavior was.  --Wells
     
+    fin  = TFile(condor_dir+"/pu.root", "READ");  
+    fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE"); 
+    print "Copying histogram " + dataset + " from " + fin.GetName() + " to " + fout.GetName()  
+
+    fin.cd()
     h = fin.Get(dataset) 
     if not h: 
-        print "  Could not find hist named " + dataset 
+        print "  Could not find hist named " + dataset + " in " + fin.GetName()  
         return 
         
     fout.cd()
@@ -73,6 +79,10 @@ def copyOneFile(fin, fout, dataset):
 
     h.Write()  
     
+    fin.Close()
+    fout.Close()
+    
+    
 ###############################################################################################################################The following function is for a special case when you creat a new dataset(with new name) by selecting events from a current dataset(like a skim). For example, one may want to creat w0jets sample from wjets sample. This function would copy the existing pu distribution of wjets and rename it as w0jets.root
 #If you want to use pu distribution of dataset A as the pu distribution for dataset B, just include A and B in the localconfig file, and do not INCLUDE -c in the command line.  
 ##############################################################################################################################
@@ -93,20 +103,14 @@ def copyAndRenameOneFile(fout, datasets):
 ########################################################################################
 ########################################################################################
 if not UseExisting:
+    for dataset in datasets:    
+     	copyOneFile(dataset)  
 
-	fin  = TFile(condor_dir+"/pu.root", "READ");  
-	fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE"); 
-
-	print "Will merge histograms from " + fin.GetName() + " to " + fout.GetName() 
-	for dataset in datasets:    
-     	copyOneFile(fin, fout, dataset)
-        fin.Close()
-        fout.Close()
 else:
-	fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE"); 
-	copyAndRenameOneFile(fout, datasets)
-        fout.Close()
-
+    fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE"); 
+    copyAndRenameOneFile(fout, datasets)
+    fout.Close()
+        
 print "Finished addPUHists.py successfully."  
     
 
