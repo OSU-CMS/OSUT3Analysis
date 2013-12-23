@@ -38,6 +38,9 @@ parser.add_option("--hist", action="store_true", dest="plot_hist", default=False
                                     help="plot as hollow histograms instead of error bar crosses")
 parser.add_option("--line-width", dest="line_width",
                                     help="set line width (default is 2)")
+parser.add_option("-g", "--generic", action="store_true", dest="generic", default=False,
+                  help="generic root file directory structure; does not assume that channel dir is in OSUAnalysis dir")
+
 
 (arguments, args) = parser.parse_args()
 
@@ -255,7 +258,10 @@ def MakeOneDHist(histogramName):
     for source in input_sources: # loop over different input sources in config file
         dataset_file = "condor/%s/%s.root" % (source['condor_dir'],source['dataset'])
         inputFile = TFile(dataset_file)
-        HistogramObj = inputFile.Get("OSUAnalysis/" + source['channel'] + "/" +histogramName)
+        if arguments.generic:
+            HistogramObj = inputFile.Get(source['channel'] + "/" +histogramName)  
+        else: 
+            HistogramObj = inputFile.Get("OSUAnalysis/" + source['channel'] + "/" +histogramName)
         if not HistogramObj:
             print "WARNING:  Could not find histogram " + source['channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
             return 
@@ -473,8 +479,11 @@ first_input = input_sources[0]
 
 #### use the first input file as a template and make comparison versions of all its histograms
 testFile = TFile("condor/" + first_input['condor_dir'] + "/" + first_input['dataset'] + ".root")
-testFile.cd("OSUAnalysis/" + first_input['channel'])
-
+if arguments.generic:
+    testFile.cd(first_input['channel'])  
+else:
+    testFile.cd("OSUAnalysis/" + first_input['channel'])
+    
 if arguments.savePDFs:
     os.system("rm -rf comparison_histograms_pdfs")
     os.system("mkdir comparison_histograms_pdfs")
