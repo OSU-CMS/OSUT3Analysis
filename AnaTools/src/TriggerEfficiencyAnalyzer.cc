@@ -1,0 +1,80 @@
+#include "../interface/TriggerEfficiencyAnalyzer.h"
+
+TriggerEfficiencyAnalyzer::TriggerEfficiencyAnalyzer (const edm::ParameterSet &cfg) :
+  Trigger_ (cfg.getParameter<edm::InputTag> ("Trigger")),
+  triggers_  (cfg.getParameter<vector<edm::ParameterSet> >("triggers")) 
+{
+  TH1D::SetDefaultSumw2 ();
+  
+  //include all trigger paths of interest, divided up into one histogram for each element of "TriggerTypes"
+  for (uint iType=0; iType<triggers_.size(); iType++) {  
+    string typeName = triggers_.at(iType).getParameter<string>("trigType");
+    TriggerTypes.push_back(typeName);  
+    vector<string> trigs_ = triggers_.at(iType).getParameter<vector<string> >("trigs");
+    for (uint iTrig=0; iTrig<trigs_.size(); iTrig++) {  
+      TriggerNameMap[typeName].push_back(trigs_.at(iTrig));  
+    }    
+  }  
+
+  //Set Axis Labels of histograms to names of triggers
+  for (std::vector<string>::const_iterator triggerType = TriggerTypes.begin(); triggerType != TriggerTypes.end(); triggerType++) {
+    int nTriggers = TriggerNameMap[*triggerType].size();
+    const char* histName = (*triggerType).c_str();
+    TriggerHistogramMap[*triggerType] = fs->make<TH1D> (histName, histName, nTriggers+2, 0.0, nTriggers+2);
+    TriggerHistogramMap[*triggerType]->GetXaxis()->SetBinLabel (1,"Total Gen-Matched Events");
+    for(int bin = 0; bin != nTriggers; bin++){
+      TriggerHistogramMap[*triggerType]->GetXaxis()->SetBinLabel (bin+2,(TriggerNameMap[*triggerType].at(bin)).c_str());
+    }
+    TriggerHistogramMap[*triggerType]->GetXaxis()->SetBinLabel (nTriggers+2,"OR of All Triggers");
+  }
+
+}  
+
+TriggerEfficiencyAnalyzer::~TriggerEfficiencyAnalyzer ()
+{
+}
+
+void
+TriggerEfficiencyAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &setup)
+{
+
+  event.getByLabel (Trigger_ , TriggerCollection);
+
+  //initialize maps
+  for(std::vector<string>::const_iterator triggerType = TriggerTypes.begin(); triggerType != TriggerTypes.end(); triggerType++){
+    InclusiveORMap[*triggerType] = false;
+  }
+  
+  int nEvts = 0;  
+  //fill denominator bin for all trigger types that match generated final state
+  for(std::vector<string>::const_iterator triggerType = TriggerTypes.begin(); triggerType != TriggerTypes.end(); triggerType++) {
+    TriggerHistogramMap[*triggerType]->Fill(0) ;
+    nEvts++;  
+  }
+  
+
+  //loop over all trigger paths in the event
+  for (BNtriggerCollection::const_iterator trigger = TriggerCollection->begin(); trigger != TriggerCollection->end(); trigger++) {    
+    if(trigger->pass != 1) continue;
+        
+    //loop over the different types of triggers of interest
+    for(std::vector<string>::const_iterator triggerType = TriggerTypes.begin(); triggerType != TriggerTypes.end(); triggerType++){
+      //loop over the different trigger names as specified by the user
+      for(std::vector<string>::const_iterator triggerName = TriggerNameMap[*triggerType].begin(); triggerName != TriggerNameMap[*triggerType].end(); triggerName++){
+	if(trigger->name.find(*triggerName)!=std::string::npos){
+	  TriggerHistogramMap[*triggerType]->Fill(triggerName-TriggerNameMap[*triggerType].begin()+1);
+	  InclusiveORMap[*triggerType] = true;
+	}
+      }
+    }
+  }  
+  //fill final bin if any triggers were passed
+  for(std::vector<string>::const_iterator triggerType = TriggerTypes.begin(); triggerType != TriggerTypes.end(); triggerType++)
+    if(InclusiveORMap[*triggerType]) TriggerHistogramMap[*triggerType]->Fill(TriggerNameMap[*triggerType].size()+1);
+
+} // void TriggerEfficiencyAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &setup)  
+
+
+DEFINE_FWK_MODULE(TriggerEfficiencyAnalyzer);
+
+
