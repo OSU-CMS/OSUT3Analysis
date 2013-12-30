@@ -24,7 +24,7 @@ for file in os.listdir(dir):
 process.source.duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 
 process.TFileService = cms.Service ('TFileService',
-                                    fileName = cms.string ('trigger.root')
+                                    fileName = cms.string ('hist.root')
     )
 
 process.maxEvents = cms.untracked.PSet (

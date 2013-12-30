@@ -20,18 +20,46 @@ TriggerEfficiencyAnalyzer::TriggerEfficiencyAnalyzer (const edm::ParameterSet &c
   for (std::vector<string>::const_iterator triggerType = TriggerTypes.begin(); triggerType != TriggerTypes.end(); triggerType++) {
     int nTriggers = TriggerNameMap[*triggerType].size();
     const char* histName = (*triggerType).c_str();
+    TString effName = histName;  
+    effName += "Eff";
     TriggerHistogramMap[*triggerType] = fs->make<TH1D> (histName, histName, nTriggers+2, 0.0, nTriggers+2);
-    TriggerHistogramMap[*triggerType]->GetXaxis()->SetBinLabel (1,"Total Gen-Matched Events");
+    TriggerHistEffMap  [*triggerType] = fs->make<TH1D> (effName,  effName,  nTriggers+2, 0.0, nTriggers+2);
+    TriggerHistogramMap[*triggerType]->GetXaxis()->SetBinLabel (1,"Total Events");
+    TriggerHistEffMap  [*triggerType]->GetXaxis()->SetBinLabel (1,"Total Events");
     for(int bin = 0; bin != nTriggers; bin++){
       TriggerHistogramMap[*triggerType]->GetXaxis()->SetBinLabel (bin+2,(TriggerNameMap[*triggerType].at(bin)).c_str());
+      TriggerHistEffMap  [*triggerType]->GetXaxis()->SetBinLabel (bin+2,(TriggerNameMap[*triggerType].at(bin)).c_str());
     }
     TriggerHistogramMap[*triggerType]->GetXaxis()->SetBinLabel (nTriggers+2,"OR of All Triggers");
+    TriggerHistEffMap  [*triggerType]->GetXaxis()->SetBinLabel (nTriggers+2,"OR of All Triggers");
+    effName.ReplaceAll("Eff", " trigger efficiency");  
+    TriggerHistEffMap  [*triggerType]->SetTitle(effName);  
   }
 
 }  
 
 TriggerEfficiencyAnalyzer::~TriggerEfficiencyAnalyzer ()
 {
+   for (std::vector<string>::const_iterator triggerType = TriggerTypes.begin(); triggerType != TriggerTypes.end(); triggerType++) {
+     TH1D* h    = TriggerHistogramMap[*triggerType];  
+     TH1D* heff = TriggerHistEffMap  [*triggerType];  
+     if (!h || !heff) { clog << "ERROR [TriggerEfficiencyAnalyzer]:  could not find histogram." << endl; }  
+     double total = h->GetBinContent(1);  // Total number of events.  
+     heff->SetBinContent(1, 1.0);         // Efficiency in first bin (no trigger requirement) is defined to be 100%.  
+     heff->SetBinError  (1, h->GetBinError(1) / h->GetBinContent(1));  
+     for(int bin = 0; bin<h->GetNbinsX()-1; bin++){
+       double eff    = h->GetBinContent(bin+2) / total;  
+       double effErr = eff * (h->GetBinError(bin+2) / h->GetBinContent(bin+2));  // assign the relative error in the efficiency as the relative error in the raw yield  
+       if (h->GetBinContent(bin+2)==0) effErr = 0;  // protect against division by 0  
+       heff->SetBinContent(bin+2, eff);  
+       heff->SetBinError  (bin+2, effErr);  
+     }
+     heff->SetMinimum(0);
+     heff->SetMaximum(1.5);
+   }
+
+   clog << "Successfully completed TriggerEfficiencyAnalyzer." << endl;  
+
 }
 
 void

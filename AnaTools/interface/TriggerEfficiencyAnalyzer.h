@@ -1,12 +1,11 @@
 #ifndef TRIGGER_EFFICIENCY_ANALYZER
-#include "DataFormats/Math/interface/deltaPhi.h"
 #include <map>
 #include <string>
 #include <vector>
 
 #include "TH1D.h"
 #include "TH2D.h"
-#include "TLorentzVector.h"
+#include "TString.h"
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -31,6 +30,7 @@ class TriggerEfficiencyAnalyzer : public edm::EDAnalyzer
       std::vector<string> TriggerTypes;
       std::map< string, std::vector<string> > TriggerNameMap;
       std::map< string, TH1D* > TriggerHistogramMap;
+      std::map< string, TH1D* > TriggerHistEffMap;  
       std::map< string, bool > InclusiveORMap;
 
       void analyze (const edm::Event &, const edm::EventSetup &);
