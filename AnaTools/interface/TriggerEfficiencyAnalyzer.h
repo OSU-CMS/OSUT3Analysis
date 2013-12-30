@@ -6,6 +6,7 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TString.h"
+#include "TStopwatch.h"
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -40,7 +41,8 @@ class TriggerEfficiencyAnalyzer : public edm::EDAnalyzer
       edm::Handle<BNtriggerCollection> TriggerCollection;
       edm::InputTag Trigger_;
       vector<edm::ParameterSet> triggers_;
-      
+      TStopwatch* timer;  
+
   };
 
 #endif

@@ -4,6 +4,10 @@ TriggerEfficiencyAnalyzer::TriggerEfficiencyAnalyzer (const edm::ParameterSet &c
   Trigger_ (cfg.getParameter<edm::InputTag> ("Trigger")),
   triggers_  (cfg.getParameter<vector<edm::ParameterSet> >("triggers")) 
 {
+
+  timer = new TStopwatch();  
+  timer->Start();  
+
   TH1D::SetDefaultSumw2 ();
   
   //include all trigger paths of interest, divided up into one histogram for each element of "TriggerTypes"
@@ -58,6 +62,8 @@ TriggerEfficiencyAnalyzer::~TriggerEfficiencyAnalyzer ()
      heff->SetMaximum(1.5);
    }
 
+   timer->Print();  
+   clog << endl;  
    clog << "Successfully completed TriggerEfficiencyAnalyzer." << endl;  
 
 }
