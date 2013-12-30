@@ -94,6 +94,11 @@ datasets = [
    'AMSB_mGrav50K_1ns_Reco',
    'AMSB_mGrav50K_5ns_Reco',
 
+   'AMSB_mGrav61K_0p2ns',
+   'AMSB_mGrav61K_0p5ns',
+   'AMSB_mGrav61K_1ns',
+   'AMSB_mGrav61K_5ns',
+
    'AMSB_mGrav75K_0p5ns',
    'AMSB_mGrav75K_1ns',
    'AMSB_mGrav75K_5ns',
@@ -799,6 +804,11 @@ dataset_names = {
     'AMSB_mGrav50K_1ns'   : '/DisappTrkChargino_LL01_mGrav50K_1ns_V5/wulsin-DisappTrkChargino_LL01_mGrav50K_1ns_V5-8d7921bb856d43d2cc7dce00818be4d4/USER', 
     'AMSB_mGrav50K_5ns'   : '/DisappTrkChargino_LL01_mGrav50K_5ns_V5/wulsin-DisappTrkChargino_LL01_mGrav50K_5ns_V5-c797f30334d0feac946adf3f988a6189/USER',
     
+    'AMSB_mGrav61K_0p2ns' : '/DisappTrkChargino_LL01_mGrav61K_0p2ns_V5/wulsin-DisappTrkChargino_LL01_mGrav61K_0p2ns_V5-e2a86264f85e2fe70e651c2aa13c594a/USER', 
+    'AMSB_mGrav61K_0p5ns' : '/DisappTrkChargino_LL01_mGrav61K_0p5ns_V5/wulsin-DisappTrkChargino_LL01_mGrav61K_0p5ns_V5-4d88979c16cc9eba0e57c6422bc75ffc/USER', 
+    'AMSB_mGrav61K_1ns'   : '/DisappTrkChargino_LL01_mGrav61K_1ns_V5/wulsin-DisappTrkChargino_LL01_mGrav61K_1ns_V5-c1250bd7ba1be8ecace130ea7b0ea4c7/USER', 
+    'AMSB_mGrav61K_5ns'   : '/DisappTrkChargino_LL01_mGrav61K_5ns_V5/wulsin-DisappTrkChargino_LL01_mGrav61K_5ns_V5-615871aff2b8526b13ce8bebdc277506/USER', 
+    
     'AMSB_mGrav75K_0p5ns' : '/DisappTrkChargino_LL01_mGrav75K_0p5ns_V5/wulsin-DisappTrkChargino_LL01_mGrav75K_0p5ns_V5-64e057cfee25eb2da5ad7f4ba073218b/USER',
     'AMSB_mGrav75K_1ns'   : '/DisappTrkChargino_LL01_mGrav75K_1ns_V5/wulsin-DisappTrkChargino_LL01_mGrav75K_1ns_V5-d7f3732cf921ea9bbe6178e5308dc945/USER',
     'AMSB_mGrav75K_5ns'   : '/DisappTrkChargino_LL01_mGrav75K_5ns_V5/wulsin-DisappTrkChargino_LL01_mGrav75K_5ns_V5-5c3ba9e0f2fc83598aa92e5bd06ecf95/USER',
@@ -1085,6 +1095,11 @@ nJobs = {
    'AMSB_mGrav50K_0p5ns' : 1,
    'AMSB_mGrav50K_1ns'   : 1,
    'AMSB_mGrav50K_5ns'   : 1,
+
+   'AMSB_mGrav61K_0p2ns' : 1,
+   'AMSB_mGrav61K_0p5ns' : 1,
+   'AMSB_mGrav61K_1ns'   : 1,
+   'AMSB_mGrav61K_5ns'   : 1,
 
    'AMSB_mGrav75K_0p5ns' : 1,
    'AMSB_mGrav75K_1ns'   : 1,
@@ -1375,6 +1390,11 @@ maxEvents = {
    'AMSB_mGrav50K_0p5ns' : -1,
    'AMSB_mGrav50K_1ns'   : -1,
    'AMSB_mGrav50K_5ns'   : -1,
+
+   'AMSB_mGrav61K_0p2ns' : -1,
+   'AMSB_mGrav61K_0p5ns' : -1,
+   'AMSB_mGrav61K_1ns'   : -1,
+   'AMSB_mGrav61K_5ns'   : -1,
 
    'AMSB_mGrav75K_0p5ns' : -1,
    'AMSB_mGrav75K_1ns'   : -1,
@@ -1732,6 +1752,11 @@ types = {
    'AMSB_mGrav50K_0p5ns_Reco' : "signalMC",
    'AMSB_mGrav50K_1ns_Reco'   : "signalMC",
    'AMSB_mGrav50K_5ns_Reco'   : "signalMC",
+
+   'AMSB_mGrav61K_0p2ns' : "signalMC",
+   'AMSB_mGrav61K_0p5ns' : "signalMC",
+   'AMSB_mGrav61K_1ns'   : "signalMC",
+   'AMSB_mGrav61K_5ns'   : "signalMC",
 
    'AMSB_mGrav75K_0p5ns' : "signalMC",
    'AMSB_mGrav75K_1ns'   : "signalMC",
@@ -2093,6 +2118,11 @@ colors = {
    'AMSB_mGrav50K_1ns_Reco'   : 596,
    'AMSB_mGrav50K_5ns_Reco'   : 923,
 
+   'AMSB_mGrav61K_0p2ns' : 872,
+   'AMSB_mGrav61K_0p5ns' : 628,
+   'AMSB_mGrav61K_1ns'   : 596,
+   'AMSB_mGrav61K_5ns'   : 923,
+
    'AMSB_mGrav75K_0p5ns' : 628,
    'AMSB_mGrav75K_1ns'   : 596,
    'AMSB_mGrav75K_5ns'   : 923,
@@ -2453,6 +2483,11 @@ labels = {
    'AMSB_mGrav50K_0p5ns_Reco' : "#chi_{1}^{#pm}, 164 GeV, 0.5 ns",
    'AMSB_mGrav50K_1ns_Reco'   : "#chi_{1}^{#pm}, 164 GeV, 1 ns",
    'AMSB_mGrav50K_5ns_Reco'   : "#chi_{1}^{#pm}, 164 GeV, 5 ns",
+
+   'AMSB_mGrav61K_0p2ns' : "#chi_{1}^{#pm}, 200 GeV, 0.2 ns",
+   'AMSB_mGrav61K_0p5ns' : "#chi_{1}^{#pm}, 200 GeV, 0.5 ns",
+   'AMSB_mGrav61K_1ns'   : "#chi_{1}^{#pm}, 200 GeV, 1 ns",
+   'AMSB_mGrav61K_5ns'   : "#chi_{1}^{#pm}, 200 GeV, 5 ns",
 
    'AMSB_mGrav75K_0p5ns' : "#chi_{1}^{#pm}, 246 GeV, 0.5 ns",
    'AMSB_mGrav75K_1ns'   : "#chi_{1}^{#pm}, 246 GeV, 1 ns",
