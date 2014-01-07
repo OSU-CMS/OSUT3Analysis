@@ -3498,6 +3498,19 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
 
   }
 
+  else if(variable == "isNotSigOrMatchedToSusy") {
+    // Return true if the input dataset is not signal MC or if the track is matched to a SUSY particle.  
+    if (datasetType_ != "signalMC") { value = 1; } else {
+      int index = getGenMatchedParticleIndex(object);
+      if (index == -1) value = 0;  // not matched 
+      else { 
+	int pdgId = abs(mcparticles->at(index).id);  
+	if (pdgId>1000001 && pdgId<3160113) value = 1;  // matched to a SUSY particle  
+	else                                value = 0;  
+      }        
+    }  
+  }  
+
   else if(variable == "genDeltaRLowest") value = getGenDeltaRLowest(object);
 
   else if(variable == "genMatchedPdgId"){
