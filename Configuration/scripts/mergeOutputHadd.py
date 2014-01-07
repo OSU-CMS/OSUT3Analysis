@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
-# Script to merge the output of PU files, created using OSUT3Analysis/AnaTools/test/pu_cfg.py
-# Usage instructions:
-# https://twiki.cern.ch/twiki/bin/view/CMS/OSUT3Analysis#Pile_Up_Reweighting
+# Script to merge the output of root files that do not contain cutflow histograms.
 # This is much simpler than mergeOutput.py:  it only runs hadd for the histograms in the specified datasets. 
+#
+# For example, may be used with PU files created using OSUT3Analysis/AnaTools/test/pu_cfg.py; see: 
+# https://twiki.cern.ch/twiki/bin/view/CMS/OSUT3Analysis#Pile_Up_Reweighting
+# Also may be used to merge TriggerEfficiencyAnalyzer output.  
 
 import os
 import sys

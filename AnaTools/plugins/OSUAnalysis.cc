@@ -3165,6 +3165,52 @@ OSUAnalysis::valueLookup (const BNmet* object, string variable, string function,
     TVector2 p2MetNoElec = p2Met + p2Elec;
     value =  p2MetNoElec.Mod();
   }
+  else if(variable == "deltaPhiMin2Jets") {
+    // minimum |deltaPhi| between met vector and either of the two leading jets 
+    // only consider jets with pt > 45 GeV and |eta|<2.8  
+    if (!jets.product()) clog << "ERROR:  cannot find deltaPhiMin2Jets because jets collection is not initialized." << endl;
+    double ptJet1 = -99; // leading jet
+    double ptJet2 = -99; // 2nd jet 
+    double phiJet1 = -99;
+    double phiJet2 = -99;  
+    if (verbose_>4) clog << "Debug:  calculating deltaPhiMin2Jets" << endl;  
+    for (uint ijet = 0; ijet<jets->size(); ijet++) {
+      // find indices of candidate jets 
+      string empty = "";
+      double jetPt  = valueLookup(&jets->at(ijet), "pt", "", empty); 
+      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty); 
+      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty); 
+      if (jetPt < 45 ||
+	  fabs(jetEta) > 2.8) continue;  
+      if (verbose_>4) clog << "  Found jet with pt=" << jetPt << ", eta=" << jetEta << ", phi=" << jetPhi << endl;  
+      if        (jetPt > ptJet1) { 
+	ptJet2 = ptJet1; 
+	ptJet1 = jetPt;  
+	phiJet2 = phiJet1;  
+	phiJet1 = jetPhi;  
+      } else if (jetPt > ptJet2) {
+	ptJet2 = jetPt;  
+	phiJet2 = jetPhi;  
+      }
+    }
+
+    // find minimum deltaPhi
+    double deltaPhiMin2Jets = 99.;  
+    if (ptJet1 >=0) {
+      double dPhi = fabs(deltaPhi (phiJet1, object->phi));  
+      if (dPhi<deltaPhiMin2Jets) deltaPhiMin2Jets = dPhi;  
+    }
+    if (ptJet2 >=0) {
+      double dPhi = fabs(deltaPhi (phiJet2, object->phi));  
+      if (dPhi<deltaPhiMin2Jets) deltaPhiMin2Jets = dPhi;  
+    }
+    value = deltaPhiMin2Jets;  
+    if (verbose_>4) clog  << "  Met phi==" << object->phi << endl;  
+    if (verbose_>4) clog << "  Calculated value:  deltaPhiMin2Jets=" << deltaPhiMin2Jets << endl;  
+  }
+
+
+
   else{clog << "WARNING: invalid met variable '" << variable << "'\n"; value = -999;}
 
   value = applyFunction(function, value);
@@ -3300,6 +3346,11 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
       pt = object->pt;
     value = vz - (vx * px + vy * py)/pt * (pz/pt);
   }
+  else if (variable == "dZSinTheta"){
+    string empty = ""; 
+    double dZwrtPV = valueLookup(object, "dZwrtPV", "", empty);
+    value = dZwrtPV * (object->pt / pMag);  // sin(theta) = pt / p
+  }
 
   else if(variable == "deltaRMinSubLeadJet") {
     // calculate minimum deltaR between track and any other subleading jet
@@ -3434,7 +3485,7 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
 	if (p4mumu.M()<80 || 100<p4mumu.M()) continue;  
 	// Now two muons have passed the required criteria.  
 	if (imuon0>=0 || imuon1>=0) {
-	  cout << "Warning [OSUAnalysis::valueLookup()]: More than one dimuon pair passes criteria in deltaPhiMuMuPair calculation." << endl;    
+	  clog << "Warning [OSUAnalysis::valueLookup()]: More than one dimuon pair passes criteria in deltaPhiMuMuPair calculation." << endl;    
 	}
 	imuon0 = imuon;
 	imuon1 = jmuon;  
@@ -5200,7 +5251,7 @@ OSUAnalysis::WriteBadCSC() {
     newChan.etaCSC = etaCSC;
     newChan.phiCSC = phiCSC;
     BadCSCVec.push_back(newChan);
-    //    cout << "Debug:  Adding bad CSC with eta=" << etaCSC << ", phi=" << phiCSC << endl;  
+    //    clog << "Debug:  Adding bad CSC with eta=" << etaCSC << ", phi=" << phiCSC << endl;  
   }
   if (BadCSCVec.size() == 0) clog << "Warning: No bad CSC chambers have been found." << endl;
 }  
