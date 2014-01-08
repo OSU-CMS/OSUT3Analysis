@@ -10,7 +10,7 @@ config_file = "standardConfig_cfg.py"
 #intLumi = 19741.  # DoubleMu_22Jan2013
 #intLumi = 18380.  # DoublePhoton
 #intLumi = 18260.  # MuEG
-intLumi = 19487.  # MuEG - DISPLACED_LEPTON-v3
+intLumi = 19680.  # MuEG 22Jan ReReco
 
 datasets = [
 
