@@ -1909,6 +1909,16 @@ OSUAnalysis::valueLookup (const BNjet* object, string variable, string function,
     } else value = -999;
   }
 
+  else if(variable == "isLeadingPtJet") {
+    double ptMax = -99;  
+    for (uint ijet = 0; ijet<jets->size(); ijet++) {
+      string empty = "";  
+      double jetPt = valueLookup(&jets->at(ijet), "pt", "", empty); 
+      if (jetPt > ptMax) ptMax = jetPt;  
+    }
+    if (object->pt < ptMax) value = 0; 
+    else                    value = 1;  
+  }  
 
   else{clog << "WARNING: invalid jet variable '" << variable << "'\n"; value = -999;}
 
