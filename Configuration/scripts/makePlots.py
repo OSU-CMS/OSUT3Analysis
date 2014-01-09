@@ -623,7 +623,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     if numBgMCSamples is 0 or numDataSamples is not 1:
         makeRatioPlots = False
         makeDiffPlots = False
-    if numBgMCSamples is 0 or numSignalSamples is 0:
+    if makeSignifPlots and (numBgMCSamples is 0 or numSignalSamples is 0):
         print "Error:  you have requested to make significance plots, but you are missing either signal or background samples.  Will skip making the significance plots."
         print "numBgMCSamples = " + str(numBgMCSamples) + "; numSignalSamples = " + str(numSignalSamples)  
         makeSignifPlots = False  
