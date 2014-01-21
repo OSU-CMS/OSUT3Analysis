@@ -16,6 +16,7 @@ MuonHistograms = cms.PSet(
             name = cms.string("muonPt"),
             title = cms.string("Muon Transverse Momentum; p_{T} [GeV]"),
             bins = cms.untracked.vdouble(100, 0, 500),
+            #variableBinsX = cms.untracked.vdouble(10,15,20,25,30,40,50,70,90,120,150,200,300,500),
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
@@ -41,6 +42,12 @@ MuonHistograms = cms.PSet(
             title = cms.string("Muon Charge; charge"),
             bins = cms.untracked.vdouble(3, -1.5, 1.5),
             inputVariables = cms.vstring("charge"),
+        ),
+        cms.PSet (
+            name = cms.string("muonGenRecoChargeProduct"),
+            title = cms.string("Muon Gen-Reco Charge Product; charge"),
+            bins = cms.untracked.vdouble(50, -2.5, 2.5),
+            inputVariables = cms.vstring("genRecoChargeProduct"),
         ),
         cms.PSet (
             name = cms.string("muonEtaPhi"),
@@ -567,6 +574,12 @@ ElectronHistograms = cms.PSet(
             title = cms.string("Electron Charge; charge"),
             bins = cms.untracked.vdouble(3, -1.5, 1.5),
             inputVariables = cms.vstring("charge"),
+        ),
+        cms.PSet (
+            name = cms.string("electronGenRecoChargeProduct"),
+            title = cms.string("Electron Gen-Reco Charge Product; charge"),
+            bins = cms.untracked.vdouble(50, -2.5, 2.5),
+            inputVariables = cms.vstring("genRecoChargeProduct"),
         ),
         cms.PSet (
             name = cms.string("electronEtaPhi"),
