@@ -3230,7 +3230,73 @@ OSUAnalysis::valueLookup (const BNmet* object, string variable, string function,
     if (verbose_>4) clog << "  Calculated value:  deltaPhiMin2Jets=" << deltaPhiMin2Jets << endl;  
   }
 
+  else if(variable == "deltaPhiJet1") {
+    // |deltaPhi| between met vector and leading jet 
+    // only consider jets with pt > 45 GeV and |eta|<2.8  
+    if (!jets.product()) clog << "ERROR:  cannot find deltaPhiJet1 because jets collection is not initialized." << endl;
+    double ptJet1 = -99; // leading jet
+    double phiJet1 = -99;
+    if (verbose_>4) clog << "Debug:  calculating deltaPhiJet1" << endl;  
+    for (uint ijet = 0; ijet<jets->size(); ijet++) {
+      // find indices of candidate jets 
+      string empty = "";
+      double jetPt  = valueLookup(&jets->at(ijet), "pt", "", empty); 
+      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty); 
+      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty); 
+      if (jetPt < 45 ||
+	  fabs(jetEta) > 2.8) continue;  
+      if (verbose_>4) clog << "  Found jet with pt=" << jetPt << ", eta=" << jetEta << ", phi=" << jetPhi << endl;  
+      if (jetPt > ptJet1) { 
+	ptJet1 = jetPt;  
+	phiJet1 = jetPhi;  
+      }
+    }
 
+    double deltaPhiJet1 = 99.; 
+    if (ptJet1 >=0) {
+      double dPhi = fabs(deltaPhi (phiJet1, object->phi));  
+      deltaPhiJet1 = dPhi;  
+    }
+    value = deltaPhiJet1;  
+  }
+
+  else if(variable == "deltaPhiJet2") {
+    // |deltaPhi| between met vector and subleading jet 
+    // only consider jets with pt > 45 GeV and |eta|<2.8  
+    if (!jets.product()) clog << "ERROR:  cannot find deltaPhiJet2 because jets collection is not initialized." << endl;
+    double ptJet1 = -99; // leading jet
+    double ptJet2 = -99; // 2nd jet 
+    double phiJet1 = -99;
+    double phiJet2 = -99;  
+    if (verbose_>4) clog << "Debug:  calculating deltaPhiMin2Jets" << endl;  
+    for (uint ijet = 0; ijet<jets->size(); ijet++) {
+      // find indices of candidate jets 
+      string empty = "";
+      double jetPt  = valueLookup(&jets->at(ijet), "pt", "", empty); 
+      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty); 
+      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty); 
+      if (jetPt < 45 ||
+	  fabs(jetEta) > 2.8) continue;  
+      if (verbose_>4) clog << "  Found jet with pt=" << jetPt << ", eta=" << jetEta << ", phi=" << jetPhi << endl;  
+      if        (jetPt > ptJet1) { 
+	ptJet2 = ptJet1; 
+	ptJet1 = jetPt;  
+	phiJet2 = phiJet1;  
+	phiJet1 = jetPhi;  
+      } else if (jetPt > ptJet2) {
+	ptJet2 = jetPt;  
+	phiJet2 = jetPhi;  
+      }
+    }
+
+    // find minimum deltaPhi
+    double deltaPhiJet2 = 99.;  
+    if (ptJet2 >=0) {
+      double dPhi = fabs(deltaPhi (phiJet2, object->phi));  
+      deltaPhiJet2 = dPhi;  
+    }
+    value = deltaPhiJet2;  
+  }
 
   else{clog << "WARNING: invalid met variable '" << variable << "'\n"; value = -999;}
 
