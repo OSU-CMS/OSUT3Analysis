@@ -128,6 +128,7 @@ class OSUAnalysis : public edm::EDProducer
       double getTrkIsIso (const BNtrack* track1);
       double getTrkCaloTotRhoCorr(const BNtrack* track);
       double getTrkDepTrkRp5RhoCorr(const BNtrack* track);
+      double getVariableBinsWeights(vector<double> , double );
       double getTrkDepTrkRp3RhoCorr(const BNtrack* track);
       void WriteDeadEcal();
       void WriteBadCSC();
@@ -268,6 +269,7 @@ class OSUAnalysis : public edm::EDProducer
         string title;
         vector<double> bins;
         vector<double> variableBinsX;
+        vector<double> variableBinsWeightsX;
         vector<double> variableBinsY;
         string inputCollection;
         vector<string> inputVariables;

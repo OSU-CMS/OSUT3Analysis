@@ -1,4 +1,5 @@
 #include "OSUT3Analysis/AnaTools/plugins/OSUAnalysis.h"
+using namespace std;
 OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   /// Retrieve parameters from the configuration file.
   jets_ (cfg.getParameter<edm::InputTag> ("jets")),
@@ -2294,6 +2295,11 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
     if(index == -1) value = 24;
     else value = 24 - getPdgIdBinValue(mcparticles->at(index).motherId);
   }
+  else if(variable == "genRecoChargeProduct"){
+    int index = getGenMatchedParticleIndex(object);
+    if(index == -1) value = 2;
+    else value = object->charge * mcparticles->at(index).charge;
+  }
   else if(variable == "genMatchedGrandmotherId"){
     int index = getGenMatchedParticleIndex(object);
     if(index == -1) value = 0;
@@ -2782,6 +2788,11 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
     else value = mcparticles->at(index).id;
   }
 
+  else if(variable == "genRecoChargeProduct"){
+    int index = getGenMatchedParticleIndex(object);
+    if(index == -1) value = 2;
+    else value = object->charge * mcparticles->at(index).charge;
+  }
 
   else if(variable == "genMatchedId"){
     int index = getGenMatchedParticleIndex(object);
@@ -5082,7 +5093,29 @@ OSUAnalysis::getTrkIsIso (const BNtrack* track1, const BNtrackCollection* trackC
   return 1;
 
 }
-
+// Return the weighting factors for variable bins.
+double 
+OSUAnalysis::getVariableBinsWeights(vector<double> variableBins, double value){
+  vector<double> variableBinWidths;
+  for (unsigned i = 0; i != variableBins.size() - 1; i++){
+        variableBinWidths.push_back(variableBins[i+1] - variableBins[i]);
+ }
+  sort(variableBinWidths.begin(), variableBinWidths.end());
+  double scalingFactor = -999;
+  double num = 1;
+  double den = 1;
+  for (unsigned i = 0; i != variableBins.size() - 1; i++){
+	if (value >= variableBins.at(i) && value < variableBins.at(i+1)){
+              den = (double)(variableBins.at(i+1) - variableBins.at(i));
+              num = (double)variableBinWidths.at(0);
+	      scalingFactor = (double) num/den;
+       }
+  }
+  if (scalingFactor != -999){
+       return scalingFactor;
+     }
+  else {return 1;}
+}
 //calculate the scalar sum of Jet Pt in the event.
 double
 OSUAnalysis::getHt (const BNjetCollection* jetColl){
@@ -5653,7 +5686,10 @@ void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollect
 
     string stringValue = "";
     double value = valueLookup(&inputCollection->at(object), inputVariable, function, stringValue);
-    histo->Fill(value,scaleFactor);
+    if( parameters.variableBinsX.size() != 0)
+    { scaleFactor = scaleFactor*getVariableBinsWeights(parameters.variableBinsX,value);
+    }
+  histo->Fill(value,scaleFactor);
 
     if (printEventInfo_) {
       // Write information about event to screen, for testing purposes.
