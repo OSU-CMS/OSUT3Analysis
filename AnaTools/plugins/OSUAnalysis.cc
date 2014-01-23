@@ -38,14 +38,15 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   doPileupReweighting_ (cfg.getParameter<bool> ("doPileupReweighting")),
   doTopPtReweighting_  (cfg.getParameter<bool> ("doTopPtReweighting")),
   applyTriggerSF_ (cfg.getParameter<bool> ("applyTriggerSF")),
-  applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   triggerScaleFactor_ (cfg.getParameter<double> ("triggerScaleFactor")),
   trackingScaleFactor_ (cfg.getParameter<double> ("trackingScaleFactor")),
   applyLeptonSF_ (cfg.getParameter<bool> ("applyLeptonSF")),
+  applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
   electronSFShift_ (cfg.getParameter<string> ("electronSFShift")),
   muonSFShift_ (cfg.getParameter<string> ("muonSFShift")),
+  trackSFShift_ (cfg.getParameter<string> ("trackSFShift")),
   printEventInfo_      (cfg.getParameter<bool> ("printEventInfo")),
   printAllTriggers_    (cfg.getParameter<bool> ("printAllTriggers")),
   useTrackCaloRhoCorr_ (cfg.getParameter<bool> ("useTrackCaloRhoCorr")),
@@ -65,6 +66,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if (applyLeptonSF_){
       muonSFWeight_ = new MuonSFWeight (muonSFFile_, muonSF_);
       electronSFWeight_ = new ElectronSFWeight ("53X", electronSFID_, electronSFFile_, electronSF_);
+    }
+    if(applyTrackingSF_) {
+      trackSFWeight_ = new TrackSFWeight ();
     }
     if (applyBtagSF_){
       bTagSFWeight_ = new BtagSFWeight;
@@ -967,9 +971,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   if (!applyTriggerSF_ || datasetType_ != "data") triggerScaleFactor_ = 1.0; //reset the variable to 1 if we're not applying it, so it will take that value in its histogram
   if (applyTriggerSF_ && datasetType_ != "data") globalScaleFactor_ *= triggerScaleFactor_;
 
-  //apply tracking efficiency
-  if (!applyTrackingSF_) trackingScaleFactor_ = 1.0;
-  if (applyTrackingSF_ && datasetType_ != "data") eventScaleFactor_ *= trackingScaleFactor_;
+
 
   //get pile-up event weight
   if (doPileupReweighting_ && datasetType_ != "data") {
@@ -1204,7 +1206,14 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
     channelScaleFactor_ = 1.0; //this variable holds the product of all SFs calculated separately for each channel
 
-    muonScaleFactor_ = electronScaleFactor_ = bTagScaleFactor_ = 1.0;
+  trackScaleFactor_ =  muonScaleFactor_ = electronScaleFactor_ = bTagScaleFactor_ = 1.0;
+
+
+
+	  //           electronScaleFactor_ *= trackSFWeight_->at (electrons->at(electronIndex).correctedD0, shiftUpDown);
+        
+
+
 
     if(applyLeptonSF_ && datasetType_ != "data"){
       //only apply SFs if we've cut on this object
@@ -1247,6 +1256,59 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         }
       }
     }
+      
+
+
+  // Track weighting for muons
+
+    if(applyTrackingSF_ && datasetType_ != "data"){
+      //only apply SFs if we've cut on this object
+      if(find(objectsToCut.begin(),objectsToCut.end(),"muons") != objectsToCut.end ()){
+        flagPair muonFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("muons").at(i).size()){
+            muonFlags = cumulativeFlags.at("muons").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
+          if(!muonFlags.at(muonIndex).second) continue;
+          int shiftUpDown = 0;
+          if (trackSFShift_ == "up") shiftUpDown = 1;
+          if (trackSFShift_ == "down") shiftUpDown = -1;
+	  cout << "before applying trackSFWeight muons SF=" << muonScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
+	  muonScaleFactor_ *= trackSFWeight_->at (muons->at(muonIndex).correctedD0,shiftUpDown);
+	  cout << " after applying trackSFWeight" << muonScaleFactor_ << muons->at(muonIndex).correctedD0 << endl;
+	  
+        }
+      }
+      
+      // Track weighting for electrons
+
+      //only apply SFs if we've cut on this object
+      if(find(objectsToCut.begin(),objectsToCut.end(),"electrons") != objectsToCut.end ()){
+        flagPair electronFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("electrons").at(i).size()){
+            electronFlags = cumulativeFlags.at("electrons").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
+          if(!electronFlags.at(electronIndex).second) continue;
+          int shiftUpDown = 0;
+          if (trackSFShift_ == "up") shiftUpDown = 1;
+          if (trackSFShift_ == "down") shiftUpDown = -1;
+          electronScaleFactor_ *= 1.1;
+	  cout << shiftUpDown << endl;
+	}
+      }
+    }
+
 
     if(applyBtagSF_ && datasetType_ != "data"){
       //only apply SFs if we've cut on this object
@@ -1269,9 +1331,11 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         bTagScaleFactor_ *= bTagSFWeight_->weight( jetSFs, minBtag_);
       }
     }
-
+    
+    
     channelScaleFactor_ *= muonScaleFactor_;
     channelScaleFactor_ *= electronScaleFactor_;
+    channelScaleFactor_ *= trackScaleFactor_;
     channelScaleFactor_ *= bTagScaleFactor_;
 
 

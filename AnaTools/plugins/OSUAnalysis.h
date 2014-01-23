@@ -199,14 +199,15 @@ class OSUAnalysis : public edm::EDProducer
       bool doPileupReweighting_;
       bool doTopPtReweighting_;
       bool applyTriggerSF_;
-      bool applyTrackingSF_;
       double triggerScaleFactor_;
       double trackingScaleFactor_;
       bool applyLeptonSF_;
+      bool applyTrackingSF_;
       bool applyBtagSF_;
       int  minBtag_;
       string electronSFShift_;
       string muonSFShift_;
+      string trackSFShift_;
       bool printEventInfo_;
       bool printAllTriggers_;
       bool useTrackCaloRhoCorr_;  // to use the calo-based rho correction for the by-hand calculation of the track isolation energy
@@ -324,6 +325,8 @@ class OSUAnalysis : public edm::EDProducer
       double muonScaleFactor_;
       ElectronSFWeight *electronSFWeight_;
       double electronScaleFactor_;
+      TrackSFWeight *trackSFWeight_;
+      double trackScaleFactor_ ;
       BtagSFWeight *bTagSFWeight_;
       double bTagScaleFactor_;     
 
