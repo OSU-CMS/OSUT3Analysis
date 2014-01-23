@@ -1,6 +1,32 @@
 #include "OSUT3Analysis/AnaTools/interface/SFWeight.h"
 
 
+double
+TrackSFWeight::at(const double &correctedD0, const int &shiftUpDown)
+{
+  // just hard coded for now with dummy value (waiting for final result)
+  double scaleFactor = 0;
+  double error =0;
+  double crit_value= -10;
+  if (correctedD0 < crit_value )
+    {
+      scaleFactor = 1;
+      error = 0.1;
+    }
+  else 
+    {
+      scaleFactor = 2;
+      error = 0.5;
+    }
+  return scaleFactor + shiftUpDown * error; 
+}
+
+TrackSFWeight::~TrackSFWeight ()
+{
+}
+
+
+
 MuonSFWeight::MuonSFWeight (const string &sfFile, const string &dataOverMC)
 {
   TFile *fin = TFile::Open (sfFile.c_str ());
