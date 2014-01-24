@@ -326,7 +326,8 @@ class OSUAnalysis : public edm::EDProducer
       ElectronSFWeight *electronSFWeight_;
       double electronScaleFactor_;
       TrackSFWeight *trackSFWeight_;
-      double trackScaleFactor_ ;
+      double muonTrackScaleFactor_ ;
+      double electronTrackScaleFactor_ ;
       BtagSFWeight *bTagSFWeight_;
       double bTagScaleFactor_;     
 

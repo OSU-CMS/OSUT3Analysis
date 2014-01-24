@@ -4,19 +4,19 @@
 double
 TrackSFWeight::at(const double &correctedD0, const int &shiftUpDown)
 {
-  // just hard coded for now with dummy value (waiting for final result)
+
   double scaleFactor = 0;
   double error =0;
-  double crit_value= -10;
-  if (correctedD0 < crit_value )
+  double crit_value= 0.02; // 0.02 check which variable exoll used
+  if (abs(correctedD0) < crit_value )
     {
       scaleFactor = 1;
-      error = 0.1;
+      error = 0.1;// check that using den and num histos
     }
   else 
     {
-      scaleFactor = 2;
-      error = 0.5;
+      scaleFactor = 0.960;
+      error = 0.012;
     }
   return scaleFactor + shiftUpDown * error; 
 }

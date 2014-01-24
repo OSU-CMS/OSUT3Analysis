@@ -28,7 +28,7 @@ class TrackSFWeight
   double at (const double &, const int &shiftUpDown = 0);
 
  private:
-  double *trackSFWeight_; // faco
+  double *trackSFWeight_;
 };
 
 

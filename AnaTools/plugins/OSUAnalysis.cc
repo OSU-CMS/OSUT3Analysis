@@ -1206,12 +1206,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
     channelScaleFactor_ = 1.0; //this variable holds the product of all SFs calculated separately for each channel
 
-  trackScaleFactor_ =  muonScaleFactor_ = electronScaleFactor_ = bTagScaleFactor_ = 1.0;
+    muonScaleFactor_ = electronScaleFactor_ =  muonTrackScaleFactor_ =  electronTrackScaleFactor_ = bTagScaleFactor_ = 1.0;
 
-
-
-	  //           electronScaleFactor_ *= trackSFWeight_->at (electrons->at(electronIndex).correctedD0, shiftUpDown);
-        
 
 
 
@@ -1278,10 +1274,9 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           int shiftUpDown = 0;
           if (trackSFShift_ == "up") shiftUpDown = 1;
           if (trackSFShift_ == "down") shiftUpDown = -1;
-	  cout << "before applying trackSFWeight muons SF=" << muonScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
-	  muonScaleFactor_ *= trackSFWeight_->at (muons->at(muonIndex).correctedD0,shiftUpDown);
-	  cout << " after applying trackSFWeight" << muonScaleFactor_ << muons->at(muonIndex).correctedD0 << endl;
-	  
+	  //	  cout << "before applying trackSFWeight muons SF=" << muonTrackScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
+	  muonTrackScaleFactor_ *= trackSFWeight_->at (muons->at(muonIndex).correctedD0,shiftUpDown);
+	  //	  cout << " after applying trackSFWeight" << muonTrackScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
         }
       }
       
@@ -1303,8 +1298,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           int shiftUpDown = 0;
           if (trackSFShift_ == "up") shiftUpDown = 1;
           if (trackSFShift_ == "down") shiftUpDown = -1;
-          electronScaleFactor_ *= 1.1;
-	  cout << shiftUpDown << endl;
+	  electronTrackScaleFactor_ *= trackSFWeight_->at (electrons->at(electronIndex).correctedD0,shiftUpDown);
 	}
       }
     }
@@ -1335,7 +1329,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     
     channelScaleFactor_ *= muonScaleFactor_;
     channelScaleFactor_ *= electronScaleFactor_;
-    channelScaleFactor_ *= trackScaleFactor_;
+    channelScaleFactor_ *= muonTrackScaleFactor_;
+    channelScaleFactor_ *= electronTrackScaleFactor_;
     channelScaleFactor_ *= bTagScaleFactor_;
 
 
@@ -2993,6 +2988,8 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   }
   else if(variable == "muonScaleFactor") value = muonScaleFactor_;
   else if(variable == "electronScaleFactor") value = electronScaleFactor_;
+  else if(variable == "muonTrackScaleFactor") value = muonTrackScaleFactor_;
+  else if(variable == "electronTrackScaleFactor") value = electronTrackScaleFactor_;
   else if(variable == "stopCTauScaleFactor") value = stopCTauScaleFactor_;
   else if(variable == "bTagScaleFactor") value = bTagScaleFactor_;
   else if(variable == "topPtScaleFactor") value = topPtScaleFactor_;

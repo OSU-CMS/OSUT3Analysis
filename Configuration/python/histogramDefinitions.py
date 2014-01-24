@@ -2880,16 +2880,28 @@ EventHistograms = cms.PSet(
             inputVariables = cms.vstring("muonScaleFactor"),
         ),
         cms.PSet (
-            name = cms.string("bTagScaleFactor"),
-            title = cms.string("Btag Scale Factor;btag weight"),
+            name = cms.string("muonTrackScaleFactor"),
+            title = cms.string("Track Scale Factor for muons;muon weight"),
             bins = cms.untracked.vdouble(100, 0.5, 1.5),
-            inputVariables = cms.vstring("bTagScaleFactor"),
+            inputVariables = cms.vstring("muonTrackScaleFactor"),
         ),
         cms.PSet (
             name = cms.string("electronScaleFactor"),
             title = cms.string("Electron Scale Factor;electron weight"),
             bins = cms.untracked.vdouble(100, 0.5, 1.5),
             inputVariables = cms.vstring("electronScaleFactor"),
+        ),
+        cms.PSet (
+            name = cms.string("electronTrackScaleFactor"),
+            title = cms.string("Track Scale Factor for electrons;electron weight"),
+            bins = cms.untracked.vdouble(100, 0.5, 1.5),
+            inputVariables = cms.vstring("electronTrackScaleFactor"),
+        ),
+        cms.PSet (
+            name = cms.string("bTagScaleFactor"),
+            title = cms.string("Btag Scale Factor;btag weight"),
+            bins = cms.untracked.vdouble(100, 0.5, 1.5),
+            inputVariables = cms.vstring("bTagScaleFactor"),
         ),
         cms.PSet (
             name = cms.string("stopCTauScaleFactor"),
