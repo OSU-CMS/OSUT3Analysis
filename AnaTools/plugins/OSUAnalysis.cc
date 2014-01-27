@@ -1909,6 +1909,12 @@ OSUAnalysis::valueLookup (const BNjet* object, string variable, string function,
     } else value = -999;
   }
 
+  else if(variable == "metPt") {  // allow making 2D plots of jet quantities vs. Met  
+    if (const BNmet *met = chosenMET ()) {
+      value = met->pt;  
+    } else value = -999;
+  }
+
   else if(variable == "isLeadingPtJet") {
     double ptMax = -99;  
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
