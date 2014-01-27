@@ -1,4 +1,5 @@
 #include "OSUT3Analysis/AnaTools/plugins/OSUAnalysis.h"
+using namespace std;
 OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   /// Retrieve parameters from the configuration file.
   jets_ (cfg.getParameter<edm::InputTag> ("jets")),
@@ -37,14 +38,15 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   doPileupReweighting_ (cfg.getParameter<bool> ("doPileupReweighting")),
   doTopPtReweighting_  (cfg.getParameter<bool> ("doTopPtReweighting")),
   applyTriggerSF_ (cfg.getParameter<bool> ("applyTriggerSF")),
-  applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   triggerScaleFactor_ (cfg.getParameter<double> ("triggerScaleFactor")),
   trackingScaleFactor_ (cfg.getParameter<double> ("trackingScaleFactor")),
   applyLeptonSF_ (cfg.getParameter<bool> ("applyLeptonSF")),
+  applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
   electronSFShift_ (cfg.getParameter<string> ("electronSFShift")),
   muonSFShift_ (cfg.getParameter<string> ("muonSFShift")),
+  trackSFShift_ (cfg.getParameter<string> ("trackSFShift")),
   printEventInfo_      (cfg.getParameter<bool> ("printEventInfo")),
   printAllTriggers_    (cfg.getParameter<bool> ("printAllTriggers")),
   useTrackCaloRhoCorr_ (cfg.getParameter<bool> ("useTrackCaloRhoCorr")),
@@ -64,6 +66,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if (applyLeptonSF_){
       muonSFWeight_ = new MuonSFWeight (muonSFFile_, muonSF_);
       electronSFWeight_ = new ElectronSFWeight ("53X", electronSFID_, electronSFFile_, electronSF_);
+    }
+    if(applyTrackingSF_) {
+      trackSFWeight_ = new TrackSFWeight ();
     }
     if (applyBtagSF_){
       bTagSFWeight_ = new BtagSFWeight;
@@ -966,9 +971,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   if (!applyTriggerSF_ || datasetType_ != "data") triggerScaleFactor_ = 1.0; //reset the variable to 1 if we're not applying it, so it will take that value in its histogram
   if (applyTriggerSF_ && datasetType_ != "data") globalScaleFactor_ *= triggerScaleFactor_;
 
-  //apply tracking efficiency
-  if (!applyTrackingSF_) trackingScaleFactor_ = 1.0;
-  if (applyTrackingSF_ && datasetType_ != "data") eventScaleFactor_ *= trackingScaleFactor_;
+
 
   //get pile-up event weight
   if (doPileupReweighting_ && datasetType_ != "data") {
@@ -1203,7 +1206,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
     channelScaleFactor_ = 1.0; //this variable holds the product of all SFs calculated separately for each channel
 
-    muonScaleFactor_ = electronScaleFactor_ = bTagScaleFactor_ = 1.0;
+    muonScaleFactor_ = electronScaleFactor_ =  muonTrackScaleFactor_ =  electronTrackScaleFactor_ = bTagScaleFactor_ = 1.0;
+
+
+
 
     if(applyLeptonSF_ && datasetType_ != "data"){
       //only apply SFs if we've cut on this object
@@ -1246,6 +1252,57 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         }
       }
     }
+      
+
+
+  // Track weighting for muons
+
+    if(applyTrackingSF_ && datasetType_ != "data"){
+      //only apply SFs if we've cut on this object
+      if(find(objectsToCut.begin(),objectsToCut.end(),"muons") != objectsToCut.end ()){
+        flagPair muonFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("muons").at(i).size()){
+            muonFlags = cumulativeFlags.at("muons").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
+          if(!muonFlags.at(muonIndex).second) continue;
+          int shiftUpDown = 0;
+          if (trackSFShift_ == "up") shiftUpDown = 1;
+          if (trackSFShift_ == "down") shiftUpDown = -1;
+	  //	  cout << "before applying trackSFWeight muons SF=" << muonTrackScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
+	  muonTrackScaleFactor_ *= trackSFWeight_->at (muons->at(muonIndex).correctedD0,shiftUpDown);
+	  //	  cout << " after applying trackSFWeight" << muonTrackScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
+        }
+      }
+      
+      // Track weighting for electrons
+
+      //only apply SFs if we've cut on this object
+      if(find(objectsToCut.begin(),objectsToCut.end(),"electrons") != objectsToCut.end ()){
+        flagPair electronFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("electrons").at(i).size()){
+            electronFlags = cumulativeFlags.at("electrons").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
+          if(!electronFlags.at(electronIndex).second) continue;
+          int shiftUpDown = 0;
+          if (trackSFShift_ == "up") shiftUpDown = 1;
+          if (trackSFShift_ == "down") shiftUpDown = -1;
+	  electronTrackScaleFactor_ *= trackSFWeight_->at (electrons->at(electronIndex).correctedD0,shiftUpDown);
+	}
+      }
+    }
+
 
     if(applyBtagSF_ && datasetType_ != "data"){
       //only apply SFs if we've cut on this object
@@ -1268,9 +1325,12 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         bTagScaleFactor_ *= bTagSFWeight_->weight( jetSFs, minBtag_);
       }
     }
-
+    
+    
     channelScaleFactor_ *= muonScaleFactor_;
     channelScaleFactor_ *= electronScaleFactor_;
+    channelScaleFactor_ *= muonTrackScaleFactor_;
+    channelScaleFactor_ *= electronTrackScaleFactor_;
     channelScaleFactor_ *= bTagScaleFactor_;
 
 
@@ -2300,6 +2360,11 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
     if(index == -1) value = 24;
     else value = 24 - getPdgIdBinValue(mcparticles->at(index).motherId);
   }
+  else if(variable == "genRecoChargeProduct"){
+    int index = getGenMatchedParticleIndex(object);
+    if(index == -1) value = 2;
+    else value = object->charge * mcparticles->at(index).charge;
+  }
   else if(variable == "genMatchedGrandmotherId"){
     int index = getGenMatchedParticleIndex(object);
     if(index == -1) value = 0;
@@ -2788,6 +2853,11 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
     else value = mcparticles->at(index).id;
   }
 
+  else if(variable == "genRecoChargeProduct"){
+    int index = getGenMatchedParticleIndex(object);
+    if(index == -1) value = 2;
+    else value = object->charge * mcparticles->at(index).charge;
+  }
 
   else if(variable == "genMatchedId"){
     int index = getGenMatchedParticleIndex(object);
@@ -2924,6 +2994,8 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   }
   else if(variable == "muonScaleFactor") value = muonScaleFactor_;
   else if(variable == "electronScaleFactor") value = electronScaleFactor_;
+  else if(variable == "muonTrackScaleFactor") value = muonTrackScaleFactor_;
+  else if(variable == "electronTrackScaleFactor") value = electronTrackScaleFactor_;
   else if(variable == "stopCTauScaleFactor") value = stopCTauScaleFactor_;
   else if(variable == "bTagScaleFactor") value = bTagScaleFactor_;
   else if(variable == "topPtScaleFactor") value = topPtScaleFactor_;
@@ -5154,7 +5226,29 @@ OSUAnalysis::getTrkIsIso (const BNtrack* track1, const BNtrackCollection* trackC
   return 1;
 
 }
-
+// Return the weighting factors for variable bins.
+double 
+OSUAnalysis::getVariableBinsWeights(vector<double> variableBins, double value){
+  vector<double> variableBinWidths;
+  for (unsigned i = 0; i != variableBins.size() - 1; i++){
+        variableBinWidths.push_back(variableBins[i+1] - variableBins[i]);
+ }
+  sort(variableBinWidths.begin(), variableBinWidths.end());
+  double scalingFactor = -999;
+  double num = 1;
+  double den = 1;
+  for (unsigned i = 0; i != variableBins.size() - 1; i++){
+	if (value >= variableBins.at(i) && value < variableBins.at(i+1)){
+              den = (double)(variableBins.at(i+1) - variableBins.at(i));
+              num = (double)variableBinWidths.at(0);
+	      scalingFactor = (double) num/den;
+       }
+  }
+  if (scalingFactor != -999){
+       return scalingFactor;
+     }
+  else {return 1;}
+}
 //calculate the scalar sum of Jet Pt in the event.
 double
 OSUAnalysis::getHt (const BNjetCollection* jetColl){
@@ -5725,7 +5819,10 @@ void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollect
 
     string stringValue = "";
     double value = valueLookup(&inputCollection->at(object), inputVariable, function, stringValue);
-    histo->Fill(value,scaleFactor);
+    if( parameters.variableBinsX.size() != 0)
+    { scaleFactor = scaleFactor*getVariableBinsWeights(parameters.variableBinsX,value);
+    }
+  histo->Fill(value,scaleFactor);
 
     if (printEventInfo_) {
       // Write information about event to screen, for testing purposes.

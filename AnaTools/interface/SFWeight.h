@@ -19,6 +19,19 @@
 using namespace std;
 
 
+
+class TrackSFWeight
+{
+ public:
+  TrackSFWeight () {};
+  ~TrackSFWeight ();
+  double at (const double &, const int &shiftUpDown = 0);
+
+ private:
+  double *trackSFWeight_;
+};
+
+
 class MuonSFWeight
   {
     public:

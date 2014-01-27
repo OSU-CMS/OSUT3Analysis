@@ -1,6 +1,32 @@
 #include "OSUT3Analysis/AnaTools/interface/SFWeight.h"
 
 
+double
+TrackSFWeight::at(const double &correctedD0, const int &shiftUpDown)
+{
+
+  double scaleFactor = 0;
+  double error =0;
+  double crit_value= 0.02; // 0.02 check which variable exoll used
+  if (abs(correctedD0) < crit_value )
+    {
+      scaleFactor = 1;
+      error = 0.1;// check that using den and num histos
+    }
+  else 
+    {
+      scaleFactor = 0.960;
+      error = 0.012;
+    }
+  return scaleFactor + shiftUpDown * error; 
+}
+
+TrackSFWeight::~TrackSFWeight ()
+{
+}
+
+
+
 MuonSFWeight::MuonSFWeight (const string &sfFile, const string &dataOverMC)
 {
   TFile *fin = TFile::Open (sfFile.c_str ());
