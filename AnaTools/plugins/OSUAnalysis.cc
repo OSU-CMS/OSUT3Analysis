@@ -39,7 +39,6 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   doTopPtReweighting_  (cfg.getParameter<bool> ("doTopPtReweighting")),
   applyTriggerSF_ (cfg.getParameter<bool> ("applyTriggerSF")),
   triggerScaleFactor_ (cfg.getParameter<double> ("triggerScaleFactor")),
-  trackingScaleFactor_ (cfg.getParameter<double> ("trackingScaleFactor")),
   applyLeptonSF_ (cfg.getParameter<bool> ("applyLeptonSF")),
   applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
@@ -1255,7 +1254,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
       
 
 
-  // Track weighting for muons
+    // Track weighting for muons
 
     if(applyTrackingSF_ && datasetType_ != "data"){
       //only apply SFs if we've cut on this object
