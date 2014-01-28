@@ -67,18 +67,20 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
     muonSF = cms.string ('Combined_TOT'),
     dataset = cms.string ('TTbar_Lep'),#dummy variable
     datasetType = cms.string ('bgMC'),#dummy variable
+
     applyTriggerSF = cms.bool(False),
     triggerScaleFactor = cms.double(0.9821),#0.9821+0.0173 #ONLY RELEVANT FOR DISPLACED SUSY ANALYSIS
-    applyTrackingSF = cms.bool(True),
+    applyTrackingSF = cms.bool(False),
     doPileupReweighting = cms.bool(True),
     doTopPtReweighting = cms.bool(True),
-    applyLeptonSF = cms.bool(True),  #  multiplies scale factors in the case of multiple leptons
+    applyLeptonSF = cms.bool(False),  #  multiplies scale factors in the case of multiple leptons
     applyBtagSF = cms.bool(False),
     minBtag = cms.int32(1),
     maxBtag = cms.int32(5),
     electronSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1
     muonSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma
     trackSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma                                       
+
     printAllTriggers = cms.bool(False),  # prints all available triggers (for first event only)  
     printEventInfo   = cms.bool(False),  # produces a lot of output, recommend using only with few channels and histograms
     GetPlotsAfterEachCut = cms.bool(False),
