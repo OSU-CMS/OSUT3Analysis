@@ -128,6 +128,7 @@ class OSUAnalysis : public edm::EDProducer
       double getTrkIsIso (const BNtrack* track1);
       double getTrkCaloTotRhoCorr(const BNtrack* track);
       double getTrkDepTrkRp5RhoCorr(const BNtrack* track);
+      double getVariableBinsWeights(vector<double> , double );
       double getTrkDepTrkRp3RhoCorr(const BNtrack* track);
       void WriteDeadEcal();
       void WriteBadCSC();
@@ -198,14 +199,15 @@ class OSUAnalysis : public edm::EDProducer
       bool doPileupReweighting_;
       bool doTopPtReweighting_;
       bool applyTriggerSF_;
-      bool applyTrackingSF_;
       double triggerScaleFactor_;
       double trackingScaleFactor_;
       bool applyLeptonSF_;
+      bool applyTrackingSF_;
       bool applyBtagSF_;
       int  minBtag_;
       string electronSFShift_;
       string muonSFShift_;
+      string trackSFShift_;
       bool printEventInfo_;
       bool printAllTriggers_;
       bool useTrackCaloRhoCorr_;  // to use the calo-based rho correction for the by-hand calculation of the track isolation energy
@@ -268,6 +270,7 @@ class OSUAnalysis : public edm::EDProducer
         string title;
         vector<double> bins;
         vector<double> variableBinsX;
+        vector<double> variableBinsWeightsX;
         vector<double> variableBinsY;
         string inputCollection;
         vector<string> inputVariables;
@@ -322,6 +325,9 @@ class OSUAnalysis : public edm::EDProducer
       double muonScaleFactor_;
       ElectronSFWeight *electronSFWeight_;
       double electronScaleFactor_;
+      TrackSFWeight *trackSFWeight_;
+      double muonTrackScaleFactor_ ;
+      double electronTrackScaleFactor_ ;
       BtagSFWeight *bTagSFWeight_;
       double bTagScaleFactor_;     
 

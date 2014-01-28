@@ -210,6 +210,10 @@ main (int argc, char *argv[])
       else if (opt.count ("signalToBackground"))
         {
           binContent = x / sqrt (x + y);
+	  // Calculate error with standard error propagation:
+	  // F = x / sqrt (x + y)
+	  // errF = sqrt ( (dF/dx)^2 * dx^2 + (dF/dy)^2 * dy^2 )  
+	  // A lot of algebra gives the expression below.  
           binError = 4.0 * y * y * dx * dx + 4 * x * y * dx * dx + x * x * dy * dy + x * x * dx * dx;
           binError /= 4 * (x + y) * (x + y) * (x + y);
           binError = sqrt (binError);
