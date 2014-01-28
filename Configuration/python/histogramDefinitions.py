@@ -1131,7 +1131,7 @@ ElectronMuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronMuonDeltaZ"),
             title = cms.string("Electron-muon #DeltaZ; #DeltaZ"),
-            bins = cms.untracked.vdouble(1000, -20, 20),
+            bins = cms.untracked.vdouble(100, -20, 20),
             inputVariables = cms.vstring("dz"),
         ),
         cms.PSet (
@@ -1732,7 +1732,7 @@ ElectronJetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronJetDistance"),
             title = cms.string("Distance Between Electron Track to Jet Axis; [cm]"),
-            bins = cms.untracked.vdouble(1000,0,10),
+            bins = cms.untracked.vdouble(100,0,10),
             inputVariables = cms.vstring("distance"),
         ),
         cms.PSet (
@@ -1756,7 +1756,7 @@ ElectronJetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronJetDeltaZ"),
             title = cms.string("Electron-jet Z Difference; #Delta(z)"),
-            bins = cms.untracked.vdouble(1000, -20, 20),
+            bins = cms.untracked.vdouble(100, -20, 20),
             inputVariables = cms.vstring("deltaZ"),
         ),
         cms.PSet (
@@ -1895,7 +1895,7 @@ MuonJetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonJetDistance"),
             title = cms.string("Distance Between Muon Track to Jet Axis; [cm]"),
-            bins = cms.untracked.vdouble(1000,0,10),
+            bins = cms.untracked.vdouble(100,0,10),
             inputVariables = cms.vstring("distance"),
         ),
         cms.PSet (
@@ -1913,7 +1913,7 @@ MuonJetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonJetDeltaZ"),
             title = cms.string("Muon-jet Z Difference; #Delta(z)"),
-            bins = cms.untracked.vdouble(1000, -20, 20),
+            bins = cms.untracked.vdouble(100, -20, 20),
             inputVariables = cms.vstring("deltaZ"),
         ),
         cms.PSet (
@@ -2045,7 +2045,7 @@ MuonSecondaryJetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonSecondaryJetDistance"),
             title = cms.string("Distance Between Muon Track to Secondary Jet Axis; [cm]"),
-            bins = cms.untracked.vdouble(1000,0,10),
+            bins = cms.untracked.vdouble(100,0,10),
             inputVariables = cms.vstring("distance"),
         ),
         cms.PSet (
@@ -2189,7 +2189,7 @@ ElectronSecondaryJetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronSecondaryJetDistance"),
             title = cms.string("Distance Between Electron Track to Secondary Jet Axis; [cm]"),
-            bins = cms.untracked.vdouble(1000,0,10),
+            bins = cms.untracked.vdouble(100,0,10),
             inputVariables = cms.vstring("distance"),
         ),
         cms.PSet (
