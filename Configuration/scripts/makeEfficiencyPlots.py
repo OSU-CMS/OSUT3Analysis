@@ -384,14 +384,18 @@ def MakeOneDHist(histogramName):
         plotting_options = "HIST"
 
     for histogram in Histograms:
-        histogram.SetTitle(histoTitle)
-        histogram.Draw(plotting_options)
-        histogram.GetXaxis().SetTitle(xAxisLabel)
-        histogram.GetYaxis().SetTitle(yAxisLabel)
-        histogram.SetMaximum(finalMax)
-        histogram.SetMinimum(yAxisMin)
-        if makeRatioPlots or makeDiffPlots:
-            histogram.GetXaxis().SetLabelSize(0)
+        if histogram.Class().InheritsFrom("TH2"):
+            histogram.SetTitle(histoTitle)
+            histogram.Draw("colz")  
+        else: 
+            histogram.SetTitle(histoTitle)
+            histogram.Draw(plotting_options)
+            histogram.GetXaxis().SetTitle(xAxisLabel)
+            histogram.GetYaxis().SetTitle(yAxisLabel)
+            histogram.SetMaximum(finalMax)
+            histogram.SetMinimum(yAxisMin)
+            if makeRatioPlots or makeDiffPlots:
+                histogram.GetXaxis().SetLabelSize(0)
         if histCounter is 0:
             plotting_options = plotting_options + " SAME"
         histCounter = histCounter + 1
@@ -493,7 +497,7 @@ if arguments.savePDFs:
     os.system("mkdir efficiency_histograms_pdfs")
     
 for key in gDirectory.GetListOfKeys():
-    if re.match ('TH1', key.GetClassName()):  #found a 1D histogram
+    if re.match ('TH1', key.GetClassName()) or re.match ('TH2', key.GetClassName()):  #found a 1D or 2D histogram
         MakeOneDHist(key.GetName())
 
 testFile.Close()
