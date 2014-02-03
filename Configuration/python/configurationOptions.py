@@ -689,6 +689,23 @@ dataset_names = {
 
    ######################################################################################################################
 
+   'DY_50_matching_up'   : "/DYJetsToLL_M-50_matchingup_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'DY_50_matching_down' : "/DYJetsToLL_M-50_matchingdown_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",  
+   'DY_50_scale_up'      : "/DYJetsToLL_M-50_scaleup_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'DY_50_scale_down'    : "/DYJetsToLL_M-50_scaledown_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",    
+
+   'Wjets_matching_up'   : "/WJetsToLNu_matchingup_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'Wjets_matching_down' : "/WJetsToLNu_matchingdown_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",  
+   'Wjets_scale_up'      : "/WJetsToLNu_scaleup_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM",
+   'Wjets_scale_down'    : "/WJetsToLNu_scaledown_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",    
+
+   'TTbar_Inclusive_matching_up'   :  "/TTJets_matchingup_TuneZ2star_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'TTbar_Inclusive_matching_down' :  "/TTJets_matchingdown_TuneZ2star_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'TTbar_Inclusive_scale_up'      :  "/TTJets_scaleup_TuneZ2star_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'TTbar_Inclusive_scale_down'    :  "/TTJets_scaledown_TuneZ2star_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+
+   ######################################################################################################################    
+
     'stop200toBl_1mm'     :  "/stop200ToBottom_1.00mm_8TeV-pythia6_Summer12-START52_V9-v2/ahart-stop200ToBottom_1.00mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v3-e542883f7d1b22c1f30ae55768bc52e5/USER",
     'stop200toBl_10mm'    :  "/stop200ToBottom_10.0mm_8TeV-pythia6_Summer12-START52_V9-v2/ahart-stop200ToBottom_10.0mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v3-e542883f7d1b22c1f30ae55768bc52e5/USER",
     'stop200toBl_100mm'   :  "/stop200ToBottom_100mm_8TeV-pythia6_Summer12-START52_V9-v2/ahart-stop200ToBottom_100mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v3-e542883f7d1b22c1f30ae55768bc52e5/USER",
@@ -914,7 +931,12 @@ nJobs = {
    'ZJetsToNuNu_200to400' : 40,
    'ZJetsToNuNu_400toInf' : 40,
 
-   'DY_50'          : 75,
+   'DY_50'               : 75,
+   'DY_50_matching_up'   : 75,
+   'DY_50_matching_down' : 75,   
+   'DY_50_scale_up'      : 75,
+   'DY_50_scale_down'    : 75,
+   
    'DY_10-50'       : 75,
    'DY_PtZ100'      : 75, 
 
@@ -922,6 +944,10 @@ nJobs = {
    'TTbar_SemiLep'  : 100,
    'TTbar_Lep'      : 100,
    'TTbar_Inclusive': 100,
+   'TTbar_Inclusive_matching_up'   : 100, 
+   'TTbar_Inclusive_matching_down' : 100, 
+   'TTbar_Inclusive_scale_up'      : 100, 
+   'TTbar_Inclusive_scale_down'    : 100, 
 
    'SingleT_s'      : 30, 
    'SingleTbar_s'   : 30, 
@@ -931,6 +957,10 @@ nJobs = {
    'SingleTbar_tW'  : 30, 
 
    'Wjets'          : 200,
+   'Wjets_matching_up'   : 200,
+   'Wjets_matching_down' : 200,
+   'Wjets_scale_up'      : 200,
+   'Wjets_scale_down'    : 200,
    'Wjets_PtW100'   : 200,
    'W0jets'         : 200,
    'W1jets'         : 200,
@@ -1210,6 +1240,10 @@ maxEvents = {
    'ZJetsToNuNu_400toInf' : -1,
    
    'DY_50'          : -1,
+   'DY_50_matching_up'   : -1,
+   'DY_50_matching_down' : -1,   
+   'DY_50_scale_up'      : -1,
+   'DY_50_scale_down'    : -1,
    'DY_10-50'       : -1,
    'DY_PtZ100'      : -1, 
 
@@ -1217,6 +1251,10 @@ maxEvents = {
    'TTbar_SemiLep'  : -1,
    'TTbar_Lep'      : -1,
    'TTbar_Inclusive': -1,
+   'TTbar_Inclusive_matching_up'   : -1, 
+   'TTbar_Inclusive_matching_down' : -1, 
+   'TTbar_Inclusive_scale_up'      : -1, 
+   'TTbar_Inclusive_scale_down'    : -1, 
 
    'SingleT_s'      : -1,
    'SingleTbar_s'   : -1,
@@ -1226,6 +1264,10 @@ maxEvents = {
    'SingleTbar_tW'  : -1,
 
    'Wjets'          : -1,
+   'Wjets_matching_up'   : -1,
+   'Wjets_matching_down' : -1,
+   'Wjets_scale_up'      : -1,
+   'Wjets_scale_down'    : -1,
    'Wjets_PtW100'   : -1,
    'W0jets'         : -1,
    'W1jets'         : -1,
@@ -1530,6 +1572,10 @@ types = {
    'TTbar_SemiLep'  : "bgMC",
    'TTbar_Lep'      : "bgMC",
    'TTbar_Inclusive': "bgMC",
+   'TTbar_Inclusive_matching_up'   : "bgMC", 
+   'TTbar_Inclusive_matching_down' : "bgMC", 
+   'TTbar_Inclusive_scale_up'      : "bgMC", 
+   'TTbar_Inclusive_scale_down'    : "bgMC", 
 
    'SingleTop'      : "bgMC",
    'SingleT_s'      : "bgMC",
@@ -1541,10 +1587,18 @@ types = {
 
    'DY'             : "bgMC",
    'DY_50'          : "bgMC",
+   'DY_50_matching_up'   : "bgMC",
+   'DY_50_matching_down' : "bgMC",   
+   'DY_50_scale_up'      : "bgMC",
+   'DY_50_scale_down'    : "bgMC",
    'DY_10-50'       : "bgMC",
    'DY_PtZ100'      : "bgMC",
 
    'Wjets'          : "bgMC",
+   'Wjets_matching_up'   : "bgMC",
+   'Wjets_matching_down' : "bgMC",
+   'Wjets_scale_up'      : "bgMC",
+   'Wjets_scale_down'    : "bgMC",
    'WjetsHighPt'    : "bgMC",
    'Wjets_PtW100'   : "bgMC",
    'W0jets'         : "bgMC",
@@ -1886,6 +1940,10 @@ colors = {
    'TTbar_SemiLep'     : 872,
    'TTbar_Lep'         : 873,
    'TTbar_Inclusive'   : 872,
+   'TTbar_Inclusive_matching_up'   : 872, 
+   'TTbar_Inclusive_matching_down' : 872, 
+   'TTbar_Inclusive_scale_up'      : 872, 
+   'TTbar_Inclusive_scale_down'    : 872, 
 
    'SingleTop'         : 607,
    'SingleT_s'         : 905,
@@ -1896,6 +1954,10 @@ colors = {
    'SingleTbar_tW'     : 910, 
 
    'Wjets'             : 852,
+   'Wjets_matching_up'   : 852,
+   'Wjets_matching_down' : 852,
+   'Wjets_scale_up'      : 852,
+   'Wjets_scale_down'    : 852,
    'WjetsHighPt'       : 852,
    'Wjets_PtW100'      : 852,
    'WNjets'            : 852,
@@ -1920,6 +1982,10 @@ colors = {
 
    'DY'                : 410,
    'DY_50'             : 410,
+   'DY_50_matching_up'   : 410,
+   'DY_50_matching_down' : 410,   
+   'DY_50_scale_up'      : 410,
+   'DY_50_scale_down'    : 410,
    'DY_10-50'          : 410,
    'DY_PtZ100'         : 410, 
    'DYToEE_20'         : 407,
@@ -2253,6 +2319,10 @@ labels = {
    'TTbar_SemiLep' : "t#bar{t} (semi-leptonic)",
    'TTbar_Lep'     : "t#bar{t} (leptonic)",
    'TTbar_Inclusive': "t#bar{t}",
+   'TTbar_Inclusive_matching_up'   : "t#bar{t} - matching up", 
+   'TTbar_Inclusive_matching_down' : "t#bar{t} - matching down", 
+   'TTbar_Inclusive_scale_up'      : "t#bar{t} - scale up", 
+   'TTbar_Inclusive_scale_down'    : "t#bar{t} - scale down",
 
    'SingleTop'         : "single top",
    'SingleT_s'         : "t (s-channel)",
@@ -2264,6 +2334,11 @@ labels = {
 
    'DY'             : "Z#rightarrowll",
    'DY_50'          : "Z#rightarrowll M(50)",
+   'DY_50_matching_up'   : "Z#rightarrowll M(50) - matching up",
+   'DY_50_matching_down' : "Z#rightarrowll M(50) - matching down",   
+   'DY_50_scale_up'      : "Z#rightarrowll M(50) - scale up",
+   'DY_50_scale_down'    : "Z#rightarrowll M(50) - scale down",
+
    'DY_10-50'       : "Z#rightarrowll M(10-50)",
    'DY_PtZ100'      : "Z#rightarrowll (Z_{p_{T}} 100 GeV)",
    'DYToEE_20'      : "Z#rightarrowee",
@@ -2272,6 +2347,10 @@ labels = {
    'DYToBB_50'      : "Z#rightarrowbb",
 
    'Wjets'          : "W#rightarrowl#nu",
+   'Wjets_matching_up'   : "W#rightarrowl#nu - matching up",
+   'Wjets_matching_down' : "W#rightarrowl#nu - matching down",
+   'Wjets_scale_up'      : "W#rightarrowl#nu - scale up",
+   'Wjets_scale_down'    : "W#rightarrowl#nu - scale down",
    'WjetsHighPt'    : "W#rightarrowl#nu (W_{p_{T}} 100 GeV)",
    'Wjets_PtW100'   : "W#rightarrowl#nu (high p_{T})",
    'WNjets'         : "W#rightarrowl#nu",
