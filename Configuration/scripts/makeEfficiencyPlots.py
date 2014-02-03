@@ -20,7 +20,7 @@ parser = set_commandline_arguments(parser)
 parser.remove_option("-c")
 parser.remove_option("-e")
 parser.remove_option("-n")
-parser.remove_option("--2D")
+#parser.remove_option("--2D")
 parser.remove_option("-y")
 
 parser.add_option("-f", "--fancy", action="store_true", dest="makeFancy", default=False,
@@ -215,7 +215,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
 ##########################################################################################################################################
 
 
-def MakeOneDHist(histogramName): 
+def MakeOneHist(histogramName): 
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
@@ -265,6 +265,8 @@ def MakeOneDHist(histogramName):
             return 
 
         Histogram = NumHistogramObj.Clone()
+        if Histogram.Class().InheritsFrom("TH2"): 
+            Histogram.SetName(Histogram.GetName() + "__" + source['dataset'])
         Histogram.SetDirectory(0)
         DenHistogram = DenHistogramObj.Clone()
         DenHistogram.SetDirectory(0)
@@ -273,7 +275,7 @@ def MakeOneDHist(histogramName):
         if arguments.rebinFactor:
             RebinFactor = int(arguments.rebinFactor)
             #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
-            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") is -1:
+            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") is -1 and not Histogram.Class().InheritsFrom("TH2"):  
                 Histogram.Rebin(RebinFactor)
                 DenHistogram.Rebin(RebinFactor)
 
@@ -386,7 +388,20 @@ def MakeOneDHist(histogramName):
     for histogram in Histograms:
         if histogram.Class().InheritsFrom("TH2"):
             histogram.SetTitle(histoTitle)
-            histogram.Draw("colz")  
+            histogram.Draw("colz")
+            DatasetName = histogram.GetName()
+            DatasetName = DatasetName[DatasetName.rfind('__')+2:]  # substring starting with the last underscore  
+            DatasetLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,DatasetName,"NDC")
+            DatasetLabel.SetBorderSize(0)
+            DatasetLabel.SetFillColor(0)
+            DatasetLabel.SetFillStyle(0)
+            DatasetLabel.Draw()  
+            outputFile.cd()
+            Canvas.SetName(histogram.GetName())  
+            Canvas.Write()
+            if arguments.makeFancy:
+                HeaderLabel.Draw()
+
         else: 
             histogram.SetTitle(histoTitle)
             histogram.Draw(plotting_options)
@@ -400,8 +415,10 @@ def MakeOneDHist(histogramName):
             plotting_options = plotting_options + " SAME"
         histCounter = histCounter + 1
 
-    #legend coordinates, empirically determined :-)
+    if histogram.Class().InheritsFrom("TH2"):
+        return
 
+    #legend coordinates, empirically determined :-)
     x_left = 0.1677852
     x_right = 0.9647651
     y_min = 0.6765734
@@ -414,15 +431,7 @@ def MakeOneDHist(histogramName):
     Legend.Draw()
 
 
-    # Deciding which text labels to draw and drawing them
-    drawHeaderLabel = False
-
     if arguments.makeFancy:
-        drawHeaderLabel = True
-
-    #now that flags are set, draw the appropriate labels
-
-    if drawHeaderLabel:
         HeaderLabel.Draw()
 
 
@@ -497,8 +506,10 @@ if arguments.savePDFs:
     os.system("mkdir efficiency_histograms_pdfs")
     
 for key in gDirectory.GetListOfKeys():
-    if re.match ('TH1', key.GetClassName()) or re.match ('TH2', key.GetClassName()):  #found a 1D or 2D histogram
-        MakeOneDHist(key.GetName())
+    if re.match ('TH1', key.GetClassName()):  # found a 1D histogram
+        MakeOneHist(key.GetName())
+    if arguments.draw2DPlots and re.match ('TH2', key.GetClassName()):  # make 2D histograms  
+        MakeOneHist(key.GetName())
 
 testFile.Close()
 outputFile.Close()
