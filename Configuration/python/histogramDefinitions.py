@@ -522,7 +522,7 @@ MuonTauHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("MuonTauInvMass"),
             title = cms.string("Muon-Tau Invariant Mass; M_{#mu#tau} [GeV]"),
-            bins = cms.untracked.vdouble(100, 0, 180),
+            bins = cms.untracked.vdouble(90, 0, 180),
             inputVariables = cms.vstring("invMass"),
             ),
         cms.PSet (
@@ -1403,7 +1403,7 @@ DiTauHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("diTauInvMass"),
             title = cms.string("Di-Tau Invariant Mass; M_{#tau#tau} [GeV]"),
-            bins = cms.untracked.vdouble(100, 0, 180),
+            bins = cms.untracked.vdouble(90, 0, 180),
             inputVariables = cms.vstring("invMass"),
             ),
         cms.PSet (
@@ -2595,7 +2595,7 @@ MetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("metPhi"),
             title = cms.string("Phi of Missing E_{T}; Missing E_{T} #phi"),
-            bins = cms.untracked.vdouble(100, 0, 3.15),
+            bins = cms.untracked.vdouble(100, -3.15, 3.15),
             inputVariables = cms.vstring("phi"),
         ),
     )
@@ -2665,7 +2665,7 @@ ElectronTrackHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("ElectronTrackInvMass"),
             title = cms.string("Electron-Track Invariant Mass; M_{e+track} [GeV]"),
-            bins = cms.untracked.vdouble(100, 0, 180),
+            bins = cms.untracked.vdouble(90, 0, 180),
             inputVariables = cms.vstring("invMass"),
             ),
         cms.PSet (
@@ -2703,7 +2703,7 @@ MuonTrackHistograms = cms.PSet(
     cms.PSet (
         name = cms.string("MuonTrackInvMass"),
         title = cms.string("Muon-Track Invariant Mass; M_{#mu+track} [GeV]"),
-        bins = cms.untracked.vdouble(100, 0, 180),
+        bins = cms.untracked.vdouble(90, 0, 180),
         inputVariables = cms.vstring("invMass"),
         ),
     cms.PSet (
@@ -2747,7 +2747,7 @@ TauTrackHistograms = cms.PSet(
     cms.PSet (
         name = cms.string("TauTrackInvMass"),
         title = cms.string("Tau-Track Invariant Mass; M_{#mu+track} [GeV]"),
-        bins = cms.untracked.vdouble(100, 0, 180),
+        bins = cms.untracked.vdouble(90, 0, 180),
         inputVariables = cms.vstring("invMass"),
         ),
     cms.PSet (

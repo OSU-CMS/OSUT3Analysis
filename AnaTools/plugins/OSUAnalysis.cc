@@ -3455,7 +3455,7 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
     } else value = -999;
   }
 
-
+  else if (variable == "rhoCorrRp5")                 value = getRhoCorr(object);
   else if(variable == "caloTotDeltaRp5")            value =  (object->caloHadDeltaRp5 + object->caloEMDeltaRp5);
   else if(variable == "caloTotDeltaRp5ByP")         value = ((object->caloHadDeltaRp5 + object->caloEMDeltaRp5)/pMag);
   else if(variable == "caloTotDeltaRp5RhoCorr")     value = getTrkCaloTotRhoCorr(object);
@@ -3476,6 +3476,7 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
 
   else if(variable == "isIso")                      value = getTrkIsIso(object, tracks.product());
   else if(variable == "isMatchedDeadEcal")          value = getTrkIsMatchedDeadEcal(object);
+    else if(variable == "trkDeadEcalDeltaR")          value = getTrkDeadEcalDeltaR(object);
   else if(variable == "isMatchedBadCSC")            value = getTrkIsMatchedBadCSC  (object);
   else if(variable == "ptErrorByPt")                value = (object->ptError/object->pt);
   else if(variable == "ptError")                    value = object->ptError;
@@ -5038,6 +5039,7 @@ OSUAnalysis::valueLookup (const BNtrack* object1, const BNevent* object2, string
                      object1->pz * object1->pz);
 
   if      (variable == "numPV")                      value = object2->numPV;
+  else if (variable == "rhoCorrRp5")                 value = getRhoCorr(object1);
   else if (variable == "caloTotDeltaRp5")            value =  (object1->caloHadDeltaRp5 + object1->caloEMDeltaRp5);
   else if (variable == "caloTotDeltaRp5ByP")         value = ((object1->caloHadDeltaRp5 + object1->caloEMDeltaRp5)/pMag);
   else if (variable == "caloTotDeltaRp5_RhoCorr")    value = getTrkCaloTotRhoCorr(object1);
@@ -5355,6 +5357,21 @@ OSUAnalysis::getTrkCaloTotRhoCorr(const BNtrack* track) {
 }
 
 double
+OSUAnalysis::getRhoCorr(const BNtrack* track) {
+  // Return the pile-up (rho) corrected isolation energy, i.e., the total calorimeter energy around the candidate track.                                                                                  
+  if (!useTrackCaloRhoCorr_) return -99;
+  // if (!rhokt6CaloJetsHandle_) {                                                                                                                                                                        
+  //   clog << "ERROR [getTrkCaloTotRhoCorr]:  The collection rhokt6CaloJetsHandle is not available!" << endl;                                                                                            
+  //   return -99;                                                                                                                                                                                        
+  // }                                                                                                                                                                                                    
+  double radDeltaRCone = 0.5;
+  double rhoCorr_kt6CaloJets = *rhokt6CaloJetsHandle_ * TMath::Pi() * pow(radDeltaRCone, 2);  // Define effective area as pi*r^2, where r is radius of DeltaR cone.                                       
+  return rhoCorr_kt6CaloJets;
+
+}
+
+
+double
 OSUAnalysis::getTrkDepTrkRp5RhoCorr(const BNtrack* track) {
   // Return the pile-up (rho) corrected isolation energy, i.e., the total calorimeter energy around the candidate track.
   if (!useTrackCaloRhoCorr_) return -99;
@@ -5448,8 +5465,15 @@ OSUAnalysis::WriteBadCSC() {
 //if a track is found within dR<0.05 of a dead Ecal channel value = 1, otherwise value = 0
 int
 OSUAnalysis::getTrkIsMatchedDeadEcal (const BNtrack* track1){
-  double deltaRLowest = 999;
   int value = 0;
+  if (getTrkDeadEcalDeltaR(track1)<0.05) {value = 1;}
+  else {value = 0;}
+  return value;
+}
+
+double
+OSUAnalysis::getTrkDeadEcalDeltaR (const BNtrack* track1){
+  double deltaRLowest = 999;
   if (DeadEcalVec.size() == 0) WriteDeadEcal();
   for(vector<DeadEcal>::const_iterator ecal = DeadEcalVec.begin(); ecal != DeadEcalVec.end(); ++ecal){
     double eta = ecal->etaEcal;
@@ -5457,10 +5481,10 @@ OSUAnalysis::getTrkIsMatchedDeadEcal (const BNtrack* track1){
     double deltaRtemp = deltaR(eta, phi, track1->eta, track1->phi);
     if(deltaRtemp < deltaRLowest) deltaRLowest = deltaRtemp;
   }
-  if (deltaRLowest<0.05) {value = 1;}
-  else {value = 0;}
-  return value;
+  if (verbose_) clog << deltaRLowest << endl;
+  return deltaRLowest;
 }
+
 
 
 // If a track is found within dR<0.25 of a bad CSC chamber, value = 1, otherwise value = 0.  
