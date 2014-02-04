@@ -299,6 +299,18 @@ composite_dataset_definitions = {
         'DYToTauTau_20',
         'Wjets'
     ],
+    'EWK_WNjets' : [
+        'WW',
+        'WZ',
+        'ZZ',
+        'ZG',
+        'WG',
+        'DYToEE_20',
+        'DYToMuMu_20',
+        'DYToTauTau_20',
+        'WNjets'
+    ],
+
     'QCD' : [
         'QCD_0to5',
         'QCD_5to15',
@@ -1623,6 +1635,7 @@ types = {
    'DYToBB_50'      : "bgMC",
 
    'EWK'            : "bgMC",
+   'EWK_WNjets'     : "bgMC",   
 
    'QCD'            : "bgMC",
    'QCD_0to5'       : "bgMC",
@@ -1933,7 +1946,7 @@ colors = {
    'Background'        : 625,
    'Background_NoQCD'  : 625,
 
-   'Top'               : 876,
+   'Top'               : 872,
 
    'TTbar'             : 872,
    'TTbar_Had'         : 871,
@@ -1994,6 +2007,7 @@ colors = {
    'DYToBB_50'         : 419,
 
    'EWK'               : 426,
+   'EWK_WNjets'        : 410,   
 
    'QCD'               : 791,
    'QCDFromData'       : 791,
@@ -2373,10 +2387,12 @@ labels = {
    'ZG'      : "Z#gamma",
    'WG'      : "W#gamma",
 
-   'EWK'      : "electroweak",
+   'EWK'        : "electroweak",
+   'EWK_WNjets' : "EWK",   
 
    'QCD'            : "QCD",
-   'QCDFromData'    : "data-driven QCD",
+#   'QCDFromData'    : "data-driven QCD",
+   'QCDFromData'    : "QCD",   
    'QCD_0to5'       : "QCD Pt 0-5",
    'QCD_5to15'      : "QCD Pt 5-15",
    'QCD_15to30'     : "QCD Pt 15-30",
