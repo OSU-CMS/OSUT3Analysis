@@ -836,7 +836,7 @@ locationExists
   my $location = shift;
 
   $location =~ s/^(.*)\/+$/$1/;
-  my $query = "select id from ntuple where location like '$location%' and id!=$id";
+  my $query = "select id from ntuple where location like '$location' and id!=$id";
   $db->selectdb ("ntuple");
   my $results = $db->query ($query);
   return 1 if $results->numrows ();
