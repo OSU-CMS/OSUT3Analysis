@@ -127,12 +127,14 @@ class OSUAnalysis : public edm::EDProducer
       double getTrkPtRes (const BNtrack* track1);
       double getTrkIsIso (const BNtrack* track1);
       double getTrkCaloTotRhoCorr(const BNtrack* track);
+      double getRhoCorr(const BNtrack* track);
       double getTrkDepTrkRp5RhoCorr(const BNtrack* track);
       double getVariableBinsWeights(vector<double> , double );
       double getTrkDepTrkRp3RhoCorr(const BNtrack* track);
       void WriteDeadEcal();
       void WriteBadCSC();
       int getTrkIsMatchedDeadEcal (const BNtrack* track1);
+      double getTrkDeadEcalDeltaR (const BNtrack* track1);
       int getTrkIsMatchedBadCSC   (const BNtrack* track1);  
 
       //BNskimbits

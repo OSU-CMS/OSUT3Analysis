@@ -11,6 +11,14 @@ from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 import ROOT
 
+print "********************************************************"
+print "********************************************************"
+print "makeEfficiencyPlotsAsymm.py has been deprecated."
+print "Please use makeEfficiencyPlots.py instead."
+print "********************************************************"
+print "********************************************************"
+sys.exit(0)  
+
 
 ### parse the command-line options
 

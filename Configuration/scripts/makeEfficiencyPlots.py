@@ -20,14 +20,15 @@ parser = set_commandline_arguments(parser)
 parser.remove_option("-c")
 parser.remove_option("-e")
 parser.remove_option("-n")
-parser.remove_option("--2D")
+#parser.remove_option("--2D")
 parser.remove_option("-y")
 
 parser.add_option("-f", "--fancy", action="store_true", dest="makeFancy", default=False,
                   help="removes the title and replaces it with the official CMS plot heading")
 parser.add_option("--dontRebinRatio", action="store_true", dest="dontRebinRatio", default=False,
                   help="don't do the rebinning of ratio plots")
-
+parser.add_option("--noTGraph", action="store_true", dest="noTGraph", default=False,
+                  help="don't make a TGraph; just make a TH1")
 parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,		 
                   help="Set logarithmic scale on vertical axis on all plots")	 
 parser.add_option("--ymin", dest="setYMin", 
@@ -44,7 +45,7 @@ parser.add_option("--line-width", dest="line_width",
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
-    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")  # Remove .py from end of config file first.  
 
 
 
@@ -60,9 +61,13 @@ if arguments.makeRatioPlots and arguments.makeDiffPlots:
     print "You have requested both ratio and difference plots.  Will make just ratio plots instead"
     arguments.makeRatioPlots = False
 
+if arguments.makeRatioPlots and not arguments.noTGraph:
+    print "You have requested ratio plots, but this is not supported with TGraph's.  Try again with -r --noTGraph."  
+    arguments.makeRatioPlots = False
 
 
-from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, TH1F, TCanvas, TString, TLegend, TLegendEntry, TIter, TKey, TPaveLabel, gPad
+
+from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, TH1F, TCanvas, TString, TLegend, TLegendEntry, TIter, TKey, TPaveLabel, gPad, TGraphAsymmErrors  
 
 
 ### setting ROOT options so our plots will look awesome and everyone will love us
@@ -169,7 +174,10 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
 
     def groupR(group):
         Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
-        return (Data-MC)/MC if MC else 0
+        if MC!=0:
+            return (Data-MC)/MC
+        else:
+            return 0
     
     def groupErr(group):
         Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
@@ -215,7 +223,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
 ##########################################################################################################################################
 
 
-def MakeOneDHist(histogramName): 
+def MakeOneHist(histogramName): 
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
@@ -265,6 +273,8 @@ def MakeOneDHist(histogramName):
             return 
 
         Histogram = NumHistogramObj.Clone()
+        if Histogram.Class().InheritsFrom("TH2"): 
+            Histogram.SetName(Histogram.GetName() + "__" + source['dataset'])
         Histogram.SetDirectory(0)
         DenHistogram = DenHistogramObj.Clone()
         DenHistogram.SetDirectory(0)
@@ -273,11 +283,10 @@ def MakeOneDHist(histogramName):
         if arguments.rebinFactor:
             RebinFactor = int(arguments.rebinFactor)
             #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
-            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") is -1:
+            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") is -1 and not Histogram.Class().InheritsFrom("TH2"):  
                 Histogram.Rebin(RebinFactor)
                 DenHistogram.Rebin(RebinFactor)
 
-        Histogram.Divide(DenHistogram)
 
         xAxisLabel = Histogram.GetXaxis().GetTitle()
         unitBeginIndex = xAxisLabel.find("[")
@@ -290,6 +299,11 @@ def MakeOneDHist(histogramName):
         if arguments.normalizeToUnitArea:
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
 
+        #Histogram = ROOT.TGraphAsymmErrors(NumHistogramObj,DenHistogramObj)
+        if arguments.noTGraph or Histogram.Class().InheritsFrom("TH2"):
+            Histogram.Divide(DenHistogram)
+        else: 
+            Histogram = TGraphAsymmErrors(Histogram,DenHistogram)
         
         if not arguments.makeFancy:
             fullTitle = Histogram.GetTitle()
@@ -337,10 +351,11 @@ def MakeOneDHist(histogramName):
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
     finalMax = 0
-    for histogram in Histograms:
-        currentMax = histogram.GetMaximum() + histogram.GetBinError(histogram.GetMaximumBin())
-        if(currentMax > finalMax):
-            finalMax = currentMax
+    if arguments.noTGraph:  
+        for histogram in Histograms:
+            currentMax = histogram.GetMaximum() + histogram.GetBinError(histogram.GetMaximumBin())
+            if(currentMax > finalMax):
+                finalMax = currentMax
     finalMax = 1.5*finalMax
     if finalMax is 0:
         finalMax = 1
@@ -384,20 +399,45 @@ def MakeOneDHist(histogramName):
         plotting_options = "HIST"
 
     for histogram in Histograms:
-        histogram.SetTitle(histoTitle)
-        histogram.Draw(plotting_options)
-        histogram.GetXaxis().SetTitle(xAxisLabel)
-        histogram.GetYaxis().SetTitle(yAxisLabel)
-        histogram.SetMaximum(finalMax)
-        histogram.SetMinimum(yAxisMin)
-        if makeRatioPlots or makeDiffPlots:
-            histogram.GetXaxis().SetLabelSize(0)
+        if histogram.Class().InheritsFrom("TH2"):
+            histogram.SetTitle(histoTitle)
+            histogram.Draw("colz")
+            DatasetName = histogram.GetName()
+            DatasetName = DatasetName[DatasetName.rfind('__')+2:]  # substring starting with the last underscore  
+            DatasetLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,DatasetName,"NDC")
+            DatasetLabel.SetBorderSize(0)
+            DatasetLabel.SetFillColor(0)
+            DatasetLabel.SetFillStyle(0)
+            DatasetLabel.Draw()  
+            outputFile.cd()
+            Canvas.SetName(histogram.GetName())  
+            Canvas.Write()
+            if arguments.makeFancy:
+                HeaderLabel.Draw()
+
+        else: 
+            if histogram.InheritsFrom("TGraph") and histCounter==0:
+                plotting_options = "AP"
+            histogram.SetTitle(histoTitle)
+            histogram.Draw(plotting_options)
+            histogram.GetXaxis().SetTitle(xAxisLabel)
+            histogram.GetYaxis().SetTitle(yAxisLabel)
+            if histogram.InheritsFrom("TH1"):
+                histogram.SetMaximum(finalMax)
+                histogram.SetMinimum(yAxisMin)
+            if makeRatioPlots or makeDiffPlots:
+                histogram.GetXaxis().SetLabelSize(0)
         if histCounter is 0:
-            plotting_options = plotting_options + " SAME"
+            if histogram.InheritsFrom("TH1"):
+                plotting_options = plotting_options + " SAME"
+            elif histogram.InheritsFrom("TGraph"):
+                plotting_options = "P"
         histCounter = histCounter + 1
 
-    #legend coordinates, empirically determined :-)
+    if histogram.Class().InheritsFrom("TH2"):
+        return
 
+    #legend coordinates, empirically determined :-)
     x_left = 0.1677852
     x_right = 0.9647651
     y_min = 0.6765734
@@ -410,15 +450,7 @@ def MakeOneDHist(histogramName):
     Legend.Draw()
 
 
-    # Deciding which text labels to draw and drawing them
-    drawHeaderLabel = False
-
     if arguments.makeFancy:
-        drawHeaderLabel = True
-
-    #now that flags are set, draw the appropriate labels
-
-    if drawHeaderLabel:
         HeaderLabel.Draw()
 
 
@@ -482,6 +514,9 @@ if arguments.outputFileName:
 
 outputFile = TFile(outputFileName, "RECREATE")
 
+outputConfigFile = outputFileName.replace(".root", ".py")  
+os.system("cp " + arguments.localConfig + " " + outputConfigFile)  # make a copy of the config file 
+
 first_input = input_sources[0]
 
 #### use the first input file as a template and make efficiency versions of all its histograms
@@ -493,8 +528,10 @@ if arguments.savePDFs:
     os.system("mkdir efficiency_histograms_pdfs")
     
 for key in gDirectory.GetListOfKeys():
-    if re.match ('TH1', key.GetClassName()):  #found a 1D histogram
-        MakeOneDHist(key.GetName())
+    if re.match ('TH1', key.GetClassName()):  # found a 1D histogram
+        MakeOneHist(key.GetName())
+    if arguments.draw2DPlots and re.match ('TH2', key.GetClassName()):  # make 2D histograms  
+        MakeOneHist(key.GetName())
 
 testFile.Close()
 outputFile.Close()

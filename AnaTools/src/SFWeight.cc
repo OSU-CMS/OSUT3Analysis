@@ -7,11 +7,11 @@ TrackSFWeight::at(const double &correctedD0, const int &shiftUpDown)
 
   double scaleFactor = 0;
   double error =0;
-  double crit_value= 0.02; // 0.02 check which variable exoll used
+  double crit_value= 0.02; // For displaced stuff all the different d_0 are almost  equivalent
   if (abs(correctedD0) < crit_value )
     {
       scaleFactor = 1;
-      error = 0.1;// check that using den and num histos
+      error = 0.0; // The prompt region is used by the whole collaboration and very well know and no correction from tracking SF are currently applied so we set the error to be 0
     }
   else 
     {
