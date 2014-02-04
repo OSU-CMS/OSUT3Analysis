@@ -5481,7 +5481,7 @@ OSUAnalysis::getTrkDeadEcalDeltaR (const BNtrack* track1){
     double deltaRtemp = deltaR(eta, phi, track1->eta, track1->phi);
     if(deltaRtemp < deltaRLowest) deltaRLowest = deltaRtemp;
   }
-  std::cout <<deltaRLowest<<std::endl;
+  if (verbose_) clog << deltaRLowest << endl;
   return deltaRLowest;
 }
 
