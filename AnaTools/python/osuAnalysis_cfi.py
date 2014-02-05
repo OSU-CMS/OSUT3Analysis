@@ -69,7 +69,7 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
     datasetType = cms.string ('bgMC'),#dummy variable
 
     applyTriggerSF = cms.bool(False),
-    triggerScaleFactor = cms.double(0.9821),#0.9821+0.0173 #ONLY RELEVANT FOR DISPLACED SUSY ANALYSIS
+    triggerScaleFactor = cms.double(0.985),#0.985+0.004 #ONLY RELEVANT FOR DISPLACED SUSY ANALYSIS                                      
     applyTrackingSF = cms.bool(False),
     doPileupReweighting = cms.bool(True),
     doTopPtReweighting = cms.bool(True),
