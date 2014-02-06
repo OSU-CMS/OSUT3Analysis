@@ -308,9 +308,12 @@ composite_dataset_definitions = {
         'DYToEE_20',
         'DYToMuMu_20',
         'DYToTauTau_20',
-        'WNjets'
+        'W0jets',
+        'W1jets',
+        'W2jets',
+        'W3jets',
+        'W4jets',
     ],
-
     'QCD' : [
         'QCD_0to5',
         'QCD_5to15',
