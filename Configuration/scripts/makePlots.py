@@ -32,6 +32,8 @@ parser.add_option("-S", "--systematics", action="store_true", dest="includeSyste
                   help="also lists the systematic uncertainties")
 parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,		 
                   help="Make significance plots")	 
+parser.add_option("-O", "--addOverUnderFlow", action="store_true", dest="addOverUnderFlow", default=False,		 
+                  help="Add the overflow and underflow entries to the last and first bins")	 
 (arguments, args) = parser.parse_args()
 
 
@@ -475,6 +477,14 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             legLabel = legLabel + " (%.1f)" % yieldHist
 
         Histogram = MakeIntegralHist(Histogram, integrateDir)  
+
+        if (arguments.addOverUnderFlow):
+            nbins = Histogram.GetNbinsX()
+            Histogram.SetBinContent(1,     Histogram.GetBinContent(1)     + Histogram.GetBinContent(0))       # Add underflow 
+            Histogram.SetBinContent(nbins, Histogram.GetBinContent(nbins) + Histogram.GetBinContent(nbins+1)) # Add overflow 
+            # Set the errors to be the sum in quadrature
+            Histogram.SetBinError(1,     math.sqrt(math.pow(Histogram.GetBinError(1),    2) + math.pow(Histogram.GetBinError(0),      2))) 
+            Histogram.SetBinError(nbins, math.sqrt(math.pow(Histogram.GetBinError(nbins),2) + math.pow(Histogram.GetBinError(nbins+1),2)))
 
         if( types[sample] == "bgMC"):
             
