@@ -308,9 +308,12 @@ composite_dataset_definitions = {
         'DYToEE_20',
         'DYToMuMu_20',
         'DYToTauTau_20',
-        'WNjets'
+        'W0jets',
+        'W1jets',
+        'W2jets',
+        'W3jets',
+        'W4jets',
     ],
-
     'QCD' : [
         'QCD_0to5',
         'QCD_5to15',
@@ -746,7 +749,7 @@ dataset_names = {
     'stop400toBl_10mm'    :  "/stop400ToBottom_10.0mm_8TeV-pythia6_Summer12-START52_V9-v2/ahart-stop400ToBottom_10.0mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v3-e542883f7d1b22c1f30ae55768bc52e5/USER",
     'stop400toBl_100mm'   :  "/stop400ToBottom_100mm_8TeV-pythia6_Summer12-START52_V9-v2/ahart-stop400ToBottom_100mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v3-e542883f7d1b22c1f30ae55768bc52e5/USER",
 
-    'stop400toBT_1mm'     :  "/stop400ToBT_1.00mm_8TeV-pythia6_Summer12-START52_V9-v2/lantonel-stop400ToBT_1.00mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v2-3c2c2ea126eaa14f77b77129f5e671ee/USER",
+    'stop400toBT_1mm'     :  "/stop400ToBT_1.00mm_8TeV-pythia6_Summer12-START52_V9-v2/lantonel-stop400ToBT_1.00mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v3-e542883f7d1b22c1f30ae55768bc52e5/USER",
     'stop400toBT_10mm'    :  "/stop400ToBT_10.0mm_8TeV-pythia6_Summer12-START52_V9-v2/lantonel-stop400ToBT_10.0mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v2-3c2c2ea126eaa14f77b77129f5e671ee/USER",
     'stop400toBT_100mm'   :  "/stop400ToBT_100mm_8TeV-pythia6_Summer12-START52_V9-v2/lantonel-stop400ToBT_100mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v2-3c2c2ea126eaa14f77b77129f5e671ee/USER",
 
@@ -779,7 +782,7 @@ dataset_names = {
     'stop600toTnu_100mm'  :  "/stop600ToTop_100mm_8TeV-pythia6_Summer12-START52_V9-v2/ahart-stop600ToTop_100mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v3-e542883f7d1b22c1f30ae55768bc52e5/USER",
 
     'stop700toBl_1mm'     :  "/stop700ToBottom_1.00mm_8TeV-pythia6_Summer12-START52_V9-v2/lantonel-stop700ToBottom_1.00mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v2-3c2c2ea126eaa14f77b77129f5e671ee/USER",
-    'stop700toBl_10mm'    :  "/stop700ToBottom_10.0mm_8TeV-pythia6_Summer12-START52_V9-v2/lantonel-stop700ToBottom_10.0mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v2-3c2c2ea126eaa14f77b77129f5e671ee/USER",
+    'stop700toBl_10mm'    :  "/stop700ToBottom_10.0mm_8TeV-pythia6_Summer12-START52_V9-v2/lantonel-stop700ToBottom_10.0mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v3-e542883f7d1b22c1f30ae55768bc52e5/USER",
     'stop700toBl_100mm'   :  "/stop700ToBottom_100mm_8TeV-pythia6_Summer12-START52_V9-v2/lantonel-stop700ToBottom_100mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v2-3c2c2ea126eaa14f77b77129f5e671ee/USER",
 
     'stop700toBT_1mm'     :  "/stop700ToBT_1.00mm_8TeV-pythia6_Summer12-START52_V9-v2/lantonel-stop700ToBT_1.00mm_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v2-3c2c2ea126eaa14f77b77129f5e671ee/USER",
