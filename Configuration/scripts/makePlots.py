@@ -165,6 +165,12 @@ def getSystematicError(sample,channel):
             error = float(global_systematic_uncertainties[uncertainty]['value']) -1
             errorSquared = errorSquared + error * error
 
+    # add sample-specific uncertainties
+    for uncertainty in unique_systematic_uncertainties:
+        if sample is unique_systematic_uncertainties[uncertainty]['dataset']:
+            error = float(unique_systematic_uncertainties[uncertainty]['value']) -1
+            errorSquared = errorSquared + error * error
+
     # add sample-specific uncertainties from text files
     for uncertainty in external_systematic_uncertainties:
         input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
