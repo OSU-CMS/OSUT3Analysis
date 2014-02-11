@@ -170,7 +170,7 @@ def getSystematicError(sample,channel):
         input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
         if not os.path.exists(input_file_path):
             print "WARNING: didn't find ",input_file_path
-            input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__Blinded_Preselection" + ".txt"
+            input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
             if not os.path.exists(input_file_path):
                 print "   skipping",uncertainty,"systematic for the",channel,"channel"
                 return 0
