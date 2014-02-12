@@ -187,8 +187,8 @@ for sample in processed_datasets:
             sysError_ = 0.0
 
         yields[sample][channel] = formatNumber(str(round_sigfigs(int(yield_),5)).rstrip("0").rstrip("."))
-        stat_errors[sample][channel] = formatNumber(str(round_sigfigs(statError_,3)).rstrip("0").rstrip("."))
-        sys_errors[sample][channel] = formatNumber(str(round_sigfigs(sysError_,3)).rstrip("0").rstrip("."))
+        stat_errors[sample][channel] = formatNumber(str(round_sigfigs(statError_,1)).rstrip("0").rstrip("."))
+        sys_errors[sample][channel] = formatNumber(str(round_sigfigs(sysError_,1)).rstrip("0").rstrip("."))
 
         if types[sample] is "bgMC":
             bgMCSum[channel] = bgMCSum[channel] + yield_
@@ -231,8 +231,8 @@ for channel in channels:
     if bgMCcounter is not 0:
 
         bgMCSum_ = formatNumber(str(round_sigfigs(int(bgMCSum[channel]),5)).rstrip("0").rstrip("."))
-        bgMCStatErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCStatErrSquared[channel]),3)).rstrip("0").rstrip("."))
-        bgMCSysErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCSysErrSquared[channel]),3)).rstrip("0").rstrip("."))
+        bgMCStatErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCStatErrSquared[channel]),1)).rstrip("0").rstrip("."))
+        bgMCSysErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCSysErrSquared[channel]),1)).rstrip("0").rstrip("."))
         line = hLine+"background sum & " + bgMCSum_ + " $\pm$ " + bgMCStatErr_
         if arguments.includeSystematics:
             line = line + " $\pm$ " + bgMCSysErr_
