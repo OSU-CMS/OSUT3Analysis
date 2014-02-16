@@ -466,10 +466,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             xAxisLabelVar = xAxisLabel[0:unitBeginIndex]  
         else:
             yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
-        if integrateDir is "left": 
-            yAxisLabel = "Yield, " + xAxisLabelVar + " < x"  
-        if integrateDir is "right": 
-            yAxisLabel = "Yield, " + xAxisLabelVar + " > x"  
+
+        if arguments.normalizeToUnitArea and arguments.makeSignificancePlots:
+            unit = "Efficiency"
+        else:
+            unit = "Yield"
+        if integrateDir is "left":
+            yAxisLabel = unit + ", " + xAxisLabelVar + "< x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
+        if integrateDir is "right":
+            yAxisLabel = unit + ", " + xAxisLabelVar + "> x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
         
         if not arguments.makeFancy:
             histoTitle = Histogram.GetTitle()
@@ -481,8 +486,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if (arguments.printYields):
             yieldHist = Histogram.Integral()
             legLabel = legLabel + " (%.1f)" % yieldHist
-
-        Histogram = MakeIntegralHist(Histogram, integrateDir)  
 
         if (arguments.addOverUnderFlow):
             nbins = Histogram.GetNbinsX()
@@ -524,6 +527,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Histogram.SetLineWidth(2)
             if(arguments.normalizeToUnitArea and Histogram.Integral() > 0):
                 Histogram.Scale(1./Histogram.Integral())
+
+            Histogram = MakeIntegralHist(Histogram, integrateDir)
                 
             SignalMCLegendEntries.append(legLabel)
             SignalMCHistograms.append(Histogram)
@@ -542,6 +547,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             if(arguments.normalizeToUnitArea and Histogram.Integral() > 0):
                 Histogram.Scale(1./Histogram.Integral())
 
+            Histogram = MakeIntegralHist(Histogram, integrateDir)
+            
             DataLegendEntries.append(legLabel)
             DataHistograms.append(Histogram)
                     
@@ -556,6 +563,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             bgMCHist.Scale(1./backgroundIntegral)
         elif arguments.normalizeToUnitArea and arguments.noStack and bgMCHist.Integral() > 0:
             bgMCHist.Scale(1./bgMCHist.Integral())
+
+        bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
+            
 
         if not arguments.noStack:
             Stack.Add(bgMCHist)
