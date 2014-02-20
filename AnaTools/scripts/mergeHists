@@ -133,7 +133,7 @@ foreach my $file (@$files)
 
                 foreach my $channelCutFlow (keys %{$count})
                   {
-                    my $channel = substr ($channelCutFlow, 0, length ($channelCutFlow) - length ($cutFlow));
+                    my $channel = substr ($channelCutFlow, 0, length ($channelCutFlow) - length ($cutFlow) -1);
                     next if !length ($channel);
                     $skimEventCounts{$arg} = {} if !(defined $skimEventCounts{$arg});
                     $skimEventCounts{$arg}{$channel} += $count->{$channelCutFlow} if defined $skimEventCounts{$arg};
