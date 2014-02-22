@@ -25,6 +25,8 @@ from OSUT3Analysis.Configuration.formattingUtilities import *
 
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
+parser.add_option("-m", "--getMean", action="store_true", dest="getMean", default=False,
+                  help="report the mean for each histogram (upper and lower bounds are ignored)")  
 (arguments, args) = parser.parse_args()  
 
 if arguments.localConfig:
@@ -57,7 +59,11 @@ for hist in input_hists:     # loop over different input hists in config file
 #    print "xloBin = " + str(xloBin) 
 #    print "xhiBin = " + str(xhiBin) 
 
-    print "Integral of " + hist['histName'] + " in " + inputFile.GetName() + " from " + str(xlo) + " to " + str(xhi) + ": " + str (integral) + " +- " + str (intError) 
+    line = "Integral of " + hist['histName'] + " in " + inputFile.GetName() + " from " + str(xlo) + " to " + str(xhi) + ": " + str (integral) + " +- " + str (intError) 
+    if arguments.getMean:
+        line += "; Mean of entire histogram= " + str(histogram.GetMean()) + " +- " + str(histogram.GetMeanError())
+    print line 
+
 
 
 
