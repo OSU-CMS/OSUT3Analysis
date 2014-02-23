@@ -40,3 +40,7 @@ outputFile = TFile(arguments.outfile, "RECREATE")
 hist.Write()
 outputFile.Close()  
 inputFile.Close()
+
+print "Finished writing ratio histogram " + arguments.canName + " to " + arguments.outfile
+
+

@@ -187,10 +187,14 @@ class OSUAnalysis : public edm::EDProducer
       string badCSCFile_;
       string electronSFFile_;
       string muonSFFile_;
+      string triggerMetSFFile_;
+      string trackNMissOutSFFile_;
       string dataPU_;
       string electronSFID_;
       string electronSF_;
       string muonSF_;
+      string triggerMetSF_;
+      string trackNMissOutSF_;
       string dataset_;
       string datasetType_;
       vector<edm::ParameterSet> channels_;
@@ -209,6 +213,8 @@ class OSUAnalysis : public edm::EDProducer
       int  minBtag_;
       string electronSFShift_;
       string muonSFShift_;
+      string triggerMetSFShift_;
+      string trackNMissOutSFShift_;
       string trackSFShift_;
       bool printEventInfo_;
       bool printAllTriggers_;
@@ -332,6 +338,10 @@ class OSUAnalysis : public edm::EDProducer
       double electronTrackScaleFactor_ ;
       BtagSFWeight *bTagSFWeight_;
       double bTagScaleFactor_;     
+      TriggerMetSFWeight *triggerMetSFWeight_;
+      double triggerMetScaleFactor_;
+      TrackNMissOutSFWeight *trackNMissOutSFWeight_;
+      double trackNMissOutScaleFactor_;
 
       double topPtScaleFactor_;
 
