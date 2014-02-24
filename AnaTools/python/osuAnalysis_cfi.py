@@ -50,46 +50,53 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
     triggers = cms.InputTag('BNproducer','HLT'),
     trigobjs = cms.InputTag('BNproducer','HLT'),
 
+    dataset = cms.string ('TTbar_Lep'),#dummy variable
+    datasetType = cms.string ('bgMC'),#dummy variable
     channels = cms.VPSet (),
     histogramSets = cms.VPSet (),
     useEDMFormat = cms.bool (False),
     treeBranchSets = cms.VPSet (),  
 #    treeBranchSets = AllTreeBranchSets,
 
-    puFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/pu.root'),
     deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/DeadEcalChannels.txt'),
     badCSCFile   = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/BadCSCChambers.txt'),  
-    electronSFFile = cms.string (''), # if blank, will attempt to use the SFs hard-coded in SFWeight.cc
-    muonSFFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/MuonSF_ID_ISO_2D.root'),
-    dataPU = cms.string ('PU_data_190456_208686_69300xSec'),
-    electronSFID = cms.string ('mvaTrig0p9'), # ID label for using hard-coded SFs in SFWeight.cc
-    electronSF = cms.string (''), # histogram name if using SFs from a histogram
-    muonSF = cms.string ('Combined_TOT'),
-    dataset = cms.string ('TTbar_Lep'),#dummy variable
-    datasetType = cms.string ('bgMC'),#dummy variable
-
-    applyTriggerSF = cms.bool(False),
-    triggerScaleFactor = cms.double(0.985),#0.985+0.004 #ONLY RELEVANT FOR DISPLACED SUSY ANALYSIS                                      
-    applyTrackingSF = cms.bool(False),
-    doPileupReweighting = cms.bool(True),
-    doTopPtReweighting = cms.bool(True),
-    applyLeptonSF = cms.bool(False),  #  multiplies scale factors in the case of multiple leptons
-    applyBtagSF = cms.bool(False),
-    minBtag = cms.int32(1),
-    maxBtag = cms.int32(5),
-    electronSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1
-    muonSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma
-    trackSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma                                       
-
     printAllTriggers = cms.bool(False),  # prints all available triggers (for first event only)  
     printEventInfo   = cms.bool(False),  # produces a lot of output, recommend using only with few channels and histograms
     GetPlotsAfterEachCut = cms.bool(False),
     useTrackCaloRhoCorr = cms.bool(False),  # Only needed for PU correction of BNtrack isolation energy
     stopCTau = cms.vdouble(100.0, 50.0),  # Original and target stop <c*tau> values; only used if
                                           # datasetType_ == "signalMC" and dataset_ matches "stop.*to.*_.*mm.*"
-
     plotAllObjectsInPassingEvents = cms.bool(False),
     verbose = cms.int32(0),
+
+# Parameters for event weighting, including systematics  
+    doPileupReweighting = cms.bool(True),
+    puFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/pu.root'),
+    dataPU = cms.string ('PU_data_190456_208686_69300xSec'),
+    applyLeptonSF = cms.bool(False),  #  multiplies scale factors in the case of multiple leptons
+    electronSFFile = cms.string (''), # if blank, will attempt to use the SFs hard-coded in SFWeight.cc
+    electronSFID = cms.string ('mvaTrig0p9'), # ID label for using hard-coded SFs in SFWeight.cc
+    electronSF = cms.string (''), # histogram name if using SFs from a histogram
+    electronSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1
+    muonSFFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/MuonSF_ID_ISO_2D.root'),
+    muonSF = cms.string ('Combined_TOT'),
+    muonSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma
+    triggerMetSFFile = cms.string (''),  # filename 
+    triggerMetSF = cms.string (''),      # histogram name 
+    triggerMetSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma
+    trackNMissOutSFFile = cms.string (''),  # filename 
+    trackNMissOutSF = cms.string (''),      # histogram name 
+    trackNMissOutSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma
+    applyTriggerSF = cms.bool(False),
+    triggerScaleFactor = cms.double(0.985),#0.985+0.004 #ONLY RELEVANT FOR DISPLACED SUSY ANALYSIS                                      
+    applyTrackingSF = cms.bool(False),
+    trackSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma                                       
+    doTopPtReweighting = cms.bool(True),
+    applyBtagSF = cms.bool(False),
+    minBtag = cms.int32(1),
+    maxBtag = cms.int32(5),
+
+
 
 )
 

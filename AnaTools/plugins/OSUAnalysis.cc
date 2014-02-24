@@ -24,10 +24,14 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   badCSCFile_ (cfg.getParameter<string> ("badCSCFile")),
   electronSFFile_ (cfg.getParameter<string> ("electronSFFile")),
   muonSFFile_ (cfg.getParameter<string> ("muonSFFile")),
+  triggerMetSFFile_ (cfg.getParameter<string> ("triggerMetSFFile")),
+  trackNMissOutSFFile_ (cfg.getParameter<string> ("trackNMissOutSFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
   electronSFID_ (cfg.getParameter<string> ("electronSFID")),
   electronSF_ (cfg.getParameter<string> ("electronSF")),
   muonSF_ (cfg.getParameter<string> ("muonSF")),
+  triggerMetSF_ (cfg.getParameter<string> ("triggerMetSF")),
+  trackNMissOutSF_ (cfg.getParameter<string> ("trackNMissOutSF")),
   dataset_ (cfg.getParameter<string> ("dataset")),
   datasetType_ (cfg.getParameter<string> ("datasetType")),
   channels_  (cfg.getParameter<vector<edm::ParameterSet> >("channels")),
@@ -45,6 +49,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   minBtag_ (cfg.getParameter<int> ("minBtag")),
   electronSFShift_ (cfg.getParameter<string> ("electronSFShift")),
   muonSFShift_ (cfg.getParameter<string> ("muonSFShift")),
+  triggerMetSFShift_ (cfg.getParameter<string> ("triggerMetSFShift")),
+  trackNMissOutSFShift_ (cfg.getParameter<string> ("trackNMissOutSFShift")),
   trackSFShift_ (cfg.getParameter<string> ("trackSFShift")),
   printEventInfo_      (cfg.getParameter<bool> ("printEventInfo")),
   printAllTriggers_    (cfg.getParameter<bool> ("printAllTriggers")),
@@ -59,7 +65,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 
   TH1::SetDefaultSumw2();
 
-  //create pile-up reweighting object, if necessary
+  //create reweighting objects, if necessary
   if(datasetType_ != "data") {
     if(doPileupReweighting_) puWeight_ = new PUWeight (puFile_, dataPU_, dataset_);
     if (applyLeptonSF_){
@@ -71,6 +77,12 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     }
     if (applyBtagSF_){
       bTagSFWeight_ = new BtagSFWeight;
+    }
+    if (triggerMetSFFile_ != "" ){
+      triggerMetSFWeight_ = new TriggerMetSFWeight(triggerMetSFFile_, triggerMetSF_);  
+    }
+    if (trackNMissOutSFFile_ != "" ){
+      trackNMissOutSFWeight_ = new TrackNMissOutSFWeight(trackNMissOutSFFile_, trackNMissOutSF_);  
     }
   }
   if (datasetType_ == "signalMC" && regex_match (dataset_, regex ("stop.*to.*_.*mm.*")))
@@ -1210,7 +1222,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     channelScaleFactor_ = 1.0; //this variable holds the product of all SFs calculated separately for each channel
 
     muonScaleFactor_ = electronScaleFactor_ =  muonTrackScaleFactor_ =  electronTrackScaleFactor_ = bTagScaleFactor_ = 1.0;
-
+    triggerMetScaleFactor_    = 1.0;  
+    trackNMissOutScaleFactor_ = 1.0;  
 
 
 
@@ -1328,13 +1341,44 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         bTagScaleFactor_ *= bTagSFWeight_->weight( jetSFs, minBtag_);
       }
     }
-    
-    
+
+    if(triggerMetSFFile_ != "" && datasetType_ != "data"){
+      int shiftUpDown = 0;
+      if (triggerMetSFShift_ == "up")   shiftUpDown =  1; 
+      if (triggerMetSFShift_ == "down") shiftUpDown = -1; 
+      if (const BNmet *met = chosenMET ()) { 
+	triggerMetScaleFactor_ *= triggerMetSFWeight_->at (met->pt, shiftUpDown);  
+      }
+    }
+
+    if(trackNMissOutSFFile_ != "" && datasetType_ != "data"){
+      if(find(objectsToCut.begin(),objectsToCut.end(),"tracks") != objectsToCut.end ()){
+        flagPair trkFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("tracks").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("tracks").at(i).size()){
+            trkFlags = cumulativeFlags.at("tracks").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint trkIndex = 0; trkIndex != trkFlags.size(); trkIndex++){
+          if(!trkFlags.at(trkIndex).second) continue;
+          int shiftUpDown = 0;
+          if (trackNMissOutSFShift_ == "up")   shiftUpDown =  1; 
+          if (trackNMissOutSFShift_ == "down") shiftUpDown = -1; 
+	  trackNMissOutScaleFactor_ *= trackNMissOutSFWeight_->at (tracks->at(trkIndex).nHitsMissingOuter, shiftUpDown);
+	}
+      }
+    }
+        
     channelScaleFactor_ *= muonScaleFactor_;
     channelScaleFactor_ *= electronScaleFactor_;
     channelScaleFactor_ *= muonTrackScaleFactor_;
     channelScaleFactor_ *= electronTrackScaleFactor_;
     channelScaleFactor_ *= bTagScaleFactor_;
+    channelScaleFactor_ *= triggerMetScaleFactor_;
+    channelScaleFactor_ *= trackNMissOutScaleFactor_;
 
 
     //calculate the total scale factor for the event and fill the cutflow for each channel
@@ -1346,6 +1390,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                          << " muonScaleFactor_ = " << muonScaleFactor_
                          << ", electronScaleFactor_ = " << electronScaleFactor_
                          << ", bTagScaleFactor_ = " << bTagScaleFactor_
+                         << ", triggerMetScaleFactor_ = " << triggerMetScaleFactor_
+                         << ", trackNMissOutScaleFactor_ = " << trackNMissOutScaleFactor_
                          << ", total scale factor = " << eventScaleFactor_
                          << endl;
 
@@ -3005,6 +3051,8 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "bTagScaleFactor") value = bTagScaleFactor_;
   else if(variable == "topPtScaleFactor") value = topPtScaleFactor_;
   else if(variable == "triggerScaleFactor") value = triggerScaleFactor_;
+  else if(variable == "triggerMetScaleFactor") value = triggerMetScaleFactor_;
+  else if(variable == "trackNMissOutScaleFactor") value = trackNMissOutScaleFactor_;
   else if(variable == "globalScaleFactor") value = globalScaleFactor_;
   else if(variable == "channelScaleFactor") value = channelScaleFactor_;
   else if(variable == "eventScaleFactor") value = eventScaleFactor_;
