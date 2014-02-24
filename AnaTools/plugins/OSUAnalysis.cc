@@ -1,5 +1,7 @@
 #include "OSUT3Analysis/AnaTools/plugins/OSUAnalysis.h"
+#include "LHAPDF/LHAPDF.h"    
 using namespace std;
+
 OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   /// Retrieve parameters from the configuration file.
   jets_ (cfg.getParameter<edm::InputTag> ("jets")),
@@ -47,6 +49,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
+  calcPdfWeights_ (cfg.getParameter<bool> ("calcPdfWeights")),  
+  pdfSet_ (cfg.getParameter<string> ("pdfSet")),  
+  pdfSetFlag_ (cfg.getParameter<int> ("pdfSetFlag")),  
   electronSFShift_ (cfg.getParameter<string> ("electronSFShift")),
   muonSFShift_ (cfg.getParameter<string> ("muonSFShift")),
   triggerMetSFShift_ (cfg.getParameter<string> ("triggerMetSFShift")),
@@ -65,7 +70,48 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 
   TH1::SetDefaultSumw2();
 
-  //create reweighting objects, if necessary
+  //create reweighting objects, if necessary 
+
+  if (calcPdfWeights_) {
+    LHAPDF::initPDFSet(pdfSetFlag_, pdfSet_.c_str()); 
+    
+    // PDFsets tried:  
+    //LHAPDF::initPDFSet(1, "cteq66.LHgrid"); 
+    //LHAPDF::initPDFSet(1, "CT10.LHgrid"); 
+    //LHAPDF::initPDFSet(1, "cteq6ll.LHpdf"); 
+    //LHAPDF::initPDFSet(2, "cteq66alphas.LHgrid");
+    //LHAPDF::initPDFSet(1, "MSTW2008nlo68cl.LHgrid");
+    //LHAPDF::initPDFSet(2, "MSTW2008nlo68cl_asmz+68cl.LHgrid");
+    //LHAPDF::initPDFSet(3, "MSTW2008nlo68cl_asmz-68cl.LHgrid");
+    //LHAPDF::initPDFSet(1,"NNPDF20_100.LHgrid");  //This is the central with as=0.119 
+    //LHAPDF::initPDFSet(6,"NNPDF20_as_0116_100.LHgrid"); //Need to fix max allowed sets 
+    //LHAPDF::initPDFSet(4,"NNPDF20_as_0117_100.LHgrid");
+    //LHAPDF::initPDFSet(2,"NNPDF20_as_0118_100.LHgrid");
+    //LHAPDF::initPDFSet(3,"NNPDF20_as_0120_100.LHgrid");
+    //LHAPDF::initPDFSet(5,"NNPDF20_as_0121_100.LHgrid");
+    //LHAPDF::initPDFSet(7,"NNPDF20_as_0122_100.LHgrid");
+    
+    ///Initialize PDF study counters
+    passedSF=0.0;
+    allSF=0.0;
+    allNo=0;
+    passedNo=0;
+    
+    passedSF2=0.0;
+    allSF2=0.0;
+    
+    passedCentralW2=0.0;
+    allCentralW2=0.0;
+    
+    
+    //    clog << "Debug:  LHAPDF::numberPDF() = " << LHAPDF::numberPDF() << endl;  
+    for(int i=0;i<=LHAPDF::numberPDF();i++){
+      allSums.push_back(0.0);
+      passedSums.push_back(0.0);
+    }
+  }  
+
+
   if(datasetType_ != "data") {
     if(doPileupReweighting_) puWeight_ = new PUWeight (puFile_, dataPU_, dataset_);
     if (applyLeptonSF_){
@@ -858,6 +904,19 @@ OSUAnalysis::~OSUAnalysis ()
 
   if (printEventInfo_ && findEventsLog) findEventsLog->close();
 
+
+  if (calcPdfWeights_) {
+    ///PRINT HERE PDF RESULTS 
+    //Put "all" and "passed" numbers in pairs for easy manipulation 
+    cout << "XXX "<<allNo<<" "<<passedNo<<" "<<allSF<<" "<<passedSF<<" "<<allSF2<<" "<<passedSF2<<" "<<allCentralW2<<" "<<passedCentralW2;
+    // allSums and passedSums size should be the same so use either 
+    //    cout << endl << "Debug: passedSums.size() = " << passedSums.size() << endl;  
+    for(uint i=0;i<passedSums.size();i++){
+      cout <<" "<<allSums[i]<<" "<<passedSums[i];
+    }
+    cout << endl;
+  }
+
   clog << "=============================================" << endl;
   clog << "Successfully completed OSUAnalysis." << endl;
   clog << "=============================================" << endl;
@@ -1406,6 +1465,33 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
     }
 
+    if(calcPdfWeights_){
+      //Calculate weights every time 
+      std::vector<double> weights = getPdfWeights();
+      allNo++;
+      allSF += eventScaleFactor_;
+      allSF2 +=eventScaleFactor_*eventScaleFactor_;
+      //add for all events                                                                                                                                                                                
+      for(uint i=0; i<weights.size();i++){
+        allSums[i]+=weights[i]*eventScaleFactor_;
+      }
+
+
+      allCentralW2+=weights[0]*eventScaleFactor_*weights[0]*eventScaleFactor_;
+
+      if(eventPassedAllCuts) {
+        //add weights for events that pass                                                                                                                                                                
+        passedNo++;
+        passedSF += eventScaleFactor_;
+        passedSF2 += eventScaleFactor_*eventScaleFactor_;
+        passedCentralW2+=weights[0]*eventScaleFactor_*weights[0]*eventScaleFactor_;
+
+        for(uint i=0; i< weights.size();i++){
+          passedSums[i]+=weights[i]*eventScaleFactor_;
+
+        }
+      }//Event passed all cuts                                                                                                                                                                            
+    }//Calc pdf weights                                                                                                                                                                                   
 
     //filling histograms
     for(uint currentCut = 0; currentCut != oneDHists_.at(currentChannelIndex).size(); currentCut++){//loop over all the cuts in each channel; if GetPlotsAfterEachCut_ is false, only the last cut will be used.
@@ -6483,5 +6569,43 @@ OSUAnalysis::getTopPtWeight()
   return result;
 
 }
+
+
+
+std::vector<double> OSUAnalysis::getPdfWeights()
+{
+  double x1 = events->at(0).x1;
+  double x2 = events->at(0).x2;
+  double q = events->at(0).qScale;
+  double id1 = events->at(0).id1;
+  double id2 = events->at(0).id2;
+
+  std::vector<double> pdf_weights;
+
+  //for CTEQ6L1 xPDF is ONLY PDF so we multiply with x1       
+  //get weight from event //NOTE: EVNET WEIGHT DOES NOT HAVE X1 x2 contrary to what it says    
+  double xpdf1 = (events->at(0).xPDF1)*x1;
+  double xpdf2 = (events->at(0).xPDF2)*x2;
+  double w0 = xpdf1 * xpdf2;
+
+  const int NumberReplicas = LHAPDF::numberPDF();
+
+  //  std::cout<<"DEBUG: event xPDF: "<<xpdf1<<" "<<xpdf2<< " x1: " << x1 <<  " x2: " << x2 <<  " id1: " <<id1<< " id2: " << id2 << " q: " << q <<" member PDFs: " << endl; 
+  //Store nominal as well     
+  for(int i=0; i <=NumberReplicas; ++i){
+    LHAPDF::usePDFMember(1,i);
+    double xpdf1_new = LHAPDF::xfx(1, x1, q, id1);
+    double xpdf2_new = LHAPDF::xfx(1, x2, q, id2);  //central weight is 1.0    
+
+    //    std::cout<<xpdf1_new <<" "<<xpdf2_new<<" ";   
+    double weight = xpdf1_new * xpdf2_new / w0;
+    pdf_weights.push_back(weight);
+  }
+
+  //  std::cout<<std::endl;  
+
+  return pdf_weights;
+}
+
 
 DEFINE_FWK_MODULE(OSUAnalysis);

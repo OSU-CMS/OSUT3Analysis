@@ -211,6 +211,9 @@ class OSUAnalysis : public edm::EDProducer
       bool applyTrackingSF_;
       bool applyBtagSF_;
       int  minBtag_;
+      bool calcPdfWeights_;
+      string pdfSet_;  
+      int    pdfSetFlag_;  
       string electronSFShift_;
       string muonSFShift_;
       string triggerMetSFShift_;
@@ -387,6 +390,17 @@ class OSUAnalysis : public edm::EDProducer
       pair<const BNelectron *, const BNelectron*> leadElectronPair ();
 
       double getTopPtWeight();
+
+      // for PDF weights:    
+      std::vector<double>  getPdfWeights();   
+      int allNo;
+      int passedNo;
+      std::vector<double> allSums;
+      std::vector<double> passedSums;
+      double allSF,allSF2;
+      double passedSF,passedSF2;
+      double passedCentralW2,allCentralW2;
+
   };
 
 #endif

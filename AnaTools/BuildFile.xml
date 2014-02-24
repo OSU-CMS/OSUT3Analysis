@@ -6,6 +6,7 @@
 <use   name="FWCore/ServiceRegistry"/>
 <use   name="DataFormats/Common"/>
 <use   name="CommonTools/UtilAlgos"/>
+<use   name="lhapdf"/>            
 <export>
   <lib   name="1"/>
 </export>

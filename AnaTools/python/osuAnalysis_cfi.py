@@ -95,8 +95,9 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
     applyBtagSF = cms.bool(False),
     minBtag = cms.int32(1),
     maxBtag = cms.int32(5),
-
-
+    calcPdfWeights = cms.bool(False),      # If setting this to true, recompile with: src> touch OSUT3Analysis/AnaTools/plugins/OSUAnalysis.cc; scram setup lhapdffull; scram b -j 9 
+    pdfSet = cms.string('cteq66.LHgrid'),  # only used if calcPdfWeights is True
+    pdfSetFlag = cms.int32(1),             # only used if calcPdfWeights is True
 
 )
 
