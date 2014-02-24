@@ -107,6 +107,7 @@ class OSUAnalysis : public edm::EDProducer
       double valueLookup (const BNmcparticle* object, string variable, string function, string &stringValue);
 
       double valueLookup (const BNelectron* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
+      double valueLookup (const BNmuon* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
       double valueLookup (const BNtrack* object1,   const BNmcparticle* object2, string variable, string function, string &stringValue);  
 
 
