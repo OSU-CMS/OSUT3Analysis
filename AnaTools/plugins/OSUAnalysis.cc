@@ -3173,6 +3173,26 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
     pt0 += pt1;
     value = pt0.Mod ();
   }
+  else if(variable == "totalMcparticlePt") {
+    TVector2 ptTot(0.0, 0.0); 
+
+    if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
+      flagPair mcFlags;
+      //get the last valid flags in the flag map
+      for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
+	if (cumulativeFlags.at("mcparticles").at(i).size()){
+	  mcFlags = cumulativeFlags.at("mcparticles").at(i);
+	  break;
+	}
+      }
+      for (uint mcIndex = 0; mcIndex != mcFlags.size(); mcIndex++) {
+	if (!mcFlags.at(mcIndex).second) continue;
+	TVector2 pt(mcparticles->at(mcIndex).px, mcparticles->at(mcIndex).py);
+	ptTot = pt + ptTot;  
+      }
+    }
+    value = ptTot.Mod();
+  } 
   else{clog << "WARNING: invalid event variable '" << variable << "'\n"; value = -999;}
 
   value = applyFunction(function, value);
