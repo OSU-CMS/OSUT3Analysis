@@ -24,6 +24,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   badCSCFile_ (cfg.getParameter<string> ("badCSCFile")),
   electronSFFile_ (cfg.getParameter<string> ("electronSFFile")),
   muonSFFile_ (cfg.getParameter<string> ("muonSFFile")),
+  jESJERCorr_(cfg.getParameter<string> ("jESJERCorr")),
+  flagJESJERCorr_(cfg.getParameter<bool> ("flagJESJERCorr")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
   electronSFID_ (cfg.getParameter<string> ("electronSFID")),
   electronSF_ (cfg.getParameter<string> ("electronSF")),
@@ -1819,15 +1821,20 @@ string OSUAnalysis::getObjToGet(string obj) {
 
 }
 
-
 //!jet valueLookup
 double
 OSUAnalysis::valueLookup (const BNjet* object, string variable, string function, string &stringValue){
 
+  BNjet jetCorr;
+  if (flagJESJERCorr_) {
+    jetCorr = getCorrectedJet(*object, jESJERCorr_);  
+    object = &jetCorr;  
+  }
+
   double value = 0.0;
   if(variable == "energy") value = object->energy;
   else if(variable == "et") value = object->et;
-  else if(variable == "pt") value = object->pt;
+  else if(variable == "pt") value = object->pt; 
   else if(variable == "px") value = object->px;
   else if(variable == "py") value = object->py;
   else if(variable == "pz") value = object->pz;
@@ -5504,6 +5511,87 @@ OSUAnalysis::getTrkIsMatchedBadCSC (const BNtrack* track1){
   else                  { value = 0; } 
   return value;
 }
+
+//return corrected jet
+BNjet OSUAnalysis::getCorrectedJet(const BNjet &iJet, string jERCase){
+
+    if(datasetType_ == "data"){ return iJet; }
+    double jetFactor = 1;
+
+  // Make appopriate correction to the xy components of input jet
+    if(jERCase == "JERup")   jetFactor *= getJERfactor(1, fabs(iJet.eta), iJet.genJetPT, iJet.pt);
+    if(jERCase == "JERdown") jetFactor *= getJERfactor(-1, fabs(iJet.eta), iJet.genJetPT, iJet.pt);
+    if(jERCase == "JESup") {
+      jetFactor *= (1. + iJet.JESunc);
+      jetFactor *= getJERfactor(0, fabs(iJet.eta), iJet.genJetPT, jetFactor * iJet.pt);
+    }
+    if(jERCase =="JESdown"){
+      jetFactor *= (1. - iJet.JESunc);
+      jetFactor *= getJERfactor(0, fabs(iJet.eta), iJet.genJetPT, jetFactor * iJet.pt);
+    }
+    else jetFactor *= getJERfactor(0, fabs(iJet.eta), iJet.genJetPT, iJet.pt);
+  // Make a copy of the input jet for output and update 4-vector values
+  BNjet result = iJet;
+    
+  result.px   *= jetFactor;
+  result.py   *= jetFactor;
+  result.pz   *= jetFactor;
+  result.pt   *= jetFactor;
+  result.et      *= jetFactor;
+  result.energy *= jetFactor;
+  result.mass     *= jetFactor;
+
+  // Update CSV value (i.e. reshape it if applicable)
+  // result.btagCombinedSecVertex = GetCSVvalue(result,iSysType);
+
+  return result;
+
+
+}
+
+  double OSUAnalysis::getJERfactor(int returnType, double jetAbsETA, double genjetPT, double recojetPT){
+
+    double factor = 1.;
+    
+    double scale_JER = 1., scale_JERup = 1., scale_JERdown = 1.;
+    if( jetAbsETA<0.5 ){ 
+      scale_JER = 1.052; scale_JERup = 1.052 + sqrt( 0.012*0.012 + 0.062*0.062 ); scale_JERdown = 1.052 - sqrt( 0.012*0.012 + 0.061*0.061 );
+    }
+    else if( jetAbsETA<1.1 ){ 
+      scale_JER = 1.057; scale_JERup = 1.057 + sqrt( 0.012*0.012 + 0.056*0.056 ); scale_JERdown = 1.057 - sqrt( 0.012*0.012 + 0.055*0.055 );
+    }
+    else if( jetAbsETA<1.7 ){ 
+      scale_JER = 1.096; scale_JERup = 1.096 + sqrt( 0.017*0.017 + 0.063*0.063 ); scale_JERdown = 1.096 - sqrt( 0.017*0.017 + 0.062*0.062 );
+    }
+    else if( jetAbsETA<2.3 ){ 
+      scale_JER = 1.134; scale_JERup = 1.134 + sqrt( 0.035*0.035 + 0.087*0.087 ); scale_JERdown = 1.134 - sqrt( 0.035*0.035 + 0.085*0.085 );
+    }
+    else if( jetAbsETA<5.0 ){ 
+      scale_JER = 1.288; scale_JERup = 1.288 + sqrt( 0.127*0.127 + 0.155*0.155 ); scale_JERdown = 1.288 - sqrt( 0.127*0.127 + 0.153*0.153 );
+    }
+
+    double jetPt_JER = recojetPT;
+    double jetPt_JERup = recojetPT;
+    double jetPt_JERdown = recojetPT;
+
+    double diff_recojet_genjet = recojetPT - genjetPT;
+
+    if( genjetPT>10. ){
+      jetPt_JER = std::max( 0., genjetPT + scale_JER * ( diff_recojet_genjet ) );
+      jetPt_JERup = std::max( 0., genjetPT + scale_JERup * ( diff_recojet_genjet ) );
+      jetPt_JERdown = std::max( 0., genjetPT + scale_JERdown * ( diff_recojet_genjet ) );
+    }
+
+    if( returnType==1 )       factor = jetPt_JERup/recojetPT;
+    else if( returnType==-1 ) factor = jetPt_JERdown/recojetPT;
+    else                      factor = jetPt_JER/recojetPT;
+
+    if( !(genjetPT>10.) ) factor = 1.;
+
+    return factor;
+ 
+
+ }
 
 
 // Returns the smallest DeltaR between the object and any generated true particle in the event.
