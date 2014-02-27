@@ -109,6 +109,7 @@ class OSUAnalysis : public edm::EDProducer
       double valueLookup (const BNmcparticle* object, string variable, string function, string &stringValue);
 
       double valueLookup (const BNelectron* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
+      double valueLookup (const BNmuon* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
       double valueLookup (const BNtrack* object1,   const BNmcparticle* object2, string variable, string function, string &stringValue);  
 
 
@@ -194,10 +195,14 @@ class OSUAnalysis : public edm::EDProducer
       string muonSFFile_;
       string jESJERCorr_;
       bool flagJESJERCorr_;
+      string triggerMetSFFile_;
+      string trackNMissOutSFFile_;
       string dataPU_;
       string electronSFID_;
       string electronSF_;
       string muonSF_;
+      string triggerMetSF_;
+      string trackNMissOutSF_;
       string dataset_;
       string datasetType_;
       vector<edm::ParameterSet> channels_;
@@ -214,8 +219,13 @@ class OSUAnalysis : public edm::EDProducer
       bool applyTrackingSF_;
       bool applyBtagSF_;
       int  minBtag_;
+      bool calcPdfWeights_;
+      string pdfSet_;  
+      int    pdfSetFlag_;  
       string electronSFShift_;
       string muonSFShift_;
+      string triggerMetSFShift_;
+      string trackNMissOutSFShift_;
       string trackSFShift_;
       bool printEventInfo_;
       bool printAllTriggers_;
@@ -339,6 +349,10 @@ class OSUAnalysis : public edm::EDProducer
       double electronTrackScaleFactor_ ;
       BtagSFWeight *bTagSFWeight_;
       double bTagScaleFactor_;     
+      TriggerMetSFWeight *triggerMetSFWeight_;
+      double triggerMetScaleFactor_;
+      TrackNMissOutSFWeight *trackNMissOutSFWeight_;
+      double trackNMissOutScaleFactor_;
 
       double topPtScaleFactor_;
 
@@ -384,6 +398,17 @@ class OSUAnalysis : public edm::EDProducer
       pair<const BNelectron *, const BNelectron*> leadElectronPair ();
 
       double getTopPtWeight();
+
+      // for PDF weights:    
+      std::vector<double>  getPdfWeights();   
+      int allNo;
+      int passedNo;
+      std::vector<double> allSums;
+      std::vector<double> passedSums;
+      double allSF,allSF2;
+      double passedSF,passedSF2;
+      double passedCentralW2,allCentralW2;
+
   };
 
 #endif

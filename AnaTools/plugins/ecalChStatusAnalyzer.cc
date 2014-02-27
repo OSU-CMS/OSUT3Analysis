@@ -27,6 +27,7 @@ ndcap (deadEcalMap.root)
 #include <string>
 #include <math.h>
 #include <TFile.h>
+#include <TStyle.h>
 #include <TH1.h>
 #include <TH2.h>
 #include <map>
@@ -101,8 +102,9 @@ class ecalChStatusAnalyzer : public edm::EDAnalyzer {
   //                                                                                                                                                                               
   //declare histograms                                                                                                                                                             
   //                                                                                                                                                                               
-    TH2D* deadBarrelEtaVsPhi;
+  TH2D* deadBarrelEtaVsPhi;
   TH2D* deadEndcapEtaVsPhi;
+  TH2D* deadEcalEtaVsPhi;
 
 
 };
@@ -116,8 +118,8 @@ ecalChStatusAnalyzer::ecalChStatusAnalyzer(const edm::ParameterSet& iConfig)
 {
    //now do what ever initialization is needed
 
-  deadBarrelEtaVsPhi= fs->make<TH2D> ("deadBarrelEtaVsPhi", ";#phi;deadBarrelChannels (#eta)", 100, -3, 3, 100, -3, 3);
-  deadEndcapEtaVsPhi= fs->make<TH2D> ("deadEndcapEtaVsPhi", ";#phi ;deadEndcapChannels (#eta)", 100, -3, 3, 100, -3, 3);
+  deadBarrelEtaVsPhi= fs->make<TH2D> ("deadBarrelEtaVsPhi", ";#phi;deadBarrelChannels (#eta)" , 342, -3, 3, 360, -3.14, 3.14);
+  deadEndcapEtaVsPhi= fs->make<TH2D> ("deadEndcapEtaVsPhi", ";#phi ;deadEndcapChannels (#eta)", 342, -3, 3, 360, -3.14, 3.14);
 
 
 }
@@ -165,13 +167,13 @@ ecalChStatusAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
 
 void ecalChStatusAnalyzer::getChannelStatusMaps(){
   //written using code from the function getChannelStatusMaps() in http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/RecoMET/METFilters/plugins/EcalDeadCellDeltaRFilter.cc?revision=1.2&view=markup                                                                                                                                                                  
-
+  gStyle->SetOptStat(0000000);
   EcalAllDeadChannelsValMap_.clear();
- EcalAllDeadChannelsBitMap_.clear();
- // double deltaRLowestBarrel = 99.;
- // double deltaRLowestEndcap = 99.;
- //looping over the barrel                                                                                                                                                         
- for( int ieta=-85; ieta<=85; ieta++ ){
+  EcalAllDeadChannelsBitMap_.clear();
+  // double deltaRLowestBarrel = 99.;
+  // double deltaRLowestEndcap = 99.;
+  //looping over the barrel                                                                                                                                                         
+  for( int ieta=-85; ieta<=85; ieta++ ){
    for( int iphi=0; iphi<=360; iphi++ ){
      if(! EBDetId::validDetId( ieta, iphi ) )  continue;
      const EBDetId detid = EBDetId( ieta, iphi, EBDetId::ETAPHIMODE );
@@ -183,6 +185,9 @@ void ecalChStatusAnalyzer::getChannelStatusMaps(){
      const CaloCellGeometry*        cellGeom = subGeom->getGeometry (detid);
      double eta = cellGeom->getPosition ().eta ();
      double phi = cellGeom->getPosition ().phi ();
+     if(-0.68 > eta && -0.71 < eta && phi > -2.3 && phi < -2.0)
+       std::cout << "Eta, pho coord in barrel: " << eta << ", " << phi << " with status " << status <<std::endl;
+
      double theta = cellGeom->getPosition().theta();
      if(status >= maskedEcalChannelStatusThreshold_){
        std::vector<double> valVec; std::vector<int> bitVec;
@@ -215,7 +220,8 @@ void ecalChStatusAnalyzer::getChannelStatusMaps(){
        double eta = cellGeom->getPosition ().eta () ;
        double phi = cellGeom->getPosition ().phi () ;
        double theta = cellGeom->getPosition().theta();
-
+       if(-0.68 > eta && -0.71 < eta && phi > -2.3 && phi < -2.0)
+	 std::cout << "Eta, pho coord in endcap: " << eta << ", " << phi << " with status " << status <<std::endl;
        if(status >= maskedEcalChannelStatusThreshold_){
 	 std::vector<double> valVec; std::vector<int> bitVec;
          valVec.push_back(eta); valVec.push_back(phi); valVec.push_back(theta);
@@ -242,7 +248,7 @@ void ecalChStatusAnalyzer::getChannelStatusMaps(){
 
 double ecalChStatusAnalyzer::writeDeadEcalChannels() {
   ofstream EcalMap;
-  EcalMap.open("DeadEcalChannels.txt");
+  EcalMap.open("DeadEcalChannelsLatest.txt");
   for (std::map<DetId, std::vector<double> >::const_iterator ecal = EcalAllDeadChannelsValMap_.begin();
        ecal != EcalAllDeadChannelsValMap_.end();
        ecal++) {
@@ -265,6 +271,15 @@ ecalChStatusAnalyzer::beginJob()
 void 
 ecalChStatusAnalyzer::endJob() 
 {
+
+  deadEcalEtaVsPhi = (TH2D*) deadEndcapEtaVsPhi->Clone("deadEcalEtaVsPhi");
+  deadEcalEtaVsPhi ->SetTitle("Dead or Noisy ECAL Channels;#eta;#phi");
+  deadEcalEtaVsPhi ->Add(deadBarrelEtaVsPhi);
+  
+  deadEcalEtaVsPhi ->SetMarkerStyle(5);
+  deadEcalEtaVsPhi ->SetMarkerSize(0.7);
+  deadEcalEtaVsPhi ->SetMarkerColor(12);
+  deadEcalEtaVsPhi ->Write();
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------

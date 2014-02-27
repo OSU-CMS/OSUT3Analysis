@@ -70,6 +70,8 @@ MuonSFWeight::~MuonSFWeight ()
   delete muonSFWeight_;
 }
 
+
+
 ElectronSFWeight::ElectronSFWeight (const string &cmsswRelease, const string &id, const string &sfFile, const string &dataOverMC) :
   cmsswRelease_ (cmsswRelease),
   id_ (id),
@@ -359,6 +361,60 @@ ElectronSFWeight::at (const double &eta, const double &pt, const int &shiftUpDow
 ElectronSFWeight::~ElectronSFWeight ()
 {
 }
+
+
+
+TriggerMetSFWeight::TriggerMetSFWeight (const string &sfFile, const string &dataOverMC)
+{
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
+  if (!dataOverMCHist) cout << "Fatal Error [TriggerMetSFWeight::TriggerMetSFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  triggerMetSFWeight_ = (TH1F*)  dataOverMCHist->Clone();
+  triggerMetSFWeight_->GetEntries();// to avoid the crashing warning
+  delete dataOverMCHist;
+  fin->Close ();
+ }
+
+ 
+double
+TriggerMetSFWeight::at(const double &Met, const int &shiftUpDown) 
+{  
+  int bin = triggerMetSFWeight_->FindBin(Met);  
+  return 1.0 + triggerMetSFWeight_->GetBinContent(bin) + shiftUpDown * triggerMetSFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
+}
+
+TriggerMetSFWeight::~TriggerMetSFWeight ()
+{
+  delete triggerMetSFWeight_;
+}
+
+
+
+TrackNMissOutSFWeight::TrackNMissOutSFWeight (const string &sfFile, const string &dataOverMC)
+{
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
+  if (!dataOverMCHist) cout << "Fatal Error [TrackNMissOutSFWeight::TrackNMissOutSFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  trackNMissOutSFWeight_ = (TH1F*)  dataOverMCHist->Clone();
+  trackNMissOutSFWeight_->GetEntries();  // to avoid the crashing warning
+  delete dataOverMCHist;
+  fin->Close ();
+}
+
+ 
+double
+TrackNMissOutSFWeight::at(const double &NMissOut, const int &shiftUpDown) 
+{  
+  int bin = trackNMissOutSFWeight_->FindBin(NMissOut);  
+  return 1.0 + trackNMissOutSFWeight_->GetBinContent(bin) + shiftUpDown * trackNMissOutSFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
+}
+
+TrackNMissOutSFWeight::~TrackNMissOutSFWeight ()
+{
+  delete trackNMissOutSFWeight_;
+}
+
+
 
 
 

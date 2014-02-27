@@ -25,13 +25,15 @@ from OSUT3Analysis.Configuration.formattingUtilities import *
 
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
+parser.add_option("-m", "--getMean", action="store_true", dest="getMean", default=False,
+                  help="report the mean for each histogram (upper and lower bounds are ignored)")  
 (arguments, args) = parser.parse_args()  
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + arguments.localConfig.rstrip('.py') + " import *")
 
-  
+DoRatio = False
 for hist in input_hists:     # loop over different input hists in config file
    
     inputFile = TFile("condor/"+hist['condor_dir']+"/"+hist['dataset']+".root")
@@ -57,8 +59,38 @@ for hist in input_hists:     # loop over different input hists in config file
 #    print "xloBin = " + str(xloBin) 
 #    print "xhiBin = " + str(xhiBin) 
 
+<<<<<<< HEAD
     print "Integral of " + hist['histName'] + " in " + inputFile.GetName() + " from " + str(xlo) + " to " + str(xhi) + ": " + str (integral) + " +- " + str (intError) 
+    if hist.has_key('role in ratioDic'):
+    	DoRatio = True
+        for key in RatioDic.keys():
+		if key == hist['role in ratioDic'][0]:
+			if hist['role in ratioDic'][1] == "Denominator":
+				RatioDic[key]['Denominator']['value'] = integral
+				RatioDic[key]['Denominator']['error'] = intError
+			if hist['role in ratioDic'][1] == "Numerator":
+				RatioDic[key]['Numerator']['value'] = integral
+				RatioDic[key]['Numerator']['error'] = intError
+if DoRatio:
+	for key in RatioDic.keys():
+		NumValue = RatioDic[key]['Numerator']['value']
+        	DenValue = RatioDic[key]['Denominator']['value']
+		NumError = RatioDic[key]['Numerator']['error']
+		DenError = RatioDic[key]['Denominator']['error']
+        	if DenValue == 0:
+			print "Denominator of " + str(key) + " is 0 ! Please Check! "
+			break
+        	Ratio = NumValue/DenValue
+        	RatioError = math.pow(math.pow(NumError,2)/math.pow(DenValue,2) + math.pow(DenError,2)*math.pow(NumValue,2)/math.pow(DenValue,4),0.5)
+		print str(key) + " is " + str(Ratio) + " +- " + str(RatioError) 
+=======
+    line = "Integral of " + hist['histName'] + " in " + inputFile.GetName() + " from " + str(xlo) + " to " + str(xhi) + ": " + str (integral) + " +- " + str (intError) 
+    if arguments.getMean:
+        line += "; Mean of entire histogram= " + str(histogram.GetMean()) + " +- " + str(histogram.GetMeanError())
+    print line 
 
 
+
+>>>>>>> b76a9db37db028cd348b96cde04f53426b07f3ab
 
 

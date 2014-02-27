@@ -264,7 +264,12 @@ def MakeOneHist(histogramName):
         dataset_file = "condor/%s/%s.root" % (source['condor_dir'],source['dataset'])
         inputFile = TFile(dataset_file)
         NumHistogramObj = inputFile.Get("OSUAnalysis/" + source['num_channel'] + "/" +histogramName)
-        DenHistogramObj = inputFile.Get("OSUAnalysis/" + source['den_channel'] + "/" +histogramName)
+        if 'condor_dir_den' in source:   # If specified, take the denominator histogram from a different condor directory.  
+            dataset_fileDen = "condor/%s/%s.root" % (source['condor_dir_den'],source['dataset'])
+            inputFileDen = TFile(dataset_fileDen)
+            DenHistogramObj = inputFileDen.Get("OSUAnalysis/" + source['den_channel'] + "/" +histogramName)
+        else:   # Default is to use the same condor directory  
+            DenHistogramObj = inputFile.Get("OSUAnalysis/" + source['den_channel'] + "/" +histogramName)
         if not NumHistogramObj:
             print "WARNING:  Could not find histogram " + source['num_channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
             return 
@@ -514,7 +519,9 @@ if arguments.outputFileName:
 
 outputFile = TFile(outputFileName, "RECREATE")
 
-outputConfigFile = outputFileName.replace(".root", ".py")  
+outputConfigFile = outputFileName.replace(".root", ".py")
+if os.path.exists(outputConfigFile):    
+    os.system("mv " + outputConfigFile + " " + outputConfigFile.replace(".py", "-bkup.py"))  # make a backup copy of a previous config file  
 os.system("cp " + arguments.localConfig + " " + outputConfigFile)  # make a copy of the config file 
 
 first_input = input_sources[0]

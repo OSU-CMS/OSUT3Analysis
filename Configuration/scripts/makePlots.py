@@ -32,6 +32,8 @@ parser.add_option("-S", "--systematics", action="store_true", dest="includeSyste
                   help="also lists the systematic uncertainties")
 parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,		 
                   help="Make significance plots")	 
+parser.add_option("-O", "--addOverUnderFlow", action="store_true", dest="addOverUnderFlow", default=False,		 
+                  help="Add the overflow and underflow entries to the last and first bins")	 
 (arguments, args) = parser.parse_args()
 
 
@@ -165,12 +167,18 @@ def getSystematicError(sample,channel):
             error = float(global_systematic_uncertainties[uncertainty]['value']) -1
             errorSquared = errorSquared + error * error
 
+    # add sample-specific uncertainties
+    for uncertainty in unique_systematic_uncertainties:
+        if sample is unique_systematic_uncertainties[uncertainty]['dataset']:
+            error = float(unique_systematic_uncertainties[uncertainty]['value']) -1
+            errorSquared = errorSquared + error * error
+
     # add sample-specific uncertainties from text files
     for uncertainty in external_systematic_uncertainties:
         input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
         if not os.path.exists(input_file_path):
             print "WARNING: didn't find ",input_file_path
-            input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__Blinded_Preselection" + ".txt"
+            input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
             if not os.path.exists(input_file_path):
                 print "   skipping",uncertainty,"systematic for the",channel,"channel"
                 return 0
@@ -458,10 +466,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             xAxisLabelVar = xAxisLabel[0:unitBeginIndex]  
         else:
             yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
-        if integrateDir is "left": 
-            yAxisLabel = "Yield, " + xAxisLabelVar + " < x"  
-        if integrateDir is "right": 
-            yAxisLabel = "Yield, " + xAxisLabelVar + " > x"  
+
+        if arguments.normalizeToUnitArea and arguments.makeSignificancePlots:
+            unit = "Efficiency"
+        else:
+            unit = "Yield"
+        if integrateDir is "left":
+            yAxisLabel = unit + ", " + xAxisLabelVar + "< x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
+        if integrateDir is "right":
+            yAxisLabel = unit + ", " + xAxisLabelVar + "> x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
         
         if not arguments.makeFancy:
             histoTitle = Histogram.GetTitle()
@@ -474,7 +487,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             yieldHist = Histogram.Integral()
             legLabel = legLabel + " (%.1f)" % yieldHist
 
-        Histogram = MakeIntegralHist(Histogram, integrateDir)  
+        if (arguments.addOverUnderFlow):
+            nbins = Histogram.GetNbinsX()
+            Histogram.SetBinContent(1,     Histogram.GetBinContent(1)     + Histogram.GetBinContent(0))       # Add underflow 
+            Histogram.SetBinContent(nbins, Histogram.GetBinContent(nbins) + Histogram.GetBinContent(nbins+1)) # Add overflow 
+            # Set the errors to be the sum in quadrature
+            Histogram.SetBinError(1,     math.sqrt(math.pow(Histogram.GetBinError(1),    2) + math.pow(Histogram.GetBinError(0),      2))) 
+            Histogram.SetBinError(nbins, math.sqrt(math.pow(Histogram.GetBinError(nbins),2) + math.pow(Histogram.GetBinError(nbins+1),2)))
 
         if( types[sample] == "bgMC"):
             
@@ -508,6 +527,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Histogram.SetLineWidth(2)
             if(arguments.normalizeToUnitArea and Histogram.Integral() > 0):
                 Histogram.Scale(1./Histogram.Integral())
+
+            Histogram = MakeIntegralHist(Histogram, integrateDir)
                 
             SignalMCLegendEntries.append(legLabel)
             SignalMCHistograms.append(Histogram)
@@ -526,6 +547,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             if(arguments.normalizeToUnitArea and Histogram.Integral() > 0):
                 Histogram.Scale(1./Histogram.Integral())
 
+            Histogram = MakeIntegralHist(Histogram, integrateDir)
+            
             DataLegendEntries.append(legLabel)
             DataHistograms.append(Histogram)
                     
@@ -540,6 +563,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             bgMCHist.Scale(1./backgroundIntegral)
         elif arguments.normalizeToUnitArea and arguments.noStack and bgMCHist.Integral() > 0:
             bgMCHist.Scale(1./bgMCHist.Integral())
+
+        bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
+            
 
         if not arguments.noStack:
             Stack.Add(bgMCHist)

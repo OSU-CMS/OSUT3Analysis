@@ -60,6 +60,7 @@ input_sources = [
     { 'condor_dir' : 'triggerEfficiencyTest',
       'dataset' : 'stop400_100.0mm_br50',
       'den_channel' : 'NoTrigger',
+      'condor_dir_den' : 'noTriggerTest',  # condor directory for deominator channel (optional)  
       'num_channel' : 'Mu17Ele8ORMu8Ele17',
       'legend_entry' : '#epsilon of Mu17Ele8 OR Mu8Ele17',
       'color' : 'purple',
