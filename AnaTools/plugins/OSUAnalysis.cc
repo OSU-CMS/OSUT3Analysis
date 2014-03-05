@@ -131,9 +131,13 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       trackNMissOutSFWeight_ = new TrackNMissOutSFWeight(trackNMissOutSFFile_, trackNMissOutSF_);  
     }
   }
-  if (datasetType_ == "signalMC" && regex_match (dataset_, regex ("stop.*to.*_.*mm.*")))
-    stopCTauWeight_ = new StopCTauWeight (stopCTau_.at(0), stopCTau_.at(1), stops_);
 
+  if (datasetType_ == "signalMC" && 
+      (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) || 
+       regex_match (dataset_, regex ("AMSB.*")))) {
+    if (verbose_) clog << "Debug: Setting stopctau with:  stopCTau_.at(0)=" << stopCTau_.at(0) << "; stopCTau_.at(1)=" << stopCTau_.at(1) << endl;  
+    stopCTauWeight_ = new StopCTauWeight (stopCTau_.at(0), stopCTau_.at(1), stops_);
+  }
 
   // Construct Cutflow Objects. These store the results of cut decisions and
   // handle filling cut flow histograms.
@@ -1057,8 +1061,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   }
 
   stopCTauScaleFactor_ = 1.0;
-  if (datasetType_ == "signalMC" && regex_match (dataset_, regex ("stop.*to.*_.*mm.*")))
-    stopCTauScaleFactor_ = stopCTauWeight_->at (event);
+  if (datasetType_ == "signalMC" && 
+      (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) ||
+       regex_match (dataset_, regex ("AMSB.*")))
+      ) stopCTauScaleFactor_ = stopCTauWeight_->at (event);
   globalScaleFactor_ *= stopCTauScaleFactor_;
 
   topPtScaleFactor_ = 1.0;

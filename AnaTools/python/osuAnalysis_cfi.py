@@ -119,3 +119,13 @@ if osusub.batchMode:
     stopCTau = stop_ctau (label)
     sourceStopCTau = source_stop_ctau (stopCTau)
     process.OSUAnalysis.stopCTau = cms.vdouble (sourceStopCTau / 10.0, stopCTau / 10.0)
+  
+  if process.OSUAnalysis.datasetType == cms.string ("signalMC") and re.match (r"AMSB*", label):
+    charginoCTau =  chargino_ctau (label)
+    sourceCharginoCTau = source_chargino_ctau (charginoCTau)
+    process.OSUAnalysis.stopCTau = cms.vdouble (sourceCharginoCTau, charginoCTau)
+    print "Setting stopCTau = (" + str(sourceCharginoCTau) + ", " + str(charginoCTau) + ") "  
+
+
+
+

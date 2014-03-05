@@ -137,6 +137,42 @@ def add_stops (options, masses, ctaus, bottomBranchingRatios = []):
                 options['labels'][topDatasetName] = "#tilde{t}#tilde{t}#rightarrowtt#nu#nu (#LTc#tau#GT = " + str (ctau) + " mm)"
                 options['labels'][mixedDatasetName] = "#tilde{t}#tilde{t}#rightarrowbtl#nu (#LTc#tau#GT = " + str (ctau) + " mm)"
 
+
+def chargino_ctau (dataset):
+    if not re.match (r"AMSB_mGrav.*_.*cm", dataset):
+        return 0.0
+    return float (re.sub (r"AMSB_mGrav[^_]*_([^_]*)cm.*", r"\1", dataset))
+
+def source_chargino_tauFromCtau_Num(ctau):
+    # ctau should be in units of cm
+    # return tau in ns
+    c = 2.998e1       # cm / ns
+    tau = ctau / c    # ns
+    if tau < 0.5:
+        src_tau = 0.5
+    elif tau < 1:
+        src_tau = 1.0
+    else:
+        src_tau = 5.0
+    return src_tau
+    
+def source_chargino_tauFromCtau_Str (ctau):
+    src_tau = source_chargino_tauFromCtau_Num(ctau)
+    if src_tau <= 0.5:
+        return "0p5"
+    elif src_tau <= 1:
+        return "1"
+    else:
+        return "5"
+    
+def source_chargino_ctau (ctau):
+    src_tau = source_chargino_tauFromCtau_Num(ctau)
+    c = 2.998e1      # cm / ns
+    ctau = c * src_tau
+    return ctau
+
+
+
 def add_channels (process, channels, outputCommands = ["keep *"]):
     suffix = ""
     if osusub.batchMode:
