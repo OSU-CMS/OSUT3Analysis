@@ -57,6 +57,8 @@
 #include "OSUT3Analysis/AnaTools/interface/BtagSFWeight.h"
 #include "OSUT3Analysis/AnaTools/interface/StopCTauWeight.h"
 
+namespace sysType{enum sysType{NA, JERup, JERdown, JESup, JESdown, hfSFup, hfSFdown, lfSFdown, lfSFup, TESup, TESdown, CSVLFup, CSVLFdown, CSVHFup, CSVHFdown, CSVHFStats1up, CSVHFStats1down, CSVLFStats1up, CSVLFStats1down, CSVHFStats2up, CSVHFStats2down, CSVLFStats2up, CSVLFStats2down, CSVCErr1up, CSVCErr1down, CSVCErr2up, CSVCErr2down }; }
+
 using namespace std;
 
 class OSUAnalysis : public edm::EDProducer
@@ -121,6 +123,9 @@ class OSUAnalysis : public edm::EDProducer
       double valueLookup (const BNstop* object, string variable, string function, string &stringValue);
 
       int getTrkIsIso (const BNtrack* track1, const BNtrackCollection* trackColl);
+      BNjet getCorrectedJet (const BNjet &iJet, string jERCase);
+      //BNjet getCorrectedJet (const BNjet *iJet, string jERCase);
+      double getJERfactor (int returnType, double jetAbsETA, double genjetPT, double recojetPT);
       double getTrkPtTrue (const BNtrack* track1, const BNmcparticleCollection* genPartColl);
       double getHt (const BNjetCollection* jetColl);
       unsigned int GetNumExtraPartons (const BNmcparticleCollection* genPartColl);
@@ -188,6 +193,8 @@ class OSUAnalysis : public edm::EDProducer
       string badCSCFile_;
       string electronSFFile_;
       string muonSFFile_;
+      string jESJERCorr_;
+      bool flagJESJERCorr_;
       string triggerMetSFFile_;
       string trackNMissOutSFFile_;
       string dataPU_;

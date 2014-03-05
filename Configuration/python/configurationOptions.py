@@ -889,9 +889,9 @@ nJobs = {
    'SingleMu_2012D'       : 500,
    
    'SingleElectron_2012A'   : 100,
-   'SingleElectron_2012B'   : 300,
-   'SingleElectron_2012C'   : 300,
-   'SingleElectron_2012D'   : 300,
+   'SingleElectron_2012B'   : 500,
+   'SingleElectron_2012C'   : 500,
+   'SingleElectron_2012D'   : 500,
 
    'DoubleElectron_2012A_22Jan2013' : 15,
    'DoubleElectron_2012B_22Jan2013' : 40,
@@ -1137,9 +1137,9 @@ nJobs = {
    'AMSB_mGrav32K_1ns'   : 1,
    'AMSB_mGrav32K_5ns'   : 1,
       
-   'AMSB_mGrav50K_0p5ns' : 1,
-   'AMSB_mGrav50K_1ns'   : 1,
-   'AMSB_mGrav50K_5ns'   : 1,
+   'AMSB_mGrav50K_0p5ns' : 5,
+   'AMSB_mGrav50K_1ns'   : 5,
+   'AMSB_mGrav50K_5ns'   : 5,
 
    'AMSB_mGrav61K_0p2ns' : 1,
    'AMSB_mGrav61K_0p5ns' : 1,
