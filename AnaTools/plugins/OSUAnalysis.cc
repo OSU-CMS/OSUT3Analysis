@@ -3160,6 +3160,11 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "unfilteredSt") value = getSt(electrons.product(),muons.product(),jets.product());
   else if(variable == "st") value = chosenST ();
 
+  else if(variable == "metPt") { // allow making 2D plots of event quantities vs. Met
+    if (const BNmet *met = chosenMET ()) {
+      value = met->pt;
+    } else value = -999;
+  }
   else if(variable == "leadMuPairInvMass"){
     pair<const BNmuon *, const BNmuon *> muPair = leadMuonPair ();
     TLorentzVector p0 (muPair.first->px, muPair.first->py, muPair.first->pz, muPair.first->energy),
@@ -3206,6 +3211,7 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
     }
     value = ptTot.Mod();
   } 
+
   else{clog << "WARNING: invalid event variable '" << variable << "'\n"; value = -999;}
 
   value = applyFunction(function, value);
