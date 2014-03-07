@@ -136,7 +136,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 
   if (datasetType_ == "signalMC" && 
       (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) || 
-       regex_match (dataset_, regex ("AMSB.*")))) {
+       regex_match (dataset_, regex ("AMSB.*cm")))) {
     if (verbose_) clog << "Debug: Setting stopctau with:  stopCTau_.at(0)=" << stopCTau_.at(0) << "; stopCTau_.at(1)=" << stopCTau_.at(1) << endl;  
     stopCTauWeight_ = new StopCTauWeight (stopCTau_.at(0), stopCTau_.at(1), stops_);
   }
@@ -1065,7 +1065,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   stopCTauScaleFactor_ = 1.0;
   if (datasetType_ == "signalMC" && 
       (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) ||
-       regex_match (dataset_, regex ("AMSB.*")))
+       regex_match (dataset_, regex ("AMSB.*cm")))
       ) stopCTauScaleFactor_ = stopCTauWeight_->at (event);
   globalScaleFactor_ *= stopCTauScaleFactor_;
 
