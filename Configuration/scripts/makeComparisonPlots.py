@@ -40,6 +40,8 @@ parser.add_option("--line-width", dest="line_width",
                                     help="set line width (default is 2)")
 parser.add_option("-g", "--generic", action="store_true", dest="generic", default=False,
                   help="generic root file directory structure; does not assume that channel dir is in OSUAnalysis dir")
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                  help="verbose output")  
 
 
 (arguments, args) = parser.parse_args()
@@ -286,7 +288,7 @@ def MakeOneDHist(histogramName):
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
 
         
-        if not arguments.makeFancy:
+        if not arguments.makeFancy and not arguments.generic:  
             fullTitle = Histogram.GetTitle()
             splitTitle = fullTitle.split(":")
             #    print splitTitle
@@ -373,11 +375,15 @@ def MakeOneDHist(histogramName):
 
     histCounter = 0
     plotting_options = ""
+    if arguments.generic:
+        plotting_options = "p,e" 
     if arguments.plot_hist:
         plotting_options = "HIST"
 
     for histogram in Histograms:
         histogram.SetTitle(histoTitle)
+        if arguments.verbose:
+            print "Debug:  drawing hist " + histogram.GetName() + ", with plotting_options = " + plotting_options + ", with mean = " + str(histogram.GetMean()) + ", with color = " + str(histogram.GetLineColor())    
         histogram.Draw(plotting_options)
         histogram.GetXaxis().SetTitle(xAxisLabel)
         histogram.GetYaxis().SetTitle(yAxisLabel)
@@ -390,7 +396,6 @@ def MakeOneDHist(histogramName):
         histCounter = histCounter + 1
 
     #legend coordinates, empirically determined :-)
-
     x_left = 0.1677852
     x_right = 0.9647651
     y_min = 0.6765734
@@ -452,7 +457,7 @@ def MakeOneDHist(histogramName):
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMax,1.2*YMax)
                 else:
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
-                            
+                         
         Comparison.GetYaxis().SetNdivisions(205)
         Comparison.Draw()
 
@@ -494,3 +499,4 @@ for key in gDirectory.GetListOfKeys():
 
 testFile.Close()
 outputFile.Close()
+print "Finished writing " + outputFile.GetName()  
