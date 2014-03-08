@@ -30,12 +30,14 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   flagJESJERCorr_(cfg.getParameter<bool> ("flagJESJERCorr")),
   triggerMetSFFile_ (cfg.getParameter<string> ("triggerMetSFFile")),
   trackNMissOutSFFile_ (cfg.getParameter<string> ("trackNMissOutSFFile")),
+  isrVarySFFile_ (cfg.getParameter<string> ("isrVarySFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
   electronSFID_ (cfg.getParameter<string> ("electronSFID")),
   electronSF_ (cfg.getParameter<string> ("electronSF")),
   muonSF_ (cfg.getParameter<string> ("muonSF")),
   triggerMetSF_ (cfg.getParameter<string> ("triggerMetSF")),
   trackNMissOutSF_ (cfg.getParameter<string> ("trackNMissOutSF")),
+  isrVarySF_ (cfg.getParameter<string> ("isrVarySF")),
   dataset_ (cfg.getParameter<string> ("dataset")),
   datasetType_ (cfg.getParameter<string> ("datasetType")),
   channels_  (cfg.getParameter<vector<edm::ParameterSet> >("channels")),
@@ -58,6 +60,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   muonSFShift_ (cfg.getParameter<string> ("muonSFShift")),
   triggerMetSFShift_ (cfg.getParameter<string> ("triggerMetSFShift")),
   trackNMissOutSFShift_ (cfg.getParameter<string> ("trackNMissOutSFShift")),
+  isrVarySFShift_ (cfg.getParameter<string> ("isrVarySFShift")),
   trackSFShift_ (cfg.getParameter<string> ("trackSFShift")),
   printEventInfo_      (cfg.getParameter<bool> ("printEventInfo")),
   printAllTriggers_    (cfg.getParameter<bool> ("printAllTriggers")),
@@ -131,6 +134,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     }
     if (trackNMissOutSFFile_ != "" ){
       trackNMissOutSFWeight_ = new TrackNMissOutSFWeight(trackNMissOutSFFile_, trackNMissOutSF_);  
+    }
+    if (isrVarySFFile_ != "" ){
+      isrVarySFWeight_ = new IsrVarySFWeight(isrVarySFFile_, isrVarySF_);  
     }
   }
 
@@ -1291,6 +1297,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     muonScaleFactor_ = electronScaleFactor_ =  muonTrackScaleFactor_ =  electronTrackScaleFactor_ = bTagScaleFactor_ = 1.0;
     triggerMetScaleFactor_    = 1.0;  
     trackNMissOutScaleFactor_ = 1.0;  
+    isrVaryScaleFactor_       = 1.0;  
 
 
 
@@ -1438,6 +1445,15 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 	}
       }
     }
+
+    if (isrVarySFFile_ != "" && datasetType_ != "data"){
+      int shiftUpDown = 0;
+      if (isrVarySFShift_ == "up")   shiftUpDown =  1; 
+      if (isrVarySFShift_ == "down") shiftUpDown = -1; 
+      string dummy = ""; 
+      double ptSusy = valueLookup(&events->at(0), "totalMcparticleStatus3SusyIdPt", "", dummy);  
+      isrVaryScaleFactor_ *= isrVarySFWeight_->at(ptSusy, shiftUpDown);  
+    }  
         
     channelScaleFactor_ *= muonScaleFactor_;
     channelScaleFactor_ *= electronScaleFactor_;
@@ -1446,6 +1462,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     channelScaleFactor_ *= bTagScaleFactor_;
     channelScaleFactor_ *= triggerMetScaleFactor_;
     channelScaleFactor_ *= trackNMissOutScaleFactor_;
+    channelScaleFactor_ *= isrVaryScaleFactor_;  
 
 
     //calculate the total scale factor for the event and fill the cutflow for each channel
@@ -1459,6 +1476,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                          << ", bTagScaleFactor_ = " << bTagScaleFactor_
                          << ", triggerMetScaleFactor_ = " << triggerMetScaleFactor_
                          << ", trackNMissOutScaleFactor_ = " << trackNMissOutScaleFactor_
+                         << ", isrVaryScaleFactor_ = " << isrVaryScaleFactor_ 
                          << ", total scale factor = " << eventScaleFactor_
                          << endl;
 
@@ -3152,6 +3170,7 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "triggerScaleFactor") value = triggerScaleFactor_;
   else if(variable == "triggerMetScaleFactor") value = triggerMetScaleFactor_;
   else if(variable == "trackNMissOutScaleFactor") value = trackNMissOutScaleFactor_;
+  else if(variable == "isrVaryScaleFactor") value = isrVaryScaleFactor_;  
   else if(variable == "globalScaleFactor") value = globalScaleFactor_;
   else if(variable == "channelScaleFactor") value = channelScaleFactor_;
   else if(variable == "eventScaleFactor") value = eventScaleFactor_;
@@ -3211,6 +3230,22 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
     }
     value = ptTot.Mod();
   } 
+  else if(variable == "totalMcparticleStatus3SusyIdPt") {
+    TVector2 ptTot(0.0, 0.0); 
+
+    for (BNmcparticleCollection::const_iterator mcparticle = mcparticles->begin (); 
+	 mcparticle < mcparticles->end(); 
+	 mcparticle++) {
+
+      if (mcparticle->status != 3) continue;  
+      int pdgId = abs(mcparticle->id);  
+      bool isSusy = (pdgId>1000001 && pdgId<3160113);  // matched to a SUSY particle
+      if (!isSusy) continue;  
+      TVector2 pt(mcparticle->px, mcparticle->py);
+      ptTot = pt + ptTot;  
+    }
+    value = ptTot.Mod();
+  }
 
   else{clog << "WARNING: invalid event variable '" << variable << "'\n"; value = -999;}
 

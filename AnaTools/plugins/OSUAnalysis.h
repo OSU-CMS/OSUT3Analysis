@@ -197,12 +197,14 @@ class OSUAnalysis : public edm::EDProducer
       bool flagJESJERCorr_;
       string triggerMetSFFile_;
       string trackNMissOutSFFile_;
+      string isrVarySFFile_; 
       string dataPU_;
       string electronSFID_;
       string electronSF_;
       string muonSF_;
       string triggerMetSF_;
       string trackNMissOutSF_;
+      string isrVarySF_; 
       string dataset_;
       string datasetType_;
       vector<edm::ParameterSet> channels_;
@@ -226,6 +228,7 @@ class OSUAnalysis : public edm::EDProducer
       string muonSFShift_;
       string triggerMetSFShift_;
       string trackNMissOutSFShift_;
+      string isrVarySFShift_;
       string trackSFShift_;
       bool printEventInfo_;
       bool printAllTriggers_;
@@ -353,6 +356,8 @@ class OSUAnalysis : public edm::EDProducer
       double triggerMetScaleFactor_;
       TrackNMissOutSFWeight *trackNMissOutSFWeight_;
       double trackNMissOutScaleFactor_;
+      IsrVarySFWeight *isrVarySFWeight_;
+      double isrVaryScaleFactor_;
 
       double topPtScaleFactor_;
 
