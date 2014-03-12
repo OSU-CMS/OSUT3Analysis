@@ -1,5 +1,7 @@
 #include "OSUT3Analysis/AnaTools/plugins/OSUAnalysis.h"
+#include "LHAPDF/LHAPDF.h"    
 using namespace std;
+
 OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   /// Retrieve parameters from the configuration file.
   jets_ (cfg.getParameter<edm::InputTag> ("jets")),
@@ -24,10 +26,18 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   badCSCFile_ (cfg.getParameter<string> ("badCSCFile")),
   electronSFFile_ (cfg.getParameter<string> ("electronSFFile")),
   muonSFFile_ (cfg.getParameter<string> ("muonSFFile")),
+  jESJERCorr_(cfg.getParameter<string> ("jESJERCorr")),
+  flagJESJERCorr_(cfg.getParameter<bool> ("flagJESJERCorr")),
+  triggerMetSFFile_ (cfg.getParameter<string> ("triggerMetSFFile")),
+  trackNMissOutSFFile_ (cfg.getParameter<string> ("trackNMissOutSFFile")),
+  isrVarySFFile_ (cfg.getParameter<string> ("isrVarySFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
   electronSFID_ (cfg.getParameter<string> ("electronSFID")),
   electronSF_ (cfg.getParameter<string> ("electronSF")),
   muonSF_ (cfg.getParameter<string> ("muonSF")),
+  triggerMetSF_ (cfg.getParameter<string> ("triggerMetSF")),
+  trackNMissOutSF_ (cfg.getParameter<string> ("trackNMissOutSF")),
+  isrVarySF_ (cfg.getParameter<string> ("isrVarySF")),
   dataset_ (cfg.getParameter<string> ("dataset")),
   datasetType_ (cfg.getParameter<string> ("datasetType")),
   channels_  (cfg.getParameter<vector<edm::ParameterSet> >("channels")),
@@ -43,8 +53,14 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
+  calcPdfWeights_ (cfg.getParameter<bool> ("calcPdfWeights")),  
+  pdfSet_ (cfg.getParameter<string> ("pdfSet")),  
+  pdfSetFlag_ (cfg.getParameter<int> ("pdfSetFlag")),  
   electronSFShift_ (cfg.getParameter<string> ("electronSFShift")),
   muonSFShift_ (cfg.getParameter<string> ("muonSFShift")),
+  triggerMetSFShift_ (cfg.getParameter<string> ("triggerMetSFShift")),
+  trackNMissOutSFShift_ (cfg.getParameter<string> ("trackNMissOutSFShift")),
+  isrVarySFShift_ (cfg.getParameter<string> ("isrVarySFShift")),
   trackSFShift_ (cfg.getParameter<string> ("trackSFShift")),
   printEventInfo_      (cfg.getParameter<bool> ("printEventInfo")),
   printAllTriggers_    (cfg.getParameter<bool> ("printAllTriggers")),
@@ -59,7 +75,48 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 
   TH1::SetDefaultSumw2();
 
-  //create pile-up reweighting object, if necessary
+  //create reweighting objects, if necessary 
+
+  if (calcPdfWeights_) {
+    LHAPDF::initPDFSet(pdfSetFlag_, pdfSet_.c_str()); 
+    
+    // PDFsets tried:  
+    //LHAPDF::initPDFSet(1, "cteq66.LHgrid"); 
+    //LHAPDF::initPDFSet(1, "CT10.LHgrid"); 
+    //LHAPDF::initPDFSet(1, "cteq6ll.LHpdf"); 
+    //LHAPDF::initPDFSet(2, "cteq66alphas.LHgrid");
+    //LHAPDF::initPDFSet(1, "MSTW2008nlo68cl.LHgrid");
+    //LHAPDF::initPDFSet(2, "MSTW2008nlo68cl_asmz+68cl.LHgrid");
+    //LHAPDF::initPDFSet(3, "MSTW2008nlo68cl_asmz-68cl.LHgrid");
+    //LHAPDF::initPDFSet(1,"NNPDF20_100.LHgrid");  //This is the central with as=0.119 
+    //LHAPDF::initPDFSet(6,"NNPDF20_as_0116_100.LHgrid"); //Need to fix max allowed sets 
+    //LHAPDF::initPDFSet(4,"NNPDF20_as_0117_100.LHgrid");
+    //LHAPDF::initPDFSet(2,"NNPDF20_as_0118_100.LHgrid");
+    //LHAPDF::initPDFSet(3,"NNPDF20_as_0120_100.LHgrid");
+    //LHAPDF::initPDFSet(5,"NNPDF20_as_0121_100.LHgrid");
+    //LHAPDF::initPDFSet(7,"NNPDF20_as_0122_100.LHgrid");
+    
+    ///Initialize PDF study counters
+    passedSF=0.0;
+    allSF=0.0;
+    allNo=0;
+    passedNo=0;
+    
+    passedSF2=0.0;
+    allSF2=0.0;
+    
+    passedCentralW2=0.0;
+    allCentralW2=0.0;
+    
+    
+    //    clog << "Debug:  LHAPDF::numberPDF() = " << LHAPDF::numberPDF() << endl;  
+    for(int i=0;i<=LHAPDF::numberPDF();i++){
+      allSums.push_back(0.0);
+      passedSums.push_back(0.0);
+    }
+  }  
+
+
   if(datasetType_ != "data") {
     if(doPileupReweighting_) puWeight_ = new PUWeight (puFile_, dataPU_, dataset_);
     if (applyLeptonSF_){
@@ -72,10 +129,23 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if (applyBtagSF_){
       bTagSFWeight_ = new BtagSFWeight;
     }
+    if (triggerMetSFFile_ != "" ){
+      triggerMetSFWeight_ = new TriggerMetSFWeight(triggerMetSFFile_, triggerMetSF_);  
+    }
+    if (trackNMissOutSFFile_ != "" ){
+      trackNMissOutSFWeight_ = new TrackNMissOutSFWeight(trackNMissOutSFFile_, trackNMissOutSF_);  
+    }
+    if (isrVarySFFile_ != "" ){
+      isrVarySFWeight_ = new IsrVarySFWeight(isrVarySFFile_, isrVarySF_);  
+    }
   }
-  if (datasetType_ == "signalMC" && regex_match (dataset_, regex ("stop.*to.*_.*mm.*")))
-    stopCTauWeight_ = new StopCTauWeight (stopCTau_.at(0), stopCTau_.at(1), stops_);
 
+  if (datasetType_ == "signalMC" && 
+      (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) || 
+       regex_match (dataset_, regex ("AMSB.*cm")))) {
+    if (verbose_) clog << "Debug: Setting stopctau with:  stopCTau_.at(0)=" << stopCTau_.at(0) << "; stopCTau_.at(1)=" << stopCTau_.at(1) << endl;  
+    stopCTauWeight_ = new StopCTauWeight (stopCTau_.at(0), stopCTau_.at(1), stops_);
+  }
 
   // Construct Cutflow Objects. These store the results of cut decisions and
   // handle filling cut flow histograms.
@@ -143,6 +213,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "trigobj-electron pairs")   tempInputCollection = "electron-trigobj pairs";
     if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
     if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
+    if(tempInputCollection == "mcparticle-muon pairs")   tempInputCollection = "muon-mcparticle pairs";
     if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
     if(tempInputCollection.find("pairs")==string::npos){ //just a single object
       if(tempInputCollection.find("secondary")!=string::npos){//secondary object
@@ -388,6 +459,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       if(tempInputCollection == "trigobj-electron pairs")   tempInputCollection = "electron-trigobj pairs";
       if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
       if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
+      if(tempInputCollection == "mcparticle-muon pairs")   tempInputCollection = "muon-mcparticle pairs";
       if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
       tempCut.inputCollection = tempInputCollection;
       if(tempInputCollection.find("pairs")==string::npos){ //just a single object
@@ -699,6 +771,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         else if(currentObject == "electron-trigobj pairs")    currentObject = "electronTrigobjPairs";
         else if(currentObject == "muon-trigobj pairs")        currentObject = "muonTrigobjPairs";
         else if(currentObject == "electron-mcparticle pairs") currentObject = "electronMCparticlePairs";
+        else if(currentObject == "muon-mcparticle pairs") currentObject = "muonMCparticlePairs";
         else if(currentObject == "track-mcparticle pairs")    currentObject = "trackMCparticlePairs";
 
 
@@ -846,6 +919,19 @@ OSUAnalysis::~OSUAnalysis ()
 
   if (printEventInfo_ && findEventsLog) findEventsLog->close();
 
+
+  if (calcPdfWeights_) {
+    ///PRINT HERE PDF RESULTS 
+    //Put "all" and "passed" numbers in pairs for easy manipulation 
+    cout << "XXX "<<allNo<<" "<<passedNo<<" "<<allSF<<" "<<passedSF<<" "<<allSF2<<" "<<passedSF2<<" "<<allCentralW2<<" "<<passedCentralW2;
+    // allSums and passedSums size should be the same so use either 
+    //    cout << endl << "Debug: passedSums.size() = " << passedSums.size() << endl;  
+    for(uint i=0;i<passedSums.size();i++){
+      cout <<" "<<allSums[i]<<" "<<passedSums[i];
+    }
+    cout << endl;
+  }
+
   clog << "=============================================" << endl;
   clog << "Successfully completed OSUAnalysis." << endl;
   clog << "=============================================" << endl;
@@ -983,8 +1069,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   }
 
   stopCTauScaleFactor_ = 1.0;
-  if (datasetType_ == "signalMC" && regex_match (dataset_, regex ("stop.*to.*_.*mm.*")))
-    stopCTauScaleFactor_ = stopCTauWeight_->at (event);
+  if (datasetType_ == "signalMC" && 
+      (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) ||
+       regex_match (dataset_, regex ("AMSB.*cm")))
+      ) stopCTauScaleFactor_ = stopCTauWeight_->at (event);
   globalScaleFactor_ *= stopCTauScaleFactor_;
 
   topPtScaleFactor_ = 1.0;
@@ -1151,6 +1239,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "electron-trigobj pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),trigobjs.product(),"electron-trigobj pairs");
         else if(currentObject == "muon-trigobj pairs")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),trigobjs.product(),"muon-trigobj pairs");
         else if(currentObject == "electron-mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),mcparticles.product(),"electron-mcparticle pairs");
+        else if(currentObject == "muon-mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),mcparticles.product(),"muon-mcparticle pairs");
         else if(currentObject == "track-mcparticle pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),mcparticles.product(),"track-mcparticle pairs");
 
         if(currentObject == "stops" && datasetType_ == "signalMC") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,stops.product(),"stops");
@@ -1206,7 +1295,9 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     channelScaleFactor_ = 1.0; //this variable holds the product of all SFs calculated separately for each channel
 
     muonScaleFactor_ = electronScaleFactor_ =  muonTrackScaleFactor_ =  electronTrackScaleFactor_ = bTagScaleFactor_ = 1.0;
-
+    triggerMetScaleFactor_    = 1.0;  
+    trackNMissOutScaleFactor_ = 1.0;  
+    isrVaryScaleFactor_       = 1.0;  
 
 
 
@@ -1324,13 +1415,54 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         bTagScaleFactor_ *= bTagSFWeight_->weight( jetSFs, minBtag_);
       }
     }
-    
-    
+
+    if(triggerMetSFFile_ != "" && datasetType_ != "data"){
+      int shiftUpDown = 0;
+      if (triggerMetSFShift_ == "up")   shiftUpDown =  1; 
+      if (triggerMetSFShift_ == "down") shiftUpDown = -1; 
+      if (const BNmet *met = chosenMET ()) { 
+	triggerMetScaleFactor_ *= triggerMetSFWeight_->at (met->pt, shiftUpDown);  
+      }
+    }
+
+    if(trackNMissOutSFFile_ != "" && datasetType_ != "data"){
+      if(find(objectsToCut.begin(),objectsToCut.end(),"tracks") != objectsToCut.end ()){
+        flagPair trkFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("tracks").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("tracks").at(i).size()){
+            trkFlags = cumulativeFlags.at("tracks").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint trkIndex = 0; trkIndex != trkFlags.size(); trkIndex++){
+          if(!trkFlags.at(trkIndex).second) continue;
+          int shiftUpDown = 0;
+          if (trackNMissOutSFShift_ == "up")   shiftUpDown =  1; 
+          if (trackNMissOutSFShift_ == "down") shiftUpDown = -1; 
+	  trackNMissOutScaleFactor_ *= trackNMissOutSFWeight_->at (tracks->at(trkIndex).nHitsMissingOuter, shiftUpDown);
+	}
+      }
+    }
+
+    if (isrVarySFFile_ != "" && datasetType_ != "data"){
+      int shiftUpDown = 0;
+      if (isrVarySFShift_ == "up")   shiftUpDown =  1; 
+      if (isrVarySFShift_ == "down") shiftUpDown = -1; 
+      string dummy = ""; 
+      double ptSusy = valueLookup(&events->at(0), "totalMcparticleStatus3SusyIdPt", "", dummy);  
+      isrVaryScaleFactor_ *= isrVarySFWeight_->at(ptSusy, shiftUpDown);  
+    }  
+        
     channelScaleFactor_ *= muonScaleFactor_;
     channelScaleFactor_ *= electronScaleFactor_;
     channelScaleFactor_ *= muonTrackScaleFactor_;
     channelScaleFactor_ *= electronTrackScaleFactor_;
     channelScaleFactor_ *= bTagScaleFactor_;
+    channelScaleFactor_ *= triggerMetScaleFactor_;
+    channelScaleFactor_ *= trackNMissOutScaleFactor_;
+    channelScaleFactor_ *= isrVaryScaleFactor_;  
 
 
     //calculate the total scale factor for the event and fill the cutflow for each channel
@@ -1342,6 +1474,9 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                          << " muonScaleFactor_ = " << muonScaleFactor_
                          << ", electronScaleFactor_ = " << electronScaleFactor_
                          << ", bTagScaleFactor_ = " << bTagScaleFactor_
+                         << ", triggerMetScaleFactor_ = " << triggerMetScaleFactor_
+                         << ", trackNMissOutScaleFactor_ = " << trackNMissOutScaleFactor_
+                         << ", isrVaryScaleFactor_ = " << isrVaryScaleFactor_ 
                          << ", total scale factor = " << eventScaleFactor_
                          << endl;
 
@@ -1360,6 +1495,33 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
     }
 
+    if(calcPdfWeights_){
+      //Calculate weights every time 
+      std::vector<double> weights = getPdfWeights();
+      allNo++;
+      allSF += eventScaleFactor_;
+      allSF2 +=eventScaleFactor_*eventScaleFactor_;
+      //add for all events                                                                                                                                                                                
+      for(uint i=0; i<weights.size();i++){
+        allSums[i]+=weights[i]*eventScaleFactor_;
+      }
+
+
+      allCentralW2+=weights[0]*eventScaleFactor_*weights[0]*eventScaleFactor_;
+
+      if(eventPassedAllCuts) {
+        //add weights for events that pass                                                                                                                                                                
+        passedNo++;
+        passedSF += eventScaleFactor_;
+        passedSF2 += eventScaleFactor_*eventScaleFactor_;
+        passedCentralW2+=weights[0]*eventScaleFactor_*weights[0]*eventScaleFactor_;
+
+        for(uint i=0; i< weights.size();i++){
+          passedSums[i]+=weights[i]*eventScaleFactor_;
+
+        }
+      }//Event passed all cuts                                                                                                                                                                            
+    }//Calc pdf weights                                                                                                                                                                                   
 
     //filling histograms
     for(uint currentCut = 0; currentCut != oneDHists_.at(currentChannelIndex).size(); currentCut++){//loop over all the cuts in each channel; if GetPlotsAfterEachCut_ is false, only the last cut will be used.
@@ -1456,8 +1618,9 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                                   cumulativeFlags.at("electron-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-trigobj pairs") fill1DHistogram(histo,currentHistogram, muons.product(),trigobjs.product(),
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),mcparticles.product(),
-                                                                                              cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),mcparticles.product(), cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "muon-mcparticle pairs") fill1DHistogram(histo,currentHistogram, muons.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("muon-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill1DHistogram(histo,currentHistogram, tracks.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
             // fill the histograms of weighting factors with 1, to see the shape of a SF without any weight applied
@@ -1545,8 +1708,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                                   cumulativeFlags.at("electron-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-trigobj pairs") fill2DHistogram(histo,currentHistogram,muons.product(),trigobjs.product(),
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),mcparticles.product(),
-                                                                                              cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),mcparticles.product(), cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "muon-mcparticle pairs") fill2DHistogram(histo,currentHistogram,muons.product(),mcparticles.product(), cumulativeFlags.at("muon-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "events") fill2DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
@@ -1614,6 +1777,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "electron-trigobj pairs")             objectToPlot = "electronTrigobjPairs";
           else if(currentObject == "muon-trigobj pairs")                 objectToPlot = "muonTrigobjPairs";
           else if(currentObject == "electron-mcparticle pairs")          objectToPlot = "electronMCparticlePairs";
+          else if(currentObject == "muon-mcparticle pairs")          objectToPlot = "muonMCparticlePairs";
           else if(currentObject == "track-mcparticle pairs")             objectToPlot = "trackMCparticlePairs";
           else objectToPlot = currentObject;
 
@@ -1819,15 +1983,20 @@ string OSUAnalysis::getObjToGet(string obj) {
 
 }
 
-
 //!jet valueLookup
 double
 OSUAnalysis::valueLookup (const BNjet* object, string variable, string function, string &stringValue){
 
+  BNjet jetCorr;
+  if (flagJESJERCorr_) {
+    jetCorr = getCorrectedJet(*object, jESJERCorr_);  
+    object = &jetCorr;  
+  }
+
   double value = 0.0;
   if(variable == "energy") value = object->energy;
   else if(variable == "et") value = object->et;
-  else if(variable == "pt") value = object->pt;
+  else if(variable == "pt") value = object->pt; 
   else if(variable == "px") value = object->px;
   else if(variable == "py") value = object->py;
   else if(variable == "pz") value = object->pz;
@@ -2999,6 +3168,9 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "bTagScaleFactor") value = bTagScaleFactor_;
   else if(variable == "topPtScaleFactor") value = topPtScaleFactor_;
   else if(variable == "triggerScaleFactor") value = triggerScaleFactor_;
+  else if(variable == "triggerMetScaleFactor") value = triggerMetScaleFactor_;
+  else if(variable == "trackNMissOutScaleFactor") value = trackNMissOutScaleFactor_;
+  else if(variable == "isrVaryScaleFactor") value = isrVaryScaleFactor_;  
   else if(variable == "globalScaleFactor") value = globalScaleFactor_;
   else if(variable == "channelScaleFactor") value = channelScaleFactor_;
   else if(variable == "eventScaleFactor") value = eventScaleFactor_;
@@ -3007,6 +3179,11 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "unfilteredSt") value = getSt(electrons.product(),muons.product(),jets.product());
   else if(variable == "st") value = chosenST ();
 
+  else if(variable == "metPt") { // allow making 2D plots of event quantities vs. Met
+    if (const BNmet *met = chosenMET ()) {
+      value = met->pt;
+    } else value = -999;
+  }
   else if(variable == "leadMuPairInvMass"){
     pair<const BNmuon *, const BNmuon *> muPair = leadMuonPair ();
     TLorentzVector p0 (muPair.first->px, muPair.first->py, muPair.first->pz, muPair.first->energy),
@@ -3033,6 +3210,43 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
     pt0 += pt1;
     value = pt0.Mod ();
   }
+  else if(variable == "totalMcparticlePt") {
+    TVector2 ptTot(0.0, 0.0); 
+
+    if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
+      flagPair mcFlags;
+      //get the last valid flags in the flag map
+      for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
+	if (cumulativeFlags.at("mcparticles").at(i).size()){
+	  mcFlags = cumulativeFlags.at("mcparticles").at(i);
+	  break;
+	}
+      }
+      for (uint mcIndex = 0; mcIndex != mcFlags.size(); mcIndex++) {
+	if (!mcFlags.at(mcIndex).second) continue;
+	TVector2 pt(mcparticles->at(mcIndex).px, mcparticles->at(mcIndex).py);
+	ptTot = pt + ptTot;  
+      }
+    }
+    value = ptTot.Mod();
+  } 
+  else if(variable == "totalMcparticleStatus3SusyIdPt") {
+    TVector2 ptTot(0.0, 0.0); 
+
+    for (BNmcparticleCollection::const_iterator mcparticle = mcparticles->begin (); 
+	 mcparticle < mcparticles->end(); 
+	 mcparticle++) {
+
+      if (mcparticle->status != 3) continue;  
+      int pdgId = abs(mcparticle->id);  
+      bool isSusy = (pdgId>1000001 && pdgId<3160113);  // matched to a SUSY particle
+      if (!isSusy) continue;  
+      TVector2 pt(mcparticle->px, mcparticle->py);
+      ptTot = pt + ptTot;  
+    }
+    value = ptTot.Mod();
+  }
+
   else{clog << "WARNING: invalid event variable '" << variable << "'\n"; value = -999;}
 
   value = applyFunction(function, value);
@@ -4606,6 +4820,7 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNmcparticle* object2
 
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "id") value = fabs(object2->id);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "threeDAngle")
     {
@@ -4616,8 +4831,40 @@ OSUAnalysis::valueLookup (const BNelectron* object1, const BNmcparticle* object2
   else if(variable == "chargeProduct"){
     value = object1->charge*object2->charge;
   }
+  else if(variable == "chargeProductById"){
+    value = object1->charge*object2->id;
+  }
 
   else{clog << "WARNING: invalid electron-mcparticle variable '" << variable << "'\n"; value = -999;}
+  value = applyFunction(function, value);
+
+  return value;
+}
+
+//!muon-mcparticle pair valueLookup
+double
+OSUAnalysis::valueLookup (const BNmuon* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+
+  double value = 0.0;
+
+  if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
+  else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "id") value = fabs(object2->id);
+  else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
+  else if(variable == "threeDAngle")
+    {
+      TVector3 threeVector1(object1->px, object1->py, object1->pz);
+      TVector3 threeVector2(object2->px, object2->py, object2->pz);
+      value = (threeVector1.Angle(threeVector2));
+    }
+  else if(variable == "chargeProduct"){
+    value = object1->charge*object2->charge;
+  }
+  else if(variable == "chargeProductById"){
+    value = object1->charge*object2->id;
+  }
+
+  else{clog << "WARNING: invalid muon-mcparticle variable '" << variable << "'\n"; value = -999;}
   value = applyFunction(function, value);
 
   return value;
@@ -5308,7 +5555,6 @@ OSUAnalysis::getSt (const BNelectronCollection* electronColl, const BNmuonCollec
   return St;
 }
 
-
 double
 OSUAnalysis::getTrkPtRes (const BNtrack* track1){
 
@@ -5504,6 +5750,87 @@ OSUAnalysis::getTrkIsMatchedBadCSC (const BNtrack* track1){
   else                  { value = 0; } 
   return value;
 }
+
+//return corrected jet
+BNjet OSUAnalysis::getCorrectedJet(const BNjet &iJet, string jERCase){
+
+    if(datasetType_ == "data"){ return iJet; }
+    double jetFactor = 1;
+
+  // Make appopriate correction to the xy components of input jet
+    if(jERCase == "JERup")   jetFactor *= getJERfactor(1, fabs(iJet.eta), iJet.genJetPT, iJet.pt);
+    if(jERCase == "JERdown") jetFactor *= getJERfactor(-1, fabs(iJet.eta), iJet.genJetPT, iJet.pt);
+    if(jERCase == "JESup") {
+      jetFactor *= (1. + iJet.JESunc);
+      jetFactor *= getJERfactor(0, fabs(iJet.eta), iJet.genJetPT, jetFactor * iJet.pt);
+    }
+    if(jERCase =="JESdown"){
+      jetFactor *= (1. - iJet.JESunc);
+      jetFactor *= getJERfactor(0, fabs(iJet.eta), iJet.genJetPT, jetFactor * iJet.pt);
+    }
+    else jetFactor *= getJERfactor(0, fabs(iJet.eta), iJet.genJetPT, iJet.pt);
+  // Make a copy of the input jet for output and update 4-vector values
+  BNjet result = iJet;
+    
+  result.px   *= jetFactor;
+  result.py   *= jetFactor;
+  result.pz   *= jetFactor;
+  result.pt   *= jetFactor;
+  result.et      *= jetFactor;
+  result.energy *= jetFactor;
+  result.mass     *= jetFactor;
+
+  // Update CSV value (i.e. reshape it if applicable)
+  // result.btagCombinedSecVertex = GetCSVvalue(result,iSysType);
+
+  return result;
+
+
+}
+
+  double OSUAnalysis::getJERfactor(int returnType, double jetAbsETA, double genjetPT, double recojetPT){
+
+    double factor = 1.;
+    
+    double scale_JER = 1., scale_JERup = 1., scale_JERdown = 1.;
+    if( jetAbsETA<0.5 ){ 
+      scale_JER = 1.052; scale_JERup = 1.052 + sqrt( 0.012*0.012 + 0.062*0.062 ); scale_JERdown = 1.052 - sqrt( 0.012*0.012 + 0.061*0.061 );
+    }
+    else if( jetAbsETA<1.1 ){ 
+      scale_JER = 1.057; scale_JERup = 1.057 + sqrt( 0.012*0.012 + 0.056*0.056 ); scale_JERdown = 1.057 - sqrt( 0.012*0.012 + 0.055*0.055 );
+    }
+    else if( jetAbsETA<1.7 ){ 
+      scale_JER = 1.096; scale_JERup = 1.096 + sqrt( 0.017*0.017 + 0.063*0.063 ); scale_JERdown = 1.096 - sqrt( 0.017*0.017 + 0.062*0.062 );
+    }
+    else if( jetAbsETA<2.3 ){ 
+      scale_JER = 1.134; scale_JERup = 1.134 + sqrt( 0.035*0.035 + 0.087*0.087 ); scale_JERdown = 1.134 - sqrt( 0.035*0.035 + 0.085*0.085 );
+    }
+    else if( jetAbsETA<5.0 ){ 
+      scale_JER = 1.288; scale_JERup = 1.288 + sqrt( 0.127*0.127 + 0.155*0.155 ); scale_JERdown = 1.288 - sqrt( 0.127*0.127 + 0.153*0.153 );
+    }
+
+    double jetPt_JER = recojetPT;
+    double jetPt_JERup = recojetPT;
+    double jetPt_JERdown = recojetPT;
+
+    double diff_recojet_genjet = recojetPT - genjetPT;
+
+    if( genjetPT>10. ){
+      jetPt_JER = std::max( 0., genjetPT + scale_JER * ( diff_recojet_genjet ) );
+      jetPt_JERup = std::max( 0., genjetPT + scale_JERup * ( diff_recojet_genjet ) );
+      jetPt_JERdown = std::max( 0., genjetPT + scale_JERdown * ( diff_recojet_genjet ) );
+    }
+
+    if( returnType==1 )       factor = jetPt_JERup/recojetPT;
+    else if( returnType==-1 ) factor = jetPt_JERdown/recojetPT;
+    else                      factor = jetPt_JER/recojetPT;
+
+    if( !(genjetPT>10.) ) factor = 1.;
+
+    return factor;
+ 
+
+ }
 
 
 // Returns the smallest DeltaR between the object and any generated true particle in the event.
@@ -6435,5 +6762,43 @@ OSUAnalysis::getTopPtWeight()
   return result;
 
 }
+
+
+
+std::vector<double> OSUAnalysis::getPdfWeights()
+{
+  double x1 = events->at(0).x1;
+  double x2 = events->at(0).x2;
+  double q = events->at(0).qScale;
+  double id1 = events->at(0).id1;
+  double id2 = events->at(0).id2;
+
+  std::vector<double> pdf_weights;
+
+  //for CTEQ6L1 xPDF is ONLY PDF so we multiply with x1       
+  //get weight from event //NOTE: EVNET WEIGHT DOES NOT HAVE X1 x2 contrary to what it says    
+  double xpdf1 = (events->at(0).xPDF1)*x1;
+  double xpdf2 = (events->at(0).xPDF2)*x2;
+  double w0 = xpdf1 * xpdf2;
+
+  const int NumberReplicas = LHAPDF::numberPDF();
+
+  //  std::cout<<"DEBUG: event xPDF: "<<xpdf1<<" "<<xpdf2<< " x1: " << x1 <<  " x2: " << x2 <<  " id1: " <<id1<< " id2: " << id2 << " q: " << q <<" member PDFs: " << endl; 
+  //Store nominal as well     
+  for(int i=0; i <=NumberReplicas; ++i){
+    LHAPDF::usePDFMember(1,i);
+    double xpdf1_new = LHAPDF::xfx(1, x1, q, id1);
+    double xpdf2_new = LHAPDF::xfx(1, x2, q, id2);  //central weight is 1.0    
+
+    //    std::cout<<xpdf1_new <<" "<<xpdf2_new<<" ";   
+    double weight = xpdf1_new * xpdf2_new / w0;
+    pdf_weights.push_back(weight);
+  }
+
+  //  std::cout<<std::endl;  
+
+  return pdf_weights;
+}
+
 
 DEFINE_FWK_MODULE(OSUAnalysis);

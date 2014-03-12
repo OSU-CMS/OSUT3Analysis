@@ -61,4 +61,41 @@ class ElectronSFWeight
       TH2F *electronSFWeight_;
   };
 
+
+class TriggerMetSFWeight 
+// Class for assigning a scale factor according to the trigger efficiency as a function of Met
+  {
+    public:
+      TriggerMetSFWeight (const string &sfFile, const string &dataOverMC); 
+      ~TriggerMetSFWeight ();
+      double at (const double &Met, const int &shiftUpDown = 0);
+
+    private:
+      TH1F *triggerMetSFWeight_; 
+  };
+
+class TrackNMissOutSFWeight 
+// Class for assigning a scale factor according to the number of missing out her hits for the selected track
+  {
+    public:
+      TrackNMissOutSFWeight (const string &sfFile, const string &dataOverMC); 
+      ~TrackNMissOutSFWeight ();
+      double at (const double &NMissOut, const int &shiftUpDown = 0);
+
+    private:
+      TH1F *trackNMissOutSFWeight_; 
+  };
+
+class IsrVarySFWeight 
+// Class for assigning a scale factor according to the pT of ISR, which is taken to be equivalent to the sum(pT) of all status 3 Susy particles  
+  {
+    public:  
+      IsrVarySFWeight (const string &sfFile, const string &dataOverMC);  
+      ~IsrVarySFWeight ();  
+      double at (const double &ptSusy, const int &shiftUpDown = 0);  
+
+    private:
+      TH1F *isrVarySFWeight_; 
+  };
+
 #endif

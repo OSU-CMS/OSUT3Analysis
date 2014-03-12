@@ -2970,6 +2970,24 @@ EventHistograms = cms.PSet(
             inputVariables = cms.vstring("bTagScaleFactor"),
         ),
         cms.PSet (
+            name = cms.string("triggerMetScaleFactor"),
+            title = cms.string("Met Trigger Efficiency Reweighting Factor; trigger efficiency weight "),
+            bins = cms.untracked.vdouble(100, 0.5, 1.5),
+            inputVariables = cms.vstring("triggerMetScaleFactor"),
+        ),
+        cms.PSet (
+            name = cms.string("trackNMissOutScaleFactor"),
+            title = cms.string("trackNMissOut Reweighting Factor; N_{miss}^{out} SF weight "),
+            bins = cms.untracked.vdouble(100, 0.5, 1.5),
+            inputVariables = cms.vstring("trackNMissOutScaleFactor"),
+        ),
+        cms.PSet (
+            name = cms.string("isrVaryScaleFactor"),
+            title = cms.string("isrVaryScaleFactor Reweighting Factor; ISR variation SF weight "),
+            bins = cms.untracked.vdouble(100, 0.0, 2.0),
+            inputVariables = cms.vstring("isrVaryScaleFactor"),
+        ),
+        cms.PSet (
             name = cms.string("stopCTauScaleFactor"),
             title = cms.string("#LTc#tau#GT Scale Factor;#LTc#tau#GT weight"),
             bins = cms.untracked.vdouble(100, 0, 10),
