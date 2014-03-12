@@ -467,6 +467,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         else:
             yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
 
+        if arguments.normalizeToUnitArea:
+            yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
+
         if arguments.normalizeToUnitArea and arguments.makeSignificancePlots:
             unit = "Efficiency"
         else:
