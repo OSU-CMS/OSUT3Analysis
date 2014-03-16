@@ -8,11 +8,10 @@ sub processArgs;
 sub printHelp;
 sub getRunList;
 sub countEvents;
-sub isEDM;
 
 my %opt;
 Getopt::Long::Configure ("bundling");
-GetOptions (\%opt, "cutflow|c=s", "luminosity|l=s", "prefix|p=s", "weight|w=s", "xsection|x=s", "help|h");
+GetOptions (\%opt, "cutflow|c=s", "luminosity|l=s", "prefix|p=s", "ttree|t", "weight|w=s", "xsection|x=s", "help|h");
 
 printHelp () if $opt{"help"} || !$opt{"prefix"};
 my $files = processArgs (\@ARGV);
@@ -89,8 +88,9 @@ foreach my $file (@$files)
     my $badJob = 0;
     my $jobNumber;
     my $fileIsEDM = 0;
-    $fileIsEDM = isEDM ($file) if $file =~ m/^.*\.root$/;
-    if ($fileIsEDM < 0)
+    my $count = countEvents ($file, $cutFlow) if $file =~ m/^.*\.root$/;;
+    my $fileIsEDM = defined $count->{"EDM events"};
+    if ($fileIsEDM && $count->{"EDM events"} == 0)
       {
         unlink ($file);
         next;
@@ -109,7 +109,6 @@ foreach my $file (@$files)
             if (substr ($file, 0, length ($arg)) eq $arg)
               {
                 $dirs{$arg} = $dir;
-                my $count = countEvents ($file, $cutFlow);
                 if ($count->{$cutFlow} < 0)
                   {
                     $nGoodJobs--;
@@ -170,10 +169,13 @@ foreach my $arg (@ARGV)
       }
     push (@mergedFiles, $tmpName);
     push (@mergedWeights, $weights{$arg});
-    foreach my $rootFile (@{$rootFiles{$arg}})
+    if ($opt{"ttree"})
       {
-        my $weight = $weights{$arg};
-        system ("weightTrees $rootFile $weight");
+        foreach my $rootFile (@{$rootFiles{$arg}})
+          {
+            my $weight = $weights{$arg};
+            system ("weightTrees $rootFile $weight");
+          }
       }
     open (EVENT_COUNT, ">$dirs{$arg}/numberOfEvents.txt");
     print EVENT_COUNT sprintf ("%.16g", $count) . "\n";
@@ -287,7 +289,9 @@ printHelp
   printf "%-29s%s\n", "  -h, --help", "print this help message";
   printf "%-29s%s\n", "  -l, --luminosity", "integrated luminosity to which the histograms are";
   printf "%-29s%s\n", "                  ", "weighted (default: 10000/pb)";
-  printf "%-29s%s\n", "  -p, --prefix PREFIX", "output is  named PREFIX.root";
+  printf "%-29s%s\n", "  -p, --prefix PREFIX", "output is named PREFIX.root";
+  printf "%-29s%s\n", "  -t, --ttree", "apply weights to TTree objects as well as";
+  printf "%-29s%s\n", "             ", "histograms";
   printf "%-29s%s\n", "  -w, --weight WEIGHT", "scale the output by WEIGHT, overriding the";
   printf "%-29s%s\n", "                     ", "automatic weighting using the cross section from";
   printf "%-29s%s\n", "                     ", "the database; WEIGHT may be a single number or a";
@@ -349,18 +353,4 @@ countEvents
     }
 
   return \%count;
-}
-
-sub
-isEDM
-{
-  my $file = shift;
-
-  my $output = `edmFileUtil $file 2>&1`;
-  return 0 if $output =~ m/appears to be missing/ || $output =~ m/not a ROOT file/;
-  $output =~ s/[\f\n\r]//g;
-  $output =~ s/^.*, ([^,]*) events,.*$/$1/;
-  $output += 0;
-  $output-- if $output == 0;
-  return $output;
 }
