@@ -11,7 +11,7 @@ sub countEvents;
 
 my %opt;
 Getopt::Long::Configure ("bundling");
-GetOptions (\%opt, "cutflow|c=s", "luminosity|l=s", "prefix|p=s", "ttree|t", "weight|w=s", "xsection|x=s", "help|h");
+GetOptions (\%opt, "cutflow|c=s", "luminosity|l=s", "prefix|p=s", "ttree|T", "weight|w=s", "xsection|x=s", "help|h");
 
 printHelp () if $opt{"help"} || !$opt{"prefix"};
 my $files = processArgs (\@ARGV);
@@ -290,7 +290,7 @@ printHelp
   printf "%-29s%s\n", "  -l, --luminosity", "integrated luminosity to which the histograms are";
   printf "%-29s%s\n", "                  ", "weighted (default: 10000/pb)";
   printf "%-29s%s\n", "  -p, --prefix PREFIX", "output is named PREFIX.root";
-  printf "%-29s%s\n", "  -t, --ttree", "apply weights to TTree objects as well as";
+  printf "%-29s%s\n", "  -T, --ttree", "apply weights to TTree objects as well as";
   printf "%-29s%s\n", "             ", "histograms";
   printf "%-29s%s\n", "  -w, --weight WEIGHT", "scale the output by WEIGHT, overriding the";
   printf "%-29s%s\n", "                     ", "automatic weighting using the cross section from";
