@@ -4444,6 +4444,18 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNmuon* object2, string v
   else if(variable == "muon2timeAtIpInOut"){
     value = object2->timeAtIpInOut;
   }
+  else if(variable == "deltaOutInTime"){
+    value = fabs(object2->timeAtIpOutIn - object1->timeAtIpOutIn);
+  }
+  else if(variable == "deltaInOutTime"){
+    value = fabs(object2->timeAtIpInOut - object1->timeAtIpInOut);
+  }
+  else if(variable == "deltaECALTime"){
+    value = fabs(object2->ecal_time - object1->ecal_time);
+  }
+  else if(variable == "deltaHCALTime"){
+    value = fabs(object2->hcal_time - object1->hcal_time);
+  }
   else if(variable == "muon1CorrectedD0")
     {
       value = object1->correctedD0;
