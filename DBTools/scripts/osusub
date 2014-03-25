@@ -7,6 +7,7 @@ use Getopt::Long;
 use POSIX;
 use Term::ANSIColor;
 use Cwd 'abs_path';
+use Sys::Hostname;
 
 select ((select (STDOUT), $| = 1)[0]);
 
@@ -15,12 +16,13 @@ sub outputPset;
 sub outputRunList;
 sub getLocation;
 sub outputCondor;
+sub outputLxbatch;
 
 our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
 
 my %opt;
 Getopt::Long::Configure ("bundling");
-GetOptions (\%opt, "dataset|d=s", "label|l=s", "maxEvents|m=s", "process|p=s", "filename|f=s", "random|r", "help|h");
+GetOptions (\%opt, "dataset|d=s", "label|l=s", "maxEvents|m=s", "process|p=s", "filename|f=s", "queue|q=s", "random|r", "help|h");
 my $argc = @ARGV;
 
 printHelp () if $opt{"help"};
@@ -55,6 +57,11 @@ if (-e $directory)
     exit;
   }
 mkdir $directory;
+my $host = hostname();
+my $useLxbatch = 0;    
+if (index($host, 'cern.ch') != -1) {
+  $useLxbatch = 1;  
+}
 my $nFiles = outputRunList ($dataset, $directory);
 my $realNJobs = $nJobs;
 $realNJobs = ceil ($nFiles / ceil ($nFiles / $realNJobs)) if $nFiles;
@@ -63,12 +70,21 @@ $eventsPerJob = ceil ($opt{"maxEvents"} / $realNJobs) if $opt{"maxEvents"} && $o
 my $realMaxEvents = $eventsPerJob * $realNJobs;
 outputPset ($directory, $dataset, $opt{"maxEvents"}, $eventsPerJob, $opt{"process"}, $opt{"filename"}, $opt{"random"});
 $dataset = $opt{"dataset"} if $opt{"dataset"};
-outputCondor ("$ENV{'CMSSW_BASE'}/src/OSUT3Analysis/DBTools/data/condor.sub", $directory, $realNJobs, $dataset, $opt{"label"});
+if ($useLxbatch) {
+  outputLxbatch($directory, $realNJobs, $opt{"queue"});
+} else {
+  outputCondor ("$ENV{'CMSSW_BASE'}/src/OSUT3Analysis/DBTools/data/condor.sub", $directory, $realNJobs, $dataset, $opt{"label"});
+}
 copy ($config, "$directory/userConfig_cfg.py");
 chdir $directory;
 print "Submitting $realNJobs jobs to run on $realMaxEvents events in $nFiles files.\n" if $realMaxEvents >= 0;
 print "Submitting $realNJobs jobs to run on all events in $nFiles files.\n" if $realMaxEvents < 0;
-system ("LD_LIBRARY_PATH=/usr/lib64/condor:\$LD_LIBRARY_PATH condor_submit condor.sub");
+if ($useLxbatch) {
+  system ("chmod +x lxbatchSub.sh"); 
+  system ("./lxbatchSub.sh"); 
+} else {
+  system ("LD_LIBRARY_PATH=/usr/lib64/condor:\$LD_LIBRARY_PATH condor_submit condor.sub");
+}
 
 sub
 outputPset
@@ -327,6 +343,39 @@ outputCondor
 }
 
 sub
+outputLxbatch
+{
+  my $workingDir = shift;
+  my $nJobs = shift;
+  my $queue = shift;
+  if (!$queue) {
+    $queue = "8nh";    
+  }
+
+  my $currentDir = getcwd();  
+  my $batchFile = "";
+  $batchFile .= "#!/bin/sh \n";  
+  $batchFile .= "for i in {1..$nJobs} \n";  
+  $batchFile .= "do \n";  
+  $batchFile .= "  bsub -q $queue -oo $currentDir/$workingDir/lxbatch_\$i.log $currentDir/$workingDir/lxbatchRun.sh \$i \n";   
+  $batchFile .= "done \n";  
+  $batchFile .= "echo \"Finished submitting $nJobs jobs.\" \n";    
+  open (SUB, ">$workingDir/lxbatchSub.sh");
+  print SUB $batchFile;
+  close (SUB);
+
+  $batchFile = "";
+  $batchFile .= "#!/bin/sh \n";  
+  $batchFile .= "cd $currentDir/$workingDir/ \n"; 
+  $batchFile .= "eval `scram runtime -sh` \n"; 
+  $batchFile .= "cmsRun config_cfg.py True $nJobs \$1 NULL NULL \n";  # Not set up to use a dataset with lxbatch.    
+  open (SUB, ">$workingDir/lxbatchRun.sh");
+  print SUB $batchFile;
+  close (SUB);
+
+}
+
+sub
 printHelp
 {
   my $exeName = $0;
@@ -343,6 +392,7 @@ printHelp
   printf "%-29s%s\n", " ", "to run over all events";
   printf "%-29s%s\n", "  -f, --filename FILENAME", "parameter of output filename in config file; default is process.TFileService.fileName";
   printf "%-29s%s\n", "  -r, --random", "set the random number seed equal to the job number; useful for signal generation";  
+  printf "%-29s%s\n", "  -q, --queue", "choose the lxbatch queue to use; default is 8nh";  
   print "\n";
   print "The optional first argument must be either a DATASET registered in the Tier 3\n";
   print "ntuple database, a LOCATION which exists on disk, or a text file containing a\n";
