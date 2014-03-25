@@ -11,6 +11,7 @@ use Sys::Hostname;
 
 select ((select (STDOUT), $| = 1)[0]);
 
+
 sub printHelp;
 sub outputPset;
 sub outputRunList;
@@ -22,7 +23,7 @@ our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") o
 
 my %opt;
 Getopt::Long::Configure ("bundling");
-GetOptions (\%opt, "dataset|d=s", "label|l=s", "maxEvents|m=s", "process|p=s", "filename|f=s", "queue|q=s", "random|r", "help|h");
+GetOptions (\%opt, "dataset|d=s", "label|l=s", "maxEvents|m=s", "process|p=s", "filename|f=s", "queue|q=s", "random|r", "noexec|n", "help|h");
 my $argc = @ARGV;
 
 printHelp () if $opt{"help"};
@@ -77,14 +78,17 @@ if ($useLxbatch) {
 }
 copy ($config, "$directory/userConfig_cfg.py");
 chdir $directory;
-print "Submitting $realNJobs jobs to run on $realMaxEvents events in $nFiles files.\n" if $realMaxEvents >= 0;
-print "Submitting $realNJobs jobs to run on all events in $nFiles files.\n" if $realMaxEvents < 0;
-if ($useLxbatch) {
-  system ("chmod +x lxbatchSub.sh"); 
-  system ("./lxbatchSub.sh"); 
+if (!$opt{"noexec"}) {
+  print "Submitting $realNJobs jobs to run on $realMaxEvents events in $nFiles files.\n" if $realMaxEvents >= 0;
+  print "Submitting $realNJobs jobs to run on all events in $nFiles files.\n" if $realMaxEvents < 0;
+  if ($useLxbatch) {
+    system ("./lxbatchSub.sh"); 
+  } else {
+    system ("LD_LIBRARY_PATH=/usr/lib64/condor:\$LD_LIBRARY_PATH condor_submit condor.sub");
+  }
 } else {
-  system ("LD_LIBRARY_PATH=/usr/lib64/condor:\$LD_LIBRARY_PATH condor_submit condor.sub");
-}
+  print "Configuration files created but no jobs submitted.\n"; 
+}  
 
 sub
 outputPset
@@ -373,6 +377,10 @@ outputLxbatch
   print SUB $batchFile;
   close (SUB);
 
+  system ("chmod +x $workingDir/lxbatchRun.sh"); 
+  system ("chmod +x $workingDir/lxbatchSub.sh"); 
+
+
 }
 
 sub
@@ -393,6 +401,7 @@ printHelp
   printf "%-29s%s\n", "  -f, --filename FILENAME", "parameter of output filename in config file; default is process.TFileService.fileName";
   printf "%-29s%s\n", "  -r, --random", "set the random number seed equal to the job number; useful for signal generation";  
   printf "%-29s%s\n", "  -q, --queue", "choose the lxbatch queue to use; default is 8nh";  
+  printf "%-29s%s\n", "  -n, --noexec", "set up the required configuration files, but do not submit jobs";  
   print "\n";
   print "The optional first argument must be either a DATASET registered in the Tier 3\n";
   print "ntuple database, a LOCATION which exists on disk, or a text file containing a\n";
