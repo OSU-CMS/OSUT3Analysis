@@ -223,6 +223,30 @@ MuonHistograms = cms.PSet(
             bins = cms.untracked.vdouble(100, 0, 3.15),
             inputVariables = cms.vstring("metDeltaPhi"),
         ),
+        cms.PSet (
+            name = cms.string("muonHCALTime"),
+            title = cms.string("Muon HCAL Time; ns"),
+            bins = cms.untracked.vdouble(160, -80, 80),
+            inputVariables = cms.vstring("hcal_time"),
+        ),
+        cms.PSet (
+            name = cms.string("muonECALTime"),
+            title = cms.string("Muon ECAL Time; ns"),
+            bins = cms.untracked.vdouble(160, -80, 80),
+            inputVariables = cms.vstring("ecal_time"),
+        ),
+        cms.PSet (
+            name = cms.string("muonTimeAtIpInOut"),
+            title = cms.string("Muon Time at Ip InOut Time; ns"),
+            bins = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("timeAtIpInOut"),
+        ),
+        cms.PSet (
+            name = cms.string("muonTimeAtIpOutIn"),
+            title = cms.string("Muon Time at Ip OutIn Time; ns"),
+            bins = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("timeAtIpOutIn"),
+        ),
     )
 )
 
@@ -564,6 +588,30 @@ MuonSecondaryMuonHistograms = cms.PSet(
             title = cms.string("Muon |d_{0}| vs. Secondary Muon |d_{0}|; |d_{0}| [cm]; |d_{0}| [cm]"),
             bins = cms.untracked.vdouble(100, 0, 0.02, 100, 0, 0.02),
             inputVariables = cms.vstring("abs(muon2CorrectedD0Vertex)","abs(muon1CorrectedD0Vertex)"),
+        ),
+        cms.PSet (
+            name = cms.string("muonPairHCALTimeInterval"),
+            title = cms.string("|#Delta(t)|; ns"),
+            bins = cms.untracked.vdouble(320, -160, 160),
+            inputVariables = cms.vstring("deltaHCALTime"),
+        ),
+        cms.PSet (
+            name = cms.string("muonPairECALTimeInterval"),
+            title = cms.string("|#Delta(t)|; ns"),
+            bins = cms.untracked.vdouble(320, -160, 160),
+            inputVariables = cms.vstring("deltaECALTime"),
+        ),
+        cms.PSet (
+            name = cms.string("muonPairInOutTimeInterval"),
+            title = cms.string("|#Delta(t)|; ns"),
+            bins = cms.untracked.vdouble(200, -100, 100),
+            inputVariables = cms.vstring("deltaInOutTime"),
+        ),
+        cms.PSet (
+            name = cms.string("muonPairOutInTimeInterval"),
+            title = cms.string("|#Delta(t)|; ns"),
+            bins = cms.untracked.vdouble(200, -100, 100),
+            inputVariables = cms.vstring("deltaOutInTime"),
         ),
     )
 )
