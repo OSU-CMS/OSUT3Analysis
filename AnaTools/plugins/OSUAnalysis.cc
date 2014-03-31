@@ -4144,6 +4144,9 @@ OSUAnalysis::valueLookup (const BNmcparticle* object, string variable, string fu
   else if (variable == "deltaVz"){
     value = object->vz - chosenVertex ()->z;
   }
+  else if (variable == "rho"){
+    value = sqrt (object->vx * object->vx + object->vy * object->vy);
+  }
 
   else{clog << "WARNING: invalid mcparticle variable '" << variable << "'\n"; value = -999;}
 
