@@ -44,7 +44,9 @@ if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 exec("import " + re.sub (r".py$", r"", config_file) + " as configFileContents")
-hasTTree = len (configFileContents.process.OSUAnalysis.treeBranchSets)
+hasTTree = False
+if hasattr (configFileContents.process, "OSUAnalysis"):
+    hasTTree = len (configFileContents.process.OSUAnalysis.treeBranchSets)
 
 condor_dir = set_condor_submit_dir(arguments)
 short_condor_dir = condor_dir
