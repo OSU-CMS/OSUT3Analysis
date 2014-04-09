@@ -858,7 +858,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
                             
         Comparison.GetYaxis().SetNdivisions(205)
-        Comparison.Draw()
+        Comparison.Draw("E0")
         if makeSignifPlots:  # Draw the other significance hists
             YMax = Comparison.GetMaximum()
             YMin = Comparison.GetMinimum()            
