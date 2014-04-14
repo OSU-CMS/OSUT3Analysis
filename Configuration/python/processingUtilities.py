@@ -98,7 +98,7 @@ def stop_ctau (dataset):
 def source_stop_ctau (ctau):
     return max (int (math.pow (10.0, math.ceil (math.log10 (ctau)))), 1)
 
-def add_stops (options, masses, ctaus, rHadron = False, bottomBranchingRatios = []):
+def add_stops (options, masses, ctaus, bottomBranchingRatios = [], rHadron = True):
     prefix = 'stopHadron' if rHadron else 'stop'
     if not bottomBranchingRatios:
         bottomBranchingRatios.append (100.0)
