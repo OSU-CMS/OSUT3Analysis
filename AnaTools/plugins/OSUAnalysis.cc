@@ -110,10 +110,10 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 		     << "  isrVarySF_                       = " <<  isrVarySF_                       << endl   
 		     << "  dataset_                         = " <<  dataset_                         << endl   
 		     << "  datasetType_                     = " <<  datasetType_                     << endl   
-		     << "  channels_                        = " <<  channels_                        << endl   
-		     << "  histogramSets_                   = " <<  histogramSets_                   << endl   
+    //		     << "  channels_                        = " <<  channels_                        << endl   
+    //		     << "  histogramSets_                   = " <<  histogramSets_                   << endl   
 		     << "  useEDMFormat_                    = " <<  useEDMFormat_                    << endl   
-		     << "  treeBranchSets_                  = " <<  treeBranchSets_                  << endl   
+    //		     << "  treeBranchSets_                  = " <<  treeBranchSets_                  << endl   
 		     << "  plotAllObjectsInPassingEvents_   = " <<  plotAllObjectsInPassingEvents_   << endl   
 		     << "  doPileupReweighting_             = " <<  doPileupReweighting_             << endl   
 		     << "  doTopPtReweighting_              = " <<  doTopPtReweighting_              << endl   
@@ -135,7 +135,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 		     << "  printEventInfo_                  = " <<  printEventInfo_                  << endl   
 		     << "  printAllTriggers_                = " <<  printAllTriggers_                << endl   
 		     << "  useTrackCaloRhoCorr_             = " <<  useTrackCaloRhoCorr_             << endl   
-		     << "  stopCTau_                        = " <<  stopCTau_                        << endl   
+    //		     << "  stopCTau_                        = " <<  stopCTau_                        << endl   
 		     << "  GetPlotsAfterEachCut_            = " <<  GetPlotsAfterEachCut_            << endl   
 		     << "  verbose_                         = " <<  verbose_                         << endl   
 		     << endl;  
