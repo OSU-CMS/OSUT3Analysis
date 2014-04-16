@@ -82,6 +82,10 @@ datasets = [
    'SingleElec_data_Reco',
    'SingleMu_data_Reco',
 
+   'AMSB_chargino_200GeV_ctau10cm', 
+   'AMSB_chargino_200GeV_ctau100cm', 
+   'AMSB_chargino_200GeV_ctau1000cm', 
+
    'AMSB_mGrav32K_0p5ns',
    'AMSB_mGrav32K_1ns',
    'AMSB_mGrav32K_5ns',
@@ -569,7 +573,7 @@ dataset_names = {
    'DoubleMu_2012C_2'     : "/DoubleMu/Run2012C-PromptReco-v2/AOD",
    'DoubleMu_2012D'       : "/DoubleMu/Run2012D-PromptReco-v1/AOD",
 
-   'DoubleMu_2012A_22Jan2013'       : "/DoubleMu/Run2012A-22Jan2013-v1/AOD",
+   'DoubleMu_2012A_22Jan2013'       : "/DoubleMuParked/Run2012A-22Jan2013-v1/AOD", 
    'DoubleMu_2012B_22Jan2013'       : "/DoubleMuParked/Run2012B-22Jan2013-v1/AOD",
    'DoubleMu_2012C_22Jan2013'       : "/DoubleMuParked/Run2012C-22Jan2013-v1/AOD",
    'DoubleMu_2012D_22Jan2013'       : "/DoubleMuParked/Run2012D-22Jan2013-v1/AOD",
@@ -644,6 +648,9 @@ dataset_names = {
    'DYToMuMu_20'    : "/DYToMuMu_M-20_CT10_TuneZ2star_v2_8TeV-powheg-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
    'DYToTauTau_20'  : "/DYToTauTau_M-20_CT10_TuneZ2star_v2_8TeV-powheg-tauola-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM",
    'DYToBB_50'      : "/DYToBB_M_50_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+
+   'DYToEE_20_Pythia'   : "/DYToEE_M_20_TuneZ2star_8TeV_pythia6_v2/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+   'DYToMuMu_20_Pythia' : "/DYToMuMu_M_20_TuneZ2star_8TeV_pythia6_v2/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",  
 
    'QCD_0to5'       : "/QCD_Pt-0to5_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
    'QCD_5to15'      : "/QCD_Pt-5to15_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
@@ -827,6 +834,9 @@ dataset_names = {
    'SingleMu_P1_Reco'    :  "/SingleMu/Run2012C-PromptReco-v2/RECO_P1_disappTrks",
    'SingleMu_P2_Reco'    :  "/SingleMu/Run2012C-PromptReco-v2/RECO_P2_disappTrks",
 
+    'AMSB_chargino_200GeV_ctau10cm'   : "AMSB_chargino_200GeV_ctau10cm",
+    'AMSB_chargino_200GeV_ctau100cm'  : "AMSB_chargino_200GeV_ctau100cm",
+    'AMSB_chargino_200GeV_ctau1000cm' : "AMSB_chargino_200GeV_ctau1000cm",
 
     'AMSB_mGrav32K_0p5ns' : '/DisappTrkChargino_LL01_0p5ns_V5/wulsin-DisappTrkChargino_LL01_0p5ns_V5-d01f5b9f6ef51059166dee85045de929/USER',
     'AMSB_mGrav32K_1ns'   : '/DisappTrkChargino_LL01_1ns_V5/wulsin-DisappTrkChargino_LL01_1ns_V5-f934c1dfbdd7800327dfb1efb0e7c43c/USER',
@@ -834,8 +844,8 @@ dataset_names = {
     
     'AMSB_mGrav50K_0p5ns' : '/DisappTrkChargino_LL01_mGrav50K_0p5ns_V5/wulsin-DisappTrkChargino_LL01_mGrav50K_0p5ns_V5-bc901238a19bd91cf436f9dd92d9a527/USER', 
     'AMSB_mGrav50K_1ns'   : '/DisappTrkChargino_LL01_mGrav50K_1ns_V5/wulsin-DisappTrkChargino_LL01_mGrav50K_1ns_V5-8d7921bb856d43d2cc7dce00818be4d4/USER', 
-    'AMSB_mGrav50K_5ns'   : '/DisappTrkChargino_LL01_mGrav50K_5ns_V5/wulsin-DisappTrkChargino_LL01_mGrav50K_5ns_V5-c797f30334d0feac946adf3f988a6189/USER',
-    
+    'AMSB_mGrav50K_5ns'   : '/DisappTrkChargino_LL01_mGrav50K_5ns_V5/wulsin-DisappTrkChargino_LL01_mGrav50K_5ns_V5-c797f30334d0feac946adf3f988a6189/USER',  
+
     'AMSB_mGrav61K_0p2ns' : '/DisappTrkChargino_LL01_mGrav61K_0p2ns_V5/wulsin-DisappTrkChargino_LL01_mGrav61K_0p2ns_V5-e2a86264f85e2fe70e651c2aa13c594a/USER', 
     'AMSB_mGrav61K_0p5ns' : '/DisappTrkChargino_LL01_mGrav61K_0p5ns_V5/wulsin-DisappTrkChargino_LL01_mGrav61K_0p5ns_V5-4d88979c16cc9eba0e57c6422bc75ffc/USER', 
     'AMSB_mGrav61K_1ns'   : '/DisappTrkChargino_LL01_mGrav61K_1ns_V5/wulsin-DisappTrkChargino_LL01_mGrav61K_1ns_V5-c1250bd7ba1be8ecace130ea7b0ea4c7/USER', 
@@ -905,10 +915,10 @@ nJobs = {
    'DoubleMu_2012C_2'     : 50,
    'DoubleMu_2012D'       : 50,
 
-   'DoubleMu_2012A_22Jan2013'   : 15,
-   'DoubleMu_2012B_22Jan2013'   : 40,
-   'DoubleMu_2012C_22Jan2013'   : 60,
-   'DoubleMu_2012D_22Jan2013'   : 60,
+   'DoubleMu_2012A_22Jan2013'   :  40,
+   'DoubleMu_2012B_22Jan2013'   : 120,
+   'DoubleMu_2012C_22Jan2013'   : 150,
+   'DoubleMu_2012D_22Jan2013'   : 150,
 
    'MuEG_2012A_22Jan2013' : 50,
    'MuEG_2012B_22Jan2013' : 50,
@@ -993,6 +1003,9 @@ nJobs = {
    'DYToMuMu_20'    : 100,
    'DYToTauTau_20'  : 100,
    'DYToBB_50'      : 100,
+
+   'DYToEE_20_Pythia'   : 100,
+   'DYToMuMu_20_Pythia' : 100,
 
    'QCD_0to5'       : 20,
    'QCD_5to15'      : 20,
@@ -1132,6 +1145,10 @@ nJobs = {
    'SingleElec_P2_Reco'  :  100,
    'SingleMu_P1_Reco'    :  100,
    'SingleMu_P2_Reco'    :  100,
+
+   'AMSB_chargino_200GeV_ctau10cm'   : 1, 
+   'AMSB_chargino_200GeV_ctau100cm'  : 1, 
+   'AMSB_chargino_200GeV_ctau1000cm' : 1, 
 
    'AMSB_mGrav32K_0p5ns' : 1,
    'AMSB_mGrav32K_1ns'   : 1,
@@ -1301,6 +1318,9 @@ maxEvents = {
    'DYToTauTau_20'  : -1,
    'DYToBB_50'      : -1,
 
+   'DYToEE_20_Pythia'    : -1,
+   'DYToMuMu_20_Pythia'  : -1,
+
    'QCD_0to5'       : -1,
    'QCD_5to15'      : -1,
    'QCD_15to30'     : -1,
@@ -1439,6 +1459,10 @@ maxEvents = {
    'SingleElec_P2_Reco'  :  -1,
    'SingleMu_P1_Reco'    :  -1,
    'SingleMu_P2_Reco'    :  -1,
+
+   'AMSB_chargino_200GeV_ctau10cm' : -1, 
+   'AMSB_chargino_200GeV_ctau100cm' : -1, 
+   'AMSB_chargino_200GeV_ctau1000cm' : -1, 
 
    'AMSB_mGrav32K_0p5ns' : -1,
    'AMSB_mGrav32K_1ns'   : -1,
@@ -1637,6 +1661,9 @@ types = {
    'DYToTauTau_20'  : "bgMC",
    'DYToBB_50'      : "bgMC",
 
+   'DYToEE_20_Pythia'    : "bgMC",
+   'DYToMuMu_20_Pythia'  : "bgMC",
+
    'EWK'            : "bgMC",
    'EWK_WNjets'     : "bgMC",   
 
@@ -1810,6 +1837,10 @@ types = {
    'SingleMu_data_Reco'    :  "data",
    'SingleMu_P1_Reco'      :  "data",
    'SingleMu_P2_Reco'      :  "data",
+
+   'AMSB_chargino_200GeV_ctau10cm' : "signalMC",
+   'AMSB_chargino_200GeV_ctau100cm' : "signalMC",
+   'AMSB_chargino_200GeV_ctau1000cm' : "signalMC",
 
    'AMSB_mGrav32K_0p5ns' : "signalMC",
    'AMSB_mGrav32K_1ns'   : "signalMC",
@@ -2009,6 +2040,9 @@ colors = {
    'DYToTauTau_20'     : 414,
    'DYToBB_50'         : 419,
 
+   'DYToEE_20_Pythia'   : 407,
+   'DYToMuMu_20_Pythia' : 410,
+
    'EWK'               : 426,
    'EWK_WNjets'        : 410,   
 
@@ -2189,6 +2223,10 @@ colors = {
    'SingleMu_P1_Reco'      :  1,
    'SingleMu_P2_Reco'      :  1,
 
+   'AMSB_chargino_200GeV_ctau10cm'   : 628, 
+   'AMSB_chargino_200GeV_ctau100cm'  : 596, 
+   'AMSB_chargino_200GeV_ctau1000cm' : 923, 
+
    'AMSB_mGrav32K_0p5ns' : 628,
    'AMSB_mGrav32K_1ns'   : 596,
    'AMSB_mGrav32K_5ns'   : 923,
@@ -2362,6 +2400,9 @@ labels = {
    'DYToMuMu_20'    : "Z#rightarrow#mu#mu",
    'DYToTauTau_20'  : "Z#rightarrow#tau#tau",
    'DYToBB_50'      : "Z#rightarrowbb",
+
+   'DYToEE_20_Pythia'   : "Z#rightarrowee",
+   'DYToMuMu_20_Pythia' : "Z#rightarrow#mu#mu",
 
    'Wjets'          : "W#rightarrowl#nu",
    'Wjets_matching_up'   : "W#rightarrowl#nu - matching up",
@@ -2569,6 +2610,9 @@ labels = {
    'SingleMu_P1_Reco'      :  "SingleMu data (P1)",
    'SingleMu_P2_Reco'      :  "SingleMu data (P2)",
 
+   'AMSB_chargino_200GeV_ctau10cm'   : "#chi_{1}^{#pm}, 200 GeV, #LTc#tau#GT=10cm",
+   'AMSB_chargino_200GeV_ctau100cm'  : "#chi_{1}^{#pm}, 200 GeV, #LTc#tau#GT=100cm",
+   'AMSB_chargino_200GeV_ctau1000cm' : "#chi_{1}^{#pm}, 200 GeV, #LTc#tau#GT=1000cm",
 
    'AMSB_mGrav32K_0p5ns' : "#chi_{1}^{#pm}, 103 GeV, 0.5 ns",
    'AMSB_mGrav32K_1ns'   : "#chi_{1}^{#pm}, 103 GeV, 1 ns",
