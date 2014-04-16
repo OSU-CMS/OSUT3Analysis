@@ -424,6 +424,7 @@ IsrVarySFWeight::IsrVarySFWeight (const string &sfFile, const string &dataOverMC
   isrVarySFWeight_ = (TH1F*)  dataOverMCHist->Clone();
   isrVarySFWeight_->GetEntries();// to avoid the crashing warning
   delete dataOverMCHist;
+  clog << "Will use hist " << isrVarySFWeight_->GetName() << " from file " << sfFile << " to do ISR reweighting." << endl;  
   fin->Close ();
  }
  
