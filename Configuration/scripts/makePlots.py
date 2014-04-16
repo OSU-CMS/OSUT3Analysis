@@ -28,6 +28,8 @@ parser.add_option("--ymax", dest="setYMax",
                   help="Maximum of y axis")	 
 parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
                   help="maximum error used in rebinning the ratio histogram")  
+parser.add_option("-N", "--normalizeFactor", dest="normalizeFactor",
+                  help="scale bkgd MC by a specified scale factor")  
 parser.add_option("-S", "--systematics", action="store_true", dest="includeSystematics", default=False,
                   help="also lists the systematic uncertainties")
 parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,		 
@@ -225,7 +227,7 @@ def addSystematicError(histogram, fractionalSysError):
 
 # some fancy-ass code from Andrzej Zuranski to merge bins in the ratio plot until the error goes below some threshold
 def ratioHistogram( dataHist, mcHist, relErrMax=0.1):
-
+        
     if not dataHist:
         print "Error:  trying to run ratioHistogram but dataHist is invalid" 
         return
@@ -390,7 +392,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         NormText = "Scaled to unit area"
     elif arguments.normalizeToData:
         NormText = "MC scaled to data"
-        NormLabel.SetLabel(NormText)
+    elif arguments.normalizeFactor:
+        NormText = "MC scaled by " + str(arguments.normalizeFactor)  
+    NormLabel.SetLabel(NormText)
         
         
     BgMCLegend = TLegend()
@@ -556,10 +560,12 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             DataHistograms.append(Histogram)
                     
     #scaling histograms as per user's specifications
-    if dataIntegral > 0 and backgroundIntegral > 0:
+    if arguments.normalizeFactor:
+        scaleFactor = float(arguments.normalizeFactor)  
+    elif dataIntegral > 0 and backgroundIntegral > 0:
         scaleFactor = dataIntegral/backgroundIntegral
     for bgMCHist in BgMCHistograms:
-        if arguments.normalizeToData:
+        if arguments.normalizeToData or arguments.normalizeFactor:
             bgMCHist.Scale(scaleFactor)
 
         if arguments.normalizeToUnitArea and not arguments.noStack and backgroundIntegral > 0:
@@ -822,7 +828,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         BgSum = Stack.GetStack().Last()
         if makeRatioPlots:
             if arguments.ratioRelErrMax:
-                Comparison = ratioHistogram(DataHistograms[0],BgSum,arguments.ratioRelErrMax)
+                Comparison = ratioHistogram(DataHistograms[0],BgSum,float(arguments.ratioRelErrMax))
             else:
                 Comparison = ratioHistogram(DataHistograms[0],BgSum)
         elif makeDiffPlots:
@@ -861,7 +867,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
                             
         Comparison.GetYaxis().SetNdivisions(205)
-        Comparison.Draw()
+        Comparison.Draw("E0")
         if makeSignifPlots:  # Draw the other significance hists
             YMax = Comparison.GetMaximum()
             YMin = Comparison.GetMinimum()            

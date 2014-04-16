@@ -482,7 +482,7 @@ def MakeOneDHist(histogramName):
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
                             
         Comparison.GetYaxis().SetNdivisions(205)
-        Comparison.Draw()
+        Comparison.Draw("E0")
 
     outputFile.cd()
     Canvas.Write()
