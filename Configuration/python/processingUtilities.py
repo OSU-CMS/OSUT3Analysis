@@ -98,19 +98,20 @@ def stop_ctau (dataset):
 def source_stop_ctau (ctau):
     return max (int (math.pow (10.0, math.ceil (math.log10 (ctau)))), 1)
 
-def add_stops (options, masses, ctaus, bottomBranchingRatios = []):
+def add_stops (options, masses, ctaus, bottomBranchingRatios = [], rHadron = True):
+    prefix = 'stopHadron' if rHadron else 'stop'
     if not bottomBranchingRatios:
-        bottomBranchingRatios.append (50.0)
+        bottomBranchingRatios.append (100.0)
     for mass in masses:
         for ctau in ctaus:
             for bottomBranchingRatio in bottomBranchingRatios:
-                datasetName = 'stop' + str (mass) + "_" + str (ctau) + "mm_br" + str (int (bottomBranchingRatio))
-                bottomDatasetName = 'stop' + str (mass) + "toBl_" + str (ctau) + "mm"
-                sourceBottomDatasetName = 'stop' + str (mass) + "toBl_" + str (source_stop_ctau (ctau)) + "mm"
-                topDatasetName = 'stop' + str (mass) + "toTnu_" + str (ctau) + "mm"
-                sourceTopDatasetName = 'stop' + str (mass) + "toTnu_" + str (source_stop_ctau (ctau)) + "mm"
-                mixedDatasetName = 'stop' + str (mass) + "toBT_" + str (ctau) + "mm"
-                sourceMixedDatasetName = 'stop' + str (mass) + "toBT_" + str (source_stop_ctau (ctau)) + "mm"
+                datasetName = prefix + str (mass) + "_" + str (ctau) + "mm_br" + str (int (bottomBranchingRatio))
+                bottomDatasetName = prefix + str (mass) + "toBl_" + str (ctau) + "mm"
+                sourceBottomDatasetName = prefix + str (mass) + "toBl_" + str (source_stop_ctau (ctau)) + "mm"
+                topDatasetName = prefix + str (mass) + "toTnu_" + str (ctau) + "mm"
+                sourceTopDatasetName = prefix + str (mass) + "toTnu_" + str (source_stop_ctau (ctau)) + "mm"
+                mixedDatasetName = prefix + str (mass) + "toBT_" + str (ctau) + "mm"
+                sourceMixedDatasetName = prefix + str (mass) + "toBT_" + str (source_stop_ctau (ctau)) + "mm"
 
                 options['datasets'].append (datasetName)
                 bottomBranchingRatio /= 100.0
