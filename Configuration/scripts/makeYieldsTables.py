@@ -122,8 +122,6 @@ def getSystematicError(sample,channel):
 #### check which input datasets have valid output files
 processed_datasets = []
 for dataset in datasets:
-    if types[dataset] is "signalMC": #only include bgMC and data yields
-        continue
     fileName = condor_dir + "/" + dataset + ".root"
     if not os.path.exists(fileName):
         "input file not found for ",dataset,"dataset"
@@ -186,7 +184,12 @@ for sample in processed_datasets:
         else:
             sysError_ = 0.0
 
-        yields[sample][channel] = formatNumber(str(round_sigfigs(int(yield_),5)).rstrip("0").rstrip("."))
+        
+        if types[sample] is not "data":
+            yields[sample][channel] = formatNumber(str(round_sigfigs(yield_,3)).rstrip("0").rstrip("."))
+        else:
+            yields[sample][channel] = formatNumber(str(yield_).rstrip("0").rstrip("."))
+
         stat_errors[sample][channel] = formatNumber(str(round_sigfigs(statError_,1)).rstrip("0").rstrip("."))
         sys_errors[sample][channel] = formatNumber(str(round_sigfigs(sysError_,1)).rstrip("0").rstrip("."))
 
@@ -209,7 +212,7 @@ for channel in channels:
 
     line = "Event Source & Event Yield $\pm$ 1$\sigma$ (stat.)"
     if arguments.includeSystematics:
-        line = line + " $\pm$ 1$\sigma$ (sys.)"
+        line = line + " $\pm$ 1$\sigma$ (syst.)"
     line = line +endLine+newLine+hLine
     fout.write(line)
 
@@ -219,8 +222,9 @@ for channel in channels:
         if types[sample] is not "bgMC":
             continue
         bgMCcounter = bgMCcounter + 1
-        rawlabel = "$" + labels[sample] + "$"
-        label = rawlabel.replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ")
+        
+        rawlabel = labels[sample]  
+        label = rawlabel.replace("#bar{t}","$\\bar{\\mathrm{t}}$").replace("#nu","$\\nu$").replace("#rightarrow","${\\rightarrow}$").replace(" ","\\ ")
         line = label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel]
         if arguments.includeSystematics:
             line = line + " $\pm$ " + sys_errors[sample][channel]
@@ -239,14 +243,35 @@ for channel in channels:
         line = line + endLine + newLine + hLine
         fout.write(line)
 
+
     #write a line for each data sample
     for sample in processed_datasets_channels[channel]:
         if types[sample] is not "data":
             continue
-        rawlabel = "$" + labels[sample] + "$"
+
+        rawlabel = "data"
         label = rawlabel.replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ")
-#        fout.write(label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel] + endLine + newLine)
         fout.write(label + " & " + yields[sample][channel] + endLine + newLine)        
+
+
+    #write a line for each signal sample
+    signalMCcounter = 0
+    for sample in processed_datasets_channels[channel]:
+        if types[sample] is not "signalMC":
+            continue
+        signalMCcounter = signalMCcounter + 1
+        rawlabel = labels[sample]
+        label = rawlabel.replace("#bar{t}","$\\bar{\\mathrm{t}}$").replace("#nu","$\\nu$").replace("#rightarrow","${\\rightarrow}$").replace(" ","\\ ")
+        line = label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel]
+        if arguments.includeSystematics:
+            line = line + " $\pm$ " + sys_errors[sample][channel]
+        line = line + endLine + newLine
+        fout.write(line)
+
+    if signalMCcounter is not 0:
+        line = hLine
+        fout.write(line)        
+
                                             
     fout.write("\\end{tabular}"+newLine)
     if(arguments.standAlone):
