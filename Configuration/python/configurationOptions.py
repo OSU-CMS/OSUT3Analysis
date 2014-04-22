@@ -512,6 +512,21 @@ composite_dataset_definitions = {
         'W3jets',
         'W4jets',
     ],
+    'EWK_WNjets_Other' : [
+        'WW',
+        'WZ',
+        'ZZ',
+        'ZG',
+        'WG',
+        'DYToEE_20',
+        'DYToMuMu_20',
+#        'DYToTauTau_20',
+        'W0jets',
+        'W1jets',
+        'W2jets',
+        'W3jets',
+        'W4jets',
+    ],
     'QCD' : [
         'QCD_0to5',
         'QCD_5to15',
@@ -1963,7 +1978,6 @@ types = {
    'ZJetsToNuNu_400toInf' : "bgMC",
     
    'Top'            : "bgMC",
-
    'TTbar'          : "bgMC",
    'TTbar_Had'      : "bgMC",
    'TTbar_SemiLep'  : "bgMC",
@@ -2020,7 +2034,8 @@ types = {
    'DYToBB_50'      : "bgMC",
 
    'EWK'            : "bgMC",
-   'EWK_WNjets'     : "bgMC",   
+   'EWK_WNjets'     : "bgMC",
+   'EWK_WNjets_Other' : "bgMC",      
 
    'QCD'            : "bgMC",
    'QCD_0to5'       : "bgMC",
@@ -2435,8 +2450,7 @@ colors = {
    'Background'        : 625,
    'Background_NoQCD'  : 625,
 
-   'Top'               : 872,
-
+   'Top'               : 591,
    'TTbar'             : 872,
    'TTbar_Had'         : 871,
    'TTbar_SemiLep'     : 872,
@@ -2490,13 +2504,14 @@ colors = {
    'DY_50_scale_down'    : 410,
    'DY_10-50'          : 410,
    'DY_PtZ100'         : 410, 
-   'DYToEE_20'         : 407,
-   'DYToMuMu_20'       : 410,
-   'DYToTauTau_20'     : 414,
+   'DYToEE_20'         : 408,
+   'DYToMuMu_20'       : 414,
+   'DYToTauTau_20'     : 410,   
    'DYToBB_50'         : 419,
 
    'EWK'               : 426,
-   'EWK_WNjets'        : 410,   
+   'EWK_WNjets'        : 410,
+   'EWK_WNjets_Other'  : 625,      
 
    'QCD'               : 791,
    'QCDFromData'       : 791,
@@ -2881,7 +2896,7 @@ labels = {
    'DoubleMu_2012D_22Jan2013'     : "DoubleMu 2012D data",
 
    'MuEG'                 : "MuEG data",
-   'MuEG_22Jan2013'       : "MuEG data",
+   'MuEG_22Jan2013'       : "data",
    'MuEG_2012A_22Jan2013' : "MuEG 2012A data",
    'MuEG_2012B_22Jan2013' : "MuEG 2012B data",
    'MuEG_2012C_22Jan2013' : "MuEG 2012C data",
@@ -2922,7 +2937,6 @@ labels = {
    'Background_NoQCD' : "SM Background, No QCD",
 
    'Top'           : "top",
-   
    'TTbar'         : "t#bar{t}",
    'TTbar_Had'     : "t#bar{t} (hadronic)",
    'TTbar_SemiLep' : "t#bar{t} (semi-leptonic)",
@@ -2983,7 +2997,8 @@ labels = {
    'WG'      : "W#gamma",
 
    'EWK'        : "electroweak",
-   'EWK_WNjets' : "EWK",   
+   'EWK_WNjets' : "EWK",
+   'EWK_WNjets_Other' : "other EWK",      
 
    'QCD'            : "QCD",
 #   'QCDFromData'    : "data-driven QCD",
