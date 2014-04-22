@@ -80,20 +80,20 @@ gStyle.SetCanvasBorderMode(0)
 gStyle.SetPadBorderMode(0)
 gStyle.SetPadColor(0)
 gStyle.SetCanvasColor(0)
-gStyle.SetTextFont(42)
 gStyle.SetCanvasDefH(600)
 gStyle.SetCanvasDefW(600)
 gStyle.SetCanvasDefX(0)
 gStyle.SetCanvasDefY(0)
-gStyle.SetPadTopMargin(0.07)
+gStyle.SetPadTopMargin(0.056)
 gStyle.SetPadBottomMargin(0.13)
-gStyle.SetPadLeftMargin(0.15)
-gStyle.SetPadRightMargin(0.05)
+gStyle.SetPadLeftMargin(0.1476)
+gStyle.SetPadRightMargin(0.0335)
 gStyle.SetTitleColor(1, "XYZ")
 gStyle.SetTitleFont(42, "XYZ")
 gStyle.SetTitleSize(0.04, "XYZ")
 gStyle.SetTitleXOffset(1.1)
-gStyle.SetTitleYOffset(2)
+gStyle.SetTitleYOffset(1.4)
+gStyle.SetTextFont(42)
 gStyle.SetTextAlign(12)
 gStyle.SetLabelColor(1, "XYZ")
 gStyle.SetLabelFont(42, "XYZ")
@@ -118,21 +118,20 @@ else:
     LumiText = "L_{int} = " + str.format('{0:.1f}', LumiInFb) + " fb^{-1}"
 
 #bestest place for lumi. label, in top left corner
-topLeft_x_left    = 0.1375839
-topLeft_x_right   = 0.4580537
-topLeft_y_bottom  = 0.8479021
-topLeft_y_top     = 0.9475524
+topLeft_x_left    = 0.137
+topLeft_x_right   = 0.458
+topLeft_y_bottom  = 0.847
+topLeft_y_top     = 0.947
 topLeft_y_offset  = 0.035
 
 #set the text for the fancy heading
 HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 8 TeV"
 
 #position for header
-header_x_left    = 0.2181208
-header_x_right   = 0.9562937
-header_y_bottom  = 0.9479866
-header_y_top     = 0.9947552
-
+header_x_left    = 0.244
+header_x_right   = 0.981
+header_y_bottom  = 0.947
+header_y_top     = 1
 
 
 ##########################################################################################################################################
@@ -177,13 +176,13 @@ def getSystematicError(sample,channel):
     for uncertainty in external_systematic_uncertainties:
         input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
         if not os.path.exists(input_file_path):
-            print "WARNING: didn't find ",input_file_path
+#            print "WARNING: didn't find ",input_file_path
             input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
             if not os.path.exists(input_file_path):
-                print "   skipping",uncertainty,"systematic for the",channel,"channel"
+#                print "   skipping",uncertainty,"systematic for the",channel,"channel"
                 return 0
-            else:
-                print "   using default",uncertainty,"systematic for the",channel,"channel"
+#            else:
+#                print "   using default",uncertainty,"systematic for the",channel,"channel"
 
         input_file = open(input_file_path)
         for line in input_file:
@@ -268,7 +267,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.1):
             ratio.SetBinContent(i+1,groupR(g))
             ratio.SetBinError(i+1,groupErr(g))
 
-    ratio.GetYaxis().SetTitle("#frac{Data-Bkgd}{Bkgd}")
+    ratio.GetYaxis().SetTitle("#frac{data-bkgd}{bkgd}")
     ratio.SetLineColor(1)
     ratio.SetLineWidth(2)
     return ratio
@@ -394,9 +393,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         
         
     BgMCLegend = TLegend()
-    BgTitle = BgMCLegend.AddEntry(0, "Data & Bkgd. MC", "H")
-    BgTitle.SetTextAlign(22)
-    BgTitle.SetTextFont(62)
+##     BgTitle = BgMCLegend.AddEntry(0, "Data & Bkgd. MC", "H")
+##     BgTitle.SetTextAlign(22)
+##     BgTitle.SetTextFont(62)
     BgMCLegend.SetBorderSize(0)
     BgMCLegend.SetFillColor(0)
     BgMCLegend.SetFillStyle(0)
@@ -587,7 +586,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if arguments.includeSystematics:
             addSystematicError(BgMCHistograms[0],BgMCUncertainties[0])
         ErrorHisto = BgMCHistograms[0].Clone("errors")
-        ErrorHisto.SetFillStyle(3001)
+        ErrorHisto.SetFillStyle(3002)
         ErrorHisto.SetFillColor(13)
         ErrorHisto.SetLineWidth(0)
         for index in range(1,len(BgMCHistograms)):
@@ -596,9 +595,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             ErrorHisto.Add(BgMCHistograms[index])
 
         if arguments.includeSystematics:
-            BgMCLegend.AddEntry(ErrorHisto,"Stat. & Sys. Errors","F")
+            BgMCLegend.AddEntry(ErrorHisto,"stat. & syst. errors","F")
         else:
-            BgMCLegend.AddEntry(ErrorHisto,"Stat. Errors","F")            
+            BgMCLegend.AddEntry(ErrorHisto,"stat. errors","F")            
 
 
     ### formatting bgMC histograms and adding to legend
@@ -737,8 +736,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     #legend coordinates, empirically determined :-)
-    x_left = 0.6761745
-    x_right = 0.9328859
+    x_left = 0.6
+    x_right = 0.932
     x_width = x_right - x_left
     y_max = 0.9
     entry_height = 0.05
@@ -773,7 +772,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     elif numSignalSamples is not 0: #draw the signalMC legend in the upper right corner
         SignalMCLegend.SetX1NDC(x_left)
-        SignalMCLegend.SetY1NDC(y_max-entry_height*(1+numSignalSamples)) # add one for the title
+        SignalMCLegend.SetY1NDC(y_max-entry_height*(numSignalSamples)) # add one for the title
         SignalMCLegend.SetX2NDC(x_right)
         SignalMCLegend.SetY2NDC(y_max)
         SignalMCLegend.Draw()
@@ -829,7 +828,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Comparison = DataHistograms[0].Clone("diff")
             Comparison.Add(BgSum,-1)
             Comparison.SetTitle("")
-            Comparison.GetYaxis().SetTitle("Data-Bkgd")
+            Comparison.GetYaxis().SetTitle("data-bkgd")
         elif makeSignifPlots:
             Comparisons = signifHistograms(BgSum,SignalMCHistograms)
             Comparison = Comparisons[0]  
