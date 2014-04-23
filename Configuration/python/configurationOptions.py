@@ -3011,10 +3011,10 @@ labels = {
    'W4jets'         : "W#rightarrowl#nu (4 Jets)",
 
    'ZJetsToNuNu'           : "Z #rightarrow#nu#nu ",
-   'ZJetsToNuNu_50to100'   : "Z #rightarrow#nu#nu (50to100)",
-   'ZJetsToNuNu_100to200'  : "Z #rightarrow#nu#nu (100to200)",
-   'ZJetsToNuNu_200to400'  : "Z #rightarrow#nu#nu (200to400)",
-   'ZJetsToNuNu_400toInf'  : "Z #rightarrow#nu#nu (400toInf)",
+   'ZJetsToNuNu_50to100'   : "Z #rightarrow#nu#nu (Pt 50-100)",
+   'ZJetsToNuNu_100to200'  : "Z #rightarrow#nu#nu (Pt 100-200)",
+   'ZJetsToNuNu_200to400'  : "Z #rightarrow#nu#nu (Pt 200-400)",
+   'ZJetsToNuNu_400toInf'  : "Z #rightarrow#nu#nu (Pt 400-#infty)",
 
    'Diboson' : "Diboson",
    'WW'      : "WW",
