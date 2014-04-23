@@ -473,6 +473,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
         if arguments.normalizeToUnitArea:
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
+        if arguments.normalizeToData:
+            yAxisLabel = yAxisLabel + " (Bkgd. Normalized to Data)"  
 
         if arguments.normalizeToUnitArea and arguments.makeSignificancePlots:
             unit = "Efficiency"
