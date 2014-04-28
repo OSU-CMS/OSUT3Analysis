@@ -2489,8 +2489,8 @@ labels = {
    'EWK_WNjets' : "EWK",   
 
    'QCD'            : "QCD",
-#   'QCDFromData'    : "data-driven QCD",
-   'QCDFromData'    : "QCD",   
+#   'QCDFromData'     : "data-driven QCD",
+   'QCDFromData'    : "QCD", 
    'QCD_0to5'       : "QCD Pt 0-5",
    'QCD_5to15'      : "QCD Pt 5-15",
    'QCD_15to30'     : "QCD Pt 15-30",
