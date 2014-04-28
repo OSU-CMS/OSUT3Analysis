@@ -1,4 +1,4 @@
-#include "OSUT3Analysis/AnaTools/interface/PUAnalyzer.h"
+#include "OSUT3Analysis/AnaTools/plugins/PUAnalyzer.h"
 
 PUAnalyzer::PUAnalyzer (const edm::ParameterSet &cfg) :
   events_ (cfg.getParameter<edm::InputTag> ("events"))

@@ -181,6 +181,7 @@ fills = {
 # some fancy-ass code from Andrzej Zuranski to merge bins in the ratio plot until the error goes below some threshold
 def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
 
+    # A group is a list of consecutive histogram bins
     def groupR(group):
         Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
         return (Data-MC)/MC if MC else 0
@@ -524,7 +525,7 @@ def MakeOneDHist(histogramName,integrateDir):
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
                          
         Comparison.GetYaxis().SetNdivisions(205)
-        Comparison.Draw()
+        Comparison.Draw("E0")
 
     outputFile.cd()
     Canvas.Write()

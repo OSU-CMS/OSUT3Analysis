@@ -383,6 +383,17 @@ class OSUAnalysis : public edm::EDProducer
       template <class InputCollection1, class InputCollection2> void fill2DHistogram(TH2*, histogram, InputCollection1, InputCollection2, flagPair, double);
       bool getPreviousCumulativeFlags(uint currentCutIndex, flagMap &individualFlags, string obj1Type, uint object1, string flagType);
 
+      inline flagPair getLastValidFlags(string objType) {
+	// get the last valid flags in the flag map
+	for (int i = cumulativeFlags.at(objType).size() - 1; i >= 0; i--) {  // loop backwards over all the cuts
+	  if (cumulativeFlags.at(objType).at(i).size()){  	  // If all the flags have been filled, then the last cut will have a nonzero size
+	    return cumulativeFlags.at(objType).at(i);  
+	  }
+	}
+	// no valid flags have been found 
+	flagPair empty;
+	return empty;  
+      }  
 
 
       template <class InputObject> int getGenMatchedParticleIndex(InputObject);

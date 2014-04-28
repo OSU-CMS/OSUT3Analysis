@@ -43,6 +43,10 @@ if (arguments.skimDir and not arguments.skimChannel) or (not arguments.skimDir a
 if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
+exec("import " + re.sub (r".py$", r"", config_file) + " as configFileContents")
+hasTTree = False
+if hasattr (configFileContents.process, "OSUAnalysis"):
+    hasTTree = len (configFileContents.process.OSUAnalysis.treeBranchSets)
 
 condor_dir = set_condor_submit_dir(arguments)
 short_condor_dir = condor_dir
@@ -136,6 +140,8 @@ if arguments.mergeDaemon and len (clusters) > 0:
             if arguments.localConfig:
                 shutil.copy (arguments.localConfig, "mergeDaemonOptions_" + str (pid) + ".py")
                 command += " -l mergeDaemonOptions_" + str (pid) + ".py"
+            if hasTTree:
+                command += " -t"
             os.execvp ("mergeDaemon.pl", ["mergeDaemon.pl", command] + clusters.split ())
         else:
             print "\nMerging daemon PID: " + str (pid)

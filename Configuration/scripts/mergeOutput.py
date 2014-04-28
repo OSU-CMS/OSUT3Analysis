@@ -26,6 +26,8 @@ parser.add_option("-i", "--nice", dest="increment", default=10,
                   help="Set the niceness increment for the processes that are forked (default: 10)")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                   help="verbose output")
+parser.add_option("-T", "--ttree", action="store_true", dest="ttree", default=False,
+                  help="apply weights to TTree objects as well as histograms")
 (arguments, args) = parser.parse_args()
 
 if arguments.localConfig:
@@ -84,6 +86,8 @@ def mergeDataset (dataset, sema):
         command = "mergeHists -w 1 -p %s %s" % (dataset_dir, dataset_dir)
     else:
         command = "mergeHists -l %g -p %s %s" % (intLumi, dataset_dir, dataset_dir)
+    if arguments.ttree:
+        command += " -T"
     command += " >> " + logMerge + " 2>&1"    # append stdout and stderr to log file  
 
     output = open (logMerge, "w")
@@ -153,6 +157,8 @@ def mergeCompositeDataset (composite_dataset, sema):
                 else:
                     component_weights_list += "1"
     command = "mergeHists -w %s -p %s %s" % (component_weights_list, composite_dataset_dir, component_datasets_list)
+    if arguments.ttree:
+        command += " -T"
     command += " >> " + logMerge + " 2>&1"
 
     output = open (logMerge, "w") 

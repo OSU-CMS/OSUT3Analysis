@@ -2696,13 +2696,13 @@ MetHistograms = cms.PSet(
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("metPt"),
-            title = cms.string("Missing E_{T}; Missing E_{T} [GeV]"),
+            title = cms.string("Missing E_{T}; E_{T}^{miss} [GeV]"),
             bins = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
             name = cms.string("metPhi"),
-            title = cms.string("Phi of Missing E_{T}; Missing E_{T} #phi"),
+            title = cms.string("Phi of Missing E_{T}; #phi(E_{T}^{miss})"),
             bins = cms.untracked.vdouble(100, -3.15, 3.15),
             inputVariables = cms.vstring("phi"),
         ),
