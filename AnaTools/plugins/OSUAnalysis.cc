@@ -760,6 +760,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         else if(currentObject == "track-event pairs")         currentObject = "trackEventPairs";
         else if(currentObject == "electron-track pairs")      currentObject = "electronTrackPairs";
         else if(currentObject == "muon-track pairs")          currentObject = "muonTrackPairs";
+        else if(currentObject == "jet-track pairs")          currentObject = "jetTrackPairs";
         else if(currentObject == "secondary muon-track pairs") currentObject = "secondaryMuonTrackPairs";
         else if(currentObject == "muon-tau pairs")            currentObject = "muonTauPairs";
         else if(currentObject == "tau-tau pairs")             currentObject = "ditauPairs";
@@ -1232,6 +1233,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "track-event pairs")       setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),events.product(), "track-event pairs");
         else if(currentObject == "electron-track pairs")    setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),tracks.product(),"electron-track pairs");
         else if(currentObject == "muon-track pairs")        setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),tracks.product(),"muon-track pairs");
+        else if(currentObject == "jet-track pairs")        setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),tracks.product(),"jet-track pairs");
         else if(currentObject == "secondary muon-track pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,secMuons.product(),tracks.product(),"secondary muon-track pairs");
         else if(currentObject == "muon-tau pairs")          setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),taus.product(),"muon-tau pairs");
         else if(currentObject == "tau-tau pairs")           setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,taus.product(),taus.product(),"tau-tau pairs");
@@ -1606,6 +1608,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                                 cumulativeFlags.at("electron-track pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-track pairs") fill1DHistogram(histo,currentHistogram, muons.product(),tracks.product(),
                                                                                             cumulativeFlags.at("muon-track pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "jet-track pairs") fill1DHistogram(histo,currentHistogram, jets.product(),tracks.product(),
+                                                                                            cumulativeFlags.at("jet-track pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary muon-track pairs") fill1DHistogram(histo,currentHistogram, secMuons.product(),tracks.product(),
                                                                                             cumulativeFlags.at("secondary muon-track pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-tau pairs") fill1DHistogram(histo,currentHistogram, muons.product(),taus.product(),
@@ -1696,6 +1700,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                                 cumulativeFlags.at("electron-track pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-track pairs") fill2DHistogram(histo,currentHistogram,muons.product(),tracks.product(),
                                                                                             cumulativeFlags.at("muon-track pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "jet-track pairs") fill2DHistogram(histo,currentHistogram,jets.product(),tracks.product(),
+                                                                                            cumulativeFlags.at("jet-track pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "secondary muon-track pairs") fill2DHistogram(histo,currentHistogram,secMuons.product(),tracks.product(),
                                                                                             cumulativeFlags.at("muon-track pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-tau pairs") fill2DHistogram(histo,currentHistogram,muons.product(),taus.product(),
@@ -1759,6 +1765,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "secondary photons")                  objectToPlot = "secondaryPhotons";
           else if(currentObject == "electron-track pairs")               objectToPlot = "electronTrackPairs";
           else if(currentObject == "muon-track pairs")                   objectToPlot = "muonTrackPairs";
+          else if(currentObject == "jet-track pairs")                   objectToPlot = "jetTrackPairs";
           else if(currentObject == "secondary muon-track pairs")         objectToPlot = "secondaryMuonTrackPairs";
           else if(currentObject == "secondary muon-jet pairs")           objectToPlot = "secondaryMuonJetPairs";
           else if(currentObject == "secondary electron-jet pairs")       objectToPlot = "secondaryElectronJetPairs";
@@ -2280,6 +2287,7 @@ OSUAnalysis::valueLookup (const BNmuon* object, string variable, string function
   else if(variable == "timeAtIpOutInErr") value = object->timeAtIpOutInErr;
   else if(variable == "ecal_time") value = object->ecal_time;
   else if(variable == "hcal_time") value = object->hcal_time;
+  else if(variable == "time_between_ecal_hcal") value = object->hcal_time - object->ecal_time;
   else if(variable == "ecal_timeError") value = object->ecal_timeError;
   else if(variable == "hcal_timeError") value = object->hcal_timeError;
   else if(variable == "energy_ecal") value = object->energy_ecal;
@@ -4397,6 +4405,7 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNmuon* object2, string v
 
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "deltaPt") value = fabs(object1->pt - object2->pt);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "invMass"){
     TLorentzVector fourVector1(object1->px, object1->py, object1->pz, object1->energy);
@@ -4444,17 +4453,13 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNmuon* object2, string v
   else if(variable == "muon2timeAtIpInOut"){
     value = object2->timeAtIpInOut;
   }
-  else if(variable == "deltaOutInTime"){
-    value = fabs(object2->timeAtIpOutIn - object1->timeAtIpOutIn);
+  else if(variable == "muon1EcalTime"){ value = object1->ecal_time;
   }
-  else if(variable == "deltaInOutTime"){
-    value = fabs(object2->timeAtIpInOut - object1->timeAtIpInOut);
+  else if(variable == "muon2EcalTime"){ value = object2->ecal_time;
   }
-  else if(variable == "deltaECALTime"){
-    value = fabs(object2->ecal_time - object1->ecal_time);
+  else if(variable == "muon1HcalTime"){ value = object1->hcal_time;
   }
-  else if(variable == "deltaHCALTime"){
-    value = fabs(object2->hcal_time - object1->hcal_time);
+  else if(variable == "muon2HcalTime"){ value = object2->hcal_time;
   }
   else if(variable == "muon1CorrectedD0")
     {
@@ -5179,6 +5184,13 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNtrack* object2, string 
   double value = 0.0;
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "alpha")
+    {
+      static const double pi = 3.1415926535897932384626433832795028841971693993751058;
+      TVector3 threeVector1(object1->px, object1->py, object1->pz);
+      TVector3 threeVector2(object2->px, object2->py, object2->pz);
+      value = (pi-threeVector1.Angle(threeVector2));
+    }
   else if(variable == "deltaPt")  value = fabs(object1->pt - object2->pt);  
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "deltaRLooseID") {
@@ -5207,6 +5219,19 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNtrack* object2, string 
   }
 
   else{clog << "WARNING: invalid muon-track pair variable '" << variable << "'\n"; value = -999;}
+  value = applyFunction(function, value);
+  return value;
+}
+
+//!jet-track pair valueLookup
+double
+OSUAnalysis::valueLookup (const BNjet* object1, const BNtrack* object2, string variable, string function, string &stringValue){
+  double value = 0.0;
+  if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
+  else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
+  else if(variable == "deltaPt")  value = fabs(object1->pt - object2->pt);  
+  else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
+  else{clog << "WARNING: invalid jet-track pair variable '" << variable << "'\n"; value = -999;}
   value = applyFunction(function, value);
   return value;
 }
