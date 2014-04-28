@@ -27,7 +27,8 @@ parser.add_option("-f", "--fancy", action="store_true", dest="makeFancy", defaul
                   help="removes the title and replaces it with the official CMS plot heading")
 parser.add_option("--dontRebinRatio", action="store_true", dest="dontRebinRatio", default=False,
                   help="don't do the rebinning of ratio plots")
-
+parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
+                  help="maximum error used in rebinning the ratio histogram")
 parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,		 
                   help="Set logarithmic scale on vertical axis on all plots")	 
 parser.add_option("--ymin", dest="setYMin", 
@@ -488,7 +489,10 @@ def MakeOneDHist(histogramName,integrateDir):
     if makeRatioPlots or makeDiffPlots:
         Canvas.cd(2)
         if makeRatioPlots:
-            Comparison = ratioHistogram(Histograms[0],Histograms[1])
+            if arguments.ratioRelErrMax:
+                Comparison = ratioHistogram(Histograms[0],Histograms[1],float(arguments.ratioRelErrMax))
+            else:
+                Comparison = ratioHistogram(Histograms[0],Histograms[1])
         elif makeDiffPlots:
             Comparison = Histograms[0].Clone("diff")
             Comparison.Add(Histograms[1],-1)

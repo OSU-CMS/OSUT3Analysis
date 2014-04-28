@@ -177,13 +177,13 @@ def getSystematicError(sample,channel):
     for uncertainty in external_systematic_uncertainties:
         input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
         if not os.path.exists(input_file_path):
-            print "WARNING: didn't find ",input_file_path
+            #print "WARNING: didn't find ",input_file_path
             input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
             if not os.path.exists(input_file_path):
-                print "   skipping",uncertainty,"systematic for the",channel,"channel"
+                #print "   skipping",uncertainty,"systematic for the",channel,"channel"
                 return 0
-            else:
-                print "   using default",uncertainty,"systematic for the",channel,"channel"
+            #else:
+                #print "   using default",uncertainty,"systematic for the",channel,"channel"
 
         input_file = open(input_file_path)
         for line in input_file:
@@ -224,8 +224,7 @@ def addSystematicError(histogram, fractionalSysError):
 ##########################################################################################################################################
 
 # some fancy-ass code from Andrzej Zuranski to merge bins in the ratio plot until the error goes below some threshold
-def ratioHistogram( dataHist, mcHist, relErrMax=0.1):
-
+def ratioHistogram( dataHist, mcHist, relErrMax = 0.10):
     if not dataHist:
         print "Error:  trying to run ratioHistogram but dataHist is invalid" 
         return
@@ -435,7 +434,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         if not HistogramObj:
-            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+            #print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
             continue 
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
@@ -822,7 +821,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         BgSum = Stack.GetStack().Last()
         if makeRatioPlots:
             if arguments.ratioRelErrMax:
-                Comparison = ratioHistogram(DataHistograms[0],BgSum,arguments.ratioRelErrMax)
+                Comparison = ratioHistogram(DataHistograms[0],BgSum,float(arguments.ratioRelErrMax))
             else:
                 Comparison = ratioHistogram(DataHistograms[0],BgSum)
         elif makeDiffPlots:
@@ -951,7 +950,7 @@ def MakeTwoDHist(pathToDir,histogramName):
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         if not HistogramObj:
-            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+            #print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
             continue 
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
