@@ -86,4 +86,16 @@ class TrackNMissOutSFWeight
       TH1F *trackNMissOutSFWeight_; 
   };
 
+class IsrVarySFWeight 
+// Class for assigning a scale factor according to the pT of ISR, which is taken to be equivalent to the sum(pT) of all status 3 Susy particles  
+  {
+    public:  
+      IsrVarySFWeight (const string &sfFile, const string &dataOverMC);  
+      ~IsrVarySFWeight ();  
+      double at (const double &ptSusy, const int &shiftUpDown = 0);  
+
+    private:
+      TH1F *isrVarySFWeight_; 
+  };
+
 #endif

@@ -416,6 +416,31 @@ TrackNMissOutSFWeight::~TrackNMissOutSFWeight ()
 
 
 
+IsrVarySFWeight::IsrVarySFWeight (const string &sfFile, const string &dataOverMC)
+{
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
+  if (!dataOverMCHist) cout << "Fatal Error [IsrVarySFWeight::IsrVarySFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  isrVarySFWeight_ = (TH1F*)  dataOverMCHist->Clone();
+  isrVarySFWeight_->GetEntries();// to avoid the crashing warning
+  delete dataOverMCHist;
+  clog << "Will use hist " << isrVarySFWeight_->GetName() << " from file " << sfFile << " to do ISR reweighting." << endl;  
+  fin->Close ();
+ }
+ 
+double
+IsrVarySFWeight::at(const double &ptSusy, const int &shiftUpDown) 
+{  
+  int bin = isrVarySFWeight_->FindBin(ptSusy);  
+  return 1.0 + isrVarySFWeight_->GetBinContent(bin) + shiftUpDown * isrVarySFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
+}
+
+IsrVarySFWeight::~IsrVarySFWeight ()
+{
+  delete isrVarySFWeight_;
+}
+
+
 
 
 /*

@@ -223,6 +223,36 @@ MuonHistograms = cms.PSet(
             bins = cms.untracked.vdouble(100, 0, 3.15),
             inputVariables = cms.vstring("metDeltaPhi"),
         ),
+        cms.PSet (
+            name = cms.string("muonHCALTime"),
+            title = cms.string("Muon HCAL Time; ns"),
+            bins = cms.untracked.vdouble(160, -80, 80),
+            inputVariables = cms.vstring("hcal_time"),
+        ),
+        cms.PSet (
+            name = cms.string("muonECALTime"),
+            title = cms.string("Muon ECAL Time; ns"),
+            bins = cms.untracked.vdouble(160, -80, 80),
+            inputVariables = cms.vstring("ecal_time"),
+        ),
+        cms.PSet (
+            name = cms.string("muonTimeAtIpInOut"),
+            title = cms.string("Muon Time at Ip InOut Time; ns"),
+            bins = cms.untracked.vdouble(200, -10, 10),
+            inputVariables = cms.vstring("timeAtIpInOut"),
+        ),
+        cms.PSet (
+            name = cms.string("muonTimeAtIpOutIn"),
+            title = cms.string("Muon Time at Ip OutIn Time; ns"),
+            bins = cms.untracked.vdouble(200, -10, 10),
+            inputVariables = cms.vstring("timeAtIpOutIn"),
+        ),
+        cms.PSet (
+            name = cms.string("muonEcalTimeVsHcalTime"),
+            title = cms.string("EcalTime_{#mu} vs. HcalTime_{#mu}; ns ; ns"),
+            bins = cms.untracked.vdouble(200, -100, 100, 200,-100,100),
+            inputVariables = cms.vstring("hcal_time","ecal_time"),
+        ),
     )
 )
 
@@ -554,10 +584,28 @@ MuonSecondaryMuonHistograms = cms.PSet(
             inputVariables = cms.vstring("muon2CorrectedD0Vertex","muon1CorrectedD0Vertex"),
         ),
         cms.PSet (
+            name = cms.string("muonD0BeamspotvsSecondaryMuonD0Beamspot"),
+            title = cms.string("Muon d_{0} wrt Beamspot vs. Secondary Muon d_{0} wrt Beamspot; d_{0} [cm]; d_{0} [cm]"),
+            bins = cms.untracked.vdouble(100, -0.02, 0.02, 100, -0.02, 0.02),
+            inputVariables = cms.vstring("muon2CorrectedD0","muon1CorrectedD0"),
+        ),
+        cms.PSet (
             name = cms.string("muonAbsD0vsSecondaryMuonAbsD0"),
             title = cms.string("Muon |d_{0}| vs. Secondary Muon |d_{0}|; |d_{0}| [cm]; |d_{0}| [cm]"),
             bins = cms.untracked.vdouble(100, 0, 0.02, 100, 0, 0.02),
             inputVariables = cms.vstring("abs(muon2CorrectedD0Vertex)","abs(muon1CorrectedD0Vertex)"),
+        ),
+        cms.PSet (
+            name = cms.string("muon1EcalTimeVsMuon2EcalTime"),
+            title = cms.string("EcalTime_{#mu_1} vs. EcalTime_{#mu_2}; ns ; ns"),
+            bins = cms.untracked.vdouble(200, -100, 100, 200,-100,100),
+            inputVariables = cms.vstring("muon2EcalTime","muon1EcalTime"),
+        ),
+        cms.PSet (
+            name = cms.string("muon1HcalTimeVsMuon2HcalTime"),
+            title = cms.string("HcalTime_{#mu_1} vs. HcalTime_{#mu_2}; ns ; ns"),
+            bins = cms.untracked.vdouble(200, -100, 100, 200,-100,100),
+            inputVariables = cms.vstring("muon2HcalTime","muon1HcalTime"),
         ),
     )
 )
@@ -1139,6 +1187,12 @@ ElectronSecondaryElectronHistograms = cms.PSet(
             inputVariables = cms.vstring("electron2CorrectedD0Vertex","electron1CorrectedD0Vertex"),
         ),
         cms.PSet (
+            name = cms.string("electronD0BeamspotvsSecondaryElectronD0Beamspot"),
+            title = cms.string("Electron d_{0} wrt Beamspot vs. Secondary Electron d_{0} wrt Beamspot; d_{0} [cm]; d_{0} [cm]"),
+            bins = cms.untracked.vdouble(100, -0.02, 0.02, 100, -0.02, 0.02),
+            inputVariables = cms.vstring("electron2CorrectedD0","electron1CorrectedD0"),
+        ),
+        cms.PSet (
             name = cms.string("electronAbsD0vsSecondaryElectronAbsD0"),
             title = cms.string("Electron |d_{0}| vs. Secondary Electron |d_{0}|; |d_{0}| [cm]; |d_{0}| [cm]"),
             bins = cms.untracked.vdouble(100, 0, 0.02, 100, 0, 0.02),
@@ -1206,6 +1260,12 @@ ElectronMuonHistograms = cms.PSet(
             title = cms.string("Electron d_{0} vs. Muon d_{0}; muon d_{0} [cm]; electron d_{0} [cm]"),
             bins = cms.untracked.vdouble(100, -0.02, 0.02, 100, -0.02, 0.02),
             inputVariables = cms.vstring("muonCorrectedD0Vertex","electronCorrectedD0Vertex"),
+        ),
+        cms.PSet (
+            name = cms.string("electronD0BeamspotVsMuonD0Beamspot"),
+            title = cms.string("Electron d_{0} wrt Beamspot vs. Muon d_{0} wrt Beamspot; muon d_{0} [cm]; electron d_{0} [cm]"),
+            bins = cms.untracked.vdouble(100, -0.02, 0.02, 100, -0.02, 0.02),
+            inputVariables = cms.vstring("muonCorrectedD0","electronCorrectedD0"),
         ),
         cms.PSet (
             name = cms.string("electronD0SigvsMuonD0Sig"),
@@ -2636,13 +2696,13 @@ MetHistograms = cms.PSet(
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("metPt"),
-            title = cms.string("Missing E_{T}; Missing E_{T} [GeV]"),
+            title = cms.string("Missing E_{T}; E_{T}^{miss} [GeV]"),
             bins = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
             name = cms.string("metPhi"),
-            title = cms.string("Phi of Missing E_{T}; Missing E_{T} #phi"),
+            title = cms.string("Phi of Missing E_{T}; #phi(E_{T}^{miss})"),
             bins = cms.untracked.vdouble(100, -3.15, 3.15),
             inputVariables = cms.vstring("phi"),
         ),
@@ -2678,7 +2738,7 @@ TrackHistograms = cms.PSet(
             bins = cms.untracked.vdouble(100, -0.5, 0.5),
             inputVariables = cms.vstring("d0"),
         ),
-        cms.PSet (
+       cms.PSet (
             name = cms.string("trackdz"),
             title = cms.string("Track d_{z}; d_{z} [cm]"),
             bins = cms.untracked.vdouble(100, -30, 30),
@@ -2753,6 +2813,12 @@ MuonTrackHistograms = cms.PSet(
         title = cms.string("Muon-Track Invariant Mass; M_{#mu+track} [GeV]"),
         bins = cms.untracked.vdouble(90, 0, 180),
         inputVariables = cms.vstring("invMass"),
+        ),
+    cms.PSet (
+        name = cms.string("MuonTrackPiMinusThreeDAngle"),
+        title = cms.string("Pi - angle between the two muons;log(#alpha [rad])"),
+        bins = cms.untracked.vdouble(100, -9, 5),
+        inputVariables = cms.vstring("log10(alpha)"),
         ),
     cms.PSet (
         name = cms.string("MuonTrackDeltaEta"),
@@ -2962,6 +3028,12 @@ EventHistograms = cms.PSet(
             title = cms.string("trackNMissOut Reweighting Factor; N_{miss}^{out} SF weight "),
             bins = cms.untracked.vdouble(100, 0.5, 1.5),
             inputVariables = cms.vstring("trackNMissOutScaleFactor"),
+        ),
+        cms.PSet (
+            name = cms.string("isrVaryScaleFactor"),
+            title = cms.string("isrVaryScaleFactor Reweighting Factor; ISR variation SF weight "),
+            bins = cms.untracked.vdouble(100, 0.0, 2.0),
+            inputVariables = cms.vstring("isrVaryScaleFactor"),
         ),
         cms.PSet (
             name = cms.string("stopCTauScaleFactor"),

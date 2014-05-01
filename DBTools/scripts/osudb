@@ -897,11 +897,9 @@ mergeDatasets
   my ($dstStatus, $dstComment, $dstJSONFile, $dstLumiSummary, $dstCurrentStatus, $dstWorkingDirectory) = getInfo ($dstID);
   my ($srcStatus, $srcComment, $srcJSONFile, $srcLumiSummary, $srcCurrentStatus, $srcWorkingDirectory) = getInfo ($srcID);
 
-  if ($dstStatus ne "present" || $srcStatus ne "present")
-    {
-      print "Only \"present\" datasets can be merged. Quitting.\n";
-      exit;
-    }
+  die "Only \"present\" datasets can be merged, stopped" if $dstStatus ne "present" || $srcStatus ne "present";
+  die "One of the datasets has no JSON file in the database, stopped" if !$dstJSONFile || !$srcJSONFile;
+  die "One of the datasets has no lumiSummary file in the database, stopped" if !$dstLumiSummary || !$srcLumiSummary;
 
   $dstLocation .= ":" . $srcLocation;
   $dstFileList = $dstFileList . "\n" . $srcFileList;

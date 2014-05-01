@@ -27,7 +27,8 @@ parser.add_option("-f", "--fancy", action="store_true", dest="makeFancy", defaul
                   help="removes the title and replaces it with the official CMS plot heading")
 parser.add_option("--dontRebinRatio", action="store_true", dest="dontRebinRatio", default=False,
                   help="don't do the rebinning of ratio plots")
-
+parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
+                  help="maximum error used in rebinning the ratio histogram")
 parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,		 
                   help="Set logarithmic scale on vertical axis on all plots")	 
 parser.add_option("--ymin", dest="setYMin", 
@@ -40,6 +41,10 @@ parser.add_option("--line-width", dest="line_width",
                                     help="set line width (default is 2)")
 parser.add_option("-g", "--generic", action="store_true", dest="generic", default=False,
                   help="generic root file directory structure; does not assume that channel dir is in OSUAnalysis dir")
+parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,
+                                    help="Make significance plots")
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                  help="verbose output")  
 
 
 (arguments, args) = parser.parse_args()
@@ -64,6 +69,12 @@ if arguments.makeRatioPlots and arguments.makeDiffPlots:
     arguments.makeRatioPlots = False
 
 
+if arguments.makeSignificancePlots and arguments.makeRatioPlots:
+    print "You have asked to make a ratio plot and significance plots. This is a very strange request.  Will skip making the ratio plot."
+    arguments.makeRatioPlots = False
+if arguments.makeSignificancePlots and arguments.makeDiffPlots:
+    print "You have asked to make a difference plot and significance plots. This is a very strange request.  Will skip making the difference plot."
+    arguments.makeDiffPlots = False
 
 from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TLegendEntry, THStack, TIter, TKey, TPaveLabel, gPad
 
@@ -170,6 +181,7 @@ fills = {
 # some fancy-ass code from Andrzej Zuranski to merge bins in the ratio plot until the error goes below some threshold
 def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
 
+    # A group is a list of consecutive histogram bins
     def groupR(group):
         Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
         return (Data-MC)/MC if MC else 0
@@ -218,7 +230,43 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
 ##########################################################################################################################################
 
 
-def MakeOneDHist(histogramName): 
+def MakeIntegralHist(hist, integrateDir):
+    # return the integrated histogram, in the direction specified
+    # integrateDir values: "left", "right", "none"
+    if integrateDir is "none":
+        return hist  # do nothing
+    integral = 0
+    error = 0
+    nbins = hist.GetNbinsX()
+    if integrateDir is "left":
+        for i in range(0,nbins+1):  # start with underflow bin
+            integral += hist.GetBinContent(i)
+            error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
+            hist.SetBinContent(i, integral)
+            hist.SetBinError  (i, error)
+            # Then include overflow bin in the last bin
+            hist.SetBinContent(nbins, hist.GetBinContent(nbins) + hist.GetBinContent(nbins+1))
+            hist.SetBinError  (nbins, math.sqrt(hist.GetBinError(nbins)*hist.GetBinError(nbins) + hist.GetBinError(nbins+1)*hist.GetBinError(nbins+1)))
+    elif integrateDir is "right":
+        for i in xrange(nbins+1, 0, -1):  # start with overflow bin
+            integral += hist.GetBinContent(i)
+            error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
+            hist.SetBinContent(i, integral)
+            hist.SetBinError  (i, error)
+            # Then include underflow bin in the first bin
+            hist.SetBinContent(1, hist.GetBinContent(1) + hist.GetBinContent(0))
+            hist.SetBinError  (1, math.sqrt(hist.GetBinError(1)*hist.GetBinError(1) + hist.GetBinError(0)*hist.GetBinError(0)))
+
+    return hist
+
+                                                                                                                                                                                    
+
+##########################################################################################################################################
+##########################################################################################################################################
+##########################################################################################################################################
+                                                                                                                                                                                    
+
+def MakeOneDHist(histogramName,integrateDir): 
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
@@ -249,7 +297,12 @@ def MakeOneDHist(histogramName):
     Legend.SetFillColor(0)
     Legend.SetFillStyle(0)
 
-    Canvas = TCanvas(histogramName)
+    canvasName = histogramName
+    if integrateDir is "left":
+        canvasName += "_CumulativeLeft"
+    elif integrateDir is "right":
+        canvasName += "_CumulativeRight"
+    Canvas = TCanvas(canvasName)
     Histograms = []
     LegendEntries = []
 
@@ -277,16 +330,27 @@ def MakeOneDHist(histogramName):
         xAxisLabel = Histogram.GetXaxis().GetTitle()
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
-
+        xAxisLabelVar = xAxisLabel
+        
         if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
             yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
+            xAxisLabelVar = xAxisLabel[0:unitBeginIndex]
         else:
             yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
         if arguments.normalizeToUnitArea:
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
 
+        if arguments.normalizeToUnitArea and arguments.makeSignificancePlots:
+            unit = "Efficiency"
+        else:
+            unit = "Yield"
+        if integrateDir is "left":
+            yAxisLabel = unit + ", " + xAxisLabelVar + "< x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
+        if integrateDir is "right":
+            yAxisLabel = unit + ", " + xAxisLabelVar + "> x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
+                                                        
         
-        if not arguments.makeFancy:
+        if not arguments.makeFancy and not arguments.generic:  
             fullTitle = Histogram.GetTitle()
             splitTitle = fullTitle.split(":")
             #    print splitTitle
@@ -315,15 +379,15 @@ def MakeOneDHist(histogramName):
         Histogram.SetLineWidth(line_width)
         Histogram.SetFillStyle(0)
 
+        if arguments.normalizeToUnitArea and Histogram.Integral() > 0:
+            Histogram.Scale(1./Histogram.Integral())
+
+        Histogram = MakeIntegralHist(Histogram, integrateDir)
+            
         LegendEntries.append(source['legend_entry']) 
         Histograms.append(Histogram)
 
-    ### scaling histograms as per user's specifications
-    for histogram in Histograms:
-        if arguments.normalizeToUnitArea and histogram.Integral() > 0:
-            histogram.Scale(1./histogram.Integral())
-
-
+            
     ### formatting histograms and adding to legend
     legendIndex = 0
     for histogram in Histograms:
@@ -344,7 +408,8 @@ def MakeOneDHist(histogramName):
 
     makeRatioPlots = arguments.makeRatioPlots
     makeDiffPlots = arguments.makeDiffPlots
-
+    #makeSignifPlots = arguments.makeSignificancePlots
+    
     yAxisMin = 0.0001
     if arguments.setYMin:
         yAxisMin = float(arguments.setYMin)
@@ -373,11 +438,15 @@ def MakeOneDHist(histogramName):
 
     histCounter = 0
     plotting_options = ""
+    if arguments.generic:
+        plotting_options = "p,e" 
     if arguments.plot_hist:
         plotting_options = "HIST"
 
     for histogram in Histograms:
         histogram.SetTitle(histoTitle)
+        if arguments.verbose:
+            print "Debug:  drawing hist " + histogram.GetName() + ", with plotting_options = " + plotting_options + ", with mean = " + str(histogram.GetMean()) + ", with color = " + str(histogram.GetLineColor())    
         histogram.Draw(plotting_options)
         histogram.GetXaxis().SetTitle(xAxisLabel)
         histogram.GetYaxis().SetTitle(yAxisLabel)
@@ -390,7 +459,6 @@ def MakeOneDHist(histogramName):
         histCounter = histCounter + 1
 
     #legend coordinates, empirically determined :-)
-
     x_left = 0.1677852
     x_right = 0.9647651
     y_min = 0.6765734
@@ -422,7 +490,10 @@ def MakeOneDHist(histogramName):
     if makeRatioPlots or makeDiffPlots:
         Canvas.cd(2)
         if makeRatioPlots:
-            Comparison = ratioHistogram(Histograms[0],Histograms[1])
+            if arguments.ratioRelErrMax:
+                Comparison = ratioHistogram(Histograms[0],Histograms[1],float(arguments.ratioRelErrMax))
+            else:
+                Comparison = ratioHistogram(Histograms[0],Histograms[1])
         elif makeDiffPlots:
             Comparison = Histograms[0].Clone("diff")
             Comparison.Add(Histograms[1],-1)
@@ -452,9 +523,9 @@ def MakeOneDHist(histogramName):
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMax,1.2*YMax)
                 else:
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
-                            
+                         
         Comparison.GetYaxis().SetNdivisions(205)
-        Comparison.Draw()
+        Comparison.Draw("E0")
 
     outputFile.cd()
     Canvas.Write()
@@ -490,7 +561,12 @@ if arguments.savePDFs:
     
 for key in gDirectory.GetListOfKeys():
     if re.match ('TH1', key.GetClassName()):  #found a 1D histogram
-        MakeOneDHist(key.GetName())
+        if arguments.makeSignificancePlots:
+            MakeOneDHist(key.GetName(),"left")
+            MakeOneDHist(key.GetName(),"right")
+        else:
+            MakeOneDHist(key.GetName(),"none")
 
 testFile.Close()
 outputFile.Close()
+print "Finished writing " + outputFile.GetName()  

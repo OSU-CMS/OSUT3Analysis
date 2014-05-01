@@ -96,35 +96,38 @@ def stop_ctau (dataset):
     return float (re.sub (r"stop[^_]*to[^_]*_([^_]*)mm.*", r"\1", dataset))
 
 def source_stop_ctau (ctau):
-    return int (math.pow (10.0, math.ceil (math.log10 (ctau))))
+    return max (int (math.pow (10.0, math.ceil (math.log10 (ctau)))), 1)
 
-def add_stops (options, masses, ctaus, bottomBranchingRatios = []):
+def add_stops (options, masses, ctaus, bottomBranchingRatios = [], rHadron = True):
+    prefix = 'stopHadron' if rHadron else 'stop'
     if not bottomBranchingRatios:
-        bottomBranchingRatios.append (50.0)
+        bottomBranchingRatios.append (100.0)
     for mass in masses:
         for ctau in ctaus:
             for bottomBranchingRatio in bottomBranchingRatios:
-                datasetName = 'stop' + str (mass) + "_" + str (ctau) + "mm_br" + str (int (bottomBranchingRatio))
-                bottomDatasetName = 'stop' + str (mass) + "toBl_" + str (ctau) + "mm"
-                sourceBottomDatasetName = 'stop' + str (mass) + "toBl_" + str (source_stop_ctau (ctau)) + "mm"
-                topDatasetName = 'stop' + str (mass) + "toTnu_" + str (ctau) + "mm"
-                sourceTopDatasetName = 'stop' + str (mass) + "toTnu_" + str (source_stop_ctau (ctau)) + "mm"
-                mixedDatasetName = 'stop' + str (mass) + "toBT_" + str (ctau) + "mm"
-                sourceMixedDatasetName = 'stop' + str (mass) + "toBT_" + str (source_stop_ctau (ctau)) + "mm"
+                datasetName = prefix + str (mass) + "_" + str (ctau) + "mm_br" + str (int (bottomBranchingRatio))
+                bottomDatasetName = prefix + str (mass) + "toBl_" + str (ctau) + "mm"
+                sourceBottomDatasetName = prefix + str (mass) + "toBl_" + str (source_stop_ctau (ctau)) + "mm"
+                topDatasetName = prefix + str (mass) + "toTnu_" + str (ctau) + "mm"
+                sourceTopDatasetName = prefix + str (mass) + "toTnu_" + str (source_stop_ctau (ctau)) + "mm"
+                mixedDatasetName = prefix + str (mass) + "toBT_" + str (ctau) + "mm"
+                sourceMixedDatasetName = prefix + str (mass) + "toBT_" + str (source_stop_ctau (ctau)) + "mm"
 
                 options['datasets'].append (datasetName)
                 bottomBranchingRatio /= 100.0
-                options['composite_dataset_definitions'][datasetName] = {
-                    bottomDatasetName : bottomBranchingRatio * bottomBranchingRatio,
-                    topDatasetName : (1 - bottomBranchingRatio) * (1 - bottomBranchingRatio),
-                    mixedDatasetName : (1 - bottomBranchingRatio * bottomBranchingRatio - (1 - bottomBranchingRatio) * (1 - bottomBranchingRatio))
-                }
-                options['dataset_names'][bottomDatasetName] = options['dataset_names'][sourceBottomDatasetName]
-                options['dataset_names'][topDatasetName] = options['dataset_names'][sourceTopDatasetName]
-                options['dataset_names'][mixedDatasetName] = options['dataset_names'][sourceMixedDatasetName]
-                options['nJobs'][bottomDatasetName] = 5
-                options['nJobs'][topDatasetName] = 5
-                options['nJobs'][mixedDatasetName] = 5
+                options['composite_dataset_definitions'][datasetName] = {}
+                if bottomBranchingRatio > 1.0e-6:
+                    options['composite_dataset_definitions'][datasetName][bottomDatasetName] = bottomBranchingRatio * bottomBranchingRatio
+                    options['dataset_names'][bottomDatasetName] = options['dataset_names'][sourceBottomDatasetName]
+                if 1.0 - bottomBranchingRatio > 1.0e-6:
+                    options['composite_dataset_definitions'][datasetName][topDatasetName] = (1.0 - bottomBranchingRatio) * (1.0 - bottomBranchingRatio)
+                    options['dataset_names'][topDatasetName] = options['dataset_names'][sourceTopDatasetName]
+                if bottomBranchingRatio > 1.0e-6 and 1.0 - bottomBranchingRatio > 1.0e-6:
+                    options['composite_dataset_definitions'][datasetName][mixedDatasetName] = (1.0 - bottomBranchingRatio * bottomBranchingRatio - (1.0 - bottomBranchingRatio) * (1.0 - bottomBranchingRatio))
+                    options['dataset_names'][mixedDatasetName] = options['dataset_names'][sourceMixedDatasetName]
+                options['nJobs'][bottomDatasetName] = 100
+                options['nJobs'][topDatasetName] = 100
+                options['nJobs'][mixedDatasetName] = 100
                 options['maxEvents'][bottomDatasetName] = -1
                 options['maxEvents'][topDatasetName] = -1
                 options['maxEvents'][mixedDatasetName] = -1
@@ -136,6 +139,42 @@ def add_stops (options, masses, ctaus, bottomBranchingRatios = []):
                 options['labels'][bottomDatasetName] = "#tilde{t}#tilde{t}#rightarrowbbll (#LTc#tau#GT = " + str (ctau) + " mm)"
                 options['labels'][topDatasetName] = "#tilde{t}#tilde{t}#rightarrowtt#nu#nu (#LTc#tau#GT = " + str (ctau) + " mm)"
                 options['labels'][mixedDatasetName] = "#tilde{t}#tilde{t}#rightarrowbtl#nu (#LTc#tau#GT = " + str (ctau) + " mm)"
+
+
+def chargino_ctau (dataset):
+    if not re.match (r"AMSB_mGrav.*_.*cm", dataset):
+        return 0.0
+    return float (re.sub (r"AMSB_mGrav[^_]*_([^_]*)cm.*", r"\1", dataset))
+
+def source_chargino_tauFromCtau_Num(ctau):
+    # ctau should be in units of cm
+    # return tau in ns
+    c = 2.998e1       # cm / ns
+    tau = ctau / c    # ns
+    if tau < 0.5:
+        src_tau = 0.5
+    elif tau < 1:
+        src_tau = 1.0
+    else:
+        src_tau = 5.0
+    return src_tau
+    
+def source_chargino_tauFromCtau_Str (ctau):
+    src_tau = source_chargino_tauFromCtau_Num(ctau)
+    if src_tau <= 0.5:
+        return "0p5"
+    elif src_tau <= 1:
+        return "1"
+    else:
+        return "5"
+    
+def source_chargino_ctau (ctau):
+    src_tau = source_chargino_tauFromCtau_Num(ctau)
+    c = 2.998e1      # cm / ns
+    ctau = c * src_tau
+    return ctau
+
+
 
 def add_channels (process, channels, outputCommands = ["keep *"]):
     suffix = ""

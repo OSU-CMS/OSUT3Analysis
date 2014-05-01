@@ -9,10 +9,12 @@
 #include "TKey.h"
 #include "TH1D.h"
 #include "TAxis.h"
+#include "TTree.h"
 
 using namespace std;
 
 void printHelp (const string &exeName);
+unsigned isEDM (TFile *);
 
 int
 main (int argc, char *argv[])
@@ -30,6 +32,12 @@ main (int argc, char *argv[])
   if (!(fin = TFile::Open (fileName.c_str ())))
     {
       cout << "Failed to open " << fileName << "!" << endl;
+      return 0;
+    }
+  unsigned events = isEDM (fin);
+  if (events)
+    {
+      cout << "EDM events: " << events << endl;
       return 0;
     }
   if (!fin->GetNkeys ())
@@ -92,4 +100,23 @@ printHelp (const string &exeName)
   printf ("Usage: %s FILE HIST\n", exeName.c_str ());
   printf ("Prints the total number of events based on the cutflow in HIST from the given\n");
   printf ("ROOT file.\n");
+}
+
+unsigned
+isEDM (TFile *f)
+{
+  unsigned edm = 1;
+  TTree *events = 0;
+
+  edm = edm && f->Get ("MetaData");
+  edm = edm && f->Get ("ParameterSets");
+  edm = edm && f->Get ("Parentage");
+  edm = edm && (events = (TTree *) f->Get ("Events"));
+  edm = edm && f->Get ("LuminosityBlocks");
+  edm = edm && f->Get ("Runs");
+
+  if (edm)
+    edm = events->GetEntries ();
+
+  return edm;
 }

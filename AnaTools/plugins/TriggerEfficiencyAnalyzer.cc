@@ -1,4 +1,4 @@
-#include "../interface/TriggerEfficiencyAnalyzer.h"
+#include "OSUT3Analysis/AnaTools/plugins/TriggerEfficiencyAnalyzer.h"
 
 TriggerEfficiencyAnalyzer::TriggerEfficiencyAnalyzer (const edm::ParameterSet &cfg) :
   Trigger_ (cfg.getParameter<edm::InputTag> ("Trigger")),
