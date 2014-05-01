@@ -27,6 +27,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   electronSFFile_ (cfg.getParameter<string> ("electronSFFile")),
   muonSFFile_ (cfg.getParameter<string> ("muonSFFile")),
   jESJERCorr_(cfg.getParameter<string> ("jESJERCorr")),
+  targetTriggers_(cfg.getParameter<vector <string> > ("targetTriggers")),
   flagJESJERCorr_(cfg.getParameter<bool> ("flagJESJERCorr")),
   triggerMetSFFile_ (cfg.getParameter<string> ("triggerMetSFFile")),
   trackNMissOutSFFile_ (cfg.getParameter<string> ("trackNMissOutSFFile")),
@@ -189,6 +190,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "event-muon pairs") tempInputCollection = "muon-event pairs";
     if(tempInputCollection == "event-electron pairs") tempInputCollection = "electron-event pairs";
     if(tempInputCollection == "jet-met pairs")  tempInputCollection = "met-jet pairs";
+    if(tempInputCollection == "mcparticle-met pairs")  tempInputCollection = "met-mcparticle pairs";
     if(tempInputCollection == "track-jet pairs")  tempInputCollection = "track-jet pairs";
     if(tempInputCollection == "event-track pairs")   tempInputCollection = "track-event pairs";
     if(tempInputCollection == "secondary muon-muon pairs")   tempInputCollection = "muon-secondary muon pairs";
@@ -434,6 +436,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       if(tempInputCollection == "event-muon pairs") tempInputCollection = "muon-event pairs";
       if(tempInputCollection == "event-electron pairs") tempInputCollection = "electron-event pairs";
       if(tempInputCollection == "jet-met pairs")  tempInputCollection = "met-jet pairs";
+      if(tempInputCollection == "mcparticle-met pairs")  tempInputCollection = "met-mcparticle pairs";
       if(tempInputCollection == "track-jet pairs")  tempInputCollection = "track-jet pairs";
       if(tempInputCollection == "jet-photon pairs") tempInputCollection = "photon-jet pairs";
       if(tempInputCollection == "event-track pairs")   tempInputCollection = "track-event pairs";
@@ -740,6 +743,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         else if(currentObject == "electron-event pairs")            currentObject = "electronEventPairs";
         else if(currentObject == "photon-jet pairs")            currentObject = "photonJetPairs";
         else if(currentObject == "met-jet pairs")             currentObject = "metJetPairs";
+        else if(currentObject == "met-mcparticle pairs")      currentObject = "metMcParticlePairs";
         else if(currentObject == "track-jet pairs")           currentObject = "trackJetPairs";
         else if(currentObject == "muon-secondary jet pairs")  currentObject = "muonSecondaryJetPairs";
         else if(currentObject == "muon-secondary photon pairs")  currentObject = "muonSecondaryPhotonPairs";
@@ -1215,6 +1219,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "muon-event pairs")        setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),events.product(), "muon-event pairs");
         else if(currentObject == "electron-event pairs")        setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),events.product(), "electron-event pairs");
         else if(currentObject == "met-jet pairs")           setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,mets.product(),jets.product(), "met-jet pairs");
+        else if(currentObject == "met-mcparticle pairs")    setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,mets.product(),mcparticles.product(), "met-mcparticle pairs");
         else if(currentObject == "track-jet pairs")         setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),jets.product(), "track-jet pairs");
         else if(currentObject == "muon-photon pairs")       setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),photons.product(), "muon-photon pairs");
         else if(currentObject == "track-event pairs")       setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),events.product(), "track-event pairs");
@@ -1572,6 +1577,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                           cumulativeFlags.at("electron-event pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "met-jet pairs")  fill1DHistogram(histo,currentHistogram, mets.product(),jets.product(),
                                                                                           cumulativeFlags.at("met-jet pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "met-mcparticle pairs")  fill1DHistogram(histo,currentHistogram, mets.product(),mcparticles.product(),
+                                                                                          cumulativeFlags.at("met-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "track-jet pairs")  fill1DHistogram(histo,currentHistogram,tracks.product(),jets.product(),
                                                                                           cumulativeFlags.at("track-jet pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-photon pairs") fill1DHistogram(histo,currentHistogram, muons.product(),photons.product(),
@@ -1662,6 +1669,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                           cumulativeFlags.at("electron-event pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "met-jet pairs") fill2DHistogram(histo,currentHistogram,mets.product(),jets.product(),
                                                                                          cumulativeFlags.at("met-jet pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "met-mcparticle pairs") fill2DHistogram(histo,currentHistogram,mets.product(),mcparticles.product(),
+                                                                                         cumulativeFlags.at("met-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "track-jet pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),jets.product(),
                                                                                          cumulativeFlags.at("track-jet pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "photon-jet pairs") fill2DHistogram(histo,currentHistogram,photons.product(),jets.product(),
@@ -1728,6 +1737,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "muon-photon pairs")                  objectToPlot = "muonPhotonPairs";
           else if(currentObject == "photon-jet pairs")                   objectToPlot = "photonJetPairs";
           else if(currentObject == "met-jet pairs")                      objectToPlot = "metJetPairs";
+          else if(currentObject == "met-mcparticle pairs")               objectToPlot = "metMcParticlePairs";
           else if(currentObject == "track-jet pairs")                    objectToPlot = "trackJetPairs";
           else if(currentObject == "jet-jet pairs")                      objectToPlot = "dijetPairs";
           else if(currentObject == "jet-secondary jet pairs")            objectToPlot = "jetSecondaryJetPairs";
@@ -2105,7 +2115,7 @@ OSUAnalysis::valueLookup (const BNjet* object, string variable, string function,
       && fabs(object->eta) < 4.5
       && object->neutralHadronEnergyFraction < 0.7
       && object->chargedEmEnergyFraction < 0.5;
-  }
+      }
 
   else if(variable == "dPhiMet") {
     if (const BNmet *met = chosenMET ()) {
@@ -2129,6 +2139,7 @@ OSUAnalysis::valueLookup (const BNjet* object, string variable, string function,
     if (object->pt < ptMax) value = 0; 
     else                    value = 1;  
   }  
+
 
   else{clog << "WARNING: invalid jet variable '" << variable << "'\n"; value = -999;}
 
@@ -2555,6 +2566,8 @@ double
 OSUAnalysis::valueLookup (const BNelectron* object, string variable, string function, string &stringValue){
 
   double value = 0.0;
+  double pMag = sqrt(object->pt * object->pt +
+                     object->pz * object->pz);
   if(variable == "energy") value = object->energy;
   else if(variable == "et") value = object->et;
   else if(variable == "gsfEt") value = object->gsfEt;
@@ -2603,6 +2616,8 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
   else if(variable == "vz") value = object->vz;
   else if(variable == "scEnergy") value = object->scEnergy;
   else if(variable == "scRawEnergy") value = object->scRawEnergy;
+  else if(variable == "scEnergyRes") value = (object->scEnergy-object->scRawEnergy)/object->scRawEnergy;
+  else if(variable == "scRawOverCorrectedEnergy") value = (object->scRawEnergy)/object->scEnergy;
   else if(variable == "scSigmaEtaEta") value = object->scSigmaEtaEta;
   else if(variable == "scSigmaIEtaIEta") value = object->scSigmaIEtaIEta;
   else if(variable == "scE1x5") value = object->scE1x5;
@@ -2714,6 +2729,7 @@ OSUAnalysis::valueLookup (const BNelectron* object, string variable, string func
   else if(variable == "passConvVeto") value = object->passConvVeto;
 
   //user-defined variables
+  else if(variable == "EOverP") value = (object->energy)/pMag;
   else if(variable == "vertexDistZ") value = object->vz - chosenVertex()->z;
   else if(variable == "correctedD0VertexErr") value =  hypot (object->tkD0err, hypot (chosenVertex ()->xError, chosenVertex ()->yError));
   else if(variable == "correctedD0VertexSig") value =  object->correctedD0Vertex / hypot (object->tkD0err, hypot (chosenVertex ()->xError, chosenVertex ()->yError));
@@ -3151,9 +3167,9 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "eventScaleFactor") value = eventScaleFactor_;
   else if(variable == "unfilteredHt") value = getHt(jets.product());
   else if(variable == "ht") value = chosenHT ();
+  else if(variable == "sumJetPt") value = getSumJetPt(jets.product());
   else if(variable == "unfilteredSt") value = getSt(electrons.product(),muons.product(),jets.product());
   else if(variable == "st") value = chosenST ();
-
   else if(variable == "leadMuPairInvMass"){
     pair<const BNmuon *, const BNmuon *> muPair = leadMuonPair ();
     TLorentzVector p0 (muPair.first->px, muPair.first->py, muPair.first->pz, muPair.first->energy),
@@ -3180,6 +3196,11 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
     pt0 += pt1;
     value = pt0.Mod ();
   }
+  else if(variable == "metPt") {  // allow making 2D plots of event quantities vs. Met                                                                                                                                                       
+    if (const BNmet *met = chosenMET ()) {
+      value = met->pt;
+    } else value = -999;
+  }
   else if(variable == "totalMcparticlePt") {
     TVector2 ptTot(0.0, 0.0); 
 
@@ -3200,6 +3221,38 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
     }
     value = ptTot.Mod();
   } 
+
+  else if(variable == "totalMcparticlePtByMetPt") {
+    double MET = 0;
+    double mcPt = 0;
+
+    //get met
+if (const BNmet *met = chosenMET ()) {
+      MET = met->pt;
+    } else value = -999;
+
+//get mcPt
+ TVector2 ptTot(0.0, 0.0);
+
+ if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
+   flagPair mcFlags;
+   //get the last valid flags in the flag map                                                                                               
+   for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
+     if (cumulativeFlags.at("mcparticles").at(i).size()){
+       mcFlags = cumulativeFlags.at("mcparticles").at(i);
+       break;
+     }
+   }
+   for (uint mcIndex = 0; mcIndex != mcFlags.size(); mcIndex++) {
+     if (!mcFlags.at(mcIndex).second) continue;
+     TVector2 pt(mcparticles->at(mcIndex).px, mcparticles->at(mcIndex).py);
+     ptTot = pt + ptTot;
+   }
+ }
+ mcPt = ptTot.Mod();
+
+value = (mcPt/MET);
+  }
   else{clog << "WARNING: invalid event variable '" << variable << "'\n"; value = -999;}
 
   value = applyFunction(function, value);
@@ -3383,6 +3436,8 @@ OSUAnalysis::valueLookup (const BNmet* object, string variable, string function,
   else if(variable == "pfT1jet10pt") value = object->pfT1jet10pt;
   else if(variable == "pfT1jet10phi") value = object->pfT1jet10phi;
 
+  else if(variable == "hltPt") value = getPtSingleObjectMatchesAnyTrigger(object->phi, targetTriggers_, trigobjs.product());
+
   else if(variable == "metNoMu") { 
     // Calculate the MET, without including muons in the sum of E_T  
     TVector2 p2Met;
@@ -3400,6 +3455,26 @@ OSUAnalysis::valueLookup (const BNmet* object, string variable, string function,
     }
     TVector2 p2MetNoMu = p2Met + p2Muon;
     value = p2MetNoMu.Mod();
+  }
+
+  else if(variable == "hltPtNoMu") {
+    // Calculate the MET, without including muons in the sum of E_T                                                                                       
+    TVector2 p2Met;
+    TVector2 p2Muon;
+    p2Met. SetMagPhi(object->pt, object->phi);
+    p2Muon.SetMagPhi(0, 0);
+    if (!muons.product()) clog << "ERROR: cannot find metNoMu because muons collection is not initialized." << endl;
+    for (uint imuon = 0; imuon<muons->size(); imuon++) {
+      string empty = "";
+      double muonPt  = valueLookup(&muons->at(imuon), "pt",  "", empty);
+      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty);
+      TVector2 p2MuonTmp;
+      p2MuonTmp.SetMagPhi(muonPt, muonPhi);
+      p2Muon += p2MuonTmp;
+    }
+    TVector2 p2MetNoMu = p2Met + p2Muon;
+    //    value = p2MetNoMu.Mod();
+    value = getPtSingleObjectMatchesAnyTrigger(p2MetNoMu.Phi(), targetTriggers_, trigobjs.product());
   }
   else if(variable == "metNoElec") { 
     // Calculate the MET, without including electrons in the sum of E_T  
@@ -3688,6 +3763,24 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
     }
     value = trkJetDeltaRMin;
   }
+
+  else if(variable == "deltaPhiMaxSubLeadJet") {
+    // calculate maximum deltaPhi between track and any other subleading jet                                  
+    double trkJetDeltaPhiMax = -99.;
+    if (!jets.product()) clog << "ERROR:  cannot find deltaPhiMaxSubLeadJet because jets collection is not in\
+itialized." << endl;
+    for (uint ijet = 0; ijet<jets->size(); ijet++) {
+      string empty = "";
+      double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID", "", empty);
+      if (!isSubLeadingJet) continue;  // only consider jets that pass the subleading jet ID criteria         
+      //      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty);                                 
+      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
+      double trkJetDeltaPhi = fabs(deltaPhi(object->phi, jetPhi));
+      if (trkJetDeltaPhi > trkJetDeltaPhiMax) trkJetDeltaPhiMax = trkJetDeltaPhi;
+    }
+    value = trkJetDeltaPhiMax;
+  }
+
 
   else if(variable == "deltaRMinElecLooseMvaId") {
     // calculate minimum deltaR between track and any other electron passing loose mva ID, i.e., mvaNonTrigV0 > 0
@@ -4315,6 +4408,7 @@ OSUAnalysis::valueLookup (const BNtrigobj* object, string variable, string funct
   double value = 0.0;
 
   if(variable == "pt") value = object->pt;
+  else if(variable == "ptWithForwardJets") value = (object->pt + getSumForwardJetPt(jets.product()));
   else if(variable == "eta") value = object->eta;
   else if(variable == "phi") value = object->phi;
   else if(variable == "px") value = object->px;
@@ -4330,10 +4424,26 @@ OSUAnalysis::valueLookup (const BNtrigobj* object, string variable, string funct
   else if(variable == "isForward") value = object->isForward;
   else if(variable == "isRPC") value = object->isRPC;
   else if(variable == "bx") value = object->bx;
+  else if(variable == "metPt") {  // allow making 2D plots of jet quantities vs. Met                                          
+    if (const BNmet *met = chosenMET ()) {
+      value = met->pt;
+    } else value = -999;
+  }
+  else if(variable == "trackPt") {  // allow making 2D plots of jet quantities vs. Met                                                              
+    if (const BNtrack *track = chosenTrack ()) {
+      value = track->pt;
+    } else value = -999;
+  }
+  else if(variable == "jetPt") {  // allow making 2D plots of jet quantities vs. Met                                                              
+    if (const BNjet *jet = chosenJet ()) {
+      value = jet->pt;
+    } else value = -999;
+  }
   else if(variable == "filter") {
     if ((stringValue = object->filter) == "")
       stringValue = "none";  // stringValue should only be empty if value is filled
   }
+
 
   else{clog << "WARNING: invalid trigobj variable '" << variable << "'\n"; value = -999;}
 
@@ -4918,6 +5028,20 @@ OSUAnalysis::valueLookup (const BNmet* object1, const BNjet* object2, string var
 
 }
 
+double
+OSUAnalysis::valueLookup (const BNmet* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+
+  double value = 0.0;
+
+  if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
+  else{clog << "WARNING: invalid met-mcparticle pair variable '" << variable << "'\n"; value = -999;}
+  value = applyFunction(function, value);
+
+  return value;
+
+}
+
+
 
 
 //!muon-jet pair valueLookup
@@ -5460,6 +5584,38 @@ OSUAnalysis::getHt (const BNjetCollection* jetColl){
   return Ht;
 }
 
+double
+OSUAnalysis::getSumJetPt (const BNjetCollection* jetColl){
+  double sumJetPt = 0;
+  TLorentzVector hT (0, 0, 0, 0);
+  for(BNjetCollection::const_iterator jet = jetColl->begin(); jet !=jetColl->end(); jet++){
+    TLorentzVector hT_2(0, 0, 0, 0);
+    hT_2.SetPtEtaPhiM(jet->pt, jet->eta, jet->phi, jet->mass);
+    hT += hT_2;
+    sumJetPt = hT.Pt();
+    
+  }
+  return sumJetPt;
+}
+
+
+double
+OSUAnalysis::getSumForwardJetPt (const BNjetCollection* jetColl){
+  double sumForwardJetPt = 0;
+  TLorentzVector hT (0, 0, 0, 0);
+  for(BNjetCollection::const_iterator jet = jetColl->begin(); jet !=jetColl->end(); jet++){
+    TLorentzVector hT_2(0, 0, 0, 0);
+    if (fabs(jet->eta) < 3 ) continue;
+    hT_2.SetPtEtaPhiM(jet->pt, jet->eta, jet->phi, jet->mass);
+    hT += hT_2;
+    sumForwardJetPt = hT.Pt();
+
+  }
+
+  return sumForwardJetPt;
+}
+
+
 
 unsigned int OSUAnalysis::GetNumExtraPartons(const BNmcparticleCollection* genPartColl){
 
@@ -5703,6 +5859,39 @@ OSUAnalysis::getTrkIsMatchedBadCSC (const BNtrack* track1){
   else                  { value = 0; } 
   return value;
 }
+
+
+double OSUAnalysis::getPtSingleObjectMatchesAnyTrigger(double recoPhi, const vector<string> & targetTriggers, const BNtrigobjCollection * triggerObjects){
+
+  double matchPt = -99;
+
+  for ( BNtrigobjCollection::const_iterator iObj = triggerObjects->begin();
+        iObj != triggerObjects->end();
+        iObj ++ ) {
+    // look for a matching name again                                                                                                          
+    for (vector<string>::const_iterator iTarget = targetTriggers.begin();
+         iTarget != targetTriggers.end();
+         iTarget++) {
+      // if this is the right name                                                                                                             
+      if ( iObj->filter.find((*iTarget)) != std::string::npos) {
+        double deltaPhiCalc = fabs(deltaPhi(recoPhi, iObj->phi));
+
+        if (deltaPhiCalc < 0.3) matchPt = iObj->pt;
+
+      } 
+
+    }// end for each target                                                                                                                    
+
+
+  } // end for each object                                                                                                                     
+
+
+  return matchPt;
+
+
+}
+
+
 
 //return corrected jet
 BNjet OSUAnalysis::getCorrectedJet(const BNjet &iJet, string jERCase){
@@ -6456,6 +6645,55 @@ OSUAnalysis::chosenMET ()
 
   return chosenMET;
 }
+
+const BNtrack *
+OSUAnalysis::chosenTrack ()
+{
+  const BNtrack *chosenTrack = 0;
+  if(cumulativeFlags.find ("tracks") != cumulativeFlags.end ()){
+    flagPair trackFlags;
+    for (int i = cumulativeFlags.at("tracks").size() - 1; i >= 0; i--){
+      if (cumulativeFlags.at("tracks").at(i).size()){
+        trackFlags = cumulativeFlags.at("tracks").at(i);
+	break;
+      }
+    }
+    for (uint trackIndex = 0; trackIndex != trackFlags.size(); trackIndex++){
+      if(!trackFlags.at(trackIndex).first) continue;
+      chosenTrack = & tracks->at(trackIndex);
+      break;
+    }
+  }
+  else if (find (objectsToGet.begin (), objectsToGet.end (), "tracks") != objectsToGet.end ())
+    chosenTrack = & tracks->at (0);
+
+  return chosenTrack;
+}
+
+const BNjet *
+OSUAnalysis::chosenJet ()
+{
+  const BNjet *chosenJet = 0;
+  if(cumulativeFlags.find ("jets") != cumulativeFlags.end ()){
+    flagPair jetFlags;
+    for (int i = cumulativeFlags.at("jets").size() - 1; i >= 0; i--){
+      if (cumulativeFlags.at("jets").at(i).size()){
+        jetFlags = cumulativeFlags.at("jets").at(i);
+	break;
+      }
+    }
+    for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++){
+      if(!jetFlags.at(jetIndex).first) continue;
+      chosenJet = & jets->at(jetIndex);
+      break;
+    }
+  }
+  else if (find (objectsToGet.begin (), objectsToGet.end (), "jets") != objectsToGet.end ())
+    chosenJet = & jets->at (0);
+
+  return chosenJet;
+}
+
 
 const BNelectron *
 OSUAnalysis::chosenElectron ()
