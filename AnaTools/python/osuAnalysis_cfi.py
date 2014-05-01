@@ -75,6 +75,7 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
     dataPU = cms.string ('PU_data_190456_208686_69300xSec'),
     flagJESJERCorr = cms.bool(False),
     jESJERCorr = cms.string(''),
+    targetTriggers = cms.vstring(''),
     applyLeptonSF = cms.bool(False),  #  multiplies scale factors in the case of multiple leptons
     electronSFFile = cms.string (''), # if blank, will attempt to use the SFs hard-coded in SFWeight.cc
     electronSFID = cms.string ('mvaTrig0p9'), # ID label for using hard-coded SFs in SFWeight.cc
