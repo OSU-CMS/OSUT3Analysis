@@ -89,18 +89,18 @@ gStyle.SetCanvasDefY(0)
 gStyle.SetPadTopMargin(0.056)
 gStyle.SetPadBottomMargin(0.13)
 gStyle.SetPadLeftMargin(0.1476)
-gStyle.SetPadRightMargin(0.0335)
+gStyle.SetPadRightMargin(0.05)
 gStyle.SetTitleColor(1, "XYZ")
 gStyle.SetTitleFont(42, "XYZ")
-gStyle.SetTitleSize(0.04, "XYZ")
+gStyle.SetTitleSize(0.05, "XYZ")
 gStyle.SetTitleXOffset(1.1)
-gStyle.SetTitleYOffset(1.4)
-gStyle.SetTextFont(42)
+gStyle.SetTitleYOffset(1.5)
+#gStyle.SetTextFont(42)
 gStyle.SetTextAlign(12)
 gStyle.SetLabelColor(1, "XYZ")
 gStyle.SetLabelFont(42, "XYZ")
 gStyle.SetLabelOffset(0.007, "XYZ")
-gStyle.SetLabelSize(0.04, "XYZ")
+gStyle.SetLabelSize(0.05, "XYZ")
 gStyle.SetAxisColor(1, "XYZ")
 gStyle.SetStripDecimals(True)
 gStyle.SetTickLength(0.03, "XYZ")
@@ -130,10 +130,10 @@ topLeft_y_offset  = 0.035
 HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 8 TeV"
 
 #position for header
-header_x_left    = 0.244
-header_x_right   = 0.981
-header_y_bottom  = 0.947
-header_y_top     = 1
+header_x_left    = 0.089
+header_x_right   = 0.969
+header_y_bottom  = 0.939
+header_y_top     = 0.99
 
 
 ##########################################################################################################################################
@@ -270,6 +270,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.1):
             ratio.SetBinError(i+1,groupErr(g))
 
     ratio.GetYaxis().SetTitle("#frac{data-bkgd}{bkgd}")
+    ratio.GetYaxis().SetLabelSize(0.3)
     ratio.SetLineColor(1)
     ratio.SetLineWidth(2)
     return ratio
@@ -368,6 +369,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
+    HeaderLabel.SetTextFont(42)
     HeaderLabel.SetBorderSize(0)
     HeaderLabel.SetFillColor(0)
     HeaderLabel.SetFillStyle(0)
@@ -842,10 +844,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Comparison.GetYaxis().SetTitle("S/#sqrt{S+B}")
         Comparison.GetXaxis().SetTitle(xAxisLabel)
         Comparison.GetYaxis().CenterTitle()
-        Comparison.GetYaxis().SetTitleSize(0.1)
-        Comparison.GetYaxis().SetTitleOffset(0.5)
+        Comparison.GetYaxis().SetTitleSize(0.14)
+        Comparison.GetYaxis().SetTitleOffset(0.43)
         Comparison.GetXaxis().SetTitleSize(0.15)
-        Comparison.GetYaxis().SetLabelSize(0.1)
+        Comparison.GetYaxis().SetLabelSize(0.13)
         Comparison.GetXaxis().SetLabelSize(0.15)
         if makeRatioPlots:
             RatioYRange = 1.15
