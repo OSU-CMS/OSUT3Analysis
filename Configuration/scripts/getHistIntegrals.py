@@ -47,19 +47,27 @@ for hist in input_hists:     # loop over different input hists in config file
     histogram.SetDirectory(0)
     inputFile.Close()
 
+    Nxbins = histogram.GetNbinsX() 
+    xmax = histogram.GetBinContent(Nxbins)
     xlo = hist['xlo']
     xhi = hist['xhi']
+    
     xloBin = histogram.GetXaxis().FindBin(float(xlo))
+    if xhi > xmax:
+    	print "xhi is outside the range of the histogram, will include all the overflow instead"
     xhiBin = histogram.GetXaxis().FindBin(float(xhi))
     xlo = histogram.GetXaxis().GetBinLowEdge(xloBin)   # lo edge is the left edge of the first bin 
-    xhi = histogram.GetXaxis().GetBinLowEdge(xhiBin+1) # hi edge is the left edge of the bin to the right of the last bin
+    if xhi > xmax:
+	xhi = "All to infinity"
+    else:
+	xhi = histogram.GetXaxis().GetBinLowEdge(xhiBin+1)
     intError = Double (0.0)
     integral = histogram.IntegralAndError(xloBin, xhiBin, intError)
 
-#    print "xloBin = " + str(xloBin) 
-#    print "xhiBin = " + str(xhiBin) 
-
-    print "Integral of " + hist['histName'] + " in " + inputFile.GetName() + " from " + str(xlo) + " to " + str(xhi) + ": " + str (integral) + " +- " + str (intError) 
+    line = "Integral of " + hist['histName'] + " in " + inputFile.GetName() + " from " + str(xlo) + " to " + str(xhi) + ": " + str (integral) + " +- " + str (intError) 
+    if arguments.getMean:
+         line += "; Mean of entire histogram= " + str(histogram.GetMean()) + " +- " + str(histogram.GetMeanError())
+    print line 
     if hist.has_key('role in ratioDic'):
     	DoRatio = True
         for key in RatioDic.keys():
@@ -71,23 +79,17 @@ for hist in input_hists:     # loop over different input hists in config file
                     RatioDic[key]['Numerator']['value'] = integral
                     RatioDic[key]['Numerator']['error'] = intError
 if DoRatio:
-    for key in RatioDic.keys():
-        NumValue = RatioDic[key]['Numerator']['value']
-        DenValue = RatioDic[key]['Denominator']['value']
-        NumError = RatioDic[key]['Numerator']['error']
-        DenError = RatioDic[key]['Denominator']['error']
-        if DenValue == 0:
-            print "Denominator of " + str(key) + " is 0 ! Please Check! "
-            break
-        Ratio = NumValue/DenValue
-        RatioError = math.pow(math.pow(NumError,2)/math.pow(DenValue,2) + math.pow(DenError,2)*math.pow(NumValue,2)/math.pow(DenValue,4),0.5)
-        print str(key) + " is " + str(Ratio) + " +- " + str(RatioError) 
-    line = "Integral of " + hist['histName'] + " in " + inputFile.GetName() + " from " + str(xlo) + " to " + str(xhi) + ": " + str (integral) + " +- " + str (intError)
-    if arguments.getMean:
-        line += "; Mean of entire histogram= " + str(histogram.GetMean()) + " +- " + str(histogram.GetMeanError())
-    print line 
-
-
+	for key in RatioDic.keys():
+		NumValue = RatioDic[key]['Numerator']['value']
+        	DenValue = RatioDic[key]['Denominator']['value']
+		NumError = RatioDic[key]['Numerator']['error']
+		DenError = RatioDic[key]['Denominator']['error']
+        	if DenValue == 0:
+			print "Denominator of " + str(key) + " is 0 ! Please Check! "
+			break
+        	Ratio = NumValue/DenValue
+        	RatioError = math.pow(math.pow(NumError,2)/math.pow(DenValue,2) + math.pow(DenError,2)*math.pow(NumValue,2)/math.pow(DenValue,4),0.5)
+		print str(key) + " is " + str(Ratio) + " +- " + str(RatioError) 
 
 
 

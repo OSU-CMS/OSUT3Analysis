@@ -92,8 +92,10 @@ class OSUAnalysis : public edm::EDProducer
       double valueLookup (const BNelectron* object1, const BNtrack* object2, string variable, string function, string &stringValue);
       double valueLookup (const BNmuon* object1, const BNjet* object2, string variable, string function, string &stringValue);
       double valueLookup (const BNmet* object1, const BNjet* object2, string variable, string function, string &stringValue);  
+      double valueLookup (const BNmet* object1, const BNmcparticle* object2, string variable, string function, string &stringValue);  
       double valueLookup (const BNtrack* object1, const BNjet* object2, string variable, string function, string &stringValue);  
       double valueLookup (const BNmuon* object1, const BNtrack* object2, string variable, string function, string &stringValue);
+      double valueLookup (const BNjet* object1, const BNtrack* object2, string variable, string function, string &stringValue);
       double valueLookup (const BNmuon* object1, const BNtau* object2, string variable, string function, string &stringValue);
       double valueLookup (const BNtau* object1, const BNtau* object2, string variable, string function, string &stringValue);
       double valueLookup (const BNtau* object1, const BNtrack* object2, string variable, string function, string &stringValue);
@@ -126,8 +128,12 @@ class OSUAnalysis : public edm::EDProducer
       BNjet getCorrectedJet (const BNjet &iJet, string jERCase);
       //BNjet getCorrectedJet (const BNjet *iJet, string jERCase);
       double getJERfactor (int returnType, double jetAbsETA, double genjetPT, double recojetPT);
+      //      bool singleObjectMatchesAnyTrigger(double recoEta, double recoPhi, const vector<string> & targetTriggers, const BNtrigobjCollection & triggerObjects);
+      double getPtSingleObjectMatchesAnyTrigger(double recoPhi, const vector<string> & targetTriggers, const BNtrigobjCollection * triggerObjects);
       double getTrkPtTrue (const BNtrack* track1, const BNmcparticleCollection* genPartColl);
       double getHt (const BNjetCollection* jetColl);
+      double getSumJetPt (const BNjetCollection* jetColl);
+      double getSumForwardJetPt (const BNjetCollection* jetColl);
       unsigned int GetNumExtraPartons (const BNmcparticleCollection* genPartColl);
       double getSt (const BNelectronCollection* electronColl, const BNmuonCollection* muonColl, const BNjetCollection* jetColl);
       double getTrkPtRes (const BNtrack* track1);
@@ -194,6 +200,7 @@ class OSUAnalysis : public edm::EDProducer
       string electronSFFile_;
       string muonSFFile_;
       string jESJERCorr_;
+      vector<string> targetTriggers_;
       bool flagJESJERCorr_;
       string triggerMetSFFile_;
       string trackNMissOutSFFile_;
@@ -404,6 +411,8 @@ class OSUAnalysis : public edm::EDProducer
 
       const BNprimaryvertex *chosenVertex ();
       const BNmet *chosenMET ();
+      const BNtrack *chosenTrack ();
+      const BNjet *chosenJet ();
       const BNelectron *chosenElectron ();
       const BNmuon *chosenMuon ();
       template<typename T0, typename T1> const T1 *closest (const T0 *, const edm::Handle<vector<T1> > &, const string &);

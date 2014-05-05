@@ -225,7 +225,7 @@ def addSystematicError(histogram, fractionalSysError):
 ##########################################################################################################################################
 
 # some fancy-ass code from Andrzej Zuranski to merge bins in the ratio plot until the error goes below some threshold
-def ratioHistogram( dataHist, mcHist, relErrMax=0.1):
+def ratioHistogram( dataHist, mcHist, relErrMax = 0.10):
         
     if not dataHist:
         print "Error:  trying to run ratioHistogram but dataHist is invalid" 
@@ -474,6 +474,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
         if arguments.normalizeToUnitArea:
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
+        if arguments.normalizeToData:
+            yAxisLabel = yAxisLabel + " (Bkgd. Normalized to Data)"  
 
         if arguments.normalizeToUnitArea and arguments.makeSignificancePlots:
             unit = "Efficiency"
@@ -958,7 +960,7 @@ def MakeTwoDHist(pathToDir,histogramName):
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         if not HistogramObj:
-            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+            #print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
             continue 
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)

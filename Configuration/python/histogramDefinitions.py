@@ -238,14 +238,20 @@ MuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonTimeAtIpInOut"),
             title = cms.string("Muon Time at Ip InOut Time; ns"),
-            bins = cms.untracked.vdouble(100, 0, 100),
+            bins = cms.untracked.vdouble(200, -10, 10),
             inputVariables = cms.vstring("timeAtIpInOut"),
         ),
         cms.PSet (
             name = cms.string("muonTimeAtIpOutIn"),
             title = cms.string("Muon Time at Ip OutIn Time; ns"),
-            bins = cms.untracked.vdouble(100, 0, 100),
+            bins = cms.untracked.vdouble(200, -10, 10),
             inputVariables = cms.vstring("timeAtIpOutIn"),
+        ),
+        cms.PSet (
+            name = cms.string("muonEcalTimeVsHcalTime"),
+            title = cms.string("EcalTime_{#mu} vs. HcalTime_{#mu}; ns ; ns"),
+            bins = cms.untracked.vdouble(200, -100, 100, 200,-100,100),
+            inputVariables = cms.vstring("hcal_time","ecal_time"),
         ),
     )
 )
@@ -590,28 +596,16 @@ MuonSecondaryMuonHistograms = cms.PSet(
             inputVariables = cms.vstring("abs(muon2CorrectedD0Vertex)","abs(muon1CorrectedD0Vertex)"),
         ),
         cms.PSet (
-            name = cms.string("muonPairHCALTimeInterval"),
-            title = cms.string("|#Delta(t)|; ns"),
-            bins = cms.untracked.vdouble(320, -160, 160),
-            inputVariables = cms.vstring("deltaHCALTime"),
+            name = cms.string("muon1EcalTimeVsMuon2EcalTime"),
+            title = cms.string("EcalTime_{#mu_1} vs. EcalTime_{#mu_2}; ns ; ns"),
+            bins = cms.untracked.vdouble(200, -100, 100, 200,-100,100),
+            inputVariables = cms.vstring("muon2EcalTime","muon1EcalTime"),
         ),
         cms.PSet (
-            name = cms.string("muonPairECALTimeInterval"),
-            title = cms.string("|#Delta(t)|; ns"),
-            bins = cms.untracked.vdouble(320, -160, 160),
-            inputVariables = cms.vstring("deltaECALTime"),
-        ),
-        cms.PSet (
-            name = cms.string("muonPairInOutTimeInterval"),
-            title = cms.string("|#Delta(t)|; ns"),
-            bins = cms.untracked.vdouble(200, -100, 100),
-            inputVariables = cms.vstring("deltaInOutTime"),
-        ),
-        cms.PSet (
-            name = cms.string("muonPairOutInTimeInterval"),
-            title = cms.string("|#Delta(t)|; ns"),
-            bins = cms.untracked.vdouble(200, -100, 100),
-            inputVariables = cms.vstring("deltaOutInTime"),
+            name = cms.string("muon1HcalTimeVsMuon2HcalTime"),
+            title = cms.string("HcalTime_{#mu_1} vs. HcalTime_{#mu_2}; ns ; ns"),
+            bins = cms.untracked.vdouble(200, -100, 100, 200,-100,100),
+            inputVariables = cms.vstring("muon2HcalTime","muon1HcalTime"),
         ),
     )
 )
@@ -2702,13 +2696,13 @@ MetHistograms = cms.PSet(
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("metPt"),
-            title = cms.string("Missing E_{T}; Missing E_{T} [GeV]"),
+            title = cms.string("Missing E_{T}; E_{T}^{miss} [GeV]"),
             bins = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
             name = cms.string("metPhi"),
-            title = cms.string("Phi of Missing E_{T}; Missing E_{T} #phi"),
+            title = cms.string("Phi of Missing E_{T}; #phi(E_{T}^{miss})"),
             bins = cms.untracked.vdouble(100, -3.15, 3.15),
             inputVariables = cms.vstring("phi"),
         ),
@@ -2744,7 +2738,7 @@ TrackHistograms = cms.PSet(
             bins = cms.untracked.vdouble(100, -0.5, 0.5),
             inputVariables = cms.vstring("d0"),
         ),
-        cms.PSet (
+       cms.PSet (
             name = cms.string("trackdz"),
             title = cms.string("Track d_{z}; d_{z} [cm]"),
             bins = cms.untracked.vdouble(100, -30, 30),
@@ -2819,6 +2813,12 @@ MuonTrackHistograms = cms.PSet(
         title = cms.string("Muon-Track Invariant Mass; M_{#mu+track} [GeV]"),
         bins = cms.untracked.vdouble(90, 0, 180),
         inputVariables = cms.vstring("invMass"),
+        ),
+    cms.PSet (
+        name = cms.string("MuonTrackPiMinusThreeDAngle"),
+        title = cms.string("Pi - angle between the two muons;log(#alpha [rad])"),
+        bins = cms.untracked.vdouble(100, -9, 5),
+        inputVariables = cms.vstring("log10(alpha)"),
         ),
     cms.PSet (
         name = cms.string("MuonTrackDeltaEta"),
