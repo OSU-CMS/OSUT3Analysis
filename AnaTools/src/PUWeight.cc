@@ -31,7 +31,9 @@ PUWeight::PUWeight (const string &puFile, const string &dataPU, const string &mc
     trimmedMC->SetBinContent (bin, mc->GetBinContent (bin));
   puWeight_->Divide (trimmedMC);
   fin->Close ();
+  delete fin;
   delete mc;
+  delete trimmedMC;
 }
   
 PUWeight::~PUWeight ()
