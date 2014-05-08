@@ -53,6 +53,8 @@ main (int argc, char *argv[])
       isNew = !(versionTestCutFlow->GetNbinsX () < 2);
       delete versionTestCutFlow;
     }
+  if (!isNew)
+    cout << "Assuming OLD cut flow format!" << endl;
 
   TIter next0 (fin->GetListOfKeys ());
   TObject *obj0;
@@ -79,7 +81,7 @@ main (int argc, char *argv[])
 
               if (obj1Class == "TH1D"
                && (!isNew || obj1Name == histName)
-               && (isNew || (obj1Name == histName || obj1Name.substr (obj1Name.length () - HistName.length ()) == HistName)))
+               && (isNew || (obj1Name == histName || (obj1Name.length () >= HistName.length () && obj1Name.substr (obj1Name.length () - HistName.length ()) == HistName))))
                 {
                   cutFlows.push_back ((TH1D *) dir->Get (obj1Name.c_str ()));
                   cutFlows.back ()->SetDirectory (0);
