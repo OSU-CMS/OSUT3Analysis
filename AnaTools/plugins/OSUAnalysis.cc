@@ -1,6 +1,5 @@
 #include "OSUT3Analysis/AnaTools/plugins/OSUAnalysis.h"
 #include "LHAPDF/LHAPDF.h"    
-using namespace std;
 
 OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   /// Retrieve parameters from the configuration file.
@@ -1949,9 +1948,14 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
   } // end loop over channel
 
+  for(uint currentChannelIndex = 0; currentChannelIndex != channels.size(); currentChannelIndex++){
+    channel currentChannel = channels.at(currentChannelIndex);
+    masterCutFlow_->at(currentChannel.name) = channelDecisions->at (currentChannel.name);
+  }
   masterCutFlow_->fillCutFlow();
 
   event.put (channelDecisions, "channelDecisions");
+  channelDecisions.reset ();
 
   isFirstEvent_ = false;
 
