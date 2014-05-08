@@ -2,6 +2,7 @@
 
 import math
 import decimal
+
 def roundingNumbers(central,sta,sys):
         roundingDic = {}
         sys = float(sys)
@@ -15,18 +16,20 @@ def roundingNumbers(central,sta,sys):
 		centralOut = modifyByPrecision(central,sys,sysRounded)
 		staOut = modifyByPrecision(sta,sys,sysRounded)
         else:
-                staRounded = round_sigfigs(sta,2)
-		staOut = modifyByPrecision(sta,sta,staRounded)
-		centralOut = modifyByPrecision(central,sta,staRounded)
-		sysOut = modifyByPrecision(sys,sta,staRounded)
+                if not sta > 0:
+			sysOut = decimal.Decimal("0").quantize(decimal.Decimal("0"))
+			staOut = decimal.Decimal("0").quantize(decimal.Decimal("0"))
+			centralOut = decimal.Decimal(str(central)).quantize(decimal.Decimal("0"))
+		else:
+			staRounded = round_sigfigs(sta,2)
+			staOut = modifyByPrecision(sta,sta,staRounded)
+			centralOut = modifyByPrecision(central,sta,staRounded)
+			sysOut = modifyByPrecision(sys,sta,staRounded)
                 
         roundingDic['central'] = centralOut
         roundingDic['sys'] = sysOut
         roundingDic['sta'] = staOut
 
-        print roundingDic['central']
-        print roundingDic['sta']
-        print roundingDic['sys']
         return roundingDic
 
 def modifyByPrecision(input, origin, originRounded):
@@ -36,6 +39,8 @@ def modifyByPrecision(input, origin, originRounded):
 			output = int(input)
 		elif not origin < 1:
 			output = originRounded
+		elif not input > 0:
+			output = decimal.Decimal(str(input)).quantize(decimal.Decimal("0"))
 		else:
 			for n in range(1,100):
                                     if int(int(originRounded*math.pow(10,n))/(originRounded*math.pow(10,n))) is 1 and int(originRounded*math.pow(10,n)) is not 0:
@@ -49,13 +54,10 @@ def modifyByPrecision(input, origin, originRounded):
 				output = round(input,1)
 		else:
         		for n in range(1,100):
-                                    if int(int(originRounded*math.pow(10,n))/(originRounded*math.pow(10,n))) is 1 and int(originRounded*math.pow(10,n)) is not 0:
-                                                if int(originRounded*math.pow(10,n)) is not 0:
-							base = math.pow(10,-n)
-							output = decimal.Decimal(input).quantize(decimal.Decimal(str(base)))
-                                                else:
-							output = decimal.Decimal(input).quantize(decimal.Decimal(str(base/10)))
-                                                break	
+                                if int(originRounded*math.pow(10,n)) is not 0:
+                                                base = math.pow(10,-n-1)
+						output = decimal.Decimal(str(input)).quantize(decimal.Decimal(str(base)))  
+						break  
 	else:
 		if originRounded < 10:
 			output = round(input,1)
