@@ -119,9 +119,14 @@ def getSystematicError(sample,channel):
 
     return math.sqrt(errorSquared)
 
+
+
+
 #### check which input datasets have valid output files
 processed_datasets = []
 for dataset in datasets:
+    if types[dataset] is "signalMC": #only include bgMC and data yields
+        continue
     fileName = condor_dir + "/" + dataset + ".root"
     if not os.path.exists(fileName):
         "input file not found for ",dataset,"dataset"
@@ -183,15 +188,10 @@ for sample in processed_datasets:
             sysError_ = fractionalSysError_ * yield_
         else:
             sysError_ = 0.0
-
-        
-        if types[sample] is not "data":
-            yields[sample][channel] = formatNumber(str(round_sigfigs(yield_,3)).rstrip("0").rstrip("."))
-        else:
-            yields[sample][channel] = formatNumber(str(yield_).rstrip("0").rstrip("."))
-
-        stat_errors[sample][channel] = formatNumber(str(round_sigfigs(statError_,1)).rstrip("0").rstrip("."))
-        sys_errors[sample][channel] = formatNumber(str(round_sigfigs(sysError_,1)).rstrip("0").rstrip("."))
+	dic = roundingNumbers(yield_,statError_,sysError_)
+        yields[sample][channel] = str(dic['central'])
+        stat_errors[sample][channel] = str(dic['sta'])
+        sys_errors[sample][channel] = str(dic['sys'])
 
         if types[sample] is "bgMC":
             bgMCSum[channel] = bgMCSum[channel] + yield_
@@ -212,7 +212,7 @@ for channel in channels:
 
     line = "Event Source & Event Yield $\pm$ 1$\sigma$ (stat.)"
     if arguments.includeSystematics:
-        line = line + " $\pm$ 1$\sigma$ (syst.)"
+        line = line + " $\pm$ 1$\sigma$ (sys.)"
     line = line +endLine+newLine+hLine
     fout.write(line)
 
@@ -222,56 +222,34 @@ for channel in channels:
         if types[sample] is not "bgMC":
             continue
         bgMCcounter = bgMCcounter + 1
-        
-        rawlabel = labels[sample]  
-        label = rawlabel.replace("#bar{t}","$\\bar{\\mathrm{t}}$").replace("#nu","$\\nu$").replace("#rightarrow","${\\rightarrow}$").replace(" ","\\ ")
+        rawlabel = "$" + labels[sample] + "$"
+        label = rawlabel.replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ")
         line = label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel]
         if arguments.includeSystematics:
             line = line + " $\pm$ " + sys_errors[sample][channel]
         line = line + endLine + newLine
-        fout.write(line)
+	fout.write(line)
 
     #write a line with the sum of the backgrounds
     if bgMCcounter is not 0:
-
-        bgMCSum_ = formatNumber(str(round_sigfigs(int(bgMCSum[channel]),5)).rstrip("0").rstrip("."))
-        bgMCStatErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCStatErrSquared[channel]),1)).rstrip("0").rstrip("."))
-        bgMCSysErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCSysErrSquared[channel]),1)).rstrip("0").rstrip("."))
+        dic = roundingNumbers(bgMCSum[channel], math.sqrt(bgMCStatErrSquared[channel]),math.sqrt(bgMCSysErrSquared[channel]))
+	bgMCSum_ = str(dic['central'])
+        bgMCStatErr_ = str(dic['sta'])
+        bgMCSysErr_ = str(dic['sys'])
         line = hLine+"background sum & " + bgMCSum_ + " $\pm$ " + bgMCStatErr_
         if arguments.includeSystematics:
             line = line + " $\pm$ " + bgMCSysErr_
         line = line + endLine + newLine + hLine
         fout.write(line)
 
-
     #write a line for each data sample
     for sample in processed_datasets_channels[channel]:
         if types[sample] is not "data":
             continue
-
-        rawlabel = "data"
+        rawlabel = "$" + labels[sample] + "$"
         label = rawlabel.replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ")
+#        fout.write(label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel] + endLine + newLine)
         fout.write(label + " & " + yields[sample][channel] + endLine + newLine)        
-
-
-    #write a line for each signal sample
-    signalMCcounter = 0
-    for sample in processed_datasets_channels[channel]:
-        if types[sample] is not "signalMC":
-            continue
-        signalMCcounter = signalMCcounter + 1
-        rawlabel = labels[sample]
-        label = rawlabel.replace("#bar{t}","$\\bar{\\mathrm{t}}$").replace("#nu","$\\nu$").replace("#rightarrow","${\\rightarrow}$").replace(" ","\\ ")
-        line = label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel]
-        if arguments.includeSystematics:
-            line = line + " $\pm$ " + sys_errors[sample][channel]
-        line = line + endLine + newLine
-        fout.write(line)
-
-    if signalMCcounter is not 0:
-        line = hLine
-        fout.write(line)        
-
                                             
     fout.write("\\end{tabular}"+newLine)
     if(arguments.standAlone):
