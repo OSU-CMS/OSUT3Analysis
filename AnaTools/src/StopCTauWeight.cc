@@ -32,6 +32,10 @@ StopCTauWeight::operator[] (const BNstopCollection &stops)
       cout << "Warning[StopCTauWeight]:  Found event with ctau==0." << endl;  
       //      wt = 0;  // Set 0 weight for any event with a ctau of identically 0; indicates that a problem occurred.  
     }
+    if (ctau < 0) {
+      cout << "Warning[StopCTauWeight]:  Found event with ctau<0." << endl;  
+      wt = 0.0;
+    }
     weight *= wt;  
   }
 

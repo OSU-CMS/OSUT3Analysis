@@ -35,6 +35,7 @@ MuonSFWeight::MuonSFWeight (const string &sfFile, const string &dataOverMC)
   muonSFWeight_->GetEntries();// to avoid the crashing warning
   delete SF_Combined_TOT;
   fin->Close ();
+  delete fin;
  }
 
  
@@ -85,6 +86,7 @@ ElectronSFWeight::ElectronSFWeight (const string &cmsswRelease, const string &id
   electronSFWeight_ = (TH2F *) fin->Get (dataOverMC.c_str ());
   electronSFWeight_->SetDirectory (0);
   fin->Close ();
+  delete fin;
 }
 
 double
@@ -360,6 +362,8 @@ ElectronSFWeight::at (const double &eta, const double &pt, const int &shiftUpDow
 
 ElectronSFWeight::~ElectronSFWeight ()
 {
+  if (electronSFWeight_)
+    delete electronSFWeight_;
 }
 
 
@@ -373,6 +377,7 @@ TriggerMetSFWeight::TriggerMetSFWeight (const string &sfFile, const string &data
   triggerMetSFWeight_->GetEntries();// to avoid the crashing warning
   delete dataOverMCHist;
   fin->Close ();
+  delete fin;
  }
 
  
@@ -399,6 +404,7 @@ TrackNMissOutSFWeight::TrackNMissOutSFWeight (const string &sfFile, const string
   trackNMissOutSFWeight_->GetEntries();  // to avoid the crashing warning
   delete dataOverMCHist;
   fin->Close ();
+  delete fin;
 }
 
  
@@ -426,6 +432,7 @@ IsrVarySFWeight::IsrVarySFWeight (const string &sfFile, const string &dataOverMC
   delete dataOverMCHist;
   clog << "Will use hist " << isrVarySFWeight_->GetName() << " from file " << sfFile << " to do ISR reweighting." << endl;  
   fin->Close ();
+  delete fin;
  }
  
 double
