@@ -1,7 +1,73 @@
 #!/usr/bin/env python
 
 import math
+import decimal
+def roundingNumbers(central,sta,sys):
+        roundingDic = {}
+        sys = float(sys)
+        sta = float(sta)
+        sysOut = 0
+        staOut = 0
+        centralOut = 0
+        if sys > sta:
+                sysRounded = round_sigfigs(sys,2)
+		sysOut = modifyByPrecision(sys,sys,sysRounded)
+		centralOut = modifyByPrecision(central,sys,sysRounded)
+		staOut = modifyByPrecision(sta,sys,sysRounded)
+        else:
+                staRounded = round_sigfigs(sta,2)
+		staOut = modifyByPrecision(sta,sta,staRounded)
+		centralOut = modifyByPrecision(central,sta,staRounded)
+		sysOut = modifyByPrecision(sys,sta,staRounded)
+                
+        roundingDic['central'] = centralOut
+        roundingDic['sys'] = sysOut
+        roundingDic['sta'] = staOut
 
+        print roundingDic['central']
+        print roundingDic['sta']
+        print roundingDic['sys']
+        return roundingDic
+
+def modifyByPrecision(input, origin, originRounded):
+	output = 0
+	if input is origin:
+		if not origin < 10:
+			output = int(input)
+		elif not origin < 1:
+			output = originRounded
+		else:
+			for n in range(1,100):
+                                    if int(int(originRounded*math.pow(10,n))/(originRounded*math.pow(10,n))) is 1 and int(originRounded*math.pow(10,n)) is not 0:
+                                                if int(originRounded*math.pow(10,n)) is 0:
+                                                        output = decimal.Decimal(originRounded).quantize(decimal.Decimal(str(base/10)))
+						else:
+							output = originRounded
+			 
+	if originRounded - int(originRounded) > 0:
+		if originRounded > 1:
+				output = round(input,1)
+		else:
+        		for n in range(1,100):
+                                    if int(int(originRounded*math.pow(10,n))/(originRounded*math.pow(10,n))) is 1 and int(originRounded*math.pow(10,n)) is not 0:
+                                                if int(originRounded*math.pow(10,n)) is not 0:
+							base = math.pow(10,-n)
+							output = decimal.Decimal(input).quantize(decimal.Decimal(str(base)))
+                                                else:
+							output = decimal.Decimal(input).quantize(decimal.Decimal(str(base/10)))
+                                                break	
+	else:
+		if originRounded < 10:
+			output = round(input,1)
+		else:
+                	for n in range(0,100):
+				precision = 0
+                                if int(originRounded/math.pow(10,n)) is 0:
+           				precision = math.pow(10,n-2)
+                                        output = int((int(input/precision))*precision)
+					break
+
+	return output
 #function to replace special characters in a cut name
 def plainTextString(inputString):
 
