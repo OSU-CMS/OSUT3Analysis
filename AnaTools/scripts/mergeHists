@@ -33,7 +33,7 @@ my %dirs;
 my %channels;
 my $integratedLuminosity = 10000;
 $integratedLuminosity = $opt{"luminosity"} if $opt{"luminosity"};
-my $cutFlow = "cutFlow";
+my $cutFlow = "selection";
 $cutFlow = $opt{"cutflow"} if $opt{"cutflow"};
 foreach my $file (@$files)
   {
@@ -79,6 +79,8 @@ foreach my $file (@$files)
         $crossSections{$dir} = $crossSection;
       }
   }
+my $isNew = 1;
+my $unweightedTotal = "Total";
 foreach my $file (@$files)
   {
     next if $file eq ".";
@@ -89,6 +91,9 @@ foreach my $file (@$files)
     my $jobNumber;
     my $fileIsEDM = 0;
     my $count = countEvents ($file, $cutFlow) if $file =~ m/^.*\.root$/;;
+    $isNew = !(defined $count->{"cutFlow"});
+    $unweightedTotal = "cutFlow" if !$isNew;
+    print "Assuming OLD cut flow format!\n" if !$isNew;
     my $fileIsEDM = defined $count->{"EDM events"};
     if ($fileIsEDM && $count->{"EDM events"} == 0)
       {
@@ -109,16 +114,16 @@ foreach my $file (@$files)
             if (substr ($file, 0, length ($arg)) eq $arg)
               {
                 $dirs{$arg} = $dir;
-                if ($count->{$cutFlow} < 0)
+                if ($count->{$unweightedTotal} < 0)
                   {
                     $nGoodJobs--;
                     $nBadJobs++;
                     print "WARNING: Skipping job $jobNumber. (bad ROOT file)\n";
                     last;
                   }
-                $nTotalEvents{$arg} += $count->{$cutFlow} if defined $nTotalEvents{$arg};
-                $nTotalEvents{$arg} = $count->{$cutFlow} if !(defined $nTotalEvents{$arg});
-                $nTotalEvents += $count->{$cutFlow};
+                $nTotalEvents{$arg} += $count->{$unweightedTotal} if defined $nTotalEvents{$arg};
+                $nTotalEvents{$arg} = $count->{$unweightedTotal} if !(defined $nTotalEvents{$arg});
+                $nTotalEvents += $count->{$unweightedTotal};
                 push (@{$rootFiles{$arg}}, $file);
                 if ($opt{"weight"})
                   {
@@ -132,7 +137,9 @@ foreach my $file (@$files)
 
                 foreach my $channelCutFlow (keys %{$count})
                   {
-                    my $channel = substr ($channelCutFlow, 0, length ($channelCutFlow) - length ($cutFlow) );
+                    my $channel = $channelCutFlow;
+                    $channel = substr ($channelCutFlow, 0, length ($channelCutFlow) - length ($cutFlow)) if !$isNew;
+                    next if $channel eq $unweightedTotal || $channel eq "Weighted Yield";
                     next if !length ($channel);
                     $skimEventCounts{$arg} = {} if !(defined $skimEventCounts{$arg});
                     $skimEventCounts{$arg}{$channel} += $count->{$channelCutFlow} if defined $skimEventCounts{$arg};
@@ -230,7 +237,7 @@ foreach my $arg (keys %weights)
 print $output if $printOutput;
 
 my $goodEvents = countEvents ("$opt{'prefix'}.root", $cutFlow);
-printf "$nGoodJobs jobs ran successfully over %.1f (%.1f weighted) events.\n", $nTotalEvents, $goodEvents->{$cutFlow} if $counting;
+printf "$nGoodJobs jobs ran successfully over %.1f (%.1f weighted) events.\n", $nTotalEvents, $goodEvents->{$unweightedTotal} if $counting;
 print "$nBadJobs jobs failed to run.\n" if $counting;
 print "$nIncompleteJobs jobs have not finished.\n" if $counting;
 print "=============================================\n";
@@ -285,7 +292,7 @@ printHelp
   print "\n";
   print "Mandatory arguments to long options are mandatory for short options too.\n";
   printf "%-29s%s\n", "  -c, --cutflow HISTOGRAM", "name of histogram to use for the cutflow (default:";
-  printf "%-29s%s\n", "                  ", "cutFlow)";
+  printf "%-29s%s\n", "                  ", "selection)";
   printf "%-29s%s\n", "  -h, --help", "print this help message";
   printf "%-29s%s\n", "  -l, --luminosity", "integrated luminosity to which the histograms are";
   printf "%-29s%s\n", "                  ", "weighted (default: 10000/pb)";
@@ -333,23 +340,15 @@ countEvents
       print $output[0];
       return {$cutFlow => -1};
     }
-  my %weight;
+  @output = `getEventsFromCutFlow $file cutFlow` if $output[0] =~ m/Assuming OLD/;
   my %count;
   foreach my $line (@output)
     {
       my $cutFlowName = $line;
-      my $weight = $line;
       my $count = $line;
-      $cutFlowName =~ s/(.*): .* \/ .*\n*/$1/;
-      $weight =~ s/.*: .* \/ (.*)\n*/$1/;
-      $count =~ s/.*: (.*) \/ .*\n*/$1/;
+      $cutFlowName =~ s/(.*): .*\n*/$1/;
+      $count =~ s/.*: (.*)\n*/$1/;
       $count{$cutFlowName} = $count + 0;
-      $weight{$cutFlowName} = $weight + 0;
-    }
-  foreach my $cutFlowName (keys %count)
-    {
-      $count{$cutFlowName} *= $count{$cutFlow} / $weight{$cutFlowName} if $weight{$cutFlowName};
-      $count{$cutFlowName} *= $count{$cutFlow} * $weight{$cutFlowName} if !$weight{$cutFlowName};
     }
 
   return \%count;
