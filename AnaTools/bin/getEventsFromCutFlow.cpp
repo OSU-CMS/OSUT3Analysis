@@ -45,6 +45,15 @@ main (int argc, char *argv[])
       cout << fileName << " appears to be empty!" << endl;
       return 0;
     }
+
+  TH1D *versionTestCutFlow = (TH1D *) fin->Get (("OSUAnalysis/" + histName).c_str ());
+  bool isNew = true;
+  if (versionTestCutFlow)
+    {
+      isNew = !(versionTestCutFlow->GetNbinsX () < 2);
+      delete versionTestCutFlow;
+    }
+
   TIter next0 (fin->GetListOfKeys ());
   TObject *obj0;
   vector<TH1D *> cutFlows;
@@ -68,7 +77,9 @@ main (int argc, char *argv[])
               string obj1Class = ((TKey *) obj1)->GetClassName (),
                      obj1Name = obj1->GetName ();
 
-              if (obj1Class == "TH1D" && (obj1Name == histName || obj1Name.substr (obj1Name.length () - HistName.length ()) == HistName))
+              if (obj1Class == "TH1D"
+               && (!isNew || obj1Name == histName)
+               && (isNew || (obj1Name == histName || obj1Name.substr (obj1Name.length () - HistName.length ()) == HistName)))
                 {
                   cutFlows.push_back ((TH1D *) dir->Get (obj1Name.c_str ()));
                   cutFlows.back ()->SetDirectory (0);
@@ -86,9 +97,17 @@ main (int argc, char *argv[])
   for (vector<TH1D *>::const_iterator cutFlow = cutFlows.begin (); cutFlow != cutFlows.end (); cutFlow++)
     {
       TAxis *x = (*cutFlow)->GetXaxis ();
-      double totalEvents = (*cutFlow)->GetBinContent (1),
-             selectedEvents = (*cutFlow)->GetBinContent (x->GetNbins ());
-      cout << (*cutFlow)->GetName () << ": " << setprecision (16) << selectedEvents << " / " << setprecision (16) << totalEvents << endl;
+      if (isNew)
+        {
+          for (int i = 1; i <= x->GetNbins (); i++)
+            cout << x->GetBinLabel (i) << ": " << (*cutFlow)->GetBinContent (i) << endl;
+        }
+      else
+        {
+          double totalEvents = (*cutFlow)->GetBinContent (1),
+          selectedEvents = (*cutFlow)->GetBinContent (x->GetNbins ());
+          cout << (*cutFlow)->GetName () << ": " << setprecision (16) << selectedEvents << " / " << setprecision (16) << totalEvents << endl;
+        }
     }
 
   return 0;
