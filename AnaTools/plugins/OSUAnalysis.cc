@@ -1135,7 +1135,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   globalScaleFactor_ = 1.0; //this variable holds the product of all SFs applied equally to all channels
 
   //apply trigger efficiency
-  if (!applyTriggerSF_ || datasetType_ != "data") triggerScaleFactor_ = 1.0; //reset the variable to 1 if we're not applying it, so it will take that value in its histogram
+  if (!applyTriggerSF_ || datasetType_ == "data") triggerScaleFactor_ = 1.0; //reset the variable to 1 if we're not applying it, so it will take that value in its histogram
   if (applyTriggerSF_ && datasetType_ != "data") globalScaleFactor_ *= triggerScaleFactor_;
 
 
