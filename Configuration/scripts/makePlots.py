@@ -30,6 +30,8 @@ parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
                   help="maximum error used in rebinning the ratio histogram")  
 parser.add_option("-N", "--normalizeFactor", dest="normalizeFactor",
                   help="scale bkgd MC by a specified scale factor")  
+parser.add_option("-q", "--quickRun", dest="quickHistName",
+                  help="only make histograms that are named quickHistName")  
 parser.add_option("-S", "--systematics", action="store_true", dest="includeSystematics", default=False,
                   help="also lists the systematic uncertainties")
 parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,		 
@@ -1168,6 +1170,8 @@ for key in inputFile.GetListOfKeys():
 
             inputFile.cd(level2Directory)
             for key3 in gDirectory.GetListOfKeys():
+                if arguments.quickHistName and not arguments.quickHistName in key3.GetName():  
+                    continue  
                 if re.match ('TH1', key3.GetClassName()): # found a 1-D histogram
                     if arguments.makeSignificancePlots:
                         MakeOneDHist(level2Directory,key3.GetName(),"left")
