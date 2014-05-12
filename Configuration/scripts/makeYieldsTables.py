@@ -119,6 +119,9 @@ def getSystematicError(sample,channel):
 
     return math.sqrt(errorSquared)
 
+
+
+
 #### check which input datasets have valid output files
 processed_datasets = []
 for dataset in datasets:
@@ -185,10 +188,10 @@ for sample in processed_datasets:
             sysError_ = fractionalSysError_ * yield_
         else:
             sysError_ = 0.0
-
-        yields[sample][channel] = formatNumber(str(round_sigfigs(int(yield_),5)).rstrip("0").rstrip("."))
-        stat_errors[sample][channel] = formatNumber(str(round_sigfigs(statError_,1)).rstrip("0").rstrip("."))
-        sys_errors[sample][channel] = formatNumber(str(round_sigfigs(sysError_,1)).rstrip("0").rstrip("."))
+	dic = roundingNumbers(yield_,statError_,sysError_)
+        yields[sample][channel] = str(dic['central'])
+        stat_errors[sample][channel] = str(dic['sta'])
+        sys_errors[sample][channel] = str(dic['sys'])
 
         if types[sample] is "bgMC":
             bgMCSum[channel] = bgMCSum[channel] + yield_
@@ -225,14 +228,14 @@ for channel in channels:
         if arguments.includeSystematics:
             line = line + " $\pm$ " + sys_errors[sample][channel]
         line = line + endLine + newLine
-        fout.write(line)
+	fout.write(line)
 
     #write a line with the sum of the backgrounds
     if bgMCcounter is not 0:
-
-        bgMCSum_ = formatNumber(str(round_sigfigs(int(bgMCSum[channel]),5)).rstrip("0").rstrip("."))
-        bgMCStatErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCStatErrSquared[channel]),1)).rstrip("0").rstrip("."))
-        bgMCSysErr_ = formatNumber(str(round_sigfigs(math.sqrt(bgMCSysErrSquared[channel]),1)).rstrip("0").rstrip("."))
+        dic = roundingNumbers(bgMCSum[channel], math.sqrt(bgMCStatErrSquared[channel]),math.sqrt(bgMCSysErrSquared[channel]))
+	bgMCSum_ = str(dic['central'])
+        bgMCStatErr_ = str(dic['sta'])
+        bgMCSysErr_ = str(dic['sys'])
         line = hLine+"background sum & " + bgMCSum_ + " $\pm$ " + bgMCStatErr_
         if arguments.includeSystematics:
             line = line + " $\pm$ " + bgMCSysErr_

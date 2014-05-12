@@ -139,6 +139,11 @@ def add_stops (options, masses, ctaus, bottomBranchingRatios = [], rHadron = Tru
                 options['labels'][bottomDatasetName] = "#tilde{t}#tilde{t}#rightarrowbbll (#LTc#tau#GT = " + str (ctau) + " mm)"
                 options['labels'][topDatasetName] = "#tilde{t}#tilde{t}#rightarrowtt#nu#nu (#LTc#tau#GT = " + str (ctau) + " mm)"
                 options['labels'][mixedDatasetName] = "#tilde{t}#tilde{t}#rightarrowbtl#nu (#LTc#tau#GT = " + str (ctau) + " mm)"
+                if not rHadron:
+                    options['labels'][datasetName] += " (PYTHIA6)"
+                    options['labels'][bottomDatasetName] += " (PYTHIA6)"
+                    options['labels'][topDatasetName] += " (PYTHIA6)"
+                    options['labels'][mixedDatasetName] += " (PYTHIA6)"
 
 
 def chargino_ctau (dataset):
@@ -189,6 +194,8 @@ def add_channels (process, channels, outputCommands = ["keep *"]):
         except OSError:
             pass
         out = cms.OutputModule ("PoolOutputModule",
+          splitLevel = cms.untracked.int32 (0),
+          eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
           fileName = cms.untracked.string (channelName + "/bean" + suffix + ".root"),
           SelectEvents = cms.untracked.PSet (
             SelectEvents = cms.vstring ("myFilterPath" + str (i))
