@@ -115,11 +115,11 @@ gROOT.ForceStyle()
 #set the text for the luminosity label
 if(intLumi < 1000.):
     LumiInPb = intLumi
-    LumiText = "L_{int} = " + str(intLumi) + " pb^{-1}"
-    LumiText = "L_{int} = " + str.format('{0:.1f}', LumiInPb) + " pb^{-1}"
+    LumiText = "L = " + str(intLumi) + " pb^{-1}"
+    LumiText = "L = " + str.format('{0:.1f}', LumiInPb) + " pb^{-1}"
 else:
     LumiInFb = intLumi/1000.
-    LumiText = "L_{int} = " + str.format('{0:.1f}', LumiInFb) + " fb^{-1}"
+    LumiText = "L = " + str.format('{0:.1f}', LumiInFb) + " fb^{-1}"
 
 #bestest place for lumi. label, in top left corner
 topLeft_x_left    = 0.137
