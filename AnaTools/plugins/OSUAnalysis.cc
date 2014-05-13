@@ -3994,22 +3994,20 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
   }
 
   else if(variable == "deltaPhiMaxSubLeadJet") {
-    // calculate maximum deltaPhi between track and any other subleading jet                                  
+    // calculate maximum deltaPhi between track and any other subleading jet
     double trkJetDeltaPhiMax = -99.;
-    if (!jets.product()) clog << "ERROR:  cannot find deltaPhiMaxSubLeadJet because jets collection is not in\
-itialized." << endl;
+    if (!jets.product()) clog << "ERROR:  cannot find deltaPhiMaxSubLeadJet because jets collection is not initialized." << endl;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
       string empty = "";
       double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID", "", empty);
-      if (!isSubLeadingJet) continue;  // only consider jets that pass the subleading jet ID criteria         
-      //      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty);                                 
+      if (!isSubLeadingJet) continue;  // only consider jets that pass the subleading jet ID criteria
+      //      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty);
       double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
       double trkJetDeltaPhi = fabs(deltaPhi(object->phi, jetPhi));
-      if (trkJetDeltaPhi > trkJetDeltaPhiMax) trkJetDeltaPhiMax = trkJetDeltaPhi;
+      if (trkJetDeltaPhi > trkJetDeltaPhiMax) trkJetDeltaPhiMax = trkJetDeltaPhi;  
     }
     value = trkJetDeltaPhiMax;
   }
-
 
   else if(variable == "deltaRMinElecLooseMvaId") {
     // calculate minimum deltaR between track and any other electron passing loose mva ID, i.e., mvaNonTrigV0 > 0
@@ -4422,6 +4420,22 @@ OSUAnalysis::valueLookup (const BNmcparticle* object, string variable, string fu
   else if (variable == "rho"){
     value = sqrt (object->vx * object->vx + object->vy * object->vy);
   }
+
+  else if(variable == "deltaPhiMaxSubLeadJet") {
+    // calculate maximum deltaPhi between mcparticle and any subleading jet 
+    double mcpartJetDeltaPhiMax = -99.;
+    if (!jets.product()) clog << "ERROR:  cannot find deltaPhiMaxSubLeadJet because jets collection is not initialized." << endl;
+    for (uint ijet = 0; ijet<jets->size(); ijet++) {
+      string empty = "";
+      double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID", "", empty);
+      if (!isSubLeadingJet) continue;  // only consider jets that pass the subleading jet ID criteria
+      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
+      double mcpartJetDeltaPhi = fabs(deltaPhi(object->phi, jetPhi));
+      if (mcpartJetDeltaPhi > mcpartJetDeltaPhiMax) mcpartJetDeltaPhiMax = mcpartJetDeltaPhi;
+    }
+    value = mcpartJetDeltaPhiMax;
+  }
+
 
   else{clog << "WARNING: invalid mcparticle variable '" << variable << "'\n"; value = -999;}
 

@@ -26,6 +26,7 @@ from OSUT3Analysis.Configuration.formattingUtilities import *
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
 parser.remove_option("-n")
+parser.remove_option("-d")
 
 parser.add_option("-n", "--histToBeReWeighted", dest="histToBeReWeighted",
                   help="histogram that will be reweighted")  
@@ -35,6 +36,8 @@ parser.add_option("-f", "--fileWithWtHist", dest="fileWithWtHist",
                   help="file containing weights histogram")  
 parser.add_option("-s", "--suffixRename", dest="suffixRename", default="_Reweighted", 
                   help="suffix to add to histogram name after weighting")  
+parser.add_option("-d", "--singleDataset", dest="singleDataset",
+                  help="Specify a single dataset to run over; overrides the list in the localOptions file") 
 
 (arguments, args) = parser.parse_args()  
 
@@ -42,6 +45,9 @@ if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
+if arguments.singleDataset: # Only run over a single dataset; override definition in localConfig  
+    datasets = [ arguments.singleDataset ]
+        
 condor_dir = set_condor_output_dir(arguments)
 
 def rewtOneHist(dataset, hwts):  
