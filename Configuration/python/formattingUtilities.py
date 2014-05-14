@@ -3,32 +3,35 @@
 import math
 import decimal
 
-def roundingNumbers(central,sta,sys):
+def roundingNumbers(central_value,stat_error,syst_error):
         roundingDic = {}
-        sys = float(sys)
-        sta = float(sta)
-        sysOut = 0
-        staOut = 0
-        centralOut = 0
-        if sys > sta:
-                sysRounded = round_sigfigs(sys,2)
-		sysOut = modifyByPrecision(sys,sys,sysRounded)
-		centralOut = modifyByPrecision(central,sys,sysRounded)
-		staOut = modifyByPrecision(sta,sys,sysRounded)
+        syst_error = float(syst_error)
+        stat_error = float(stat_error)
+        syst_errorOut = 0
+        stat_errorOut = 0
+        central_valueOut = 0
+
+	#take the larger error (syst or stat) and round it to 2 sig figs
+	
+        if syst_error > stat_error:
+                syst_errorRounded = round_sigfigs(syst_error,2)
+		syst_errorOut = modifyByPrecision(syst_error,syst_error,syst_errorRounded)
+		central_valueOut = modifyByPrecision(central_value,syst_error,syst_errorRounded)
+		stat_errorOut = modifyByPrecision(stat_error,syst_error,syst_errorRounded)
         else:
-                if not sta > 0:
-			sysOut = decimal.Decimal("0").quantize(decimal.Decimal("0"))
-			staOut = decimal.Decimal("0").quantize(decimal.Decimal("0"))
-			centralOut = decimal.Decimal(str(central)).quantize(decimal.Decimal("0"))
+                if stat_error <= 0:
+			syst_errorOut = decimal.Decimal("0").quantize(decimal.Decimal("0"))
+			stat_errorOut = decimal.Decimal("0").quantize(decimal.Decimal("0"))
+			central_valueOut = decimal.Decimal(str(central_value)).quantize(decimal.Decimal("0"))
 		else:
-			staRounded = round_sigfigs(sta,2)
-			staOut = modifyByPrecision(sta,sta,staRounded)
-			centralOut = modifyByPrecision(central,sta,staRounded)
-			sysOut = modifyByPrecision(sys,sta,staRounded)
+			stat_errorRounded = round_sigfigs(stat_error,2)
+			stat_errorOut = modifyByPrecision(stat_error,stat_error,stat_errorRounded)
+			central_valueOut = modifyByPrecision(central_value,stat_error,stat_errorRounded)
+			syst_errorOut = modifyByPrecision(syst_error,stat_error,stat_errorRounded)
                 
-        roundingDic['central'] = centralOut
-        roundingDic['sys'] = sysOut
-        roundingDic['sta'] = staOut
+        roundingDic['central_value'] = central_valueOut
+        roundingDic['syst_error'] = syst_errorOut
+        roundingDic['stat_error'] = stat_errorOut
 
         return roundingDic
 
@@ -70,6 +73,8 @@ def modifyByPrecision(input, origin, originRounded):
 					break
 
 	return output
+
+
 #function to replace special characters in a cut name
 def plainTextString(inputString):
 

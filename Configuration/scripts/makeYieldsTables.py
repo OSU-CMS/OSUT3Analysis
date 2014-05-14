@@ -188,10 +188,10 @@ for sample in processed_datasets:
             sysError_ = fractionalSysError_ * yield_
         else:
             sysError_ = 0.0
-	dic = roundingNumbers(yield_,statError_,sysError_)
-        yields[sample][channel] = str(dic['central'])
-        stat_errors[sample][channel] = str(dic['sta'])
-        sys_errors[sample][channel] = str(dic['sys'])
+	roundedNumbersDictionary = roundingNumbers(yield_,statError_,sysError_)
+        yields[sample][channel] = str(roundedNumbersDictionary['central_value'])
+        stat_errors[sample][channel] = str(roundedNumbersDictionary['stat_error'])
+        sys_errors[sample][channel] = str(roundedNumbersDictionary['syst_error'])
 
         if types[sample] is "bgMC":
             bgMCSum[channel] = bgMCSum[channel] + yield_
@@ -212,7 +212,7 @@ for channel in channels:
 
     line = "Event Source & Event Yield $\pm$ 1$\sigma$ (stat.)"
     if arguments.includeSystematics:
-        line = line + " $\pm$ 1$\sigma$ (sys.)"
+        line = line + " $\pm$ 1$\sigma$ (syst.)"
     line = line +endLine+newLine+hLine
     fout.write(line)
 
@@ -222,8 +222,8 @@ for channel in channels:
         if types[sample] is not "bgMC":
             continue
         bgMCcounter = bgMCcounter + 1
-        rawlabel = "$" + labels[sample] + "$"
-        label = rawlabel.replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ")
+        rawlabel = labels[sample]
+        label = rawlabel.replace("#bar{t}","$\\bar{\\mathrm{t}}$").replace("#tau","$\\tau$").replace("#nu","$\\nu$").replace("#rightarrow","${\\rightarrow}$").replace(" ","\\ ")
         line = label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel]
         if arguments.includeSystematics:
             line = line + " $\pm$ " + sys_errors[sample][channel]
@@ -232,11 +232,11 @@ for channel in channels:
 
     #write a line with the sum of the backgrounds
     if bgMCcounter is not 0:
-        dic = roundingNumbers(bgMCSum[channel], math.sqrt(bgMCStatErrSquared[channel]),math.sqrt(bgMCSysErrSquared[channel]))
-	bgMCSum_ = str(dic['central'])
-        bgMCStatErr_ = str(dic['sta'])
-        bgMCSysErr_ = str(dic['sys'])
-        line = hLine+"background sum & " + bgMCSum_ + " $\pm$ " + bgMCStatErr_
+        roundedNumbersDictionary = roundingNumbers(bgMCSum[channel], math.sqrt(bgMCStatErrSquared[channel]),math.sqrt(bgMCSysErrSquared[channel]))
+	bgMCSum_ = str(roundedNumbersDictionary['central_value'])
+        bgMCStatErr_ = str(roundedNumbersDictionary['stat_error'])
+        bgMCSysErr_ = str(roundedNumbersDictionary['syst_error'])
+        line = hLine+"Total expected background & " + bgMCSum_ + " $\pm$ " + bgMCStatErr_
         if arguments.includeSystematics:
             line = line + " $\pm$ " + bgMCSysErr_
         line = line + endLine + newLine + hLine
@@ -246,9 +246,8 @@ for channel in channels:
     for sample in processed_datasets_channels[channel]:
         if types[sample] is not "data":
             continue
-        rawlabel = "$" + labels[sample] + "$"
-        label = rawlabel.replace("#","\\").replace("\\rightarrow","{\\rightarrow}").replace(" ","\\ ")
-#        fout.write(label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel] + endLine + newLine)
+
+        label =  "Observation"
         fout.write(label + " & " + yields[sample][channel] + endLine + newLine)        
                                             
     fout.write("\\end{tabular}"+newLine)
