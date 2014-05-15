@@ -435,18 +435,20 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     BgMCHistograms = []
     BgMCUncertainties = []
     BgMCLegendEntries = []
+    BgMCLegendLabelYieldsDic = {}
     SignalMCHistograms = []
     SignalMCLegendEntries = []
     DataHistograms = []
     DataLegendEntries = []
-
+    BgMCLegendEntriesYieldsDic = {}
+    bgMCHistList = []  
 
     
     
     backgroundIntegral = 0
     dataIntegral = 0
     scaleFactor = 1
-
+    
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
         inputFile = TFile(dataset_file)
@@ -539,9 +541,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 Histogram.SetLineColor(1)
                 Histogram.SetLineWidth(1)
 
-            BgMCLegendEntries.append(legLabel) 
+	    BgMCLegendLabelYieldsDic[legLabel] = Histogram.Integral()
             BgMCHistograms.append(Histogram)
-
             if arguments.includeSystematics:
                 BgMCUncertainties.append(getSystematicError(sample,channel))
                     
@@ -593,13 +594,25 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             bgMCHist.Scale(1./backgroundIntegral)
         elif arguments.normalizeToUnitArea and arguments.noStack and bgMCHist.Integral() > 0:
             bgMCHist.Scale(1./bgMCHist.Integral())
-
-        bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
+        
+	bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
+        bgMCHistList.append(bgMCHist)
             
-
-        if not arguments.noStack:
-            Stack.Add(bgMCHist)
-
+    BgMCHistograms = []
+    bgMCYieldList = []
+    for hist in bgMCHistList:
+    	bgMCYieldList.append(hist.Integral())
+    bgMCYieldList = list(set(bgMCYieldList))
+    bgMCYieldList.sort()
+    if not arguments.noStack:
+        for yields in bgMCYieldList:
+	    for hist in bgMCHistList:
+		if hist.Integral() == yields:     
+		   Stack.Add(hist)
+                   BgMCHistograms.append(hist)
+            for legend in BgMCLegendLabelYieldsDic:
+		if BgMCLegendLabelYieldsDic[legend] == yields:
+		   BgMCLegendEntries.append(legend)	
                 
 
     ### formatting data histograms and adding to legend
