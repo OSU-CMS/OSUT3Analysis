@@ -132,10 +132,10 @@ topLeft_y_offset  = 0.035
 HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 8 TeV"
 
 #position for header
-header_x_left    = 0.089
-header_x_right   = 0.969
-header_y_bottom  = 0.939
-header_y_top     = 0.99
+header_x_left    = 0.08892617
+header_y_bottom  = 0.9458042
+header_x_right   = 0.9681208
+header_y_top     = 0.9965035
 
 
 ##########################################################################################################################################
@@ -748,10 +748,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     #legend coordinates, empirically determined :-)
-    x_left = 0.6
-    x_right = 0.932
+    x_left = 0.6006711
+    x_right = 0.9328859
     x_width = x_right - x_left
-    y_max = 0.9
+    y_max = 0.9178322
     entry_height = 0.05
 
     if(numBgMCSamples is not 0 or numDataSamples is not 0): #then draw the data & bgMC legend
