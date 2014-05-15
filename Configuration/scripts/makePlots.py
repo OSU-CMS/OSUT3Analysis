@@ -180,13 +180,13 @@ def getSystematicError(sample,channel):
     for uncertainty in external_systematic_uncertainties:
         input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
         if not os.path.exists(input_file_path):
-#            print "WARNING: didn't find ",input_file_path
+            print "WARNING: didn't find ",input_file_path
             input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
             if not os.path.exists(input_file_path):
-#                print "   skipping",uncertainty,"systematic for the",channel,"channel"
+                print "   skipping",uncertainty,"systematic for the",channel,"channel"
                 return 0
-#            else:
-#                print "   using default",uncertainty,"systematic for the",channel,"channel"
+            else:
+                print "   using default",uncertainty,"systematic for the",channel,"channel"
 
         input_file = open(input_file_path)
         for line in input_file:
@@ -346,8 +346,18 @@ def MakeIntegralHist(hist, integrateDir):
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
-
-
+def YaxisTitleForVariableBinHist(histogram):
+    variableBin = {}
+    binWidth = []
+    variableBin['isVariable'] = False
+    for i in range(1,histogram.GetNbinsX() + 1):
+	binWidth.append(histogram.GetXaxis().GetBinWidth(i))
+    binWidth.sort()
+    if binWidth[0] < binWidth[-1]:
+	variableBin['isVariable'] = True
+    variableBin['smallestBinWidth'] =  binWidth[0]
+    return variableBin
+	
 def MakeOneDHist(pathToDir,histogramName,integrateDir): 
 
     channel = pathToDir.lstrip(rootDirectory).lstrip('/')
@@ -467,11 +477,17 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
         xAxisLabelVar = xAxisLabel
-        
+        variableBinYaxisSet = YaxisTitleForVariableBinHist(Histogram)         
+
         if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
-            yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
+            if variableBinYaxisSet['isVariable']:
+	    	yAxisLabel = "Entries / (Width_{Bin}/" + str(variableBinYaxisSet['smallestBinWidth']) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex] + ")"
+            else:
+	    	yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
             xAxisLabelVar = xAxisLabel[0:unitBeginIndex]  
-        else:
+        elif variableBinYaxisSet['isVariable']:
+            yAxisLabel = "Entries per bin (Width_{Bin}/" + str(variableBinYaxisSet['smallestBinWidth']) + ")"
+        else: 
             yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
 
         if arguments.normalizeToUnitArea:
@@ -962,7 +978,7 @@ def MakeTwoDHist(pathToDir,histogramName):
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         if not HistogramObj:
-            #print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
             continue 
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
