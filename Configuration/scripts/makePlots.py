@@ -440,7 +440,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     SignalMCLegendEntries = []
     DataHistograms = []
     DataLegendEntries = []
-    BgMCLegendEntriesYieldsDic = {}
     bgMCHistList = []  
 
     
