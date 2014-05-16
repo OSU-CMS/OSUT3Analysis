@@ -37,10 +37,6 @@ parser.add_option("-o", "--output-file", dest="outputFileName",
 
 (arguments, args) = parser.parse_args()
 
-if arguments.localConfig:
-    sys.path.append(os.getcwd())
-    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
-
 condor_dir = set_condor_output_dir(arguments)
 
 from ROOT import TFile, gROOT, gStyle, gDirectory, TKey
@@ -95,6 +91,14 @@ secondary_replacements = {
 
 }
 
+replacements_extra = {}
+
+if arguments.localConfig:
+    sys.path.append(os.getcwd())
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")    
+
+###read in any extra replacements from local config file
+secondary_replacements.update(replacements_extra)
 
 #### check which input datasets have valid output files
 for dataset in datasets:
