@@ -33,7 +33,10 @@ parser.add_option("-t", "--totBkgd", action="store_true", dest="totalBkgd", defa
                   help="add a column for total background to the tables")
 parser.add_option("-o", "--output-file", dest="outputFileName",
                   help="specify an output file base name for the cutflow table (suffix will be appended), default is 'cutFlow'")
-
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                  help="verbose output")
+parser.add_option("-e", "--noErrors", action="store_true", dest="noErrors", default=False,
+                  help="do not print errors in table")
 
 (arguments, args) = parser.parse_args()
 
@@ -100,7 +103,8 @@ secondary_replacements = {
 for dataset in datasets:
     fileName = condor_dir + "/" + dataset + ".root"
     if not os.path.exists(fileName):
-        #print "Couldn't find output file for",dataset,"dataset"
+        if (arguments.verbose):
+            print "Couldn't find output file for",dataset,"dataset"
         continue
     testFile = TFile(fileName)
     if not (testFile.IsZombie()):
@@ -185,6 +189,8 @@ for channel in channels: # loop over final states, which each have their own dir
     if not firstChannel:
         fout.write ("\\pagebreak\n\n")
     cutFlowTable = "cutFlowTable"
+    if arguments.noErrors:
+      cutFlowTable += " -e "  
     if arguments.makeDiffPlots:
       cutFlowTable += " -d \"Data - MC\""
     if arguments.makeRatioPlots:
@@ -197,7 +203,8 @@ for channel in channels: # loop over final states, which each have their own dir
     fout.write ("\\section*{" + formatted_channel + " channel}\n\n")
     fout.write ("\\subsection*{Cut flow}\n\n")
     fout.close ()
-#    print "Debug:  running command:  %s -l %g -m %s >> %s" % (cutFlowTable, intLumi,cutFlowArgs,texfile)
+    if (arguments.verbose):
+        print "Debug:  running command:  %s -l %g -m %s >> %s" % (cutFlowTable, intLumi,cutFlowArgs,texfile)
     os.system("%s -l %g -m %s >> %s" % (cutFlowTable, intLumi,cutFlowArgs,texfile))
     fout = open (texfile, "a")
     fout.write ("\\pagebreak\n\n")
@@ -235,6 +242,8 @@ fout.close ()
 command = "pdflatex -interaction=batchmode -output-directory=./%s %s > /dev/null" % (condor_dir,texfile)
 os.system(command)
 os.system(command)
+if (arguments.verbose):
+    print "Finished running: " + command  
 #os.system("rm %s" % texfile)
 os.system("rm %saux" % (texfile.rstrip("tex")))
 os.system("rm %slog" % (texfile.rstrip("tex")))
