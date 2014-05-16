@@ -5714,6 +5714,8 @@ OSUAnalysis::valueLookup (const BNstop* object, string variable, string function
   double value = 0.0;
 
   if      (variable == "ctau") value = object->ctau;
+  else if (variable == "pdgId") value = object->pdgId;  
+  else if (variable == "status") value = object->status;  
   else if (variable == "pt") value = object->pt;  
   else if (variable == "eta") value = object->eta;  
   else if (variable == "phi") value = object->phi;  
@@ -5724,6 +5726,8 @@ OSUAnalysis::valueLookup (const BNstop* object, string variable, string function
   else if (variable == "mass") value = object->mass;  
   else if (variable == "beta") value = object->beta;  
   else if (variable == "gamma") value = object->gamma;  
+  else if (variable == "betaAtDecay") value = object->betaAtDecay;  
+  else if (variable == "gammaAtDecay") value = object->gammaAtDecay;  
   else if (variable == "vx") value = object->vx;  
   else if (variable == "vy") value = object->vy;  
   else if (variable == "vz") value = object->vz;  
@@ -5747,7 +5751,18 @@ OSUAnalysis::valueLookup (const BNstop* object, string variable, string function
   else if (variable == "daughter0ThreeCharge") value = object->daughter0ThreeCharge;  
   else if (variable == "daughter1Charge")      value = object->daughter1Charge;  
   else if (variable == "daughter1ThreeCharge") value = object->daughter1ThreeCharge;  
-
+  else if (variable == "rHadronCharge")        value = object->rHadronCharge;  
+  else if (variable == "rHadronPT")            value = object->rHadronPT;  
+  else if (variable == "rHadronEnergy")        value = object->rHadronEnergy;  
+  else if (variable == "rHadronMass")          value = object->rHadronMass;  
+  else if (variable == "rHadronPhi")           value = object->rHadronPhi;  
+  else if (variable == "rHadronEta")           value = object->rHadronEta;  
+  else if (variable == "rHadronBeta")          value = object->rHadronBeta;  
+  else if (variable == "rHadronGamma")         value = object->rHadronGamma;  
+  else if (variable == "rHadronId")            value = object->rHadronId;  
+  else if (variable == "rHadronStatus")        value = object->rHadronStatus;  
+  else if (variable == "rHadronThreeCharge")   value = object->rHadronThreeCharge;  
+            
   // derived quantities  
   else if (variable == "betaGamma") value = object->beta * object->gamma;  
   else if (variable == "vxy") value = sqrt(object->vx * object->vx + object->vy * object->vy);  
