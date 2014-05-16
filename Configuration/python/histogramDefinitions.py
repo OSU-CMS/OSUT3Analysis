@@ -221,7 +221,7 @@ MuonHistograms = cms.PSet(
             name = cms.string("muonMetDeltaPhi"),
             title = cms.string("Muon-MET Delta Phi; muon-met |#Delta(#phi)|"),
             bins = cms.untracked.vdouble(100, 0, 3.15),
-            inputVariables = cms.vstring("metDeltaPhi"),
+            inputVariables = cms.vstring("abs(metDeltaPhi)"),
         ),
         cms.PSet (
             name = cms.string("muonHCALTime"),
@@ -475,7 +475,7 @@ SecondaryMuonHistograms = cms.PSet(
             name = cms.string("secondaryMuonMetDeltaPhi"),
             title = cms.string("Secondary Muon-MET Delta Phi; |#Delta(#phi)|"),
             bins = cms.untracked.vdouble(100, 0, 3.15),
-            inputVariables = cms.vstring("metDeltaPhi"),
+            inputVariables = cms.vstring("abs(metDeltaPhi)"),
         ),
     )
 )
@@ -813,7 +813,7 @@ ElectronHistograms = cms.PSet(
             name = cms.string("electronMetDeltaPhi"),
             title = cms.string("Electron-MET Delta Phi; electron-met |#Delta(#phi)|"),
             bins = cms.untracked.vdouble(100, 0, 3.15),
-            inputVariables = cms.vstring("metDeltaPhi"),
+            inputVariables = cms.vstring("abs(metDeltaPhi)"),
         ),        
         cms.PSet (
             name = cms.string("electronNumberOfLostHits"),
@@ -1030,7 +1030,7 @@ SecondaryElectronHistograms = cms.PSet(
             name = cms.string("secondaryElectronMetDeltaPhi"),
             title = cms.string("Secondary Electron-MET Delta Phi; |#Delta(#phi)|"),
             bins = cms.untracked.vdouble(100, 0, 3.15),
-            inputVariables = cms.vstring("metDeltaPhi"),
+            inputVariables = cms.vstring("abs(metDeltaPhi)"),
         ),        
         
     )
@@ -1693,7 +1693,7 @@ SecondaryJetHistograms = cms.PSet(
             inputVariables = cms.vstring("btagCombinedSecVertex"),
         ),
         cms.PSet (
-            name = cms.string("jetMetDeltaPhi"),
+            name = cms.string("secondaryJetMetDeltaPhi"),
             title = cms.string("Jet-MET Delta Phi; |#Delta(#phi)|"),
             bins = cms.untracked.vdouble(100, 0, 3.15),
             inputVariables = cms.vstring("dPhiMet"),

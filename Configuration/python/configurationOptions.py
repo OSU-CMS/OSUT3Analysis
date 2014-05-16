@@ -3191,7 +3191,7 @@ labels = {
    'ZJetsToNuNu_200to400'  : "Z #rightarrow#nu#nu (Pt 200-400)",
    'ZJetsToNuNu_400toInf'  : "Z #rightarrow#nu#nu (Pt 400-#infty)",
 
-   'Diboson' : "Diboson",
+   'Diboson' : "diboson",
    'WW'      : "WW",
    'WZ'      : "WZ",
    'ZZ'      : "ZZ",

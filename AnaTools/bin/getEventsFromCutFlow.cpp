@@ -13,8 +13,8 @@
 
 using namespace std;
 
-void printHelp (const string &exeName);
-unsigned isEDM (TFile *);
+void printHelp (const string &);
+unsigned isEDM (TFile *, bool &);
 
 int
 main (int argc, char *argv[])
@@ -34,8 +34,9 @@ main (int argc, char *argv[])
       cout << "Failed to open " << fileName << "!" << endl;
       return 0;
     }
-  unsigned events = isEDM (fin);
-  if (events)
+  bool fileIsEDM;
+  unsigned events = isEDM (fin, fileIsEDM);
+  if (fileIsEDM)
     {
       cout << "EDM events: " << events << endl;
       return 0;
@@ -124,20 +125,19 @@ printHelp (const string &exeName)
 }
 
 unsigned
-isEDM (TFile *f)
+isEDM (TFile *f, bool &fileIsEDM)
 {
-  unsigned edm = 1;
   TTree *events = 0;
 
-  edm = edm && f->Get ("MetaData");
-  edm = edm && f->Get ("ParameterSets");
-  edm = edm && f->Get ("Parentage");
-  edm = edm && (events = (TTree *) f->Get ("Events"));
-  edm = edm && f->Get ("LuminosityBlocks");
-  edm = edm && f->Get ("Runs");
+  fileIsEDM = true;
+  fileIsEDM = fileIsEDM && f->Get ("MetaData");
+  fileIsEDM = fileIsEDM && f->Get ("ParameterSets");
+  fileIsEDM = fileIsEDM && f->Get ("Parentage");
+  fileIsEDM = fileIsEDM && (events = (TTree *) f->Get ("Events"));
+  fileIsEDM = fileIsEDM && f->Get ("LuminosityBlocks");
+  fileIsEDM = fileIsEDM && f->Get ("Runs");
 
-  if (edm)
-    edm = events->GetEntries ();
-
-  return edm;
+  if (fileIsEDM)
+    return events->GetEntries ();
+  return 0;
 }
