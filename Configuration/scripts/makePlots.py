@@ -28,6 +28,8 @@ parser.add_option("--ymax", dest="setYMax",
                   help="Maximum of y axis")	 
 parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
                   help="maximum error used in rebinning the ratio histogram")  
+parser.add_option("--SO", "--sortOrderByYields", action="store_true", dest="sortOrderByYields", default=False,
+                  help="will sort the order in the stacked histogram by yields")  
 parser.add_option("-N", "--normalizeFactor", dest="normalizeFactor",
                   help="scale bkgd MC by a specified scale factor")  
 parser.add_option("-q", "--quickRun", dest="quickHistName",
@@ -604,14 +606,21 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     bgMCYieldList = list(set(bgMCYieldList))
     bgMCYieldList.sort()
     if not arguments.noStack:
-        for yields in bgMCYieldList:
-	    for hist in bgMCHistList:
-		if hist.Integral() == yields:     
-		   Stack.Add(hist)
-                   BgMCHistograms.append(hist)
+	if not arguments.sortOrderByYields:
+            for hist in bgMCHistList:
+	        Stack.Add(hist)
+                BgMCHistograms.append(hist)
             for legend in BgMCLegendLabelYieldsDic:
-		if BgMCLegendLabelYieldsDic[legend] == yields:
-		   BgMCLegendEntries.append(legend)	
+		BgMCLegendEntries.append(legend)	
+	else:
+            for yields in bgMCYieldList:
+	    	for hist in bgMCHistList:
+        	    if hist.Integral() == yields:     
+		       Stack.Add(hist)
+                       BgMCHistograms.append(hist)
+                for legend in BgMCLegendLabelYieldsDic:
+		    if BgMCLegendLabelYieldsDic[legend] == yields:
+		       BgMCLegendEntries.append(legend)	
                 
 
     ### formatting data histograms and adding to legend
