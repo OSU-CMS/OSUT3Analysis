@@ -123,12 +123,20 @@ main (int argc, char *argv[])
             {
               if (binContent >= BIG_INT)
                 {
-                  tableContent = "(" + bigInt (binContent, "big") + " \\pm ";
-                  tableContent += bigInt (binError, "error") + ") ";
+		  if (opt.count ("noErrors")) {
+		    tableContent = bigInt (binContent, "big") + " ";
+		  } else { 
+		    tableContent = "(" + bigInt (binContent, "big") + " \\pm ";
+		    tableContent += bigInt (binError, "error") + ") ";
+		  }
                   tableContent += bigInt (0.0, "exponent");
                 }
               else
-                tableContent = bigInt (binContent) + " \\pm " + bigInt (binError);
+		if (opt.count ("noErrors")) {
+		  tableContent = bigInt (binContent);  
+		} else {
+		  tableContent = bigInt (binContent) + " \\pm " + bigInt (binError);
+		}
             }
           else
             {
@@ -230,12 +238,21 @@ main (int argc, char *argv[])
         }
       else if (fabs (binContent) >= BIG_INT)
         {
-          columnContent = "(" + bigInt (binContent, "big") + " \\pm ";
-          columnContent += bigInt (binError, "error") + ") ";
-          columnContent += bigInt (0.0, "exponent");
-        }
-      else
-        columnContent = bigInt (binContent) + " \\pm " + bigInt (binError);
+	  if (opt.count ("noErrors")) {
+	    columnContent = bigInt (binContent, "big") + " "; 
+	  } else {
+	    columnContent = "(" + bigInt (binContent, "big") + " \\pm ";
+	    columnContent += bigInt (binError, "error") + ") ";
+	  }
+	    columnContent += bigInt (0.0, "exponent");
+	}
+      else {
+	if (opt.count ("noErrors")) {
+	  columnContent = bigInt (binContent);  
+	} else {
+	  columnContent = bigInt (binContent) + " \\pm " + bigInt (binError);
+	}
+      }
       extraColumn.push_back (columnContent);
     }
 
@@ -450,6 +467,7 @@ printHelp (const string &exeName)
   printf ("%-29s%s\n", "  -r, --ratio LABEL", "add a column for (X-Y)/Y");
   printf ("%-29s%s\n", "  -t, --total LABEL", "add a column for Y");
   printf ("%-29s%s\n", "  -s, --sToB LABEL", "add a column for X/sqrt(X+Y)");
+  printf ("%-29s%s\n", "  -e, --noErrors", "do not print errors");  
   printf ("\n");
   printf ("For the \"-d\", \"-r\", and \"-s\" options, X is defined as the sum of those columns\n");
   printf ("whose FILE is prefixed with \"<\". Likewise, Y is defined by prefixing the FILE\n");
@@ -485,6 +503,8 @@ parseOptions (int argc, char *argv[], map<string, string> &opt, vector<string> &
         key = "marginal";
       if (key == "l")
         key = "luminosity";
+      if (key == "e")
+        key = "noErrors";
       if (key == "d")
         {
           key = "diff";

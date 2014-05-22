@@ -68,11 +68,11 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   stopCTau_ (cfg.getParameter<vector<double> > ("stopCTau")),
   GetPlotsAfterEachCut_ (cfg.getParameter<bool> ("GetPlotsAfterEachCut")),
   verbose_ (cfg.getParameter<int> ("verbose"))
- {
-
-  if (verbose_) printEventInfo_ = true;
+{
+  
+  //  if (verbose_) printEventInfo_ = true;
   if (verbose_) clog << "Beginning OSUAnalysis::OSUAnalysis constructor." << endl;
-
+  
   if (verbose_) clog << "Using the following parameters:  " << endl
 		     << "  jets_                            = " <<  jets_                            << endl   
 		     << "  muons_                           = " <<  muons_                           << endl   
@@ -220,8 +220,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 
   if (datasetType_ == "signalMC" && 
       (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) || 
-       regex_match (dataset_, regex ("AMSB.*cm")))) {
-    if (verbose_) clog << "Debug: Setting stopctau with:  stopCTau_.at(0)=" << stopCTau_.at(0) << "; stopCTau_.at(1)=" << stopCTau_.at(1) << endl;  
+       regex_match (dataset_, regex ("AMSB.*WtCtau.*cm")))) {
+    //    if (verbose_) 
+    clog << "Setting stopctau with:  stopCTau_.at(0)=" << stopCTau_.at(0) << "; stopCTau_.at(1)=" << stopCTau_.at(1) << endl;  
     stopCTauWeight_ = new StopCTauWeight (stopCTau_.at(0), stopCTau_.at(1), stops_);
   }  
 
@@ -1153,7 +1154,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   stopCTauScaleFactor_ = 1.0;
   if (datasetType_ == "signalMC" && 
       (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) || 
-       regex_match (dataset_, regex ("AMSB.*cm")))
+       regex_match (dataset_, regex ("AMSB.*WtCtau.*cm")))
       ) stopCTauScaleFactor_ = stopCTauWeight_->at (event);
   globalScaleFactor_ *= stopCTauScaleFactor_;
 
@@ -3442,6 +3443,21 @@ value = (mcPt/MET);
     }
     value = ptTot.Phi();
   } 
+  else if(variable == "dijetDeltaPhiMax") {
+    double deltaPhiMax = -99.;
+    if(find(objectsToCut.begin(),objectsToCut.end(),"jets") != objectsToCut.end ()){
+      flagPair jetFlags = getLastValidFlags("jets");
+      for   (uint iJet = 0;      iJet != jetFlags.size(); iJet++) {
+	for (uint jJet = iJet+1; jJet != jetFlags.size(); jJet++) {
+          if (!jetFlags.at(iJet).second) continue;
+          if (!jetFlags.at(jJet).second) continue;
+          double dPhi = fabs(deltaPhi(jets->at(iJet).phi, jets->at(jJet).phi));
+          if (dPhi > deltaPhiMax) deltaPhiMax = dPhi;
+        }
+      }
+    }
+    value = deltaPhiMax;
+  }
   else if(variable == "totalJetPtMinusTotalMcparticlePt") {
     value = 
       valueLookup(object, "totalJetPt",        "", empty) - 
@@ -5698,6 +5714,8 @@ OSUAnalysis::valueLookup (const BNstop* object, string variable, string function
   double value = 0.0;
 
   if      (variable == "ctau") value = object->ctau;
+  else if (variable == "pdgId") value = object->pdgId;  
+  else if (variable == "status") value = object->status;  
   else if (variable == "pt") value = object->pt;  
   else if (variable == "eta") value = object->eta;  
   else if (variable == "phi") value = object->phi;  
@@ -5708,6 +5726,8 @@ OSUAnalysis::valueLookup (const BNstop* object, string variable, string function
   else if (variable == "mass") value = object->mass;  
   else if (variable == "beta") value = object->beta;  
   else if (variable == "gamma") value = object->gamma;  
+  else if (variable == "betaAtDecay") value = object->betaAtDecay;  
+  else if (variable == "gammaAtDecay") value = object->gammaAtDecay;  
   else if (variable == "vx") value = object->vx;  
   else if (variable == "vy") value = object->vy;  
   else if (variable == "vz") value = object->vz;  
@@ -5731,7 +5751,18 @@ OSUAnalysis::valueLookup (const BNstop* object, string variable, string function
   else if (variable == "daughter0ThreeCharge") value = object->daughter0ThreeCharge;  
   else if (variable == "daughter1Charge")      value = object->daughter1Charge;  
   else if (variable == "daughter1ThreeCharge") value = object->daughter1ThreeCharge;  
-
+  else if (variable == "rHadronCharge")        value = object->rHadronCharge;  
+  else if (variable == "rHadronPT")            value = object->rHadronPT;  
+  else if (variable == "rHadronEnergy")        value = object->rHadronEnergy;  
+  else if (variable == "rHadronMass")          value = object->rHadronMass;  
+  else if (variable == "rHadronPhi")           value = object->rHadronPhi;  
+  else if (variable == "rHadronEta")           value = object->rHadronEta;  
+  else if (variable == "rHadronBeta")          value = object->rHadronBeta;  
+  else if (variable == "rHadronGamma")         value = object->rHadronGamma;  
+  else if (variable == "rHadronId")            value = object->rHadronId;  
+  else if (variable == "rHadronStatus")        value = object->rHadronStatus;  
+  else if (variable == "rHadronThreeCharge")   value = object->rHadronThreeCharge;  
+            
   // derived quantities  
   else if (variable == "betaGamma") value = object->beta * object->gamma;  
   else if (variable == "vxy") value = sqrt(object->vx * object->vx + object->vy * object->vy);  
@@ -6627,13 +6658,13 @@ void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollect
     if( parameters.variableBinsX.size() != 0)
     { scaleFactor = scaleFactor*getVariableBinsWeights(parameters.variableBinsX,value);
     }
-  histo->Fill(value,scaleFactor);
-
+    histo->Fill(value,scaleFactor);
+    
     if (printEventInfo_) {
       // Write information about event to screen, for testing purposes.
       clog << "  Info for event:  value for histogram " << histo->GetName() << ":  " << value << " (object number " << object << ")" << endl;
     }
-
+    
   }
 }
 
