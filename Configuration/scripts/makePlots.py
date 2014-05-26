@@ -616,8 +616,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         
 	bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
     
-    if not arguments.noStack:
-	Stack.Add(hist)
+        if not arguments.noStack:
+	    Stack.Add(bgMCHist)
             
                 
 
