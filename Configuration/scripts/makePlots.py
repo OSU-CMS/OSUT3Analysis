@@ -359,6 +359,13 @@ def YaxisTitleForVariableBinHist(histogram):
 	variableBin['isVariable'] = True
     variableBin['smallestBinWidth'] =  binWidth[0]
     return variableBin
+
+def sortedDictValues(dic):
+    keys = dic.keys()
+    keys.sort()
+    return [dic[key] for key in keys]
+
+
 	
 def MakeOneDHist(pathToDir,histogramName,integrateDir): 
 
@@ -442,7 +449,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     SignalMCLegendEntries = []
     DataHistograms = []
     DataLegendEntries = []
-    bgMCHistList = []  
+    bgMCHistYieldsDic = {}  
 
     
     
@@ -541,9 +548,14 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 Histogram.SetFillColor(colors[sample])
                 Histogram.SetLineColor(1)
                 Histogram.SetLineWidth(1)
+            if not arguments.sortOrderByYields:
+            	if not arguments.noStack:
+	            Stack.Add(Histogram)
+                BgMCHistograms.append(Histogram)
+                BgMCLegendEntries.append(legLabel)
 
-	    BgMCLegendLabelYieldsDic[legLabel] = Histogram.Integral()
-            BgMCHistograms.append(Histogram)
+	    BgMCLegendLabelYieldsDic[Histogram.Integral()] = legLabel 
+            bgMCHistYieldsDic[Histogram.Integral()] = Histogram
             if arguments.includeSystematics:
                 BgMCUncertainties.append(getSystematicError(sample,channel))
                     
@@ -581,6 +593,16 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             
             DataLegendEntries.append(legLabel)
             DataHistograms.append(Histogram)
+    
+    if arguments.sortOrderByYields: 
+        bgMCHistYieldsDic = sortedDictValues(bgMCHistYieldsDic)
+        BgMCLegendLabelYieldsDic = sortedDictValues(BgMCLegendLabelYieldsDic)
+        for hist in bgMCHistYieldsDic:
+            if not arguments.noStack:
+	        Stack.Add(hist)
+            BgMCHistograms.append(hist)
+        for legend in BgMCLegendLabelYieldsDic:
+            BgMCLegendEntries.append(legend)	
                     
     #scaling histograms as per user's specifications
     if arguments.normalizeFactor:
@@ -597,30 +619,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             bgMCHist.Scale(1./bgMCHist.Integral())
         
 	bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
-        bgMCHistList.append(bgMCHist)
             
-    BgMCHistograms = []
-    bgMCYieldList = []
-    for hist in bgMCHistList:
-    	bgMCYieldList.append(hist.Integral())
-    bgMCYieldList = list(set(bgMCYieldList))
-    bgMCYieldList.sort()
-    if not arguments.noStack:
-	if not arguments.sortOrderByYields:
-            for hist in bgMCHistList:
-	        Stack.Add(hist)
-                BgMCHistograms.append(hist)
-            for legend in BgMCLegendLabelYieldsDic:
-		BgMCLegendEntries.append(legend)	
-	else:
-            for yields in bgMCYieldList:
-	    	for hist in bgMCHistList:
-        	    if hist.Integral() == yields:     
-		       Stack.Add(hist)
-                       BgMCHistograms.append(hist)
-                for legend in BgMCLegendLabelYieldsDic:
-		    if BgMCLegendLabelYieldsDic[legend] == yields:
-		       BgMCLegendEntries.append(legend)	
                 
 
     ### formatting data histograms and adding to legend
