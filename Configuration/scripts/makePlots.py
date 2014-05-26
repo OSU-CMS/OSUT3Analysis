@@ -549,8 +549,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 Histogram.SetLineColor(1)
                 Histogram.SetLineWidth(1)
             if not arguments.sortOrderByYields:
-            	if not arguments.noStack:
-	            Stack.Add(Histogram)
                 BgMCHistograms.append(Histogram)
                 BgMCLegendEntries.append(legLabel)
 
@@ -598,8 +596,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         bgMCHistYieldsDic = sortedDictValues(bgMCHistYieldsDic)
         BgMCLegendLabelYieldsDic = sortedDictValues(BgMCLegendLabelYieldsDic)
         for hist in bgMCHistYieldsDic:
-            if not arguments.noStack:
-	        Stack.Add(hist)
             BgMCHistograms.append(hist)
         for legend in BgMCLegendLabelYieldsDic:
             BgMCLegendEntries.append(legend)	
@@ -619,6 +615,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             bgMCHist.Scale(1./bgMCHist.Integral())
         
 	bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
+    
+    if not arguments.noStack:
+	Stack.Add(hist)
             
                 
 
