@@ -28,6 +28,8 @@ parser.add_option("--ymax", dest="setYMax",
                   help="Maximum of y axis")	 
 parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
                   help="maximum error used in rebinning the ratio histogram")  
+parser.add_option("--SO", "--sortOrderByYields", action="store_true", dest="sortOrderByYields", default=False,
+                  help="will sort the order in the stacked histogram by yields")  
 parser.add_option("-N", "--normalizeFactor", dest="normalizeFactor",
                   help="scale bkgd MC by a specified scale factor")  
 parser.add_option("-q", "--quickRun", dest="quickHistName",
@@ -346,8 +348,25 @@ def MakeIntegralHist(hist, integrateDir):
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
+def YaxisTitleForVariableBinHist(histogram):
+    variableBin = {}
+    binWidth = []
+    variableBin['isVariable'] = False
+    for i in range(1,histogram.GetNbinsX() + 1):
+	binWidth.append(histogram.GetXaxis().GetBinWidth(i))
+    binWidth.sort()
+    if binWidth[0] < binWidth[-1]:
+	variableBin['isVariable'] = True
+    variableBin['smallestBinWidth'] =  binWidth[0]
+    return variableBin
+
+def sortedDictValues(dic):
+    keys = dic.keys()
+    keys.sort()
+    return [dic[key] for key in keys]
 
 
+	
 def MakeOneDHist(pathToDir,histogramName,integrateDir): 
 
     channel = pathToDir.lstrip(rootDirectory).lstrip('/')
@@ -429,7 +448,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     SignalMCLegendEntries = []
     DataHistograms = []
     DataLegendEntries = []
-
+    bgMCHistYieldsDic = {}  
 
     
     
@@ -522,10 +541,12 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 Histogram.SetFillColor(colors[sample])
                 Histogram.SetLineColor(1)
                 Histogram.SetLineWidth(1)
+            if not arguments.sortOrderByYields:
+                BgMCHistograms.append(Histogram)
+                BgMCLegendEntries.append(legLabel)
 
-            BgMCLegendEntries.append(legLabel) 
-            BgMCHistograms.append(Histogram)
-
+	    BgMCLegendLabelYieldsDic[Histogram.Integral()] = legLabel 
+            bgMCHistYieldsDic[Histogram.Integral()] = Histogram
             if arguments.includeSystematics:
                 BgMCUncertainties.append(getSystematicError(sample,channel))
                     
@@ -563,6 +584,14 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             
             DataLegendEntries.append(legLabel)
             DataHistograms.append(Histogram)
+    
+    if arguments.sortOrderByYields: 
+        bgMCHistYieldsDic = sortedDictValues(bgMCHistYieldsDic)
+        BgMCLegendLabelYieldsDic = sortedDictValues(BgMCLegendLabelYieldsDic)
+        for hist in bgMCHistYieldsDic:
+            BgMCHistograms.append(hist)
+        for legend in BgMCLegendLabelYieldsDic:
+            BgMCLegendEntries.append(legend)	
                     
     #scaling histograms as per user's specifications
     if arguments.normalizeFactor:
@@ -577,13 +606,12 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             bgMCHist.Scale(1./backgroundIntegral)
         elif arguments.normalizeToUnitArea and arguments.noStack and bgMCHist.Integral() > 0:
             bgMCHist.Scale(1./bgMCHist.Integral())
-
-        bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
-            
-
+        
+	bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
+    
         if not arguments.noStack:
-            Stack.Add(bgMCHist)
-
+	    Stack.Add(bgMCHist)
+            
                 
 
     ### formatting data histograms and adding to legend

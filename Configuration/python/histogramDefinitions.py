@@ -68,12 +68,6 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("correctedD0Vertex"),
         ),
         cms.PSet (
-            name = cms.string("muonD0BeamSpotSig"),
-            title = cms.string("Muon d_{0} Sig wrt BS; muon #sigma_{d_{0}}"),
-            bins = cms.untracked.vdouble(100, 0, 100),
-            inputVariables = cms.vstring("correctedD0Sig"),
-        ),
-        cms.PSet (
             name = cms.string("muonTkNormChi2"),
             title = cms.string("Muon Track NormChi2; #chi^{2}"),
             bins = cms.untracked.vdouble(50, 0, 50),
@@ -414,7 +408,7 @@ SecondaryMuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("secondaryMuonD0VertexSig"),
             title = cms.string("Secondary Muon d_{0} Significance; d_{0} / #sigma_{d_{0}}"),
-            bins = cms.untracked.vdouble(100, -2, 2),
+            bins = cms.untracked.vdouble(100, -10, 10),
             inputVariables = cms.vstring("correctedD0VertexSig"),
         ),
         cms.PSet (
@@ -690,12 +684,6 @@ ElectronHistograms = cms.PSet(
             inputVariables = cms.vstring("correctedD0Vertex"),
         ),
         cms.PSet (
-            name = cms.string("electronD0BeamSpotSig"),
-            title = cms.string("Electron d_{0} Sig wrt BS; electron #sigma_{d_{0}}"),
-            bins = cms.untracked.vdouble(100, 0, 100),
-            inputVariables = cms.vstring("correctedD0Sig"),
-        ),
-        cms.PSet (
             name = cms.string("electronTkNormChi2"),
             title = cms.string("Electron Track NormChi2; #chi^{2}"),
             bins = cms.untracked.vdouble(50, 0, 50),
@@ -734,7 +722,7 @@ ElectronHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronD0VertexSig"),
             title = cms.string("Electron d_{0} Significance; electron d_{0} / #sigma_{d_{0}}"),
-            bins = cms.untracked.vdouble(100, -2, 2),
+            bins = cms.untracked.vdouble(100, -10, 10),
             inputVariables = cms.vstring("correctedD0VertexSig"),
         ),
         cms.PSet (
@@ -951,7 +939,7 @@ SecondaryElectronHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("secondaryElectronD0VertexSig"),
             title = cms.string("Secondary Electron d_{0} Significance; d_{0} / #sigma_{d_{0}}"),
-            bins = cms.untracked.vdouble(100, -2, 2),
+            bins = cms.untracked.vdouble(100, -10, 10),
             inputVariables = cms.vstring("correctedD0VertexSig"),
         ),
         cms.PSet (
@@ -1271,7 +1259,7 @@ ElectronMuonHistograms = cms.PSet(
             name = cms.string("electronD0SigvsMuonD0Sig"),
             title = cms.string("Electron d_{0} Sig vs. Muon d_{0} Sig; muon #sigma_{d_{0}}; electron #sigma_{d_{0}}"),
             bins = cms.untracked.vdouble(100, 0, 100, 100, 0, 100),
-            inputVariables = cms.vstring("muonCorrectedD0Sig","electronCorrectedD0Sig"),
+            inputVariables = cms.vstring("abs(muonCorrectedD0Sig)","abs(electronCorrectedD0Sig)"),
         ),
         cms.PSet (
             name = cms.string("electronD0ErrvsMuonD0Err"),
