@@ -220,7 +220,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 
   if (datasetType_ == "signalMC" && 
       (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) || 
-       regex_match (dataset_, regex ("AMSB.*WtCtau.*cm")))) {
+       regex_match (dataset_, regex ("AMSB.*RewtCtau.*cm")))) {
     //    if (verbose_) 
     clog << "Setting stopctau with:  stopCTau_.at(0)=" << stopCTau_.at(0) << "; stopCTau_.at(1)=" << stopCTau_.at(1) << endl;  
     stopCTauWeight_ = new StopCTauWeight (stopCTau_.at(0), stopCTau_.at(1), stops_);
@@ -928,7 +928,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       cutFlows_.at(currentChannelIndex)->at (currentCut.name) = true;
     }
     cutFlows_.at(currentChannelIndex)->fillCutFlow(0);  // fill cutflow with 0 weight, just to create the cutflow histograms
+    masterCutFlow_->at(currentChannel.name) = true;  
   }
+  masterCutFlow_->fillCutFlow(0);
 
   //make unique vector of objects we need to get from the event
   sort( objectsToGet.begin(), objectsToGet.end() );
@@ -1154,7 +1156,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   stopCTauScaleFactor_ = 1.0;
   if (datasetType_ == "signalMC" && 
       (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) || 
-       regex_match (dataset_, regex ("AMSB.*WtCtau.*cm")))
+       regex_match (dataset_, regex ("AMSB.*RewtCtau.*cm")))
       ) stopCTauScaleFactor_ = stopCTauWeight_->at (event);
   globalScaleFactor_ *= stopCTauScaleFactor_;
 
