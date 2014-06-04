@@ -134,10 +134,10 @@ topLeft_y_offset  = 0.035
 HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 8 TeV"
 
 #position for header
-header_x_left    = 0.089
-header_x_right   = 0.969
-header_y_bottom  = 0.939
-header_y_top     = 0.99
+header_x_left    = 0.08892617
+header_y_bottom  = 0.9458042
+header_x_right   = 0.9681208
+header_y_top     = 0.9965035
 
 
 ##########################################################################################################################################
@@ -182,13 +182,13 @@ def getSystematicError(sample,channel):
     for uncertainty in external_systematic_uncertainties:
         input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
         if not os.path.exists(input_file_path):
-#            print "WARNING: didn't find ",input_file_path
+            print "WARNING: didn't find ",input_file_path
             input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
             if not os.path.exists(input_file_path):
-#                print "   skipping",uncertainty,"systematic for the",channel,"channel"
+                print "   skipping",uncertainty,"systematic for the",channel,"channel"
                 return 0
-#            else:
-#                print "   using default",uncertainty,"systematic for the",channel,"channel"
+            else:
+                print "   using default",uncertainty,"systematic for the",channel,"channel"
 
         input_file = open(input_file_path)
         for line in input_file:
@@ -444,6 +444,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     BgMCHistograms = []
     BgMCUncertainties = []
     BgMCLegendEntries = []
+    BgMCLegendLabelYieldsDic = {}
     SignalMCHistograms = []
     SignalMCLegendEntries = []
     DataHistograms = []
@@ -455,7 +456,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     backgroundIntegral = 0
     dataIntegral = 0
     scaleFactor = 1
-
+    
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
         inputFile = TFile(dataset_file)
@@ -486,11 +487,17 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
         xAxisLabelVar = xAxisLabel
-        
+        variableBinYaxisSet = YaxisTitleForVariableBinHist(Histogram)         
+
         if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
-            yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
+            if variableBinYaxisSet['isVariable']:
+	    	yAxisLabel = "Entries / (Width_{Bin}/" + str(variableBinYaxisSet['smallestBinWidth']) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex] + ")"
+            else:
+	    	yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
             xAxisLabelVar = xAxisLabel[0:unitBeginIndex]  
-        else:
+        elif variableBinYaxisSet['isVariable']:
+            yAxisLabel = "Entries per bin (Width_{Bin}/" + str(variableBinYaxisSet['smallestBinWidth']) + ")"
+        else: 
             yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
 
         if arguments.normalizeToUnitArea:
@@ -776,10 +783,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     #legend coordinates, empirically determined :-)
-    x_left = 0.6
-    x_right = 0.932
+    x_left = 0.6006711
+    x_right = 0.9328859
     x_width = x_right - x_left
-    y_max = 0.9
+    y_max = 0.9178322
     entry_height = 0.05
 
     if(numBgMCSamples is not 0 or numDataSamples is not 0): #then draw the data & bgMC legend
@@ -990,7 +997,7 @@ def MakeTwoDHist(pathToDir,histogramName):
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         if not HistogramObj:
-            #print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
             continue 
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
