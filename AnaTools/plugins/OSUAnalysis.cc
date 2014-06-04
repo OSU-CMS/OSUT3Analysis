@@ -928,9 +928,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       cutFlows_.at(currentChannelIndex)->at (currentCut.name) = true;
     }
     cutFlows_.at(currentChannelIndex)->fillCutFlow(0);  // fill cutflow with 0 weight, just to create the cutflow histograms
-    masterCutFlow_->at(currentChannel.name) = true;  
+    masterCutFlow_->at(currentChannel.name) = true; 
   }
-  masterCutFlow_->fillCutFlow(0);
+  masterCutFlow_->fillCutFlow(0); 
 
   //make unique vector of objects we need to get from the event
   sort( objectsToGet.begin(), objectsToGet.end() );
@@ -3875,6 +3875,8 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
   else if(variable == "pz") value = object->pz;
   else if(variable == "phi") value = object->phi;
   else if(variable == "eta") value = object->eta;
+  else if(variable == "detectorEta") value = getDetectorEta(object->eta, object->dZ);
+  else if(variable == "detectorEtaMinusEta") value = getDetectorEta(object->eta, object->dZ) - object->eta;
   else if(variable == "theta") value = object->theta;
   else if(variable == "normChi2") value = object->normChi2;
   else if(variable == "dZ") value = object->dZ;
@@ -3965,6 +3967,7 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
 
   else if(variable == "isIso")                      value = getTrkIsIso(object, tracks.product());
   else if(variable == "isMatchedDeadEcal")          value = getTrkIsMatchedDeadEcal(object);
+  else if(variable == "isMatchedDeadEcalDet")          value = getTrkIsMatchedDeadEcalDet(object);
     else if(variable == "trkDeadEcalDeltaR")          value = getTrkDeadEcalDeltaR(object);
   else if(variable == "isMatchedBadCSC")            value = getTrkIsMatchedBadCSC  (object);
   else if(variable == "ptErrorByPt")                value = (object->ptError/object->pt);
@@ -6071,6 +6074,48 @@ OSUAnalysis::getRhoCorr(const BNtrack* track) {
 
 }
 
+double
+OSUAnalysis::getDetectorEta(double evntEta,double z0) {
+  // Use algorithm from Sam Harper, https://hypernews.cern.ch/HyperNews/CMS/get/EXO-12-034/19.html  
+  double thetaEvt = etaToTheta(evntEta);
+  //   std::cout << "**************************************** " << std::endl;
+  //   std::cout << "Event Theta: " << thetaEvt << std::endl;
+  double z = 129.4 / tan(thetaEvt); //129.4 is the average barrel radius
+  double zTot = z+z0;
+  
+  if(fabs(zTot)<269){ //269 is an emperically derived number which means that < its likely in th barrel
+    return zTot !=0 ? thetaToEta(atan(129.4/zTot)) : 0.;
+  }
+
+  //otherwise endcap time
+  double endcapZ = 319.2; //average z position of endcap
+  if(evntEta<0) endcapZ*=-1;
+  double rxy = tan(thetaEvt) * (endcapZ-z0);
+  //   std::cout << "rxy: " << rxy << std::endl;
+  //   std::cout << "endcapZ: " << endcapZ << std::endl;
+  //   std::cout << "Event Eta: " << evntEta << std::endl;
+  //   std::cout << "Result of getDetectorEta: " << thetaToEta(atan(rxy/endcapZ)) << std::endl;
+  //  std::cout << "Result of getDetectorEta: " << -log(tan((atan(rxy/endcapZ))/2)) << std::endl;
+  return thetaToEta(atan(rxy/endcapZ));
+  //  return -log(tan((atan(rxy/endcapZ))/2));
+  
+}
+
+double
+OSUAnalysis::etaToTheta(double eta) {
+  if(eta<0) return -2*atan(exp(eta));
+  else return 2*atan(exp(-1*eta));
+}
+
+double
+OSUAnalysis::thetaToEta(double theta) {
+  if (theta < 0) theta += TMath::Pi();  // to calculate eta, theta must be in range (0,pi)
+  return -log(tan(theta/2.));
+}
+
+
+
+
 
 double
 OSUAnalysis::getTrkDepTrkRp5RhoCorr(const BNtrack* track) {
@@ -6172,6 +6217,14 @@ OSUAnalysis::getTrkIsMatchedDeadEcal (const BNtrack* track1){
   return value;
 }
 
+int
+OSUAnalysis::getTrkIsMatchedDeadEcalDet (const BNtrack* track1){
+  int value = 0;
+  if (getDetDeadEcalDeltaR(track1)<0.05) {value = 1;}
+  else {value = 0;}
+  return value;
+}
+
 double
 OSUAnalysis::getTrkDeadEcalDeltaR (const BNtrack* track1){
   double deltaRLowest = 999;
@@ -6180,6 +6233,20 @@ OSUAnalysis::getTrkDeadEcalDeltaR (const BNtrack* track1){
     double eta = ecal->etaEcal;
     double phi = ecal->phiEcal;
     double deltaRtemp = deltaR(eta, phi, track1->eta, track1->phi);
+    if(deltaRtemp < deltaRLowest) deltaRLowest = deltaRtemp;
+  }
+  if (verbose_) clog << deltaRLowest << endl;
+  return deltaRLowest;
+}
+
+double
+OSUAnalysis::getDetDeadEcalDeltaR (const BNtrack* track1){
+  double deltaRLowest = 999;
+  if (DeadEcalVec.size() == 0) WriteDeadEcal();
+  for(vector<DeadEcal>::const_iterator ecal = DeadEcalVec.begin(); ecal != DeadEcalVec.end(); ++ecal){
+    double eta = ecal->etaEcal;
+    double phi = ecal->phiEcal;
+    double deltaRtemp = deltaR(eta, phi, getDetectorEta(track1->eta, track1->dZ), track1->phi);
     if(deltaRtemp < deltaRLowest) deltaRLowest = deltaRtemp;
   }
   if (verbose_) clog << deltaRLowest << endl;
