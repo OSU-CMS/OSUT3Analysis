@@ -20,6 +20,13 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
+            name = cms.string("muonGenPt"),
+            title = cms.string("Muon Gen. Transverse Momentum;generated muon p_{T} [GeV]"),
+            bins = cms.untracked.vdouble(100, 0, 500),
+            #variableBinsX = cms.untracked.vdouble(10,15,20,25,30,40,50,70,90,120,150,200,300,500),
+            inputVariables = cms.vstring("genPT"),
+        ),
+        cms.PSet (
             name = cms.string("muonEta"),
             title = cms.string("Muon Eta; muon #eta"),
             bins = cms.untracked.vdouble(100, -3, 3),
@@ -646,6 +653,12 @@ ElectronHistograms = cms.PSet(
             title = cms.string("Electron Transverse Momentum; electron p_{T} [GeV]"),
             bins = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("pt"),
+        ),
+         cms.PSet (
+            name = cms.string("electronGenPt"),
+            title = cms.string("Electron Gen. Transverse Momentum; generated electron p_{T} [GeV]"),
+            bins = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("genPT"),
         ),
         cms.PSet (
             name = cms.string("electronEta"),

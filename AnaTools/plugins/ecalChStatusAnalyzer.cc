@@ -185,8 +185,9 @@ void ecalChStatusAnalyzer::getChannelStatusMaps(){
      const CaloCellGeometry*        cellGeom = subGeom->getGeometry (detid);
      double eta = cellGeom->getPosition ().eta ();
      double phi = cellGeom->getPosition ().phi ();
-     if(-0.68 > eta && -0.71 < eta && phi > -2.3 && phi < -2.0)
-       std::cout << "Eta, pho coord in barrel: " << eta << ", " << phi << " with status " << status <<std::endl;
+//      if(-0.68 > eta && -0.71 < eta && phi > -2.3 && phi < -2.0)
+//        std::cout << "Eta, pho coord in barrel: " << eta << ", " << phi << " with status " << status <<std::endl;
+     std::cout << ieta << " " << iphi << " " << "0" << " " << status <<  std::endl;  
 
      double theta = cellGeom->getPosition().theta();
      if(status >= maskedEcalChannelStatusThreshold_){
@@ -220,8 +221,9 @@ void ecalChStatusAnalyzer::getChannelStatusMaps(){
        double eta = cellGeom->getPosition ().eta () ;
        double phi = cellGeom->getPosition ().phi () ;
        double theta = cellGeom->getPosition().theta();
-       if(-0.68 > eta && -0.71 < eta && phi > -2.3 && phi < -2.0)
-	 std::cout << "Eta, pho coord in endcap: " << eta << ", " << phi << " with status " << status <<std::endl;
+       std::cout << ix << " " << iy << " " << iz << " " << status <<  std::endl; 
+//        if(-0.68 > eta && -0.71 < eta && phi > -2.3 && phi < -2.0)
+// 	 std::cout << "Eta, pho coord in endcap: " << eta << ", " << phi << " with status " << status <<std::endl;
        if(status >= maskedEcalChannelStatusThreshold_){
 	 std::vector<double> valVec; std::vector<int> bitVec;
          valVec.push_back(eta); valVec.push_back(phi); valVec.push_back(theta);
