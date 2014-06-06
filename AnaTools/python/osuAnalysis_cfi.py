@@ -58,7 +58,8 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
     treeBranchSets = cms.VPSet (),  
 #    treeBranchSets = AllTreeBranchSets,
 
-    deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/DeadEcalChannels.txt'),
+    #deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/DeadEcalChannels.txt'),
+deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/ecalDpgMapCutPlusHotSpots.txt'),
     badCSCFile   = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/BadCSCChambers.txt'),  
     printAllTriggers = cms.bool(False),  # prints all available triggers (for first event only)  
     printEventInfo   = cms.bool(False),  # produces a lot of output, recommend using only with few channels and histograms
