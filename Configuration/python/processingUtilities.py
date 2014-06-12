@@ -147,37 +147,20 @@ def add_stops (options, masses, ctaus, bottomBranchingRatios = [], rHadron = Tru
 
 
 def chargino_ctau (dataset):
-    if not re.match (r"AMSB_mGrav.*_.*cm", dataset):
-        return 0.0
-    return float (re.sub (r"AMSB_mGrav[^_]*_([^_]*)cm.*", r"\1", dataset))
-
-def source_chargino_tauFromCtau_Num(ctau):
-    # ctau should be in units of cm
-    # return tau in ns
-    c = 2.998e1       # cm / ns
-    tau = ctau / c    # ns
-    if tau < 0.5:
-        src_tau = 0.5
-    elif tau < 1:
-        src_tau = 1.0
-    else:
-        src_tau = 5.0
-    return src_tau
-    
-def source_chargino_tauFromCtau_Str (ctau):
-    src_tau = source_chargino_tauFromCtau_Num(ctau)
-    if src_tau <= 0.5:
-        return "0p5"
-    elif src_tau <= 1:
-        return "1"
-    else:
-        return "5"
+    if not re.match (r"AMSB_chargino_.*GeV_RewtCtau.*cm", dataset):
+        return -99.0 
+    return float (re.sub (r"AMSB_chargino_[^_]*GeV_RewtCtau([^_]*)cm", r"\1", dataset))  
     
 def source_chargino_ctau (ctau):
-    src_tau = source_chargino_tauFromCtau_Num(ctau)
-    c = 2.998e1      # cm / ns
-    ctau = c * src_tau
-    return ctau
+    # Units of ctau are cm.
+    # Choose as the source the next sample with ctau larger than the target.  
+    if ctau <= 10:
+        src_ctau = 10
+    elif ctau <= 100:
+        src_ctau = 100 
+    else:
+        src_ctau = 1000 
+    return float(src_ctau)
 
 
 
