@@ -59,7 +59,7 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
 #    treeBranchSets = AllTreeBranchSets,
 
     #deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/DeadEcalChannels.txt'),
-deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/ecalDpgMapCutPlusHotSpots.txt'),
+    deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/ecalDpgMapCutPlusHotSpots.txt'),
     badCSCFile   = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/BadCSCChambers.txt'),  
     printAllTriggers = cms.bool(False),  # prints all available triggers (for first event only)  
     printEventInfo   = cms.bool(False),  # produces a lot of output, recommend using only with few channels and histograms
@@ -130,9 +130,9 @@ if osusub.batchMode:
   if process.OSUAnalysis.datasetType == cms.string ("signalMC") and re.match (r"AMSB*", label):
     charginoCTau =  chargino_ctau (label)
     sourceCharginoCTau = source_chargino_ctau (charginoCTau)
-    process.OSUAnalysis.stopCTau = cms.vdouble (sourceCharginoCTau, charginoCTau)
-    print "Setting stopCTau = (" + str(sourceCharginoCTau) + ", " + str(charginoCTau) + ") "  
-
+    process.OSUAnalysis.stopCTau = cms.vdouble (sourceCharginoCTau, charginoCTau)  
+    print "Setting stopCTau = (" + str(sourceCharginoCTau) + ", " + str(charginoCTau) + ") for label = " + label + ", datasetType = " + str(process.OSUAnalysis.datasetType) + ", dataset = " + str(process.OSUAnalysis.dataset) 
+    
 
 
 
