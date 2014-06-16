@@ -9,23 +9,6 @@ import FWCore.ParameterSet.Config as cms
 
 ##############################################################################################
 
-
-FacoHistograms = cms.PSet(
-    inputCollection = cms.string("mcparticles"),
-    histograms = cms.VPSet (
-        cms.PSet (
-            name = cms.string("etafaco"),
-            title = cms.string("Muon eta; muon eta "),
-            bins = cms.untracked.vdouble(100, -5, 5),
-            inputVariables = cms.vstring("eta"),
-        ),
-        )
-    )
-
-
-
-
-
 MuonHistograms = cms.PSet(
     inputCollection = cms.string("muons"),
     histograms = cms.VPSet (
