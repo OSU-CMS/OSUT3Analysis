@@ -14,6 +14,8 @@ parser = OptionParser()
 parser = set_commandline_arguments(parser)
 parser.add_option("-t", "--no-weights", action="store_true", dest="noWeights", default=False,
                   help="do not apply cross section weights")
+parser.add_option("-O", "--normalizeOther", dest="normalizeOther", default=False,
+                                    help="normalize dataset to user defined value")
 parser.add_option("-q", "--quickMerge", action="store_true", dest="quickMerge", default=False,
                   help="do merge without making cutflow or plots")
 parser.add_option("-C", "--compositeOnly", action="store_true", dest="compositeOnly", default=False,
@@ -84,6 +86,8 @@ def mergeDataset (dataset, sema):
     logMerge = "%s/logMerge/%s.out" % (condor_dir,dataset)  # the logfile for a single dataset  
     if arguments.noWeights:
         command = "mergeHists -w 1 -p %s %s" % (dataset_dir, dataset_dir)
+    if arguments.normalizeOther:
+        command = "mergeHists -l %g -p %s %s" % (intLumi*float(arguments.normalizeOther), dataset_dir, dataset_dir)
     else:
         command = "mergeHists -l %g -p %s %s" % (intLumi, dataset_dir, dataset_dir)
     if arguments.ttree:
