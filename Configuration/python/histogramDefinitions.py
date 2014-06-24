@@ -2599,7 +2599,7 @@ MCParticleHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("mcparticleEta"),
             title = cms.string("MCparticle Eta; #eta"),
-            bins = cms.untracked.vdouble(100, -3, 3),
+            bins = cms.untracked.vdouble(100, -5, 5),
             inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
@@ -2611,19 +2611,19 @@ MCParticleHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("mcparticleAbsD0Vertex"),
             title = cms.string("MCParticle |d_{0}| wrt PV; |d_{0}| [cm]"),
-            bins = cms.untracked.vdouble(100, 0, 20),
+            bins = cms.untracked.vdouble(100, 0, 0.2),
             inputVariables = cms.vstring("abs(d0Vertex)")
         ),
         cms.PSet (
             name = cms.string("mcparticleAbsD0Beamspot"),
             title = cms.string("MCParticle |d_{0}| wrt Beamspot; |d_{0}| [cm]"),
-            bins = cms.untracked.vdouble(100, 0, 20),
+            bins = cms.untracked.vdouble(100, 0, 0.2),
             inputVariables = cms.vstring("abs(d0Beamspot)")
         ),
         cms.PSet (
             name = cms.string("mcparticleAbsD0Origin"),
             title = cms.string("MCParticle |d_{0}| wrt Origin; |d_{0}| [cm]"),
-            bins = cms.untracked.vdouble(100, 0, 20),
+            bins = cms.untracked.vdouble(100, 0, 0.2),
             inputVariables = cms.vstring("abs(d0Origin)")
         ),
         cms.PSet (
@@ -2654,7 +2654,7 @@ SecondaryMCParticleHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("secondaryMcparticleEta"),
             title = cms.string("Secondary MCparticle Eta; #eta"),
-            bins = cms.untracked.vdouble(100, -3, 3),
+            bins = cms.untracked.vdouble(100, -5, 5),
             inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
@@ -2666,19 +2666,19 @@ SecondaryMCParticleHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("secondaryMcparticleAbsD0Vertex"),
             title = cms.string("MCParticle |d_{0}| wrt PV; |d_{0}| [cm]"),
-            bins = cms.untracked.vdouble(100, 0, 20),
+            bins = cms.untracked.vdouble(100, 0, 0.2),
             inputVariables = cms.vstring("abs(d0Vertex)")
         ),
         cms.PSet (
             name = cms.string("secondaryMcparticleAbsD0Beamspot"),
             title = cms.string("MCParticle |d_{0}| wrt Beamspot; |d_{0}| [cm]"),
-            bins = cms.untracked.vdouble(100, 0, 20),
+            bins = cms.untracked.vdouble(100, 0, 0.2),
             inputVariables = cms.vstring("abs(d0Beamspot)")
         ),
         cms.PSet (
             name = cms.string("secondaryMcparticleAbsD0Origin"),
             title = cms.string("MCParticle |d_{0}| wrt Origin; |d_{0}| [cm]"),
-            bins = cms.untracked.vdouble(100, 0, 20),
+            bins = cms.untracked.vdouble(100, 0, 0.2),
             inputVariables = cms.vstring("abs(d0Origin)")
         ),
         cms.PSet (

@@ -2023,6 +2023,11 @@ OSUAnalysis::evaluateTriggers (vector<string> triggersToTest, vector<string> tri
   //loop over all triggers defined in the event
   for (BNtriggerCollection::const_iterator trigger = triggerCollection->begin (); trigger != triggerCollection->end (); trigger++){
 
+    for(uint triggerName = 0; triggerName != triggersToTest.size(); triggerName++){
+    if (triggersToTest.at(triggerName) == "emulateHLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95" && emulateHLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95(targetTriggers_, trigobjs.product()) > 0) {
+      triggerDecision = true;
+	}
+    }
     if (printAllTriggers_) clog << "   " << trigger->name << endl;
 
     //we're only interested in triggers that actually passed
@@ -6306,6 +6311,66 @@ double OSUAnalysis::getPtSingleObjectMatchesAnyTrigger(double recoPhi, const vec
 
 }
 
+
+double OSUAnalysis::emulateHLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95(const vector<string> & targetTriggers, const BNtrigobjCollection * triggerObjects){
+
+  double filterValue = 0;
+  double filter1 = 0;
+  double filter2 = 0;
+  double filter3 = 0;
+  double filter4 = 0;
+  double filter5 = 0;
+
+  for ( BNtrigobjCollection::const_iterator iObj = triggerObjects->begin();
+        iObj != triggerObjects->end();
+        iObj ++ ) {
+    // look for a matching name again
+    for (vector<string>::const_iterator iTarget = targetTriggers.begin();
+         iTarget != targetTriggers.end();
+         iTarget++) {
+
+ if ( iObj->filter.find("hltL1sL1ETM40") != std::string::npos) {
+   //   std::cout << "have found hltL1sL1ETM40 with pt = " << iObj->pt << std::endl;
+   if (iObj->pt < 40) continue;
+   filter1 = 1;
+ }
+
+ if ( iObj->filter.find("hltCentralJet65L1FastJet") != std::string::npos) {
+   //   std::cout << "have found hltCentralJet65L1FastJet with pt = " << iObj->pt << std::endl;
+   if (iObj->pt < 65) continue;
+   filter2 = 1;
+ }
+
+ if ( iObj->filter.find("hltMET65") != std::string::npos) {
+   //   std::cout << "have found hltMET65 with pt = " << iObj->pt << std::endl;
+   if (iObj->pt < 65) continue;
+   filter3 = 1;
+ }
+
+ //This filter does not have a straightforward pT cut; postpone for now
+ /* if ( iObj->filter.find("hltPFNHEF95Filter") != std::string::npos) {
+   std::cout << "have found hltPFNHEF95Filter with pt = " << iObj->pt << std::endl;
+   }*/
+
+ if ( iObj->filter.find("hltCentralPFJet80") != std::string::npos) {
+   //   std::cout << "have found hltCentralPFJet80 with pt = " << iObj->pt << std::endl;
+   if (iObj->pt < 80) continue;
+   filter4 = 1;
+ }
+
+ if ( iObj->filter.find("hltPFMETWOM") != std::string::npos) {
+   //  if ( iObj->filter.find("hltPFMETnoMu") != std::string::npos) {
+   //   std::cout << "have found hltPFMETWOM with pt = " << iObj->pt << std::endl;
+   if (iObj->pt < 105) continue;
+   filter5 = 1;      
+}
+ if (filter1 == 1 && filter2 == 1 && filter3 == 1 && filter4 == 1 && filter5 ==1) filterValue = 1;
+    }
+  }
+  return filterValue;
+
+
+}
 
 
 //return corrected jet

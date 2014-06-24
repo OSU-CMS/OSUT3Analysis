@@ -42,6 +42,8 @@ parser.add_option("-O", "--addOverUnderFlow", action="store_true", dest="addOver
                   help="Add the overflow and underflow entries to the last and first bins")	 
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,		 
                   help="verbose output")	 
+parser.add_option("-P", "--paperConfig", dest="paperConfig",
+                      help="paper configuration file")
 (arguments, args) = parser.parse_args()
 
 
@@ -49,9 +51,21 @@ if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
-if arguments.includeSystematics:
+if arguments.paperConfig:
     sys.path.append(os.getcwd())
-    exec("from " + re.sub (r".py$", r"", systematics_file) + " import *")
+    exec("from " + re.sub (r".py$", r"", arguments.paperConfig) + " import *")
+
+# if using the paperConfig, we need to check if any histgrams will have systematics included,
+# in which case we should import from that config
+includeSystematics = arguments.includeSystematics
+if arguments.paperConfig:
+    for histo in paper_histograms:
+        if 'includeSystematics' in histo:
+            if histo['includeSystematics']:
+                includeSystematics = True
+if includeSystematics:
+        sys.path.append(os.getcwd())
+        exec("from " + re.sub (r".py$", r"", systematics_file) + " import *")
 
 #### deal with conflicting arguments
 if arguments.normalizeToData and arguments.normalizeToUnitArea:
@@ -96,11 +110,12 @@ gStyle.SetPadTopMargin(0.056)
 gStyle.SetPadBottomMargin(0.13)
 gStyle.SetPadLeftMargin(0.1476)
 gStyle.SetPadRightMargin(0.05)
+gStyle.SetHistTopMargin(0)
 gStyle.SetTitleColor(1, "XYZ")
 gStyle.SetTitleFont(42, "XYZ")
 gStyle.SetTitleSize(0.05, "XYZ")
 gStyle.SetTitleXOffset(1.1)
-gStyle.SetTitleYOffset(1.5)
+gStyle.SetTitleYOffset(1.45)
 #gStyle.SetTextFont(42)
 gStyle.SetTextAlign(12)
 gStyle.SetLabelColor(1, "XYZ")
@@ -110,7 +125,7 @@ gStyle.SetLabelSize(0.05, "XYZ")
 gStyle.SetAxisColor(1, "XYZ")
 gStyle.SetStripDecimals(True)
 gStyle.SetTickLength(0.03, "XYZ")
-gStyle.SetNdivisions(510, "XYZ")
+gStyle.SetNdivisions(509, "XYZ")
 gStyle.SetPadTickX(1)
 gStyle.SetPadTickY(1)
 gROOT.ForceStyle()
@@ -130,7 +145,7 @@ topLeft_x_left    = 0.137
 topLeft_x_right   = 0.458
 topLeft_y_bottom  = 0.847
 topLeft_y_top     = 0.947
-topLeft_y_offset  = 0.035
+topLeft_y_offset  = 0.04
 
 #set the text for the fancy heading
 HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 8 TeV"
@@ -184,13 +199,13 @@ def getSystematicError(sample,channel):
     for uncertainty in external_systematic_uncertainties:
         input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
         if not os.path.exists(input_file_path):
-            print "WARNING: didn't find ",input_file_path
+            #print "WARNING: didn't find ",input_file_path
             input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
             if not os.path.exists(input_file_path):
                 print "   skipping",uncertainty,"systematic for the",channel,"channel"
                 return 0
-            else:
-                print "   using default",uncertainty,"systematic for the",channel,"channel"
+            #else:
+            #    print "   using default",uncertainty,"systematic for the",channel,"channel"
 
         input_file = open(input_file_path)
         for line in input_file:
@@ -371,7 +386,10 @@ def sortedDictValues(dic):
 	
 def MakeOneDHist(pathToDir,histogramName,integrateDir): 
 
-    channel = pathToDir.lstrip(rootDirectory).lstrip('/')
+    global processed_datasets
+    # let's just assume the root directory is "OSUAnalysis", because, come on, of course it is
+    #channel = pathToDir.lstrip(rootDirectory).lstrip('/')
+    channel = pathToDir.lstrip("OSUAnalysis").lstrip('/')
 
     blindData = False
     # To blind histograms, define a list of histsToBlind in the localOptions.py file  
@@ -383,11 +401,117 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                     blindData = True
     except NameError:
         time.sleep(0.000001) # Do nothing if histsToBlind does not exist
-                
+
+
+
+    backgroundIntegral = 0
+    dataIntegral = 0
+    scaleFactor = 1
+
     numBgMCSamples = 0
     numDataSamples = 0
     numSignalSamples = 0
-    
+
+
+    # we'll define all the options for each plot here,
+    # in case the user is using a "paperConfig" with specific options for each plot
+
+        
+
+    if arguments.paperConfig:
+        # use the user-defined list of datasets if there is one
+        if 'datasets' in paperHistogram:
+            processed_datasets = paperHistogram['datasets']
+        # otherwise, use the default set from the supplied localOptions.py file 
+        else:
+            processed_datasets = datasets
+
+    ###############################################
+    ###############################################
+    ###############################################
+    ###############################################
+    ###############################################
+
+    if arguments.normalizeFactor:
+        scaleFactor = arguments.normalizeFactor
+    if arguments.paperConfig:
+        if 'normalizeFactor' in paperHistogram:
+            scaleFactor = paperHistogram['normalizeFactor']
+    ###############################################
+    noStack = arguments.noStack    
+    if arguments.paperConfig:
+        if 'noStack' in paperHistogram:
+            noStack = paperHistogram['noStack']
+    ###############################################
+    normalizeToUnitArea = arguments.normalizeToUnitArea    
+    if arguments.paperConfig:
+        if 'normalizeToUnitArea' in paperHistogram:
+            normalizeToUnitArea = paperHistogram['normalizeToUnitArea']
+    ###############################################
+    normalizeToData = arguments.normalizeToData    
+    if arguments.paperConfig:
+        if 'normalizeToData' in paperHistogram:
+            normalizeToData = paperHistogram['normalizeToData']
+    ###############################################
+    makeRatioPlots = arguments.makeRatioPlots
+    if arguments.paperConfig:
+        if 'makeRatioPlots' in paperHistogram:
+            makeRatioPlots = paperHistogram['makeRatioPlots']
+    ###############################################
+    makeDiffPlots = arguments.makeDiffPlots
+    if arguments.paperConfig:
+        if 'makeDiffPlots' in paperHistogram:
+            makeDiffPlots = paperHistogram['makeDiffPlots']
+    ###############################################
+    printYields = arguments.printYields
+    if arguments.paperConfig:
+        if 'printYields' in paperHistogram:
+            printYields = paperHistogram['printYields']
+    ###############################################            
+    setLogY = arguments.setLogY
+    if arguments.paperConfig:
+        if 'setLogY' in paperHistogram:
+            setLogY = paperHistogram['setLogY']
+    ###############################################
+    includeSystematics = arguments.includeSystematics
+    if arguments.paperConfig:
+        if 'includeSystematics' in paperHistogram:
+            includeSystematics = paperHistogram['includeSystematics']
+    ###############################################
+    addOverUnderFlow = arguments.addOverUnderFlow
+    if arguments.paperConfig:
+        if 'addOverUnderFlow' in paperHistogram:
+            addOverUnderFlow = paperHistogram['addOverUnderFlow']
+    ###############################################
+    sortOrderByYields = arguments.sortOrderByYields
+    if arguments.paperConfig:
+        if 'sortOrderByYields' in paperHistogram:
+            sortOrderByYields = paperHistogram['sortOrderByYields']
+    ###############################################
+    makeFancy = arguments.makeFancy
+    if arguments.paperConfig:
+        if 'makeFancy' in paperHistogram:
+            makeFancy = paperHistogram['makeFancy']
+    ###############################################
+    ratioRelErrMax = -1
+    if arguments.ratioRelErrMax:
+        ratioRelErrMax = arguments.ratioRelErrMax
+    if arguments.paperConfig:
+        if 'ratioRelErrMax' in paperHistogram:
+            ratioRelErrMax = paperHistogram['ratioRelErrMax']
+    ###############################################
+    doRebin = False
+    if arguments.rebinFactor:
+        doRebin = True
+        rebinFactor = arguments.rebinFactor
+    if arguments.paperConfig:
+        if 'rebinFactor' in paperHistogram:
+            doRebin = True
+            rebinFactor = paperHistogram['rebinFactor']
+    ###############################################
+
+
+
     Stack = THStack("stack",histogramName)
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
@@ -398,28 +522,12 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     HeaderLabel.SetFillStyle(0)
 
     LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
+    LumiLabel.SetTextAlign(32)
+    LumiLabel.SetTextFont(42)
     LumiLabel.SetBorderSize(0)
     LumiLabel.SetFillColor(0)
     LumiLabel.SetFillStyle(0)
     
-    NormLabel = TPaveLabel()
-    NormLabel.SetDrawOption("NDC")
-    NormLabel.SetX1NDC(topLeft_x_left)
-    NormLabel.SetX2NDC(topLeft_x_right)
-    
-    NormLabel.SetBorderSize(0)
-    NormLabel.SetFillColor(0)
-    NormLabel.SetFillStyle(0)
-    
-    NormText = ""
-    if arguments.normalizeToUnitArea:
-        NormText = "Scaled to unit area"
-    elif arguments.normalizeToData:
-        NormText = "MC scaled to data"
-    elif arguments.normalizeFactor:
-        NormText = "MC scaled by " + str(arguments.normalizeFactor)  
-    NormLabel.SetLabel(NormText)
-        
         
     BgMCLegend = TLegend()
 ##     BgTitle = BgMCLegend.AddEntry(0, "Data & Bkgd. MC", "H")
@@ -429,14 +537,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     BgMCLegend.SetFillColor(0)
     BgMCLegend.SetFillStyle(0)
     SignalMCLegend = TLegend()
-    SignalTitle = SignalMCLegend.AddEntry(0, "Signal MC", "H")
-    SignalTitle.SetTextAlign(22)
-    SignalTitle.SetTextFont(62)
+#    SignalTitle = SignalMCLegend.AddEntry(0, "Signal MC", "H")
+#    SignalTitle.SetTextAlign(22)
+#    SignalTitle.SetTextFont(62)
     SignalMCLegend.SetBorderSize(0)
     SignalMCLegend.SetFillColor(0)
     SignalMCLegend.SetFillStyle(0)
-    
-    outputFile.cd(pathToDir)
+
+    if not arguments.paperConfig:    
+        outputFile.cd(pathToDir)
     canvasName = histogramName
     if integrateDir is "left":
         canvasName += "_CumulativeLeft" 
@@ -451,13 +560,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     SignalMCLegendEntries = []
     DataHistograms = []
     DataLegendEntries = []
-    bgMCHistYieldsDic = {}  
+    BgMCHistYieldsDic = {}  
 
     
-    
-    backgroundIntegral = 0
-    dataIntegral = 0
-    scaleFactor = 1
+    print pathToDir+"/"+histogramName
     
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
@@ -469,20 +575,22 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
         inputFile.Close()
-        if arguments.rebinFactor:
-            RebinFactor = int(arguments.rebinFactor)
+
+        if doRebin:
             #don't rebin any gen-matching or cutflow histograms, or numObject type histograms
             if (Histogram.GetName().find("num") is -1 and
                 Histogram.GetName().find("Primaryvertexs") is -1 and
                 Histogram.GetName().find("CutFlow")  is -1 and
-                Histogram.GetName().find("cutFlow")  is -1 and                
+                Histogram.GetName().find("cutFlow")  is -1 and
                 Histogram.GetName().find("Selection")  is -1 and
-                Histogram.GetName().find("selection")  is -1 and                
+                Histogram.GetName().find("selection")  is -1 and
                 Histogram.GetName().find("MinusOne")  is -1 and
-                Histogram.GetName().find("minusOne")  is -1 and                                
+                Histogram.GetName().find("minusOne")  is -1 and
+                Histogram.GetName().find("status3OutgoingID")  is -1 and
+                Histogram.GetName().find("Charge")  is -1 and
                 Histogram.GetName().find("GenMatch") is -1): 
-                
-                Histogram.Rebin(RebinFactor)
+
+                Histogram.Rebin(int(rebinFactor))
                 
 
         xAxisLabel = Histogram.GetXaxis().GetTitle()
@@ -502,12 +610,14 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         else: 
             yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
 
-        if arguments.normalizeToUnitArea:
+        if normalizeToUnitArea:
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
-        if arguments.normalizeToData:
+        if normalizeToData:
             yAxisLabel = yAxisLabel + " (Bkgd. Normalized to Data)"  
+        if scaleFactor is not 1:
+            yAxisLabel = yAxisLabel + " (Bkgd. Scaled by " + str(scaleFactor) + ")"  
 
-        if arguments.normalizeToUnitArea and arguments.makeSignificancePlots:
+        if normalizeToUnitArea and arguments.makeSignificancePlots:
             unit = "Efficiency"
         else:
             unit = "Yield"
@@ -516,18 +626,18 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if integrateDir is "right":
             yAxisLabel = unit + ", " + xAxisLabelVar + "> x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
         
-        if not arguments.makeFancy:
+        if not makeFancy:
             histoTitle = Histogram.GetTitle()
         else:
             histoTitle = ""
 
 
         legLabel = labels[sample]
-        if (arguments.printYields):
+        if (printYields):
             yieldHist = Histogram.Integral()
             legLabel = legLabel + " (%.1f)" % yieldHist
 
-        if (arguments.addOverUnderFlow):
+        if (addOverUnderFlow):
             nbins = Histogram.GetNbinsX()
             Histogram.SetBinContent(1,     Histogram.GetBinContent(1)     + Histogram.GetBinContent(0))       # Add underflow 
             Histogram.SetBinContent(nbins, Histogram.GetBinContent(nbins) + Histogram.GetBinContent(nbins+1)) # Add overflow 
@@ -541,7 +651,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             backgroundIntegral += Histogram.Integral()
             
             Histogram.SetLineStyle(1)
-            if(arguments.noStack):
+            if(noStack):
                 Histogram.SetFillStyle(0)
                 Histogram.SetLineColor(colors[sample])
                 Histogram.SetLineWidth(2)
@@ -550,13 +660,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 Histogram.SetFillColor(colors[sample])
                 Histogram.SetLineColor(1)
                 Histogram.SetLineWidth(1)
-            if not arguments.sortOrderByYields:
+            if not sortOrderByYields:
                 BgMCHistograms.append(Histogram)
                 BgMCLegendEntries.append(legLabel)
 
 	    BgMCLegendLabelYieldsDic[Histogram.Integral()] = legLabel 
-            bgMCHistYieldsDic[Histogram.Integral()] = Histogram
-            if arguments.includeSystematics:
+            BgMCHistYieldsDic[Histogram.Integral()] = Histogram
+            if includeSystematics:
                 BgMCUncertainties.append(getSystematicError(sample,channel))
                     
         elif( types[sample] == "signalMC"):
@@ -567,7 +677,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Histogram.SetLineColor(colors[sample])
             Histogram.SetLineStyle(1)
             Histogram.SetLineWidth(2)
-            if(arguments.normalizeToUnitArea and Histogram.Integral() > 0):
+            if(normalizeToUnitArea and Histogram.Integral() > 0):
                 Histogram.Scale(1./Histogram.Integral())
 
             Histogram = MakeIntegralHist(Histogram, integrateDir)
@@ -586,7 +696,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Histogram.SetLineColor(colors[sample])
             Histogram.SetLineStyle(1)
             Histogram.SetLineWidth(2)
-            if(arguments.normalizeToUnitArea and Histogram.Integral() > 0):
+            if(normalizeToUnitArea and Histogram.Integral() > 0):
                 Histogram.Scale(1./Histogram.Integral())
 
             Histogram = MakeIntegralHist(Histogram, integrateDir)
@@ -594,31 +704,30 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             DataLegendEntries.append(legLabel)
             DataHistograms.append(Histogram)
     
-    if arguments.sortOrderByYields: 
-        bgMCHistYieldsDic = sortedDictValues(bgMCHistYieldsDic)
+    if sortOrderByYields: 
+        BgMCHistYieldsDic = sortedDictValues(BgMCHistYieldsDic)
         BgMCLegendLabelYieldsDic = sortedDictValues(BgMCLegendLabelYieldsDic)
-        for hist in bgMCHistYieldsDic:
+        for hist in BgMCHistYieldsDic:
             BgMCHistograms.append(hist)
         for legend in BgMCLegendLabelYieldsDic:
             BgMCLegendEntries.append(legend)	
                     
     #scaling histograms as per user's specifications
-    if arguments.normalizeFactor:
-        scaleFactor = float(arguments.normalizeFactor)  
-    elif dataIntegral > 0 and backgroundIntegral > 0:
-        scaleFactor = dataIntegral/backgroundIntegral
     for bgMCHist in BgMCHistograms:
-        if arguments.normalizeToData or arguments.normalizeFactor:
-            bgMCHist.Scale(scaleFactor)
 
-        if arguments.normalizeToUnitArea and not arguments.noStack and backgroundIntegral > 0:
+        if normalizeToData and dataIntegral > 0 and backgroundIntegral > 0:
+            scaleFactor = dataIntegral/backgroundIntegral
+
+        bgMCHist.Scale(scaleFactor)
+
+        if normalizeToUnitArea and not noStack and backgroundIntegral > 0:
             bgMCHist.Scale(1./backgroundIntegral)
-        elif arguments.normalizeToUnitArea and arguments.noStack and bgMCHist.Integral() > 0:
+        elif normalizeToUnitArea and noStack and bgMCHist.Integral() > 0:
             bgMCHist.Scale(1./bgMCHist.Integral())
         
 	bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
     
-        if not arguments.noStack:
+        if not noStack:
 	    Stack.Add(bgMCHist)
             
                 
@@ -631,19 +740,19 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     ### creating the histogram to represent the statistical errors on the stack
-    if numBgMCSamples is not 0 and not arguments.noStack: 
-        if arguments.includeSystematics:
+    if numBgMCSamples is not 0 and not noStack: 
+        if includeSystematics:
             addSystematicError(BgMCHistograms[0],BgMCUncertainties[0])
         ErrorHisto = BgMCHistograms[0].Clone("errors")
         ErrorHisto.SetFillStyle(3002)
         ErrorHisto.SetFillColor(13)
         ErrorHisto.SetLineWidth(0)
         for index in range(1,len(BgMCHistograms)):
-            if arguments.includeSystematics:
+            if includeSystematics:
                 addSystematicError(BgMCHistograms[index],BgMCUncertainties[index])
             ErrorHisto.Add(BgMCHistograms[index])
 
-        if arguments.includeSystematics:
+        if includeSystematics:
             BgMCLegend.AddEntry(ErrorHisto,"stat. & syst. errors","F")
         else:
             BgMCLegend.AddEntry(ErrorHisto,"stat. errors","F")            
@@ -652,7 +761,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     ### formatting bgMC histograms and adding to legend
     legendIndex = numBgMCSamples-1
     for Histogram in reversed(BgMCHistograms):
-        if(arguments.noStack):
+        if(noStack):
             BgMCLegend.AddEntry(Histogram,BgMCLegendEntries[legendIndex],"L")
         else:
             BgMCLegend.AddEntry(Histogram,BgMCLegendEntries[legendIndex],"F")
@@ -668,7 +777,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
     finalMax = 0
-    if numBgMCSamples is not 0 and not arguments.noStack:
+    if numBgMCSamples is not 0 and not noStack:
         finalMax = ErrorHisto.GetMaximum() + ErrorHisto.GetBinError(ErrorHisto.GetMaximumBin())
     else:
         for bgMCHist in BgMCHistograms:
@@ -678,24 +787,34 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if(signalMCHist.GetMaximum() > finalMax):
             finalMax = signalMCHist.GetMaximum()
     for dataHist in DataHistograms:
-        if(dataHist.GetMaximum() > finalMax):
+        if(dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin()) > finalMax):
             finalMax = dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin())
     finalMax = 1.15*finalMax
-    if arguments.setYMax:  
-        finalMax = float(arguments.setYMax)
+    if finalMax <= 0: # if it's an empty canvas, set ymax > ymin to avoid an error
+        finalMax = 1.0
 
-
-    ### Drawing histograms to canvas
-
-    outputFile.cd(pathToDir)        
-        
-    makeRatioPlots = arguments.makeRatioPlots
-    makeDiffPlots = arguments.makeDiffPlots
-    makeSignifPlots = arguments.makeSignificancePlots 
-
+    ### aaaaaand overwrite all that work we just did if the user wants us to
     yAxisMin = 0.0001
     if arguments.setYMin:
         yAxisMin = float(arguments.setYMin)
+    if arguments.setYMax:  
+        finalMax = float(arguments.setYMax)
+
+    if arguments.paperConfig:
+        if 'setYMin' in paperHistogram:
+            yAxisMin = float(paperHistogram['setYMin'])
+        if 'setYMax' in paperHistogram:
+            finalMax = float(paperHistogram['setYMax'])
+
+    ### Drawing histograms to canvas
+
+    if not arguments.paperConfig:
+        outputFile.cd(pathToDir)        
+        
+    makeSignifPlots = arguments.makeSignificancePlots 
+
+    if setLogY:
+        gPad.SetLogy()
 
     if numBgMCSamples is 0 or numDataSamples is not 1:
         makeRatioPlots = False
@@ -711,10 +830,11 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         gPad.SetPad(0,0.25,1,1)
         gPad.SetMargin(0.15,0.05,0.01,0.07)
         gPad.SetFillStyle(0)
+        # we need to reset this in the case of dividing the canvas into two parts
+        if setLogY:
+            gPad.SetLogy()
         gPad.Update()
         gPad.Draw()
-        if arguments.setLogY:
-            gPad.SetLogy()
         Canvas.cd(2)
         gPad.SetPad(0,0,1,0.25)
         #format: gPad.SetMargin(l,r,b,t)
@@ -728,15 +848,22 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     if numBgMCSamples is not 0: # the first thing to draw to the canvas is a bgMC sample
 
-        if not arguments.noStack: # draw stacked background samples
+        if not noStack: # draw stacked background samples
             Stack.SetTitle(histoTitle)
             Stack.Draw("HIST")
-            Stack.GetXaxis().SetTitle(xAxisLabel)
-            Stack.GetYaxis().SetTitle(yAxisLabel)
             Stack.SetMaximum(finalMax)
             Stack.SetMinimum(yAxisMin)
+            Stack.Draw("HIST")
+            Stack.GetXaxis().SetMoreLogLabels()
+            Stack.GetXaxis().SetTitle(xAxisLabel)
+            Stack.GetYaxis().SetTitle(yAxisLabel)
             if makeRatioPlots or makeDiffPlots or makeSignifPlots:
                 Stack.GetHistogram().GetXaxis().SetLabelSize(0)
+            #redraw so the changes take effect
+            Stack.Draw("HIST")
+            gPad.Update()
+            gPad.Modified()
+            gPad.RedrawAxis()
             #draw shaded error bands
             ErrorHisto.Draw("A E2 SAME")
                 
@@ -829,17 +956,11 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     # Deciding which text labels to draw and drawing them
     drawLumiLabel = False
-    drawNormLabel = False
-    offsetNormLabel = False
     drawHeaderLabel = False
 
-    if not arguments.normalizeToUnitArea or numDataSamples > 0: #don't draw the lumi label if there's no data and it's scaled to unit area
+    if not normalizeToUnitArea or numDataSamples > 0: #don't draw the lumi label if there's no data and it's scaled to unit area
         drawLumiLabel = True
-        #move the normalization label down before drawing if we drew the lumi. label
-        offsetNormLabel = True
-    if arguments.normalizeToUnitArea or arguments.normalizeToData:
-        drawNormLabel = True
-    if arguments.makeFancy:
+    if makeFancy:
         drawHeaderLabel = True
         drawLumiLabel = False
 
@@ -847,15 +968,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     if drawLumiLabel:
         LumiLabel.Draw()
-
-    if drawNormLabel:
-        if offsetNormLabel:
-            NormLabel.SetY1NDC(topLeft_y_bottom-topLeft_y_offset)
-            NormLabel.SetY2NDC(topLeft_y_top-topLeft_y_offset)
-        else:
-            NormLabel.SetY1NDC(topLeft_y_bottom)
-            NormLabel.SetY2NDC(topLeft_y_top)
-        NormLabel.Draw()
 
     if drawHeaderLabel:
         HeaderLabel.Draw()
@@ -869,8 +981,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Canvas.cd(2)
         BgSum = Stack.GetStack().Last()
         if makeRatioPlots:
-            if arguments.ratioRelErrMax:
-                Comparison = ratioHistogram(DataHistograms[0],BgSum,float(arguments.ratioRelErrMax))
+            if ratioRelErrMax is not -1: # it gets initialized to this dummy value of -1
+                Comparison = ratioHistogram(DataHistograms[0],BgSum,float(ratioRelErrMax))
             else:
                 Comparison = ratioHistogram(DataHistograms[0],BgSum)
         elif makeDiffPlots:
@@ -890,24 +1002,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Comparison.GetXaxis().SetTitleSize(0.15)
         Comparison.GetYaxis().SetLabelSize(0.13)
         Comparison.GetXaxis().SetLabelSize(0.15)
-        if makeRatioPlots:
-            RatioYRange = 1.15
-            if arguments.ratioYRange:
-                RatioYRange = float(arguments.ratioYRange)
-            Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
-        elif makeDiffPlots or makeSignifPlots:  
-            YMax = Comparison.GetMaximum()
-            YMin = Comparison.GetMinimum()
-            if YMax <= 0 and YMin <= 0:
-                Comparison.GetYaxis().SetRangeUser(-1.2*YMin,0)
-            elif YMax >= 0 and YMin >= 0:
-                Comparison.GetYaxis().SetRangeUser(0,1.2*YMax)
-            else: #axis crosses y=0
-                if abs(YMax) > abs(YMin):
-                    Comparison.GetYaxis().SetRangeUser(-1.2*YMax,1.2*YMax)
-                else:
-                    Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
-                            
+
+        RatioYRange = 1.15 # default of just over 100%
+        if arguments.ratioYRange:
+            RatioYRange = float(arguments.ratioYRange)
+        if arguments.paperConfig:
+            if 'ratioYRange' in paperHistogram:
+                RatioYRange = paperHistogram['ratioYRange']
+
+        Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
         Comparison.GetYaxis().SetNdivisions(205)
         Comparison.Draw("E0")
         if makeSignifPlots:  # Draw the other significance hists
@@ -922,7 +1025,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Comparison.GetYaxis().SetRangeUser(0, 1.2*YMax)  
         
 
-    Canvas.Write()
+    if not arguments.paperConfig:            
+        Canvas.Write()
+
+    if arguments.paperConfig:
+        if 'output_name' in paperHistogram:
+            Canvas.SaveAs("figures/"+paperHistogram['output_dir']+"/"+paperHistogram['output_name']+".pdf")
+        else:
+            Canvas.SaveAs("figures/"+paperHistogram['output_dir']+"/"+histogramName+".pdf")
+        
     if arguments.savePDFs:
         pathToDirString = plainTextString(pathToDir)
         Canvas.SaveAs(condor_dir+"/stacked_histograms_pdfs/"+pathToDirString+"/"+histogramName+".pdf")
@@ -987,7 +1098,8 @@ def MakeTwoDHist(pathToDir,histogramName):
     SignalMCLegend.SetFillColor(0)
     SignalMCLegend.SetFillStyle(0)
 
-    outputFile.cd(pathToDir)
+    if not arguments.paperConfig:
+        outputFile.cd(pathToDir)
     Canvas = TCanvas(histogramName)
     Canvas.SetRightMargin(0.2413793);
     BgMCHistograms = []
@@ -1047,7 +1159,8 @@ def MakeTwoDHist(pathToDir,histogramName):
             BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             DataHistograms.append(Histogram)
 
-    outputFile.cd(pathToDir)        
+    if not arguments.paperConfig:
+        outputFile.cd(pathToDir)        
 
     if(numBgMCSamples is not 0):
         BgMCHistograms[0].SetTitle(histoTitle)
@@ -1121,8 +1234,8 @@ def MakeTwoDHist(pathToDir,histogramName):
         BgMCLegend.Draw()
     if(numSignalSamples is not 0):
         SignalMCLegend.Draw()
-
-    Canvas.Write()
+    if not arguments.paperConfig:            
+        Canvas.Write()
 
 
 
@@ -1130,8 +1243,31 @@ def MakeTwoDHist(pathToDir,histogramName):
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
+
 
 processed_datasets = []
+
+#### if there's a list of specified histograms, we'll just make those ones and then quit
+if arguments.paperConfig:
+
+    os.system("rm -rf figures/")
+    os.system("mkdir figures")
+    
+    for paperHistogram in paper_histograms:
+        # set up output directories for paper-ready plots
+        pathToDir = "figures/"+paperHistogram['output_dir']
+        if not os.path.exists(pathToDir):
+            os.system("mkdir %s" % (pathToDir))
+ 
+        # make each canvas and save the pdf
+        directory = "OSUAnalysis/" + paperHistogram['channel']
+        condor_dir = "condor/" + paperHistogram['condor_dir']
+        MakeOneDHist(directory,paperHistogram['name'],"none")
+
+    sys.exit(0) # our work here is done
+
+
+
 
 condor_dir = set_condor_output_dir(arguments)
 
@@ -1154,6 +1290,9 @@ for sample in datasets:
 if len(processed_datasets) is 0:
     sys.exit("No datasets have been processed")
 
+if arguments.savePDFs:
+    os.system("rm -rf %s/stacked_histograms_pdfs" % (condor_dir))
+    os.system("mkdir %s/stacked_histograms_pdfs" % (condor_dir))
 
 #### make output file
 outputFileName = "stacked_histograms.root"
@@ -1164,17 +1303,10 @@ if arguments.outputFileName:
 
 outputFile = TFile(condor_dir + "/" + outputFileName, "RECREATE")
 
-
-
 #### use the first input file as a template and make stacked versions of all its histograms
 inputFile = TFile(condor_dir + "/" + processed_datasets[0] + ".root")
 inputFile.cd()
 outputFile.cd()
-
-if arguments.savePDFs:
-    os.system("rm -rf %s/stacked_histograms_pdfs" % (condor_dir))
-    os.system("mkdir %s/stacked_histograms_pdfs" % (condor_dir))
-    
 
 #get root directory in the first layer, generally "OSUAnalysis"
 for key in inputFile.GetListOfKeys():

@@ -130,6 +130,7 @@ class OSUAnalysis : public edm::EDProducer
       double getJERfactor (int returnType, double jetAbsETA, double genjetPT, double recojetPT);
       //      bool singleObjectMatchesAnyTrigger(double recoEta, double recoPhi, const vector<string> & targetTriggers, const BNtrigobjCollection & triggerObjects);
       double getPtSingleObjectMatchesAnyTrigger(double recoPhi, const vector<string> & targetTriggers, const BNtrigobjCollection * triggerObjects);
+      double emulateHLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95(const vector<string> & targetTriggers, const BNtrigobjCollection * triggerObjects);
       double getTrkPtTrue (const BNtrack* track1, const BNmcparticleCollection* genPartColl);
       double getHt (const BNjetCollection* jetColl);
       double getSumJetPt (const BNjetCollection* jetColl);

@@ -2262,7 +2262,9 @@ types = {
    'ZG'             : "bgMC",
    'WG'             : "bgMC",
 
-   'QCDFromData'    : "bgMC",
+   'QCDFromData'            : "bgMC",
+   'QCDFromDataMuon'        : "bgMC",
+   'QCDFromDataElectron'    : "bgMC",
 
    'DYToEE_20'      : "bgMC",
    'DYToMuMu_20'    : "bgMC",
@@ -2815,6 +2817,8 @@ colors = {
 
    'QCD'               : 791,
    'QCDFromData'       : 791,
+   'QCDFromDataMuon'   : 791,
+   'QCDFromDataElectron': 791,
    'QCD_0to5'          : 791,
    'QCD_5to15'         : 791,
    'QCD_15to30'        : 791,
@@ -3371,7 +3375,9 @@ labels = {
 
    'QCD'            : "QCD",
 #   'QCDFromData'     : "data-driven QCD",
-   'QCDFromData'    : "QCD", 
+   'QCDFromData'    : "QCD",
+   'QCDFromDataMuon'    : "QCD",
+   'QCDFromDataElectron'    : "QCD",    
    'QCD_0to5'       : "QCD Pt 0-5",
    'QCD_5to15'      : "QCD Pt 5-15",
    'QCD_15to30'     : "QCD Pt 15-30",
