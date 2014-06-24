@@ -40,9 +40,10 @@ parser.add_option("-s", "--signif", action="store_true", dest="makeSignificanceP
                   help="Make significance plots")	 
 parser.add_option("-O", "--addOverUnderFlow", action="store_true", dest="addOverUnderFlow", default=False,		 
                   help="Add the overflow and underflow entries to the last and first bins")	 
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,		 
+                  help="verbose output")	 
 parser.add_option("-P", "--paperConfig", dest="paperConfig",
                       help="paper configuration file")
-
 (arguments, args) = parser.parse_args()
 
 
@@ -385,6 +386,7 @@ def sortedDictValues(dic):
 	
 def MakeOneDHist(pathToDir,histogramName,integrateDir): 
 
+    global processed_datasets
     # let's just assume the root directory is "OSUAnalysis", because, come on, of course it is
     #channel = pathToDir.lstrip(rootDirectory).lstrip('/')
     channel = pathToDir.lstrip("OSUAnalysis").lstrip('/')
@@ -502,9 +504,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     if arguments.rebinFactor:
         doRebin = True
         rebinFactor = arguments.rebinFactor
-    if 'rebinFactor' in paperHistogram:
-        doRebin = True
-        rebinFactor = paperHistogram['rebinFactor']
+    if arguments.paperConfig:
+        if 'rebinFactor' in paperHistogram:
+            doRebin = True
+            rebinFactor = paperHistogram['rebinFactor']
     ###############################################
 
 
@@ -560,7 +563,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     BgMCHistYieldsDic = {}  
 
     
-
+    print pathToDir+"/"+histogramName
     
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
@@ -572,19 +575,22 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
         inputFile.Close()
+
         if doRebin:
             #don't rebin any gen-matching or cutflow histograms, or numObject type histograms
             if (Histogram.GetName().find("num") is -1 and
                 Histogram.GetName().find("Primaryvertexs") is -1 and
                 Histogram.GetName().find("CutFlow")  is -1 and
-                Histogram.GetName().find("cutFlow")  is -1 and                
+                Histogram.GetName().find("cutFlow")  is -1 and
                 Histogram.GetName().find("Selection")  is -1 and
-                Histogram.GetName().find("selection")  is -1 and                
+                Histogram.GetName().find("selection")  is -1 and
                 Histogram.GetName().find("MinusOne")  is -1 and
-                Histogram.GetName().find("minusOne")  is -1 and                                
+                Histogram.GetName().find("minusOne")  is -1 and
+                Histogram.GetName().find("status3OutgoingID")  is -1 and
+                Histogram.GetName().find("Charge")  is -1 and
                 Histogram.GetName().find("GenMatch") is -1): 
-                
-                Histogram.Rebin(rebinFactor)
+
+                Histogram.Rebin(int(rebinFactor))
                 
 
         xAxisLabel = Histogram.GetXaxis().GetTitle()
@@ -784,7 +790,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if(dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin()) > finalMax):
             finalMax = dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin())
     finalMax = 1.15*finalMax
-
+    if finalMax <= 0: # if it's an empty canvas, set ymax > ymin to avoid an error
+        finalMax = 1.0
 
     ### aaaaaand overwrite all that work we just did if the user wants us to
     yAxisMin = 0.0001
@@ -1240,7 +1247,6 @@ def MakeTwoDHist(pathToDir,histogramName):
 
 processed_datasets = []
 
-
 #### if there's a list of specified histograms, we'll just make those ones and then quit
 if arguments.paperConfig:
 
@@ -1266,8 +1272,13 @@ if arguments.paperConfig:
 condor_dir = set_condor_output_dir(arguments)
 
 #### check which input datasets have valid output files
+if arguments.verbose:
+    print "Number of datasets: " + str(len(datasets))
+    print datasets  
 for sample in datasets:
     fileName = condor_dir + "/" + sample + ".root"
+    if arguments.verbose:
+        print "Adding fileName: " + fileName 
     if not os.path.exists(fileName):
         print "WARNING: didn't find ",fileName
         continue

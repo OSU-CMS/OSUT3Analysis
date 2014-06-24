@@ -150,6 +150,7 @@ datasets = [
 
    'AMSB_chargino_200GeV_ctau10cmNoFilter', 
    'AMSB_chargino_200GeV_ctau30cmNoFilter', 
+   'AMSB_chargino_200GeV_ctau30cmNoFilter_UESettings', 
    'AMSB_chargino_200GeV_ctau100cmNoFilter', 
    'AMSB_chargino_200GeV_ctau1000cmNoFilter', 
 
@@ -1207,6 +1208,12 @@ dataset_names = {
     'AMSB_chargino_200GeV_ctau30cm'   : "/AMSB_chargino_200GeV_ctau30cm_NoFilter_8TeV_pythia6_V1/wulsin-AMSB_chargino_200GeV_ctau30cm_NoFilter_8TeV_pythia6_V1-ae3f86cb5b5e41389e02b4b277502ec0/USER", 
     'AMSB_chargino_200GeV_ctau100cm'  : "/AMSB_chargino_200GeV_ctau100cm_NoFilter_8TeV_pythia6_V1/wulsin-AMSB_chargino_200GeV_ctau100cm_NoFilter_8TeV_pythia6_V1-551ba977c24b4460d551a906f49057d4/USER", 
     'AMSB_chargino_200GeV_ctau1000cm' : "/AMSB_chargino_200GeV_ctau1000cm_NoFilter_8TeV_pythia6_V1/wulsin-AMSB_chargino_200GeV_ctau1000cm_NoFilter_8TeV_pythia6_V1-305d261b0c8df6625a241e1827554810/USER", 
+
+    'AMSB_chargino_200GeV_ctau10cmNoFilter'   : "/AMSB_chargino_200GeV_ctau10cm_NoFilter_8TeV_pythia6_V1/wulsin-AMSB_chargino_200GeV_ctau10cm_NoFilter_8TeV_pythia6_V1-52250f5d55941c367e4830e715401158/USER", 
+    'AMSB_chargino_200GeV_ctau30cmNoFilter'   : "/AMSB_chargino_200GeV_ctau30cm_NoFilter_8TeV_pythia6_V1/wulsin-AMSB_chargino_200GeV_ctau30cm_NoFilter_8TeV_pythia6_V1-ae3f86cb5b5e41389e02b4b277502ec0/USER", 
+    'AMSB_chargino_200GeV_ctau30cmNoFilter_UESettings'   : "/AMSB_chargino_200GeV_ctau30cm_NoFilter_UESettings_8TeV_pythia6_V1/wulsin-AMSB_chargino_200GeV_ctau30cm_NoFilter_UESettings_8TeV_pythia6_V1-e2f8e6b0772b5077a897b92836577734/USER", 
+    'AMSB_chargino_200GeV_ctau100cmNoFilter'  : "/AMSB_chargino_200GeV_ctau100cm_NoFilter_8TeV_pythia6_V1/wulsin-AMSB_chargino_200GeV_ctau100cm_NoFilter_8TeV_pythia6_V1-551ba977c24b4460d551a906f49057d4/USER", 
+    'AMSB_chargino_200GeV_ctau1000cmNoFilter' : "/AMSB_chargino_200GeV_ctau1000cm_NoFilter_8TeV_pythia6_V1/wulsin-AMSB_chargino_200GeV_ctau1000cm_NoFilter_8TeV_pythia6_V1-305d261b0c8df6625a241e1827554810/USER", 
     
     'AMSB_chargino_300GeV_ctau10cm'   : "/AMSB_chargino_300GeV_ctau10cm_NoFilter_8TeV_pythia6_V1/wulsin-AMSB_chargino_300GeV_ctau10cm_NoFilter_8TeV_pythia6_V1-071c7e11eaac2e3485394bd3c071050e/USER", 
     'AMSB_chargino_300GeV_ctau100cm'  : "/AMSB_chargino_300GeV_ctau100cm_NoFilter_8TeV_pythia6_V1/wulsin-AMSB_chargino_300GeV_ctau100cm_NoFilter_8TeV_pythia6_V1-c918d293339828d332b260ed053d140b/USER",   
@@ -1616,6 +1623,7 @@ nJobs = {
 
    'AMSB_chargino_200GeV_ctau10cmNoFilter'   : 5, 
    'AMSB_chargino_200GeV_ctau30cmNoFilter'   : 5, 
+   'AMSB_chargino_200GeV_ctau30cmNoFilter_UESettings'   : 5, 
    'AMSB_chargino_200GeV_ctau100cmNoFilter'   : 5, 
    'AMSB_chargino_200GeV_ctau1000cmNoFilter'   : 5, 
 
@@ -2034,6 +2042,7 @@ maxEvents = {
 
    'AMSB_chargino_200GeV_ctau10cmNoFilter'   : -1,  
    'AMSB_chargino_200GeV_ctau30cmNoFilter'   : -1,  
+   'AMSB_chargino_200GeV_ctau30cmNoFilter_UESettings'   : -1,  
    'AMSB_chargino_200GeV_ctau100cmNoFilter'   : -1,  
    'AMSB_chargino_200GeV_ctau1000cmNoFilter'   : -1,  
 
@@ -2570,6 +2579,7 @@ types = {
 
    'AMSB_chargino_200GeV_ctau10cmNoFilter'     : "signalMC", 
    'AMSB_chargino_200GeV_ctau30cmNoFilter'     : "signalMC", 
+   'AMSB_chargino_200GeV_ctau30cmNoFilter_UESettings'     : "signalMC", 
    'AMSB_chargino_200GeV_ctau100cmNoFilter'    : "signalMC", 
    'AMSB_chargino_200GeV_ctau1000cmNoFilter'   : "signalMC", 
 
@@ -3121,6 +3131,7 @@ colors = {
 
    'AMSB_chargino_200GeV_ctau10cmNoFilter'   : 628,
    'AMSB_chargino_200GeV_ctau30cmNoFilter'   : 628,
+   'AMSB_chargino_200GeV_ctau30cmNoFilter_UESettings'   : 628,
    'AMSB_chargino_200GeV_ctau100cmNoFilter'  : 596,
    'AMSB_chargino_200GeV_ctau1000cmNoFilter' : 923,
 
@@ -3667,6 +3678,7 @@ labels = {
 
    'AMSB_chargino_200GeV_ctau10cmNoFilter'   : "#chi_{1}^{#pm}, 200 GeV, #LTc#tau#GT=10cm",  
    'AMSB_chargino_200GeV_ctau30cmNoFilter'   : "#chi_{1}^{#pm}, 200 GeV, #LTc#tau#GT=30cm",  
+   'AMSB_chargino_200GeV_ctau30cmNoFilter_UESettings'   : "#chi_{1}^{#pm}, 200 GeV, #LTc#tau#GT=30cm, UESettings",  
    'AMSB_chargino_200GeV_ctau100cmNoFilter'  : "#chi_{1}^{#pm}, 200 GeV, #LTc#tau#GT=100cm", 
    'AMSB_chargino_200GeV_ctau1000cmNoFilter' : "#chi_{1}^{#pm}, 200 GeV, #LTc#tau#GT=1000cm",
 
