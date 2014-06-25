@@ -40,9 +40,10 @@ parser.add_option("-s", "--signif", action="store_true", dest="makeSignificanceP
                   help="Make significance plots")	 
 parser.add_option("-O", "--addOverUnderFlow", action="store_true", dest="addOverUnderFlow", default=False,		 
                   help="Add the overflow and underflow entries to the last and first bins")	 
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,		 
+                  help="verbose output")	 
 parser.add_option("-P", "--paperConfig", dest="paperConfig",
                       help="paper configuration file")
-
 (arguments, args) = parser.parse_args()
 
 
@@ -1271,8 +1272,13 @@ if arguments.paperConfig:
 condor_dir = set_condor_output_dir(arguments)
 
 #### check which input datasets have valid output files
+if arguments.verbose:
+    print "Number of datasets: " + str(len(datasets))
+    print datasets  
 for sample in datasets:
     fileName = condor_dir + "/" + sample + ".root"
+    if arguments.verbose:
+        print "Adding fileName: " + fileName 
     if not os.path.exists(fileName):
         print "WARNING: didn't find ",fileName
         continue
