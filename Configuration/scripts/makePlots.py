@@ -432,7 +432,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     ###############################################
 
     if arguments.normalizeFactor:
-        scaleFactor = arguments.normalizeFactor
+        scaleFactor = float(arguments.normalizeFactor)
     if arguments.paperConfig:
         if 'normalizeFactor' in paperHistogram:
             scaleFactor = paperHistogram['normalizeFactor']
