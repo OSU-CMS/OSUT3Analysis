@@ -80,7 +80,7 @@ for histogram in input_histograms:
         datasets_needed.append(histogram['dataset'])
 
 
-Legend = TLegend(0.70,0.65,0.9,0.9)# two times 0.9 ??
+Legend = TLegend(0.70,0.65,0.9,0.9)
 Legend.SetBorderSize(0)
 Legend.SetFillColor(0)
 Legend.SetFillStyle(0)
@@ -99,22 +99,18 @@ for histogram in input_histograms:
     if inputFile.IsZombie() or not inputFile.GetNkeys():
         continue
     
-    #    Histogram = inputFile.Get("OSUAnalysis/"+histogram['channel']+"/"+histogram['name']).Clone()
     
     Numerator = inputFile.Get("OSUAnalysis/"+histogram['channel_numerator']+"/"+histogram['name']).Clone()
     Denominator = inputFile.Get("OSUAnalysis/"+histogram['channel_denominator']+"/"+histogram['name']).Clone()
     
-#    Numerator.Divide(Denominator)
+
     Histogram = ROOT.TGraphAsymmErrors(Numerator,Denominator)
 
-#    Histogram.SetDirectory(0)
-    #    Histogram.SetDirectory(0)
     inputFile.Close()
 
 
     fullTitle = Histogram.GetTitle()
     splitTitle = fullTitle.split(":")
-#    print splitTitle
     Histogram.SetTitle(splitTitle[1].lstrip(" "))
 
     Histogram.SetMarkerColor(histogram['color'])
