@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-
-
-
+### this script has been done to overlaid on the same canva multiple efficency's curves. It uses the asymmetryc errors. 
 
 
 
@@ -15,7 +13,7 @@ from decimal import *
 
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
-
+import ROOT
 
 
 
@@ -31,7 +29,6 @@ parser = OptionParser()
 parser = set_commandline_arguments(parser)
 
 parser.remove_option("-c")
-parser.remove_option("-t")
 parser.remove_option("-n")
 parser.remove_option("-e")
 parser.remove_option("-r")
@@ -107,52 +104,52 @@ for histogram in input_histograms:
     Numerator = inputFile.Get("OSUAnalysis/"+histogram['channel_numerator']+"/"+histogram['name']).Clone()
     Denominator = inputFile.Get("OSUAnalysis/"+histogram['channel_denominator']+"/"+histogram['name']).Clone()
     
-    Numerator.Divide(Denominator)
+#    Numerator.Divide(Denominator)
+    Histogram = ROOT.TGraphAsymmErrors(Numerator,Denominator)
 
-
-    Numerator.SetDirectory(0)
-    #    Numerator.SetDirectory(0)
+#    Histogram.SetDirectory(0)
+    #    Histogram.SetDirectory(0)
     inputFile.Close()
 
 
-    fullTitle = Numerator.GetTitle()
+    fullTitle = Histogram.GetTitle()
     splitTitle = fullTitle.split(":")
 #    print splitTitle
-    Numerator.SetTitle(splitTitle[1].lstrip(" "))
+    Histogram.SetTitle(splitTitle[1].lstrip(" "))
 
-    Numerator.SetMarkerColor(histogram['color'])
-    Numerator.SetLineColor(histogram['color'])
-    Numerator.SetLineWidth(line_width)
-    Numerator.SetFillStyle(0)
-    if(arguments.normalizeToUnitArea and Numerator.Integral() > 0):
-        Numerator.Scale(1./Numerator.Integral())
+    Histogram.SetMarkerColor(histogram['color'])
+    Histogram.SetLineColor(histogram['color'])
+    Histogram.SetLineWidth(line_width)
+    Histogram.SetFillStyle(0)
+    if(arguments.normalizeToUnitArea and Histogram.Integral() > 0):
+        Histogram.Scale(1./Histogram.Integral())
     if arguments.rebinFactor:
         RebinFactor = int(arguments.rebinFactor)
-        if Numerator.GetNbinsX() >= RebinFactor*10:
-            Numerator.Rebin(RebinFactor)
+        if Histogram.GetNbinsX() >= RebinFactor*10:
+            Histogram.Rebin(RebinFactor)
 
 
-    currentMax = Numerator.GetMaximum()
+    currentMax = Histogram.GetMaximum()
     if currentMax > finalMax:
         finalMax = currentMax
 
-    Legend.AddEntry(Numerator,histogram['legend_entry'],"L")
-    Histograms.append(Numerator)
+    Legend.AddEntry(Histogram,histogram['legend_entry'],"L")
+    Histograms.append(Histogram)
 
 
 Canvas = TCanvas(re.sub (r".root$", r"", outputFileName))
 
 counter = 0
-for Numerator in Histograms:
+for Histogram in Histograms:
+    if Histogram.InheritsFrom("TGraph") and counter==0:
+        plotting_options = "AP"
+    Histogram.Draw(plotting_options)
+#    Histogram.GetXaxis().SetTitle(xAxisLabel)
+    Histogram.GetYaxis().SetTitle("cut efficiency")
     if counter is 0:
-        Numerator.SetMaximum(1.1*finalMax)
-        Numerator.SetMinimum(0.0001)
-        Numerator.Draw(plotting_options)
-        
-    else:
-        Numerator.Draw(plotting_options+" SAME")
-    counter = counter+1
-
+        if Histogram.InheritsFrom("TGraph"):
+            plotting_options = "P"
+    counter = counter+1 
 
 Legend.Draw()
 if arguments.normalizeToUnitArea:
