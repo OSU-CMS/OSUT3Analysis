@@ -48,7 +48,7 @@ for hist in input_hists:     # loop over different input hists in config file
     inputFile.Close()
 
     Nxbins = histogram.GetNbinsX() 
-    xmax = histogram.GetBinContent(Nxbins)
+    xmax = histogram.GetXaxis().GetBinLowEdge(Nxbins+1)
     xlo = hist['xlo']
     xhi = hist['xhi']
     
