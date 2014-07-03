@@ -298,6 +298,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
     if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
     if(tempInputCollection == "mcparticle-muon pairs")   tempInputCollection = "muon-mcparticle pairs";
+    if(tempInputCollection == "secondary mcparticle-muon pairs")   tempInputCollection = "muon-secondary mcparticle pairs";
     if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
     if(tempInputCollection.find("pairs")==string::npos){ //just a single object
       if(tempInputCollection.find("secondary")!=string::npos){//secondary object
@@ -548,6 +549,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
       if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
       if(tempInputCollection == "mcparticle-muon pairs")   tempInputCollection = "muon-mcparticle pairs";
+      if(tempInputCollection == "secondary mcparticle-muon pairs")   tempInputCollection = "muon-secondary mcparticle pairs";
       if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
       tempCut.inputCollection = tempInputCollection;
       if(tempInputCollection.find("pairs")==string::npos){ //just a single object
@@ -864,6 +866,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         else if(currentObject == "electron-trigobj pairs")    currentObject = "electronTrigobjPairs";
         else if(currentObject == "muon-trigobj pairs")        currentObject = "muonTrigobjPairs";
         else if(currentObject == "electron-mcparticle pairs") currentObject = "electronMCparticlePairs";
+        else if(currentObject == "muon-secondary mcparticle pairs") currentObject = "muonSecondayMCparticlePairs";
         else if(currentObject == "muon-mcparticle pairs") currentObject = "muonMCparticlePairs";
         else if(currentObject == "track-mcparticle pairs")    currentObject = "trackMCparticlePairs";
 
@@ -1339,6 +1342,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "electron-trigobj pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),trigobjs.product(),"electron-trigobj pairs");
         else if(currentObject == "muon-trigobj pairs")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),trigobjs.product(),"muon-trigobj pairs");
         else if(currentObject == "electron-mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),mcparticles.product(),"electron-mcparticle pairs");
+        else if(currentObject == "muon-secondary mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),mcparticles.product(),"muon-secondary mcparticle pairs");
         else if(currentObject == "muon-mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),mcparticles.product(),"muon-mcparticle pairs");
         else if(currentObject == "track-mcparticle pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),mcparticles.product(),"track-mcparticle pairs");
 
@@ -1731,6 +1735,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
             else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),mcparticles.product(), cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-mcparticle pairs") fill1DHistogram(histo,currentHistogram, muons.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("muon-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "muon-secondary mcparticle pairs") fill1DHistogram(histo,currentHistogram, muons.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("muon-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill1DHistogram(histo,currentHistogram, tracks.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
             // fill the histograms of weighting factors with 1, to see the shape of a SF without any weight applied
@@ -1830,6 +1836,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),mcparticles.product(), cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-mcparticle pairs") fill2DHistogram(histo,currentHistogram,muons.product(),mcparticles.product(), cumulativeFlags.at("muon-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "muon-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,muons.product(),mcparticles.product(), cumulativeFlags.at("muon-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "events") fill2DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
@@ -1903,6 +1910,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "muon-trigobj pairs")                 objectToPlot = "muonTrigobjPairs";
           else if(currentObject == "electron-mcparticle pairs")          objectToPlot = "electronMCparticlePairs";
           else if(currentObject == "muon-mcparticle pairs")          objectToPlot = "muonMCparticlePairs";
+          else if(currentObject == "muon-secondary mcparticle pairs")          objectToPlot = "muonSecondaryMCparticlePairs";
           else if(currentObject == "track-mcparticle pairs")             objectToPlot = "trackMCparticlePairs";
           else objectToPlot = currentObject;
 
