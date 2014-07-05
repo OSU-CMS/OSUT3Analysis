@@ -86,6 +86,18 @@ class TrackNMissOutSFWeight
       TH1F *trackNMissOutSFWeight_; 
   };
 
+class GenToRecoWeight 
+// Class for assigning a scale factor at gen level according to the efficiency to ...
+  {
+    public:
+      GenToRecoWeight (const string &sfFile, const string &dataOverMC); 
+      ~GenToRecoWeight ();
+      double at (const double &NMissOut, const int &shiftUpDown = 0);
+
+    private:
+      TH1F *genToRecoWeight_; 
+  };
+
 class IsrVarySFWeight 
 // Class for assigning a scale factor according to the pT of ISR, which is taken to be equivalent to the sum(pT) of all status 3 Susy particles  
   {

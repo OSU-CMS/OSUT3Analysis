@@ -212,6 +212,7 @@ class OSUAnalysis : public edm::EDProducer
       bool flagJESJERCorr_;
       string triggerMetSFFile_;
       string trackNMissOutSFFile_;
+      string genToRecoFile_;
       string isrVarySFFile_; 
       string dataPU_;
       string electronSFID_;
@@ -219,6 +220,7 @@ class OSUAnalysis : public edm::EDProducer
       string muonSF_;
       string triggerMetSF_;
       string trackNMissOutSF_;
+      string genToReco_;
       string isrVarySF_; 
       string dataset_;
       string datasetType_;
@@ -233,6 +235,7 @@ class OSUAnalysis : public edm::EDProducer
       double triggerScaleFactor_;
       double trackingScaleFactor_;
       bool applyLeptonSF_;
+      bool applyGentoRecoEfficiency_;
       bool applyTrackingSF_;
       bool applyBtagSF_;
       int  minBtag_;
@@ -371,6 +374,8 @@ class OSUAnalysis : public edm::EDProducer
       double triggerMetScaleFactor_;
       TrackNMissOutSFWeight *trackNMissOutSFWeight_;
       double trackNMissOutScaleFactor_;
+      GenToRecoWeight *genToRecoWeight_;
+      //      double trackNMissOutScaleFactor_;
       IsrVarySFWeight *isrVarySFWeight_;
       double isrVaryScaleFactor_;
 

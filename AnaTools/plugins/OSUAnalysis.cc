@@ -30,6 +30,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   flagJESJERCorr_(cfg.getParameter<bool> ("flagJESJERCorr")),
   triggerMetSFFile_ (cfg.getParameter<string> ("triggerMetSFFile")),
   trackNMissOutSFFile_ (cfg.getParameter<string> ("trackNMissOutSFFile")),
+  genToRecoFile_ (cfg.getParameter<string> ("genToRecoFile")),
+  //genToRecoWeight_ (cfg.getParameter<string> ("genToRecoWeight")),
   isrVarySFFile_ (cfg.getParameter<string> ("isrVarySFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
   electronSFID_ (cfg.getParameter<string> ("electronSFID")),
@@ -37,6 +39,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   muonSF_ (cfg.getParameter<string> ("muonSF")),
   triggerMetSF_ (cfg.getParameter<string> ("triggerMetSF")),
   trackNMissOutSF_ (cfg.getParameter<string> ("trackNMissOutSF")),
+  genToReco_ (cfg.getParameter<string> ("genToReco")),
   isrVarySF_ (cfg.getParameter<string> ("isrVarySF")),
   dataset_ (cfg.getParameter<string> ("dataset")),
   datasetType_ (cfg.getParameter<string> ("datasetType")),
@@ -50,6 +53,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   applyTriggerSF_ (cfg.getParameter<bool> ("applyTriggerSF")),
   triggerScaleFactor_ (cfg.getParameter<double> ("triggerScaleFactor")),
   applyLeptonSF_ (cfg.getParameter<bool> ("applyLeptonSF")),
+  applyGentoRecoEfficiency_ (cfg.getParameter<bool> ("applyGentoRecoEfficiency")),
   applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
@@ -100,6 +104,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 		     << "  flagJESJERCorr_                  = " <<  flagJESJERCorr_                  << endl   
 		     << "  triggerMetSFFile_                = " <<  triggerMetSFFile_                << endl   
 		     << "  trackNMissOutSFFile_             = " <<  trackNMissOutSFFile_             << endl   
+		     << "  genToRecoWeight_             = " <<  genToRecoWeight_             << endl   
 		     << "  isrVarySFFile_                   = " <<  isrVarySFFile_                   << endl   
 		     << "  dataPU_                          = " <<  dataPU_                          << endl   
 		     << "  electronSFID_                    = " <<  electronSFID_                    << endl   
@@ -107,6 +112,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 		     << "  muonSF_                          = " <<  muonSF_                          << endl   
 		     << "  triggerMetSF_                    = " <<  triggerMetSF_                    << endl   
 		     << "  trackNMissOutSF_                 = " <<  trackNMissOutSF_                 << endl   
+		     << "  genToReco_                 = " <<  genToReco_                 << endl   
 		     << "  isrVarySF_                       = " <<  isrVarySF_                       << endl   
 		     << "  dataset_                         = " <<  dataset_                         << endl   
 		     << "  datasetType_                     = " <<  datasetType_                     << endl   
@@ -118,6 +124,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 		     << "  doPileupReweighting_             = " <<  doPileupReweighting_             << endl   
 		     << "  doTopPtReweighting_              = " <<  doTopPtReweighting_              << endl   
 		     << "  applyTriggerSF_                  = " <<  applyTriggerSF_                  << endl   
+		     << "  applyGentoRecoEfficiency_        = " <<  applyGentoRecoEfficiency_        << endl   
 		     << "  triggerScaleFactor_              = " <<  triggerScaleFactor_              << endl   
 		     << "  applyLeptonSF_                   = " <<  applyLeptonSF_                   << endl   
 		     << "  applyTrackingSF_                 = " <<  applyTrackingSF_                 << endl   
@@ -201,6 +208,10 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     }
     if (trackNMissOutSFFile_ != "" ){
       trackNMissOutSFWeight_ = new TrackNMissOutSFWeight(trackNMissOutSFFile_, trackNMissOutSF_);  
+    }
+    //    if (genToRecoFile_ != "" ){
+    if(applyGentoRecoEfficiency_){
+      genToRecoWeight_ = new GenToRecoWeight(genToRecoFile_, genToReco_);  
     }
     if (isrVarySFFile_ != "" ){
       if (isrVarySFFile_.find("XXX")!=string::npos) { 
@@ -1448,6 +1459,51 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     }
       
 
+    // Reweighting for generated event to emulate CMS reco efficiency and analysis cut efficiency
+
+    if(applyGentoRecoEfficiency_ && datasetType_ != "data"){ /// take care on what object I should apply this reweighting, also on what kind of datasetType.
+      //only apply SFs if we've cut on this object
+      if(find(objectsToCut.begin(),objectsToCut.end(),"muons") != objectsToCut.end ()){
+        flagPair muonFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("muons").at(i).size()){
+            muonFlags = cumulativeFlags.at("muons").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
+          if(!muonFlags.at(muonIndex).second) continue;
+          int shiftUpDown = 0;
+          if (muonSFShift_ == "up") shiftUpDown = 1;
+          if (muonSFShift_ == "down") shiftUpDown = -1;
+          muonScaleFactor_ *= muonSFWeight_->at (muons->at(muonIndex).eta, muons->at(muonIndex).pt,shiftUpDown);
+        }
+      }
+
+      //only apply SFs if we've cut on this object
+      if(find(objectsToCut.begin(),objectsToCut.end(),"electrons") != objectsToCut.end ()){
+        flagPair electronFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("electrons").at(i).size()){
+            electronFlags = cumulativeFlags.at("electrons").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
+          if(!electronFlags.at(electronIndex).second) continue;
+          int shiftUpDown = 0;
+          if (electronSFShift_ == "up") shiftUpDown = 1;
+          if (electronSFShift_ == "down") shiftUpDown = -1;
+          electronScaleFactor_ *= electronSFWeight_->at (electrons->at(electronIndex).scEta, electrons->at(electronIndex).pt, shiftUpDown);
+        }
+      }
+    }
+     
+    // eof 
 
     // Track weighting for muons
 

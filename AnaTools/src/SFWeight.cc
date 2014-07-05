@@ -421,6 +421,35 @@ TrackNMissOutSFWeight::~TrackNMissOutSFWeight ()
 }
 
 
+// New class to reweight generated event to emulate the CMS reconstruction algorithm and the set of cut applied in the analysis
+
+GenToRecoWeight::GenToRecoWeight (const string &sfFile, const string &dataOverMC)
+{
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
+  if (!dataOverMCHist) cout << "Fatal Error [GenToRecoWeight::GenToRecoWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  genToRecoWeight_ = (TH1F*)  dataOverMCHist->Clone();
+  genToRecoWeight_->GetEntries();  // to avoid the crashing warning
+  delete dataOverMCHist;
+  fin->Close ();
+  delete fin;
+}
+
+ 
+double
+GenToRecoWeight::at(const double &NMissOut, const int &shiftUpDown) 
+{  
+  int bin = genToRecoWeight_->FindBin(NMissOut);  
+  return 1.0 + genToRecoWeight_->GetBinContent(bin); // + shiftUpDown * genToRecoWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
+}
+
+GenToRecoWeight::~GenToRecoWeight ()
+{
+  delete genToRecoWeight_;
+}
+
+
+
 
 IsrVarySFWeight::IsrVarySFWeight (const string &sfFile, const string &dataOverMC)
 {
