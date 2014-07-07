@@ -439,7 +439,7 @@ double
 IsrVarySFWeight::at(const double &ptSusy, const int &shiftUpDown) 
 {  
   int bin = isrVarySFWeight_->FindBin(ptSusy);  
-  return  isrVarySFWeight_->GetBinContent(bin) + shiftUpDown * isrVarySFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
+  return 1.0 + isrVarySFWeight_->GetBinContent(bin) + shiftUpDown * isrVarySFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
 }
 
 IsrVarySFWeight::~IsrVarySFWeight ()
@@ -547,7 +547,7 @@ double
 RecoMuonWeight::at(const double &d0) 
 {  
   int bin = recoMuonWeight_->FindBin(d0);  
-  return 1.0 + recoMuonWeight_->GetBinContent(bin); 
+  return  recoMuonWeight_->GetBinContent(bin); 
 }
 
 RecoMuonWeight::~RecoMuonWeight ()
