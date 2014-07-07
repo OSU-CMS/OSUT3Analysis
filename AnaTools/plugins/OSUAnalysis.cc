@@ -1423,11 +1423,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     channelScaleFactor_ = 1.0; //this variable holds the product of all SFs calculated separately for each channel
 
     muonScaleFactor_ = electronScaleFactor_ =  muonTrackScaleFactor_ =  electronTrackScaleFactor_ = bTagScaleFactor_ = 1.0;
-    //
-    muonCutEfficiency_ = electronCutEfficiency_ =  recoMuonEfficiency_ =  recoElectronEfficiency_ = 1;
     triggerMetScaleFactor_    = 1.0;  
     trackNMissOutScaleFactor_ = 1.0;  
     isrVaryScaleFactor_       = 1.0;  
+    muonCutEfficiency_ = electronCutEfficiency_ =  recoMuonEfficiency_ =  recoElectronEfficiency_ = 1.0;
 
 
 
@@ -1476,11 +1475,9 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
     // Reweighting for generated event to emulate CMS reco efficiency and analysis cut efficiency
 
-    if(applyGentoRecoEfficiency_ && datasetType_ != "data"){ /// take care on what object I should apply this reweighting, also on what kind of datasetType.
+    if(applyGentoRecoEfficiency_ && datasetType_ != "data"){
       //only apply SFs if we've cut on this object
-      cout << "FACO!!!" << endl;
-
-
+      cout << "if applyGentoRecoEfficiency_ && datasetType_ != data, has succeeded" << endl;
       //RecoElectronWeight
       if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
 	cout << "passed if mcparticles" << endl;
@@ -1496,7 +1493,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
           if(!mcFlags.at(mcparticleIndex).second) continue;
 	  recoElectronEfficiency_ *= recoElectronWeight_->at (mcparticles->at(mcparticleIndex).pt);
-	  cout << "muonCutEfficiency_ is " << muonCutEfficiency_ << endl;
+	  cout << "recoElectronEfficiency_ is " << recoElectronEfficiency_ << endl;
         }
       }
 
@@ -1506,7 +1503,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         flagPair mcFlags;
         //get the last valid flags in the flag map
         for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
-	  //	  cout << "mc particles loop" << endl;
+	  cout << "mc particles loop" << endl;
           if (cumulativeFlags.at("mcparticles").at(i).size()){
             mcFlags = cumulativeFlags.at("mcparticles").at(i);
             break;
@@ -1582,7 +1579,6 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           if (trackSFShift_ == "down") shiftUpDown = -1;
 	  //	  cout << "before applying trackSFWeight muons SF=" << muonTrackScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
 	  muonTrackScaleFactor_ *= trackSFWeight_->at (muons->at(muonIndex).correctedD0,shiftUpDown);
-	  //	  cout << " after applying trackSFWeight" << muonTrackScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
         }
       }
       
@@ -1679,6 +1675,13 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     channelScaleFactor_ *= triggerMetScaleFactor_;
     channelScaleFactor_ *= trackNMissOutScaleFactor_;
     channelScaleFactor_ *= isrVaryScaleFactor_;  
+    channelScaleFactor_ *= recoElectronEfficiency_;
+    channelScaleFactor_ *= recoMuonEfficiency_;
+    channelScaleFactor_ *= electronCutEfficiency_;
+    channelScaleFactor_ *= muonCutEfficiency_;
+
+
+    
 
 
     //calculate the total scale factor for the event and fill the cutflow for each channel
