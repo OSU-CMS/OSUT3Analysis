@@ -30,8 +30,14 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   flagJESJERCorr_(cfg.getParameter<bool> ("flagJESJERCorr")),
   triggerMetSFFile_ (cfg.getParameter<string> ("triggerMetSFFile")),
   trackNMissOutSFFile_ (cfg.getParameter<string> ("trackNMissOutSFFile")),
-  genToRecoFile_ (cfg.getParameter<string> ("genToRecoFile")),
-  //genToRecoWeight_ (cfg.getParameter<string> ("genToRecoWeight")),
+  muonCutFile_ (cfg.getParameter<string> ("muonCutFile")),
+  muonCut_ (cfg.getParameter<string> ("muonCut")),
+  electronCutFile_ (cfg.getParameter<string> ("electronCutFile")),
+  electronCut_ (cfg.getParameter<string> ("electronCut")),
+  recoMuonFile_ (cfg.getParameter<string> ("recoMuonFile")),
+  recoMuon_ (cfg.getParameter<string> ("recoMuon")),
+  recoElectronFile_ (cfg.getParameter<string> ("recoElectronFile")),
+  recoElectron_ (cfg.getParameter<string> ("recoElectron")),
   isrVarySFFile_ (cfg.getParameter<string> ("isrVarySFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
   electronSFID_ (cfg.getParameter<string> ("electronSFID")),
@@ -39,7 +45,6 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   muonSF_ (cfg.getParameter<string> ("muonSF")),
   triggerMetSF_ (cfg.getParameter<string> ("triggerMetSF")),
   trackNMissOutSF_ (cfg.getParameter<string> ("trackNMissOutSF")),
-  genToReco_ (cfg.getParameter<string> ("genToReco")),
   isrVarySF_ (cfg.getParameter<string> ("isrVarySF")),
   dataset_ (cfg.getParameter<string> ("dataset")),
   datasetType_ (cfg.getParameter<string> ("datasetType")),
@@ -104,7 +109,10 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 		     << "  flagJESJERCorr_                  = " <<  flagJESJERCorr_                  << endl   
 		     << "  triggerMetSFFile_                = " <<  triggerMetSFFile_                << endl   
 		     << "  trackNMissOutSFFile_             = " <<  trackNMissOutSFFile_             << endl   
-		     << "  genToRecoWeight_             = " <<  genToRecoWeight_             << endl   
+		     << "  muonCutWeight_             = " <<  muonCutWeight_             << endl   
+    		     << "  electronCutWeight_             = " <<  electronCutWeight_             << endl  
+		     << "  recoMuonWeight_             = " <<  recoMuonWeight_             << endl   
+		     << "  recoElectronWeight_             = " <<  recoElectronWeight_             << endl   
 		     << "  isrVarySFFile_                   = " <<  isrVarySFFile_                   << endl   
 		     << "  dataPU_                          = " <<  dataPU_                          << endl   
 		     << "  electronSFID_                    = " <<  electronSFID_                    << endl   
@@ -112,7 +120,10 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 		     << "  muonSF_                          = " <<  muonSF_                          << endl   
 		     << "  triggerMetSF_                    = " <<  triggerMetSF_                    << endl   
 		     << "  trackNMissOutSF_                 = " <<  trackNMissOutSF_                 << endl   
-		     << "  genToReco_                 = " <<  genToReco_                 << endl   
+		     << "  muonCut_                 = " <<  muonCut_                 << endl   
+		     << "  electronCut_                 = " <<  electronCut_                 << endl   
+		     << "  recoMuon_                 = " <<  recoMuon_                 << endl   
+		     << "  recoElectron_                 = " <<  recoElectron_                 << endl   
 		     << "  isrVarySF_                       = " <<  isrVarySF_                       << endl   
 		     << "  dataset_                         = " <<  dataset_                         << endl   
 		     << "  datasetType_                     = " <<  datasetType_                     << endl   
@@ -209,9 +220,11 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if (trackNMissOutSFFile_ != "" ){
       trackNMissOutSFWeight_ = new TrackNMissOutSFWeight(trackNMissOutSFFile_, trackNMissOutSF_);  
     }
-    //    if (genToRecoFile_ != "" ){
     if(applyGentoRecoEfficiency_){
-      genToRecoWeight_ = new GenToRecoWeight(genToRecoFile_, genToReco_);  
+      muonCutWeight_ = new MuonCutWeight(muonCutFile_, muonCut_);  
+      electronCutWeight_ = new ElectronCutWeight(electronCutFile_, electronCut_);
+      recoElectronWeight_ = new RecoElectronWeight(recoElectronFile_, recoElectron_);
+      recoMuonWeight_ = new RecoMuonWeight(recoMuonFile_, recoMuon_);
     }
     if (isrVarySFFile_ != "" ){
       if (isrVarySFFile_.find("XXX")!=string::npos) { 
@@ -1410,6 +1423,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     channelScaleFactor_ = 1.0; //this variable holds the product of all SFs calculated separately for each channel
 
     muonScaleFactor_ = electronScaleFactor_ =  muonTrackScaleFactor_ =  electronTrackScaleFactor_ = bTagScaleFactor_ = 1.0;
+    //
+    muonCutEfficiency_ = electronCutEfficiency_ =  recoMuonEfficiency_ =  recoElectronEfficiency_ = 1;
     triggerMetScaleFactor_    = 1.0;  
     trackNMissOutScaleFactor_ = 1.0;  
     isrVaryScaleFactor_       = 1.0;  
@@ -1463,44 +1478,85 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
     if(applyGentoRecoEfficiency_ && datasetType_ != "data"){ /// take care on what object I should apply this reweighting, also on what kind of datasetType.
       //only apply SFs if we've cut on this object
-      if(find(objectsToCut.begin(),objectsToCut.end(),"muons") != objectsToCut.end ()){
-        flagPair muonFlags;
+      cout << "FACO!!!" << endl;
+
+
+      //RecoElectronWeight
+      if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
+	cout << "passed if mcparticles" << endl;
+        flagPair mcFlags;
         //get the last valid flags in the flag map
-        for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
-          if (cumulativeFlags.at("muons").at(i).size()){
-            muonFlags = cumulativeFlags.at("muons").at(i);
+        for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("mcparticles").at(i).size()){
+            mcFlags = cumulativeFlags.at("mcparticles").at(i);
             break;
           }
         }
         //apply the weight for each of those objects
-        for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
-          if(!muonFlags.at(muonIndex).second) continue;
-          int shiftUpDown = 0;
-          if (muonSFShift_ == "up") shiftUpDown = 1;
-          if (muonSFShift_ == "down") shiftUpDown = -1;
-          muonScaleFactor_ *= muonSFWeight_->at (muons->at(muonIndex).eta, muons->at(muonIndex).pt,shiftUpDown);
+        for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
+          if(!mcFlags.at(mcparticleIndex).second) continue;
+	  recoElectronEfficiency_ *= recoElectronWeight_->at (mcparticles->at(mcparticleIndex).pt);
+	  cout << "muonCutEfficiency_ is " << muonCutEfficiency_ << endl;
         }
       }
 
-      //only apply SFs if we've cut on this object
-      if(find(objectsToCut.begin(),objectsToCut.end(),"electrons") != objectsToCut.end ()){
-        flagPair electronFlags;
+      // RecoMuonWeight
+      if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
+	cout << "passed if mcparticles" << endl;
+        flagPair mcFlags;
         //get the last valid flags in the flag map
-        for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
-          if (cumulativeFlags.at("electrons").at(i).size()){
-            electronFlags = cumulativeFlags.at("electrons").at(i);
+        for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
+	  //	  cout << "mc particles loop" << endl;
+          if (cumulativeFlags.at("mcparticles").at(i).size()){
+            mcFlags = cumulativeFlags.at("mcparticles").at(i);
             break;
           }
         }
         //apply the weight for each of those objects
-        for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
-          if(!electronFlags.at(electronIndex).second) continue;
-          int shiftUpDown = 0;
-          if (electronSFShift_ == "up") shiftUpDown = 1;
-          if (electronSFShift_ == "down") shiftUpDown = -1;
-          electronScaleFactor_ *= electronSFWeight_->at (electrons->at(electronIndex).scEta, electrons->at(electronIndex).pt, shiftUpDown);
+        for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
+          if(!mcFlags.at(mcparticleIndex).second) continue;
+	  recoMuonEfficiency_ *= recoMuonWeight_->at (mcparticles->at(mcparticleIndex).pt);
+	  cout << "muonCutEfficiency_ is " << muonCutEfficiency_ << endl;
         }
       }
+
+      // ElectronCutWeight
+      if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
+        flagPair mcFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("mcparticles").at(i).size()){
+            mcFlags = cumulativeFlags.at("mcparticles").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
+          if(!mcFlags.at(mcparticleIndex).second) continue;
+	  electronCutEfficiency_ *= electronCutWeight_->at (mcparticles->at(mcparticleIndex).pt);
+	  cout << "muonCutEfficiency_ is " << muonCutEfficiency_ << endl;
+        }
+      }
+
+      // MuonCutWeight
+      if(find(objectsToCut.begin(),objectsToCut.end(),"secondary mcparticles") != objectsToCut.end ()){
+        flagPair mcFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("secondary mcparticles").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("secondary mcparticles").at(i).size()){
+	    mcFlags = cumulativeFlags.at("secondary mcparticles").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint secondaryMcParticleIndex = 0; secondaryMcParticleIndex != mcFlags.size(); secondaryMcParticleIndex++){
+          if(!mcFlags.at(secondaryMcParticleIndex).second) continue;
+	  muonCutEfficiency_ *= muonCutWeight_->at (mcparticles->at(secondaryMcParticleIndex).pt);
+	  cout << "muonCutEfficiency_ is " << muonCutEfficiency_ << endl;
+        }
+      }
+
+
     }
      
     // eof 

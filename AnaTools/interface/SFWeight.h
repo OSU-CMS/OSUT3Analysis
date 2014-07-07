@@ -86,18 +86,6 @@ class TrackNMissOutSFWeight
       TH1F *trackNMissOutSFWeight_; 
   };
 
-class GenToRecoWeight 
-// Class for assigning a scale factor at gen level according to the efficiency to ...
-  {
-    public:
-      GenToRecoWeight (const string &sfFile, const string &dataOverMC); 
-      ~GenToRecoWeight ();
-      double at (const double &NMissOut, const int &shiftUpDown = 0);
-
-    private:
-      TH1F *genToRecoWeight_; 
-  };
-
 class IsrVarySFWeight 
 // Class for assigning a scale factor according to the pT of ISR, which is taken to be equivalent to the sum(pT) of all status 3 Susy particles  
   {
@@ -109,5 +97,59 @@ class IsrVarySFWeight
     private:
       TH1F *isrVarySFWeight_; 
   };
+
+class MuonCutWeight 
+// Class for assigning a scale factor at gen level according to the efficiency to ...
+  {
+    public:
+      MuonCutWeight (const string &sfFile, const string &dataOverMC); 
+      ~MuonCutWeight ();
+      double at (const double &pt);
+
+    private:
+      TH1F *muonCutWeight_; 
+  };
+
+
+class ElectronCutWeight 
+// Class for assigning a scale factor at gen level according to the efficiency to ...
+  {
+    public:
+      ElectronCutWeight (const string &sfFile, const string &dataOverMC); 
+      ~ElectronCutWeight ();
+      double at (const double &d0);
+
+    private:
+      TH1F *electronCutWeight_; 
+  };
+
+
+class RecoElectronWeight 
+// Class for assigning a scale factor at gen level according to the efficiency to ...
+  {
+    public:
+      RecoElectronWeight (const string &sfFile, const string &dataOverMC); 
+      ~RecoElectronWeight ();
+      double at (const double &d0);
+
+    private:
+      TH1F *recoElectronWeight_; 
+  };
+
+
+class RecoMuonWeight 
+// Class for assigning a scale factor at gen level according to the efficiency to ...
+  {
+    public:
+      RecoMuonWeight (const string &sfFile, const string &dataOverMC); 
+      ~RecoMuonWeight ();
+      double at (const double &d0);
+
+    private:
+      TH1F *recoMuonWeight_; 
+  };
+
+
+
 
 #endif
