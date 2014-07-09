@@ -31,6 +31,14 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   triggerMetSFFile_ (cfg.getParameter<string> ("triggerMetSFFile")),
   trackNMissOutSFFile_ (cfg.getParameter<string> ("trackNMissOutSFFile")),
   EcaloVarySFFile_ (cfg.getParameter<string> ("EcaloVarySFFile")),
+  muonCutFile_ (cfg.getParameter<string> ("muonCutFile")),
+  muonCut_ (cfg.getParameter<string> ("muonCut")),
+  electronCutFile_ (cfg.getParameter<string> ("electronCutFile")),
+  electronCut_ (cfg.getParameter<string> ("electronCut")),
+  recoMuonFile_ (cfg.getParameter<string> ("recoMuonFile")),
+  recoMuon_ (cfg.getParameter<string> ("recoMuon")),
+  recoElectronFile_ (cfg.getParameter<string> ("recoElectronFile")),
+  recoElectron_ (cfg.getParameter<string> ("recoElectron")),
   isrVarySFFile_ (cfg.getParameter<string> ("isrVarySFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
   electronSFID_ (cfg.getParameter<string> ("electronSFID")),
@@ -52,6 +60,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   applyTriggerSF_ (cfg.getParameter<bool> ("applyTriggerSF")),
   triggerScaleFactor_ (cfg.getParameter<double> ("triggerScaleFactor")),
   applyLeptonSF_ (cfg.getParameter<bool> ("applyLeptonSF")),
+  applyGentoRecoEfficiency_ (cfg.getParameter<bool> ("applyGentoRecoEfficiency")),
   applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
@@ -103,6 +112,10 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 		     << "  flagJESJERCorr_                  = " <<  flagJESJERCorr_                  << endl   
 		     << "  triggerMetSFFile_                = " <<  triggerMetSFFile_                << endl   
 		     << "  trackNMissOutSFFile_             = " <<  trackNMissOutSFFile_             << endl   
+		     << "  muonCutWeight_             = " <<  muonCutWeight_             << endl   
+    		     << "  electronCutWeight_             = " <<  electronCutWeight_             << endl  
+		     << "  recoMuonWeight_             = " <<  recoMuonWeight_             << endl   
+		     << "  recoElectronWeight_             = " <<  recoElectronWeight_             << endl   
 		     << "  isrVarySFFile_                   = " <<  isrVarySFFile_                   << endl   
 		     << "  dataPU_                          = " <<  dataPU_                          << endl   
 		     << "  electronSFID_                    = " <<  electronSFID_                    << endl   
@@ -110,6 +123,10 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 		     << "  muonSF_                          = " <<  muonSF_                          << endl   
 		     << "  triggerMetSF_                    = " <<  triggerMetSF_                    << endl   
 		     << "  trackNMissOutSF_                 = " <<  trackNMissOutSF_                 << endl   
+		     << "  muonCut_                 = " <<  muonCut_                 << endl   
+		     << "  electronCut_                 = " <<  electronCut_                 << endl   
+		     << "  recoMuon_                 = " <<  recoMuon_                 << endl   
+		     << "  recoElectron_                 = " <<  recoElectron_                 << endl   
 		     << "  isrVarySF_                       = " <<  isrVarySF_                       << endl   
 		     << "  dataset_                         = " <<  dataset_                         << endl   
 		     << "  datasetType_                     = " <<  datasetType_                     << endl   
@@ -121,6 +138,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 		     << "  doPileupReweighting_             = " <<  doPileupReweighting_             << endl   
 		     << "  doTopPtReweighting_              = " <<  doTopPtReweighting_              << endl   
 		     << "  applyTriggerSF_                  = " <<  applyTriggerSF_                  << endl   
+		     << "  applyGentoRecoEfficiency_        = " <<  applyGentoRecoEfficiency_        << endl   
 		     << "  triggerScaleFactor_              = " <<  triggerScaleFactor_              << endl   
 		     << "  applyLeptonSF_                   = " <<  applyLeptonSF_                   << endl   
 		     << "  applyTrackingSF_                 = " <<  applyTrackingSF_                 << endl   
@@ -208,6 +226,12 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if (EcaloVarySFFile_ != "" ){
       EcaloVarySFWeight_ = new EcaloVarySFWeight(EcaloVarySFFile_, EcaloVarySF_);  
     }
+    if(applyGentoRecoEfficiency_){
+      muonCutWeight_ = new MuonCutWeight(muonCutFile_, muonCut_);  
+      electronCutWeight_ = new ElectronCutWeight(electronCutFile_, electronCut_);
+      recoElectronWeight_ = new RecoElectronWeight(recoElectronFile_, recoElectron_);
+      recoMuonWeight_ = new RecoMuonWeight(recoMuonFile_, recoMuon_);
+    }
     if (isrVarySFFile_ != "" ){
       if (isrVarySFFile_.find("XXX")!=string::npos) { 
 	// Assumes that isrVarySFFile_ has the form "compareIsr*XXXK*Ratio.root and that 
@@ -286,6 +310,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "event-electron pairs") tempInputCollection = "electron-event pairs";
     if(tempInputCollection == "jet-met pairs")  tempInputCollection = "met-jet pairs";
     if(tempInputCollection == "mcparticle-met pairs")  tempInputCollection = "met-mcparticle pairs";
+    if(tempInputCollection == "secondary mcparticle-jet pairs")  tempInputCollection = "jet-secondary mcparticle pairs";
+    if(tempInputCollection == "mcparticle-jet pairs")  tempInputCollection = "jet-mcparticle pairs";
+    if(tempInputCollection == "secondary mcparticle-mcparticle pairs")  tempInputCollection = "mcparticle-secondary mcparticle pairs";
     if(tempInputCollection == "track-jet pairs")  tempInputCollection = "track-jet pairs";
     if(tempInputCollection == "event-track pairs")   tempInputCollection = "track-event pairs";
     if(tempInputCollection == "secondary muon-muon pairs")   tempInputCollection = "muon-secondary muon pairs";
@@ -301,6 +328,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
     if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
     if(tempInputCollection == "mcparticle-muon pairs")   tempInputCollection = "muon-mcparticle pairs";
+    if(tempInputCollection == "secondary mcparticle-muon pairs")   tempInputCollection = "muon-secondary mcparticle pairs";
     if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
     if(tempInputCollection.find("pairs")==string::npos){ //just a single object
       if(tempInputCollection.find("secondary")!=string::npos){//secondary object
@@ -532,6 +560,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       if(tempInputCollection == "event-electron pairs") tempInputCollection = "electron-event pairs";
       if(tempInputCollection == "jet-met pairs")  tempInputCollection = "met-jet pairs";
       if(tempInputCollection == "mcparticle-met pairs")  tempInputCollection = "met-mcparticle pairs";
+      if(tempInputCollection == "secondary mcparticle-jet pairs")  tempInputCollection = "jet-secondary mcparticle pairs";
+      if(tempInputCollection == "mcparticle-jet pairs")  tempInputCollection = "jet-mcparticle pairs";
+      if(tempInputCollection == "secondary mcparticle-mcparticle pairs")  tempInputCollection = "mcparticle-secondary mcparticle pairs";
       if(tempInputCollection == "track-jet pairs")  tempInputCollection = "track-jet pairs";
       if(tempInputCollection == "jet-photon pairs") tempInputCollection = "photon-jet pairs";
       if(tempInputCollection == "event-track pairs")   tempInputCollection = "track-event pairs";
@@ -548,6 +579,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       if(tempInputCollection == "trigobj-muon pairs")   tempInputCollection = "muon-trigobj pairs";
       if(tempInputCollection == "mcparticle-electron pairs")   tempInputCollection = "electron-mcparticle pairs";
       if(tempInputCollection == "mcparticle-muon pairs")   tempInputCollection = "muon-mcparticle pairs";
+      if(tempInputCollection == "secondary mcparticle-muon pairs")   tempInputCollection = "muon-secondary mcparticle pairs";
       if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
       tempCut.inputCollection = tempInputCollection;
       if(tempInputCollection.find("pairs")==string::npos){ //just a single object
@@ -839,6 +871,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         else if(currentObject == "photon-jet pairs")            currentObject = "photonJetPairs";
         else if(currentObject == "met-jet pairs")             currentObject = "metJetPairs";
         else if(currentObject == "met-mcparticle pairs")      currentObject = "metMcParticlePairs";
+        else if(currentObject == "jet-mcparticle pairs")      currentObject = "jetMcParticlePairs";
+        else if(currentObject == "jet-secondary mcparticle pairs")      currentObject = "jetSecondaryMcParticlePairs";
+        else if(currentObject == "mcparticle-secondary mcparticle pairs")      currentObject = "mcParticleSecondaryMcParticlePairs";
         else if(currentObject == "track-jet pairs")           currentObject = "trackJetPairs";
         else if(currentObject == "muon-secondary jet pairs")  currentObject = "muonSecondaryJetPairs";
         else if(currentObject == "muon-secondary photon pairs")  currentObject = "muonSecondaryPhotonPairs";
@@ -861,6 +896,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         else if(currentObject == "electron-trigobj pairs")    currentObject = "electronTrigobjPairs";
         else if(currentObject == "muon-trigobj pairs")        currentObject = "muonTrigobjPairs";
         else if(currentObject == "electron-mcparticle pairs") currentObject = "electronMCparticlePairs";
+        else if(currentObject == "muon-secondary mcparticle pairs") currentObject = "muonSecondayMCparticlePairs";
         else if(currentObject == "muon-mcparticle pairs") currentObject = "muonMCparticlePairs";
         else if(currentObject == "track-mcparticle pairs")    currentObject = "trackMCparticlePairs";
 
@@ -1309,7 +1345,6 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
         else if(currentObject == "electron-electron pairs")           setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),electrons.product(), "electron-electron pairs");
         else if(currentObject == "electron-muon pairs")     setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),muons.product(), "electron-muon pairs");
-        else if(currentObject == "jet-jet pairs")           setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),jets.product(), "jet-jet pairs");
         else if(currentObject == "jet-secondary jet pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),jets.product(), "jet-secondary jet pairs");
         else if(currentObject == "electron-jet pairs")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),jets.product(), "electron-jet pairs");
         else if(currentObject == "secondary electron-jet pairs")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),jets.product(), "secondary electron-jet pairs");
@@ -1321,6 +1356,9 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "electron-event pairs")        setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),events.product(), "electron-event pairs");
         else if(currentObject == "met-jet pairs")           setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,mets.product(),jets.product(), "met-jet pairs");
         else if(currentObject == "met-mcparticle pairs")    setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,mets.product(),mcparticles.product(), "met-mcparticle pairs");
+        else if(currentObject == "jet-mcparticle pairs")    setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),mcparticles.product(), "jet-mcparticle pairs");
+        else if(currentObject == "jet-secondary mcparticle pairs")    setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),mcparticles.product(), "jet-secondary mcparticle pairs");
+        else if(currentObject == "mcparticle-secondary mcparticle pairs")    setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,mcparticles.product(),mcparticles.product(), "mcparticle-secondary mcparticle pairs");
         else if(currentObject == "track-jet pairs")         setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),jets.product(), "track-jet pairs");
         else if(currentObject == "muon-photon pairs")       setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),photons.product(), "muon-photon pairs");
         else if(currentObject == "track-event pairs")       setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),events.product(), "track-event pairs");
@@ -1334,6 +1372,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "electron-trigobj pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),trigobjs.product(),"electron-trigobj pairs");
         else if(currentObject == "muon-trigobj pairs")      setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),trigobjs.product(),"muon-trigobj pairs");
         else if(currentObject == "electron-mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),mcparticles.product(),"electron-mcparticle pairs");
+        else if(currentObject == "muon-secondary mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),mcparticles.product(),"muon-secondary mcparticle pairs");
         else if(currentObject == "muon-mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),mcparticles.product(),"muon-mcparticle pairs");
         else if(currentObject == "track-mcparticle pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),mcparticles.product(),"track-mcparticle pairs");
 
@@ -1394,6 +1433,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     trackNMissOutScaleFactor_ = 1.0;  
     EcaloVaryScaleFactor_ = 1.0;  
     isrVaryScaleFactor_       = 1.0;  
+    muonCutEfficiency_ = electronCutEfficiency_ =  recoMuonEfficiency_ =  recoElectronEfficiency_ = 1.0;
 
 
 
@@ -1440,6 +1480,83 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     }
       
 
+    // Reweighting for generated event to emulate CMS reco efficiency and analysis cut efficiency
+
+    if(applyGentoRecoEfficiency_ && datasetType_ != "data"){
+      string dummy = "";
+
+
+      //RecoElectronWeight function of d0Beamspot
+      if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
+        flagPair mcFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("mcparticles").at(i).size()){
+            mcFlags = cumulativeFlags.at("mcparticles").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
+          if(!mcFlags.at(mcparticleIndex).second) continue;
+	  recoElectronEfficiency_ *= recoElectronWeight_->at (abs(valueLookup(&mcparticles->at(mcparticleIndex), "d0Beamspot", "", dummy)));
+	  recoElectronEfficiency_ *= electronCutWeight_->at (mcparticles->at(mcparticleIndex).pt);
+        }
+      }
+
+      // RecoMuonWeight function of d0Beamspot
+      if(find(objectsToCut.begin(),objectsToCut.end(),"secondary mcparticles") != objectsToCut.end ()){
+        flagPair mcFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("secondary mcparticles").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("secondary mcparticles").at(i).size()){
+	    mcFlags = cumulativeFlags.at("secondary mcparticles").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint secondaryMcParticleIndex = 0; secondaryMcParticleIndex != mcFlags.size(); secondaryMcParticleIndex++){
+          if(!mcFlags.at(secondaryMcParticleIndex).second) continue;
+	  recoMuonEfficiency_ *= recoMuonWeight_->at (abs(valueLookup(&mcparticles->at(secondaryMcParticleIndex), "d0Beamspot", "", dummy)));
+        }
+      }
+
+
+      // ElectronCutWeight function of pt
+      if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
+        flagPair mcFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("mcparticles").at(i).size()){
+            mcFlags = cumulativeFlags.at("mcparticles").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
+          if(!mcFlags.at(mcparticleIndex).second) continue;
+	  electronCutEfficiency_ *= electronCutWeight_->at (mcparticles->at(mcparticleIndex).pt);
+        }
+      }
+
+      // MuonCutWeight function of pt 
+      if(find(objectsToCut.begin(),objectsToCut.end(),"secondary mcparticles") != objectsToCut.end ()){
+        flagPair mcFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("secondary mcparticles").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("secondary mcparticles").at(i).size()){
+	    mcFlags = cumulativeFlags.at("secondary mcparticles").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint secondaryMcParticleIndex = 0; secondaryMcParticleIndex != mcFlags.size(); secondaryMcParticleIndex++){
+          if(!mcFlags.at(secondaryMcParticleIndex).second) continue;
+	  muonCutEfficiency_ *= muonCutWeight_->at (mcparticles->at(secondaryMcParticleIndex).pt);
+        }
+      }
+    }
+     
 
     // Track weighting for muons
 
@@ -1462,7 +1579,6 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           if (trackSFShift_ == "down") shiftUpDown = -1;
 	  //	  cout << "before applying trackSFWeight muons SF=" << muonTrackScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
 	  muonTrackScaleFactor_ *= trackSFWeight_->at (muons->at(muonIndex).correctedD0,shiftUpDown);
-	  //	  cout << " after applying trackSFWeight" << muonTrackScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
         }
       }
       
@@ -1586,6 +1702,13 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     channelScaleFactor_ *= trackNMissOutScaleFactor_;
     channelScaleFactor_ *= EcaloVaryScaleFactor_;
     channelScaleFactor_ *= isrVaryScaleFactor_;  
+    channelScaleFactor_ *= recoElectronEfficiency_;
+    channelScaleFactor_ *= recoMuonEfficiency_;
+    channelScaleFactor_ *= electronCutEfficiency_;
+    channelScaleFactor_ *= muonCutEfficiency_;
+
+
+    
 
 
     //calculate the total scale factor for the event and fill the cutflow for each channel
@@ -1721,6 +1844,12 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                           cumulativeFlags.at("met-jet pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "met-mcparticle pairs")  fill1DHistogram(histo,currentHistogram, mets.product(),mcparticles.product(),
                                                                                           cumulativeFlags.at("met-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "jet-mcparticle pairs")  fill1DHistogram(histo,currentHistogram, jets.product(),mcparticles.product(),
+                                                                                          cumulativeFlags.at("jet-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "jet-secondary mcparticle pairs")  fill1DHistogram(histo,currentHistogram, jets.product(),mcparticles.product(),
+                                                                                          cumulativeFlags.at("jet-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "mcparticle-secondary mcparticle pairs")  fill1DHistogram(histo,currentHistogram, jets.product(),mcparticles.product(),
+                                                                                          cumulativeFlags.at("mcparticle-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "track-jet pairs")  fill1DHistogram(histo,currentHistogram,tracks.product(),jets.product(),
                                                                                           cumulativeFlags.at("track-jet pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-photon pairs") fill1DHistogram(histo,currentHistogram, muons.product(),photons.product(),
@@ -1748,6 +1877,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
             else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),mcparticles.product(), cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-mcparticle pairs") fill1DHistogram(histo,currentHistogram, muons.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("muon-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "muon-secondary mcparticle pairs") fill1DHistogram(histo,currentHistogram, muons.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("muon-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill1DHistogram(histo,currentHistogram, tracks.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
             // fill the histograms of weighting factors with 1, to see the shape of a SF without any weight applied
@@ -1815,6 +1946,12 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                          cumulativeFlags.at("met-jet pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "met-mcparticle pairs") fill2DHistogram(histo,currentHistogram,mets.product(),mcparticles.product(),
                                                                                          cumulativeFlags.at("met-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "jet-mcparticle pairs") fill2DHistogram(histo,currentHistogram,jets.product(),mcparticles.product(),
+                                                                                         cumulativeFlags.at("jet-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "jet-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,jets.product(),mcparticles.product(),
+                                                                                         cumulativeFlags.at("jet-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "mcparticle-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,jets.product(),mcparticles.product(),
+                                                                                         cumulativeFlags.at("mcparticle-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "track-jet pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),jets.product(),
                                                                                          cumulativeFlags.at("track-jet pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "photon-jet pairs") fill2DHistogram(histo,currentHistogram,photons.product(),jets.product(),
@@ -1841,6 +1978,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                               cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),mcparticles.product(), cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "muon-mcparticle pairs") fill2DHistogram(histo,currentHistogram,muons.product(),mcparticles.product(), cumulativeFlags.at("muon-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(currentHistogram.inputCollection == "muon-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,muons.product(),mcparticles.product(), cumulativeFlags.at("muon-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
             else if(currentHistogram.inputCollection == "events") fill2DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
@@ -1884,6 +2022,9 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "photon-jet pairs")                   objectToPlot = "photonJetPairs";
           else if(currentObject == "met-jet pairs")                      objectToPlot = "metJetPairs";
           else if(currentObject == "met-mcparticle pairs")               objectToPlot = "metMcParticlePairs";
+          else if(currentObject == "jet-mcparticle pairs")               objectToPlot = "jetMcParticlePairs";
+          else if(currentObject == "jet-secondary mcparticle pairs")     objectToPlot = "jetSecondaryMcParticlePairs";
+          else if(currentObject == "mcparticle-secondary mcparticle pairs")     objectToPlot = "mcParticleSecondaryMcParticlePairs";
           else if(currentObject == "track-jet pairs")                    objectToPlot = "trackJetPairs";
           else if(currentObject == "jet-jet pairs")                      objectToPlot = "dijetPairs";
           else if(currentObject == "jet-secondary jet pairs")            objectToPlot = "jetSecondaryJetPairs";
@@ -1911,6 +2052,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "muon-trigobj pairs")                 objectToPlot = "muonTrigobjPairs";
           else if(currentObject == "electron-mcparticle pairs")          objectToPlot = "electronMCparticlePairs";
           else if(currentObject == "muon-mcparticle pairs")          objectToPlot = "muonMCparticlePairs";
+          else if(currentObject == "muon-secondary mcparticle pairs")          objectToPlot = "muonSecondaryMCparticlePairs";
           else if(currentObject == "track-mcparticle pairs")             objectToPlot = "trackMCparticlePairs";
           else objectToPlot = currentObject;
 
@@ -5250,6 +5392,41 @@ OSUAnalysis::valueLookup (const BNmuon* object1, const BNmcparticle* object2, st
 
   return value;
 }
+
+
+//!mcparticle-mcparticle pair valueLookup
+double
+OSUAnalysis::valueLookup (const BNmcparticle* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+
+  double value = 0.0;
+
+  if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
+  else if(variable == "chargeProduct"){
+    value = object1->charge*object2->charge;
+  }
+  else{clog << "WARNING: invalid mcparticle-mcparticle variable '" << variable << "'\n"; value = -999;}
+  value = applyFunction(function, value);
+
+  return value;
+}
+
+
+//!jet-mcparticle pair valueLookup
+double
+OSUAnalysis::valueLookup (const BNjet* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+
+  double value = 0.0;
+
+  if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
+
+
+  else{clog << "WARNING: invalid jet-mcparticle variable '" << variable << "'\n"; value = -999;}
+  value = applyFunction(function, value);
+
+  return value;
+}
+
+
 
 //!track-mcparticle pair valueLookup
 double

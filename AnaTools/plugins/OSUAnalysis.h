@@ -112,6 +112,8 @@ class OSUAnalysis : public edm::EDProducer
 
       double valueLookup (const BNelectron* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
       double valueLookup (const BNmuon* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
+      double valueLookup (const BNmcparticle* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
+      double valueLookup (const BNjet* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
       double valueLookup (const BNtrack* object1,   const BNmcparticle* object2, string variable, string function, string &stringValue);  
 
 
@@ -211,6 +213,14 @@ class OSUAnalysis : public edm::EDProducer
       string triggerMetSFFile_;
       string trackNMissOutSFFile_;
       string EcaloVarySFFile_;
+      string muonCutFile_;
+      string muonCut_;
+      string electronCutFile_;
+      string electronCut_;
+      string recoMuonFile_;
+      string recoMuon_;
+      string recoElectronFile_;
+      string recoElectron_;
       string isrVarySFFile_; 
       string dataPU_;
       string electronSFID_;
@@ -233,6 +243,7 @@ class OSUAnalysis : public edm::EDProducer
       double triggerScaleFactor_;
       double trackingScaleFactor_;
       bool applyLeptonSF_;
+      bool applyGentoRecoEfficiency_;
       bool applyTrackingSF_;
       bool applyBtagSF_;
       int  minBtag_;
@@ -374,6 +385,14 @@ class OSUAnalysis : public edm::EDProducer
       double trackNMissOutScaleFactor_;
       EcaloVarySFWeight *EcaloVarySFWeight_;
       double EcaloVaryScaleFactor_;
+      MuonCutWeight *muonCutWeight_;
+      double muonCutEfficiency_;
+      ElectronCutWeight *electronCutWeight_;
+      double electronCutEfficiency_;
+      RecoMuonWeight *recoMuonWeight_;
+      double recoMuonEfficiency_;
+      RecoElectronWeight *recoElectronWeight_;
+      double recoElectronEfficiency_;
       IsrVarySFWeight *isrVarySFWeight_;
       double isrVaryScaleFactor_;
 

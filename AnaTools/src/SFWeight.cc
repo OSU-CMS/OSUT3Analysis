@@ -471,6 +471,115 @@ IsrVarySFWeight::~IsrVarySFWeight ()
 }
 
 
+// Define four classes that will be used to reweight generated event to emulate the CMS reconstruction and the set of cut applied in the displaced susy analysis
+
+// MuonCutWeight
+MuonCutWeight::MuonCutWeight (const string &sfFile, const string &dataOverMC)
+{
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
+  if (!dataOverMCHist) cout << "Fatal Error [MuonCutWeight::MuonCutWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  muonCutWeight_ = (TH1F*)  dataOverMCHist->Clone();
+  muonCutWeight_->GetEntries();  // to avoid the crashing warning
+  delete dataOverMCHist;
+  fin->Close ();
+  delete fin;
+}
+
+ 
+double
+MuonCutWeight::at(const double &pt) 
+{  
+  int bin = muonCutWeight_->FindBin(pt);  
+  return  muonCutWeight_->GetBinContent(bin);
+}
+
+MuonCutWeight::~MuonCutWeight ()
+{
+  delete muonCutWeight_;
+}
+
+
+// ElectronCutWeight
+ElectronCutWeight::ElectronCutWeight (const string &sfFile, const string &dataOverMC)
+{
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
+  if (!dataOverMCHist) cout << "Fatal Error [ElectronCutWeight::ElectronCutWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  electronCutWeight_ = (TH1F*)  dataOverMCHist->Clone();
+  electronCutWeight_->GetEntries();  // to avoid the crashing warning
+  delete dataOverMCHist;
+  fin->Close ();
+  delete fin;
+}
+
+ 
+double
+ElectronCutWeight::at(const double &pt) 
+{  
+  int bin = electronCutWeight_->FindBin(pt);  
+  return  electronCutWeight_->GetBinContent(bin); 
+}
+
+ElectronCutWeight::~ElectronCutWeight ()
+{
+  delete electronCutWeight_;
+}
+
+// RecoElectronWeight
+RecoElectronWeight::RecoElectronWeight (const string &sfFile, const string &dataOverMC)
+{
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
+  if (!dataOverMCHist) cout << "Fatal Error [RecoElectronWeight::RecoElectronWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  recoElectronWeight_ = (TH1F*)  dataOverMCHist->Clone();
+  recoElectronWeight_->GetEntries();  
+  delete dataOverMCHist;
+  fin->Close ();
+  delete fin;
+}
+
+ 
+double
+RecoElectronWeight::at(const double &d0) 
+{  
+  int bin = recoElectronWeight_->FindBin(d0);  
+  return recoElectronWeight_->GetBinContent(bin); 
+}
+
+RecoElectronWeight::~RecoElectronWeight ()
+{
+  delete recoElectronWeight_;
+}
+
+// RecoMuonWeight
+RecoMuonWeight::RecoMuonWeight (const string &sfFile, const string &dataOverMC)
+{
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
+  if (!dataOverMCHist) cout << "Fatal Error [RecoMuonWeight::RecoMuonWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  recoMuonWeight_ = (TH1F*)  dataOverMCHist->Clone();
+  recoMuonWeight_->GetEntries();  // to avoid the crashing warning
+  delete dataOverMCHist;
+  fin->Close ();
+  delete fin;
+}
+
+ 
+double
+RecoMuonWeight::at(const double &d0) 
+{  
+  int bin = recoMuonWeight_->FindBin(d0);  
+  return  recoMuonWeight_->GetBinContent(bin); 
+}
+
+RecoMuonWeight::~RecoMuonWeight ()
+{
+  delete recoMuonWeight_;
+}
+
+
+
 
 
 /*
