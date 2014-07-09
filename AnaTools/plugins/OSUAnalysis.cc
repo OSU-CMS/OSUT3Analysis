@@ -30,6 +30,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   flagJESJERCorr_(cfg.getParameter<bool> ("flagJESJERCorr")),
   triggerMetSFFile_ (cfg.getParameter<string> ("triggerMetSFFile")),
   trackNMissOutSFFile_ (cfg.getParameter<string> ("trackNMissOutSFFile")),
+  EcaloVarySFFile_ (cfg.getParameter<string> ("EcaloVarySFFile")),
   isrVarySFFile_ (cfg.getParameter<string> ("isrVarySFFile")),
   dataPU_ (cfg.getParameter<string> ("dataPU")),
   electronSFID_ (cfg.getParameter<string> ("electronSFID")),
@@ -37,6 +38,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   muonSF_ (cfg.getParameter<string> ("muonSF")),
   triggerMetSF_ (cfg.getParameter<string> ("triggerMetSF")),
   trackNMissOutSF_ (cfg.getParameter<string> ("trackNMissOutSF")),
+  EcaloVarySF_ (cfg.getParameter<string> ("EcaloVarySF")),
   isrVarySF_ (cfg.getParameter<string> ("isrVarySF")),
   dataset_ (cfg.getParameter<string> ("dataset")),
   datasetType_ (cfg.getParameter<string> ("datasetType")),
@@ -60,6 +62,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   muonSFShift_ (cfg.getParameter<string> ("muonSFShift")),
   triggerMetSFShift_ (cfg.getParameter<string> ("triggerMetSFShift")),
   trackNMissOutSFShift_ (cfg.getParameter<string> ("trackNMissOutSFShift")),
+  EcaloVarySFShift_ (cfg.getParameter<string> ("EcaloVarySFShift")),
   isrVarySFShift_ (cfg.getParameter<string> ("isrVarySFShift")),
   trackSFShift_ (cfg.getParameter<string> ("trackSFShift")),
   printEventInfo_      (cfg.getParameter<bool> ("printEventInfo")),
@@ -201,6 +204,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     }
     if (trackNMissOutSFFile_ != "" ){
       trackNMissOutSFWeight_ = new TrackNMissOutSFWeight(trackNMissOutSFFile_, trackNMissOutSF_);  
+    }
+    if (EcaloVarySFFile_ != "" ){
+      EcaloVarySFWeight_ = new EcaloVarySFWeight(EcaloVarySFFile_, EcaloVarySF_);  
     }
     if (isrVarySFFile_ != "" ){
       if (isrVarySFFile_.find("XXX")!=string::npos) { 
@@ -1386,6 +1392,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     muonScaleFactor_ = electronScaleFactor_ =  muonTrackScaleFactor_ =  electronTrackScaleFactor_ = bTagScaleFactor_ = 1.0;
     triggerMetScaleFactor_    = 1.0;  
     trackNMissOutScaleFactor_ = 1.0;  
+    EcaloVaryScaleFactor_ = 1.0;  
     isrVaryScaleFactor_       = 1.0;  
 
 
@@ -1512,6 +1519,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
       if (const BNmet *met = chosenMET ()) { 
 	triggerMetScaleFactor_ *= triggerMetSFWeight_->at (met->pt, shiftUpDown);  
       }
+
     }
 
     if(trackNMissOutSFFile_ != "" && datasetType_ != "data"){
@@ -1535,6 +1543,31 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
       }
     }
 
+    if(EcaloVarySFFile_ != "" && datasetType_ != "data"){
+      if(find(objectsToCut.begin(),objectsToCut.end(),"tracks") != objectsToCut.end ()){
+        flagPair trkFlags;
+        //get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at("tracks").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("tracks").at(i).size()){
+            trkFlags = cumulativeFlags.at("tracks").at(i);
+            break;
+          }
+        }
+        //apply the weight for each of those objects
+        for (uint trkIndex = 0; trkIndex != trkFlags.size(); trkIndex++){
+          if(!trkFlags.at(trkIndex).second) continue;
+          int shiftUpDown = 0;
+          if (EcaloVarySFShift_ == "up")   shiftUpDown =  1; 
+          if (EcaloVarySFShift_ == "down") shiftUpDown = -1; 
+	  string dummy = "";
+	  double caloTot = valueLookup(&tracks->at(trkIndex), "caloTotDeltaRp5RhoCorr", "", dummy);
+	  EcaloVaryScaleFactor_ *= EcaloVarySFWeight_->at (caloTot, shiftUpDown);
+	}
+      }
+    }
+
+
+
     if (isrVarySFFile_ != "" && datasetType_ != "data"){
       int shiftUpDown = 0;
       if (isrVarySFShift_ == "up")   shiftUpDown =  1; 
@@ -1551,6 +1584,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     channelScaleFactor_ *= bTagScaleFactor_;
     channelScaleFactor_ *= triggerMetScaleFactor_;
     channelScaleFactor_ *= trackNMissOutScaleFactor_;
+    channelScaleFactor_ *= EcaloVaryScaleFactor_;
     channelScaleFactor_ *= isrVaryScaleFactor_;  
 
 
@@ -3302,6 +3336,7 @@ OSUAnalysis::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "triggerScaleFactor") value = triggerScaleFactor_;
   else if(variable == "triggerMetScaleFactor") value = triggerMetScaleFactor_;
   else if(variable == "trackNMissOutScaleFactor") value = trackNMissOutScaleFactor_;
+  else if(variable == "EcaloVaryScaleFactor") value = EcaloVaryScaleFactor_;
   else if(variable == "isrVaryScaleFactor") value = isrVaryScaleFactor_;  
   else if(variable == "globalScaleFactor") value = globalScaleFactor_;
   else if(variable == "channelScaleFactor") value = channelScaleFactor_;
