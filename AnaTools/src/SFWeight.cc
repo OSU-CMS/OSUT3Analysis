@@ -366,7 +366,18 @@ ElectronSFWeight::~ElectronSFWeight ()
     delete electronSFWeight_;
 }
 
+double
+TriggerMetSFWeight::at(const double &Met, const int &shiftUpDown)
+{
+  int bin = triggerMetSFWeight_->FindBin(Met);
+  return 1.0 + triggerMetSFWeight_->GetBinContent(bin) + shiftUpDown * triggerMetSFWeight_->GetBinError(bin);\
+  // Add 1.0 because the histogram bin content is (data-MC)/MC                                                      
+}
 
+TriggerMetSFWeight::~TriggerMetSFWeight ()
+{
+  delete triggerMetSFWeight_;
+}
 
 TriggerMetSFWeight::TriggerMetSFWeight (const string &sfFile, const string &dataOverMC)
 {
@@ -382,16 +393,17 @@ TriggerMetSFWeight::TriggerMetSFWeight (const string &sfFile, const string &data
 
  
 double
-TriggerMetSFWeight::at(const double &Met, const int &shiftUpDown) 
+TrackNMissOutSFWeight::at(const double &NMissOut, const int &shiftUpDown) 
 {  
-  int bin = triggerMetSFWeight_->FindBin(Met);  
-  return 1.0 + triggerMetSFWeight_->GetBinContent(bin) + shiftUpDown * triggerMetSFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
+  int bin = trackNMissOutSFWeight_->FindBin(NMissOut);  
+  return 1.0 + trackNMissOutSFWeight_->GetBinContent(bin) + shiftUpDown * trackNMissOutSFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
 }
 
-TriggerMetSFWeight::~TriggerMetSFWeight ()
+TrackNMissOutSFWeight::~TrackNMissOutSFWeight ()
 {
-  delete triggerMetSFWeight_;
+  delete trackNMissOutSFWeight_;
 }
+
 
 
 
@@ -409,17 +421,28 @@ TrackNMissOutSFWeight::TrackNMissOutSFWeight (const string &sfFile, const string
 
  
 double
-TrackNMissOutSFWeight::at(const double &NMissOut, const int &shiftUpDown) 
+EcaloVarySFWeight::at(const double &EcaloVary, const int &shiftUpDown) 
 {  
-  int bin = trackNMissOutSFWeight_->FindBin(NMissOut);  
-  return 1.0 + trackNMissOutSFWeight_->GetBinContent(bin) + shiftUpDown * trackNMissOutSFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
+  int bin = EcaloVarySFWeight_->FindBin(EcaloVary);  
+  return 1.0 + EcaloVarySFWeight_->GetBinContent(bin) + shiftUpDown * EcaloVarySFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
 }
 
-TrackNMissOutSFWeight::~TrackNMissOutSFWeight ()
+EcaloVarySFWeight::~EcaloVarySFWeight ()
 {
-  delete trackNMissOutSFWeight_;
+  delete EcaloVarySFWeight_;
 }
 
+EcaloVarySFWeight::EcaloVarySFWeight (const string &sfFile, const string &dataOverMC)
+{
+  TFile *fin = TFile::Open (sfFile.c_str ());
+  TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
+  if (!dataOverMCHist) cout << "Fatal Error [EcaloVarySFWeight::EcaloVarySFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;
+  EcaloVarySFWeight_ = (TH1F*)  dataOverMCHist->Clone();
+  EcaloVarySFWeight_->GetEntries();  // to avoid the crashing warning                                           
+  delete dataOverMCHist;
+  fin->Close ();
+  delete fin;
+}
 
 
 IsrVarySFWeight::IsrVarySFWeight (const string &sfFile, const string &dataOverMC)
