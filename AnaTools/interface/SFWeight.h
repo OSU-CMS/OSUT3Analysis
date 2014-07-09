@@ -86,6 +86,20 @@ class TrackNMissOutSFWeight
       TH1F *trackNMissOutSFWeight_; 
   };
 
+class EcaloVarySFWeight
+// Class for assigning a scale factor according to the number of missing out her hits for the selected track        
+{
+ public:
+  EcaloVarySFWeight (const string &sfFile, const string &dataOverMC);
+  ~EcaloVarySFWeight ();
+  double at (const double &EcaloVary, const int &shiftUpDown = 0);
+
+ private:
+  TH1F *EcaloVarySFWeight_;
+};
+
+
+
 class IsrVarySFWeight 
 // Class for assigning a scale factor according to the pT of ISR, which is taken to be equivalent to the sum(pT) of all status 3 Susy particles  
   {
