@@ -60,6 +60,7 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
 
     #deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/DeadEcalChannels.txt'),
     deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/ecalDpgMapCutPlusHotSpots.txt'),
+#    deadEcalFile = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/federicoMapCut.txt'),
     badCSCFile   = cms.string (os.environ['CMSSW_BASE']+'/src/OSUT3Analysis/Configuration/data/BadCSCChambers.txt'),  
     printAllTriggers = cms.bool(False),  # prints all available triggers (for first event only)  
     printEventInfo   = cms.bool(False),  # produces a lot of output, recommend using only with few channels and histograms
@@ -91,6 +92,9 @@ process.OSUAnalysis = cms.EDProducer ('OSUAnalysis',
     trackNMissOutSFFile = cms.string (''),  # filename 
     trackNMissOutSF = cms.string (''),      # histogram name 
     trackNMissOutSFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma
+    EcaloVarySFFile = cms.string (''),  # filename 
+    EcaloVarySF = cms.string (''),      # histogram name 
+    EcaloVarySFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma
     isrVarySFFile = cms.string (''),  # filename 
     isrVarySF  = cms.string (''),      # histogram name 
     isrVarySFShift = cms.string('central'), # change to 'up' to shift factors up 1 sigma, to 'down' to shift factors down 1 sigma
@@ -131,7 +135,7 @@ if osusub.batchMode:
     charginoCTau =  chargino_ctau (label)
     sourceCharginoCTau = source_chargino_ctau (charginoCTau)
     process.OSUAnalysis.stopCTau = cms.vdouble (sourceCharginoCTau, charginoCTau)  
-    print "Setting stopCTau = (" + str(sourceCharginoCTau) + ", " + str(charginoCTau) + ") for label = " + label + ", datasetType = " + str(process.OSUAnalysis.datasetType) + ", dataset = " + str(process.OSUAnalysis.dataset) 
+#    print "Setting stopCTau = (" + str(sourceCharginoCTau) + ", " + str(charginoCTau) + ") for label = " + label + ", datasetType = " + str(process.OSUAnalysis.datasetType) + ", dataset = " + str(process.OSUAnalysis.dataset) 
     
 
 
