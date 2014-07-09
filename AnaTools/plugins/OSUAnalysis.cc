@@ -1476,11 +1476,11 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     // Reweighting for generated event to emulate CMS reco efficiency and analysis cut efficiency
 
     if(applyGentoRecoEfficiency_ && datasetType_ != "data"){
-      //only apply SFs if we've cut on this object
-      cout << "if applyGentoRecoEfficiency_ && datasetType_ != data, has succeeded" << endl;
-      //RecoElectronWeight
+      string dummy = "";
+
+
+      //RecoElectronWeight function of d0Beamspot
       if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
-	cout << "passed if mcparticles" << endl;
         flagPair mcFlags;
         //get the last valid flags in the flag map
         for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
@@ -1492,32 +1492,30 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         //apply the weight for each of those objects
         for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
           if(!mcFlags.at(mcparticleIndex).second) continue;
-	  recoElectronEfficiency_ *= recoElectronWeight_->at (mcparticles->at(mcparticleIndex).pt);
-	  cout << "recoElectronEfficiency_ is " << recoElectronEfficiency_ << endl;
+	  recoElectronEfficiency_ *= recoElectronWeight_->at (abs(valueLookup(&mcparticles->at(mcparticleIndex), "d0Beamspot", "", dummy)));
+	  recoElectronEfficiency_ *= electronCutWeight_->at (mcparticles->at(mcparticleIndex).pt);
         }
       }
 
-      // RecoMuonWeight
-      if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
-	cout << "passed if mcparticles" << endl;
+      // RecoMuonWeight function of d0Beamspot
+      if(find(objectsToCut.begin(),objectsToCut.end(),"secondary mcparticles") != objectsToCut.end ()){
         flagPair mcFlags;
         //get the last valid flags in the flag map
-        for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
-	  cout << "mc particles loop" << endl;
-          if (cumulativeFlags.at("mcparticles").at(i).size()){
-            mcFlags = cumulativeFlags.at("mcparticles").at(i);
+        for (int i = cumulativeFlags.at("secondary mcparticles").size() - 1; i >= 0; i--){
+          if (cumulativeFlags.at("secondary mcparticles").at(i).size()){
+	    mcFlags = cumulativeFlags.at("secondary mcparticles").at(i);
             break;
           }
         }
         //apply the weight for each of those objects
-        for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
-          if(!mcFlags.at(mcparticleIndex).second) continue;
-	  recoMuonEfficiency_ *= recoMuonWeight_->at (mcparticles->at(mcparticleIndex).pt);
-	  cout << "muonCutEfficiency_ is " << muonCutEfficiency_ << endl;
+        for (uint secondaryMcParticleIndex = 0; secondaryMcParticleIndex != mcFlags.size(); secondaryMcParticleIndex++){
+          if(!mcFlags.at(secondaryMcParticleIndex).second) continue;
+	  recoMuonEfficiency_ *= recoMuonWeight_->at (abs(valueLookup(&mcparticles->at(secondaryMcParticleIndex), "d0Beamspot", "", dummy)));
         }
       }
 
-      // ElectronCutWeight
+
+      // ElectronCutWeight function of pt
       if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
         flagPair mcFlags;
         //get the last valid flags in the flag map
@@ -1531,11 +1529,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
           if(!mcFlags.at(mcparticleIndex).second) continue;
 	  electronCutEfficiency_ *= electronCutWeight_->at (mcparticles->at(mcparticleIndex).pt);
-	  cout << "muonCutEfficiency_ is " << muonCutEfficiency_ << endl;
         }
       }
 
-      // MuonCutWeight
+      // MuonCutWeight function of pt 
       if(find(objectsToCut.begin(),objectsToCut.end(),"secondary mcparticles") != objectsToCut.end ()){
         flagPair mcFlags;
         //get the last valid flags in the flag map
@@ -1549,14 +1546,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         for (uint secondaryMcParticleIndex = 0; secondaryMcParticleIndex != mcFlags.size(); secondaryMcParticleIndex++){
           if(!mcFlags.at(secondaryMcParticleIndex).second) continue;
 	  muonCutEfficiency_ *= muonCutWeight_->at (mcparticles->at(secondaryMcParticleIndex).pt);
-	  cout << "muonCutEfficiency_ is " << muonCutEfficiency_ << endl;
         }
       }
-
-
     }
      
-    // eof 
 
     // Track weighting for muons
 
