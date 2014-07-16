@@ -71,6 +71,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   muonSFShift_ (cfg.getParameter<string> ("muonSFShift")),
   triggerMetSFShift_ (cfg.getParameter<string> ("triggerMetSFShift")),
   trackNMissOutSFShift_ (cfg.getParameter<string> ("trackNMissOutSFShift")),
+  NmissoutShiftUp_(cfg.getParameter<bool> ("NmissoutShiftUp")),
+  NmissoutShiftDown_(cfg.getParameter<bool> ("NmissoutShiftDown")),
   EcaloVarySFShift_ (cfg.getParameter<string> ("EcaloVarySFShift")),
   isrVarySFShift_ (cfg.getParameter<string> ("isrVarySFShift")),
   trackSFShift_ (cfg.getParameter<string> ("trackSFShift")),
@@ -4081,7 +4083,31 @@ OSUAnalysis::valueLookup (const BNtrack* object, string variable, string functio
   else if(variable == "caloHadDeltaRp4")    value = object->caloHadDeltaRp4;
   else if(variable == "caloEMDeltaRp5")     value = object->caloEMDeltaRp5;
   else if(variable == "caloHadDeltaRp5")    value = object->caloHadDeltaRp5;
-  else if(variable == "nHitsMissingOuter")  value = object->nHitsMissingOuter;
+  else if (!NmissoutShiftUp_ && !NmissoutShiftDown_ && variable == "nHitsMissin\
+gOuter"){
+    value = object->nHitsMissingOuter;
+  }
+  else if (NmissoutShiftUp_ && variable == "nHitsMissingOuter") {
+    double r;
+    double d = -99;
+    d = object->nHitsMissingOuter;
+    r = ((double) rand() / (RAND_MAX));
+    if (r > 0.11) value = d;
+    else {
+      value = d += 1;
+    }
+  }
+  else if (NmissoutShiftDown_ && variable == "nHitsMissingOuter") {
+    double r;
+    double d = -99;
+    d = object->nHitsMissingOuter;
+    r = ((double) rand() / (RAND_MAX));
+    if (r > 0.11) value = d;
+    else {
+      if (d != 0) value = d+= -1;
+    }
+  }
+
   else if(variable == "nHitsMissingInner")  value = object->nHitsMissingInner;
   else if(variable == "nHitsMissingMiddle") value = object->nHitsMissingMiddle;
   else if(variable == "depTrkRp3")          value = object->depTrkRp3;
