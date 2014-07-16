@@ -1364,6 +1364,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "track-event pairs")       setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),events.product(), "track-event pairs");
         else if(currentObject == "electron-track pairs")    setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,electrons.product(),tracks.product(),"electron-track pairs");
         else if(currentObject == "muon-track pairs")        setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),tracks.product(),"muon-track pairs");
+        else if(currentObject == "jet-jet pairs")        setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),jets.product(),"jet-jet pairs");
         else if(currentObject == "jet-track pairs")        setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,jets.product(),tracks.product(),"jet-track pairs");
         else if(currentObject == "secondary muon-track pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,secMuons.product(),tracks.product(),"secondary muon-track pairs");
         else if(currentObject == "muon-tau pairs")          setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),taus.product(),"muon-tau pairs");
