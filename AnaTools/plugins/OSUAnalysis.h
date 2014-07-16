@@ -254,6 +254,8 @@ class OSUAnalysis : public edm::EDProducer
       string muonSFShift_;
       string triggerMetSFShift_;
       string trackNMissOutSFShift_;
+      bool NmissoutShiftUp_;
+      bool NmissoutShiftDown_;
       string EcaloVarySFShift_;
       string isrVarySFShift_;
       string trackSFShift_;
