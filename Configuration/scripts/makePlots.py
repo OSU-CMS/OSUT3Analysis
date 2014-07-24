@@ -34,6 +34,8 @@ parser.add_option("-N", "--normalizeFactor", dest="normalizeFactor",
                   help="scale bkgd MC by a specified scale factor")  
 parser.add_option("-q", "--quickRun", dest="quickHistName",
                   help="only make histograms that are named quickHistName")  
+parser.add_option("--qr", "--quickRename", dest="quickRename",
+                  help="only make histograms that are named quickHistName with a different label on x axis")  
 parser.add_option("-S", "--systematics", action="store_true", dest="includeSystematics", default=False,
                   help="also lists the systematic uncertainties")
 parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,		 
@@ -91,7 +93,7 @@ if arguments.makeSignificancePlots and arguments.makeDiffPlots:
     print "You have asked to make a difference plot and significance plots. This is a very strange request.  Will skip making the difference plot." 
     arguments.makeDiffPlots = False  
 
-from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TLegendEntry, THStack, TIter, TKey, TPaveLabel, gPad
+from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1, TH1F, TCanvas, TString, TLegend, TLegendEntry, THStack, TIter, TKey, TPaveLabel, gPad
 
 
 ### setting ROOT options so our plots will look awesome and everyone will love us
@@ -134,21 +136,22 @@ gROOT.ForceStyle()
 #set the text for the luminosity label
 if(intLumi < 1000.):
     LumiInPb = intLumi
-    LumiText = "L = " + str(intLumi) + " pb^{-1}"
-    LumiText = "L = " + str.format('{0:.1f}', LumiInPb) + " pb^{-1}"
+    LumiText = str(intLumi) + " pb^{-1}"
+    LumiText = str.format('{0:.1f}', LumiInPb) + " pb^{-1}"
 else:
     LumiInFb = intLumi/1000.
-    LumiText = "L = " + str.format('{0:.1f}', LumiInFb) + " fb^{-1}"
+    LumiText = str.format('{0:.1f}', LumiInFb) + " fb^{-1}"
 
 #bestest place for lumi. label, in top left corner
-topLeft_x_left    = 0.137
-topLeft_x_right   = 0.458
-topLeft_y_bottom  = 0.847
-topLeft_y_top     = 0.947
+topLeft_x_left    = 0.176
+topLeft_x_right   = 0.496
+topLeft_y_bottom  = 0.837
+topLeft_y_top     = 0.937
 topLeft_y_offset  = 0.04
 
 #set the text for the fancy heading
-HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 8 TeV"
+#HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 8 TeV"
+HeaderText = LumiText + " (8 TeV)"
 
 #position for header
 header_x_left    = 0.08892617
@@ -336,6 +339,7 @@ def MakeIntegralHist(hist, integrateDir):
     # return the integrated histogram, in the direction specified
     # integrateDir values: "left", "right", "none"
     if integrateDir is "none":
+        hist.SetBinErrorOption(TH1.kPoisson)
         return hist  # do nothing  
     integral = 0
     error = 0  
@@ -358,6 +362,7 @@ def MakeIntegralHist(hist, integrateDir):
         # Then include underflow bin in the first bin
         hist.SetBinContent(1, hist.GetBinContent(1) + hist.GetBinContent(0))     
         hist.SetBinError  (1, math.sqrt(hist.GetBinError(1)*hist.GetBinError(1) + hist.GetBinError(0)*hist.GetBinError(0)))     
+    hist.SetBinErrorOption(TH1.kPoisson)
     return hist 
  
 
@@ -509,8 +514,14 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             doRebin = True
             rebinFactor = paperHistogram['rebinFactor']
     ###############################################
-
-
+    renamePaperHist = False
+    if arguments.quickRename:
+        quickRenameString = arguments.quickRename
+    if arguments.paperConfig:
+        if 'quickRename' in paperHistogram:
+            renamePaperHist = True
+            quickRenameString = paperHistogram['quickRename']
+        
 
     Stack = THStack("stack",histogramName)
 
@@ -521,9 +532,21 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     HeaderLabel.SetFillColor(0)
     HeaderLabel.SetFillStyle(0)
 
-    LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
-    LumiLabel.SetTextAlign(32)
-    LumiLabel.SetTextFont(42)
+    CMSLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
+    CMSLabel.SetTextAlign(32)
+    CMSLabel.SetTextFont(42)
+    CMSLabel.SetBorderSize(0)
+    CMSLabel.SetFillColor(0)
+    CMSLabel.SetFillStyle(0)
+    if makeFancy:
+        LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,"CMS","NDC")
+        LumiLabel.SetTextFont(62)
+        LumiLabel.SetTextAlign(12)
+    else:
+        LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
+        LumiLabel.SetTextAlign(32)
+        LumiLabel.SetTextFont(42)
+
     LumiLabel.SetBorderSize(0)
     LumiLabel.SetFillColor(0)
     LumiLabel.SetFillStyle(0)
@@ -569,11 +592,20 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         dataset_file = "%s/%s.root" % (condor_dir,sample)
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
+        HistogramObj.SetBinErrorOption(TH1.kPoisson)
+        print "Name of Histogram Object : " + HistogramObj.GetXaxis().GetTitle()
+        print "Hist Obj Err: " + str(HistogramObj.GetBinErrorUp(5))
         if not HistogramObj:
             print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
-            continue 
+            continue
         Histogram = HistogramObj.Clone()
+        Histogram.SetBinErrorOption(TH1.kPoisson)
         Histogram.SetDirectory(0)
+        Histogram.SetBinErrorOption(TH1.kPoisson)
+        print "Name of Histogram : " + Histogram.GetXaxis().GetTitle()
+        print "Hist Err: " + str(Histogram.GetBinErrorUp(5))
+
+
         inputFile.Close()
 
         if doRebin:
@@ -592,8 +624,17 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
                 Histogram.Rebin(int(rebinFactor))
                 
-
+         
         xAxisLabel = Histogram.GetXaxis().GetTitle()
+
+        if arguments.quickRename:
+            xAxisLabel = Histogram.GetXaxis().SetTitle(arguments.quickRename)
+            xAxisLabel = Histogram.GetXaxis().GetTitle()
+        if renamePaperHist:
+                 xAxisLabel = Histogram.GetXaxis().SetTitle(quickRenameString)
+                 xAxisLabel = Histogram.GetXaxis().GetTitle()
+                             
+            
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
         xAxisLabelVar = xAxisLabel
@@ -701,6 +742,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
             Histogram = MakeIntegralHist(Histogram, integrateDir)
             
+            Histogram.SetBinErrorOption(TH1.kPoisson)
             DataLegendEntries.append(legLabel)
             DataHistograms.append(Histogram)
     
@@ -735,6 +777,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     ### formatting data histograms and adding to legend
     legendIndex = 0
     for Histogram in DataHistograms:
+        Histogram.SetBinErrorOption(TH1.kPoisson)
         BgMCLegend.AddEntry(Histogram,DataLegendEntries[legendIndex],"LEP")
         legendIndex = legendIndex+1
 
@@ -787,6 +830,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if(signalMCHist.GetMaximum() > finalMax):
             finalMax = signalMCHist.GetMaximum()
     for dataHist in DataHistograms:
+        dataHist.SetBinErrorOption(TH1.kPoisson)
         if(dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin()) > finalMax):
             finalMax = dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin())
     finalMax = 1.15*finalMax
@@ -880,6 +924,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         for signalMCHist in SignalMCHistograms:
             signalMCHist.Draw("A HIST SAME")
         for dataHist in DataHistograms:
+            dataHist.SetBinErrorOption(TH1.kPoisson)
             dataHist.Draw("A E X0 SAME")
 
                                 
@@ -895,11 +940,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             if(signalMCHist is not SignalMCHistograms[0]):
                 signalMCHist.Draw("A HIST SAME")
         for dataHist in DataHistograms:
+            dataHist.SetBinErrorOption(TH1.kPoisson)
             dataHist.Draw("A E X0 SAME")
 
 
     elif(numDataSamples is not 0): # the first thing to draw to the canvas is a data sample
         DataHistograms[0].SetTitle(histoTitle)
+        DataHistograms[0].SetBinErrorOption(TH1.kPoisson)
+        print "BinErrorUp: " + str(DataHistograms[0].GetBinErrorUp(5))
+        print "BinErrorLow: " + str(DataHistograms[0].GetBinErrorLow(5))
         DataHistograms[0].Draw("E")
         DataHistograms[0].GetXaxis().SetTitle(xAxisLabel)
         DataHistograms[0].GetYaxis().SetTitle(yAxisLabel)
@@ -907,6 +956,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         DataHistograms[0].SetMinimum(yAxisMin)
         for dataHist in DataHistograms:
             if(dataHist is not DataHistograms[0]):
+                DataHistograms[0].SetBinErrorOption(TH1.kPoisson)
+                print "BinErrorUp: " + str(DataHistograms[0].GetBinErrorUp(5))
+                print "BinErrorLow: " + str(DataHistograms[0].GetBinErrorLow(5))
                 dataHist.Draw("A E X0 SAME")
 
 
@@ -962,7 +1014,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         drawLumiLabel = True
     if makeFancy:
         drawHeaderLabel = True
-        drawLumiLabel = False
+        drawLumiLabel = True
 
     #now that flags are set, draw the appropriate labels
 
@@ -1109,6 +1161,7 @@ def MakeTwoDHist(pathToDir,histogramName):
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
         inputFile = TFile(dataset_file)
+#        HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         if not HistogramObj:
             print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
