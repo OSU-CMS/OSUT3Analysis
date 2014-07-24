@@ -339,7 +339,6 @@ def MakeIntegralHist(hist, integrateDir):
     # return the integrated histogram, in the direction specified
     # integrateDir values: "left", "right", "none"
     if integrateDir is "none":
-        hist.SetBinErrorOption(TH1.kPoisson)
         return hist  # do nothing  
     integral = 0
     error = 0  
@@ -362,7 +361,6 @@ def MakeIntegralHist(hist, integrateDir):
         # Then include underflow bin in the first bin
         hist.SetBinContent(1, hist.GetBinContent(1) + hist.GetBinContent(0))     
         hist.SetBinError  (1, math.sqrt(hist.GetBinError(1)*hist.GetBinError(1) + hist.GetBinError(0)*hist.GetBinError(0)))     
-    hist.SetBinErrorOption(TH1.kPoisson)
     return hist 
  
 
@@ -592,18 +590,11 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         dataset_file = "%s/%s.root" % (condor_dir,sample)
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
-        HistogramObj.SetBinErrorOption(TH1.kPoisson)
-        print "Name of Histogram Object : " + HistogramObj.GetXaxis().GetTitle()
-        print "Hist Obj Err: " + str(HistogramObj.GetBinErrorUp(5))
         if not HistogramObj:
             print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
             continue
         Histogram = HistogramObj.Clone()
-        Histogram.SetBinErrorOption(TH1.kPoisson)
         Histogram.SetDirectory(0)
-        Histogram.SetBinErrorOption(TH1.kPoisson)
-        print "Name of Histogram : " + Histogram.GetXaxis().GetTitle()
-        print "Hist Err: " + str(Histogram.GetBinErrorUp(5))
 
 
         inputFile.Close()
@@ -742,7 +733,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
             Histogram = MakeIntegralHist(Histogram, integrateDir)
             
-            Histogram.SetBinErrorOption(TH1.kPoisson)
             DataLegendEntries.append(legLabel)
             DataHistograms.append(Histogram)
     
@@ -777,7 +767,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     ### formatting data histograms and adding to legend
     legendIndex = 0
     for Histogram in DataHistograms:
-        Histogram.SetBinErrorOption(TH1.kPoisson)
         BgMCLegend.AddEntry(Histogram,DataLegendEntries[legendIndex],"LEP")
         legendIndex = legendIndex+1
 
@@ -830,7 +819,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if(signalMCHist.GetMaximum() > finalMax):
             finalMax = signalMCHist.GetMaximum()
     for dataHist in DataHistograms:
-        dataHist.SetBinErrorOption(TH1.kPoisson)
         if(dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin()) > finalMax):
             finalMax = dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin())
     finalMax = 1.15*finalMax
@@ -924,7 +912,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         for signalMCHist in SignalMCHistograms:
             signalMCHist.Draw("A HIST SAME")
         for dataHist in DataHistograms:
-            dataHist.SetBinErrorOption(TH1.kPoisson)
             dataHist.Draw("A E X0 SAME")
 
                                 
@@ -940,15 +927,11 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             if(signalMCHist is not SignalMCHistograms[0]):
                 signalMCHist.Draw("A HIST SAME")
         for dataHist in DataHistograms:
-            dataHist.SetBinErrorOption(TH1.kPoisson)
             dataHist.Draw("A E X0 SAME")
 
 
     elif(numDataSamples is not 0): # the first thing to draw to the canvas is a data sample
         DataHistograms[0].SetTitle(histoTitle)
-        DataHistograms[0].SetBinErrorOption(TH1.kPoisson)
-        print "BinErrorUp: " + str(DataHistograms[0].GetBinErrorUp(5))
-        print "BinErrorLow: " + str(DataHistograms[0].GetBinErrorLow(5))
         DataHistograms[0].Draw("E")
         DataHistograms[0].GetXaxis().SetTitle(xAxisLabel)
         DataHistograms[0].GetYaxis().SetTitle(yAxisLabel)
@@ -956,9 +939,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         DataHistograms[0].SetMinimum(yAxisMin)
         for dataHist in DataHistograms:
             if(dataHist is not DataHistograms[0]):
-                DataHistograms[0].SetBinErrorOption(TH1.kPoisson)
-                print "BinErrorUp: " + str(DataHistograms[0].GetBinErrorUp(5))
-                print "BinErrorLow: " + str(DataHistograms[0].GetBinErrorLow(5))
                 dataHist.Draw("A E X0 SAME")
 
 
@@ -1161,7 +1141,6 @@ def MakeTwoDHist(pathToDir,histogramName):
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
         inputFile = TFile(dataset_file)
-#        HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         if not HistogramObj:
             print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
