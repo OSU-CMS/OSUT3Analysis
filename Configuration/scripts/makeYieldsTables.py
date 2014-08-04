@@ -34,6 +34,8 @@ parser.add_option("-s", "--standAlone", action="store_true", dest="standAlone", 
 
 parser.add_option("-S", "--systematics", action="store_true", dest="includeSystematics", default=False,
                                     help="also lists the systematic uncertainties")
+parser.add_option("--is", "--withSignal", action="store_true", dest="includeSignal", default=False,
+                                    help="include signal MC")
 
 (arguments, args) = parser.parse_args()
 
@@ -125,7 +127,7 @@ def getSystematicError(sample,channel):
 #### check which input datasets have valid output files
 processed_datasets = []
 for dataset in datasets:
-    if types[dataset] is "signalMC": #only include bgMC and data yields
+    if not arguments.includeSignal and  types[dataset] is "signalMC": #only include bgMC and data yields
         continue
     fileName = condor_dir + "/" + dataset + ".root"
     if not os.path.exists(fileName):
@@ -219,7 +221,7 @@ for channel in channels:
     #write a line for each background sample
     bgMCcounter = 0
     for sample in processed_datasets_channels[channel]:
-        if types[sample] is not "bgMC":
+        if not arguments.includeSignal and  types[sample] is not "bgMC":
             continue
         bgMCcounter = bgMCcounter + 1
         rawlabel = labels[sample]
