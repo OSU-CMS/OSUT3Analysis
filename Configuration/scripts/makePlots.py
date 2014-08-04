@@ -46,6 +46,10 @@ parser.add_option("-v", "--verbose", action="store_true", dest="verbose", defaul
                   help="verbose output")	 
 parser.add_option("-P", "--paperConfig", dest="paperConfig",
                       help="paper configuration file")
+parser.add_option("--pe", "--poissonErrors", action="store_true", dest="poisErr",default=False,
+                      help="draw data histograms with poisson errorbars")
+
+
 (arguments, args) = parser.parse_args()
 
 
@@ -93,7 +97,7 @@ if arguments.makeSignificancePlots and arguments.makeDiffPlots:
     print "You have asked to make a difference plot and significance plots. This is a very strange request.  Will skip making the difference plot." 
     arguments.makeDiffPlots = False  
 
-from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1, TH1F, TCanvas, TString, TLegend, TLegendEntry, THStack, TIter, TKey, TPaveLabel, gPad
+from ROOT import Math, TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1, TH1F, TCanvas, TString, TLegend, TLegendEntry, THStack, TIter, TKey, TPaveLabel, gPad, TGraphAsymmErrors
 
 
 ### setting ROOT options so our plots will look awesome and everyone will love us
@@ -385,6 +389,16 @@ def sortedDictValues(dic):
     keys.sort()
     return [dic[key] for key in keys]
 
+def setXAxisRangeUser(hist):
+    if arguments.paperConfig and ('setXMin' in paperHistogram or 'setXMax' in paperHistogram):
+        xAxisMin = hist.GetXaxis().GetBinLowEdge(1)
+        xAxisMax = hist.GetXaxis().GetBinLowEdge(1+hist.GetXaxis().GetNbins())
+        if 'setXMin' in paperHistogram:
+            xAxisMin = float(paperHistogram['setXMin'])
+        if 'setXMax' in paperHistogram:
+            xAxisMax = float(paperHistogram['setXMax'])
+        hist.GetXaxis().SetRangeUser(xAxisMin, xAxisMax)
+                                                                
 
 	
 def MakeOneDHist(pathToDir,histogramName,integrateDir): 
@@ -512,14 +526,22 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             doRebin = True
             rebinFactor = paperHistogram['rebinFactor']
     ###############################################
-    renamePaperHist = False
+    renamePaperHistX = False
+    renamePaperHistY = False
     if arguments.quickRename:
         quickRenameString = arguments.quickRename
     if arguments.paperConfig:
-        if 'quickRename' in paperHistogram:
-            renamePaperHist = True
-            quickRenameString = paperHistogram['quickRename']
-        
+        if 'quickRenameX' in paperHistogram:
+            renamePaperHistX = True
+            quickRenameStringX = paperHistogram['quickRenameX']
+        if 'quickRenameY' in paperHistogram:
+            renamePaperHistY = True
+            quickRenameStringY = paperHistogram['quickRenameY']
+    ####################################################
+    makePoisErrHist = False
+    if arguments.paperConfig:
+        if 'poisErr' in paperHistogram:
+            makePoisErrHist = True
 
     Stack = THStack("stack",histogramName)
 
@@ -621,8 +643,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if arguments.quickRename:
             xAxisLabel = Histogram.GetXaxis().SetTitle(arguments.quickRename)
             xAxisLabel = Histogram.GetXaxis().GetTitle()
-        if renamePaperHist:
-                 xAxisLabel = Histogram.GetXaxis().SetTitle(quickRenameString)
+        if renamePaperHistX:
+                 xAxisLabel = Histogram.GetXaxis().SetTitle(quickRenameStringX)
                  xAxisLabel = Histogram.GetXaxis().GetTitle()
                              
             
@@ -648,6 +670,11 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             yAxisLabel = yAxisLabel + " (Bkgd. Normalized to Data)"  
         if scaleFactor is not 1:
             yAxisLabel = yAxisLabel + " (Bkgd. Scaled by " + str(scaleFactor) + ")"  
+
+        if renamePaperHistY:
+                 yAxisLabel = Histogram.GetYaxis().SetTitle(quickRenameStringY)
+                 yAxisLabel = Histogram.GetYaxis().GetTitle()
+
 
         if normalizeToUnitArea and arguments.makeSignificancePlots:
             unit = "Efficiency"
@@ -707,8 +734,14 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             
             Histogram.SetFillStyle(0)
             Histogram.SetLineColor(colors[sample])
-            Histogram.SetLineStyle(1)
-            Histogram.SetLineWidth(2)
+            if (arguments.paperConfig and 'SigLineStyle' in paperHistogram):
+                Histogram.SetLineStyle(paperHistogram['SigLineStyle'])
+            else:
+                Histogram.SetLineStyle(1)
+            if (arguments.paperConfig and 'SigLineWidth' in paperHistogram):
+                Histogram.SetLineWidth(paperHistogram['SigLineWidth'])
+            else:
+                Histogram.SetLineWidth(2)
             if(normalizeToUnitArea and Histogram.Integral() > 0):
                 Histogram.Scale(1./Histogram.Integral())
 
@@ -721,7 +754,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
             numDataSamples += 1
             dataIntegral += Histogram.Integral()
-            
+
             Histogram.SetMarkerStyle(20)
             Histogram.SetMarkerSize(0.8)
             Histogram.SetFillStyle(0)
@@ -732,8 +765,21 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 Histogram.Scale(1./Histogram.Integral())
 
             Histogram = MakeIntegralHist(Histogram, integrateDir)
+            if arguments.poisErr or makePoisErrHist == True:
+                newDataHist  = TH1F(Histogram.GetName(), Histogram.GetTitle(), Histogram.GetNbinsX(), Histogram.GetXaxis().GetBinLowEdge(1), Histogram.GetXaxis().GetBinLowEdge(1+Histogram.GetNbinsX()))
+                for i in range(1,Histogram.GetNbinsX()+1):
+                    newDataHist.SetBinContent(i,Histogram.GetBinContent(i))
+                    newDataHist.SetBinErrorOption(TH1.kPoisson)
+                    newDataHist.SetMarkerColor(colors[sample])
+                    newDataHist.SetMarkerStyle(20)
+                    newDataHist.SetMarkerSize(1.2)
+                    newDataHist.SetLineColor(colors[sample])
+                    newDataHist.SetLineWidth(2)
+                Histogram = newDataHist
+
             
             DataLegendEntries.append(legLabel)
+            
             DataHistograms.append(Histogram)
     
     if sortOrderByYields: 
@@ -821,6 +867,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     for dataHist in DataHistograms:
         if(dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin()) > finalMax):
             finalMax = dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin())
+            
     finalMax = 1.15*finalMax
     if finalMax <= 0: # if it's an empty canvas, set ymax > ymin to avoid an error
         finalMax = 1.0
@@ -877,6 +924,18 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         gPad.Draw()
         
         Canvas.cd(1)
+        for dataHist in DataHistograms:
+            if arguments.poisErr or makePoisErrHist == True:
+                newDataHist  = TH1F(dataHist.GetName(), dataHist.GetTitle(), dataHist.GetNbinsX(), dataHist.GetXaxis().GetBinLowEdge(1), dataHist.GetXaxis().GetBinLowEdge(1+dataHist.GetNbinsX()))
+                for i in range(1,dataHist.GetNbinsX()+1):
+                    newDataHist.SetBinContent(i,dataHist.GetBinContent(i))
+                    newDataHist.SetBinErrorOption(TH1.kPoisson)
+                    newDataHist.SetMarkerColor(colors[sample])
+                    newDataHist.SetMarkerStyle(20)
+                    newDataHist.SetMarkerSize(1.2)
+                    newDataHist.SetLineColor(colors[sample])
+                    newDataHist.SetLineWidth(2)
+                dataHist = newDataHist
 
     if numBgMCSamples is not 0: # the first thing to draw to the canvas is a bgMC sample
 
@@ -885,6 +944,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Stack.Draw("HIST")
             Stack.SetMaximum(finalMax)
             Stack.SetMinimum(yAxisMin)
+            setXAxisRangeUser(Stack)
             Stack.Draw("HIST")
             Stack.GetXaxis().SetMoreLogLabels()
             Stack.GetXaxis().SetTitle(xAxisLabel)
@@ -906,6 +966,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             BgMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
             BgMCHistograms[0].SetMaximum(finalMax)
             BgMCHistograms[0].SetMinimum(yAxisMin)            
+            setXAxisRangeUser(BgMCHistograms[0])
             for bgMCHist in BgMCHistograms:
                 bgMCHist.Draw("A HIST SAME")
 
@@ -913,7 +974,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             signalMCHist.Draw("A HIST SAME")
         for dataHist in DataHistograms:
             dataHist.Draw("A E X0 SAME")
-
                                 
     elif numSignalSamples is not 0: # the first thing to draw to the canvas is a signalMC sample 
         SignalMCHistograms[0].SetTitle(histoTitle)
@@ -922,12 +982,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         SignalMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
         SignalMCHistograms[0].SetMaximum(finalMax)
         SignalMCHistograms[0].SetMinimum(yAxisMin)
-
+        setXAxisRangeUser(SignalMCHistograms[0])
         for signalMCHist in SignalMCHistograms:
             if(signalMCHist is not SignalMCHistograms[0]):
                 signalMCHist.Draw("A HIST SAME")
         for dataHist in DataHistograms:
             dataHist.Draw("A E X0 SAME")
+                                                                                                                
 
 
     elif(numDataSamples is not 0): # the first thing to draw to the canvas is a data sample
@@ -937,6 +998,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         DataHistograms[0].GetYaxis().SetTitle(yAxisLabel)
         DataHistograms[0].SetMaximum(finalMax)
         DataHistograms[0].SetMinimum(yAxisMin)
+        setXAxisRangeUser(DataHistograms[0])
         for dataHist in DataHistograms:
             if(dataHist is not DataHistograms[0]):
                 dataHist.Draw("A E X0 SAME")
@@ -952,17 +1014,35 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     if(numBgMCSamples is not 0 or numDataSamples is not 0): #then draw the data & bgMC legend
 
+
         numExtraEntries = 1 # count the legend title
-        BgMCLegend.SetX1NDC(x_left)
+        if (arguments.paperConfig and 'BkgdLegX1' in paperHistogram):
+            BgMCLegend.SetX1NDC(float(paperHistogram['BkgdLegX1']))
+        else:
+            BgMCLegend.SetX1NDC(x_left)
+
         if numBgMCSamples > 0:
             numExtraEntries = numExtraEntries + 1 # count the stat. errors entry
-            
-        BgMCLegend.SetY1NDC(y_max-entry_height*(numExtraEntries+numBgMCSamples+numDataSamples))
-        BgMCLegend.SetX2NDC(x_right)
-        BgMCLegend.SetY2NDC(y_max)
+        if (arguments.paperConfig and 'BkgdLegX1' in paperHistogram):
+#            BgMCLegend.SetY1NDC(float(paperHistogram['BkgdLegY1'])-entry_height*(numExtraEntries+numBgMCSamples+numDataSamples))
+            BgMCLegend.SetY1NDC(float(paperHistogram['BkgdLegY1']))
+            BgMCLegend.SetX2NDC(float(paperHistogram['BkgdLegX2']))
+            BgMCLegend.SetY2NDC(float(paperHistogram['BkgdLegY2']))
+        else:
+            BgMCLegend.SetY1NDC(y_max-entry_height*(numExtraEntries+numBgMCSamples+numDataSamples))
+            BgMCLegend.SetX2NDC(x_right)
+            BgMCLegend.SetY2NDC(y_max)
         BgMCLegend.Draw()
 
-        if(numSignalSamples is not 0): #then draw the signalMC legend to the left of the other one
+        if(numSignalSamples is not 0 and arguments.paperConfig and 'SigLegX1' in paperHistogram): #then draw the signalMC legend to the left of the other one
+            SignalMCLegend.SetX1NDC(float(paperHistogram['SigLegX1']))
+            SignalMCLegend.SetY1NDC(float(paperHistogram['SigLegY1'])) # add one for the title
+            SignalMCLegend.SetX2NDC(float(paperHistogram['SigLegX2']))
+            SignalMCLegend.SetY2NDC(float(paperHistogram['SigLegY2']))
+            if arguments.paperConfig and 'SigTextSize' in paperHistogram:
+                SignalMCLegend.SetTextSize(paperHistogram['SigTextSize'])
+            SignalMCLegend.Draw()
+        elif (numSignalSamples is not 0):
             SignalMCLegend.SetX1NDC(x_left-x_width)
             SignalMCLegend.SetY1NDC(y_max-entry_height*(1+numSignalSamples)) # add one for the title
             SignalMCLegend.SetX2NDC(x_left)
@@ -978,6 +1058,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             BgMCLegend.Draw()
             
 
+    if(numSignalSamples is not 0 and arguments.paperConfig and 'SigLegX1' in paperHistogram):
+        SignalMCLegend.SetX1NDC(float(paperHistogram['SigLegX1']))
+        SignalMCLegend.SetY1NDC(float(paperHistogram['SigLegY1'])) # add one for the title
+        SignalMCLegend.SetX2NDC(float(paperHistogram['SigLegX2']))
+        SignalMCLegend.SetY2NDC(float(paperHistogram['SigLegY2']))
+        SignalMCLegend.Draw()
+        
     elif numSignalSamples is not 0: #draw the signalMC legend in the upper right corner
         SignalMCLegend.SetX1NDC(x_left)
         SignalMCLegend.SetY1NDC(y_max-entry_height*(numSignalSamples)) # add one for the title
@@ -1177,8 +1264,8 @@ def MakeTwoDHist(pathToDir,histogramName):
             Histogram.SetMarkerStyle(20)
             Histogram.SetMarkerSize(1.2)
             Histogram.SetFillColor(colors[sample])
-            BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
-#            SignalMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
+#            BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
+            SignalMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             SignalMCHistograms.append(Histogram)
 
         elif( types[sample] == "data" and not blindData):
@@ -1218,7 +1305,7 @@ def MakeTwoDHist(pathToDir,histogramName):
     elif(numDataSamples is not 0):
         DataHistograms[0].SetTitle(histoTitle)
         DataHistograms[0].GetXaxis().SetTitle(xAxisLabel)
-        DataHistograms[0].GetYaxis().SetTitle(yAxisLabel)            
+        DataHistograms[0].GetYaxis().SetTitle(yAxisLabel)
         DataHistograms[0].Draw()
         for dataHist in DataHistograms:
             if(dataHist is not DataHistograms[0]):
@@ -1377,7 +1464,8 @@ for key in inputFile.GetListOfKeys():
 
             inputFile.cd(level2Directory)
             for key3 in gDirectory.GetListOfKeys():
-                if arguments.quickHistName and not arguments.quickHistName in key3.GetName():  
+#                if arguments.quickHistName and not arguments.quickHistName in key3.GetName():  
+                if arguments.quickHistName and not arguments.quickHistName == key3.GetName():  
                     continue  
                 if re.match ('TH1', key3.GetClassName()): # found a 1-D histogram
                     if arguments.makeSignificancePlots:
