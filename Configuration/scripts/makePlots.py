@@ -766,15 +766,18 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
             Histogram = MakeIntegralHist(Histogram, integrateDir)
             if arguments.poisErr or makePoisErrHist == True:
-                newDataHist  = TH1F(Histogram.GetName(), Histogram.GetTitle(), Histogram.GetNbinsX(), Histogram.GetXaxis().GetBinLowEdge(1), Histogram.GetXaxis().GetBinLowEdge(1+Histogram.GetNbinsX()))
+                xBins = array ('d', [])
+                for i in range(1,Histogram.GetNbinsX()+1):
+                    xBins.append (Histogram.GetBinLowEdge (i))
+                newDataHist  = TH1F(Histogram.GetName(), Histogram.GetTitle(), Histogram.GetNbinsX(), xBins)
                 for i in range(1,Histogram.GetNbinsX()+1):
                     newDataHist.SetBinContent(i,Histogram.GetBinContent(i))
-                    newDataHist.SetBinErrorOption(TH1.kPoisson)
-                    newDataHist.SetMarkerColor(colors[sample])
-                    newDataHist.SetMarkerStyle(20)
-                    newDataHist.SetMarkerSize(1.2)
-                    newDataHist.SetLineColor(colors[sample])
-                    newDataHist.SetLineWidth(2)
+                newDataHist.SetBinErrorOption(TH1.kPoisson)
+                newDataHist.SetMarkerColor(colors[sample])
+                newDataHist.SetMarkerStyle(20)
+                newDataHist.SetMarkerSize(1.2)
+                newDataHist.SetLineColor(colors[sample])
+                newDataHist.SetLineWidth(2)
                 Histogram = newDataHist
 
             
@@ -926,15 +929,18 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Canvas.cd(1)
         for dataHist in DataHistograms:
             if arguments.poisErr or makePoisErrHist == True:
-                newDataHist  = TH1F(dataHist.GetName(), dataHist.GetTitle(), dataHist.GetNbinsX(), dataHist.GetXaxis().GetBinLowEdge(1), dataHist.GetXaxis().GetBinLowEdge(1+dataHist.GetNbinsX()))
+                xBins = array ('d', [])
+                for i in range(1,dataHist.GetNbinsX()+1):
+                    xBins.append (dataHist.GetBinLowEdge (i))
+                newDataHist  = TH1F(dataHist.GetName(), dataHist.GetTitle(), dataHist.GetNbinsX(), xBins)
                 for i in range(1,dataHist.GetNbinsX()+1):
                     newDataHist.SetBinContent(i,dataHist.GetBinContent(i))
-                    newDataHist.SetBinErrorOption(TH1.kPoisson)
-                    newDataHist.SetMarkerColor(colors[sample])
-                    newDataHist.SetMarkerStyle(20)
-                    newDataHist.SetMarkerSize(1.2)
-                    newDataHist.SetLineColor(colors[sample])
-                    newDataHist.SetLineWidth(2)
+                newDataHist.SetBinErrorOption(TH1.kPoisson)
+                newDataHist.SetMarkerColor(colors[sample])
+                newDataHist.SetMarkerStyle(20)
+                newDataHist.SetMarkerSize(1.2)
+                newDataHist.SetLineColor(colors[sample])
+                newDataHist.SetLineWidth(2)
                 dataHist = newDataHist
 
     if numBgMCSamples is not 0: # the first thing to draw to the canvas is a bgMC sample
