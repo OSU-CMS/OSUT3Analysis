@@ -414,11 +414,11 @@ class OSUAnalysis : public edm::EDProducer
       template <class InputCollection1, class InputCollection2> void setObjectFlags(cut &, uint, flagMap &, flagMap &, InputCollection1, InputCollection2, string);
 
       template <class InputCollection> void assignTreeBranch(BranchSpecs brSpecs, InputCollection inputCollection, flagPair flags);  
-      template <class InputCollection> void fill1DHistogram(TH1*, histogram, InputCollection, flagPair, double);
-      template <class InputCollection1, class InputCollection2> void fill1DHistogram(TH1*, histogram, InputCollection1, InputCollection2, flagPair, double);
+      template <class InputCollection> void fill1DHistogram(TH1*, histogram, InputCollection, flagPair, string, double);
+      template <class InputCollection1, class InputCollection2> void fill1DHistogram(TH1*, histogram, InputCollection1, InputCollection2, flagPair, string, double);
       void fill1DStatus3Histogram(TH1* histo, const BNmcparticleCollection *inputCollection, double scaleFactor);
-      template <class InputCollection> void fill2DHistogram(TH2*, histogram, InputCollection, flagPair, double);
-      template <class InputCollection1, class InputCollection2> void fill2DHistogram(TH2*, histogram, InputCollection1, InputCollection2, flagPair, double);
+      template <class InputCollection> void fill2DHistogram(TH2*, histogram, InputCollection, flagPair, string, double);
+      template <class InputCollection1, class InputCollection2> void fill2DHistogram(TH2*, histogram, InputCollection1, InputCollection2, flagPair, string, double);
       bool getPreviousCumulativeFlags(uint currentCutIndex, flagMap &individualFlags, string obj1Type, uint object1, string flagType);
 
       inline flagPair getLastValidFlags(string objType) {
