@@ -110,12 +110,12 @@ class OSUAnalysis : public edm::EDProducer
       double valueLookup (const BNgenjet* object, string variable, string function, string &stringValue);
       double valueLookup (const BNmcparticle* object, string variable, string function, string &stringValue);
 
-      double valueLookup (const BNelectron* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
-      double valueLookup (const BNmuon* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
-      double valueLookup (const BNmcparticle* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
-      double valueLookup (const BNjet* object1, const BNmcparticle* object, string variable, string function, string &stringValue);
-      double valueLookup (const BNtrack* object1,   const BNmcparticle* object2, string variable, string function, string &stringValue);  
-
+      double valueLookup (const BNelectron*   object1, const BNmcparticle* object,  string variable, string function, string &stringValue);
+      double valueLookup (const BNmuon*       object1, const BNmcparticle* object,  string variable, string function, string &stringValue);
+      double valueLookup (const BNmcparticle* object1, const BNmcparticle* object,  string variable, string function, string &stringValue);
+      double valueLookup (const BNjet*        object1, const BNmcparticle* object,  string variable, string function, string &stringValue);
+      double valueLookup (const BNtrack*      object1, const BNmcparticle* object2, string variable, string function, string &stringValue);  
+      double valueLookup (const BNstop*       object1, const BNmcparticle* object2, string variable, string function, string &stringValue); 
 
       double valueLookup (const BNprimaryvertex* object, string variable, string function, string &stringValue);
       double valueLookup (const BNbxlumi* object, string variable, string function, string &stringValue);
