@@ -23,6 +23,8 @@ parser.remove_option("-r")
 parser.remove_option("-o")
 parser.remove_option("--2D")
 
+parser.add_option("-p", "--precision", dest="precision", 
+                  help="precision of values in table, default in cutFlowTable.cpp is 3")  
 parser.add_option("-d", "--diff", action="store_true", dest="makeDiffPlots", default=False,
                   help="add a column for data-MC to the tables")
 parser.add_option("-r", "--ratio", action="store_true", dest="makeRatioPlots", default=False,
@@ -108,7 +110,7 @@ for dataset in datasets:
     fileName = condor_dir + "/" + dataset + ".root"
     if not os.path.exists(fileName):
         if (arguments.verbose):
-            print "Couldn't find output file for",dataset,"dataset"
+            print "Couldn't find output file for",dataset,"dataset",fileName,"fileName"  
         continue
     testFile = TFile(fileName)
     if not (testFile.IsZombie()):
@@ -195,6 +197,8 @@ for channel in channels: # loop over final states, which each have their own dir
     cutFlowTable = "cutFlowTable"
     if arguments.noErrors:
       cutFlowTable += " -e "  
+    if arguments.precision:
+      cutFlowTable += " -p " + arguments.precision    
     if arguments.makeDiffPlots:
       cutFlowTable += " -d \"Data - MC\""
     if arguments.makeRatioPlots:
