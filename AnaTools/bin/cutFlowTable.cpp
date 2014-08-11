@@ -23,6 +23,8 @@ void printHelp (const string &exeName);
 void parseOptions (int, char **, map<string, string> &, vector<string> &);
 void ReplaceStringInPlace(std::string& subject, const std::string& search,
                           const std::string& replace);
+int myprecision_ = 3;  // default value
+
 
 int
 main (int argc, char *argv[])
@@ -43,6 +45,10 @@ main (int argc, char *argv[])
       return 0;  
     }
     sb = true;
+  }
+  if (opt.count ("precision")) {
+    myprecision_ = atoi(opt.at("precision").c_str());
+    cerr << "Will use precision of " << myprecision_ << endl;  
   }
   if (opt.count ("diff"))
     sbLabel = opt.at ("diff");
@@ -385,9 +391,9 @@ bigInt (double n, string option)
   if (decimals)
     {
       if (option == "error")
-        ss << fixed << setprecision (3) << n;
+        ss << fixed << setprecision (myprecision_) << n;
       else
-        ss << setprecision (3) << n;
+        ss << setprecision (myprecision_) << n;
     }
   else
     ss << (long) (n + 0.5 * (n / fabs (n)));
@@ -437,7 +443,7 @@ bigEff (double n)
 
   if (isnan (n) || isinf (n))
     n = 0.0;
-  ss << setprecision (3) << n;
+  ss << setprecision (myprecision_) << n;
   num = ss.str ();
   if (num.find ("e") != string::npos)
     {
@@ -465,6 +471,7 @@ printHelp (const string &exeName)
   printf ("%-29s%s\n", "  -l, --luminosity LUMI", "integrated luminosity in inverse picobarns");
   printf ("%-29s%s\n", "  -m, --marginal", "include a table of marginal efficiencies");
   printf ("%-29s%s\n", "  -r, --ratio LABEL", "add a column for (X-Y)/Y");
+  printf ("%-29s%s\n", "  -p, --precision VALUE", "set the precision (integer) of table values");
   printf ("%-29s%s\n", "  -t, --total LABEL", "add a column for Y");
   printf ("%-29s%s\n", "  -s, --sToB LABEL", "add a column for X/sqrt(X+Y)");
   printf ("%-29s%s\n", "  -e, --noErrors", "do not print errors");  
@@ -519,6 +526,10 @@ parseOptions (int argc, char *argv[], map<string, string> &opt, vector<string> &
           opt.erase ("signalToBackground");
           opt.erase ("totalBkgd");
         }
+      if (key == "p")
+        {
+          key = "precision";
+	}
       if (key == "t")
         {
           key = "totalBkgd";
@@ -527,6 +538,8 @@ parseOptions (int argc, char *argv[], map<string, string> &opt, vector<string> &
           opt.erase ("ratio");
         }
       if (key == "luminosity" || key == "signalToBackground" || key == "diff" || key == "ratio" || key == "totalBkgd")
+        value = argv[i++ + 1];
+      if (key == "precision") 
         value = argv[i++ + 1];
       opt[key] = value;
     }
