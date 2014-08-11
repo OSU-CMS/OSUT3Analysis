@@ -1788,6 +1788,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
         for (uint histogramIndex = 0; histogramIndex != histograms.size(); histogramIndex++){
           histogram currentHistogram = histograms.at(histogramIndex);
+	  string inputCollection = currentHistogram.inputCollection;
 
           if (cumulativeFlags.count(currentHistogram.inputCollection) == 0 && currentHistogram.name.find ("status3") == string::npos)
             clog << "Error: no flags found for collection:  " << currentHistogram.inputCollection << ", will cause a seg fault" << endl;
@@ -1798,213 +1799,213 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
             TH1D* histo;
             histo = oneDHists_.at(currentChannelIndex).at(currentCut).at(currentHistogram.name);
             if     (currentHistogram.name.find ("status3") != string::npos) fill1DStatus3Histogram(histo,mcparticles.product(),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "jets")            fill1DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("jets").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary jets")  fill1DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("secondary jets").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary photons")  fill1DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("secondary photons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muons")           fill1DHistogram(histo,currentHistogram,muons.product(),cumulativeFlags.at("muons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary muons") fill1DHistogram(histo,currentHistogram,secMuons.product(),cumulativeFlags.at("secondary muons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary electrons") fill1DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("secondary electrons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-muon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),muons.product(),
-                                                                                           cumulativeFlags.at("muon-muon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-secondary muon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),secMuons.product(),
-                                                                                                     cumulativeFlags.at("muon-secondary muon pairs").at(currentDir),eventScaleFactor_);
-             else if(currentHistogram.inputCollection == "muon-secondary photon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),photons.product(),
-                                                                                                     cumulativeFlags.at("muon-secondary photon pairs").at(currentDir),eventScaleFactor_);
-             else if(currentHistogram.inputCollection == "muon-secondary jet pairs") fill1DHistogram(histo,currentHistogram,muons.product(),jets.product(),
-                                                                                                     cumulativeFlags.at("muon-secondary jet pairs").at(currentDir),eventScaleFactor_);
-             else if(currentHistogram.inputCollection == "photon-secondary jet pairs") fill1DHistogram(histo,currentHistogram,photons.product(),jets.product(),
-                                                                                                     cumulativeFlags.at("photon-secondary jet pairs").at(currentDir),eventScaleFactor_);
-             else if(currentHistogram.inputCollection == "electron-secondary jet pairs") fill1DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
-                                                                                                     cumulativeFlags.at("electron-secondary jet pairs").at(currentDir),eventScaleFactor_);
+            else if(inputCollection == "jets")            fill1DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("jets").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary jets")  fill1DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("secondary jets").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary photons")  fill1DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("secondary photons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muons")           fill1DHistogram(histo,currentHistogram,muons.product(),cumulativeFlags.at("muons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary muons") fill1DHistogram(histo,currentHistogram,secMuons.product(),cumulativeFlags.at("secondary muons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary electrons") fill1DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("secondary electrons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-muon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),muons.product(),
+                                                                                           cumulativeFlags.at("muon-muon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-secondary muon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),secMuons.product(),
+                                                                                                     cumulativeFlags.at("muon-secondary muon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+             else if(inputCollection == "muon-secondary photon pairs") fill1DHistogram(histo,currentHistogram,muons.product(),photons.product(),
+                                                                                                     cumulativeFlags.at("muon-secondary photon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+             else if(inputCollection == "muon-secondary jet pairs") fill1DHistogram(histo,currentHistogram,muons.product(),jets.product(),
+                                                                                                     cumulativeFlags.at("muon-secondary jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+             else if(inputCollection == "photon-secondary jet pairs") fill1DHistogram(histo,currentHistogram,photons.product(),jets.product(),
+                                                                                                     cumulativeFlags.at("photon-secondary jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+             else if(inputCollection == "electron-secondary jet pairs") fill1DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
+                                                                                                     cumulativeFlags.at("electron-secondary jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
 
-            else if(currentHistogram.inputCollection == "electrons") fill1DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("electrons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-electron pairs") fill1DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
-                                                                                                   cumulativeFlags.at("electron-electron pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "jet-jet pairs") fill1DHistogram(histo,currentHistogram,jets.product(),jets.product(),
-                                                                                         cumulativeFlags.at("jet-jet pairs").at(currentDir),eventScaleFactor_);
-             else if(currentHistogram.inputCollection == "jet-secondary jet pairs") fill1DHistogram(histo,currentHistogram,jets.product(),jets.product(),
-                                                                                                     cumulativeFlags.at("jet-secondary jet pairs").at(currentDir),eventScaleFactor_);
+            else if(inputCollection == "electrons") fill1DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("electrons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-electron pairs") fill1DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
+                                                                                                   cumulativeFlags.at("electron-electron pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "jet-jet pairs") fill1DHistogram(histo,currentHistogram,jets.product(),jets.product(),
+                                                                                         cumulativeFlags.at("jet-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+             else if(inputCollection == "jet-secondary jet pairs") fill1DHistogram(histo,currentHistogram,jets.product(),jets.product(),
+                                                                                                     cumulativeFlags.at("jet-secondary jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
 
-            else if(currentHistogram.inputCollection == "electron-secondary electron pairs") fill1DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
-                                                                                                             cumulativeFlags.at("electron-secondary electron pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-muon pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),muons.product(),
-                                                                                               cumulativeFlags.at("electron-muon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-jet pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),jets.product(),
-                                                                                              cumulativeFlags.at("electron-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary electron-jet pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),jets.product(),
-                                                                                              cumulativeFlags.at("secondary electron-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary muon-jet pairs") fill1DHistogram(histo,currentHistogram, muons.product(),jets.product(),
-                                                                                              cumulativeFlags.at("secondary muon-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "photon-jet pairs") fill1DHistogram(histo,currentHistogram, photons.product(),jets.product(),
-                                                                                              cumulativeFlags.at("photon-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-jet pairs") fill1DHistogram(histo,currentHistogram, muons.product(),jets.product(),
-                                                                                          cumulativeFlags.at("muon-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-event pairs") fill1DHistogram(histo,currentHistogram, muons.product(),events.product(),
-                                                                                          cumulativeFlags.at("muon-event pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-event pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),events.product(),
-                                                                                          cumulativeFlags.at("electron-event pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "met-jet pairs")  fill1DHistogram(histo,currentHistogram, mets.product(),jets.product(),
-                                                                                          cumulativeFlags.at("met-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "met-mcparticle pairs")  fill1DHistogram(histo,currentHistogram, mets.product(),mcparticles.product(),
-                                                                                          cumulativeFlags.at("met-mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "jet-mcparticle pairs")  fill1DHistogram(histo,currentHistogram, jets.product(),mcparticles.product(),
-                                                                                          cumulativeFlags.at("jet-mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "jet-secondary mcparticle pairs")  fill1DHistogram(histo,currentHistogram, jets.product(),mcparticles.product(),
-                                                                                          cumulativeFlags.at("jet-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "mcparticle-secondary mcparticle pairs")  fill1DHistogram(histo,currentHistogram, jets.product(),mcparticles.product(),
-                                                                                          cumulativeFlags.at("mcparticle-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "track-jet pairs")  fill1DHistogram(histo,currentHistogram,tracks.product(),jets.product(),
-                                                                                          cumulativeFlags.at("track-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-photon pairs") fill1DHistogram(histo,currentHistogram, muons.product(),photons.product(),
-                                                                                          cumulativeFlags.at("muon-photon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-photon pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),photons.product(),
-                                                                                          cumulativeFlags.at("electron-photon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-track pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),tracks.product(),
-                                                                                                cumulativeFlags.at("electron-track pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-track pairs") fill1DHistogram(histo,currentHistogram, muons.product(),tracks.product(),
-                                                                                            cumulativeFlags.at("muon-track pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "jet-track pairs") fill1DHistogram(histo,currentHistogram, jets.product(),tracks.product(),
-                                                                                            cumulativeFlags.at("jet-track pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary muon-track pairs") fill1DHistogram(histo,currentHistogram, secMuons.product(),tracks.product(),
-                                                                                            cumulativeFlags.at("secondary muon-track pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-tau pairs") fill1DHistogram(histo,currentHistogram, muons.product(),taus.product(),
-                                                                                          cumulativeFlags.at("muon-tau pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "tau-tau pairs") fill1DHistogram(histo,currentHistogram, taus.product(),taus.product(),
-                                                                                         cumulativeFlags.at("tau-tau pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "tau-track pairs") fill1DHistogram(histo,currentHistogram, taus.product(),tracks.product(),
-                                                                                           cumulativeFlags.at("tau-track pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-trigobj pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),trigobjs.product(),
-                                                                                                  cumulativeFlags.at("electron-trigobj pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-trigobj pairs") fill1DHistogram(histo,currentHistogram, muons.product(),trigobjs.product(),
-                                                                                              cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),mcparticles.product(), cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-mcparticle pairs") fill1DHistogram(histo,currentHistogram, muons.product(),mcparticles.product(),
-                                                                                              cumulativeFlags.at("muon-mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-secondary mcparticle pairs") fill1DHistogram(histo,currentHistogram, muons.product(),mcparticles.product(),
-                                                                                              cumulativeFlags.at("muon-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill1DHistogram(histo,currentHistogram, tracks.product(),mcparticles.product(),
-                                                                                              cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
+            else if(inputCollection == "electron-secondary electron pairs") fill1DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
+                                                                                                             cumulativeFlags.at("electron-secondary electron pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-muon pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),muons.product(),
+                                                                                               cumulativeFlags.at("electron-muon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-jet pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("electron-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary electron-jet pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("secondary electron-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary muon-jet pairs") fill1DHistogram(histo,currentHistogram, muons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("secondary muon-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "photon-jet pairs") fill1DHistogram(histo,currentHistogram, photons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("photon-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-jet pairs") fill1DHistogram(histo,currentHistogram, muons.product(),jets.product(),
+                                                                                          cumulativeFlags.at("muon-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-event pairs") fill1DHistogram(histo,currentHistogram, muons.product(),events.product(),
+                                                                                          cumulativeFlags.at("muon-event pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-event pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),events.product(),
+                                                                                          cumulativeFlags.at("electron-event pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "met-jet pairs")  fill1DHistogram(histo,currentHistogram, mets.product(),jets.product(),
+                                                                                          cumulativeFlags.at("met-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "met-mcparticle pairs")  fill1DHistogram(histo,currentHistogram, mets.product(),mcparticles.product(),
+                                                                                          cumulativeFlags.at("met-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "jet-mcparticle pairs")  fill1DHistogram(histo,currentHistogram, jets.product(),mcparticles.product(),
+                                                                                          cumulativeFlags.at("jet-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "jet-secondary mcparticle pairs")  fill1DHistogram(histo,currentHistogram, jets.product(),mcparticles.product(),
+                                                                                          cumulativeFlags.at("jet-secondary mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "mcparticle-secondary mcparticle pairs")  fill1DHistogram(histo,currentHistogram, jets.product(),mcparticles.product(),
+                                                                                          cumulativeFlags.at("mcparticle-secondary mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "track-jet pairs")  fill1DHistogram(histo,currentHistogram,tracks.product(),jets.product(),
+                                                                                          cumulativeFlags.at("track-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-photon pairs") fill1DHistogram(histo,currentHistogram, muons.product(),photons.product(),
+                                                                                          cumulativeFlags.at("muon-photon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-photon pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),photons.product(),
+                                                                                          cumulativeFlags.at("electron-photon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-track pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),tracks.product(),
+                                                                                                cumulativeFlags.at("electron-track pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-track pairs") fill1DHistogram(histo,currentHistogram, muons.product(),tracks.product(),
+                                                                                            cumulativeFlags.at("muon-track pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "jet-track pairs") fill1DHistogram(histo,currentHistogram, jets.product(),tracks.product(),
+                                                                                            cumulativeFlags.at("jet-track pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary muon-track pairs") fill1DHistogram(histo,currentHistogram, secMuons.product(),tracks.product(),
+                                                                                            cumulativeFlags.at("secondary muon-track pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-tau pairs") fill1DHistogram(histo,currentHistogram, muons.product(),taus.product(),
+                                                                                          cumulativeFlags.at("muon-tau pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "tau-tau pairs") fill1DHistogram(histo,currentHistogram, taus.product(),taus.product(),
+                                                                                         cumulativeFlags.at("tau-tau pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "tau-track pairs") fill1DHistogram(histo,currentHistogram, taus.product(),tracks.product(),
+                                                                                           cumulativeFlags.at("tau-track pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-trigobj pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),trigobjs.product(),
+                                                                                                  cumulativeFlags.at("electron-trigobj pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-trigobj pairs") fill1DHistogram(histo,currentHistogram, muons.product(),trigobjs.product(),
+                                                                                              cumulativeFlags.at("muon-trigobj pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-mcparticle pairs") fill1DHistogram(histo,currentHistogram, electrons.product(),mcparticles.product(), cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-mcparticle pairs") fill1DHistogram(histo,currentHistogram, muons.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("muon-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-secondary mcparticle pairs") fill1DHistogram(histo,currentHistogram, muons.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("muon-secondary mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "track-mcparticle pairs") fill1DHistogram(histo,currentHistogram, tracks.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("track-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
             // fill the histograms of weighting factors with 1, to see the shape of a SF without any weight applied
-            else if(currentHistogram.inputCollection == "events" && currentHistogram.name.find("ScaleFactor")!=string::npos) fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),1.0);
-            else if(currentHistogram.inputCollection == "events") fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
+            else if(inputCollection == "events" && currentHistogram.name.find("ScaleFactor")!=string::npos) fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),inputCollection,1.0);
+            else if(inputCollection == "events") fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),inputCollection,eventScaleFactor_);
 
-            else if(currentHistogram.inputCollection == "taus") fill1DHistogram(histo,currentHistogram,taus.product(),cumulativeFlags.at("taus").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "mets") fill1DHistogram(histo,currentHistogram,mets.product(),cumulativeFlags.at("mets").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "tracks") fill1DHistogram(histo,currentHistogram,tracks.product(),cumulativeFlags.at("tracks").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "genjets") fill1DHistogram(histo,currentHistogram,genjets.product(),cumulativeFlags.at("genjets").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "mcparticles") fill1DHistogram(histo,currentHistogram,mcparticles.product(),cumulativeFlags.at("mcparticles").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary mcparticles") fill1DHistogram(histo,currentHistogram,mcparticles.product(),cumulativeFlags.at("secondary mcparticles").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "primaryvertexs") fill1DHistogram(histo,currentHistogram,primaryvertexs.product(),cumulativeFlags.at("primaryvertexs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "bxlumis") fill1DHistogram(histo,currentHistogram,bxlumis.product(),cumulativeFlags.at("bxlumis").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "photons") fill1DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("photons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "superclusters") fill1DHistogram(histo,currentHistogram,superclusters.product(),cumulativeFlags.at("superclusters").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "trigobjs") fill1DHistogram(histo,currentHistogram,trigobjs.product(),cumulativeFlags.at("trigobjs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "stops" && datasetType_ == "signalMC") fill1DHistogram(histo,currentHistogram,stops.product(),cumulativeFlags.at("stops").at(currentDir),eventScaleFactor_);
+            else if(inputCollection == "taus") fill1DHistogram(histo,currentHistogram,taus.product(),cumulativeFlags.at("taus").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "mets") fill1DHistogram(histo,currentHistogram,mets.product(),cumulativeFlags.at("mets").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "tracks") fill1DHistogram(histo,currentHistogram,tracks.product(),cumulativeFlags.at("tracks").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "genjets") fill1DHistogram(histo,currentHistogram,genjets.product(),cumulativeFlags.at("genjets").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "mcparticles") fill1DHistogram(histo,currentHistogram,mcparticles.product(),cumulativeFlags.at("mcparticles").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary mcparticles") fill1DHistogram(histo,currentHistogram,mcparticles.product(),cumulativeFlags.at("secondary mcparticles").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "primaryvertexs") fill1DHistogram(histo,currentHistogram,primaryvertexs.product(),cumulativeFlags.at("primaryvertexs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "bxlumis") fill1DHistogram(histo,currentHistogram,bxlumis.product(),cumulativeFlags.at("bxlumis").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "photons") fill1DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("photons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "superclusters") fill1DHistogram(histo,currentHistogram,superclusters.product(),cumulativeFlags.at("superclusters").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "trigobjs") fill1DHistogram(histo,currentHistogram,trigobjs.product(),cumulativeFlags.at("trigobjs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "stops" && datasetType_ == "signalMC") fill1DHistogram(histo,currentHistogram,stops.product(),cumulativeFlags.at("stops").at(currentDir),inputCollection,eventScaleFactor_);
           }
           else if(currentHistogram.inputVariables.size() == 2){
             TH2D* histo;
             histo = twoDHists_.at(currentChannelIndex).at(currentCut).at(currentHistogram.name);
-            if(currentHistogram.inputCollection == "jets")            fill2DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("jets").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary jets")  fill2DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("secondary jets").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary photons")  fill2DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("secondary photons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muons")           fill2DHistogram(histo,currentHistogram,muons.product(),cumulativeFlags.at("muons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary muons") fill2DHistogram(histo,currentHistogram,secMuons.product(),cumulativeFlags.at("secondary muons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-muon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),muons.product(),
-                                                                                           cumulativeFlags.at("muon-muon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-secondary muon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),secMuons.product(),
-                                                                                                     cumulativeFlags.at("muon-secondary muon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-secondary photon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),photons.product(),
-                                                                                                     cumulativeFlags.at("muon-secondary photon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-secondary jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(),
-                                                                                                     cumulativeFlags.at("muon-secondary jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-secondary jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
-                                                                                                     cumulativeFlags.at("electron-secondary jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "photon-secondary jet pairs") fill2DHistogram(histo,currentHistogram,photons.product(),jets.product(),
-                                                                                                     cumulativeFlags.at("photon-secondary jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electrons") fill2DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("electrons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary electrons") fill2DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("secondary electrons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-electron pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
-                                                                                                   cumulativeFlags.at("electron-electron pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "jet-jet pairs") fill2DHistogram(histo,currentHistogram,jets.product(),jets.product(),
-                                                                                         cumulativeFlags.at("jet-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-secondary electron pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
-                                                                                                             cumulativeFlags.at("electron-secondary electron pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-muon pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),muons.product(),
-                                                                                               cumulativeFlags.at("electron-muon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
-                                                                                              cumulativeFlags.at("electron-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary electron-jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
-                                                                                              cumulativeFlags.at("secondary electron-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary muon-jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(),
-                                                                                              cumulativeFlags.at("secondary muon-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-photon pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),photons.product(),
-                                                                                              cumulativeFlags.at("electron-photon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(),
-                                                                                          cumulativeFlags.at("muon-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-event pairs") fill2DHistogram(histo,currentHistogram,muons.product(),events.product(),
-                                                                                          cumulativeFlags.at("muon-event pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-event pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),events.product(),
-                                                                                          cumulativeFlags.at("electron-event pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "met-jet pairs") fill2DHistogram(histo,currentHistogram,mets.product(),jets.product(),
-                                                                                         cumulativeFlags.at("met-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "met-mcparticle pairs") fill2DHistogram(histo,currentHistogram,mets.product(),mcparticles.product(),
-                                                                                         cumulativeFlags.at("met-mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "jet-mcparticle pairs") fill2DHistogram(histo,currentHistogram,jets.product(),mcparticles.product(),
-                                                                                         cumulativeFlags.at("jet-mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "jet-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,jets.product(),mcparticles.product(),
-                                                                                         cumulativeFlags.at("jet-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "mcparticle-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,jets.product(),mcparticles.product(),
-                                                                                         cumulativeFlags.at("mcparticle-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "track-jet pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),jets.product(),
-                                                                                         cumulativeFlags.at("track-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "photon-jet pairs") fill2DHistogram(histo,currentHistogram,photons.product(),jets.product(),
-                                                                                          cumulativeFlags.at("photon-jet pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-photon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),photons.product(),
-                                                                                          cumulativeFlags.at("muon-photon pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-track pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),tracks.product(),
-                                                                                                cumulativeFlags.at("electron-track pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-track pairs") fill2DHistogram(histo,currentHistogram,muons.product(),tracks.product(),
-                                                                                            cumulativeFlags.at("muon-track pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "jet-track pairs") fill2DHistogram(histo,currentHistogram,jets.product(),tracks.product(),
-                                                                                            cumulativeFlags.at("jet-track pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary muon-track pairs") fill2DHistogram(histo,currentHistogram,secMuons.product(),tracks.product(),
-                                                                                            cumulativeFlags.at("muon-track pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-tau pairs") fill2DHistogram(histo,currentHistogram,muons.product(),taus.product(),
-                                                                                          cumulativeFlags.at("muon-tau pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "tau-tau pairs") fill2DHistogram(histo,currentHistogram,taus.product(),taus.product(),
-                                                                                         cumulativeFlags.at("tau-tau pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "tau-track pairs") fill2DHistogram(histo,currentHistogram,taus.product(),tracks.product(),
-                                                                                           cumulativeFlags.at("tau-track pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-trigobj pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),trigobjs.product(),
-                                                                                                  cumulativeFlags.at("electron-trigobj pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-trigobj pairs") fill2DHistogram(histo,currentHistogram,muons.product(),trigobjs.product(),
-                                                                                              cumulativeFlags.at("muon-trigobj pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "electron-mcparticle pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),mcparticles.product(), cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-mcparticle pairs") fill2DHistogram(histo,currentHistogram,muons.product(),mcparticles.product(), cumulativeFlags.at("muon-mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "muon-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,muons.product(),mcparticles.product(), cumulativeFlags.at("muon-secondary mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "track-mcparticle pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),mcparticles.product(),
-                                                                                              cumulativeFlags.at("track-mcparticle pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "events") fill2DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "taus") fill2DHistogram(histo,currentHistogram,taus.product(),cumulativeFlags.at("taus").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "mets") fill2DHistogram(histo,currentHistogram,mets.product(),cumulativeFlags.at("mets").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "tracks") fill2DHistogram(histo,currentHistogram,tracks.product(),cumulativeFlags.at("tracks").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "track-event pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),events.product(),
-                                                                                             cumulativeFlags.at("track-event pairs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "genjets") fill2DHistogram(histo,currentHistogram,genjets.product(),cumulativeFlags.at("genjets").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "mcparticles") fill2DHistogram(histo,currentHistogram,mcparticles.product(),cumulativeFlags.at("mcparticles").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "secondary mcparticles") fill2DHistogram(histo,currentHistogram,mcparticles.product(),cumulativeFlags.at("secondary mcparticles").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "primaryvertexs") fill2DHistogram(histo,currentHistogram,primaryvertexs.product(),cumulativeFlags.at("primaryvertexs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "bxlumis") fill2DHistogram(histo,currentHistogram,bxlumis.product(),cumulativeFlags.at("bxlumis").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "photons") fill2DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("photons").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "superclusters") fill2DHistogram(histo,currentHistogram,superclusters.product(),cumulativeFlags.at("superclusters").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "trigobjs") fill2DHistogram(histo,currentHistogram,trigobjs.product(),cumulativeFlags.at("trigobjs").at(currentDir),eventScaleFactor_);
-            else if(currentHistogram.inputCollection == "stops" && datasetType_ == "signalMC") fill2DHistogram(histo,currentHistogram,stops.product(),cumulativeFlags.at("stops").at(currentDir),eventScaleFactor_);
+            if(inputCollection == "jets")            fill2DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("jets").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary jets")  fill2DHistogram(histo,currentHistogram,jets.product(),cumulativeFlags.at("secondary jets").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary photons")  fill2DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("secondary photons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muons")           fill2DHistogram(histo,currentHistogram,muons.product(),cumulativeFlags.at("muons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary muons") fill2DHistogram(histo,currentHistogram,secMuons.product(),cumulativeFlags.at("secondary muons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-muon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),muons.product(),
+                                                                                           cumulativeFlags.at("muon-muon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-secondary muon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),secMuons.product(),
+                                                                                                     cumulativeFlags.at("muon-secondary muon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-secondary photon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),photons.product(),
+                                                                                                     cumulativeFlags.at("muon-secondary photon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-secondary jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(),
+                                                                                                     cumulativeFlags.at("muon-secondary jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-secondary jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
+                                                                                                     cumulativeFlags.at("electron-secondary jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "photon-secondary jet pairs") fill2DHistogram(histo,currentHistogram,photons.product(),jets.product(),
+                                                                                                     cumulativeFlags.at("photon-secondary jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electrons") fill2DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("electrons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary electrons") fill2DHistogram(histo,currentHistogram,electrons.product(),cumulativeFlags.at("secondary electrons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-electron pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
+                                                                                                   cumulativeFlags.at("electron-electron pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "jet-jet pairs") fill2DHistogram(histo,currentHistogram,jets.product(),jets.product(),
+                                                                                         cumulativeFlags.at("jet-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-secondary electron pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),electrons.product(),
+                                                                                                             cumulativeFlags.at("electron-secondary electron pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-muon pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),muons.product(),
+                                                                                               cumulativeFlags.at("electron-muon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("electron-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary electron-jet pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("secondary electron-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary muon-jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(),
+                                                                                              cumulativeFlags.at("secondary muon-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-photon pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),photons.product(),
+                                                                                              cumulativeFlags.at("electron-photon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-jet pairs") fill2DHistogram(histo,currentHistogram,muons.product(),jets.product(),
+                                                                                          cumulativeFlags.at("muon-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-event pairs") fill2DHistogram(histo,currentHistogram,muons.product(),events.product(),
+                                                                                          cumulativeFlags.at("muon-event pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-event pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),events.product(),
+                                                                                          cumulativeFlags.at("electron-event pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "met-jet pairs") fill2DHistogram(histo,currentHistogram,mets.product(),jets.product(),
+                                                                                         cumulativeFlags.at("met-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "met-mcparticle pairs") fill2DHistogram(histo,currentHistogram,mets.product(),mcparticles.product(),
+                                                                                         cumulativeFlags.at("met-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "jet-mcparticle pairs") fill2DHistogram(histo,currentHistogram,jets.product(),mcparticles.product(),
+                                                                                         cumulativeFlags.at("jet-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "jet-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,jets.product(),mcparticles.product(),
+                                                                                         cumulativeFlags.at("jet-secondary mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "mcparticle-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,jets.product(),mcparticles.product(),
+                                                                                         cumulativeFlags.at("mcparticle-secondary mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "track-jet pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),jets.product(),
+                                                                                         cumulativeFlags.at("track-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "photon-jet pairs") fill2DHistogram(histo,currentHistogram,photons.product(),jets.product(),
+                                                                                          cumulativeFlags.at("photon-jet pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-photon pairs") fill2DHistogram(histo,currentHistogram,muons.product(),photons.product(),
+                                                                                          cumulativeFlags.at("muon-photon pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-track pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),tracks.product(),
+                                                                                                cumulativeFlags.at("electron-track pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-track pairs") fill2DHistogram(histo,currentHistogram,muons.product(),tracks.product(),
+                                                                                            cumulativeFlags.at("muon-track pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "jet-track pairs") fill2DHistogram(histo,currentHistogram,jets.product(),tracks.product(),
+                                                                                            cumulativeFlags.at("jet-track pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary muon-track pairs") fill2DHistogram(histo,currentHistogram,secMuons.product(),tracks.product(),
+                                                                                            cumulativeFlags.at("muon-track pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-tau pairs") fill2DHistogram(histo,currentHistogram,muons.product(),taus.product(),
+                                                                                          cumulativeFlags.at("muon-tau pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "tau-tau pairs") fill2DHistogram(histo,currentHistogram,taus.product(),taus.product(),
+                                                                                         cumulativeFlags.at("tau-tau pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "tau-track pairs") fill2DHistogram(histo,currentHistogram,taus.product(),tracks.product(),
+                                                                                           cumulativeFlags.at("tau-track pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-trigobj pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),trigobjs.product(),
+                                                                                                  cumulativeFlags.at("electron-trigobj pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-trigobj pairs") fill2DHistogram(histo,currentHistogram,muons.product(),trigobjs.product(),
+                                                                                              cumulativeFlags.at("muon-trigobj pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "electron-mcparticle pairs") fill2DHistogram(histo,currentHistogram,electrons.product(),mcparticles.product(), cumulativeFlags.at("electron-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-mcparticle pairs") fill2DHistogram(histo,currentHistogram,muons.product(),mcparticles.product(), cumulativeFlags.at("muon-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "muon-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,muons.product(),mcparticles.product(), cumulativeFlags.at("muon-secondary mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "track-mcparticle pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),mcparticles.product(),
+                                                                                              cumulativeFlags.at("track-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "events") fill2DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "taus") fill2DHistogram(histo,currentHistogram,taus.product(),cumulativeFlags.at("taus").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "mets") fill2DHistogram(histo,currentHistogram,mets.product(),cumulativeFlags.at("mets").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "tracks") fill2DHistogram(histo,currentHistogram,tracks.product(),cumulativeFlags.at("tracks").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "track-event pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),events.product(),
+                                                                                             cumulativeFlags.at("track-event pairs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "genjets") fill2DHistogram(histo,currentHistogram,genjets.product(),cumulativeFlags.at("genjets").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "mcparticles") fill2DHistogram(histo,currentHistogram,mcparticles.product(),cumulativeFlags.at("mcparticles").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "secondary mcparticles") fill2DHistogram(histo,currentHistogram,mcparticles.product(),cumulativeFlags.at("secondary mcparticles").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "primaryvertexs") fill2DHistogram(histo,currentHistogram,primaryvertexs.product(),cumulativeFlags.at("primaryvertexs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "bxlumis") fill2DHistogram(histo,currentHistogram,bxlumis.product(),cumulativeFlags.at("bxlumis").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "photons") fill2DHistogram(histo,currentHistogram,photons.product(),cumulativeFlags.at("photons").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "superclusters") fill2DHistogram(histo,currentHistogram,superclusters.product(),cumulativeFlags.at("superclusters").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "trigobjs") fill2DHistogram(histo,currentHistogram,trigobjs.product(),cumulativeFlags.at("trigobjs").at(currentDir),inputCollection,eventScaleFactor_);
+            else if(inputCollection == "stops" && datasetType_ == "signalMC") fill2DHistogram(histo,currentHistogram,stops.product(),cumulativeFlags.at("stops").at(currentDir),inputCollection,eventScaleFactor_);
           }
 
         }
 
 
-        //fills histograms with the sizes of collections
+       //fills histograms with the sizes of collections
         for (uint currentObjectIndex = 0; currentObjectIndex != objectsToPlot.size(); currentObjectIndex++){
 
           string currentObject = objectsToPlot.at(currentObjectIndex);
@@ -2110,7 +2111,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(coll == "tracks")              assignTreeBranch(brSpecs,tracks.product(),        cumulativeFlags.at(coll).back());
         else if(coll == "genjets")             assignTreeBranch(brSpecs,genjets.product(),       cumulativeFlags.at(coll).back());
         else if(coll == "mcparticles")         assignTreeBranch(brSpecs,mcparticles.product(),   cumulativeFlags.at(coll).back());
-        else if(coll == "sedconary mcparticles")assignTreeBranch(brSpecs,mcparticles.product(),   cumulativeFlags.at(coll).back());
+        else if(coll == "secondary mcparticles")assignTreeBranch(brSpecs,mcparticles.product(),   cumulativeFlags.at(coll).back());
         else if(coll == "primaryvertexs")      assignTreeBranch(brSpecs,primaryvertexs.product(),cumulativeFlags.at(coll).back());
         else if(coll == "bxlumis")             assignTreeBranch(brSpecs,bxlumis.product(),       cumulativeFlags.at(coll).back());
         else if(coll == "photons")             assignTreeBranch(brSpecs,photons.product(),       cumulativeFlags.at(coll).back());
@@ -6815,9 +6816,6 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
                        << ", inputType=" << inputType
                        << endl;
 
-  bool sameObjects = false;
-  if(typeid(InputCollection1).name() == typeid(InputCollection2).name()) sameObjects = true;  // FIXME:  is sameObjects just the not of isTwoTypesOfObject?  If so, it's redundant.
-
   // Get the strings for the two objects that make up the pair.
   string obj1Type, obj2Type;
   getTwoObjs(inputType, obj1Type, obj2Type);
@@ -6844,7 +6842,7 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
   for (uint object1 = 0; object1 != inputCollection1->size(); object1++){
     for (uint object2 = 0; object2 != inputCollection2->size(); object2++){
 
-      if(sameObjects && object1 >= object2) continue;//account for duplicate pairs if both collections are the same
+      if(!isTwoTypesOfObject && object1 >= object2) continue;//account for duplicate pairs if both collections are the same
 
 
       bool cutDecision  = true;//object passes if this cut doesn't cut on that type of object
@@ -7008,7 +7006,7 @@ void OSUAnalysis::assignTreeBranch(BranchSpecs parameters, InputCollection input
 
 
 template <class InputCollection>
-void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollection inputCollection, flagPair flags, double scaleFactor){
+void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollection inputCollection, flagPair flags, string inputType, double scaleFactor){
 
   if (verbose_>2) clog << "  Filling histogram for " << parameters.name << endl;
 
@@ -7045,16 +7043,19 @@ void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollect
 
 template <class InputCollection1, class InputCollection2>
 void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollection1 inputCollection1, InputCollection2 inputCollection2,
-                                  flagPair pairFlags, double scaleFactor){
+                                  flagPair pairFlags, string inputType, double scaleFactor){
 
-  bool sameObjects = false;
-  if(typeid(InputCollection1).name() == typeid(InputCollection2).name()) sameObjects = true;
+  // Get the strings for the two objects that make up the pair.
+  string obj1Type, obj2Type;
+  getTwoObjs(inputType, obj1Type, obj2Type);
+  bool isTwoTypesOfObject = true;
+  if (obj1Type==obj2Type) isTwoTypesOfObject = false;
 
   int pairCounter = -1;
   for (uint object1 = 0; object1 != inputCollection1->size(); object1++){
     for (uint object2 = 0; object2 != inputCollection2->size(); object2++){
 
-      if(sameObjects && object1 >= object2) continue;//account for duplicate pairs if both collections are the same
+      if(!isTwoTypesOfObject && object1 >= object2) continue;//account for duplicate pairs if both collections are the same
 
       pairCounter++;
       if(!plotAllObjectsInPassingEvents_ && !pairFlags.at(pairCounter).second) continue;
@@ -7108,7 +7109,7 @@ void OSUAnalysis::fill1DStatus3Histogram(TH1* histo, const BNmcparticleCollectio
 }
 
 template <class InputCollection>
-void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollection inputCollection, flagPair flags, double scaleFactor){
+void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollection inputCollection, flagPair flags, string inputType, double scaleFactor){
 
   for (uint object = 0; object != inputCollection->size(); object++){
 
@@ -7150,16 +7151,19 @@ void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollect
 
 template <class InputCollection1, class InputCollection2>
 void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollection1 inputCollection1, InputCollection2 inputCollection2,
-                                  flagPair pairFlags, double scaleFactor){
+                                  flagPair pairFlags, string inputType, double scaleFactor){
 
-  bool sameObjects = false;
-  if(typeid(InputCollection1).name() == typeid(InputCollection2).name()) sameObjects = true;
+  // Get the strings for the two objects that make up the pair.
+  string obj1Type, obj2Type;
+  getTwoObjs(inputType, obj1Type, obj2Type);
+  bool isTwoTypesOfObject = true;
+  if (obj1Type==obj2Type) isTwoTypesOfObject = false;
 
   int pairCounter = -1;
   for (uint object1 = 0; object1 != inputCollection1->size(); object1++){
     for (uint object2 = 0; object2 != inputCollection2->size(); object2++){
 
-      if(sameObjects && object1 >= object2) continue;//account for duplicate pairs if both collections are the same
+      if(!isTwoTypesOfObject && object1 >= object2) continue;//account for duplicate pairs if both collections are the same
 
       pairCounter++;
 
