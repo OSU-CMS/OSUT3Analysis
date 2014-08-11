@@ -767,7 +767,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Histogram = MakeIntegralHist(Histogram, integrateDir)
             if arguments.poisErr or makePoisErrHist == True:
                 xBins = array ('d', [])
-                for i in range(1,Histogram.GetNbinsX()+1):
+                for i in range(1,Histogram.GetNbinsX()+2):  # Want n+1 bin boundaries for n bins  
                     xBins.append (Histogram.GetBinLowEdge (i))
                 newDataHist  = TH1F(Histogram.GetName(), Histogram.GetTitle(), Histogram.GetNbinsX(), xBins)
                 for i in range(1,Histogram.GetNbinsX()+1):
@@ -779,7 +779,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 newDataHist.SetLineColor(colors[sample])
                 newDataHist.SetLineWidth(2)
                 Histogram = newDataHist
-
             
             DataLegendEntries.append(legLabel)
             
@@ -927,21 +926,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         gPad.Draw()
         
         Canvas.cd(1)
-        for dataHist in DataHistograms:
-            if arguments.poisErr or makePoisErrHist == True:
-                xBins = array ('d', [])
-                for i in range(1,dataHist.GetNbinsX()+1):
-                    xBins.append (dataHist.GetBinLowEdge (i))
-                newDataHist  = TH1F(dataHist.GetName(), dataHist.GetTitle(), dataHist.GetNbinsX(), xBins)
-                for i in range(1,dataHist.GetNbinsX()+1):
-                    newDataHist.SetBinContent(i,dataHist.GetBinContent(i))
-                newDataHist.SetBinErrorOption(TH1.kPoisson)
-                newDataHist.SetMarkerColor(colors[sample])
-                newDataHist.SetMarkerStyle(20)
-                newDataHist.SetMarkerSize(1.2)
-                newDataHist.SetLineColor(colors[sample])
-                newDataHist.SetLineWidth(2)
-                dataHist = newDataHist
 
     if numBgMCSamples is not 0: # the first thing to draw to the canvas is a bgMC sample
 
