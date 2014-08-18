@@ -1,5 +1,3 @@
-<library file="*.cc" name="OSUAnalysisAnaToolsPlugins">
-<flags  EDM_PLUGIN="1"/>
 <use    name="BEAN/Collections"/>
 <use    name="FWCore/Framework"/>
 <use    name="FWCore/ParameterSet"/>
@@ -17,4 +15,6 @@
 <use    name="lhapdf"/>
 <use    name="root"/>
 <use    name="rootrflx"/>
+<library file="*.cc" name="OSUAnalysisAnaToolsPlugins">
+  <flags  EDM_PLUGIN="1"/>
 </library>
