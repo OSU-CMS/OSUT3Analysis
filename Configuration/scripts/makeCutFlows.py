@@ -39,6 +39,8 @@ parser.add_option("-v", "--verbose", action="store_true", dest="verbose", defaul
                   help="verbose output")
 parser.add_option("-e", "--noErrors", action="store_true", dest="noErrors", default=False,
                   help="do not print errors in table")
+parser.add_option("-x", "--xsecTheory", dest="xsecTheory", 
+                  help="specify file with theory cross sections for each dataset")
 
 (arguments, args) = parser.parse_args()
 
@@ -199,6 +201,8 @@ for channel in channels: # loop over final states, which each have their own dir
       cutFlowTable += " -e "  
     if arguments.precision:
       cutFlowTable += " -p " + arguments.precision    
+    if arguments.xsecTheory:
+      cutFlowTable += " -x " + arguments.xsecTheory  
     if arguments.makeDiffPlots:
       cutFlowTable += " -d \"Data - MC\""
     if arguments.makeRatioPlots:

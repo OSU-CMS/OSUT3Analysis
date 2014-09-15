@@ -6,12 +6,14 @@
 #include <map>
 #include <vector>
 #include <math.h>
+#include <fstream>
 
 #include "TFile.h"
 #include "TDirectoryFile.h"
 #include "TKey.h"
 #include "TH1D.h"
 #include "TAxis.h"
+#include "TString.h"
 
 #define BIG_INT (1.0e6)
 
@@ -50,6 +52,19 @@ main (int argc, char *argv[])
     myprecision_ = atoi(opt.at("precision").c_str());
     cerr << "Will use precision of " << myprecision_ << endl;  
   }
+
+  map<string, double> xsecs;  
+  if (opt.count ("xsecTheory")) {
+    ifstream xsecFile(opt.at("xsecTheory").c_str());  
+    if (!xsecFile) { cerr << "Error: file " << opt.at("xsecTheory") << " could not be opened." << endl; return 0; }
+    cerr << "Will use cross sections from " << opt.at("xsecTheory") << endl;  
+    string sample;
+    double xsec;  
+    while (!xsecFile.eof()) { 
+      xsecFile >> sample >> xsec;
+      xsecs[sample] = xsec;  
+    }
+  }  
   if (opt.count ("diff"))
     sbLabel = opt.at ("diff");
   if (opt.count ("ratio"))
@@ -80,6 +95,22 @@ main (int argc, char *argv[])
       TIter next0 (fin->GetListOfKeys ());
       TObject *obj0;
       TH1D *cutFlow = 0, *upperLimit = 0;
+
+      double yieldTheory = -99;  
+      double xsec = -99;  
+      if (opt.count ("xsecTheory")) {
+	TString fileNameStr(fileName);  
+	for (map<string, double>::iterator it = xsecs.begin(); it != xsecs.end(); it++) {
+	  TString sample = TString(it->first);  
+	  if (fileNameStr.Contains(sample.Data())) {
+	    xsec = it->second;
+	    yieldTheory = xsec * atof (opt["luminosity"].c_str ());  
+	    break;  
+	  }
+	}
+	cerr << "Found for fileName: " << fileName << ": xsec = " << xsec << ", yieldTheory = " << yieldTheory << endl;  
+      }
+
       while (!cutFlow && (obj0 = next0 ()))
         {
           string obj0Class = ((TKey *) obj0)->GetClassName (),
@@ -124,6 +155,10 @@ main (int argc, char *argv[])
       for (unsigned j = 1; j <= (unsigned) x->GetNbins (); j++)
         {
           double binContent = cutFlow->GetBinContent (j), binUpperLimit = upperLimit->GetBinContent (j), binError = cutFlow->GetBinError (j);
+	  if (j==1 && opt.count ("xsecTheory")) {
+	    binContent = yieldTheory;  
+	  }
+
           string tableContent;
           if (binContent - binError > 0)
             {
@@ -155,7 +190,12 @@ main (int argc, char *argv[])
                 tableContent = "< " + bigInt (binUpperLimit);
             }
           table.back ().push_back (tableContent);
-          effTable.back ().push_back (bigEff (100.0 * (cutFlow->GetBinContent (j) / (double) cutFlow->GetBinContent (1))));
+
+	  if (opt.count ("xsecTheory")) {
+	    effTable.back ().push_back (bigEff (100.0 * (cutFlow->GetBinContent (j) / yieldTheory)));  
+	  } else {
+	    effTable.back ().push_back (bigEff (100.0 * (cutFlow->GetBinContent (j) / (double) cutFlow->GetBinContent (1))));
+	  }
           if (j == 1)
             marginalEffTable.back ().push_back (bigEff (100.0));
           else
@@ -193,7 +233,8 @@ main (int argc, char *argv[])
                 }
             }
         }
-    }
+    }  
+
   numerator.resize (ylabels.size (), 0.0);
   denominator.resize (ylabels.size (), 0.0);
   numeratorError2.resize (ylabels.size (), 0.0);
@@ -288,6 +329,7 @@ main (int argc, char *argv[])
     }
   else
     {
+
       for (unsigned i = 0; i < xlabels.size () + 1; i++)
         cout << "l";
       cout << "}" << endl;
@@ -530,6 +572,10 @@ parseOptions (int argc, char *argv[], map<string, string> &opt, vector<string> &
         {
           key = "precision";
 	}
+      if (key == "x")
+        {
+          key = "xsecTheory";
+	}
       if (key == "t")
         {
           key = "totalBkgd";
@@ -539,7 +585,7 @@ parseOptions (int argc, char *argv[], map<string, string> &opt, vector<string> &
         }
       if (key == "luminosity" || key == "signalToBackground" || key == "diff" || key == "ratio" || key == "totalBkgd")
         value = argv[i++ + 1];
-      if (key == "precision") 
+      if (key == "precision" || key == "xsecTheory") 
         value = argv[i++ + 1];
       opt[key] = value;
     }
