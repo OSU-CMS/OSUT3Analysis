@@ -155,7 +155,7 @@ main (int argc, char *argv[])
       for (unsigned j = 1; j <= (unsigned) x->GetNbins (); j++)
         {
           double binContent = cutFlow->GetBinContent (j), binUpperLimit = upperLimit->GetBinContent (j), binError = cutFlow->GetBinError (j);
-	  if (j==1 && opt.count ("xsecTheory")) {
+	  if (j==1 && opt.count ("xsecTheory") && yieldTheory > 0.0) {
 	    binContent = yieldTheory;  
 	  }
 
@@ -191,11 +191,7 @@ main (int argc, char *argv[])
             }
           table.back ().push_back (tableContent);
 
-	  if (opt.count ("xsecTheory")) {
-	    effTable.back ().push_back (bigEff (100.0 * (cutFlow->GetBinContent (j) / yieldTheory)));  
-	  } else {
-	    effTable.back ().push_back (bigEff (100.0 * (cutFlow->GetBinContent (j) / (double) cutFlow->GetBinContent (1))));
-	  }
+          effTable.back ().push_back (bigEff (100.0 * (cutFlow->GetBinContent (j) / (double) cutFlow->GetBinContent (1))));
           if (j == 1)
             marginalEffTable.back ().push_back (bigEff (100.0));
           else
