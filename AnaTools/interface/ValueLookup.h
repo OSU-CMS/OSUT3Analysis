@@ -3,12 +3,14 @@
 
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupCommon.h"
 
-class ValueLookup
-{
-  public:
-    ValueLookup () {};
-    ~ValueLookup () {};
+// Declaration of the ValueLookup class, containing all the valueLookup methods
+// and the variables on which they depend.
+class ValueLookup { public: ValueLookup () {}; ~ValueLookup () {};
 
+  public:
+    ////////////////////////////////////////////////////////////////////////////
+    // valueLookup methods for each type of object.
+    ////////////////////////////////////////////////////////////////////////////
     double  valueLookup  (const  BNbxlumi*         object,  string  variable,  string  function,  string  &stringValue);
     double  valueLookup  (const  BNelectron*       object,  string  variable,  string  function,  string  &stringValue);
     double  valueLookup  (const  BNevent*          object,  string  variable,  string  function,  string  &stringValue);
@@ -24,7 +26,11 @@ class ValueLookup
     double  valueLookup  (const  BNtau*            object,  string  variable,  string  function,  string  &stringValue);
     double  valueLookup  (const  BNtrack*          object,  string  variable,  string  function,  string  &stringValue);
     double  valueLookup  (const  BNtrigobj*        object,  string  variable,  string  function,  string  &stringValue);
+    ////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////
+    // valueLookup methods for each pair of objects.
+    ////////////////////////////////////////////////////////////////////////////
     double  valueLookup  (const  BNelectron*    object1,  const  BNelectron*    object2,  string  variable,  string  function,  string  &stringValue);
     double  valueLookup  (const  BNelectron*    object1,  const  BNevent*       object2,  string  variable,  string  function,  string  &stringValue);
     double  valueLookup  (const  BNelectron*    object1,  const  BNjet*         object2,  string  variable,  string  function,  string  &stringValue);
@@ -54,7 +60,12 @@ class ValueLookup
     double  valueLookup  (const  BNtrack*       object1,  const  BNevent*       object2,  string  variable,  string  function,  string  &stringValue);
     double  valueLookup  (const  BNtrack*       object1,  const  BNjet*         object2,  string  variable,  string  function,  string  &stringValue);
     double  valueLookup  (const  BNtrack*       object1,  const  BNmcparticle*  object2,  string  variable,  string  function,  string  &stringValue);
+    ////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Public methods to assign values to each of the private object
+    // collections.
+    ////////////////////////////////////////////////////////////////////////////
     edm::Handle<BNbxlumiCollection>         setBxlumis                   (edm::Handle<BNbxlumiCollection>         &x)  {  return  (bxlumis                    =  x);  };
     edm::Handle<BNelectronCollection>       setElectrons                 (edm::Handle<BNelectronCollection>       &x)  {  return  (electrons                  =  x);  };
     edm::Handle<BNeventCollection>          setEvents                    (edm::Handle<BNeventCollection>          &x)  {  return  (events                     =  x);  };
@@ -73,7 +84,11 @@ class ValueLookup
     edm::Handle<BNtriggerCollection>        setTriggers                  (edm::Handle<BNtriggerCollection>        &x)  {  return  (triggers                   =  x);  };
     edm::Handle<BNtrigobjCollection>        setTrigobjs                  (edm::Handle<BNtrigobjCollection>        &x)  {  return  (trigobjs                   =  x);  };
     edm::Handle<double>                     setRhokt6CaloJetsHandle      (edm::Handle<double>                     &x)  {  return  (rhokt6CaloJetsHandle_      =  x);  };
+    ////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Public methods to assign values to each of the private variables.
+    ////////////////////////////////////////////////////////////////////////////
     PUWeight*                               setPuWeight                  (PUWeight*                               x)   {  return  (puWeight_                  =  x);  };
     bool                                    setDoPileupReweighting       (bool                                    &x)  {  return  (doPileupReweighting_       =  x);  };
     bool                                    setFlagJESJERCorr            (bool                                    &x)  {  return  (flagJESJERCorr_            =  x);  };
@@ -106,11 +121,19 @@ class ValueLookup
     vector<string>                          setObjectsToCut              (vector<string>                          &x)  {  return  (objectsToCut               =  x);  };
     vector<string>                          setObjectsToGet              (vector<string>                          &x)  {  return  (objectsToGet               =  x);  };
     vector<string>                          setTargetTriggers            (vector<string>                          &x)  {  return  (targetTriggers_            =  x);  };
+    ////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Public methods which are used explicitly within OSUAnalysis.cc.
+    ////////////////////////////////////////////////////////////////////////////
     const BNmet * chosenMET ();
     int getPdgIdBinValue(int pdgId);
+    ////////////////////////////////////////////////////////////////////////////
 
   private:
+    ////////////////////////////////////////////////////////////////////////////
+    // Private utilitiy methods used by the valueLookup methods.
+    ////////////////////////////////////////////////////////////////////////////
     BNjet getCorrectedJet(const BNjet &iJet, string jERCase);
     const BNelectron * chosenElectron ();
     const BNjet * chosenJet ();
@@ -151,8 +174,11 @@ class ValueLookup
     unsigned int GetNumExtraPartons(const BNmcparticleCollection* genPartColl);
     void WriteBadCSC();
     void WriteDeadEcal ();
+    ////////////////////////////////////////////////////////////////////////////
 
-    //Collections
+    ////////////////////////////////////////////////////////////////////////////
+    // Private object collections used by the valueLookup methods.
+    ////////////////////////////////////////////////////////////////////////////
     edm::Handle<BNtriggerCollection>        triggers;
     edm::Handle<BNtrigobjCollection>        trigobjs;
     edm::Handle<BNjetCollection>            jets;
@@ -171,7 +197,11 @@ class ValueLookup
     edm::Handle<BNsuperclusterCollection>   superclusters;
     edm::Handle<BNstopCollection>           stops;
     edm::Handle<double>                     rhokt6CaloJetsHandle_;
+    ////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Private variables used by the valueLookup methods.
+    ////////////////////////////////////////////////////////////////////////////
     PUWeight          *puWeight_;
     bool              NmissoutShiftDown_;
     bool              NmissoutShiftUp_;
@@ -206,6 +236,7 @@ class ValueLookup
     vector<string>    targetTriggers_;
 };
 
+// Definitions of the template methods.
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTemplates.h"
 
 #endif

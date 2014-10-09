@@ -18,14 +18,14 @@ ValueLookup::applyFunction(string function, double value){
 
 double
 ValueLookup::getRhoCorr(const BNtrack* track) {
-  // Return the pile-up (rho) corrected isolation energy, i.e., the total calorimeter energy around the candidate track.                                                                                  
+  // Return the pile-up (rho) corrected isolation energy, i.e., the total calorimeter energy around the candidate track.
   if (!useTrackCaloRhoCorr_) return -99;
-  // if (!rhokt6CaloJetsHandle_) {                                                                                                                                                                        
-  //   clog << "ERROR [getTrkCaloTotRhoCorr]:  The collection rhokt6CaloJetsHandle is not available!" << endl;                                                                                            
-  //   return -99;                                                                                                                                                                                        
-  // }                                                                                                                                                                                                    
+  // if (!rhokt6CaloJetsHandle_) {
+  //   clog << "ERROR [getTrkCaloTotRhoCorr]:  The collection rhokt6CaloJetsHandle is not available!" << endl;
+  //   return -99;
+  // }
   double radDeltaRCone = 0.5;
-  double rhoCorr_kt6CaloJets = *rhokt6CaloJetsHandle_ * TMath::Pi() * pow(radDeltaRCone, 2);  // Define effective area as pi*r^2, where r is radius of DeltaR cone.                                       
+  double rhoCorr_kt6CaloJets = *rhokt6CaloJetsHandle_ * TMath::Pi() * pow(radDeltaRCone, 2);  // Define effective area as pi*r^2, where r is radius of DeltaR cone.
   return rhoCorr_kt6CaloJets;
 
 }
@@ -135,7 +135,7 @@ ValueLookup::chosenTrack ()
     for (int i = cumulativeFlags.at("tracks").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("tracks").at(i).size()){
         trackFlags = cumulativeFlags.at("tracks").at(i);
-	break;
+        break;
       }
     }
     for (uint trackIndex = 0; trackIndex != trackFlags.size(); trackIndex++){
@@ -160,7 +160,7 @@ ValueLookup::chosenJet ()
     for (int i = cumulativeFlags.at("jets").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("jets").at(i).size()){
         jetFlags = cumulativeFlags.at("jets").at(i);
-	break;
+        break;
       }
     }
     for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++){
@@ -418,7 +418,7 @@ ValueLookup::getSumJetPt (const BNjetCollection* jetColl){
     hT_2.SetPtEtaPhiM(jet->pt, jet->eta, jet->phi, jet->mass);
     hT += hT_2;
     sumJetPt = hT.Pt();
-    
+
   }
   return sumJetPt;
 }
@@ -548,7 +548,7 @@ BNjet ValueLookup::getCorrectedJet(const BNjet &iJet, string jERCase){
     else jetFactor *= getJERfactor(0, fabs(iJet.eta), iJet.genJetPT, iJet.pt);
   // Make a copy of the input jet for output and update 4-vector values
   BNjet result = iJet;
-    
+
   result.px   *= jetFactor;
   result.py   *= jetFactor;
   result.pz   *= jetFactor;
@@ -568,13 +568,13 @@ BNjet ValueLookup::getCorrectedJet(const BNjet &iJet, string jERCase){
 
 double
 ValueLookup::getDetectorEta(double evntEta,double z0) {
-  // Use algorithm from Sam Harper, https://hypernews.cern.ch/HyperNews/CMS/get/EXO-12-034/19.html  
+  // Use algorithm from Sam Harper, https://hypernews.cern.ch/HyperNews/CMS/get/EXO-12-034/19.html
   double thetaEvt = etaToTheta(evntEta);
   //   std::cout << "**************************************** " << std::endl;
   //   std::cout << "Event Theta: " << thetaEvt << std::endl;
   double z = 129.4 / tan(thetaEvt); //129.4 is the average barrel radius
   double zTot = z+z0;
-  
+
   if(fabs(zTot)<269){ //269 is an emperically derived number which means that < its likely in th barrel
     return zTot !=0 ? thetaToEta(atan(129.4/zTot)) : 0.;
   }
@@ -590,7 +590,7 @@ ValueLookup::getDetectorEta(double evntEta,double z0) {
   //  std::cout << "Result of getDetectorEta: " << -log(tan((atan(rxy/endcapZ))/2)) << std::endl;
   return thetaToEta(atan(rxy/endcapZ));
   //  return -log(tan((atan(rxy/endcapZ))/2));
-  
+
 }
 
 
@@ -678,8 +678,8 @@ ValueLookup::getTrkDeadEcalDeltaR (const BNtrack* track1){
 }
 
 
-// If a track is found within dR<0.25 of a bad CSC chamber, value = 1, otherwise value = 0.  
-// FIXME:  Instead of a deltaR cut, it would be better to use the boundaries of the chamber 
+// If a track is found within dR<0.25 of a bad CSC chamber, value = 1, otherwise value = 0.
+// FIXME:  Instead of a deltaR cut, it would be better to use the boundaries of the chamber
 int
 ValueLookup::getTrkIsMatchedBadCSC (const BNtrack* track1){
   double deltaRLowest = 999;
@@ -692,7 +692,7 @@ ValueLookup::getTrkIsMatchedBadCSC (const BNtrack* track1){
     if(deltaRtemp < deltaRLowest) deltaRLowest = deltaRtemp;
   }
   if (deltaRLowest<0.25) { value = 1; }
-  else                  { value = 0; } 
+  else                  { value = 0; }
   return value;
 }
 
@@ -736,22 +736,22 @@ double ValueLookup::getPtSingleObjectMatchesAnyTrigger(double recoPhi, const vec
   for ( BNtrigobjCollection::const_iterator iObj = triggerObjects->begin();
         iObj != triggerObjects->end();
         iObj ++ ) {
-    // look for a matching name again                                                                                                          
+    // look for a matching name again
     for (vector<string>::const_iterator iTarget = targetTriggers.begin();
          iTarget != targetTriggers.end();
          iTarget++) {
-      // if this is the right name                                                                                                             
+      // if this is the right name
       if ( iObj->filter.find((*iTarget)) != std::string::npos) {
         double deltaPhiCalc = fabs(deltaPhi(recoPhi, iObj->phi));
 
         if (deltaPhiCalc < 0.3) matchPt = iObj->pt;
 
-      } 
+      }
 
-    }// end for each target                                                                                                                    
+    }// end for each target
 
 
-  } // end for each object                                                                                                                     
+  } // end for each object
 
 
   return matchPt;
@@ -763,21 +763,21 @@ double ValueLookup::getPtSingleObjectMatchesAnyTrigger(double recoPhi, const vec
 double ValueLookup::getJERfactor(int returnType, double jetAbsETA, double genjetPT, double recojetPT){
 
   double factor = 1.;
-  
+
   double scale_JER = 1., scale_JERup = 1., scale_JERdown = 1.;
-  if( jetAbsETA<0.5 ){ 
+  if( jetAbsETA<0.5 ){
     scale_JER = 1.052; scale_JERup = 1.052 + sqrt( 0.012*0.012 + 0.062*0.062 ); scale_JERdown = 1.052 - sqrt( 0.012*0.012 + 0.061*0.061 );
   }
-  else if( jetAbsETA<1.1 ){ 
+  else if( jetAbsETA<1.1 ){
     scale_JER = 1.057; scale_JERup = 1.057 + sqrt( 0.012*0.012 + 0.056*0.056 ); scale_JERdown = 1.057 - sqrt( 0.012*0.012 + 0.055*0.055 );
   }
-  else if( jetAbsETA<1.7 ){ 
+  else if( jetAbsETA<1.7 ){
     scale_JER = 1.096; scale_JERup = 1.096 + sqrt( 0.017*0.017 + 0.063*0.063 ); scale_JERdown = 1.096 - sqrt( 0.017*0.017 + 0.062*0.062 );
   }
-  else if( jetAbsETA<2.3 ){ 
+  else if( jetAbsETA<2.3 ){
     scale_JER = 1.134; scale_JERup = 1.134 + sqrt( 0.035*0.035 + 0.087*0.087 ); scale_JERdown = 1.134 - sqrt( 0.035*0.035 + 0.085*0.085 );
   }
-  else if( jetAbsETA<5.0 ){ 
+  else if( jetAbsETA<5.0 ){
     scale_JER = 1.288; scale_JERup = 1.288 + sqrt( 0.127*0.127 + 0.155*0.155 ); scale_JERdown = 1.288 - sqrt( 0.127*0.127 + 0.153*0.153 );
   }
 
@@ -854,8 +854,8 @@ ValueLookup::WriteDeadEcal (){
 }
 
 
-// Creates a map of the bad CSC chambers.  
-// The list of bad CSC chambers is taken from:  
+// Creates a map of the bad CSC chambers.
+// The list of bad CSC chambers is taken from:
 // https://twiki.cern.ch/twiki/bin/viewauth/CMS/CSCDPGConditions#CSC_bad_chambers_in_2012_30_05_2
 void
 ValueLookup::WriteBadCSC() {
@@ -875,10 +875,10 @@ ValueLookup::WriteBadCSC() {
     newChan.etaCSC = etaCSC;
     newChan.phiCSC = phiCSC;
     BadCSCVec.push_back(newChan);
-    //    clog << "Debug:  Adding bad CSC with eta=" << etaCSC << ", phi=" << phiCSC << endl;  
+    //    clog << "Debug:  Adding bad CSC with eta=" << etaCSC << ", phi=" << phiCSC << endl;
   }
   if (BadCSCVec.size() == 0) clog << "Warning: No bad CSC chambers have been found." << endl;
-}  
+}
 
 
 double
@@ -891,11 +891,11 @@ ValueLookup::thetaToEta(double theta) {
 flagPair ValueLookup::getLastValidFlags(string objType) {
   // get the last valid flags in the flag map
   for (int i = cumulativeFlags.at(objType).size() - 1; i >= 0; i--) {  // loop backwards over all the cuts
-    if (cumulativeFlags.at(objType).at(i).size()){  	  // If all the flags have been filled, then the last cut will have a nonzero size
-      return cumulativeFlags.at(objType).at(i);  
+    if (cumulativeFlags.at(objType).at(i).size()){            // If all the flags have been filled, then the last cut will have a nonzero size
+      return cumulativeFlags.at(objType).at(i);
     }
   }
-  // no valid flags have been found 
+  // no valid flags have been found
   flagPair empty;
-  return empty;  
-}  
+  return empty;
+}

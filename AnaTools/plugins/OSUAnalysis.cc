@@ -1,5 +1,5 @@
 #include "OSUT3Analysis/AnaTools/plugins/OSUAnalysis.h"
-#include "LHAPDF/LHAPDF.h"    
+#include "LHAPDF/LHAPDF.h"
 
 OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   /// Retrieve parameters from the configuration file.
@@ -64,9 +64,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   applyTrackingSF_ (cfg.getParameter<bool> ("applyTrackingSF")),
   applyBtagSF_ (cfg.getParameter<bool> ("applyBtagSF")),
   minBtag_ (cfg.getParameter<int> ("minBtag")),
-  calcPdfWeights_ (cfg.getParameter<bool> ("calcPdfWeights")),  
-  pdfSet_ (cfg.getParameter<string> ("pdfSet")),  
-  pdfSetFlag_ (cfg.getParameter<int> ("pdfSetFlag")),  
+  calcPdfWeights_ (cfg.getParameter<bool> ("calcPdfWeights")),
+  pdfSet_ (cfg.getParameter<string> ("pdfSet")),
+  pdfSetFlag_ (cfg.getParameter<int> ("pdfSetFlag")),
   electronSFShift_ (cfg.getParameter<string> ("electronSFShift")),
   muonSFShift_ (cfg.getParameter<string> ("muonSFShift")),
   triggerMetSFShift_ (cfg.getParameter<string> ("triggerMetSFShift")),
@@ -83,128 +83,128 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   GetPlotsAfterEachCut_ (cfg.getParameter<bool> ("GetPlotsAfterEachCut")),
   verbose_ (cfg.getParameter<int> ("verbose"))
 {
-  
+
   //  if (verbose_) printEventInfo_ = true;
   if (verbose_) clog << "Beginning OSUAnalysis::OSUAnalysis constructor." << endl;
-  
+
   if (verbose_) clog << "Using the following parameters:  " << endl
-		     << "  jets_                            = " <<  jets_                            << endl   
-		     << "  muons_                           = " <<  muons_                           << endl   
-		     << "  secMuons_                        = " <<  secMuons_                        << endl   
-		     << "  electrons_                       = " <<  electrons_                       << endl   
-		     << "  events_                          = " <<  events_                          << endl   
-		     << "  taus_                            = " <<  taus_                            << endl   
-		     << "  mets_                            = " <<  mets_                            << endl   
-		     << "  tracks_                          = " <<  tracks_                          << endl   
-		     << "  genjets_                         = " <<  genjets_                         << endl   
-		     << "  mcparticles_                     = " <<  mcparticles_                     << endl   
-		     << "  stops_                           = " <<  stops_                           << endl   
-		     << "  primaryvertexs_                  = " <<  primaryvertexs_                  << endl   
-		     << "  bxlumis_                         = " <<  bxlumis_                         << endl   
-		     << "  photons_                         = " <<  photons_                         << endl   
-		     << "  superclusters_                   = " <<  superclusters_                   << endl   
-		     << "  triggers_                        = " <<  triggers_                        << endl   
-		     << "  trigobjs_                        = " <<  trigobjs_                        << endl   
-		     << "  puFile_                          = " <<  puFile_                          << endl   
-		     << "  deadEcalFile_                    = " <<  deadEcalFile_                    << endl   
-		     << "  badCSCFile_                      = " <<  badCSCFile_                      << endl   
-		     << "  electronSFFile_                  = " <<  electronSFFile_                  << endl   
-		     << "  muonSFFile_                      = " <<  muonSFFile_                      << endl   
-		     << "  jESJERCorr_                      = " <<  jESJERCorr_                      << endl   
-		     << "  flagJESJERCorr_                  = " <<  flagJESJERCorr_                  << endl   
-		     << "  triggerMetSFFile_                = " <<  triggerMetSFFile_                << endl   
-		     << "  trackNMissOutSFFile_             = " <<  trackNMissOutSFFile_             << endl   
-		     << "  muonCutWeight_             = " <<  muonCutWeight_             << endl   
-    		     << "  electronCutWeight_             = " <<  electronCutWeight_             << endl  
-		     << "  recoMuonWeight_             = " <<  recoMuonWeight_             << endl   
-		     << "  recoElectronWeight_             = " <<  recoElectronWeight_             << endl   
-		     << "  isrVarySFFile_                   = " <<  isrVarySFFile_                   << endl   
-		     << "  dataPU_                          = " <<  dataPU_                          << endl   
-		     << "  electronSFID_                    = " <<  electronSFID_                    << endl   
-		     << "  electronSF_                      = " <<  electronSF_                      << endl   
-		     << "  muonSF_                          = " <<  muonSF_                          << endl   
-		     << "  triggerMetSF_                    = " <<  triggerMetSF_                    << endl   
-		     << "  trackNMissOutSF_                 = " <<  trackNMissOutSF_                 << endl   
-		     << "  muonCut_                 = " <<  muonCut_                 << endl   
-		     << "  electronCut_                 = " <<  electronCut_                 << endl   
-		     << "  recoMuon_                 = " <<  recoMuon_                 << endl   
-		     << "  recoElectron_                 = " <<  recoElectron_                 << endl   
-		     << "  isrVarySF_                       = " <<  isrVarySF_                       << endl   
-		     << "  dataset_                         = " <<  dataset_                         << endl   
-		     << "  datasetType_                     = " <<  datasetType_                     << endl   
-    //		     << "  channels_                        = " <<  channels_                        << endl   
-    //		     << "  histogramSets_                   = " <<  histogramSets_                   << endl   
-		     << "  useEDMFormat_                    = " <<  useEDMFormat_                    << endl   
-    //		     << "  treeBranchSets_                  = " <<  treeBranchSets_                  << endl   
-		     << "  plotAllObjectsInPassingEvents_   = " <<  plotAllObjectsInPassingEvents_   << endl   
-		     << "  doPileupReweighting_             = " <<  doPileupReweighting_             << endl   
-		     << "  doTopPtReweighting_              = " <<  doTopPtReweighting_              << endl   
-		     << "  applyTriggerSF_                  = " <<  applyTriggerSF_                  << endl   
-		     << "  applyGentoRecoEfficiency_        = " <<  applyGentoRecoEfficiency_        << endl   
-		     << "  triggerScaleFactor_              = " <<  triggerScaleFactor_              << endl   
-		     << "  applyLeptonSF_                   = " <<  applyLeptonSF_                   << endl   
-		     << "  applyTrackingSF_                 = " <<  applyTrackingSF_                 << endl   
-		     << "  applyBtagSF_                     = " <<  applyBtagSF_                     << endl   
-		     << "  minBtag_                         = " <<  minBtag_                         << endl   
-		     << "  calcPdfWeights_                  = " <<  calcPdfWeights_                  << endl   
-		     << "  pdfSet_                          = " <<  pdfSet_                          << endl   
-		     << "  pdfSetFlag_                      = " <<  pdfSetFlag_                      << endl   
-		     << "  electronSFShift_                 = " <<  electronSFShift_                 << endl   
-		     << "  muonSFShift_                     = " <<  muonSFShift_                     << endl   
-		     << "  triggerMetSFShift_               = " <<  triggerMetSFShift_               << endl   
-		     << "  trackNMissOutSFShift_            = " <<  trackNMissOutSFShift_            << endl   
-		     << "  isrVarySFShift_                  = " <<  isrVarySFShift_                  << endl   
-		     << "  trackSFShift_                    = " <<  trackSFShift_                    << endl   
-		     << "  printEventInfo_                  = " <<  printEventInfo_                  << endl   
-		     << "  printAllTriggers_                = " <<  printAllTriggers_                << endl   
-		     << "  useTrackCaloRhoCorr_             = " <<  useTrackCaloRhoCorr_             << endl   
-    //		     << "  stopCTau_                        = " <<  stopCTau_                        << endl   
-		     << "  GetPlotsAfterEachCut_            = " <<  GetPlotsAfterEachCut_            << endl   
-		     << "  verbose_                         = " <<  verbose_                         << endl   
-		     << endl;  
+                     << "  jets_                            = " <<  jets_                            << endl
+                     << "  muons_                           = " <<  muons_                           << endl
+                     << "  secMuons_                        = " <<  secMuons_                        << endl
+                     << "  electrons_                       = " <<  electrons_                       << endl
+                     << "  events_                          = " <<  events_                          << endl
+                     << "  taus_                            = " <<  taus_                            << endl
+                     << "  mets_                            = " <<  mets_                            << endl
+                     << "  tracks_                          = " <<  tracks_                          << endl
+                     << "  genjets_                         = " <<  genjets_                         << endl
+                     << "  mcparticles_                     = " <<  mcparticles_                     << endl
+                     << "  stops_                           = " <<  stops_                           << endl
+                     << "  primaryvertexs_                  = " <<  primaryvertexs_                  << endl
+                     << "  bxlumis_                         = " <<  bxlumis_                         << endl
+                     << "  photons_                         = " <<  photons_                         << endl
+                     << "  superclusters_                   = " <<  superclusters_                   << endl
+                     << "  triggers_                        = " <<  triggers_                        << endl
+                     << "  trigobjs_                        = " <<  trigobjs_                        << endl
+                     << "  puFile_                          = " <<  puFile_                          << endl
+                     << "  deadEcalFile_                    = " <<  deadEcalFile_                    << endl
+                     << "  badCSCFile_                      = " <<  badCSCFile_                      << endl
+                     << "  electronSFFile_                  = " <<  electronSFFile_                  << endl
+                     << "  muonSFFile_                      = " <<  muonSFFile_                      << endl
+                     << "  jESJERCorr_                      = " <<  jESJERCorr_                      << endl
+                     << "  flagJESJERCorr_                  = " <<  flagJESJERCorr_                  << endl
+                     << "  triggerMetSFFile_                = " <<  triggerMetSFFile_                << endl
+                     << "  trackNMissOutSFFile_             = " <<  trackNMissOutSFFile_             << endl
+                     << "  muonCutWeight_             = " <<  muonCutWeight_             << endl
+                         << "  electronCutWeight_             = " <<  electronCutWeight_             << endl
+                     << "  recoMuonWeight_             = " <<  recoMuonWeight_             << endl
+                     << "  recoElectronWeight_             = " <<  recoElectronWeight_             << endl
+                     << "  isrVarySFFile_                   = " <<  isrVarySFFile_                   << endl
+                     << "  dataPU_                          = " <<  dataPU_                          << endl
+                     << "  electronSFID_                    = " <<  electronSFID_                    << endl
+                     << "  electronSF_                      = " <<  electronSF_                      << endl
+                     << "  muonSF_                          = " <<  muonSF_                          << endl
+                     << "  triggerMetSF_                    = " <<  triggerMetSF_                    << endl
+                     << "  trackNMissOutSF_                 = " <<  trackNMissOutSF_                 << endl
+                     << "  muonCut_                 = " <<  muonCut_                 << endl
+                     << "  electronCut_                 = " <<  electronCut_                 << endl
+                     << "  recoMuon_                 = " <<  recoMuon_                 << endl
+                     << "  recoElectron_                 = " <<  recoElectron_                 << endl
+                     << "  isrVarySF_                       = " <<  isrVarySF_                       << endl
+                     << "  dataset_                         = " <<  dataset_                         << endl
+                     << "  datasetType_                     = " <<  datasetType_                     << endl
+    //                     << "  channels_                        = " <<  channels_                        << endl
+    //                     << "  histogramSets_                   = " <<  histogramSets_                   << endl
+                     << "  useEDMFormat_                    = " <<  useEDMFormat_                    << endl
+    //                     << "  treeBranchSets_                  = " <<  treeBranchSets_                  << endl
+                     << "  plotAllObjectsInPassingEvents_   = " <<  plotAllObjectsInPassingEvents_   << endl
+                     << "  doPileupReweighting_             = " <<  doPileupReweighting_             << endl
+                     << "  doTopPtReweighting_              = " <<  doTopPtReweighting_              << endl
+                     << "  applyTriggerSF_                  = " <<  applyTriggerSF_                  << endl
+                     << "  applyGentoRecoEfficiency_        = " <<  applyGentoRecoEfficiency_        << endl
+                     << "  triggerScaleFactor_              = " <<  triggerScaleFactor_              << endl
+                     << "  applyLeptonSF_                   = " <<  applyLeptonSF_                   << endl
+                     << "  applyTrackingSF_                 = " <<  applyTrackingSF_                 << endl
+                     << "  applyBtagSF_                     = " <<  applyBtagSF_                     << endl
+                     << "  minBtag_                         = " <<  minBtag_                         << endl
+                     << "  calcPdfWeights_                  = " <<  calcPdfWeights_                  << endl
+                     << "  pdfSet_                          = " <<  pdfSet_                          << endl
+                     << "  pdfSetFlag_                      = " <<  pdfSetFlag_                      << endl
+                     << "  electronSFShift_                 = " <<  electronSFShift_                 << endl
+                     << "  muonSFShift_                     = " <<  muonSFShift_                     << endl
+                     << "  triggerMetSFShift_               = " <<  triggerMetSFShift_               << endl
+                     << "  trackNMissOutSFShift_            = " <<  trackNMissOutSFShift_            << endl
+                     << "  isrVarySFShift_                  = " <<  isrVarySFShift_                  << endl
+                     << "  trackSFShift_                    = " <<  trackSFShift_                    << endl
+                     << "  printEventInfo_                  = " <<  printEventInfo_                  << endl
+                     << "  printAllTriggers_                = " <<  printAllTriggers_                << endl
+                     << "  useTrackCaloRhoCorr_             = " <<  useTrackCaloRhoCorr_             << endl
+    //                     << "  stopCTau_                        = " <<  stopCTau_                        << endl
+                     << "  GetPlotsAfterEachCut_            = " <<  GetPlotsAfterEachCut_            << endl
+                     << "  verbose_                         = " <<  verbose_                         << endl
+                     << endl;
 
   TH1::SetDefaultSumw2();
 
-  //create reweighting objects, if necessary 
+  //create reweighting objects, if necessary
 
   if (calcPdfWeights_) {
-    LHAPDF::initPDFSet(pdfSetFlag_, pdfSet_.c_str()); 
-    
-    // PDFsets tried:  
-    //LHAPDF::initPDFSet(1, "cteq66.LHgrid"); 
-    //LHAPDF::initPDFSet(1, "CT10.LHgrid"); 
-    //LHAPDF::initPDFSet(1, "cteq6ll.LHpdf"); 
+    LHAPDF::initPDFSet(pdfSetFlag_, pdfSet_.c_str());
+
+    // PDFsets tried:
+    //LHAPDF::initPDFSet(1, "cteq66.LHgrid");
+    //LHAPDF::initPDFSet(1, "CT10.LHgrid");
+    //LHAPDF::initPDFSet(1, "cteq6ll.LHpdf");
     //LHAPDF::initPDFSet(2, "cteq66alphas.LHgrid");
     //LHAPDF::initPDFSet(1, "MSTW2008nlo68cl.LHgrid");
     //LHAPDF::initPDFSet(2, "MSTW2008nlo68cl_asmz+68cl.LHgrid");
     //LHAPDF::initPDFSet(3, "MSTW2008nlo68cl_asmz-68cl.LHgrid");
-    //LHAPDF::initPDFSet(1,"NNPDF20_100.LHgrid");  //This is the central with as=0.119 
-    //LHAPDF::initPDFSet(6,"NNPDF20_as_0116_100.LHgrid"); //Need to fix max allowed sets 
+    //LHAPDF::initPDFSet(1,"NNPDF20_100.LHgrid");  //This is the central with as=0.119
+    //LHAPDF::initPDFSet(6,"NNPDF20_as_0116_100.LHgrid"); //Need to fix max allowed sets
     //LHAPDF::initPDFSet(4,"NNPDF20_as_0117_100.LHgrid");
     //LHAPDF::initPDFSet(2,"NNPDF20_as_0118_100.LHgrid");
     //LHAPDF::initPDFSet(3,"NNPDF20_as_0120_100.LHgrid");
     //LHAPDF::initPDFSet(5,"NNPDF20_as_0121_100.LHgrid");
     //LHAPDF::initPDFSet(7,"NNPDF20_as_0122_100.LHgrid");
-    
+
     ///Initialize PDF study counters
     passedSF=0.0;
     allSF=0.0;
     allNo=0;
     passedNo=0;
-    
+
     passedSF2=0.0;
     allSF2=0.0;
-    
+
     passedCentralW2=0.0;
     allCentralW2=0.0;
-    
-    
-    //    clog << "Debug:  LHAPDF::numberPDF() = " << LHAPDF::numberPDF() << endl;  
+
+
+    //    clog << "Debug:  LHAPDF::numberPDF() = " << LHAPDF::numberPDF() << endl;
     for(int i=0;i<=LHAPDF::numberPDF();i++){
       allSums.push_back(0.0);
       passedSums.push_back(0.0);
     }
-  }  
+  }
 
 
   if(datasetType_ != "data") {
@@ -220,44 +220,44 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       bTagSFWeight_ = new BtagSFWeight;
     }
     if (triggerMetSFFile_ != "" ){
-      triggerMetSFWeight_ = new TriggerMetSFWeight(triggerMetSFFile_, triggerMetSF_);  
+      triggerMetSFWeight_ = new TriggerMetSFWeight(triggerMetSFFile_, triggerMetSF_);
     }
     if (trackNMissOutSFFile_ != "" ){
-      trackNMissOutSFWeight_ = new TrackNMissOutSFWeight(trackNMissOutSFFile_, trackNMissOutSF_);  
+      trackNMissOutSFWeight_ = new TrackNMissOutSFWeight(trackNMissOutSFFile_, trackNMissOutSF_);
     }
     if (EcaloVarySFFile_ != "" ){
-      EcaloVarySFWeight_ = new EcaloVarySFWeight(EcaloVarySFFile_, EcaloVarySF_);  
+      EcaloVarySFWeight_ = new EcaloVarySFWeight(EcaloVarySFFile_, EcaloVarySF_);
     }
     if(applyGentoRecoEfficiency_){
-      muonCutWeight_ = new MuonCutWeight(muonCutFile_, muonCut_);  
+      muonCutWeight_ = new MuonCutWeight(muonCutFile_, muonCut_);
       electronCutWeight_ = new ElectronCutWeight(electronCutFile_, electronCut_);
       recoElectronWeight_ = new RecoElectronWeight(recoElectronFile_, recoElectron_);
       recoMuonWeight_ = new RecoMuonWeight(recoMuonFile_, recoMuon_);
     }
     if (isrVarySFFile_ != "" ){
-      if (isrVarySFFile_.find("XXX")!=string::npos) { 
-	// Assumes that isrVarySFFile_ has the form "compareIsr*XXXK*Ratio.root and that 
-	// dataset_ has form "AMSB_mGravXXXK_*  
-	size_t pos = dataset_.find("mGrav");  
-	if (pos==string::npos) clog << "Error:  could not find mass for ISR file in dataset name:  " << dataset_ << endl;  
-	string strMass = dataset_.substr(pos+5);  
-	pos = strMass.find("K");  
-	strMass = strMass.substr(0, pos);
-	isrVarySFFile_.replace(isrVarySFFile_.find("XXX"), string("XXX").length(), strMass);  
-	clog << "Modified isrVarySFFile_ to be:  " << isrVarySFFile_ << endl;  
+      if (isrVarySFFile_.find("XXX")!=string::npos) {
+        // Assumes that isrVarySFFile_ has the form "compareIsr*XXXK*Ratio.root and that
+        // dataset_ has form "AMSB_mGravXXXK_*
+        size_t pos = dataset_.find("mGrav");
+        if (pos==string::npos) clog << "Error:  could not find mass for ISR file in dataset name:  " << dataset_ << endl;
+        string strMass = dataset_.substr(pos+5);
+        pos = strMass.find("K");
+        strMass = strMass.substr(0, pos);
+        isrVarySFFile_.replace(isrVarySFFile_.find("XXX"), string("XXX").length(), strMass);
+        clog << "Modified isrVarySFFile_ to be:  " << isrVarySFFile_ << endl;
       }
-      isrVarySFWeight_ = new IsrVarySFWeight(isrVarySFFile_, isrVarySF_);  
+      isrVarySFWeight_ = new IsrVarySFWeight(isrVarySFFile_, isrVarySF_);
     }
   }
 
-  if (datasetType_ == "signalMC" && 
-      (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) || 
+  if (datasetType_ == "signalMC" &&
+      (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) ||
        //       regex_match (dataset_, regex ("AMSB.*RewtCtau.*cm")))) {
        regex_match (dataset_, regex ("AMSB.*cm")))) {
-    //    if (verbose_) 
-    clog << "Setting stopctau with:  stopCTau_.at(0)=" << stopCTau_.at(0) << "; stopCTau_.at(1)=" << stopCTau_.at(1) << endl;  
+    //    if (verbose_)
+    clog << "Setting stopctau with:  stopCTau_.at(0)=" << stopCTau_.at(0) << "; stopCTau_.at(1)=" << stopCTau_.at(1) << endl;
     stopCTauWeight_ = new StopCTauWeight (stopCTau_.at(0), stopCTau_.at(1), stops_);
-  }  
+  }
 
   // Construct Cutflow Objects. These store the results of cut decisions and
   // handle filling cut flow histograms.
@@ -332,7 +332,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
     if(tempInputCollection == "mcparticle-muon pairs")   tempInputCollection = "muon-mcparticle pairs";
     if(tempInputCollection == "secondary mcparticle-muon pairs")   tempInputCollection = "muon-secondary mcparticle pairs";
     if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
-    if(tempInputCollection == "mcparticle-stop pairs")    tempInputCollection = "stop-mcparticle pairs";    
+    if(tempInputCollection == "mcparticle-stop pairs")    tempInputCollection = "stop-mcparticle pairs";
     if(tempInputCollection.find("pairs")==string::npos){ //just a single object
       if(tempInputCollection.find("secondary")!=string::npos){//secondary object
         if(tempInputCollection.find("secondary muons")!=string::npos){//treat secondary muons differently; allow for a different input collection
@@ -584,7 +584,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       if(tempInputCollection == "mcparticle-muon pairs")   tempInputCollection = "muon-mcparticle pairs";
       if(tempInputCollection == "secondary mcparticle-muon pairs")   tempInputCollection = "muon-secondary mcparticle pairs";
       if(tempInputCollection == "mcparticle-track pairs")   tempInputCollection = "track-mcparticle pairs";
-      if(tempInputCollection == "mcparticle-stop pairs")    tempInputCollection = "stop-mcparticle pairs";    
+      if(tempInputCollection == "mcparticle-stop pairs")    tempInputCollection = "stop-mcparticle pairs";
       tempCut.inputCollection = tempInputCollection;
       if(tempInputCollection.find("pairs")==string::npos){ //just a single object
         if(tempInputCollection.find("secondary")!=string::npos){//secondary object
@@ -903,7 +903,7 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
         else if(currentObject == "muon-secondary mcparticle pairs") currentObject = "muonSecondayMCparticlePairs";
         else if(currentObject == "muon-mcparticle pairs") currentObject = "muonMCparticlePairs";
         else if(currentObject == "track-mcparticle pairs")    currentObject = "trackMCparticlePairs";
-	else if(currentObject == "stop-mcparticle pairs")     currentObject = "stopMCparticlePairs";     
+        else if(currentObject == "stop-mcparticle pairs")     currentObject = "stopMCparticlePairs";
 
         currentObject.at(0) = toupper(currentObject.at(0));
         string histoName = "num" + currentObject;
@@ -975,9 +975,9 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
       cutFlows_.at(currentChannelIndex)->at (currentCut.name) = true;
     }
     cutFlows_.at(currentChannelIndex)->fillCutFlow(0);  // fill cutflow with 0 weight, just to create the cutflow histograms
-    masterCutFlow_->at(currentChannel.name) = true; 
+    masterCutFlow_->at(currentChannel.name) = true;
   }
-  masterCutFlow_->fillCutFlow(0); 
+  masterCutFlow_->fillCutFlow(0);
 
   //make unique vector of objects we need to get from the event
   sort( objectsToGet.begin(), objectsToGet.end() );
@@ -1052,16 +1052,23 @@ OSUAnalysis::~OSUAnalysis ()
 
 
   if (calcPdfWeights_) {
-    ///PRINT HERE PDF RESULTS 
-    //Put "all" and "passed" numbers in pairs for easy manipulation 
+    ///PRINT HERE PDF RESULTS
+    //Put "all" and "passed" numbers in pairs for easy manipulation
     cout << "XXX "<<allNo<<" "<<passedNo<<" "<<allSF<<" "<<passedSF<<" "<<allSF2<<" "<<passedSF2<<" "<<allCentralW2<<" "<<passedCentralW2;
-    // allSums and passedSums size should be the same so use either 
-    //    cout << endl << "Debug: passedSums.size() = " << passedSums.size() << endl;  
+    // allSums and passedSums size should be the same so use either
+    //    cout << endl << "Debug: passedSums.size() = " << passedSums.size() << endl;
     for(uint i=0;i<passedSums.size();i++){
       cout <<" "<<allSums[i]<<" "<<passedSums[i];
     }
     cout << endl;
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Destroy the ValueLookup object if it exists.
+  //////////////////////////////////////////////////////////////////////////////
+  if (vl_)
+    delete vl_;
+  //////////////////////////////////////////////////////////////////////////////
 
   clog << "=============================================" << endl;
   clog << "Successfully completed OSUAnalysis." << endl;
@@ -1200,8 +1207,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
   }
 
   stopCTauScaleFactor_ = 1.0;
-  if (datasetType_ == "signalMC" && 
-      (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) || 
+  if (datasetType_ == "signalMC" &&
+      (regex_match (dataset_, regex ("stop.*to.*_.*mm.*")) ||
        //       regex_match (dataset_, regex ("AMSB.*RewtCtau.*cm")))
        regex_match (dataset_, regex ("AMSB.*cm")))
       ) stopCTauScaleFactor_ = stopCTauWeight_->at (event);
@@ -1381,7 +1388,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         else if(currentObject == "muon-secondary mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),mcparticles.product(),"muon-secondary mcparticle pairs");
         else if(currentObject == "muon-mcparticle pairs") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,muons.product(),mcparticles.product(),"muon-mcparticle pairs");
         else if(currentObject == "track-mcparticle pairs")  setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,tracks.product(),mcparticles.product(),"track-mcparticle pairs");
-	else if(currentObject == "stop-mcparticle pairs")   setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,stops.product(), mcparticles.product(),"stop-mcparticle pairs");    
+        else if(currentObject == "stop-mcparticle pairs")   setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,stops.product(), mcparticles.product(),"stop-mcparticle pairs");
         if(currentObject == "stops" && datasetType_ == "signalMC") setObjectFlags(currentCut,currentCutIndex,individualFlags,cumulativeFlags,stops.product(),"stops");
       }
 
@@ -1435,10 +1442,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     channelScaleFactor_ = 1.0; //this variable holds the product of all SFs calculated separately for each channel
 
     muonScaleFactor_ = electronScaleFactor_ =  muonTrackScaleFactor_ =  electronTrackScaleFactor_ = bTagScaleFactor_ = 1.0;
-    triggerMetScaleFactor_    = 1.0;  
-    trackNMissOutScaleFactor_ = 1.0;  
-    EcaloVaryScaleFactor_ = 1.0;  
-    isrVaryScaleFactor_       = 1.0;  
+    triggerMetScaleFactor_    = 1.0;
+    trackNMissOutScaleFactor_ = 1.0;
+    EcaloVaryScaleFactor_ = 1.0;
+    isrVaryScaleFactor_       = 1.0;
     muonCutEfficiency_ = electronCutEfficiency_ =  recoMuonEfficiency_ =  recoElectronEfficiency_ = 1.0;
 
 
@@ -1484,7 +1491,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         }
       }
     }
-      
+
 
     // Reweighting for generated event to emulate CMS reco efficiency and analysis cut efficiency
 
@@ -1505,8 +1512,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         //apply the weight for each of those objects
         for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
           if(!mcFlags.at(mcparticleIndex).second) continue;
-	  recoElectronEfficiency_ *= recoElectronWeight_->at (abs(vl_->valueLookup(&mcparticles->at(mcparticleIndex), "d0Beamspot", "", dummy)));
-	  recoElectronEfficiency_ *= electronCutWeight_->at (mcparticles->at(mcparticleIndex).pt);
+          recoElectronEfficiency_ *= recoElectronWeight_->at (abs(vl_->valueLookup(&mcparticles->at(mcparticleIndex), "d0Beamspot", "", dummy)));
+          recoElectronEfficiency_ *= electronCutWeight_->at (mcparticles->at(mcparticleIndex).pt);
         }
       }
 
@@ -1516,14 +1523,14 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         //get the last valid flags in the flag map
         for (int i = cumulativeFlags.at("secondary mcparticles").size() - 1; i >= 0; i--){
           if (cumulativeFlags.at("secondary mcparticles").at(i).size()){
-	    mcFlags = cumulativeFlags.at("secondary mcparticles").at(i);
+            mcFlags = cumulativeFlags.at("secondary mcparticles").at(i);
             break;
           }
         }
         //apply the weight for each of those objects
         for (uint secondaryMcParticleIndex = 0; secondaryMcParticleIndex != mcFlags.size(); secondaryMcParticleIndex++){
           if(!mcFlags.at(secondaryMcParticleIndex).second) continue;
-	  recoMuonEfficiency_ *= recoMuonWeight_->at (abs(vl_->valueLookup(&mcparticles->at(secondaryMcParticleIndex), "d0Beamspot", "", dummy)));
+          recoMuonEfficiency_ *= recoMuonWeight_->at (abs(vl_->valueLookup(&mcparticles->at(secondaryMcParticleIndex), "d0Beamspot", "", dummy)));
         }
       }
 
@@ -1541,28 +1548,28 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         //apply the weight for each of those objects
         for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
           if(!mcFlags.at(mcparticleIndex).second) continue;
-	  electronCutEfficiency_ *= electronCutWeight_->at (mcparticles->at(mcparticleIndex).pt);
+          electronCutEfficiency_ *= electronCutWeight_->at (mcparticles->at(mcparticleIndex).pt);
         }
       }
 
-      // MuonCutWeight function of pt 
+      // MuonCutWeight function of pt
       if(find(objectsToCut.begin(),objectsToCut.end(),"secondary mcparticles") != objectsToCut.end ()){
         flagPair mcFlags;
         //get the last valid flags in the flag map
         for (int i = cumulativeFlags.at("secondary mcparticles").size() - 1; i >= 0; i--){
           if (cumulativeFlags.at("secondary mcparticles").at(i).size()){
-	    mcFlags = cumulativeFlags.at("secondary mcparticles").at(i);
+            mcFlags = cumulativeFlags.at("secondary mcparticles").at(i);
             break;
           }
         }
         //apply the weight for each of those objects
         for (uint secondaryMcParticleIndex = 0; secondaryMcParticleIndex != mcFlags.size(); secondaryMcParticleIndex++){
           if(!mcFlags.at(secondaryMcParticleIndex).second) continue;
-	  muonCutEfficiency_ *= muonCutWeight_->at (mcparticles->at(secondaryMcParticleIndex).pt);
+          muonCutEfficiency_ *= muonCutWeight_->at (mcparticles->at(secondaryMcParticleIndex).pt);
         }
       }
     }
-     
+
 
     // Track weighting for muons
 
@@ -1583,11 +1590,11 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           int shiftUpDown = 0;
           if (trackSFShift_ == "up") shiftUpDown = 1;
           if (trackSFShift_ == "down") shiftUpDown = -1;
-	  //	  cout << "before applying trackSFWeight muons SF=" << muonTrackScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
-	  muonTrackScaleFactor_ *= trackSFWeight_->at (muons->at(muonIndex).correctedD0,shiftUpDown);
+          //          cout << "before applying trackSFWeight muons SF=" << muonTrackScaleFactor_ << "and d0 of muon =" << muons->at(muonIndex).correctedD0 << endl;
+          muonTrackScaleFactor_ *= trackSFWeight_->at (muons->at(muonIndex).correctedD0,shiftUpDown);
         }
       }
-      
+
       // Track weighting for electrons
 
       //only apply SFs if we've cut on this object
@@ -1606,8 +1613,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           int shiftUpDown = 0;
           if (trackSFShift_ == "up") shiftUpDown = 1;
           if (trackSFShift_ == "down") shiftUpDown = -1;
-	  electronTrackScaleFactor_ *= trackSFWeight_->at (electrons->at(electronIndex).correctedD0,shiftUpDown);
-	}
+          electronTrackScaleFactor_ *= trackSFWeight_->at (electrons->at(electronIndex).correctedD0,shiftUpDown);
+        }
       }
     }
 
@@ -1636,10 +1643,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
     if(triggerMetSFFile_ != "" && datasetType_ != "data"){
       int shiftUpDown = 0;
-      if (triggerMetSFShift_ == "up")   shiftUpDown =  1; 
-      if (triggerMetSFShift_ == "down") shiftUpDown = -1; 
-      if (const BNmet *met = vl_->chosenMET ()) { 
-	triggerMetScaleFactor_ *= triggerMetSFWeight_->at (met->pt, shiftUpDown);  
+      if (triggerMetSFShift_ == "up")   shiftUpDown =  1;
+      if (triggerMetSFShift_ == "down") shiftUpDown = -1;
+      if (const BNmet *met = vl_->chosenMET ()) {
+        triggerMetScaleFactor_ *= triggerMetSFWeight_->at (met->pt, shiftUpDown);
       }
 
     }
@@ -1658,10 +1665,10 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         for (uint trkIndex = 0; trkIndex != trkFlags.size(); trkIndex++){
           if(!trkFlags.at(trkIndex).second) continue;
           int shiftUpDown = 0;
-          if (trackNMissOutSFShift_ == "up")   shiftUpDown =  1; 
-          if (trackNMissOutSFShift_ == "down") shiftUpDown = -1; 
-	  trackNMissOutScaleFactor_ *= trackNMissOutSFWeight_->at (tracks->at(trkIndex).nHitsMissingOuter, shiftUpDown);
-	}
+          if (trackNMissOutSFShift_ == "up")   shiftUpDown =  1;
+          if (trackNMissOutSFShift_ == "down") shiftUpDown = -1;
+          trackNMissOutScaleFactor_ *= trackNMissOutSFWeight_->at (tracks->at(trkIndex).nHitsMissingOuter, shiftUpDown);
+        }
       }
     }
 
@@ -1679,12 +1686,12 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         for (uint trkIndex = 0; trkIndex != trkFlags.size(); trkIndex++){
           if(!trkFlags.at(trkIndex).second) continue;
           int shiftUpDown = 0;
-          if (EcaloVarySFShift_ == "up")   shiftUpDown =  1; 
-          if (EcaloVarySFShift_ == "down") shiftUpDown = -1; 
-	  string dummy = "";
-	  double caloTot = vl_->valueLookup(&tracks->at(trkIndex), "caloTotDeltaRp5RhoCorr", "", dummy);
-	  EcaloVaryScaleFactor_ *= EcaloVarySFWeight_->at (caloTot, shiftUpDown);
-	}
+          if (EcaloVarySFShift_ == "up")   shiftUpDown =  1;
+          if (EcaloVarySFShift_ == "down") shiftUpDown = -1;
+          string dummy = "";
+          double caloTot = vl_->valueLookup(&tracks->at(trkIndex), "caloTotDeltaRp5RhoCorr", "", dummy);
+          EcaloVaryScaleFactor_ *= EcaloVarySFWeight_->at (caloTot, shiftUpDown);
+        }
       }
     }
 
@@ -1692,13 +1699,13 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
     if (isrVarySFFile_ != "" && datasetType_ != "data"){
       int shiftUpDown = 0;
-      if (isrVarySFShift_ == "up")   shiftUpDown =  1; 
-      if (isrVarySFShift_ == "down") shiftUpDown = -1; 
-      string dummy = ""; 
-      double ptSusy = vl_->valueLookup(&events->at(0), "totalMcparticleStatus3SusyIdPt", "", dummy);  
-      isrVaryScaleFactor_ *= isrVarySFWeight_->at(ptSusy, shiftUpDown);  
-    }  
-        
+      if (isrVarySFShift_ == "up")   shiftUpDown =  1;
+      if (isrVarySFShift_ == "down") shiftUpDown = -1;
+      string dummy = "";
+      double ptSusy = vl_->valueLookup(&events->at(0), "totalMcparticleStatus3SusyIdPt", "", dummy);
+      isrVaryScaleFactor_ *= isrVarySFWeight_->at(ptSusy, shiftUpDown);
+    }
+
     channelScaleFactor_ *= muonScaleFactor_;
     channelScaleFactor_ *= electronScaleFactor_;
     channelScaleFactor_ *= muonTrackScaleFactor_;
@@ -1707,14 +1714,14 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     channelScaleFactor_ *= triggerMetScaleFactor_;
     channelScaleFactor_ *= trackNMissOutScaleFactor_;
     channelScaleFactor_ *= EcaloVaryScaleFactor_;
-    channelScaleFactor_ *= isrVaryScaleFactor_;  
+    channelScaleFactor_ *= isrVaryScaleFactor_;
     channelScaleFactor_ *= recoElectronEfficiency_;
     channelScaleFactor_ *= recoMuonEfficiency_;
     channelScaleFactor_ *= electronCutEfficiency_;
     channelScaleFactor_ *= muonCutEfficiency_;
 
 
-    
+
 
 
     //calculate the total scale factor for the event and fill the cutflow for each channel
@@ -1728,7 +1735,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                          << ", bTagScaleFactor_ = " << bTagScaleFactor_
                          << ", triggerMetScaleFactor_ = " << triggerMetScaleFactor_
                          << ", trackNMissOutScaleFactor_ = " << trackNMissOutScaleFactor_
-                         << ", isrVaryScaleFactor_ = " << isrVaryScaleFactor_ 
+                         << ", isrVaryScaleFactor_ = " << isrVaryScaleFactor_
                          << ", total scale factor = " << eventScaleFactor_
                          << endl;
 
@@ -1748,12 +1755,12 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     }
 
     if(calcPdfWeights_){
-      //Calculate weights every time 
+      //Calculate weights every time
       std::vector<double> weights = getPdfWeights();
       allNo++;
       allSF += eventScaleFactor_;
       allSF2 +=eventScaleFactor_*eventScaleFactor_;
-      //add for all events                                                                                                                                                                                
+      //add for all events
       for(uint i=0; i<weights.size();i++){
         allSums[i]+=weights[i]*eventScaleFactor_;
       }
@@ -1762,7 +1769,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
       allCentralW2+=weights[0]*eventScaleFactor_*weights[0]*eventScaleFactor_;
 
       if(eventPassedAllCuts) {
-        //add weights for events that pass                                                                                                                                                                
+        //add weights for events that pass
         passedNo++;
         passedSF += eventScaleFactor_;
         passedSF2 += eventScaleFactor_*eventScaleFactor_;
@@ -1772,8 +1779,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           passedSums[i]+=weights[i]*eventScaleFactor_;
 
         }
-      }//Event passed all cuts                                                                                                                                                                            
-    }//Calc pdf weights                                                                                                                                                                                   
+      }//Event passed all cuts
+    }//Calc pdf weights
 
     initializeValueLookup ();
 
@@ -1793,7 +1800,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
         for (uint histogramIndex = 0; histogramIndex != histograms.size(); histogramIndex++){
           histogram currentHistogram = histograms.at(histogramIndex);
-	  string inputCollection = currentHistogram.inputCollection;
+          string inputCollection = currentHistogram.inputCollection;
 
           if (cumulativeFlags.count(currentHistogram.inputCollection) == 0 && currentHistogram.name.find ("status3") == string::npos)
             clog << "Error: no flags found for collection:  " << currentHistogram.inputCollection << ", will cause a seg fault" << endl;
@@ -1890,8 +1897,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
                                                                                               cumulativeFlags.at("muon-secondary mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
             else if(inputCollection == "track-mcparticle pairs") fill1DHistogram(histo,currentHistogram, tracks.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("track-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
-            else if(inputCollection == "stop-mcparticle pairs") fill1DHistogram(histo,currentHistogram, stops.product(),mcparticles.product(),         
-                                                                                             cumulativeFlags.at("stop-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_); 
+            else if(inputCollection == "stop-mcparticle pairs") fill1DHistogram(histo,currentHistogram, stops.product(),mcparticles.product(),
+                                                                                             cumulativeFlags.at("stop-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
             // fill the histograms of weighting factors with 1, to see the shape of a SF without any weight applied
             else if(inputCollection == "events" && currentHistogram.name.find("ScaleFactor")!=string::npos) fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),inputCollection,1.0);
             else if(inputCollection == "events") fill1DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),inputCollection,eventScaleFactor_);
@@ -1992,7 +1999,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
             else if(inputCollection == "muon-secondary mcparticle pairs") fill2DHistogram(histo,currentHistogram,muons.product(),mcparticles.product(), cumulativeFlags.at("muon-secondary mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
             else if(inputCollection == "track-mcparticle pairs") fill2DHistogram(histo,currentHistogram,tracks.product(),mcparticles.product(),
                                                                                               cumulativeFlags.at("track-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
-            else if(inputCollection == "stop-mcparticle pairs") fill2DHistogram(histo,currentHistogram,stops.product(),mcparticles.product(),    
+            else if(inputCollection == "stop-mcparticle pairs") fill2DHistogram(histo,currentHistogram,stops.product(),mcparticles.product(),
                                                                                              cumulativeFlags.at("stop-mcparticle pairs").at(currentDir),inputCollection,eventScaleFactor_);
             else if(inputCollection == "events") fill2DHistogram(histo,currentHistogram,events.product(),cumulativeFlags.at("events").at(currentDir),inputCollection,eventScaleFactor_);
             else if(inputCollection == "taus") fill2DHistogram(histo,currentHistogram,taus.product(),cumulativeFlags.at("taus").at(currentDir),inputCollection,eventScaleFactor_);
@@ -2067,7 +2074,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           else if(currentObject == "muon-mcparticle pairs")          objectToPlot = "muonMCparticlePairs";
           else if(currentObject == "muon-secondary mcparticle pairs")          objectToPlot = "muonSecondaryMCparticlePairs";
           else if(currentObject == "track-mcparticle pairs")             objectToPlot = "trackMCparticlePairs";
-	  else if(currentObject == "stop-mcparticle pairs")              objectToPlot = "stopMCparticlePairs";       
+          else if(currentObject == "stop-mcparticle pairs")              objectToPlot = "stopMCparticlePairs";
           else objectToPlot = currentObject;
 
           string tempCurrentObject = objectToPlot;
@@ -2216,7 +2223,7 @@ OSUAnalysis::evaluateTriggers (vector<string> triggersToTest, vector<string> tri
     for(uint triggerName = 0; triggerName != triggersToTest.size(); triggerName++){
     if (triggersToTest.at(triggerName) == "emulateHLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95" && emulateHLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95(targetTriggers_, trigobjs.product()) > 0) {
       triggerDecision = true;
-	}
+        }
     }
     if (printAllTriggers_) clog << "   " << trigger->name << endl;
 
@@ -2284,7 +2291,7 @@ string OSUAnalysis::getObjToGet(string obj) {
 
 
 // Return the weighting factors for variable bins.
-double 
+double
 OSUAnalysis::getVariableBinsWeights(vector<double> variableBins, double value){
   vector<double> variableBinWidths;
   for (unsigned i = 0; i != variableBins.size() - 1; i++){
@@ -2295,10 +2302,10 @@ OSUAnalysis::getVariableBinsWeights(vector<double> variableBins, double value){
   double num = 1;
   double den = 1;
   for (unsigned i = 0; i != variableBins.size() - 1; i++){
-	if (value >= variableBins.at(i) && value < variableBins.at(i+1)){
+        if (value >= variableBins.at(i) && value < variableBins.at(i+1)){
               den = (double)(variableBins.at(i+1) - variableBins.at(i));
               num = (double)variableBinWidths.at(0);
-	      scalingFactor = (double) num/den;
+              scalingFactor = (double) num/den;
        }
   }
   if (scalingFactor != -999){
@@ -2358,7 +2365,7 @@ double OSUAnalysis::emulateHLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95(const ve
    //  if ( iObj->filter.find("hltPFMETnoMu") != std::string::npos) {
    //   std::cout << "have found hltPFMETWOM with pt = " << iObj->pt << std::endl;
    if (iObj->pt < 105) continue;
-   filter5 = 1;      
+   filter5 = 1;
 }
  if (filter1 == 1 && filter2 == 1 && filter3 == 1 && filter4 == 1 && filter5 ==1) filterValue = 1;
     }
@@ -2469,8 +2476,8 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
   bool isTwoTypesOfObject = true;
   if (obj1Type==obj2Type) isTwoTypesOfObject = false;
 
-  if (!inputCollection1 ||   
-      !inputCollection2) clog << "ERROR:  invalid input collection for inputType=" << inputType << endl;    
+  if (!inputCollection1 ||
+      !inputCollection2) clog << "ERROR:  invalid input collection for inputType=" << inputType << endl;
 
   // Initialize the flags for individual objects to all be false, if the cut is on the pair.
   // Set them to true later, if any paired object passes (in which case both of its constituents should pass).
@@ -2682,12 +2689,12 @@ void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollect
     { scaleFactor = scaleFactor*getVariableBinsWeights(parameters.variableBinsX,value);
     }
     histo->Fill(value,scaleFactor);
-    
+
     if (printEventInfo_) {
       // Write information about event to screen, for testing purposes.
       clog << "  Info for event:  value for histogram " << histo->GetName() << ":  " << value << " (object number " << object << ")" << endl;
     }
-    
+
   }
 }
 
@@ -2893,27 +2900,27 @@ std::vector<double> OSUAnalysis::getPdfWeights()
 
   std::vector<double> pdf_weights;
 
-  //for CTEQ6L1 xPDF is ONLY PDF so we multiply with x1       
-  //get weight from event //NOTE: EVNET WEIGHT DOES NOT HAVE X1 x2 contrary to what it says    
+  //for CTEQ6L1 xPDF is ONLY PDF so we multiply with x1
+  //get weight from event //NOTE: EVNET WEIGHT DOES NOT HAVE X1 x2 contrary to what it says
   double xpdf1 = (events->at(0).xPDF1)*x1;
   double xpdf2 = (events->at(0).xPDF2)*x2;
   double w0 = xpdf1 * xpdf2;
 
   const int NumberReplicas = LHAPDF::numberPDF();
 
-  //  std::cout<<"DEBUG: event xPDF: "<<xpdf1<<" "<<xpdf2<< " x1: " << x1 <<  " x2: " << x2 <<  " id1: " <<id1<< " id2: " << id2 << " q: " << q <<" member PDFs: " << endl; 
-  //Store nominal as well     
+  //  std::cout<<"DEBUG: event xPDF: "<<xpdf1<<" "<<xpdf2<< " x1: " << x1 <<  " x2: " << x2 <<  " id1: " <<id1<< " id2: " << id2 << " q: " << q <<" member PDFs: " << endl;
+  //Store nominal as well
   for(int i=0; i <=NumberReplicas; ++i){
     LHAPDF::usePDFMember(1,i);
     double xpdf1_new = LHAPDF::xfx(1, x1, q, id1);
-    double xpdf2_new = LHAPDF::xfx(1, x2, q, id2);  //central weight is 1.0    
+    double xpdf2_new = LHAPDF::xfx(1, x2, q, id2);  //central weight is 1.0
 
-    //    std::cout<<xpdf1_new <<" "<<xpdf2_new<<" ";   
+    //    std::cout<<xpdf1_new <<" "<<xpdf2_new<<" ";
     double weight = xpdf1_new * xpdf2_new / w0;
     pdf_weights.push_back(weight);
   }
 
-  //  std::cout<<std::endl;  
+  //  std::cout<<std::endl;
 
   return pdf_weights;
 }
@@ -2921,9 +2928,17 @@ std::vector<double> OSUAnalysis::getPdfWeights()
 void
 OSUAnalysis::initializeValueLookup ()
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Create a new ValueLookup object if it does not already exist.
+  //////////////////////////////////////////////////////////////////////////////
   if (!vl_)
     vl_ = new ValueLookup ();
+  //////////////////////////////////////////////////////////////////////////////
 
+  //////////////////////////////////////////////////////////////////////////////
+  // Set all the private object collections of the ValueLookup object to the
+  // values in this OSUAnalysis object.
+  //////////////////////////////////////////////////////////////////////////////
   vl_->setBxlumis                   (bxlumis);
   vl_->setElectrons                 (electrons);
   vl_->setEvents                    (events);
@@ -2942,7 +2957,12 @@ OSUAnalysis::initializeValueLookup ()
   vl_->setTracks                    (tracks);
   vl_->setTriggers                  (triggers);
   vl_->setTrigobjs                  (trigobjs);
+  //////////////////////////////////////////////////////////////////////////////
 
+  //////////////////////////////////////////////////////////////////////////////
+  // Set all the private variables of the ValueLookup object to the
+  // corresponding values in this OSUAnalysis object.
+  //////////////////////////////////////////////////////////////////////////////
   vl_->setBTagScaleFactor           (bTagScaleFactor_);
   vl_->setBadCSCFile                (badCSCFile_);
   vl_->setBadCSCVec                 (BadCSCVec);
@@ -2975,6 +2995,7 @@ OSUAnalysis::initializeValueLookup ()
   vl_->setDatasetType               (datasetType_);
   vl_->setUseTrackCaloRhoCorr       (useTrackCaloRhoCorr_);
   vl_->setVerbose                   (verbose_);
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 DEFINE_FWK_MODULE(OSUAnalysis);

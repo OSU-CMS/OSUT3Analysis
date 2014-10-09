@@ -206,12 +206,12 @@ ValueLookup::valueLookup (const BNmuon* object, string variable, string function
     // Calculate the magnitude of the vector sum of the muon pT and the Met.
     if (const BNmet *met = chosenMET ())
       {
-	TVector2 p2Met;
-	TVector2 p2Muon;
-	p2Met. SetMagPhi(   met->pt,    met->phi);
-	p2Muon.SetMagPhi(object->pt, object->phi);  
-	TVector2 p2MetMuon = p2Met + p2Muon;
-        value = p2MetMuon.Mod();  
+        TVector2 p2Met;
+        TVector2 p2Muon;
+        p2Met. SetMagPhi(   met->pt,    met->phi);
+        p2Muon.SetMagPhi(object->pt, object->phi);
+        TVector2 p2MetMuon = p2Met + p2Muon;
+        value = p2MetMuon.Mod();
       }
     else
       value = -999;
@@ -324,7 +324,7 @@ ValueLookup::valueLookup (const BNmuon* object, string variable, string function
 
 
   else if(variable == "tightID") {
-    // Defined in https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon 
+    // Defined in https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon
     value = object->isGlobalMuon > 0                \
       && object->isPFMuon > 0                        \
       && object->normalizedChi2 < 10                \

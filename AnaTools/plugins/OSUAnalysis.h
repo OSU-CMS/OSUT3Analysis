@@ -85,7 +85,7 @@ class OSUAnalysis : public edm::EDProducer
       string recoMuon_;
       string recoElectronFile_;
       string recoElectron_;
-      string isrVarySFFile_; 
+      string isrVarySFFile_;
       string dataPU_;
       string electronSFID_;
       string electronSF_;
@@ -93,13 +93,13 @@ class OSUAnalysis : public edm::EDProducer
       string triggerMetSF_;
       string trackNMissOutSF_;
       string EcaloVarySF_;
-      string isrVarySF_; 
+      string isrVarySF_;
       string dataset_;
       string datasetType_;
       vector<edm::ParameterSet> channels_;
       vector<edm::ParameterSet> histogramSets_;
       bool useEDMFormat_;
-      vector<edm::ParameterSet> treeBranchSets_;  
+      vector<edm::ParameterSet> treeBranchSets_;
       bool plotAllObjectsInPassingEvents_;
       bool doPileupReweighting_;
       bool doTopPtReweighting_;
@@ -112,8 +112,8 @@ class OSUAnalysis : public edm::EDProducer
       bool applyBtagSF_;
       int  minBtag_;
       bool calcPdfWeights_;
-      string pdfSet_;  
-      int    pdfSetFlag_;  
+      string pdfSet_;
+      int    pdfSetFlag_;
       string electronSFShift_;
       string muonSFShift_;
       string triggerMetSFShift_;
@@ -129,7 +129,7 @@ class OSUAnalysis : public edm::EDProducer
       vector<double> stopCTau_;
       bool GetPlotsAfterEachCut_;
       int verbose_;
-      
+
       vector<DeadEcal> DeadEcalVec;
       vector<BadCSC> BadCSCVec;
 
@@ -160,11 +160,11 @@ class OSUAnalysis : public edm::EDProducer
 
       vector<vector<map<string, TH1D*>>> oneDHists_;
       vector<vector<map<string, TH2D*>>> twoDHists_;
-      vector<TTree*> BNTrees_;  // one tree per channel  
-      map<string, vector<float>> BNTreeBranchVals_;  // data structure to hold the values of the branches to be stored in the BNTrees_; the string is the name of a variable  
-      long BNTreeBranchVals_evtLong_;  // event number  
-      int  BNTreeBranchVals_runInt_;   // run number  
-      int  BNTreeBranchVals_lumiInt_;  // lumi number  
+      vector<TTree*> BNTrees_;  // one tree per channel
+      map<string, vector<float>> BNTreeBranchVals_;  // data structure to hold the values of the branches to be stored in the BNTrees_; the string is the name of a variable
+      long BNTreeBranchVals_evtLong_;  // event number
+      int  BNTreeBranchVals_runInt_;   // run number
+      int  BNTreeBranchVals_lumiInt_;  // lumi number
 
       edm::Service<TFileService> fs_;
 
@@ -201,15 +201,15 @@ class OSUAnalysis : public edm::EDProducer
         int    numberRequired;
         string eventComparativeOperator;
         string name;
-	bool   isVeto;
+        bool   isVeto;
       };
 
       struct channel {
         string name;
-	vector<int> inStatus3Outgoing;
-	vector<int> notInStatus3Outgoing;
-	vector<int> absInStatus3Outgoing;
-	vector<int> absNotInStatus3Outgoing;
+        vector<int> inStatus3Outgoing;
+        vector<int> notInStatus3Outgoing;
+        vector<int> absInStatus3Outgoing;
+        vector<int> absNotInStatus3Outgoing;
         string inStatus3OutgoingCutName;
         string notInStatus3OutgoingCutName;
         vector<string> triggers;
@@ -235,7 +235,7 @@ class OSUAnalysis : public edm::EDProducer
       double muonTrackScaleFactor_ ;
       double electronTrackScaleFactor_ ;
       BtagSFWeight *bTagSFWeight_;
-      double bTagScaleFactor_;     
+      double bTagScaleFactor_;
       TriggerMetSFWeight *triggerMetSFWeight_;
       double triggerMetScaleFactor_;
       TrackNMissOutSFWeight *trackNMissOutSFWeight_;
@@ -262,13 +262,13 @@ class OSUAnalysis : public edm::EDProducer
       double channelScaleFactor_;
       double eventScaleFactor_;
 
-      ofstream* findEventsLog; 
-      bool isFirstEvent_;  
+      ofstream* findEventsLog;
+      bool isFirstEvent_;
 
       template <class InputCollection> void setObjectFlags(cut &, uint, flagMap &, flagMap &, InputCollection, string);
       template <class InputCollection1, class InputCollection2> void setObjectFlags(cut &, uint, flagMap &, flagMap &, InputCollection1, InputCollection2, string);
 
-      template <class InputCollection> void assignTreeBranch(BranchSpecs brSpecs, InputCollection inputCollection, flagPair flags);  
+      template <class InputCollection> void assignTreeBranch(BranchSpecs brSpecs, InputCollection inputCollection, flagPair flags);
       template <class InputCollection> void fill1DHistogram(TH1*, histogram, InputCollection, flagPair, string, double);
       template <class InputCollection1, class InputCollection2> void fill1DHistogram(TH1*, histogram, InputCollection1, InputCollection2, flagPair, string, double);
       void fill1DStatus3Histogram(TH1* histo, const BNmcparticleCollection *inputCollection, double scaleFactor);
@@ -277,22 +277,22 @@ class OSUAnalysis : public edm::EDProducer
       bool getPreviousCumulativeFlags(uint currentCutIndex, flagMap &individualFlags, string obj1Type, uint object1, string flagType);
 
       inline flagPair getLastValidFlags(string objType) {
-	// get the last valid flags in the flag map
-	for (int i = cumulativeFlags.at(objType).size() - 1; i >= 0; i--) {  // loop backwards over all the cuts
-	  if (cumulativeFlags.at(objType).at(i).size()){  	  // If all the flags have been filled, then the last cut will have a nonzero size
-	    return cumulativeFlags.at(objType).at(i);  
-	  }
-	}
-	// no valid flags have been found 
-	flagPair empty;
-	return empty;  
-      }  
+        // get the last valid flags in the flag map
+        for (int i = cumulativeFlags.at(objType).size() - 1; i >= 0; i--) {  // loop backwards over all the cuts
+          if (cumulativeFlags.at(objType).at(i).size()){            // If all the flags have been filled, then the last cut will have a nonzero size
+            return cumulativeFlags.at(objType).at(i);
+          }
+        }
+        // no valid flags have been found
+        flagPair empty;
+        return empty;
+      }
 
 
       double getTopPtWeight();
 
-      // for PDF weights:    
-      std::vector<double>  getPdfWeights();   
+      // for PDF weights:
+      std::vector<double>  getPdfWeights();
       int allNo;
       int passedNo;
       std::vector<double> allSums;
@@ -301,8 +301,13 @@ class OSUAnalysis : public edm::EDProducer
       double passedSF,passedSF2;
       double passedCentralW2,allCentralW2;
 
-      void initializeValueLookup ();
+      //////////////////////////////////////////////////////////////////////////
+      // ValueLookup object and the function for initializing its private
+      // variables, which some valueLookup methods use.
+      //////////////////////////////////////////////////////////////////////////
       ValueLookup *vl_;
+      void initializeValueLookup ();
+      //////////////////////////////////////////////////////////////////////////
   };
 
 #endif

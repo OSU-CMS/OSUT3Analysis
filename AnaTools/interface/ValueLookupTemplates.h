@@ -1,6 +1,13 @@
 #ifndef VALUE_LOOKUP_TEMPLATES
 #define VALUE_LOOKUP_TEMPLATES
 
+////////////////////////////////////////////////////////////////////////////////
+// This file contains the definitions of the template methods in the ValueLookup
+// class. These definitions need to be included by any file which calls these
+// functions so that the compiler knows which instances of the methods to
+// create.
+////////////////////////////////////////////////////////////////////////////////
+
 template<typename T0, typename T1> const T1 *
 ValueLookup::closest (const T0 *object0, const edm::Handle<vector<T1> > &object1Collection, const string &name)
 {

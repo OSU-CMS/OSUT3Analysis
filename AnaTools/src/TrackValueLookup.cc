@@ -156,7 +156,7 @@ gOuter"){
     value = vz - (vx * px + vy * py)/pt * (pz/pt);
   }
   else if (variable == "dZSinTheta"){
-    string empty = ""; 
+    string empty = "";
     double dZwrtPV = valueLookup(object, "dZwrtPV", "", empty);
     value = dZwrtPV * (object->pt / pMag);  // sin(theta) = pt / p
   }
@@ -188,7 +188,7 @@ gOuter"){
       //      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty);
       double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
       double trkJetDeltaPhi = fabs(deltaPhi(object->phi, jetPhi));
-      if (trkJetDeltaPhi > trkJetDeltaPhiMax) trkJetDeltaPhiMax = trkJetDeltaPhi;  
+      if (trkJetDeltaPhi > trkJetDeltaPhiMax) trkJetDeltaPhiMax = trkJetDeltaPhi;
     }
     value = trkJetDeltaPhiMax;
   }
@@ -210,14 +210,14 @@ gOuter"){
   }
 
   else if(variable == "isPassMuonLooseID") {
-    // boolean for whether track is loosely identified with a muon, 
+    // boolean for whether track is loosely identified with a muon,
     // i.e., true if it is DeltaR-matched to a member of either of the muon or secondary muon collections
     string empty = "";
     double trkMuonDeltaRMin    = valueLookup(object, "deltaRMinMuonLooseId",    "", empty);
-    double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseId", "", empty); 
-    value = 0;                                  // initialize to be false 
-    if (trkMuonDeltaRMin    < 0.15) value = 1;  // true if matched to muon 
-    if (trkSecMuonDeltaRMin < 0.15) value = 1;  // true if matched to secondary muon 
+    double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseId", "", empty);
+    value = 0;                                  // initialize to be false
+    if (trkMuonDeltaRMin    < 0.15) value = 1;  // true if matched to muon
+    if (trkSecMuonDeltaRMin < 0.15) value = 1;  // true if matched to secondary muon
   }
 
   else if(variable == "deltaRMinMuonLooseId") {
@@ -234,7 +234,7 @@ gOuter"){
     value = trkMuonDeltaRMin;
   }
   else if(variable == "deltaRMinSecMuonLooseId") {
-    // calculate minimum deltaR between track and any secondary muon                                       
+    // calculate minimum deltaR between track and any secondary muon
     double trkMuonDeltaRMin = 99.;
     if (!secMuons.product()) clog << "ERROR:  cannot find deltaRMinSecMuonLooseId because secMuons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<secMuons->size(); imuon++) {
@@ -280,61 +280,61 @@ gOuter"){
   }
 
   else if(variable == "deltaPhiMuMuPair") {
-    // delta phi between track and dimuon pair   
-    // Set to dummy value if there are not 2 muons with pT>25, opposite sign, and 80<m(mu-mu)<100 GeV.  
-    string empty = "";  
+    // delta phi between track and dimuon pair
+    // Set to dummy value if there are not 2 muons with pT>25, opposite sign, and 80<m(mu-mu)<100 GeV.
+    string empty = "";
 
-    TLorentzVector p4muon0;  // first muon                                                                                                                                                             
-    TLorentzVector p4muon1;  // second muon                                                                                                                                                            
-    TLorentzVector p4mumu;   // dimuon pair                                                                                                                                                            
+    TLorentzVector p4muon0;  // first muon
+    TLorentzVector p4muon1;  // second muon
+    TLorentzVector p4mumu;   // dimuon pair
     double mMuon = 0.105658;  // mass from PDG
     int imuon0 = -1;
-    int imuon1 = -1;  
-    double phiMuMu = 0;  
+    int imuon1 = -1;
+    double phiMuMu = 0;
     for (uint imuon = 0; imuon<muons->size(); imuon++) {
-      double pt0   = valueLookup(&muons->at(imuon), "pt",     "", empty); 
-      double eta0  = valueLookup(&muons->at(imuon), "eta",    "", empty); 
-      double phi0  = valueLookup(&muons->at(imuon), "phi",    "", empty); 
-      double chg0  = valueLookup(&muons->at(imuon), "charge", "", empty); 
-      if (pt0<25) continue; 
+      double pt0   = valueLookup(&muons->at(imuon), "pt",     "", empty);
+      double eta0  = valueLookup(&muons->at(imuon), "eta",    "", empty);
+      double phi0  = valueLookup(&muons->at(imuon), "phi",    "", empty);
+      double chg0  = valueLookup(&muons->at(imuon), "charge", "", empty);
+      if (pt0<25) continue;
       for (uint jmuon = imuon+1; jmuon<muons->size(); jmuon++) {
-	double pt1   = valueLookup(&muons->at(jmuon), "pt",      "", empty); 
-	double eta1  = valueLookup(&muons->at(jmuon), "eta",     "", empty); 
-	double phi1  = valueLookup(&muons->at(jmuon), "phi",     "", empty); 
-	double chg1  = valueLookup(&muons->at(jmuon), "charge",  "", empty); 
-	if (pt1<25)          continue; 
-	if (chg0*chg1 != -1) continue;
-	p4muon0.SetPtEtaPhiM(pt0, eta0, phi0, mMuon); 
-	p4muon1.SetPtEtaPhiM(pt1, eta1, phi1, mMuon); 
-	p4mumu = p4muon0 + p4muon1;
-	if (p4mumu.M()<80 || 100<p4mumu.M()) continue;  
-	// Now two muons have passed the required criteria.  
-	if (imuon0>=0 || imuon1>=0) {
-	  clog << "Warning [valueLookup()]: More than one dimuon pair passes criteria in deltaPhiMuMuPair calculation." << endl;    
-	}
-	imuon0 = imuon;
-	imuon1 = jmuon;  
-	phiMuMu = p4mumu.Phi();  
+        double pt1   = valueLookup(&muons->at(jmuon), "pt",      "", empty);
+        double eta1  = valueLookup(&muons->at(jmuon), "eta",     "", empty);
+        double phi1  = valueLookup(&muons->at(jmuon), "phi",     "", empty);
+        double chg1  = valueLookup(&muons->at(jmuon), "charge",  "", empty);
+        if (pt1<25)          continue;
+        if (chg0*chg1 != -1) continue;
+        p4muon0.SetPtEtaPhiM(pt0, eta0, phi0, mMuon);
+        p4muon1.SetPtEtaPhiM(pt1, eta1, phi1, mMuon);
+        p4mumu = p4muon0 + p4muon1;
+        if (p4mumu.M()<80 || 100<p4mumu.M()) continue;
+        // Now two muons have passed the required criteria.
+        if (imuon0>=0 || imuon1>=0) {
+          clog << "Warning [valueLookup()]: More than one dimuon pair passes criteria in deltaPhiMuMuPair calculation." << endl;
+        }
+        imuon0 = imuon;
+        imuon1 = jmuon;
+        phiMuMu = p4mumu.Phi();
       }
     }
 
-    value = -99;                            // initialize to dummy value  
-    if (imuon0>=0 && imuon1>=0) value = deltaPhi(phiMuMu, object->phi);  // only set the value if two muons pass the given criteria  
+    value = -99;                            // initialize to dummy value
+    if (imuon0>=0 && imuon1>=0) value = deltaPhi(phiMuMu, object->phi);  // only set the value if two muons pass the given criteria
 
   }
 
   else if(variable == "isNotSigOrMatchedToSusy") {
-    // Return true if the input dataset is not signal MC or if the track is matched to a SUSY particle.  
+    // Return true if the input dataset is not signal MC or if the track is matched to a SUSY particle.
     if (datasetType_ != "signalMC") { value = 1; } else {
       int index = getGenMatchedParticleIndex(object);
-      if (index == -1) value = 0;  // not matched 
-      else { 
-	int pdgId = abs(mcparticles->at(index).id);  
-	if (pdgId>1000001 && pdgId<3160113) value = 1;  // matched to a SUSY particle  
-	else                                value = 0;  
-      }        
-    }  
-  }  
+      if (index == -1) value = 0;  // not matched
+      else {
+        int pdgId = abs(mcparticles->at(index).id);
+        if (pdgId>1000001 && pdgId<3160113) value = 1;  // matched to a SUSY particle
+        else                                value = 0;
+      }
+    }
+  }
 
   else if(variable == "genDeltaRLowest") value = getGenDeltaRLowest(object);
 
@@ -381,11 +381,11 @@ gOuter"){
     else value = 24 - getPdgIdBinValue(mcparticles->at(index).grandMotherId);
   }
 
-  else { 
+  else {
     //  else{clog << "WARNING: invalid track variable '" << variable << "'\n"; value = -999;}
-    // Allow looking up event-level quantities.  
-    // FIXME:  Check for whether "variable" is valid for valueLookup(&events->at(0)...).  
-    value = valueLookup(&events->at(0), variable, function, stringValue); 
+    // Allow looking up event-level quantities.
+    // FIXME:  Check for whether "variable" is valid for valueLookup(&events->at(0)...).
+    value = valueLookup(&events->at(0), variable, function, stringValue);
   }
 
   value = applyFunction(function, value);

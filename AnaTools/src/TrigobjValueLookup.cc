@@ -23,17 +23,17 @@ ValueLookup::valueLookup (const BNtrigobj* object, string variable, string funct
   else if(variable == "isForward") value = object->isForward;
   else if(variable == "isRPC") value = object->isRPC;
   else if(variable == "bx") value = object->bx;
-  else if(variable == "metPt") {  // allow making 2D plots of jet quantities vs. Met                                          
+  else if(variable == "metPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNmet *met = chosenMET ()) {
       value = met->pt;
     } else value = -999;
   }
-  else if(variable == "trackPt") {  // allow making 2D plots of jet quantities vs. Met                                                              
+  else if(variable == "trackPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNtrack *track = chosenTrack ()) {
       value = track->pt;
     } else value = -999;
   }
-  else if(variable == "jetPt") {  // allow making 2D plots of jet quantities vs. Met                                                              
+  else if(variable == "jetPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNjet *jet = chosenJet ()) {
       value = jet->pt;
     } else value = -999;

@@ -44,16 +44,16 @@
 
 using namespace std;
 
-//flagPair (corresponds to flagMap):  
+//flagPair (corresponds to flagMap):
 //vector corresponds to each object in input collection
-//pair(bool) first bool counts towards the event passing, second bool determines whether to plot the object        
+//pair(bool) first bool counts towards the event passing, second bool determines whether to plot the object
 typedef vector<pair<bool,bool> > flagPair;
 
 //flagMap:
 //string       holds input collection type
 //outer vector corresponds to each cut
 //inner vector corresponds to each object in input collection
-//pair(bool) first bool counts towards the event passing, second bool determines whether to plot the object        
+//pair(bool) first bool counts towards the event passing, second bool determines whether to plot the object
 typedef map<string, vector<flagPair> > flagMap;
 
 struct BadCSC {

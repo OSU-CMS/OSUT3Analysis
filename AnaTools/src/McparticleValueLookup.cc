@@ -183,7 +183,7 @@ ValueLookup::valueLookup (const BNmcparticle* object, string variable, string fu
   }
 
   else if(variable == "deltaPhiMaxSubLeadJet") {
-    // calculate maximum deltaPhi between mcparticle and any subleading jet 
+    // calculate maximum deltaPhi between mcparticle and any subleading jet
     double mcpartJetDeltaPhiMax = -99.;
     if (!jets.product()) clog << "ERROR:  cannot find deltaPhiMaxSubLeadJet because jets collection is not initialized." << endl;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {

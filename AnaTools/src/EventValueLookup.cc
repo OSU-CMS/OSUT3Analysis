@@ -89,7 +89,7 @@ ValueLookup::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "triggerMetScaleFactor") value = triggerMetScaleFactor_;
   else if(variable == "trackNMissOutScaleFactor") value = trackNMissOutScaleFactor_;
   else if(variable == "EcaloVaryScaleFactor") value = EcaloVaryScaleFactor_;
-  else if(variable == "isrVaryScaleFactor") value = isrVaryScaleFactor_;  
+  else if(variable == "isrVaryScaleFactor") value = isrVaryScaleFactor_;
   else if(variable == "globalScaleFactor") value = globalScaleFactor_;
   else if(variable == "channelScaleFactor") value = channelScaleFactor_;
   else if(variable == "eventScaleFactor") value = eventScaleFactor_;
@@ -130,47 +130,47 @@ ValueLookup::valueLookup (const BNevent* object, string variable, string functio
     pt0 += pt1;
     value = pt0.Mod ();
   }
-  else if(variable == "metPt") {  // allow making 2D plots of event quantities vs. Met                                                                                                                                                       
+  else if(variable == "metPt") {  // allow making 2D plots of event quantities vs. Met
     if (const BNmet *met = chosenMET ()) {
       value = met->pt;
     } else value = -999;
   }
   else if(variable == "totalMcparticlePt") {
-    TVector2 ptTot(0.0, 0.0); 
+    TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
-      flagPair mcFlags = getLastValidFlags("mcparticles");  
+      flagPair mcFlags = getLastValidFlags("mcparticles");
       for (uint mcIndex = 0; mcIndex != mcFlags.size(); mcIndex++) {
-	if (!mcFlags.at(mcIndex).second) continue;
-	TVector2 pt(mcparticles->at(mcIndex).px, mcparticles->at(mcIndex).py);
-	ptTot = pt + ptTot;  
+        if (!mcFlags.at(mcIndex).second) continue;
+        TVector2 pt(mcparticles->at(mcIndex).px, mcparticles->at(mcIndex).py);
+        ptTot = pt + ptTot;
       }
     }
     value = ptTot.Mod();
-  } 
+  }
   else if(variable == "totalMcparticlePhi") {
-    TVector2 ptTot(0.0, 0.0); 
+    TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
-      flagPair mcFlags = getLastValidFlags("mcparticles");  
+      flagPair mcFlags = getLastValidFlags("mcparticles");
       for (uint mcIndex = 0; mcIndex != mcFlags.size(); mcIndex++) {
-	if (!mcFlags.at(mcIndex).second) continue;
-	TVector2 pt(mcparticles->at(mcIndex).px, mcparticles->at(mcIndex).py);
-	ptTot = pt + ptTot;  
+        if (!mcFlags.at(mcIndex).second) continue;
+        TVector2 pt(mcparticles->at(mcIndex).px, mcparticles->at(mcIndex).py);
+        ptTot = pt + ptTot;
       }
     }
     value = ptTot.Phi();
-  } 
+  }
   else if(variable == "totalMuonPt") {
-    TVector2 ptTot(0.0, 0.0); 
+    TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"muons") != objectsToCut.end ()){
-      flagPair muFlags = getLastValidFlags("muons");  
+      flagPair muFlags = getLastValidFlags("muons");
       for (uint muIndex = 0; muIndex != muFlags.size(); muIndex++) {
-	if (!muFlags.at(muIndex).second) continue;
-	TVector2 pt(muons->at(muIndex).px, muons->at(muIndex).py);
-	ptTot = pt + ptTot;  
+        if (!muFlags.at(muIndex).second) continue;
+        TVector2 pt(muons->at(muIndex).px, muons->at(muIndex).py);
+        ptTot = pt + ptTot;
       }
     }
     value = ptTot.Mod();
-  } 
+  }
 
   else if(variable == "totalMcparticlePtByMetPt") {
     double MET = 0;
@@ -186,7 +186,7 @@ if (const BNmet *met = chosenMET ()) {
 
  if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
    flagPair mcFlags;
-   //get the last valid flags in the flag map                                                                                               
+   //get the last valid flags in the flag map
    for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
      if (cumulativeFlags.at("mcparticles").at(i).size()){
        mcFlags = cumulativeFlags.at("mcparticles").at(i);
@@ -204,47 +204,47 @@ if (const BNmet *met = chosenMET ()) {
 value = (mcPt/MET);
   }
   else if(variable == "totalMuonPhi") {
-    TVector2 ptTot(0.0, 0.0); 
+    TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"muons") != objectsToCut.end ()){
-      flagPair muFlags = getLastValidFlags("muons");  
+      flagPair muFlags = getLastValidFlags("muons");
       for (uint muIndex = 0; muIndex != muFlags.size(); muIndex++) {
-	if (!muFlags.at(muIndex).second) continue;
-	TVector2 pt(muons->at(muIndex).px, muons->at(muIndex).py);
-	ptTot = pt + ptTot;  
+        if (!muFlags.at(muIndex).second) continue;
+        TVector2 pt(muons->at(muIndex).px, muons->at(muIndex).py);
+        ptTot = pt + ptTot;
       }
     }
     value = ptTot.Phi();
-  } 
+  }
   else if(variable == "totalJetPt") {
-    TVector2 ptTot(0.0, 0.0); 
+    TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"jets") != objectsToCut.end ()){
-      flagPair jetFlags = getLastValidFlags("jets");  
+      flagPair jetFlags = getLastValidFlags("jets");
       for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++) {
-	if (!jetFlags.at(jetIndex).second) continue;
-	TVector2 pt(jets->at(jetIndex).px, jets->at(jetIndex).py);
-	ptTot = pt + ptTot;  
+        if (!jetFlags.at(jetIndex).second) continue;
+        TVector2 pt(jets->at(jetIndex).px, jets->at(jetIndex).py);
+        ptTot = pt + ptTot;
       }
     }
     value = ptTot.Mod();
-  } 
+  }
   else if(variable == "totalJetPhi") {
-    TVector2 ptTot(0.0, 0.0); 
+    TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"jets") != objectsToCut.end ()){
-      flagPair jetFlags = getLastValidFlags("jets");  
+      flagPair jetFlags = getLastValidFlags("jets");
       for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++) {
-	if (!jetFlags.at(jetIndex).second) continue;
-	TVector2 pt(jets->at(jetIndex).px, jets->at(jetIndex).py);
-	ptTot = pt + ptTot;  
+        if (!jetFlags.at(jetIndex).second) continue;
+        TVector2 pt(jets->at(jetIndex).px, jets->at(jetIndex).py);
+        ptTot = pt + ptTot;
       }
     }
     value = ptTot.Phi();
-  } 
+  }
   else if(variable == "dijetDeltaPhiMax") {
     double deltaPhiMax = -99.;
     if(find(objectsToCut.begin(),objectsToCut.end(),"jets") != objectsToCut.end ()){
       flagPair jetFlags = getLastValidFlags("jets");
       for   (uint iJet = 0;      iJet != jetFlags.size(); iJet++) {
-	for (uint jJet = iJet+1; jJet != jetFlags.size(); jJet++) {
+        for (uint jJet = iJet+1; jJet != jetFlags.size(); jJet++) {
           if (!jetFlags.at(iJet).second) continue;
           if (!jetFlags.at(jJet).second) continue;
           double dPhi = fabs(deltaPhi(jets->at(iJet).phi, jets->at(jJet).phi));
@@ -255,41 +255,41 @@ value = (mcPt/MET);
     value = deltaPhiMax;
   }
   else if(variable == "totalJetPtMinusTotalMcparticlePt") {
-    value = 
-      valueLookup(object, "totalJetPt",        "", empty) - 
-      valueLookup(object, "totalMcparticlePt", "", empty);  
+    value =
+      valueLookup(object, "totalJetPt",        "", empty) -
+      valueLookup(object, "totalMcparticlePt", "", empty);
   }
   else if(variable == "totalJetPhiMinusTotalMcparticlePhi") {
     value = deltaPhi(valueLookup(object, "totalJetPhi",        "", empty),
-		     valueLookup(object, "totalMcparticlePhi", "", empty));  
+                     valueLookup(object, "totalMcparticlePhi", "", empty));
   }
   else if(variable == "totalMuonPtMinusTotalMcparticlePt") {
-    value = 
-      valueLookup(object, "totalMuonPt",       "", empty) - 
-      valueLookup(object, "totalMcparticlePt", "", empty);  
+    value =
+      valueLookup(object, "totalMuonPt",       "", empty) -
+      valueLookup(object, "totalMcparticlePt", "", empty);
   }
   else if(variable == "totalMuonPtMinusTotalJetPt") {
-    value = 
-      valueLookup(object, "totalMuonPt",       "", empty) - 
-      valueLookup(object, "totalJetPt",        "", empty);  
+    value =
+      valueLookup(object, "totalMuonPt",       "", empty) -
+      valueLookup(object, "totalJetPt",        "", empty);
   }
   else if(variable == "totalMuonPhiMinusTotalJetPhi") {
     value = deltaPhi(valueLookup(object, "totalMuonPhi", "", empty),
-		     valueLookup(object, "totalJetPhi",  "", empty));  
+                     valueLookup(object, "totalJetPhi",  "", empty));
   }
   else if(variable == "totalMcparticleStatus3SusyIdPt") {
-    TVector2 ptTot(0.0, 0.0); 
+    TVector2 ptTot(0.0, 0.0);
 
-    for (BNmcparticleCollection::const_iterator mcparticle = mcparticles->begin (); 
-	 mcparticle < mcparticles->end(); 
-	 mcparticle++) {
+    for (BNmcparticleCollection::const_iterator mcparticle = mcparticles->begin ();
+         mcparticle < mcparticles->end();
+         mcparticle++) {
 
-      if (mcparticle->status != 3) continue;  
-      int pdgId = abs(mcparticle->id);  
+      if (mcparticle->status != 3) continue;
+      int pdgId = abs(mcparticle->id);
       bool isSusy = (pdgId>1000001 && pdgId<3160113);  // matched to a SUSY particle
-      if (!isSusy) continue;  
+      if (!isSusy) continue;
       TVector2 pt(mcparticle->px, mcparticle->py);
-      ptTot = pt + ptTot;  
+      ptTot = pt + ptTot;
     }
     value = ptTot.Mod();
   }

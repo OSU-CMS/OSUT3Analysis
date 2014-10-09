@@ -6,14 +6,14 @@ ValueLookup::valueLookup (const BNjet* object, string variable, string function,
 
   BNjet jetCorr;
   if (flagJESJERCorr_) {
-    jetCorr = getCorrectedJet(*object, jESJERCorr_);  
-    object = &jetCorr;  
+    jetCorr = getCorrectedJet(*object, jESJERCorr_);
+    object = &jetCorr;
   }
 
   double value = 0.0;
   if(variable == "energy") value = object->energy;
   else if(variable == "et") value = object->et;
-  else if(variable == "pt") value = object->pt; 
+  else if(variable == "pt") value = object->pt;
   else if(variable == "px") value = object->px;
   else if(variable == "py") value = object->py;
   else if(variable == "pz") value = object->pz;
@@ -154,38 +154,38 @@ ValueLookup::valueLookup (const BNjet* object, string variable, string function,
     } else value = -999;
   }
 
-  else if(variable == "metPt") {  // allow making 2D plots of jet quantities vs. Met  
+  else if(variable == "metPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNmet *met = chosenMET ()) {
-      value = met->pt;  
+      value = met->pt;
     } else value = -999;
   }
 
   else if(variable == "isLeadingPtJet") {
-    double ptMax = -99;  
+    double ptMax = -99;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
-      string empty = "";  
-      double jetPt = valueLookup(&jets->at(ijet), "pt", "", empty); 
-      if (jetPt > ptMax) ptMax = jetPt;  
+      string empty = "";
+      double jetPt = valueLookup(&jets->at(ijet), "pt", "", empty);
+      if (jetPt > ptMax) ptMax = jetPt;
     }
-    if (object->pt < ptMax) value = 0; 
-    else                    value = 1;  
-  }  
+    if (object->pt < ptMax) value = 0;
+    else                    value = 1;
+  }
 
   else if(variable == "deltaRMuonPt20") {
     // calculate the minimum deltaR between the jet and any muon with pT>20 GeV
-    double deltaRMin = 99; 
+    double deltaRMin = 99;
     if (!muons.product()) clog << "ERROR:  cannot find deltaRMuonPt20 because muons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<muons->size(); imuon++) {
-      string empty = "";  
-      double muonPt = valueLookup(&muons->at(imuon), "pt", "", empty); 
-      if (muonPt < 20) continue;  
-      double muonEta = valueLookup(&muons->at(imuon), "eta", "", empty); 
-      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty); 
-      double dR = deltaR(object->eta, object->phi, muonEta, muonPhi);  
+      string empty = "";
+      double muonPt = valueLookup(&muons->at(imuon), "pt", "", empty);
+      if (muonPt < 20) continue;
+      double muonEta = valueLookup(&muons->at(imuon), "eta", "", empty);
+      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty);
+      double dR = deltaR(object->eta, object->phi, muonEta, muonPhi);
       if (dR < deltaRMin) deltaRMin = dR;
     }
-    value = deltaRMin; 
-  }  
+    value = deltaRMin;
+  }
   else{clog << "WARNING: invalid jet variable '" << variable << "'\n"; value = -999;}
 
   value = applyFunction(function, value);

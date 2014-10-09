@@ -872,7 +872,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNtrack* object2, string 
       TVector3 threeVector2(object2->px, object2->py, object2->pz);
       value = (pi-threeVector1.Angle(threeVector2));
     }
-  else if(variable == "deltaPt")  value = fabs(object1->pt - object2->pt);  
+  else if(variable == "deltaPt")  value = fabs(object1->pt - object2->pt);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "deltaRLooseID") {
     // only consider muons that pass looseId criteria; otherwise return very large value (99.)
@@ -910,7 +910,7 @@ ValueLookup::valueLookup (const BNjet* object1, const BNtrack* object2, string v
   double value = 0.0;
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
-  else if(variable == "deltaPt")  value = fabs(object1->pt - object2->pt);  
+  else if(variable == "deltaPt")  value = fabs(object1->pt - object2->pt);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else{clog << "WARNING: invalid jet-track pair variable '" << variable << "'\n"; value = -999;}
   value = applyFunction(function, value);
