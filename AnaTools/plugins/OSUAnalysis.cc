@@ -1034,7 +1034,6 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
 
   if (verbose_) clog << "Finished OSUAnalysis::OSUAnalysis constructor." << endl;
 
-
   } // end constructor OSUAnalysis::OSUAnalysis()
 
 
@@ -1293,6 +1292,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
     if (currentChannel.notInStatus3Outgoing.size () || currentChannel.absNotInStatus3Outgoing.size ())
       cutFlows_.at(currentChannelIndex)->at (currentChannel.notInStatus3OutgoingCutName) = notInStatus3Decision;
 
+    initializeValueLookup ();
+
     //loop over all cuts
     for(uint currentCutIndex = 0; currentCutIndex != currentChannel.cuts.size(); currentCutIndex++){
       cut currentCut = currentChannel.cuts.at(currentCutIndex);
@@ -1386,7 +1387,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
 
     }//end loop over all cuts
 
-
+    initializeValueLookup ();
 
     //use cumulative flags to apply cuts at event level
     vector<bool> eventPassedPreviousCuts;    //a vector to store cumulative cut decisions after each cut.
@@ -1504,7 +1505,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         //apply the weight for each of those objects
         for (uint mcparticleIndex = 0; mcparticleIndex != mcFlags.size(); mcparticleIndex++){
           if(!mcFlags.at(mcparticleIndex).second) continue;
-	  recoElectronEfficiency_ *= recoElectronWeight_->at (abs(valueLookup(&mcparticles->at(mcparticleIndex), "d0Beamspot", "", dummy)));
+	  recoElectronEfficiency_ *= recoElectronWeight_->at (abs(vl_->valueLookup(&mcparticles->at(mcparticleIndex), "d0Beamspot", "", dummy)));
 	  recoElectronEfficiency_ *= electronCutWeight_->at (mcparticles->at(mcparticleIndex).pt);
         }
       }
@@ -1522,7 +1523,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         //apply the weight for each of those objects
         for (uint secondaryMcParticleIndex = 0; secondaryMcParticleIndex != mcFlags.size(); secondaryMcParticleIndex++){
           if(!mcFlags.at(secondaryMcParticleIndex).second) continue;
-	  recoMuonEfficiency_ *= recoMuonWeight_->at (abs(valueLookup(&mcparticles->at(secondaryMcParticleIndex), "d0Beamspot", "", dummy)));
+	  recoMuonEfficiency_ *= recoMuonWeight_->at (abs(vl_->valueLookup(&mcparticles->at(secondaryMcParticleIndex), "d0Beamspot", "", dummy)));
         }
       }
 
@@ -1637,7 +1638,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
       int shiftUpDown = 0;
       if (triggerMetSFShift_ == "up")   shiftUpDown =  1; 
       if (triggerMetSFShift_ == "down") shiftUpDown = -1; 
-      if (const BNmet *met = chosenMET ()) { 
+      if (const BNmet *met = vl_->chosenMET ()) { 
 	triggerMetScaleFactor_ *= triggerMetSFWeight_->at (met->pt, shiftUpDown);  
       }
 
@@ -1681,7 +1682,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
           if (EcaloVarySFShift_ == "up")   shiftUpDown =  1; 
           if (EcaloVarySFShift_ == "down") shiftUpDown = -1; 
 	  string dummy = "";
-	  double caloTot = valueLookup(&tracks->at(trkIndex), "caloTotDeltaRp5RhoCorr", "", dummy);
+	  double caloTot = vl_->valueLookup(&tracks->at(trkIndex), "caloTotDeltaRp5RhoCorr", "", dummy);
 	  EcaloVaryScaleFactor_ *= EcaloVarySFWeight_->at (caloTot, shiftUpDown);
 	}
       }
@@ -1694,7 +1695,7 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
       if (isrVarySFShift_ == "up")   shiftUpDown =  1; 
       if (isrVarySFShift_ == "down") shiftUpDown = -1; 
       string dummy = ""; 
-      double ptSusy = valueLookup(&events->at(0), "totalMcparticleStatus3SusyIdPt", "", dummy);  
+      double ptSusy = vl_->valueLookup(&events->at(0), "totalMcparticleStatus3SusyIdPt", "", dummy);  
       isrVaryScaleFactor_ *= isrVarySFWeight_->at(ptSusy, shiftUpDown);  
     }  
         
@@ -1773,6 +1774,8 @@ OSUAnalysis::produce (edm::Event &event, const edm::EventSetup &setup)
         }
       }//Event passed all cuts                                                                                                                                                                            
     }//Calc pdf weights                                                                                                                                                                                   
+
+    initializeValueLookup ();
 
     //filling histograms
     for(uint currentCut = 0; currentCut != oneDHists_.at(currentChannelIndex).size(); currentCut++){//loop over all the cuts in each channel; if GetPlotsAfterEachCut_ is false, only the last cut will be used.
@@ -2403,7 +2406,7 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
       vector<bool> subcutDecisions;
       for( int subcutIndex = 0; subcutIndex != currentCut.numSubcuts; subcutIndex++){
         string stringValue = "";//!!!!
-        double value = valueLookup(&inputCollection->at(object), currentCut.variables.at(subcutIndex), currentCut.functions.at(subcutIndex), stringValue);
+        double value = vl_->valueLookup(&inputCollection->at(object), currentCut.variables.at(subcutIndex), currentCut.functions.at(subcutIndex), stringValue);
         if (stringValue == "") subcutDecisions.push_back(evaluateComparison(value,currentCut.comparativeOperators.at(subcutIndex),currentCut.cutValues.at(subcutIndex)));
         else subcutDecisions.push_back(evaluateComparison(stringValue,currentCut.comparativeOperators.at(subcutIndex),currentCut.cutStringValues.at(subcutIndex)));
 
@@ -2501,7 +2504,7 @@ void OSUAnalysis::setObjectFlags(cut &currentCut, uint currentCutIndex, flagMap 
         vector<bool> subcutDecisions;
         for( int subcutIndex = 0; subcutIndex != currentCut.numSubcuts; subcutIndex++){
           string stringValue = "";
-          double value = valueLookup(&inputCollection1->at(object1), &inputCollection2->at(object2), currentCut.variables.at(subcutIndex), currentCut.functions.at(subcutIndex), stringValue);
+          double value = vl_->valueLookup(&inputCollection1->at(object1), &inputCollection2->at(object2), currentCut.variables.at(subcutIndex), currentCut.functions.at(subcutIndex), stringValue);
           if (verbose_>1) clog << currentCut.variables.at(subcutIndex) << " = " << value
                                << endl;
           if (stringValue == "") subcutDecisions.push_back(evaluateComparison(value,currentCut.comparativeOperators.at(subcutIndex),currentCut.cutValues.at(subcutIndex)));
@@ -2645,7 +2648,7 @@ void OSUAnalysis::assignTreeBranch(BranchSpecs parameters, InputCollection input
     string inputVariable = parameters.inputVariable;
     string function = "";
     string stringValue = "";
-    double value = valueLookup(&inputCollection->at(object), inputVariable, function, stringValue);
+    double value = vl_->valueLookup(&inputCollection->at(object), inputVariable, function, stringValue);
     BNTreeBranchVals_.at(parameters.name).push_back(value);
 
   }
@@ -2674,7 +2677,7 @@ void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollect
     }
 
     string stringValue = "";
-    double value = valueLookup(&inputCollection->at(object), inputVariable, function, stringValue);
+    double value = vl_->valueLookup(&inputCollection->at(object), inputVariable, function, stringValue);
     if( parameters.variableBinsX.size() != 0)
     { scaleFactor = scaleFactor*getVariableBinsWeights(parameters.variableBinsX,value);
     }
@@ -2720,7 +2723,7 @@ void OSUAnalysis::fill1DHistogram(TH1* histo, histogram parameters, InputCollect
       }
 
       string stringValue = "";
-      double value = valueLookup(&inputCollection1->at(object1), &inputCollection2->at(object2), inputVariable, function, stringValue);
+      double value = vl_->valueLookup(&inputCollection1->at(object1), &inputCollection2->at(object2), inputVariable, function, stringValue);
       histo->Fill(value,scaleFactor);
 
       if (printEventInfo_) {
@@ -2745,7 +2748,7 @@ void OSUAnalysis::fill1DStatus3Histogram(TH1* histo, const BNmcparticleCollectio
       if (inputCollection->at (i).status != 3)
         break;
       unsigned value = abs (inputCollection->at (i).id);
-      value = getPdgIdBinValue (value);
+      value = vl_->getPdgIdBinValue (value);
       histo->Fill (value, scaleFactor);
 
       if (printEventInfo_) {
@@ -2774,7 +2777,7 @@ void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollect
       inputVariable = currentString.substr(currentString.find("(")+1);//get rest of string
       inputVariable = inputVariable.substr(0,inputVariable.size()-1);//remove trailing ")"
     }
-    double valueX = valueLookup(&inputCollection->at(object), inputVariable, function, stringValue);
+    double valueX = vl_->valueLookup(&inputCollection->at(object), inputVariable, function, stringValue);
 
     currentString = parameters.inputVariables.at(1);
     inputVariable = "";
@@ -2788,7 +2791,7 @@ void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollect
       inputVariable = inputVariable.substr(0,inputVariable.size()-1);//remove trailing ")"
     }
 
-    double valueY = valueLookup(&inputCollection->at(object), inputVariable, function, stringValue);
+    double valueY = vl_->valueLookup(&inputCollection->at(object), inputVariable, function, stringValue);
 
     histo->Fill(valueX,valueY,scaleFactor);
 
@@ -2828,7 +2831,7 @@ void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollect
         inputVariable = currentString.substr(currentString.find("(")+1);//get rest of string
         inputVariable = inputVariable.substr(0,inputVariable.size()-1);//remove trailing ")"
       }
-      double valueX = valueLookup(&inputCollection1->at(object1), &inputCollection2->at(object2), inputVariable, function, stringValue);
+      double valueX = vl_->valueLookup(&inputCollection1->at(object1), &inputCollection2->at(object2), inputVariable, function, stringValue);
 
       currentString = parameters.inputVariables.at(1);
       inputVariable = "";
@@ -2841,7 +2844,7 @@ void OSUAnalysis::fill2DHistogram(TH2* histo, histogram parameters, InputCollect
         inputVariable = currentString.substr(currentString.find("(")+1);//get rest of string
         inputVariable = inputVariable.substr(0,inputVariable.size()-1);//remove trailing ")"
       }
-      double valueY = valueLookup(&inputCollection1->at(object1), &inputCollection2->at(object2), inputVariable, function, stringValue);
+      double valueY = vl_->valueLookup(&inputCollection1->at(object1), &inputCollection2->at(object2), inputVariable, function, stringValue);
 
 
       histo->Fill(valueX,valueY,scaleFactor);
@@ -2915,5 +2918,63 @@ std::vector<double> OSUAnalysis::getPdfWeights()
   return pdf_weights;
 }
 
+void
+OSUAnalysis::initializeValueLookup ()
+{
+  if (!vl_)
+    vl_ = new ValueLookup ();
+
+  vl_->setBxlumis                   (bxlumis);
+  vl_->setElectrons                 (electrons);
+  vl_->setEvents                    (events);
+  vl_->setGenjets                   (genjets);
+  vl_->setJets                      (jets);
+  vl_->setMcparticles               (mcparticles);
+  vl_->setMets                      (mets);
+  vl_->setMuons                     (muons);
+  vl_->setPhotons                   (photons);
+  vl_->setPrimaryvertexs            (primaryvertexs);
+  vl_->setRhokt6CaloJetsHandle      (rhokt6CaloJetsHandle_);
+  vl_->setSecMuons                  (secMuons);
+  vl_->setStops                     (stops);
+  vl_->setSuperclusters             (superclusters);
+  vl_->setTaus                      (taus);
+  vl_->setTracks                    (tracks);
+  vl_->setTriggers                  (triggers);
+  vl_->setTrigobjs                  (trigobjs);
+
+  vl_->setBTagScaleFactor           (bTagScaleFactor_);
+  vl_->setBadCSCFile                (badCSCFile_);
+  vl_->setBadCSCVec                 (BadCSCVec);
+  vl_->setChannelScaleFactor        (channelScaleFactor_);
+  vl_->setCumulativeFlags           (cumulativeFlags);
+  vl_->setDeadEcalFile              (deadEcalFile_);
+  vl_->setDeadEcalVec               (DeadEcalVec);
+  vl_->setDoPileupReweighting       (doPileupReweighting_);
+  vl_->setEcaloVaryScaleFactor      (EcaloVaryScaleFactor_);
+  vl_->setElectronScaleFactor       (electronScaleFactor_);
+  vl_->setElectronTrackScaleFactor  (electronTrackScaleFactor_);
+  vl_->setEventScaleFactor          (eventScaleFactor_);
+  vl_->setFlagJESJERCorr            (flagJESJERCorr_);
+  vl_->setGlobalScaleFactor         (globalScaleFactor_);
+  vl_->setIsrVaryScaleFactor        (isrVaryScaleFactor_);
+  vl_->setJESJERCorr                (jESJERCorr_);
+  vl_->setMuonScaleFactor           (muonScaleFactor_);
+  vl_->setMuonTrackScaleFactor      (muonTrackScaleFactor_);
+  vl_->setNmissoutShiftDown         (NmissoutShiftDown_);
+  vl_->setNmissoutShiftUp           (NmissoutShiftUp_);
+  vl_->setObjectsToCut              (objectsToCut);
+  vl_->setObjectsToGet              (objectsToGet);
+  vl_->setPuWeight                  (puWeight_);
+  vl_->setStopCTauScaleFactor       (stopCTauScaleFactor_);
+  vl_->setTargetTriggers            (targetTriggers_);
+  vl_->setTopPtScaleFactor          (topPtScaleFactor_);
+  vl_->setTrackNMissOutScaleFactor  (trackNMissOutScaleFactor_);
+  vl_->setTriggerMetScaleFactor     (triggerMetScaleFactor_);
+  vl_->setTriggerScaleFactor        (triggerScaleFactor_);
+  vl_->setDatasetType               (datasetType_);
+  vl_->setUseTrackCaloRhoCorr       (useTrackCaloRhoCorr_);
+  vl_->setVerbose                   (verbose_);
+}
 
 DEFINE_FWK_MODULE(OSUAnalysis);
