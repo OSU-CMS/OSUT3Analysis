@@ -66,6 +66,13 @@ process.MetCorrections = cms.EDProducer ('CorrectionProducer',
 
 ################################################################################
 
+# combine correction modules into one sequence
+process.CorrectionSequence = cms.Sequence(process.MuonCorrections *
+                                          process.MetCorrections
+                                          )
+
+################################################################################
+
 # create module to flag all objects in all events
 # according to the user-defined selections (channels)
 process.EventSelections = cms.EDProducer ('EventProcessor',
@@ -101,8 +108,7 @@ from OSUT3Analysis.AnaTools.MyProtoHistogramDefinitions import *
 process.Plotting.histogramSets.append(MyProtoHistograms)
 
 process.myPath = cms.Path (process.DiMuonMetDeltaPhiDefinition *
-                           process.MuonCorrections *
-                           process.MetCorrections *
+                           process.CorrectionSequence *
                            process.EventSelections *
                            process.EventFiltering *
                            process.Plotting
