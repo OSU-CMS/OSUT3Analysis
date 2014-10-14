@@ -138,9 +138,9 @@ ValueLookup::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "totalMcparticlePt") {
     TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
-      flagPair mcFlags = getLastValidFlags("mcparticles");
+      vector<bool> mcFlags = getLastValidFlags("mcparticles");
       for (uint mcIndex = 0; mcIndex != mcFlags.size(); mcIndex++) {
-        if (!mcFlags.at(mcIndex).second) continue;
+        if (!mcFlags.at(mcIndex)) continue;
         TVector2 pt(mcparticles->at(mcIndex).px, mcparticles->at(mcIndex).py);
         ptTot = pt + ptTot;
       }
@@ -150,9 +150,9 @@ ValueLookup::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "totalMcparticlePhi") {
     TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
-      flagPair mcFlags = getLastValidFlags("mcparticles");
+      vector<bool> mcFlags = getLastValidFlags("mcparticles");
       for (uint mcIndex = 0; mcIndex != mcFlags.size(); mcIndex++) {
-        if (!mcFlags.at(mcIndex).second) continue;
+        if (!mcFlags.at(mcIndex)) continue;
         TVector2 pt(mcparticles->at(mcIndex).px, mcparticles->at(mcIndex).py);
         ptTot = pt + ptTot;
       }
@@ -162,9 +162,9 @@ ValueLookup::valueLookup (const BNevent* object, string variable, string functio
   else if(variable == "totalMuonPt") {
     TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"muons") != objectsToCut.end ()){
-      flagPair muFlags = getLastValidFlags("muons");
+      vector<bool> muFlags = getLastValidFlags("muons");
       for (uint muIndex = 0; muIndex != muFlags.size(); muIndex++) {
-        if (!muFlags.at(muIndex).second) continue;
+        if (!muFlags.at(muIndex)) continue;
         TVector2 pt(muons->at(muIndex).px, muons->at(muIndex).py);
         ptTot = pt + ptTot;
       }
@@ -185,7 +185,7 @@ if (const BNmet *met = chosenMET ()) {
  TVector2 ptTot(0.0, 0.0);
 
  if(find(objectsToCut.begin(),objectsToCut.end(),"mcparticles") != objectsToCut.end ()){
-   flagPair mcFlags;
+   vector<bool> mcFlags;
    //get the last valid flags in the flag map
    for (int i = cumulativeFlags.at("mcparticles").size() - 1; i >= 0; i--){
      if (cumulativeFlags.at("mcparticles").at(i).size()){
@@ -194,7 +194,7 @@ if (const BNmet *met = chosenMET ()) {
      }
    }
    for (uint mcIndex = 0; mcIndex != mcFlags.size(); mcIndex++) {
-     if (!mcFlags.at(mcIndex).second) continue;
+     if (!mcFlags.at(mcIndex)) continue;
      TVector2 pt(mcparticles->at(mcIndex).px, mcparticles->at(mcIndex).py);
      ptTot = pt + ptTot;
    }
@@ -206,9 +206,9 @@ value = (mcPt/MET);
   else if(variable == "totalMuonPhi") {
     TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"muons") != objectsToCut.end ()){
-      flagPair muFlags = getLastValidFlags("muons");
+      vector<bool> muFlags = getLastValidFlags("muons");
       for (uint muIndex = 0; muIndex != muFlags.size(); muIndex++) {
-        if (!muFlags.at(muIndex).second) continue;
+        if (!muFlags.at(muIndex)) continue;
         TVector2 pt(muons->at(muIndex).px, muons->at(muIndex).py);
         ptTot = pt + ptTot;
       }
@@ -218,9 +218,9 @@ value = (mcPt/MET);
   else if(variable == "totalJetPt") {
     TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"jets") != objectsToCut.end ()){
-      flagPair jetFlags = getLastValidFlags("jets");
+      vector<bool> jetFlags = getLastValidFlags("jets");
       for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++) {
-        if (!jetFlags.at(jetIndex).second) continue;
+        if (!jetFlags.at(jetIndex)) continue;
         TVector2 pt(jets->at(jetIndex).px, jets->at(jetIndex).py);
         ptTot = pt + ptTot;
       }
@@ -230,9 +230,9 @@ value = (mcPt/MET);
   else if(variable == "totalJetPhi") {
     TVector2 ptTot(0.0, 0.0);
     if(find(objectsToCut.begin(),objectsToCut.end(),"jets") != objectsToCut.end ()){
-      flagPair jetFlags = getLastValidFlags("jets");
+      vector<bool> jetFlags = getLastValidFlags("jets");
       for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++) {
-        if (!jetFlags.at(jetIndex).second) continue;
+        if (!jetFlags.at(jetIndex)) continue;
         TVector2 pt(jets->at(jetIndex).px, jets->at(jetIndex).py);
         ptTot = pt + ptTot;
       }
@@ -242,11 +242,11 @@ value = (mcPt/MET);
   else if(variable == "dijetDeltaPhiMax") {
     double deltaPhiMax = -99.;
     if(find(objectsToCut.begin(),objectsToCut.end(),"jets") != objectsToCut.end ()){
-      flagPair jetFlags = getLastValidFlags("jets");
+      vector<bool> jetFlags = getLastValidFlags("jets");
       for   (uint iJet = 0;      iJet != jetFlags.size(); iJet++) {
         for (uint jJet = iJet+1; jJet != jetFlags.size(); jJet++) {
-          if (!jetFlags.at(iJet).second) continue;
-          if (!jetFlags.at(jJet).second) continue;
+          if (!jetFlags.at(iJet)) continue;
+          if (!jetFlags.at(jJet)) continue;
           double dPhi = fabs(deltaPhi(jets->at(iJet).phi, jets->at(jJet).phi));
           if (dPhi > deltaPhiMax) deltaPhiMax = dPhi;
         }

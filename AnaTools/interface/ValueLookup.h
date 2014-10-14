@@ -5,7 +5,10 @@
 
 // Declaration of the ValueLookup class, containing all the valueLookup methods
 // and the variables on which they depend.
-class ValueLookup { public: ValueLookup () {}; ~ValueLookup () {};
+class ValueLookup {
+  public:
+    ValueLookup () {};
+    ~ValueLookup () {};
 
   public:
     ////////////////////////////////////////////////////////////////////////////
@@ -160,7 +163,7 @@ class ValueLookup { public: ValueLookup () {}; ~ValueLookup () {};
     double getTrkPtRes (const BNtrack* track1);
     double getTrkPtTrue (const BNtrack* track1, const BNmcparticleCollection* genPartColl);
     double thetaToEta(double theta);
-    flagPair getLastValidFlags(string objType);
+    vector<bool> getLastValidFlags(string objType);
     int findTauMotherIndex(const BNmcparticle* tau);
     int getTrkIsIso (const BNtrack* track1, const BNtrackCollection* trackColl);
     int getTrkIsMatchedBadCSC (const BNtrack* track1);
@@ -234,6 +237,7 @@ class ValueLookup { public: ValueLookup () {}; ~ValueLookup () {};
     vector<string>    objectsToCut;
     vector<string>    objectsToGet;
     vector<string>    targetTriggers_;
+    ////////////////////////////////////////////////////////////////////////////
 };
 
 // Definitions of the template methods.

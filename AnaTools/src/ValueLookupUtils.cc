@@ -81,7 +81,7 @@ ValueLookup::chosenVertex ()
 {
   const BNprimaryvertex *chosenVertex = 0;
   if(cumulativeFlags.find ("primaryvertexs") != cumulativeFlags.end ()){
-    flagPair vertexFlags;
+    vector<bool> vertexFlags;
     for (int i = cumulativeFlags.at("primaryvertexs").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("primaryvertexs").at(i).size()){
         vertexFlags = cumulativeFlags.at("primaryvertexs").at(i);
@@ -89,7 +89,7 @@ ValueLookup::chosenVertex ()
       }
     }
     for (uint vertexIndex = 0; vertexIndex != vertexFlags.size(); vertexIndex++){
-      if(!vertexFlags.at(vertexIndex).first) continue;
+      if(!vertexFlags.at(vertexIndex)) continue;
       chosenVertex = & primaryvertexs->at(vertexIndex);
       break;
     }
@@ -106,7 +106,7 @@ ValueLookup::chosenMET ()
 {
   const BNmet *chosenMET = 0;
   if(cumulativeFlags.find ("mets") != cumulativeFlags.end ()){
-    flagPair metFlags;
+    vector<bool> metFlags;
     for (int i = cumulativeFlags.at("mets").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("mets").at(i).size()){
         metFlags = cumulativeFlags.at("mets").at(i);
@@ -114,7 +114,7 @@ ValueLookup::chosenMET ()
       }
     }
     for (uint metIndex = 0; metIndex != metFlags.size(); metIndex++){
-      if(!metFlags.at(metIndex).first) continue;
+      if(!metFlags.at(metIndex)) continue;
       chosenMET = & mets->at(metIndex);
       break;
     }
@@ -131,7 +131,7 @@ ValueLookup::chosenTrack ()
 {
   const BNtrack *chosenTrack = 0;
   if(cumulativeFlags.find ("tracks") != cumulativeFlags.end ()){
-    flagPair trackFlags;
+    vector<bool> trackFlags;
     for (int i = cumulativeFlags.at("tracks").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("tracks").at(i).size()){
         trackFlags = cumulativeFlags.at("tracks").at(i);
@@ -139,7 +139,7 @@ ValueLookup::chosenTrack ()
       }
     }
     for (uint trackIndex = 0; trackIndex != trackFlags.size(); trackIndex++){
-      if(!trackFlags.at(trackIndex).first) continue;
+      if(!trackFlags.at(trackIndex)) continue;
       chosenTrack = & tracks->at(trackIndex);
       break;
     }
@@ -156,7 +156,7 @@ ValueLookup::chosenJet ()
 {
   const BNjet *chosenJet = 0;
   if(cumulativeFlags.find ("jets") != cumulativeFlags.end ()){
-    flagPair jetFlags;
+    vector<bool> jetFlags;
     for (int i = cumulativeFlags.at("jets").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("jets").at(i).size()){
         jetFlags = cumulativeFlags.at("jets").at(i);
@@ -164,7 +164,7 @@ ValueLookup::chosenJet ()
       }
     }
     for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++){
-      if(!jetFlags.at(jetIndex).first) continue;
+      if(!jetFlags.at(jetIndex)) continue;
       chosenJet = & jets->at(jetIndex);
       break;
     }
@@ -181,7 +181,7 @@ ValueLookup::chosenElectron ()
 {
   const BNelectron *chosenElectron = 0;
   if(cumulativeFlags.find ("electrons") != cumulativeFlags.end ()){
-    flagPair electronFlags;
+    vector<bool> electronFlags;
     for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("electrons").at(i).size()){
         electronFlags = cumulativeFlags.at("electrons").at(i);
@@ -189,7 +189,7 @@ ValueLookup::chosenElectron ()
       }
     }
     for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
-      if(!electronFlags.at(electronIndex).first) continue;
+      if(!electronFlags.at(electronIndex)) continue;
       chosenElectron = & electrons->at(electronIndex);
       break;
     }
@@ -206,7 +206,7 @@ ValueLookup::chosenMuon ()
 {
   const BNmuon *chosenMuon = 0;
   if(cumulativeFlags.find ("muons") != cumulativeFlags.end ()){
-    flagPair muonFlags;
+    vector<bool> muonFlags;
     for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("muons").at(i).size()){
         muonFlags = cumulativeFlags.at("muons").at(i);
@@ -214,7 +214,7 @@ ValueLookup::chosenMuon ()
       }
     }
     for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
-      if(!muonFlags.at(muonIndex).first) continue;
+      if(!muonFlags.at(muonIndex)) continue;
       chosenMuon = & muons->at(muonIndex);
       break;
     }
@@ -231,7 +231,7 @@ ValueLookup::chosenHT ()
 {
   double chosenHT = 0.0;
   if(cumulativeFlags.find ("jets") != cumulativeFlags.end ()){
-    flagPair jetFlags;
+    vector<bool> jetFlags;
     for (int i = cumulativeFlags.at("jets").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("jets").at(i).size()){
         jetFlags = cumulativeFlags.at("jets").at(i);
@@ -239,7 +239,7 @@ ValueLookup::chosenHT ()
       }
     }
     for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++){
-      if(!jetFlags.at(jetIndex).first) continue;
+      if(!jetFlags.at(jetIndex)) continue;
       chosenHT += jets->at(jetIndex).pt;
     }
   }
@@ -253,7 +253,7 @@ ValueLookup::chosenST ()
 {
   double chosenST = 0.0;
   if(cumulativeFlags.find ("electrons") != cumulativeFlags.end ()){
-    flagPair electronFlags;
+    vector<bool> electronFlags;
     for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("electrons").at(i).size()){
         electronFlags = cumulativeFlags.at("electrons").at(i);
@@ -261,13 +261,13 @@ ValueLookup::chosenST ()
       }
     }
     for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
-      if(!electronFlags.at(electronIndex).first) continue;
+      if(!electronFlags.at(electronIndex)) continue;
       chosenST += electrons->at(electronIndex).pt;
     }
   }
 
   if(cumulativeFlags.find ("muons") != cumulativeFlags.end ()){
-    flagPair muonFlags;
+    vector<bool> muonFlags;
     for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("muons").at(i).size()){
         muonFlags = cumulativeFlags.at("muons").at(i);
@@ -275,13 +275,13 @@ ValueLookup::chosenST ()
       }
     }
     for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
-      if(!muonFlags.at(muonIndex).first) continue;
+      if(!muonFlags.at(muonIndex)) continue;
       chosenST += muons->at(muonIndex).pt;
     }
   }
 
   if(cumulativeFlags.find ("jets") != cumulativeFlags.end ()){
-    flagPair jetFlags;
+    vector<bool> jetFlags;
     for (int i = cumulativeFlags.at("jets").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("jets").at(i).size()){
         jetFlags = cumulativeFlags.at("jets").at(i);
@@ -289,7 +289,7 @@ ValueLookup::chosenST ()
       }
     }
     for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++){
-      if(!jetFlags.at(jetIndex).first) continue;
+      if(!jetFlags.at(jetIndex)) continue;
       chosenST += jets->at(jetIndex).pt;
     }
   }
@@ -450,7 +450,7 @@ ValueLookup::leadMuonPair ()
   leadMuonPair.first = leadMuonPair.second = 0;
 
   if(cumulativeFlags.find ("muons") != cumulativeFlags.end ()){
-    flagPair muonFlags;
+    vector<bool> muonFlags;
     for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("muons").at(i).size()){
         muonFlags = cumulativeFlags.at("muons").at(i);
@@ -458,9 +458,9 @@ ValueLookup::leadMuonPair ()
       }
     }
     for (uint muonIndex0 = 0; muonIndex0 != muonFlags.size(); muonIndex0++){
-      if(!muonFlags.at(muonIndex0).first) continue;
+      if(!muonFlags.at(muonIndex0)) continue;
       for (uint muonIndex1 = muonIndex0 + 1; muonIndex1 < muonFlags.size(); muonIndex1++){
-        if(!muonFlags.at(muonIndex1).first) continue;
+        if(!muonFlags.at(muonIndex1)) continue;
         const BNmuon *mu0 = & muons->at(muonIndex0);
         const BNmuon *mu1 = & muons->at(muonIndex1);
         if(leadMuonPair.first == 0 || leadMuonPair.second == 0){
@@ -492,7 +492,7 @@ ValueLookup::leadElectronPair ()
   pair<const BNelectron *, const BNelectron *> leadElectronPair;
   leadElectronPair.first = leadElectronPair.second = 0;
   if(cumulativeFlags.find ("electrons") != cumulativeFlags.end ()){
-    flagPair electronFlags;
+    vector<bool> electronFlags;
     for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("electrons").at(i).size()){
         electronFlags = cumulativeFlags.at("electrons").at(i);
@@ -500,9 +500,9 @@ ValueLookup::leadElectronPair ()
       }
     }
     for (uint electronIndex0 = 0; electronIndex0 != electronFlags.size(); electronIndex0++){
-      if(!electronFlags.at(electronIndex0).first) continue;
+      if(!electronFlags.at(electronIndex0)) continue;
       for (uint electronIndex1 = electronIndex0 + 1; electronIndex1 < electronFlags.size(); electronIndex1++){
-        if(!electronFlags.at(electronIndex1).first) continue;
+        if(!electronFlags.at(electronIndex1)) continue;
         const BNelectron *el0 = & electrons->at(electronIndex0);
         const BNelectron *el1 = & electrons->at(electronIndex1);
         if(leadElectronPair.first == 0 || leadElectronPair.second == 0){
@@ -888,7 +888,8 @@ ValueLookup::thetaToEta(double theta) {
 }
 
 
-flagPair ValueLookup::getLastValidFlags(string objType) {
+vector<bool>
+ValueLookup::getLastValidFlags(string objType) {
   // get the last valid flags in the flag map
   for (int i = cumulativeFlags.at(objType).size() - 1; i >= 0; i--) {  // loop backwards over all the cuts
     if (cumulativeFlags.at(objType).at(i).size()){            // If all the flags have been filled, then the last cut will have a nonzero size
@@ -896,6 +897,99 @@ flagPair ValueLookup::getLastValidFlags(string objType) {
     }
   }
   // no valid flags have been found
-  flagPair empty;
+  vector<bool> empty;
   return empty;
 }
+
+template class edm::Handle<double>;
+template class edm::Handle<std::vector<BNbxlumi, std::allocator<BNbxlumi> > >;
+template class edm::Handle<std::vector<BNelectron, std::allocator<BNelectron> > >;
+template class edm::Handle<std::vector<BNevent, std::allocator<BNevent> > >;
+template class edm::Handle<std::vector<BNgenjet, std::allocator<BNgenjet> > >;
+template class edm::Handle<std::vector<BNjet, std::allocator<BNjet> > >;
+template class edm::Handle<std::vector<BNmcparticle, std::allocator<BNmcparticle> > >;
+template class edm::Handle<std::vector<BNmet, std::allocator<BNmet> > >;
+template class edm::Handle<std::vector<BNmuon, std::allocator<BNmuon> > >;
+template class edm::Handle<std::vector<BNphoton, std::allocator<BNphoton> > >;
+template class edm::Handle<std::vector<BNprimaryvertex, std::allocator<BNprimaryvertex> > >;
+template class edm::Handle<std::vector<BNstop, std::allocator<BNstop> > >;
+template class edm::Handle<std::vector<BNsupercluster, std::allocator<BNsupercluster> > >;
+template class edm::Handle<std::vector<BNtau, std::allocator<BNtau> > >;
+template class edm::Handle<std::vector<BNtrack, std::allocator<BNtrack> > >;
+template class edm::Handle<std::vector<BNtrigger, std::allocator<BNtrigger> > >;
+template class edm::Handle<std::vector<BNtrigobj, std::allocator<BNtrigobj> > >;
+template class edm::OrphanHandle<std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > > >;
+template class edm::Wrapper<std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > > >;
+template class std::auto_ptr<std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > > >;
+template class std::istream_iterator<std::string, char, std::char_traits<char>, long>;
+template class std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > >;
+template class std::pair<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >;
+template class std::vector<BadCSC, std::allocator<BadCSC> >;
+template class std::vector<DeadEcal, std::allocator<DeadEcal> >;
+template class std::vector<bool, std::allocator<bool> >;
+template class std::vector<cut, std::allocator<cut> >;
+template class std::vector<double, std::allocator<double> >;
+template class std::vector<edm::ParameterSet, std::allocator<edm::ParameterSet> >;
+template class std::vector<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>, std::allocator<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*> > >;
+template class std::vector<std::string, std::allocator<std::string> >;
+template class std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >;
+
+template BadCSC* std::copy<BadCSC*, BadCSC*>(BadCSC*, BadCSC*, BadCSC*);
+template DeadEcal* std::copy<DeadEcal*, DeadEcal*>(DeadEcal*, DeadEcal*, DeadEcal*);
+template bool edm::Event::getByLabel<std::vector<BNbxlumi, std::allocator<BNbxlumi> > >(edm::InputTag const&, edm::Handle<std::vector<BNbxlumi, std::allocator<BNbxlumi> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNelectron, std::allocator<BNelectron> > >(edm::InputTag const&, edm::Handle<std::vector<BNelectron, std::allocator<BNelectron> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNevent, std::allocator<BNevent> > >(edm::InputTag const&, edm::Handle<std::vector<BNevent, std::allocator<BNevent> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNgenjet, std::allocator<BNgenjet> > >(edm::InputTag const&, edm::Handle<std::vector<BNgenjet, std::allocator<BNgenjet> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNjet, std::allocator<BNjet> > >(edm::InputTag const&, edm::Handle<std::vector<BNjet, std::allocator<BNjet> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNmcparticle, std::allocator<BNmcparticle> > >(edm::InputTag const&, edm::Handle<std::vector<BNmcparticle, std::allocator<BNmcparticle> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNmet, std::allocator<BNmet> > >(edm::InputTag const&, edm::Handle<std::vector<BNmet, std::allocator<BNmet> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNmuon, std::allocator<BNmuon> > >(edm::InputTag const&, edm::Handle<std::vector<BNmuon, std::allocator<BNmuon> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNphoton, std::allocator<BNphoton> > >(edm::InputTag const&, edm::Handle<std::vector<BNphoton, std::allocator<BNphoton> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNprimaryvertex, std::allocator<BNprimaryvertex> > >(edm::InputTag const&, edm::Handle<std::vector<BNprimaryvertex, std::allocator<BNprimaryvertex> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNsupercluster, std::allocator<BNsupercluster> > >(edm::InputTag const&, edm::Handle<std::vector<BNsupercluster, std::allocator<BNsupercluster> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNtau, std::allocator<BNtau> > >(edm::InputTag const&, edm::Handle<std::vector<BNtau, std::allocator<BNtau> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNtrack, std::allocator<BNtrack> > >(edm::InputTag const&, edm::Handle<std::vector<BNtrack, std::allocator<BNtrack> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNtrigger, std::allocator<BNtrigger> > >(edm::InputTag const&, edm::Handle<std::vector<BNtrigger, std::allocator<BNtrigger> > >&) const;
+template bool edm::Event::getByLabel<std::vector<BNtrigobj, std::allocator<BNtrigobj> > >(edm::InputTag const&, edm::Handle<std::vector<BNtrigobj, std::allocator<BNtrigobj> > >&) const;
+template bool std::operator!=<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&);
+template bool std::operator< <char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&);
+template bool std::operator<=<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&);
+template bool std::operator==<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*);
+template bool std::operator><char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&);
+template bool std::operator>=<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&);
+template boost::exception_ptr boost::exception_detail::get_static_exception_object<boost::exception_detail::bad_alloc_>();
+template boost::exception_ptr boost::exception_detail::get_static_exception_object<boost::exception_detail::bad_exception_>();
+template edm::OrphanHandle<std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > > > edm::Event::put<std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > > >(std::auto_ptr<std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > > >, std::string const&);
+template std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> >&&, char const*);
+template std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>* std::__uninitialized_copy<false>::__uninit_copy<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>*, std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>*>(std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>*, std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>*, std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>*);
+template std::pair<std::_Rb_tree_iterator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > >, bool> std::_Rb_tree<std::string, std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >, std::_Select1st<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > >::_M_insert_unique<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > >(std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >&&);
+template std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >::pair<std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, void>(std::string const&, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >&&);
+template std::string* std::copy<std::string*, std::string*>(std::string*, std::string*, std::string*);
+template std::vector<bool, std::allocator<bool> >* std::__uninitialized_copy<false>::__uninit_copy<__gnu_cxx::__normal_iterator<std::vector<bool, std::allocator<bool> > const*, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >, std::vector<bool, std::allocator<bool> >*>(__gnu_cxx::__normal_iterator<std::vector<bool, std::allocator<bool> > const*, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >, __gnu_cxx::__normal_iterator<std::vector<bool, std::allocator<bool> > const*, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >, std::vector<bool, std::allocator<bool> >*);
+template std::vector<bool, std::allocator<bool> >* std::__uninitialized_copy<false>::__uninit_copy<std::move_iterator<std::vector<bool, std::allocator<bool> >*>, std::vector<bool, std::allocator<bool> >*>(std::move_iterator<std::vector<bool, std::allocator<bool> >*>, std::move_iterator<std::vector<bool, std::allocator<bool> >*>, std::vector<bool, std::allocator<bool> >*);
+template std::vector<std::string, std::allocator<std::string> >::vector<std::istream_iterator<std::string, char, std::char_traits<char>, long> >(std::istream_iterator<std::string, char, std::char_traits<char>, long>, std::istream_iterator<std::string, char, std::char_traits<char>, long>, std::allocator<std::string> const&);
+template void edm::convert_handle<std::vector<BNbxlumi, std::allocator<BNbxlumi> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNbxlumi, std::allocator<BNbxlumi> > >&);
+template void edm::convert_handle<std::vector<BNelectron, std::allocator<BNelectron> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNelectron, std::allocator<BNelectron> > >&);
+template void edm::convert_handle<std::vector<BNevent, std::allocator<BNevent> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNevent, std::allocator<BNevent> > >&);
+template void edm::convert_handle<std::vector<BNgenjet, std::allocator<BNgenjet> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNgenjet, std::allocator<BNgenjet> > >&);
+template void edm::convert_handle<std::vector<BNjet, std::allocator<BNjet> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNjet, std::allocator<BNjet> > >&);
+template void edm::convert_handle<std::vector<BNmcparticle, std::allocator<BNmcparticle> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNmcparticle, std::allocator<BNmcparticle> > >&);
+template void edm::convert_handle<std::vector<BNmet, std::allocator<BNmet> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNmet, std::allocator<BNmet> > >&);
+template void edm::convert_handle<std::vector<BNmuon, std::allocator<BNmuon> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNmuon, std::allocator<BNmuon> > >&);
+template void edm::convert_handle<std::vector<BNphoton, std::allocator<BNphoton> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNphoton, std::allocator<BNphoton> > >&);
+template void edm::convert_handle<std::vector<BNprimaryvertex, std::allocator<BNprimaryvertex> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNprimaryvertex, std::allocator<BNprimaryvertex> > >&);
+template void edm::convert_handle<std::vector<BNsupercluster, std::allocator<BNsupercluster> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNsupercluster, std::allocator<BNsupercluster> > >&);
+template void edm::convert_handle<std::vector<BNtau, std::allocator<BNtau> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNtau, std::allocator<BNtau> > >&);
+template void edm::convert_handle<std::vector<BNtrack, std::allocator<BNtrack> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNtrack, std::allocator<BNtrack> > >&);
+template void edm::convert_handle<std::vector<BNtrigger, std::allocator<BNtrigger> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNtrigger, std::allocator<BNtrigger> > >&);
+template void edm::convert_handle<std::vector<BNtrigobj, std::allocator<BNtrigobj> > >(edm::BasicHandle const&, edm::Handle<std::vector<BNtrigobj, std::allocator<BNtrigobj> > >&);
+template void std::list<edm::ProductRegistryHelper::TypeLabelItem, std::allocator<edm::ProductRegistryHelper::TypeLabelItem> >::_M_insert<edm::BranchType, edm::TypeID const&, std::string const&>(std::_List_iterator<edm::ProductRegistryHelper::TypeLabelItem>, edm::BranchType&&, edm::TypeID const&, std::string const&);
+template void std::list<edm::ProductRegistryHelper::TypeLabelItem, std::allocator<edm::ProductRegistryHelper::TypeLabelItem> >::emplace_back<edm::BranchType, edm::TypeID const&, std::string const&>(edm::BranchType&&, edm::TypeID const&, std::string const&);
+template void std::vector<cut, std::allocator<cut> >::_M_emplace_back_aux<cut const&>(cut const&);
+template void std::vector<double, std::allocator<double> >::_M_emplace_back_aux<double>(double&&);
+template void std::vector<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>, std::allocator<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*> > >::_M_emplace_back_aux<edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&>(edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&);
+template void std::vector<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>, std::allocator<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*> > >::emplace_back<edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&>(edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&);
+template void std::vector<std::string, std::allocator<std::string> >::_M_emplace_back_aux<std::string const&>(std::string const&);
+template void std::vector<std::string, std::allocator<std::string> >::_M_emplace_back_aux<std::string>(std::string&&);
+template void std::vector<std::string, std::allocator<std::string> >::emplace_back<std::string>(std::string&&);
+template void std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >::_M_emplace_back_aux<std::vector<bool, std::allocator<bool> > >(std::vector<bool, std::allocator<bool> >&&);
