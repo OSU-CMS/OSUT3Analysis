@@ -81,7 +81,8 @@ OSUAnalysis::OSUAnalysis (const edm::ParameterSet &cfg) :
   useTrackCaloRhoCorr_ (cfg.getParameter<bool> ("useTrackCaloRhoCorr")),
   stopCTau_ (cfg.getParameter<vector<double> > ("stopCTau")),
   GetPlotsAfterEachCut_ (cfg.getParameter<bool> ("GetPlotsAfterEachCut")),
-  verbose_ (cfg.getParameter<int> ("verbose"))
+  verbose_ (cfg.getParameter<int> ("verbose")),
+  vl_ (NULL)
 {
 
   //  if (verbose_) printEventInfo_ = true;

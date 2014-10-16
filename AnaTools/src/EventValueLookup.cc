@@ -1,3 +1,9 @@
+#include <iostream>
+
+#include "TLorentzVector.h"
+#include "TVector2.h"
+
+#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
 
 //!event valueLookup

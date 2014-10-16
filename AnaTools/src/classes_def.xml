@@ -9,8 +9,8 @@
   <class pattern="edm::Wrapper<BNPFChgHad>"/>
   <class name="edm::Wrapper<std::vector<BNPFChgHad> >" />
 
-  <class name="std::map<std::basic_string<char>,std::vector<std::vector<std::pair<bool,bool> > > >" />
-  <class name="edm::Wrapper<std::map<std::basic_string<char>,std::vector<std::vector<std::pair<bool,bool> > > > >" />
-  <class name="std::vector<std::map<std::basic_string<char>,std::vector<std::vector<std::pair<bool,bool> > > > >" />
-  <class name="edm::Wrapper<std::vector<std::map<std::basic_string<char>,std::vector<std::vector<std::pair<bool,bool> > > > > >" />
+  <class name="CutCalculatorPayload"/>
+  <class name="std::vector<CutCalculatorPayload>"/>
+  <class name="edm::Wrapper<CutCalculatorPayload>"/>
+  <class name="edm::Wrapper<std::vector<CutCalculatorPayload> >"/>
 </lcgdict>

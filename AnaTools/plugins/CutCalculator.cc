@@ -1,10 +1,17 @@
+#include <iostream>
+
+#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/plugins/CutCalculator.h"
 
 CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   collections_  (cfg.getParameter<edm::ParameterSet>   ("collections")),
   cuts_         (cfg.getParameter<edm::ParameterSet>  ("cuts")),
-  firstEvent_   (true)
+  firstEvent_   (true),
+  vl_           (NULL)
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Retrieve the object collection names from the collections ParameterSet.
+  //////////////////////////////////////////////////////////////////////////////
   bxlumis_         =  collections_.getParameter<edm::InputTag>  ("bxlumis");
   electrons_       =  collections_.getParameter<edm::InputTag>  ("electrons");
   events_          =  collections_.getParameter<edm::InputTag>  ("events");
@@ -21,201 +28,266 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   tracks_          =  collections_.getParameter<edm::InputTag>  ("tracks");
   triggers_        =  collections_.getParameter<edm::InputTag>  ("triggers");
   trigobjs_        =  collections_.getParameter<edm::InputTag>  ("trigobjs");
+  //////////////////////////////////////////////////////////////////////////////
 
-  unpackCuts ();
-  produces<flagMap> ("cutDecisions");
+  //////////////////////////////////////////////////////////////////////////////
+  // Try to unpack the cuts ParameterSet and quit if there is a problem.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!unpackCuts ())
+    {
+      clog << "ERROR: failed to interpret cuts PSet. Quitting..." << endl;
+      exit (1);
+    }
+  //////////////////////////////////////////////////////////////////////////////
+
+  produces<CutCalculatorPayload> ("cutDecisions");
 }
 
 CutCalculator::~CutCalculator ()
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Destroy the ValueLookup object if it exists.
+  //////////////////////////////////////////////////////////////////////////////
+  if (vl_)
+    delete vl_;
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 void
 CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  event.getByLabel  (bxlumis_,         bxlumis);
-  event.getByLabel  (electrons_,       electrons);
-  event.getByLabel  (events_,          events);
-  event.getByLabel  (genjets_,         genjets);
-  event.getByLabel  (jets_,            jets);
-  event.getByLabel  (mcparticles_,     mcparticles);
-  event.getByLabel  (mets_,            mets);
-  event.getByLabel  (muons_,           muons);
-  event.getByLabel  (photons_,         photons);
-  event.getByLabel  (primaryvertexs_,  primaryvertexs);
-  event.getByLabel  (secMuons_,        secMuons);
-  event.getByLabel  (superclusters_,   superclusters);
-  event.getByLabel  (taus_,            taus);
-  event.getByLabel  (tracks_,          tracks);
-  event.getByLabel  (triggers_,        triggers);
-  event.getByLabel  (trigobjs_,        trigobjs);
+  //////////////////////////////////////////////////////////////////////////////
+  // Retrieve each object collection which we need and print a warning if it is
+  // missing.
+  //////////////////////////////////////////////////////////////////////////////
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "bxlumis")         !=  objectsToGet_.end  ())  event.getByLabel  (bxlumis_,         bxlumis);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "electrons")       !=  objectsToGet_.end  ())  event.getByLabel  (electrons_,       electrons);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "events")          !=  objectsToGet_.end  ())  event.getByLabel  (events_,          events);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "genjets")         !=  objectsToGet_.end  ())  event.getByLabel  (genjets_,         genjets);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "jets")            !=  objectsToGet_.end  ())  event.getByLabel  (jets_,            jets);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "mcparticles")     !=  objectsToGet_.end  ())  event.getByLabel  (mcparticles_,     mcparticles);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "mets")            !=  objectsToGet_.end  ())  event.getByLabel  (mets_,            mets);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "muons")           !=  objectsToGet_.end  ())  event.getByLabel  (muons_,           muons);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "photons")         !=  objectsToGet_.end  ())  event.getByLabel  (photons_,         photons);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "primaryvertexs")  !=  objectsToGet_.end  ())  event.getByLabel  (primaryvertexs_,  primaryvertexs);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "secMuons")        !=  objectsToGet_.end  ())  event.getByLabel  (secMuons_,        secMuons);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "superclusters")   !=  objectsToGet_.end  ())  event.getByLabel  (superclusters_,   superclusters);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "taus")            !=  objectsToGet_.end  ())  event.getByLabel  (taus_,            taus);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "tracks")          !=  objectsToGet_.end  ())  event.getByLabel  (tracks_,          tracks);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "triggers")        !=  objectsToGet_.end  ())  event.getByLabel  (triggers_,        triggers);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "trigobjs")        !=  objectsToGet_.end  ())  event.getByLabel  (trigobjs_,        trigobjs);
 
-  if (!bxlumis.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve bxlumis collection from the event" << endl;
-  if (!electrons.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve electrons collection from the event" << endl;
-  if (!events.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve events collection from the event" << endl;
-  if (!genjets.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve genjets collection from the event" << endl;
-  if (!jets.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve jets collection from the event" << endl;
-  if (!mcparticles.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve mcparticles collection from the event" << endl;
-  if (!mets.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve mets collection from the event" << endl;
-  if (!muons.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve muons collection from the event" << endl;
-  if (!photons.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve photons collection from the event" << endl;
-  if (!primaryvertexs.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve primaryvertexs collection from the event" << endl;
-  if (!secMuons.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve secMuons collection from the event" << endl;
-  if (!superclusters.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve superclusters collection from the event" << endl;
-  if (!taus.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve taus collection from the event" << endl;
-  if (!tracks.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve tracks collection from the event" << endl;
-  if (!triggers.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve triggers collection from the event" << endl;
-  if (!trigobjs.isValid () && firstEvent_)
-    clog << "ERROR: failed to retrieve trigobjs collection from the event" << endl;
+  if (firstEvent_ && !bxlumis.isValid ())
+    clog << "WARNING: did not retrieve bxlumis collection from the event" << endl;
+  if (firstEvent_ && !electrons.isValid ())
+    clog << "WARNING: did not retrieve electrons collection from the event" << endl;
+  if (firstEvent_ && !events.isValid ())
+    clog << "WARNING: did not retrieve events collection from the event" << endl;
+  if (firstEvent_ && !genjets.isValid ())
+    clog << "WARNING: did not retrieve genjets collection from the event" << endl;
+  if (firstEvent_ && !jets.isValid ())
+    clog << "WARNING: did not retrieve jets collection from the event" << endl;
+  if (firstEvent_ && !mcparticles.isValid ())
+    clog << "WARNING: did not retrieve mcparticles collection from the event" << endl;
+  if (firstEvent_ && !mets.isValid ())
+    clog << "WARNING: did not retrieve mets collection from the event" << endl;
+  if (firstEvent_ && !muons.isValid ())
+    clog << "WARNING: did not retrieve muons collection from the event" << endl;
+  if (firstEvent_ && !photons.isValid ())
+    clog << "WARNING: did not retrieve photons collection from the event" << endl;
+  if (firstEvent_ && !primaryvertexs.isValid ())
+    clog << "WARNING: did not retrieve primaryvertexs collection from the event" << endl;
+  if (firstEvent_ && !secMuons.isValid ())
+    clog << "WARNING: did not retrieve secMuons collection from the event" << endl;
+  if (firstEvent_ && !superclusters.isValid ())
+    clog << "WARNING: did not retrieve superclusters collection from the event" << endl;
+  if (firstEvent_ && !taus.isValid ())
+    clog << "WARNING: did not retrieve taus collection from the event" << endl;
+  if (firstEvent_ && !tracks.isValid ())
+    clog << "WARNING: did not retrieve tracks collection from the event" << endl;
+  if (firstEvent_ && !triggers.isValid ())
+    clog << "WARNING: did not retrieve triggers collection from the event" << endl;
+  if (firstEvent_ && !trigobjs.isValid ())
+    clog << "WARNING: did not retrieve trigobjs collection from the event" << endl;
+  //////////////////////////////////////////////////////////////////////////////
 
+  // Set all the private variables in the ValueLookup object before using it.
   initializeValueLookup ();
 
-  individualFlags_ = auto_ptr<flagMap> (new flagMap);
+  //////////////////////////////////////////////////////////////////////////////
+  // Create the payload for this EDProducer and initialize some of its members.
+  //////////////////////////////////////////////////////////////////////////////
+  pl_ = auto_ptr<CutCalculatorPayload> (new CutCalculatorPayload);
+  pl_->isValid = true;
+  pl_->cuts = unpackedCuts_;
+  pl_->triggers = unpackedTriggers_;
+  pl_->triggersToVeto = unpackedTriggersToVeto_;
+  //////////////////////////////////////////////////////////////////////////////
 
-  //loop over all cuts
-  for (uint currentCutIndex = 0; currentCutIndex != unpackedCuts_.size (); currentCutIndex++)
+  // Loop over cuts to set flags for each object indicating whether it passed
+  // the cut.
+  for (unsigned currentCutIndex = 0; pl_->isValid && currentCutIndex != pl_->cuts.size (); currentCutIndex++)
     {
-      cut currentCut = unpackedCuts_.at (currentCutIndex);
+      cut currentCut = pl_->cuts.at (currentCutIndex);
 
-      for (uint currentObjectIndex = 0; currentObjectIndex != objectsToFlag.size (); currentObjectIndex++)
+      //////////////////////////////////////////////////////////////////////////
+      // Initialize the object flags for this cut in the payload with blank
+      // vectors.
+      //////////////////////////////////////////////////////////////////////////
+      for (unsigned currentObjectIndex = 0; currentObjectIndex != objectsToFlag_.size (); currentObjectIndex++)
         {
-          string currentObject = objectsToFlag.at (currentObjectIndex);
+          string currentObject = objectsToFlag_.at (currentObjectIndex);
 
-          //initialize maps to get ready to set cuts
-          if (!individualFlags_->count (currentObject))
-            (*individualFlags_)[currentObject] = vector<vector<bool> > ();
-          (*individualFlags_)[currentObject].push_back (vector<bool> ());
+          if (!pl_->objectFlags.count (currentObject))
+            pl_->objectFlags[currentObject] = vector<vector<bool> > ();
+          pl_->objectFlags[currentObject].push_back (vector<bool> ());
         }
+      //////////////////////////////////////////////////////////////////////////
 
-      //set flags for all relevant objects
-      for (int currentObjectIndex = -1; currentObjectIndex != int (objectsToFlag.size ()); currentObjectIndex++)
+      // Loop over each object type to set flags for each object indicating
+      // whether it passed the current cut.
+      for (int currentObjectIndex = -1; pl_->isValid && currentObjectIndex != (int) objectsToFlag_.size (); currentObjectIndex++)
         {
+          //////////////////////////////////////////////////////////////////////
+          // The first iteration sets the flags for the current cut so that
+          // other collections can use this flag.
+          //////////////////////////////////////////////////////////////////////
           string currentObject;
-          if (currentObjectIndex < 0) currentObject = currentCut.inputCollection;  // In the first loop, set the flags for the collection that the cut is acting on.
-                                                                                   // That way other paired collections can access the correct flag for the current cut.
-          else currentObject = objectsToFlag.at (currentObjectIndex);
-          if (currentObjectIndex >= 0 && currentObject == currentCut.inputCollection) continue;  // Flags have already been set for the inputCollection object, so should not be set again.
+          if (currentObjectIndex < 0)
+            currentObject = currentCut.inputCollection;
+          else
+            currentObject = objectsToFlag_.at (currentObjectIndex);
+          if (currentObjectIndex >= 0 && currentObject == currentCut.inputCollection)
+            continue;
 
-          // single object collections
-          if        (currentObject  ==  "jets")                   setObjectFlags  (currentCut,  currentCutIndex,  jets,            "jets");
-          else  if  (currentObject  ==  "secondary jets")         setObjectFlags  (currentCut,  currentCutIndex,  jets,            "secondary jets");
-          else  if  (currentObject  ==  "secondary photons")      setObjectFlags  (currentCut,  currentCutIndex,  photons,         "secondary photons");
-          else  if  (currentObject  ==  "muons")                  setObjectFlags  (currentCut,  currentCutIndex,  muons,           "muons");
-          else  if  (currentObject  ==  "secondary muons")        setObjectFlags  (currentCut,  currentCutIndex,  secMuons,        "secondary muons");
-          else  if  (currentObject  ==  "secondary electrons")    setObjectFlags  (currentCut,  currentCutIndex,  electrons,       "secondary electrons");
-          else  if  (currentObject  ==  "electrons")              setObjectFlags  (currentCut,  currentCutIndex,  electrons,       "electrons");
-          else  if  (currentObject  ==  "events")                 setObjectFlags  (currentCut,  currentCutIndex,  events,          "events");
-          else  if  (currentObject  ==  "taus")                   setObjectFlags  (currentCut,  currentCutIndex,  taus,            "taus");
-          else  if  (currentObject  ==  "mets")                   setObjectFlags  (currentCut,  currentCutIndex,  mets,            "mets");
-          else  if  (currentObject  ==  "tracks")                 setObjectFlags  (currentCut,  currentCutIndex,  tracks,          "tracks");
-          else  if  (currentObject  ==  "genjets")                setObjectFlags  (currentCut,  currentCutIndex,  genjets,         "genjets");
-          else  if  (currentObject  ==  "mcparticles")            setObjectFlags  (currentCut,  currentCutIndex,  mcparticles,     "mcparticles");
-          else  if  (currentObject  ==  "secondary mcparticles")  setObjectFlags  (currentCut,  currentCutIndex,  mcparticles,     "secondary mcparticles");
-          else  if  (currentObject  ==  "primaryvertexs")         setObjectFlags  (currentCut,  currentCutIndex,  primaryvertexs,  "primaryvertexs");
-          else  if  (currentObject  ==  "bxlumis")                setObjectFlags  (currentCut,  currentCutIndex,  bxlumis,         "bxlumis");
-          else  if  (currentObject  ==  "photons")                setObjectFlags  (currentCut,  currentCutIndex,  photons,         "photons");
-          else  if  (currentObject  ==  "superclusters")          setObjectFlags  (currentCut,  currentCutIndex,  superclusters,   "superclusters");
-          else  if  (currentObject  ==  "trigobjs")               setObjectFlags  (currentCut,  currentCutIndex,  trigobjs,        "trigobjs");
+          //////////////////////////////////////////////////////////////////////
+          // Set the flags for each object in single object collections.
+          //////////////////////////////////////////////////////////////////////
+          if        (currentObject  ==  "bxlumis")                pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  bxlumis,         "bxlumis");
+          else  if  (currentObject  ==  "electrons")              pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,       "electrons");
+          else  if  (currentObject  ==  "events")                 pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  events,          "events");
+          else  if  (currentObject  ==  "genjets")                pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  genjets,         "genjets");
+          else  if  (currentObject  ==  "mcparticles")            pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  mcparticles,     "mcparticles");
+          else  if  (currentObject  ==  "mets")                   pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  mets,            "mets");
+          else  if  (currentObject  ==  "muons")                  pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,           "muons");
+          else  if  (currentObject  ==  "photons")                pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  photons,         "photons");
+          else  if  (currentObject  ==  "primaryvertexs")         pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  primaryvertexs,  "primaryvertexs");
+          else  if  (currentObject  ==  "secondary electrons")    pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,       "secondary electrons");
+          else  if  (currentObject  ==  "secondary jets")         pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  jets,            "secondary jets");
+          else  if  (currentObject  ==  "secondary mcparticles")  pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  mcparticles,     "secondary mcparticles");
+          else  if  (currentObject  ==  "secondary muons")        pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  secMuons,        "secondary muons");
+          else  if  (currentObject  ==  "secondary photons")      pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  photons,         "secondary photons");
+          else  if  (currentObject  ==  "superclusters")          pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  superclusters,   "superclusters");
+          else  if  (currentObject  ==  "taus")                   pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  taus,            "taus");
+          else  if  (currentObject  ==  "tracks")                 pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  tracks,          "tracks");
+          else  if  (currentObject  ==  "trigobjs")               pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  trigobjs,        "trigobjs");
+          else  if  (currentObject  ==  "jets")                   pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  jets,            "jets");
+          //////////////////////////////////////////////////////////////////////
 
-          // paired object collections
-          else  if  (currentObject  ==  "muon-muon pairs")                        setObjectFlags  (currentCut,  currentCutIndex,  muons,        muons,        "muon-muon pairs");
-          else  if  (currentObject  ==  "muon-secondary muon pairs")              setObjectFlags  (currentCut,  currentCutIndex,  muons,        secMuons,     "muon-secondary muon pairs");
-          else  if  (currentObject  ==  "muon-secondary photon pairs")            setObjectFlags  (currentCut,  currentCutIndex,  muons,        photons,      "muon-secondary photon pairs");
-          else  if  (currentObject  ==  "muon-secondary jet pairs")               setObjectFlags  (currentCut,  currentCutIndex,  muons,        jets,         "muon-secondary jet pairs");
-          else  if  (currentObject  ==  "photon-secondary jet pairs")             setObjectFlags  (currentCut,  currentCutIndex,  photons,      jets,         "photon-secondary jet pairs");
-          else  if  (currentObject  ==  "electron-secondary jet pairs")           setObjectFlags  (currentCut,  currentCutIndex,  electrons,    jets,         "electron-secondary jet pairs");
-          else  if  (currentObject  ==  "electron-secondary electron pairs")      setObjectFlags  (currentCut,  currentCutIndex,  electrons,    electrons,    "electron-secondary electron pairs");
-          else  if  (currentObject  ==  "electron-electron pairs")                setObjectFlags  (currentCut,  currentCutIndex,  electrons,    electrons,    "electron-electron pairs");
-          else  if  (currentObject  ==  "electron-muon pairs")                    setObjectFlags  (currentCut,  currentCutIndex,  electrons,    muons,        "electron-muon pairs");
-          else  if  (currentObject  ==  "jet-secondary jet pairs")                setObjectFlags  (currentCut,  currentCutIndex,  jets,         jets,         "jet-secondary jet pairs");
-          else  if  (currentObject  ==  "electron-jet pairs")                     setObjectFlags  (currentCut,  currentCutIndex,  electrons,    jets,         "electron-jet pairs");
-          else  if  (currentObject  ==  "secondary electron-jet pairs")           setObjectFlags  (currentCut,  currentCutIndex,  electrons,    jets,         "secondary electron-jet pairs");
-          else  if  (currentObject  ==  "secondary muon-jet pairs")               setObjectFlags  (currentCut,  currentCutIndex,  muons,        jets,         "secondary muon-jet pairs");
-          else  if  (currentObject  ==  "electron-photon pairs")                  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    photons,      "electron-photon pairs");
-          else  if  (currentObject  ==  "photon-jet pairs")                       setObjectFlags  (currentCut,  currentCutIndex,  photons,      jets,         "photon-jet pairs");
-          else  if  (currentObject  ==  "muon-jet pairs")                         setObjectFlags  (currentCut,  currentCutIndex,  muons,        jets,         "muon-jet pairs");
-          else  if  (currentObject  ==  "muon-event pairs")                       setObjectFlags  (currentCut,  currentCutIndex,  muons,        events,       "muon-event pairs");
-          else  if  (currentObject  ==  "electron-event pairs")                   setObjectFlags  (currentCut,  currentCutIndex,  electrons,    events,       "electron-event pairs");
-          else  if  (currentObject  ==  "met-jet pairs")                          setObjectFlags  (currentCut,  currentCutIndex,  mets,         jets,         "met-jet pairs");
-          else  if  (currentObject  ==  "met-mcparticle pairs")                   setObjectFlags  (currentCut,  currentCutIndex,  mets,         mcparticles,  "met-mcparticle pairs");
-          else  if  (currentObject  ==  "jet-mcparticle pairs")                   setObjectFlags  (currentCut,  currentCutIndex,  jets,         mcparticles,  "jet-mcparticle pairs");
-          else  if  (currentObject  ==  "jet-secondary mcparticle pairs")         setObjectFlags  (currentCut,  currentCutIndex,  jets,         mcparticles,  "jet-secondary mcparticle pairs");
-          else  if  (currentObject  ==  "mcparticle-secondary mcparticle pairs")  setObjectFlags  (currentCut,  currentCutIndex,  mcparticles,  mcparticles,  "mcparticle-secondary mcparticle pairs");
-          else  if  (currentObject  ==  "track-jet pairs")                        setObjectFlags  (currentCut,  currentCutIndex,  tracks,       jets,         "track-jet pairs");
-          else  if  (currentObject  ==  "muon-photon pairs")                      setObjectFlags  (currentCut,  currentCutIndex,  muons,        photons,      "muon-photon pairs");
-          else  if  (currentObject  ==  "track-event pairs")                      setObjectFlags  (currentCut,  currentCutIndex,  tracks,       events,       "track-event pairs");
-          else  if  (currentObject  ==  "electron-track pairs")                   setObjectFlags  (currentCut,  currentCutIndex,  electrons,    tracks,       "electron-track pairs");
-          else  if  (currentObject  ==  "muon-track pairs")                       setObjectFlags  (currentCut,  currentCutIndex,  muons,        tracks,       "muon-track pairs");
-          else  if  (currentObject  ==  "jet-jet pairs")                          setObjectFlags  (currentCut,  currentCutIndex,  jets,         jets,         "jet-jet pairs");
-          else  if  (currentObject  ==  "jet-track pairs")                        setObjectFlags  (currentCut,  currentCutIndex,  jets,         tracks,       "jet-track pairs");
-          else  if  (currentObject  ==  "secondary muon-track pairs")             setObjectFlags  (currentCut,  currentCutIndex,  secMuons,     tracks,       "secondary muon-track pairs");
-          else  if  (currentObject  ==  "muon-tau pairs")                         setObjectFlags  (currentCut,  currentCutIndex,  muons,        taus,         "muon-tau pairs");
-          else  if  (currentObject  ==  "tau-tau pairs")                          setObjectFlags  (currentCut,  currentCutIndex,  taus,         taus,         "tau-tau pairs");
-          else  if  (currentObject  ==  "tau-track pairs")                        setObjectFlags  (currentCut,  currentCutIndex,  taus,         tracks,       "tau-track pairs");
-          else  if  (currentObject  ==  "electron-trigobj pairs")                 setObjectFlags  (currentCut,  currentCutIndex,  electrons,    trigobjs,     "electron-trigobj pairs");
-          else  if  (currentObject  ==  "muon-trigobj pairs")                     setObjectFlags  (currentCut,  currentCutIndex,  muons,        trigobjs,     "muon-trigobj pairs");
-          else  if  (currentObject  ==  "electron-mcparticle pairs")              setObjectFlags  (currentCut,  currentCutIndex,  electrons,    mcparticles,  "electron-mcparticle pairs");
-          else  if  (currentObject  ==  "muon-secondary mcparticle pairs")        setObjectFlags  (currentCut,  currentCutIndex,  muons,        mcparticles,  "muon-secondary mcparticle pairs");
-          else  if  (currentObject  ==  "muon-mcparticle pairs")                  setObjectFlags  (currentCut,  currentCutIndex,  muons,        mcparticles,  "muon-mcparticle pairs");
-          else  if  (currentObject  ==  "track-mcparticle pairs")                 setObjectFlags  (currentCut,  currentCutIndex,  tracks,       mcparticles,  "track-mcparticle pairs");
+          //////////////////////////////////////////////////////////////////////
+          // Set the flags for each object in paired object collections.
+          //////////////////////////////////////////////////////////////////////
+          else  if  (currentObject  ==  "electron-electron pairs")                pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    electrons,    "electron-electron pairs");
+          else  if  (currentObject  ==  "electron-event pairs")                   pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    events,       "electron-event pairs");
+          else  if  (currentObject  ==  "electron-jet pairs")                     pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    jets,         "electron-jet pairs");
+          else  if  (currentObject  ==  "electron-mcparticle pairs")              pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    mcparticles,  "electron-mcparticle pairs");
+          else  if  (currentObject  ==  "electron-muon pairs")                    pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    muons,        "electron-muon pairs");
+          else  if  (currentObject  ==  "electron-photon pairs")                  pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    photons,      "electron-photon pairs");
+          else  if  (currentObject  ==  "electron-secondary electron pairs")      pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    electrons,    "electron-secondary electron pairs");
+          else  if  (currentObject  ==  "electron-secondary jet pairs")           pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    jets,         "electron-secondary jet pairs");
+          else  if  (currentObject  ==  "electron-track pairs")                   pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    tracks,       "electron-track pairs");
+          else  if  (currentObject  ==  "electron-trigobj pairs")                 pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    trigobjs,     "electron-trigobj pairs");
+          else  if  (currentObject  ==  "jet-jet pairs")                          pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  jets,         jets,         "jet-jet pairs");
+          else  if  (currentObject  ==  "jet-mcparticle pairs")                   pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  jets,         mcparticles,  "jet-mcparticle pairs");
+          else  if  (currentObject  ==  "jet-secondary jet pairs")                pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  jets,         jets,         "jet-secondary jet pairs");
+          else  if  (currentObject  ==  "jet-secondary mcparticle pairs")         pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  jets,         mcparticles,  "jet-secondary mcparticle pairs");
+          else  if  (currentObject  ==  "jet-track pairs")                        pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  jets,         tracks,       "jet-track pairs");
+          else  if  (currentObject  ==  "mcparticle-secondary mcparticle pairs")  pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  mcparticles,  mcparticles,  "mcparticle-secondary mcparticle pairs");
+          else  if  (currentObject  ==  "met-jet pairs")                          pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  mets,         jets,         "met-jet pairs");
+          else  if  (currentObject  ==  "met-mcparticle pairs")                   pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  mets,         mcparticles,  "met-mcparticle pairs");
+          else  if  (currentObject  ==  "muon-event pairs")                       pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        events,       "muon-event pairs");
+          else  if  (currentObject  ==  "muon-jet pairs")                         pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        jets,         "muon-jet pairs");
+          else  if  (currentObject  ==  "muon-mcparticle pairs")                  pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        mcparticles,  "muon-mcparticle pairs");
+          else  if  (currentObject  ==  "muon-muon pairs")                        pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        muons,        "muon-muon pairs");
+          else  if  (currentObject  ==  "muon-photon pairs")                      pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        photons,      "muon-photon pairs");
+          else  if  (currentObject  ==  "muon-secondary jet pairs")               pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        jets,         "muon-secondary jet pairs");
+          else  if  (currentObject  ==  "muon-secondary mcparticle pairs")        pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        mcparticles,  "muon-secondary mcparticle pairs");
+          else  if  (currentObject  ==  "muon-secondary muon pairs")              pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        secMuons,     "muon-secondary muon pairs");
+          else  if  (currentObject  ==  "muon-secondary photon pairs")            pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        photons,      "muon-secondary photon pairs");
+          else  if  (currentObject  ==  "muon-tau pairs")                         pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        taus,         "muon-tau pairs");
+          else  if  (currentObject  ==  "muon-track pairs")                       pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        tracks,       "muon-track pairs");
+          else  if  (currentObject  ==  "muon-trigobj pairs")                     pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        trigobjs,     "muon-trigobj pairs");
+          else  if  (currentObject  ==  "photon-jet pairs")                       pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  photons,      jets,         "photon-jet pairs");
+          else  if  (currentObject  ==  "photon-secondary jet pairs")             pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  photons,      jets,         "photon-secondary jet pairs");
+          else  if  (currentObject  ==  "secondary electron-jet pairs")           pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  electrons,    jets,         "secondary electron-jet pairs");
+          else  if  (currentObject  ==  "secondary muon-jet pairs")               pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  muons,        jets,         "secondary muon-jet pairs");
+          else  if  (currentObject  ==  "secondary muon-track pairs")             pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  secMuons,     tracks,       "secondary muon-track pairs");
+          else  if  (currentObject  ==  "tau-tau pairs")                          pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  taus,         taus,         "tau-tau pairs");
+          else  if  (currentObject  ==  "tau-track pairs")                        pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  taus,         tracks,       "tau-track pairs");
+          else  if  (currentObject  ==  "track-event pairs")                      pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  tracks,       events,       "track-event pairs");
+          else  if  (currentObject  ==  "track-jet pairs")                        pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  tracks,       jets,         "track-jet pairs");
+          else  if  (currentObject  ==  "track-mcparticle pairs")                 pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  tracks,       mcparticles,  "track-mcparticle pairs");
+          //////////////////////////////////////////////////////////////////////
         }
-    }//end loop over all cuts
+    }
 
-/*  bool triggerDecision = true;
-  if (unpackedTriggers_.size () != 0 || unpackedTriggersToVeto_.size () != 0)  //triggers specified
-    triggerDecision = evaluateTriggers (unpackedTriggers_, unpackedTriggersToVeto_, triggers);*/
+  //////////////////////////////////////////////////////////////////////////////
+  // Quit if there was a problem setting the flags for any of the objects.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!pl_->isValid)
+    {
+      clog << "ERROR: failed to set flags. Quitting..." <<  endl;
+      exit (1);
+    }
+  //////////////////////////////////////////////////////////////////////////////
 
-  event.put (individualFlags_, "cutDecisions");
+  // Decide whether the event passes the triggers specified by the user and
+  // store the decision in the payload.
+  evaluateTriggers ();
+  setEventFlags ();
+
+  event.put (pl_, "cutDecisions");
   firstEvent_ = false;
 }
 
-template <class InputCollection>
-void CutCalculator::setObjectFlags (cut &currentCut, uint currentCutIndex, edm::Handle<InputCollection> inputCollection, string inputType)
+template <class InputCollection> bool
+CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, edm::Handle<InputCollection> inputCollection, const string &inputType)
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Return false and print an error if the input collection is invalid.
+  //////////////////////////////////////////////////////////////////////////////
   if (!inputCollection.isValid ())
     {
-      clog << "ERROR:  invalid input collection for inputType=" << inputType << endl;
-      return;
+      firstEvent_ && clog << "ERROR: failed to set flags for invalid " << inputType << " collection." <<  endl;
+      return false;
     }
+  //////////////////////////////////////////////////////////////////////////////
 
+  //////////////////////////////////////////////////////////////////////////////
+  // If the cut is on a pair which includes the object collection whose flags
+  // are being set, return. The flags for this object collection will be set
+  // instead when setObjectFlags() is called for the pair.
+  //////////////////////////////////////////////////////////////////////////////
   if (currentCut.inputCollection.find ("pair") != string::npos)
     {
       string obj1, obj2;
       getTwoObjs (currentCut.inputCollection, obj1, obj2);
-      if (inputType==obj1 || inputType==obj2)
-        {
-          // Do not add a cut to individualFlags_ if the cut is on a paired
-          // collection, and the inputType is a member of the pair.  The cut
-          // will instead be applied when the setObjectFlags() is called for
-          // the paired collection.  For example, if
-          // currentCut.inputCollection==electron-muon pairs, then the flags
-          // should not be set here when inputType==muons or
-          // inputType==electrons.
-          return;
-        }
+      if (inputType == obj1 || inputType == obj2)
+        return true;
     }
+  //////////////////////////////////////////////////////////////////////////////
 
-  for (uint object = 0; object != inputCollection->size (); object++)
+  // Set the flag for each object in the collection.
+  for (unsigned object = 0; object != inputCollection->size (); object++)
     {
-      bool cutDecision = true;//object passes if this cut doesn't cut on that type of object
+      // The flag is true unless the cut acts on this collection.
+      bool cutDecision = true;
 
       if (currentCut.inputCollection == inputType)
         {
+          //////////////////////////////////////////////////////////////////////
+          // Calculate the flag for each subcut.
+          //////////////////////////////////////////////////////////////////////
           vector<bool> subcutDecisions;
           for (int subcutIndex = 0; subcutIndex != currentCut.numSubcuts; subcutIndex++)
             {
@@ -226,6 +298,12 @@ void CutCalculator::setObjectFlags (cut &currentCut, uint currentCutIndex, edm::
               else
                 subcutDecisions.push_back (evaluateComparison (stringValue, currentCut.comparativeOperators.at (subcutIndex), currentCut.cutStringValues.at (subcutIndex)));
             }
+          //////////////////////////////////////////////////////////////////////
+
+          //////////////////////////////////////////////////////////////////////
+          // Combine the subcut flags using the logical operators given by the
+          // user.
+          //////////////////////////////////////////////////////////////////////
           if (currentCut.numSubcuts == 1)
             cutDecision = subcutDecisions.at (0);
           else
@@ -240,64 +318,81 @@ void CutCalculator::setObjectFlags (cut &currentCut, uint currentCutIndex, edm::
                 }
               cutDecision = tempDecision;
             }
-          //invert the cut if this cut is a veto
+          //////////////////////////////////////////////////////////////////////
+
+          //////////////////////////////////////////////////////////////////////
+          // Invert the flag if the cut is a veto.
+          //////////////////////////////////////////////////////////////////////
           if (currentCut.isVeto)
             cutDecision = !cutDecision;
+          //////////////////////////////////////////////////////////////////////
         }
 
-      individualFlags_->at (inputType).at (currentCutIndex).push_back (cutDecision);
-    }  //   for (uint object = 0; object != inputCollection->size (); object++)
-} // end void CutCalculator::setObjectFlags
-
-
-template <class InputCollection1, class InputCollection2>
-void CutCalculator::setObjectFlags (cut &currentCut, uint currentCutIndex, edm::Handle<InputCollection1> inputCollection1, edm::Handle<InputCollection2> inputCollection2, string inputType)
-{
-  // This function sets the flags for the paired object collection.
-  // If the cut is applying on the given paired object collection, then the flags for the single object collections are also set.
-  // If not, then the flags for the paired object collection are taken as the AND of the flags for each single object collection.
-  //
-  if (!inputCollection1.isValid () || !inputCollection2.isValid ())
-    {
-      clog << "ERROR:  invalid input collection for inputType=" << inputType << endl;
-      return;
+      pl_->objectFlags.at (inputType).at (currentCutIndex).push_back (cutDecision);
     }
 
-  // Get the strings for the two objects that make up the pair.
+  return true;
+}
+
+template <class InputCollection1, class InputCollection2> bool
+CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, edm::Handle<InputCollection1> inputCollection1, edm::Handle<InputCollection2> inputCollection2, const string &inputType)
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Return false and print an error if either input collection is invalid.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!inputCollection1.isValid () || !inputCollection2.isValid ())
+    {
+      firstEvent_ && clog << "ERROR: failed to set flags for invalid " << inputType << " collection." <<  endl;
+      return false;
+    }
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Decide if the two objects in the pair are of different types.
+  //////////////////////////////////////////////////////////////////////////////
   string obj1Type, obj2Type;
   getTwoObjs (inputType, obj1Type, obj2Type);
   bool isTwoTypesOfObject = true;
-  if (obj1Type==obj2Type)
+  if (obj1Type == obj2Type)
     isTwoTypesOfObject = false;
+  //////////////////////////////////////////////////////////////////////////////
 
-  // Initialize the flags for individual objects to all be false, if the cut is on the pair.
-  // Set them to true later, if any paired object passes (in which case both of its constituents should pass).
+  //////////////////////////////////////////////////////////////////////////////
+  // Initialize all the flags for the individual collections with false.
+  //////////////////////////////////////////////////////////////////////////////
   if (currentCut.inputCollection == inputType)
     {
-      for (uint object1 = 0; object1 != inputCollection1->size (); object1++)
-        individualFlags_->at (obj1Type).at (currentCutIndex).push_back (false);
-      if (isTwoTypesOfObject) // Only initialize the second object if it is different from the first.
+      for (unsigned object1 = 0; object1 != inputCollection1->size (); object1++)
+        pl_->objectFlags.at (obj1Type).at (currentCutIndex).push_back (false);
+      if (isTwoTypesOfObject)
         {
-          for (uint object2 = 0; object2 != inputCollection2->size (); object2++)
-            individualFlags_->at (obj2Type).at (currentCutIndex).push_back (false);
+          for (unsigned object2 = 0; object2 != inputCollection2->size (); object2++)
+            pl_->objectFlags.at (obj2Type).at (currentCutIndex).push_back (false);
         }
     }
+  //////////////////////////////////////////////////////////////////////////////
 
-  int counter = 0;
-
-  for (uint object1 = 0; object1 != inputCollection1->size (); object1++)
+  // Set the flag for each pair of objects.
+  for (unsigned object1 = 0; object1 != inputCollection1->size (); object1++)
     {
-      for (uint object2 = 0; object2 != inputCollection2->size (); object2++)
+      for (unsigned object2 = 0; object2 != inputCollection2->size (); object2++)
         {
-          if (!isTwoTypesOfObject && object1 >= object2)//account for duplicate pairs if both collections are the same
+          //////////////////////////////////////////////////////////////////////
+          // Avoid double counting pairs when the two collections are the same
+          // type.
+          //////////////////////////////////////////////////////////////////////
+          if (!isTwoTypesOfObject && object1 >= object2)
             continue;
+          //////////////////////////////////////////////////////////////////////
 
-          bool cutDecision  = true;//object passes if this cut doesn't cut on that type of object
-          bool plotDecision = true;
+          // The flag is true unless the cut acts on this pair.
+          bool cutDecision = true;
 
-          // Determine whether each pair passes the cut, only if inputCollection is the same as the inputType.
           if (currentCut.inputCollection == inputType)
             {
+              //////////////////////////////////////////////////////////////////
+              // Calculate the flag for each subcut.
+              //////////////////////////////////////////////////////////////////
               vector<bool> subcutDecisions;
               for (int subcutIndex = 0; subcutIndex != currentCut.numSubcuts; subcutIndex++)
                 {
@@ -308,8 +403,14 @@ void CutCalculator::setObjectFlags (cut &currentCut, uint currentCutIndex, edm::
                   else
                     subcutDecisions.push_back (evaluateComparison (stringValue, currentCut.comparativeOperators.at (subcutIndex), currentCut.cutStringValues.at (subcutIndex)));
                 }
+              //////////////////////////////////////////////////////////////////
 
-              if (currentCut.numSubcuts == 1) cutDecision = subcutDecisions.at (0);
+              //////////////////////////////////////////////////////////////////
+              // Combine the subcut flags using the logical operators given by
+              // the user.
+              //////////////////////////////////////////////////////////////////
+              if (currentCut.numSubcuts == 1)
+                cutDecision = subcutDecisions.at (0);
               else
                 {
                   bool tempDecision = subcutDecisions.at (0);
@@ -322,58 +423,62 @@ void CutCalculator::setObjectFlags (cut &currentCut, uint currentCutIndex, edm::
                     }
                   cutDecision = tempDecision;
                 }
-              //invert the cut if this cut is a veto
+              //////////////////////////////////////////////////////////////////
+
+              //////////////////////////////////////////////////////////////////
+              // Invert the flag if the cut is a veto.
+              //////////////////////////////////////////////////////////////////
               if (currentCut.isVeto)
                 cutDecision = !cutDecision;
-              plotDecision = cutDecision;
+              //////////////////////////////////////////////////////////////////
 
-              if (cutDecision)  // only set the flags for the individual objects if the pair object is being cut on
-                {
-                  individualFlags_->at (obj1Type).at (currentCutIndex).at (object1) = true;
-                  individualFlags_->at (obj2Type).at (currentCutIndex).at (object2) = true;
-                }
-              if (plotDecision)  // only set the flags for the individual objects if the pair object is being cut on
-                {
-                  individualFlags_->at (obj1Type).at (currentCutIndex).at (object1) = true;
-                  individualFlags_->at (obj2Type).at (currentCutIndex).at (object2) = true;
-                }
-            } // if (currentCut.inputCollection == inputType)
+              // Set the flags for the individual objects.
+              pl_->objectFlags.at (obj1Type).at (currentCutIndex).at (object1) = pl_->objectFlags.at (obj2Type).at (currentCutIndex).at (object2) = cutDecision;
+            }
 
-          // The individualFlags_ will be true if the inputCollection is not the same as the inputType.
-          // They are also independent of the previous flags on the single objects.
-          individualFlags_->at (inputType).at (currentCutIndex).push_back (cutDecision);
+          pl_->objectFlags.at (inputType).at (currentCutIndex).push_back (cutDecision);
+        }
+    }
 
-          counter++;
+  return true;
+}
 
-        } // end   for (uint object2 = 0; object2 != inputCollection2->size (); object2++)
-    }  // end   for (uint object1 = 0; object1 != inputCollection1->size (); object1++)
-
-} // end void CutCalculator::setObjectFlags
-
-void
+bool
 CutCalculator::unpackCuts ()
 {
-  //set triggers for this channel
+  //////////////////////////////////////////////////////////////////////////////
+  // If triggers are given, retrieve them.
+  //////////////////////////////////////////////////////////////////////////////
   if (cuts_.exists ("triggers"))
     {
       unpackedTriggers_ = cuts_.getParameter<vector<string> > ("triggers");
-      objectsToGet.push_back ("triggers");
+      objectsToGet_.push_back ("triggers");
     }
   if (cuts_.exists ("triggersToVeto"))
     {
       unpackedTriggersToVeto_ = cuts_.getParameter<vector<string> > ("triggersToVeto");
-      objectsToGet.push_back("triggers");
+      objectsToGet_.push_back("triggers");
     }
+  //////////////////////////////////////////////////////////////////////////////
 
-  vector<string> subSubDirNames;//subdirectories in each channel.
+  //////////////////////////////////////////////////////////////////////////////
+  // Retrieve the cuts and clear the vector in which they will be stored after
+  // parsing.
+  //////////////////////////////////////////////////////////////////////////////
   edm::VParameterSet cuts = cuts_.getParameter<edm::VParameterSet> ("cuts");
+  unpackedCuts_.clear ();
+  //////////////////////////////////////////////////////////////////////////////
 
-  for (uint currentCut = 0; currentCut != cuts.size (); currentCut++)
+  // Loop over the cuts, parsing each one and storing it in a vector.
+  for (unsigned currentCut = 0; currentCut != cuts.size (); currentCut++)
     {
       cut tempCut;
-      //store input collection for cut
       string tempInputCollection = cuts.at (currentCut).getParameter<string> ("inputCollection");
 
+      //////////////////////////////////////////////////////////////////////////
+      // Swap the names of the objects in pairs to match what is used in the
+      // rest of the code.
+      //////////////////////////////////////////////////////////////////////////
       if  (tempInputCollection  ==  "muon-electron pairs")                    tempInputCollection  =  "electron-muon pairs";
       if  (tempInputCollection  ==  "photon-electron pairs")                  tempInputCollection  =  "electron-photon pairs";
       if  (tempInputCollection  ==  "photon-muon pairs")                      tempInputCollection  =  "muon-photon pairs";
@@ -404,245 +509,293 @@ CutCalculator::unpackCuts ()
       if  (tempInputCollection  ==  "mcparticle-muon pairs")                  tempInputCollection  =  "muon-mcparticle pairs";
       if  (tempInputCollection  ==  "secondary mcparticle-muon pairs")        tempInputCollection  =  "muon-secondary mcparticle pairs";
       if  (tempInputCollection  ==  "mcparticle-track pairs")                 tempInputCollection  =  "track-mcparticle pairs";
+      //////////////////////////////////////////////////////////////////////////
 
+      //////////////////////////////////////////////////////////////////////////
+      // Store the name(s) of the collection(s) to get from the event and for
+      // which to set flags.
+      //////////////////////////////////////////////////////////////////////////
       tempCut.inputCollection = tempInputCollection;
-      if (tempInputCollection.find ("pairs")==string::npos) //just a single object
+      if (tempInputCollection.find ("pairs") == string::npos)
         {
-          if (tempInputCollection.find ("secondary")!=string::npos)//secondary object
-            {
-              if (tempInputCollection.find ("secondary muons")!=string::npos)//treat secondary muons differently; allow for a different input collection
-                objectsToGet.push_back ("secondary muons");
-              else
-                {
-                  int spaceIndex = tempInputCollection.find (" ");
-                  int secondWordLength = tempInputCollection.size () - spaceIndex;
-                  objectsToGet.push_back (tempInputCollection.substr (spaceIndex + 1, secondWordLength));
-                }
-            }
+          if (tempInputCollection.find ("secondary muons") != string::npos)
+            objectsToGet_.push_back ("secondary muons");
           else
-            objectsToGet.push_back (tempInputCollection);
-          objectsToCut.push_back (tempInputCollection);
-          objectsToFlag.push_back (tempInputCollection);
+            objectsToGet_.push_back (getObjToGet (tempInputCollection));
+          objectsToFlag_.push_back (tempInputCollection);
         }
-      else//pair of objects, need to add them both to objectsToGet
+      else
         {
           string obj1;
           string obj2;
           getTwoObjs (tempInputCollection, obj1, obj2);
           string obj2ToGet = getObjToGet (obj2);
-          objectsToCut.push_back (tempInputCollection);
-          objectsToCut.push_back (obj1);
-          objectsToCut.push_back (obj2);
-          objectsToFlag.push_back (tempInputCollection);
-          objectsToFlag.push_back (obj1);
-          objectsToFlag.push_back (obj2);
-          objectsToGet.push_back (tempInputCollection);
-          objectsToGet.push_back (obj1);
-          objectsToGet.push_back (obj2ToGet);
+          objectsToFlag_.push_back (tempInputCollection);
+          objectsToFlag_.push_back (obj1);
+          objectsToFlag_.push_back (obj2);
+          objectsToGet_.push_back (tempInputCollection);
+          objectsToGet_.push_back (obj1);
+          objectsToGet_.push_back (obj2ToGet);
         }
+      //////////////////////////////////////////////////////////////////////////
 
-      //split cut string into parts and store them
+      //////////////////////////////////////////////////////////////////////////
+      // Separate the cut into subcuts, each of which is separated by a logical
+      // operator.
+      //////////////////////////////////////////////////////////////////////////
       string cutString = cuts.at (currentCut).getParameter<string> ("cutString");
       vector<string> cutStringVector = splitString (cutString);
       if (cutStringVector.size () != 3 && cutStringVector.size () % 4 != 3)
         {
-          clog << "Error: Didn't find the expected number elements in the following cut string: '" << cutString << "'\n";
-          exit (0);
+          clog << "ERROR: malformed cut: \"" << cutString << "\"." << endl;
+          return false;
         }
       tempCut.numSubcuts = (cutStringVector.size () + 1) / 4;
-      for (int subcutIndex = 0; subcutIndex != tempCut.numSubcuts; subcutIndex++)//loop over all the pieces of the cut combined using &,|
+      for (int subcutIndex = 0; subcutIndex != tempCut.numSubcuts; subcutIndex++)
         {
           int indexOffset = 4 * subcutIndex;
           string currentVariableString = cutStringVector.at (indexOffset);
           if (currentVariableString.find ("(") == string::npos)
             {
-              tempCut.functions.push_back ("");//no function was specified
-              tempCut.variables.push_back (currentVariableString);// variable to cut on
+              tempCut.functions.push_back ("");
+              tempCut.variables.push_back (currentVariableString);
             }
           else
             {
-              tempCut.functions.push_back (currentVariableString.substr (0, currentVariableString.find ("(")));//function comes before the "("
-              string tempVariable = currentVariableString.substr (currentVariableString.find ("(") + 1);//get rest of string
-              tempCut.variables.push_back (tempVariable.substr (0, tempVariable.size () - 1));//remove trailing ")"
+              tempCut.functions.push_back (currentVariableString.substr (0, currentVariableString.find ("(")));
+              string tempVariable = currentVariableString.substr (currentVariableString.find ("(") + 1);
+              tempCut.variables.push_back (tempVariable.substr (0, tempVariable.size () - 1));
             }
-          tempCut.comparativeOperators.push_back (cutStringVector.at (indexOffset + 1));// comparison to make
-          tempCut.cutValues.push_back (atof (cutStringVector.at (indexOffset + 2).c_str ()));// threshold value to pass cut
-          tempCut.cutStringValues.push_back (cutStringVector.at (indexOffset + 2));// string value to pass cut
+          tempCut.comparativeOperators.push_back (cutStringVector.at (indexOffset + 1));
+          tempCut.cutValues.push_back (atof (cutStringVector.at (indexOffset + 2).c_str ()));
+          tempCut.cutStringValues.push_back (cutStringVector.at (indexOffset + 2));
           if (subcutIndex != 0)
-            tempCut.logicalOperators.push_back (cutStringVector.at (indexOffset - 1)); // logical comparison (and, or)
+            tempCut.logicalOperators.push_back (cutStringVector.at (indexOffset - 1));
         }
+      //////////////////////////////////////////////////////////////////////////
 
-      //get number of objects required to pass cut for event to pass
+      //////////////////////////////////////////////////////////////////////////
+      // Extract the number of objects required by the cut.
+      //////////////////////////////////////////////////////////////////////////
       string numberRequiredString = cuts.at (currentCut).getParameter<string> ("numberRequired");
       vector<string> numberRequiredVector = splitString (numberRequiredString);
       if (numberRequiredVector.size () != 2)
         {
-          clog << "Error: Didn't find two elements in the following number requirement string: '" << numberRequiredString << "'\n";
-          exit (0);
+          clog << "ERROR: malformed number required: \"" << numberRequiredString << "\"." << endl;
+          return false;
         }
-
       int numberRequiredInt = atoi (numberRequiredVector.at (1).c_str ());
-      tempCut.numberRequired = numberRequiredInt;// number of objects required to pass the cut
-      tempCut.eventComparativeOperator = numberRequiredVector.at (0);// comparison to make
+      tempCut.numberRequired = numberRequiredInt;
+      tempCut.eventComparativeOperator = numberRequiredVector.at (0);
+      //////////////////////////////////////////////////////////////////////////
 
-      //Set up vectors to store the directories and subDirectories for each channel.
-      string subSubDirName;
+      //////////////////////////////////////////////////////////////////////////
+      // Give the cut a name to be used in cut flows. If the user specifies an
+      // alias, this is used as the name.
+      //////////////////////////////////////////////////////////////////////////
       string tempCutName;
       if (cuts.at (currentCut).exists ("alias"))
-        {
-          tempCutName = cuts.at (currentCut).getParameter<string> ("alias");
-          subSubDirName = "After " + tempCutName + " Cut Applied";
-        }
+        tempCutName = cuts.at (currentCut).getParameter<string> ("alias");
       else
         {
-          //construct string for cutflow table
           bool plural = numberRequiredInt != 1;
           string collectionString = plural ? tempInputCollection : tempInputCollection.substr (0, tempInputCollection.size () - 1);
           string cutName =  numberRequiredString + " " + collectionString + " with " + cutString;
           tempCutName = cutName;
-          subSubDirName = "After " + numberRequiredString + " " + collectionString + " with " + cutString + " Cut Applied";
         }
+      tempCut.name = tempCutName;
+      //////////////////////////////////////////////////////////////////////////
 
+      //////////////////////////////////////////////////////////////////////////
+      // Extract "isVeto" which instructs the code to drop events which pass
+      // this cut.
+      //////////////////////////////////////////////////////////////////////////
       tempCut.isVeto = false;
       if (cuts.at (currentCut).exists ("isVeto"))
         tempCut.isVeto = cuts.at (currentCut).getParameter<bool> ("isVeto");
-      subSubDirNames.push_back (subSubDirName);
-      tempCut.name = tempCutName;
+      //////////////////////////////////////////////////////////////////////////
 
+      // Store the temporary cut variable into the vector of unpacked cuts.
       unpackedCuts_.push_back (tempCut);
+    }
 
-    }//end loop over cuts
+  return true;
 }
 
 void
 CutCalculator::getTwoObjs (string tempInputCollection, string &obj1, string &obj2)
 {
-  // Set two object strings from the tempInputCollection string,
-  // For example, if tempInputCollection is "electron-muon pairs",
-  // then obj1 = "electrons" and obj2 = "muons".
-  // Note that the objects have an "s" appended.
-
+  //////////////////////////////////////////////////////////////////////////////
+  // Extracts the names of the two object types from the name of a pair.
+  //////////////////////////////////////////////////////////////////////////////
   int dashIndex = tempInputCollection.find ("-");
   int spaceIndex = tempInputCollection.find_last_of (" ");
   int secondWordLength = spaceIndex - dashIndex;
   obj1 = tempInputCollection.substr (0, dashIndex) + "s";
   obj2 = tempInputCollection.substr (dashIndex + 1, secondWordLength - 1) + "s";
+  //////////////////////////////////////////////////////////////////////////////
 }
 
-bool
-CutCalculator::evaluateComparison (double testValue, string comparison, double cutValue)
+template<typename T> bool
+CutCalculator::evaluateComparison (T testValue, string comparison, T cutValue)
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Return the result of the comparison of two values, returning false if the
+  // comparison operator is not recognized.
+  //////////////////////////////////////////////////////////////////////////////
   bool returnValue;
 
-  if (comparison == ">")
-    returnValue = testValue >  cutValue;
-  else if (comparison == ">=")
-    returnValue = testValue >= cutValue;
-  else if (comparison == "<")
-    returnValue = testValue <  cutValue;
-  else if (comparison == "<=")
-    returnValue = testValue <= cutValue;
-  else if (comparison == "==")
-    returnValue = testValue == cutValue;
-  else if (comparison == "=")
-    returnValue = testValue == cutValue;
-  else if (comparison == "!=")
-    returnValue = testValue != cutValue;
+  if        (comparison  ==  "!=")  returnValue  =  (testValue  !=  cutValue);
+  else  if  (comparison  ==  "<")   returnValue  =  (testValue  <   cutValue);
+  else  if  (comparison  ==  "<=")  returnValue  =  (testValue  <=  cutValue);
+  else  if  (comparison  ==  "=")   returnValue  =  (testValue  ==  cutValue);
+  else  if  (comparison  ==  "==")  returnValue  =  (testValue  ==  cutValue);
+  else  if  (comparison  ==  ">=")  returnValue  =  (testValue  >=  cutValue);
+  else  if  (comparison  ==  ">")   returnValue  =  (testValue  >   cutValue);
   else
     {
-      clog << "WARNING: invalid comparison operator '" << comparison << "'\n";
+      clog << "WARNING: invalid comparison operator \"" << comparison << "\"" << endl;
       returnValue = false;
     }
 
   return returnValue;
-}
-
-bool
-CutCalculator::evaluateComparison (string testValue, string comparison, string cutValue)
-{
-  bool returnValue;
-
-  if (comparison == ">")
-    returnValue = testValue >  cutValue;
-  else if (comparison == ">=")
-    returnValue = testValue >= cutValue;
-  else if (comparison == "<")
-    returnValue = testValue <  cutValue;
-  else if (comparison == "<=")
-    returnValue = testValue <= cutValue;
-  else if (comparison == "==")
-    returnValue = testValue == cutValue;
-  else if (comparison == "=")
-    returnValue = testValue == cutValue;
-  else if (comparison == "!=")
-    returnValue = testValue != cutValue;
-  else
-    {
-      clog << "WARNING: invalid comparison operator '" << comparison << "'\n";
-      returnValue = false;
-    }
-
-  return returnValue;
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 string
 CutCalculator::getObjToGet (string obj)
 {
-  // Return the string corresponding to the object to get for the given obj string.
-  // Right now this only handles the case in which obj contains "secondary",
-  // e.g, "secondary muons".
-  // Note that "s" is NOT appended.
-
-  if (obj.find ("secondary") == string::npos)  // "secondary" is not found
+  //////////////////////////////////////////////////////////////////////////////
+  // Strip the word "secondary" from the beginning of a string.
+  //////////////////////////////////////////////////////////////////////////////
+  if (obj.find ("secondary") == string::npos)
     return obj;
   int firstSpaceIndex = obj.find_first_of (" ");
-  return obj.substr (firstSpaceIndex+1, obj.length () - 1);
+  return obj.substr (firstSpaceIndex + 1, obj.length () - 1);
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 vector<string>
 CutCalculator::splitString (string inputString)
 {
-  stringstream stringStream(inputString);
-  istream_iterator<string> begin(stringStream);
+  //////////////////////////////////////////////////////////////////////////////
+  // Split the input string into words separated by whitespace, with each word
+  // stored in a vector.
+  //////////////////////////////////////////////////////////////////////////////
+  stringstream ss (inputString);
+  istream_iterator<string> begin (ss);
   istream_iterator<string> end;
-  vector<string> stringVector(begin, end);
+  vector<string> stringVector (begin, end);
   return stringVector;
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 bool
-CutCalculator::evaluateTriggers (vector<string> triggersToTest, vector<string> triggersToVeto, const edm::Handle<BNtriggerCollection> triggerCollection)
+CutCalculator::evaluateTriggers ()
 {
-  //initialize to false until a chosen trigger is passed
-  bool triggerDecision = false;
+  //////////////////////////////////////////////////////////////////////////////
+  // Initialize the flags for each trigger which is required and each trigger
+  // which is to be vetoed, as well as the event-wide flags for each of these.
+  //////////////////////////////////////////////////////////////////////////////
+  bool triggerDecision = !pl_->triggers.size (), vetoTriggerDecision = true;
+  pl_->triggerFlags.resize (pl_->triggers.size (), false);
+  pl_->vetoTriggerFlags.resize (pl_->triggersToVeto.size (), true);
+  //////////////////////////////////////////////////////////////////////////////
 
-  //loop over all triggers defined in the event
-  for (BNtriggerCollection::const_iterator trigger = triggerCollection->begin (); trigger != triggerCollection->end (); trigger++)
+  for (BNtriggerCollection::const_iterator trigger = triggers->begin (); trigger != triggers->end (); trigger++)
     {
-      //we're only interested in triggers that actually passed
-      if (trigger->pass != 1)
-        continue;
+      //////////////////////////////////////////////////////////////////////////
+      // If the current trigger matches one of the triggers to veto, record its
+      // decision. If any of these triggers is true, set the event-wide flag to
+      // false;
+      //////////////////////////////////////////////////////////////////////////
+      for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
+        {
+          if (trigger->name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+            {
+              vetoTriggerDecision = vetoTriggerDecision && !trigger->pass;
+              pl_->vetoTriggerFlags.at (triggerIndex) = trigger->pass;
+            }
+        }
+      //////////////////////////////////////////////////////////////////////////
 
-      //if the event passes one of the veto triggers, exit and return false
-      for (uint triggerName = 0; triggerName != triggersToVeto.size (); triggerName++)
+      //////////////////////////////////////////////////////////////////////////
+      // If the current trigger matches one of the required triggers, record its
+      // decision. If any of these triggers is true, set the event-wide flag to
+      // true.
+      //////////////////////////////////////////////////////////////////////////
+      for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
         {
-          if (trigger->name.find (triggersToVeto.at (triggerName)) != string::npos)
-            return false;
+          if (trigger->name.find (pl_->triggers.at (triggerIndex)) == 0)
+            {
+              triggerDecision = triggerDecision || trigger->pass;
+              pl_->triggerFlags.at (triggerIndex) = trigger->pass;
+            }
         }
-      //if the event passes one of the chosen triggers, set triggerDecision to true
-      for (uint triggerName = 0; triggerName != triggersToTest.size (); triggerName++)
-        {
-          if (trigger->name.find (triggersToTest.at (triggerName)) != string::npos)
-            triggerDecision = true;
-        }
+      //////////////////////////////////////////////////////////////////////////
     }
 
-  //if none of the veto triggers fired:
-  //return the OR of all the chosen triggers
-  if (triggersToTest.size () != 0)
-    return triggerDecision;
-  //or if no triggers were defined return true
-  else
-    return true;
+  // Store the logical AND of the two event-wide flags as the event-wide
+  // trigger decision in the payload and return it.
+  return (pl_->triggerDecision = (triggerDecision && vetoTriggerDecision));
+}
+
+bool
+CutCalculator::setEventFlags ()
+{
+  pl_->cutDecision = true;
+
+  // Loop over the cuts, storing the event-wide decision for each in the
+  // payload.
+  for (unsigned currentCutIndex = 0; currentCutIndex != pl_->cuts.size (); currentCutIndex++)
+    {
+      cut currentCut = pl_->cuts.at (currentCutIndex);
+      int numberPassing = 0;
+      int numberPassingPrev = 0;
+
+      //////////////////////////////////////////////////////////////////////////
+      // Count the number of objects passing the current cut in the collection
+      // on which the cut acts.
+      //////////////////////////////////////////////////////////////////////////
+      for (unsigned object = 0; object != pl_->objectFlags.at (currentCut.inputCollection).at (currentCutIndex).size (); object++)
+        if (pl_->objectFlags.at (currentCut.inputCollection).at (currentCutIndex).at (object))
+          numberPassing++;
+      //////////////////////////////////////////////////////////////////////////
+
+      //////////////////////////////////////////////////////////////////////////
+      // Decide if the event passes this cut. If the cut is a veto, we have to
+      // test the number of objects which failed this cut but which passed all
+      // previous cuts. Remember, the object flags are inverted in the case of a
+      // veto.
+      //////////////////////////////////////////////////////////////////////////
+      bool cutDecision;
+      if (!currentCut.isVeto)
+        cutDecision = evaluateComparison (numberPassing, currentCut.eventComparativeOperator, currentCut.numberRequired);
+      else
+        {
+          for (unsigned object = 0; object < pl_->objectFlags.at (currentCut.inputCollection).at (currentCutIndex).size (); object++)
+            {
+              bool passesPrevCuts = true;
+              for (int cut = currentCutIndex - 1; cut >= 0; cut--)
+                passesPrevCuts = passesPrevCuts && pl_->objectFlags.at (currentCut.inputCollection).at (cut).at (object);
+              passesPrevCuts && numberPassingPrev++;
+            }
+          int numberFailCut = numberPassingPrev - numberPassing;
+          cutDecision = evaluateComparison (numberFailCut, currentCut.eventComparativeOperator, currentCut.numberRequired);
+        }
+
+      //////////////////////////////////////////////////////////////////////////
+      // Store the decision for this cut in the payload and update the global
+      // cut decision flag.
+      //////////////////////////////////////////////////////////////////////////
+      pl_->eventFlags.push_back (cutDecision);
+      pl_->cutDecision = pl_->cutDecision && cutDecision;
+      //////////////////////////////////////////////////////////////////////////
+    }
+
+  // Store the logical AND of the trigger decision and the global cut decision
+  // as the global event decision in the payload and return it.
+  return (pl_->eventDecision = (pl_->triggerDecision && pl_->cutDecision));
 }
 
 void
@@ -703,8 +856,8 @@ CutCalculator::initializeValueLookup ()
   vl_->setMuonTrackScaleFactor      (muonTrackScaleFactor_);
   vl_->setNmissoutShiftDown         (NmissoutShiftDown_);
   vl_->setNmissoutShiftUp           (NmissoutShiftUp_);
-  vl_->setObjectsToCut              (objectsToCut);
-  vl_->setObjectsToGet              (objectsToGet);
+  vl_->setObjectsToCut              (objectsToCut_);
+  vl_->setObjectsToGet              (objectsToGet_);
   vl_->setPuWeight                  (puWeight_);
   vl_->setStopCTauScaleFactor       (stopCTauScaleFactor_);
   vl_->setTargetTriggers            (targetTriggers_);

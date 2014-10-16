@@ -3,6 +3,7 @@
 //Add includes for your classes here
 #include "OSUT3Analysis/AnaTools/interface/BNstop.h"
 #include "OSUT3Analysis/AnaTools/interface/BNPFChgHad.h"
+#include "OSUT3Analysis/AnaTools/plugins/AnalysisPayloads.h"
 #include <utility>
 #include <vector>
 #include <map>
@@ -21,9 +22,9 @@ namespace {
      std::vector<BNPFChgHad> PFChgHaddummy2;
      edm::Wrapper<std::vector<BNPFChgHad> > PFChgHaddummy3;
 
-     std::map<std::basic_string<char>,std::vector<std::vector<std::pair<bool,bool> > > > flagMapDummy0;
-     edm::Wrapper<std::map<std::basic_string<char>,std::vector<std::vector<std::pair<bool,bool> > > > > flagMapDummy1;
-     std::vector<std::map<std::basic_string<char>,std::vector<std::vector<std::pair<bool,bool> > > > > flagMapDummy2;
-     edm::Wrapper<std::vector<std::map<std::basic_string<char>,std::vector<std::vector<std::pair<bool,bool> > > > > > flagMapDummy3;
+     CutCalculatorPayload CutCalculatorPayloadDummy0;
+     std::vector<CutCalculatorPayload> CutCalculatorPayloadDummy1;
+     edm::Wrapper<CutCalculatorPayload> CutCalculatorPayloadDummy2;
+     edm::Wrapper<std::vector<CutCalculatorPayload> > CutCalculatorPayloadDummy3;
    };
 }

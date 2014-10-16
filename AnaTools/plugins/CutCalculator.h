@@ -1,11 +1,17 @@
 #ifndef CUT_CALCULATOR
-
 #define CUT_CALCULATOR
 
+#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Framework/interface/EventSetup.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
+
+#include "OSUT3Analysis/AnaTools/plugins/AnalysisPayloads.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
 
-class edm::EventSetup;
-
+// Declaration of the CutCalculator EDProducer which produces various flags
+// indicating whether the event and each object passed the user-defined cuts.
 class CutCalculator : public edm::EDProducer
 {
   public:
@@ -15,20 +21,31 @@ class CutCalculator : public edm::EDProducer
     void produce (edm::Event &, const edm::EventSetup &);
 
   private:
-    template <class InputCollection> void setObjectFlags (cut &, uint, edm::Handle<InputCollection>, string);
-    template <class InputCollection1, class InputCollection2> void setObjectFlags (cut &, uint, edm::Handle<InputCollection1>, edm::Handle<InputCollection2>, string);
-    void unpackCuts ();
+    ////////////////////////////////////////////////////////////////////////////
+    // Private methods used in calculating the cut decisions.
+    ////////////////////////////////////////////////////////////////////////////
+    template <class InputCollection> bool setObjectFlags (const cut &, uint, edm::Handle<InputCollection>, const string &);
+    template <class InputCollection1, class InputCollection2> bool setObjectFlags (const cut &, uint, edm::Handle<InputCollection1>, edm::Handle<InputCollection2>, const string &);
+    bool unpackCuts ();
     void getTwoObjs (string, string &, string &);
-    bool evaluateComparison (double, string, double);
-    bool evaluateComparison (string, string, string);
+    template<typename T> bool evaluateComparison (T, string, T);
     string getObjToGet (string);
     vector<string> splitString (string);
-    bool evaluateTriggers (vector<string>, vector<string>, const edm::Handle<BNtriggerCollection>);
+    bool evaluateTriggers ();
+    bool setEventFlags ();
+    ////////////////////////////////////////////////////////////////////////////
 
-    edm::ParameterSet collections_;
-    edm::ParameterSet cuts_;
-    auto_ptr<flagMap> individualFlags_;
+    ////////////////////////////////////////////////////////////////////////////
+    // Private variables initialized by the constructor.
+    ////////////////////////////////////////////////////////////////////////////
+    edm::ParameterSet               collections_;
+    edm::ParameterSet               cuts_;
+    bool                            firstEvent_;
+    ////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Private InputTag variables set by unpacking the collections ParameterSet.
+    ////////////////////////////////////////////////////////////////////////////
     edm::InputTag  bxlumis_;
     edm::InputTag  electrons_;
     edm::InputTag  events_;
@@ -45,11 +62,21 @@ class CutCalculator : public edm::EDProducer
     edm::InputTag  tracks_;
     edm::InputTag  triggers_;
     edm::InputTag  trigobjs_;
+    ////////////////////////////////////////////////////////////////////////////
 
-    vector<cut> unpackedCuts_;
-    vector<string> unpackedTriggers_;
-    vector<string> unpackedTriggersToVeto_;
+    ////////////////////////////////////////////////////////////////////////////
+    // Private variables set after unpacking the cuts ParameterSet.
+    ////////////////////////////////////////////////////////////////////////////
+    vector<cut>                     unpackedCuts_;
+    vector<string>                  unpackedTriggers_;
+    vector<string>                  unpackedTriggersToVeto_;
+    vector<string>                  objectsToFlag_;
+    vector<string>                  objectsToGet_;
+    ////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Object collections which can be gotten from the event.
+    ////////////////////////////////////////////////////////////////////////////
     edm::Handle<BNbxlumiCollection>         bxlumis;
     edm::Handle<BNelectronCollection>       electrons;
     edm::Handle<BNeventCollection>          events;
@@ -66,54 +93,52 @@ class CutCalculator : public edm::EDProducer
     edm::Handle<BNtrackCollection>          tracks;
     edm::Handle<BNtriggerCollection>        triggers;
     edm::Handle<BNtrigobjCollection>        trigobjs;
-    edm::Handle<BNstopCollection>           stops;
-    edm::Handle<double>                     rhokt6CaloJetsHandle_;
+    ////////////////////////////////////////////////////////////////////////////
 
-    vector<string>  objectsToPlot;
-    vector<string>  objectsToFlag;
-
-    bool firstEvent_;
+    // Payload for this EDProducer.
+    auto_ptr<CutCalculatorPayload>  pl_;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private variables used by the valueLookup methods.
     ////////////////////////////////////////////////////////////////////////////
-    PUWeight          *puWeight_;
-    bool              NmissoutShiftDown_;
-    bool              NmissoutShiftUp_;
-    bool              doPileupReweighting_;
-    bool              flagJESJERCorr_;
-    bool              useTrackCaloRhoCorr_;
-    double            EcaloVaryScaleFactor_;
-    double            bTagScaleFactor_;
-    double            channelScaleFactor_;
-    double            electronScaleFactor_;
-    double            electronTrackScaleFactor_;
-    double            eventScaleFactor_;
-    double            globalScaleFactor_;
-    double            isrVaryScaleFactor_;
-    double            muonScaleFactor_;
-    double            muonTrackScaleFactor_;
-    double            stopCTauScaleFactor_;
-    double            topPtScaleFactor_;
-    double            trackNMissOutScaleFactor_;
-    double            triggerMetScaleFactor_;
-    double            triggerScaleFactor_;
-    flagMap           cumulativeFlags;
-    int               verbose_;
-    string            badCSCFile_;
-    string            datasetType_;
-    string            deadEcalFile_;
-    string            jESJERCorr_;
-    vector<BadCSC>    BadCSCVec;
-    vector<DeadEcal>  DeadEcalVec;
-    vector<string>    objectsToCut;
-    vector<string>    objectsToGet;
-    vector<string>    targetTriggers_;
-  //////////////////////////////////////////////////////////////////////////////
+    PUWeight                       *puWeight_;
+    bool                           NmissoutShiftDown_;
+    bool                           NmissoutShiftUp_;
+    bool                           doPileupReweighting_;
+    bool                           flagJESJERCorr_;
+    bool                           useTrackCaloRhoCorr_;
+    double                         EcaloVaryScaleFactor_;
+    double                         bTagScaleFactor_;
+    double                         channelScaleFactor_;
+    double                         electronScaleFactor_;
+    double                         electronTrackScaleFactor_;
+    double                         eventScaleFactor_;
+    double                         globalScaleFactor_;
+    double                         isrVaryScaleFactor_;
+    double                         muonScaleFactor_;
+    double                         muonTrackScaleFactor_;
+    double                         stopCTauScaleFactor_;
+    double                         topPtScaleFactor_;
+    double                         trackNMissOutScaleFactor_;
+    double                         triggerMetScaleFactor_;
+    double                         triggerScaleFactor_;
+    edm::Handle<BNstopCollection>  stops;
+    edm::Handle<double>            rhokt6CaloJetsHandle_;
+    flagMap                        cumulativeFlags;
+    int                            verbose_;
+    string                         badCSCFile_;
+    string                         datasetType_;
+    string                         deadEcalFile_;
+    string                         jESJERCorr_;
+    vector<BadCSC>                 BadCSCVec;
+    vector<DeadEcal>               DeadEcalVec;
+    vector<string>                 objectsToCut_;
+    vector<string>                 targetTriggers_;
+    ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
-    //ValueLookup object and the function for initializing its private
-    //variables, which some valueLookup methods use.
+    // ValueLookup object and the function for initializing its private
+    // variables, which some valueLookup methods use.
     ////////////////////////////////////////////////////////////////////////////
     ValueLookup *vl_;
     void initializeValueLookup ();

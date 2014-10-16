@@ -1,34 +1,11 @@
-#ifndef VALUE_LOOKUP_COMMON
-#define VALUE_LOOKUP_COMMON
+#ifndef EXTERN_TEMPLATES
+#define EXTERN_TEMPLATES
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <string>
-#include <map>
-#include <algorithm>
-#include <regex>
-
-#include "TH1D.h"
-#include "TH2D.h"
-#include "TLorentzVector.h"
-#include "TVector3.h"
-#include "TVector2.h"
-#include "TTree.h"
-#include "TString.h"
-
-#include "CommonTools/Utils/interface/TFileDirectory.h"
-
-#include "DataFormats/Math/interface/deltaPhi.h"
-#include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/Common/interface/Handle.h"
-#include "DataFormats/GeometrySurface/interface/Line.h"
 
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "FWCore/Framework/interface/MakerMacros.h"
 
 #include "BEAN/Collections/interface/BNbxlumi.h"
 #include "BEAN/Collections/interface/BNelectron.h"
@@ -47,43 +24,8 @@
 #include "BEAN/Collections/interface/BNtau.h"
 #include "BEAN/Collections/interface/BNgenjet.h"
 
-#include "OSUT3Analysis/AnaTools/interface/CutFlow.h"
-#include "OSUT3Analysis/AnaTools/interface/PUWeight.h"
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 #include "OSUT3Analysis/AnaTools/interface/BNstop.h"
-
-using namespace std;
-
-//flagMap:
-//string       holds input collection type
-//outer vector corresponds to each cut
-//inner vector corresponds to each object in input collection
-//pair(bool) first bool counts towards the event passing, second bool determines whether to plot the object
-typedef map<string, vector<vector<bool> > > flagMap;
-
-struct BadCSC {
-  double etaCSC;
-  double phiCSC;
-};
-
-struct DeadEcal {
-  double etaEcal;
-  double phiEcal;
-};
-
-struct cut {
-  bool            isVeto;
-  int             numSubcuts;
-  int             numberRequired;
-  string          eventComparativeOperator;
-  string          inputCollection;
-  string          name;
-  vector<double>  cutValues;
-  vector<string>  comparativeOperators;// >, <, =, etc.
-  vector<string>  cutStringValues;
-  vector<string>  functions;
-  vector<string>  logicalOperators;//and, or
-  vector<string>  variables;
-};
 
 extern template class edm::Handle<double>;
 extern template class edm::Handle<std::vector<BNbxlumi, std::allocator<BNbxlumi> > >;
@@ -107,7 +49,7 @@ extern template class edm::Wrapper<std::map<std::string, std::vector<std::vector
 extern template class std::auto_ptr<std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > > >;
 extern template class std::istream_iterator<std::string, char, std::char_traits<char>, long>;
 extern template class std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > >;
-extern template class std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >;
+extern template class std::pair<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >;
 extern template class std::vector<BadCSC, std::allocator<BadCSC> >;
 extern template class std::vector<DeadEcal, std::allocator<DeadEcal> >;
 extern template class std::vector<bool, std::allocator<bool> >;
@@ -145,9 +87,6 @@ extern template boost::exception_ptr boost::exception_detail::get_static_excepti
 extern template boost::exception_ptr boost::exception_detail::get_static_exception_object<boost::exception_detail::bad_exception_>();
 extern template edm::OrphanHandle<std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > > > edm::Event::put<std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > > >(std::auto_ptr<std::map<std::string, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > > >, std::string const&);
 extern template std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> >&&, char const*);
-extern template std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>* std::__uninitialized_copy<false>::__uninit_copy<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>*, std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>*>(std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>*, std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>*, std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>*);
-extern template std::pair<std::_Rb_tree_iterator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > >, bool> std::_Rb_tree<std::string, std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >, std::_Select1st<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > >, std::less<std::string>, std::allocator<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > > >::_M_insert_unique<std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > > >(std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >&&);
-extern template std::pair<std::string const, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >::pair<std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >, void>(std::string const&, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >&&);
 extern template std::string* std::copy<std::string*, std::string*>(std::string*, std::string*, std::string*);
 extern template std::vector<bool, std::allocator<bool> >* std::__uninitialized_copy<false>::__uninit_copy<__gnu_cxx::__normal_iterator<std::vector<bool, std::allocator<bool> > const*, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >, std::vector<bool, std::allocator<bool> >*>(__gnu_cxx::__normal_iterator<std::vector<bool, std::allocator<bool> > const*, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >, __gnu_cxx::__normal_iterator<std::vector<bool, std::allocator<bool> > const*, std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > > >, std::vector<bool, std::allocator<bool> >*);
 extern template std::vector<bool, std::allocator<bool> >* std::__uninitialized_copy<false>::__uninit_copy<std::move_iterator<std::vector<bool, std::allocator<bool> >*>, std::vector<bool, std::allocator<bool> >*>(std::move_iterator<std::vector<bool, std::allocator<bool> >*>, std::move_iterator<std::vector<bool, std::allocator<bool> >*>, std::vector<bool, std::allocator<bool> >*);
