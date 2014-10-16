@@ -1,12 +1,14 @@
 #ifndef VALUE_LOOKUP_TEMPLATES
 #define VALUE_LOOKUP_TEMPLATES
 
-////////////////////////////////////////////////////////////////////////////////
-// This file contains the definitions of the template methods in the ValueLookup
-// class. These definitions need to be included by any file which calls these
-// functions so that the compiler knows which instances of the methods to
-// create.
-////////////////////////////////////////////////////////////////////////////////
+#include <iostream>
+
+#include "DataFormats/Math/interface/deltaR.h"
+
+// This file contains the definitions of the template methods in the
+// ValueLookup class. These definitions need to be included by any file which
+// calls these functions so that the compiler knows which instances of the
+// methods to create.
 
 template<typename T0, typename T1> const T1 *
 ValueLookup::closest (const T0 *object0, const edm::Handle<vector<T1> > &object1Collection, const string &name)
@@ -14,7 +16,7 @@ ValueLookup::closest (const T0 *object0, const edm::Handle<vector<T1> > &object1
   const T1 *closestObject1 = 0;
   double smallestDeltaR;
   if(cumulativeFlags.find (name) != cumulativeFlags.end ()){
-    flagPair flags;
+    vector<bool> flags;
     for (int i = cumulativeFlags.at(name).size() - 1; i >= 0; i--){
       if (cumulativeFlags.at(name).at(i).size()){
         flags = cumulativeFlags.at(name).at(i);
@@ -22,10 +24,10 @@ ValueLookup::closest (const T0 *object0, const edm::Handle<vector<T1> > &object1
       }
     }
     for (uint index = 0; index != flags.size(); index++){
-      if(!flags.at(index).first) continue;
+      if(!flags.at(index)) continue;
       const T1 *object1 = &object1Collection->at(index);
       double dR;
-      if(!closestObject1 || (dR = reco::deltaR (object0->eta, object0->phi, object1->eta, object1->phi)) < smallestDeltaR){
+      if(!closestObject1 || (dR = deltaR (object0->eta, object0->phi, object1->eta, object1->phi)) < smallestDeltaR){
         closestObject1 = object1;
         smallestDeltaR = dR;
       }

@@ -8,4 +8,9 @@
   <class name="std::vector<BNPFChgHad>" />
   <class pattern="edm::Wrapper<BNPFChgHad>"/>
   <class name="edm::Wrapper<std::vector<BNPFChgHad> >" />
+
+  <class name="CutCalculatorPayload"/>
+  <class name="std::vector<CutCalculatorPayload>"/>
+  <class name="edm::Wrapper<CutCalculatorPayload>"/>
+  <class name="edm::Wrapper<std::vector<CutCalculatorPayload> >"/>
 </lcgdict>

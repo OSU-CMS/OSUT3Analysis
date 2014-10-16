@@ -1,3 +1,11 @@
+#include <iostream>
+
+#include "TLorentzVector.h"
+#include "TVector3.h"
+
+#include "DataFormats/GeometrySurface/interface/Line.h"
+
+#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
 
 //!muon-muon pair valueLookup

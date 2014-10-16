@@ -1,3 +1,8 @@
+#include <iostream>
+
+#include "TVector2.h"
+
+#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
 
 //!muon valueLookup

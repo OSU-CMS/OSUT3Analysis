@@ -1,11 +1,35 @@
 #ifndef VALUE_LOOKUP
 #define VALUE_LOOKUP
 
-#include "OSUT3Analysis/AnaTools/interface/ValueLookupCommon.h"
+#include "DataFormats/Common/interface/Handle.h"
+
+#include "BEAN/Collections/interface/BNbxlumi.h"
+#include "BEAN/Collections/interface/BNelectron.h"
+#include "BEAN/Collections/interface/BNevent.h"
+#include "BEAN/Collections/interface/BNjet.h"
+#include "BEAN/Collections/interface/BNmcparticle.h"
+#include "BEAN/Collections/interface/BNmet.h"
+#include "BEAN/Collections/interface/BNmuon.h"
+#include "BEAN/Collections/interface/BNphoton.h"
+#include "BEAN/Collections/interface/BNprimaryvertex.h"
+#include "BEAN/Collections/interface/BNskimbits.h"
+#include "BEAN/Collections/interface/BNsupercluster.h"
+#include "BEAN/Collections/interface/BNtrack.h"
+#include "BEAN/Collections/interface/BNtrigger.h"
+#include "BEAN/Collections/interface/BNtrigobj.h"
+#include "BEAN/Collections/interface/BNtau.h"
+#include "BEAN/Collections/interface/BNgenjet.h"
+
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/PUWeight.h"
+#include "OSUT3Analysis/AnaTools/interface/BNstop.h"
 
 // Declaration of the ValueLookup class, containing all the valueLookup methods
 // and the variables on which they depend.
-class ValueLookup { public: ValueLookup () {}; ~ValueLookup () {};
+class ValueLookup {
+  public:
+    ValueLookup () {};
+    ~ValueLookup () {};
 
   public:
     ////////////////////////////////////////////////////////////////////////////
@@ -160,7 +184,7 @@ class ValueLookup { public: ValueLookup () {}; ~ValueLookup () {};
     double getTrkPtRes (const BNtrack* track1);
     double getTrkPtTrue (const BNtrack* track1, const BNmcparticleCollection* genPartColl);
     double thetaToEta(double theta);
-    flagPair getLastValidFlags(string objType);
+    vector<bool> getLastValidFlags(string objType);
     int findTauMotherIndex(const BNmcparticle* tau);
     int getTrkIsIso (const BNtrack* track1, const BNtrackCollection* trackColl);
     int getTrkIsMatchedBadCSC (const BNtrack* track1);
@@ -234,6 +258,7 @@ class ValueLookup { public: ValueLookup () {}; ~ValueLookup () {};
     vector<string>    objectsToCut;
     vector<string>    objectsToGet;
     vector<string>    targetTriggers_;
+    ////////////////////////////////////////////////////////////////////////////
 };
 
 // Definitions of the template methods.

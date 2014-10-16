@@ -7,6 +7,7 @@
 <use  name="DataFormats/Common"/>
 <use  name="CommonTools/UtilAlgos"/>
 <use  name="lhapdf"/>
+<flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
 <export>
   <lib  name="1"/>
 </export>

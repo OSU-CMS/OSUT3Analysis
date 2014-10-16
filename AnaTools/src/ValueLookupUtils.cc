@@ -1,3 +1,11 @@
+#include <iostream>
+#include <fstream>
+
+#include "TMath.h"
+#include "TLorentzVector.h"
+#include "TVector2.h"
+
+#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
 
 double
@@ -81,7 +89,7 @@ ValueLookup::chosenVertex ()
 {
   const BNprimaryvertex *chosenVertex = 0;
   if(cumulativeFlags.find ("primaryvertexs") != cumulativeFlags.end ()){
-    flagPair vertexFlags;
+    vector<bool> vertexFlags;
     for (int i = cumulativeFlags.at("primaryvertexs").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("primaryvertexs").at(i).size()){
         vertexFlags = cumulativeFlags.at("primaryvertexs").at(i);
@@ -89,7 +97,7 @@ ValueLookup::chosenVertex ()
       }
     }
     for (uint vertexIndex = 0; vertexIndex != vertexFlags.size(); vertexIndex++){
-      if(!vertexFlags.at(vertexIndex).first) continue;
+      if(!vertexFlags.at(vertexIndex)) continue;
       chosenVertex = & primaryvertexs->at(vertexIndex);
       break;
     }
@@ -106,7 +114,7 @@ ValueLookup::chosenMET ()
 {
   const BNmet *chosenMET = 0;
   if(cumulativeFlags.find ("mets") != cumulativeFlags.end ()){
-    flagPair metFlags;
+    vector<bool> metFlags;
     for (int i = cumulativeFlags.at("mets").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("mets").at(i).size()){
         metFlags = cumulativeFlags.at("mets").at(i);
@@ -114,7 +122,7 @@ ValueLookup::chosenMET ()
       }
     }
     for (uint metIndex = 0; metIndex != metFlags.size(); metIndex++){
-      if(!metFlags.at(metIndex).first) continue;
+      if(!metFlags.at(metIndex)) continue;
       chosenMET = & mets->at(metIndex);
       break;
     }
@@ -131,7 +139,7 @@ ValueLookup::chosenTrack ()
 {
   const BNtrack *chosenTrack = 0;
   if(cumulativeFlags.find ("tracks") != cumulativeFlags.end ()){
-    flagPair trackFlags;
+    vector<bool> trackFlags;
     for (int i = cumulativeFlags.at("tracks").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("tracks").at(i).size()){
         trackFlags = cumulativeFlags.at("tracks").at(i);
@@ -139,7 +147,7 @@ ValueLookup::chosenTrack ()
       }
     }
     for (uint trackIndex = 0; trackIndex != trackFlags.size(); trackIndex++){
-      if(!trackFlags.at(trackIndex).first) continue;
+      if(!trackFlags.at(trackIndex)) continue;
       chosenTrack = & tracks->at(trackIndex);
       break;
     }
@@ -156,7 +164,7 @@ ValueLookup::chosenJet ()
 {
   const BNjet *chosenJet = 0;
   if(cumulativeFlags.find ("jets") != cumulativeFlags.end ()){
-    flagPair jetFlags;
+    vector<bool> jetFlags;
     for (int i = cumulativeFlags.at("jets").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("jets").at(i).size()){
         jetFlags = cumulativeFlags.at("jets").at(i);
@@ -164,7 +172,7 @@ ValueLookup::chosenJet ()
       }
     }
     for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++){
-      if(!jetFlags.at(jetIndex).first) continue;
+      if(!jetFlags.at(jetIndex)) continue;
       chosenJet = & jets->at(jetIndex);
       break;
     }
@@ -181,7 +189,7 @@ ValueLookup::chosenElectron ()
 {
   const BNelectron *chosenElectron = 0;
   if(cumulativeFlags.find ("electrons") != cumulativeFlags.end ()){
-    flagPair electronFlags;
+    vector<bool> electronFlags;
     for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("electrons").at(i).size()){
         electronFlags = cumulativeFlags.at("electrons").at(i);
@@ -189,7 +197,7 @@ ValueLookup::chosenElectron ()
       }
     }
     for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
-      if(!electronFlags.at(electronIndex).first) continue;
+      if(!electronFlags.at(electronIndex)) continue;
       chosenElectron = & electrons->at(electronIndex);
       break;
     }
@@ -206,7 +214,7 @@ ValueLookup::chosenMuon ()
 {
   const BNmuon *chosenMuon = 0;
   if(cumulativeFlags.find ("muons") != cumulativeFlags.end ()){
-    flagPair muonFlags;
+    vector<bool> muonFlags;
     for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("muons").at(i).size()){
         muonFlags = cumulativeFlags.at("muons").at(i);
@@ -214,7 +222,7 @@ ValueLookup::chosenMuon ()
       }
     }
     for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
-      if(!muonFlags.at(muonIndex).first) continue;
+      if(!muonFlags.at(muonIndex)) continue;
       chosenMuon = & muons->at(muonIndex);
       break;
     }
@@ -231,7 +239,7 @@ ValueLookup::chosenHT ()
 {
   double chosenHT = 0.0;
   if(cumulativeFlags.find ("jets") != cumulativeFlags.end ()){
-    flagPair jetFlags;
+    vector<bool> jetFlags;
     for (int i = cumulativeFlags.at("jets").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("jets").at(i).size()){
         jetFlags = cumulativeFlags.at("jets").at(i);
@@ -239,7 +247,7 @@ ValueLookup::chosenHT ()
       }
     }
     for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++){
-      if(!jetFlags.at(jetIndex).first) continue;
+      if(!jetFlags.at(jetIndex)) continue;
       chosenHT += jets->at(jetIndex).pt;
     }
   }
@@ -253,7 +261,7 @@ ValueLookup::chosenST ()
 {
   double chosenST = 0.0;
   if(cumulativeFlags.find ("electrons") != cumulativeFlags.end ()){
-    flagPair electronFlags;
+    vector<bool> electronFlags;
     for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("electrons").at(i).size()){
         electronFlags = cumulativeFlags.at("electrons").at(i);
@@ -261,13 +269,13 @@ ValueLookup::chosenST ()
       }
     }
     for (uint electronIndex = 0; electronIndex != electronFlags.size(); electronIndex++){
-      if(!electronFlags.at(electronIndex).first) continue;
+      if(!electronFlags.at(electronIndex)) continue;
       chosenST += electrons->at(electronIndex).pt;
     }
   }
 
   if(cumulativeFlags.find ("muons") != cumulativeFlags.end ()){
-    flagPair muonFlags;
+    vector<bool> muonFlags;
     for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("muons").at(i).size()){
         muonFlags = cumulativeFlags.at("muons").at(i);
@@ -275,13 +283,13 @@ ValueLookup::chosenST ()
       }
     }
     for (uint muonIndex = 0; muonIndex != muonFlags.size(); muonIndex++){
-      if(!muonFlags.at(muonIndex).first) continue;
+      if(!muonFlags.at(muonIndex)) continue;
       chosenST += muons->at(muonIndex).pt;
     }
   }
 
   if(cumulativeFlags.find ("jets") != cumulativeFlags.end ()){
-    flagPair jetFlags;
+    vector<bool> jetFlags;
     for (int i = cumulativeFlags.at("jets").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("jets").at(i).size()){
         jetFlags = cumulativeFlags.at("jets").at(i);
@@ -289,7 +297,7 @@ ValueLookup::chosenST ()
       }
     }
     for (uint jetIndex = 0; jetIndex != jetFlags.size(); jetIndex++){
-      if(!jetFlags.at(jetIndex).first) continue;
+      if(!jetFlags.at(jetIndex)) continue;
       chosenST += jets->at(jetIndex).pt;
     }
   }
@@ -450,7 +458,7 @@ ValueLookup::leadMuonPair ()
   leadMuonPair.first = leadMuonPair.second = 0;
 
   if(cumulativeFlags.find ("muons") != cumulativeFlags.end ()){
-    flagPair muonFlags;
+    vector<bool> muonFlags;
     for (int i = cumulativeFlags.at("muons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("muons").at(i).size()){
         muonFlags = cumulativeFlags.at("muons").at(i);
@@ -458,9 +466,9 @@ ValueLookup::leadMuonPair ()
       }
     }
     for (uint muonIndex0 = 0; muonIndex0 != muonFlags.size(); muonIndex0++){
-      if(!muonFlags.at(muonIndex0).first) continue;
+      if(!muonFlags.at(muonIndex0)) continue;
       for (uint muonIndex1 = muonIndex0 + 1; muonIndex1 < muonFlags.size(); muonIndex1++){
-        if(!muonFlags.at(muonIndex1).first) continue;
+        if(!muonFlags.at(muonIndex1)) continue;
         const BNmuon *mu0 = & muons->at(muonIndex0);
         const BNmuon *mu1 = & muons->at(muonIndex1);
         if(leadMuonPair.first == 0 || leadMuonPair.second == 0){
@@ -492,7 +500,7 @@ ValueLookup::leadElectronPair ()
   pair<const BNelectron *, const BNelectron *> leadElectronPair;
   leadElectronPair.first = leadElectronPair.second = 0;
   if(cumulativeFlags.find ("electrons") != cumulativeFlags.end ()){
-    flagPair electronFlags;
+    vector<bool> electronFlags;
     for (int i = cumulativeFlags.at("electrons").size() - 1; i >= 0; i--){
       if (cumulativeFlags.at("electrons").at(i).size()){
         electronFlags = cumulativeFlags.at("electrons").at(i);
@@ -500,9 +508,9 @@ ValueLookup::leadElectronPair ()
       }
     }
     for (uint electronIndex0 = 0; electronIndex0 != electronFlags.size(); electronIndex0++){
-      if(!electronFlags.at(electronIndex0).first) continue;
+      if(!electronFlags.at(electronIndex0)) continue;
       for (uint electronIndex1 = electronIndex0 + 1; electronIndex1 < electronFlags.size(); electronIndex1++){
-        if(!electronFlags.at(electronIndex1).first) continue;
+        if(!electronFlags.at(electronIndex1)) continue;
         const BNelectron *el0 = & electrons->at(electronIndex0);
         const BNelectron *el1 = & electrons->at(electronIndex1);
         if(leadElectronPair.first == 0 || leadElectronPair.second == 0){
@@ -888,7 +896,8 @@ ValueLookup::thetaToEta(double theta) {
 }
 
 
-flagPair ValueLookup::getLastValidFlags(string objType) {
+vector<bool>
+ValueLookup::getLastValidFlags(string objType) {
   // get the last valid flags in the flag map
   for (int i = cumulativeFlags.at(objType).size() - 1; i >= 0; i--) {  // loop backwards over all the cuts
     if (cumulativeFlags.at(objType).at(i).size()){            // If all the flags have been filled, then the last cut will have a nonzero size
@@ -896,6 +905,6 @@ flagPair ValueLookup::getLastValidFlags(string objType) {
     }
   }
   // no valid flags have been found
-  flagPair empty;
+  vector<bool> empty;
   return empty;
 }
