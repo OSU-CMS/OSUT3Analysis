@@ -1,3 +1,4 @@
+#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/plugins/Plotter.h"
 
 // The Plotter class handles user-defined histograms

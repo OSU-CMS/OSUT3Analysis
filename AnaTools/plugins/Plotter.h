@@ -15,6 +15,7 @@
 #include "BEAN/Collections/interface/BNmuon.h"
 
 #include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
 #include <vector>
 #include <string>
@@ -24,21 +25,6 @@
 
 
 using namespace std;
-
-
-struct histoDef {
-  string inputCollection;
-  //TFileDirectory *directory;
-  string directory;
-  string name;
-  string title; // contains axis labels
-  vector<double> binsX;
-  vector<double> binsY;
-  bool hasVariableBinsX;
-  bool hasVariableBinsY;
-  vector<string> inputVariables;
-  int dimensions;
-};
 
 
 class Plotter : public edm::EDAnalyzer

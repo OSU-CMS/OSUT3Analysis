@@ -35,4 +35,18 @@ struct cut
   vector<string>  variables;
 };
 
+struct histoDef {
+  string inputCollection;
+  //TFileDirectory *directory;
+  string directory;
+  string name;
+  string title; // contains axis labels
+  vector<double> binsX;
+  vector<double> binsY;
+  bool hasVariableBinsX;
+  bool hasVariableBinsY;
+  vector<string> inputVariables;
+  int dimensions;
+};
+
 #endif
