@@ -9,14 +9,13 @@
   <class pattern="edm::Wrapper<BNPFChgHad>"/>
   <class name="edm::Wrapper<std::vector<BNPFChgHad> >" />
 
-  <class name="UserVars" />
-  <class name="std::vector<UserVars>" />
-  <class pattern="edm::Wrapper<UserVars>"/>
-  <class name="edm::Wrapper<std::vector<UserVars> >" />
-
   <class name="std::map<std::string, double>" />
   <class name="std::vector<std::map<std::string, double> >" />
   <class pattern="edm::Wrapper<std::map<std::string, double> >"/>
   <class name="edm::Wrapper<std::vector<std::map<std::string, double> > >" />
 
+  <class name="CutCalculatorPayload"/>
+  <class name="std::vector<CutCalculatorPayload>"/>
+  <class name="edm::Wrapper<CutCalculatorPayload>"/>
+  <class name="edm::Wrapper<std::vector<CutCalculatorPayload> >"/>
 </lcgdict>

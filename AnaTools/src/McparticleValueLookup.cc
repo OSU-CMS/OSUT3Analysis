@@ -1,3 +1,6 @@
+#include <iostream>
+
+#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
 
 //!mcparticle valueLookup

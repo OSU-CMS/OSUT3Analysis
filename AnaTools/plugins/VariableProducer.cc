@@ -1,3 +1,4 @@
+#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/plugins/VariableProducer.h"
 
 VariableProducer::VariableProducer(const edm::ParameterSet &cfg) :

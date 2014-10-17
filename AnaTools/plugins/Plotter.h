@@ -1,4 +1,4 @@
- #ifndef PLOTTER
+#ifndef PLOTTER
 
 #define PLOTTER
 
@@ -11,10 +11,21 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 
+#include "BEAN/Collections/interface/BNelectron.h"
+#include "BEAN/Collections/interface/BNmuon.h"
+
+#include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+
 #include <vector>
 #include <string>
 
+#include "TH1.h"
+#include "TH2.h"
+
+
 using namespace std;
+
 
 class Plotter : public edm::EDAnalyzer
 {
@@ -33,75 +44,70 @@ class Plotter : public edm::EDAnalyzer
 
 
       // Remember to define parameters to be retrieved from the configuration file.
-/*       edm::InputTag jets_; */
+      edm::InputTag jets_; 
       edm::InputTag muons_;
-/*       edm::InputTag secMuons_; */
       edm::InputTag electrons_;
-/*       edm::InputTag taus_; */
-/*       edm::InputTag mets_; */
-/*       edm::InputTag tracks_; */
-/*       edm::InputTag genjets_; */
-/*       edm::InputTag mcparticles_; */
-/*       edm::InputTag primaryvertexs_; */
-/*       edm::InputTag bxlumis_; */
-/*       edm::InputTag photons_; */
-/*       edm::InputTag superclusters_; */
-/*       edm::InputTag triggers_; */
-/*       edm::InputTag trigobjs_; */
-
-
+      edm::InputTag taus_; 
+      edm::InputTag mets_; 
+      edm::InputTag genjets_; 
+      edm::InputTag mcparticles_; 
+      edm::InputTag primaryvertexs_; 
+      edm::InputTag photons_; 
+      edm::InputTag triggers_; 
+      
+      
       //Collections
-/*       edm::Handle<BNtriggerCollection> triggers; */
-/*       edm::Handle<BNtrigobjCollection> trigobjs; */
-/*       edm::Handle<BNjetCollection> jets; */
-/*       edm::Handle<BNmuonCollection> muons; */
-/*       edm::Handle<BNelectronCollection> electrons; */
-/*       edm::Handle<BNeventCollection> events; */
-/*       edm::Handle<BNtauCollection> taus; */
-/*       edm::Handle<BNmetCollection> mets; */
-/*       edm::Handle<BNtrackCollection> tracks; */
-/*       edm::Handle<BNgenjetCollection> genjets; */
-/*       edm::Handle<BNmcparticleCollection> mcparticles; */
-/*       edm::Handle<BNprimaryvertexCollection> primaryvertexs; */
-/*       edm::Handle<BNbxlumiCollection> bxlumis; */
-/*       edm::Handle<BNphotonCollection> photons; */
-/*       edm::Handle<BNsuperclusterCollection> superclusters; */
-
-/*       vector<vector<map<string, TH1D*>>> oneDHists_; */
-/*       vector<vector<map<string, TH2D*>>> twoDHists_; */
+      edm::Handle<BNtriggerCollection> triggers; 
+      edm::Handle<BNjetCollection> jets; 
+      edm::Handle<BNmuonCollection> muons;
+      edm::Handle<BNelectronCollection> electrons;
+      edm::Handle<BNtauCollection> taus; 
+      edm::Handle<BNmetCollection> mets; 
+      edm::Handle<BNgenjetCollection> genjets; 
+      edm::Handle<BNmcparticleCollection> mcparticles; 
+      edm::Handle<BNprimaryvertexCollection> primaryvertexs; 
+      edm::Handle<BNphotonCollection> photons; 
+      
 
       vector<edm::ParameterSet> histogramSets_;
 
       int verbose_;
 
+      ValueLookup *vl_;
+
       edm::Service<TFileService> fs_;
 
       vector<string> objectsToGet;
 
-
-
-      struct histoDef {
-        string inputCollection;
-        TFileDirectory *directory;
-        string name;
-        string title; // contains axis labels
-        vector<double> binsX;
-        vector<double> binsY;
-        vector<string> inputVariables;
-        int dimensions;
-      };
+      vector<TFileDirectory> subDirs;
 
       vector<histoDef> histogramDefinitions;
 
       string getDirectoryName(const string);
       vector<string> getInputTypes(const string);
       string fixOrdering(const string);
-      histoDef parseHistoDef(const edm::ParameterSet, string, TFileDirectory*);
-      void bookHistogram(Plotter::histoDef);
+      histoDef parseHistoDef(const edm::ParameterSet, const string, const string);
+      void bookHistogram(const histoDef);
+      pair<string,string> getVariableAndFunction(const string);
 
+      template <class InputCollection> void fillHistogram(const histoDef, const InputCollection);
+      template <class InputCollection1, class InputCollection2> void fillHistogram(const histoDef, const InputCollection1, const InputCollection2);
+
+      template <class InputCollection> void fill1DHistogram(const histoDef, const InputCollection);
+      template <class InputCollection1, class InputCollection2> void fill1DHistogram(const histoDef, const InputCollection1, const InputCollection2);
+
+      template <class InputCollection> void fill2DHistogram(const histoDef, const InputCollection);
+      template <class InputCollection1, class InputCollection2> void fill2DHistogram(const histoDef, const InputCollection1, const InputCollection2);
+
+      double getBinSize(TH1D *, const double);
+      pair<double,double> getBinSize(TH2D *, const double, const double);
+      string setYaxisLabel(const histoDef);
 
 
 };
+
+
+
 
 
 #endif
