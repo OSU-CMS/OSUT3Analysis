@@ -5,7 +5,6 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "FWCore/Framework/interface/MakerMacros.h"
 
 #include "OSUT3Analysis/AnaTools/plugins/AnalysisPayloads.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
@@ -38,9 +37,9 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     // Private variables initialized by the constructor.
     ////////////////////////////////////////////////////////////////////////////
-    edm::ParameterSet               collections_;
-    edm::ParameterSet               cuts_;
-    bool                            firstEvent_;
+    edm::ParameterSet  collections_;
+    edm::ParameterSet  cuts_;
+    bool               firstEvent_;
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -67,11 +66,11 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     // Private variables set after unpacking the cuts ParameterSet.
     ////////////////////////////////////////////////////////////////////////////
-    vector<cut>                     unpackedCuts_;
-    vector<string>                  unpackedTriggers_;
-    vector<string>                  unpackedTriggersToVeto_;
-    vector<string>                  objectsToFlag_;
-    vector<string>                  objectsToGet_;
+    vector<cut>     unpackedCuts_;
+    vector<string>  unpackedTriggers_;
+    vector<string>  unpackedTriggersToVeto_;
+    vector<string>  objectsToFlag_;
+    vector<string>  objectsToGet_;
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////

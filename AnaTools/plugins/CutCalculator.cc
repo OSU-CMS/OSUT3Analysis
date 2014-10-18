@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/plugins/CutCalculator.h"
@@ -78,37 +79,37 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "trigobjs")        !=  objectsToGet_.end  ())  event.getByLabel  (trigobjs_,        trigobjs);
 
   if (firstEvent_ && !bxlumis.isValid ())
-    clog << "WARNING: did not retrieve bxlumis collection from the event" << endl;
+    clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
   if (firstEvent_ && !electrons.isValid ())
-    clog << "WARNING: did not retrieve electrons collection from the event" << endl;
+    clog << "INFO: did not retrieve electrons collection from the event." << endl;
   if (firstEvent_ && !events.isValid ())
-    clog << "WARNING: did not retrieve events collection from the event" << endl;
+    clog << "INFO: did not retrieve events collection from the event." << endl;
   if (firstEvent_ && !genjets.isValid ())
-    clog << "WARNING: did not retrieve genjets collection from the event" << endl;
+    clog << "INFO: did not retrieve genjets collection from the event." << endl;
   if (firstEvent_ && !jets.isValid ())
-    clog << "WARNING: did not retrieve jets collection from the event" << endl;
+    clog << "INFO: did not retrieve jets collection from the event." << endl;
   if (firstEvent_ && !mcparticles.isValid ())
-    clog << "WARNING: did not retrieve mcparticles collection from the event" << endl;
+    clog << "INFO: did not retrieve mcparticles collection from the event." << endl;
   if (firstEvent_ && !mets.isValid ())
-    clog << "WARNING: did not retrieve mets collection from the event" << endl;
+    clog << "INFO: did not retrieve mets collection from the event." << endl;
   if (firstEvent_ && !muons.isValid ())
-    clog << "WARNING: did not retrieve muons collection from the event" << endl;
+    clog << "INFO: did not retrieve muons collection from the event." << endl;
   if (firstEvent_ && !photons.isValid ())
-    clog << "WARNING: did not retrieve photons collection from the event" << endl;
+    clog << "INFO: did not retrieve photons collection from the event." << endl;
   if (firstEvent_ && !primaryvertexs.isValid ())
-    clog << "WARNING: did not retrieve primaryvertexs collection from the event" << endl;
+    clog << "INFO: did not retrieve primaryvertexs collection from the event." << endl;
   if (firstEvent_ && !secMuons.isValid ())
-    clog << "WARNING: did not retrieve secMuons collection from the event" << endl;
+    clog << "INFO: did not retrieve secMuons collection from the event." << endl;
   if (firstEvent_ && !superclusters.isValid ())
-    clog << "WARNING: did not retrieve superclusters collection from the event" << endl;
+    clog << "INFO: did not retrieve superclusters collection from the event." << endl;
   if (firstEvent_ && !taus.isValid ())
-    clog << "WARNING: did not retrieve taus collection from the event" << endl;
+    clog << "INFO: did not retrieve taus collection from the event." << endl;
   if (firstEvent_ && !tracks.isValid ())
-    clog << "WARNING: did not retrieve tracks collection from the event" << endl;
+    clog << "INFO: did not retrieve tracks collection from the event." << endl;
   if (firstEvent_ && !triggers.isValid ())
-    clog << "WARNING: did not retrieve triggers collection from the event" << endl;
+    clog << "INFO: did not retrieve triggers collection from the event." << endl;
   if (firstEvent_ && !trigobjs.isValid ())
-    clog << "WARNING: did not retrieve trigobjs collection from the event" << endl;
+    clog << "INFO: did not retrieve trigobjs collection from the event." << endl;
   //////////////////////////////////////////////////////////////////////////////
 
   // Set all the private variables in the ValueLookup object before using it.
@@ -123,6 +124,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_->triggers = unpackedTriggers_;
   pl_->triggersToVeto = unpackedTriggersToVeto_;
   //////////////////////////////////////////////////////////////////////////////
+
 
   // Loop over cuts to set flags for each object indicating whether it passed
   // the cut.
@@ -618,6 +620,10 @@ CutCalculator::unpackCuts ()
       // Store the temporary cut variable into the vector of unpacked cuts.
       unpackedCuts_.push_back (tempCut);
     }
+  sort (objectsToGet_.begin (), objectsToGet_.end ());
+  objectsToGet_.erase (unique (objectsToGet_.begin (), objectsToGet_.end ()), objectsToGet_.end ());
+  sort (objectsToFlag_.begin (), objectsToFlag_.end ());
+  objectsToFlag_.erase (unique (objectsToFlag_.begin (), objectsToFlag_.end ()), objectsToFlag_.end ());
 
   return true;
 }
@@ -654,7 +660,7 @@ CutCalculator::evaluateComparison (T testValue, string comparison, T cutValue)
   else  if  (comparison  ==  ">")   returnValue  =  (testValue  >   cutValue);
   else
     {
-      clog << "WARNING: invalid comparison operator \"" << comparison << "\"" << endl;
+      clog << "WARNING: invalid comparison operator \"" << comparison << "\"." << endl;
       returnValue = false;
     }
 
@@ -871,4 +877,5 @@ CutCalculator::initializeValueLookup ()
   //////////////////////////////////////////////////////////////////////////////
 }
 
+#include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(CutCalculator);
