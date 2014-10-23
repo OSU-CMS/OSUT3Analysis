@@ -140,13 +140,23 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
     event.getByLabel (photons_, photons);
     if (!photons.product()) clog << "ERROR: could not get photons input collection" << endl;
   }
+  if (find(objectsToGet.begin(), objectsToGet.end(), "userVariables") != objectsToGet.end()) {
+    event.getByLabel ("UserVariableProduction", "userVariables", userVariables);
+    if (!userVariables.product()) clog << "ERROR: could not get userVariables input collection" << endl;
+  }
  
   // now that we have all the required objects, we'll loop over the histograms, filling each one as we go
 
   vector<histoDef>::iterator histogram;
   for(histogram = histogramDefinitions.begin(); histogram != histogramDefinitions.end(); ++histogram){
 
-    if(histogram->inputCollection == "muons"){
+    if (histogram->inputCollection == "userVariables") {
+      fillHistogram(*histogram, userVariables.product());
+    } 
+    else if (histogram->inputCollection == "mets") {
+      fillHistogram(*histogram, mets.product());
+    }
+    else if(histogram->inputCollection == "muons"){
       fillHistogram(*histogram, muons.product());
     }
     else if(histogram->inputCollection == "muon-muon pairs"){
@@ -494,7 +504,7 @@ template <class InputCollection> void Plotter::fill1DHistogram(const histoDef de
     }
     histogram->Fill(value, weight);
   }
-
+  
 }
 
 ////////////////////////////////////////////////////////////////////////

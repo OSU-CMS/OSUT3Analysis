@@ -50,6 +50,7 @@ class ValueLookup {
     double  valueLookup  (const  BNtau*            object,  string  variable,  string  function,  string  &stringValue);
     double  valueLookup  (const  BNtrack*          object,  string  variable,  string  function,  string  &stringValue);
     double  valueLookup  (const  BNtrigobj*        object,  string  variable,  string  function,  string  &stringValue);
+    double  valueLookup  (const map<string,double>* object,  string  variable,  string  function,  string  &stringValue); 
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////

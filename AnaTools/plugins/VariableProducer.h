@@ -75,7 +75,8 @@ class VariableProducer : public edm::EDProducer
 
       // Functions
 
-      double setDiMuonMetDeltaPhi(const BNmuonCollection *, const BNmetCollection *);
+      double setDiMuonMetDeltaPhi(const BNmuonCollection *muons, const BNmetCollection *mets);
+      double getDiMuonInvMass    (const BNmuonCollection *muons);  
 
 
   };

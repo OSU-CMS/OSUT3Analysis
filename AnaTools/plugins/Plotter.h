@@ -67,7 +67,8 @@ class Plotter : public edm::EDAnalyzer
       edm::Handle<BNmcparticleCollection> mcparticles; 
       edm::Handle<BNprimaryvertexCollection> primaryvertexs; 
       edm::Handle<BNphotonCollection> photons; 
-      
+      edm::Handle<vector< map<string,double> > > userVariables;
+
 
       vector<edm::ParameterSet> histogramSets_;
 

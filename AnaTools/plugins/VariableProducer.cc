@@ -1,10 +1,12 @@
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
+#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"  
 #include "OSUT3Analysis/AnaTools/plugins/VariableProducer.h"
 
 VariableProducer::VariableProducer(const edm::ParameterSet &cfg) :
   collectionMap_ (cfg.getParameter<edm::ParameterSet> ("inputsMap"))
 {
-  produces<map<string, double> > ("userVariables");
+
+  //  produces<map<string, double> > ("userVariables");
+  produces<vector<map<string, double> > > ("userVariables");
 
   jets_ = collectionMap_.getParameter<edm::InputTag> ("jets");
   muons_ = collectionMap_.getParameter<edm::InputTag> ("muons");
@@ -26,22 +28,52 @@ void
 VariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   // define structure that will be put into the event
-  auto_ptr<map<string, double> > userVariables(new map<string, double>);
+  auto_ptr<vector<map<string, double> > > userVariables (new vector<map<string, double> >);  
+
 
   // get whatever we need from the event
   event.getByLabel (muons_, muons);
   event.getByLabel (mets_, mets);
 
   ////////////////////////////////////////////////////////////////////////
+  map<string, double> myVars; 
+  myVars["dimuonMetDeltaPhi"] = setDiMuonMetDeltaPhi(muons.product(), mets.product());
+  myVars["dimuonInvMass"]     = getDiMuonInvMass(muons.product());  
+  myVars["metPt"] = mets->at(0).pt; 
 
-  (*userVariables)["diMuonMetDeltaPhi"] = setDiMuonMetDeltaPhi(muons.product(), mets.product());
+  userVariables->push_back(myVars);  
+
 
   ////////////////////////////////////////////////////////////////////////
 
-  // store all of our calculated quantities in the event
-  event.put(userVariables, "userVariables");
+  // store all of our calculated quantities in the event  
+  event.put (userVariables, "userVariables");
+  userVariables.reset();  
+
 
 }
+
+
+// calculate the invariant mass of muon pair in event 
+double
+VariableProducer::getDiMuonInvMass(const BNmuonCollection *muons) { 
+
+  // if not exactly two muons, return a dummy value
+  if (muons->size() != 2) { 
+    return -99;
+  } else {
+    BNmuon muon1 = muons->at(0);
+    BNmuon muon2 = muons->at(1);
+    TLorentzVector muon1vector;  
+    TLorentzVector muon2vector; 
+    muon1vector.SetPxPyPzE(muon1.px, muon1.py, muon1.pz, muon1.energy);
+    muon2vector.SetPxPyPzE(muon2.px, muon2.py, muon2.pz, muon2.energy);
+    TLorentzVector dimuonVector = muon1vector + muon2vector;
+    return dimuonVector.M();  
+  }
+
+}
+
 
 
 
