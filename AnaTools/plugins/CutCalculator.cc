@@ -456,6 +456,10 @@ CutCalculator::unpackCuts ()
       unpackedTriggers_ = cuts_.getParameter<vector<string> > ("triggers");
       objectsToGet_.push_back ("triggers");
     }
+  else {
+    clog << "ERROR:  triggers must be specified in the cuts.." << endl;
+    exit(0);  
+  }
   if (cuts_.exists ("triggersToVeto"))
     {
       unpackedTriggersToVeto_ = cuts_.getParameter<vector<string> > ("triggersToVeto");
