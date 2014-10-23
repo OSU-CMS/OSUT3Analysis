@@ -1,11 +1,15 @@
 import FWCore.ParameterSet.Config as cms
 import os
+import copy
+
 
 ################################################################################
 ########################### Set up the main process ############################
 ################################################################################
 
 process = cms.Process ('ProtoInvestigation')
+process.load ('FWCore.MessageService.MessageLogger_cfi')
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 # configure input files
 process.source = cms.Source ('PoolSource',
@@ -25,7 +29,7 @@ process.TFileService = cms.Service ('TFileService',
 # number of events to process
 # (mainly for testing, overwritten when running in batch mode)
 process.maxEvents = cms.untracked.PSet (
-    input = cms.untracked.int32 (5)
+    input = cms.untracked.int32 (1000)
 )
 
 ################################################################################
@@ -37,18 +41,57 @@ process.maxEvents = cms.untracked.PSet (
 from OSUT3Analysis.AnaTools.osuAnalysis_cfi import collectionMapBEANs # BEANs
 
 
+cuts = cms.PSet(
+    name = cms.string("DimuonSelection"),
+    triggers = cms.vstring(""), # TRIGGER
+    cuts = cms.VPSet (
+    cms.PSet (
+    inputCollection = cms.string("muons"),
+    cutString = cms.string("pt > -1"),
+    numberRequired = cms.string("== 2")  # require exactly 2 muons 
+    ),
+)
+)
+
+
+
 ################################################################################
+#################### Put all desired modules into the path #####################
+################################################################################
+
+process.out0 = cms.OutputModule("PoolOutputModule",
+                                dropMetaData = cms.untracked.string('ALL'),
+                                outputCommands = cms.untracked.vstring('keep *',
+                                                                       'drop BNtriggers_BNproducer_L1Talgo_BEANs'),
+                                fileName = cms.untracked.string('bean.root'),
+                                eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
+                                splitLevel = cms.untracked.int32(0),
+                                )
+
+process.CutCalculator = cms.EDProducer ('CutCalculator',
+                                        collections = collectionMapBEANs,
+                                        cuts = cuts,
+                                        )
+process.MuonObjectSelector = cms.EDFilter ('MuonObjectSelector',
+                                           collections = collectionMapBEANs,   
+                                           collectionToFilter = cms.string ('muons'),
+                                           cutDecisions = cms.InputTag ('CutCalculator', 'cutDecisions'),
+                                           )
+
+collectionMapBEANsSelected = copy.deepcopy(collectionMapBEANs)  
+collectionMapBEANsSelected.muons = cms.InputTag ('MuonObjectSelector', 'selectedObjects') 
 
 # create module to define an event-wide variable
 # e.g. deltaPhi between Met and dimuon system 
 process.UserVariableProduction = cms.EDProducer ('VariableProducer',
-                                                 inputsMap = collectionMapBEANs
+                                                 inputsMap = collectionMapBEANsSelected,
                                                  )
 
 
 process.Plotting = cms.EDAnalyzer ('Plotter',
                                    jets = cms.InputTag ('BNproducer', 'selectedPatJetsPFlow'),
-                                   muons    = cms.InputTag ('BNproducer', 'selectedPatMuonsLoosePFlow'),
+#                                   muons    = cms.InputTag ('BNproducer', 'selectedPatMuonsLoosePFlow'),
+                                   muons    = cms.InputTag ('MuonObjectSelector', 'selectedObjects'),  
                                    electrons = cms.InputTag ('BNproducer', 'selectedPatElectronsLoosePFlow'),
                                    taus = cms.InputTag ('BNproducer', 'selectedPatTaus'),
                                    mets = cms.InputTag ('BNproducer', 'patMETsPFlow'),
@@ -60,6 +103,9 @@ process.Plotting = cms.EDAnalyzer ('Plotter',
                                    histogramSets = cms.VPSet (),
                                    verbose = cms.int32(0),                                   
                                    )
+
+
+
 
 
 ################################################################################
@@ -79,22 +125,9 @@ process.Plotting.histogramSets.append(MyProtoHistograms)
 
 
 ################################################################################
-#################### Put all desired modules into the path #####################
+######### Define the path                                              #########
 ################################################################################
-
-process.out0 = cms.OutputModule("PoolOutputModule",
-                                dropMetaData = cms.untracked.string('ALL'),
-                                outputCommands = cms.untracked.vstring('keep *',
-                                                                       'drop BNtriggers_BNproducer_L1Talgo_BEANs'),
-                                fileName = cms.untracked.string('bean.root'),
-                                eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-                                splitLevel = cms.untracked.int32(0),
-                                )
-
-
-process.myPath = cms.Path (process.UserVariableProduction *
-                           process.Plotting
-                           )
+process.myPath = cms.Path (process.CutCalculator + process.MuonObjectSelector + process.UserVariableProduction + process.Plotting )
 
 # Include this to write out a skim:  
 process.myEndPath0 = cms.EndPath(process.out0)

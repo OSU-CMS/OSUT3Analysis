@@ -89,8 +89,10 @@ VariableProducer::setDiMuonMetDeltaPhi(const BNmuonCollection *muons, const BNme
     // get 4-vector of dimuon system
     BNmuon muon1 = muons->at(0);
     BNmuon muon2 = muons->at(1);
-    TLorentzVector muon1vector(muon1.px, muon1.py, muon1.pz, muon1.energy); 
-    TLorentzVector muon2vector(muon2.px, muon2.py, muon2.pz, muon2.energy); 
+    TLorentzVector muon1vector;  
+    TLorentzVector muon2vector; 
+    muon1vector.SetPxPyPzE(muon1.px, muon1.py, muon1.pz, muon1.energy);
+    muon2vector.SetPxPyPzE(muon2.px, muon2.py, muon2.pz, muon2.energy);
     TLorentzVector dimuonVector = muon1vector + muon2vector;
     // take delta phi with met
     BNmet met = mets->at(0);

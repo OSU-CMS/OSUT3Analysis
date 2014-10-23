@@ -14,7 +14,7 @@ MyProtoHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("dimuonMetDeltaPhi"),
             title = cms.string("#Delta(#phi) of the dimuon-MET system; dimuon-MET #Delta(#phi)"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
+            binsX = cms.untracked.vdouble(100, 0, 3.15),
             inputVariables = cms.vstring("dimuonMetDeltaPhi"),
         ),
         cms.PSet (
