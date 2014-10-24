@@ -109,6 +109,7 @@ class ValueLookup {
     edm::Handle<BNtriggerCollection>        setTriggers                  (edm::Handle<BNtriggerCollection>        &x)  {  return  (triggers                   =  x);  };
     edm::Handle<BNtrigobjCollection>        setTrigobjs                  (edm::Handle<BNtrigobjCollection>        &x)  {  return  (trigobjs                   =  x);  };
     edm::Handle<double>                     setRhokt6CaloJetsHandle      (edm::Handle<double>                     &x)  {  return  (rhokt6CaloJetsHandle_      =  x);  };
+    edm::Handle<vector< map<string,double> > > setUserVariables          (edm::Handle<vector< map<string,double> > > &x) { return  (userVariables             =  x);  };
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -222,6 +223,8 @@ class ValueLookup {
     edm::Handle<BNsuperclusterCollection>   superclusters;
     edm::Handle<BNstopCollection>           stops;
     edm::Handle<double>                     rhokt6CaloJetsHandle_;
+    edm::Handle<vector< map<string,double> > > userVariables;
+
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////

@@ -29,6 +29,7 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   tracks_          =  collections_.getParameter<edm::InputTag>  ("tracks");
   triggers_        =  collections_.getParameter<edm::InputTag>  ("triggers");
   trigobjs_        =  collections_.getParameter<edm::InputTag>  ("trigobjs");
+  userVariables_   =  collections_.getParameter<edm::InputTag>  ("userVariables");
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -77,6 +78,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "tracks")          !=  objectsToGet_.end  ())  event.getByLabel  (tracks_,          tracks);
   if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "triggers")        !=  objectsToGet_.end  ())  event.getByLabel  (triggers_,        triggers);
   if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "trigobjs")        !=  objectsToGet_.end  ())  event.getByLabel  (trigobjs_,        trigobjs);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "userVariables")   !=  objectsToGet_.end  ())  event.getByLabel  (userVariables_,   userVariables);
 
   if (firstEvent_ && !bxlumis.isValid ())
     clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
@@ -110,6 +112,8 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
     clog << "INFO: did not retrieve triggers collection from the event." << endl;
   if (firstEvent_ && !trigobjs.isValid ())
     clog << "INFO: did not retrieve trigobjs collection from the event." << endl;
+  if (firstEvent_ && !userVariables.isValid ())
+    clog << "INFO: did not retrieve userVariables collection from the event." << endl;
   //////////////////////////////////////////////////////////////////////////////
 
   // Set all the private variables in the ValueLookup object before using it.
@@ -184,6 +188,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
           else  if  (currentObject  ==  "tracks")                 pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  tracks,          "tracks");
           else  if  (currentObject  ==  "trigobjs")               pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  trigobjs,        "trigobjs");
           else  if  (currentObject  ==  "jets")                   pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  jets,            "jets");
+          else  if  (currentObject  ==  "userVariables")          pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  userVariables,   "userVariables");
           //////////////////////////////////////////////////////////////////////
 
           //////////////////////////////////////////////////////////////////////
@@ -840,6 +845,7 @@ CutCalculator::initializeValueLookup ()
   vl_->setTracks                    (tracks);
   vl_->setTriggers                  (triggers);
   vl_->setTrigobjs                  (trigobjs);
+  vl_->setUserVariables             (userVariables);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////

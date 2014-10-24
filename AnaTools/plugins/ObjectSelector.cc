@@ -83,6 +83,7 @@ typedef  ObjectSelector<BNtau>            TauObjectSelector;
 typedef  ObjectSelector<BNtrack>          TrackObjectSelector;
 typedef  ObjectSelector<BNtrigger>        TriggerObjectSelector;
 typedef  ObjectSelector<BNtrigobj>        TrigobjObjectSelector;
+typedef  ObjectSelector<map<string, double> > UserVarObjectSelector;
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(BxlumiObjectSelector);
@@ -100,3 +101,4 @@ DEFINE_FWK_MODULE(TauObjectSelector);
 DEFINE_FWK_MODULE(TrackObjectSelector);
 DEFINE_FWK_MODULE(TriggerObjectSelector);
 DEFINE_FWK_MODULE(TrigobjObjectSelector);
+DEFINE_FWK_MODULE(UserVarObjectSelector);
