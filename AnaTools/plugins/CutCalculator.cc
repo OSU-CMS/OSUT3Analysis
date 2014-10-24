@@ -456,10 +456,8 @@ CutCalculator::unpackCuts ()
       unpackedTriggers_ = cuts_.getParameter<vector<string> > ("triggers");
       objectsToGet_.push_back ("triggers");
     }
-  else {
-    clog << "ERROR:  triggers must be specified in the cuts.." << endl;
-    exit(0);  
-  }
+  else
+    clog << "WARNING: no triggers have been specified." << endl;
   if (cuts_.exists ("triggersToVeto"))
     {
       unpackedTriggersToVeto_ = cuts_.getParameter<vector<string> > ("triggersToVeto");
@@ -712,37 +710,40 @@ CutCalculator::evaluateTriggers ()
   pl_->vetoTriggerFlags.resize (pl_->triggersToVeto.size (), true);
   //////////////////////////////////////////////////////////////////////////////
 
-  for (BNtriggerCollection::const_iterator trigger = triggers->begin (); trigger != triggers->end (); trigger++)
+  if (triggers.isValid ())
     {
-      //////////////////////////////////////////////////////////////////////////
-      // If the current trigger matches one of the triggers to veto, record its
-      // decision. If any of these triggers is true, set the event-wide flag to
-      // false;
-      //////////////////////////////////////////////////////////////////////////
-      for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
+      for (BNtriggerCollection::const_iterator trigger = triggers->begin (); trigger != triggers->end (); trigger++)
         {
-          if (trigger->name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+          //////////////////////////////////////////////////////////////////////////
+          // If the current trigger matches one of the triggers to veto, record its
+          // decision. If any of these triggers is true, set the event-wide flag to
+          // false;
+          //////////////////////////////////////////////////////////////////////////
+          for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
             {
-              vetoTriggerDecision = vetoTriggerDecision && !trigger->pass;
-              pl_->vetoTriggerFlags.at (triggerIndex) = trigger->pass;
+              if (trigger->name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+                {
+                  vetoTriggerDecision = vetoTriggerDecision && !trigger->pass;
+                  pl_->vetoTriggerFlags.at (triggerIndex) = trigger->pass;
+                }
             }
-        }
-      //////////////////////////////////////////////////////////////////////////
+          //////////////////////////////////////////////////////////////////////////
 
-      //////////////////////////////////////////////////////////////////////////
-      // If the current trigger matches one of the required triggers, record its
-      // decision. If any of these triggers is true, set the event-wide flag to
-      // true.
-      //////////////////////////////////////////////////////////////////////////
-      for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
-        {
-          if (trigger->name.find (pl_->triggers.at (triggerIndex)) == 0)
+          //////////////////////////////////////////////////////////////////////////
+          // If the current trigger matches one of the required triggers, record its
+          // decision. If any of these triggers is true, set the event-wide flag to
+          // true.
+          //////////////////////////////////////////////////////////////////////////
+          for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
             {
-              triggerDecision = triggerDecision || trigger->pass;
-              pl_->triggerFlags.at (triggerIndex) = trigger->pass;
+              if (trigger->name.find (pl_->triggers.at (triggerIndex)) == 0)
+                {
+                  triggerDecision = triggerDecision || trigger->pass;
+                  pl_->triggerFlags.at (triggerIndex) = trigger->pass;
+                }
             }
+          //////////////////////////////////////////////////////////////////////////
         }
-      //////////////////////////////////////////////////////////////////////////
     }
 
   // Store the logical AND of the two event-wide flags as the event-wide
