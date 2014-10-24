@@ -4,6 +4,8 @@
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/plugins/CutCalculator.h"
 
+#define EXIT_CODE 1
+
 CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   collections_  (cfg.getParameter<edm::ParameterSet>   ("collections")),
   cuts_         (cfg.getParameter<edm::ParameterSet>  ("cuts")),
@@ -37,7 +39,7 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   if (!unpackCuts ())
     {
       clog << "ERROR: failed to interpret cuts PSet. Quitting..." << endl;
-      exit (1);
+      exit (EXIT_CODE);
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -239,7 +241,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   if (!pl_->isValid)
     {
       clog << "ERROR: failed to set flags. Quitting..." <<  endl;
-      exit (1);
+      exit (EXIT_CODE);
     }
   //////////////////////////////////////////////////////////////////////////////
 

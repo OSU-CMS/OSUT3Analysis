@@ -3,6 +3,8 @@
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/plugins/ObjectSelector.h"
 
+#define EXIT_CODE 2
+
 template<class T>
 ObjectSelector<T>::ObjectSelector (const edm::ParameterSet &cfg) :
   collections_         (cfg.getParameter<edm::ParameterSet>  ("collections")),
