@@ -15,23 +15,23 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   //////////////////////////////////////////////////////////////////////////////
   // Retrieve the object collection names from the collections ParameterSet.
   //////////////////////////////////////////////////////////////////////////////
-  bxlumis_         =  collections_.getParameter<edm::InputTag>  ("bxlumis");
-  electrons_       =  collections_.getParameter<edm::InputTag>  ("electrons");
-  events_          =  collections_.getParameter<edm::InputTag>  ("events");
-  genjets_         =  collections_.getParameter<edm::InputTag>  ("genjets");
-  jets_            =  collections_.getParameter<edm::InputTag>  ("jets");
-  mcparticles_     =  collections_.getParameter<edm::InputTag>  ("mcparticles");
-  mets_            =  collections_.getParameter<edm::InputTag>  ("mets");
-  muons_           =  collections_.getParameter<edm::InputTag>  ("muons");
-  photons_         =  collections_.getParameter<edm::InputTag>  ("photons");
-  primaryvertexs_  =  collections_.getParameter<edm::InputTag>  ("primaryvertexs");
-  secMuons_        =  collections_.getParameter<edm::InputTag>  ("secMuons");
-  superclusters_   =  collections_.getParameter<edm::InputTag>  ("superclusters");
-  taus_            =  collections_.getParameter<edm::InputTag>  ("taus");
-  tracks_          =  collections_.getParameter<edm::InputTag>  ("tracks");
-  triggers_        =  collections_.getParameter<edm::InputTag>  ("triggers");
-  trigobjs_        =  collections_.getParameter<edm::InputTag>  ("trigobjs");
-  userVariables_   =  collections_.getParameter<edm::InputTag>  ("userVariables");
+  if  (collections_.exists  ("bxlumis"))         bxlumis_         =  collections_.getParameter<edm::InputTag>  ("bxlumis");
+  if  (collections_.exists  ("electrons"))       electrons_       =  collections_.getParameter<edm::InputTag>  ("electrons");
+  if  (collections_.exists  ("events"))          events_          =  collections_.getParameter<edm::InputTag>  ("events");
+  if  (collections_.exists  ("genjets"))         genjets_         =  collections_.getParameter<edm::InputTag>  ("genjets");
+  if  (collections_.exists  ("jets"))            jets_            =  collections_.getParameter<edm::InputTag>  ("jets");
+  if  (collections_.exists  ("mcparticles"))     mcparticles_     =  collections_.getParameter<edm::InputTag>  ("mcparticles");
+  if  (collections_.exists  ("mets"))            mets_            =  collections_.getParameter<edm::InputTag>  ("mets");
+  if  (collections_.exists  ("muons"))           muons_           =  collections_.getParameter<edm::InputTag>  ("muons");
+  if  (collections_.exists  ("photons"))         photons_         =  collections_.getParameter<edm::InputTag>  ("photons");
+  if  (collections_.exists  ("primaryvertexs"))  primaryvertexs_  =  collections_.getParameter<edm::InputTag>  ("primaryvertexs");
+  if  (collections_.exists  ("secMuons"))        secMuons_        =  collections_.getParameter<edm::InputTag>  ("secMuons");
+  if  (collections_.exists  ("superclusters"))   superclusters_   =  collections_.getParameter<edm::InputTag>  ("superclusters");
+  if  (collections_.exists  ("taus"))            taus_            =  collections_.getParameter<edm::InputTag>  ("taus");
+  if  (collections_.exists  ("tracks"))          tracks_          =  collections_.getParameter<edm::InputTag>  ("tracks");
+  if  (collections_.exists  ("triggers"))        triggers_        =  collections_.getParameter<edm::InputTag>  ("triggers");
+  if  (collections_.exists  ("trigobjs"))        trigobjs_        =  collections_.getParameter<edm::InputTag>  ("trigobjs");
+  if  (collections_.exists  ("userVariables"))   userVariables_   =  collections_.getParameter<edm::InputTag>  ("userVariables");
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
