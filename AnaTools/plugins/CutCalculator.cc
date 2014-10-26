@@ -4,8 +4,10 @@
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/plugins/CutCalculator.h"
 
+#define EXIT_CODE 1
+
 CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
-  collections_  (cfg.getParameter<edm::ParameterSet>   ("collections")),
+  collections_  (cfg.getParameter<edm::ParameterSet>  ("collections")),
   cuts_         (cfg.getParameter<edm::ParameterSet>  ("cuts")),
   firstEvent_   (true),
   vl_           (NULL)
@@ -13,22 +15,23 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   //////////////////////////////////////////////////////////////////////////////
   // Retrieve the object collection names from the collections ParameterSet.
   //////////////////////////////////////////////////////////////////////////////
-  bxlumis_         =  collections_.getParameter<edm::InputTag>  ("bxlumis");
-  electrons_       =  collections_.getParameter<edm::InputTag>  ("electrons");
-  events_          =  collections_.getParameter<edm::InputTag>  ("events");
-  genjets_         =  collections_.getParameter<edm::InputTag>  ("genjets");
-  jets_            =  collections_.getParameter<edm::InputTag>  ("jets");
-  mcparticles_     =  collections_.getParameter<edm::InputTag>  ("mcparticles");
-  mets_            =  collections_.getParameter<edm::InputTag>  ("mets");
-  muons_           =  collections_.getParameter<edm::InputTag>  ("muons");
-  photons_         =  collections_.getParameter<edm::InputTag>  ("photons");
-  primaryvertexs_  =  collections_.getParameter<edm::InputTag>  ("primaryvertexs");
-  secMuons_        =  collections_.getParameter<edm::InputTag>  ("secMuons");
-  superclusters_   =  collections_.getParameter<edm::InputTag>  ("superclusters");
-  taus_            =  collections_.getParameter<edm::InputTag>  ("taus");
-  tracks_          =  collections_.getParameter<edm::InputTag>  ("tracks");
-  triggers_        =  collections_.getParameter<edm::InputTag>  ("triggers");
-  trigobjs_        =  collections_.getParameter<edm::InputTag>  ("trigobjs");
+  if  (collections_.exists  ("bxlumis"))         bxlumis_         =  collections_.getParameter<edm::InputTag>  ("bxlumis");
+  if  (collections_.exists  ("electrons"))       electrons_       =  collections_.getParameter<edm::InputTag>  ("electrons");
+  if  (collections_.exists  ("events"))          events_          =  collections_.getParameter<edm::InputTag>  ("events");
+  if  (collections_.exists  ("genjets"))         genjets_         =  collections_.getParameter<edm::InputTag>  ("genjets");
+  if  (collections_.exists  ("jets"))            jets_            =  collections_.getParameter<edm::InputTag>  ("jets");
+  if  (collections_.exists  ("mcparticles"))     mcparticles_     =  collections_.getParameter<edm::InputTag>  ("mcparticles");
+  if  (collections_.exists  ("mets"))            mets_            =  collections_.getParameter<edm::InputTag>  ("mets");
+  if  (collections_.exists  ("muons"))           muons_           =  collections_.getParameter<edm::InputTag>  ("muons");
+  if  (collections_.exists  ("photons"))         photons_         =  collections_.getParameter<edm::InputTag>  ("photons");
+  if  (collections_.exists  ("primaryvertexs"))  primaryvertexs_  =  collections_.getParameter<edm::InputTag>  ("primaryvertexs");
+  if  (collections_.exists  ("secMuons"))        secMuons_        =  collections_.getParameter<edm::InputTag>  ("secMuons");
+  if  (collections_.exists  ("superclusters"))   superclusters_   =  collections_.getParameter<edm::InputTag>  ("superclusters");
+  if  (collections_.exists  ("taus"))            taus_            =  collections_.getParameter<edm::InputTag>  ("taus");
+  if  (collections_.exists  ("tracks"))          tracks_          =  collections_.getParameter<edm::InputTag>  ("tracks");
+  if  (collections_.exists  ("triggers"))        triggers_        =  collections_.getParameter<edm::InputTag>  ("triggers");
+  if  (collections_.exists  ("trigobjs"))        trigobjs_        =  collections_.getParameter<edm::InputTag>  ("trigobjs");
+  if  (collections_.exists  ("userVariables"))   userVariables_   =  collections_.getParameter<edm::InputTag>  ("userVariables");
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -37,7 +40,7 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   if (!unpackCuts ())
     {
       clog << "ERROR: failed to interpret cuts PSet. Quitting..." << endl;
-      exit (1);
+      exit (EXIT_CODE);
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -77,6 +80,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "tracks")          !=  objectsToGet_.end  ())  event.getByLabel  (tracks_,          tracks);
   if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "triggers")        !=  objectsToGet_.end  ())  event.getByLabel  (triggers_,        triggers);
   if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "trigobjs")        !=  objectsToGet_.end  ())  event.getByLabel  (trigobjs_,        trigobjs);
+  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "userVariables")   !=  objectsToGet_.end  ())  event.getByLabel  (userVariables_,   userVariables);
 
   if (firstEvent_ && !bxlumis.isValid ())
     clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
@@ -110,6 +114,8 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
     clog << "INFO: did not retrieve triggers collection from the event." << endl;
   if (firstEvent_ && !trigobjs.isValid ())
     clog << "INFO: did not retrieve trigobjs collection from the event." << endl;
+  if (firstEvent_ && !userVariables.isValid ())
+    clog << "INFO: did not retrieve userVariables collection from the event." << endl;
   //////////////////////////////////////////////////////////////////////////////
 
   // Set all the private variables in the ValueLookup object before using it.
@@ -184,6 +190,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
           else  if  (currentObject  ==  "tracks")                 pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  tracks,          "tracks");
           else  if  (currentObject  ==  "trigobjs")               pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  trigobjs,        "trigobjs");
           else  if  (currentObject  ==  "jets")                   pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  jets,            "jets");
+          else  if  (currentObject  ==  "userVariables")          pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  userVariables,   "userVariables");
           //////////////////////////////////////////////////////////////////////
 
           //////////////////////////////////////////////////////////////////////
@@ -239,7 +246,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   if (!pl_->isValid)
     {
       clog << "ERROR: failed to set flags. Quitting..." <<  endl;
-      exit (1);
+      exit (EXIT_CODE);
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -456,10 +463,8 @@ CutCalculator::unpackCuts ()
       unpackedTriggers_ = cuts_.getParameter<vector<string> > ("triggers");
       objectsToGet_.push_back ("triggers");
     }
-  else {
-    clog << "ERROR:  triggers must be specified in the cuts.." << endl;
-    exit(0);  
-  }
+  else
+    clog << "WARNING: no triggers have been specified." << endl;
   if (cuts_.exists ("triggersToVeto"))
     {
       unpackedTriggersToVeto_ = cuts_.getParameter<vector<string> > ("triggersToVeto");
@@ -712,37 +717,40 @@ CutCalculator::evaluateTriggers ()
   pl_->vetoTriggerFlags.resize (pl_->triggersToVeto.size (), true);
   //////////////////////////////////////////////////////////////////////////////
 
-  for (BNtriggerCollection::const_iterator trigger = triggers->begin (); trigger != triggers->end (); trigger++)
+  if (triggers.isValid ())
     {
-      //////////////////////////////////////////////////////////////////////////
-      // If the current trigger matches one of the triggers to veto, record its
-      // decision. If any of these triggers is true, set the event-wide flag to
-      // false;
-      //////////////////////////////////////////////////////////////////////////
-      for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
+      for (BNtriggerCollection::const_iterator trigger = triggers->begin (); trigger != triggers->end (); trigger++)
         {
-          if (trigger->name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+          //////////////////////////////////////////////////////////////////////////
+          // If the current trigger matches one of the triggers to veto, record its
+          // decision. If any of these triggers is true, set the event-wide flag to
+          // false;
+          //////////////////////////////////////////////////////////////////////////
+          for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
             {
-              vetoTriggerDecision = vetoTriggerDecision && !trigger->pass;
-              pl_->vetoTriggerFlags.at (triggerIndex) = trigger->pass;
+              if (trigger->name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+                {
+                  vetoTriggerDecision = vetoTriggerDecision && !trigger->pass;
+                  pl_->vetoTriggerFlags.at (triggerIndex) = trigger->pass;
+                }
             }
-        }
-      //////////////////////////////////////////////////////////////////////////
+          //////////////////////////////////////////////////////////////////////////
 
-      //////////////////////////////////////////////////////////////////////////
-      // If the current trigger matches one of the required triggers, record its
-      // decision. If any of these triggers is true, set the event-wide flag to
-      // true.
-      //////////////////////////////////////////////////////////////////////////
-      for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
-        {
-          if (trigger->name.find (pl_->triggers.at (triggerIndex)) == 0)
+          //////////////////////////////////////////////////////////////////////////
+          // If the current trigger matches one of the required triggers, record its
+          // decision. If any of these triggers is true, set the event-wide flag to
+          // true.
+          //////////////////////////////////////////////////////////////////////////
+          for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
             {
-              triggerDecision = triggerDecision || trigger->pass;
-              pl_->triggerFlags.at (triggerIndex) = trigger->pass;
+              if (trigger->name.find (pl_->triggers.at (triggerIndex)) == 0)
+                {
+                  triggerDecision = triggerDecision || trigger->pass;
+                  pl_->triggerFlags.at (triggerIndex) = trigger->pass;
+                }
             }
+          //////////////////////////////////////////////////////////////////////////
         }
-      //////////////////////////////////////////////////////////////////////////
     }
 
   // Store the logical AND of the two event-wide flags as the event-wide
@@ -840,6 +848,7 @@ CutCalculator::initializeValueLookup ()
   vl_->setTracks                    (tracks);
   vl_->setTriggers                  (triggers);
   vl_->setTrigobjs                  (trigobjs);
+  vl_->setUserVariables             (userVariables);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////

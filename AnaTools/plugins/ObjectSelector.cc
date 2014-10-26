@@ -3,6 +3,8 @@
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/plugins/ObjectSelector.h"
 
+#define EXIT_CODE 2
+
 template<class T>
 ObjectSelector<T>::ObjectSelector (const edm::ParameterSet &cfg) :
   collections_         (cfg.getParameter<edm::ParameterSet>  ("collections")),
@@ -68,21 +70,22 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   return (cutDecisions.isValid () ? cutDecisions->eventDecision : true);
 }
 
-typedef  ObjectSelector<BNbxlumi>         BxlumiObjectSelector;
-typedef  ObjectSelector<BNelectron>       ElectronObjectSelector;
-typedef  ObjectSelector<BNevent>          EventObjectSelector;
-typedef  ObjectSelector<BNgenjet>         GenjetObjectSelector;
-typedef  ObjectSelector<BNjet>            JetObjectSelector;
-typedef  ObjectSelector<BNmcparticle>     McparticleObjectSelector;
-typedef  ObjectSelector<BNmet>            MetObjectSelector;
-typedef  ObjectSelector<BNmuon>           MuonObjectSelector;
-typedef  ObjectSelector<BNphoton>         PhotonObjectSelector;
-typedef  ObjectSelector<BNprimaryvertex>  PrimaryvertexObjectSelector;
-typedef  ObjectSelector<BNsupercluster>   SuperclusterObjectSelector;
-typedef  ObjectSelector<BNtau>            TauObjectSelector;
-typedef  ObjectSelector<BNtrack>          TrackObjectSelector;
-typedef  ObjectSelector<BNtrigger>        TriggerObjectSelector;
-typedef  ObjectSelector<BNtrigobj>        TrigobjObjectSelector;
+typedef  ObjectSelector<BNbxlumi>              BxlumiObjectSelector;
+typedef  ObjectSelector<BNelectron>            ElectronObjectSelector;
+typedef  ObjectSelector<BNevent>               EventObjectSelector;
+typedef  ObjectSelector<BNgenjet>              GenjetObjectSelector;
+typedef  ObjectSelector<BNjet>                 JetObjectSelector;
+typedef  ObjectSelector<BNmcparticle>          McparticleObjectSelector;
+typedef  ObjectSelector<BNmet>                 MetObjectSelector;
+typedef  ObjectSelector<BNmuon>                MuonObjectSelector;
+typedef  ObjectSelector<BNphoton>              PhotonObjectSelector;
+typedef  ObjectSelector<BNprimaryvertex>       PrimaryvertexObjectSelector;
+typedef  ObjectSelector<BNsupercluster>        SuperclusterObjectSelector;
+typedef  ObjectSelector<BNtau>                 TauObjectSelector;
+typedef  ObjectSelector<BNtrack>               TrackObjectSelector;
+typedef  ObjectSelector<BNtrigger>             TriggerObjectSelector;
+typedef  ObjectSelector<BNtrigobj>             TrigobjObjectSelector;
+typedef  ObjectSelector<map<string, double> >  UserVarObjectSelector;
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(BxlumiObjectSelector);
@@ -100,3 +103,4 @@ DEFINE_FWK_MODULE(TauObjectSelector);
 DEFINE_FWK_MODULE(TrackObjectSelector);
 DEFINE_FWK_MODULE(TriggerObjectSelector);
 DEFINE_FWK_MODULE(TrigobjObjectSelector);
+DEFINE_FWK_MODULE(UserVarObjectSelector);

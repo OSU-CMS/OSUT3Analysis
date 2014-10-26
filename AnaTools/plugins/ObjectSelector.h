@@ -12,14 +12,14 @@
 
 template<class T>
 class ObjectSelector : public edm::EDFilter
-  {
-    public:
-      ObjectSelector (const edm::ParameterSet &);
-      ~ObjectSelector ();
+{
+  public:
+    ObjectSelector (const edm::ParameterSet &);
+    ~ObjectSelector ();
 
-      bool filter (edm::Event &, const edm::EventSetup &);
+    bool filter (edm::Event &, const edm::EventSetup &);
 
-    private:
+  private:
     ////////////////////////////////////////////////////////////////////////////
     // Private variables initialized by the constructor.
     ////////////////////////////////////////////////////////////////////////////
@@ -41,6 +41,6 @@ class ObjectSelector : public edm::EDFilter
 
     // Payload for this EDFilter.
     auto_ptr<vector<T> > pl_;
-  };
+};
 
 #endif

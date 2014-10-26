@@ -1,6 +1,8 @@
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/plugins/Plotter.h"
 
+#define EXIT_CODE 5
+
 // The Plotter class handles user-defined histograms
 // As input, it takes:
 //   1. histogram definitions
