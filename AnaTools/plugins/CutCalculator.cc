@@ -7,7 +7,7 @@
 #define EXIT_CODE 1
 
 CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
-  collections_  (cfg.getParameter<edm::ParameterSet>   ("collections")),
+  collections_  (cfg.getParameter<edm::ParameterSet>  ("collections")),
   cuts_         (cfg.getParameter<edm::ParameterSet>  ("cuts")),
   firstEvent_   (true),
   vl_           (NULL)

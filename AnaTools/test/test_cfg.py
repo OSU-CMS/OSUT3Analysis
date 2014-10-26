@@ -29,7 +29,7 @@ process.TFileService = cms.Service ('TFileService',
     fileName = cms.string ('hist.root')
 )
 process.maxEvents = cms.untracked.PSet (
-    input = cms.untracked.int32 (-1)
+    input = cms.untracked.int32 (15000)
 )
 
 ###########################################################
@@ -224,7 +224,12 @@ process.MuonObjectSelector = cms.EDFilter ('MuonObjectSelector',
   cutDecisions        =  cms.InputTag ('CutCalculator', 'cutDecisions'),
 )
 
-process.Plotter = cms.EDAnalyzer ("Plotter",
+process.CutFlowPlotter = cms.EDAnalyzer ('CutFlowPlotter',
+  cutDecisions  =  cms.InputTag  ('CutCalculator',  'cutDecisions'),
+  channelName   =  cms.string    ('Preselection'),
+)
+
+process.Plotter = cms.EDAnalyzer ('Plotter',
   jets            =  collections.jets,
   muons           =  cms.InputTag ('MuonObjectSelector', 'selectedObjects'),
   electrons       =  collections.electrons,
@@ -240,4 +245,4 @@ process.Plotter = cms.EDAnalyzer ("Plotter",
   verbose         =  cms.int32 (0),
 )
 
-process.myPath = cms.Path (process.CutCalculator + process.MuonObjectSelector + process.Plotter)
+process.myPath = cms.Path (process.CutCalculator + process.CutFlowPlotter + process.MuonObjectSelector + process.Plotter)
