@@ -61,6 +61,7 @@ class CutCalculator : public edm::EDProducer
     edm::InputTag  tracks_;
     edm::InputTag  triggers_;
     edm::InputTag  trigobjs_;
+    edm::InputTag  userVariables_;
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -92,6 +93,7 @@ class CutCalculator : public edm::EDProducer
     edm::Handle<BNtrackCollection>          tracks;
     edm::Handle<BNtriggerCollection>        triggers;
     edm::Handle<BNtrigobjCollection>        trigobjs;
+    edm::Handle<vector< map<string,double> > > userVariables;  
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDProducer.
