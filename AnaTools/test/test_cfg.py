@@ -260,4 +260,4 @@ histograms = cms.PSet(
 add_channels  (process,  [eMuMinimal],    cms.VPSet  (histograms),  collections,  False)
 add_channels  (process,  [preselection],  cms.VPSet  (histograms),  collections)
 
-outfile = open('dumpedConfig.py','w'); print >> outfile,process.dumpPython(); outfile.close()
+#outfile = open('dumpedConfig.py','w'); print >> outfile,process.dumpPython(); outfile.close()
