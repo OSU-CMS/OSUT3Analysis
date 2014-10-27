@@ -180,7 +180,7 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
-def add_channels (process, channels, collections, skim = True):
+def add_channels (process, channels, histogramSets, collections, skim = True):
     ############################################################################
     # Suffix is appended to the name of the output file. In batch mode, an
     # underscore followed by the job number is appended.
@@ -191,26 +191,28 @@ def add_channels (process, channels, collections, skim = True):
     ############################################################################
 
     ############################################################################
-    # We append filterIndex and channelIndex to the names of the filter PSets
-    # and output PSets, respectively, since they need unique names. We use
-    # function attributes so that add_channels can be called multiple times to
-    # add additional channels.
+    # We append filterIndexnames of the filter PSets since they need unique
+    # names. We use function attributes so that add_channels can be called
+    # multiple times to add additional channels.
     ############################################################################
     if not hasattr (add_channels, "filterIndex"):
         add_channels.filterIndex = 0
-    if not hasattr (add_channels, "channelIndex"):
-        add_channels.channelIndex = 0
+    if not hasattr (add_channels, "endPath"):
+        add_channels.endPath = cms.EndPath ()
     ############################################################################
 
     for channel in channels:
+        channelPath = cms.Path ()
+        channelCollections = copy.deepcopy (collections)
+
         ########################################################################
         # Get the name of the channel and try to make a directory with that
         # name. If the directory already exists, an OSError exception will be
         # raised, which we ignore.
         ########################################################################
+        channelName = channel.name.pythonValue ()
+        channelName = channelName[1:-1]
         if skim:
-            channelName = channel.name.pythonValue ()
-            channelName = channelName[1:-1]
             try:
                 os.mkdir (channelName)
             except OSError:
@@ -224,9 +226,18 @@ def add_channels (process, channels, collections, skim = True):
             collections = collections,
             cuts = channel
         )
-        myPath = cms.Path (cutCalculator)
-        setattr (process, "cutCalculator" + str (add_channels.channelIndex), cutCalculator)
-        setattr (process, "myPath" + str (add_channels.channelIndex), myPath)
+        channelPath += cutCalculator
+        setattr (process, channelName + "CutCalculator", cutCalculator)
+        ########################################################################
+
+        ########################################################################
+        # Add a cut flow plotting module for this channel to the path.
+        ########################################################################
+        cutFlowPlotter = cms.EDAnalyzer ("CutFlowPlotter",
+            cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
+        )
+        channelPath += cutFlowPlotter
+        setattr (process, channelName + "CutFlowPlotter", cutFlowPlotter)
         ########################################################################
 
         ########################################################################
@@ -252,21 +263,42 @@ def add_channels (process, channels, collections, skim = True):
         # corresponding object selector to the path. We also trade the original
         # collection for the slimmed collection in the output commands.
         ########################################################################
-        originalFilterIndex = add_channels.filterIndex
         cutCollections = get_collections (channel.cuts)
         for collection in cutCollections:
             filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
-            myFilter = cms.EDFilter (filterName,
+            objectSelector = cms.EDFilter (filterName,
                 collections = collections,
                 collectionToFilter = cms.string (collection),
-                cutDecisions = cms.InputTag ("cutCalculator" + str (add_channels.channelIndex), "cutDecisions")
+                cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
             )
-            myFilterPath = cms.Path (myFilter)
-            setattr (process, "myFilter" + str (add_channels.filterIndex), myFilter)
-            setattr (process, "myFilterPath" + str (add_channels.filterIndex), myFilterPath)
+            channelPath += objectSelector
+            setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
+            setattr (channelCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), "selectedObjects"))
             add_channels.filterIndex += 1
             outputCommands.append ("drop BN" + collection + "_*_*_BEANs")
             outputCommands.append ("keep BN" + collection + "_*_*_OSUAnalysis")
+        ########################################################################
+
+        ########################################################################
+        # Add a plotting module for this channel to the path.
+        ########################################################################
+        plotter = cms.EDAnalyzer ("Plotter",
+            jets            =  channelCollections.jets,
+            muons           =  channelCollections.muons,
+            electrons       =  channelCollections.electrons,
+            taus            =  channelCollections.taus,
+            mets            =  channelCollections.mets,
+            genjets         =  channelCollections.genjets,
+            mcparticles     =  channelCollections.mcparticles,
+            primaryvertexs  =  channelCollections.primaryvertexs,
+            photons         =  channelCollections.photons,
+            triggers        =  channelCollections.triggers,
+
+            histogramSets   =  histogramSets,
+            verbose         =  cms.int32 (0)
+        )
+        channelPath += plotter
+        setattr (process, channelName + "Plotter", plotter)
         ########################################################################
 
         ########################################################################
@@ -278,8 +310,8 @@ def add_channels (process, channels, collections, skim = True):
         if skim:
             SelectEvents = cms.vstring ()
             if cutCollections:
-                SelectEvents = cms.vstring ("myFilterPath" + str (originalFilterIndex))
-            out = cms.OutputModule ("PoolOutputModule",
+                SelectEvents = cms.vstring (channelName)
+            poolOutputModule = cms.OutputModule ("PoolOutputModule",
                 splitLevel = cms.untracked.int32 (0),
                 eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
                 fileName = cms.untracked.string (channelName + "/skim" + suffix + ".root"),
@@ -287,8 +319,9 @@ def add_channels (process, channels, collections, skim = True):
                 outputCommands = cms.untracked.vstring (outputCommands),
                 dropMetaData = cms.untracked.string ("ALL")
             )
-            myEndPath = cms.EndPath (out)
-            setattr (process, "out" + str (add_channels.channelIndex), out)
-            setattr (process, "myEndPath" + str (add_channels.channelIndex), myEndPath)
-        add_channels.channelIndex += 1
+            add_channels.endPath += poolOutputModule
+            setattr (process, channelName + "PoolOutputModule", poolOutputModule)
         ########################################################################
+
+        setattr (process, channelName, channelPath)
+    setattr (process, "endPath", add_channels.endPath)

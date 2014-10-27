@@ -1,4 +1,5 @@
 import FWCore.ParameterSet.Config as cms
+from OSUT3Analysis.Configuration.processingUtilities import *
 import math
 import os
 
@@ -29,7 +30,7 @@ process.TFileService = cms.Service ('TFileService',
     fileName = cms.string ('hist.root')
 )
 process.maxEvents = cms.untracked.PSet (
-    input = cms.untracked.int32 (15000)
+    input = cms.untracked.int32 (1000)
 )
 
 ###########################################################
@@ -56,7 +57,50 @@ collections = cms.PSet (
   trigobjs        =  cms.InputTag  ('BNproducer',  'HLT'),
 )
 
-cuts = cms.PSet(
+eMuMinimal = cms.PSet(
+    name = cms.string("EMuMinimal"),
+    triggers = cms.vstring("HLT_Mu22_Photon22_CaloIdL_v"), # TRIGGER
+    cuts = cms.VPSet (
+      # EVENT CLEANING
+      cms.PSet (
+        inputCollection = cms.string("events"),
+        cutString = cms.string("FilterOutScraping > 0"),
+        numberRequired = cms.string(">= 1")
+      ),
+      # EVENT HAS GOOD PV
+      cms.PSet (
+        inputCollection = cms.string("primaryvertexs"),
+        cutString = cms.string("isGood > 0"),
+        numberRequired = cms.string(">= 1")
+      ),
+      # ELECTRON ETA CUT
+      cms.PSet (
+        inputCollection = cms.string("electrons"),
+        cutString = cms.string("abs(eta) < 2.5"),
+        numberRequired = cms.string(">= 1")
+      ),
+      # ELECTRON PT CUT
+      cms.PSet (
+        inputCollection = cms.string("electrons"),
+        cutString = cms.string("pt > 25"),
+        numberRequired = cms.string(">= 1")
+      ),
+      # MUON ETA CUT
+      cms.PSet (
+        inputCollection = cms.string("muons"),
+        cutString = cms.string("abs(eta) < 2.5"),
+        numberRequired = cms.string(">= 1")
+      ),
+      # MUON PT CUT
+      cms.PSet (
+        inputCollection = cms.string("muons"),
+        cutString = cms.string("pt > 25"),
+        numberRequired = cms.string(">= 1")
+      ),
+    )
+)
+
+preselection = cms.PSet(
     name = cms.string("Preselection"),
     triggers = cms.vstring("HLT_Mu22_Photon22_CaloIdL_v"), # TRIGGER
     cuts = cms.VPSet (
@@ -213,36 +257,7 @@ histograms = cms.PSet(
   )
 )
 
-process.CutCalculator = cms.EDProducer ('CutCalculator',
-  collections  =  collections,
-  cuts         =  cuts,
-)
+add_channels  (process,  [eMuMinimal],    cms.VPSet  (histograms),  collections,  False)
+add_channels  (process,  [preselection],  cms.VPSet  (histograms),  collections)
 
-process.MuonObjectSelector = cms.EDFilter ('MuonObjectSelector',
-  collections         =  collections,
-  collectionToFilter  =  cms.string ('muons'),
-  cutDecisions        =  cms.InputTag ('CutCalculator', 'cutDecisions'),
-)
-
-process.CutFlowPlotter = cms.EDAnalyzer ('CutFlowPlotter',
-  cutDecisions  =  cms.InputTag  ('CutCalculator',  'cutDecisions'),
-  channelName   =  cms.string    ('Preselection'),
-)
-
-process.Plotter = cms.EDAnalyzer ('Plotter',
-  jets            =  collections.jets,
-  muons           =  cms.InputTag ('MuonObjectSelector', 'selectedObjects'),
-  electrons       =  collections.electrons,
-  taus            =  collections.taus,
-  mets            =  collections.mets,
-  genjets         =  collections.genjets,
-  mcparticles     =  collections.mcparticles,
-  primaryvertexs  =  collections.primaryvertexs,
-  photons         =  collections.photons,
-  triggers        =  collections.triggers,
-
-  histogramSets   =  cms.VPSet (histograms),
-  verbose         =  cms.int32 (0),
-)
-
-process.myPath = cms.Path (process.CutCalculator + process.CutFlowPlotter + process.MuonObjectSelector + process.Plotter)
+#outfile = open('dumpedConfig.py','w'); print >> outfile,process.dumpPython(); outfile.close()

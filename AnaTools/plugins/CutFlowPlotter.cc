@@ -7,7 +7,6 @@
 
 CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
   cutDecisions_ (cfg.getParameter<edm::InputTag> ("cutDecisions")),
-  channelName_ (cfg.getParameter<string> ("channelName")),
   firstEvent_ (true)
 {
   //////////////////////////////////////////////////////////////////////////////
@@ -15,11 +14,10 @@ CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
   // within.
   //////////////////////////////////////////////////////////////////////////////
   TH1::SetDefaultSumw2 ();
-  TFileDirectory dir (fs_->mkdir (channelName_, "base directory for channel \"" + channelName_ + "\""));
-  oneDHists_["eventCounter"]  =  dir.make<TH1D>  ("eventCounter",  ";;events",          1,  0.0,  1.0);
-  oneDHists_["cutFlow"]       =  dir.make<TH1D>  ("cutFlow",       ";;passing events",  1,  0.0,  1.0);
-  oneDHists_["selection"]     =  dir.make<TH1D>  ("selection",     ";;passing events",  1,  0.0,  1.0);
-  oneDHists_["minusOne"]      =  dir.make<TH1D>  ("minusOne",      ";;passing events",  1,  0.0,  1.0);
+  oneDHists_["eventCounter"]  =  fs_->make<TH1D>  ("eventCounter",  ";;events",          1,  0.0,  1.0);
+  oneDHists_["cutFlow"]       =  fs_->make<TH1D>  ("cutFlow",       ";;passing events",  1,  0.0,  1.0);
+  oneDHists_["selection"]     =  fs_->make<TH1D>  ("selection",     ";;passing events",  1,  0.0,  1.0);
+  oneDHists_["minusOne"]      =  fs_->make<TH1D>  ("minusOne",      ";;passing events",  1,  0.0,  1.0);
   //////////////////////////////////////////////////////////////////////////////
 }
 
