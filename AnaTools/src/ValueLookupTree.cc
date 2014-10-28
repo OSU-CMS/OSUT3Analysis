@@ -62,6 +62,74 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<double> &opera
     return (operands.at (0) / operands.at (1));
   else if (op == "!")
     return (!operands.at (0));
+  else if (op == "cos")
+    return (cos (operands.at (0)));
+  else if (op == "sin")
+    return (sin (operands.at (0)));
+  else if (op == "tan")
+    return (tan (operands.at (0)));
+  else if (op == "acos")
+    return (acos (operands.at (0)));
+  else if (op == "asin")
+    return (asin (operands.at (0)));
+  else if (op == "atan")
+    return (atan (operands.at (0)));
+  else if (op == "cosh")
+    return (cosh (operands.at (0)));
+  else if (op == "sinh")
+    return (sinh (operands.at (0)));
+  else if (op == "tanh")
+    return (tanh (operands.at (0)));
+  else if (op == "acosh")
+    return (acosh (operands.at (0)));
+  else if (op == "asinh")
+    return (asinh (operands.at (0)));
+  else if (op == "atanh")
+    return (atanh (operands.at (0)));
+  else if (op == "exp")
+    return (exp (operands.at (0)));
+  else if (op == "log")
+    return (log (operands.at (0)));
+  else if (op == "log10")
+    return (log10 (operands.at (0)));
+  else if (op == "exp2")
+    return (exp2 (operands.at (0)));
+  else if (op == "expm1")
+    return (expm1 (operands.at (0)));
+  else if (op == "ilogb")
+    return (ilogb (operands.at (0)));
+  else if (op == "log1p")
+    return (log1p (operands.at (0)));
+  else if (op == "log2")
+    return (log2 (operands.at (0)));
+  else if (op == "logb")
+    return (logb (operands.at (0)));
+  else if (op == "sqrt")
+    return (sqrt (operands.at (0)));
+  else if (op == "cbrt")
+    return (cbrt (operands.at (0)));
+  else if (op == "erf")
+    return (erf (operands.at (0)));
+  else if (op == "erfc")
+    return (erfc (operands.at (0)));
+  else if (op == "tgamma")
+    return (tgamma (operands.at (0)));
+  else if (op == "lgamma")
+    return (lgamma (operands.at (0)));
+  else if (op == "ceil")
+    return (ceil (operands.at (0)));
+  else if (op == "floor")
+    return (floor (operands.at (0)));
+  else if (op == "trunc")
+    return (trunc (operands.at (0)));
+  else if (op == "round")
+    return (round (operands.at (0)));
+  else if (op == "rint")
+    return (rint (operands.at (0)));
+  else if (op == "nearbyint")
+    return (nearbyint (operands.at (0)));
+  else if (op == "abs")
+    return (fabs (operands.at (0)));
   else if (op == "()")
     return (operands.at (0));
 
@@ -85,6 +153,7 @@ ValueLookupTree::insert (const string &cut)
 node *
 ValueLookupTree::insert_ (const string &cut)
 {
+cout << "insert_ (" << cut << ")" << endl; // HART
   node *tree = new node;
   if (!(insertBinaryInfixOperator  (cut,  tree,  {"||"})                  ||
         insertBinaryInfixOperator  (cut,  tree,  {"&&"})                  ||
@@ -93,6 +162,12 @@ ValueLookupTree::insert_ (const string &cut)
         insertBinaryInfixOperator  (cut,  tree,  {"+", "-"})              ||
         insertBinaryInfixOperator  (cut,  tree,  {"*", "/"})              ||
         insertUnaryPrefixOperator  (cut,  tree,  {"!"})                   ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"cos", "sin", "tan", "acos", "asin", "atan",
+                                                  "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
+                                                  "exp", "log", "log10", "exp2", "expm1", "ilogb", "log1p", "log2", "logb",
+                                                  "sqrt", "cbrt",
+                                                  "erf", "erfc", "tgamma", "lgamma",
+                                                  "ceil", "floor", "trunc", "round", "rint", "nearbyint", "abs"})                   ||
         insertParentheses          (cut,  tree)))
     tree->value = cut;
 
@@ -151,6 +226,14 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
 bool
 ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const vector<string> &operators)
 {
+cout << "insertBinaryInfixOperator (" << s << ", " << tree << ", {"; // HART
+for (vector<string>::const_iterator op = operators.begin (); op != operators.end (); op++) // HART
+{ // HART
+  if (op != operators.begin ()) // HART
+    cout << ", "; // HART
+  cout << *op; // HART
+} // HART
+cout << "})" << endl; // HART
   bool foundAnOperator = false;
   double x;
   if (isnumber (s,x))
@@ -178,6 +261,14 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const v
 bool
 ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const vector<string> &operators)
 {
+cout << "insertUnaryPrefixOperator (" << s << ", " << tree << ", {"; // HART
+for (vector<string>::const_iterator op = operators.begin (); op != operators.end (); op++) // HART
+{ // HART
+  if (op != operators.begin ()) // HART
+    cout << ", "; // HART
+  cout << *op; // HART
+} // HART
+cout << "})" << endl; // HART
   bool foundAnOperator = false;
   double x;
   if (isnumber (s,x))
@@ -202,6 +293,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const v
 bool
 ValueLookupTree::insertParentheses (const string &s, node *tree)
 {
+cout << "insertParentheses (" << s << ", " << tree << ")" << endl; // HART
   size_t leftParenthesis = s.find ('('),
          rightParenthesis = s.rfind (')');
   if (leftParenthesis == string::npos || rightParenthesis == string::npos)
