@@ -121,7 +121,11 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
 
   // Set all the private variables in the ValueLookup object before using it.
   initializeValueLookup ();
-  initializeValueLookupTrees (unpackedCuts_);
+  if (!initializeValueLookupTrees (unpackedCuts_))
+    {
+      clog << "ERROR: failed to parse all cut strings. Quitting..." << endl;
+      exit (EXIT_CODE);
+    }
 
   //////////////////////////////////////////////////////////////////////////////
   // Create the payload for this EDProducer and initialize some of its members.
@@ -724,13 +728,18 @@ CutCalculator::setEventFlags ()
   return (pl_->eventDecision = (pl_->triggerDecision && pl_->cutDecision));
 }
 
-void
+bool
 CutCalculator::initializeValueLookupTrees (vector<cut> &cuts)
 {
   if (!firstEvent_)
-    return;
+    return true;
   for (vector<cut>::iterator cut = cuts.begin (); cut != cuts.end (); cut++)
-    cut->valueLookupTree = new ValueLookupTree (cut->cutString, vl_);
+    {
+      cut->valueLookupTree = new ValueLookupTree (cut->cutString, vl_);
+      if (!cut->valueLookupTree->isValid ())
+        return false;
+    }
+  return true;
 }
 
 void

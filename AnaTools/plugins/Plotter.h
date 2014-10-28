@@ -41,33 +41,46 @@ class Plotter : public edm::EDAnalyzer
 
     private:
 
-
+      edm::ParameterSet collections_;
 
       // Remember to define parameters to be retrieved from the configuration file.
-      edm::InputTag jets_; 
-      edm::InputTag muons_;
-      edm::InputTag electrons_;
-      edm::InputTag taus_; 
-      edm::InputTag mets_; 
-      edm::InputTag genjets_; 
-      edm::InputTag mcparticles_; 
-      edm::InputTag primaryvertexs_; 
-      edm::InputTag photons_; 
-      edm::InputTag triggers_; 
+      edm::InputTag  bxlumis_;
+      edm::InputTag  electrons_;
+      edm::InputTag  events_;
+      edm::InputTag  genjets_;
+      edm::InputTag  jets_;
+      edm::InputTag  mcparticles_;
+      edm::InputTag  mets_;
+      edm::InputTag  muons_;
+      edm::InputTag  photons_;
+      edm::InputTag  primaryvertexs_;
+      edm::InputTag  secMuons_;
+      edm::InputTag  superclusters_;
+      edm::InputTag  taus_;
+      edm::InputTag  tracks_;
+      edm::InputTag  triggers_;
+      edm::InputTag  trigobjs_;
+      edm::InputTag  userVariables_;
       
       
       //Collections
-      edm::Handle<BNtriggerCollection> triggers; 
-      edm::Handle<BNjetCollection> jets; 
-      edm::Handle<BNmuonCollection> muons;
-      edm::Handle<BNelectronCollection> electrons;
-      edm::Handle<BNtauCollection> taus; 
-      edm::Handle<BNmetCollection> mets; 
-      edm::Handle<BNgenjetCollection> genjets; 
-      edm::Handle<BNmcparticleCollection> mcparticles; 
-      edm::Handle<BNprimaryvertexCollection> primaryvertexs; 
-      edm::Handle<BNphotonCollection> photons; 
-      edm::Handle<vector< map<string,double> > > userVariables;
+      edm::Handle<BNbxlumiCollection>         bxlumis;
+      edm::Handle<BNelectronCollection>       electrons;
+      edm::Handle<BNeventCollection>          events;
+      edm::Handle<BNgenjetCollection>         genjets;
+      edm::Handle<BNjetCollection>            jets;
+      edm::Handle<BNmcparticleCollection>     mcparticles;
+      edm::Handle<BNmetCollection>            mets;
+      edm::Handle<BNmuonCollection>           muons;
+      edm::Handle<BNmuonCollection>           secMuons;
+      edm::Handle<BNphotonCollection>         photons;
+      edm::Handle<BNprimaryvertexCollection>  primaryvertexs;
+      edm::Handle<BNsuperclusterCollection>   superclusters;
+      edm::Handle<BNtauCollection>            taus;
+      edm::Handle<BNtrackCollection>          tracks;
+      edm::Handle<BNtriggerCollection>        triggers;
+      edm::Handle<BNtrigobjCollection>        trigobjs;
+      edm::Handle<vector< map<string,double> > > userVariables;  
 
 
       vector<edm::ParameterSet> histogramSets_;
@@ -77,7 +90,7 @@ class Plotter : public edm::EDAnalyzer
       bool firstEvent_;
 
       ValueLookup *vl_;
-      void initializeValueLookupTrees (vector<histoDef> &);
+      bool initializeValueLookupTrees (vector<histoDef> &);
       void initializeValueLookup ();
 
       edm::Service<TFileService> fs_;

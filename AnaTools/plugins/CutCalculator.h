@@ -143,7 +143,7 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     ValueLookup *vl_;
     void initializeValueLookup ();
-    void initializeValueLookupTrees (vector<cut> &);
+    bool initializeValueLookupTrees (vector<cut> &);
     ////////////////////////////////////////////////////////////////////////////
 };
 

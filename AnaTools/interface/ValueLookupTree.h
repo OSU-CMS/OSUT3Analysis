@@ -14,8 +14,10 @@ class ValueLookupTree
     ValueLookup *assignValueLookup (ValueLookup *);
     static bool firstOfPairAscending (pair<size_t, string>, pair<size_t, string>);
     void insert (const string &);
+    bool isValid ();
     template<class T> double evaluate (const T*);
     template<class T0, class T1> double evaluate (const T0*, const T1*);
+    bool evaluationError ();
 
   private:
     void destroy (node *);
@@ -32,9 +34,11 @@ class ValueLookupTree
     bool insertParentheses (const string &, node *);
     double evaluateOperator (const string &, const vector<double> &);
     bool isnumber (const string &, double &);
+    void pruneCommas (vector<node *> &);
 
     node *root_;
     ValueLookup *vl_;
+    bool evaluationError_;
 };
 
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTreeTemplates.h"
