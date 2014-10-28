@@ -126,10 +126,16 @@ main (int argc, char *argv[])
                   string obj1Class = ((TKey *) obj1)->GetClassName (),
                          obj1Name = obj1->GetName ();
 
-                  if (obj1Class == "TH1D" && obj1Name == histName)
+		  TString objFullName = obj0->GetName();
+		  objFullName += TString("/") + TString(obj1->GetName());  
+
+		  TString histNameStr = histName;  
+
+                  if (obj1Class == "TH1D" && objFullName == histNameStr)
                     {
                       cutFlow = (TH1D *) dir->Get (obj1Name.c_str ());
-                      upperLimit = (TH1D *) dir->Get ((obj1Name + "UpperLimit").c_str ());
+		      if (!cutFlow) cerr << "Problem accessing cutFlow" << endl;  
+		      //                      upperLimit = (TH1D *) dir->Get ((obj1Name + "UpperLimit").c_str ());
                     }
                 }
             }
@@ -139,13 +145,13 @@ main (int argc, char *argv[])
           cerr << "Did not find a histogram named " << histName << " in " << fileToOpen << "!" << endl;
           return 0;
         }
-      if (!upperLimit)
-        {
-          cerr << "Did not find a histogram named " << (histName + "UpperLimit") << " in " << fileToOpen << "!" << endl;
-          return 0;
-        }
+//       if (!upperLimit)
+//         {
+//           cerr << "Did not find a histogram named " << (histName + "UpperLimit") << " in " << fileToOpen << "!" << endl;
+//           return 0;
+//         }
       cutFlow->SetDirectory (0);
-      upperLimit->SetDirectory (0);
+      //      upperLimit->SetDirectory (0);
       fin->Close ();
 
       TAxis *x = cutFlow->GetXaxis ();
@@ -154,7 +160,10 @@ main (int argc, char *argv[])
       marginalEffTable.push_back (vector<string> ());
       for (unsigned j = 1; j <= (unsigned) x->GetNbins (); j++)
         {
-          double binContent = cutFlow->GetBinContent (j), binUpperLimit = upperLimit->GetBinContent (j), binError = cutFlow->GetBinError (j);
+          double binContent = cutFlow->GetBinContent(j);
+	  //	  double binUpperLimit = upperLimit->GetBinContent (j);
+	  double binUpperLimit = cutFlow->GetBinContent(j) + cutFlow->GetBinError(j); 
+	  double binError = cutFlow->GetBinError(j);  
 	  if (j==1 && opt.count ("xsecTheory") && yieldTheory > 0.0) {
 	    binContent = yieldTheory;  
 	  }
