@@ -47,7 +47,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNmuon* object2, string v
     double d0Sign = (object1->correctedD0Vertex*object2->correctedD0Vertex)/fabs(object1->correctedD0Vertex*object2->correctedD0Vertex);
     if(d0Sign < 0) value = -0.5;
     else if (d0Sign > 0) value = 0.5;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "chargeProduct"){
     value = object1->charge*object2->charge;
@@ -81,7 +81,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNmuon* object2, string v
       value = object2->correctedD0;
     }
 
-  else{clog << "WARNING: invalid muon-muon pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid muon-muon pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end muon-muon pair valueLookup
@@ -126,7 +126,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNphoton* object2, string
       TVector3 threeVector2(object2->px, object2->py, object2->pz);
       value = (pi-threeVector1.Angle(threeVector2));
     }
-  else{clog << "WARNING: invalid muon-photon pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid muon-photon pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end muon-photon pair valueLookup
@@ -171,7 +171,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNphoton* object2, st
       TVector3 threeVector2(object2->px, object2->py, object2->pz);
       value = (pi-threeVector1.Angle(threeVector2));
     }
-  else{clog << "WARNING: invalid electron-photon pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid electron-photon pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end electron-photon pair valueLookup
@@ -208,7 +208,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNelectron* object2, 
     double d0Sign = (object1->correctedD0Vertex*object2->correctedD0Vertex)/fabs(object1->correctedD0Vertex*object2->correctedD0Vertex);
     if(d0Sign < 0) value = -0.5;
     else if (d0Sign > 0) value = 0.5;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "chargeProduct"){
     value = object1->charge*object2->charge;
@@ -226,7 +226,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNelectron* object2, 
     value = object2->correctedD0;
   }
 
-  else{clog << "WARNING: invalid electron-electron pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid electron-electron pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end electron-electron pair valueLookup
@@ -263,7 +263,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNmuon* object2, stri
     double d0Sign = (object1->correctedD0Vertex*object2->correctedD0Vertex)/fabs(object1->correctedD0Vertex*object2->correctedD0Vertex);
     if(d0Sign < 0) value = -0.5;
     else if (d0Sign > 0) value = 0.5;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "chargeProduct"){
     value = object1->charge*object2->charge;
@@ -331,7 +331,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNmuon* object2, stri
 
 
 
-  else{clog << "WARNING: invalid electron-muon pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid electron-muon pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end electron-muon pair valueLookup
@@ -396,22 +396,22 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNjet* object2, strin
   }
   else if(variable == "ptOfClosestJetByDeltaR"){
     const BNjet *closestJet = closest<BNelectron, BNjet> (object1, jets, "jets");
-    if (!closestJet) value = -999;
+    if (!closestJet) value = numeric_limits<unsigned>::max ();
     else value = closestJet->pt;
   }
   else if(variable == "massOfClosestJetByDeltaR"){
     const BNjet *closestJet = closest<BNelectron, BNjet> (object1, jets, "jets");
-    if (!closestJet) value = -999;
+    if (!closestJet) value = numeric_limits<unsigned>::max ();
     else value = closestJet->mass;
   }
   else if(variable == "areaOfClosestJetByDeltaR"){
     const BNjet *closestJet = closest<BNelectron, BNjet> (object1, jets, "jets");
-    if (!closestJet) value = -999;
+    if (!closestJet) value = numeric_limits<unsigned>::max ();
     else value = closestJet->area;
   }
   else if(variable == "pTransverseToClosestJetByDeltaR"){
     const BNjet *closestJet = closest<BNelectron, BNjet> (object1, jets, "jets");
-    if (!closestJet) value = -999;
+    if (!closestJet) value = numeric_limits<unsigned>::max ();
     else{
       TVector3 jetP (closestJet->px, closestJet->py, closestJet->pz),
                leptonP (object1->px, object1->py, object1->pz),
@@ -423,7 +423,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNjet* object2, strin
     }
   }
 
-  else{clog << "WARNING: invalid electron-jet pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid electron-jet pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -451,7 +451,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNmcparticle* object2
     value = object1->charge*object2->id;
   }
 
-  else{clog << "WARNING: invalid electron-mcparticle variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid electron-mcparticle variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -479,7 +479,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNmcparticle* object2, st
     value = object1->charge*object2->id;
   }
 
-  else{clog << "WARNING: invalid muon-mcparticle variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid muon-mcparticle variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -495,7 +495,7 @@ ValueLookup::valueLookup (const BNmcparticle* object1, const BNmcparticle* objec
   else if(variable == "chargeProduct"){
     value = object1->charge*object2->charge;
   }
-  else{clog << "WARNING: invalid mcparticle-mcparticle variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid mcparticle-mcparticle variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -510,7 +510,7 @@ ValueLookup::valueLookup (const BNjet* object1, const BNmcparticle* object2, str
   if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
 
 
-  else{clog << "WARNING: invalid jet-mcparticle variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid jet-mcparticle variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -536,7 +536,7 @@ ValueLookup::valueLookup (const BNtrack* object1, const BNmcparticle* object2, s
     value = object1->charge*object2->charge;
   }
 
-  else{clog << "WARNING: invalid electron-mcparticle variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid electron-mcparticle variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -562,7 +562,7 @@ ValueLookup::valueLookup (const BNstop* object1, const BNmcparticle* object2, st
     value = object1->charge*object2->charge;
   }
 
-  else{clog << "WARNING: invalid stop-mcparticle variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid stop-mcparticle variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -600,7 +600,7 @@ ValueLookup::valueLookup (const BNphoton* object1, const BNjet* object2, string 
       TVector3 threeVector2(object2->px, object2->py, object2->pz);
       value = (threeVector1.Angle(threeVector2));
     }
-  else{clog << "WARNING: invalid photon-jet pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid photon-jet pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -614,7 +614,7 @@ ValueLookup::valueLookup (const BNtrack* object1, const BNjet* object2, string v
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
 
-  else{clog << "WARNING: invalid track-jet pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid track-jet pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 
@@ -630,7 +630,7 @@ ValueLookup::valueLookup (const BNmet* object1, const BNjet* object2, string var
 
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
 
-  else{clog << "WARNING: invalid met-jet pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid met-jet pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 
@@ -642,7 +642,7 @@ ValueLookup::valueLookup (const BNmet* object1, const BNmcparticle* object2, str
   double value = 0.0;
 
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
-  else{clog << "WARNING: invalid met-mcparticle pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid met-mcparticle pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 
@@ -711,22 +711,22 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNjet* object2, string va
   }
   else if(variable == "ptOfClosestJetByDeltaR"){
     const BNjet *closestJet = closest<BNmuon, BNjet> (object1, jets, "jets");
-    if (!closestJet) value = -999;
+    if (!closestJet) value = numeric_limits<unsigned>::max ();
     else value = closestJet->pt;
   }
   else if(variable == "massOfClosestJetByDeltaR"){
     const BNjet *closestJet = closest<BNmuon, BNjet> (object1, jets, "jets");
-    if (!closestJet) value = -999;
+    if (!closestJet) value = numeric_limits<unsigned>::max ();
     else value = closestJet->mass;
   }
   else if(variable == "areaOfClosestJetByDeltaR"){
     const BNjet *closestJet = closest<BNmuon, BNjet> (object1, jets, "jets");
-    if (!closestJet) value = -999;
+    if (!closestJet) value = numeric_limits<unsigned>::max ();
     else value = closestJet->area;
   }
   else if(variable == "pTransverseToClosestJetByDeltaR"){
     const BNjet *closestJet = closest<BNmuon, BNjet> (object1, jets, "jets");
-    if (!closestJet) value = -999;
+    if (!closestJet) value = numeric_limits<unsigned>::max ();
     else{
       TVector3 jetP (closestJet->px, closestJet->py, closestJet->pz),
                leptonP (object1->px, object1->py, object1->pz),
@@ -738,7 +738,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNjet* object2, string va
     }
   }
 
-  else{clog << "WARNING: invalid muon-jet pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid muon-jet pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end muon-jet pair valueLookup
@@ -758,7 +758,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNevent* object2, string 
   else if(variable == "numPV")   value = object2->numPV;
   else if(variable == "correctedD0")   value = object1->correctedD0;
   else if(variable == "relPFdBetaIso") value = (object1->pfIsoR04SumChargedHadronPt + max(0.0, object1->pfIsoR04SumNeutralHadronEt + object1->pfIsoR04SumPhotonEt - 0.5*object1->pfIsoR04SumPUPt)) / object1->pt;
-  else{clog << "WARNING: invalid muon-event pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid muon-event pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -770,7 +770,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNevent* object2, str
 
   if     (variable == "numPV")       value = object2->numPV;
   else if(variable == "correctedD0") value = object1->correctedD0;
-  else{clog << "WARNING: invalid electron-event pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid electron-event pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -804,7 +804,7 @@ ValueLookup::valueLookup (const BNjet* object1, const BNjet* object2, string var
     value = object1->charge*object2->charge;
   }
 
-  else{clog << "WARNING: invalid jet-jet pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid jet-jet pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }
@@ -834,7 +834,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNtrack* object2, str
   else if(variable == "chargeProduct"){
     value = object1->charge*object2->charge;
   }
-  else{clog << "WARNING: invalid electron-track pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid electron-track pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
   return value;
 
 }
@@ -879,7 +879,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNtrack* object2, string 
     value = object1->charge*object2->charge;
   }
 
-  else{clog << "WARNING: invalid muon-track pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid muon-track pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
   return value;
 }
 
@@ -891,7 +891,7 @@ ValueLookup::valueLookup (const BNjet* object1, const BNtrack* object2, string v
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
   else if(variable == "deltaPt")  value = fabs(object1->pt - object2->pt);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
-  else{clog << "WARNING: invalid jet-track pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid jet-track pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
   return value;
 }
 
@@ -912,7 +912,7 @@ ValueLookup::valueLookup (const BNtau* object1, const BNtau* object2, string var
     value = object1->charge*object2->charge;
   }
 
-  else{clog << "WARNING: invalid tau-tau pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid tau-tau pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
   return value;
 }
 
@@ -933,7 +933,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNtau* object2, string va
     value = object1->charge*object2->charge;
   }
 
-  else{clog << "WARNING: invalid muon-tau pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid muon-tau pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
   return value;
 }
 
@@ -964,7 +964,7 @@ ValueLookup::valueLookup (const BNtau* object1, const BNtrack* object2, string v
     value = object1->charge*object2->charge;
   }
 
-  else{clog << "WARNING: invalid tau-track pair variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid tau-track pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
   return value;
 }
 
@@ -984,7 +984,7 @@ ValueLookup::valueLookup (const BNtrack* object1, const BNevent* object2, string
   else if (variable == "caloTotDeltaRp5_RhoCorr")    value = getTrkCaloTotRhoCorr(object1);
   else if (variable == "caloTotDeltaRp5ByP_RhoCorr") value = getTrkCaloTotRhoCorr(object1) / pMag;
 
-  else { clog << "WARNING: invalid track-event pair variable '" << variable << "'\n"; value = -999; }
+  else { clog << "WARNING: invalid track-event pair variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max (); }
 
 
   return value;
@@ -1005,7 +1005,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNtrigobj* object2, s
       stringValue = "none";
   }*/
 
-  else { clog << "WARNING: invalid electron-trigobj variable '" << variable << "'\n"; value = -999; }
+  else { clog << "WARNING: invalid electron-trigobj variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max (); }
 
   return value;
 
@@ -1019,7 +1019,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNtrigobj* object2, strin
 
   if (variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
 
-  else { clog << "WARNING: invalid muon-trigobj variable '" << variable << "'\n"; value = -999; }
+  else { clog << "WARNING: invalid muon-trigobj variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max (); }
 
   return value;
 

@@ -29,17 +29,17 @@ ValueLookup::valueLookup (const BNtrigobj* object, string variable){
   else if(variable == "metPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNmet *met = chosenMET ()) {
       value = met->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "trackPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNtrack *track = chosenTrack ()) {
       value = track->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "jetPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNjet *jet = chosenJet ()) {
       value = jet->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
   /*else if(variable == "filter") {
     if ((stringValue = object->filter) == "")
@@ -47,7 +47,7 @@ ValueLookup::valueLookup (const BNtrigobj* object, string variable){
   }*/
 
 
-  else{clog << "WARNING: invalid trigobj variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid trigobj variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }

@@ -129,7 +129,7 @@ ValueLookup::valueLookup (const BNphoton* object, string variable){
   }
 
 
-  else{clog << "WARNING: invalid photon variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid photon variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end photon valueLookup

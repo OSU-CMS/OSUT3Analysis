@@ -19,7 +19,7 @@ ValueLookup::valueLookup (const BNsupercluster* object, string variable){
   else if(variable == "theta") value = object->theta;
 
 
-  else{clog << "WARNING: invalid supercluster variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid supercluster variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }

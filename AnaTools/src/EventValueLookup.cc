@@ -107,7 +107,7 @@ ValueLookup::valueLookup (const BNevent* object, string variable){
   else if(variable == "metPt") { // allow making 2D plots of event quantities vs. Met
     if (const BNmet *met = chosenMET ()) {
       value = met->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "leadMuPairInvMass"){
     pair<const BNmuon *, const BNmuon *> muPair = leadMuonPair ();
@@ -138,7 +138,7 @@ ValueLookup::valueLookup (const BNevent* object, string variable){
   else if(variable == "metPt") {  // allow making 2D plots of event quantities vs. Met
     if (const BNmet *met = chosenMET ()) {
       value = met->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "totalMcparticlePt") {
     TVector2 ptTot(0.0, 0.0);
@@ -184,7 +184,7 @@ ValueLookup::valueLookup (const BNevent* object, string variable){
     //get met
 if (const BNmet *met = chosenMET ()) {
       MET = met->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
 
 //get mcPt
  TVector2 ptTot(0.0, 0.0);
@@ -299,7 +299,7 @@ value = (mcPt/MET);
     value = ptTot.Mod();
   }
 
-  else{clog << "WARNING: invalid event variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid event variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end event valueLookup

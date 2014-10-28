@@ -235,7 +235,7 @@ ValueLookup::valueLookup (const BNmet* object, string variable){
     value = deltaPhiJet2;
   }
 
-  else{clog << "WARNING: invalid met variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid met variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end met valueLookup

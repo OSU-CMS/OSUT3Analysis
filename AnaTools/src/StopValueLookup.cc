@@ -168,7 +168,7 @@ ValueLookup::valueLookup (const BNstop* object, string variable){
 
 
 
-  else { clog << "WARNING: invalid stop variable '" << variable << "'\n"; value = -999; }
+  else { clog << "WARNING: invalid stop variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max (); }
 
   return value;
 

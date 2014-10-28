@@ -111,7 +111,7 @@ gOuter"){
   else if(variable == "dPhiMet") {
     if (const BNmet *met = chosenMET ()) {
       value = deltaPhi (object->phi, met->phi);
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
 
   else if (variable == "rhoCorrRp5")                 value = getRhoCorr(object);
@@ -376,12 +376,7 @@ gOuter"){
     else value = 24 - getPdgIdBinValue(mcparticles->at(index).grandMotherId);
   }
 
-  else {
-    //  else{clog << "WARNING: invalid track variable '" << variable << "'\n"; value = -999;}
-    // Allow looking up event-level quantities.
-    // FIXME:  Check for whether "variable" is valid for valueLookup(&events->at(0)...).
-    //value = valueLookup(&events->at(0), variable, function, stringValue);
-  }
+  else{clog << "WARNING: invalid track variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end track valueLookup

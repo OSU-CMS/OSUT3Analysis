@@ -25,7 +25,7 @@ ValueLookup::valueLookup (const BNgenjet* object, string variable){
   else if(variable == "charge") value = object->charge;
 
 
-  else{clog << "WARNING: invalid genjet variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid genjet variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }

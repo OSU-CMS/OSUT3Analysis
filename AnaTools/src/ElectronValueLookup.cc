@@ -186,8 +186,8 @@ ValueLookup::valueLookup (const BNelectron* object, string variable){
   else if(variable == "ChargedHadInrelPFrhoIso") value = (object->chargedHadronIsoDR03)/ object->pt;
   else if(variable == "NeutralHadInrelPFrhoIso") value = (object->neutralHadronIsoDR03)/ object->pt;
   else if(variable == "PhotonInrelPFrhoIso") value = (object->photonIsoDR03)/ object->pt;
-  else if(variable == "relPFrhoIsoEB") value = object->isEB ? ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03 - object->AEffDr03*object->rhoPrime) ) / object->pt : -999;
-  else if(variable == "relPFrhoIsoEE") value = object->isEE ? ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03 - object->AEffDr03*object->rhoPrime) ) / object->pt : -999;
+  else if(variable == "relPFrhoIsoEB") value = object->isEB ? ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03 - object->AEffDr03*object->rhoPrime) ) / object->pt : numeric_limits<unsigned>::max ();
+  else if(variable == "relPFrhoIsoEE") value = object->isEE ? ( object->chargedHadronIsoDR03 + max(0.0, object->neutralHadronIsoDR03 + object->photonIsoDR03 - object->AEffDr03*object->rhoPrime) ) / object->pt : numeric_limits<unsigned>::max ();
   else if(variable == "metMT") {
     if (const BNmet *met = chosenMET ())
       {
@@ -195,13 +195,13 @@ ValueLookup::valueLookup (const BNelectron* object, string variable){
         value = sqrt (2 * object->pt * met->pt * (1 - cos (dPhi)));
       }
     else
-      value = -999;
+      value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "metDeltaPhi") {
     if (const BNmet *met = chosenMET ())
       value = deltaPhi (object->phi, met->phi);
     else
-      value = -999;
+      value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "ptPlusMet") {
     // Calculate the magnitude of the vector sum of the electron pT and the Met.
@@ -215,68 +215,68 @@ ValueLookup::valueLookup (const BNelectron* object, string variable){
         value = p2MetElec.Mod();
       }
     else
-      value = -999;
+      value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0VertexEEPositiveChargeLowPt"){
     if(fabs(object->eta) > 1.479 && object->charge > 0 && object->pt > 45) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexEEPositiveChargeHighPt"){
     if(fabs(object->eta) > 1.479 && object->charge > 0 && object->pt < 45) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0VertexInEBPlus"){
     if(fabs(object->eta) < 0.8 && object->eta > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexOutEBPlus"){
     if(object->isEB && fabs(object->eta) > 0.8 && object->eta > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexEEPlus"){
     if(object->isEE && object->eta > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0BeamspotInEBPlus"){
     if(fabs(object->eta) < 0.8 && object->eta > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotOutEBPlus"){
     if(object->isEB && fabs(object->eta) > 0.8 && object->eta > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotEEPlus"){
     if(object->isEE && object->eta > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0VertexInEBMinus"){
     if(fabs(object->eta) < 0.8 && object->eta < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexOutEBMinus"){
     if(object->isEB && fabs(object->eta) > 0.8 && object->eta < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexEEMinus"){
     if(object->isEE && object->eta < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0BeamspotInEBMinus"){
     if(fabs(object->eta) < 0.8 && object->eta < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotOutEBMinus"){
     if(object->isEB && fabs(object->eta) > 0.8 && object->eta < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotEEMinus"){
     if(object->isEE && object->eta < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "looseID"){
@@ -378,54 +378,54 @@ ValueLookup::valueLookup (const BNelectron* object, string variable){
       }
   else if(variable == "correctedD0VertexInEBPositiveCharge"){
     if(fabs(object->eta) < 0.8 && object->charge > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexOutEBPositiveCharge"){
     if(object->isEB && fabs(object->eta) > 0.8 && object->charge > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexEEPositiveCharge"){
     if(object->isEE && object->charge > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0BeamspotInEBPositiveCharge"){
     if(fabs(object->eta) < 0.8 && object->charge > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotOutEBPositiveCharge"){
     if(object->isEB && fabs(object->eta) > 0.8 && object->charge > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotEEPositiveCharge"){
     if(object->isEE && object->charge > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0VertexInEBNegativeCharge"){
     if(fabs(object->eta) < 0.8 && object->charge < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexOutEBNegativeCharge"){
     if(object->isEB && fabs(object->eta) > 0.8 && object->charge < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexEENegativeCharge"){
     if(object->isEE && object->charge < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0BeamspotInEBNegativeCharge"){
     if(fabs(object->eta) < 0.8 && object->charge < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotOutEBNegativeCharge"){
     if(object->isEB && fabs(object->eta) > 0.8 && object->charge < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotEENegativeCharge"){
     if(object->isEE && object->charge < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
 
@@ -511,7 +511,7 @@ ValueLookup::valueLookup (const BNelectron* object, string variable){
 
 
 
-  else{clog << "WARNING: invalid electron variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid electron variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end electron valueLookup

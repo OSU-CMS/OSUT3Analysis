@@ -24,7 +24,7 @@ ValueLookup::valueLookup (const BNprimaryvertex* object, string variable){
   else if(variable == "isGood") value = object->isGood;
 
 
-  else{clog << "WARNING: invalid primaryvertex variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid primaryvertex variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }

@@ -200,7 +200,7 @@ ValueLookup::valueLookup (const BNmcparticle* object, string variable){
   }
 
 
-  else{clog << "WARNING: invalid mcparticle variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid mcparticle variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end mcparticle valueLookup

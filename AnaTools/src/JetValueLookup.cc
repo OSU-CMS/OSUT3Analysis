@@ -154,13 +154,13 @@ ValueLookup::valueLookup (const BNjet* object, string variable){
   else if(variable == "dPhiMet") {
     if (const BNmet *met = chosenMET ()) {
       value = deltaPhi (object->phi, met->phi);
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "metPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNmet *met = chosenMET ()) {
       value = met->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "isLeadingPtJet") {
@@ -187,7 +187,7 @@ ValueLookup::valueLookup (const BNjet* object, string variable){
     }
     value = deltaRMin;
   }
-  else{clog << "WARNING: invalid jet variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid jet variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end jet valueLookup

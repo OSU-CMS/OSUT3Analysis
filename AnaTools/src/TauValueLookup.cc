@@ -104,7 +104,7 @@ ValueLookup::valueLookup (const BNtau* object, string variable){
   }
 
 
-  else{clog << "WARNING: invalid tau variable '" << variable << "'\n"; value = -999;}
+  else{clog << "WARNING: invalid tau variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end tau valueLookup
