@@ -94,7 +94,7 @@ main (int argc, char *argv[])
         }
       TIter next0 (fin->GetListOfKeys ());
       TObject *obj0;
-      TH1D *cutFlow = 0, *upperLimit = 0;
+      TH1D *cutFlow = 0; //, *upperLimit = 0;
 
       double yieldTheory = -99;  
       double xsec = -99;  
