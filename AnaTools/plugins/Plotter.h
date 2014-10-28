@@ -74,7 +74,11 @@ class Plotter : public edm::EDAnalyzer
 
       int verbose_;
 
+      bool firstEvent_;
+
       ValueLookup *vl_;
+      void initializeValueLookupTrees (vector<histoDef> &);
+      void initializeValueLookup ();
 
       edm::Service<TFileService> fs_;
 

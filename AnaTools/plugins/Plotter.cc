@@ -1,4 +1,5 @@
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
+#include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 #include "OSUT3Analysis/AnaTools/plugins/Plotter.h"
 
 #define EXIT_CODE 5
@@ -28,7 +29,10 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
   triggers_ (cfg.getParameter<edm::InputTag> ("triggers")),
 
   histogramSets_ (cfg.getParameter<vector<edm::ParameterSet> >("histogramSets")),
-  verbose_ (cfg.getParameter<int> ("verbose"))
+  verbose_ (cfg.getParameter<int> ("verbose")),
+
+  firstEvent_ (true),
+  vl_ (NULL)
 
 {
   
@@ -146,6 +150,9 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
     event.getByLabel ("UserVariableProduction", "userVariables", userVariables);
     if (!userVariables.product()) clog << "ERROR: could not get userVariables input collection" << endl;
   }
+
+  initializeValueLookup ();
+  initializeValueLookupTrees (histogramDefinitions);
  
   // now that we have all the required objects, we'll loop over the histograms, filling each one as we go
 
@@ -169,12 +176,16 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
     }
   }
 
+  firstEvent_ = false;
 }
 
 ////////////////////////////////////////////////////////////////////////
 
 Plotter::~Plotter ()
-{}
+{
+  if (vl_)
+    delete vl_;
+}
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -488,18 +499,11 @@ template <class InputCollection1, class InputCollection2> void Plotter::fillHist
 template <class InputCollection> void Plotter::fill1DHistogram(const histoDef definition,
 							       const InputCollection collection){
 
-  // collect information for filling                                                                                                                                                                      
-  pair<string,string> variableAndFunction = getVariableAndFunction(definition.inputVariables.at(0));
-  string variable = variableAndFunction.first;
-  string function = variableAndFunction.second;
-
-  string dummy = "";
-
   TH1D *histogram = fs_->getObject<TH1D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
   for(uint index = 0; index != collection->size(); index++){
-    double value = vl_->valueLookup(&collection->at(index), variable, function, dummy);
+    double value = definition.valueLookupTrees.at (0)->evaluate (&collection->at(index));
     double weight = 1.0;
     if(definition.hasVariableBinsX){
       weight /= getBinSize(histogram,value);
@@ -516,14 +520,6 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill1DHi
 											const InputCollection1 collection1,
 											const InputCollection2 collection2){
   
-  // collect information for filling
-
-  pair<string,string> variableAndFunction = getVariableAndFunction(definition.inputVariables.at(0));
-  string variable = variableAndFunction.first;
-  string function = variableAndFunction.second;
-
-  string dummy = "";
-
   vector<string> objects = getInputTypes(definition.inputCollection);
   bool sameType = objects.at(0) == objects.at(1);
 
@@ -536,7 +532,7 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill1DHi
       //account for duplicate pairs if both collections are the same
       if(sameType && index1 >= index2) continue;
 
-      double value = vl_->valueLookup(&collection1->at(index1), &collection2->at(index2), variable, function, dummy);
+      double value = definition.valueLookupTrees.at (0)->evaluate (&collection1->at(index1), &collection2->at(index2));
       double weight = 1.0;
       if(definition.hasVariableBinsX){
 	weight /= getBinSize(histogram,value);
@@ -554,24 +550,12 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill1DHi
 template <class InputCollection> void Plotter::fill2DHistogram(const histoDef definition,
 							       const InputCollection collection){
 
-  // collect information for filling
-
-  pair<string,string> variableAndFunctionX = getVariableAndFunction(definition.inputVariables.at(0));
-  string variableX = variableAndFunctionX.first;
-  string functionX = variableAndFunctionX.second;
-
-  pair<string,string> variableAndFunctionY = getVariableAndFunction(definition.inputVariables.at(1));
-  string variableY = variableAndFunctionY.first;
-  string functionY = variableAndFunctionY.second;
-
-  string dummy = "";
-
   TH2D *histogram = fs_->getObject<TH2D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
   for(uint index = 0; index != collection->size(); index++){
-    double valueX = vl_->valueLookup(&collection->at(index), variableX, functionX, dummy);
-    double valueY = vl_->valueLookup(&collection->at(index), variableY, functionY, dummy);
+    double valueX = definition.valueLookupTrees.at (0)->evaluate (&collection->at(index));
+    double valueY = definition.valueLookupTrees.at (1)->evaluate (&collection->at(index));
     double weight = 1.0;
     if(definition.hasVariableBinsX){
       weight /= getBinSize(histogram,valueX, valueY).first;
@@ -591,18 +575,6 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill2DHi
 											const InputCollection1 collection1,
 											const InputCollection2 collection2){
 
-  // collect information for filling
-
-  pair<string,string> variableAndFunctionX = getVariableAndFunction(definition.inputVariables.at(0));
-  string variableX = variableAndFunctionX.first;
-  string functionX = variableAndFunctionX.second;
-
-  pair<string,string> variableAndFunctionY = getVariableAndFunction(definition.inputVariables.at(1));
-  string variableY = variableAndFunctionY.first;
-  string functionY = variableAndFunctionY.second;
-
-  string dummy = "";
-
   vector<string> objects = getInputTypes(definition.inputCollection);
   bool sameType = objects.at(0) == objects.at(1);
 
@@ -615,8 +587,8 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill2DHi
       //account for duplicate pairs if both collections are the same
       if(sameType && index1 >= index2) continue;
 
-      double valueX = vl_->valueLookup(&collection1->at(index1), &collection2->at(index2), variableX, functionX, dummy);
-      double valueY = vl_->valueLookup(&collection1->at(index1), &collection2->at(index2), variableY, functionY, dummy);
+      double valueX = definition.valueLookupTrees.at (0)->evaluate (&collection1->at(index1), &collection2->at(index2));
+      double valueY = definition.valueLookupTrees.at (1)->evaluate (&collection1->at(index1), &collection2->at(index2));
       double weight = 1.0;
       if(definition.hasVariableBinsX){
 	weight /= getBinSize(histogram,valueX, valueY).first;
@@ -721,5 +693,27 @@ string Plotter::setYaxisLabel(const histoDef definition){
   return title;
 }
 
+void
+Plotter::initializeValueLookupTrees (vector<histoDef> &histograms)
+{
+  if (!firstEvent_)
+    return;
+  for (vector<histoDef>::iterator histogram = histograms.begin (); histogram != histograms.end (); histogram++)
+    {
+      for (vector<string>::const_iterator inputVariable = histogram->inputVariables.begin (); inputVariable != histogram->inputVariables.end (); inputVariable++)
+        histogram->valueLookupTrees.push_back (new ValueLookupTree (*inputVariable, vl_));
+    }
+}
+
+void
+Plotter::initializeValueLookup ()
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Create a new ValueLookup object if it does not already exist.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!vl_)
+    vl_ = new ValueLookup ();
+  //////////////////////////////////////////////////////////////////////////////
+}
 
 DEFINE_FWK_MODULE(Plotter);

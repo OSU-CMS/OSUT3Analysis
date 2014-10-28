@@ -5,7 +5,7 @@
 
 //!trigobj valueLookup
 double
-ValueLookup::valueLookup (const BNtrigobj* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNtrigobj* object, string variable){
 
   double value = 0.0;
 
@@ -41,15 +41,13 @@ ValueLookup::valueLookup (const BNtrigobj* object, string variable, string funct
       value = jet->pt;
     } else value = -999;
   }
-  else if(variable == "filter") {
+  /*else if(variable == "filter") {
     if ((stringValue = object->filter) == "")
       stringValue = "none";  // stringValue should only be empty if value is filled
-  }
+  }*/
 
 
   else{clog << "WARNING: invalid trigobj variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
 
   return value;
 }

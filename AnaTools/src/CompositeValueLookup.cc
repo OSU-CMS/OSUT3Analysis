@@ -10,7 +10,7 @@
 
 //!muon-muon pair valueLookup
 double
-ValueLookup::valueLookup (const BNmuon* object1, const BNmuon* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmuon* object1, const BNmuon* object2, string variable){
 
   double value = 0.0;
 
@@ -83,15 +83,13 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNmuon* object2, string v
 
   else{clog << "WARNING: invalid muon-muon pair variable '" << variable << "'\n"; value = -999;}
 
-  value = applyFunction(function, value);
-
   return value;
 } // end muon-muon pair valueLookup
 
 
 //!muon-photon pair valueLookup
 double
-ValueLookup::valueLookup (const BNmuon* object1, const BNphoton* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmuon* object1, const BNphoton* object2, string variable){
 
   double value = 0.0;
 
@@ -130,15 +128,13 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNphoton* object2, string
     }
   else{clog << "WARNING: invalid muon-photon pair variable '" << variable << "'\n"; value = -999;}
 
-  value = applyFunction(function, value);
-
   return value;
 } // end muon-photon pair valueLookup
 
 
 //!electron-photon pair valueLookup
 double
-ValueLookup::valueLookup (const BNelectron* object1, const BNphoton* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNelectron* object1, const BNphoton* object2, string variable){
 
   double value = 0.0;
 
@@ -177,15 +173,13 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNphoton* object2, st
     }
   else{clog << "WARNING: invalid electron-photon pair variable '" << variable << "'\n"; value = -999;}
 
-  value = applyFunction(function, value);
-
   return value;
 } // end electron-photon pair valueLookup
 
 
 //!electron-electron pair valueLookup
 double
-ValueLookup::valueLookup (const BNelectron* object1, const BNelectron* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNelectron* object1, const BNelectron* object2, string variable){
 
   double value = 0.0;
 
@@ -234,15 +228,13 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNelectron* object2, 
 
   else{clog << "WARNING: invalid electron-electron pair variable '" << variable << "'\n"; value = -999;}
 
-  value = applyFunction(function, value);
-
   return value;
 } // end electron-electron pair valueLookup
 
 
 //!electron-muon pair valueLookup
 double
-ValueLookup::valueLookup (const BNelectron* object1, const BNmuon* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNelectron* object1, const BNmuon* object2, string variable){
 
   double value = 0.0;
 
@@ -317,12 +309,10 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNmuon* object2, stri
     value = object2->eta;
   }
   else if(variable == "electronMetMT"){
-    string dummy = "";
-    value = valueLookup(object1,string("metMT"),string(""),dummy);
+    value = valueLookup(object1,string("metMT"));
   }
   else if(variable == "muonMetMT"){
-    string dummy = "";
-    value = valueLookup(object2,string("metMT"),string(""),dummy);
+    value = valueLookup(object2,string("metMT"));
   }
   else if(variable == "dz"){
     // based on definition of "dz" in DataFormats/TrackReco/interface/TrackBase.h
@@ -342,7 +332,6 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNmuon* object2, stri
 
 
   else{clog << "WARNING: invalid electron-muon pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 } // end electron-muon pair valueLookup
@@ -350,7 +339,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNmuon* object2, stri
 
 //!electron-jet pair valueLookup
 double
-ValueLookup::valueLookup (const BNelectron* object1, const BNjet* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNelectron* object1, const BNjet* object2, string variable){
 
   double value = 0.0;
 
@@ -435,14 +424,13 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNjet* object2, strin
   }
 
   else{clog << "WARNING: invalid electron-jet pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
 
 //!electron-mcparticle pair valueLookup
 double
-ValueLookup::valueLookup (const BNelectron* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNelectron* object1, const BNmcparticle* object2, string variable){
 
   double value = 0.0;
 
@@ -464,14 +452,13 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNmcparticle* object2
   }
 
   else{clog << "WARNING: invalid electron-mcparticle variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
 
 //!muon-mcparticle pair valueLookup
 double
-ValueLookup::valueLookup (const BNmuon* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmuon* object1, const BNmcparticle* object2, string variable){
 
   double value = 0.0;
 
@@ -493,7 +480,6 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNmcparticle* object2, st
   }
 
   else{clog << "WARNING: invalid muon-mcparticle variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
@@ -501,7 +487,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNmcparticle* object2, st
 
 //!mcparticle-mcparticle pair valueLookup
 double
-ValueLookup::valueLookup (const BNmcparticle* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmcparticle* object1, const BNmcparticle* object2, string variable){
 
   double value = 0.0;
 
@@ -510,7 +496,6 @@ ValueLookup::valueLookup (const BNmcparticle* object1, const BNmcparticle* objec
     value = object1->charge*object2->charge;
   }
   else{clog << "WARNING: invalid mcparticle-mcparticle variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
@@ -518,7 +503,7 @@ ValueLookup::valueLookup (const BNmcparticle* object1, const BNmcparticle* objec
 
 //!jet-mcparticle pair valueLookup
 double
-ValueLookup::valueLookup (const BNjet* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNjet* object1, const BNmcparticle* object2, string variable){
 
   double value = 0.0;
 
@@ -526,7 +511,6 @@ ValueLookup::valueLookup (const BNjet* object1, const BNmcparticle* object2, str
 
 
   else{clog << "WARNING: invalid jet-mcparticle variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
@@ -535,7 +519,7 @@ ValueLookup::valueLookup (const BNjet* object1, const BNmcparticle* object2, str
 
 //!track-mcparticle pair valueLookup
 double
-ValueLookup::valueLookup (const BNtrack* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNtrack* object1, const BNmcparticle* object2, string variable){
 
   double value = 0.0;
 
@@ -553,7 +537,6 @@ ValueLookup::valueLookup (const BNtrack* object1, const BNmcparticle* object2, s
   }
 
   else{clog << "WARNING: invalid electron-mcparticle variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
@@ -562,7 +545,7 @@ ValueLookup::valueLookup (const BNtrack* object1, const BNmcparticle* object2, s
 
 //!stop-mcparticle pair valueLookup
 double
-ValueLookup::valueLookup (const BNstop* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNstop* object1, const BNmcparticle* object2, string variable){
 
   double value = 0.0;
 
@@ -580,7 +563,6 @@ ValueLookup::valueLookup (const BNstop* object1, const BNmcparticle* object2, st
   }
 
   else{clog << "WARNING: invalid stop-mcparticle variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
@@ -590,7 +572,7 @@ ValueLookup::valueLookup (const BNstop* object1, const BNmcparticle* object2, st
 
 //!photon-jet pair valueLookup
 double
-ValueLookup::valueLookup (const BNphoton* object1, const BNjet* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNphoton* object1, const BNjet* object2, string variable){
 
   double value = 0.0;
 
@@ -619,14 +601,13 @@ ValueLookup::valueLookup (const BNphoton* object1, const BNjet* object2, string 
       value = (threeVector1.Angle(threeVector2));
     }
   else{clog << "WARNING: invalid photon-jet pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
 
 // track-jet pair valueLookup
 double
-ValueLookup::valueLookup (const BNtrack* object1, const BNjet* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNtrack* object1, const BNjet* object2, string variable){
 
   double value = 0.0;
 
@@ -634,7 +615,6 @@ ValueLookup::valueLookup (const BNtrack* object1, const BNjet* object2, string v
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
 
   else{clog << "WARNING: invalid track-jet pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 
@@ -644,27 +624,25 @@ ValueLookup::valueLookup (const BNtrack* object1, const BNjet* object2, string v
 
 // met-jet pair valueLookup
 double
-ValueLookup::valueLookup (const BNmet* object1, const BNjet* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmet* object1, const BNjet* object2, string variable){
 
   double value = 0.0;
 
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
 
   else{clog << "WARNING: invalid met-jet pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 
 }
 
 double
-ValueLookup::valueLookup (const BNmet* object1, const BNmcparticle* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmet* object1, const BNmcparticle* object2, string variable){
 
   double value = 0.0;
 
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else{clog << "WARNING: invalid met-mcparticle pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 
@@ -675,7 +653,7 @@ ValueLookup::valueLookup (const BNmet* object1, const BNmcparticle* object2, str
 
 //!muon-jet pair valueLookup
 double
-ValueLookup::valueLookup (const BNmuon* object1, const BNjet* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmuon* object1, const BNjet* object2, string variable){
 
   double value = 0.0;
 
@@ -761,7 +739,6 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNjet* object2, string va
   }
 
   else{clog << "WARNING: invalid muon-jet pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 } // end muon-jet pair valueLookup
@@ -769,7 +746,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNjet* object2, string va
 
 //!muon-event valueLookup
 double
-ValueLookup::valueLookup (const BNmuon* object1, const BNevent* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmuon* object1, const BNevent* object2, string variable){
 
   double value = 0.0;
 
@@ -782,26 +759,24 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNevent* object2, string 
   else if(variable == "correctedD0")   value = object1->correctedD0;
   else if(variable == "relPFdBetaIso") value = (object1->pfIsoR04SumChargedHadronPt + max(0.0, object1->pfIsoR04SumNeutralHadronEt + object1->pfIsoR04SumPhotonEt - 0.5*object1->pfIsoR04SumPUPt)) / object1->pt;
   else{clog << "WARNING: invalid muon-event pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
 //!electron-event valueLookup
 double
-ValueLookup::valueLookup (const BNelectron* object1, const BNevent* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNelectron* object1, const BNevent* object2, string variable){
 
   double value = 0.0;
 
   if     (variable == "numPV")       value = object2->numPV;
   else if(variable == "correctedD0") value = object1->correctedD0;
   else{clog << "WARNING: invalid electron-event pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
 //!jet-jet pair valueLookup
 double
-ValueLookup::valueLookup (const BNjet* object1, const BNjet* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNjet* object1, const BNjet* object2, string variable){
 
   double value = 0.0;
 
@@ -830,14 +805,13 @@ ValueLookup::valueLookup (const BNjet* object1, const BNjet* object2, string var
   }
 
   else{clog << "WARNING: invalid jet-jet pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
 
   return value;
 }
 
 //!electron-track pair valueLookup
 double
-ValueLookup::valueLookup (const BNelectron* object1, const BNtrack* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNelectron* object1, const BNtrack* object2, string variable){
   double electronMass = 0.000511;
   double value = 0.0;
   TLorentzVector fourVector1(0, 0, 0, 0);
@@ -861,7 +835,6 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNtrack* object2, str
     value = object1->charge*object2->charge;
   }
   else{clog << "WARNING: invalid electron-track pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
   return value;
 
 }
@@ -869,7 +842,7 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNtrack* object2, str
 
 //!muon-track pair valueLookup
 double
-ValueLookup::valueLookup (const BNmuon* object1, const BNtrack* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmuon* object1, const BNtrack* object2, string variable){
   double value = 0.0;
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
@@ -884,8 +857,7 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNtrack* object2, string 
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "deltaRLooseID") {
     // only consider muons that pass looseId criteria; otherwise return very large value (99.)
-    string empty = "";
-    double isLooseId = valueLookup(object1, "looseID", "", empty);
+    double isLooseId = valueLookup(object1, "looseID");
     if (isLooseId) value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
     else           value = 99.;
   }
@@ -908,26 +880,24 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNtrack* object2, string 
   }
 
   else{clog << "WARNING: invalid muon-track pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
   return value;
 }
 
 //!jet-track pair valueLookup
 double
-ValueLookup::valueLookup (const BNjet* object1, const BNtrack* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNjet* object1, const BNtrack* object2, string variable){
   double value = 0.0;
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
   else if(variable == "deltaPt")  value = fabs(object1->pt - object2->pt);
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else{clog << "WARNING: invalid jet-track pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
   return value;
 }
 
 //!tau-tau pair valueLookup
 double
-ValueLookup::valueLookup (const BNtau* object1, const BNtau* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNtau* object1, const BNtau* object2, string variable){
   double value = 0.0;
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
@@ -943,13 +913,12 @@ ValueLookup::valueLookup (const BNtau* object1, const BNtau* object2, string var
   }
 
   else{clog << "WARNING: invalid tau-tau pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
   return value;
 }
 
 //!muon-tau pair valueLookup
 double
-ValueLookup::valueLookup (const BNmuon* object1, const BNtau* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmuon* object1, const BNtau* object2, string variable){
   double value = 0.0;
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaEta") value = fabs(object1->eta - object2->eta);
@@ -965,20 +934,18 @@ ValueLookup::valueLookup (const BNmuon* object1, const BNtau* object2, string va
   }
 
   else{clog << "WARNING: invalid muon-tau pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
   return value;
 }
 
 //!tau-track pair valueLookup
 double
-ValueLookup::valueLookup (const BNtau* object1, const BNtrack* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNtau* object1, const BNtrack* object2, string variable){
   double value = 0.0;
   if(variable == "deltaPhi") value = fabs(deltaPhi(object1->phi,object2->phi));
   else if(variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
   else if(variable == "deltaRLooseHadronicID") {
     // only consider tau's that pass the loose hadronic ID criteria; otherwise return very large value (99)
-    string empty = "";
-    double isLooseHadronicID = valueLookup(object1, "looseHadronicID", "", empty);
+    double isLooseHadronicID = valueLookup(object1, "looseHadronicID");
 
     if (isLooseHadronicID) value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
     else                   value = 99.;
@@ -998,14 +965,13 @@ ValueLookup::valueLookup (const BNtau* object1, const BNtrack* object2, string v
   }
 
   else{clog << "WARNING: invalid tau-track pair variable '" << variable << "'\n"; value = -999;}
-  value = applyFunction(function, value);
   return value;
 }
 
 
 //!track-event pair valueLookup
 double
-ValueLookup::valueLookup (const BNtrack* object1, const BNevent* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNtrack* object1, const BNevent* object2, string variable){
 
   double value = 0.0;
   double pMag = sqrt(object1->pt * object1->pt +
@@ -1020,7 +986,6 @@ ValueLookup::valueLookup (const BNtrack* object1, const BNevent* object2, string
 
   else { clog << "WARNING: invalid track-event pair variable '" << variable << "'\n"; value = -999; }
 
-  value = applyFunction(function, value);
 
   return value;
 
@@ -1028,21 +993,19 @@ ValueLookup::valueLookup (const BNtrack* object1, const BNevent* object2, string
 
 //!electron-trigobj pair valueLookup
 double
-ValueLookup::valueLookup (const BNelectron* object1, const BNtrigobj* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNelectron* object1, const BNtrigobj* object2, string variable){
 
   double value = 0.0;
 
   if (variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
-  else if (variable == "match"){
+  /*else if (variable == "match"){
     if (deltaR(object1->eta,object1->phi,object2->eta,object2->phi) < 0.2 && abs(object2->id) == 11)
       stringValue = object2->filter;
     else
       stringValue = "none";
-  }
+  }*/
 
   else { clog << "WARNING: invalid electron-trigobj variable '" << variable << "'\n"; value = -999; }
-
-  value = applyFunction(function, value);
 
   return value;
 
@@ -1050,15 +1013,13 @@ ValueLookup::valueLookup (const BNelectron* object1, const BNtrigobj* object2, s
 
 //!muon-trigobj pair valueLookup
 double
-ValueLookup::valueLookup (const BNmuon* object1, const BNtrigobj* object2, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmuon* object1, const BNtrigobj* object2, string variable){
 
   double value = 0.0;
 
   if (variable == "deltaR") value = deltaR(object1->eta,object1->phi,object2->eta,object2->phi);
 
   else { clog << "WARNING: invalid muon-trigobj variable '" << variable << "'\n"; value = -999; }
-
-  value = applyFunction(function, value);
 
   return value;
 

@@ -5,7 +5,7 @@
 
 //!supercluster valueLookup
 double
-ValueLookup::valueLookup (const BNsupercluster* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNsupercluster* object, string variable){
 
   double value = 0.0;
 
@@ -20,8 +20,6 @@ ValueLookup::valueLookup (const BNsupercluster* object, string variable, string 
 
 
   else{clog << "WARNING: invalid supercluster variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
 
   return value;
 }

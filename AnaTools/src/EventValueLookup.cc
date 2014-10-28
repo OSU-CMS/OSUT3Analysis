@@ -8,10 +8,9 @@
 
 //!event valueLookup
 double
-ValueLookup::valueLookup (const BNevent* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNevent* object, string variable){
 
   double value = 0.0;
-  string empty = "";
 
   if(variable == "weight") value = object->weight;
   else if(variable == "pthat") value = object->pthat;
@@ -262,26 +261,26 @@ value = (mcPt/MET);
   }
   else if(variable == "totalJetPtMinusTotalMcparticlePt") {
     value =
-      valueLookup(object, "totalJetPt",        "", empty) -
-      valueLookup(object, "totalMcparticlePt", "", empty);
+      valueLookup(object, "totalJetPt") -
+      valueLookup(object, "totalMcparticlePt");
   }
   else if(variable == "totalJetPhiMinusTotalMcparticlePhi") {
-    value = deltaPhi(valueLookup(object, "totalJetPhi",        "", empty),
-                     valueLookup(object, "totalMcparticlePhi", "", empty));
+    value = deltaPhi(valueLookup(object, "totalJetPhi"),
+                     valueLookup(object, "totalMcparticlePhi"));
   }
   else if(variable == "totalMuonPtMinusTotalMcparticlePt") {
     value =
-      valueLookup(object, "totalMuonPt",       "", empty) -
-      valueLookup(object, "totalMcparticlePt", "", empty);
+      valueLookup(object, "totalMuonPt") -
+      valueLookup(object, "totalMcparticlePt");
   }
   else if(variable == "totalMuonPtMinusTotalJetPt") {
     value =
-      valueLookup(object, "totalMuonPt",       "", empty) -
-      valueLookup(object, "totalJetPt",        "", empty);
+      valueLookup(object, "totalMuonPt") -
+      valueLookup(object, "totalJetPt");
   }
   else if(variable == "totalMuonPhiMinusTotalJetPhi") {
-    value = deltaPhi(valueLookup(object, "totalMuonPhi", "", empty),
-                     valueLookup(object, "totalJetPhi",  "", empty));
+    value = deltaPhi(valueLookup(object, "totalMuonPhi"),
+                     valueLookup(object, "totalJetPhi"));
   }
   else if(variable == "totalMcparticleStatus3SusyIdPt") {
     TVector2 ptTot(0.0, 0.0);
@@ -301,8 +300,6 @@ value = (mcPt/MET);
   }
 
   else{clog << "WARNING: invalid event variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
 
   return value;
 } // end event valueLookup

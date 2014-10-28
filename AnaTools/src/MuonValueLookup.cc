@@ -7,7 +7,7 @@
 
 //!muon valueLookup
 double
-ValueLookup::valueLookup (const BNmuon* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmuon* object, string variable){
 
   double value = 0.0;
   if(variable == "energy") value = object->energy;
@@ -412,8 +412,6 @@ ValueLookup::valueLookup (const BNmuon* object, string variable, string function
 
 
   else{clog << "WARNING: invalid muon variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
 
   return value;
 } // end muon valueLookup

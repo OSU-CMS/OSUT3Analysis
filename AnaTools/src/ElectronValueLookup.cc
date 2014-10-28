@@ -7,7 +7,7 @@
 
 //!electron valueLookup
 double
-ValueLookup::valueLookup (const BNelectron* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNelectron* object, string variable){
 
   double value = 0.0;
   double pMag = sqrt(object->pt * object->pt +
@@ -512,8 +512,6 @@ ValueLookup::valueLookup (const BNelectron* object, string variable, string func
 
 
   else{clog << "WARNING: invalid electron variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
 
   return value;
 } // end electron valueLookup

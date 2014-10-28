@@ -35,56 +35,56 @@ class ValueLookup {
     ////////////////////////////////////////////////////////////////////////////
     // valueLookup methods for each type of object.
     ////////////////////////////////////////////////////////////////////////////
-    double  valueLookup  (const  BNbxlumi*         object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNelectron*       object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNevent*          object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNgenjet*         object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNjet*            object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmcparticle*     object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmet*            object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmuon*           object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNphoton*         object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNprimaryvertex*  object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNstop*           object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNsupercluster*   object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNtau*            object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNtrack*          object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNtrigobj*        object,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const map<string,double>* object,  string  variable,  string  function,  string  &stringValue); 
+    double  valueLookup  (const  BNbxlumi*             object,  string  variable);
+    double  valueLookup  (const  BNelectron*           object,  string  variable);
+    double  valueLookup  (const  BNevent*              object,  string  variable);
+    double  valueLookup  (const  BNgenjet*             object,  string  variable);
+    double  valueLookup  (const  BNjet*                object,  string  variable);
+    double  valueLookup  (const  BNmcparticle*         object,  string  variable);
+    double  valueLookup  (const  BNmet*                object,  string  variable);
+    double  valueLookup  (const  BNmuon*               object,  string  variable);
+    double  valueLookup  (const  BNphoton*             object,  string  variable);
+    double  valueLookup  (const  BNprimaryvertex*      object,  string  variable);
+    double  valueLookup  (const  BNstop*               object,  string  variable);
+    double  valueLookup  (const  BNsupercluster*       object,  string  variable);
+    double  valueLookup  (const  BNtau*                object,  string  variable);
+    double  valueLookup  (const  BNtrack*              object,  string  variable);
+    double  valueLookup  (const  BNtrigobj*            object,  string  variable);
+    double  valueLookup  (const  map<string, double>*  object,  string  variable);
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
     // valueLookup methods for each pair of objects.
     ////////////////////////////////////////////////////////////////////////////
-    double  valueLookup  (const  BNelectron*    object1,  const  BNelectron*    object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNelectron*    object1,  const  BNevent*       object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNelectron*    object1,  const  BNjet*         object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNelectron*    object1,  const  BNmcparticle*  object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNelectron*    object1,  const  BNmuon*        object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNelectron*    object1,  const  BNphoton*      object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNelectron*    object1,  const  BNtrack*       object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNelectron*    object1,  const  BNtrigobj*     object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNjet*         object1,  const  BNjet*         object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNjet*         object1,  const  BNmcparticle*  object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNjet*         object1,  const  BNtrack*       object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmcparticle*  object1,  const  BNmcparticle*  object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmet*         object1,  const  BNjet*         object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmet*         object1,  const  BNmcparticle*  object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmuon*        object1,  const  BNevent*       object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmuon*        object1,  const  BNjet*         object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmuon*        object1,  const  BNmcparticle*  object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmuon*        object1,  const  BNmuon*        object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmuon*        object1,  const  BNphoton*      object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmuon*        object1,  const  BNtau*         object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmuon*        object1,  const  BNtrack*       object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNmuon*        object1,  const  BNtrigobj*     object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNphoton*      object1,  const  BNjet*         object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNstop*        object1,  const  BNmcparticle*  object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNtau*         object1,  const  BNtau*         object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNtau*         object1,  const  BNtrack*       object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNtrack*       object1,  const  BNevent*       object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNtrack*       object1,  const  BNjet*         object2,  string  variable,  string  function,  string  &stringValue);
-    double  valueLookup  (const  BNtrack*       object1,  const  BNmcparticle*  object2,  string  variable,  string  function,  string  &stringValue);
+    double  valueLookup  (const  BNelectron*    object1,  const  BNelectron*    object2,  string  variable);
+    double  valueLookup  (const  BNelectron*    object1,  const  BNevent*       object2,  string  variable);
+    double  valueLookup  (const  BNelectron*    object1,  const  BNjet*         object2,  string  variable);
+    double  valueLookup  (const  BNelectron*    object1,  const  BNmcparticle*  object2,  string  variable);
+    double  valueLookup  (const  BNelectron*    object1,  const  BNmuon*        object2,  string  variable);
+    double  valueLookup  (const  BNelectron*    object1,  const  BNphoton*      object2,  string  variable);
+    double  valueLookup  (const  BNelectron*    object1,  const  BNtrack*       object2,  string  variable);
+    double  valueLookup  (const  BNelectron*    object1,  const  BNtrigobj*     object2,  string  variable);
+    double  valueLookup  (const  BNjet*         object1,  const  BNjet*         object2,  string  variable);
+    double  valueLookup  (const  BNjet*         object1,  const  BNmcparticle*  object2,  string  variable);
+    double  valueLookup  (const  BNjet*         object1,  const  BNtrack*       object2,  string  variable);
+    double  valueLookup  (const  BNmcparticle*  object1,  const  BNmcparticle*  object2,  string  variable);
+    double  valueLookup  (const  BNmet*         object1,  const  BNjet*         object2,  string  variable);
+    double  valueLookup  (const  BNmet*         object1,  const  BNmcparticle*  object2,  string  variable);
+    double  valueLookup  (const  BNmuon*        object1,  const  BNevent*       object2,  string  variable);
+    double  valueLookup  (const  BNmuon*        object1,  const  BNjet*         object2,  string  variable);
+    double  valueLookup  (const  BNmuon*        object1,  const  BNmcparticle*  object2,  string  variable);
+    double  valueLookup  (const  BNmuon*        object1,  const  BNmuon*        object2,  string  variable);
+    double  valueLookup  (const  BNmuon*        object1,  const  BNphoton*      object2,  string  variable);
+    double  valueLookup  (const  BNmuon*        object1,  const  BNtau*         object2,  string  variable);
+    double  valueLookup  (const  BNmuon*        object1,  const  BNtrack*       object2,  string  variable);
+    double  valueLookup  (const  BNmuon*        object1,  const  BNtrigobj*     object2,  string  variable);
+    double  valueLookup  (const  BNphoton*      object1,  const  BNjet*         object2,  string  variable);
+    double  valueLookup  (const  BNstop*        object1,  const  BNmcparticle*  object2,  string  variable);
+    double  valueLookup  (const  BNtau*         object1,  const  BNtau*         object2,  string  variable);
+    double  valueLookup  (const  BNtau*         object1,  const  BNtrack*       object2,  string  variable);
+    double  valueLookup  (const  BNtrack*       object1,  const  BNevent*       object2,  string  variable);
+    double  valueLookup  (const  BNtrack*       object1,  const  BNjet*         object2,  string  variable);
+    double  valueLookup  (const  BNtrack*       object1,  const  BNmcparticle*  object2,  string  variable);
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////

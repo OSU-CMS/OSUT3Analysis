@@ -5,7 +5,7 @@
 
 //!bxlumi valueLookup
 double
-ValueLookup::valueLookup (const BNbxlumi* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNbxlumi* object, string variable){
 
   double value = 0.0;
 
@@ -15,8 +15,6 @@ ValueLookup::valueLookup (const BNbxlumi* object, string variable, string functi
 
 
   else{clog << "WARNING: invalid bxlumi variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
 
   return value;
 }

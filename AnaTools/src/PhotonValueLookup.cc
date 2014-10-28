@@ -5,7 +5,7 @@
 
 //!photon valueLookup
 double
-ValueLookup::valueLookup (const BNphoton* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNphoton* object, string variable){
 
   double value = 0.0;
 
@@ -130,8 +130,6 @@ ValueLookup::valueLookup (const BNphoton* object, string variable, string functi
 
 
   else{clog << "WARNING: invalid photon variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
 
   return value;
 } // end photon valueLookup
