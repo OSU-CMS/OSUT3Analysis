@@ -24,24 +24,16 @@ struct DeadEcal {
 struct cut
 {
   bool            isVeto;
-  //int             numSubcuts;
   int             numberRequired;
   string          eventComparativeOperator;
   string          inputCollection;
   string          name;
   string          cutString;
   ValueLookupTree *valueLookupTree;
-  //vector<double>  cutValues;
-  //vector<string>  comparativeOperators;
-  //vector<string>  cutStringValues;
-  //vector<string>  functions;
-  //vector<string>  logicalOperators;
-  //vector<string>  variables;
 };
 
 struct histoDef {
   string inputCollection;
-  //TFileDirectory *directory;
   string directory;
   string name;
   string title; // contains axis labels

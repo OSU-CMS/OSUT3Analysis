@@ -119,13 +119,18 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
     clog << "INFO: did not retrieve userVariables collection from the event." << endl;
   //////////////////////////////////////////////////////////////////////////////
 
-  // Set all the private variables in the ValueLookup object before using it.
+  //////////////////////////////////////////////////////////////////////////////
+  // Set all the private variables in the ValueLookup object before using it,
+  // and parse the cut strings in the unpacked cuts into ValueLookupTree
+  // objects.
+  //////////////////////////////////////////////////////////////////////////////
   initializeValueLookup ();
   if (!initializeValueLookupTrees (unpackedCuts_))
     {
       clog << "ERROR: failed to parse all cut strings. Quitting..." << endl;
       exit (EXIT_CODE);
     }
+  //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
   // Create the payload for this EDProducer and initialize some of its members.
@@ -300,6 +305,8 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
 
       if (currentCut.inputCollection == inputType)
         {
+          // Calculate the cut decision by evaluating the ValueLookupTree for
+          // this object.
           cutDecision = currentCut.valueLookupTree->evaluate (&inputCollection->at (object));
 
           //////////////////////////////////////////////////////////////////////
@@ -372,6 +379,8 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
 
           if (currentCut.inputCollection == inputType)
             {
+              // Calculate the cut decision by evaluating the ValueLookupTree
+              // for these objects.
               cutDecision = currentCut.valueLookupTree->evaluate (&inputCollection1->at (object1), &inputCollection2->at (object2));
 
               //////////////////////////////////////////////////////////////////
@@ -731,8 +740,17 @@ CutCalculator::setEventFlags ()
 bool
 CutCalculator::initializeValueLookupTrees (vector<cut> &cuts)
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Do nothing if it is not the first event.
+  //////////////////////////////////////////////////////////////////////////////
   if (!firstEvent_)
     return true;
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // For each cut, parse its cut string into a new ValueLookupTree object which
+  // is stored in the cut structure.
+  //////////////////////////////////////////////////////////////////////////////
   for (vector<cut>::iterator cut = cuts.begin (); cut != cuts.end (); cut++)
     {
       cut->valueLookupTree = new ValueLookupTree (cut->cutString, vl_);
@@ -740,6 +758,7 @@ CutCalculator::initializeValueLookupTrees (vector<cut> &cuts)
         return false;
     }
   return true;
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 void

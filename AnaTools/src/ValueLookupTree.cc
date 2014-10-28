@@ -28,6 +28,24 @@ ValueLookupTree::assignValueLookup (ValueLookup *vl)
   return (vl_ = vl);
 }
 
+bool
+ValueLookupTree::isValid ()
+{
+  return (root_ != NULL);
+}
+
+bool
+ValueLookupTree::evaluationError ()
+{
+  return evaluationError_;
+}
+
+void
+ValueLookupTree::insert (const string &cut)
+{
+  root_ = insert_ (cut);
+}
+
 void
 ValueLookupTree::destroy (node *x)
 {
@@ -36,15 +54,57 @@ ValueLookupTree::destroy (node *x)
   delete x;
 }
 
-bool
-ValueLookupTree::isValid ()
+node *
+ValueLookupTree::insert_ (const string &cut)
 {
-  return (root_ != NULL);
+  //////////////////////////////////////////////////////////////////////////////
+  // If the given string is missing parentheses, simply print an error and
+  // return NULL. The user can then use the isValid() method to see if
+  // inserting the expression into the tree was successful.
+  //////////////////////////////////////////////////////////////////////////////
+  if (splitParentheses (cut))
+    {
+      clog << "ERROR: missing parentheses in \"" << cut << "\"" << endl;
+      return NULL;
+    }
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Try inserting nodes for each possible operator, in reverse order of
+  // operations. If none of the operators can be inserted, then it means we
+  // have hit a leaf.
+  //////////////////////////////////////////////////////////////////////////////
+  node *tree = new node;
+  if (!(insertBinaryInfixOperator   (cut,  tree,  {","})                   ||
+        insertBinaryInfixOperator   (cut,  tree,  {"||", "|"})             ||
+        insertBinaryInfixOperator   (cut,  tree,  {"&&", "&"})             ||
+        insertBinaryInfixOperator   (cut,  tree,  {"==", "!=", "="})       ||
+        insertBinaryInfixOperator   (cut,  tree,  {"<", "<=", ">", ">="})  ||
+        insertBinaryInfixOperator   (cut,  tree,  {"+", "-"})              ||
+        insertBinaryInfixOperator   (cut,  tree,  {"*", "/", "%"})         ||
+        insertUnaryPrefixOperator   (cut,  tree,  {"!"})                   ||
+        insertUnaryPrefixOperator   (cut,  tree,  {"cos", "sin", "tan", "acos", "asin", "atan", "atan2",
+                                                   "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
+                                                   "exp", "ldexp", "log", "log10", "exp2", "expm1", "ilogb", "log1p", "log2", "logb",
+                                                   "pow", "sqrt", "cbrt", "hypot",
+                                                   "erf", "erfc", "tgamma", "lgamma",
+                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
+                                                   "copysign", "nextafter",
+                                                   "fdim", "fmax", "fmin"}) ||
+        insertParentheses           (cut,  tree)))
+    tree->value = cut;
+  //////////////////////////////////////////////////////////////////////////////
+
+  return tree;
 }
 
 double
 ValueLookupTree::evaluateOperator (const string &op, const vector<double> &operands)
 {
+  // Tries to return the result of operating on the operands. Prints out a
+  // warning, sets evaluationError_ to true, and returns the maximum unsigned
+  // integer if there is a problem.
+
   evaluationError_ = false;
   try
     {
@@ -183,60 +243,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<double> &opera
       clog << ")\"" << endl;
       evaluationError_ = true;
     }
-
   return numeric_limits<unsigned>::max ();
-}
-
-bool
-ValueLookupTree::evaluationError ()
-{
-  return evaluationError_;
-}
-
-bool
-ValueLookupTree::isnumber (const string &s, double &x)
-{
-  char *p;
-  x = strtod (s.c_str (), &p);
-  return !(*p);
-}
-
-void
-ValueLookupTree::insert (const string &cut)
-{
-  root_ = insert_ (cut);
-}
-
-node *
-ValueLookupTree::insert_ (const string &cut)
-{
-cout << "insert_ (" << cut << ")" << endl; // HART
-  if (splitParentheses (cut))
-    {
-      clog << "ERROR: missing parentheses in \"" << cut << "\"" << endl;
-      return NULL;
-    }
-  node *tree = new node;
-  if (!(insertBinaryInfixOperator   (cut,  tree,  {","})                   ||
-        insertBinaryInfixOperator   (cut,  tree,  {"||", "|"})             ||
-        insertBinaryInfixOperator   (cut,  tree,  {"&&", "&"})             ||
-        insertBinaryInfixOperator   (cut,  tree,  {"==", "!=", "="})       ||
-        insertBinaryInfixOperator   (cut,  tree,  {"<", "<=", ">", ">="})  ||
-        insertBinaryInfixOperator   (cut,  tree,  {"+", "-"})              ||
-        insertBinaryInfixOperator   (cut,  tree,  {"*", "/", "%"})         ||
-        insertUnaryPrefixOperator   (cut,  tree,  {"!"})                   ||
-        insertUnaryPrefixOperator   (cut,  tree,  {"cos", "sin", "tan", "acos", "asin", "atan", "atan2",
-                                                   "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
-                                                   "exp", "ldexp", "log", "log10", "exp2", "expm1", "ilogb", "log1p", "log2", "logb",
-                                                   "pow", "sqrt", "cbrt", "hypot",
-                                                   "erf", "erfc", "tgamma", "lgamma",
-                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
-                                                   "copysign", "nextafter",
-                                                   "fdim", "fmax", "fmin"}) ||
-        insertParentheses           (cut,  tree)))
-    tree->value = cut;
-
-  return tree;
 }
 
 string &
@@ -260,6 +267,9 @@ ValueLookupTree::trim (string &s)
 bool
 ValueLookupTree::splitParentheses (string s)
 {
+  // Returns true if the number of left parentheses does not equal the number
+  // of right parentheses.
+
   int parentheses = 0;
   for (unsigned i = 0; i < s.length (); i++)
     {
@@ -272,26 +282,38 @@ ValueLookupTree::splitParentheses (string s)
   return parentheses;
 }
 
+bool
+ValueLookupTree::isnumber (const string &s, double &x)
+{
+  char *p;
+  x = strtod (s.c_str (), &p);
+  return !(*p);
+}
+
 void
 ValueLookupTree::pruneCommas (vector<node *> &branches)
 {
-cout << "pruneCommas" << endl; // HART
+  //////////////////////////////////////////////////////////////////////////////
+  // Do nothing if there is not exactly one branch whose value is either a
+  // comma or parentheses.
+  //////////////////////////////////////////////////////////////////////////////
   if (branches.size () != 1)
     return;
   if (branches.at (0)->value != "," && branches.at (0)->value != "()")
     return;
-cout << "  value of daughter: " << branches.at (0)->value << endl; // HART
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Replace the branches with those of the daughter, then prune the result
+  // again.
+  //////////////////////////////////////////////////////////////////////////////
   node *originalBranch = branches.at (0);
   branches.clear ();
   for (vector<node *>::const_iterator branch = originalBranch->branches.begin (); branch != originalBranch->branches.end (); branch++)
     branches.push_back (*branch);
-cout << "  branches now has " << branches.size () << " members" << endl; // HART
-cout << "  "; // HART
-for (vector<node *>::const_iterator branch = branches.begin (); branch != branches.end (); branch++) // HART
-  cout << (*branch)->value << " "; // HART
-cout << endl; // HART
   delete originalBranch;
   pruneCommas (branches);
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 bool
@@ -306,10 +328,19 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
   vector<pair<size_t, string> > indices;
   pair<size_t, string> firstHit, biggestHit;
 
+  //////////////////////////////////////////////////////////////////////////////
+  // For each of the target strings, find the index of the first instance of
+  // it. Then sort the indices in ascending order.
+  //////////////////////////////////////////////////////////////////////////////
   for (vector<string>::const_iterator target = targets.begin (); target != targets.end (); target++)
     indices.push_back (make_pair (s.find (*target, pos), *target));
   sort (indices.begin (), indices.end (), ValueLookupTree::firstOfPairAscending);
+  //////////////////////////////////////////////////////////////////////////////
 
+  //////////////////////////////////////////////////////////////////////////////
+  // If there are multiple targets which match at the same position in the
+  // string, then only return the one which matches the most characters.
+  //////////////////////////////////////////////////////////////////////////////
   firstHit = indices.at (0);
   for (vector<pair<size_t, string> >::const_iterator index = indices.begin (); index != indices.end () && index->first == firstHit.first; index++)
     {
@@ -317,23 +348,27 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
         biggestHit = *index;
     }
   return biggestHit;
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 bool
 ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const vector<string> &operators)
 {
-cout << "insertBinaryInfixOperator (" << s << ", " << tree << ", {"; // HART
-for (vector<string>::const_iterator op = operators.begin (); op != operators.end (); op++) // HART
-{ // HART
-  if (op != operators.begin ()) // HART
-    cout << ", "; // HART
-  cout << *op; // HART
-} // HART
-cout << "})" << endl; // HART
   bool foundAnOperator = false;
   double x;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // If the string is a number, then simply return false;
+  //////////////////////////////////////////////////////////////////////////////
   if (isnumber (s,x))
-    return foundAnOperator;
+    return false;
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // For each operator which is found in the string, split the string into a
+  // left and right substring. These substrings are inserted into the tree and
+  // stored as branches for the operator's node.
+  //////////////////////////////////////////////////////////////////////////////
   for (pair<size_t, string> i = findFirstOf (s, operators); i.first != string::npos; i = findFirstOf (s, operators, i.first + i.second.length ()))
     {
       string left, right;
@@ -350,6 +385,7 @@ cout << "})" << endl; // HART
           foundAnOperator = true;
         }
     }
+  //////////////////////////////////////////////////////////////////////////////
 
   return foundAnOperator;
 }
@@ -357,18 +393,21 @@ cout << "})" << endl; // HART
 bool
 ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const vector<string> &operators)
 {
-cout << "insertUnaryPrefixOperator (" << s << ", " << tree << ", {"; // HART
-for (vector<string>::const_iterator op = operators.begin (); op != operators.end (); op++) // HART
-{ // HART
-  if (op != operators.begin ()) // HART
-    cout << ", "; // HART
-  cout << *op; // HART
-} // HART
-cout << "})" << endl; // HART
   bool foundAnOperator = false;
   double x;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // If the string is a number, then simply return false;
+  //////////////////////////////////////////////////////////////////////////////
   if (isnumber (s,x))
     return foundAnOperator;
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // For each operator which is found in the string, split the string into a
+  // left and right substring. The right substring is inserted into the tree and
+  // stored as a branch for the operator's node.
+  //////////////////////////////////////////////////////////////////////////////
   for (pair<size_t, string> i = findFirstOf (s, operators); i.first != string::npos; i = findFirstOf (s, operators, i.first + i.second.length ()))
     {
       string left, right;
@@ -381,17 +420,10 @@ cout << "})" << endl; // HART
           tree->value = i.second;
           tree->branches.push_back (insert_ (right));
           pruneCommas (tree->branches);
-if (tree->value == "pow") // HART
-{ // HART
-  cout << "  pow has " << tree->branches.size () << " daughters" << endl; // HART
-  cout << "  ";  // HART
-  for (vector<node *>::const_iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)  // HART
-    cout << (*branch)->value << " ";  // HART
-  cout << endl;  // HART
-} // HART
           foundAnOperator = true;
         }
     }
+  //////////////////////////////////////////////////////////////////////////////
 
   return foundAnOperator;
 }
@@ -399,14 +431,24 @@ if (tree->value == "pow") // HART
 bool
 ValueLookupTree::insertParentheses (const string &s, node *tree)
 {
-cout << "insertParentheses (" << s << ", " << tree << ")" << endl; // HART
+  //////////////////////////////////////////////////////////////////////////////
+  // Look for the first left parenthesis and the last right parenthesis and
+  // simply return false if both are not found.
+  //////////////////////////////////////////////////////////////////////////////
   size_t leftParenthesis = s.find ('('),
          rightParenthesis = s.rfind (')');
   if (leftParenthesis == string::npos || rightParenthesis == string::npos)
     return false;
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Insert the substring between the parentheses into the tree and return
+  // true.
+  //////////////////////////////////////////////////////////////////////////////
   string middle = s.substr (leftParenthesis + 1, rightParenthesis - leftParenthesis - 1);
   trim (middle);
   tree->value = "()";
   tree->branches.push_back (insert_ (middle));
   return true;
+  //////////////////////////////////////////////////////////////////////////////
 }
