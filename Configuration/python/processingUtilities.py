@@ -283,17 +283,7 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         # Add a plotting module for this channel to the path.
         ########################################################################
         plotter = cms.EDAnalyzer ("Plotter",
-            jets            =  channelCollections.jets,
-            muons           =  channelCollections.muons,
-            electrons       =  channelCollections.electrons,
-            taus            =  channelCollections.taus,
-            mets            =  channelCollections.mets,
-            genjets         =  channelCollections.genjets,
-            mcparticles     =  channelCollections.mcparticles,
-            primaryvertexs  =  channelCollections.primaryvertexs,
-            photons         =  channelCollections.photons,
-            triggers        =  channelCollections.triggers,
-
+            collections     =  channelCollections,
             histogramSets   =  histogramSets,
             verbose         =  cms.int32 (0)
         )

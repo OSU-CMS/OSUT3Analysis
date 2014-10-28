@@ -9,6 +9,8 @@ using namespace std;
 
 typedef map<string, vector<vector<bool> > > flagMap;
 
+class ValueLookupTree;
+
 struct BadCSC {
   double etaCSC;
   double phiCSC;
@@ -22,22 +24,16 @@ struct DeadEcal {
 struct cut
 {
   bool            isVeto;
-  int             numSubcuts;
   int             numberRequired;
   string          eventComparativeOperator;
   string          inputCollection;
   string          name;
-  vector<double>  cutValues;
-  vector<string>  comparativeOperators;
-  vector<string>  cutStringValues;
-  vector<string>  functions;
-  vector<string>  logicalOperators;
-  vector<string>  variables;
+  string          cutString;
+  ValueLookupTree *valueLookupTree;
 };
 
 struct histoDef {
   string inputCollection;
-  //TFileDirectory *directory;
   string directory;
   string name;
   string title; // contains axis labels
@@ -46,7 +42,14 @@ struct histoDef {
   bool hasVariableBinsX;
   bool hasVariableBinsY;
   vector<string> inputVariables;
+  vector<ValueLookupTree *> valueLookupTrees;
   int dimensions;
+};
+
+struct node
+{
+  string value;
+  vector<node *> branches;
 };
 
 #endif

@@ -7,7 +7,7 @@
 
 //!muon valueLookup
 double
-ValueLookup::valueLookup (const BNmuon* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmuon* object, string variable){
 
   double value = 0.0;
   if(variable == "energy") value = object->energy;
@@ -199,13 +199,13 @@ ValueLookup::valueLookup (const BNmuon* object, string variable, string function
         value = sqrt (2 * object->pt * met->pt * (1 - cos (dPhi)));
       }
     else
-      value = -999;
+      value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "metDeltaPhi") {
     if (const BNmet *met = chosenMET ())
       value = deltaPhi (object->phi, met->phi);
     else
-      value = -999;
+      value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "ptPlusMet") {
     // Calculate the magnitude of the vector sum of the muon pT and the Met.
@@ -219,112 +219,112 @@ ValueLookup::valueLookup (const BNmuon* object, string variable, string function
         value = p2MetMuon.Mod();
       }
     else
-      value = -999;
+      value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0VertexInEBPlus"){
     if(fabs(object->eta) < 0.8 && object->eta > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexOutEBPlus"){
     if(fabs(object->eta) < 1.479 && fabs(object->eta) > 0.8 && object->eta > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexEEPlus"){
     if(fabs(object->eta) > 1.479 && object->eta > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0BeamspotInEBPlus"){
     if(fabs(object->eta) < 0.8 && object->eta > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotOutEBPlus"){
     if(fabs(object->eta) < 1.479 && fabs(object->eta) > 0.8 && object->eta > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotEEPlus"){
     if(fabs(object->eta) > 1.479 && object->eta > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0VertexInEBMinus"){
     if(fabs(object->eta) < 0.8 && object->eta < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexOutEBMinus"){
     if(fabs(object->eta) < 1.479 && fabs(object->eta) > 0.8 && object->eta < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexEEMinus"){
     if(fabs(object->eta) > 1.479 && object->eta < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0BeamspotInEBMinus"){
     if(fabs(object->eta) < 0.8 && object->eta < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotOutEBMinus"){
     if(fabs(object->eta) < 1.479 && fabs(object->eta) > 0.8 && object->eta < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotEEMinus"){
     if(fabs(object->eta) > 1.479 && object->eta < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
 
   else if(variable == "correctedD0VertexInEBPositiveCharge"){
     if(fabs(object->eta) < 0.8 && object->charge > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexOutEBPositiveCharge"){
     if(fabs(object->eta) < 1.479 && fabs(object->eta) > 0.8 && object->charge > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexEEPositiveCharge"){
     if(fabs(object->eta) > 1.479 && object->charge > 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0BeamspotInEBPositiveCharge"){
     if(fabs(object->eta) < 0.8 && object->charge > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotOutEBPositiveCharge"){
     if(fabs(object->eta) < 1.479 && fabs(object->eta) > 0.8 && object->charge > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotEEPositiveCharge"){
     if(fabs(object->eta) > 1.479 && object->charge > 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0VertexInEBNegativeCharge"){
     if(fabs(object->eta) < 0.8 && object->charge < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexOutEBNegativeCharge"){
     if(fabs(object->eta) < 1.479 && fabs(object->eta) > 0.8 && object->charge < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0VertexEENegativeCharge"){
     if(fabs(object->eta) > 1.479 && object->charge < 0) value = object->correctedD0Vertex;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "correctedD0BeamspotInEBNegativeCharge"){
     if(fabs(object->eta) < 0.8 && object->charge < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotOutEBNegativeCharge"){
     if(fabs(object->eta) < 1.479 && fabs(object->eta) > 0.8 && object->charge < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "correctedD0BeamspotEENegativeCharge"){
     if(fabs(object->eta) > 1.479 && object->charge < 0) value = object->correctedD0;
-    else value = -999;
+    else value = numeric_limits<unsigned>::max ();
   }
 
 
@@ -411,9 +411,7 @@ ValueLookup::valueLookup (const BNmuon* object, string variable, string function
 
 
 
-  else{clog << "WARNING: invalid muon variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
+  else{clog << "WARNING: invalid muon variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end muon valueLookup

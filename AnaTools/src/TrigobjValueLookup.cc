@@ -5,7 +5,7 @@
 
 //!trigobj valueLookup
 double
-ValueLookup::valueLookup (const BNtrigobj* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNtrigobj* object, string variable){
 
   double value = 0.0;
 
@@ -29,27 +29,25 @@ ValueLookup::valueLookup (const BNtrigobj* object, string variable, string funct
   else if(variable == "metPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNmet *met = chosenMET ()) {
       value = met->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "trackPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNtrack *track = chosenTrack ()) {
       value = track->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
   else if(variable == "jetPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNjet *jet = chosenJet ()) {
       value = jet->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
-  else if(variable == "filter") {
+  /*else if(variable == "filter") {
     if ((stringValue = object->filter) == "")
       stringValue = "none";  // stringValue should only be empty if value is filled
-  }
+  }*/
 
 
-  else{clog << "WARNING: invalid trigobj variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
+  else{clog << "WARNING: invalid trigobj variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }

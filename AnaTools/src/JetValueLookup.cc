@@ -5,7 +5,7 @@
 
 //!jet valueLookup
 double
-ValueLookup::valueLookup (const BNjet* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNjet* object, string variable){
 
   BNjet jetCorr;
   if (flagJESJERCorr_) {
@@ -154,20 +154,19 @@ ValueLookup::valueLookup (const BNjet* object, string variable, string function,
   else if(variable == "dPhiMet") {
     if (const BNmet *met = chosenMET ()) {
       value = deltaPhi (object->phi, met->phi);
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "metPt") {  // allow making 2D plots of jet quantities vs. Met
     if (const BNmet *met = chosenMET ()) {
       value = met->pt;
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
 
   else if(variable == "isLeadingPtJet") {
     double ptMax = -99;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
-      string empty = "";
-      double jetPt = valueLookup(&jets->at(ijet), "pt", "", empty);
+      double jetPt = valueLookup(&jets->at(ijet), "pt");
       if (jetPt > ptMax) ptMax = jetPt;
     }
     if (object->pt < ptMax) value = 0;
@@ -179,19 +178,16 @@ ValueLookup::valueLookup (const BNjet* object, string variable, string function,
     double deltaRMin = 99;
     if (!muons.product()) clog << "ERROR:  cannot find deltaRMuonPt20 because muons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<muons->size(); imuon++) {
-      string empty = "";
-      double muonPt = valueLookup(&muons->at(imuon), "pt", "", empty);
+      double muonPt = valueLookup(&muons->at(imuon), "pt");
       if (muonPt < 20) continue;
-      double muonEta = valueLookup(&muons->at(imuon), "eta", "", empty);
-      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty);
+      double muonEta = valueLookup(&muons->at(imuon), "eta");
+      double muonPhi = valueLookup(&muons->at(imuon), "phi");
       double dR = deltaR(object->eta, object->phi, muonEta, muonPhi);
       if (dR < deltaRMin) deltaRMin = dR;
     }
     value = deltaRMin;
   }
-  else{clog << "WARNING: invalid jet variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
+  else{clog << "WARNING: invalid jet variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end jet valueLookup

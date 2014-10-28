@@ -5,7 +5,7 @@
 
 //!mcparticle valueLookup
 double
-ValueLookup::valueLookup (const BNmcparticle* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmcparticle* object, string variable){
 
   double value = 0.0;
 
@@ -190,10 +190,9 @@ ValueLookup::valueLookup (const BNmcparticle* object, string variable, string fu
     double mcpartJetDeltaPhiMax = -99.;
     if (!jets.product()) clog << "ERROR:  cannot find deltaPhiMaxSubLeadJet because jets collection is not initialized." << endl;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
-      string empty = "";
-      double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID", "", empty);
+      double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID");
       if (!isSubLeadingJet) continue;  // only consider jets that pass the subleading jet ID criteria
-      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
+      double jetPhi = valueLookup(&jets->at(ijet), "phi");
       double mcpartJetDeltaPhi = fabs(deltaPhi(object->phi, jetPhi));
       if (mcpartJetDeltaPhi > mcpartJetDeltaPhiMax) mcpartJetDeltaPhiMax = mcpartJetDeltaPhi;
     }
@@ -201,9 +200,7 @@ ValueLookup::valueLookup (const BNmcparticle* object, string variable, string fu
   }
 
 
-  else{clog << "WARNING: invalid mcparticle variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
+  else{clog << "WARNING: invalid mcparticle variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end mcparticle valueLookup

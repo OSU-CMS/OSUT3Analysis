@@ -138,11 +138,12 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
-    // ValueLookup object and the function for initializing its private
-    // variables, which some valueLookup methods use.
+    // ValueLookup object, the function for initializing its private variables,
+    // and the function for initializing ValueLookupTree objects.
     ////////////////////////////////////////////////////////////////////////////
     ValueLookup *vl_;
     void initializeValueLookup ();
+    bool initializeValueLookupTrees (vector<cut> &);
     ////////////////////////////////////////////////////////////////////////////
 };
 

@@ -7,7 +7,7 @@
 
 //!met valueLookup
 double
-ValueLookup::valueLookup (const BNmet* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNmet* object, string variable){
 
   double value = 0.0;
 
@@ -81,9 +81,8 @@ ValueLookup::valueLookup (const BNmet* object, string variable, string function,
     p2Muon.SetMagPhi(0, 0);
     if (!muons.product()) clog << "ERROR: cannot find metNoMu because muons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<muons->size(); imuon++) {
-      string empty = "";
-      double muonPt  = valueLookup(&muons->at(imuon), "pt",  "", empty);
-      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty);
+      double muonPt  = valueLookup(&muons->at(imuon), "pt");
+      double muonPhi = valueLookup(&muons->at(imuon), "phi");
       TVector2 p2MuonTmp;
       p2MuonTmp.SetMagPhi(muonPt, muonPhi);
       p2Muon += p2MuonTmp;
@@ -100,9 +99,8 @@ ValueLookup::valueLookup (const BNmet* object, string variable, string function,
     p2Muon.SetMagPhi(0, 0);
     if (!muons.product()) clog << "ERROR: cannot find metNoMu because muons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<muons->size(); imuon++) {
-      string empty = "";
-      double muonPt  = valueLookup(&muons->at(imuon), "pt",  "", empty);
-      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty);
+      double muonPt  = valueLookup(&muons->at(imuon), "pt");
+      double muonPhi = valueLookup(&muons->at(imuon), "phi");
       TVector2 p2MuonTmp;
       p2MuonTmp.SetMagPhi(muonPt, muonPhi);
       p2Muon += p2MuonTmp;
@@ -119,9 +117,8 @@ ValueLookup::valueLookup (const BNmet* object, string variable, string function,
     p2Elec.SetMagPhi(0, 0);
     if (!electrons.product()) clog << "ERROR: cannot find metNoElec because electron collection is not initialized." << endl;
     for (uint ielec = 0; ielec<electrons->size(); ielec++) {
-      string empty = "";
-      double elecPt  = valueLookup(&electrons->at(ielec), "pt",  "", empty);
-      double elecPhi = valueLookup(&electrons->at(ielec), "phi", "", empty);
+      double elecPt  = valueLookup(&electrons->at(ielec), "pt");
+      double elecPhi = valueLookup(&electrons->at(ielec), "phi");
       TVector2 p2ElecTmp;
       p2ElecTmp.SetMagPhi(elecPt, elecPhi);
       p2Elec += p2ElecTmp;
@@ -140,10 +137,9 @@ ValueLookup::valueLookup (const BNmet* object, string variable, string function,
     if (verbose_>4) clog << "Debug:  calculating deltaPhiMin2Jets" << endl;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
       // find indices of candidate jets
-      string empty = "";
-      double jetPt  = valueLookup(&jets->at(ijet), "pt", "", empty);
-      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty);
-      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
+      double jetPt  = valueLookup(&jets->at(ijet), "pt");
+      double jetEta = valueLookup(&jets->at(ijet), "eta");
+      double jetPhi = valueLookup(&jets->at(ijet), "phi");
       if (jetPt < 45 ||
           fabs(jetEta) > 2.8) continue;
       if (verbose_>4) clog << "  Found jet with pt=" << jetPt << ", eta=" << jetEta << ", phi=" << jetPhi << endl;
@@ -182,10 +178,9 @@ ValueLookup::valueLookup (const BNmet* object, string variable, string function,
     if (verbose_>4) clog << "Debug:  calculating deltaPhiJet1" << endl;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
       // find indices of candidate jets
-      string empty = "";
-      double jetPt  = valueLookup(&jets->at(ijet), "pt", "", empty);
-      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty);
-      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
+      double jetPt  = valueLookup(&jets->at(ijet), "pt");
+      double jetEta = valueLookup(&jets->at(ijet), "eta");
+      double jetPhi = valueLookup(&jets->at(ijet), "phi");
       if (jetPt < 45 ||
           fabs(jetEta) > 2.8) continue;
       if (verbose_>4) clog << "  Found jet with pt=" << jetPt << ", eta=" << jetEta << ", phi=" << jetPhi << endl;
@@ -214,10 +209,9 @@ ValueLookup::valueLookup (const BNmet* object, string variable, string function,
     if (verbose_>4) clog << "Debug:  calculating deltaPhiMin2Jets" << endl;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
       // find indices of candidate jets
-      string empty = "";
-      double jetPt  = valueLookup(&jets->at(ijet), "pt", "", empty);
-      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty);
-      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
+      double jetPt  = valueLookup(&jets->at(ijet), "pt");
+      double jetEta = valueLookup(&jets->at(ijet), "eta");
+      double jetPhi = valueLookup(&jets->at(ijet), "phi");
       if (jetPt < 45 ||
           fabs(jetEta) > 2.8) continue;
       if (verbose_>4) clog << "  Found jet with pt=" << jetPt << ", eta=" << jetEta << ", phi=" << jetPhi << endl;
@@ -241,9 +235,7 @@ ValueLookup::valueLookup (const BNmet* object, string variable, string function,
     value = deltaPhiJet2;
   }
 
-  else{clog << "WARNING: invalid met variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
+  else{clog << "WARNING: invalid met variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end met valueLookup

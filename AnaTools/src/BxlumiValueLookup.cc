@@ -5,7 +5,7 @@
 
 //!bxlumi valueLookup
 double
-ValueLookup::valueLookup (const BNbxlumi* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNbxlumi* object, string variable){
 
   double value = 0.0;
 
@@ -14,9 +14,7 @@ ValueLookup::valueLookup (const BNbxlumi* object, string variable, string functi
   else if(variable == "bx_LUMI_now") value = object->bx_LUMI_now;
 
 
-  else{clog << "WARNING: invalid bxlumi variable '" << variable << "'\n"; value = -999;}
-
-  value = applyFunction(function, value);
+  else{clog << "WARNING: invalid bxlumi variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 }

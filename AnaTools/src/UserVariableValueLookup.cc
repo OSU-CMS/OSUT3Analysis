@@ -5,8 +5,7 @@
 
 //!userVariable valueLookup
 double
-//ValueLookup::valueLookup (map<string,double>* object, string variable, string function, string &stringValue) {
-ValueLookup::valueLookup (const map<string,double>* object, string variable, string function, string &stringValue) {
+ValueLookup::valueLookup (const map<string,double>* object, string variable){
 
   double value = 0.0;
   string empty = "";
@@ -15,8 +14,6 @@ ValueLookup::valueLookup (const map<string,double>* object, string variable, str
   } else {
     value = object->at(variable);  
   }
-
-  value = applyFunction(function, value);
 
   return value;
 

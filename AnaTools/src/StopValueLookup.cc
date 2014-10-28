@@ -5,7 +5,7 @@
 
 //!stop valueLookup
 double
-ValueLookup::valueLookup (const BNstop* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNstop* object, string variable){
 
 
   double value = 0.0;
@@ -168,9 +168,7 @@ ValueLookup::valueLookup (const BNstop* object, string variable, string function
 
 
 
-  else { clog << "WARNING: invalid stop variable '" << variable << "'\n"; value = -999; }
-
-  value = applyFunction(function, value);
+  else { clog << "WARNING: invalid stop variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max (); }
 
   return value;
 

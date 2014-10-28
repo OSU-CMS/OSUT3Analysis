@@ -1,4 +1,5 @@
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
+#include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 #include "OSUT3Analysis/AnaTools/plugins/Plotter.h"
 
 #define EXIT_CODE 5
@@ -16,23 +17,35 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
   // Then we book the TH1/TH2 objects in these directories
 
   /// Retrieve parameters from the configuration file.
-  jets_ (cfg.getParameter<edm::InputTag> ("jets")),
-  muons_ (cfg.getParameter<edm::InputTag> ("muons")),
-  electrons_ (cfg.getParameter<edm::InputTag> ("electrons")),
-  taus_ (cfg.getParameter<edm::InputTag> ("taus")),
-  mets_ (cfg.getParameter<edm::InputTag> ("mets")),
-  genjets_ (cfg.getParameter<edm::InputTag> ("genjets")),
-  mcparticles_ (cfg.getParameter<edm::InputTag> ("mcparticles")),
-  primaryvertexs_ (cfg.getParameter<edm::InputTag> ("primaryvertexs")),
-  photons_ (cfg.getParameter<edm::InputTag> ("photons")),
-  triggers_ (cfg.getParameter<edm::InputTag> ("triggers")),
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
 
   histogramSets_ (cfg.getParameter<vector<edm::ParameterSet> >("histogramSets")),
-  verbose_ (cfg.getParameter<int> ("verbose"))
+  verbose_ (cfg.getParameter<int> ("verbose")),
+
+  firstEvent_ (true),
+  vl_ (NULL)
 
 {
   
   if (verbose_) clog << "Beginning Plotter::Plotter constructor." << endl;
+
+  if  (collections_.exists  ("bxlumis"))         bxlumis_         =  collections_.getParameter<edm::InputTag>  ("bxlumis");
+  if  (collections_.exists  ("electrons"))       electrons_       =  collections_.getParameter<edm::InputTag>  ("electrons");
+  if  (collections_.exists  ("events"))          events_          =  collections_.getParameter<edm::InputTag>  ("events");
+  if  (collections_.exists  ("genjets"))         genjets_         =  collections_.getParameter<edm::InputTag>  ("genjets");
+  if  (collections_.exists  ("jets"))            jets_            =  collections_.getParameter<edm::InputTag>  ("jets");
+  if  (collections_.exists  ("mcparticles"))     mcparticles_     =  collections_.getParameter<edm::InputTag>  ("mcparticles");
+  if  (collections_.exists  ("mets"))            mets_            =  collections_.getParameter<edm::InputTag>  ("mets");
+  if  (collections_.exists  ("muons"))           muons_           =  collections_.getParameter<edm::InputTag>  ("muons");
+  if  (collections_.exists  ("photons"))         photons_         =  collections_.getParameter<edm::InputTag>  ("photons");
+  if  (collections_.exists  ("primaryvertexs"))  primaryvertexs_  =  collections_.getParameter<edm::InputTag>  ("primaryvertexs");
+  if  (collections_.exists  ("secMuons"))        secMuons_        =  collections_.getParameter<edm::InputTag>  ("secMuons");
+  if  (collections_.exists  ("superclusters"))   superclusters_   =  collections_.getParameter<edm::InputTag>  ("superclusters");
+  if  (collections_.exists  ("taus"))            taus_            =  collections_.getParameter<edm::InputTag>  ("taus");
+  if  (collections_.exists  ("tracks"))          tracks_          =  collections_.getParameter<edm::InputTag>  ("tracks");
+  if  (collections_.exists  ("triggers"))        triggers_        =  collections_.getParameter<edm::InputTag>  ("triggers");
+  if  (collections_.exists  ("trigobjs"))        trigobjs_        =  collections_.getParameter<edm::InputTag>  ("trigobjs");
+  if  (collections_.exists  ("userVariables"))   userVariables_   =  collections_.getParameter<edm::InputTag>  ("userVariables");
 
   TH1::SetDefaultSumw2();
 
@@ -101,80 +114,164 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
 
   // get the required collections from the event
-
-  if (find(objectsToGet.begin(), objectsToGet.end(), "triggers") != objectsToGet.end()) {
-    event.getByLabel (triggers_, triggers);
-    if (!triggers.product()) clog << "ERROR: could not get triggers input collection" << endl;
+  if (find(objectsToGet.begin(), objectsToGet.end(), "bxlumis") != objectsToGet.end()){
+    event.getByLabel (bxlumis_, bxlumis);
+    if (!bxlumis.product()) clog << "ERROR: could not get bxlumis input collection" << endl;
   }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "jets") != objectsToGet.end()) {
-    event.getByLabel (jets_, jets);
-    if (!jets.product()) clog << "ERROR: could not get jets input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "muons") != objectsToGet.end()) {
-    event.getByLabel (muons_, muons);
-    if (!muons.product()) clog << "ERROR: could not get muons input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "electrons") != objectsToGet.end()) {
+  if (find(objectsToGet.begin(), objectsToGet.end(), "electrons") != objectsToGet.end()){
     event.getByLabel (electrons_, electrons);
     if (!electrons.product()) clog << "ERROR: could not get electrons input collection" << endl;
   }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "taus") != objectsToGet.end()) {
-    event.getByLabel (taus_, taus);
-    if (!taus.product()) clog << "ERROR: could not get taus input collection" << endl;
+  if (find(objectsToGet.begin(), objectsToGet.end(), "events") != objectsToGet.end()){
+    event.getByLabel (events_, events);
+    if (!events.product()) clog << "ERROR: could not get events input collection" << endl;
   }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "mets") != objectsToGet.end()) {
-    event.getByLabel (mets_, mets);
-    if (!mets.product()) clog << "ERROR: could not get mets input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "genjets") != objectsToGet.end()) {
+  if (find(objectsToGet.begin(), objectsToGet.end(), "genjets") != objectsToGet.end()){
     event.getByLabel (genjets_, genjets);
     if (!genjets.product()) clog << "ERROR: could not get genjets input collection" << endl;
   }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "mcparticles") != objectsToGet.end()) {
+  if (find(objectsToGet.begin(), objectsToGet.end(), "jets") != objectsToGet.end()){
+    event.getByLabel (jets_, jets);
+    if (!jets.product()) clog << "ERROR: could not get jets input collection" << endl;
+  }
+  if (find(objectsToGet.begin(), objectsToGet.end(), "mcparticles") != objectsToGet.end()){
     event.getByLabel (mcparticles_, mcparticles);
     if (!mcparticles.product()) clog << "ERROR: could not get mcparticles input collection" << endl;
   }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "primaryvertexs") != objectsToGet.end()) {
-    event.getByLabel (primaryvertexs_, primaryvertexs);
-    if (!primaryvertexs.product()) clog << "ERROR: could not get primaryvertexs input collection" << endl;
+  if (find(objectsToGet.begin(), objectsToGet.end(), "mets") != objectsToGet.end()){
+    event.getByLabel (mets_, mets);
+    if (!mets.product()) clog << "ERROR: could not get mets input collection" << endl;
   }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "photons") != objectsToGet.end()) {
+  if (find(objectsToGet.begin(), objectsToGet.end(), "muons") != objectsToGet.end()){
+    event.getByLabel (muons_, muons);
+    if (!muons.product()) clog << "ERROR: could not get muons input collection" << endl;
+  }
+  if (find(objectsToGet.begin(), objectsToGet.end(), "photons") != objectsToGet.end()){
     event.getByLabel (photons_, photons);
     if (!photons.product()) clog << "ERROR: could not get photons input collection" << endl;
   }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "userVariables") != objectsToGet.end()) {
-    event.getByLabel ("UserVariableProduction", "userVariables", userVariables);
+  if (find(objectsToGet.begin(), objectsToGet.end(), "primaryvertexs") != objectsToGet.end()){
+    event.getByLabel (primaryvertexs_, primaryvertexs);
+    if (!primaryvertexs.product()) clog << "ERROR: could not get primaryvertexs input collection" << endl;
+  }
+  if (find(objectsToGet.begin(), objectsToGet.end(), "secMuons") != objectsToGet.end()){
+    event.getByLabel (secMuons_, secMuons);
+    if (!secMuons.product()) clog << "ERROR: could not get secMuons input collection" << endl;
+  }
+  if (find(objectsToGet.begin(), objectsToGet.end(), "superclusters") != objectsToGet.end()){
+    event.getByLabel (superclusters_, superclusters);
+    if (!superclusters.product()) clog << "ERROR: could not get superclusters input collection" << endl;
+  }
+  if (find(objectsToGet.begin(), objectsToGet.end(), "taus") != objectsToGet.end()){
+    event.getByLabel (taus_, taus);
+    if (!taus.product()) clog << "ERROR: could not get taus input collection" << endl;
+  }
+  if (find(objectsToGet.begin(), objectsToGet.end(), "tracks") != objectsToGet.end()){
+    event.getByLabel (tracks_, tracks);
+    if (!tracks.product()) clog << "ERROR: could not get tracks input collection" << endl;
+  }
+  if (find(objectsToGet.begin(), objectsToGet.end(), "triggers") != objectsToGet.end()){
+    event.getByLabel (triggers_, triggers);
+    if (!triggers.product()) clog << "ERROR: could not get triggers input collection" << endl;
+  }
+  if (find(objectsToGet.begin(), objectsToGet.end(), "trigobjs") != objectsToGet.end()){
+    event.getByLabel (trigobjs_, trigobjs);
+    if (!trigobjs.product()) clog << "ERROR: could not get trigobjs input collection" << endl;
+  }
+  if (find(objectsToGet.begin(), objectsToGet.end(), "userVariables") != objectsToGet.end()){
+    event.getByLabel (userVariables_, userVariables);
     if (!userVariables.product()) clog << "ERROR: could not get userVariables input collection" << endl;
   }
+
+
+  initializeValueLookup ();
+  if (!initializeValueLookupTrees (histogramDefinitions))
+    {
+      clog << "ERROR: failed to parse input variables. Quitting..." << endl;
+      exit (EXIT_CODE);
+    }
  
   // now that we have all the required objects, we'll loop over the histograms, filling each one as we go
 
   vector<histoDef>::iterator histogram;
   for(histogram = histogramDefinitions.begin(); histogram != histogramDefinitions.end(); ++histogram){
+    if        (histogram->inputCollection  ==  "bxlumis")                fillHistogram  (*histogram,  bxlumis.product         ());
+    else  if  (histogram->inputCollection  ==  "electrons")              fillHistogram  (*histogram,  electrons.product       ());
+    else  if  (histogram->inputCollection  ==  "events")                 fillHistogram  (*histogram,  events.product          ());
+    else  if  (histogram->inputCollection  ==  "genjets")                fillHistogram  (*histogram,  genjets.product         ());
+    else  if  (histogram->inputCollection  ==  "mcparticles")            fillHistogram  (*histogram,  mcparticles.product     ());
+    else  if  (histogram->inputCollection  ==  "mets")                   fillHistogram  (*histogram,  mets.product            ());
+    else  if  (histogram->inputCollection  ==  "muons")                  fillHistogram  (*histogram,  muons.product           ());
+    else  if  (histogram->inputCollection  ==  "photons")                fillHistogram  (*histogram,  photons.product         ());
+    else  if  (histogram->inputCollection  ==  "primaryvertexs")         fillHistogram  (*histogram,  primaryvertexs.product  ());
+    else  if  (histogram->inputCollection  ==  "secondary electrons")    fillHistogram  (*histogram,  electrons.product       ());
+    else  if  (histogram->inputCollection  ==  "secondary jets")         fillHistogram  (*histogram,  jets.product            ());
+    else  if  (histogram->inputCollection  ==  "secondary mcparticles")  fillHistogram  (*histogram,  mcparticles.product     ());
+    else  if  (histogram->inputCollection  ==  "secondary muons")        fillHistogram  (*histogram,  muons.product           ());
+    else  if  (histogram->inputCollection  ==  "secondary photons")      fillHistogram  (*histogram,  photons.product         ());
+    else  if  (histogram->inputCollection  ==  "superclusters")          fillHistogram  (*histogram,  superclusters.product   ());
+    else  if  (histogram->inputCollection  ==  "taus")                   fillHistogram  (*histogram,  taus.product            ());
+    else  if  (histogram->inputCollection  ==  "tracks")                 fillHistogram  (*histogram,  tracks.product          ());
+    else  if  (histogram->inputCollection  ==  "trigobjs")               fillHistogram  (*histogram,  trigobjs.product        ());
+    else  if  (histogram->inputCollection  ==  "jets")                   fillHistogram  (*histogram,  jets.product            ());
+    else  if  (histogram->inputCollection  ==  "userVariables")          fillHistogram  (*histogram,  userVariables.product   ());
 
-    if (histogram->inputCollection == "userVariables") {
-      fillHistogram(*histogram, userVariables.product());
-    } 
-    else if (histogram->inputCollection == "mets") {
-      fillHistogram(*histogram, mets.product());
-    }
-    else if(histogram->inputCollection == "muons"){
-      fillHistogram(*histogram, muons.product());
-    }
-    else if(histogram->inputCollection == "muon-muon pairs"){
-      fillHistogram(*histogram, muons.product(), muons.product());
-    }
-    else if(histogram->inputCollection == "electron-muon pairs"){
-      fillHistogram(*histogram, electrons.product(), muons.product());
-    }
+    else  if  (histogram->inputCollection  ==  "electron-electron pairs")                fillHistogram  (*histogram,  electrons.product    (),  electrons.product    ());
+    else  if  (histogram->inputCollection  ==  "electron-event pairs")                   fillHistogram  (*histogram,  electrons.product    (),  events.product       ());
+    else  if  (histogram->inputCollection  ==  "electron-jet pairs")                     fillHistogram  (*histogram,  electrons.product    (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "electron-mcparticle pairs")              fillHistogram  (*histogram,  electrons.product    (),  mcparticles.product  ());
+    else  if  (histogram->inputCollection  ==  "electron-muon pairs")                    fillHistogram  (*histogram,  electrons.product    (),  muons.product        ());
+    else  if  (histogram->inputCollection  ==  "electron-photon pairs")                  fillHistogram  (*histogram,  electrons.product    (),  photons.product      ());
+    else  if  (histogram->inputCollection  ==  "electron-secondary electron pairs")      fillHistogram  (*histogram,  electrons.product    (),  electrons.product    ());
+    else  if  (histogram->inputCollection  ==  "electron-secondary jet pairs")           fillHistogram  (*histogram,  electrons.product    (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "electron-track pairs")                   fillHistogram  (*histogram,  electrons.product    (),  tracks.product       ());
+    else  if  (histogram->inputCollection  ==  "electron-trigobj pairs")                 fillHistogram  (*histogram,  electrons.product    (),  trigobjs.product     ());
+    else  if  (histogram->inputCollection  ==  "jet-jet pairs")                          fillHistogram  (*histogram,  jets.product         (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "jet-mcparticle pairs")                   fillHistogram  (*histogram,  jets.product         (),  mcparticles.product  ());
+    else  if  (histogram->inputCollection  ==  "jet-secondary jet pairs")                fillHistogram  (*histogram,  jets.product         (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "jet-secondary mcparticle pairs")         fillHistogram  (*histogram,  jets.product         (),  mcparticles.product  ());
+    else  if  (histogram->inputCollection  ==  "jet-track pairs")                        fillHistogram  (*histogram,  jets.product         (),  tracks.product       ());
+    else  if  (histogram->inputCollection  ==  "mcparticle-secondary mcparticle pairs")  fillHistogram  (*histogram,  mcparticles.product  (),  mcparticles.product  ());
+    else  if  (histogram->inputCollection  ==  "met-jet pairs")                          fillHistogram  (*histogram,  mets.product         (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "met-mcparticle pairs")                   fillHistogram  (*histogram,  mets.product         (),  mcparticles.product  ());
+    else  if  (histogram->inputCollection  ==  "muon-event pairs")                       fillHistogram  (*histogram,  muons.product        (),  events.product       ());
+    else  if  (histogram->inputCollection  ==  "muon-jet pairs")                         fillHistogram  (*histogram,  muons.product        (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "muon-mcparticle pairs")                  fillHistogram  (*histogram,  muons.product        (),  mcparticles.product  ());
+    else  if  (histogram->inputCollection  ==  "muon-muon pairs")                        fillHistogram  (*histogram,  muons.product        (),  muons.product        ());
+    else  if  (histogram->inputCollection  ==  "muon-photon pairs")                      fillHistogram  (*histogram,  muons.product        (),  photons.product      ());
+    else  if  (histogram->inputCollection  ==  "muon-secondary jet pairs")               fillHistogram  (*histogram,  muons.product        (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "muon-secondary mcparticle pairs")        fillHistogram  (*histogram,  muons.product        (),  mcparticles.product  ());
+    else  if  (histogram->inputCollection  ==  "muon-secondary muon pairs")              fillHistogram  (*histogram,  muons.product        (),  secMuons.product     ());
+    else  if  (histogram->inputCollection  ==  "muon-secondary photon pairs")            fillHistogram  (*histogram,  muons.product        (),  photons.product      ());
+    else  if  (histogram->inputCollection  ==  "muon-tau pairs")                         fillHistogram  (*histogram,  muons.product        (),  taus.product         ());
+    else  if  (histogram->inputCollection  ==  "muon-track pairs")                       fillHistogram  (*histogram,  muons.product        (),  tracks.product       ());
+    else  if  (histogram->inputCollection  ==  "muon-trigobj pairs")                     fillHistogram  (*histogram,  muons.product        (),  trigobjs.product     ());
+    else  if  (histogram->inputCollection  ==  "photon-jet pairs")                       fillHistogram  (*histogram,  photons.product      (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "photon-secondary jet pairs")             fillHistogram  (*histogram,  photons.product      (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "secondary electron-jet pairs")           fillHistogram  (*histogram,  electrons.product    (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "secondary muon-jet pairs")               fillHistogram  (*histogram,  muons.product        (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "secondary muon-track pairs")             fillHistogram  (*histogram,  secMuons.product     (),  tracks.product       ());
+    else  if  (histogram->inputCollection  ==  "tau-tau pairs")                          fillHistogram  (*histogram,  taus.product         (),  taus.product         ());
+    else  if  (histogram->inputCollection  ==  "tau-track pairs")                        fillHistogram  (*histogram,  taus.product         (),  tracks.product       ());
+    else  if  (histogram->inputCollection  ==  "track-event pairs")                      fillHistogram  (*histogram,  tracks.product       (),  events.product       ());
+    else  if  (histogram->inputCollection  ==  "track-jet pairs")                        fillHistogram  (*histogram,  tracks.product       (),  jets.product         ());
+    else  if  (histogram->inputCollection  ==  "track-mcparticle pairs")                 fillHistogram  (*histogram,  tracks.product       (),  mcparticles.product  ());
   }
 
+  firstEvent_ = false;
 }
 
 ////////////////////////////////////////////////////////////////////////
 
 Plotter::~Plotter ()
-{}
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Destroy the ValueLookup object if it exists.
+  //////////////////////////////////////////////////////////////////////////////
+  if (vl_)
+    delete vl_;
+  //////////////////////////////////////////////////////////////////////////////
+}
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -488,18 +585,11 @@ template <class InputCollection1, class InputCollection2> void Plotter::fillHist
 template <class InputCollection> void Plotter::fill1DHistogram(const histoDef definition,
 							       const InputCollection collection){
 
-  // collect information for filling                                                                                                                                                                      
-  pair<string,string> variableAndFunction = getVariableAndFunction(definition.inputVariables.at(0));
-  string variable = variableAndFunction.first;
-  string function = variableAndFunction.second;
-
-  string dummy = "";
-
   TH1D *histogram = fs_->getObject<TH1D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
   for(uint index = 0; index != collection->size(); index++){
-    double value = vl_->valueLookup(&collection->at(index), variable, function, dummy);
+    double value = definition.valueLookupTrees.at (0)->evaluate (&collection->at(index));
     double weight = 1.0;
     if(definition.hasVariableBinsX){
       weight /= getBinSize(histogram,value);
@@ -516,14 +606,6 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill1DHi
 											const InputCollection1 collection1,
 											const InputCollection2 collection2){
   
-  // collect information for filling
-
-  pair<string,string> variableAndFunction = getVariableAndFunction(definition.inputVariables.at(0));
-  string variable = variableAndFunction.first;
-  string function = variableAndFunction.second;
-
-  string dummy = "";
-
   vector<string> objects = getInputTypes(definition.inputCollection);
   bool sameType = objects.at(0) == objects.at(1);
 
@@ -536,7 +618,7 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill1DHi
       //account for duplicate pairs if both collections are the same
       if(sameType && index1 >= index2) continue;
 
-      double value = vl_->valueLookup(&collection1->at(index1), &collection2->at(index2), variable, function, dummy);
+      double value = definition.valueLookupTrees.at (0)->evaluate (&collection1->at(index1), &collection2->at(index2));
       double weight = 1.0;
       if(definition.hasVariableBinsX){
 	weight /= getBinSize(histogram,value);
@@ -554,24 +636,12 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill1DHi
 template <class InputCollection> void Plotter::fill2DHistogram(const histoDef definition,
 							       const InputCollection collection){
 
-  // collect information for filling
-
-  pair<string,string> variableAndFunctionX = getVariableAndFunction(definition.inputVariables.at(0));
-  string variableX = variableAndFunctionX.first;
-  string functionX = variableAndFunctionX.second;
-
-  pair<string,string> variableAndFunctionY = getVariableAndFunction(definition.inputVariables.at(1));
-  string variableY = variableAndFunctionY.first;
-  string functionY = variableAndFunctionY.second;
-
-  string dummy = "";
-
   TH2D *histogram = fs_->getObject<TH2D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
   for(uint index = 0; index != collection->size(); index++){
-    double valueX = vl_->valueLookup(&collection->at(index), variableX, functionX, dummy);
-    double valueY = vl_->valueLookup(&collection->at(index), variableY, functionY, dummy);
+    double valueX = definition.valueLookupTrees.at (0)->evaluate (&collection->at(index));
+    double valueY = definition.valueLookupTrees.at (1)->evaluate (&collection->at(index));
     double weight = 1.0;
     if(definition.hasVariableBinsX){
       weight /= getBinSize(histogram,valueX, valueY).first;
@@ -591,18 +661,6 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill2DHi
 											const InputCollection1 collection1,
 											const InputCollection2 collection2){
 
-  // collect information for filling
-
-  pair<string,string> variableAndFunctionX = getVariableAndFunction(definition.inputVariables.at(0));
-  string variableX = variableAndFunctionX.first;
-  string functionX = variableAndFunctionX.second;
-
-  pair<string,string> variableAndFunctionY = getVariableAndFunction(definition.inputVariables.at(1));
-  string variableY = variableAndFunctionY.first;
-  string functionY = variableAndFunctionY.second;
-
-  string dummy = "";
-
   vector<string> objects = getInputTypes(definition.inputCollection);
   bool sameType = objects.at(0) == objects.at(1);
 
@@ -615,8 +673,8 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill2DHi
       //account for duplicate pairs if both collections are the same
       if(sameType && index1 >= index2) continue;
 
-      double valueX = vl_->valueLookup(&collection1->at(index1), &collection2->at(index2), variableX, functionX, dummy);
-      double valueY = vl_->valueLookup(&collection1->at(index1), &collection2->at(index2), variableY, functionY, dummy);
+      double valueX = definition.valueLookupTrees.at (0)->evaluate (&collection1->at(index1), &collection2->at(index2));
+      double valueY = definition.valueLookupTrees.at (1)->evaluate (&collection1->at(index1), &collection2->at(index2));
       double weight = 1.0;
       if(definition.hasVariableBinsX){
 	weight /= getBinSize(histogram,valueX, valueY).first;
@@ -721,5 +779,41 @@ string Plotter::setYaxisLabel(const histoDef definition){
   return title;
 }
 
+bool
+Plotter::initializeValueLookupTrees (vector<histoDef> &histograms)
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Do nothing if it is not the first event.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!firstEvent_)
+    return true;
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // For each inputVariable of each histogram, parse it into a new
+  // ValueLookupTree object which is stored in the histogram definition
+  // structure.
+  //////////////////////////////////////////////////////////////////////////////
+  for (vector<histoDef>::iterator histogram = histograms.begin (); histogram != histograms.end (); histogram++)
+    {
+      for (vector<string>::const_iterator inputVariable = histogram->inputVariables.begin (); inputVariable != histogram->inputVariables.end (); inputVariable++)
+        histogram->valueLookupTrees.push_back (new ValueLookupTree (*inputVariable, vl_));
+      if (!histogram->valueLookupTrees.back ()->isValid ())
+        return false;
+    }
+  return true;
+  //////////////////////////////////////////////////////////////////////////////
+}
+
+void
+Plotter::initializeValueLookup ()
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Create a new ValueLookup object if it does not already exist.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!vl_)
+    vl_ = new ValueLookup ();
+  //////////////////////////////////////////////////////////////////////////////
+}
 
 DEFINE_FWK_MODULE(Plotter);

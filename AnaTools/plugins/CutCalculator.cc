@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
+#include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 #include "OSUT3Analysis/AnaTools/plugins/CutCalculator.h"
 
 #define EXIT_CODE 1
@@ -118,8 +119,18 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
     clog << "INFO: did not retrieve userVariables collection from the event." << endl;
   //////////////////////////////////////////////////////////////////////////////
 
-  // Set all the private variables in the ValueLookup object before using it.
+  //////////////////////////////////////////////////////////////////////////////
+  // Set all the private variables in the ValueLookup object before using it,
+  // and parse the cut strings in the unpacked cuts into ValueLookupTree
+  // objects.
+  //////////////////////////////////////////////////////////////////////////////
   initializeValueLookup ();
+  if (!initializeValueLookupTrees (unpackedCuts_))
+    {
+      clog << "ERROR: failed to parse all cut strings. Quitting..." << endl;
+      exit (EXIT_CODE);
+    }
+  //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
   // Create the payload for this EDProducer and initialize some of its members.
@@ -294,40 +305,9 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
 
       if (currentCut.inputCollection == inputType)
         {
-          //////////////////////////////////////////////////////////////////////
-          // Calculate the flag for each subcut.
-          //////////////////////////////////////////////////////////////////////
-          vector<bool> subcutDecisions;
-          for (int subcutIndex = 0; subcutIndex != currentCut.numSubcuts; subcutIndex++)
-            {
-              string stringValue = "";
-              double value = vl_->valueLookup (&inputCollection->at (object), currentCut.variables.at (subcutIndex), currentCut.functions.at (subcutIndex), stringValue);
-              if (stringValue == "")
-                subcutDecisions.push_back (evaluateComparison (value, currentCut.comparativeOperators.at (subcutIndex), currentCut.cutValues.at (subcutIndex)));
-              else
-                subcutDecisions.push_back (evaluateComparison (stringValue, currentCut.comparativeOperators.at (subcutIndex), currentCut.cutStringValues.at (subcutIndex)));
-            }
-          //////////////////////////////////////////////////////////////////////
-
-          //////////////////////////////////////////////////////////////////////
-          // Combine the subcut flags using the logical operators given by the
-          // user.
-          //////////////////////////////////////////////////////////////////////
-          if (currentCut.numSubcuts == 1)
-            cutDecision = subcutDecisions.at (0);
-          else
-            {
-              bool tempDecision = subcutDecisions.at (0);
-              for (int subcutIndex = 1; subcutIndex < currentCut.numSubcuts; subcutIndex++)
-                {
-                  if (currentCut.logicalOperators.at (subcutIndex - 1) == "&" || currentCut.logicalOperators.at (subcutIndex - 1) == "&&")
-                    tempDecision = tempDecision && subcutDecisions.at (subcutIndex);
-                  else if (currentCut.logicalOperators.at (subcutIndex - 1) == "|"|| currentCut.logicalOperators.at (subcutIndex - 1) == "||")
-                    tempDecision = tempDecision || subcutDecisions.at (subcutIndex);
-                }
-              cutDecision = tempDecision;
-            }
-          //////////////////////////////////////////////////////////////////////
+          // Calculate the cut decision by evaluating the ValueLookupTree for
+          // this object.
+          cutDecision = currentCut.valueLookupTree->evaluate (&inputCollection->at (object));
 
           //////////////////////////////////////////////////////////////////////
           // Invert the flag if the cut is a veto.
@@ -399,40 +379,9 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
 
           if (currentCut.inputCollection == inputType)
             {
-              //////////////////////////////////////////////////////////////////
-              // Calculate the flag for each subcut.
-              //////////////////////////////////////////////////////////////////
-              vector<bool> subcutDecisions;
-              for (int subcutIndex = 0; subcutIndex != currentCut.numSubcuts; subcutIndex++)
-                {
-                  string stringValue = "";
-                  double value = vl_->valueLookup (&inputCollection1->at (object1), &inputCollection2->at (object2), currentCut.variables.at (subcutIndex), currentCut.functions.at (subcutIndex), stringValue);
-                  if (stringValue == "")
-                    subcutDecisions.push_back (evaluateComparison (value, currentCut.comparativeOperators.at (subcutIndex), currentCut.cutValues.at (subcutIndex)));
-                  else
-                    subcutDecisions.push_back (evaluateComparison (stringValue, currentCut.comparativeOperators.at (subcutIndex), currentCut.cutStringValues.at (subcutIndex)));
-                }
-              //////////////////////////////////////////////////////////////////
-
-              //////////////////////////////////////////////////////////////////
-              // Combine the subcut flags using the logical operators given by
-              // the user.
-              //////////////////////////////////////////////////////////////////
-              if (currentCut.numSubcuts == 1)
-                cutDecision = subcutDecisions.at (0);
-              else
-                {
-                  bool tempDecision = subcutDecisions.at (0);
-                  for (int subcutIndex = 1; subcutIndex < currentCut.numSubcuts; subcutIndex++)
-                    {
-                      if (currentCut.logicalOperators.at (subcutIndex-1) == "&" || currentCut.logicalOperators.at (subcutIndex-1) == "&&")
-                        tempDecision = tempDecision && subcutDecisions.at (subcutIndex);
-                      else if (currentCut.logicalOperators.at (subcutIndex-1) == "|"|| currentCut.logicalOperators.at (subcutIndex-1) == "||")
-                        tempDecision = tempDecision || subcutDecisions.at (subcutIndex);
-                    }
-                  cutDecision = tempDecision;
-                }
-              //////////////////////////////////////////////////////////////////
+              // Calculate the cut decision by evaluating the ValueLookupTree
+              // for these objects.
+              cutDecision = currentCut.valueLookupTree->evaluate (&inputCollection1->at (object1), &inputCollection2->at (object2));
 
               //////////////////////////////////////////////////////////////////
               // Invert the flag if the cut is a veto.
@@ -554,35 +503,7 @@ CutCalculator::unpackCuts ()
       // Separate the cut into subcuts, each of which is separated by a logical
       // operator.
       //////////////////////////////////////////////////////////////////////////
-      string cutString = cuts.at (currentCut).getParameter<string> ("cutString");
-      vector<string> cutStringVector = splitString (cutString);
-      if (cutStringVector.size () != 3 && cutStringVector.size () % 4 != 3)
-        {
-          clog << "ERROR: malformed cut: \"" << cutString << "\"." << endl;
-          return false;
-        }
-      tempCut.numSubcuts = (cutStringVector.size () + 1) / 4;
-      for (int subcutIndex = 0; subcutIndex != tempCut.numSubcuts; subcutIndex++)
-        {
-          int indexOffset = 4 * subcutIndex;
-          string currentVariableString = cutStringVector.at (indexOffset);
-          if (currentVariableString.find ("(") == string::npos)
-            {
-              tempCut.functions.push_back ("");
-              tempCut.variables.push_back (currentVariableString);
-            }
-          else
-            {
-              tempCut.functions.push_back (currentVariableString.substr (0, currentVariableString.find ("(")));
-              string tempVariable = currentVariableString.substr (currentVariableString.find ("(") + 1);
-              tempCut.variables.push_back (tempVariable.substr (0, tempVariable.size () - 1));
-            }
-          tempCut.comparativeOperators.push_back (cutStringVector.at (indexOffset + 1));
-          tempCut.cutValues.push_back (atof (cutStringVector.at (indexOffset + 2).c_str ()));
-          tempCut.cutStringValues.push_back (cutStringVector.at (indexOffset + 2));
-          if (subcutIndex != 0)
-            tempCut.logicalOperators.push_back (cutStringVector.at (indexOffset - 1));
-        }
+      tempCut.cutString = cuts.at (currentCut).getParameter<string> ("cutString");
       //////////////////////////////////////////////////////////////////////////
 
       //////////////////////////////////////////////////////////////////////////
@@ -611,7 +532,7 @@ CutCalculator::unpackCuts ()
         {
           bool plural = numberRequiredInt != 1;
           string collectionString = plural ? tempInputCollection : tempInputCollection.substr (0, tempInputCollection.size () - 1);
-          string cutName =  numberRequiredString + " " + collectionString + " with " + cutString;
+          string cutName =  numberRequiredString + " " + collectionString + " with " + tempCut.cutString;
           tempCutName = cutName;
         }
       tempCut.name = tempCutName;
@@ -814,6 +735,30 @@ CutCalculator::setEventFlags ()
   // Store the logical AND of the trigger decision and the global cut decision
   // as the global event decision in the payload and return it.
   return (pl_->eventDecision = (pl_->triggerDecision && pl_->cutDecision));
+}
+
+bool
+CutCalculator::initializeValueLookupTrees (vector<cut> &cuts)
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Do nothing if it is not the first event.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!firstEvent_)
+    return true;
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // For each cut, parse its cut string into a new ValueLookupTree object which
+  // is stored in the cut structure.
+  //////////////////////////////////////////////////////////////////////////////
+  for (vector<cut>::iterator cut = cuts.begin (); cut != cuts.end (); cut++)
+    {
+      cut->valueLookupTree = new ValueLookupTree (cut->cutString, vl_);
+      if (!cut->valueLookupTree->isValid ())
+        return false;
+    }
+  return true;
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 void

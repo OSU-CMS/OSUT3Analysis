@@ -7,7 +7,7 @@
 
 //!track valueLookup
 double
-ValueLookup::valueLookup (const BNtrack* object, string variable, string function, string &stringValue){
+ValueLookup::valueLookup (const BNtrack* object, string variable){
 
   double value = 0.0;
   double pMag = sqrt(object->pt * object->pt +
@@ -111,7 +111,7 @@ gOuter"){
   else if(variable == "dPhiMet") {
     if (const BNmet *met = chosenMET ()) {
       value = deltaPhi (object->phi, met->phi);
-    } else value = -999;
+    } else value = numeric_limits<unsigned>::max ();
   }
 
   else if (variable == "rhoCorrRp5")                 value = getRhoCorr(object);
@@ -161,8 +161,7 @@ gOuter"){
     value = vz - (vx * px + vy * py)/pt * (pz/pt);
   }
   else if (variable == "dZSinTheta"){
-    string empty = "";
-    double dZwrtPV = valueLookup(object, "dZwrtPV", "", empty);
+    double dZwrtPV = valueLookup(object, "dZwrtPV");
     value = dZwrtPV * (object->pt / pMag);  // sin(theta) = pt / p
   }
 
@@ -171,11 +170,10 @@ gOuter"){
     double trkJetDeltaRMin = 99.;
     if (!jets.product()) clog << "ERROR:  cannot find deltaRMinSubLeadJet because jets collection is not initialized." << endl;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
-      string empty = "";
-      double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID", "", empty);
+      double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID");
       if (!isSubLeadingJet) continue;  // only consider jets that pass the subleading jet ID criteria
-      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty);
-      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
+      double jetEta = valueLookup(&jets->at(ijet), "eta");
+      double jetPhi = valueLookup(&jets->at(ijet), "phi");
       double trkJetDeltaR = deltaR(object->eta, object->phi, jetEta, jetPhi);
       if (trkJetDeltaR < trkJetDeltaRMin) trkJetDeltaRMin = trkJetDeltaR;
     }
@@ -187,11 +185,10 @@ gOuter"){
     double trkJetDeltaPhiMax = -99.;
     if (!jets.product()) clog << "ERROR:  cannot find deltaPhiMaxSubLeadJet because jets collection is not initialized." << endl;
     for (uint ijet = 0; ijet<jets->size(); ijet++) {
-      string empty = "";
-      double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID", "", empty);
+      double isSubLeadingJet = valueLookup(&jets->at(ijet), "disappTrkSubLeadingJetID");
       if (!isSubLeadingJet) continue;  // only consider jets that pass the subleading jet ID criteria
       //      double jetEta = valueLookup(&jets->at(ijet), "eta", "", empty);
-      double jetPhi = valueLookup(&jets->at(ijet), "phi", "", empty);
+      double jetPhi = valueLookup(&jets->at(ijet), "phi");
       double trkJetDeltaPhi = fabs(deltaPhi(object->phi, jetPhi));
       if (trkJetDeltaPhi > trkJetDeltaPhiMax) trkJetDeltaPhiMax = trkJetDeltaPhi;
     }
@@ -203,11 +200,10 @@ gOuter"){
     double trkElecDeltaRMin = 99.;
     if (!electrons.product()) clog << "ERROR:  cannot find deltaRMinElecLooseMvaId because electrons collection is not initialized." << endl;
     for (uint ielec = 0; ielec<electrons->size(); ielec++) {
-      string empty = "";
-      double mvaNonTrigV0 = valueLookup(&electrons->at(ielec), "mvaNonTrigV0", "", empty);
+      double mvaNonTrigV0 = valueLookup(&electrons->at(ielec), "mvaNonTrigV0");
       if (mvaNonTrigV0 < 0) continue;  // only consider electrons with mvaNonTrigV0 > 0
-      double elecEta = valueLookup(&electrons->at(ielec), "eta", "", empty);
-      double elecPhi = valueLookup(&electrons->at(ielec), "phi", "", empty);
+      double elecEta = valueLookup(&electrons->at(ielec), "eta");
+      double elecPhi = valueLookup(&electrons->at(ielec), "phi");
       double trkElecDeltaR = deltaR(object->eta, object->phi, elecEta, elecPhi);
       if (trkElecDeltaR < trkElecDeltaRMin) trkElecDeltaRMin = trkElecDeltaR;
     }
@@ -217,9 +213,8 @@ gOuter"){
   else if(variable == "isPassMuonLooseID") {
     // boolean for whether track is loosely identified with a muon,
     // i.e., true if it is DeltaR-matched to a member of either of the muon or secondary muon collections
-    string empty = "";
-    double trkMuonDeltaRMin    = valueLookup(object, "deltaRMinMuonLooseId",    "", empty);
-    double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseId", "", empty);
+    double trkMuonDeltaRMin    = valueLookup(object, "deltaRMinMuonLooseId");
+    double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseId");
     value = 0;                                  // initialize to be false
     if (trkMuonDeltaRMin    < 0.15) value = 1;  // true if matched to muon
     if (trkSecMuonDeltaRMin < 0.15) value = 1;  // true if matched to secondary muon
@@ -230,9 +225,8 @@ gOuter"){
     double trkMuonDeltaRMin = 99.;
     if (!muons.product()) clog << "ERROR:  cannot find deltaRMinMuonLooseId because muons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<muons->size(); imuon++) {
-      string empty = "";
-      double muonEta = valueLookup(&muons->at(imuon), "eta", "", empty);
-      double muonPhi = valueLookup(&muons->at(imuon), "phi", "", empty);
+      double muonEta = valueLookup(&muons->at(imuon), "eta");
+      double muonPhi = valueLookup(&muons->at(imuon), "phi");
       double trkMuonDeltaR = deltaR(object->eta, object->phi, muonEta, muonPhi);
       if (trkMuonDeltaR < trkMuonDeltaRMin) trkMuonDeltaRMin = trkMuonDeltaR;
     }
@@ -243,9 +237,8 @@ gOuter"){
     double trkMuonDeltaRMin = 99.;
     if (!secMuons.product()) clog << "ERROR:  cannot find deltaRMinSecMuonLooseId because secMuons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<secMuons->size(); imuon++) {
-      string empty = "";
-      double muonEta = valueLookup(&secMuons->at(imuon), "eta", "", empty);
-      double muonPhi = valueLookup(&secMuons->at(imuon), "phi", "", empty);
+      double muonEta = valueLookup(&secMuons->at(imuon), "eta");
+      double muonPhi = valueLookup(&secMuons->at(imuon), "phi");
       double trkMuonDeltaR = deltaR(object->eta, object->phi, muonEta, muonPhi);
       if (trkMuonDeltaR < trkMuonDeltaRMin) trkMuonDeltaRMin = trkMuonDeltaR;
     }
@@ -257,11 +250,10 @@ gOuter"){
     double trkMuonDeltaRMin = 99.;
     if (!secMuons.product()) clog << "ERROR:  cannot find deltaRMinSecMuonLooseIdGlobal because secMuons collection is not initialized." << endl;
     for (uint imuon = 0; imuon<secMuons->size(); imuon++) {
-      string empty = "";
-      double isLooseIdMuon = valueLookup(&secMuons->at(imuon), "looseIDGlobalMuon", "", empty);
+      double isLooseIdMuon = valueLookup(&secMuons->at(imuon), "looseIDGlobalMuon");
       if (!isLooseIdMuon) continue;  // only consider muons that pass the looseIDGlobal criteria
-      double muonEta = valueLookup(&secMuons->at(imuon), "eta", "", empty);
-      double muonPhi = valueLookup(&secMuons->at(imuon), "phi", "", empty);
+      double muonEta = valueLookup(&secMuons->at(imuon), "eta");
+      double muonPhi = valueLookup(&secMuons->at(imuon), "phi");
       double trkMuonDeltaR = deltaR(object->eta, object->phi, muonEta, muonPhi);
       if (trkMuonDeltaR < trkMuonDeltaRMin) trkMuonDeltaRMin = trkMuonDeltaR;
     }
@@ -273,11 +265,10 @@ gOuter"){
     double trkTauDeltaRMin = 99.;
     if (!taus.product()) clog << "ERROR:  cannot find deltaRMinTauLooseHadronicId because taus collection is not initialized." << endl;
     for (uint itau = 0; itau<taus->size(); itau++) {
-      string empty = "";
-      double isIdTau = valueLookup(&taus->at(itau), "looseHadronicID", "", empty);
+      double isIdTau = valueLookup(&taus->at(itau), "looseHadronicID");
       if (!isIdTau) continue;  // only consider taus that pass the loose hadronic ID criteria
-      double tauEta = valueLookup(&taus->at(itau), "eta", "", empty);
-      double tauPhi = valueLookup(&taus->at(itau), "phi", "", empty);
+      double tauEta = valueLookup(&taus->at(itau), "eta");
+      double tauPhi = valueLookup(&taus->at(itau), "phi");
       double trkTauDeltaR = deltaR(object->eta, object->phi, tauEta, tauPhi);
       if (trkTauDeltaR < trkTauDeltaRMin) trkTauDeltaRMin = trkTauDeltaR;
     }
@@ -287,7 +278,6 @@ gOuter"){
   else if(variable == "deltaPhiMuMuPair") {
     // delta phi between track and dimuon pair
     // Set to dummy value if there are not 2 muons with pT>25, opposite sign, and 80<m(mu-mu)<100 GeV.
-    string empty = "";
 
     TLorentzVector p4muon0;  // first muon
     TLorentzVector p4muon1;  // second muon
@@ -297,16 +287,16 @@ gOuter"){
     int imuon1 = -1;
     double phiMuMu = 0;
     for (uint imuon = 0; imuon<muons->size(); imuon++) {
-      double pt0   = valueLookup(&muons->at(imuon), "pt",     "", empty);
-      double eta0  = valueLookup(&muons->at(imuon), "eta",    "", empty);
-      double phi0  = valueLookup(&muons->at(imuon), "phi",    "", empty);
-      double chg0  = valueLookup(&muons->at(imuon), "charge", "", empty);
+      double pt0   = valueLookup(&muons->at(imuon), "pt");
+      double eta0  = valueLookup(&muons->at(imuon), "eta");
+      double phi0  = valueLookup(&muons->at(imuon), "phi");
+      double chg0  = valueLookup(&muons->at(imuon), "charge");
       if (pt0<25) continue;
       for (uint jmuon = imuon+1; jmuon<muons->size(); jmuon++) {
-        double pt1   = valueLookup(&muons->at(jmuon), "pt",      "", empty);
-        double eta1  = valueLookup(&muons->at(jmuon), "eta",     "", empty);
-        double phi1  = valueLookup(&muons->at(jmuon), "phi",     "", empty);
-        double chg1  = valueLookup(&muons->at(jmuon), "charge",  "", empty);
+        double pt1   = valueLookup(&muons->at(jmuon), "pt");
+        double eta1  = valueLookup(&muons->at(jmuon), "eta");
+        double phi1  = valueLookup(&muons->at(jmuon), "phi");
+        double chg1  = valueLookup(&muons->at(jmuon), "charge");
         if (pt1<25)          continue;
         if (chg0*chg1 != -1) continue;
         p4muon0.SetPtEtaPhiM(pt0, eta0, phi0, mMuon);
@@ -386,14 +376,7 @@ gOuter"){
     else value = 24 - getPdgIdBinValue(mcparticles->at(index).grandMotherId);
   }
 
-  else {
-    //  else{clog << "WARNING: invalid track variable '" << variable << "'\n"; value = -999;}
-    // Allow looking up event-level quantities.
-    // FIXME:  Check for whether "variable" is valid for valueLookup(&events->at(0)...).
-    value = valueLookup(&events->at(0), variable, function, stringValue);
-  }
-
-  value = applyFunction(function, value);
+  else{clog << "WARNING: invalid track variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
 
   return value;
 } // end track valueLookup
