@@ -589,7 +589,7 @@ template <class InputCollection> void Plotter::fill1DHistogram(const histoDef de
 
   // loop over objets in input collection and fill histogram
   for(uint index = 0; index != collection->size(); index++){
-    double value = definition.valueLookupTrees.at (0)->evaluate (&collection->at(index));
+    double value = definition.valueLookupTrees.at (0)->evaluate (collection->at(index));
     double weight = 1.0;
     if(definition.hasVariableBinsX){
       weight /= getBinSize(histogram,value);
@@ -618,7 +618,7 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill1DHi
       //account for duplicate pairs if both collections are the same
       if(sameType && index1 >= index2) continue;
 
-      double value = definition.valueLookupTrees.at (0)->evaluate (&collection1->at(index1), &collection2->at(index2));
+      double value = definition.valueLookupTrees.at (0)->evaluate (collection1->at(index1), collection2->at(index2));
       double weight = 1.0;
       if(definition.hasVariableBinsX){
 	weight /= getBinSize(histogram,value);
@@ -640,8 +640,8 @@ template <class InputCollection> void Plotter::fill2DHistogram(const histoDef de
 
   // loop over objets in input collection and fill histogram
   for(uint index = 0; index != collection->size(); index++){
-    double valueX = definition.valueLookupTrees.at (0)->evaluate (&collection->at(index));
-    double valueY = definition.valueLookupTrees.at (1)->evaluate (&collection->at(index));
+    double valueX = definition.valueLookupTrees.at (0)->evaluate (collection->at(index));
+    double valueY = definition.valueLookupTrees.at (1)->evaluate (collection->at(index));
     double weight = 1.0;
     if(definition.hasVariableBinsX){
       weight /= getBinSize(histogram,valueX, valueY).first;
@@ -673,8 +673,8 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill2DHi
       //account for duplicate pairs if both collections are the same
       if(sameType && index1 >= index2) continue;
 
-      double valueX = definition.valueLookupTrees.at (0)->evaluate (&collection1->at(index1), &collection2->at(index2));
-      double valueY = definition.valueLookupTrees.at (1)->evaluate (&collection1->at(index1), &collection2->at(index2));
+      double valueX = definition.valueLookupTrees.at (0)->evaluate (collection1->at(index1), collection2->at(index2));
+      double valueY = definition.valueLookupTrees.at (1)->evaluate (collection1->at(index1), collection2->at(index2));
       double weight = 1.0;
       if(definition.hasVariableBinsX){
 	weight /= getBinSize(histogram,valueX, valueY).first;

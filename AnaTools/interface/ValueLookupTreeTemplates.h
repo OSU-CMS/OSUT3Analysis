@@ -7,19 +7,19 @@
 // the methods to create.
 
 template<class T> double
-ValueLookupTree::evaluate (const T* obj)
+ValueLookupTree::evaluate (const T &obj)
 {
   return evaluate_ (root_, obj);
 }
 
 template<class T0, class T1> double
-ValueLookupTree::evaluate (const T0* obj0, const T1* obj1)
+ValueLookupTree::evaluate (const T0 &obj0, const T1 &obj1)
 {
   return evaluate_ (root_, obj0, obj1);
 }
 
 template<class T> double
-ValueLookupTree::evaluate_ (node *tree, const T* obj)
+ValueLookupTree::evaluate_ (node *tree, const T &obj)
 {
   //////////////////////////////////////////////////////////////////////////////
   // Do nothing if the tree is null.
@@ -52,13 +52,13 @@ ValueLookupTree::evaluate_ (node *tree, const T* obj)
       if (isnumber (tree->value, value))
         return value;
       else
-        return vl_->valueLookup (obj, tree->value);
+        return vl_->valueLookup (&obj, tree->value);
     }
   //////////////////////////////////////////////////////////////////////////////
 }
 
 template<class T0, class T1> double
-ValueLookupTree::evaluate_ (node *tree, const T0* obj0, const T1* obj1)
+ValueLookupTree::evaluate_ (node *tree, const T0 &obj0, const T1 &obj1)
 {
   //////////////////////////////////////////////////////////////////////////////
   // Do nothing if the tree is null.
@@ -91,7 +91,7 @@ ValueLookupTree::evaluate_ (node *tree, const T0* obj0, const T1* obj1)
       if (isnumber (tree->value, value))
         return value;
       else
-        return vl_->valueLookup (obj0, obj1, tree->value);
+        return vl_->valueLookup (&obj0, &obj1, tree->value);
     }
   //////////////////////////////////////////////////////////////////////////////
 }

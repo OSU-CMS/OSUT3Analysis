@@ -48,13 +48,15 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
     {
       for (typename vector<T>::const_iterator object = collection->begin (); object != collection->end (); object++)
         {
+          unsigned iObject = object - collection->begin (),
+                   nCuts;
           bool passes = true;
-          unsigned iObject = object - collection->begin ();
 
           if (cutDecisions.isValid ())
             {
-              for (vector<vector<bool> >::const_iterator cut = cutDecisions->objectFlags.at (collectionToFilter_).begin (); cut != cutDecisions->objectFlags.at (collectionToFilter_).end (); cut++)
-                passes = passes && cut->at (iObject);
+              nCuts = cutDecisions->cumulativeObjectFlags.at (collectionToFilter_).size ();
+              if (nCuts > 0)
+                passes = cutDecisions->cumulativeObjectFlags.at (collectionToFilter_).at (nCuts - 1).at (iObject);
             }
           if (passes)
             pl_->push_back (*object);

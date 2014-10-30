@@ -25,6 +25,7 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     template <class InputCollection> bool setObjectFlags (const cut &, uint, edm::Handle<InputCollection>, const string &);
     template <class InputCollection1, class InputCollection2> bool setObjectFlags (const cut &, uint, edm::Handle<InputCollection1>, edm::Handle<InputCollection2>, const string &);
+    void updatePairFlags (flagMap &);
     bool unpackCuts ();
     void getTwoObjs (string, string &, string &);
     template<typename T> bool evaluateComparison (T, string, T);
@@ -77,23 +78,23 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     // Object collections which can be gotten from the event.
     ////////////////////////////////////////////////////////////////////////////
-    edm::Handle<BNbxlumiCollection>         bxlumis;
-    edm::Handle<BNelectronCollection>       electrons;
-    edm::Handle<BNeventCollection>          events;
-    edm::Handle<BNgenjetCollection>         genjets;
-    edm::Handle<BNjetCollection>            jets;
-    edm::Handle<BNmcparticleCollection>     mcparticles;
-    edm::Handle<BNmetCollection>            mets;
-    edm::Handle<BNmuonCollection>           muons;
-    edm::Handle<BNmuonCollection>           secMuons;
-    edm::Handle<BNphotonCollection>         photons;
-    edm::Handle<BNprimaryvertexCollection>  primaryvertexs;
-    edm::Handle<BNsuperclusterCollection>   superclusters;
-    edm::Handle<BNtauCollection>            taus;
-    edm::Handle<BNtrackCollection>          tracks;
-    edm::Handle<BNtriggerCollection>        triggers;
-    edm::Handle<BNtrigobjCollection>        trigobjs;
-    edm::Handle<vector< map<string,double> > > userVariables;  
+    edm::Handle<BNbxlumiCollection>             bxlumis;
+    edm::Handle<BNelectronCollection>           electrons;
+    edm::Handle<BNeventCollection>              events;
+    edm::Handle<BNgenjetCollection>             genjets;
+    edm::Handle<BNjetCollection>                jets;
+    edm::Handle<BNmcparticleCollection>         mcparticles;
+    edm::Handle<BNmetCollection>                mets;
+    edm::Handle<BNmuonCollection>               muons;
+    edm::Handle<BNmuonCollection>               secMuons;
+    edm::Handle<BNphotonCollection>             photons;
+    edm::Handle<BNprimaryvertexCollection>      primaryvertexs;
+    edm::Handle<BNsuperclusterCollection>       superclusters;
+    edm::Handle<BNtauCollection>                taus;
+    edm::Handle<BNtrackCollection>              tracks;
+    edm::Handle<BNtriggerCollection>            triggers;
+    edm::Handle<BNtrigobjCollection>            trigobjs;
+    edm::Handle<vector<map<string, double> > >  userVariables;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDProducer.

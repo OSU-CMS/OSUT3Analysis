@@ -30,8 +30,8 @@ class ValueLookupTree
     // expression.
     ////////////////////////////////////////////////////////////////////////////
     void insert (const string &);
-    template<class T> double evaluate (const T*);
-    template<class T0, class T1> double evaluate (const T0*, const T1*);
+    template<class T> double evaluate (const T &);
+    template<class T0, class T1> double evaluate (const T0 &, const T1 &);
     ////////////////////////////////////////////////////////////////////////////
 
   private:
@@ -44,8 +44,8 @@ class ValueLookupTree
     ////////////////////////////////////////////////////////////////////////////
     node *insert_ (const string &);
     double evaluateOperator (const string &, const vector<double> &);
-    template<class T> double evaluate_ (node *, const T*);
-    template<class T0, class T1> double evaluate_ (node *, const T0*, const T1*);
+    template<class T> double evaluate_ (node *, const T &);
+    template<class T0, class T1> double evaluate_ (node *, const T0 &, const T1 &);
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
