@@ -254,8 +254,15 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
           else  if  (currentObject  ==  "track-mcparticle pairs")                 pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  tracks,       mcparticles,  "track-mcparticle pairs");
           //////////////////////////////////////////////////////////////////////
         }
+
+      //////////////////////////////////////////////////////////////////////////
+      // Update the flags for the paired object collections with those of the
+      // constituent object collections.
+      //////////////////////////////////////////////////////////////////////////
       updatePairFlags (pl_->objectFlags);
       updatePairFlags (pl_->cumulativeObjectFlags);
+      //////////////////////////////////////////////////////////////////////////
+
     }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -406,12 +413,20 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
                 cutDecision = !cutDecision;
               //////////////////////////////////////////////////////////////////
 
+              //////////////////////////////////////////////////////////////////
+              // If either of the constituent objects failed one of its
+              // previous cuts, we do not count this cut against the
+              // constituent object collections.
+              //////////////////////////////////////////////////////////////////
               bool objectCutDecision = cutDecision;
               if (currentCutIndex > 0
                && !(pl_->cumulativeObjectFlags.at (obj1Type).at (currentCutIndex - 1).at (object1) && pl_->cumulativeObjectFlags.at (obj2Type).at (currentCutIndex - 1).at (object2)))
                 objectCutDecision = true;
+              //////////////////////////////////////////////////////////////////
 
+              //////////////////////////////////////////////////////////////////
               // Set the flags for the individual objects.
+              //////////////////////////////////////////////////////////////////
               if (currentCut.isVeto)
                 {
                   pl_->objectFlags.at (obj1Type).at (currentCutIndex).at (object1) = pl_->objectFlags.at (obj1Type).at (currentCutIndex).at (object1) && objectCutDecision;
@@ -438,6 +453,7 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
                   pl_->cumulativeObjectFlags.at (obj1Type).at (currentCutIndex).at (object1) = pl_->cumulativeObjectFlags.at (obj1Type).at (currentCutIndex).at (object1) || cumulativeCutDecision.first;
                   pl_->cumulativeObjectFlags.at (obj2Type).at (currentCutIndex).at (object2) = pl_->cumulativeObjectFlags.at (obj2Type).at (currentCutIndex).at (object2) || cumulativeCutDecision.second;
                 }
+              //////////////////////////////////////////////////////////////////
             }
 
           pl_->objectFlags.at (inputType).at (currentCutIndex).push_back (cutDecision);
@@ -453,6 +469,10 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
 void
 CutCalculator::updatePairFlags (flagMap &flags)
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // For each paired object collection, AND the flags with those of the
+  // individual object collections.
+  //////////////////////////////////////////////////////////////////////////////
   for (flagMap::iterator flag = flags.begin (); flag != flags.end (); flag++)
     {
       if (flag->first.find ("pair") == string::npos)
@@ -469,6 +489,7 @@ CutCalculator::updatePairFlags (flagMap &flags)
                                       && flags.at (type2).at (currentCut).at (type2Index);
         }
     }
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 bool
