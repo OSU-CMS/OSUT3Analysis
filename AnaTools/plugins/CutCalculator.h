@@ -25,6 +25,7 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     template <class InputCollection> bool setObjectFlags (const cut &, uint, edm::Handle<InputCollection>, const string &);
     template <class InputCollection1, class InputCollection2> bool setObjectFlags (const cut &, uint, edm::Handle<InputCollection1>, edm::Handle<InputCollection2>, const string &);
+    void updatePairFlags (flagMap &);
     bool unpackCuts ();
     void getTwoObjs (string, string &, string &);
     template<typename T> bool evaluateComparison (T, string, T);

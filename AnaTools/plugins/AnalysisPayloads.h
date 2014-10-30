@@ -9,6 +9,7 @@ struct CutCalculatorPayload
   bool            cutDecision;
   bool            eventDecision;
   bool            triggerDecision;
+  flagMap         cumulativeObjectFlags;
   flagMap         objectFlags;
   vector<bool>    eventFlags;
   vector<bool>    triggerFlags;

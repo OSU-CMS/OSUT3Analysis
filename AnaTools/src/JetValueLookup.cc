@@ -7,11 +7,11 @@
 double
 ValueLookup::valueLookup (const BNjet* object, string variable){
 
-  BNjet jetCorr;
+/*  BNjet jetCorr;
   if (flagJESJERCorr_) {
     jetCorr = getCorrectedJet(*object, jESJERCorr_);
     object = &jetCorr;
-  }
+  }*/
 
   double value = 0.0;
   if(variable == "energy") value = object->energy;

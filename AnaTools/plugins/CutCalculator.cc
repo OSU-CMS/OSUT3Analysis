@@ -158,7 +158,11 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
           string currentObject = objectsToFlag_.at (currentObjectIndex);
 
           if (!pl_->objectFlags.count (currentObject))
-            pl_->objectFlags[currentObject] = vector<vector<bool> > ();
+            {
+              pl_->cumulativeObjectFlags[currentObject];
+              pl_->objectFlags[currentObject];
+            }
+          pl_->cumulativeObjectFlags[currentObject].push_back (vector<bool> ());
           pl_->objectFlags[currentObject].push_back (vector<bool> ());
         }
       //////////////////////////////////////////////////////////////////////////
@@ -178,6 +182,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
             currentObject = objectsToFlag_.at (currentObjectIndex);
           if (currentObjectIndex >= 0 && currentObject == currentCut.inputCollection)
             continue;
+          //////////////////////////////////////////////////////////////////////
 
           //////////////////////////////////////////////////////////////////////
           // Set the flags for each object in single object collections.
@@ -249,6 +254,8 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
           else  if  (currentObject  ==  "track-mcparticle pairs")                 pl_->isValid  =  setObjectFlags  (currentCut,  currentCutIndex,  tracks,       mcparticles,  "track-mcparticle pairs");
           //////////////////////////////////////////////////////////////////////
         }
+      updatePairFlags (pl_->objectFlags);
+      updatePairFlags (pl_->cumulativeObjectFlags);
     }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -307,7 +314,7 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
         {
           // Calculate the cut decision by evaluating the ValueLookupTree for
           // this object.
-          cutDecision = currentCut.valueLookupTree->evaluate (&inputCollection->at (object));
+          cutDecision = currentCut.valueLookupTree->evaluate (inputCollection->at (object));
 
           //////////////////////////////////////////////////////////////////////
           // Invert the flag if the cut is a veto.
@@ -318,6 +325,9 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
         }
 
       pl_->objectFlags.at (inputType).at (currentCutIndex).push_back (cutDecision);
+      if (currentCutIndex > 0)
+        cutDecision = cutDecision && pl_->cumulativeObjectFlags.at (inputType).at (currentCutIndex - 1).at (object);
+      pl_->cumulativeObjectFlags.at (inputType).at (currentCutIndex).push_back (cutDecision);
     }
 
   return true;
@@ -352,19 +362,25 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
   if (currentCut.inputCollection == inputType)
     {
       for (unsigned object1 = 0; object1 != inputCollection1->size (); object1++)
-        pl_->objectFlags.at (obj1Type).at (currentCutIndex).push_back (false);
+        {
+          pl_->cumulativeObjectFlags.at (obj1Type).at (currentCutIndex).push_back (currentCut.isVeto);
+          pl_->objectFlags.at (obj1Type).at (currentCutIndex).push_back (currentCut.isVeto);
+        }
       if (isTwoTypesOfObject)
         {
           for (unsigned object2 = 0; object2 != inputCollection2->size (); object2++)
-            pl_->objectFlags.at (obj2Type).at (currentCutIndex).push_back (false);
+            {
+              pl_->cumulativeObjectFlags.at (obj2Type).at (currentCutIndex).push_back (currentCut.isVeto);
+              pl_->objectFlags.at (obj2Type).at (currentCutIndex).push_back (currentCut.isVeto);
+            }
         }
     }
   //////////////////////////////////////////////////////////////////////////////
 
   // Set the flag for each pair of objects.
-  for (unsigned object1 = 0; object1 != inputCollection1->size (); object1++)
+  for (unsigned object1 = 0, object = 0; object1 != inputCollection1->size (); object1++)
     {
-      for (unsigned object2 = 0; object2 != inputCollection2->size (); object2++)
+      for (unsigned object2 = 0; object2 != inputCollection2->size (); object2++, object++)
         {
           //////////////////////////////////////////////////////////////////////
           // Avoid double counting pairs when the two collections are the same
@@ -381,7 +397,7 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
             {
               // Calculate the cut decision by evaluating the ValueLookupTree
               // for these objects.
-              cutDecision = currentCut.valueLookupTree->evaluate (&inputCollection1->at (object1), &inputCollection2->at (object2));
+              cutDecision = currentCut.valueLookupTree->evaluate (inputCollection1->at (object1), inputCollection2->at (object2));
 
               //////////////////////////////////////////////////////////////////
               // Invert the flag if the cut is a veto.
@@ -390,15 +406,69 @@ CutCalculator::setObjectFlags (const cut &currentCut, unsigned currentCutIndex, 
                 cutDecision = !cutDecision;
               //////////////////////////////////////////////////////////////////
 
+              bool objectCutDecision = cutDecision;
+              if (currentCutIndex > 0
+               && !(pl_->cumulativeObjectFlags.at (obj1Type).at (currentCutIndex - 1).at (object1) && pl_->cumulativeObjectFlags.at (obj2Type).at (currentCutIndex - 1).at (object2)))
+                objectCutDecision = true;
+
               // Set the flags for the individual objects.
-              pl_->objectFlags.at (obj1Type).at (currentCutIndex).at (object1) = pl_->objectFlags.at (obj2Type).at (currentCutIndex).at (object2) = cutDecision;
+              if (currentCut.isVeto)
+                {
+                  pl_->objectFlags.at (obj1Type).at (currentCutIndex).at (object1) = pl_->objectFlags.at (obj1Type).at (currentCutIndex).at (object1) && objectCutDecision;
+                  pl_->objectFlags.at (obj2Type).at (currentCutIndex).at (object2) = pl_->objectFlags.at (obj2Type).at (currentCutIndex).at (object2) && objectCutDecision;
+                }
+              else
+                {
+                  pl_->objectFlags.at (obj1Type).at (currentCutIndex).at (object1) = pl_->objectFlags.at (obj1Type).at (currentCutIndex).at (object1) || objectCutDecision;
+                  pl_->objectFlags.at (obj2Type).at (currentCutIndex).at (object2) = pl_->objectFlags.at (obj2Type).at (currentCutIndex).at (object2) || objectCutDecision;
+                }
+              pair<bool, bool> cumulativeCutDecision = make_pair (objectCutDecision, objectCutDecision);
+              if (currentCutIndex > 0)
+                {
+                  cumulativeCutDecision.first = cumulativeCutDecision.first && pl_->cumulativeObjectFlags.at (obj1Type).at (currentCutIndex - 1).at (object1);
+                  cumulativeCutDecision.second = cumulativeCutDecision.second && pl_->cumulativeObjectFlags.at (obj2Type).at (currentCutIndex - 1).at (object2);
+                }
+              if (currentCut.isVeto)
+                {
+                  pl_->cumulativeObjectFlags.at (obj1Type).at (currentCutIndex).at (object1) = pl_->cumulativeObjectFlags.at (obj1Type).at (currentCutIndex).at (object1) && cumulativeCutDecision.first;
+                  pl_->cumulativeObjectFlags.at (obj2Type).at (currentCutIndex).at (object2) = pl_->cumulativeObjectFlags.at (obj2Type).at (currentCutIndex).at (object2) && cumulativeCutDecision.second;
+                }
+              else
+                {
+                  pl_->cumulativeObjectFlags.at (obj1Type).at (currentCutIndex).at (object1) = pl_->cumulativeObjectFlags.at (obj1Type).at (currentCutIndex).at (object1) || cumulativeCutDecision.first;
+                  pl_->cumulativeObjectFlags.at (obj2Type).at (currentCutIndex).at (object2) = pl_->cumulativeObjectFlags.at (obj2Type).at (currentCutIndex).at (object2) || cumulativeCutDecision.second;
+                }
             }
 
           pl_->objectFlags.at (inputType).at (currentCutIndex).push_back (cutDecision);
+          if (currentCutIndex > 0)
+            cutDecision = cutDecision && pl_->cumulativeObjectFlags.at (inputType).at (currentCutIndex - 1).at (object);
+          pl_->cumulativeObjectFlags.at (inputType).at (currentCutIndex).push_back (cutDecision);
         }
     }
 
   return true;
+}
+
+void
+CutCalculator::updatePairFlags (flagMap &flags)
+{
+  for (flagMap::iterator flag = flags.begin (); flag != flags.end (); flag++)
+    {
+      if (flag->first.find ("pair") == string::npos)
+        continue;
+      string type1, type2;
+      getTwoObjs (flag->first, type1, type2);
+      unsigned currentCut = flag->second.size () - 1;
+      for (vector<bool>::iterator cutDecision = flag->second.at (currentCut).begin (); cutDecision != flag->second.at (currentCut).end (); cutDecision++)
+        {
+          unsigned index = cutDecision - flag->second.at (currentCut).begin (),
+                   type1Index = index / (unsigned) flags.at (type2).at (currentCut).size (),
+                   type2Index = index % (unsigned) flags.at (type2).at (currentCut).size ();
+          *cutDecision = *cutDecision && flags.at (type1).at (currentCut).at (type1Index)
+                                      && flags.at (type2).at (currentCut).at (type2Index);
+        }
+    }
 }
 
 bool
@@ -421,13 +491,9 @@ CutCalculator::unpackCuts ()
     }
   //////////////////////////////////////////////////////////////////////////////
 
-  //////////////////////////////////////////////////////////////////////////////
   // Retrieve the cuts and clear the vector in which they will be stored after
   // parsing.
-  //////////////////////////////////////////////////////////////////////////////
   edm::VParameterSet cuts = cuts_.getParameter<edm::VParameterSet> ("cuts");
-  unpackedCuts_.clear ();
-  //////////////////////////////////////////////////////////////////////////////
 
   // Loop over the cuts, parsing each one and storing it in a vector.
   for (unsigned currentCut = 0; currentCut != cuts.size (); currentCut++)
@@ -693,12 +759,14 @@ CutCalculator::setEventFlags ()
       int numberPassingPrev = 0;
 
       //////////////////////////////////////////////////////////////////////////
-      // Count the number of objects passing the current cut in the collection
-      // on which the cut acts.
+      // Count the number of objects passing the current cut and all previous
+      // cuts in the collection on which the cut acts.
       //////////////////////////////////////////////////////////////////////////
-      for (unsigned object = 0; object != pl_->objectFlags.at (currentCut.inputCollection).at (currentCutIndex).size (); object++)
-        if (pl_->objectFlags.at (currentCut.inputCollection).at (currentCutIndex).at (object))
-          numberPassing++;
+      for (unsigned object = 0; object != pl_->cumulativeObjectFlags.at (currentCut.inputCollection).at (currentCutIndex).size (); object++)
+        {
+          if (pl_->cumulativeObjectFlags.at (currentCut.inputCollection).at (currentCutIndex).at (object))
+            numberPassing++;
+        }
       //////////////////////////////////////////////////////////////////////////
 
       //////////////////////////////////////////////////////////////////////////
@@ -712,11 +780,11 @@ CutCalculator::setEventFlags ()
         cutDecision = evaluateComparison (numberPassing, currentCut.eventComparativeOperator, currentCut.numberRequired);
       else
         {
-          for (unsigned object = 0; object < pl_->objectFlags.at (currentCut.inputCollection).at (currentCutIndex).size (); object++)
+          for (unsigned object = 0; object < pl_->cumulativeObjectFlags.at (currentCut.inputCollection).at (currentCutIndex).size (); object++)
             {
               bool passesPrevCuts = true;
-              for (int cut = currentCutIndex - 1; cut >= 0; cut--)
-                passesPrevCuts = passesPrevCuts && pl_->objectFlags.at (currentCut.inputCollection).at (cut).at (object);
+              if (currentCutIndex > 0)
+                passesPrevCuts = pl_->cumulativeObjectFlags.at (currentCut.inputCollection).at (currentCutIndex - 1).at (object);
               passesPrevCuts && numberPassingPrev++;
             }
           int numberFailCut = numberPassingPrev - numberPassing;
