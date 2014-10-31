@@ -5,16 +5,21 @@
 
 //!bxlumi valueLookup
 double
-ValueLookup::valueLookup (const BNbxlumi* object, string variable){
+ValueLookup::valueLookup (const BNbxlumi &object, string variable){
 
   double value = 0.0;
+  BNbxlumi *obj = new BNbxlumi (object);
 
-  if(variable == "bx_B1_now") value = object->bx_B1_now;
-  else if(variable == "bx_B2_now") value = object->bx_B2_now;
-  else if(variable == "bx_LUMI_now") value = object->bx_LUMI_now;
+  try
+    {
+      value = getMember ("BNbxlumi", obj, variable);
+    }
+  catch (...)
+    {
+      clog << "WARNING: invalid bxlumi variable '" << variable << "'\n";
+      value = numeric_limits<int>::min ();
+    }
 
-
-  else{clog << "WARNING: invalid bxlumi variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
-
+  delete obj;
   return value;
 }

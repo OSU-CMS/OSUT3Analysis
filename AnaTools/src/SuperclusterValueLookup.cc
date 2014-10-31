@@ -5,21 +5,21 @@
 
 //!supercluster valueLookup
 double
-ValueLookup::valueLookup (const BNsupercluster* object, string variable){
+ValueLookup::valueLookup (const BNsupercluster &object, string variable){
 
   double value = 0.0;
+  BNsupercluster *obj = new BNsupercluster (object);
 
-  if(variable == "energy") value = object->energy;
-  else if(variable == "et") value = object->et;
-  else if(variable == "ex") value = object->ex;
-  else if(variable == "ey") value = object->ey;
-  else if(variable == "ez") value = object->ez;
-  else if(variable == "phi") value = object->phi;
-  else if(variable == "eta") value = object->eta;
-  else if(variable == "theta") value = object->theta;
+  try
+    {
+      value = getMember ("BNsupercluster", obj, variable);
+    }
+  catch (...)
+    {
+      clog << "WARNING: invalid supercluster variable '" << variable << "'\n";
+      value = numeric_limits<int>::min ();
+    }
 
-
-  else{clog << "WARNING: invalid supercluster variable '" << variable << "'\n"; value = numeric_limits<unsigned>::max ();}
-
+  delete obj;
   return value;
 }
