@@ -138,21 +138,32 @@ preselection = cms.PSet(
       # ELECTRON ID
       cms.PSet (
         inputCollection = cms.string("electrons"),
-        cutString = cms.string("mvaNonTrig_HtoZZto4l > 0"),
-        numberRequired = cms.string(">= 1")
+        cutString = cms.string("                              \
+          (pt > 7 && pt < 10                                  \
+            && ((abs (scEta) < 0.8 && mvaNonTrigV0 > 0.47)    \
+             || (abs (scEta) >= 0.8 && abs (scEta) < 1.479 && mvaNonTrigV0 > 0.004) \
+             || (abs (scEta) >= 1.479 && abs (scEta) < 2.5 && mvaNonTrigV0 > 0.295))) \
+       || (pt >= 10                                           \
+            && ((abs (scEta) < 0.8 && mvaNonTrigV0 > -0.34)   \
+             || (abs (scEta) >= 0.8 && abs (scEta) < 1.479 && mvaNonTrigV0 > -0.65) \
+             || (abs (scEta) >= 1.479 && abs (scEta) < 2.5 && mvaNonTrigV0 > 0.60)))  \
+        "),
+        numberRequired = cms.string(">= 1"),
+        alias = cms.string("electron ID")
       ),
       # PHOTON CONVERSION VETO
       cms.PSet (
         inputCollection = cms.string("electrons"),
-        cutString = cms.string("passConvVeto > 0 & numberOfLostHits = 0"),
+        cutString = cms.string("passConvVeto > 0 && numberOfLostHits == 0"),
         numberRequired = cms.string(">= 1"),
         alias = cms.string("electron conversion rejection")
       ),
       # ELECTRON ISOLATION
       cms.PSet (
         inputCollection = cms.string("electrons"),
-        cutString = cms.string("relPFrhoIso < 0.1"),
-        numberRequired = cms.string(">= 1")
+        cutString = cms.string("((chargedHadronIsoDR03 + max (0.0, neutralHadronIsoDR03 + photonIsoDR03 - AEffDr03 * rhoPrime)) / pt) < 0.1"),
+        numberRequired = cms.string(">= 1"),
+        alias = cms.string("electron isolation")
       ),
       # MUON ETA CUT
       cms.PSet (
@@ -169,14 +180,24 @@ preselection = cms.PSet(
       # MUON ID
       cms.PSet (
         inputCollection = cms.string("muons"),
-        cutString = cms.string("tightIDdisplaced > 0"),
-        numberRequired = cms.string(">= 1")
+        cutString = cms.string("              \
+          isGlobalMuon                        \
+       && isPFMuon                            \
+       && (normalizedChi2 < 10.0)             \
+       && (numberOfValidMuonHits > 0)         \
+       && (numberOfMatchedStations > 1)       \
+       && (numberOfValidPixelHits > 0)        \
+       && (numberOfLayersWithMeasurement > 5) \
+        "),
+        numberRequired = cms.string(">= 1"),
+        alias = cms.string("muon ID")
       ),
       # MUON ISOLATION
       cms.PSet (
         inputCollection = cms.string("muons"),
-        cutString = cms.string("relPFdBetaIso < 0.12"),
-        numberRequired = cms.string(">= 1")
+        cutString = cms.string("((pfIsoR04SumChargedHadronPt + max (0.0, pfIsoR04SumNeutralHadronEt + pfIsoR04SumPhotonEt - 0.5 * pfIsoR04SumPUPt)) / pt) < 0.12"),
+        numberRequired = cms.string(">= 1"),
+        alias = cms.string("muon isolation")
       ),
       # VETO EVENTS WITH EXTRA ELECTRON
       cms.PSet (
