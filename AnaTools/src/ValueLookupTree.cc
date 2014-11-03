@@ -78,7 +78,7 @@ ValueLookupTree::insert_ (const string &cut)
   if (!(insertBinaryInfixOperator   (cut,  tree,  {","})                   ||
         insertBinaryInfixOperator   (cut,  tree,  {"||", "|"})             ||
         insertBinaryInfixOperator   (cut,  tree,  {"&&", "&"})             ||
-        insertBinaryInfixOperator   (cut,  tree,  {"==", "!=", "="})       ||
+        insertBinaryInfixOperator   (cut,  tree,  {"==", "!="})            ||
         insertBinaryInfixOperator   (cut,  tree,  {"<", "<=", ">", ">="})  ||
         insertBinaryInfixOperator   (cut,  tree,  {"+", "-"})              ||
         insertBinaryInfixOperator   (cut,  tree,  {"*", "/", "%"})         ||
@@ -90,7 +90,7 @@ ValueLookupTree::insert_ (const string &cut)
                                                    "erf", "erfc", "tgamma", "lgamma",
                                                    "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
                                                    "copysign", "nextafter",
-                                                   "fdim", "fmax", "fmin"}) ||
+                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
         insertParentheses           (cut,  tree)))
     tree->value = cut;
   //////////////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<double> &opera
         return (operands.at (0) || operands.at (1));
       else if (op == "&&" || op == "&")
         return (operands.at (0) && operands.at (1));
-      else if (op == "==" || op == "=")
+      else if (op == "==")
         return (operands.at (0) == operands.at (1));
       else if (op == "!=")
         return (operands.at (0) != operands.at (1));
@@ -156,9 +156,9 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<double> &opera
         return (nextafter (operands.at (0), operands.at (1)));
       else if (op == "fdim")
         return (fdim (operands.at (0), operands.at (1)));
-      else if (op == "fmax")
+      else if (op == "fmax" || op == "max")
         return (fmax (operands.at (0), operands.at (1)));
-      else if (op == "fmin")
+      else if (op == "fmin" || op == "min")
         return (fmin (operands.at (0), operands.at (1)));
       else if (op == "cos")
         return (cos (operands.at (0)));
@@ -243,7 +243,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<double> &opera
       clog << ")\"" << endl;
       evaluationError_ = true;
     }
-  return numeric_limits<unsigned>::max ();
+  return numeric_limits<unsigned>::min ();
 }
 
 string &
@@ -369,7 +369,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const v
   // left and right substring. These substrings are inserted into the tree and
   // stored as branches for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (pair<size_t, string> i = findFirstOf (s, operators); i.first != string::npos; i = findFirstOf (s, operators, i.first + i.second.length ()))
+  for (pair<size_t, string> i = findFirstOf (s, operators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, i.first + i.second.length ()))
     {
       string left, right;
       left = s.substr (0, i.first);
@@ -408,7 +408,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const v
   // left and right substring. The right substring is inserted into the tree and
   // stored as a branch for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (pair<size_t, string> i = findFirstOf (s, operators); i.first != string::npos; i = findFirstOf (s, operators, i.first + i.second.length ()))
+  for (pair<size_t, string> i = findFirstOf (s, operators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, i.first + i.second.length ()))
     {
       string left, right;
       left = s.substr (0, i.first);
@@ -416,7 +416,6 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const v
       if (!splitParentheses (left) && !splitParentheses (right))
         {
           trim (right);
-
           tree->value = i.second;
           tree->branches.push_back (insert_ (right));
           pruneCommas (tree->branches);

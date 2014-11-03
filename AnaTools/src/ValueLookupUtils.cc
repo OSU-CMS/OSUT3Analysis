@@ -5,27 +5,16 @@
 #include "TLorentzVector.h"
 #include "TVector2.h"
 
+#include "Reflex/Base.h"
+#include "Reflex/Member.h"
+#include "Reflex/Object.h"
+#include "Reflex/Type.h"
+
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
 
 double
-ValueLookup::applyFunction(string function, double value){
-
-  if(function == "abs") value = fabs(value);
-  else if(function == "fabs") value = fabs(value);
-  else if(function == "log10") value = log10(value);
-  else if(function == "log") value = log10(value);
-
-  else if(function == "") value = value;
-  else{clog << "WARNING: invalid function '" << function << "'\n";}
-
-  return value;
-
-}
-
-
-double
-ValueLookup::getRhoCorr(const BNtrack* track) {
+ValueLookup::getRhoCorr() {
   // Return the pile-up (rho) corrected isolation energy, i.e., the total calorimeter energy around the candidate track.
   if (!useTrackCaloRhoCorr_) return -99;
   // if (!rhokt6CaloJetsHandle_) {
@@ -907,4 +896,46 @@ ValueLookup::getLastValidFlags(string objType) {
   // no valid flags have been found
   vector<bool> empty;
   return empty;
+}
+
+double
+ValueLookup::getMember (const string type, void *obj, const string member)
+{
+  double value = numeric_limits<int>::min ();
+  Reflex::Type t = Reflex::Type::ByName (type);
+  Reflex::Object *o = new Reflex::Object (t, obj);
+  try
+    {
+      string typeName = t.DataMemberByName (member).TypeOf ().Name ();
+      if (typeName == "double")
+        value = Reflex::Object_Cast<double> (o->Get (member));
+      else if (typeName == "int")
+        value = Reflex::Object_Cast<int> (o->Get (member));
+      else if (typeName != "")
+        clog << "WARNING: \"" << member << "\" has unrecognized type \"" << typeName << "\"" << endl;
+      else
+        value = Reflex::Object_Cast<double> (o->Get (member));
+    }
+  catch (...)
+    {
+      bool found = false;
+      for (Reflex::Base_Iterator bi = t.Base_Begin (); bi != t.Base_End (); bi++)
+        {
+          try
+            {
+              value = getMember (bi->Name (), obj, member);
+              found = true;
+              break;
+            }
+          catch (...)
+            {
+              continue;
+            }
+        }
+      if (!found)
+        throw;
+    }
+  delete o;
+
+  return value;
 }

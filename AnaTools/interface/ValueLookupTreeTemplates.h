@@ -52,7 +52,7 @@ ValueLookupTree::evaluate_ (node *tree, const T &obj)
       if (isnumber (tree->value, value))
         return value;
       else
-        return vl_->valueLookup (&obj, tree->value);
+        return vl_->valueLookup (obj, tree->value);
     }
   //////////////////////////////////////////////////////////////////////////////
 }
@@ -91,7 +91,7 @@ ValueLookupTree::evaluate_ (node *tree, const T0 &obj0, const T1 &obj1)
       if (isnumber (tree->value, value))
         return value;
       else
-        return vl_->valueLookup (&obj0, &obj1, tree->value);
+        return vl_->valueLookup (obj0, obj1, tree->value);
     }
   //////////////////////////////////////////////////////////////////////////////
 }
