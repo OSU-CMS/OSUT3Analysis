@@ -1,0 +1,122 @@
+#!/usr/bin/env perl
+
+use strict;
+use Mysql;
+use File::Copy;
+use POSIX;
+use Term::ANSIColor;
+use Cwd 'abs_path';
+
+select ((select (STDOUT), $| = 1)[0]);
+
+
+sub getLocation;
+
+our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
+my $dataset;
+my $outfile; 
+my $prefix;
+
+$dataset = $ARGV[0];
+$outfile = $ARGV[1];
+$prefix = $ARGV[2];
+
+getLocation($dataset,$outfile,$prefix);
+
+sub
+getLocation
+{
+  my $dataset = shift; 
+  my $outfile = shift;
+  my $results;
+  my $queryDataset = $dataset;
+  $queryDataset =~ s/\*/%/g;
+  $queryDataset =~ s/(.*)/%$1%/g;
+  my $query = "select dataset,user,creationTime,location,nFiles,status,crossSectionInPicobarn,higherOrderCrossSectionInPicobarn,fileList from ntuple where dataset like '$queryDataset' order by creationTime";
+  $db->selectdb ("ntuple");
+  $results = $db->query ($query);
+  
+  if ($results->numrows () == 1)
+    {
+      my @row = $results->fetchrow ();
+      my @files = split (/\n/, $row[8]);
+      $row[7] += 0;
+      open(my $tmpfile, '>', $outfile); 
+      print $tmpfile 'datasetName = "'.$row[0].'"'."\n"; 
+      print $tmpfile 'location = "'.$row[3].'"'."\n"; 
+      print $tmpfile "numberOfFiles = ".$row[4]."\n"; 
+      print $tmpfile 'status = "'.$row[5].'"'."\n"; 
+      print $tmpfile "crossSection = ".$row[7]."\n" if $row[7] > 0;  
+      print $tmpfile "crossSection = "."-1".$row[6]."\n" if $row[7] <= 0;  
+      print $tmpfile "listOfFiles = [\n";
+      my $length = @files;
+      if ($length) { 
+      for (my $i = 0; $i < $length; $i++)
+          {
+             next if @files->[$i] eq ".";
+             next if @files->[$i] eq "..";
+             next if !(@files->[$i] =~ m/\.root$/);
+             print $tmpfile "'" . $prefix . @files->[$i] . "'";
+             print $tmpfile "," if $i + 1 != $length;
+             print $tmpfile "\n";
+          }
+      }
+      print $tmpfile "]";
+      return 
+   }
+  if ($results->numrows () == 0)
+    {
+      open(my $tmpfile, '>', $outfile);
+      print $tmpfile "Dataset does not exist on the Tier 3!";
+      exit;
+    }
+  my %map;
+  print "Found multiple datasets matching\n";
+  print "\"$dataset\":\n";
+  for (my $i = 1; $i <= $results->numrows (); $i++)
+    {
+      my @row = $results->fetchrow ();
+      $row[2] =~ s/([^ ]*) [^ ]*/$1/g;
+      my @files = split (/\n/, $row[8]);
+      $map{"$i"} = [$row[0], $row[3], $row[4], $row[5], $row[7], \@files] if $row[7];
+      $map{"$i"} = [$row[0], $row[3], $row[4], $row[5], $row[6], \@files] if !$row[7];
+      printf "(%2d) $row[0]\n", $i;
+      print "     (";
+      print color "green" if $row[5] eq "present";
+      print color "bold yellow" if $row[5] eq "submitted" or $row[5] eq "finishing";
+      print color "bold red" if $row[5] eq "created" or $row[5] eq "cancelled" or $row[5] eq "deprecated" or $row[5] eq "finished";
+      print $row[5];
+      print color "reset";
+      print ") created by $row[1] on $row[2]\n";
+    }
+  print "\nWhich dataset would you like to use?: ";
+  my $response = <STDIN>;
+  $response =~ s/[ \t\n]//g;
+  if (!(exists $map{$response}))
+    {
+      print "Your selection \"$response\" was not a valid option! Quitting.\n";
+      exit;
+    }
+  open(my $tmpfile, '>', $outfile); 
+  print $tmpfile 'datasetName = "'.$map{$response}[0].'"'."\n"; 
+  print $tmpfile 'location = "'.$map{$response}[1].'"'."\n"; 
+  print $tmpfile "numberOfFiles = ".$map{$response}[2]."\n"; 
+  print $tmpfile 'status = "'.$map{$response}[3].'"'."\n"; 
+  print $tmpfile "crossSection = ".$map{$response}[4]."\n" if $map{$response}[4]; 
+  print $tmpfile "crossSection = ".'"Null"'."\n" if !$map{$response}[4]; 
+  print $tmpfile "listOfFiles = [\n";    
+  if ($map{$response}[5]) { 
+      for (my $i = 0; $i < @{$map{$response}[5]}; $i++)
+          {
+             next if $map{$response}[5]->[$i] eq ".";
+             next if $map{$response}[5]->[$i] eq "..";
+             next if !($map{$response}[5]->[$i] =~ m/\.root$/);
+             print $tmpfile "'" . $prefix . $map{$response}[5]->[$i] . "'";
+             print $tmpfile "," if $i + 1 != @{$map{$response}[5]};
+             print $tmpfile "\n";
+          }
+   }
+  print $tmpfile "]";
+  return 
+}
+
