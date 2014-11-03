@@ -8,4 +8,31 @@
   <class name="std::vector<BNPFChgHad>" />
   <class pattern="edm::Wrapper<BNPFChgHad>"/>
   <class name="edm::Wrapper<std::vector<BNPFChgHad> >" />
+
+  <class name="std::map<std::string, double>" />
+  <class name="std::vector<std::map<std::string, double> >" />
+  <class pattern="edm::Wrapper<std::map<std::string, double> >"/>
+  <class name="edm::Wrapper<std::vector<std::map<std::string, double> > >" />
+
+  <class name="CutCalculatorPayload"/>
+  <class name="std::vector<CutCalculatorPayload>"/>
+  <class pattern="edm::Wrapper<CutCalculatorPayload>"/>
+  <class name="edm::Wrapper<std::vector<CutCalculatorPayload> >"/>
+
+  <class name="cut"/>
+  <class name="std::vector<cut>"/>
+  <class pattern="edm::Wrapper<cut>"/>
+  <class name="edm::Wrapper<std::vector<cut> >"/>
+
+  <class name="std::map<std::basic_string<char>,std::vector<std::vector<bool> > >"/>
+  <class name="std::vector<std::map<std::basic_string<char>,std::vector<std::vector<bool> > > >"/>
+  <class pattern="edm::Wrapper<std::map<std::basic_string<char>,std::vector<std::vector<bool> > > >"/>
+  <class name="edm::Wrapper<std::vector<std::map<std::basic_string<char>,std::vector<std::vector<bool> > > > >"/>
+
+  <class name="std::vector<bool>"/>
+  <class name="std::vector<std::vector<bool> >"/>
+  <class pattern="edm::Wrapper<std::vector<bool> >"/>
+  <class name="edm::Wrapper<std::vector<std::vector<bool> > >"/>
+
+
 </lcgdict>

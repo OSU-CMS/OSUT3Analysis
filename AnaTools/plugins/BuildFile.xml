@@ -1,20 +1,21 @@
-<library file="*.cc" name="OSUAnalysisAnaToolsPlugins">
-<flags  EDM_PLUGIN="1"/>
-<use    name="BEAN/Collections"/>
-<use    name="FWCore/Framework"/>
-<use    name="FWCore/ParameterSet"/>
-<use    name="FWCore/ServiceRegistry"/>
-<use    name="DataFormats/Common"/>
-<use    name="DataFormats/GeometrySurface"/>
-<use    name="CommonTools/UtilAlgos"/>
-<use    name="Geometry/CaloGeometry"/>
-<use    name="Geometry/CaloTopology"/>
-<use    name="CondFormats/DataRecord"/>
-<use    name="CondFormats/EcalObjects"/>
-<use    name="DataFormats/EcalDetId"/>
-<use    name="OSUT3Analysis/AnaTools"/>
-<use    name="Geometry/Records"/>
-<use    name="lhapdf"/>
-<use    name="root"/>
-<use    name="rootrflx"/>
+<use  name="BEAN/Collections"/>
+<use  name="FWCore/Framework"/>
+<use  name="FWCore/ParameterSet"/>
+<use  name="FWCore/ServiceRegistry"/>
+<use  name="DataFormats/Common"/>
+<use  name="DataFormats/GeometrySurface"/>
+<use  name="CommonTools/UtilAlgos"/>
+<use  name="Geometry/CaloGeometry"/>
+<use  name="Geometry/CaloTopology"/>
+<use  name="CondFormats/DataRecord"/>
+<use  name="CondFormats/EcalObjects"/>
+<use  name="DataFormats/EcalDetId"/>
+<use  name="Geometry/Records"/>
+<use  name="OSUT3Analysis/AnaTools"/>
+<use  name="lhapdf"/>
+<use  name="root"/>
+<use  name="rootrflx"/>
+<flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
+<library  file="CutCalculator.cc,CutFlowPlotter.cc,ObjectSelector.cc,Plotter.cc,VariableProducer.cc"  name="OSUAnalysisAnaToolsPlugins">
+  <flags  EDM_PLUGIN="1"/>
 </library>

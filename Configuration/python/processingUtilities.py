@@ -162,42 +162,156 @@ def source_chargino_ctau (ctau):
         src_ctau = 1000 
     return float(src_ctau)
 
+def get_collections (cuts):
+    ############################################################################
+    # Return a list of collections on which cuts are applied with duplicates
+    # removed. In the case of a collection pair, we add the individual
+    # collections to the list.
+    ############################################################################
+    collections = set ()
+    for cut in cuts:
+        inputCollection = cut.inputCollection.pythonValue ()
+        inputCollection = inputCollection[1:-1]
+        if re.match (r" *([^- ]*) *- *([^- ]*) *pair.*", inputCollection):
+            collections.add (re.sub (r" *([^- ]*) *- *([^- ]*) *pair.*", r"\1s", inputCollection))
+            collections.add (re.sub (r" *([^- ]*) *- *([^- ]*) *pair.*", r"\2s", inputCollection))
+        else:
+            collections.add (inputCollection)
+    return sorted (list (collections))
+    ############################################################################
 
-
-def add_channels (process, channels, outputCommands = ["keep *"]):
+def add_channels (process, channels, histogramSets, collections, skim = True):
+    ############################################################################
+    # Suffix is appended to the name of the output file. In batch mode, an
+    # underscore followed by the job number is appended.
+    ############################################################################
     suffix = ""
     if osusub.batchMode:
         suffix = "_" + str (osusub.jobNumber)
-    i = 0
+    ############################################################################
+
+    ############################################################################
+    # We append filterIndexnames of the filter PSets since they need unique
+    # names. We use function attributes so that add_channels can be called
+    # multiple times to add additional channels.
+    ############################################################################
+    if not hasattr (add_channels, "filterIndex"):
+        add_channels.filterIndex = 0
+    if not hasattr (add_channels, "endPath"):
+        add_channels.endPath = cms.EndPath ()
+    ############################################################################
+
     for channel in channels:
+        channelPath = cms.Path ()
+        channelCollections = copy.deepcopy (collections)
+
+        ########################################################################
+        # Get the name of the channel and try to make a directory with that
+        # name. If the directory already exists, an OSError exception will be
+        # raised, which we ignore.
+        ########################################################################
         channelName = channel.name.pythonValue ()
         channelName = channelName[1:-1]
-        try:
-            os.mkdir (channelName)
-        except OSError:
-            pass
-        out = cms.OutputModule ("PoolOutputModule",
-          splitLevel = cms.untracked.int32 (0),
-          eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
-          fileName = cms.untracked.string (channelName + "/bean" + suffix + ".root"),
-          SelectEvents = cms.untracked.PSet (
-            SelectEvents = cms.vstring ("myFilterPath" + str (i))
-          ),
-          outputCommands = cms.untracked.vstring (
-            outputCommands
-          ),
-          dropMetaData = cms.untracked.string ("ALL")
+        if skim:
+            try:
+                os.mkdir (channelName)
+            except OSError:
+                pass
+        ########################################################################
+
+        ########################################################################
+        # Add a cut calculator module for this channel to the path.
+        ########################################################################
+        cutCalculator = cms.EDProducer ("CutCalculator",
+            collections = collections,
+            cuts = channel
         )
-        myFilter = cms.EDFilter ("FilterOnChannelDecision",
-            src = cms.InputTag ("OSUAnalysis", "channelDecisions"),
-            channelName = cms.string (channelName)
+        channelPath += cutCalculator
+        setattr (process, channelName + "CutCalculator", cutCalculator)
+        ########################################################################
+
+        ########################################################################
+        # Add a cut flow plotting module for this channel to the path.
+        ########################################################################
+        cutFlowPlotter = cms.EDAnalyzer ("CutFlowPlotter",
+            cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
         )
-        myFilterPath = cms.Path (myFilter)
-        myEndPath = cms.EndPath (out)
-        process.__setattr__ ("out" + str (i), out)
-        process.OSUAnalysis.channels.append (channel)
-        process.OSUAnalysis.useEDMFormat = cms.bool (True)
-        process.__setattr__ ("myFilter" + str (i), myFilter)
-        process.__setattr__ ("myFilterPath" + str (i), myFilterPath)
-        process.__setattr__ ("myEndPath" + str (i), myEndPath)
-        i += 1
+        channelPath += cutFlowPlotter
+        setattr (process, channelName + "CutFlowPlotter", cutFlowPlotter)
+        ########################################################################
+
+        ########################################################################
+        # Set up the output commands. For now, we drop everything except the
+        # collections given in the collections PSet.
+        ########################################################################
+        outputCommands = ["drop *"]
+        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a))]:
+            collectionTag = getattr (collections, collection)
+            outputCommand = "keep BN"
+            outputCommand += collection
+            outputCommand += "_"
+            outputCommand += collectionTag.getModuleLabel ()
+            outputCommand += "_"
+            outputCommand += collectionTag.getProductInstanceLabel ()
+            outputCommand += "_"
+            outputCommand += "BEANs"
+            outputCommands.append (outputCommand)
+        ########################################################################
+
+        ########################################################################
+        # For each collection on which cuts are applied, we add the
+        # corresponding object selector to the path. We also trade the original
+        # collection for the slimmed collection in the output commands.
+        ########################################################################
+        cutCollections = get_collections (channel.cuts)
+        for collection in cutCollections:
+            filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
+            objectSelector = cms.EDFilter (filterName,
+                collections = collections,
+                collectionToFilter = cms.string (collection),
+                cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
+            )
+            channelPath += objectSelector
+            setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
+            setattr (channelCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), "selectedObjects"))
+            add_channels.filterIndex += 1
+            outputCommands.append ("drop BN" + collection + "_*_*_BEANs")
+            outputCommands.append ("keep BN" + collection + "_*_*_OSUAnalysis")
+        ########################################################################
+
+        ########################################################################
+        # Add a plotting module for this channel to the path.
+        ########################################################################
+        plotter = cms.EDAnalyzer ("Plotter",
+            collections     =  channelCollections,
+            histogramSets   =  histogramSets,
+            verbose         =  cms.int32 (0)
+        )
+        channelPath += plotter
+        setattr (process, channelName + "Plotter", plotter)
+        ########################################################################
+
+        ########################################################################
+        # Add an output module for this channel to the path. We can use any of
+        # the object selectors for this channel as the "SelectEvents" parameter
+        # since they each return the global event decision. So we use the first
+        # which was added.
+        ########################################################################
+        if skim:
+            SelectEvents = cms.vstring ()
+            if cutCollections:
+                SelectEvents = cms.vstring (channelName)
+            poolOutputModule = cms.OutputModule ("PoolOutputModule",
+                splitLevel = cms.untracked.int32 (0),
+                eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
+                fileName = cms.untracked.string (channelName + "/skim" + suffix + ".root"),
+                SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
+                outputCommands = cms.untracked.vstring (outputCommands),
+                dropMetaData = cms.untracked.string ("ALL")
+            )
+            add_channels.endPath += poolOutputModule
+            setattr (process, channelName + "PoolOutputModule", poolOutputModule)
+        ########################################################################
+
+        setattr (process, channelName, channelPath)
+    setattr (process, "endPath", add_channels.endPath)

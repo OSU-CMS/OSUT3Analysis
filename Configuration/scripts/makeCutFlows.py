@@ -41,10 +41,19 @@ parser.add_option("-e", "--noErrors", action="store_true", dest="noErrors", defa
                   help="do not print errors in table")
 parser.add_option("-x", "--xsecTheory", dest="xsecTheory", 
                   help="specify file with theory cross sections for each dataset")
+parser.add_option("-i", "--inputFile", dest="inputFile", 
+                  help="specify inputFile; overrides condor directory")
 
 (arguments, args) = parser.parse_args()
 
-condor_dir = set_condor_output_dir(arguments)
+if arguments.inputFile:
+    condor_dir = "./"
+    if "/" in arguments.inputFile: 
+        condor_dir = arguments.inputFile
+        condor_dir = condor_dir[:condor_dir.rfind('/')]
+        condor_dir += "/"  
+else: 
+    condor_dir = set_condor_output_dir(arguments)
 
 from ROOT import TFile, gROOT, gStyle, gDirectory, TKey
 
@@ -57,6 +66,8 @@ if arguments.outputFileName:
 outputFileName = outputFileName.partition(".")[0]  # If the input filename contains a period, take only the part before the period.  
 
 texfile = condor_dir + "/" + outputFileName + ".tex"
+    
+    
 
 replacements = {
     ">":"$>$",
@@ -108,6 +119,13 @@ if arguments.localConfig:
 secondary_replacements.update(replacements_extra)
 
 #### check which input datasets have valid output files
+if arguments.inputFile:
+    dataset = arguments.inputFile[arguments.inputFile.rfind('/')+1:]
+    dataset = dataset.replace(".root", "")
+    datasets = [dataset]
+    processed_datasets = []  
+    labels = { dataset : dataset }
+    
 for dataset in datasets:
     fileName = condor_dir + "/" + dataset + ".root"
     if not os.path.exists(fileName):
@@ -117,6 +135,8 @@ for dataset in datasets:
     testFile = TFile(fileName)
     if not (testFile.IsZombie()):
         processed_datasets.append(dataset)
+    if arguments.verbose:
+        print "Opening testFile: ", fileName  
 
 if len(processed_datasets) is 0:
     sys.exit("Can't find any output root files for the given list of datasets")
@@ -127,12 +147,12 @@ testFile.cd()
 for key in testFile.GetListOfKeys():
     if (key.GetClassName() != "TDirectoryFile"):
         continue
-    rootDirectory = key.GetName()
-    testFile.cd(key.GetName())
-    for key2 in gDirectory.GetListOfKeys():
-        if (key2.GetClassName() != "TDirectoryFile"):
-            continue
-        channels.append(key2.GetName())
+    if not "CutFlow" in key.GetName():
+        continue     
+    channels.append(key.GetName())
+
+if arguments.verbose:
+    print "Will process the following channels: ", channels, " in the datasets ", processed_datasets  
 
 fout = open (texfile, "w")
 fout.write ("\\documentclass[a2paper,8pt]{article}\n\n")
@@ -165,32 +185,33 @@ for channel in channels: # loop over final states, which each have their own dir
     #print hist
 
     for dataset in processed_datasets:
-            dataset_file = "%s/%s.root" % (condor_dir,dataset)
-            #print dataset_file
-            if arguments.makeDiffPlots or arguments.makeRatioPlots or arguments.totalBkgd:
-              if types[dataset] == "data":
+        dataset_file = "%s/%s.root" % (condor_dir,dataset)
+        #print dataset_file
+        if arguments.makeDiffPlots or arguments.makeRatioPlots or arguments.totalBkgd:
+            if types[dataset] == "data":
                 dataset_file = "\"<" + dataset_file + "\""
-              elif types[dataset] == "bgMC":
+            elif types[dataset] == "bgMC":
                 dataset_file = "\">" + dataset_file + "\""
-            if arguments.signalToBackground:
-              if types[dataset] == "signalMC":
+        if arguments.signalToBackground:
+            if types[dataset] == "signalMC":
                 dataset_file = "\"<" + dataset_file + "\""
-              elif types[dataset] == "bgMC":
+            elif types[dataset] == "bgMC":
                 dataset_file = "\">" + dataset_file + "\""
-            cutFlowArgs = cutFlowArgs + " " + dataset_file 
-            selectionArgs = selectionArgs + " " + dataset_file 
-            minusOneArgs = minusOneArgs + " " + dataset_file 
-            cutFlowArgs = cutFlowArgs + " '" + channel + "CutFlow'"
-            selectionArgs = selectionArgs + " '" + channel + "Selection'"
-            minusOneArgs = minusOneArgs + " '" + channel + "MinusOne'"
+        cutFlowArgs = cutFlowArgs + " " + dataset_file 
+        selectionArgs = selectionArgs + " " + dataset_file 
+        minusOneArgs = minusOneArgs + " " + dataset_file 
+        #            cutFlowArgs = cutFlowArgs + " '" + channel + "CutFlow'"
+        cutFlowArgs = cutFlowArgs + " '" + channel + "/cutFlow'"
+        selectionArgs = selectionArgs + " '" + channel + "Selection'"
+        minusOneArgs = minusOneArgs + " '" + channel + "MinusOne'"
 
-            rawlabel = "$" + labels[dataset] + "$"
-            label = rawlabel.replace("#","\\")
-            label = "'" + label + "'"
-            #print label
-            cutFlowArgs = cutFlowArgs + " " + label
-            selectionArgs = selectionArgs + " " + label
-            minusOneArgs = minusOneArgs + " " + label
+        rawlabel = "$" + labels[dataset] + "$"
+        label = rawlabel.replace("#","\\")
+        label = "'" + label + "'"
+        #print label
+        cutFlowArgs = cutFlowArgs + " " + label
+        selectionArgs = selectionArgs + " " + label
+        minusOneArgs = minusOneArgs + " " + label
 
     #make cutFlowTable objects
     fout = open (texfile, "a")
@@ -218,18 +239,18 @@ for channel in channels: # loop over final states, which each have their own dir
     if (arguments.verbose):
         print "Debug:  running command:  %s -l %g -m %s >> %s" % (cutFlowTable, intLumi,cutFlowArgs,texfile)
     os.system("%s -l %g -m %s >> %s" % (cutFlowTable, intLumi,cutFlowArgs,texfile))
-    fout = open (texfile, "a")
-    fout.write ("\\pagebreak\n\n")
-    fout.write ("\\section*{" + formatted_channel + " channel}\n\n")
-    fout.write ("\\subsection*{Individual selection}\n\n")
-    fout.close ()
-    os.system("%s -l %g %s >> %s" % (cutFlowTable, intLumi,selectionArgs,texfile))
-    fout = open (texfile, "a")
-    fout.write ("\\pagebreak\n\n")
-    fout.write ("\\section*{" + formatted_channel + " channel}\n\n")
-    fout.write ("\\subsection*{Minus one}\n\n")
-    fout.close ()
-    os.system("%s -l %g %s >> %s" % (cutFlowTable, intLumi,minusOneArgs,texfile))
+##     fout = open (texfile, "a")
+##     fout.write ("\\pagebreak\n\n")
+##     fout.write ("\\section*{" + formatted_channel + " channel}\n\n")
+##     fout.write ("\\subsection*{Individual selection}\n\n")
+##     fout.close ()
+##     os.system("%s -l %g %s >> %s" % (cutFlowTable, intLumi,selectionArgs,texfile))
+##     fout = open (texfile, "a")
+##     fout.write ("\\pagebreak\n\n")
+##     fout.write ("\\section*{" + formatted_channel + " channel}\n\n")
+##     fout.write ("\\subsection*{Minus one}\n\n")
+##     fout.close ()
+##     os.system("%s -l %g %s >> %s" % (cutFlowTable, intLumi,minusOneArgs,texfile))
 
 #for dataset in processed_datasets:
 #    dataset_file = "%s/%s.root_tmp" % (condor_dir,dataset)
