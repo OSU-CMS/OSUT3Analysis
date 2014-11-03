@@ -114,29 +114,6 @@ ValueLookup::valueLookup (const BNelectron &object, string variable){
         value = !value;
       }
 
-      else if(variable == "mvaNonTrig_HtoZZto4l"){
-         value = false;
-         if (valueLookup (object, "pt") > 7.0 && valueLookup (object, "pt") < 10.0)
-           {
-             if (fabs (valueLookup (object, "scEta")) < 0.8 && valueLookup (object, "mvaNonTrigV0") > 0.47)
-               value = true;
-             else if (fabs (valueLookup (object, "scEta")) >= 0.8 && fabs (valueLookup (object, "scEta")) < 1.479 && valueLookup (object, "mvaNonTrigV0") > 0.004)
-               value = true;
-             else if (fabs (valueLookup (object, "scEta")) >= 1.479 && fabs (valueLookup (object, "scEta")) < 2.5 && valueLookup (object, "mvaNonTrigV0") > 0.295)
-               value = true;
-           }
-         else if (valueLookup (object, "pt") >= 10.0)
-           {
-             if (fabs (valueLookup (object, "scEta")) < 0.8 && valueLookup (object, "mvaNonTrigV0") > -0.34)
-               value = true;
-             else if (fabs (valueLookup (object, "scEta")) >= 0.8 && fabs (valueLookup (object, "scEta")) < 1.479 && valueLookup (object, "mvaNonTrigV0") > -0.65)
-               value = true;
-             else if (fabs (valueLookup (object, "scEta")) >= 1.479 && fabs (valueLookup (object, "scEta")) < 2.5 && valueLookup (object, "mvaNonTrigV0") > 0.60)
-               value = true;
-           }
-      }
-      else if(variable == "relPFrhoIso") value = ( valueLookup (object, "chargedHadronIsoDR03") + max(0.0, valueLookup (object, "neutralHadronIsoDR03") + valueLookup (object, "photonIsoDR03") - valueLookup (object, "AEffDr03") * valueLookup (object, "rhoPrime")) ) / valueLookup (object, "pt");
-
       else
         clog << "WARNING: invalid electron variable '" << variable << "'\n";
     }

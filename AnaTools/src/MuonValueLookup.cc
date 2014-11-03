@@ -113,17 +113,6 @@ ValueLookup::valueLookup (const BNmuon &object, string variable){
         value = (object.isStandAloneMuon && !object.isTrackerMuon && !object.isGlobalMuon) || !value;
       }
 
-      else if(variable == "tightIDdisplaced"){
-        value = valueLookup (object, "isGlobalMuon") > 0 \
-                && valueLookup (object, "isPFMuon") > 0 \
-                && valueLookup (object, "normalizedChi2") < 10 \
-                && valueLookup (object, "numberOfValidMuonHits") > 0 \
-                && valueLookup (object, "numberOfMatchedStations") > 1 \
-                && valueLookup (object, "numberOfValidPixelHits") > 0 \
-                && valueLookup (object, "numberOfLayersWithMeasurement") > 5;
-      }
-      else if(variable == "relPFdBetaIso") value = (valueLookup (object, "pfIsoR04SumChargedHadronPt") + max(0.0, valueLookup (object, "pfIsoR04SumNeutralHadronEt") + valueLookup (object, "pfIsoR04SumPhotonEt") - 0.5*valueLookup (object, "pfIsoR04SumPUPt"))) / valueLookup (object, "pt");
-
       else
         clog << "WARNING: invalid muon variable '" << variable << "'\n";
     }
