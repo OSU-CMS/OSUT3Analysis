@@ -215,7 +215,7 @@ else:
 if not os.path.exists(CondorDir):
    os.system('mkdir ' + CondorDir)
 else:
-   print 'Directory "' + arguments.Dataset + '" already exists in your condor directory. Please check and corresponding submission aborted.' 
+   print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Please check and corresponding submission aborted.' 
    sys.exit()
 
 ###############################################################################
