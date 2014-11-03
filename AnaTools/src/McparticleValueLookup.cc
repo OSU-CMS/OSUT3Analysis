@@ -7,7 +7,7 @@
 double
 ValueLookup::valueLookup (const BNmcparticle &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNmcparticle *obj = new BNmcparticle (object);
 
   try
@@ -62,14 +62,6 @@ ValueLookup::valueLookup (const BNmcparticle &object, string variable){
           pt = object.pt;
         value = (-vx * py + vy * px) / pt;
       }
-      else if (variable == "d0Origin"){
-        double vx = object.vx,
-          vy = object.vy,
-          px = object.px,
-          py = object.py,
-          pt = object.pt;
-        value = (-vx * py + vy * px) / pt;
-      }
 
       else if (variable == "dz"){
         double vx = object.vx - chosenVertex ()->x,
@@ -80,9 +72,6 @@ ValueLookup::valueLookup (const BNmcparticle &object, string variable){
           pz = object.pz,
           pt = object.pt;
         value = vz - (vx * px + vy * py)/pt * (pz/pt);
-      }
-      else if(variable == "v0"){
-        value = sqrt(object.vx*object.vx + object.vy*object.vy);
       }
       else if(variable == "deltaV0"){
         value = sqrt((object.vx-chosenVertex ()->x)*(object.vx-chosenVertex ()->x) + (object.vy-chosenVertex ()->y)*(object.vy-chosenVertex ()->y));
@@ -95,9 +84,6 @@ ValueLookup::valueLookup (const BNmcparticle &object, string variable){
       }
       else if (variable == "deltaVz"){
         value = object.vz - chosenVertex ()->z;
-      }
-      else if (variable == "rho"){
-        value = sqrt (object.vx * object.vx + object.vy * object.vy);
       }
 
 /*      else if(variable == "deltaPhiMaxSubLeadJet") {
@@ -114,10 +100,8 @@ ValueLookup::valueLookup (const BNmcparticle &object, string variable){
         value = mcpartJetDeltaPhiMax;
       }*/
 
-      else{
+      else
         clog << "WARNING: invalid mcparticle variable '" << variable << "'\n";
-        value = numeric_limits<int>::min ();
-      }
     }
 
   delete obj;

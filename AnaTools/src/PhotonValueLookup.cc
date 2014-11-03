@@ -7,7 +7,7 @@
 double
 ValueLookup::valueLookup (const BNphoton &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNphoton *obj = new BNphoton (object);
 
   try
@@ -23,8 +23,6 @@ ValueLookup::valueLookup (const BNphoton &object, string variable){
         if(index == -1) value = 0;
         else value = mcparticles->at(index).id;
       }
-
-
 
       else if(variable == "genMatchedId"){
         int index = getGenMatchedParticleIndex(&object);
@@ -63,10 +61,8 @@ ValueLookup::valueLookup (const BNphoton &object, string variable){
       }
 
 
-      else{
+      else
         clog << "WARNING: invalid photon variable '" << variable << "'\n";
-        value = numeric_limits<int>::min ();
-      }
     }
 
   delete obj;

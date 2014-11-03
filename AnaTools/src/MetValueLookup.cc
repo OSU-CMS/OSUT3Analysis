@@ -9,7 +9,7 @@
 double
 ValueLookup::valueLookup (const BNmet &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNmet *obj = new BNmet (object);
 
   try
@@ -182,10 +182,8 @@ ValueLookup::valueLookup (const BNmet &object, string variable){
         value = deltaPhiJet2;
       }*/
 
-      else{
+      else
         clog << "WARNING: invalid met variable '" << variable << "'\n";
-        value = numeric_limits<int>::min ();
-      }
     }
 
   delete obj;

@@ -9,9 +9,8 @@
 double
 ValueLookup::valueLookup (const BNtrack &object, string variable){
 
-  double value = 0.0;
-  double pMag = sqrt(object.pt * object.pt +
-                     object.pz * object.pz);
+  double value = numeric_limits<int>::min ();
+  double pMag = hypot (object.pt, object.pz);
   BNtrack *obj = new BNtrack (object);
 
   try
@@ -47,28 +46,9 @@ ValueLookup::valueLookup (const BNtrack &object, string variable){
         }
       }
 
-      else if(variable == "trkRelIsoRp3")     { value = (object.depTrkRp3 - object.pt) / object.pt; if (value<0) value = 0; }
-      else if(variable == "trkRelIsoRp5")     { value = (object.depTrkRp5 - object.pt) / object.pt; if (value<0) value = 0; }
-
       //user defined variables
       else if(variable == "d0wrtBS") value = (object.vx-events->at(0).BSx)*object.py/object.pt - (object.vy-events->at(0).BSy)*object.px/object.pt;
       else if(variable == "dZwrtBS") value = object.dZ - events->at(0).BSz;
-      else if(variable == "depTrkRp5MinusPt"){
-        if ( (object.depTrkRp5 - object.pt) < 0 ) {
-    //       clog << "Warning:  found track with depTrkRp5 < pt:  depTrkRp5=" << object.depTrkRp5
-    //            << "; pt=" << object.pt
-    //            << "; object.depTrkRp5 - object.pt = " << object.depTrkRp5 - object.pt
-    //            << endl;
-               value = 0;
-             }
-             else value =  (object.depTrkRp5 - object.pt);
-      }
-      else if(variable == "depTrkRp3MinusPt"){
-        if ( (object.depTrkRp3 - object.pt) < 0 ) {
-          value = 0;
-        }
-        else value =  (object.depTrkRp3 - object.pt);
-      }
 
       else if(variable == "dPhiMet") {
         if (const BNmet *met = chosenMET ()) {
@@ -77,8 +57,6 @@ ValueLookup::valueLookup (const BNtrack &object, string variable){
       }
 
       else if (variable == "rhoCorrRp5")                 value = getRhoCorr();
-      else if(variable == "caloTotDeltaRp5")            value =  (object.caloHadDeltaRp5 + object.caloEMDeltaRp5);
-      else if(variable == "caloTotDeltaRp5ByP")         value = ((object.caloHadDeltaRp5 + object.caloEMDeltaRp5)/pMag);
       else if(variable == "caloTotDeltaRp5RhoCorr")     value = getTrkCaloTotRhoCorr(&object);
       else if(variable == "caloTotDeltaRp5ByPRhoCorr")  value = getTrkCaloTotRhoCorr(&object) / pMag;
       else if(variable == "depTrkRp5RhoCorr")           value = getTrkDepTrkRp5RhoCorr(&object);
@@ -100,7 +78,6 @@ ValueLookup::valueLookup (const BNtrack &object, string variable){
       else if(variable == "isMatchedDeadEcalDet")          value = getTrkIsMatchedDeadEcalDet(&object);
         else if(variable == "trkDeadEcalDeltaR")          value = getTrkDeadEcalDeltaR(&object);
       else if(variable == "isMatchedBadCSC")            value = getTrkIsMatchedBadCSC  (&object);
-      else if(variable == "ptErrorByPt")                value = (object.ptError/object.pt);
       else if(variable == "ptRes")                      value = getTrkPtRes(&object);
       else if(variable == "ptTrue")                     value = getTrkPtTrue(&object, mcparticles.product());
       else if (variable == "d0wrtPV"){
@@ -121,10 +98,6 @@ ValueLookup::valueLookup (const BNtrack &object, string variable){
           pt = object.pt;
         value = vz - (vx * px + vy * py)/pt * (pz/pt);
       }
-/*      else if (variable == "dZSinTheta"){
-        double dZwrtPV = valueLookup(object, "dZwrtPV");
-        value = dZwrtPV * (object.pt / pMag);  // sin(theta) = pt / p
-      }*/
 
 /*      else if(variable == "deltaRMinSubLeadJet") {
         // calculate minimum deltaR between track and any other subleading jet
@@ -169,16 +142,6 @@ ValueLookup::valueLookup (const BNtrack &object, string variable){
           if (trkElecDeltaR < trkElecDeltaRMin) trkElecDeltaRMin = trkElecDeltaR;
         }
         value = trkElecDeltaRMin;
-      }*/
-
-/*      else if(variable == "isPassMuonLooseID") {
-        // boolean for whether track is loosely identified with a muon,
-        // i.e., true if it is DeltaR-matched to a member of either of the muon or secondary muon collections
-        double trkMuonDeltaRMin    = valueLookup(object, "deltaRMinMuonLooseId");
-        double trkSecMuonDeltaRMin = valueLookup(object, "deltaRMinSecMuonLooseId");
-        value = 0;                                  // initialize to be false
-        if (trkMuonDeltaRMin    < 0.15) value = 1;  // true if matched to muon
-        if (trkSecMuonDeltaRMin < 0.15) value = 1;  // true if matched to secondary muon
       }*/
 
 /*      else if(variable == "deltaRMinMuonLooseId") {
@@ -300,7 +263,6 @@ ValueLookup::valueLookup (const BNtrack &object, string variable){
         else value = mcparticles->at(index).id;
       }
 
-
       else if(variable == "genMatchedId"){
         int index = getGenMatchedParticleIndex(&object);
         if(index == -1) value = 0;
@@ -337,10 +299,8 @@ ValueLookup::valueLookup (const BNtrack &object, string variable){
         else value = 24 - getPdgIdBinValue(mcparticles->at(index).grandMotherId);
       }
 
-      else{
+      else
         clog << "WARNING: invalid track variable '" << variable << "'\n";
-        value = numeric_limits<int>::min ();
-      }
     }
 
   delete obj;

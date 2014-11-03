@@ -7,7 +7,7 @@
 double
 ValueLookup::valueLookup (const BNstop &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNstop *obj = new BNstop (object);
 
   try
@@ -17,11 +17,7 @@ ValueLookup::valueLookup (const BNstop &object, string variable){
   catch (...)
     {
       // derived quantities
-      if (variable == "betaGamma") value = object.beta * object.gamma;
-      else if (variable == "vxy") value = sqrt(object.vx * object.vx + object.vy * object.vy);
-      else if (variable == "decayVxy") value = sqrt(object.decayVx * object.decayVx + object.decayVy * object.decayVy);
-
-      else if (variable == "d0"){
+      if (variable == "d0"){
         double vx = object.vx - chosenVertex ()->x,
           vy = object.vy - chosenVertex ()->y,
           px = object.px,
@@ -117,14 +113,8 @@ ValueLookup::valueLookup (const BNstop &object, string variable){
         }
       }
 
-      else if (variable == "decaysToTau"){
-        value = abs (object.daughter0Id) == 15 || abs (object.daughter1Id) == 15;
-      }
-
-      else{
+      else
         clog << "WARNING: invalid stop variable '" << variable << "'\n";
-        value = numeric_limits<int>::min ();
-      }
     }
 
   delete obj;

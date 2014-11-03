@@ -7,7 +7,7 @@
 double
 ValueLookup::valueLookup (const BNbxlumi &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNbxlumi *obj = new BNbxlumi (object);
 
   try
@@ -17,7 +17,6 @@ ValueLookup::valueLookup (const BNbxlumi &object, string variable){
   catch (...)
     {
       clog << "WARNING: invalid bxlumi variable '" << variable << "'\n";
-      value = numeric_limits<int>::min ();
     }
 
   delete obj;

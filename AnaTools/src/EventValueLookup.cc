@@ -10,7 +10,7 @@
 double
 ValueLookup::valueLookup (const BNevent &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNevent *obj = new BNevent (object);
 
   try
@@ -202,29 +202,14 @@ ValueLookup::valueLookup (const BNevent &object, string variable){
         }
         value = deltaPhiMax;
       }
-/*      else if(variable == "totalJetPtMinusTotalMcparticlePt") {
-        value =
-          valueLookup(object, "totalJetPt") -
-          valueLookup(object, "totalMcparticlePt");
-      }*/
-/*      else if(variable == "totalJetPhiMinusTotalMcparticlePhi") {
+      else if(variable == "totalJetPhiMinusTotalMcparticlePhi") {
         value = deltaPhi(valueLookup(object, "totalJetPhi"),
                          valueLookup(object, "totalMcparticlePhi"));
-      }*/
-/*      else if(variable == "totalMuonPtMinusTotalMcparticlePt") {
-        value =
-          valueLookup(object, "totalMuonPt") -
-          valueLookup(object, "totalMcparticlePt");
-      }*/
-/*      else if(variable == "totalMuonPtMinusTotalJetPt") {
-        value =
-          valueLookup(object, "totalMuonPt") -
-          valueLookup(object, "totalJetPt");
-      }*/
-/*      else if(variable == "totalMuonPhiMinusTotalJetPhi") {
+      }
+      else if(variable == "totalMuonPhiMinusTotalJetPhi") {
         value = deltaPhi(valueLookup(object, "totalMuonPhi"),
                          valueLookup(object, "totalJetPhi"));
-      }*/
+      }
       else if(variable == "totalMcparticleStatus3SusyIdPt") {
         TVector2 ptTot(0.0, 0.0);
 
@@ -242,10 +227,8 @@ ValueLookup::valueLookup (const BNevent &object, string variable){
         value = ptTot.Mod();
       }
 
-      else{
+      else
         clog << "WARNING: invalid event variable '" << variable << "'\n";
-        value = numeric_limits<int>::min ();
-      }
     }
 
   delete obj;

@@ -7,7 +7,7 @@
 double
 ValueLookup::valueLookup (const BNsupercluster &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNsupercluster *obj = new BNsupercluster (object);
 
   try
@@ -17,7 +17,6 @@ ValueLookup::valueLookup (const BNsupercluster &object, string variable){
   catch (...)
     {
       clog << "WARNING: invalid supercluster variable '" << variable << "'\n";
-      value = numeric_limits<int>::min ();
     }
 
   delete obj;

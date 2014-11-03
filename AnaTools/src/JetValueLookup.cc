@@ -13,7 +13,7 @@ ValueLookup::valueLookup (const BNjet &object, string variable){
     object = &jetCorr;
   }*/
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNjet *obj = new BNjet (object);
 
   try
@@ -22,24 +22,7 @@ ValueLookup::valueLookup (const BNjet &object, string variable){
     }
   catch (...)
     {
-      //user defined variable
-      if(variable == "disappTrkLeadingJetID") {
-        value = object.pt > 110
-          && fabs(object.eta) < 2.4
-          && object.chargedHadronEnergyFraction > 0.2
-          && object.neutralHadronEnergyFraction < 0.7
-          && object.chargedEmEnergyFraction < 0.5
-          && object.neutralEmEnergyFraction < 0.7;
-      }
-
-      else if(variable == "disappTrkSubLeadingJetID") {
-        value = object.pt > 30
-          && fabs(object.eta) < 4.5
-          && object.neutralHadronEnergyFraction < 0.7
-          && object.chargedEmEnergyFraction < 0.5;
-          }
-
-      else if(variable == "dPhiMet") {
+      if(variable == "dPhiMet") {
         if (const BNmet *met = chosenMET ()) {
           value = deltaPhi (object.phi, met->phi);
         } else value = numeric_limits<int>::min ();
@@ -75,10 +58,8 @@ ValueLookup::valueLookup (const BNjet &object, string variable){
         }
         value = deltaRMin;
       }*/
-      else{
+      else
         clog << "WARNING: invalid jet variable '" << variable << "'\n";
-        value = numeric_limits<int>::min ();
-      }
     }
 
   delete obj;

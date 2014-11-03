@@ -7,7 +7,7 @@
 double
 ValueLookup::valueLookup (const BNgenjet &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNgenjet *obj = new BNgenjet (object);
 
   try
@@ -17,7 +17,6 @@ ValueLookup::valueLookup (const BNgenjet &object, string variable){
   catch (...)
     {
       clog << "WARNING: invalid genjet variable '" << variable << "'\n";
-      value = numeric_limits<int>::min ();
     }
 
   delete obj;

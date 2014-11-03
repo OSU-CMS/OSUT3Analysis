@@ -7,7 +7,7 @@
 double
 ValueLookup::valueLookup (const BNtrigobj &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNtrigobj *obj = new BNtrigobj (object);
 
   try
@@ -37,11 +37,8 @@ ValueLookup::valueLookup (const BNtrigobj &object, string variable){
           stringValue = "none";  // stringValue should only be empty if value is filled
       }*/
 
-
-      else{
+      else
         clog << "WARNING: invalid trigobj variable '" << variable << "'\n";
-        value = numeric_limits<int>::min ();
-      }
     }
 
   delete obj;

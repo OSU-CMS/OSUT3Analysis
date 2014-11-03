@@ -7,7 +7,7 @@
 double
 ValueLookup::valueLookup (const BNprimaryvertex &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNprimaryvertex *obj = new BNprimaryvertex (object);
 
   try
@@ -17,7 +17,6 @@ ValueLookup::valueLookup (const BNprimaryvertex &object, string variable){
   catch (...)
     {
       clog << "WARNING: invalid primaryvertex variable '" << variable << "'\n";
-      value = numeric_limits<int>::min ();
     }
 
   delete obj;

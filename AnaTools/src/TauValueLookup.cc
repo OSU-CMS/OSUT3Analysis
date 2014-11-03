@@ -7,7 +7,7 @@
 double
 ValueLookup::valueLookup (const BNtau &object, string variable){
 
-  double value = 0.0;
+  double value = numeric_limits<int>::min ();
   BNtau *obj = new BNtau (object);
 
   try
@@ -16,17 +16,7 @@ ValueLookup::valueLookup (const BNtau &object, string variable){
     }
   catch (...)
     {
-      if (variable == "looseHadronicID") {
-        //criteria taken from http://cms.cern.ch/iCMS/jsp/db_notes/showNoteDetails.jsp?noteID=CMS%20AN-2011/019
-        value = object.pt > 30
-          && fabs(object.eta) < 2.3
-          && object.HPSbyLooseCombinedIsolationDeltaBetaCorr > 0
-          && object.HPSdecayModeFinding > 0
-          && object.HPSagainstElectronLoose > 0
-          && object.HPSagainstMuonTight > 0;
-      }
-
-      else if(variable == "genDeltaRLowest") value = getGenDeltaRLowest(&object);
+      if(variable == "genDeltaRLowest") value = getGenDeltaRLowest(&object);
 
       else if(variable == "genMatchedPdgId"){
         int index = getGenMatchedParticleIndex(&object);
@@ -70,11 +60,8 @@ ValueLookup::valueLookup (const BNtau &object, string variable){
         else value = 24 - getPdgIdBinValue(mcparticles->at(index).grandMotherId);
       }
 
-
-      else{
+      else
         clog << "WARNING: invalid tau variable '" << variable << "'\n";
-        value = numeric_limits<int>::min ();
-      }
     }
 
   delete obj;
