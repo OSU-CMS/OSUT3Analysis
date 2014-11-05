@@ -75,14 +75,14 @@ ValueLookupTree::insert_ (const string &cut)
   // have hit a leaf.
   //////////////////////////////////////////////////////////////////////////////
   node *tree = new node;
-  if (!(insertBinaryInfixOperator   (cut,  tree,  {","})                   ||
-        insertBinaryInfixOperator   (cut,  tree,  {"||", "|"})             ||
-        insertBinaryInfixOperator   (cut,  tree,  {"&&", "&"})             ||
-        insertBinaryInfixOperator   (cut,  tree,  {"==", "!="})            ||
-        insertBinaryInfixOperator   (cut,  tree,  {"<", "<=", ">", ">="})  ||
-        insertBinaryInfixOperator   (cut,  tree,  {"+", "-"})              ||
-        insertBinaryInfixOperator   (cut,  tree,  {"*", "/", "%"})         ||
-        insertUnaryPrefixOperator   (cut,  tree,  {"!"})                   ||
+  if (!(insertBinaryInfixOperator   (cut,  tree,  {","})                           ||
+        insertBinaryInfixOperator   (cut,  tree,  {"||", "|"})                     ||
+        insertBinaryInfixOperator   (cut,  tree,  {"&&", "&"})                     ||
+        insertBinaryInfixOperator   (cut,  tree,  {"==", "!=", "="}, {"<=", ">="}) ||
+        insertBinaryInfixOperator   (cut,  tree,  {"<", "<=", ">", ">="})          ||
+        insertBinaryInfixOperator   (cut,  tree,  {"+", "-"})                      ||
+        insertBinaryInfixOperator   (cut,  tree,  {"*", "/", "%"})                 ||
+        insertUnaryPrefixOperator   (cut,  tree,  {"!"})                           ||
         insertUnaryPrefixOperator   (cut,  tree,  {"cos", "sin", "tan", "acos", "asin", "atan", "atan2",
                                                    "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
                                                    "exp", "ldexp", "log", "log10", "exp2", "expm1", "ilogb", "log1p", "log2", "logb",
@@ -114,7 +114,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<double> &opera
         return (operands.at (0) || operands.at (1));
       else if (op == "&&" || op == "&")
         return (operands.at (0) && operands.at (1));
-      else if (op == "==")
+      else if (op == "==" || op == "=")
         return (operands.at (0) == operands.at (1));
       else if (op == "!=")
         return (operands.at (0) != operands.at (1));
@@ -323,7 +323,7 @@ ValueLookupTree::firstOfPairAscending (pair<size_t, string> a, pair<size_t, stri
 }
 
 pair<size_t, string>
-ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, const size_t pos)
+ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos)
 {
   vector<pair<size_t, string> > indices;
   pair<size_t, string> firstHit, biggestHit;
@@ -333,9 +333,16 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
   // it. Then sort the indices in ascending order.
   //////////////////////////////////////////////////////////////////////////////
   for (vector<string>::const_iterator target = targets.begin (); target != targets.end (); target++)
-    indices.push_back (make_pair (s.find (*target, pos), *target));
+    {
+      size_t index = s.find (*target, pos);
+      if (!vetoMatch (s, *target, index, vetoTargets))
+        indices.push_back (make_pair (index, *target));
+    }
   sort (indices.begin (), indices.end (), ValueLookupTree::firstOfPairAscending);
   //////////////////////////////////////////////////////////////////////////////
+
+  if (!indices.size ())
+    return make_pair (string::npos, "");
 
   //////////////////////////////////////////////////////////////////////////////
   // If there are multiple targets which match at the same position in the
@@ -352,7 +359,31 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
 }
 
 bool
-ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const vector<string> &operators)
+ValueLookupTree::vetoMatch (const string &s, const string &target, const size_t index, const vector<string> &vetoTargets)
+{
+  if (index == string::npos)
+    return true;
+
+  size_t end = index + target.length () - 1;
+  char first = s.at (index), last = s.at (end),
+       preceding = index > 0 ? s.at (index - 1) : '\0', proceeding = end < s.length () - 1 ? s.at (end + 1) : '\0';
+
+  if ((isalnum (first) || first == '_') && (isalnum (preceding) || preceding == '_'))
+    return true;
+  if ((isalnum (last) || last == '_') && (isalnum (proceeding) || proceeding == '_'))
+    return true;
+  for (vector<string>::const_iterator vetoTarget = vetoTargets.begin (); vetoTarget != vetoTargets.end (); vetoTarget++)
+    {
+      size_t i = s.find (*vetoTarget, max ((size_t) 0, index - vetoTarget->length () - 1));
+      if (i <= index)
+        return true;
+    }
+
+  return false;
+}
+
+bool
+ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const vector<string> &operators, const vector<string> &vetoOperators)
 {
   bool foundAnOperator = false;
   double x;
@@ -360,7 +391,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const v
   //////////////////////////////////////////////////////////////////////////////
   // If the string is a number, then simply return false;
   //////////////////////////////////////////////////////////////////////////////
-  if (isnumber (s,x))
+  if (isnumber (s, x))
     return false;
   //////////////////////////////////////////////////////////////////////////////
 
@@ -369,7 +400,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const v
   // left and right substring. These substrings are inserted into the tree and
   // stored as branches for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (pair<size_t, string> i = findFirstOf (s, operators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, i.first + i.second.length ()))
+  for (pair<size_t, string> i = findFirstOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, vetoOperators, i.first + i.second.length ()))
     {
       string left, right;
       left = s.substr (0, i.first);
@@ -391,7 +422,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const v
 }
 
 bool
-ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const vector<string> &operators)
+ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const vector<string> &operators, const vector<string> &vetoOperators)
 {
   bool foundAnOperator = false;
   double x;
@@ -399,7 +430,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const v
   //////////////////////////////////////////////////////////////////////////////
   // If the string is a number, then simply return false;
   //////////////////////////////////////////////////////////////////////////////
-  if (isnumber (s,x))
+  if (isnumber (s, x))
     return foundAnOperator;
   //////////////////////////////////////////////////////////////////////////////
 
@@ -408,7 +439,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const v
   // left and right substring. The right substring is inserted into the tree and
   // stored as a branch for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (pair<size_t, string> i = findFirstOf (s, operators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, i.first + i.second.length ()))
+  for (pair<size_t, string> i = findFirstOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, vetoOperators, i.first + i.second.length ()))
     {
       string left, right;
       left = s.substr (0, i.first);

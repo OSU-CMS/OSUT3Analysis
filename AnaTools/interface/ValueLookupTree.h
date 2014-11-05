@@ -75,14 +75,15 @@ class ValueLookupTree
     // vector of target strings.
     ////////////////////////////////////////////////////////////////////////////
     static bool firstOfPairAscending (pair<size_t, string>, pair<size_t, string>);
-    pair<size_t, string> findFirstOf (const string &, const vector<string> &, const size_t pos = 0);
+    pair<size_t, string> findFirstOf (const string &, const vector<string> &, const vector<string> &, const size_t = 0);
+    bool vetoMatch (const string &, const string &, const size_t, const vector<string> &);
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for inserting different types of operators into the tree.
     ////////////////////////////////////////////////////////////////////////////
-    bool insertBinaryInfixOperator (const string &, node *, const vector<string> &);
-    bool insertUnaryPrefixOperator (const string &, node *, const vector<string> &);
+    bool insertBinaryInfixOperator (const string &, node *, const vector<string> &, const vector<string> & = {});
+    bool insertUnaryPrefixOperator (const string &, node *, const vector<string> &, const vector<string> & = {});
     bool insertParentheses (const string &, node *);
     ////////////////////////////////////////////////////////////////////////////
 
