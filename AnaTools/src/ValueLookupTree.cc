@@ -341,8 +341,12 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
   sort (indices.begin (), indices.end (), ValueLookupTree::firstOfPairAscending);
   //////////////////////////////////////////////////////////////////////////////
 
+  //////////////////////////////////////////////////////////////////////////////
+  // If there are no matches, just return string::npos.
+  //////////////////////////////////////////////////////////////////////////////
   if (!indices.size ())
     return make_pair (string::npos, "");
+  //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
   // If there are multiple targets which match at the same position in the
@@ -361,13 +365,25 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
 bool
 ValueLookupTree::vetoMatch (const string &s, const string &target, const size_t index, const vector<string> &vetoTargets)
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // If there was no match, just return true, indicating a veto.
+  //////////////////////////////////////////////////////////////////////////////
   if (index == string::npos)
     return true;
+  //////////////////////////////////////////////////////////////////////////////
 
+  //////////////////////////////////////////////////////////////////////////////
+  // We veto an operator match if:
+  //   (1) the first character of the operator and the previous character are
+  //   alphanumeric or an underscore.
+  //   (2) the last character of the operator and the next character are
+  //   alphanumeric or an underscore.
+  //   (3) if the match is embedded in one of the veto targets passed to the
+  //   function.
+  //////////////////////////////////////////////////////////////////////////////
   size_t end = index + target.length () - 1;
   char first = s.at (index), last = s.at (end),
        preceding = index > 0 ? s.at (index - 1) : '\0', proceeding = end < s.length () - 1 ? s.at (end + 1) : '\0';
-
   if ((isalnum (first) || first == '_') && (isalnum (preceding) || preceding == '_'))
     return true;
   if ((isalnum (last) || last == '_') && (isalnum (proceeding) || proceeding == '_'))
@@ -378,6 +394,7 @@ ValueLookupTree::vetoMatch (const string &s, const string &target, const size_t 
       if (i <= index)
         return true;
     }
+  //////////////////////////////////////////////////////////////////////////////
 
   return false;
 }
