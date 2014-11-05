@@ -24,8 +24,10 @@
 #include "OSUT3Analysis/AnaTools/interface/PUWeight.h"
 #include "OSUT3Analysis/AnaTools/interface/BNstop.h"
 
+// A ValueLookup object is used to obtain the value of any variable or member 
+// function defined for a given physics object (e.g., electron, muon).  
 // Declaration of the ValueLookup class, containing all the valueLookup methods
-// and the variables on which they depend.
+// and the variables on which they depend.  
 class ValueLookup {
   public:
     ValueLookup () {};

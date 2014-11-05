@@ -149,7 +149,7 @@ def MakeFileList(Dataset, FileType, Directory):
         else:
             prefix = 'root://cms-0.mps.ohio-state.edu:1094/'
         #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py. 
-        os.system('perl MySQLModule ' + Dataset + ' ' + Directory + '/datasetInfo_cfg.py ' + prefix)
+        os.system('MySQLModule ' + Dataset + ' ' + Directory + '/datasetInfo_cfg.py ' + prefix)
         sys.path.append(Directory)
         import datasetInfo_cfg as datasetInfo
         location = datasetInfo.location 
@@ -215,7 +215,7 @@ else:
 if not os.path.exists(CondorDir):
    os.system('mkdir ' + CondorDir)
 else:
-   print 'Directory "' + arguments.Dataset + '" already exists in your condor directory. Please check and corresponding submission aborted.' 
+   print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Please check and corresponding submission aborted.' 
    sys.exit()
 
 ###############################################################################
