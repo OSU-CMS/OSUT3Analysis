@@ -23,7 +23,7 @@ ValueLookup::closest (const T0 *object0, const edm::Handle<vector<T1> > &object1
         break;
       }
     }
-    for (uint index = 0; index != flags.size(); index++){
+    for (unsigned index = 0; index != flags.size(); index++){
       if(!flags.at(index)) continue;
       const T1 *object1 = &object1Collection->at(index);
       double dR;

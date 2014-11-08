@@ -26,7 +26,6 @@
 #include "BEAN/Collections/interface/BNgenjet.h"
 
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
-#include "OSUT3Analysis/AnaTools/interface/BNstop.h"
 
 extern template class edm::Handle<double>;
 extern template class edm::Handle<std::vector<BNbxlumi, std::allocator<BNbxlumi> > >;
@@ -39,7 +38,6 @@ extern template class edm::Handle<std::vector<BNmet, std::allocator<BNmet> > >;
 extern template class edm::Handle<std::vector<BNmuon, std::allocator<BNmuon> > >;
 extern template class edm::Handle<std::vector<BNphoton, std::allocator<BNphoton> > >;
 extern template class edm::Handle<std::vector<BNprimaryvertex, std::allocator<BNprimaryvertex> > >;
-extern template class edm::Handle<std::vector<BNstop, std::allocator<BNstop> > >;
 extern template class edm::Handle<std::vector<BNsupercluster, std::allocator<BNsupercluster> > >;
 extern template class edm::Handle<std::vector<BNtau, std::allocator<BNtau> > >;
 extern template class edm::Handle<std::vector<BNtrack, std::allocator<BNtrack> > >;
@@ -61,10 +59,10 @@ extern template class std::pair<std::string, std::vector<std::vector<bool, std::
 extern template class std::vector<BadCSC, std::allocator<BadCSC> >;
 extern template class std::vector<DeadEcal, std::allocator<DeadEcal> >;
 extern template class std::vector<bool, std::allocator<bool> >;
-extern template class std::vector<cut, std::allocator<cut> >;
+extern template class std::vector<Cut, std::allocator<Cut> >;
 extern template class std::vector<double, std::allocator<double> >;
 extern template class std::vector<edm::ParameterSet, std::allocator<edm::ParameterSet> >;
-extern template class std::vector<histoDef, std::allocator<histoDef> >;
+extern template class std::vector<HistoDef, std::allocator<HistoDef> >;
 extern template class std::vector<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>, std::allocator<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*> > >;
 extern template class std::vector<std::string, std::allocator<std::string> >;
 extern template class std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >;
@@ -130,9 +128,9 @@ extern template void std::_Destroy_aux<false>::__destroy<std::string*>(std::stri
 extern template void std::_Destroy_aux<false>::__destroy<std::vector<bool, std::allocator<bool> >*>(std::vector<bool, std::allocator<bool> >*, std::vector<bool, std::allocator<bool> >*);
 extern template void std::list<edm::ProductRegistryHelper::TypeLabelItem, std::allocator<edm::ProductRegistryHelper::TypeLabelItem> >::_M_insert<edm::BranchType, edm::TypeID const&, std::string const&>(std::_List_iterator<edm::ProductRegistryHelper::TypeLabelItem>, edm::BranchType&&, edm::TypeID const&, std::string const&);
 extern template void std::list<edm::ProductRegistryHelper::TypeLabelItem, std::allocator<edm::ProductRegistryHelper::TypeLabelItem> >::emplace_back<edm::BranchType, edm::TypeID const&, std::string const&>(edm::BranchType&&, edm::TypeID const&, std::string const&);
-extern template void std::vector<cut, std::allocator<cut> >::_M_emplace_back_aux<cut const&>(cut const&);
+extern template void std::vector<Cut, std::allocator<Cut> >::_M_emplace_back_aux<Cut const&>(Cut const&);
 extern template void std::vector<double, std::allocator<double> >::_M_emplace_back_aux<double>(double&&);
-extern template void std::vector<histoDef, std::allocator<histoDef> >::_M_emplace_back_aux<histoDef const&>(histoDef const&);
+extern template void std::vector<HistoDef, std::allocator<HistoDef> >::_M_emplace_back_aux<HistoDef const&>(HistoDef const&);
 extern template void std::vector<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>, std::allocator<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*> > >::_M_emplace_back_aux<edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&>(edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&);
 extern template void std::vector<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>, std::allocator<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*> > >::emplace_back<edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&>(edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&);
 extern template void std::vector<std::string, std::allocator<std::string> >::_M_emplace_back_aux<std::string const&>(std::string const&);

@@ -19,10 +19,10 @@
   <class pattern="edm::Wrapper<CutCalculatorPayload>"/>
   <class name="edm::Wrapper<std::vector<CutCalculatorPayload> >"/>
 
-  <class name="cut"/>
-  <class name="std::vector<cut>"/>
-  <class pattern="edm::Wrapper<cut>"/>
-  <class name="edm::Wrapper<std::vector<cut> >"/>
+  <class name="Cut"/>
+  <class name="std::vector<Cut>"/>
+  <class pattern="edm::Wrapper<Cut>"/>
+  <class name="edm::Wrapper<std::vector<Cut> >"/>
 
   <class name="std::map<std::basic_string<char>,std::vector<std::vector<bool> > >"/>
   <class name="std::vector<std::map<std::basic_string<char>,std::vector<std::vector<bool> > > >"/>

@@ -54,9 +54,9 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
 
           if (cutDecisions.isValid ())
             {
-              nCuts = cutDecisions->cumulativeObjectFlags.at (collectionToFilter_).size ();
+              nCuts = cutDecisions->cumulativeObjectFlags.size ();
               if (nCuts > 0)
-                passes = cutDecisions->cumulativeObjectFlags.at (collectionToFilter_).at (nCuts - 1).at (iObject);
+                passes = cutDecisions->cumulativeObjectFlags.at (nCuts - 1).at (collectionToFilter_).at (iObject);
             }
           if (passes)
             pl_->push_back (*object);

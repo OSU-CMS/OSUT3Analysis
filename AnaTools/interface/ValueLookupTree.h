@@ -2,7 +2,6 @@
 #define VALUE_LOOKUP_TREE
 
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
-#include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
 
 /*
 A ValueLookupTree object contains all the information needed to
@@ -43,12 +42,12 @@ class ValueLookupTree
 {
   public:
     ValueLookupTree ();
-    ValueLookupTree (const string &, ValueLookup *);
+    ValueLookupTree (const Cut &);
     ~ValueLookupTree ();
 
     // Method for assigning a ValueLookup object which is used to evaluate the
     // expression.
-    ValueLookup *assignValueLookup (ValueLookup *);
+    Collections *setCollections (Collections *);
 
     ////////////////////////////////////////////////////////////////////////////
     // Error checking methods: isValid() returns false if the tree has not been
@@ -65,22 +64,23 @@ class ValueLookupTree
     // expression.
     ////////////////////////////////////////////////////////////////////////////
     void insert (const string &);
-    template<class T> double evaluate (const T &);
-    template<class T0, class T1> double evaluate (const T0 &, const T1 &);
+    void *getObject (const string &name, const unsigned i);
+    const vector<Operand> &evaluate ();
     ////////////////////////////////////////////////////////////////////////////
 
   private:
     // Method for destroying an entire tree, including all of its children.
-    void destroy (node *);
+    void destroy (Node *);
 
     ////////////////////////////////////////////////////////////////////////////
     // Recursive methods for inserting an expression into the tree and then
     // evaluating it.
     ////////////////////////////////////////////////////////////////////////////
-    node *insert_ (const string &);
-    double evaluateOperator (const string &, const vector<double> &);
-    template<class T> double evaluate_ (node *, const T &);
-    template<class T0, class T1> double evaluate_ (node *, const T0 &, const T1 &);
+    Node *insert_ (const string &);
+    string getCollectionType (const string &name);
+    unsigned getCollectionSize (const string &name);
+    Operand evaluateOperator (const string &, const vector<Operand> &, const map<string, void *> &);
+    Operand evaluate_ (Node *, const map<string, void *> &);
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -100,10 +100,11 @@ class ValueLookupTree
     // Method which returns true if the first argument looks like a number. The
     // second argument receives the converted value.
     bool isnumber (const string &, double &);
+    bool iscollection (const string &);
 
     // Method which removes commas and parentheses from the immediate daughters
     // of a unary prefix operator.
-    void pruneCommas (vector<node *> &);
+    void pruneCommas (vector<Node *> &);
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for finding the first instance within a string of any one of a
@@ -117,16 +118,39 @@ class ValueLookupTree
     ////////////////////////////////////////////////////////////////////////////
     // Methods for inserting different types of operators into the tree.
     ////////////////////////////////////////////////////////////////////////////
-    bool insertBinaryInfixOperator (const string &, node *, const vector<string> &, const vector<string> & = {});
-    bool insertUnaryPrefixOperator (const string &, node *, const vector<string> &, const vector<string> & = {});
-    bool insertParentheses (const string &, node *);
+    bool insertBinaryInfixOperator (const string &, Node *, const vector<string> &, const vector<string> & = {});
+    bool insertUnaryPrefixOperator (const string &, Node *, const vector<string> &, const vector<string> & = {});
+    bool insertParentheses (const string &, Node *);
     ////////////////////////////////////////////////////////////////////////////
 
-    node *root_;
-    ValueLookup *vl_;
+    Node *root_;
+    vector<string> inputCollections_;
+    Collections *handles_;
+    vector<Operand> values_;
     bool evaluationError_;
-};
 
-#include "OSUT3Analysis/AnaTools/interface/ValueLookupTreeTemplates.h"
+    ////////////////////////////////////////////////////////////////////////////
+    // valueLookup methods for each type of object.
+    ////////////////////////////////////////////////////////////////////////////
+    double  valueLookup  (const  BNbxlumi             *object,  string  variable);
+    double  valueLookup  (const  BNelectron           *object,  string  variable);
+    double  valueLookup  (const  BNevent              *object,  string  variable);
+    double  valueLookup  (const  BNgenjet             *object,  string  variable);
+    double  valueLookup  (const  BNjet                *object,  string  variable);
+    double  valueLookup  (const  BNmcparticle         *object,  string  variable);
+    double  valueLookup  (const  BNmet                *object,  string  variable);
+    double  valueLookup  (const  BNmuon               *object,  string  variable);
+    double  valueLookup  (const  BNphoton             *object,  string  variable);
+    double  valueLookup  (const  BNprimaryvertex      *object,  string  variable);
+    double  valueLookup  (const  BNsupercluster       *object,  string  variable);
+    double  valueLookup  (const  BNtau                *object,  string  variable);
+    double  valueLookup  (const  BNtrack              *object,  string  variable);
+    double  valueLookup  (const  BNtrigobj            *object,  string  variable);
+    double  valueLookup  (const  map<string, double>  *object,  string  variable);
+    ////////////////////////////////////////////////////////////////////////////
+
+    double getMember (const string &, void *, const string &);
+    double valueLookup (const string &, void *, const string &);
+};
 
 #endif

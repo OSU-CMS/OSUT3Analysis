@@ -5,16 +5,16 @@
 
 struct CutCalculatorPayload
 {
-  bool            isValid;
+  FlagMap         cumulativeObjectFlags;
+  FlagMap         objectFlags;
   bool            cutDecision;
   bool            eventDecision;
+  bool            isValid;
   bool            triggerDecision;
-  flagMap         cumulativeObjectFlags;
-  flagMap         objectFlags;
+  vector<Cut>     cuts;
   vector<bool>    eventFlags;
   vector<bool>    triggerFlags;
   vector<bool>    vetoTriggerFlags;
-  vector<cut>     cuts;
   vector<string>  triggers;
   vector<string>  triggersToVeto;
 };

@@ -1,20 +1,25 @@
 #include <iostream>
 #include <algorithm>
 
+#include "Reflex/Base.h"
+#include "Reflex/Member.h"
+#include "Reflex/Object.h"
+#include "Reflex/Type.h"
+
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 
 ValueLookupTree::ValueLookupTree () :
   root_ (NULL),
-  vl_ (NULL),
   evaluationError_ (false)
 {
 }
 
-ValueLookupTree::ValueLookupTree (const string &cut, ValueLookup *vl) :
-  root_ (insert_ (cut)),
-  vl_ (vl),
+ValueLookupTree::ValueLookupTree (const Cut &cut) :
+  root_ (insert_ (cut.cutString)),
+  inputCollections_ (cut.inputCollections),
   evaluationError_ (false)
 {
+  sort (inputCollections_.begin (), inputCollections_.end ());
 }
 
 ValueLookupTree::~ValueLookupTree ()
@@ -22,10 +27,11 @@ ValueLookupTree::~ValueLookupTree ()
   destroy (root_);
 }
 
-ValueLookup *
-ValueLookupTree::assignValueLookup (ValueLookup *vl)
+Collections *
+ValueLookupTree::setCollections (Collections *handles)
 {
-  return (vl_ = vl);
+  values_.clear ();
+  return (handles_ = handles);
 }
 
 bool
@@ -47,14 +53,14 @@ ValueLookupTree::insert (const string &cut)
 }
 
 void
-ValueLookupTree::destroy (node *x)
+ValueLookupTree::destroy (Node *x)
 {
-  for (vector<node *>::const_iterator branch = x->branches.begin (); branch != x->branches.end (); branch++)
+  for (vector<Node *>::const_iterator branch = x->branches.begin (); branch != x->branches.end (); branch++)
     destroy (*branch);
   delete x;
 }
 
-node *
+Node *
 ValueLookupTree::insert_ (const string &cut)
 {
   //////////////////////////////////////////////////////////////////////////////
@@ -74,167 +80,410 @@ ValueLookupTree::insert_ (const string &cut)
   // operations. If none of the operators can be inserted, then it means we
   // have hit a leaf.
   //////////////////////////////////////////////////////////////////////////////
-  node *tree = new node;
-  if (!(insertBinaryInfixOperator   (cut,  tree,  {","})                           ||
-        insertBinaryInfixOperator   (cut,  tree,  {"||", "|"})                     ||
-        insertBinaryInfixOperator   (cut,  tree,  {"&&", "&"})                     ||
-        insertBinaryInfixOperator   (cut,  tree,  {"==", "!=", "="}, {"<=", ">="}) ||
-        insertBinaryInfixOperator   (cut,  tree,  {"<", "<=", ">", ">="})          ||
-        insertBinaryInfixOperator   (cut,  tree,  {"+", "-"})                      ||
-        insertBinaryInfixOperator   (cut,  tree,  {"*", "/", "%"})                 ||
-        insertUnaryPrefixOperator   (cut,  tree,  {"!"})                           ||
-        insertUnaryPrefixOperator   (cut,  tree,  {"cos", "sin", "tan", "acos", "asin", "atan", "atan2",
-                                                   "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
-                                                   "exp", "ldexp", "log", "log10", "exp2", "expm1", "ilogb", "log1p", "log2", "logb",
-                                                   "pow", "sqrt", "cbrt", "hypot",
-                                                   "erf", "erfc", "tgamma", "lgamma",
-                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
-                                                   "copysign", "nextafter",
-                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
-        insertParentheses           (cut,  tree)))
+  Node *tree = new Node;
+  if (!(insertBinaryInfixOperator  (cut,  tree,  {","})                           ||
+        insertBinaryInfixOperator  (cut,  tree,  {"||", "|"})                     ||
+        insertBinaryInfixOperator  (cut,  tree,  {"&&", "&"})                     ||
+        insertBinaryInfixOperator  (cut,  tree,  {"==", "!=", "="}, {"<=", ">="}) ||
+        insertBinaryInfixOperator  (cut,  tree,  {"<", "<=", ">", ">="})          ||
+        insertBinaryInfixOperator  (cut,  tree,  {"+", "-"})                      ||
+        insertBinaryInfixOperator  (cut,  tree,  {"*", "/", "%"})                 ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"!"})                           ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"cos", "sin", "tan", "acos", "asin", "atan", "atan2",
+                                                  "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
+                                                  "exp", "ldexp", "log", "log10", "exp2", "expm1", "ilogb", "log1p", "log2", "logb",
+                                                  "pow", "sqrt", "cbrt", "hypot",
+                                                  "erf", "erfc", "tgamma", "lgamma",
+                                                  "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
+                                                  "copysign", "nextafter",
+                                                  "fdim", "fmax", "fmin", "max", "min"}) ||
+        insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
+        insertParentheses          (cut,  tree)))
     tree->value = cut;
   //////////////////////////////////////////////////////////////////////////////
 
   return tree;
 }
 
-double
-ValueLookupTree::evaluateOperator (const string &op, const vector<double> &operands)
+void *
+ValueLookupTree::getObject (const string &name, const unsigned i)
+{
+  if (name == "bxlumis")
+    {
+      BNbxlumi *obj = new BNbxlumi (handles_->bxlumis->at (i));
+      return obj;
+    }
+  else if (name == "electrons")
+    {
+      BNelectron *obj = new BNelectron (handles_->electrons->at (i));
+      return obj;
+    }
+  else if (name == "events")
+    {
+      BNevent *obj = new BNevent (handles_->events->at (i));
+      return obj;
+    }
+  else if (name == "genjets")
+    {
+      BNgenjet *obj = new BNgenjet (handles_->genjets->at (i));
+      return obj;
+    }
+  else if (name == "jets")
+    {
+      BNjet *obj = new BNjet (handles_->jets->at (i));
+      return obj;
+    }
+  else if (name == "mcparticles")
+    {
+      BNmcparticle *obj = new BNmcparticle (handles_->mcparticles->at (i));
+      return obj;
+    }
+  else if (name == "mets")
+    {
+      BNmet *obj = new BNmet (handles_->mets->at (i));
+      return obj;
+    }
+  else if (name == "muons")
+    {
+      BNmuon *obj = new BNmuon (handles_->muons->at (i));
+      return obj;
+    }
+  else if (name == "photons")
+    {
+      BNphoton *obj = new BNphoton (handles_->photons->at (i));
+      return obj;
+    }
+  else if (name == "primaryvertexs")
+    {
+      BNprimaryvertex *obj = new BNprimaryvertex (handles_->primaryvertexs->at (i));
+      return obj;
+    }
+  else if (name == "superclusters")
+    {
+      BNsupercluster *obj = new BNsupercluster (handles_->superclusters->at (i));
+      return obj;
+    }
+  else if (name == "taus")
+    {
+      BNtau *obj = new BNtau (handles_->taus->at (i));
+      return obj;
+    }
+  else if (name == "tracks")
+    {
+      BNtrack *obj = new BNtrack (handles_->tracks->at (i));
+      return obj;
+    }
+  else if (name == "trigobjs")
+    {
+      BNtrigobj *obj = new BNtrigobj (handles_->trigobjs->at (i));
+      return obj;
+    }
+  return NULL;
+}
+
+string
+ValueLookupTree::getCollectionType (const string &name)
+{
+  if (name == "bxlumis")
+    return "BNbxlumi";
+  else if (name == "electrons")
+    return "BNelectron";
+  else if (name == "events")
+    return "BNevent";
+  else if (name == "genjets")
+    return "BNgenjet";
+  else if (name == "jets")
+    return "BNjet";
+  else if (name == "mcparticles")
+    return "BNmcparticle";
+  else if (name == "mets")
+    return "BNmet";
+  else if (name == "muons")
+    return "BNmuon";
+  else if (name == "photons")
+    return "BNphoton";
+  else if (name == "primaryvertexs")
+    return "BNprimaryvertex";
+  else if (name == "superclusters")
+    return "BNsupercluster";
+  else if (name == "taus")
+    return "BNtau";
+  else if (name == "tracks")
+    return "BNtrack";
+  else if (name == "trigobjs")
+    return "BNtrigobj";
+  return "";
+}
+
+unsigned
+ValueLookupTree::getCollectionSize (const string &name)
+{
+  if (name == "bxlumis")
+    return handles_->bxlumis->size ();
+  else if (name == "electrons")
+    return handles_->electrons->size ();
+  else if (name == "events")
+    return handles_->events->size ();
+  else if (name == "genjets")
+    return handles_->genjets->size ();
+  else if (name == "jets")
+    return handles_->jets->size ();
+  else if (name == "mcparticles")
+    return handles_->mcparticles->size ();
+  else if (name == "mets")
+    return handles_->mets->size ();
+  else if (name == "muons")
+    return handles_->muons->size ();
+  else if (name == "photons")
+    return handles_->photons->size ();
+  else if (name == "primaryvertexs")
+    return handles_->primaryvertexs->size ();
+  else if (name == "superclusters")
+    return handles_->superclusters->size ();
+  else if (name == "taus")
+    return handles_->taus->size ();
+  else if (name == "tracks")
+    return handles_->tracks->size ();
+  else if (name == "trigobjs")
+    return handles_->trigobjs->size ();
+  return 0;
+}
+
+const vector<Operand> &
+ValueLookupTree::evaluate ()
+{
+  if (!values_.size ())
+    {
+      evaluationError_ = false;
+      vector<unsigned> nCombinations (inputCollections_.size (), 1), collectionSizes;
+      for (vector<string>::const_iterator collection = inputCollections_.begin (); collection != inputCollections_.end (); collection++)
+        {
+          unsigned currentSize = getCollectionSize (*collection);
+          for (unsigned i = 0; i < (collection - inputCollections_.begin () + 1); i++)
+            nCombinations[i] *= currentSize;
+          collectionSizes.push_back (currentSize);
+        }
+      values_.clear ();
+      for (unsigned i = 0; i < nCombinations.at (0); i++)
+        {
+          map<string, void *> objs;
+          for (vector<string>::const_iterator collection = inputCollections_.begin (); collection != inputCollections_.end (); collection++)
+            {
+              unsigned j = collection - inputCollections_.begin ();
+              if (j + 1 != inputCollections_.size ())
+                objs[getCollectionType (*collection)] = getObject (*collection, (i / nCombinations.at (j + 1)) % collectionSizes.at (j));
+            }
+          values_.push_back (evaluate_ (root_, objs));
+        }
+    }
+
+  return values_;
+}
+
+bool
+ValueLookupTree::iscollection (const string &value)
+{
+  return (value == "bxlumi"
+       || value == "electron"
+       || value == "event"
+       || value == "genjet"
+       || value == "jet"
+       || value == "mcparticle"
+       || value == "met"
+       || value == "muon"
+       || value == "photon"
+       || value == "primaryvertex"
+       || value == "supercluster"
+       || value == "tau"
+       || value == "track"
+       || value == "trigobj");
+}
+
+Operand
+ValueLookupTree::evaluate_ (Node *tree, const map<string, void *> &objs)
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Do nothing if the tree is null.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!tree)
+    return false;
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // The node is not a leaf and its value is an operator. First, evaluate its
+  // daughters, then return the result of the operator acting on the daughters.
+  //////////////////////////////////////////////////////////////////////////////
+  if (tree->branches.size ())
+    {
+      vector<Operand> operands;
+      for (vector<Node *>::iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+        operands.push_back (evaluate_ (*branch, objs));
+      return evaluateOperator (tree->value, operands, objs);
+    }
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // The node is a leaf and its value is either a valueLookup variable or a
+  // number. Return the result of the valueLookup function or simply return the
+  // number.
+  //////////////////////////////////////////////////////////////////////////////
+  else
+    {
+      double value;
+      if (isnumber (tree->value, value))
+        return value;
+      else if (iscollection (tree->value))
+        return tree->value;
+      else
+        {
+          if (inputCollections_.size () == 1)
+            return valueLookup (inputCollections_.at (0), objs.at (inputCollections_.at (0)), tree->value);
+          clog << "ERROR: cannot infer ownership of \"" << tree->value << "\"" << endl;
+          evaluationError_ = true;
+          return numeric_limits<unsigned>::min ();
+        }
+    }
+  //////////////////////////////////////////////////////////////////////////////
+}
+
+Operand
+ValueLookupTree::evaluateOperator (const string &op, const vector<Operand> &operands, const map<string, void *> &objs)
 {
   // Tries to return the result of operating on the operands. Prints out a
   // warning, sets evaluationError_ to true, and returns the maximum unsigned
   // integer if there is a problem.
 
-  evaluationError_ = false;
   try
     {
       if (op == ",")
-        return (operands.at (0), operands.at (1));
+        return (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1)));
       else if (op == "||" || op == "|")
-        return (operands.at (0) || operands.at (1));
+        return (boost::get<double> (operands.at (0)) || boost::get<double> (operands.at (1)));
       else if (op == "&&" || op == "&")
-        return (operands.at (0) && operands.at (1));
+        return (boost::get<double> (operands.at (0)) && boost::get<double> (operands.at (1)));
       else if (op == "==" || op == "=")
-        return (operands.at (0) == operands.at (1));
+        return (boost::get<double> (operands.at (0)) == boost::get<double> (operands.at (1)));
       else if (op == "!=")
-        return (operands.at (0) != operands.at (1));
+        return (boost::get<double> (operands.at (0)) != boost::get<double> (operands.at (1)));
       else if (op == "<")
-        return (operands.at (0) < operands.at (1));
+        return (boost::get<double> (operands.at (0)) < boost::get<double> (operands.at (1)));
       else if (op == "<=")
-        return (operands.at (0) <= operands.at (1));
+        return (boost::get<double> (operands.at (0)) <= boost::get<double> (operands.at (1)));
       else if (op == ">")
-        return (operands.at (0) > operands.at (1));
+        return (boost::get<double> (operands.at (0)) > boost::get<double> (operands.at (1)));
       else if (op == ">=")
-        return (operands.at (0) >= operands.at (1));
+        return (boost::get<double> (operands.at (0)) >= boost::get<double> (operands.at (1)));
       else if (op == "+")
-        return (operands.at (0) + operands.at (1));
+        return (boost::get<double> (operands.at (0)) + boost::get<double> (operands.at (1)));
       else if (op == "-")
-        return (operands.at (0) - operands.at (1));
+        return (boost::get<double> (operands.at (0)) - boost::get<double> (operands.at (1)));
       else if (op == "*")
-        return (operands.at (0) * operands.at (1));
+        return (boost::get<double> (operands.at (0)) * boost::get<double> (operands.at (1)));
       else if (op == "/")
-        return (operands.at (0) / operands.at (1));
+        return (boost::get<double> (operands.at (0)) / boost::get<double> (operands.at (1)));
       else if (op == "%")
-        return ((int) operands.at (0) % (int) operands.at (1));
+        return ((int) boost::get<double> (operands.at (0)) % (int) boost::get<double> (operands.at (1)));
       else if (op == "!")
-        return (!operands.at (0));
+        return (!boost::get<double> (operands.at (0)));
       else if (op == "atan2")
-        return (atan2 (operands.at (0), operands.at (1)));
+        return (atan2 (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "ldexp")
-        return (ldexp (operands.at (0), operands.at (1)));
+        return (ldexp (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "pow")
-        return (pow (operands.at (0), operands.at (1)));
+        return (pow (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "hypot")
-        return (hypot (operands.at (0), operands.at (1)));
+        return (hypot (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "fmod")
-        return (fmod (operands.at (0), operands.at (1)));
+        return (fmod (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "remainder")
-        return (remainder (operands.at (0), operands.at (1)));
+        return (remainder (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "copysign")
-        return (copysign (operands.at (0), operands.at (1)));
+        return (copysign (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "nextafter")
-        return (nextafter (operands.at (0), operands.at (1)));
+        return (nextafter (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "fdim")
-        return (fdim (operands.at (0), operands.at (1)));
+        return (fdim (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "fmax" || op == "max")
-        return (fmax (operands.at (0), operands.at (1)));
+        return (fmax (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "fmin" || op == "min")
-        return (fmin (operands.at (0), operands.at (1)));
+        return (fmin (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1))));
       else if (op == "cos")
-        return (cos (operands.at (0)));
+        return (cos (boost::get<double> (operands.at (0))));
       else if (op == "sin")
-        return (sin (operands.at (0)));
+        return (sin (boost::get<double> (operands.at (0))));
       else if (op == "tan")
-        return (tan (operands.at (0)));
+        return (tan (boost::get<double> (operands.at (0))));
       else if (op == "acos")
-        return (acos (operands.at (0)));
+        return (acos (boost::get<double> (operands.at (0))));
       else if (op == "asin")
-        return (asin (operands.at (0)));
+        return (asin (boost::get<double> (operands.at (0))));
       else if (op == "atan")
-        return (atan (operands.at (0)));
+        return (atan (boost::get<double> (operands.at (0))));
       else if (op == "cosh")
-        return (cosh (operands.at (0)));
+        return (cosh (boost::get<double> (operands.at (0))));
       else if (op == "sinh")
-        return (sinh (operands.at (0)));
+        return (sinh (boost::get<double> (operands.at (0))));
       else if (op == "tanh")
-        return (tanh (operands.at (0)));
+        return (tanh (boost::get<double> (operands.at (0))));
       else if (op == "acosh")
-        return (acosh (operands.at (0)));
+        return (acosh (boost::get<double> (operands.at (0))));
       else if (op == "asinh")
-        return (asinh (operands.at (0)));
+        return (asinh (boost::get<double> (operands.at (0))));
       else if (op == "atanh")
-        return (atanh (operands.at (0)));
+        return (atanh (boost::get<double> (operands.at (0))));
       else if (op == "exp")
-        return (exp (operands.at (0)));
+        return (exp (boost::get<double> (operands.at (0))));
       else if (op == "log")
-        return (log (operands.at (0)));
+        return (log (boost::get<double> (operands.at (0))));
       else if (op == "log10")
-        return (log10 (operands.at (0)));
+        return (log10 (boost::get<double> (operands.at (0))));
       else if (op == "exp2")
-        return (exp2 (operands.at (0)));
+        return (exp2 (boost::get<double> (operands.at (0))));
       else if (op == "expm1")
-        return (expm1 (operands.at (0)));
+        return (expm1 (boost::get<double> (operands.at (0))));
       else if (op == "ilogb")
-        return (ilogb (operands.at (0)));
+        return (ilogb (boost::get<double> (operands.at (0))));
       else if (op == "log1p")
-        return (log1p (operands.at (0)));
+        return (log1p (boost::get<double> (operands.at (0))));
       else if (op == "log2")
-        return (log2 (operands.at (0)));
+        return (log2 (boost::get<double> (operands.at (0))));
       else if (op == "logb")
-        return (logb (operands.at (0)));
+        return (logb (boost::get<double> (operands.at (0))));
       else if (op == "sqrt")
-        return (sqrt (operands.at (0)));
+        return (sqrt (boost::get<double> (operands.at (0))));
       else if (op == "cbrt")
-        return (cbrt (operands.at (0)));
+        return (cbrt (boost::get<double> (operands.at (0))));
       else if (op == "erf")
-        return (erf (operands.at (0)));
+        return (erf (boost::get<double> (operands.at (0))));
       else if (op == "erfc")
-        return (erfc (operands.at (0)));
+        return (erfc (boost::get<double> (operands.at (0))));
       else if (op == "tgamma")
-        return (tgamma (operands.at (0)));
+        return (tgamma (boost::get<double> (operands.at (0))));
       else if (op == "lgamma")
-        return (lgamma (operands.at (0)));
+        return (lgamma (boost::get<double> (operands.at (0))));
       else if (op == "ceil")
-        return (ceil (operands.at (0)));
+        return (ceil (boost::get<double> (operands.at (0))));
       else if (op == "floor")
-        return (floor (operands.at (0)));
+        return (floor (boost::get<double> (operands.at (0))));
       else if (op == "trunc")
-        return (trunc (operands.at (0)));
+        return (trunc (boost::get<double> (operands.at (0))));
       else if (op == "round")
-        return (round (operands.at (0)));
+        return (round (boost::get<double> (operands.at (0))));
       else if (op == "rint")
-        return (rint (operands.at (0)));
+        return (rint (boost::get<double> (operands.at (0))));
       else if (op == "nearbyint")
-        return (nearbyint (operands.at (0)));
+        return (nearbyint (boost::get<double> (operands.at (0))));
       else if (op == "abs" || op == "fabs")
-        return (fabs (operands.at (0)));
+        return (fabs (boost::get<double> (operands.at (0))));
+      else if (op == ".")
+        return valueLookup (boost::get<string> (operands.at (0)), objs.at (boost::get<string> (operands.at (0))), boost::get<string> (operands.at (1)));
       else if (op == "()")
         return (operands.at (0));
     }
   catch (...)
     {
       clog << "WARNING: failed to evaluate \"" << op << " (";
-      for (vector<double>::const_iterator operand = operands.begin (); operand != operands.end (); operand++)
+      for (vector<Operand>::const_iterator operand = operands.begin (); operand != operands.end (); operand++)
         {
           if (operand != operands.begin ())
             clog << ", " << endl;
@@ -291,7 +540,7 @@ ValueLookupTree::isnumber (const string &s, double &x)
 }
 
 void
-ValueLookupTree::pruneCommas (vector<node *> &branches)
+ValueLookupTree::pruneCommas (vector<Node *> &branches)
 {
   //////////////////////////////////////////////////////////////////////////////
   // Do nothing if there is not exactly one branch whose value is either a
@@ -307,9 +556,9 @@ ValueLookupTree::pruneCommas (vector<node *> &branches)
   // Replace the branches with those of the daughter, then prune the result
   // again.
   //////////////////////////////////////////////////////////////////////////////
-  node *originalBranch = branches.at (0);
+  Node *originalBranch = branches.at (0);
   branches.clear ();
-  for (vector<node *>::const_iterator branch = originalBranch->branches.begin (); branch != originalBranch->branches.end (); branch++)
+  for (vector<Node *>::const_iterator branch = originalBranch->branches.begin (); branch != originalBranch->branches.end (); branch++)
     branches.push_back (*branch);
   delete originalBranch;
   pruneCommas (branches);
@@ -400,7 +649,7 @@ ValueLookupTree::vetoMatch (const string &s, const string &target, const size_t 
 }
 
 bool
-ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const vector<string> &operators, const vector<string> &vetoOperators)
+ValueLookupTree::insertBinaryInfixOperator (const string &s, Node *tree, const vector<string> &operators, const vector<string> &vetoOperators)
 {
   bool foundAnOperator = false;
   double x;
@@ -439,7 +688,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, node *tree, const v
 }
 
 bool
-ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const vector<string> &operators, const vector<string> &vetoOperators)
+ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node *tree, const vector<string> &operators, const vector<string> &vetoOperators)
 {
   bool foundAnOperator = false;
   double x;
@@ -476,7 +725,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, node *tree, const v
 }
 
 bool
-ValueLookupTree::insertParentheses (const string &s, node *tree)
+ValueLookupTree::insertParentheses (const string &s, Node *tree)
 {
   //////////////////////////////////////////////////////////////////////////////
   // Look for the first left parenthesis and the last right parenthesis and
@@ -498,4 +747,88 @@ ValueLookupTree::insertParentheses (const string &s, node *tree)
   tree->branches.push_back (insert_ (middle));
   return true;
   //////////////////////////////////////////////////////////////////////////////
+}
+
+double
+ValueLookupTree::getMember (const string &type, void *obj, const string &member)
+{
+  double value = numeric_limits<int>::min ();
+  Reflex::Type t = Reflex::Type::ByName (type);
+  Reflex::Object *o = new Reflex::Object (t, obj);
+  try
+    {
+      string typeName = t.DataMemberByName (member).TypeOf ().Name ();
+      if (typeName == "double")
+        value = Reflex::Object_Cast<double> (o->Get (member));
+      else if (typeName == "int")
+        value = Reflex::Object_Cast<int> (o->Get (member));
+      else if (typeName != "")
+        clog << "WARNING: \"" << member << "\" has unrecognized type \"" << typeName << "\"" << endl;
+      else
+        value = Reflex::Object_Cast<double> (o->Get (member));
+    }
+  catch (...)
+    {
+      bool found = false;
+      for (Reflex::Base_Iterator bi = t.Base_Begin (); bi != t.Base_End (); bi++)
+        {
+          try
+            {
+              value = getMember (bi->Name (), obj, member);
+              found = true;
+              break;
+            }
+          catch (...)
+            {
+              continue;
+            }
+        }
+      if (!found)
+        throw;
+    }
+  delete o;
+
+  return value;
+}
+
+double
+ValueLookupTree::valueLookup (const string &type, void *obj, const string &variable)
+{
+  try
+    {
+      return getMember (type, obj, variable);
+    }
+  catch (...)
+    {
+      if (type == "BNbxlumi")
+        return valueLookup ((BNbxlumi *) obj, variable);
+      else if (type == "BNelectron")
+        return valueLookup ((BNelectron *) obj, variable);
+      else if (type == "BNevent")
+        return valueLookup ((BNevent *) obj, variable);
+      else if (type == "BNgenjet")
+        return valueLookup ((BNgenjet *) obj, variable);
+      else if (type == "BNjet")
+        return valueLookup ((BNjet *) obj, variable);
+      else if (type == "BNmcparticle")
+        return valueLookup ((BNmcparticle *) obj, variable);
+      else if (type == "BNmet")
+        return valueLookup ((BNmet *) obj, variable);
+      else if (type == "BNmuon")
+        return valueLookup ((BNmuon *) obj, variable);
+      else if (type == "BNphoton")
+        return valueLookup ((BNphoton *) obj, variable);
+      else if (type == "BNprimaryvertex")
+        return valueLookup ((BNprimaryvertex *) obj, variable);
+      else if (type == "BNsupercluster")
+        return valueLookup ((BNsupercluster *) obj, variable);
+      else if (type == "BNtau")
+        return valueLookup ((BNtau *) obj, variable);
+      else if (type == "BNtrack")
+        return valueLookup ((BNtrack *) obj, variable);
+      else if (type == "BNtrigobj")
+        return valueLookup ((BNtrigobj *) obj, variable);
+    }
+
+  return numeric_limits<int>::min ();
 }

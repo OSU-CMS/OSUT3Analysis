@@ -23,7 +23,6 @@
 #include "BEAN/Collections/interface/BNgenjet.h"
 
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
-#include "OSUT3Analysis/AnaTools/interface/BNstop.h"
 
 template class edm::Handle<double>;
 template class edm::Handle<std::vector<BNbxlumi, std::allocator<BNbxlumi> > >;
@@ -36,7 +35,6 @@ template class edm::Handle<std::vector<BNmet, std::allocator<BNmet> > >;
 template class edm::Handle<std::vector<BNmuon, std::allocator<BNmuon> > >;
 template class edm::Handle<std::vector<BNphoton, std::allocator<BNphoton> > >;
 template class edm::Handle<std::vector<BNprimaryvertex, std::allocator<BNprimaryvertex> > >;
-template class edm::Handle<std::vector<BNstop, std::allocator<BNstop> > >;
 template class edm::Handle<std::vector<BNsupercluster, std::allocator<BNsupercluster> > >;
 template class edm::Handle<std::vector<BNtau, std::allocator<BNtau> > >;
 template class edm::Handle<std::vector<BNtrack, std::allocator<BNtrack> > >;
@@ -58,10 +56,10 @@ template class std::pair<std::string, std::vector<std::vector<bool, std::allocat
 template class std::vector<BadCSC, std::allocator<BadCSC> >;
 template class std::vector<DeadEcal, std::allocator<DeadEcal> >;
 template class std::vector<bool, std::allocator<bool> >;
-template class std::vector<cut, std::allocator<cut> >;
+template class std::vector<Cut, std::allocator<Cut> >;
 template class std::vector<double, std::allocator<double> >;
 template class std::vector<edm::ParameterSet, std::allocator<edm::ParameterSet> >;
-template class std::vector<histoDef, std::allocator<histoDef> >;
+template class std::vector<HistoDef, std::allocator<HistoDef> >;
 template class std::vector<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>, std::allocator<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*> > >;
 template class std::vector<std::string, std::allocator<std::string> >;
 template class std::vector<std::vector<bool, std::allocator<bool> >, std::allocator<std::vector<bool, std::allocator<bool> > > >;
@@ -127,9 +125,9 @@ template void std::_Destroy_aux<false>::__destroy<std::string*>(std::string*, st
 template void std::_Destroy_aux<false>::__destroy<std::vector<bool, std::allocator<bool> >*>(std::vector<bool, std::allocator<bool> >*, std::vector<bool, std::allocator<bool> >*);
 template void std::list<edm::ProductRegistryHelper::TypeLabelItem, std::allocator<edm::ProductRegistryHelper::TypeLabelItem> >::_M_insert<edm::BranchType, edm::TypeID const&, std::string const&>(std::_List_iterator<edm::ProductRegistryHelper::TypeLabelItem>, edm::BranchType&&, edm::TypeID const&, std::string const&);
 template void std::list<edm::ProductRegistryHelper::TypeLabelItem, std::allocator<edm::ProductRegistryHelper::TypeLabelItem> >::emplace_back<edm::BranchType, edm::TypeID const&, std::string const&>(edm::BranchType&&, edm::TypeID const&, std::string const&);
-template void std::vector<cut, std::allocator<cut> >::_M_emplace_back_aux<cut const&>(cut const&);
+template void std::vector<Cut, std::allocator<Cut> >::_M_emplace_back_aux<Cut const&>(Cut const&);
 template void std::vector<double, std::allocator<double> >::_M_emplace_back_aux<double>(double&&);
-template void std::vector<histoDef, std::allocator<histoDef> >::_M_emplace_back_aux<histoDef const&>(histoDef const&);
+template void std::vector<HistoDef, std::allocator<HistoDef> >::_M_emplace_back_aux<HistoDef const&>(HistoDef const&);
 template void std::vector<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>, std::allocator<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*> > >::_M_emplace_back_aux<edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&>(edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&);
 template void std::vector<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*>, std::allocator<std::pair<edm::WrapperOwningHolder, edm::ConstBranchDescription const*> > >::emplace_back<edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&>(edm::WrapperOwningHolder const&, edm::ConstBranchDescription const*&);
 template void std::vector<std::string, std::allocator<std::string> >::_M_emplace_back_aux<std::string const&>(std::string const&);

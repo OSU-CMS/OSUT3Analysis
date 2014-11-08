@@ -32,10 +32,10 @@ namespace {
      edm::Wrapper<CutCalculatorPayload> CutCalculatorPayloadDummy2;
      edm::Wrapper<std::vector<CutCalculatorPayload> > CutCalculatorPayloadDummy3;
 
-     cut cutdummy0;
-     edm::Wrapper<cut> cutdummy1;
-     std::vector<cut> cutdummy2;
-     edm::Wrapper<std::vector<cut> > cutdummy3;
+     Cut cutdummy0;
+     edm::Wrapper<Cut> cutdummy1;
+     std::vector<Cut> cutdummy2;
+     edm::Wrapper<std::vector<Cut> > cutdummy3;
 
      std::map<std::basic_string<char>,std::vector<std::vector<bool> > > mapcharbooldummy0;
      edm::Wrapper<std::map<std::basic_string<char>,std::vector<std::vector<bool> > > > mapcharbooldummy1;

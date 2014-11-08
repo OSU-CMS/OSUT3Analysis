@@ -42,12 +42,12 @@ CutFlowPlotter::~CutFlowPlotter ()
 //       title += " Cuts";
 //       clog << title << endl;
 //     }
-//  uint longestCutName = 0;
-  uint longestCutName = 30;
+//  unsigned longestCutName = 0;
+  unsigned longestCutName = 30;
 
   //  for (vector<string>::const_iterator cut = cutNames_.begin (); cut != cutNames_.end (); cut++) {
   //  for (vector<cut>::const_iterator mycut = cutDecisions->cuts.begin (); mycut != cutDecisions->cuts.end (); mycut++) {
-//   for (uint i = 0; i < cutDecisions->cuts.size(); i++) { 
+//   for (unsigned i = 0; i < cutDecisions->cuts.size(); i++) { 
 //     //    if((mycut.name).size() > longestCutName) longestCutName = (mycut.name).size();
 //     if (cutDecisions->cuts.at(i).name.size() > longestCutName) longestCutName = cutDecisions->cuts.at(i).name.size();  
 //   }
@@ -59,7 +59,7 @@ CutFlowPlotter::~CutFlowPlotter ()
   clog << setw (longestCutName) << left << "Total:" << right << setw (10) << setprecision(1) << (double) totalEvents << setw (16) << "100% " << setw (16) << "100% " << setw (16) << "0% " << endl;
   //  for (vector<string>::const_iterator cut = cutNames_.begin (); cut != cutNames_.end (); cut++)
   //  for (vector<cut>::const_iterator mycut = cutDecisions->cuts.begin (); mycut != cutDecisions->cuts.end (); mycut++) {
-  //  for (uint i = 0; i < cutDecisions->cuts.size(); i++) { 
+  //  for (unsigned i = 0; i < cutDecisions->cuts.size(); i++) { 
   for (int i = 1; i <= cutFlow_->GetNbinsX(); i++) { 
     //    clog << "Checking cut: " << i << endl;  
     //    cut mycut = cutDecisions->cuts.at(i);  
@@ -143,7 +143,7 @@ CutFlowPlotter::initializeCutFlow ()
       oneDHists_["minusOne"]->GetXaxis   ()->SetBinLabel  (bin,  "trigger");
       bin++;
     }
-  for (vector<cut>::const_iterator cut = cutDecisions->cuts.begin (); cut != cutDecisions->cuts.end (); cut++, bin++)
+  for (vector<Cut>::const_iterator cut = cutDecisions->cuts.begin (); cut != cutDecisions->cuts.end (); cut++, bin++)
     {
       oneDHists_["cutFlow"]->GetXaxis    ()->SetBinLabel  (bin,  cut->name.c_str  ());
       oneDHists_["selection"]->GetXaxis  ()->SetBinLabel  (bin,  cut->name.c_str  ());

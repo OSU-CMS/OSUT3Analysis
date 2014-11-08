@@ -54,7 +54,7 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
   /////////////////////////////////////
   
   // loop over each histogram set the user has included
-  for(uint histoSet = 0; histoSet != histogramSets_.size(); histoSet++){
+  for(unsigned histoSet = 0; histoSet != histogramSets_.size(); histoSet++){
 
     string inputCollection = histogramSets_.at(histoSet).getParameter<string> ("inputCollection");
 
@@ -588,7 +588,7 @@ template <class InputCollection> void Plotter::fill1DHistogram(const histoDef de
   TH1D *histogram = fs_->getObject<TH1D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
-  for(uint index = 0; index != collection->size(); index++){
+  for(unsigned index = 0; index != collection->size(); index++){
     double value = definition.valueLookupTrees.at (0)->evaluate (collection->at(index));
     double weight = 1.0;
     if(definition.hasVariableBinsX){
@@ -612,8 +612,8 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill1DHi
   TH1D *histogram = fs_->getObject<TH1D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
-  for(uint index1 = 0; index1 != collection1->size(); index1++){
-    for(uint index2 = 0; index2 != collection2->size(); index2++){
+  for(unsigned index1 = 0; index1 != collection1->size(); index1++){
+    for(unsigned index2 = 0; index2 != collection2->size(); index2++){
 
       //account for duplicate pairs if both collections are the same
       if(sameType && index1 >= index2) continue;
@@ -639,7 +639,7 @@ template <class InputCollection> void Plotter::fill2DHistogram(const histoDef de
   TH2D *histogram = fs_->getObject<TH2D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
-  for(uint index = 0; index != collection->size(); index++){
+  for(unsigned index = 0; index != collection->size(); index++){
     double valueX = definition.valueLookupTrees.at (0)->evaluate (collection->at(index));
     double valueY = definition.valueLookupTrees.at (1)->evaluate (collection->at(index));
     double weight = 1.0;
@@ -667,8 +667,8 @@ template <class InputCollection1, class InputCollection2> void Plotter::fill2DHi
   TH2D *histogram = fs_->getObject<TH2D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
-  for(uint index1 = 0; index1 != collection1->size(); index1++){
-    for(uint index2 = 0; index2 != collection2->size(); index2++){
+  for(unsigned index1 = 0; index1 != collection1->size(); index1++){
+    for(unsigned index2 = 0; index2 != collection2->size(); index2++){
 
       //account for duplicate pairs if both collections are the same
       if(sameType && index1 >= index2) continue;
