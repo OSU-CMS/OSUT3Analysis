@@ -121,8 +121,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
       // Update the flags for the paired object collections with those of the
       // constituent object collections.
       //////////////////////////////////////////////////////////////////////////
-      updateCrossTalk (pl_->objectFlags);
-      updateCrossTalk (pl_->cumulativeObjectFlags);
+      updateCrossTalk (currentCut, currentCutIndex);
       //////////////////////////////////////////////////////////////////////////
 
     }
@@ -162,8 +161,11 @@ CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex)
       unsigned object = (cutDecision - currentCut.valueLookupTree->evaluate ().begin ());
       bool flag = boost::get<double> (*cutDecision);
 
+      if (currentCut.isVeto)
+        flag = !flag;
+
       pl_->objectFlags.at (currentCutIndex).at (inputType).push_back (flag);
-      if (currentCutIndex > 0)
+      if (currentCutIndex > 0 && pl_->cumulativeObjectFlags.at (currentCutIndex - 1).count (inputType))
         flag = flag && pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (inputType).at (object);
       pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).push_back (flag);
     }
@@ -172,8 +174,67 @@ CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex)
 }
 
 void
-CutCalculator::updateCrossTalk (FlagMap &flags)
+CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
 {
+  string inputType = currentCut.inputLabel;
+  vector<string> singleObjects = currentCut.valueLookupTree->getSingleObjects (inputType);
+  vector<bool> singleObjectFlagsPropagated (singleObjects.size (), false);
+  if (currentCutIndex > 0)
+    {
+      for (map<string, vector<bool> >::const_iterator collection = pl_->objectFlags.at (currentCutIndex - 1).begin (); collection != pl_->objectFlags.at (currentCutIndex - 1).end (); collection++)
+        {
+          if (collection->first == inputType)
+            continue;
+          pl_->objectFlags.at (currentCutIndex)[collection->first] = pl_->objectFlags.at (currentCutIndex - 1)[collection->first];
+          pl_->cumulativeObjectFlags.at (currentCutIndex)[collection->first] = pl_->cumulativeObjectFlags.at (currentCutIndex - 1)[collection->first];
+          for (vector<string>::const_iterator singleObject = singleObjects.begin (); singleObject != singleObjects.end (); singleObject++)
+            {
+              if (*singleObject == collection->first)
+                singleObjectFlagsPropagated.at (singleObject - singleObjects.begin ()) = true;
+              for (vector<bool>::const_iterator flag = pl_->objectFlags.at (currentCutIndex).at (inputType).begin (); flag != pl_->objectFlags.at (currentCutIndex).at (inputType).end (); flag++)
+                {
+                  unsigned localIndex = currentCut.valueLookupTree->getLocalIndex (flag - pl_->objectFlags.at (currentCutIndex).at (inputType).begin (), singleObject - singleObjects.begin ());
+                  vector<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (localIndex, *singleObject, collection->first);
+                  if (!globalIndices.size ())
+                    break;
+                  for (vector<unsigned>::const_iterator globalIndex = globalIndices.begin (); globalIndex != globalIndices.end (); globalIndex++)
+                    {
+                      pl_->objectFlags.at (currentCutIndex).at (collection->first).at (*globalIndex) = (*flag);
+                      pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection->first).at (*globalIndex) = pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection->first).at (*globalIndex) && (*flag);
+                    }
+                }
+            }
+        }
+    }
+  if (singleObjects.size () > 1)
+    {
+      for (vector<string>::const_iterator singleObject = singleObjects.begin (); singleObject != singleObjects.end (); singleObject++)
+        {
+          if (singleObjectFlagsPropagated.at (singleObject - singleObjects.begin ()))
+            continue;
+          pl_->objectFlags.at (currentCutIndex)[*singleObject] = vector<bool> (currentCut.valueLookupTree->getCollectionSize (*singleObject), false);
+          pl_->cumulativeObjectFlags.at (currentCutIndex)[*singleObject] = vector<bool> (currentCut.valueLookupTree->getCollectionSize (*singleObject), false);
+          for (vector<bool>::const_iterator flag = pl_->objectFlags.at (currentCutIndex).at (inputType).begin (); flag != pl_->objectFlags.at (currentCutIndex).at (inputType).end (); flag++)
+            {
+              unsigned localIndex = currentCut.valueLookupTree->getLocalIndex (flag - pl_->objectFlags.at (currentCutIndex).at (inputType).begin (), singleObject - singleObjects.begin ());
+              pl_->objectFlags.at (currentCutIndex).at (*singleObject).at (localIndex) = pl_->objectFlags.at (currentCutIndex).at (*singleObject).at (localIndex) || (*flag);
+              pl_->cumulativeObjectFlags.at (currentCutIndex).at (*singleObject).at (localIndex) = pl_->cumulativeObjectFlags.at (currentCutIndex).at (*singleObject).at (localIndex) || (*flag);
+            }
+        }
+    }
+  if (currentCutIndex > 0)
+    {
+      for (map<string, vector<bool> >::const_iterator collection = pl_->objectFlags.at (currentCutIndex).begin (); collection != pl_->objectFlags.at (currentCutIndex).end (); collection++)
+        {
+          if (pl_->objectFlags.at (currentCutIndex - 1).count (collection->first))
+            continue;
+          for (unsigned i = 0; i < currentCutIndex - 1; i++)
+            {
+              pl_->objectFlags.at (i)[collection->first] = vector<bool> (collection->second.size (), true);
+              pl_->cumulativeObjectFlags.at (i)[collection->first] = vector<bool> (collection->second.size (), true);
+            }
+        }
+    }
 }
 
 bool
@@ -281,20 +342,6 @@ CutCalculator::unpackCuts ()
   return true;
 }
 
-void
-CutCalculator::getTwoObjs (string tempInputCollection, string &obj1, string &obj2)
-{
-  //////////////////////////////////////////////////////////////////////////////
-  // Extracts the names of the two object types from the name of a pair.
-  //////////////////////////////////////////////////////////////////////////////
-  int dashIndex = tempInputCollection.find ("-");
-  int spaceIndex = tempInputCollection.find_last_of (" ");
-  int secondWordLength = spaceIndex - dashIndex;
-  obj1 = tempInputCollection.substr (0, dashIndex) + "s";
-  obj2 = tempInputCollection.substr (dashIndex + 1, secondWordLength - 1) + "s";
-  //////////////////////////////////////////////////////////////////////////////
-}
-
 template<typename T> bool
 CutCalculator::evaluateComparison (T testValue, string comparison, T cutValue)
 {
@@ -318,19 +365,6 @@ CutCalculator::evaluateComparison (T testValue, string comparison, T cutValue)
     }
 
   return returnValue;
-  //////////////////////////////////////////////////////////////////////////////
-}
-
-string
-CutCalculator::getObjToGet (string obj)
-{
-  //////////////////////////////////////////////////////////////////////////////
-  // Strip the word "secondary" from the beginning of a string.
-  //////////////////////////////////////////////////////////////////////////////
-  if (obj.find ("secondary") == string::npos)
-    return obj;
-  int firstSpaceIndex = obj.find_first_of (" ");
-  return obj.substr (firstSpaceIndex + 1, obj.length () - 1);
   //////////////////////////////////////////////////////////////////////////////
 }
 
@@ -465,15 +499,6 @@ CutCalculator::setEventFlags ()
 bool
 CutCalculator::initializeValueLookupTrees (vector<Cut> &cuts, Collections *handles)
 {
-  //////////////////////////////////////////////////////////////////////////////
-  // Do nothing if it is not the first event.
-  //////////////////////////////////////////////////////////////////////////////
-  if (!firstEvent_)
-    {
-      return true;
-    }
-  //////////////////////////////////////////////////////////////////////////////
-
   //////////////////////////////////////////////////////////////////////////////
   // For each cut, parse its cut string into a new ValueLookupTree object which
   // is stored in the cut structure.

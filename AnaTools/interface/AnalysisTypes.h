@@ -72,9 +72,10 @@ struct HistoDef {
 
 struct Node
 {
-  string          type;
-  string          value;
-  vector<Node *>  branches;
+  Node           *parent;
+  string         type;
+  string         value;
+  vector<Node*>  branches;
 };
 
 struct Collections

@@ -24,7 +24,7 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     template <class InputCollection> bool setObjectFlags (const Cut &, unsigned);
     bool setObjectFlags (const Cut &, unsigned);
-    void updateCrossTalk (FlagMap &);
+    void updateCrossTalk (const Cut &, unsigned);
     bool unpackCuts ();
     void getTwoObjs (string, string &, string &);
     template<typename T> bool evaluateComparison (T, string, T);

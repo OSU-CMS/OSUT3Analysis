@@ -66,6 +66,10 @@ class ValueLookupTree
     void insert (const string &);
     void *getObject (const string &name, const unsigned i);
     const vector<Operand> &evaluate ();
+    unsigned getLocalIndex (unsigned, unsigned);
+    vector<string> getSingleObjects (string);
+    vector<unsigned> getGlobalIndices (unsigned, const string &, string);
+    unsigned getCollectionSize (const string &name);
     ////////////////////////////////////////////////////////////////////////////
 
   private:
@@ -76,9 +80,8 @@ class ValueLookupTree
     // Recursive methods for inserting an expression into the tree and then
     // evaluating it.
     ////////////////////////////////////////////////////////////////////////////
-    Node *insert_ (const string &);
+    Node *insert_ (const string &, Node *);
     string getCollectionType (const string &name);
-    unsigned getCollectionSize (const string &name);
     Operand evaluateOperator (const string &, const vector<Operand> &, const map<string, void *> &);
     Operand evaluate_ (Node *, const map<string, void *> &);
     ////////////////////////////////////////////////////////////////////////////
@@ -100,7 +103,6 @@ class ValueLookupTree
     // Method which returns true if the first argument looks like a number. The
     // second argument receives the converted value.
     bool isnumber (const string &, double &);
-    bool iscollection (const string &);
 
     // Method which removes commas and parentheses from the immediate daughters
     // of a unary prefix operator.
@@ -128,6 +130,8 @@ class ValueLookupTree
     Collections *handles_;
     vector<Operand> values_;
     bool evaluationError_;
+    vector<unsigned> nCombinations_;
+    vector<unsigned> collectionSizes_;
 
     ////////////////////////////////////////////////////////////////////////////
     // valueLookup methods for each type of object.
