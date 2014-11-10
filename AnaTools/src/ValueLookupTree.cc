@@ -181,40 +181,6 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
   return NULL;
 }
 
-string
-ValueLookupTree::getCollectionType (const string &name)
-{
-  if (name == "bxlumis")
-    return "BNbxlumi";
-  else if (name == "electrons")
-    return "BNelectron";
-  else if (name == "events")
-    return "BNevent";
-  else if (name == "genjets")
-    return "BNgenjet";
-  else if (name == "jets")
-    return "BNjet";
-  else if (name == "mcparticles")
-    return "BNmcparticle";
-  else if (name == "mets")
-    return "BNmet";
-  else if (name == "muons")
-    return "BNmuon";
-  else if (name == "photons")
-    return "BNphoton";
-  else if (name == "primaryvertexs")
-    return "BNprimaryvertex";
-  else if (name == "superclusters")
-    return "BNsupercluster";
-  else if (name == "taus")
-    return "BNtau";
-  else if (name == "tracks")
-    return "BNtrack";
-  else if (name == "trigobjs")
-    return "BNtrigobj";
-  return "";
-}
-
 unsigned
 ValueLookupTree::getCollectionSize (const string &name)
 {
@@ -271,7 +237,9 @@ ValueLookupTree::evaluate ()
             {
               unsigned j = collection - inputCollections_.begin ();
               if (j + 1 != inputCollections_.size ())
-                objs[getCollectionType (*collection)] = getObject (*collection, (i / nCombinations.at (j + 1)) % collectionSizes.at (j));
+                objs[*collection] = getObject (*collection, (i / nCombinations.at (j + 1)) % collectionSizes.at (j));
+              else
+                objs[*collection] = getObject (*collection, i % collectionSizes.at (j));
             }
           values_.push_back (evaluate_ (root_, objs));
         }
@@ -791,42 +759,76 @@ ValueLookupTree::getMember (const string &type, void *obj, const string &member)
   return value;
 }
 
+string
+ValueLookupTree::getCollectionType (const string &name)
+{
+  if (name == "bxlumis")
+    return "BNbxlumi";
+  else if (name == "electrons")
+    return "BNelectron";
+  else if (name == "events")
+    return "BNevent";
+  else if (name == "genjets")
+    return "BNgenjet";
+  else if (name == "jets")
+    return "BNjet";
+  else if (name == "mcparticles")
+    return "BNmcparticle";
+  else if (name == "mets")
+    return "BNmet";
+  else if (name == "muons")
+    return "BNmuon";
+  else if (name == "photons")
+    return "BNphoton";
+  else if (name == "primaryvertexs")
+    return "BNprimaryvertex";
+  else if (name == "superclusters")
+    return "BNsupercluster";
+  else if (name == "taus")
+    return "BNtau";
+  else if (name == "tracks")
+    return "BNtrack";
+  else if (name == "trigobjs")
+    return "BNtrigobj";
+  return "";
+}
+
 double
-ValueLookupTree::valueLookup (const string &type, void *obj, const string &variable)
+ValueLookupTree::valueLookup (const string &collection, void *obj, const string &variable)
 {
   try
     {
-      return getMember (type, obj, variable);
+      return getMember (getCollectionType (collection), obj, variable);
     }
   catch (...)
     {
-      if (type == "BNbxlumi")
+      if (collection == "bxlumis")
         return valueLookup ((BNbxlumi *) obj, variable);
-      else if (type == "BNelectron")
+      else if (collection == "electrons")
         return valueLookup ((BNelectron *) obj, variable);
-      else if (type == "BNevent")
+      else if (collection == "events")
         return valueLookup ((BNevent *) obj, variable);
-      else if (type == "BNgenjet")
+      else if (collection == "genjets")
         return valueLookup ((BNgenjet *) obj, variable);
-      else if (type == "BNjet")
+      else if (collection == "jets")
         return valueLookup ((BNjet *) obj, variable);
-      else if (type == "BNmcparticle")
+      else if (collection == "mcparticles")
         return valueLookup ((BNmcparticle *) obj, variable);
-      else if (type == "BNmet")
+      else if (collection == "mets")
         return valueLookup ((BNmet *) obj, variable);
-      else if (type == "BNmuon")
+      else if (collection == "muons")
         return valueLookup ((BNmuon *) obj, variable);
-      else if (type == "BNphoton")
+      else if (collection == "photons")
         return valueLookup ((BNphoton *) obj, variable);
-      else if (type == "BNprimaryvertex")
+      else if (collection == "primaryvertexs")
         return valueLookup ((BNprimaryvertex *) obj, variable);
-      else if (type == "BNsupercluster")
+      else if (collection == "superclusters")
         return valueLookup ((BNsupercluster *) obj, variable);
-      else if (type == "BNtau")
+      else if (collection == "taus")
         return valueLookup ((BNtau *) obj, variable);
-      else if (type == "BNtrack")
+      else if (collection == "tracks")
         return valueLookup ((BNtrack *) obj, variable);
-      else if (type == "BNtrigobj")
+      else if (collection == "trigobjs")
         return valueLookup ((BNtrigobj *) obj, variable);
     }
 

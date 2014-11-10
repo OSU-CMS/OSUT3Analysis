@@ -149,8 +149,14 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
 bool
 CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex)
 {
-  // Set the flag for each object in the collection.
   string inputType = currentCut.inputLabel;
+  if (currentCutIndex >= pl_->objectFlags.size ())
+    pl_->objectFlags.resize (currentCutIndex + 1);
+  if (currentCutIndex >= pl_->cumulativeObjectFlags.size ())
+    pl_->cumulativeObjectFlags.resize (currentCutIndex + 1);
+  pl_->objectFlags.at (currentCutIndex)[inputType];
+  pl_->cumulativeObjectFlags.at (currentCutIndex)[inputType];
+
   for (vector<Operand>::const_iterator cutDecision = currentCut.valueLookupTree->evaluate ().begin (); cutDecision != currentCut.valueLookupTree->evaluate ().end (); cutDecision++)
     {
       unsigned object = (cutDecision - currentCut.valueLookupTree->evaluate ().begin ());

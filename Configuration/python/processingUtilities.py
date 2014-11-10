@@ -170,12 +170,7 @@ def get_collections (cuts):
     ############################################################################
     collections = set ()
     for cut in cuts:
-        inputCollection = cut.inputCollection.pythonValue ()
-        inputCollection = inputCollection[1:-1]
-        if re.match (r" *([^- ]*) *- *([^- ]*) *pair.*", inputCollection):
-            collections.add (re.sub (r" *([^- ]*) *- *([^- ]*) *pair.*", r"\1s", inputCollection))
-            collections.add (re.sub (r" *([^- ]*) *- *([^- ]*) *pair.*", r"\2s", inputCollection))
-        else:
+        for inputCollection in cut.inputCollection:
             collections.add (inputCollection)
     return sorted (list (collections))
     ############################################################################
@@ -282,13 +277,14 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         ########################################################################
         # Add a plotting module for this channel to the path.
         ########################################################################
-        plotter = cms.EDAnalyzer ("Plotter",
-            collections     =  channelCollections,
-            histogramSets   =  histogramSets,
-            verbose         =  cms.int32 (0)
-        )
-        channelPath += plotter
-        setattr (process, channelName + "Plotter", plotter)
+        if len (histogramSets):
+            plotter = cms.EDAnalyzer ("Plotter",
+                collections     =  channelCollections,
+                histogramSets   =  histogramSets,
+                verbose         =  cms.int32 (0)
+            )
+            channelPath += plotter
+            setattr (process, channelName + "Plotter", plotter)
         ########################################################################
 
         ########################################################################
