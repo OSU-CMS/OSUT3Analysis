@@ -1,11 +1,17 @@
 #include <iostream>
 #include <algorithm>
 
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 #include "OSUT3Analysis/AnaTools/plugins/CutCalculator.h"
 
 #define EXIT_CODE 1
+
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define AT __FILE__ ":" TOSTRING(__LINE__)
 
 CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   collections_  (cfg.getParameter<edm::ParameterSet>  ("collections")),
@@ -123,7 +129,6 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
       //////////////////////////////////////////////////////////////////////////
       updateCrossTalk (currentCut, currentCutIndex);
       //////////////////////////////////////////////////////////////////////////
-
     }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -191,18 +196,28 @@ CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
             {
               if (*singleObject == collection->first)
                 singleObjectFlagsPropagated.at (singleObject - singleObjects.begin ()) = true;
+              map<unsigned, bool> cumulativeFlags;
+              bool cumulativeFlag;
               for (vector<bool>::const_iterator flag = pl_->objectFlags.at (currentCutIndex).at (inputType).begin (); flag != pl_->objectFlags.at (currentCutIndex).at (inputType).end (); flag++)
                 {
-                  unsigned localIndex = currentCut.valueLookupTree->getLocalIndex (flag - pl_->objectFlags.at (currentCutIndex).at (inputType).begin (), singleObject - singleObjects.begin ());
+                  unsigned iFlag = flag - pl_->objectFlags.at (currentCutIndex).at (inputType).begin ();
+                  unsigned localIndex = currentCut.valueLookupTree->getLocalIndex (iFlag, singleObject - singleObjects.begin ());
                   vector<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (localIndex, *singleObject, collection->first);
                   if (!globalIndices.size ())
                     break;
+                  cumulativeFlag = false;
                   for (vector<unsigned>::const_iterator globalIndex = globalIndices.begin (); globalIndex != globalIndices.end (); globalIndex++)
                     {
                       pl_->objectFlags.at (currentCutIndex).at (collection->first).at (*globalIndex) = (*flag);
-                      pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection->first).at (*globalIndex) = pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection->first).at (*globalIndex) && (*flag);
+                      cumulativeFlag = cumulativeFlag || pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection->first).at (*globalIndex);
+                      if (!cumulativeFlags.count (*globalIndex))
+                        cumulativeFlags[*globalIndex] = false;
+                      cumulativeFlags.at (*globalIndex) = cumulativeFlags.at (*globalIndex) || pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag);
                     }
+                  pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag) = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag) && cumulativeFlag;
                 }
+              for (map<unsigned, bool>::const_iterator flag = cumulativeFlags.begin (); flag != cumulativeFlags.end (); flag++)
+                pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection->first).at (flag->first) = pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection->first).at (flag->first) && flag->second;
             }
         }
     }
@@ -228,7 +243,7 @@ CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
         {
           if (pl_->objectFlags.at (currentCutIndex - 1).count (collection->first))
             continue;
-          for (unsigned i = 0; i < currentCutIndex - 1; i++)
+          for (unsigned i = 0; i < currentCutIndex; i++)
             {
               pl_->objectFlags.at (i)[collection->first] = vector<bool> (collection->second.size (), true);
               pl_->cumulativeObjectFlags.at (i)[collection->first] = vector<bool> (collection->second.size (), true);

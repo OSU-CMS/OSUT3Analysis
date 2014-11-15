@@ -94,14 +94,14 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
     {
       for (unsigned i = 0; i < nCombinations.at (0); i++)
         {
-          if (singleObjectIndex + 1 != singleObjects.size ())
+          if (singleObjectIndex + 1 < singleObjects.size ())
             {
-              if ((i / nCombinations.at (singleObjectIndex + 1)) % collectionSizes.at (singleObjectIndex))
+              if ((i / nCombinations.at (singleObjectIndex + 1)) % collectionSizes.at (singleObjectIndex) == localIndex)
                 globalIndices.push_back (i);
             }
           else
             {
-              if (i % collectionSizes.at (singleObjectIndex))
+              if (i % collectionSizes.at (singleObjectIndex) == localIndex)
                 globalIndices.push_back (i);
             }
         }
