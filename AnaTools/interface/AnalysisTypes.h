@@ -57,7 +57,8 @@ struct Cut
 };
 
 struct HistoDef {
-  string inputCollection;
+  vector<string> inputCollections;
+  string inputLabel;
   string directory;
   string name;
   string title; // contains axis labels

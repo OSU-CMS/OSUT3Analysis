@@ -19,12 +19,42 @@ ValueLookupTree::ValueLookupTree (const Cut &cut) :
   inputCollections_ (cut.inputCollections),
   evaluationError_ (false)
 {
+  vector<string> trimmedInputCollections;
+  trimInputCollections (root_, trimmedInputCollections);
+  if (trimmedInputCollections.size ())
+    inputCollections_ = trimmedInputCollections;
+  sort (inputCollections_.begin (), inputCollections_.end ());
+}
+
+ValueLookupTree::ValueLookupTree (const string &expression, const vector<string> &inputCollections) :
+  root_ (insert_ (expression, NULL)),
+  inputCollections_ (inputCollections),
+  evaluationError_ (false)
+{
+  vector<string> trimmedInputCollections;
+  trimInputCollections (root_, trimmedInputCollections);
+  sort (trimmedInputCollections.begin (), trimmedInputCollections.end ());
+  trimmedInputCollections.erase (unique (trimmedInputCollections.begin (), trimmedInputCollections.end ()), trimmedInputCollections.end ());
+  if (trimmedInputCollections.size ())
+    inputCollections_ = trimmedInputCollections;
   sort (inputCollections_.begin (), inputCollections_.end ());
 }
 
 ValueLookupTree::~ValueLookupTree ()
 {
   destroy (root_);
+}
+
+void
+ValueLookupTree::trimInputCollections (const Node *tree, vector<string> &inputCollections)
+{
+  if (tree->branches.size ())
+    {
+      for (vector<Node *>::const_iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+        trimInputCollections (*branch, inputCollections);
+    }
+  else if (isCollection (tree->value + "s"))
+    inputCollections.push_back (tree->value + "s");
 }
 
 Collections *
@@ -766,6 +796,19 @@ ValueLookupTree::insertParentheses (const string &s, Node *tree)
   //////////////////////////////////////////////////////////////////////////////
 }
 
+string
+ValueLookupTree::catInputCollection (const vector<string> &inputCollections)
+{
+  string catInputCollection = "";
+  for (vector<string>::const_iterator collection = inputCollections.begin (); collection != inputCollections.end (); collection++)
+    {
+      if (collection != inputCollections.begin ())
+        catInputCollection += "-";
+      catInputCollection += *collection;
+    }
+  return catInputCollection;
+}
+
 double
 ValueLookupTree::getMember (const string &type, void *obj, const string &member)
 {
@@ -806,6 +849,40 @@ ValueLookupTree::getMember (const string &type, void *obj, const string &member)
   delete o;
 
   return value;
+}
+
+bool
+ValueLookupTree::isCollection (const string &name)
+{
+  if (name == "bxlumis")
+    return true;
+  else if (name == "electrons")
+    return true;
+  else if (name == "events")
+    return true;
+  else if (name == "genjets")
+    return true;
+  else if (name == "jets")
+    return true;
+  else if (name == "mcparticles")
+    return true;
+  else if (name == "mets")
+    return true;
+  else if (name == "muons")
+    return true;
+  else if (name == "photons")
+    return true;
+  else if (name == "primaryvertexs")
+    return true;
+  else if (name == "superclusters")
+    return true;
+  else if (name == "taus")
+    return true;
+  else if (name == "tracks")
+    return true;
+  else if (name == "trigobjs")
+    return true;
+  return false;
 }
 
 string

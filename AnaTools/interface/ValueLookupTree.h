@@ -43,6 +43,7 @@ class ValueLookupTree
   public:
     ValueLookupTree ();
     ValueLookupTree (const Cut &);
+    ValueLookupTree (const string &, const vector<string> &);
     ~ValueLookupTree ();
 
     // Method for assigning a ValueLookup object which is used to evaluate the
@@ -71,6 +72,8 @@ class ValueLookupTree
     vector<unsigned> getGlobalIndices (unsigned, const string &, string);
     unsigned getCollectionSize (const string &name);
     ////////////////////////////////////////////////////////////////////////////
+
+    static string catInputCollection (const vector<string> &);
 
   private:
     // Method for destroying an entire tree, including all of its children.
@@ -152,6 +155,9 @@ class ValueLookupTree
     double  valueLookup  (const  BNtrigobj            *object,  string  variable);
     double  valueLookup  (const  map<string, double>  *object,  string  variable);
     ////////////////////////////////////////////////////////////////////////////
+
+    bool isCollection (const string &);
+    void trimInputCollections (const Node *, vector<string> &);
 
     double getMember (const string &, void *, const string &);
     double valueLookup (const string &, void *, const string &);

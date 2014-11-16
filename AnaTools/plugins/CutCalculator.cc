@@ -57,7 +57,6 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "tracks")          !=  objectsToGet_.end  ()  &&  collections_.exists  ("tracks"))          event.getByLabel  (collections_.getParameter<edm::InputTag>  ("tracks"),          handles_.tracks);
   if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "triggers")        !=  objectsToGet_.end  ()  &&  collections_.exists  ("triggers"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("triggers"),        handles_.triggers);
   if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "trigobjs")        !=  objectsToGet_.end  ()  &&  collections_.exists  ("trigobjs"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("trigobjs"),        handles_.trigobjs);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "userVariables")   !=  objectsToGet_.end  ()  &&  collections_.exists  ("userVariables"))   event.getByLabel  (collections_.getParameter<edm::InputTag>  ("userVariables"),   handles_.userVariables);
 
   if (firstEvent_ && !handles_.bxlumis.isValid ())
     clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
@@ -98,7 +97,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   // and parse the cut strings in the unpacked cuts into ValueLookupTree
   // objects.
   //////////////////////////////////////////////////////////////////////////////
-  if (!initializeValueLookupTrees (unpackedCuts_, &handles_))
+  if (!initializeValueLookupForest (unpackedCuts_, &handles_))
     {
       clog << "ERROR: failed to parse all cut strings. Quitting..." << endl;
       exit (EXIT_CODE);
@@ -290,13 +289,7 @@ CutCalculator::unpackCuts ()
       objectsToGet_.insert (objectsToGet_.end (), tempInputCollection.begin (), tempInputCollection.end ());
       //////////////////////////////////////////////////////////////////////////
 
-      string catInputCollection = "";
-      for (vector<string>::const_iterator collection = tempInputCollection.begin (); collection != tempInputCollection.end (); collection++)
-        {
-          if (collection != tempInputCollection.begin ())
-            catInputCollection += "-";
-          catInputCollection += *collection;
-        }
+      string catInputCollection = ValueLookupTree::catInputCollection (tempInputCollection);
       tempCut.inputCollections = tempInputCollection;
       tempCut.inputLabel = catInputCollection;
 
@@ -512,7 +505,7 @@ CutCalculator::setEventFlags ()
 }
 
 bool
-CutCalculator::initializeValueLookupTrees (vector<Cut> &cuts, Collections *handles)
+CutCalculator::initializeValueLookupForest (vector<Cut> &cuts, Collections *handles)
 {
   //////////////////////////////////////////////////////////////////////////////
   // For each cut, parse its cut string into a new ValueLookupTree object which
