@@ -236,6 +236,26 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         ########################################################################
 
         ########################################################################
+        # Add a module for printing info, both general and for specific events.
+        ########################################################################
+        infoPrinter = cms.EDAnalyzer ("InfoPrinter",
+            cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions"),
+            eventsToPrint = cms.VEventID (),
+            printAllEvents              =  cms.bool  (False),
+            printCumulativeObjectFlags  =  cms.bool  (False),
+            printCutDecision            =  cms.bool  (False),
+            printEventDecision          =  cms.bool  (False),
+            printEventFlags             =  cms.bool  (False),
+            printObjectFlags            =  cms.bool  (False),
+            printTriggerDecision        =  cms.bool  (False),
+            printTriggerFlags           =  cms.bool  (False),
+            printVetoTriggerFlags       =  cms.bool  (False)
+        )
+        channelPath += infoPrinter
+        setattr (process, channelName + "InfoPrinter", infoPrinter)
+        ########################################################################
+
+        ########################################################################
         # Set up the output commands. For now, we drop everything except the
         # collections given in the collections PSet.
         ########################################################################

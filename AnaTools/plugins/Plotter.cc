@@ -25,7 +25,7 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
   firstEvent_ (true)
 
 {
-  
+
   if (verbose_) clog << "Beginning Plotter::Plotter constructor." << endl;
 
   TH1::SetDefaultSumw2();
@@ -33,7 +33,7 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
   /////////////////////////////////////
   // parse the histogram definitions //
   /////////////////////////////////////
-  
+
   // loop over each histogram set the user has included
   for(unsigned histoSet = 0; histoSet != histogramSets_.size(); histoSet++){
 
@@ -67,13 +67,13 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
   // loop over each parsed histogram configuration
   vector<HistoDef>::iterator histogram;
   for(histogram = histogramDefinitions.begin(); histogram != histogramDefinitions.end(); ++histogram){
-    
+
     // book a TH1/TH2 in the appropriate folder
     bookHistogram(*histogram);
 
   } // end loop on parsed histograms
 
-}      
+}
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -151,7 +151,7 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       clog << "ERROR: failed to parse input variables. Quitting..." << endl;
       exit (EXIT_CODE);
     }
- 
+
   // now that we have all the required objects, we'll loop over the histograms, filling each one as we go
 
   vector<HistoDef>::iterator histogram;
@@ -169,156 +169,14 @@ Plotter::~Plotter ()
 
 ////////////////////////////////////////////////////////////////////////
 
-
 // function to convert an input collection into a directory name
 string Plotter::getDirectoryName(string inputName){
-  string parsedName;
 
-  bool isPair = inputName.find("pair") !=string::npos;
-
-  if(isPair){
-    vector<string> objects = getInputTypes(inputName);
-    if(objects.at(0) == objects.at(1)){  // identical objects
-      parsedName = "Di" + singular(objects.at(0));
-    }
-    else{
-      parsedName = capitalize(singular(objects.at(0))) + "-" + capitalize(singular(objects.at(1)));
-    }
-  }
-  else{
-    parsedName = capitalize(singular(inputName));
-  }
+  string parsedName = ValueLookupTree::capitalize(ValueLookupTree::singular(inputName));
 
   parsedName += " Plots";
 
   return parsedName;
-
-}
-
-////////////////////////////////////////////////////////////////////////
-
-vector<string> Plotter::getInputTypes(string inputName){
-  
-  // Return the object type(s) from the inputName string,
-  // e.g. "muons" returns ["muons"],
-  // and "electron-muon pairs" returns:
-  // ["electrons","muons"]
-
-
-  vector<string> inputTypes;
-
-  bool isPair = inputName.find("pair")!=string::npos;
-
-  if(isPair){
-    int dashIndex = inputName.find("-");
-    int spaceIndex = inputName.find_last_of(" ");
-    int secondWordLength = spaceIndex - dashIndex;
-    string obj1 = plural(inputName.substr(0,dashIndex));
-    string obj2 = plural(inputName.substr(dashIndex+1,secondWordLength-1));
-    
-    inputTypes.push_back(obj1);
-    inputTypes.push_back(obj2);
-  }
-  else{
-    inputTypes.push_back(inputName);
-  }
-
-  return inputTypes;
-
-}
-
-////////////////////////////////////////////////////////////////////////
-
-pair<string,string> Plotter::getVariableAndFunction(const string input){
-
-  string inputVariable = "";
-  string function = "";
-
-  if(input.find("(")==string::npos){
-    inputVariable = input;// variable to cut on                                                                                                                                                 
-  }
-  else{
-    function = input.substr(0,input.find("("));//function comes before the "("                                                                                                          
-    inputVariable = input.substr(input.find("(")+1);//get rest of string                                                                                                                
-    inputVariable = inputVariable.substr(0,inputVariable.size()-1);//remove trailing ")"                                                                                                                
-  }
-
-  return make_pair(inputVariable,function);
-
-}
-
-////////////////////////////////////////////////////////////////////////
-
-string Plotter::capitalize(string input){
-  
-  input[0] = toupper(input[0]);
-  return input;
-
-}
-
-////////////////////////////////////////////////////////////////////////
-
-string Plotter::singular(string input){
-
-  if(strcmp(&input.back(), "s") == 0){ // remove trailing "s"
-    return input.substr(0, input.size()-1);
-  }
-  else{ 
-    return input;
-  }
-
-}
-
-////////////////////////////////////////////////////////////////////////
-
-string Plotter::plural(string input){
-
-  if(strcmp(&input.back(), "s") == 0){ 
-    return input;
-  }
-  else{
-    return input + "s"; // add trailing "s"
-  }
-
-}
-
-////////////////////////////////////////////////////////////////////////
-
-string Plotter::fixOrdering(string input){
-
-  if(input == "muon-electron pairs")                    return "electron-muon pairs";
-  if(input == "photon-muon pairs")                      return "muon-photon pairs";
-  if(input == "photon-electron pairs")                  return "electron-photon pairs";
-  if(input == "jet-electron pairs")                     return "electron-jet pairs";
-  if(input == "jet-photon pairs")                       return "photon-jet pairs";
-  if(input == "jet-muon pairs")                         return "muon-jet pairs";
-  if(input == "event-muon pairs")                       return "muon-event pairs";
-  if(input == "event-electron pairs")                   return "electron-event pairs";
-  if(input == "jet-met pairs")                          return "met-jet pairs";
-  if(input == "mcparticle-met pairs")                   return "met-mcparticle pairs";
-  if(input == "secondary mcparticle-jet pairs")         return "jet-secondary mcparticle pairs";
-  if(input == "mcparticle-jet pairs")                   return "jet-mcparticle pairs";
-  if(input == "secondary mcparticle-mcparticle pairs")  return "mcparticle-secondary mcparticle pairs";
-  if(input == "track-jet pairs")                        return "track-jet pairs";
-  if(input == "event-track pairs")                      return "track-event pairs";
-  if(input == "secondary muon-muon pairs")              return "muon-secondary muon pairs";
-  if(input == "secondary jet-muon pairs")               return "muon-secondary jet pairs";
-  if(input == "jet-secondary muon pairs")               return "secondary muon-jet pairs";
-  if(input == "secondary photon-muon pairs")            return "muon-secondary photon pairs";
-  if(input == "secondary jet-electron pairs")           return "electron-secondary jet pairs";
-  if(input == "jet-secondary electron pairs")           return "secondary electron-jet pairs";
-  if(input == "secondary jet-photon pairs")             return "photon-secondary jet pairs";
-  if(input == "secondary jet-jet pairs")                return "jet-secondary jet pairs";
-  if(input == "secondary electron-electron pairs")      return "electron-secondary electron pairs";
-  if(input == "trigobj-electron pairs")                 return "electron-trigobj pairs";
-  if(input == "trigobj-muon pairs")                     return "muon-trigobj pairs";
-  if(input == "mcparticle-electron pairs")              return "electron-mcparticle pairs";
-  if(input == "mcparticle-muon pairs")                  return "muon-mcparticle pairs";
-  if(input == "secondary mcparticle-muon pairs")        return "muon-secondary mcparticle pairs";
-  if(input == "mcparticle-track pairs")                 return "track-mcparticle pairs";
-  if(input == "mcparticle-stop pairs")                  return "stop-mcparticle pairs";
-
-  return input;
 
 }
 
@@ -358,8 +216,8 @@ void Plotter::bookHistogram(const HistoDef definition){
 
   // check for valid bins
   bool hasValidBinsX = definition.binsX.size() >= 3;
-  bool hasValidBinsY = definition.binsY.size() >= 3 || (definition.binsY.size() == 1 && 
-							definition.binsY.at(0) == -1);
+  bool hasValidBinsY = definition.binsY.size() >= 3 || (definition.binsY.size() == 1 &&
+                                                        definition.binsY.at(0) == -1);
 
   if(!hasValidBinsX || !hasValidBinsY){
     cout << "WARNING - invalid histogram bins" << endl;
@@ -368,23 +226,22 @@ void Plotter::bookHistogram(const HistoDef definition){
 
   TFileDirectory subdir = fs_->mkdir(definition.directory);
 
-
   // book 1D histogram
   if(definition.dimensions == 1){
     // equal X bins
     if(!definition.hasVariableBinsX){
       subdir.make<TH1D>(TString(definition.name),
-			TString(definition.title),
-			definition.binsX.at(0),
-			definition.binsX.at(1),
-			definition.binsX.at(2));
+                        TString(definition.title),
+                        definition.binsX.at(0),
+                        definition.binsX.at(1),
+                        definition.binsX.at(2));
     }
     // variable X bins
     else{
       subdir.make<TH1D>(TString(definition.name),
-			TString(definition.title),
-			definition.binsX.size() - 1,
-			definition.binsX.data());
+                        TString(definition.title),
+                        definition.binsX.size() - 1,
+                        definition.binsX.data());
     }
   }
   // book 2D histogram
@@ -392,42 +249,42 @@ void Plotter::bookHistogram(const HistoDef definition){
     // equal X bins and equal Y bins
     if(!definition.hasVariableBinsX && !definition.hasVariableBinsY){
       subdir.make<TH2D>(TString(definition.name),
-			TString(definition.title),
-			definition.binsX.at(0),
-			definition.binsX.at(1),
-			definition.binsX.at(2),
-			definition.binsY.at(0),
-			definition.binsY.at(1),
-			definition.binsY.at(2));
+                        TString(definition.title),
+                        definition.binsX.at(0),
+                        definition.binsX.at(1),
+                        definition.binsX.at(2),
+                        definition.binsY.at(0),
+                        definition.binsY.at(1),
+                        definition.binsY.at(2));
     }
     // variable X bins and equal Y bins
     else if(definition.hasVariableBinsX && !definition.hasVariableBinsY){
       subdir.make<TH2D>(TString(definition.name),
-			TString(definition.title),
-			definition.binsX.size() - 1,
-			definition.binsX.data(),
-			definition.binsY.at(0),
-			definition.binsY.at(1),
-			definition.binsY.at(2));
+                        TString(definition.title),
+                        definition.binsX.size() - 1,
+                        definition.binsX.data(),
+                        definition.binsY.at(0),
+                        definition.binsY.at(1),
+                        definition.binsY.at(2));
     }
     // equal X bins and variable Y bins
     else if(!definition.hasVariableBinsX && definition.hasVariableBinsY){
       subdir.make<TH2D>(TString(definition.name),
-			TString(definition.title),
-			definition.binsX.at(0),
-			definition.binsX.at(1),
-			definition.binsX.at(2),
-			definition.binsY.size() - 1,
-			definition.binsY.data());
+                        TString(definition.title),
+                        definition.binsX.at(0),
+                        definition.binsX.at(1),
+                        definition.binsX.at(2),
+                        definition.binsY.size() - 1,
+                        definition.binsY.data());
     }
     // variable X bins and variable Y bins
     else if(definition.hasVariableBinsX && definition.hasVariableBinsY){
       subdir.make<TH2D>(TString(definition.name),
-			TString(definition.title),
-			definition.binsX.size() - 1,
-			definition.binsX.data(),
-			definition.binsY.size() - 1,
-			definition.binsY.data());
+                        TString(definition.title),
+                        definition.binsX.size() - 1,
+                        definition.binsX.data(),
+                        definition.binsY.size() - 1,
+                        definition.binsY.data());
     }
   }
   else{
@@ -469,7 +326,7 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
     }
     histogram->Fill(boost::get<double> (*value), weight);
   }
-  
+
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -498,8 +355,8 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
 ////////////////////////////////////////////////////////////////////////
 
 double Plotter::getBinSize(TH1D *histogram,
-			   const double value){
-  
+                           const double value){
+
   int binIndex = histogram->FindBin(value);
   double binSize = histogram->GetBinWidth(binIndex);
 
@@ -508,13 +365,13 @@ double Plotter::getBinSize(TH1D *histogram,
 }
 
 pair<double,double>  Plotter::getBinSize(TH2D *histogram,
-					 const double valueX,
-					 const double valueY){
+                                         const double valueX,
+                                         const double valueY){
 
   int binIndex = histogram->FindBin(valueX, valueY);
   double binSizeX = histogram->GetXaxis()->GetBinWidth(binIndex);
   double binSizeY = histogram->GetYaxis()->GetBinWidth(binIndex);
-  
+
   return make_pair(binSizeX, binSizeY);
 
 }
@@ -556,13 +413,13 @@ string Plotter::setYaxisLabel(const HistoDef definition){
     if(binWidth.find('.') != string::npos){
       binWidth.erase(binWidth.find_last_not_of('0')+1, string::npos);
       if(binWidth.back() == '.'){
-	binWidth.erase(binWidth.size()-1, string::npos);
+        binWidth.erase(binWidth.size()-1, string::npos);
       }
     }
     if(binWidth == "1"){
       binWidth = "";
       if(unit == "units"){
-	unit = "unit";
+        unit = "unit";
       }
     }
     if(binWidth != ""){

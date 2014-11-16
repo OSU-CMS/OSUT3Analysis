@@ -29,7 +29,7 @@ CutFlowPlotter::~CutFlowPlotter ()
   TH1D* selection_ = oneDHists_["selection"];
   TH1D* minusOne_  = oneDHists_["minusOne"];
 
-  // Print all the cutflow information when this class is destroyed.  
+  // Print all the cutflow information when this class is destroyed.
   int totalEvents;
   //  string title = prefix_;
   clog << endl;
@@ -47,9 +47,9 @@ CutFlowPlotter::~CutFlowPlotter ()
 
   //  for (vector<string>::const_iterator cut = cutNames_.begin (); cut != cutNames_.end (); cut++) {
   //  for (vector<cut>::const_iterator mycut = cutDecisions->cuts.begin (); mycut != cutDecisions->cuts.end (); mycut++) {
-//   for (unsigned i = 0; i < cutDecisions->cuts.size(); i++) { 
+//   for (unsigned i = 0; i < cutDecisions->cuts.size(); i++) {
 //     //    if((mycut.name).size() > longestCutName) longestCutName = (mycut.name).size();
-//     if (cutDecisions->cuts.at(i).name.size() > longestCutName) longestCutName = cutDecisions->cuts.at(i).name.size();  
+//     if (cutDecisions->cuts.at(i).name.size() > longestCutName) longestCutName = cutDecisions->cuts.at(i).name.size();
 //   }
   longestCutName += 1;
   clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
@@ -59,24 +59,24 @@ CutFlowPlotter::~CutFlowPlotter ()
   clog << setw (longestCutName) << left << "Total:" << right << setw (10) << setprecision(1) << (double) totalEvents << setw (16) << "100% " << setw (16) << "100% " << setw (16) << "0% " << endl;
   //  for (vector<string>::const_iterator cut = cutNames_.begin (); cut != cutNames_.end (); cut++)
   //  for (vector<cut>::const_iterator mycut = cutDecisions->cuts.begin (); mycut != cutDecisions->cuts.end (); mycut++) {
-  //  for (unsigned i = 0; i < cutDecisions->cuts.size(); i++) { 
-  for (int i = 1; i <= cutFlow_->GetNbinsX(); i++) { 
-    //    clog << "Checking cut: " << i << endl;  
-    //    cut mycut = cutDecisions->cuts.at(i);  
-    //    clog << "Got the cut. " << endl;  
-    //string name = 
-    double cutFlow = cutFlow_->GetBinContent (i); 
-    double selection = selection_->GetBinContent (i); 
-    double minusOne = minusOne_->GetBinContent (i); 
-    //    clog << " Num events: " << cutFlow << endl;  
-    TString name = cutFlow_->GetXaxis()->GetBinLabel(i);  
+  //  for (unsigned i = 0; i < cutDecisions->cuts.size(); i++) {
+  for (int i = 1; i <= cutFlow_->GetNbinsX(); i++) {
+    //    clog << "Checking cut: " << i << endl;
+    //    cut mycut = cutDecisions->cuts.at(i);
+    //    clog << "Got the cut. " << endl;
+    //string name =
+    double cutFlow = cutFlow_->GetBinContent (i);
+    double selection = selection_->GetBinContent (i);
+    double minusOne = minusOne_->GetBinContent (i);
+    //    clog << " Num events: " << cutFlow << endl;
+    TString name = cutFlow_->GetXaxis()->GetBinLabel(i);
     clog << setw (longestCutName) << left << name << right << setw (10) << setprecision(1) << cutFlow << setw (15) << setprecision(3) << 100.0 * (cutFlow / (double) totalEvents) << "%"
-	 << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
-	 << setw (15) << setprecision(3) << 100.0 * (minusOne / (double) totalEvents) << "%" << endl;
+         << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
+         << setw (15) << setprecision(3) << 100.0 * (minusOne / (double) totalEvents) << "%" << endl;
 //     clog << setw (longestCutName) << left << (mycut.name + ":") << right << setw (10) << setprecision(1) << cutFlow << setw (15) << setprecision(3) << 100.0 * (cutFlow / (double) totalEvents) << "%"
-// 	 << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
-// 	 << setw (15) << setprecision(3) << 100.0 * (minusOne / (double) totalEvents) << "%" << endl;
-  }  
+//          << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
+//          << setw (15) << setprecision(3) << 100.0 * (minusOne / (double) totalEvents) << "%" << endl;
+  }
   clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
 
 }

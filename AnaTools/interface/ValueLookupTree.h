@@ -75,9 +75,16 @@ class ValueLookupTree
 
     static string catInputCollection (const vector<string> &);
 
+    static string capitalize (string);
+    static string singular (string);
+    static string plural (string);
+
   private:
     // Method for destroying an entire tree, including all of its children.
     void destroy (Node *);
+
+    void pruneCommas (Node *);
+    void pruneParentheses (Node *);
 
     ////////////////////////////////////////////////////////////////////////////
     // Recursive methods for inserting an expression into the tree and then

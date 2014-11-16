@@ -14,9 +14,7 @@
 #include "TH1.h"
 #include "TH2.h"
 
-
 using namespace std;
-
 
 class Plotter : public edm::EDAnalyzer
 {
@@ -26,14 +24,10 @@ class Plotter : public edm::EDAnalyzer
       ~Plotter ();
       void analyze(const edm::Event&, const edm::EventSetup&);
 
-      string capitalize(const string);
-      string singular(const string);
-      string plural(const string);
-
     private:
 
       edm::ParameterSet collections_;
-      
+
       //Collections
       Collections handles_;
 
@@ -54,11 +48,8 @@ class Plotter : public edm::EDAnalyzer
       vector<HistoDef> histogramDefinitions;
 
       string getDirectoryName(const string);
-      vector<string> getInputTypes(const string);
-      string fixOrdering(const string);
       HistoDef parseHistoDef(const edm::ParameterSet &, const vector<string> &, const string &, const string &);
       void bookHistogram(const HistoDef);
-      pair<string,string> getVariableAndFunction(const string);
 
       void fillHistogram(const HistoDef &);
       void fill1DHistogram(const HistoDef &);
@@ -67,12 +58,6 @@ class Plotter : public edm::EDAnalyzer
       double getBinSize(TH1D *, const double);
       pair<double,double> getBinSize(TH2D *, const double, const double);
       string setYaxisLabel(const HistoDef);
-
-
 };
-
-
-
-
 
 #endif

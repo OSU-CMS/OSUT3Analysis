@@ -21,8 +21,13 @@ ValueLookupTree::ValueLookupTree (const Cut &cut) :
   inputCollections_ (cut.inputCollections),
   evaluationError_ (false)
 {
+  pruneCommas (root_);
+  pruneParentheses (root_);
+
   vector<string> trimmedInputCollections;
   trimInputCollections (root_, trimmedInputCollections);
+  sort (trimmedInputCollections.begin (), trimmedInputCollections.end ());
+  trimmedInputCollections.erase (unique (trimmedInputCollections.begin (), trimmedInputCollections.end ()), trimmedInputCollections.end ());
   if (trimmedInputCollections.size ())
     inputCollections_ = trimmedInputCollections;
   sort (inputCollections_.begin (), inputCollections_.end ());
@@ -33,6 +38,9 @@ ValueLookupTree::ValueLookupTree (const string &expression, const vector<string>
   inputCollections_ (inputCollections),
   evaluationError_ (false)
 {
+  pruneCommas (root_);
+  pruneParentheses (root_);
+
   vector<string> trimmedInputCollections;
   trimInputCollections (root_, trimmedInputCollections);
   sort (trimmedInputCollections.begin (), trimmedInputCollections.end ());
@@ -45,6 +53,85 @@ ValueLookupTree::ValueLookupTree (const string &expression, const vector<string>
 ValueLookupTree::~ValueLookupTree ()
 {
   destroy (root_);
+}
+
+string
+ValueLookupTree::capitalize (string input)
+{
+  input.front () = toupper (input.front ());
+  return input;
+}
+
+string
+ValueLookupTree::singular (string input)
+{
+  if (tolower (input.back ()) == 's')
+    return input.substr (0, input.size () - 1);
+  else
+    return input;
+}
+
+string
+ValueLookupTree::plural (string input)
+{
+  if (tolower (input.back ()) == 's')
+    return input;
+  else
+    return input + "s";
+}
+
+void
+ValueLookupTree::pruneCommas (Node *tree)
+{
+  bool foundComma;
+  do
+    {
+      foundComma = false;
+      for (vector<Node *>::iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+        {
+          if ((*branch)->value == ",")
+            {
+              foundComma = true;
+
+              size_t comma = branch - tree->branches.begin ();
+              tree->branches.insert (branch + 1, (*branch)->branches.begin (), (*branch)->branches.end ());
+              branch = tree->branches.begin () + comma;
+              tree->branches.erase (branch);
+              branch = tree->branches.begin () + comma + 1;
+            }
+        }
+    }
+  while (foundComma);
+
+  for (vector<Node *>::iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+    pruneCommas (*branch);
+}
+
+void
+ValueLookupTree::pruneParentheses (Node *tree)
+{
+  bool foundParenthesis;
+  do
+    {
+      foundParenthesis = false;
+      for (vector<Node *>::iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+        {
+          if ((*branch)->value == "()")
+            {
+              foundParenthesis = true;
+
+              size_t parenthesis = branch - tree->branches.begin ();
+              tree->branches.insert (branch + 1, (*branch)->branches.begin (), (*branch)->branches.end ());
+              branch = tree->branches.begin () + parenthesis;
+              tree->branches.erase (branch);
+              branch = tree->branches.begin () + parenthesis;
+            }
+        }
+    }
+  while (foundParenthesis);
+
+  for (vector<Node *>::iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+    pruneParentheses (*branch);
 }
 
 void
@@ -97,10 +184,10 @@ ValueLookupTree::getSingleObjects (string inputLabel)
   size_t hyphen;
   while ((hyphen = inputLabel.find ('-')) != string::npos)
     {
-      singleObjects.push_back (inputLabel.substr (0, hyphen));
+      singleObjects.push_back (plural (inputLabel.substr (0, hyphen)));
       inputLabel = inputLabel.substr (hyphen + 1);
     }
-  singleObjects.push_back (inputLabel);
+  singleObjects.push_back (plural (inputLabel));
   sort (singleObjects.begin (), singleObjects.end ());
   //////////////////////////////////////////////////////////////////////////////
 
@@ -402,9 +489,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Operand> &oper
 
   try
     {
-      if (op == ",")
-        return (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1)));
-      else if (op == "||" || op == "|")
+      if (op == "||" || op == "|")
         return (boost::get<double> (operands.at (0)) || boost::get<double> (operands.at (1)));
       else if (op == "&&" || op == "&")
         return (boost::get<double> (operands.at (0)) && boost::get<double> (operands.at (1)));
@@ -546,8 +631,6 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Operand> &oper
         }
       else if (op == ".")
         return valueLookup (boost::get<string> (operands.at (0)) + "s", objs.at (boost::get<string> (operands.at (0)) + "s"), boost::get<string> (operands.at (1)));
-      else if (op == "()")
-        return (operands.at (0));
     }
   catch (...)
     {
@@ -606,35 +689,6 @@ ValueLookupTree::isnumber (const string &s, double &x)
   char *p;
   x = strtod (s.c_str (), &p);
   return !(*p);
-}
-
-void
-ValueLookupTree::pruneCommas (vector<Node *> &branches)
-{
-  //////////////////////////////////////////////////////////////////////////////
-  // Do nothing if there is not exactly one branch whose value is either a
-  // comma or parentheses.
-  //////////////////////////////////////////////////////////////////////////////
-  if (branches.size () != 1)
-    return;
-  if (branches.at (0)->value != "," && branches.at (0)->value != "()")
-    return;
-  //////////////////////////////////////////////////////////////////////////////
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Replace the branches with those of the daughter, then prune the result
-  // again.
-  //////////////////////////////////////////////////////////////////////////////
-  Node *originalBranch = branches.at (0);
-  branches.clear ();
-  for (vector<Node *>::const_iterator branch = originalBranch->branches.begin (); branch != originalBranch->branches.end (); branch++)
-    {
-      branches.push_back (*branch);
-      branches.back ()->parent = originalBranch->parent;
-    }
-  delete originalBranch;
-  pruneCommas (branches);
-  //////////////////////////////////////////////////////////////////////////////
 }
 
 bool
@@ -787,7 +841,6 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node *tree, const v
           trim (right);
           tree->value = i.second;
           tree->branches.push_back (insert_ (right, tree));
-          pruneCommas (tree->branches);
           foundAnOperator = true;
         }
     }
@@ -829,9 +882,9 @@ ValueLookupTree::catInputCollection (const vector<string> &inputCollections)
     {
       if (collection != inputCollections.begin ())
         catInputCollection += "-";
-      catInputCollection += *collection;
+      catInputCollection += singular (*collection);
     }
-  return catInputCollection;
+  return plural (catInputCollection);
 }
 
 double
