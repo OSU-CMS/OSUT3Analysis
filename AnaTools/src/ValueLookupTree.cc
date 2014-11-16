@@ -6,6 +6,8 @@
 #include "Reflex/Object.h"
 #include "Reflex/Type.h"
 
+#include "DataFormats/Math/interface/deltaR.h"
+
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 
 ValueLookupTree::ValueLookupTree () :
@@ -204,6 +206,7 @@ ValueLookupTree::insert_ (const string &cut, Node *parent)
                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
                                                   "copysign", "nextafter",
                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass"}) ||
         insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
         insertParentheses          (cut,  tree)))
     tree->value = cut;
@@ -376,7 +379,7 @@ ValueLookupTree::evaluate_ (Node *tree, const map<string, void *> &objs)
       double value;
       if (isnumber (tree->value, value))
         return value;
-      else if (tree->parent && tree->parent->value == ".")
+      else if (isCollection (tree->value + "s") || (tree->parent && tree->parent->value == "."))
         return tree->value;
       else
         {
@@ -519,6 +522,28 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Operand> &oper
         return (nearbyint (boost::get<double> (operands.at (0))));
       else if (op == "abs" || op == "fabs")
         return (fabs (boost::get<double> (operands.at (0))));
+      else if (op == "deltaPhi")
+        return deltaPhi (valueLookup (boost::get<string> (operands.at (0)) + "s", objs.at (boost::get<string> (operands.at (0)) + "s"), "phi"),
+                         valueLookup (boost::get<string> (operands.at (1)) + "s", objs.at (boost::get<string> (operands.at (1)) + "s"), "phi"));
+      else if (op == "deltaR")
+        return deltaR (valueLookup (boost::get<string> (operands.at (0)) + "s", objs.at (boost::get<string> (operands.at (0)) + "s"), "eta"),
+                       valueLookup (boost::get<string> (operands.at (0)) + "s", objs.at (boost::get<string> (operands.at (0)) + "s"), "phi"),
+                       valueLookup (boost::get<string> (operands.at (1)) + "s", objs.at (boost::get<string> (operands.at (1)) + "s"), "eta"),
+                       valueLookup (boost::get<string> (operands.at (1)) + "s", objs.at (boost::get<string> (operands.at (1)) + "s"), "phi"));
+      else if (op == "invMass")
+        {
+          double energy = 0.0, px = 0.0, py = 0.0, pz = 0.0;
+
+          for (vector<Operand>::const_iterator operand = operands.begin (); operand != operands.end (); operand++)
+            {
+              energy += valueLookup (boost::get<string> (*operand) + "s", objs.at (boost::get<string> (*operand) + "s"), "energy");
+              px += valueLookup (boost::get<string> (*operand) + "s", objs.at (boost::get<string> (*operand) + "s"), "px");
+              py += valueLookup (boost::get<string> (*operand) + "s", objs.at (boost::get<string> (*operand) + "s"), "py");
+              pz += valueLookup (boost::get<string> (*operand) + "s", objs.at (boost::get<string> (*operand) + "s"), "pz");
+            }
+
+          return sqrt (energy * energy - px * px - py * py - pz * pz);
+        }
       else if (op == ".")
         return valueLookup (boost::get<string> (operands.at (0)) + "s", objs.at (boost::get<string> (operands.at (0)) + "s"), boost::get<string> (operands.at (1)));
       else if (op == "()")
