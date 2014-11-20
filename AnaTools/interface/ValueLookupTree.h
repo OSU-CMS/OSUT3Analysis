@@ -4,38 +4,40 @@
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
 
-// A ValueLookupTree object contains all the information needed to 
-// evaluate an expression or inequality for a given object.  
-//
-// An example for an applied cut, i.e., an inequality:
-//    ValueLookupTree myvaltree("abs(eta) < 2.5", valueLookupMuons);  
-// This will create a tree with the following structure:
-//         <
-//       /   \ 
-//     abs   2.5
-//      |
-//     ( )
-//      |
-//     eta
-//
-// The nodes "eta" and "2.5" in this tree are leaves, i.e., they have no branches.
-// The nodes "<", "abs", and "( )" are not leaves, i.e., they have at least one 
-// branch.  
-// When the evaluate function is called, e.g., myvaltree.evalutate(muons.at(0)), 
-// each node of the tree will be evaluated recursively.  The nodes that are leaves 
-// return the value they correspond to; the nodes that are not leaves apply an operator 
-// to their branch(es).  
-// In this example, the evaluate function will always return 0 or 1.  
-//
-// Another example is an expression, e.g., "2 * abs(eta)", represented as:
-//       * 
-//     /   \ 
-//    abs   2
-//     |
-//    ( )
-//     |
-//    eta
-// In this case the evaluate function would return a continuous value.  
+/*
+A ValueLookupTree object contains all the information needed to
+evaluate an expression or inequality for a given object.
+
+An example for an applied cut, i.e., an inequality:
+   ValueLookupTree myvaltree("abs(eta) < 2.5", valueLookupMuons);
+This will create a tree with the following structure:
+        <
+      /   \
+    abs   2.5
+     |
+    ( )
+     |
+    eta
+
+The nodes "eta" and "2.5" in this tree are leaves, i.e., they have no branches.
+The nodes "<", "abs", and "( )" are not leaves, i.e., they have at least one
+branch.
+When the evaluate function is called, e.g., myvaltree.evalutate(muons.at(0)),
+each node of the tree will be evaluated recursively.  The nodes that are leaves
+return the value they correspond to; the nodes that are not leaves apply an operator
+to their branch(es).
+In this example, the evaluate function will always return 0 or 1.
+
+Another example is an expression, e.g., "2 * abs(eta)", represented as:
+      *
+    /   \
+   abs   2
+    |
+   ( )
+    |
+   eta
+In this case the evaluate function would return a continuous value.
+*/
 
 class ValueLookupTree
 {
@@ -108,14 +110,15 @@ class ValueLookupTree
     // vector of target strings.
     ////////////////////////////////////////////////////////////////////////////
     static bool firstOfPairAscending (pair<size_t, string>, pair<size_t, string>);
-    pair<size_t, string> findFirstOf (const string &, const vector<string> &, const size_t pos = 0);
+    pair<size_t, string> findFirstOf (const string &, const vector<string> &, const vector<string> &, const size_t = 0);
+    bool vetoMatch (const string &, const string &, const size_t, const vector<string> &);
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for inserting different types of operators into the tree.
     ////////////////////////////////////////////////////////////////////////////
-    bool insertBinaryInfixOperator (const string &, node *, const vector<string> &);
-    bool insertUnaryPrefixOperator (const string &, node *, const vector<string> &);
+    bool insertBinaryInfixOperator (const string &, node *, const vector<string> &, const vector<string> & = {});
+    bool insertUnaryPrefixOperator (const string &, node *, const vector<string> &, const vector<string> & = {});
     bool insertParentheses (const string &, node *);
     ////////////////////////////////////////////////////////////////////////////
 
