@@ -201,6 +201,17 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         add_channels.endPath = cms.EndPath ()
     ############################################################################
 
+    ############################################################################
+    # Change the process name to be unique, to avoid DuplicateProcess error
+    # in the case of running over skims.  
+    # To ensure a unique process name, use a date/time stamp.
+    ############################################################################
+    now = datetime.datetime.now()
+    date_hash = now.strftime("%YY%mM%dD%Hh%Mm%Ss")  # Non-alpha-numeric characters are not allowed in the process name.  
+    process.setName_ (process.name_ () + date_hash)
+    ############################################################################
+
+
     for channel in channels:
         channelPath = cms.Path ()
         channelCollections = copy.deepcopy (collections)
