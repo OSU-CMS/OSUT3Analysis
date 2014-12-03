@@ -289,7 +289,7 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
             originalInputTag = getattr (collections, collection)
             setattr (channelCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
             outputCommands.append ("drop BN" + collection + "_*_*_*")
-            outputCommands.append ("keep BN" + collection + "_objectSelector" + str (add_channels.filterIndex) + "_*_" + process.name_ ())
+            outputCommands.append ("keep BN" + collection + "_objectSelector" + str (add_channels.filterIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
             add_channels.filterIndex += 1
         ########################################################################
 
