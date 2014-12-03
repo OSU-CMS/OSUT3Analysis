@@ -762,17 +762,20 @@ template <class VecType> bool Plotter::vecContains(vector< VecType > vec, VecTyp
 
 
 template <class InputCollection> void Plotter::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
-  // Get a collection with the specified type.
-  // If there is more than one such collection, then select the one that matches the specified label.  
+  // Get a collection with the specified type, and match the product instance name.
+  // Do not use Event::getByLabel() function, since it also matches the module name.
   vector< edm::Handle<InputCollection> > objVec;                                                                                                                                                
-  event.getManyByType(objVec);                                                                                                                                                                    
-  if (objVec.size() > 1) {                                                                                                                                                                        
-    event.getByLabel (label, coll); 
-  } else {                                                                                                                                                                                           
-    coll = objVec.at(0);                                                                                                                                                                         
-  }                                                                                                                                                                                                  
-  
-  if (!coll.product()) clog << "ERROR: could not get input collection: " << label << endl; 
+  event.getManyByType(objVec);                          
+
+  for (uint i=0; i<objVec.size(); i++) {
+    if (label.instance() == objVec.at(i).provenance()->productInstanceName()) {
+      coll = objVec.at(i);
+      break;
+    }
+  }
+                                                                            
+  if (!coll.product()) clog << "ERROR: could not get input collection with product instance label: " << label.instance()
+			    << ", but found " << objVec.size() << " collections of the specified type." << endl; 
 
 }
 
