@@ -114,75 +114,23 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
 
   // get the required collections from the event
-  if (find(objectsToGet.begin(), objectsToGet.end(), "bxlumis") != objectsToGet.end()){
-    event.getByLabel (bxlumis_, bxlumis);
-    if (!bxlumis.product()) clog << "ERROR: could not get bxlumis input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "electrons") != objectsToGet.end()){
-    event.getByLabel (electrons_, electrons);
-    if (!electrons.product()) clog << "ERROR: could not get electrons input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "events") != objectsToGet.end()){
-    event.getByLabel (events_, events);
-    if (!events.product()) clog << "ERROR: could not get events input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "genjets") != objectsToGet.end()){
-    event.getByLabel (genjets_, genjets);
-    if (!genjets.product()) clog << "ERROR: could not get genjets input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "jets") != objectsToGet.end()){
-    event.getByLabel (jets_, jets);
-    if (!jets.product()) clog << "ERROR: could not get jets input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "mcparticles") != objectsToGet.end()){
-    event.getByLabel (mcparticles_, mcparticles);
-    if (!mcparticles.product()) clog << "ERROR: could not get mcparticles input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "mets") != objectsToGet.end()){
-    event.getByLabel (mets_, mets);
-    if (!mets.product()) clog << "ERROR: could not get mets input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "muons") != objectsToGet.end()){
-    event.getByLabel (muons_, muons);
-    if (!muons.product()) clog << "ERROR: could not get muons input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "photons") != objectsToGet.end()){
-    event.getByLabel (photons_, photons);
-    if (!photons.product()) clog << "ERROR: could not get photons input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "primaryvertexs") != objectsToGet.end()){
-    event.getByLabel (primaryvertexs_, primaryvertexs);
-    if (!primaryvertexs.product()) clog << "ERROR: could not get primaryvertexs input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "secMuons") != objectsToGet.end()){
-    event.getByLabel (secMuons_, secMuons);
-    if (!secMuons.product()) clog << "ERROR: could not get secMuons input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "superclusters") != objectsToGet.end()){
-    event.getByLabel (superclusters_, superclusters);
-    if (!superclusters.product()) clog << "ERROR: could not get superclusters input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "taus") != objectsToGet.end()){
-    event.getByLabel (taus_, taus);
-    if (!taus.product()) clog << "ERROR: could not get taus input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "tracks") != objectsToGet.end()){
-    event.getByLabel (tracks_, tracks);
-    if (!tracks.product()) clog << "ERROR: could not get tracks input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "triggers") != objectsToGet.end()){
-    event.getByLabel (triggers_, triggers);
-    if (!triggers.product()) clog << "ERROR: could not get triggers input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "trigobjs") != objectsToGet.end()){
-    event.getByLabel (trigobjs_, trigobjs);
-    if (!trigobjs.product()) clog << "ERROR: could not get trigobjs input collection" << endl;
-  }
-  if (find(objectsToGet.begin(), objectsToGet.end(), "userVariables") != objectsToGet.end()){
-    event.getByLabel (userVariables_, userVariables);
-    if (!userVariables.product()) clog << "ERROR: could not get userVariables input collection" << endl;
-  }
-
+  if (vecContains(objectsToGet, string("bxlumis")))        getCollection(bxlumis_,        bxlumis,        event);  
+  if (vecContains(objectsToGet, string("electrons")))      getCollection(electrons_,      electrons,      event);  
+  if (vecContains(objectsToGet, string("events")))         getCollection(events_,         events,         event);  
+  if (vecContains(objectsToGet, string("genjets")))        getCollection(genjets_,        genjets,        event);  
+  if (vecContains(objectsToGet, string("jets")))           getCollection(jets_,           jets,           event);  
+  if (vecContains(objectsToGet, string("mcparticles")))    getCollection(mcparticles_,    mcparticles,    event);  
+  if (vecContains(objectsToGet, string("mets")))           getCollection(mets_,           mets,           event);  
+  if (vecContains(objectsToGet, string("muons")))          getCollection(muons_,          muons,          event);  
+  if (vecContains(objectsToGet, string("photons")))        getCollection(photons_,        photons,        event);  
+  if (vecContains(objectsToGet, string("primaryvertexs"))) getCollection(primaryvertexs_, primaryvertexs, event);  
+  if (vecContains(objectsToGet, string("secMuons")))       getCollection(secMuons_,       secMuons,       event);  
+  if (vecContains(objectsToGet, string("superclusters")))  getCollection(superclusters_,  superclusters,  event);  
+  if (vecContains(objectsToGet, string("taus")))           getCollection(taus_,           taus,           event);  
+  if (vecContains(objectsToGet, string("tracks")))         getCollection(tracks_,         tracks,         event);  
+  if (vecContains(objectsToGet, string("triggers")))       getCollection(triggers_,       triggers,       event);  
+  if (vecContains(objectsToGet, string("trigobjs")))       getCollection(trigobjs_,       trigobjs,       event);  
+  if (vecContains(objectsToGet, string("userVariables")))  getCollection(userVariables_,  userVariables,  event);  
 
   initializeValueLookup ();
   if (!initializeValueLookupTrees (histogramDefinitions))
@@ -587,7 +535,7 @@ template <class InputCollection> void Plotter::fill1DHistogram(const histoDef de
 
   TH1D *histogram = fs_->getObject<TH1D>(definition.name, definition.directory);
 
-  // loop over objets in input collection and fill histogram
+  // loop over objects in input collection and fill histogram
   for(uint index = 0; index != collection->size(); index++){
     double value = definition.valueLookupTrees.at (0)->evaluate (collection->at(index));
     double weight = 1.0;
@@ -803,6 +751,32 @@ Plotter::initializeValueLookupTrees (vector<histoDef> &histograms)
     }
   return true;
   //////////////////////////////////////////////////////////////////////////////
+}
+
+
+template <class VecType> bool Plotter::vecContains(vector< VecType > vec, VecType obj) { 
+  // Return whether obj is contained in vec.  
+  if (find(vec.begin(), vec.end(), obj) != vec.end()) return true;
+  else return false; 
+}  
+
+
+template <class InputCollection> void Plotter::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
+  // Get a collection with the specified type, and match the product instance name.
+  // Do not use Event::getByLabel() function, since it also matches the module name.
+  vector< edm::Handle<InputCollection> > objVec;                                                                                                                                                
+  event.getManyByType(objVec);                          
+
+  for (uint i=0; i<objVec.size(); i++) {
+    if (label.instance() == objVec.at(i).provenance()->productInstanceName()) {
+      coll = objVec.at(i);
+      break;
+    }
+  }
+                                                                            
+  if (!coll.product()) clog << "ERROR: could not get input collection with product instance label: " << label.instance()
+			    << ", but found " << objVec.size() << " collections of the specified type." << endl; 
+
 }
 
 void

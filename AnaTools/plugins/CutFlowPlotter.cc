@@ -24,58 +24,37 @@ CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
 CutFlowPlotter::~CutFlowPlotter ()
 {
 
-
   TH1D* cutFlow_   = oneDHists_["cutFlow"];
   TH1D* selection_ = oneDHists_["selection"];
   TH1D* minusOne_  = oneDHists_["minusOne"];
 
-  // Print all the cutflow information when this class is destroyed.  
+  // Print all the cutflow information stored in histograms when this class is destroyed.  
   int totalEvents;
-  //  string title = prefix_;
   clog << endl;
   clog << "=============================================" << endl;
   clog << endl;
   clog.setf(std::ios::fixed);
-//   if (prefix_ != "")
-//     {
-//       title[0] = toupper (title[0]);
-//       title += " Cuts";
-//       clog << title << endl;
-//     }
-//  uint longestCutName = 0;
   uint longestCutName = 30;
 
-  //  for (vector<string>::const_iterator cut = cutNames_.begin (); cut != cutNames_.end (); cut++) {
-  //  for (vector<cut>::const_iterator mycut = cutDecisions->cuts.begin (); mycut != cutDecisions->cuts.end (); mycut++) {
-//   for (uint i = 0; i < cutDecisions->cuts.size(); i++) { 
-//     //    if((mycut.name).size() > longestCutName) longestCutName = (mycut.name).size();
-//     if (cutDecisions->cuts.at(i).name.size() > longestCutName) longestCutName = cutDecisions->cuts.at(i).name.size();  
-//   }
+  for (int i=1; i<=cutFlow_->GetNbinsX(); i++) {
+    string cutName = cutFlow_->GetXaxis()->GetBinLabel(i);  
+    if (cutName.size() > longestCutName) longestCutName = cutName.size();     
+  }
   longestCutName += 1;
   clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
   clog << setw (longestCutName) << left << "Cut Name" << right << setw (10) << setprecision(1) << "Events" << setw (16) << "Cumul. Eff." << setw (16) << "Indiv. Eff." << setw (16) << "Minus One" << endl;
   clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
   totalEvents = cutFlow_->GetBinContent (1);
-  clog << setw (longestCutName) << left << "Total:" << right << setw (10) << setprecision(1) << (double) totalEvents << setw (16) << "100% " << setw (16) << "100% " << setw (16) << "0% " << endl;
-  //  for (vector<string>::const_iterator cut = cutNames_.begin (); cut != cutNames_.end (); cut++)
-  //  for (vector<cut>::const_iterator mycut = cutDecisions->cuts.begin (); mycut != cutDecisions->cuts.end (); mycut++) {
-  //  for (uint i = 0; i < cutDecisions->cuts.size(); i++) { 
   for (int i = 1; i <= cutFlow_->GetNbinsX(); i++) { 
-    //    clog << "Checking cut: " << i << endl;  
-    //    cut mycut = cutDecisions->cuts.at(i);  
-    //    clog << "Got the cut. " << endl;  
-    //string name = 
-    double cutFlow = cutFlow_->GetBinContent (i); 
+    double cutFlow   =   cutFlow_->GetBinContent (i); 
     double selection = selection_->GetBinContent (i); 
-    double minusOne = minusOne_->GetBinContent (i); 
-    //    clog << " Num events: " << cutFlow << endl;  
+    double minusOne  =  minusOne_->GetBinContent (i); 
     TString name = cutFlow_->GetXaxis()->GetBinLabel(i);  
-    clog << setw (longestCutName) << left << name << right << setw (10) << setprecision(1) << cutFlow << setw (15) << setprecision(3) << 100.0 * (cutFlow / (double) totalEvents) << "%"
+    clog << setw (longestCutName) << left << name << right << setw (10) << setprecision(1) << cutFlow
+	 << setw (15) << setprecision(3) << 100.0 * (cutFlow   / (double) totalEvents) << "%"
 	 << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
-	 << setw (15) << setprecision(3) << 100.0 * (minusOne / (double) totalEvents) << "%" << endl;
-//     clog << setw (longestCutName) << left << (mycut.name + ":") << right << setw (10) << setprecision(1) << cutFlow << setw (15) << setprecision(3) << 100.0 * (cutFlow / (double) totalEvents) << "%"
-// 	 << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
-// 	 << setw (15) << setprecision(3) << 100.0 * (minusOne / (double) totalEvents) << "%" << endl;
+	 << setw (15) << setprecision(3) << 100.0 * (minusOne  / (double) totalEvents) << "%" 
+	 << endl;
   }  
   clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
 

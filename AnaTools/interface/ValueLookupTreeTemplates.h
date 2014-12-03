@@ -4,7 +4,8 @@
 // This file contains the definitions of the template methods in the
 // ValueLookupTree class. These definitions need to be included by any file
 // which calls these functions so that the compiler knows which instances of
-// the methods to create.
+// the methods to create. That is why they are included here in a header file, 
+// rather than in an implementation file.  
 
 template<class T> double
 ValueLookupTree::evaluate (const T &obj)

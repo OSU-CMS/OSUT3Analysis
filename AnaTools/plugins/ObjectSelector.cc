@@ -15,7 +15,7 @@ ObjectSelector<T>::ObjectSelector (const edm::ParameterSet &cfg) :
   // Retrieve the InputTag for the collection which is to be filtered.
   collection_ = collections_.getParameter<edm::InputTag> (collectionToFilter_);
 
-  produces<vector<T> > ("selectedObjects");
+  produces<vector<T> > (collection_.instance ());
 }
 
 template<class T>
@@ -64,7 +64,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
     }
   //////////////////////////////////////////////////////////////////////////////
 
-  event.put (pl_, "selectedObjects");
+  event.put (pl_, collection_.instance ());
   firstEvent_ = false;
 
   // Return the global decision for the event. If the cut decisions could not
