@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/plugins/ObjectSelector.h"
 
 #define EXIT_CODE 2
@@ -46,7 +45,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<T> > (new vector<T> ());
   if (collection.isValid ())
     {
-      for (typename vector<T>::const_iterator object = collection->begin (); object != collection->end (); object++)
+      for (auto object = collection->begin (); object != collection->end (); object++)
         {
           unsigned iObject = object - collection->begin (),
                    nCuts;
@@ -56,7 +55,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
             {
               nCuts = cutDecisions->cumulativeObjectFlags.size ();
               if (nCuts > 0)
-                passes = cutDecisions->cumulativeObjectFlags.at (nCuts - 1).at (collectionToFilter_).at (iObject);
+                passes = cutDecisions->cumulativeObjectFlags.at (nCuts - 1).at (collectionToFilter_).at (iObject).first;
             }
           if (passes)
             pl_->push_back (*object);

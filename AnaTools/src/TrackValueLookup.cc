@@ -2,12 +2,11 @@
 
 #include "TLorentzVector.h"
 
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 
 //!track valueLookup
 double
-ValueLookupTree::valueLookup (const BNtrack *object, string variable){
+ValueLookupTree::valueLookup (const BNtrack * const object, const string &variable) const {
 
   double value = numeric_limits<int>::min ();
 

@@ -3,12 +3,11 @@
 #include "TLorentzVector.h"
 #include "TVector2.h"
 
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 
 //!event valueLookup
 double
-ValueLookupTree::valueLookup (const BNevent *object, string variable){
+ValueLookupTree::valueLookup (const BNevent * const object, const string &variable) const {
 
   double value = numeric_limits<int>::min ();
 

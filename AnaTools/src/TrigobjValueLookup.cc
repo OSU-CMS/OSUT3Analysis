@@ -1,11 +1,10 @@
 #include <iostream>
 
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 
 //!trigobj valueLookup
 double
-ValueLookupTree::valueLookup (const BNtrigobj *object, string variable){
+ValueLookupTree::valueLookup (const BNtrigobj * const object, const string &variable) const {
 
   double value = numeric_limits<int>::min ();
 

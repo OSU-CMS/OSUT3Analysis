@@ -1,11 +1,10 @@
 #include <iostream>
 
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 
 //!mcparticle valueLookup
 double
-ValueLookupTree::valueLookup (const BNmcparticle *object, string variable){
+ValueLookupTree::valueLookup (const BNmcparticle * const object, const string &variable) const {
 
   double value = numeric_limits<int>::min ();
 

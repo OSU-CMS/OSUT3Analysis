@@ -1,6 +1,8 @@
 #ifndef CUT_CALCULATOR
 #define CUT_CALCULATOR
 
+#include <unordered_set>
+
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
@@ -22,16 +24,15 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     // Private methods used in calculating the cut decisions.
     ////////////////////////////////////////////////////////////////////////////
-    template <class InputCollection> bool setObjectFlags (const Cut &, unsigned);
-    bool setObjectFlags (const Cut &, unsigned);
-    void updateCrossTalk (const Cut &, unsigned);
+    bool setObjectFlags (const Cut &, unsigned) const;
+    void updateCrossTalk (const Cut &, unsigned) const;
     bool unpackCuts ();
     void getTwoObjs (string, string &, string &);
-    template<typename T> bool evaluateComparison (T, string, T);
+    bool evaluateComparison (int, const string &, int) const;
     string getObjToGet (string);
-    vector<string> splitString (string);
-    bool evaluateTriggers ();
-    bool setEventFlags ();
+    vector<string> splitString (const string &) const;
+    bool evaluateTriggers () const;
+    bool setEventFlags () const;
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -45,11 +46,10 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     // Private variables set after unpacking the cuts ParameterSet.
     ////////////////////////////////////////////////////////////////////////////
-    vector<Cut>     unpackedCuts_;
-    vector<string>  unpackedTriggers_;
-    vector<string>  unpackedTriggersToVeto_;
-    vector<string>  objectsToFlag_;
-    vector<string>  objectsToGet_;
+    unordered_set<string>  objectsToGet_;
+    vector<Cut>            unpackedCuts_;
+    vector<string>         unpackedTriggersToVeto_;
+    vector<string>         unpackedTriggers_;
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ class CutCalculator : public edm::EDProducer
     // ValueLookup object, the function for initializing its private variables,
     // and the function for initializing ValueLookupTree objects.
     ////////////////////////////////////////////////////////////////////////////
-    bool initializeValueLookupForest (vector<Cut> &, Collections *);
+    bool initializeValueLookupForest (vector<Cut> &, Collections * const);
     ////////////////////////////////////////////////////////////////////////////
 };
 

@@ -1,17 +1,15 @@
-#include <iostream>
 #include <algorithm>
+#include <iostream>
+#include <set>
+#include <unordered_map>
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 #include "OSUT3Analysis/AnaTools/plugins/CutCalculator.h"
 
-#define EXIT_CODE 1
 
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-#define AT __FILE__ ":" TOSTRING(__LINE__)
+#define EXIT_CODE 1
 
 CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   collections_  (cfg.getParameter<edm::ParameterSet>  ("collections")),
@@ -42,21 +40,21 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   // Retrieve each object collection which we need and print a warning if it is
   // missing.
   //////////////////////////////////////////////////////////////////////////////
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "bxlumis")         !=  objectsToGet_.end  ()  &&  collections_.exists  ("bxlumis"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("bxlumis"),         handles_.bxlumis);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "electrons")       !=  objectsToGet_.end  ()  &&  collections_.exists  ("electrons"))       event.getByLabel  (collections_.getParameter<edm::InputTag>  ("electrons"),       handles_.electrons);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "events")          !=  objectsToGet_.end  ()  &&  collections_.exists  ("events"))          event.getByLabel  (collections_.getParameter<edm::InputTag>  ("events"),          handles_.events);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "genjets")         !=  objectsToGet_.end  ()  &&  collections_.exists  ("genjets"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("genjets"),         handles_.genjets);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "jets")            !=  objectsToGet_.end  ()  &&  collections_.exists  ("jets"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("jets"),            handles_.jets);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "mcparticles")     !=  objectsToGet_.end  ()  &&  collections_.exists  ("mcparticles"))     event.getByLabel  (collections_.getParameter<edm::InputTag>  ("mcparticles"),     handles_.mcparticles);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "mets")            !=  objectsToGet_.end  ()  &&  collections_.exists  ("mets"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("mets"),            handles_.mets);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "muons")           !=  objectsToGet_.end  ()  &&  collections_.exists  ("muons"))           event.getByLabel  (collections_.getParameter<edm::InputTag>  ("muons"),           handles_.muons);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "photons")         !=  objectsToGet_.end  ()  &&  collections_.exists  ("photons"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("photons"),         handles_.photons);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "primaryvertexs")  !=  objectsToGet_.end  ()  &&  collections_.exists  ("primaryvertexs"))  event.getByLabel  (collections_.getParameter<edm::InputTag>  ("primaryvertexs"),  handles_.primaryvertexs);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "superclusters")   !=  objectsToGet_.end  ()  &&  collections_.exists  ("superclusters"))   event.getByLabel  (collections_.getParameter<edm::InputTag>  ("superclusters"),   handles_.superclusters);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "taus")            !=  objectsToGet_.end  ()  &&  collections_.exists  ("taus"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("taus"),            handles_.taus);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "tracks")          !=  objectsToGet_.end  ()  &&  collections_.exists  ("tracks"))          event.getByLabel  (collections_.getParameter<edm::InputTag>  ("tracks"),          handles_.tracks);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "triggers")        !=  objectsToGet_.end  ()  &&  collections_.exists  ("triggers"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("triggers"),        handles_.triggers);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "trigobjs")        !=  objectsToGet_.end  ()  &&  collections_.exists  ("trigobjs"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("trigobjs"),        handles_.trigobjs);
+  if  (objectsToGet_.find  ("bxlumis")         !=  objectsToGet_.end  ()  &&  collections_.exists  ("bxlumis"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("bxlumis"),         handles_.bxlumis);
+  if  (objectsToGet_.find  ("electrons")       !=  objectsToGet_.end  ()  &&  collections_.exists  ("electrons"))       event.getByLabel  (collections_.getParameter<edm::InputTag>  ("electrons"),       handles_.electrons);
+  if  (objectsToGet_.find  ("events")          !=  objectsToGet_.end  ()  &&  collections_.exists  ("events"))          event.getByLabel  (collections_.getParameter<edm::InputTag>  ("events"),          handles_.events);
+  if  (objectsToGet_.find  ("genjets")         !=  objectsToGet_.end  ()  &&  collections_.exists  ("genjets"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("genjets"),         handles_.genjets);
+  if  (objectsToGet_.find  ("jets")            !=  objectsToGet_.end  ()  &&  collections_.exists  ("jets"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("jets"),            handles_.jets);
+  if  (objectsToGet_.find  ("mcparticles")     !=  objectsToGet_.end  ()  &&  collections_.exists  ("mcparticles"))     event.getByLabel  (collections_.getParameter<edm::InputTag>  ("mcparticles"),     handles_.mcparticles);
+  if  (objectsToGet_.find  ("mets")            !=  objectsToGet_.end  ()  &&  collections_.exists  ("mets"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("mets"),            handles_.mets);
+  if  (objectsToGet_.find  ("muons")           !=  objectsToGet_.end  ()  &&  collections_.exists  ("muons"))           event.getByLabel  (collections_.getParameter<edm::InputTag>  ("muons"),           handles_.muons);
+  if  (objectsToGet_.find  ("photons")         !=  objectsToGet_.end  ()  &&  collections_.exists  ("photons"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("photons"),         handles_.photons);
+  if  (objectsToGet_.find  ("primaryvertexs")  !=  objectsToGet_.end  ()  &&  collections_.exists  ("primaryvertexs"))  event.getByLabel  (collections_.getParameter<edm::InputTag>  ("primaryvertexs"),  handles_.primaryvertexs);
+  if  (objectsToGet_.find  ("superclusters")   !=  objectsToGet_.end  ()  &&  collections_.exists  ("superclusters"))   event.getByLabel  (collections_.getParameter<edm::InputTag>  ("superclusters"),   handles_.superclusters);
+  if  (objectsToGet_.find  ("taus")            !=  objectsToGet_.end  ()  &&  collections_.exists  ("taus"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("taus"),            handles_.taus);
+  if  (objectsToGet_.find  ("tracks")          !=  objectsToGet_.end  ()  &&  collections_.exists  ("tracks"))          event.getByLabel  (collections_.getParameter<edm::InputTag>  ("tracks"),          handles_.tracks);
+  if  (objectsToGet_.find  ("triggers")        !=  objectsToGet_.end  ()  &&  collections_.exists  ("triggers"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("triggers"),        handles_.triggers);
+  if  (objectsToGet_.find  ("trigobjs")        !=  objectsToGet_.end  ()  &&  collections_.exists  ("trigobjs"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("trigobjs"),        handles_.trigobjs);
 
   if (firstEvent_ && !handles_.bxlumis.isValid ())
     clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
@@ -114,7 +112,6 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_->triggersToVeto = unpackedTriggersToVeto_;
   //////////////////////////////////////////////////////////////////////////////
 
-
   // Loop over cuts to set flags for each object indicating whether it passed
   // the cut.
   for (unsigned currentCutIndex = 0; pl_->isValid && currentCutIndex != pl_->cuts.size (); currentCutIndex++)
@@ -150,7 +147,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
 }
 
 bool
-CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex)
+CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex) const
 {
   string inputType = currentCut.inputLabel;
   if (currentCutIndex >= pl_->objectFlags.size ())
@@ -160,17 +157,18 @@ CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex)
   pl_->objectFlags.at (currentCutIndex)[inputType];
   pl_->cumulativeObjectFlags.at (currentCutIndex)[inputType];
 
-  for (vector<Operand>::const_iterator cutDecision = currentCut.valueLookupTree->evaluate ().begin (); cutDecision != currentCut.valueLookupTree->evaluate ().end (); cutDecision++)
+  for (auto cutDecision = currentCut.valueLookupTree->evaluate ().begin (); cutDecision != currentCut.valueLookupTree->evaluate ().end (); cutDecision++)
     {
       unsigned object = (cutDecision - currentCut.valueLookupTree->evaluate ().begin ());
-      bool flag = boost::get<double> (*cutDecision);
+      double value = boost::get<double> (*cutDecision);
+      pair<bool, bool> flag = make_pair (value, value > numeric_limits<int>::min () + 1);
 
       if (currentCut.isVeto)
-        flag = !flag;
+        flag.first = !flag.first;
 
       pl_->objectFlags.at (currentCutIndex).at (inputType).push_back (flag);
       if (currentCutIndex > 0 && pl_->cumulativeObjectFlags.at (currentCutIndex - 1).count (inputType))
-        flag = flag && pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (inputType).at (object);
+        flag.first = flag.first && pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (inputType).at (object).first;
       pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).push_back (flag);
     }
 
@@ -178,74 +176,152 @@ CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex)
 }
 
 void
-CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
+CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex) const
 {
   string inputType = currentCut.inputLabel;
-  vector<string> singleObjects = currentCut.valueLookupTree->getSingleObjects (inputType);
-  vector<bool> singleObjectFlagsPropagated (singleObjects.size (), false);
+  vector<string> singleObjects = ValueLookupTree::getSingleObjects (inputType);
   if (currentCutIndex > 0)
     {
-      for (map<string, vector<bool> >::const_iterator collection = pl_->objectFlags.at (currentCutIndex - 1).begin (); collection != pl_->objectFlags.at (currentCutIndex - 1).end (); collection++)
+      for (const auto &collection : pl_->objectFlags.at (currentCutIndex - 1))
         {
-          if (collection->first == inputType)
+          if (collection.first == inputType)
             continue;
-          pl_->objectFlags.at (currentCutIndex)[collection->first] = pl_->objectFlags.at (currentCutIndex - 1)[collection->first];
-          pl_->cumulativeObjectFlags.at (currentCutIndex)[collection->first] = pl_->cumulativeObjectFlags.at (currentCutIndex - 1)[collection->first];
-          for (vector<string>::const_iterator singleObject = singleObjects.begin (); singleObject != singleObjects.end (); singleObject++)
+          pl_->objectFlags.at (currentCutIndex)[collection.first] = pl_->objectFlags.at (currentCutIndex - 1).at (collection.first);
+clog << "pl_->cumulativeObjectFlags.at (" << currentCutIndex << ")[" << collection.first << "] = pl_->cumulativeObjectFlags.at (" << currentCutIndex - 1 << ").at (" << collection.first << ") = {"; // HART
+for (auto flag = pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (collection.first).begin (); flag != pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (collection.first).end (); flag++) // HART
+{ // HART
+  if (flag != pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (collection.first).begin ()) // HART
+    clog << ", "; // HART
+  clog << "{"; // HART
+  if (flag->first) // HART
+    clog << "true"; // HART
+  else // HART
+    clog << "false"; // HART
+  clog << ", "; // HART
+  if (flag->second) // HART
+    clog << "true"; // HART
+  else // HART
+    clog << "false"; // HART
+  clog << "}"; // HART
+} // HART
+clog << "}" << endl; // HART
+          pl_->cumulativeObjectFlags.at (currentCutIndex)[collection.first] = pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (collection.first);
+          unordered_map<unsigned, bool> otherCumulativeFlags;
+          unordered_map<string, vector<bool> > currentCumulativeFlags;
+          for (auto singleObject = singleObjects.begin (); singleObject != singleObjects.end (); singleObject++)
             {
-              if (*singleObject == collection->first)
-                singleObjectFlagsPropagated.at (singleObject - singleObjects.begin ()) = true;
-              map<unsigned, bool> cumulativeFlags;
-              bool cumulativeFlag;
-              for (vector<bool>::const_iterator flag = pl_->objectFlags.at (currentCutIndex).at (inputType).begin (); flag != pl_->objectFlags.at (currentCutIndex).at (inputType).end (); flag++)
+              for (auto flag = pl_->objectFlags.at (currentCutIndex).at (inputType).begin (); flag != pl_->objectFlags.at (currentCutIndex).at (inputType).end (); flag++)
                 {
                   unsigned iFlag = flag - pl_->objectFlags.at (currentCutIndex).at (inputType).begin ();
                   unsigned localIndex = currentCut.valueLookupTree->getLocalIndex (iFlag, singleObject - singleObjects.begin ());
-                  vector<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (localIndex, *singleObject, collection->first);
+                  set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (localIndex, *singleObject, collection.first);
                   if (!globalIndices.size ())
                     break;
-                  cumulativeFlag = false;
-                  for (vector<unsigned>::const_iterator globalIndex = globalIndices.begin (); globalIndex != globalIndices.end (); globalIndex++)
+                  pair<bool, bool> currentFlag = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag), otherFlag;
+                  for (const auto &globalIndex : globalIndices)
                     {
-                      pl_->objectFlags.at (currentCutIndex).at (collection->first).at (*globalIndex) = (*flag);
-                      cumulativeFlag = cumulativeFlag || pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection->first).at (*globalIndex);
-                      if (!cumulativeFlags.count (*globalIndex))
-                        cumulativeFlags[*globalIndex] = false;
-                      cumulativeFlags.at (*globalIndex) = cumulativeFlags.at (*globalIndex) || pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag);
+                      flag->second && (pl_->objectFlags.at (currentCutIndex).at (collection.first).at (globalIndex).first = flag->first);
+                      otherFlag = pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection.first).at (globalIndex);
+                      if (!currentCumulativeFlags.count (*singleObject))
+                        currentCumulativeFlags[*singleObject] = vector<bool> (pl_->objectFlags.at (currentCutIndex).at (inputType).size (), false);
+                      otherFlag.second && (currentCumulativeFlags.at (*singleObject).at (iFlag) = currentCumulativeFlags.at (*singleObject).at (iFlag) || otherFlag.first);
+                      if (!otherCumulativeFlags.count (globalIndex))
+                        otherCumulativeFlags[globalIndex] = false;
+                      currentFlag.second && (otherCumulativeFlags.at (globalIndex) = otherCumulativeFlags.at (globalIndex) || currentFlag.first);
                     }
-                  pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag) = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag) && cumulativeFlag;
                 }
-              for (map<unsigned, bool>::const_iterator flag = cumulativeFlags.begin (); flag != cumulativeFlags.end (); flag++)
-                pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection->first).at (flag->first) = pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection->first).at (flag->first) && flag->second;
             }
+          for (const auto &flag : otherCumulativeFlags)
+            {
+              pair<bool, bool> otherFlag = pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection.first).at (flag.first);
+if (otherFlag.second)
+{
+  clog << "  pl_->cumulativeObjectFlags.at (" << currentCutIndex << ").at (" << collection.first << ").at (" << flag.first << ").first = otherFlag.first && flag.second = ";
+  if (otherFlag.first)
+    clog << "true";
+  else
+    clog << "false";
+  clog << " && ";
+  if (flag.second)
+    clog << "true";
+  else
+    clog << "false";
+  clog << endl;
+}
+              otherFlag.second && (pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection.first).at (flag.first).first = otherFlag.first && flag.second);
+            }
+          for (const auto &singleObject : currentCumulativeFlags)
+            {
+              for (auto flag = singleObject.second.begin (); flag != singleObject.second.end (); flag++)
+                {
+                  unsigned iFlag = flag - singleObject.second.begin ();
+                  pair<bool, bool> currentFlag = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag);
+if (currentFlag.second)
+{
+  clog << "  pl_->cumulativeObjectFlags.at (" << currentCutIndex << ").at (" << inputType << ").at (" << iFlag << ").first = currentFlag.first && (*flag) = ";
+  if (currentFlag.first)
+    clog << "true";
+  else
+    clog << "false";
+  clog << " && ";
+  if (*flag)
+    clog << "true";
+  else
+    clog << "false";
+  clog << endl;
+}
+                  currentFlag.second && (pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag).first = currentFlag.first && (*flag));
+                }
+            }
+clog << endl;
         }
     }
   if (singleObjects.size () > 1)
     {
-      for (vector<string>::const_iterator singleObject = singleObjects.begin (); singleObject != singleObjects.end (); singleObject++)
+      for (auto singleObject = singleObjects.begin (); singleObject != singleObjects.end (); singleObject++)
         {
-          if (singleObjectFlagsPropagated.at (singleObject - singleObjects.begin ()))
+          if (pl_->objectFlags.at (currentCutIndex).count (*singleObject))
             continue;
-          pl_->objectFlags.at (currentCutIndex)[*singleObject] = vector<bool> (currentCut.valueLookupTree->getCollectionSize (*singleObject), false);
-          pl_->cumulativeObjectFlags.at (currentCutIndex)[*singleObject] = vector<bool> (currentCut.valueLookupTree->getCollectionSize (*singleObject), false);
-          for (vector<bool>::const_iterator flag = pl_->objectFlags.at (currentCutIndex).at (inputType).begin (); flag != pl_->objectFlags.at (currentCutIndex).at (inputType).end (); flag++)
+          pl_->objectFlags.at (currentCutIndex)[*singleObject] = vector<pair<bool, bool> > (currentCut.valueLookupTree->getCollectionSize (*singleObject), make_pair (false, true));
+          pl_->cumulativeObjectFlags.at (currentCutIndex)[*singleObject] = vector<pair<bool, bool> > (currentCut.valueLookupTree->getCollectionSize (*singleObject), make_pair (false, true));
+          for (auto flag = pl_->objectFlags.at (currentCutIndex).at (inputType).begin (); flag != pl_->objectFlags.at (currentCutIndex).at (inputType).end (); flag++)
             {
               unsigned localIndex = currentCut.valueLookupTree->getLocalIndex (flag - pl_->objectFlags.at (currentCutIndex).at (inputType).begin (), singleObject - singleObjects.begin ());
-              pl_->objectFlags.at (currentCutIndex).at (*singleObject).at (localIndex) = pl_->objectFlags.at (currentCutIndex).at (*singleObject).at (localIndex) || (*flag);
-              pl_->cumulativeObjectFlags.at (currentCutIndex).at (*singleObject).at (localIndex) = pl_->cumulativeObjectFlags.at (currentCutIndex).at (*singleObject).at (localIndex) || (*flag);
+              flag->second && (pl_->objectFlags.at (currentCutIndex).at (*singleObject).at (localIndex).first = pl_->objectFlags.at (currentCutIndex).at (*singleObject).at (localIndex).first || flag->first);
+              flag->second && (pl_->cumulativeObjectFlags.at (currentCutIndex).at (*singleObject).at (localIndex).first = pl_->cumulativeObjectFlags.at (currentCutIndex).at (*singleObject).at (localIndex).first || flag->first);
             }
         }
     }
   if (currentCutIndex > 0)
     {
-      for (map<string, vector<bool> >::const_iterator collection = pl_->objectFlags.at (currentCutIndex).begin (); collection != pl_->objectFlags.at (currentCutIndex).end (); collection++)
+      for (const auto &collection : pl_->objectFlags.at (currentCutIndex))
         {
-          if (pl_->objectFlags.at (currentCutIndex - 1).count (collection->first))
+          if (pl_->objectFlags.at (currentCutIndex - 1).count (collection.first))
             continue;
+          singleObjects = ValueLookupTree::getSingleObjects (inputType);
           for (unsigned i = 0; i < currentCutIndex; i++)
             {
-              pl_->objectFlags.at (i)[collection->first] = vector<bool> (collection->second.size (), true);
-              pl_->cumulativeObjectFlags.at (i)[collection->first] = vector<bool> (collection->second.size (), true);
+              vector<pair<bool, bool> > objectFlags (collection.second.size (), make_pair (true, true)),
+                                        cumulativeObjectFlags (collection.second.size (), make_pair (true, true));
+              for (const auto &singleObject : singleObjects)
+                {
+                  if (!pl_->objectFlags.at (i).count (singleObject))
+                    continue;
+                  for (auto flag = pl_->objectFlags.at (i).at (singleObject).begin (); flag != pl_->objectFlags.at (i).at (singleObject).end (); flag++)
+                    {
+                      unsigned localIndex = flag - pl_->objectFlags.at (i).at (singleObject).begin ();
+                      set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (localIndex, singleObject, collection.first);
+                      for (const auto &globalIndex : globalIndices)
+                        {
+                          objectFlags.at (globalIndex).second = pl_->objectFlags.at (currentCutIndex).at (collection.first).at (globalIndex).second;
+                          objectFlags.at (globalIndex).second && (objectFlags.at (globalIndex).first = objectFlags.at (globalIndex).first && flag->first);
+                          cumulativeObjectFlags.at (globalIndex).second = pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection.first).at (globalIndex).second;
+                          cumulativeObjectFlags.at (globalIndex).second && (cumulativeObjectFlags.at (globalIndex).first = cumulativeObjectFlags.at (globalIndex).first && pl_->cumulativeObjectFlags.at (i).at (singleObject).at (localIndex).first);
+                        }
+                    }
+                }
+              pl_->objectFlags.at (i)[collection.first] = objectFlags;
+              pl_->cumulativeObjectFlags.at (i)[collection.first] = cumulativeObjectFlags;
             }
         }
     }
@@ -260,14 +336,14 @@ CutCalculator::unpackCuts ()
   if (cuts_.exists ("triggers"))
     {
       unpackedTriggers_ = cuts_.getParameter<vector<string> > ("triggers");
-      objectsToGet_.push_back ("triggers");
+      objectsToGet_.insert ("triggers");
     }
   else
     clog << "WARNING: no triggers have been specified." << endl;
   if (cuts_.exists ("triggersToVeto"))
     {
       unpackedTriggersToVeto_ = cuts_.getParameter<vector<string> > ("triggersToVeto");
-      objectsToGet_.push_back("triggers");
+      objectsToGet_.insert ("triggers");
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -286,7 +362,7 @@ CutCalculator::unpackCuts ()
       // Store the name(s) of the collection(s) to get from the event and for
       // which to set flags.
       //////////////////////////////////////////////////////////////////////////
-      objectsToGet_.insert (objectsToGet_.end (), tempInputCollection.begin (), tempInputCollection.end ());
+      objectsToGet_.insert (tempInputCollection.begin (), tempInputCollection.end ());
       //////////////////////////////////////////////////////////////////////////
 
       string catInputCollection = ValueLookupTree::catInputCollection (tempInputCollection);
@@ -344,14 +420,12 @@ CutCalculator::unpackCuts ()
       // Store the temporary cut variable into the vector of unpacked cuts.
       unpackedCuts_.push_back (tempCut);
     }
-  sort (objectsToGet_.begin (), objectsToGet_.end ());
-  objectsToGet_.erase (unique (objectsToGet_.begin (), objectsToGet_.end ()), objectsToGet_.end ());
 
   return true;
 }
 
-template<typename T> bool
-CutCalculator::evaluateComparison (T testValue, string comparison, T cutValue)
+bool
+CutCalculator::evaluateComparison (int testValue, const string &comparison, int cutValue) const
 {
   //////////////////////////////////////////////////////////////////////////////
   // Return the result of the comparison of two values, returning false if the
@@ -377,7 +451,7 @@ CutCalculator::evaluateComparison (T testValue, string comparison, T cutValue)
 }
 
 vector<string>
-CutCalculator::splitString (string inputString)
+CutCalculator::splitString (const string &inputString) const
 {
   //////////////////////////////////////////////////////////////////////////////
   // Split the input string into words separated by whitespace, with each word
@@ -392,7 +466,7 @@ CutCalculator::splitString (string inputString)
 }
 
 bool
-CutCalculator::evaluateTriggers ()
+CutCalculator::evaluateTriggers () const
 {
   //////////////////////////////////////////////////////////////////////////////
   // Initialize the flags for each trigger which is required and each trigger
@@ -405,7 +479,7 @@ CutCalculator::evaluateTriggers ()
 
   if (handles_.triggers.isValid ())
     {
-      for (BNtriggerCollection::const_iterator trigger = handles_.triggers->begin (); trigger != handles_.triggers->end (); trigger++)
+      for (const auto &trigger : *handles_.triggers)
         {
           //////////////////////////////////////////////////////////////////////////
           // If the current trigger matches one of the triggers to veto, record its
@@ -414,10 +488,10 @@ CutCalculator::evaluateTriggers ()
           //////////////////////////////////////////////////////////////////////////
           for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
             {
-              if (trigger->name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+              if (trigger.name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
                 {
-                  vetoTriggerDecision = vetoTriggerDecision && !trigger->pass;
-                  pl_->vetoTriggerFlags.at (triggerIndex) = trigger->pass;
+                  vetoTriggerDecision = vetoTriggerDecision && !trigger.pass;
+                  pl_->vetoTriggerFlags.at (triggerIndex) = trigger.pass;
                 }
             }
           //////////////////////////////////////////////////////////////////////////
@@ -429,10 +503,10 @@ CutCalculator::evaluateTriggers ()
           //////////////////////////////////////////////////////////////////////////
           for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
             {
-              if (trigger->name.find (pl_->triggers.at (triggerIndex)) == 0)
+              if (trigger.name.find (pl_->triggers.at (triggerIndex)) == 0)
                 {
-                  triggerDecision = triggerDecision || trigger->pass;
-                  pl_->triggerFlags.at (triggerIndex) = trigger->pass;
+                  triggerDecision = triggerDecision || trigger.pass;
+                  pl_->triggerFlags.at (triggerIndex) = trigger.pass;
                 }
             }
           //////////////////////////////////////////////////////////////////////////
@@ -445,7 +519,7 @@ CutCalculator::evaluateTriggers ()
 }
 
 bool
-CutCalculator::setEventFlags ()
+CutCalculator::setEventFlags () const
 {
   pl_->cutDecision = true;
 
@@ -461,9 +535,9 @@ CutCalculator::setEventFlags ()
       // Count the number of objects passing the current cut and all previous
       // cuts in the collection on which the cut acts.
       //////////////////////////////////////////////////////////////////////////
-      for (unsigned object = 0; object != pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).size (); object++)
+      for (const auto &flag : pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel))
         {
-          if (pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (object))
+          if (flag.second && flag.first)
             numberPassing++;
         }
       //////////////////////////////////////////////////////////////////////////
@@ -479,16 +553,15 @@ CutCalculator::setEventFlags ()
         cutDecision = evaluateComparison (numberPassing, currentCut.eventComparativeOperator, currentCut.numberRequired);
       else
         {
-          for (unsigned object = 0; object < pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).size (); object++)
+          if (currentCutIndex > 0)
             {
-              bool passesPrevCuts = true;
-              if (currentCutIndex > 0)
-                passesPrevCuts = pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (currentCut.inputLabel).at (object);
-              passesPrevCuts && numberPassingPrev++;
+              for (const auto &flag : pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (currentCut.inputLabel))
+                (flag.second && flag.first) && numberPassingPrev++;
             }
           int numberFailCut = numberPassingPrev - numberPassing;
           cutDecision = evaluateComparison (numberFailCut, currentCut.eventComparativeOperator, currentCut.numberRequired);
         }
+      //////////////////////////////////////////////////////////////////////////
 
       //////////////////////////////////////////////////////////////////////////
       // Store the decision for this cut in the payload and update the global
@@ -505,21 +578,21 @@ CutCalculator::setEventFlags ()
 }
 
 bool
-CutCalculator::initializeValueLookupForest (vector<Cut> &cuts, Collections *handles)
+CutCalculator::initializeValueLookupForest (vector<Cut> &cuts, Collections * const handles)
 {
   //////////////////////////////////////////////////////////////////////////////
   // For each cut, parse its cut string into a new ValueLookupTree object which
   // is stored in the cut structure.
   //////////////////////////////////////////////////////////////////////////////
-  for (vector<Cut>::iterator cut = cuts.begin (); cut != cuts.end (); cut++)
+  for (auto &cut : cuts)
     {
       if (firstEvent_)
         {
-          cut->valueLookupTree = new ValueLookupTree (*cut);
-          if (!cut->valueLookupTree->isValid ())
+          cut.valueLookupTree = new ValueLookupTree (cut);
+          if (!cut.valueLookupTree->isValid ())
             return false;
         }
-      cut->valueLookupTree->setCollections (handles);
+      cut.valueLookupTree->setCollections (handles);
     }
   return true;
   //////////////////////////////////////////////////////////////////////////////

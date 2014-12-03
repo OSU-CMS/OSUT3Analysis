@@ -34,8 +34,8 @@ class InfoPrinter : public edm::EDAnalyzer
     bool printObjectFlags ();
     bool printTriggerFlags ();
     bool printVetoTriggerFlags ();
-    unsigned getMaxWidth (const vector<string> &);
-    unsigned getMaxWidth (const vector<Cut> &);
+    unsigned getMaxWidth (const vector<string> &) const;
+    unsigned getMaxWidth (const vector<Cut> &) const;
     void outputTime ();
 
     ////////////////////////////////////////////////////////////////////////////

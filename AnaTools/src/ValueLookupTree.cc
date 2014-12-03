@@ -24,12 +24,10 @@ ValueLookupTree::ValueLookupTree (const Cut &cut) :
   pruneCommas (root_);
   pruneParentheses (root_);
 
-  vector<string> trimmedInputCollections;
-  trimInputCollections (root_, trimmedInputCollections);
-  sort (trimmedInputCollections.begin (), trimmedInputCollections.end ());
-  trimmedInputCollections.erase (unique (trimmedInputCollections.begin (), trimmedInputCollections.end ()), trimmedInputCollections.end ());
-  if (trimmedInputCollections.size ())
-    inputCollections_ = trimmedInputCollections;
+  vector<string> inferredInputCollections;
+  inferInputCollections (root_, inferredInputCollections);
+  if (inferredInputCollections.size ())
+    inputCollections_ = inferredInputCollections;
   sort (inputCollections_.begin (), inputCollections_.end ());
 }
 
@@ -41,12 +39,10 @@ ValueLookupTree::ValueLookupTree (const string &expression, const vector<string>
   pruneCommas (root_);
   pruneParentheses (root_);
 
-  vector<string> trimmedInputCollections;
-  trimInputCollections (root_, trimmedInputCollections);
-  sort (trimmedInputCollections.begin (), trimmedInputCollections.end ());
-  trimmedInputCollections.erase (unique (trimmedInputCollections.begin (), trimmedInputCollections.end ()), trimmedInputCollections.end ());
-  if (trimmedInputCollections.size ())
-    inputCollections_ = trimmedInputCollections;
+  vector<string> inferredInputCollections;
+  inferInputCollections (root_, inferredInputCollections);
+  if (inferredInputCollections.size ())
+    inputCollections_ = inferredInputCollections;
   sort (inputCollections_.begin (), inputCollections_.end ());
 }
 
@@ -81,13 +77,13 @@ ValueLookupTree::plural (string input)
 }
 
 void
-ValueLookupTree::pruneCommas (Node *tree)
+ValueLookupTree::pruneCommas (Node * const tree) const
 {
   bool foundComma;
   do
     {
       foundComma = false;
-      for (vector<Node *>::iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+      for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
         {
           if ((*branch)->value == ",")
             {
@@ -103,18 +99,18 @@ ValueLookupTree::pruneCommas (Node *tree)
     }
   while (foundComma);
 
-  for (vector<Node *>::iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
-    pruneCommas (*branch);
+  for (const auto &branch : tree->branches)
+    pruneCommas (branch);
 }
 
 void
-ValueLookupTree::pruneParentheses (Node *tree)
+ValueLookupTree::pruneParentheses (Node * const tree) const
 {
   bool foundParenthesis;
   do
     {
       foundParenthesis = false;
-      for (vector<Node *>::iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+      for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
         {
           if ((*branch)->value == "()")
             {
@@ -130,31 +126,31 @@ ValueLookupTree::pruneParentheses (Node *tree)
     }
   while (foundParenthesis);
 
-  for (vector<Node *>::iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
-    pruneParentheses (*branch);
+  for (const auto &branch : tree->branches)
+    pruneParentheses (branch);
 }
 
 void
-ValueLookupTree::trimInputCollections (const Node *tree, vector<string> &inputCollections)
+ValueLookupTree::inferInputCollections (const Node * const tree, vector<string> &inputCollections) const
 {
   if (tree->branches.size ())
     {
-      for (vector<Node *>::const_iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
-        trimInputCollections (*branch, inputCollections);
+      for (const auto &branch : tree->branches)
+        inferInputCollections (branch, inputCollections);
     }
   else if (isCollection (tree->value + "s"))
     inputCollections.push_back (tree->value + "s");
 }
 
-Collections *
-ValueLookupTree::setCollections (Collections *handles)
+const Collections * const
+ValueLookupTree::setCollections (Collections * const handles)
 {
   handles_ = handles;
   values_.clear ();
   nCombinations_.clear ();
   collectionSizes_.clear ();
   nCombinations_.assign (inputCollections_.size (), 1);
-  for (vector<string>::const_iterator collection = inputCollections_.begin (); collection != inputCollections_.end (); collection++)
+  for (auto collection = inputCollections_.begin (); collection != inputCollections_.end (); collection++)
     {
       unsigned currentSize = getCollectionSize (*collection);
       for (unsigned i = 0; i < (collection - inputCollections_.begin () + 1); i++)
@@ -166,7 +162,7 @@ ValueLookupTree::setCollections (Collections *handles)
 }
 
 unsigned
-ValueLookupTree::getLocalIndex (unsigned globalIndex, unsigned collectionIndex)
+ValueLookupTree::getLocalIndex (unsigned globalIndex, unsigned collectionIndex) const
 {
   if (collectionIndex + 1 != inputCollections_.size ())
     return ((globalIndex / nCombinations_.at (collectionIndex + 1)) % collectionSizes_.at (collectionIndex));
@@ -194,13 +190,14 @@ ValueLookupTree::getSingleObjects (string inputLabel)
   return singleObjects;
 }
 
-vector<unsigned>
-ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObjectCollection, string inputLabel)
+set<unsigned>
+ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObjectCollection, string inputLabel) const
 {
   vector<string> singleObjects = getSingleObjects (inputLabel);
-  vector<unsigned> globalIndices, nCombinations (singleObjects.size (), 1), collectionSizes;
+  set<unsigned> globalIndices;
+  vector<unsigned> nCombinations (singleObjects.size (), 1), collectionSizes;
   unsigned singleObjectIndex = singleObjects.size ();
-  for (vector<string>::const_iterator collection = singleObjects.begin (); collection != singleObjects.end (); collection++)
+  for (auto collection = singleObjects.begin (); collection != singleObjects.end (); collection++)
     {
       unsigned currentSize = getCollectionSize (*collection);
       for (unsigned i = 0; i < (collection - singleObjects.begin () + 1); i++)
@@ -216,12 +213,12 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
           if (singleObjectIndex + 1 < singleObjects.size ())
             {
               if ((i / nCombinations.at (singleObjectIndex + 1)) % collectionSizes.at (singleObjectIndex) == localIndex)
-                globalIndices.push_back (i);
+                globalIndices.insert (i);
             }
           else
             {
               if (i % collectionSizes.at (singleObjectIndex) == localIndex)
-                globalIndices.push_back (i);
+                globalIndices.insert (i);
             }
         }
     }
@@ -230,13 +227,13 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
 }
 
 bool
-ValueLookupTree::isValid ()
+ValueLookupTree::isValid () const
 {
   return (root_ != NULL);
 }
 
 bool
-ValueLookupTree::evaluationError ()
+ValueLookupTree::evaluationError () const
 {
   return evaluationError_;
 }
@@ -248,15 +245,15 @@ ValueLookupTree::insert (const string &cut)
 }
 
 void
-ValueLookupTree::destroy (Node *x)
+ValueLookupTree::destroy (Node * const x) const
 {
-  for (vector<Node *>::const_iterator branch = x->branches.begin (); branch != x->branches.end (); branch++)
-    destroy (*branch);
+  for (const auto &branch : x->branches)
+    destroy (branch);
   delete x;
 }
 
 Node *
-ValueLookupTree::insert_ (const string &cut, Node *parent)
+ValueLookupTree::insert_ (const string &cut, Node * const parent) const
 {
   //////////////////////////////////////////////////////////////////////////////
   // If the given string is missing parentheses, simply print an error and
@@ -303,7 +300,7 @@ ValueLookupTree::insert_ (const string &cut, Node *parent)
 }
 
 void *
-ValueLookupTree::getObject (const string &name, const unsigned i)
+ValueLookupTree::getObject (const string &name, const unsigned i) const
 {
   if (name == "bxlumis")
     {
@@ -378,8 +375,41 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
   return NULL;
 }
 
+void
+ValueLookupTree::deleteObject (const string &name, void * const obj) const
+{
+  if (name == "bxlumis")
+    delete ((BNbxlumi *) obj);
+  else if (name == "electrons")
+    delete ((BNelectron *) obj);
+  else if (name == "events")
+    delete ((BNevent *) obj);
+  else if (name == "genjets")
+    delete ((BNgenjet *) obj);
+  else if (name == "jets")
+    delete ((BNjet *) obj);
+  else if (name == "mcparticles")
+    delete ((BNmcparticle *) obj);
+  else if (name == "mets")
+    delete ((BNmet *) obj);
+  else if (name == "muons")
+    delete ((BNmuon *) obj);
+  else if (name == "photons")
+    delete ((BNphoton *) obj);
+  else if (name == "primaryvertexs")
+    delete ((BNprimaryvertex *) obj);
+  else if (name == "superclusters")
+    delete ((BNsupercluster *) obj);
+  else if (name == "taus")
+    delete ((BNtau *) obj);
+  else if (name == "tracks")
+    delete ((BNtrack *) obj);
+  else if (name == "trigobjs")
+    delete ((BNtrigobj *) obj);
+}
+
 unsigned
-ValueLookupTree::getCollectionSize (const string &name)
+ValueLookupTree::getCollectionSize (const string &name) const
 {
   if (name == "bxlumis")
     return handles_->bxlumis->size ();
@@ -412,7 +442,7 @@ ValueLookupTree::getCollectionSize (const string &name)
   return 0;
 }
 
-const vector<Operand> &
+const vector<Leaf> &
 ValueLookupTree::evaluate ()
 {
   if (!values_.size ())
@@ -420,27 +450,69 @@ ValueLookupTree::evaluate ()
       evaluationError_ = false;
       for (unsigned i = 0; i < nCombinations_.at (0); i++)
         {
-          map<string, void *> objs;
-          for (vector<string>::const_iterator collection = inputCollections_.begin (); collection != inputCollections_.end (); collection++)
+          objIterators_.clear ();
+          shouldIterate_.clear ();
+          ObjMap objs;
+          unordered_set<string> keys;
+          for (auto collection = inputCollections_.begin (); collection != inputCollections_.end (); collection++)
             {
-              unsigned j = collection - inputCollections_.begin ();
-              objs[*collection] = getObject (*collection, getLocalIndex (i, j));
+              unsigned j = collection - inputCollections_.begin (),
+                       localIndex = getLocalIndex (i, j);
+              objs.insert ({*collection, make_tuple (j, localIndex, getObject (*collection, localIndex))});
+              keys.insert (*collection);
             }
-          values_.push_back (evaluate_ (root_, objs));
+          if (isUniqueCase (objs, keys))
+            values_.push_back (evaluate_ (root_, objs));
+          else
+            values_.push_back (numeric_limits<int>::min ());
+          for (const auto &obj : objs)
+            deleteObject (obj.first, get<2> (obj.second));
         }
     }
 
   return values_;
 }
 
-Operand
-ValueLookupTree::evaluate_ (Node *tree, const map<string, void *> &objs)
+bool
+ValueLookupTree::collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> > a, pair<string, tuple<unsigned, unsigned, void *> > b)
+{
+  return (get<0> (a.second) < get<0> (b.second));
+}
+
+bool
+ValueLookupTree::isUniqueCase (const ObjMap &objs, const unordered_set<string> &keys) const
+{
+  bool pass = true;
+
+  for (const auto &key : keys)
+    {
+      if (objs.count (key) <= 1)
+        continue;
+      else
+        {
+          auto range = objs.equal_range (key);
+          vector<pair<string, tuple<unsigned, unsigned, void *> > > objsOfThisType (range.first, range.second);
+          sort (objsOfThisType.begin (), objsOfThisType.end (), ValueLookupTree::collectionIndexAscending);
+          int previousLocalIndex = -1;
+          for (const auto &obj : objsOfThisType)
+            {
+              pass = pass && ((int) get<1> (obj.second) > previousLocalIndex);
+              previousLocalIndex = get<1> (obj.second);
+            }
+        }
+    }
+
+  return pass;
+}
+
+Leaf
+ValueLookupTree::evaluate_ (const Node * const tree, const ObjMap &objs)
 {
   //////////////////////////////////////////////////////////////////////////////
   // Do nothing if the tree is null.
   //////////////////////////////////////////////////////////////////////////////
   if (!tree)
-    return false;
+    return numeric_limits<int>::min ();
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -449,9 +521,9 @@ ValueLookupTree::evaluate_ (Node *tree, const map<string, void *> &objs)
   //////////////////////////////////////////////////////////////////////////////
   if (tree->branches.size ())
     {
-      vector<Operand> operands;
-      for (vector<Node *>::iterator branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
-        operands.push_back (evaluate_ (*branch, objs));
+      vector<Leaf> operands;
+      for (const auto &branch : tree->branches)
+        operands.push_back (evaluate_ (branch, objs));
       return evaluateOperator (tree->value, operands, objs);
     }
   //////////////////////////////////////////////////////////////////////////////
@@ -471,20 +543,20 @@ ValueLookupTree::evaluate_ (Node *tree, const map<string, void *> &objs)
       else
         {
           if (inputCollections_.size () == 1)
-            return valueLookup (inputCollections_.at (0), objs.at (inputCollections_.at (0)), tree->value);
+            return valueLookup (inputCollections_.at (0), objs, tree->value);
           clog << "ERROR: cannot infer ownership of \"" << tree->value << "\"" << endl;
           evaluationError_ = true;
-          return numeric_limits<unsigned>::min ();
+          return numeric_limits<int>::min ();
         }
     }
   //////////////////////////////////////////////////////////////////////////////
 }
 
-Operand
-ValueLookupTree::evaluateOperator (const string &op, const vector<Operand> &operands, const map<string, void *> &objs)
+Leaf
+ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operands, const ObjMap &objs)
 {
   // Tries to return the result of operating on the operands. Prints out a
-  // warning, sets evaluationError_ to true, and returns the maximum unsigned
+  // warning, sets evaluationError_ to true, and returns the minimum unsigned
   // integer if there is a problem.
 
   try
@@ -608,34 +680,40 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Operand> &oper
       else if (op == "abs" || op == "fabs")
         return (fabs (boost::get<double> (operands.at (0))));
       else if (op == "deltaPhi")
-        return deltaPhi (valueLookup (boost::get<string> (operands.at (0)) + "s", objs.at (boost::get<string> (operands.at (0)) + "s"), "phi"),
-                         valueLookup (boost::get<string> (operands.at (1)) + "s", objs.at (boost::get<string> (operands.at (1)) + "s"), "phi"));
+        return deltaPhi (valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "phi"),
+                         valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi"));
       else if (op == "deltaR")
-        return deltaR (valueLookup (boost::get<string> (operands.at (0)) + "s", objs.at (boost::get<string> (operands.at (0)) + "s"), "eta"),
-                       valueLookup (boost::get<string> (operands.at (0)) + "s", objs.at (boost::get<string> (operands.at (0)) + "s"), "phi"),
-                       valueLookup (boost::get<string> (operands.at (1)) + "s", objs.at (boost::get<string> (operands.at (1)) + "s"), "eta"),
-                       valueLookup (boost::get<string> (operands.at (1)) + "s", objs.at (boost::get<string> (operands.at (1)) + "s"), "phi"));
+        {
+          double eta0, phi0, eta1, phi1;
+
+          eta0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "eta");
+          phi0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "phi", false);
+          eta1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "eta");
+          phi1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi", false);
+
+          return deltaR (eta0, phi0, eta1, phi1);
+        }
       else if (op == "invMass")
         {
           double energy = 0.0, px = 0.0, py = 0.0, pz = 0.0;
 
-          for (vector<Operand>::const_iterator operand = operands.begin (); operand != operands.end (); operand++)
+          for (const auto &operand : operands)
             {
-              energy += valueLookup (boost::get<string> (*operand) + "s", objs.at (boost::get<string> (*operand) + "s"), "energy");
-              px += valueLookup (boost::get<string> (*operand) + "s", objs.at (boost::get<string> (*operand) + "s"), "px");
-              py += valueLookup (boost::get<string> (*operand) + "s", objs.at (boost::get<string> (*operand) + "s"), "py");
-              pz += valueLookup (boost::get<string> (*operand) + "s", objs.at (boost::get<string> (*operand) + "s"), "pz");
+              energy += valueLookup (boost::get<string> (operand) + "s", objs, "energy");
+              px += valueLookup (boost::get<string> (operand) + "s", objs, "px", false);
+              py += valueLookup (boost::get<string> (operand) + "s", objs, "py", false);
+              pz += valueLookup (boost::get<string> (operand) + "s", objs, "pz", false);
             }
 
           return sqrt (energy * energy - px * px - py * py - pz * pz);
         }
       else if (op == ".")
-        return valueLookup (boost::get<string> (operands.at (0)) + "s", objs.at (boost::get<string> (operands.at (0)) + "s"), boost::get<string> (operands.at (1)));
+        return valueLookup (boost::get<string> (operands.at (0)) + "s", objs, boost::get<string> (operands.at (1)));
     }
   catch (...)
     {
       clog << "WARNING: failed to evaluate \"" << op << " (";
-      for (vector<Operand>::const_iterator operand = operands.begin (); operand != operands.end (); operand++)
+      for (auto operand = operands.begin (); operand != operands.end (); operand++)
         {
           if (operand != operands.begin ())
             clog << ", ";
@@ -644,7 +722,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Operand> &oper
       clog << ")\"" << endl;
       evaluationError_ = true;
     }
-  return numeric_limits<unsigned>::min ();
+  return numeric_limits<int>::min ();
 }
 
 string &
@@ -666,7 +744,7 @@ ValueLookupTree::trim (string &s)
 }
 
 bool
-ValueLookupTree::splitParentheses (string s)
+ValueLookupTree::splitParentheses (string s) const
 {
   // Returns true if the number of left parentheses does not equal the number
   // of right parentheses.
@@ -684,7 +762,7 @@ ValueLookupTree::splitParentheses (string s)
 }
 
 bool
-ValueLookupTree::isnumber (const string &s, double &x)
+ValueLookupTree::isnumber (const string &s, double &x) const
 {
   char *p;
   x = strtod (s.c_str (), &p);
@@ -698,7 +776,7 @@ ValueLookupTree::firstOfPairAscending (pair<size_t, string> a, pair<size_t, stri
 }
 
 pair<size_t, string>
-ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos)
+ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos) const
 {
   vector<pair<size_t, string> > indices;
   pair<size_t, string> firstHit, biggestHit;
@@ -707,11 +785,11 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
   // For each of the target strings, find the index of the first instance of
   // it. Then sort the indices in ascending order.
   //////////////////////////////////////////////////////////////////////////////
-  for (vector<string>::const_iterator target = targets.begin (); target != targets.end (); target++)
+  for (const auto &target : targets)
     {
-      size_t index = s.find (*target, pos);
-      if (!vetoMatch (s, *target, index, vetoTargets))
-        indices.push_back (make_pair (index, *target));
+      size_t index = s.find (target, pos);
+      if (!vetoMatch (s, target, index, vetoTargets))
+        indices.push_back (make_pair (index, target));
     }
   sort (indices.begin (), indices.end (), ValueLookupTree::firstOfPairAscending);
   //////////////////////////////////////////////////////////////////////////////
@@ -728,7 +806,7 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
   // string, then only return the one which matches the most characters.
   //////////////////////////////////////////////////////////////////////////////
   firstHit = indices.at (0);
-  for (vector<pair<size_t, string> >::const_iterator index = indices.begin (); index != indices.end () && index->first == firstHit.first; index++)
+  for (auto index = indices.begin (); index != indices.end () && index->first == firstHit.first; index++)
     {
       if (index->second.length () > biggestHit.second.length ())
         biggestHit = *index;
@@ -738,7 +816,7 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
 }
 
 bool
-ValueLookupTree::vetoMatch (const string &s, const string &target, const size_t index, const vector<string> &vetoTargets)
+ValueLookupTree::vetoMatch (const string &s, const string &target, const size_t index, const vector<string> &vetoTargets) const
 {
   //////////////////////////////////////////////////////////////////////////////
   // If there was no match, just return true, indicating a veto.
@@ -763,9 +841,9 @@ ValueLookupTree::vetoMatch (const string &s, const string &target, const size_t 
     return true;
   if ((isalnum (last) || last == '_') && (isalnum (proceeding) || proceeding == '_'))
     return true;
-  for (vector<string>::const_iterator vetoTarget = vetoTargets.begin (); vetoTarget != vetoTargets.end (); vetoTarget++)
+  for (const auto &vetoTarget : vetoTargets)
     {
-      size_t i = s.find (*vetoTarget, max ((size_t) 0, index - vetoTarget->length () - 1));
+      size_t i = s.find (vetoTarget, max ((size_t) 0, index - vetoTarget.length () - 1));
       if (i <= index)
         return true;
     }
@@ -775,7 +853,7 @@ ValueLookupTree::vetoMatch (const string &s, const string &target, const size_t 
 }
 
 bool
-ValueLookupTree::insertBinaryInfixOperator (const string &s, Node *tree, const vector<string> &operators, const vector<string> &vetoOperators)
+ValueLookupTree::insertBinaryInfixOperator (const string &s, Node * const tree, const vector<string> &operators, const vector<string> &vetoOperators) const
 {
   bool foundAnOperator = false;
   double x;
@@ -792,7 +870,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, Node *tree, const v
   // left and right substring. These substrings are inserted into the tree and
   // stored as branches for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (pair<size_t, string> i = findFirstOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, vetoOperators, i.first + i.second.length ()))
+  for (auto i = findFirstOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, vetoOperators, i.first + i.second.length ()))
     {
       string left, right;
       left = s.substr (0, i.first);
@@ -814,7 +892,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, Node *tree, const v
 }
 
 bool
-ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node *tree, const vector<string> &operators, const vector<string> &vetoOperators)
+ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node * const tree, const vector<string> &operators, const vector<string> &vetoOperators) const
 {
   bool foundAnOperator = false;
   double x;
@@ -831,7 +909,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node *tree, const v
   // left and right substring. The right substring is inserted into the tree and
   // stored as a branch for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (pair<size_t, string> i = findFirstOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, vetoOperators, i.first + i.second.length ()))
+  for (auto i = findFirstOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, vetoOperators, i.first + i.second.length ()))
     {
       string left, right;
       left = s.substr (0, i.first);
@@ -850,7 +928,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node *tree, const v
 }
 
 bool
-ValueLookupTree::insertParentheses (const string &s, Node *tree)
+ValueLookupTree::insertParentheses (const string &s, Node * const tree) const
 {
   //////////////////////////////////////////////////////////////////////////////
   // Look for the first left parenthesis and the last right parenthesis and
@@ -878,7 +956,7 @@ string
 ValueLookupTree::catInputCollection (const vector<string> &inputCollections)
 {
   string catInputCollection = "";
-  for (vector<string>::const_iterator collection = inputCollections.begin (); collection != inputCollections.end (); collection++)
+  for (auto collection = inputCollections.begin (); collection != inputCollections.end (); collection++)
     {
       if (collection != inputCollections.begin ())
         catInputCollection += "-";
@@ -888,7 +966,7 @@ ValueLookupTree::catInputCollection (const vector<string> &inputCollections)
 }
 
 double
-ValueLookupTree::getMember (const string &type, void *obj, const string &member)
+ValueLookupTree::getMember (const string &type, void * const obj, const string &member) const
 {
   double value = numeric_limits<int>::min ();
   Reflex::Type t = Reflex::Type::ByName (type);
@@ -908,7 +986,7 @@ ValueLookupTree::getMember (const string &type, void *obj, const string &member)
   catch (...)
     {
       bool found = false;
-      for (Reflex::Base_Iterator bi = t.Base_Begin (); bi != t.Base_End (); bi++)
+      for (auto bi = t.Base_Begin (); bi != t.Base_End (); bi++)
         {
           try
             {
@@ -930,7 +1008,7 @@ ValueLookupTree::getMember (const string &type, void *obj, const string &member)
 }
 
 bool
-ValueLookupTree::isCollection (const string &name)
+ValueLookupTree::isCollection (const string &name) const
 {
   if (name == "bxlumis")
     return true;
@@ -964,7 +1042,7 @@ ValueLookupTree::isCollection (const string &name)
 }
 
 string
-ValueLookupTree::getCollectionType (const string &name)
+ValueLookupTree::getCollectionType (const string &name) const
 {
   if (name == "bxlumis")
     return "BNbxlumi";
@@ -998,8 +1076,18 @@ ValueLookupTree::getCollectionType (const string &name)
 }
 
 double
-ValueLookupTree::valueLookup (const string &collection, void *obj, const string &variable)
+ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, const string &variable, const bool iterateObj)
 {
+  if (!objIterators_.count (collection))
+    {
+      auto range = objs.equal_range (collection);
+      objIterators_[collection] = range.first;
+      shouldIterate_[collection] = (objs.count (collection) > 1);
+    }
+  else if (shouldIterate_.at (collection) && iterateObj)
+    objIterators_.at (collection)++;
+  void *obj = get<2> (objIterators_.at (collection)->second);
+
   try
     {
       return getMember (getCollectionType (collection), obj, variable);

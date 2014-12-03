@@ -1,11 +1,10 @@
 #include <iostream>
 
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 
 //!tau valueLookup
 double
-ValueLookupTree::valueLookup (const BNtau *object, string variable){
+ValueLookupTree::valueLookup (const BNtau * const object, const string &variable) const {
 
   double value = numeric_limits<int>::min ();
 

@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "OSUT3Analysis/AnaTools/plugins/CutFlowPlotter.h"
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 
 #define EXIT_CODE 4
 
@@ -25,9 +24,9 @@ CutFlowPlotter::~CutFlowPlotter ()
 {
 
 
-  TH1D* cutFlow_   = oneDHists_["cutFlow"];
-  TH1D* selection_ = oneDHists_["selection"];
-  TH1D* minusOne_  = oneDHists_["minusOne"];
+  TH1D* cutFlow_   = oneDHists_.at ("cutFlow");
+  TH1D* selection_ = oneDHists_.at ("selection");
+  TH1D* minusOne_  = oneDHists_.at ("minusOne");
 
   // Print all the cutflow information when this class is destroyed.
   int totalEvents;
@@ -112,9 +111,9 @@ CutFlowPlotter::initializeCutFlow ()
   // do no more, so return false.
   //////////////////////////////////////////////////////////////////////////////
   unsigned bin = 1;
-  oneDHists_["cutFlow"]->GetXaxis    ()->SetBinLabel  (bin,  "total");
-  oneDHists_["selection"]->GetXaxis  ()->SetBinLabel  (bin,  "total");
-  oneDHists_["minusOne"]->GetXaxis   ()->SetBinLabel  (bin,  "total");
+  oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "total");
+  oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "total");
+  oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "total");
   bin++;
   if (!cutDecisions.isValid ())
     return false;
@@ -127,9 +126,9 @@ CutFlowPlotter::initializeCutFlow ()
   //////////////////////////////////////////////////////////////////////////////
   unsigned nCuts = cutDecisions->cuts.size ();
   cutDecisions->triggers.size () && nCuts++;
-  oneDHists_["cutFlow"]->SetBins    (nCuts + 1,  0.0,  nCuts + 1);
-  oneDHists_["selection"]->SetBins  (nCuts + 1,  0.0,  nCuts + 1);
-  oneDHists_["minusOne"]->SetBins   (nCuts + 1,  0.0,  nCuts + 1);
+  oneDHists_.at ("cutFlow")->SetBins    (nCuts + 1,  0.0,  nCuts + 1);
+  oneDHists_.at ("selection")->SetBins  (nCuts + 1,  0.0,  nCuts + 1);
+  oneDHists_.at ("minusOne")->SetBins   (nCuts + 1,  0.0,  nCuts + 1);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -138,16 +137,16 @@ CutFlowPlotter::initializeCutFlow ()
   //////////////////////////////////////////////////////////////////////////////
   if (cutDecisions->triggers.size ())
     {
-      oneDHists_["cutFlow"]->GetXaxis    ()->SetBinLabel  (bin,  "trigger");
-      oneDHists_["selection"]->GetXaxis  ()->SetBinLabel  (bin,  "trigger");
-      oneDHists_["minusOne"]->GetXaxis   ()->SetBinLabel  (bin,  "trigger");
+      oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "trigger");
+      oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "trigger");
+      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger");
       bin++;
     }
   for (vector<Cut>::const_iterator cut = cutDecisions->cuts.begin (); cut != cutDecisions->cuts.end (); cut++, bin++)
     {
-      oneDHists_["cutFlow"]->GetXaxis    ()->SetBinLabel  (bin,  cut->name.c_str  ());
-      oneDHists_["selection"]->GetXaxis  ()->SetBinLabel  (bin,  cut->name.c_str  ());
-      oneDHists_["minusOne"]->GetXaxis   ()->SetBinLabel  (bin,  cut->name.c_str  ());
+      oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  cut->name.c_str  ());
+      oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  cut->name.c_str  ());
+      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  cut->name.c_str  ());
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -165,9 +164,9 @@ CutFlowPlotter::fillCutFlow (double w)
   //////////////////////////////////////////////////////////////////////////////
   double bin = 0.5;
   bool passes = true;
-  oneDHists_["eventCounter"]->Fill  (bin,  w);
-  oneDHists_["cutFlow"]->Fill       (bin,  w);
-  oneDHists_["selection"]->Fill     (bin,  w);
+  oneDHists_.at ("eventCounter")->Fill  (bin,  w);
+  oneDHists_.at ("cutFlow")->Fill       (bin,  w);
+  oneDHists_.at ("selection")->Fill     (bin,  w);
   bin++;
   if (!cutDecisions.isValid ())
     return false;
@@ -181,8 +180,8 @@ CutFlowPlotter::fillCutFlow (double w)
     {
       if (cutDecisions->triggerDecision)
         {
-          oneDHists_["cutFlow"]->Fill    (bin,  w);
-          oneDHists_["selection"]->Fill  (bin,  w);
+          oneDHists_.at ("cutFlow")->Fill    (bin,  w);
+          oneDHists_.at ("selection")->Fill  (bin,  w);
         }
       passes = passes && cutDecisions->triggerDecision;
       bin++;
@@ -191,9 +190,9 @@ CutFlowPlotter::fillCutFlow (double w)
     {
       passes = passes && (*flag);
       if (*flag)
-        oneDHists_["selection"]->Fill (bin, w);
+        oneDHists_.at ("selection")->Fill (bin, w);
       if (passes)
-        oneDHists_["cutFlow"]->Fill (bin, w);
+        oneDHists_.at ("cutFlow")->Fill (bin, w);
     }
   //////////////////////////////////////////////////////////////////////////////
 

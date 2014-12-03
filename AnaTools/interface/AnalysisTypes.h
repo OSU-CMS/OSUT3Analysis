@@ -30,9 +30,9 @@ using namespace std;
 
 class ValueLookupTree;
 
-typedef boost::variant<double, string> Operand;
+typedef boost::variant<double, string> Leaf;
 
-typedef vector<map<string, vector<bool> > > FlagMap;
+typedef vector<map<string, vector<pair<bool, bool> > > > FlagMap;
 
 struct BadCSC {
   double etaCSC;

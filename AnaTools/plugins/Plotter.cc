@@ -1,4 +1,3 @@
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 #include "OSUT3Analysis/AnaTools/plugins/Plotter.h"
 
@@ -319,7 +318,7 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
   TH1D *histogram = fs_->getObject<TH1D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
-  for(vector<Operand>::const_iterator value = definition.valueLookupTrees.at (0)->evaluate ().begin (); value != definition.valueLookupTrees.at (0)->evaluate ().end (); value++){
+  for(vector<Leaf>::const_iterator value = definition.valueLookupTrees.at (0)->evaluate ().begin (); value != definition.valueLookupTrees.at (0)->evaluate ().end (); value++){
     double weight = 1.0;
     if(definition.hasVariableBinsX){
       weight /= getBinSize(histogram,boost::get<double> (*value));
@@ -337,8 +336,8 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
   TH2D *histogram = fs_->getObject<TH2D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
-  for(vector<Operand>::const_iterator valueX = definition.valueLookupTrees.at (0)->evaluate ().begin (); valueX != definition.valueLookupTrees.at (0)->evaluate ().end (); valueX++){
-    for(vector<Operand>::const_iterator valueY = definition.valueLookupTrees.at (1)->evaluate ().begin (); valueY != definition.valueLookupTrees.at (1)->evaluate ().end (); valueY++){
+  for(vector<Leaf>::const_iterator valueX = definition.valueLookupTrees.at (0)->evaluate ().begin (); valueX != definition.valueLookupTrees.at (0)->evaluate ().end (); valueX++){
+    for(vector<Leaf>::const_iterator valueY = definition.valueLookupTrees.at (1)->evaluate ().begin (); valueY != definition.valueLookupTrees.at (1)->evaluate ().end (); valueY++){
       double weight = 1.0;
       if(definition.hasVariableBinsX){
         weight /= getBinSize(histogram,boost::get<double> (*valueX), boost::get<double> (*valueY)).first;
