@@ -206,9 +206,11 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
     # in the case of running over skims.  
     # To ensure a unique process name, use a date/time stamp.
     ############################################################################
-    now = datetime.datetime.now()
-    date_hash = now.strftime("%YY%mM%dD%Hh%Mm%Ss")  # Non-alpha-numeric characters are not allowed in the process name.  
-    process.setName_ (process.name_ () + date_hash)
+    if not hasattr (add_channels, "processNameUpdated"):
+        add_channels.processNameUpdated = True
+        now = datetime.datetime.now()
+        date_hash = now.strftime("%YY%mM%dD%Hh%Mm%Ss")  # Non-alpha-numeric characters are not allowed in the process name.
+        process.setName_ (process.name_ () + date_hash)
     ############################################################################
 
 
@@ -284,10 +286,11 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
             )
             channelPath += objectSelector
             setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
-            setattr (channelCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), "selectedObjects"))
+            originalInputTag = getattr (collections, collection)
+            setattr (channelCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
+            outputCommands.append ("drop BN" + collection + "_*_*_*")
+            outputCommands.append ("keep BN" + collection + "_objectSelector" + str (add_channels.filterIndex) + "_*_" + process.name_ ())
             add_channels.filterIndex += 1
-            outputCommands.append ("drop BN" + collection + "_*_*_BEANs")
-            outputCommands.append ("keep BN" + collection + "_*_*_OSUAnalysis")
         ########################################################################
 
         ########################################################################
