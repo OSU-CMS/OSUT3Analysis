@@ -92,8 +92,8 @@ IntLumi = 0.0
 if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
-    split_datasets = split_composite_datasets(datasets, composite_dataset_definitions)
     composite_datasets = get_composite_datasets(datasets, composite_dataset_definitions)
+    split_datasets = split_composite_datasets(datasets, composite_dataset_definitions)
     IntLumi = intLumi    
 if not arguments.localConfig:
     if arguments.Dataset == "":
@@ -147,4 +147,17 @@ for dataSet in split_datasets:
         print "    The crossSection of dataset " + dataSet + " is " + str(crossSection) + " pb."
     print "    The weighting factor is " + str(Weight) + ", which is a nunitless number." 
     print "...............................................................\n"
+    os.chdir(CondorDir) 
 
+for dataSet_component in composite_datasets:
+    print "................Merging composite dataset " + dataSet + " ................"
+    memberList = []
+    for dataset in composite_dataset_definitions[dataSet_component]:
+        if not os.path.exists(dataset + '.root'):
+            print dataset + '.root does not exist, component dataset ' + dataSet_component + ' wont be complete!'
+            continue  	
+        memberList.append(dataset + '.root')
+    InputFileString = MakeInputFileString(memberList)
+    os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + dataSet_component + '.root')
+    print 'Finish merging composite dataset ' + dataSet_component
+    print "...............................................................\n"
