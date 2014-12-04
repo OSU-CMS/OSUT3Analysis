@@ -1,8 +1,8 @@
 // Common utilities that may be used by multiple modules.
 //
-// Note that templated functions must be implemented in this header file, 
-// rather than in a separate implementation file, so that they can be used 
-// by other modules.  
+// Note that templated functions must be implemented in this header file,
+// rather than in a separate implementation file, so that they can be used
+// by other modules.
 
 #ifndef COMMON_UTILS
 #define COMMON_UTILS
@@ -17,20 +17,20 @@
 
 using namespace std;
 
-template <class InputCollection> void getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {                                                         
-  // Get a collection with the specified type, and match the product instance name.                                                                                                                    
-  // Do not use Event::getByLabel() function, since it also matches the module name.                                                                                                                   
-  vector< edm::Handle<InputCollection> > objVec;                                                                                                                                                       
-  event.getManyByType(objVec);                                                                                                                                                                         
-  for (uint i=0; i<objVec.size(); i++) {                                                                                                                                                               
-    if (label.instance() == objVec.at(i).provenance()->productInstanceName()) {                                                                                                                        
-      coll = objVec.at(i);                                                                                                                                                                             
-      break;                                                                                                                                                                                           
-    }                                                                                                                                                                                                  
-  }                                                                                                                                                                                                    
-  if (!coll.product()) clog << "ERROR: could not get input collection with product instance label: " << label.instance()                                                                               
-                         << ", but found " << objVec.size() << " collections of the specified type." << endl;                                                                                          
-}                                                                                                                                                                          
+template <class InputCollection> void getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
+  // Get a collection with the specified type, and match the product instance name.
+  // Do not use Event::getByLabel() function, since it also matches the module name.
+  vector< edm::Handle<InputCollection> > objVec;
+  event.getManyByType(objVec);
+  for (uint i=0; i<objVec.size(); i++) {
+    if (label.instance() == objVec.at(i).provenance()->productInstanceName()) {
+      coll = objVec.at(i);
+      break;
+    }
+  }
+  if (!coll.product()) clog << "ERROR: could not get input collection with product instance label: " << label.instance()
+                         << ", but found " << objVec.size() << " collections of the specified type." << endl;
+}
 
 // Extracts the constituent collections from a composite collection name.
 vector<string> getSingleObjects (string);
