@@ -8,6 +8,7 @@
 
 #include "DataFormats/Math/interface/deltaR.h"
 
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 
 ValueLookupTree::ValueLookupTree () :
@@ -51,100 +52,17 @@ ValueLookupTree::~ValueLookupTree ()
   destroy (root_);
 }
 
-string
-ValueLookupTree::capitalize (string input)
-{
-  input.front () = toupper (input.front ());
-  return input;
-}
-
-string
-ValueLookupTree::singular (string input)
-{
-  if (tolower (input.back ()) == 's')
-    return input.substr (0, input.size () - 1);
-  else
-    return input;
-}
-
-string
-ValueLookupTree::plural (string input)
-{
-  if (tolower (input.back ()) == 's')
-    return input;
-  else
-    return input + "s";
-}
-
-void
-ValueLookupTree::pruneCommas (Node * const tree) const
-{
-  bool foundComma;
-  do
-    {
-      foundComma = false;
-      for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
-        {
-          if ((*branch)->value == ",")
-            {
-              foundComma = true;
-
-              size_t comma = branch - tree->branches.begin ();
-              tree->branches.insert (branch + 1, (*branch)->branches.begin (), (*branch)->branches.end ());
-              branch = tree->branches.begin () + comma;
-              tree->branches.erase (branch);
-              branch = tree->branches.begin () + comma + 1;
-            }
-        }
-    }
-  while (foundComma);
-
-  for (const auto &branch : tree->branches)
-    pruneCommas (branch);
-}
-
-void
-ValueLookupTree::pruneParentheses (Node * const tree) const
-{
-  bool foundParenthesis;
-  do
-    {
-      foundParenthesis = false;
-      for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
-        {
-          if ((*branch)->value == "()")
-            {
-              foundParenthesis = true;
-
-              size_t parenthesis = branch - tree->branches.begin ();
-              tree->branches.insert (branch + 1, (*branch)->branches.begin (), (*branch)->branches.end ());
-              branch = tree->branches.begin () + parenthesis;
-              tree->branches.erase (branch);
-              branch = tree->branches.begin () + parenthesis;
-            }
-        }
-    }
-  while (foundParenthesis);
-
-  for (const auto &branch : tree->branches)
-    pruneParentheses (branch);
-}
-
-void
-ValueLookupTree::inferInputCollections (const Node * const tree, vector<string> &inputCollections) const
-{
-  if (tree->branches.size ())
-    {
-      for (const auto &branch : tree->branches)
-        inferInputCollections (branch, inputCollections);
-    }
-  else if (isCollection (tree->value + "s"))
-    inputCollections.push_back (tree->value + "s");
-}
-
 const Collections * const
 ValueLookupTree::setCollections (Collections * const handles)
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Assigns the given collections to the private class member, clears values_,
+  // and recalculates nCombinations_ and collectionSizes_. If there are N input
+  // collections, the i-th element of nCombinations_ is the product of the
+  // sizes of the first (N - i) collections. This is used later when
+  // calculating indices of objects. The i-th element of collectionSizes_ is
+  // just the size of the i-th collection.
+  //////////////////////////////////////////////////////////////////////////////
   handles_ = handles;
   values_.clear ();
   nCombinations_.clear ();
@@ -157,42 +75,89 @@ ValueLookupTree::setCollections (Collections * const handles)
         nCombinations_[i] *= currentSize;
       collectionSizes_.push_back (currentSize);
     }
+  //////////////////////////////////////////////////////////////////////////////
 
   return handles_;
+}
+
+bool
+ValueLookupTree::isValid () const
+{
+  return (root_ != NULL);
+}
+
+bool
+ValueLookupTree::evaluationError () const
+{
+  return evaluationError_;
+}
+
+void
+ValueLookupTree::insert (const string &cut)
+{
+  root_ = insert_ (cut, NULL);
+}
+
+const vector<Leaf> &
+ValueLookupTree::evaluate ()
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // The values_ vector contains the expression stored in the tree evaluated
+  // for each object. If it is empty when this method is called, it is filled.
+  // Then the method returns it as a reference.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!values_.size ())
+    {
+      evaluationError_ = false;
+      for (unsigned i = 0; i < nCombinations_.at (0); i++)
+        {
+          objIterators_.clear ();
+          shouldIterate_.clear ();
+          ObjMap objs;
+          unordered_set<string> keys;
+          for (auto collection = inputCollections_.begin (); collection != inputCollections_.end (); collection++)
+            {
+              unsigned j = collection - inputCollections_.begin (),
+                       localIndex = getLocalIndex (i, j);
+              objs.insert ({*collection, make_tuple (j, localIndex, getObject (*collection, localIndex))});
+              keys.insert (*collection);
+            }
+          if (isUniqueCase (objs, keys))
+            values_.push_back (evaluate_ (root_, objs));
+          else
+            values_.push_back (numeric_limits<int>::min ());
+          for (const auto &obj : objs)
+            deleteObject (obj.first, get<2> (obj.second));
+        }
+    }
+
+  return values_;
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 unsigned
 ValueLookupTree::getLocalIndex (unsigned globalIndex, unsigned collectionIndex) const
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Returns the local index within the primitive collection indexed by the
+  // second argument, given the global index within the composite collection of
+  // this tree.
+  //////////////////////////////////////////////////////////////////////////////
   if (collectionIndex + 1 != inputCollections_.size ())
     return ((globalIndex / nCombinations_.at (collectionIndex + 1)) % collectionSizes_.at (collectionIndex));
   else
     return (globalIndex % collectionSizes_.at (collectionIndex));
-}
-
-vector<string>
-ValueLookupTree::getSingleObjects (string inputLabel)
-{
   //////////////////////////////////////////////////////////////////////////////
-  // Extracts the names of the two object types from the name of a pair.
-  //////////////////////////////////////////////////////////////////////////////
-  vector<string> singleObjects;
-  size_t hyphen;
-  while ((hyphen = inputLabel.find ('-')) != string::npos)
-    {
-      singleObjects.push_back (plural (inputLabel.substr (0, hyphen)));
-      inputLabel = inputLabel.substr (hyphen + 1);
-    }
-  singleObjects.push_back (plural (inputLabel));
-  sort (singleObjects.begin (), singleObjects.end ());
-  //////////////////////////////////////////////////////////////////////////////
-
-  return singleObjects;
 }
 
 set<unsigned>
 ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObjectCollection, string inputLabel) const
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Returns the global indices within the composite collection named by the
+  // third argument, given a local index within the primitive collection named
+  // by the second argument.
+  //////////////////////////////////////////////////////////////////////////////
   vector<string> singleObjects = getSingleObjects (inputLabel);
   set<unsigned> globalIndices;
   vector<unsigned> nCombinations (singleObjects.size (), 1), collectionSizes;
@@ -222,26 +187,45 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
             }
         }
     }
+  //////////////////////////////////////////////////////////////////////////////
 
   return globalIndices;
 }
 
-bool
-ValueLookupTree::isValid () const
+unsigned
+ValueLookupTree::getCollectionSize (const string &name) const
 {
-  return (root_ != NULL);
-}
-
-bool
-ValueLookupTree::evaluationError () const
-{
-  return evaluationError_;
-}
-
-void
-ValueLookupTree::insert (const string &cut)
-{
-  root_ = insert_ (cut, NULL);
+  if (name == "bxlumis")
+    return handles_->bxlumis->size ();
+  else if (name == "electrons")
+    return handles_->electrons->size ();
+  else if (name == "events")
+    return handles_->events->size ();
+  else if (name == "genjets")
+    return handles_->genjets->size ();
+  else if (name == "jets")
+    return handles_->jets->size ();
+  else if (name == "mcparticles")
+    return handles_->mcparticles->size ();
+  else if (name == "mets")
+    return handles_->mets->size ();
+  else if (name == "muons")
+    return handles_->muons->size ();
+  else if (name == "photons")
+    return handles_->photons->size ();
+  else if (name == "primaryvertexs")
+    return handles_->primaryvertexs->size ();
+  else if (name == "superclusters")
+    return handles_->superclusters->size ();
+  else if (name == "taus")
+    return handles_->taus->size ();
+  else if (name == "tracks")
+    return handles_->tracks->size ();
+  else if (name == "trigobjs")
+    return handles_->trigobjs->size ();
+  else if (name == "userVariables")
+    return handles_->userVariables->size ();
+  return 0;
 }
 
 void
@@ -250,6 +234,68 @@ ValueLookupTree::destroy (Node * const x) const
   for (const auto &branch : x->branches)
     destroy (branch);
   delete x;
+}
+
+void
+ValueLookupTree::pruneCommas (Node * const tree) const
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Recursively replaces any commas in the tree with the daughters.
+  //////////////////////////////////////////////////////////////////////////////
+  bool foundComma;
+  do
+    {
+      foundComma = false;
+      for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+        {
+          if ((*branch)->value == ",")
+            {
+              foundComma = true;
+
+              size_t comma = branch - tree->branches.begin ();
+              tree->branches.insert (branch + 1, (*branch)->branches.begin (), (*branch)->branches.end ());
+              branch = tree->branches.begin () + comma;
+              tree->branches.erase (branch);
+              branch = tree->branches.begin () + comma + 1;
+            }
+        }
+    }
+  while (foundComma);
+
+  for (const auto &branch : tree->branches)
+    pruneCommas (branch);
+  //////////////////////////////////////////////////////////////////////////////
+}
+
+void
+ValueLookupTree::pruneParentheses (Node * const tree) const
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Recursively replaces any parentheses in the tree with the daughter.
+  //////////////////////////////////////////////////////////////////////////////
+  bool foundParenthesis;
+  do
+    {
+      foundParenthesis = false;
+      for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+        {
+          if ((*branch)->value == "()")
+            {
+              foundParenthesis = true;
+
+              size_t parenthesis = branch - tree->branches.begin ();
+              tree->branches.insert (branch + 1, (*branch)->branches.begin (), (*branch)->branches.end ());
+              branch = tree->branches.begin () + parenthesis;
+              tree->branches.erase (branch);
+              branch = tree->branches.begin () + parenthesis;
+            }
+        }
+    }
+  while (foundParenthesis);
+
+  for (const auto &branch : tree->branches)
+    pruneParentheses (branch);
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 Node *
@@ -297,221 +343,6 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
   //////////////////////////////////////////////////////////////////////////////
 
   return tree;
-}
-
-void *
-ValueLookupTree::getObject (const string &name, const unsigned i) const
-{
-  if (name == "bxlumis")
-    {
-      BNbxlumi *obj = new BNbxlumi (handles_->bxlumis->at (i));
-      return obj;
-    }
-  else if (name == "electrons")
-    {
-      BNelectron *obj = new BNelectron (handles_->electrons->at (i));
-      return obj;
-    }
-  else if (name == "events")
-    {
-      BNevent *obj = new BNevent (handles_->events->at (i));
-      return obj;
-    }
-  else if (name == "genjets")
-    {
-      BNgenjet *obj = new BNgenjet (handles_->genjets->at (i));
-      return obj;
-    }
-  else if (name == "jets")
-    {
-      BNjet *obj = new BNjet (handles_->jets->at (i));
-      return obj;
-    }
-  else if (name == "mcparticles")
-    {
-      BNmcparticle *obj = new BNmcparticle (handles_->mcparticles->at (i));
-      return obj;
-    }
-  else if (name == "mets")
-    {
-      BNmet *obj = new BNmet (handles_->mets->at (i));
-      return obj;
-    }
-  else if (name == "muons")
-    {
-      BNmuon *obj = new BNmuon (handles_->muons->at (i));
-      return obj;
-    }
-  else if (name == "photons")
-    {
-      BNphoton *obj = new BNphoton (handles_->photons->at (i));
-      return obj;
-    }
-  else if (name == "primaryvertexs")
-    {
-      BNprimaryvertex *obj = new BNprimaryvertex (handles_->primaryvertexs->at (i));
-      return obj;
-    }
-  else if (name == "superclusters")
-    {
-      BNsupercluster *obj = new BNsupercluster (handles_->superclusters->at (i));
-      return obj;
-    }
-  else if (name == "taus")
-    {
-      BNtau *obj = new BNtau (handles_->taus->at (i));
-      return obj;
-    }
-  else if (name == "tracks")
-    {
-      BNtrack *obj = new BNtrack (handles_->tracks->at (i));
-      return obj;
-    }
-  else if (name == "trigobjs")
-    {
-      BNtrigobj *obj = new BNtrigobj (handles_->trigobjs->at (i));
-      return obj;
-    }
-  else if (name == "userVariables")
-    {
-      map<string, double> *obj = new map<string, double> (handles_->userVariables->at (i));
-      return obj;
-    }
-  return NULL;
-}
-
-void
-ValueLookupTree::deleteObject (const string &name, void * const obj) const
-{
-  if (name == "bxlumis")
-    delete ((BNbxlumi *) obj);
-  else if (name == "electrons")
-    delete ((BNelectron *) obj);
-  else if (name == "events")
-    delete ((BNevent *) obj);
-  else if (name == "genjets")
-    delete ((BNgenjet *) obj);
-  else if (name == "jets")
-    delete ((BNjet *) obj);
-  else if (name == "mcparticles")
-    delete ((BNmcparticle *) obj);
-  else if (name == "mets")
-    delete ((BNmet *) obj);
-  else if (name == "muons")
-    delete ((BNmuon *) obj);
-  else if (name == "photons")
-    delete ((BNphoton *) obj);
-  else if (name == "primaryvertexs")
-    delete ((BNprimaryvertex *) obj);
-  else if (name == "superclusters")
-    delete ((BNsupercluster *) obj);
-  else if (name == "taus")
-    delete ((BNtau *) obj);
-  else if (name == "tracks")
-    delete ((BNtrack *) obj);
-  else if (name == "trigobjs")
-    delete ((BNtrigobj *) obj);
-  else if (name == "userVariables")
-    delete ((map<string, double> *) obj);
-}
-
-unsigned
-ValueLookupTree::getCollectionSize (const string &name) const
-{
-  if (name == "bxlumis")
-    return handles_->bxlumis->size ();
-  else if (name == "electrons")
-    return handles_->electrons->size ();
-  else if (name == "events")
-    return handles_->events->size ();
-  else if (name == "genjets")
-    return handles_->genjets->size ();
-  else if (name == "jets")
-    return handles_->jets->size ();
-  else if (name == "mcparticles")
-    return handles_->mcparticles->size ();
-  else if (name == "mets")
-    return handles_->mets->size ();
-  else if (name == "muons")
-    return handles_->muons->size ();
-  else if (name == "photons")
-    return handles_->photons->size ();
-  else if (name == "primaryvertexs")
-    return handles_->primaryvertexs->size ();
-  else if (name == "superclusters")
-    return handles_->superclusters->size ();
-  else if (name == "taus")
-    return handles_->taus->size ();
-  else if (name == "tracks")
-    return handles_->tracks->size ();
-  else if (name == "trigobjs")
-    return handles_->trigobjs->size ();
-  else if (name == "userVariables")
-    return handles_->userVariables->size ();
-  return 0;
-}
-
-const vector<Leaf> &
-ValueLookupTree::evaluate ()
-{
-  if (!values_.size ())
-    {
-      evaluationError_ = false;
-      for (unsigned i = 0; i < nCombinations_.at (0); i++)
-        {
-          objIterators_.clear ();
-          shouldIterate_.clear ();
-          ObjMap objs;
-          unordered_set<string> keys;
-          for (auto collection = inputCollections_.begin (); collection != inputCollections_.end (); collection++)
-            {
-              unsigned j = collection - inputCollections_.begin (),
-                       localIndex = getLocalIndex (i, j);
-              objs.insert ({*collection, make_tuple (j, localIndex, getObject (*collection, localIndex))});
-              keys.insert (*collection);
-            }
-          if (isUniqueCase (objs, keys))
-            values_.push_back (evaluate_ (root_, objs));
-          else
-            values_.push_back (numeric_limits<int>::min ());
-          for (const auto &obj : objs)
-            deleteObject (obj.first, get<2> (obj.second));
-        }
-    }
-
-  return values_;
-}
-
-bool
-ValueLookupTree::collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> > a, pair<string, tuple<unsigned, unsigned, void *> > b)
-{
-  return (get<0> (a.second) < get<0> (b.second));
-}
-
-bool
-ValueLookupTree::isUniqueCase (const ObjMap &objs, const unordered_set<string> &keys) const
-{
-  bool pass = true;
-
-  for (const auto &key : keys)
-    {
-      if (objs.count (key) <= 1)
-        continue;
-      else
-        {
-          auto range = objs.equal_range (key);
-          vector<pair<string, tuple<unsigned, unsigned, void *> > > objsOfThisType (range.first, range.second);
-          sort (objsOfThisType.begin (), objsOfThisType.end (), ValueLookupTree::collectionIndexAscending);
-          int previousLocalIndex = -1;
-          for (const auto &obj : objsOfThisType)
-            {
-              pass = pass && ((int) get<1> (obj.second) > previousLocalIndex);
-              previousLocalIndex = get<1> (obj.second);
-            }
-        }
-    }
-
-  return pass;
 }
 
 Leaf
@@ -734,22 +565,198 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
   return numeric_limits<int>::min ();
 }
 
-string &
-ValueLookupTree::ltrim (string &s)
+void *
+ValueLookupTree::getObject (const string &name, const unsigned i) const
 {
-  return s.erase (0, s.find_first_not_of (" \t\f\n\r"));
+  if (name == "bxlumis")
+    {
+      BNbxlumi *obj = new BNbxlumi (handles_->bxlumis->at (i));
+      return obj;
+    }
+  else if (name == "electrons")
+    {
+      BNelectron *obj = new BNelectron (handles_->electrons->at (i));
+      return obj;
+    }
+  else if (name == "events")
+    {
+      BNevent *obj = new BNevent (handles_->events->at (i));
+      return obj;
+    }
+  else if (name == "genjets")
+    {
+      BNgenjet *obj = new BNgenjet (handles_->genjets->at (i));
+      return obj;
+    }
+  else if (name == "jets")
+    {
+      BNjet *obj = new BNjet (handles_->jets->at (i));
+      return obj;
+    }
+  else if (name == "mcparticles")
+    {
+      BNmcparticle *obj = new BNmcparticle (handles_->mcparticles->at (i));
+      return obj;
+    }
+  else if (name == "mets")
+    {
+      BNmet *obj = new BNmet (handles_->mets->at (i));
+      return obj;
+    }
+  else if (name == "muons")
+    {
+      BNmuon *obj = new BNmuon (handles_->muons->at (i));
+      return obj;
+    }
+  else if (name == "photons")
+    {
+      BNphoton *obj = new BNphoton (handles_->photons->at (i));
+      return obj;
+    }
+  else if (name == "primaryvertexs")
+    {
+      BNprimaryvertex *obj = new BNprimaryvertex (handles_->primaryvertexs->at (i));
+      return obj;
+    }
+  else if (name == "superclusters")
+    {
+      BNsupercluster *obj = new BNsupercluster (handles_->superclusters->at (i));
+      return obj;
+    }
+  else if (name == "taus")
+    {
+      BNtau *obj = new BNtau (handles_->taus->at (i));
+      return obj;
+    }
+  else if (name == "tracks")
+    {
+      BNtrack *obj = new BNtrack (handles_->tracks->at (i));
+      return obj;
+    }
+  else if (name == "trigobjs")
+    {
+      BNtrigobj *obj = new BNtrigobj (handles_->trigobjs->at (i));
+      return obj;
+    }
+  else if (name == "userVariables")
+    {
+      map<string, double> *obj = new map<string, double> (handles_->userVariables->at (i));
+      return obj;
+    }
+  return NULL;
 }
 
-string &
-ValueLookupTree::rtrim (string &s)
+void
+ValueLookupTree::deleteObject (const string &name, void * const obj) const
 {
-  return s.erase (s.find_last_not_of (" \t\f\n\r") + 1);
+  if (name == "bxlumis")
+    delete ((BNbxlumi *) obj);
+  else if (name == "electrons")
+    delete ((BNelectron *) obj);
+  else if (name == "events")
+    delete ((BNevent *) obj);
+  else if (name == "genjets")
+    delete ((BNgenjet *) obj);
+  else if (name == "jets")
+    delete ((BNjet *) obj);
+  else if (name == "mcparticles")
+    delete ((BNmcparticle *) obj);
+  else if (name == "mets")
+    delete ((BNmet *) obj);
+  else if (name == "muons")
+    delete ((BNmuon *) obj);
+  else if (name == "photons")
+    delete ((BNphoton *) obj);
+  else if (name == "primaryvertexs")
+    delete ((BNprimaryvertex *) obj);
+  else if (name == "superclusters")
+    delete ((BNsupercluster *) obj);
+  else if (name == "taus")
+    delete ((BNtau *) obj);
+  else if (name == "tracks")
+    delete ((BNtrack *) obj);
+  else if (name == "trigobjs")
+    delete ((BNtrigobj *) obj);
+  else if (name == "userVariables")
+    delete ((map<string, double> *) obj);
 }
 
-string &
-ValueLookupTree::trim (string &s)
+string
+ValueLookupTree::getCollectionType (const string &name) const
 {
-  return ltrim (rtrim (s));
+  if (name == "bxlumis")
+    return "BNbxlumi";
+  else if (name == "electrons")
+    return "BNelectron";
+  else if (name == "events")
+    return "BNevent";
+  else if (name == "genjets")
+    return "BNgenjet";
+  else if (name == "jets")
+    return "BNjet";
+  else if (name == "mcparticles")
+    return "BNmcparticle";
+  else if (name == "mets")
+    return "BNmet";
+  else if (name == "muons")
+    return "BNmuon";
+  else if (name == "photons")
+    return "BNphoton";
+  else if (name == "primaryvertexs")
+    return "BNprimaryvertex";
+  else if (name == "superclusters")
+    return "BNsupercluster";
+  else if (name == "taus")
+    return "BNtau";
+  else if (name == "tracks")
+    return "BNtrack";
+  else if (name == "trigobjs")
+    return "BNtrigobj";
+  return "";
+}
+
+bool
+ValueLookupTree::isCollection (const string &name) const
+{
+  if (name == "bxlumis")
+    return true;
+  else if (name == "electrons")
+    return true;
+  else if (name == "events")
+    return true;
+  else if (name == "genjets")
+    return true;
+  else if (name == "jets")
+    return true;
+  else if (name == "mcparticles")
+    return true;
+  else if (name == "mets")
+    return true;
+  else if (name == "muons")
+    return true;
+  else if (name == "photons")
+    return true;
+  else if (name == "primaryvertexs")
+    return true;
+  else if (name == "superclusters")
+    return true;
+  else if (name == "taus")
+    return true;
+  else if (name == "tracks")
+    return true;
+  else if (name == "trigobjs")
+    return true;
+  else if (name == "userVariables")
+    return true;
+  return false;
+}
+
+bool
+ValueLookupTree::isnumber (const string &s, double &x) const
+{
+  char *p;
+  x = strtod (s.c_str (), &p);
+  return !(*p);
 }
 
 bool
@@ -770,20 +777,6 @@ ValueLookupTree::splitParentheses (string s) const
   return parentheses;
 }
 
-bool
-ValueLookupTree::isnumber (const string &s, double &x) const
-{
-  char *p;
-  x = strtod (s.c_str (), &p);
-  return !(*p);
-}
-
-bool
-ValueLookupTree::firstOfPairAscending (pair<size_t, string> a, pair<size_t, string> b)
-{
-  return (a.first < b.first);
-}
-
 pair<size_t, string>
 ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos) const
 {
@@ -800,7 +793,7 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
       if (!vetoMatch (s, target, index, vetoTargets))
         indices.push_back (make_pair (index, target));
     }
-  sort (indices.begin (), indices.end (), ValueLookupTree::firstOfPairAscending);
+  sort (indices.begin (), indices.end (), firstOfPairAscending);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -859,6 +852,54 @@ ValueLookupTree::vetoMatch (const string &s, const string &target, const size_t 
   //////////////////////////////////////////////////////////////////////////////
 
   return false;
+}
+
+void
+ValueLookupTree::inferInputCollections (const Node * const tree, vector<string> &inputCollections) const
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Recursively stores all the collection names located on nodes in the tree
+  // in the second argument.
+  //////////////////////////////////////////////////////////////////////////////
+  if (tree->branches.size ())
+    {
+      for (const auto &branch : tree->branches)
+        inferInputCollections (branch, inputCollections);
+    }
+  else if (isCollection (tree->value + "s"))
+    inputCollections.push_back (tree->value + "s");
+  //////////////////////////////////////////////////////////////////////////////
+}
+
+bool
+ValueLookupTree::isUniqueCase (const ObjMap &objs, const unordered_set<string> &keys) const
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Returns true only if the given objects are unique and in a specific order.
+  // This is to avoid double counting.
+  //////////////////////////////////////////////////////////////////////////////
+  bool pass = true;
+
+  for (const auto &key : keys)
+    {
+      if (objs.count (key) <= 1)
+        continue;
+      else
+        {
+          auto range = objs.equal_range (key);
+          vector<pair<string, tuple<unsigned, unsigned, void *> > > objsOfThisType (range.first, range.second);
+          sort (objsOfThisType.begin (), objsOfThisType.end (), collectionIndexAscending);
+          int previousLocalIndex = -1;
+          for (const auto &obj : objsOfThisType)
+            {
+              pass = pass && ((int) get<1> (obj.second) > previousLocalIndex);
+              previousLocalIndex = get<1> (obj.second);
+            }
+        }
+    }
+
+  return pass;
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 bool
@@ -961,19 +1002,6 @@ ValueLookupTree::insertParentheses (const string &s, Node * const tree) const
   //////////////////////////////////////////////////////////////////////////////
 }
 
-string
-ValueLookupTree::catInputCollection (const vector<string> &inputCollections)
-{
-  string catInputCollection = "";
-  for (auto collection = inputCollections.begin (); collection != inputCollections.end (); collection++)
-    {
-      if (collection != inputCollections.begin ())
-        catInputCollection += "-";
-      catInputCollection += singular (*collection);
-    }
-  return plural (catInputCollection);
-}
-
 double
 ValueLookupTree::getMember (const string &type, void * const obj, const string &member) const
 {
@@ -1016,76 +1044,6 @@ ValueLookupTree::getMember (const string &type, void * const obj, const string &
   return value;
 }
 
-bool
-ValueLookupTree::isCollection (const string &name) const
-{
-  if (name == "bxlumis")
-    return true;
-  else if (name == "electrons")
-    return true;
-  else if (name == "events")
-    return true;
-  else if (name == "genjets")
-    return true;
-  else if (name == "jets")
-    return true;
-  else if (name == "mcparticles")
-    return true;
-  else if (name == "mets")
-    return true;
-  else if (name == "muons")
-    return true;
-  else if (name == "photons")
-    return true;
-  else if (name == "primaryvertexs")
-    return true;
-  else if (name == "superclusters")
-    return true;
-  else if (name == "taus")
-    return true;
-  else if (name == "tracks")
-    return true;
-  else if (name == "trigobjs")
-    return true;
-  else if (name == "userVariables")
-    return true;
-  return false;
-}
-
-string
-ValueLookupTree::getCollectionType (const string &name) const
-{
-  if (name == "bxlumis")
-    return "BNbxlumi";
-  else if (name == "electrons")
-    return "BNelectron";
-  else if (name == "events")
-    return "BNevent";
-  else if (name == "genjets")
-    return "BNgenjet";
-  else if (name == "jets")
-    return "BNjet";
-  else if (name == "mcparticles")
-    return "BNmcparticle";
-  else if (name == "mets")
-    return "BNmet";
-  else if (name == "muons")
-    return "BNmuon";
-  else if (name == "photons")
-    return "BNphoton";
-  else if (name == "primaryvertexs")
-    return "BNprimaryvertex";
-  else if (name == "superclusters")
-    return "BNsupercluster";
-  else if (name == "taus")
-    return "BNtau";
-  else if (name == "tracks")
-    return "BNtrack";
-  else if (name == "trigobjs")
-    return "BNtrigobj";
-  return "";
-}
-
 double
 ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, const string &variable, const bool iterateObj)
 {
@@ -1109,5 +1067,4 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
     {
       return numeric_limits<int>::min ();
     }
-
 }

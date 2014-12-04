@@ -12,15 +12,10 @@
 
 #include <vector>
 
+// Return whether obj is contained in vec.
+#define VEC_CONTAINS(vec,obj) (find (vec.begin (), vec.end (), obj) != vec.end ())
+
 using namespace std;
-
-
-template <class VecType> bool vecContains(vector< VecType > vec, VecType obj) {
-  // Return whether obj is contained in vec.  
-  if (find(vec.begin(), vec.end(), obj) != vec.end()) return true;
-  else return false;
-}
-
 
 template <class InputCollection> void getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {                                                         
   // Get a collection with the specified type, and match the product instance name.                                                                                                                    
@@ -37,6 +32,35 @@ template <class InputCollection> void getCollection(const edm::InputTag& label, 
                          << ", but found " << objVec.size() << " collections of the specified type." << endl;                                                                                          
 }                                                                                                                                                                          
 
+// Extracts the constituent collections from a composite collection name.
+vector<string> getSingleObjects (string);
+
+// Concatenates collection names with hyphens between.
+string concatenateInputCollection (const vector<string> &);
+
+// Capitalizes a string.
+string capitalize (string);
+
+// Removes the trailing 's' from a string.
+string singular (string);
+
+// Adds an 's' to the end of a string.
+string plural (string);
+
+// Removes whitespace from the left side of a string.
+string &ltrim (string &);
+
+// Removes whitespace from the right side of a string.
+string &rtrim (string &);
+
+// Removes whitespace from both sides of a string.
+string &trim (string &);
+
+////////////////////////////////////////////////////////////////////////////////
+// Comparison functions for sorting.
+////////////////////////////////////////////////////////////////////////////////
+bool firstOfPairAscending (pair<size_t, string>, pair<size_t, string>);
+bool collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> >, pair<string, tuple<unsigned, unsigned, void *> >);
+////////////////////////////////////////////////////////////////////////////////
 
 #endif
-

@@ -1,7 +1,6 @@
-#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"  
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 #include "OSUT3Analysis/AnaTools/plugins/Plotter.h"
-
 
 #define EXIT_CODE 5
 
@@ -40,7 +39,7 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
 
     vector<string> inputCollection = histogramSets_.at(histoSet).getParameter<vector<string> > ("inputCollection");
     sort (inputCollection.begin (), inputCollection.end ());
-    string catInputCollection = ValueLookupTree::catInputCollection (inputCollection);
+    string catInputCollection = concatenateInputCollection (inputCollection);
 
     objectsToGet_.insert (objectsToGet_.end (), inputCollection.begin (), inputCollection.end ());
 
@@ -129,7 +128,7 @@ Plotter::~Plotter ()
 // function to convert an input collection into a directory name
 string Plotter::getDirectoryName(string inputName){
 
-  string parsedName = ValueLookupTree::capitalize(ValueLookupTree::singular(inputName));
+  string parsedName = capitalize(singular(inputName));
 
   parsedName += " Plots";
 

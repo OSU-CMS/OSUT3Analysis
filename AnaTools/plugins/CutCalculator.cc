@@ -5,9 +5,9 @@
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 #include "OSUT3Analysis/AnaTools/plugins/CutCalculator.h"
-
 
 #define EXIT_CODE 1
 
@@ -191,7 +191,7 @@ CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
   // Propagate forward any collections which have flags set for the previous
   // cut.
   string inputType = currentCut.inputLabel;
-  vector<string> singleObjects = ValueLookupTree::getSingleObjects (inputType);
+  vector<string> singleObjects = getSingleObjects (inputType);
   if (currentCutIndex > 0)
     {
       for (const auto &collection : pl_->objectFlags.at (currentCutIndex - 1))
@@ -260,7 +260,7 @@ CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
         {
           if (pl_->objectFlags.at (currentCutIndex - 1).count (collection.first))
             continue;
-          singleObjects = ValueLookupTree::getSingleObjects (inputType);
+          singleObjects = getSingleObjects (inputType);
           for (unsigned i = 0; i < currentCutIndex; i++)
             {
               vector<pair<bool, bool> > objectFlags (collection.second.size (), make_pair (true, true)),
@@ -327,7 +327,7 @@ CutCalculator::unpackCuts ()
       objectsToGet_.insert (tempInputCollection.begin (), tempInputCollection.end ());
       //////////////////////////////////////////////////////////////////////////
 
-      string catInputCollection = ValueLookupTree::catInputCollection (tempInputCollection);
+      string catInputCollection = concatenateInputCollection (tempInputCollection);
       tempCut.inputCollections = tempInputCollection;
       tempCut.inputLabel = catInputCollection;
 

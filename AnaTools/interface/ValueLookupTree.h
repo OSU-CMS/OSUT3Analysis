@@ -5,9 +5,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-// Return whether obj is contained in vec.
-#define VEC_CONTAINS(vec,obj) (find (vec.begin (), vec.end (), obj) != vec.end ())
-
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
 /*
@@ -80,43 +77,32 @@ class ValueLookupTree
     ////////////////////////////////////////////////////////////////////////////
     // Methods for retrieving various information about a collection.
     ////////////////////////////////////////////////////////////////////////////
-    static vector<string> getSingleObjects (string);
     unsigned getLocalIndex (unsigned, unsigned) const;
     set<unsigned> getGlobalIndices (unsigned, const string &, string) const;
     unsigned getCollectionSize (const string &name) const;
-    ////////////////////////////////////////////////////////////////////////////
-
-    static string catInputCollection (const vector<string> &);
-
-    static string capitalize (string);
-    static string singular (string);
-    static string plural (string);
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Methods for removing whitespace from a string, either from the left, the
-    // right, or both sides.
-    ////////////////////////////////////////////////////////////////////////////
-    static string &ltrim (string &);
-    static string &rtrim (string &);
-    static string &trim (string &);
     ////////////////////////////////////////////////////////////////////////////
 
   private:
     // Method for destroying an entire tree, including all of its children.
     void destroy (Node * const) const;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Methods for removing commas and parentheses from a tree.
+    ////////////////////////////////////////////////////////////////////////////
     void pruneCommas (Node * const) const;
     void pruneParentheses (Node * const) const;
+    ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
     // Recursive methods for inserting an expression into the tree and then
     // evaluating it.
     ////////////////////////////////////////////////////////////////////////////
     Node *insert_ (const string &, Node * const) const;
-    string getCollectionType (const string &name) const;
-    Leaf evaluateOperator (const string &, const vector<Leaf> &, const ObjMap &);
     Leaf evaluate_ (const Node * const, const ObjMap &);
     ////////////////////////////////////////////////////////////////////////////
+
+    // Returns the result of an operator acting on its operands.
+    Leaf evaluateOperator (const string &, const vector<Leaf> &, const ObjMap &);
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for retrieving and deleting an object from a collection.
@@ -125,24 +111,37 @@ class ValueLookupTree
     void deleteObject (const string &, void * const) const;
     ////////////////////////////////////////////////////////////////////////////
 
+    string getCollectionType (const string &name) const;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Methods which returns true if the first argument looks like a collection
+    // name or a number, respectively. The second argument of isNumber receives
+    // the converted value.
+    ////////////////////////////////////////////////////////////////////////////
+    bool isCollection (const string &) const;
+    bool isnumber (const string &, double &) const;
+    ////////////////////////////////////////////////////////////////////////////
 
     // Method which returns true if the parentheses are not balanced, i.e., if
     // the number of left parentheses does not equal the number of right
     // parentheses.
     bool splitParentheses (string) const;
 
-    // Method which returns true if the first argument looks like a number. The
-    // second argument receives the converted value.
-    bool isnumber (const string &, double &) const;
-
     ////////////////////////////////////////////////////////////////////////////
     // Methods for finding the first instance within a string of any one of a
     // vector of target strings.
     ////////////////////////////////////////////////////////////////////////////
-    static bool firstOfPairAscending (pair<size_t, string>, pair<size_t, string>);
     pair<size_t, string> findFirstOf (const string &, const vector<string> &, const vector<string> &, const size_t = 0) const;
     bool vetoMatch (const string &, const string &, const size_t, const vector<string> &) const;
     ////////////////////////////////////////////////////////////////////////////
+
+    // Method which infers the input collection names from the given tree. The
+    // collection names are stored in the second argument.
+    void inferInputCollections (const Node * const, vector<string> &) const;
+
+    // To avoid double counting. For a given set of objects, returns true only
+    // if they are all unique and in a specific order.
+    bool isUniqueCase (const ObjMap &, const unordered_set<string> &) const;
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for inserting different types of operators into the tree.
@@ -152,26 +151,23 @@ class ValueLookupTree
     bool insertParentheses (const string &, Node * const) const;
     ////////////////////////////////////////////////////////////////////////////
 
-    Node *root_;
-    vector<string> inputCollections_;
-    Collections *handles_;
-    vector<Leaf> values_;
-    bool evaluationError_;
-    vector<unsigned> nCombinations_;
-    vector<unsigned> collectionSizes_;
-
-    bool isCollection (const string &) const;
-    void inferInputCollections (const Node * const, vector<string> &) const;
-
+    ////////////////////////////////////////////////////////////////////////////
+    // Methods for retrieving values from objects.
+    ////////////////////////////////////////////////////////////////////////////
     double getMember (const string &, void * const, const string &) const;
     double valueLookup (const string &, const ObjMap &, const string &, const bool = true);
+    ////////////////////////////////////////////////////////////////////////////
 
-    bool isUniqueCase (const ObjMap &, const unordered_set<string> &) const;
+    Node            *root_;
+    vector<string>  inputCollections_;
+    bool            evaluationError_;
 
-    unordered_map<string, ObjMap::const_iterator> objIterators_;
-    unordered_map<string, bool> shouldIterate_;
-
-    static bool collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> >, pair<string, tuple<unsigned, unsigned, void *> >);
+    Collections                                    *handles_;
+    unordered_map<string, ObjMap::const_iterator>  objIterators_;
+    unordered_map<string, bool>                    shouldIterate_;
+    vector<Leaf>                                   values_;
+    vector<unsigned>                               collectionSizes_;
+    vector<unsigned>                               nCombinations_;
 };
 
 #endif
