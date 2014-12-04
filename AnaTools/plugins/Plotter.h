@@ -48,16 +48,28 @@ class Plotter : public edm::EDAnalyzer
       vector<HistoDef> histogramDefinitions;
 
       string getDirectoryName(const string);
-      HistoDef parseHistoDef(const edm::ParameterSet &, const vector<string> &, const string &, const string &);
+      vector<string> getInputTypes(const string);
+      string fixOrdering(const string);
+      HistoDef parseHistoDef(const edm::ParameterSet, const vector<string> &, const string &, const string &);
       void bookHistogram(const HistoDef);
+      pair<string,string> getVariableAndFunction(const string);
+      template <class VecType> bool vecContains(vector< VecType > vec, VecType obj);  
+
+      template <class InputCollection> void fillHistogram(const histoDef, const InputCollection);
+      template <class InputCollection1, class InputCollection2> void fillHistogram(const histoDef, const InputCollection1, const InputCollection2);
 
       void fillHistogram(const HistoDef &);
       void fill1DHistogram(const HistoDef &);
       void fill2DHistogram(const HistoDef &);
 
+      template <class InputCollection> void getCollection(const edm::InputTag& label,  edm::Handle<InputCollection>& coll, const edm::Event &event);   
+
       double getBinSize(TH1D *, const double);
       pair<double,double> getBinSize(TH2D *, const double, const double);
       string setYaxisLabel(const HistoDef);
+
+
+
 };
 
 #endif

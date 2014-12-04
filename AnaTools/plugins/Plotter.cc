@@ -84,66 +84,23 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
 
   // get the required collections from the event
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "bxlumis") != objectsToGet_.end() && collections_.exists ("bxlumis")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("bxlumis"), handles_.bxlumis);
-    if (!handles_.bxlumis.product()) clog << "ERROR: could not get bxlumis input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "electrons") != objectsToGet_.end() && collections_.exists ("electrons")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("electrons"), handles_.electrons);
-    if (!handles_.electrons.product()) clog << "ERROR: could not get electrons input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "events") != objectsToGet_.end() && collections_.exists ("events")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("events"), handles_.events);
-    if (!handles_.events.product()) clog << "ERROR: could not get events input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "genjets") != objectsToGet_.end() && collections_.exists ("genjets")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("genjets"), handles_.genjets);
-    if (!handles_.genjets.product()) clog << "ERROR: could not get genjets input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "jets") != objectsToGet_.end() && collections_.exists ("jets")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("jets"), handles_.jets);
-    if (!handles_.jets.product()) clog << "ERROR: could not get jets input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "mcparticles") != objectsToGet_.end() && collections_.exists ("mcparticles")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("mcparticles"), handles_.mcparticles);
-    if (!handles_.mcparticles.product()) clog << "ERROR: could not get mcparticles input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "mets") != objectsToGet_.end() && collections_.exists ("mets")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("mets"), handles_.mets);
-    if (!handles_.mets.product()) clog << "ERROR: could not get mets input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "muons") != objectsToGet_.end() && collections_.exists ("muons")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("muons"), handles_.muons);
-    if (!handles_.muons.product()) clog << "ERROR: could not get muons input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "photons") != objectsToGet_.end() && collections_.exists ("photons")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("photons"), handles_.photons);
-    if (!handles_.photons.product()) clog << "ERROR: could not get photons input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "primaryvertexs") != objectsToGet_.end() && collections_.exists ("primaryvertexs")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("primaryvertexs"), handles_.primaryvertexs);
-    if (!handles_.primaryvertexs.product()) clog << "ERROR: could not get primaryvertexs input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "superclusters") != objectsToGet_.end() && collections_.exists ("superclusters")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("superclusters"), handles_.superclusters);
-    if (!handles_.superclusters.product()) clog << "ERROR: could not get superclusters input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "taus") != objectsToGet_.end() && collections_.exists ("taus")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("taus"), handles_.taus);
-    if (!handles_.taus.product()) clog << "ERROR: could not get taus input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "tracks") != objectsToGet_.end() && collections_.exists ("tracks")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("tracks"), handles_.tracks);
-    if (!handles_.tracks.product()) clog << "ERROR: could not get tracks input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "triggers") != objectsToGet_.end() && collections_.exists ("triggers")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("triggers"), handles_.triggers);
-    if (!handles_.triggers.product()) clog << "ERROR: could not get triggers input collection" << endl;
-  }
-  if (find(objectsToGet_.begin(), objectsToGet_.end(), "trigobjs") != objectsToGet_.end() && collections_.exists ("trigobjs")){
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("trigobjs"), handles_.trigobjs);
-    if (!handles_.trigobjs.product()) clog << "ERROR: could not get trigobjs input collection" << endl;
-  }
+  if (vecContains(objectsToGet, string("bxlumis")))        getCollection(bxlumis_,        bxlumis,        event);
+  if (vecContains(objectsToGet, string("electrons")))      getCollection(electrons_,      electrons,      event);
+  if (vecContains(objectsToGet, string("events")))         getCollection(events_,         events,         event);
+  if (vecContains(objectsToGet, string("genjets")))        getCollection(genjets_,        genjets,        event);
+  if (vecContains(objectsToGet, string("jets")))           getCollection(jets_,           jets,           event);
+  if (vecContains(objectsToGet, string("mcparticles")))    getCollection(mcparticles_,    mcparticles,    event);
+  if (vecContains(objectsToGet, string("mets")))           getCollection(mets_,           mets,           event);
+  if (vecContains(objectsToGet, string("muons")))          getCollection(muons_,          muons,          event);
+  if (vecContains(objectsToGet, string("photons")))        getCollection(photons_,        photons,        event);
+  if (vecContains(objectsToGet, string("primaryvertexs"))) getCollection(primaryvertexs_, primaryvertexs, event);
+  if (vecContains(objectsToGet, string("secMuons")))       getCollection(secMuons_,       secMuons,       event);
+  if (vecContains(objectsToGet, string("superclusters")))  getCollection(superclusters_,  superclusters,  event);
+  if (vecContains(objectsToGet, string("taus")))           getCollection(taus_,           taus,           event);
+  if (vecContains(objectsToGet, string("tracks")))         getCollection(tracks_,         tracks,         event);
+  if (vecContains(objectsToGet, string("triggers")))       getCollection(triggers_,       triggers,       event);
+  if (vecContains(objectsToGet, string("trigobjs")))       getCollection(trigobjs_,       trigobjs,       event);
+  if (vecContains(objectsToGet, string("userVariables")))  getCollection(userVariables_,  userVariables,  event);
 
   if (!initializeValueLookupForest (histogramDefinitions, &handles_))
     {
@@ -317,7 +274,7 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
 
   TH1D *histogram = fs_->getObject<TH1D>(definition.name, definition.directory);
 
-  // loop over objets in input collection and fill histogram
+  // loop over objects in input collection and fill histogram
   for(vector<Leaf>::const_iterator value = definition.valueLookupTrees.at (0)->evaluate ().begin (); value != definition.valueLookupTrees.at (0)->evaluate ().end (); value++){
     double weight = 1.0;
     if(definition.hasVariableBinsX){
@@ -463,6 +420,32 @@ Plotter::initializeValueLookupForest (vector<HistoDef> &histograms, Collections 
     }
   return true;
   //////////////////////////////////////////////////////////////////////////////
+}
+
+
+template <class VecType> bool Plotter::vecContains(vector< VecType > vec, VecType obj) {
+  // Return whether obj is contained in vec.
+  if (find(vec.begin(), vec.end(), obj) != vec.end()) return true;
+  else return false;
+}
+
+
+template <class InputCollection> void Plotter::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
+  // Get a collection with the specified type, and match the product instance name.
+  // Do not use Event::getByLabel() function, since it also matches the module name.
+  vector< edm::Handle<InputCollection> > objVec;
+  event.getManyByType(objVec);
+
+  for (uint i=0; i<objVec.size(); i++) {
+    if (label.instance() == objVec.at(i).provenance()->productInstanceName()) {
+      coll = objVec.at(i);
+      break;
+    }
+  }
+
+  if (!coll.product()) clog << "ERROR: could not get input collection with product instance label: " << label.instance()
+                            << ", but found " << objVec.size() << " collections of the specified type." << endl;
+
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
