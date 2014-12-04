@@ -1,6 +1,8 @@
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"  
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 #include "OSUT3Analysis/AnaTools/plugins/Plotter.h"
+
 
 #define EXIT_CODE 5
 
@@ -753,31 +755,6 @@ Plotter::initializeValueLookupTrees (vector<histoDef> &histograms)
   //////////////////////////////////////////////////////////////////////////////
 }
 
-
-template <class VecType> bool Plotter::vecContains(vector< VecType > vec, VecType obj) { 
-  // Return whether obj is contained in vec.  
-  if (find(vec.begin(), vec.end(), obj) != vec.end()) return true;
-  else return false; 
-}  
-
-
-template <class InputCollection> void Plotter::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
-  // Get a collection with the specified type, and match the product instance name.
-  // Do not use Event::getByLabel() function, since it also matches the module name.
-  vector< edm::Handle<InputCollection> > objVec;                                                                                                                                                
-  event.getManyByType(objVec);                          
-
-  for (uint i=0; i<objVec.size(); i++) {
-    if (label.instance() == objVec.at(i).provenance()->productInstanceName()) {
-      coll = objVec.at(i);
-      break;
-    }
-  }
-                                                                            
-  if (!coll.product()) clog << "ERROR: could not get input collection with product instance label: " << label.instance()
-			    << ", but found " << objVec.size() << " collections of the specified type." << endl; 
-
-}
 
 void
 Plotter::initializeValueLookup ()

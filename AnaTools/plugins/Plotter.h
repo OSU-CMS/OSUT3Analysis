@@ -1,5 +1,4 @@
 #ifndef PLOTTER
-
 #define PLOTTER
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -107,7 +106,6 @@ class Plotter : public edm::EDAnalyzer
       histoDef parseHistoDef(const edm::ParameterSet, const string, const string);
       void bookHistogram(const histoDef);
       pair<string,string> getVariableAndFunction(const string);
-      template <class VecType> bool vecContains(vector< VecType > vec, VecType obj);  
 
       template <class InputCollection> void fillHistogram(const histoDef, const InputCollection);
       template <class InputCollection1, class InputCollection2> void fillHistogram(const histoDef, const InputCollection1, const InputCollection2);
@@ -117,8 +115,6 @@ class Plotter : public edm::EDAnalyzer
 
       template <class InputCollection> void fill2DHistogram(const histoDef, const InputCollection);
       template <class InputCollection1, class InputCollection2> void fill2DHistogram(const histoDef, const InputCollection1, const InputCollection2);
-
-      template <class InputCollection> void getCollection(const edm::InputTag& label,  edm::Handle<InputCollection>& coll, const edm::Event &event);   
 
       double getBinSize(TH1D *, const double);
       pair<double,double> getBinSize(TH2D *, const double, const double);
