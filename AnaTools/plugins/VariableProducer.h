@@ -33,6 +33,8 @@
 
 #include "DataFormats/Math/interface/deltaPhi.h"
 
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+
 using namespace std;
 
 class VariableProducer : public edm::EDProducer
@@ -76,7 +78,7 @@ class VariableProducer : public edm::EDProducer
       // Functions
 
       double setDiMuonMetDeltaPhi(const BNmuonCollection *muons, const BNmetCollection *mets);
-      double getDiMuonInvMass    (const BNmuonCollection *muons);  
+      double getDiMuonInvMass    (const BNmuonCollection *muons);
 
 
   };

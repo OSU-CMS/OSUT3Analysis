@@ -170,12 +170,7 @@ def get_collections (cuts):
     ############################################################################
     collections = set ()
     for cut in cuts:
-        inputCollection = cut.inputCollection.pythonValue ()
-        inputCollection = inputCollection[1:-1]
-        if re.match (r" *([^- ]*) *- *([^- ]*) *pair.*", inputCollection):
-            collections.add (re.sub (r" *([^- ]*) *- *([^- ]*) *pair.*", r"\1s", inputCollection))
-            collections.add (re.sub (r" *([^- ]*) *- *([^- ]*) *pair.*", r"\2s", inputCollection))
-        else:
+        for inputCollection in cut.inputCollection:
             collections.add (inputCollection)
     return sorted (list (collections))
     ############################################################################
@@ -254,6 +249,26 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         ########################################################################
 
         ########################################################################
+        # Add a module for printing info, both general and for specific events.
+        ########################################################################
+        infoPrinter = cms.EDAnalyzer ("InfoPrinter",
+            cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions"),
+            eventsToPrint = cms.VEventID (),
+            printAllEvents              =  cms.bool  (False),
+            printCumulativeObjectFlags  =  cms.bool  (False),
+            printCutDecision            =  cms.bool  (False),
+            printEventDecision          =  cms.bool  (False),
+            printEventFlags             =  cms.bool  (False),
+            printObjectFlags            =  cms.bool  (False),
+            printTriggerDecision        =  cms.bool  (False),
+            printTriggerFlags           =  cms.bool  (False),
+            printVetoTriggerFlags       =  cms.bool  (False)
+        )
+        channelPath += infoPrinter
+        setattr (process, channelName + "InfoPrinter", infoPrinter)
+        ########################################################################
+
+        ########################################################################
         # Set up the output commands. For now, we drop everything except the
         # collections given in the collections PSet.
         ########################################################################
@@ -296,13 +311,14 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         ########################################################################
         # Add a plotting module for this channel to the path.
         ########################################################################
-        plotter = cms.EDAnalyzer ("Plotter",
-            collections     =  channelCollections,
-            histogramSets   =  histogramSets,
-            verbose         =  cms.int32 (0)
-        )
-        channelPath += plotter
-        setattr (process, channelName + "Plotter", plotter)
+        if len (histogramSets):
+            plotter = cms.EDAnalyzer ("Plotter",
+                collections     =  channelCollections,
+                histogramSets   =  histogramSets,
+                verbose         =  cms.int32 (0)
+            )
+            channelPath += plotter
+            setattr (process, channelName + "Plotter", plotter)
         ########################################################################
 
         ########################################################################
