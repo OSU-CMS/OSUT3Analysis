@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"  
 #include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 #include "OSUT3Analysis/AnaTools/plugins/CutCalculator.h"
@@ -65,23 +66,23 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   // Retrieve each object collection which we need and print a warning if it is
   // missing.
   //////////////////////////////////////////////////////////////////////////////
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "bxlumis")         !=  objectsToGet_.end  ())  event.getByLabel  (bxlumis_,         bxlumis);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "electrons")       !=  objectsToGet_.end  ())  event.getByLabel  (electrons_,       electrons);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "events")          !=  objectsToGet_.end  ())  event.getByLabel  (events_,          events);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "genjets")         !=  objectsToGet_.end  ())  event.getByLabel  (genjets_,         genjets);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "jets")            !=  objectsToGet_.end  ())  event.getByLabel  (jets_,            jets);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "mcparticles")     !=  objectsToGet_.end  ())  event.getByLabel  (mcparticles_,     mcparticles);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "mets")            !=  objectsToGet_.end  ())  event.getByLabel  (mets_,            mets);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "muons")           !=  objectsToGet_.end  ())  event.getByLabel  (muons_,           muons);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "photons")         !=  objectsToGet_.end  ())  event.getByLabel  (photons_,         photons);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "primaryvertexs")  !=  objectsToGet_.end  ())  event.getByLabel  (primaryvertexs_,  primaryvertexs);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "secMuons")        !=  objectsToGet_.end  ())  event.getByLabel  (secMuons_,        secMuons);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "superclusters")   !=  objectsToGet_.end  ())  event.getByLabel  (superclusters_,   superclusters);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "taus")            !=  objectsToGet_.end  ())  event.getByLabel  (taus_,            taus);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "tracks")          !=  objectsToGet_.end  ())  event.getByLabel  (tracks_,          tracks);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "triggers")        !=  objectsToGet_.end  ())  event.getByLabel  (triggers_,        triggers);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "trigobjs")        !=  objectsToGet_.end  ())  event.getByLabel  (trigobjs_,        trigobjs);
-  if  (find  (objectsToGet_.begin  (),  objectsToGet_.end  (),  "userVariables")   !=  objectsToGet_.end  ())  event.getByLabel  (userVariables_,   userVariables);
+  if (vecContains(objectsToGet_, string("bxlumis")))        getCollection(bxlumis_,        bxlumis,        event);
+  if (vecContains(objectsToGet_, string("electrons")))      getCollection(electrons_,      electrons,      event);
+  if (vecContains(objectsToGet_, string("events")))         getCollection(events_,         events,         event);
+  if (vecContains(objectsToGet_, string("genjets")))        getCollection(genjets_,        genjets,        event);
+  if (vecContains(objectsToGet_, string("jets")))           getCollection(jets_,           jets,           event);
+  if (vecContains(objectsToGet_, string("mcparticles")))    getCollection(mcparticles_,    mcparticles,    event);
+  if (vecContains(objectsToGet_, string("mets")))           getCollection(mets_,           mets,           event);
+  if (vecContains(objectsToGet_, string("muons")))          getCollection(muons_,          muons,          event);
+  if (vecContains(objectsToGet_, string("photons")))        getCollection(photons_,        photons,        event);
+  if (vecContains(objectsToGet_, string("primaryvertexs"))) getCollection(primaryvertexs_, primaryvertexs, event);
+  if (vecContains(objectsToGet_, string("secMuons")))       getCollection(secMuons_,       secMuons,       event);
+  if (vecContains(objectsToGet_, string("superclusters")))  getCollection(superclusters_,  superclusters,  event);
+  if (vecContains(objectsToGet_, string("taus")))           getCollection(taus_,           taus,           event);
+  if (vecContains(objectsToGet_, string("tracks")))         getCollection(tracks_,         tracks,         event);
+  if (vecContains(objectsToGet_, string("triggers")))       getCollection(triggers_,       triggers,       event);
+  if (vecContains(objectsToGet_, string("trigobjs")))       getCollection(trigobjs_,       trigobjs,       event);
+  if (vecContains(objectsToGet_, string("userVariables")))  getCollection(userVariables_,  userVariables,  event);
 
   if (firstEvent_ && !bxlumis.isValid ())
     clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
