@@ -45,7 +45,6 @@ CutFlowPlotter::~CutFlowPlotter ()
   clog << setw (longestCutName) << left << "Cut Name" << right << setw (10) << setprecision(1) << "Events" << setw (16) << "Cumul. Eff." << setw (16) << "Indiv. Eff." << setw (16) << "Minus One" << endl;
   clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
   totalEvents = cutFlow_->GetBinContent (1);
-  clog << setw (longestCutName) << left << "Total:" << right << setw (10) << setprecision(1) << (double) totalEvents << setw (16) << "100% " << setw (16) << "100% " << setw (16) << "0% " << endl;
   for (int i = 1; i <= cutFlow_->GetNbinsX(); i++) { 
     double cutFlow   =   cutFlow_->GetBinContent (i); 
     double selection = selection_->GetBinContent (i); 

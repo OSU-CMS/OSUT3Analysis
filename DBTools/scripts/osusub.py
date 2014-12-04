@@ -59,7 +59,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label):
             if Dataset == '':
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py\n')
             else:
-                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py,datasetInfo_cfg.py\n')
+                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py,datasetInfo_' + Label + '_cfg.py\n')
         elif CondorSubArgumentsSet[argument].has_key('Queue'):
             SubmitFile.write('Queue ' + str(NumberOfJobs) +'\n')
         else:
@@ -100,11 +100,11 @@ def MakeSpecificConfig(Dataset, Directory):
         ConfigFile.write('pset.process.source.firstEvent = cms.untracked.uint32((osusub.jobNumber-1)*' + str(EventsPerJob) + '+1)\n')
     ConfigFile.close()
 
-def MakeFileList(Dataset, FileType, Directory):
+def MakeFileList(Dataset, FileType, Directory, Label):
     numberOfFiles = -1
     datasetRead = {}
     runList = []
-    os.system('touch ' + Directory + '/datasetInfo_cfg.py')
+    os.system('touch ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
     if FileType == 'AAA':	
         os.system('das_client.py --query="file Dataset=' + Dataset + '" --limit 0 > ' + Directory + '/runList.py')
         if lxbatch:
@@ -119,29 +119,29 @@ def MakeFileList(Dataset, FileType, Directory):
         datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
         #Get the list of the root files in the directory and modify it to have the standard format. 
         if not remoteAccessT3:
-            os.system('sed -i \'s/^/"file:/g\' ' + Directory + '/datasetInfo_cfg.py')
+            os.system('sed -i \'s/^/"file:/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
         else:
-            os.system('sed -i \'s/^/"root:\/\/cms-0.mps.ohio-state.edu:1094\//g\' ' + Directory + '/datasetInfo_cfg.py')
-        os.system('sed -i \'1,$s/$/",/g\' ' + Directory + '/datasetInfo_cfg.py')
-        os.system('sed -i "1i runList = [" ' + Directory + '/datasetInfo_cfg.py')                  
-        os.system('sed -i \'$s/,//g\' ' + Directory + '/datasetInfo_cfg.py')                  
-        os.system('sed -i \'$a ]\' ' + Directory + '/datasetInfo_cfg.py')                  
+            os.system('sed -i \'s/^/"root:\/\/cms-0.mps.ohio-state.edu:1094\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
+        os.system('sed -i \'1,$s/$/",/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
+        os.system('sed -i "1i runList = [" ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+        os.system('sed -i \'$s/,//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+        os.system('sed -i \'$a ]\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
     if FileType == 'UserList':
 	if not os.path.exists(Dataset):
             print "The list you provided does not exist."
             sys.exit()
         #Get the list of the files to datasetInfo_cfg.py and modify it to have the standard format. 
-        os.system('cp ' + Dataset + ' '  + Directory + '/datasetInfo_cfg.py')	
-        datasetRead['numberOfFiles'] = os.popen('wc -l ' + Directory + '/datasetInfo_cfg.py').read().split(' ')[0] 
+        os.system('cp ' + Dataset + ' '  + Directory + '/datasetInfo_' + Label + '_cfg.py')	
+        datasetRead['numberOfFiles'] = os.popen('wc -l ' + Directory + '/datasetInfo_' + Label + '_cfg.py').read().split(' ')[0] 
         datasetRead['realDatasetName'] = 'FilesInList:' + Dataset 
         if not remoteAccessT3:
-            os.system('sed -i \'s/^/"file:/g\' ' + Directory + '/datasetInfo_cfg.py')
+            os.system('sed -i \'s/^/"file:/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
         else:
-            os.system('sed -i \'s/^/"root:\/\/cms-0.mps.ohio-state.edu:1094\//g\' ' + Directory + '/datasetInfo_cfg.py')
-        os.system('sed -i \'1,$s/$/",/g\' ' + Directory + '/datasetInfo_cfg.py')
-        os.system('sed -i "1i runLinst = [" ' + Directory + '/datasetInfo_cfg.py')                  
-        os.system('sed -i \'$s/,//g\' ' + Directory + '/datasetInfo_cfg.py')                  
-        os.system('sed -i \'$a ]\' ' + Directory + '/datasetInfo_cfg.py')                  
+            os.system('sed -i \'s/^/"root:\/\/cms-0.mps.ohio-state.edu:1094\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
+        os.system('sed -i \'1,$s/$/",/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
+        os.system('sed -i "1i runLinst = [" ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+        os.system('sed -i \'$s/,//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+        os.system('sed -i \'$a ]\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
     if FileType == 'OSUT3Ntuple':
         prefix = ''
         if not remoteAccessT3 :
@@ -149,9 +149,9 @@ def MakeFileList(Dataset, FileType, Directory):
         else:
             prefix = 'root://cms-0.mps.ohio-state.edu:1094/'
         #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py. 
-        os.system('MySQLModule ' + Dataset + ' ' + Directory + '/datasetInfo_cfg.py ' + prefix)
+        os.system('MySQLModule ' + Dataset + ' ' + Directory + '/datasetInfo_' + Label + '_cfg.py ' + prefix)
         sys.path.append(Directory)
-        import datasetInfo_cfg as datasetInfo
+        exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
         location = datasetInfo.location 
         if location == 'Dataset does not exist on the Tier 3!':
  	    print 'Dataset does not exist on the Tier 3!'
@@ -277,7 +277,7 @@ if split_datasets:
         WorkDir = CondorDir + '/' + str(dataset)
         os.system('mkdir ' + WorkDir )
 
-        DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir)
+        DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset)
         NumberOfFiles = int(DatasetRead['numberOfFiles'])
         if not arguments.localConfig:    
             NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
