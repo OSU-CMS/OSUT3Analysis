@@ -187,27 +187,8 @@ CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
           if (collection.first == inputType)
             continue;
           pl_->objectFlags.at (currentCutIndex)[collection.first] = pl_->objectFlags.at (currentCutIndex - 1).at (collection.first);
-clog << "pl_->cumulativeObjectFlags.at (" << currentCutIndex << ")[" << collection.first << "] = pl_->cumulativeObjectFlags.at (" << currentCutIndex - 1 << ").at (" << collection.first << ") = {"; // HART
-for (auto flag = pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (collection.first).begin (); flag != pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (collection.first).end (); flag++) // HART
-{ // HART
-  if (flag != pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (collection.first).begin ()) // HART
-    clog << ", "; // HART
-  clog << "{"; // HART
-  if (flag->first) // HART
-    clog << "true"; // HART
-  else // HART
-    clog << "false"; // HART
-  clog << ", "; // HART
-  if (flag->second) // HART
-    clog << "true"; // HART
-  else // HART
-    clog << "false"; // HART
-  clog << "}"; // HART
-} // HART
-clog << "}" << endl; // HART
           pl_->cumulativeObjectFlags.at (currentCutIndex)[collection.first] = pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (collection.first);
           unordered_map<unsigned, bool> otherCumulativeFlags;
-          unordered_map<string, vector<bool> > currentCumulativeFlags;
           for (auto singleObject = singleObjects.begin (); singleObject != singleObjects.end (); singleObject++)
             {
               for (auto flag = pl_->objectFlags.at (currentCutIndex).at (inputType).begin (); flag != pl_->objectFlags.at (currentCutIndex).at (inputType).end (); flag++)
@@ -218,62 +199,24 @@ clog << "}" << endl; // HART
                   if (!globalIndices.size ())
                     break;
                   pair<bool, bool> currentFlag = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag), otherFlag;
+                  bool cumulativeFlag = false;
                   for (const auto &globalIndex : globalIndices)
                     {
                       flag->second && (pl_->objectFlags.at (currentCutIndex).at (collection.first).at (globalIndex).first = flag->first);
                       otherFlag = pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection.first).at (globalIndex);
-                      if (!currentCumulativeFlags.count (*singleObject))
-                        currentCumulativeFlags[*singleObject] = vector<bool> (pl_->objectFlags.at (currentCutIndex).at (inputType).size (), false);
-                      otherFlag.second && (currentCumulativeFlags.at (*singleObject).at (iFlag) = currentCumulativeFlags.at (*singleObject).at (iFlag) || otherFlag.first);
+                      otherFlag.second && (cumulativeFlag = cumulativeFlag || otherFlag.first);
                       if (!otherCumulativeFlags.count (globalIndex))
                         otherCumulativeFlags[globalIndex] = false;
                       currentFlag.second && (otherCumulativeFlags.at (globalIndex) = otherCumulativeFlags.at (globalIndex) || currentFlag.first);
                     }
+                  currentFlag.second && (pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag).first = currentFlag.first && cumulativeFlag);
                 }
             }
           for (const auto &flag : otherCumulativeFlags)
             {
               pair<bool, bool> otherFlag = pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection.first).at (flag.first);
-if (otherFlag.second)
-{
-  clog << "  pl_->cumulativeObjectFlags.at (" << currentCutIndex << ").at (" << collection.first << ").at (" << flag.first << ").first = otherFlag.first && flag.second = ";
-  if (otherFlag.first)
-    clog << "true";
-  else
-    clog << "false";
-  clog << " && ";
-  if (flag.second)
-    clog << "true";
-  else
-    clog << "false";
-  clog << endl;
-}
               otherFlag.second && (pl_->cumulativeObjectFlags.at (currentCutIndex).at (collection.first).at (flag.first).first = otherFlag.first && flag.second);
             }
-          for (const auto &singleObject : currentCumulativeFlags)
-            {
-              for (auto flag = singleObject.second.begin (); flag != singleObject.second.end (); flag++)
-                {
-                  unsigned iFlag = flag - singleObject.second.begin ();
-                  pair<bool, bool> currentFlag = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag);
-if (currentFlag.second)
-{
-  clog << "  pl_->cumulativeObjectFlags.at (" << currentCutIndex << ").at (" << inputType << ").at (" << iFlag << ").first = currentFlag.first && (*flag) = ";
-  if (currentFlag.first)
-    clog << "true";
-  else
-    clog << "false";
-  clog << " && ";
-  if (*flag)
-    clog << "true";
-  else
-    clog << "false";
-  clog << endl;
-}
-                  currentFlag.second && (pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (iFlag).first = currentFlag.first && (*flag));
-                }
-            }
-clog << endl;
         }
     }
   if (singleObjects.size () > 1)

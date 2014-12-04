@@ -196,7 +196,7 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
   vector<string> singleObjects = getSingleObjects (inputLabel);
   set<unsigned> globalIndices;
   vector<unsigned> nCombinations (singleObjects.size (), 1), collectionSizes;
-  unsigned singleObjectIndex = singleObjects.size ();
+  unordered_set<unsigned> singleObjectIndices;
   for (auto collection = singleObjects.begin (); collection != singleObjects.end (); collection++)
     {
       unsigned currentSize = getCollectionSize (*collection);
@@ -204,9 +204,9 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
         nCombinations[i] *= currentSize;
       collectionSizes.push_back (currentSize);
       if (*collection == singleObjectCollection)
-        singleObjectIndex = (collection - singleObjects.begin ());
+        singleObjectIndices.insert (collection - singleObjects.begin ());
     }
-  if (singleObjectIndex < singleObjects.size ())
+  for (const auto &singleObjectIndex : singleObjectIndices)
     {
       for (unsigned i = 0; i < nCombinations.at (0); i++)
         {

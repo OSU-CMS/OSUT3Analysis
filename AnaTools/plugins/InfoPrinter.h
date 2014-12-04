@@ -53,6 +53,7 @@ class InfoPrinter : public edm::EDAnalyzer
     bool                  printTriggerFlags_;
     bool                  printVetoTriggerFlags_;
     bool                  firstEvent_;
+    unsigned              counter_;
     ////////////////////////////////////////////////////////////////////////////
 
     TStopwatch *sw_;

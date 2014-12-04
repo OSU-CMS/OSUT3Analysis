@@ -17,6 +17,7 @@ InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
   printTriggerFlags_           (cfg.getParameter<bool>                  ("printTriggerFlags")),
   printVetoTriggerFlags_       (cfg.getParameter<bool>                  ("printVetoTriggerFlags")),
   firstEvent_ (true),
+  counter_ (0),
   sw_ (new TStopwatch)
 {
   sw_->Start ();
@@ -32,6 +33,8 @@ InfoPrinter::~InfoPrinter ()
 void
 InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
+  counter_++;
+
   event.getByLabel (cutDecisions_, cutDecisions);
   if (firstEvent_ && !cutDecisions.isValid ())
     clog << "WARNING: failed to retrieve cut decisions from the event." << endl;
@@ -42,7 +45,7 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       if (printAllEvents_ || ((*eventToPrint) == event.id ()))
         {
           ss_ << endl << "================================================================================" << endl;
-          ss_ << "\033[1;36minfo for " << event.id () << "\033[0m" << endl;
+          ss_ << "\033[1;36minfo for " << event.id () << " (record " << counter_ << ")\033[0m" << endl;
           printObjectFlags_            &&  printObjectFlags            ();
           printCumulativeObjectFlags_  &&  printCumulativeObjectFlags  ();
           printTriggerFlags_           &&  printTriggerFlags           ();
