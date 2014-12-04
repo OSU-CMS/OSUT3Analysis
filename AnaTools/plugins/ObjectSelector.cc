@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/plugins/ObjectSelector.h"
 
 #define EXIT_CODE 2
@@ -29,8 +30,8 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   // Get the collection and cut decisions from the event and print a warning if
   // there is a problem.
   //////////////////////////////////////////////////////////////////////////////
-  event.getByLabel  (collection_, collection);
-  event.getByLabel  (cutDecisions_, cutDecisions);
+  getCollection(collection_,   collection,   event);  
+  getCollection(cutDecisions_, cutDecisions, event);  
   if (firstEvent_ && !collection.isValid ())
     clog << "WARNING: failed to retrieve requested collection from the event." << endl;
   if (firstEvent_ && !cutDecisions.isValid ())
