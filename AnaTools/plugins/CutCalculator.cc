@@ -40,21 +40,21 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   // Retrieve each object collection which we need and print a warning if it is
   // missing.
   //////////////////////////////////////////////////////////////////////////////
-  if  (objectsToGet_.find  ("bxlumis")         !=  objectsToGet_.end  ()  &&  collections_.exists  ("bxlumis"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("bxlumis"),         handles_.bxlumis);
-  if  (objectsToGet_.find  ("electrons")       !=  objectsToGet_.end  ()  &&  collections_.exists  ("electrons"))       event.getByLabel  (collections_.getParameter<edm::InputTag>  ("electrons"),       handles_.electrons);
-  if  (objectsToGet_.find  ("events")          !=  objectsToGet_.end  ()  &&  collections_.exists  ("events"))          event.getByLabel  (collections_.getParameter<edm::InputTag>  ("events"),          handles_.events);
-  if  (objectsToGet_.find  ("genjets")         !=  objectsToGet_.end  ()  &&  collections_.exists  ("genjets"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("genjets"),         handles_.genjets);
-  if  (objectsToGet_.find  ("jets")            !=  objectsToGet_.end  ()  &&  collections_.exists  ("jets"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("jets"),            handles_.jets);
-  if  (objectsToGet_.find  ("mcparticles")     !=  objectsToGet_.end  ()  &&  collections_.exists  ("mcparticles"))     event.getByLabel  (collections_.getParameter<edm::InputTag>  ("mcparticles"),     handles_.mcparticles);
-  if  (objectsToGet_.find  ("mets")            !=  objectsToGet_.end  ()  &&  collections_.exists  ("mets"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("mets"),            handles_.mets);
-  if  (objectsToGet_.find  ("muons")           !=  objectsToGet_.end  ()  &&  collections_.exists  ("muons"))           event.getByLabel  (collections_.getParameter<edm::InputTag>  ("muons"),           handles_.muons);
-  if  (objectsToGet_.find  ("photons")         !=  objectsToGet_.end  ()  &&  collections_.exists  ("photons"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("photons"),         handles_.photons);
-  if  (objectsToGet_.find  ("primaryvertexs")  !=  objectsToGet_.end  ()  &&  collections_.exists  ("primaryvertexs"))  event.getByLabel  (collections_.getParameter<edm::InputTag>  ("primaryvertexs"),  handles_.primaryvertexs);
-  if  (objectsToGet_.find  ("superclusters")   !=  objectsToGet_.end  ()  &&  collections_.exists  ("superclusters"))   event.getByLabel  (collections_.getParameter<edm::InputTag>  ("superclusters"),   handles_.superclusters);
-  if  (objectsToGet_.find  ("taus")            !=  objectsToGet_.end  ()  &&  collections_.exists  ("taus"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("taus"),            handles_.taus);
-  if  (objectsToGet_.find  ("tracks")          !=  objectsToGet_.end  ()  &&  collections_.exists  ("tracks"))          event.getByLabel  (collections_.getParameter<edm::InputTag>  ("tracks"),          handles_.tracks);
-  if  (objectsToGet_.find  ("triggers")        !=  objectsToGet_.end  ()  &&  collections_.exists  ("triggers"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("triggers"),        handles_.triggers);
-  if  (objectsToGet_.find  ("trigobjs")        !=  objectsToGet_.end  ()  &&  collections_.exists  ("trigobjs"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("trigobjs"),        handles_.trigobjs);
+  if  (VEC_CONTAINS  (objectsToGet_,  "bxlumis")         &&  collections_.exists  ("bxlumis"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("bxlumis"),         handles_.bxlumis);
+  if  (VEC_CONTAINS  (objectsToGet_,  "electrons")       &&  collections_.exists  ("electrons"))       event.getByLabel  (collections_.getParameter<edm::InputTag>  ("electrons"),       handles_.electrons);
+  if  (VEC_CONTAINS  (objectsToGet_,  "events")          &&  collections_.exists  ("events"))          event.getByLabel  (collections_.getParameter<edm::InputTag>  ("events"),          handles_.events);
+  if  (VEC_CONTAINS  (objectsToGet_,  "genjets")         &&  collections_.exists  ("genjets"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("genjets"),         handles_.genjets);
+  if  (VEC_CONTAINS  (objectsToGet_,  "jets")            &&  collections_.exists  ("jets"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("jets"),            handles_.jets);
+  if  (VEC_CONTAINS  (objectsToGet_,  "mcparticles")     &&  collections_.exists  ("mcparticles"))     event.getByLabel  (collections_.getParameter<edm::InputTag>  ("mcparticles"),     handles_.mcparticles);
+  if  (VEC_CONTAINS  (objectsToGet_,  "mets")            &&  collections_.exists  ("mets"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("mets"),            handles_.mets);
+  if  (VEC_CONTAINS  (objectsToGet_,  "muons")           &&  collections_.exists  ("muons"))           event.getByLabel  (collections_.getParameter<edm::InputTag>  ("muons"),           handles_.muons);
+  if  (VEC_CONTAINS  (objectsToGet_,  "photons")         &&  collections_.exists  ("photons"))         event.getByLabel  (collections_.getParameter<edm::InputTag>  ("photons"),         handles_.photons);
+  if  (VEC_CONTAINS  (objectsToGet_,  "primaryvertexs")  &&  collections_.exists  ("primaryvertexs"))  event.getByLabel  (collections_.getParameter<edm::InputTag>  ("primaryvertexs"),  handles_.primaryvertexs);
+  if  (VEC_CONTAINS  (objectsToGet_,  "superclusters")   &&  collections_.exists  ("superclusters"))   event.getByLabel  (collections_.getParameter<edm::InputTag>  ("superclusters"),   handles_.superclusters);
+  if  (VEC_CONTAINS  (objectsToGet_,  "taus")            &&  collections_.exists  ("taus"))            event.getByLabel  (collections_.getParameter<edm::InputTag>  ("taus"),            handles_.taus);
+  if  (VEC_CONTAINS  (objectsToGet_,  "tracks")          &&  collections_.exists  ("tracks"))          event.getByLabel  (collections_.getParameter<edm::InputTag>  ("tracks"),          handles_.tracks);
+  if  (VEC_CONTAINS  (objectsToGet_,  "triggers")        &&  collections_.exists  ("triggers"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("triggers"),        handles_.triggers);
+  if  (VEC_CONTAINS  (objectsToGet_,  "trigobjs")        &&  collections_.exists  ("trigobjs"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("trigobjs"),        handles_.trigobjs);
 
   if (firstEvent_ && !handles_.bxlumis.isValid ())
     clog << "INFO: did not retrieve bxlumis collection from the event." << endl;

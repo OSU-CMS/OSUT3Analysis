@@ -84,23 +84,21 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
 
   // get the required collections from the event
-  if (vecContains(objectsToGet, string("bxlumis")))        getCollection(bxlumis_,        bxlumis,        event);
-  if (vecContains(objectsToGet, string("electrons")))      getCollection(electrons_,      electrons,      event);
-  if (vecContains(objectsToGet, string("events")))         getCollection(events_,         events,         event);
-  if (vecContains(objectsToGet, string("genjets")))        getCollection(genjets_,        genjets,        event);
-  if (vecContains(objectsToGet, string("jets")))           getCollection(jets_,           jets,           event);
-  if (vecContains(objectsToGet, string("mcparticles")))    getCollection(mcparticles_,    mcparticles,    event);
-  if (vecContains(objectsToGet, string("mets")))           getCollection(mets_,           mets,           event);
-  if (vecContains(objectsToGet, string("muons")))          getCollection(muons_,          muons,          event);
-  if (vecContains(objectsToGet, string("photons")))        getCollection(photons_,        photons,        event);
-  if (vecContains(objectsToGet, string("primaryvertexs"))) getCollection(primaryvertexs_, primaryvertexs, event);
-  if (vecContains(objectsToGet, string("secMuons")))       getCollection(secMuons_,       secMuons,       event);
-  if (vecContains(objectsToGet, string("superclusters")))  getCollection(superclusters_,  superclusters,  event);
-  if (vecContains(objectsToGet, string("taus")))           getCollection(taus_,           taus,           event);
-  if (vecContains(objectsToGet, string("tracks")))         getCollection(tracks_,         tracks,         event);
-  if (vecContains(objectsToGet, string("triggers")))       getCollection(triggers_,       triggers,       event);
-  if (vecContains(objectsToGet, string("trigobjs")))       getCollection(trigobjs_,       trigobjs,       event);
-  if (vecContains(objectsToGet, string("userVariables")))  getCollection(userVariables_,  userVariables,  event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "bxlumis")         &&  collections_.exists  ("bxlumis"))         getCollection  (collections_.getParameter<edm::InputTag>  ("bxlumis"),         handles_.bxlumis,         event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "electrons")       &&  collections_.exists  ("electrons"))       getCollection  (collections_.getParameter<edm::InputTag>  ("electrons"),       handles_.electrons,       event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "events")          &&  collections_.exists  ("events"))          getCollection  (collections_.getParameter<edm::InputTag>  ("events"),          handles_.events,          event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "genjets")         &&  collections_.exists  ("genjets"))         getCollection  (collections_.getParameter<edm::InputTag>  ("genjets"),         handles_.genjets,         event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "jets")            &&  collections_.exists  ("jets"))            getCollection  (collections_.getParameter<edm::InputTag>  ("jets"),            handles_.jets,            event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "mcparticles")     &&  collections_.exists  ("mcparticles"))     getCollection  (collections_.getParameter<edm::InputTag>  ("mcparticles"),     handles_.mcparticles,     event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "mets")            &&  collections_.exists  ("mets"))            getCollection  (collections_.getParameter<edm::InputTag>  ("mets"),            handles_.mets,            event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "muons")           &&  collections_.exists  ("muons"))           getCollection  (collections_.getParameter<edm::InputTag>  ("muons"),           handles_.muons,           event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "photons")         &&  collections_.exists  ("photons"))         getCollection  (collections_.getParameter<edm::InputTag>  ("photons"),         handles_.photons,         event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "primaryvertexs")  &&  collections_.exists  ("primaryvertexs"))  getCollection  (collections_.getParameter<edm::InputTag>  ("primaryvertexs"),  handles_.primaryvertexs,  event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "superclusters")   &&  collections_.exists  ("superclusters"))   getCollection  (collections_.getParameter<edm::InputTag>  ("superclusters"),   handles_.superclusters,   event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "taus")            &&  collections_.exists  ("taus"))            getCollection  (collections_.getParameter<edm::InputTag>  ("taus"),            handles_.taus,            event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "tracks")          &&  collections_.exists  ("tracks"))          getCollection  (collections_.getParameter<edm::InputTag>  ("tracks"),          handles_.tracks,          event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "triggers")        &&  collections_.exists  ("triggers"))        getCollection  (collections_.getParameter<edm::InputTag>  ("triggers"),        handles_.triggers,        event);
+  if  (VEC_CONTAINS  (objectsToGet_,  "trigobjs")        &&  collections_.exists  ("trigobjs"))        getCollection  (collections_.getParameter<edm::InputTag>  ("trigobjs"),        handles_.trigobjs,        event);
 
   if (!initializeValueLookupForest (histogramDefinitions, &handles_))
     {
@@ -421,14 +419,6 @@ Plotter::initializeValueLookupForest (vector<HistoDef> &histograms, Collections 
   return true;
   //////////////////////////////////////////////////////////////////////////////
 }
-
-
-template <class VecType> bool Plotter::vecContains(vector< VecType > vec, VecType obj) {
-  // Return whether obj is contained in vec.
-  if (find(vec.begin(), vec.end(), obj) != vec.end()) return true;
-  else return false;
-}
-
 
 template <class InputCollection> void Plotter::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
   // Get a collection with the specified type, and match the product instance name.

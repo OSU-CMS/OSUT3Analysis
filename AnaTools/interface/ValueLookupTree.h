@@ -5,6 +5,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
+// Return whether obj is contained in vec.
+#define VEC_CONTAINS(vec,obj) (find (vec.begin (), vec.end (), obj) != vec.end ())
+
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
 /*

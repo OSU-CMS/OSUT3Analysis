@@ -50,13 +50,12 @@ class Plotter : public edm::EDAnalyzer
       string getDirectoryName(const string);
       vector<string> getInputTypes(const string);
       string fixOrdering(const string);
-      HistoDef parseHistoDef(const edm::ParameterSet, const vector<string> &, const string &, const string &);
+      HistoDef parseHistoDef(const edm::ParameterSet &, const vector<string> &, const string &, const string &);
       void bookHistogram(const HistoDef);
       pair<string,string> getVariableAndFunction(const string);
-      template <class VecType> bool vecContains(vector< VecType > vec, VecType obj);  
 
-      template <class InputCollection> void fillHistogram(const histoDef, const InputCollection);
-      template <class InputCollection1, class InputCollection2> void fillHistogram(const histoDef, const InputCollection1, const InputCollection2);
+      template <class InputCollection> void fillHistogram(const HistoDef, const InputCollection);
+      template <class InputCollection1, class InputCollection2> void fillHistogram(const HistoDef, const InputCollection1, const InputCollection2);
 
       void fillHistogram(const HistoDef &);
       void fill1DHistogram(const HistoDef &);

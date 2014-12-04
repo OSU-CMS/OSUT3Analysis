@@ -30,8 +30,6 @@ CutFlowPlotter::~CutFlowPlotter ()
   // Print all the cutflow information stored in histograms when this class is destroyed.
   int totalEvents;
   clog << endl;
-  clog << "=============================================" << endl;
-  clog << endl;
   clog.setf(std::ios::fixed);
   uint longestCutName = 30;
 
@@ -39,7 +37,7 @@ CutFlowPlotter::~CutFlowPlotter ()
     string cutName = cutFlow_->GetXaxis()->GetBinLabel(i);
     if (cutName.size() > longestCutName) longestCutName = cutName.size();
   }
-  longestCutName += 1;
+  longestCutName += 2;
   clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
   clog << setw (longestCutName) << left << "Cut Name" << right << setw (10) << setprecision(1) << "Events" << setw (16) << "Cumul. Eff." << setw (16) << "Indiv. Eff." << setw (16) << "Minus One" << endl;
   clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
