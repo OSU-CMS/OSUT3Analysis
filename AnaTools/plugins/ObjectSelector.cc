@@ -31,7 +31,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   // there is a problem.
   //////////////////////////////////////////////////////////////////////////////
   getCollection(collection_,   collection,   event);
-  getCollection(cutDecisions_, cutDecisions, event);
+  event.getByLabel (cutDecisions_, cutDecisions);
   if (firstEvent_ && !collection.isValid ())
     clog << "WARNING: failed to retrieve requested collection from the event." << endl;
   if (firstEvent_ && !cutDecisions.isValid ())
