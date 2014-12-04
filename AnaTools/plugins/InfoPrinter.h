@@ -15,7 +15,7 @@
 
 #include "TStopwatch.h"
 
-#include "OSUT3Analysis/AnaTools/plugins/AnalysisPayloads.h"
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
 class InfoPrinter : public edm::EDAnalyzer
 {
@@ -26,6 +26,10 @@ class InfoPrinter : public edm::EDAnalyzer
     void analyze (const edm::Event &, const edm::EventSetup &);
 
   private:
+    ////////////////////////////////////////////////////////////////////////////
+    // Private methods for printing various information about an event to the
+    // stringstream.
+    ////////////////////////////////////////////////////////////////////////////
     bool printEventDecision ();
     bool printCutDecision ();
     bool printTriggerDecision ();
@@ -34,8 +38,17 @@ class InfoPrinter : public edm::EDAnalyzer
     bool printObjectFlags ();
     bool printTriggerFlags ();
     bool printVetoTriggerFlags ();
+    ////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Private methods for calculating how wide a column in a table needs to
+    // be.
+    ////////////////////////////////////////////////////////////////////////////
     unsigned getMaxWidth (const vector<string> &) const;
     unsigned getMaxWidth (const vector<Cut> &) const;
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Outputs the time on the stopwatch to the stringstream.
     void outputTime ();
 
     ////////////////////////////////////////////////////////////////////////////
@@ -56,12 +69,24 @@ class InfoPrinter : public edm::EDAnalyzer
     unsigned              counter_;
     ////////////////////////////////////////////////////////////////////////////
 
+    // Stopwatch for timing the code.
     TStopwatch *sw_;
+
+    // Stringstream which holds all the information to be printed until the
+    // destructor is called, where it is printed to the screen.
     stringstream ss_;
+
+    // Cut decisions which are gotten from the event.
     edm::Handle<CutCalculatorPayload> cutDecisions;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Variables for holding the widths of columns of cut names and trigger
+    // names.
+    ////////////////////////////////////////////////////////////////////////////
     unsigned maxCutWidth_;
     unsigned maxTriggerWidth_;
     unsigned maxVetoTriggerWidth_;
+    ////////////////////////////////////////////////////////////////////////////
 };
 
 #endif

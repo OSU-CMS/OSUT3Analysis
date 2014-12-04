@@ -372,6 +372,11 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
       BNtrigobj *obj = new BNtrigobj (handles_->trigobjs->at (i));
       return obj;
     }
+  else if (name == "userVariables")
+    {
+      map<string, double> *obj = new map<string, double> (handles_->userVariables->at (i));
+      return obj;
+    }
   return NULL;
 }
 
@@ -406,6 +411,8 @@ ValueLookupTree::deleteObject (const string &name, void * const obj) const
     delete ((BNtrack *) obj);
   else if (name == "trigobjs")
     delete ((BNtrigobj *) obj);
+  else if (name == "userVariables")
+    delete ((map<string, double> *) obj);
 }
 
 unsigned
@@ -439,6 +446,8 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->tracks->size ();
   else if (name == "trigobjs")
     return handles_->trigobjs->size ();
+  else if (name == "userVariables")
+    return handles_->userVariables->size ();
   return 0;
 }
 
@@ -1038,6 +1047,8 @@ ValueLookupTree::isCollection (const string &name) const
     return true;
   else if (name == "trigobjs")
     return true;
+  else if (name == "userVariables")
+    return true;
   return false;
 }
 
@@ -1090,39 +1101,13 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
 
   try
     {
+      if (collection == "userVariables")
+        return (((map<string, double> *) obj)->at (variable));
       return getMember (getCollectionType (collection), obj, variable);
     }
   catch (...)
     {
-      if (collection == "bxlumis")
-        return valueLookup ((BNbxlumi *) obj, variable);
-      else if (collection == "electrons")
-        return valueLookup ((BNelectron *) obj, variable);
-      else if (collection == "events")
-        return valueLookup ((BNevent *) obj, variable);
-      else if (collection == "genjets")
-        return valueLookup ((BNgenjet *) obj, variable);
-      else if (collection == "jets")
-        return valueLookup ((BNjet *) obj, variable);
-      else if (collection == "mcparticles")
-        return valueLookup ((BNmcparticle *) obj, variable);
-      else if (collection == "mets")
-        return valueLookup ((BNmet *) obj, variable);
-      else if (collection == "muons")
-        return valueLookup ((BNmuon *) obj, variable);
-      else if (collection == "photons")
-        return valueLookup ((BNphoton *) obj, variable);
-      else if (collection == "primaryvertexs")
-        return valueLookup ((BNprimaryvertex *) obj, variable);
-      else if (collection == "superclusters")
-        return valueLookup ((BNsupercluster *) obj, variable);
-      else if (collection == "taus")
-        return valueLookup ((BNtau *) obj, variable);
-      else if (collection == "tracks")
-        return valueLookup ((BNtrack *) obj, variable);
-      else if (collection == "trigobjs")
-        return valueLookup ((BNtrigobj *) obj, variable);
+      return numeric_limits<int>::min ();
     }
 
-  return numeric_limits<int>::min ();
 }

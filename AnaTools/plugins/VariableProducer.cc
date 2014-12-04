@@ -4,7 +4,7 @@ VariableProducer::VariableProducer(const edm::ParameterSet &cfg) :
   collectionMap_ (cfg.getParameter<edm::ParameterSet> ("inputsMap"))
 {
 
-  produces<vector<map<string, double> > > ("userVariables");
+  produces<VariableProducerPayload> ("userVariables");
 
   jets_ = collectionMap_.getParameter<edm::InputTag> ("jets");
   muons_ = collectionMap_.getParameter<edm::InputTag> ("muons");
@@ -30,7 +30,7 @@ VariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   // double is the value of the variable
   // it is a vector because  other collections are also vectors 
   // the vector will have size=1 for each event 
-  auto_ptr<vector<map<string, double> > > userVariables (new vector<map<string, double> >);  
+  auto_ptr<VariableProducerPayload> userVariables (new VariableProducerPayload);
 
 
   // get whatever we need from the event

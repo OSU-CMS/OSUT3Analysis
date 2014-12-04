@@ -74,11 +74,14 @@ class ValueLookupTree
     // expression.
     ////////////////////////////////////////////////////////////////////////////
     void insert (const string &);
-    void *getObject (const string &name, const unsigned i) const;
-    void deleteObject (const string &, void * const) const;
     const vector<Leaf> &evaluate ();
-    unsigned getLocalIndex (unsigned, unsigned) const;
+    ////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Methods for retrieving various information about a collection.
+    ////////////////////////////////////////////////////////////////////////////
     static vector<string> getSingleObjects (string);
+    unsigned getLocalIndex (unsigned, unsigned) const;
     set<unsigned> getGlobalIndices (unsigned, const string &, string) const;
     unsigned getCollectionSize (const string &name) const;
     ////////////////////////////////////////////////////////////////////////////
@@ -115,6 +118,14 @@ class ValueLookupTree
     Leaf evaluate_ (const Node * const, const ObjMap &);
     ////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Methods for retrieving and deleting an object from a collection.
+    ////////////////////////////////////////////////////////////////////////////
+    void *getObject (const string &name, const unsigned i) const;
+    void deleteObject (const string &, void * const) const;
+    ////////////////////////////////////////////////////////////////////////////
+
+
     // Method which returns true if the parentheses are not balanced, i.e., if
     // the number of left parentheses does not equal the number of right
     // parentheses.
@@ -148,25 +159,6 @@ class ValueLookupTree
     bool evaluationError_;
     vector<unsigned> nCombinations_;
     vector<unsigned> collectionSizes_;
-
-    ////////////////////////////////////////////////////////////////////////////
-    // valueLookup methods for each type of object.
-    ////////////////////////////////////////////////////////////////////////////
-    double  valueLookup  (const  BNbxlumi             * const,  const string &) const;
-    double  valueLookup  (const  BNelectron           * const,  const string &) const;
-    double  valueLookup  (const  BNevent              * const,  const string &) const;
-    double  valueLookup  (const  BNgenjet             * const,  const string &) const;
-    double  valueLookup  (const  BNjet                * const,  const string &) const;
-    double  valueLookup  (const  BNmcparticle         * const,  const string &) const;
-    double  valueLookup  (const  BNmet                * const,  const string &) const;
-    double  valueLookup  (const  BNmuon               * const,  const string &) const;
-    double  valueLookup  (const  BNphoton             * const,  const string &) const;
-    double  valueLookup  (const  BNprimaryvertex      * const,  const string &) const;
-    double  valueLookup  (const  BNsupercluster       * const,  const string &) const;
-    double  valueLookup  (const  BNtau                * const,  const string &) const;
-    double  valueLookup  (const  BNtrack              * const,  const string &) const;
-    double  valueLookup  (const  BNtrigobj            * const,  const string &) const;
-    ////////////////////////////////////////////////////////////////////////////
 
     bool isCollection (const string &) const;
     void inferInputCollections (const Node * const, vector<string> &) const;

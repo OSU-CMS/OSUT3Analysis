@@ -55,6 +55,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   if  (VEC_CONTAINS  (objectsToGet_,  "tracks")          &&  collections_.exists  ("tracks"))          event.getByLabel  (collections_.getParameter<edm::InputTag>  ("tracks"),          handles_.tracks);
   if  (VEC_CONTAINS  (objectsToGet_,  "triggers")        &&  collections_.exists  ("triggers"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("triggers"),        handles_.triggers);
   if  (VEC_CONTAINS  (objectsToGet_,  "trigobjs")        &&  collections_.exists  ("trigobjs"))        event.getByLabel  (collections_.getParameter<edm::InputTag>  ("trigobjs"),        handles_.trigobjs);
+  if  (VEC_CONTAINS  (objectsToGet_,  "userVariables")   &&  collections_.exists  ("userVariables"))   event.getByLabel  (collections_.getParameter<edm::InputTag>  ("userVariables"),   handles_.userVariables);
 
   if (firstEvent_ && !handles_.bxlumis.isValid ())
     clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
@@ -117,14 +118,14 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   for (unsigned currentCutIndex = 0; pl_->isValid && currentCutIndex != pl_->cuts.size (); currentCutIndex++)
     {
       Cut currentCut = pl_->cuts.at (currentCutIndex);
+
+      // Sets the flags for the current cut only for the objects which are
+      // being cut on.
       pl_->isValid = setObjectFlags (currentCut, currentCutIndex);
 
-      //////////////////////////////////////////////////////////////////////////
-      // Update the flags for the paired object collections with those of the
-      // constituent object collections.
-      //////////////////////////////////////////////////////////////////////////
+      // Updates the flags for other objects based on those for the objects
+      // which are being cut on.
       updateCrossTalk (currentCut, currentCutIndex);
-      //////////////////////////////////////////////////////////////////////////
     }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -149,6 +150,10 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
 bool
 CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex) const
 {
+  ////////////////////////////////////////////////////////////////////////////////
+  // Prepare the flag maps for the new cut by increasing the size of the vector
+  // and adding the input label as a key to the map.
+  ////////////////////////////////////////////////////////////////////////////////
   string inputType = currentCut.inputLabel;
   if (currentCutIndex >= pl_->objectFlags.size ())
     pl_->objectFlags.resize (currentCutIndex + 1);
@@ -156,7 +161,11 @@ CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex) 
     pl_->cumulativeObjectFlags.resize (currentCutIndex + 1);
   pl_->objectFlags.at (currentCutIndex)[inputType];
   pl_->cumulativeObjectFlags.at (currentCutIndex)[inputType];
+  ////////////////////////////////////////////////////////////////////////////////
 
+  ////////////////////////////////////////////////////////////////////////////////
+  // Set the flags for this cut, but only for the objects being cut on.
+  ////////////////////////////////////////////////////////////////////////////////
   for (auto cutDecision = currentCut.valueLookupTree->evaluate ().begin (); cutDecision != currentCut.valueLookupTree->evaluate ().end (); cutDecision++)
     {
       unsigned object = (cutDecision - currentCut.valueLookupTree->evaluate ().begin ());
@@ -171,6 +180,7 @@ CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex) 
         flag.first = flag.first && pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (inputType).at (object).first;
       pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).push_back (flag);
     }
+  ////////////////////////////////////////////////////////////////////////////////
 
   return true;
 }
@@ -178,6 +188,8 @@ CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex) 
 void
 CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex) const
 {
+  // Propagate forward any collections which have flags set for the previous
+  // cut.
   string inputType = currentCut.inputLabel;
   vector<string> singleObjects = ValueLookupTree::getSingleObjects (inputType);
   if (currentCutIndex > 0)
@@ -219,6 +231,10 @@ CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
             }
         }
     }
+
+  // If the the current cut was on a composite collection, and the constituent
+  // collections were not already propagated forward in the previous step, set
+  // the flags for these collections now.
   if (singleObjects.size () > 1)
     {
       for (auto singleObject = singleObjects.begin (); singleObject != singleObjects.end (); singleObject++)
@@ -235,6 +251,9 @@ CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
             }
         }
     }
+
+  // Propagate backwards any collections which have flags for the current cut,
+  // but not any previous cuts.
   if (currentCutIndex > 0)
     {
       for (const auto &collection : pl_->objectFlags.at (currentCutIndex))

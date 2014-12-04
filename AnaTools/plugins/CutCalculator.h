@@ -8,7 +8,7 @@
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-#include "OSUT3Analysis/AnaTools/plugins/AnalysisPayloads.h"
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
 // Declaration of the CutCalculator EDProducer which produces various flags
 // indicating whether the event and each object passed the user-defined cuts.
@@ -52,21 +52,14 @@ class CutCalculator : public edm::EDProducer
     vector<string>         unpackedTriggers_;
     ////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////
     // Object collections which can be gotten from the event.
-    ////////////////////////////////////////////////////////////////////////////
     Collections handles_;
-    ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDProducer.
     auto_ptr<CutCalculatorPayload>  pl_;
 
-    ////////////////////////////////////////////////////////////////////////////
-    // ValueLookup object, the function for initializing its private variables,
-    // and the function for initializing ValueLookupTree objects.
-    ////////////////////////////////////////////////////////////////////////////
+    // Function for initializing the ValueLookupTree objects, one for each cut.
     bool initializeValueLookupForest (vector<Cut> &, Collections * const);
-    ////////////////////////////////////////////////////////////////////////////
 };
 
 #endif

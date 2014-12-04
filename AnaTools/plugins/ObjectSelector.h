@@ -8,7 +8,7 @@
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-#include "OSUT3Analysis/AnaTools/plugins/AnalysisPayloads.h"
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
 template<class T>
 class ObjectSelector : public edm::EDFilter

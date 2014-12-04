@@ -11,7 +11,7 @@
 
 #include "TH1D.h"
 
-#include "OSUT3Analysis/AnaTools/plugins/AnalysisPayloads.h"
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
 class CutFlowPlotter : public edm::EDAnalyzer
 {

@@ -33,6 +33,8 @@
 
 #include "DataFormats/Math/interface/deltaPhi.h"
 
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+
 using namespace std;
 
 class VariableProducer : public edm::EDProducer

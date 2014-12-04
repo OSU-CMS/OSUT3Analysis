@@ -34,15 +34,7 @@ typedef boost::variant<double, string> Leaf;
 
 typedef vector<map<string, vector<pair<bool, bool> > > > FlagMap;
 
-struct BadCSC {
-  double etaCSC;
-  double phiCSC;
-};
-
-struct DeadEcal {
-  double etaEcal;
-  double phiEcal;
-};
+typedef vector<map<string, double> > VariableProducerPayload;
 
 struct Cut
 {
@@ -54,6 +46,22 @@ struct Cut
   string           inputLabel;
   string           name;
   vector<string>   inputCollections;
+};
+
+struct CutCalculatorPayload
+{
+  FlagMap         cumulativeObjectFlags;
+  FlagMap         objectFlags;
+  bool            cutDecision;
+  bool            eventDecision;
+  bool            isValid;
+  bool            triggerDecision;
+  vector<Cut>     cuts;
+  vector<bool>    eventFlags;
+  vector<bool>    triggerFlags;
+  vector<bool>    vetoTriggerFlags;
+  vector<string>  triggers;
+  vector<string>  triggersToVeto;
 };
 
 struct HistoDef {
@@ -81,22 +89,22 @@ struct Node
 
 struct Collections
 {
-  edm::Handle<BNbxlumiCollection>             bxlumis;
-  edm::Handle<BNelectronCollection>           electrons;
-  edm::Handle<BNeventCollection>              events;
-  edm::Handle<BNgenjetCollection>             genjets;
-  edm::Handle<BNjetCollection>                jets;
-  edm::Handle<BNmcparticleCollection>         mcparticles;
-  edm::Handle<BNmetCollection>                mets;
-  edm::Handle<BNmuonCollection>               muons;
-  edm::Handle<BNphotonCollection>             photons;
-  edm::Handle<BNprimaryvertexCollection>      primaryvertexs;
-  edm::Handle<BNsuperclusterCollection>       superclusters;
-  edm::Handle<BNtauCollection>                taus;
-  edm::Handle<BNtrackCollection>              tracks;
-  edm::Handle<BNtriggerCollection>            triggers;
-  edm::Handle<BNtrigobjCollection>            trigobjs;
-  edm::Handle<vector<map<string, double> > >  userVariables;
+  edm::Handle<BNbxlumiCollection>         bxlumis;
+  edm::Handle<BNelectronCollection>       electrons;
+  edm::Handle<BNeventCollection>          events;
+  edm::Handle<BNgenjetCollection>         genjets;
+  edm::Handle<BNjetCollection>            jets;
+  edm::Handle<BNmcparticleCollection>     mcparticles;
+  edm::Handle<BNmetCollection>            mets;
+  edm::Handle<BNmuonCollection>           muons;
+  edm::Handle<BNphotonCollection>         photons;
+  edm::Handle<BNprimaryvertexCollection>  primaryvertexs;
+  edm::Handle<BNsuperclusterCollection>   superclusters;
+  edm::Handle<BNtauCollection>            taus;
+  edm::Handle<BNtrackCollection>          tracks;
+  edm::Handle<BNtriggerCollection>        triggers;
+  edm::Handle<BNtrigobjCollection>        trigobjs;
+  edm::Handle<VariableProducerPayload>    userVariables;
 };
 
 #endif

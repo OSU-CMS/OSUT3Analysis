@@ -3,7 +3,7 @@
 //Add includes for your classes here
 #include "OSUT3Analysis/AnaTools/interface/BNstop.h"
 #include "OSUT3Analysis/AnaTools/interface/BNPFChgHad.h"
-#include "OSUT3Analysis/AnaTools/plugins/AnalysisPayloads.h"
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 #include <utility>
 #include <vector>
 #include <map>

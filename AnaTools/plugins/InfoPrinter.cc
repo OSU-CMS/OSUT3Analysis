@@ -20,14 +20,20 @@ InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
   counter_ (0),
   sw_ (new TStopwatch)
 {
+  // Start the timer.
   sw_->Start ();
 }
 
 InfoPrinter::~InfoPrinter ()
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Stop the timer and output the time, as well as any additional information
+  // requested by the user.
+  //////////////////////////////////////////////////////////////////////////////
   sw_->Stop ();
   outputTime ();
   clog << ss_.str ();
+  //////////////////////////////////////////////////////////////////////////////
 }
 
 void
@@ -35,11 +41,20 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
   counter_++;
 
+  //////////////////////////////////////////////////////////////////////////////
+  // Get the cut decisions out of the event.
+  //////////////////////////////////////////////////////////////////////////////
   event.getByLabel (cutDecisions_, cutDecisions);
   if (firstEvent_ && !cutDecisions.isValid ())
     clog << "WARNING: failed to retrieve cut decisions from the event." << endl;
-  maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = 0;
+  //////////////////////////////////////////////////////////////////////////////
 
+  //////////////////////////////////////////////////////////////////////////////
+  // For each type of information requested by the user, and for each event
+  // requested, print that information to the stringstream which is printed in
+  // the destructor.
+  //////////////////////////////////////////////////////////////////////////////
+  maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = 0;
   for (auto eventToPrint = eventsToPrint_.begin (); printAllEvents_ || eventToPrint != eventsToPrint_.end (); eventToPrint++)
     {
       if (printAllEvents_ || ((*eventToPrint) == event.id ()))
@@ -59,6 +74,7 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       if (printAllEvents_)
         break;
     }
+  //////////////////////////////////////////////////////////////////////////////
 
   firstEvent_ = false;
 }
@@ -257,12 +273,19 @@ InfoPrinter::printVetoTriggerFlags ()
 unsigned
 InfoPrinter::getMaxWidth (const vector<string> &list) const
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Calculate the maximum length of the strings in a vector.
+  //////////////////////////////////////////////////////////////////////////////
   unsigned w = 0;
   for (const auto &s : list)
     {
       if (s.length () > w)
         w = s.length ();
     }
+  //////////////////////////////////////////////////////////////////////////////
+
+  // Add two to the maximum length so that there are at least two spaces before
+  // the next column in the table.
   w += 2;
 
   return w;
@@ -271,12 +294,19 @@ InfoPrinter::getMaxWidth (const vector<string> &list) const
 unsigned
 InfoPrinter::getMaxWidth (const vector<Cut> &list) const
 {
+  //////////////////////////////////////////////////////////////////////////////
+  // Calculate the maximum length of the names of cuts in a vector.
+  //////////////////////////////////////////////////////////////////////////////
   unsigned w = 0;
   for (const auto &cut : list)
     {
       if (cut.name.length () > w)
         w = cut.name.length ();
     }
+  //////////////////////////////////////////////////////////////////////////////
+
+  // Add two to the maximum length so that there are at least two spaces before
+  // the next column in the table.
   w += 2;
 
   return w;
