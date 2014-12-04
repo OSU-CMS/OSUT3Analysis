@@ -1,5 +1,4 @@
 #ifndef PLOTTER
-
 #define PLOTTER
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -60,8 +59,6 @@ class Plotter : public edm::EDAnalyzer
       void fillHistogram(const HistoDef &);
       void fill1DHistogram(const HistoDef &);
       void fill2DHistogram(const HistoDef &);
-
-      template <class InputCollection> void getCollection(const edm::InputTag& label,  edm::Handle<InputCollection>& coll, const edm::Event &event);   
 
       double getBinSize(TH1D *, const double);
       pair<double,double> getBinSize(TH2D *, const double, const double);
