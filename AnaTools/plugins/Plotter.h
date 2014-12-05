@@ -28,7 +28,9 @@ class Plotter : public edm::EDAnalyzer
       edm::ParameterSet collections_;
 
       //Collections
+
       Collections handles_;
+
 
       vector<edm::ParameterSet> histogramSets_;
 
@@ -69,3 +71,7 @@ class Plotter : public edm::EDAnalyzer
 };
 
 #endif
+
+
+
+
