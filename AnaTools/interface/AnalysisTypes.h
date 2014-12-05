@@ -5,35 +5,68 @@
 #include <string>
 #include <map>
 
-using namespace std;
+#include "boost/variant.hpp"
 
-typedef map<string, vector<vector<bool> > > flagMap;
+#include "DataFormats/Common/interface/Handle.h"
+
+#include "BEAN/Collections/interface/BNbxlumi.h"
+#include "BEAN/Collections/interface/BNelectron.h"
+#include "BEAN/Collections/interface/BNevent.h"
+#include "BEAN/Collections/interface/BNjet.h"
+#include "BEAN/Collections/interface/BNmcparticle.h"
+#include "BEAN/Collections/interface/BNmet.h"
+#include "BEAN/Collections/interface/BNmuon.h"
+#include "BEAN/Collections/interface/BNphoton.h"
+#include "BEAN/Collections/interface/BNprimaryvertex.h"
+#include "BEAN/Collections/interface/BNskimbits.h"
+#include "BEAN/Collections/interface/BNsupercluster.h"
+#include "BEAN/Collections/interface/BNtrack.h"
+#include "BEAN/Collections/interface/BNtrigger.h"
+#include "BEAN/Collections/interface/BNtrigobj.h"
+#include "BEAN/Collections/interface/BNtau.h"
+#include "BEAN/Collections/interface/BNgenjet.h"
+
+using namespace std;
 
 class ValueLookupTree;
 
-struct BadCSC {
-  double etaCSC;
-  double phiCSC;
-};
+typedef boost::variant<double, string> Leaf;
 
-struct DeadEcal {
-  double etaEcal;
-  double phiEcal;
-};
+typedef vector<map<string, vector<pair<bool, bool> > > > FlagMap;
 
-struct cut
+typedef vector<map<string, double> > VariableProducerPayload;
+
+struct Cut
 {
-  bool            isVeto;
-  int             numberRequired;
-  string          eventComparativeOperator;
-  string          inputCollection;
-  string          name;
-  string          cutString;
-  ValueLookupTree *valueLookupTree;
+  ValueLookupTree  *valueLookupTree;
+  bool             isVeto;
+  int              numberRequired;
+  string           cutString;
+  string           eventComparativeOperator;
+  string           inputLabel;
+  string           name;
+  vector<string>   inputCollections;
 };
 
-struct histoDef {
-  string inputCollection;
+struct CutCalculatorPayload
+{
+  FlagMap         cumulativeObjectFlags;
+  FlagMap         objectFlags;
+  bool            cutDecision;
+  bool            eventDecision;
+  bool            isValid;
+  bool            triggerDecision;
+  vector<Cut>     cuts;
+  vector<bool>    eventFlags;
+  vector<bool>    triggerFlags;
+  vector<bool>    vetoTriggerFlags;
+  vector<string>  triggers;
+  vector<string>  triggersToVeto;
+};
+
+struct HistoDef {
+  vector<string> inputCollections;
+  string inputLabel;
   string directory;
   string name;
   string title; // contains axis labels
@@ -46,10 +79,32 @@ struct histoDef {
   int dimensions;
 };
 
-struct node
+struct Node
 {
-  string value;
-  vector<node *> branches;
+  Node           *parent;
+  string         type;
+  string         value;
+  vector<Node*>  branches;
+};
+
+struct Collections
+{
+  edm::Handle<BNbxlumiCollection>         bxlumis;
+  edm::Handle<BNelectronCollection>       electrons;
+  edm::Handle<BNeventCollection>          events;
+  edm::Handle<BNgenjetCollection>         genjets;
+  edm::Handle<BNjetCollection>            jets;
+  edm::Handle<BNmcparticleCollection>     mcparticles;
+  edm::Handle<BNmetCollection>            mets;
+  edm::Handle<BNmuonCollection>           muons;
+  edm::Handle<BNphotonCollection>         photons;
+  edm::Handle<BNprimaryvertexCollection>  primaryvertexs;
+  edm::Handle<BNsuperclusterCollection>   superclusters;
+  edm::Handle<BNtauCollection>            taus;
+  edm::Handle<BNtrackCollection>          tracks;
+  edm::Handle<BNtriggerCollection>        triggers;
+  edm::Handle<BNtrigobjCollection>        trigobjs;
+  edm::Handle<VariableProducerPayload>    userVariables;
 };
 
 #endif

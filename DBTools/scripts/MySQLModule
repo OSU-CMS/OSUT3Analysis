@@ -47,7 +47,8 @@ getLocation
       print $tmpfile "numberOfFiles = ".$row[4]."\n"; 
       print $tmpfile 'status = "'.$row[5].'"'."\n"; 
       print $tmpfile "crossSection = ".$row[7]."\n" if $row[7] > 0;  
-      print $tmpfile "crossSection = "."-1".$row[6]."\n" if $row[7] <= 0;  
+      print $tmpfile "crossSection = ".$row[6]."\n" if $row[7] < 0 and $row[6] > 0;  
+      print $tmpfile "crossSection = "."-1"."\n" if $row[7] < 0 and $row[6] < 0;  
       print $tmpfile "listOfFiles = [\n";
       my $length = @files;
       if ($length) { 
@@ -103,7 +104,7 @@ getLocation
   print $tmpfile "numberOfFiles = ".$map{$response}[2]."\n"; 
   print $tmpfile 'status = "'.$map{$response}[3].'"'."\n"; 
   print $tmpfile "crossSection = ".$map{$response}[4]."\n" if $map{$response}[4]; 
-  print $tmpfile "crossSection = ".'"Null"'."\n" if !$map{$response}[4]; 
+  print $tmpfile "crossSection = "."-1"."\n" if !$map{$response}[4]; 
   print $tmpfile "listOfFiles = [\n";    
   if ($map{$response}[5]) { 
       for (my $i = 0; $i < @{$map{$response}[5]}; $i++)

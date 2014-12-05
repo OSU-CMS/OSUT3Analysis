@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "OSUT3Analysis/AnaTools/interface/ExternTemplates.h"
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/plugins/ObjectSelector.h"
 
 #define EXIT_CODE 2
@@ -15,7 +15,7 @@ ObjectSelector<T>::ObjectSelector (const edm::ParameterSet &cfg) :
   // Retrieve the InputTag for the collection which is to be filtered.
   collection_ = collections_.getParameter<edm::InputTag> (collectionToFilter_);
 
-  produces<vector<T> > ("selectedObjects");
+  produces<vector<T> > (collection_.instance ());
 }
 
 template<class T>
@@ -30,8 +30,8 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   // Get the collection and cut decisions from the event and print a warning if
   // there is a problem.
   //////////////////////////////////////////////////////////////////////////////
-  event.getByLabel  (collection_, collection);
-  event.getByLabel  (cutDecisions_, cutDecisions);
+  getCollection(collection_,   collection,   event);
+  event.getByLabel (cutDecisions_, cutDecisions);
   if (firstEvent_ && !collection.isValid ())
     clog << "WARNING: failed to retrieve requested collection from the event." << endl;
   if (firstEvent_ && !cutDecisions.isValid ())
@@ -46,7 +46,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<T> > (new vector<T> ());
   if (collection.isValid ())
     {
-      for (typename vector<T>::const_iterator object = collection->begin (); object != collection->end (); object++)
+      for (auto object = collection->begin (); object != collection->end (); object++)
         {
           unsigned iObject = object - collection->begin (),
                    nCuts;
@@ -54,9 +54,9 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
 
           if (cutDecisions.isValid ())
             {
-              nCuts = cutDecisions->cumulativeObjectFlags.at (collectionToFilter_).size ();
+              nCuts = cutDecisions->cumulativeObjectFlags.size ();
               if (nCuts > 0)
-                passes = cutDecisions->cumulativeObjectFlags.at (collectionToFilter_).at (nCuts - 1).at (iObject);
+                passes = cutDecisions->cumulativeObjectFlags.at (nCuts - 1).at (collectionToFilter_).at (iObject).first;
             }
           if (passes)
             pl_->push_back (*object);
@@ -64,7 +64,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
     }
   //////////////////////////////////////////////////////////////////////////////
 
-  event.put (pl_, "selectedObjects");
+  event.put (pl_, collection_.instance ());
   firstEvent_ = false;
 
   // Return the global decision for the event. If the cut decisions could not

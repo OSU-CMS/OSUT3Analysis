@@ -1,8 +1,11 @@
 #ifndef VALUE_LOOKUP_TREE
 #define VALUE_LOOKUP_TREE
 
+#include <set>
+#include <unordered_map>
+#include <unordered_set>
+
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
-#include "OSUT3Analysis/AnaTools/interface/ValueLookup.h"
 
 /*
 A ValueLookupTree object contains all the information needed to
@@ -39,16 +42,19 @@ Another example is an expression, e.g., "2 * abs(eta)", represented as:
 In this case the evaluate function would return a continuous value.
 */
 
+typedef unordered_multimap<string, tuple<unsigned, unsigned, void *> > ObjMap;
+
 class ValueLookupTree
 {
   public:
     ValueLookupTree ();
-    ValueLookupTree (const string &, ValueLookup *);
+    ValueLookupTree (const Cut &);
+    ValueLookupTree (const string &, const vector<string> &);
     ~ValueLookupTree ();
 
     // Method for assigning a ValueLookup object which is used to evaluate the
     // expression.
-    ValueLookup *assignValueLookup (ValueLookup *);
+    const Collections * const setCollections (Collections * const);
 
     ////////////////////////////////////////////////////////////////////////////
     // Error checking methods: isValid() returns false if the tree has not been
@@ -56,8 +62,8 @@ class ValueLookupTree
     // returns true if there was any exception during the evaluation of the
     // expression.
     ////////////////////////////////////////////////////////////////////////////
-    bool isValid ();
-    bool evaluationError ();
+    bool isValid () const;
+    bool evaluationError () const;
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -65,68 +71,103 @@ class ValueLookupTree
     // expression.
     ////////////////////////////////////////////////////////////////////////////
     void insert (const string &);
-    template<class T> double evaluate (const T &);
-    template<class T0, class T1> double evaluate (const T0 &, const T1 &);
+    const vector<Leaf> &evaluate ();
+    ////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Methods for retrieving various information about a collection.
+    ////////////////////////////////////////////////////////////////////////////
+    unsigned getLocalIndex (unsigned, unsigned) const;
+    set<unsigned> getGlobalIndices (unsigned, const string &, string) const;
+    unsigned getCollectionSize (const string &name) const;
     ////////////////////////////////////////////////////////////////////////////
 
   private:
     // Method for destroying an entire tree, including all of its children.
-    void destroy (node *);
+    void destroy (Node * const) const;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Methods for removing commas and parentheses from a tree.
+    ////////////////////////////////////////////////////////////////////////////
+    void pruneCommas (Node * const) const;
+    void pruneParentheses (Node * const) const;
+    ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
     // Recursive methods for inserting an expression into the tree and then
     // evaluating it.
     ////////////////////////////////////////////////////////////////////////////
-    node *insert_ (const string &);
-    double evaluateOperator (const string &, const vector<double> &);
-    template<class T> double evaluate_ (node *, const T &);
-    template<class T0, class T1> double evaluate_ (node *, const T0 &, const T1 &);
+    Node *insert_ (const string &, Node * const) const;
+    Leaf evaluate_ (const Node * const, const ObjMap &);
     ////////////////////////////////////////////////////////////////////////////
 
+    // Returns the result of an operator acting on its operands.
+    Leaf evaluateOperator (const string &, const vector<Leaf> &, const ObjMap &);
+
     ////////////////////////////////////////////////////////////////////////////
-    // Methods for removing whitespace from a string, either from the left, the
-    // right, or both sides.
+    // Methods for retrieving and deleting an object from a collection.
     ////////////////////////////////////////////////////////////////////////////
-    string &ltrim (string &);
-    string &rtrim (string &);
-    string &trim (string &);
+    void *getObject (const string &name, const unsigned i) const;
+    void deleteObject (const string &, void * const) const;
+    ////////////////////////////////////////////////////////////////////////////
+
+    string getCollectionType (const string &name) const;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Methods which returns true if the first argument looks like a collection
+    // name or a number, respectively. The second argument of isNumber receives
+    // the converted value.
+    ////////////////////////////////////////////////////////////////////////////
+    bool isCollection (const string &) const;
+    bool isnumber (const string &, double &) const;
     ////////////////////////////////////////////////////////////////////////////
 
     // Method which returns true if the parentheses are not balanced, i.e., if
     // the number of left parentheses does not equal the number of right
     // parentheses.
-    bool splitParentheses (string);
-
-    // Method which returns true if the first argument looks like a number. The
-    // second argument receives the converted value.
-    bool isnumber (const string &, double &);
-
-    // Method which removes commas and parentheses from the immediate daughters
-    // of a unary prefix operator.
-    void pruneCommas (vector<node *> &);
+    bool splitParentheses (string) const;
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for finding the first instance within a string of any one of a
     // vector of target strings.
     ////////////////////////////////////////////////////////////////////////////
-    static bool firstOfPairAscending (pair<size_t, string>, pair<size_t, string>);
-    pair<size_t, string> findFirstOf (const string &, const vector<string> &, const vector<string> &, const size_t = 0);
-    bool vetoMatch (const string &, const string &, const size_t, const vector<string> &);
+    pair<size_t, string> findFirstOf (const string &, const vector<string> &, const vector<string> &, const size_t = 0) const;
+    bool vetoMatch (const string &, const string &, const size_t, const vector<string> &) const;
     ////////////////////////////////////////////////////////////////////////////
+
+    // Method which infers the input collection names from the given tree. The
+    // collection names are stored in the second argument.
+    void inferInputCollections (const Node * const, vector<string> &) const;
+
+    // To avoid double counting. For a given set of objects, returns true only
+    // if they are all unique and in a specific order.
+    bool isUniqueCase (const ObjMap &, const unordered_set<string> &) const;
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for inserting different types of operators into the tree.
     ////////////////////////////////////////////////////////////////////////////
-    bool insertBinaryInfixOperator (const string &, node *, const vector<string> &, const vector<string> & = {});
-    bool insertUnaryPrefixOperator (const string &, node *, const vector<string> &, const vector<string> & = {});
-    bool insertParentheses (const string &, node *);
+    bool insertBinaryInfixOperator (const string &, Node * const, const vector<string> &, const vector<string> & = {}) const;
+    bool insertUnaryPrefixOperator (const string &, Node * const, const vector<string> &, const vector<string> & = {}) const;
+    bool insertParentheses (const string &, Node * const) const;
     ////////////////////////////////////////////////////////////////////////////
 
-    node *root_;
-    ValueLookup *vl_;
-    bool evaluationError_;
-};
+    ////////////////////////////////////////////////////////////////////////////
+    // Methods for retrieving values from objects.
+    ////////////////////////////////////////////////////////////////////////////
+    double getMember (const string &, void * const, const string &) const;
+    double valueLookup (const string &, const ObjMap &, const string &, const bool = true);
+    ////////////////////////////////////////////////////////////////////////////
 
-#include "OSUT3Analysis/AnaTools/interface/ValueLookupTreeTemplates.h"
+    Node            *root_;
+    vector<string>  inputCollections_;
+    bool            evaluationError_;
+
+    Collections                                    *handles_;
+    unordered_map<string, ObjMap::const_iterator>  objIterators_;
+    unordered_map<string, bool>                    shouldIterate_;
+    vector<Leaf>                                   values_;
+    vector<unsigned>                               collectionSizes_;
+    vector<unsigned>                               nCombinations_;
+};
 
 #endif

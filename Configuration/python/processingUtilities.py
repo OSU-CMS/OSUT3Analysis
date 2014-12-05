@@ -170,12 +170,7 @@ def get_collections (cuts):
     ############################################################################
     collections = set ()
     for cut in cuts:
-        inputCollection = cut.inputCollection.pythonValue ()
-        inputCollection = inputCollection[1:-1]
-        if re.match (r" *([^- ]*) *- *([^- ]*) *pair.*", inputCollection):
-            collections.add (re.sub (r" *([^- ]*) *- *([^- ]*) *pair.*", r"\1s", inputCollection))
-            collections.add (re.sub (r" *([^- ]*) *- *([^- ]*) *pair.*", r"\2s", inputCollection))
-        else:
+        for inputCollection in cut.inputCollection:
             collections.add (inputCollection)
     return sorted (list (collections))
     ############################################################################
@@ -200,6 +195,19 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
     if not hasattr (add_channels, "endPath"):
         add_channels.endPath = cms.EndPath ()
     ############################################################################
+
+    ############################################################################
+    # Change the process name to be unique, to avoid DuplicateProcess error
+    # in the case of running over skims.  
+    # To ensure a unique process name, use a date/time stamp.
+    ############################################################################
+    if not hasattr (add_channels, "processNameUpdated"):
+        add_channels.processNameUpdated = True
+        now = datetime.datetime.now()
+        date_hash = now.strftime("%YY%mM%dD%Hh%Mm%Ss")  # Non-alpha-numeric characters are not allowed in the process name.
+        process.setName_ (process.name_ () + date_hash)
+    ############################################################################
+
 
     for channel in channels:
         channelPath = cms.Path ()
@@ -241,6 +249,26 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         ########################################################################
 
         ########################################################################
+        # Add a module for printing info, both general and for specific events.
+        ########################################################################
+        infoPrinter = cms.EDAnalyzer ("InfoPrinter",
+            cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions"),
+            eventsToPrint = cms.VEventID (),
+            printAllEvents              =  cms.bool  (False),
+            printCumulativeObjectFlags  =  cms.bool  (False),
+            printCutDecision            =  cms.bool  (False),
+            printEventDecision          =  cms.bool  (False),
+            printEventFlags             =  cms.bool  (False),
+            printObjectFlags            =  cms.bool  (False),
+            printTriggerDecision        =  cms.bool  (False),
+            printTriggerFlags           =  cms.bool  (False),
+            printVetoTriggerFlags       =  cms.bool  (False)
+        )
+        channelPath += infoPrinter
+        setattr (process, channelName + "InfoPrinter", infoPrinter)
+        ########################################################################
+
+        ########################################################################
         # Set up the output commands. For now, we drop everything except the
         # collections given in the collections PSet.
         ########################################################################
@@ -273,22 +301,24 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
             )
             channelPath += objectSelector
             setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
-            setattr (channelCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), "selectedObjects"))
+            originalInputTag = getattr (collections, collection)
+            setattr (channelCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
+            outputCommands.append ("drop BN" + collection + "_*_*_*")
+            outputCommands.append ("keep BN" + collection + "_objectSelector" + str (add_channels.filterIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
             add_channels.filterIndex += 1
-            outputCommands.append ("drop BN" + collection + "_*_*_BEANs")
-            outputCommands.append ("keep BN" + collection + "_*_*_OSUAnalysis")
         ########################################################################
 
         ########################################################################
         # Add a plotting module for this channel to the path.
         ########################################################################
-        plotter = cms.EDAnalyzer ("Plotter",
-            collections     =  channelCollections,
-            histogramSets   =  histogramSets,
-            verbose         =  cms.int32 (0)
-        )
-        channelPath += plotter
-        setattr (process, channelName + "Plotter", plotter)
+        if len (histogramSets):
+            plotter = cms.EDAnalyzer ("Plotter",
+                collections     =  channelCollections,
+                histogramSets   =  histogramSets,
+                verbose         =  cms.int32 (0)
+            )
+            channelPath += plotter
+            setattr (process, channelName + "Plotter", plotter)
         ########################################################################
 
         ########################################################################

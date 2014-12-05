@@ -63,37 +63,37 @@ eMuMinimal = cms.PSet(
     cuts = cms.VPSet (
       # EVENT CLEANING
       cms.PSet (
-        inputCollection = cms.string("events"),
+        inputCollection = cms.vstring("events"),
         cutString = cms.string("FilterOutScraping > 0"),
         numberRequired = cms.string(">= 1")
       ),
       # EVENT HAS GOOD PV
       cms.PSet (
-        inputCollection = cms.string("primaryvertexs"),
+        inputCollection = cms.vstring("primaryvertexs"),
         cutString = cms.string("isGood > 0"),
         numberRequired = cms.string(">= 1")
       ),
       # ELECTRON ETA CUT
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("abs(eta) < 2.5"),
         numberRequired = cms.string(">= 1")
       ),
       # ELECTRON PT CUT
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("pt > 25"),
         numberRequired = cms.string(">= 1")
       ),
       # MUON ETA CUT
       cms.PSet (
-        inputCollection = cms.string("muons"),
+        inputCollection = cms.vstring("muons"),
         cutString = cms.string("abs(eta) < 2.5"),
         numberRequired = cms.string(">= 1")
       ),
       # MUON PT CUT
       cms.PSet (
-        inputCollection = cms.string("muons"),
+        inputCollection = cms.vstring("muons"),
         cutString = cms.string("pt > 25"),
         numberRequired = cms.string(">= 1")
       ),
@@ -106,38 +106,38 @@ preselection = cms.PSet(
     cuts = cms.VPSet (
       # EVENT CLEANING
       cms.PSet (
-        inputCollection = cms.string("events"),
+        inputCollection = cms.vstring("events"),
         cutString = cms.string("FilterOutScraping > 0"),
         numberRequired = cms.string(">= 1")
       ),
       # EVENT HAS GOOD PV
       cms.PSet (
-        inputCollection = cms.string("primaryvertexs"),
+        inputCollection = cms.vstring("primaryvertexs"),
         cutString = cms.string("isGood > 0"),
         numberRequired = cms.string(">= 1")
       ),
       # ELECTRON ETA CUT
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("abs(eta) < 2.5"),
         numberRequired = cms.string(">= 1")
       ),
       # ELECTRON CRACK VETO
       cms.PSet (
-        inputCollection = cms.string("electrons"),
-        cutString = cms.string("isEBEEGap == 0"),
+        inputCollection = cms.vstring("electrons"),
+        cutString = cms.string("isEBEEGap = 0"),
         numberRequired = cms.string(">= 1"),
         alias = cms.string("electron ECAL crack veto")
       ),
       # ELECTRON PT CUT
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("pt > 25"),
         numberRequired = cms.string(">= 1")
       ),
       # ELECTRON ID
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("                              \
           (pt > 7 && pt < 10                                  \
             && ((abs (scEta) < 0.8 && mvaNonTrigV0 > 0.47)    \
@@ -153,33 +153,33 @@ preselection = cms.PSet(
       ),
       # PHOTON CONVERSION VETO
       cms.PSet (
-        inputCollection = cms.string("electrons"),
-        cutString = cms.string("passConvVeto > 0 && numberOfLostHits == 0"),
+        inputCollection = cms.vstring("electrons"),
+        cutString = cms.string("passConvVeto > 0 && numberOfLostHits = 0"),
         numberRequired = cms.string(">= 1"),
         alias = cms.string("electron conversion rejection")
       ),
       # ELECTRON ISOLATION
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("((chargedHadronIsoDR03 + max (0.0, neutralHadronIsoDR03 + photonIsoDR03 - AEffDr03 * rhoPrime)) / pt) < 0.1"),
         numberRequired = cms.string(">= 1"),
         alias = cms.string("electron isolation")
       ),
       # MUON ETA CUT
       cms.PSet (
-        inputCollection = cms.string("muons"),
+        inputCollection = cms.vstring("muons"),
         cutString = cms.string("abs(eta) < 2.5"),
         numberRequired = cms.string(">= 1")
       ),
       # MUON PT CUT
       cms.PSet (
-        inputCollection = cms.string("muons"),
+        inputCollection = cms.vstring("muons"),
         cutString = cms.string("pt > 25"),
         numberRequired = cms.string(">= 1")
       ),
       # MUON ID
       cms.PSet (
-        inputCollection = cms.string("muons"),
+        inputCollection = cms.vstring("muons"),
         cutString = cms.string("              \
           isGlobalMuon                        \
        && isPFMuon                            \
@@ -194,57 +194,57 @@ preselection = cms.PSet(
       ),
       # MUON ISOLATION
       cms.PSet (
-        inputCollection = cms.string("muons"),
+        inputCollection = cms.vstring("muons"),
         cutString = cms.string("((pfIsoR04SumChargedHadronPt + max (0.0, pfIsoR04SumNeutralHadronEt + pfIsoR04SumPhotonEt - 0.5 * pfIsoR04SumPUPt)) / pt) < 0.12"),
         numberRequired = cms.string(">= 1"),
         alias = cms.string("muon isolation")
       ),
       # VETO EVENTS WITH EXTRA ELECTRON
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("pt > -1"),
         numberRequired = cms.string("== 1"),
         alias = cms.string("extra electron veto")
       ),
       # VETO EVENTS WITH EXTRA MUON
       cms.PSet (
-        inputCollection = cms.string("muons"),
+        inputCollection = cms.vstring("muons"),
         cutString = cms.string("pt > -1"),
         numberRequired = cms.string("== 1"),
         alias = cms.string("extra muon veto")
       ),
       # OPPOSITE SIGN E-MU PAIR
       cms.PSet (
-        inputCollection = cms.string("electron-muon pairs"),
-        cutString = cms.string("chargeProduct < 0"),
+        inputCollection = cms.vstring("electrons", "muons"),
+        cutString = cms.string("electron.charge * muon.charge < 0"),
         numberRequired = cms.string("== 1")
       ),
       # ELECTRON AND MUON ARE NOT OVERLAPPING
       cms.PSet (
-        inputCollection = cms.string("electron-muon pairs"),
-        cutString = cms.string("deltaR > 0.5"),
+        inputCollection = cms.vstring("electrons", "muons"),
+        cutString = cms.string("deltaR(electron, muon) > 0.5"),
         numberRequired = cms.string("== 1")
       ),
 
       #########START OF ADDITIONAL CUTS TO REQUIRE LEPTON IS NOT IN A JET
       # ONLY CONSIDER 30 GEV JETS
       cms.PSet (
-        inputCollection = cms.string("jets"),
+        inputCollection = cms.vstring("jets"),
         cutString = cms.string("pt > 10"),
         numberRequired = cms.string(">= 0")
       ),
       # ELECTRON NOT OVERLAPPING WITH JET
       cms.PSet (
-        inputCollection = cms.string("electron-jet pairs"),
-        cutString = cms.string("deltaR < 0.5"),
+        inputCollection = cms.vstring("electrons", "jets"),
+        cutString = cms.string("deltaR(electron, jet) < 0.5"),
         numberRequired = cms.string("== 0"),
         isVeto = cms.bool(True),
         alias = cms.string("electron near jet veto"),
       ),
       # MUON NOT OVERLAPPING WITH JET
       cms.PSet (
-        inputCollection = cms.string("muon-jet pairs"),
-        cutString = cms.string("deltaR < 0.5"),
+        inputCollection = cms.vstring("muons", "jets"),
+        cutString = cms.string("deltaR(muon, jet) < 0.5"),
         numberRequired = cms.string("== 0"),
         isVeto = cms.bool(True),
         alias = cms.string("muon near jet veto"),        
@@ -253,13 +253,13 @@ preselection = cms.PSet(
 
       # RESTRICT ELECTRONS TO RECONSTRUCTION ACCEPTANCE
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("abs(correctedD0) < 2"),
         numberRequired = cms.string("== 1")
       ),
       # RESTRICT MUONS TO TRIGGER ACCEPTANCE
       cms.PSet (
-        inputCollection = cms.string("muons"),
+        inputCollection = cms.vstring("muons"),
         cutString = cms.string("abs(correctedD0) < 2"),
         numberRequired = cms.string("== 1")
       ),
@@ -267,7 +267,7 @@ preselection = cms.PSet(
 )
 
 histograms = cms.PSet(
-    inputCollection = cms.string("muons"),
+    inputCollection = cms.vstring("muons"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("muonPt"),
