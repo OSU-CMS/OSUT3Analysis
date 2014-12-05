@@ -1,4 +1,4 @@
-#include "OSUT3Analysis/AnaTools/plugins/EventVariableProducer.h"
+#include "OSUT3Analysis/AnaTools/interface/EventVariableProducer.h"
 
 EventVariableProducer::EventVariableProducer(const edm::ParameterSet &cfg) :
   collections_  (cfg.getParameter<edm::ParameterSet>  ("collections"))
