@@ -175,7 +175,52 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
+def add_variables (process, modules, collections):
+
+    ############################################################################
+    # If only the default scheduler exists, create an empty one
+    ############################################################################
+    scheduleType =  type(process.schedule).__name__
+    if scheduleType == 'NoneType':
+        process.schedule = cms.Schedule ()
+    ############################################################################
+    
+
+    ############################################################################
+    # Add the variable production modules to a path
+    ############################################################################
+    if not hasattr (add_variables, "pathIndex"):
+        add_variables.pathIndex = 0
+
+    variableProducerPath = cms.Path ()
+    for module in modules:
+        producer = cms.EDProducer (module,
+                                   collections = collections
+                                   )
+        setattr (process, module, producer)
+        variableProducerPath += producer
+
+    ############################################################################
+    # Add the variable production path at the beginning of the schedule
+    ############################################################################
+    pathName = "variableProducerPath" + str(add_variables.pathIndex)
+    setattr(process, pathName, variableProducerPath)
+    process.schedule.insert(0,variableProducerPath)
+
+    add_variables.pathIndex += 1
+    
+
+
 def add_channels (process, channels, histogramSets, collections, skim = True):
+
+    ############################################################################
+    # If only the default scheduler exists, create an empty one
+    ############################################################################
+    scheduleType =  type(process.schedule).__name__
+    if scheduleType == 'NoneType':
+        process.schedule = cms.Schedule ()
+    ############################################################################
+        
     ############################################################################
     # Suffix is appended to the name of the output file. In batch mode, an
     # underscore followed by the job number is appended.
@@ -273,6 +318,8 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         # collections given in the collections PSet.
         ########################################################################
         outputCommands = ["drop *"]
+        outputCommands.append("keep *_*_extraEventVariables_*")
+        outputCommands.append("keep *_*_extraObjectVariables_*")
         for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a))]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep BN"
@@ -344,4 +391,24 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         ########################################################################
 
         setattr (process, channelName, channelPath)
+        process.schedule.append(getattr(process,channelName))
     setattr (process, "endPath", add_channels.endPath)
+    set_endPath(process, add_channels.endPath)
+        
+def set_endPath(process, endPath):
+
+    ############################################################################
+    # Update schedule with the current endPath at the end
+    ############################################################################
+
+    # find the old endpath (if there is one), and remove it
+    endPathIndex = -1
+    for index in range(len(process.schedule)):
+        if type(process.schedule[index]).__name__ == 'EndPath':
+            endPathIndex = index
+    if endPathIndex > -1:
+        del process.schedule[endPathIndex]
+        
+    # add the new endpath at the end of the schedule
+    process.schedule.append(endPath)
+
