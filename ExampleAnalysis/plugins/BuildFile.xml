@@ -12,10 +12,11 @@
 <use  name="DataFormats/EcalDetId"/>
 <use  name="Geometry/Records"/>
 <use  name="OSUT3Analysis/AnaTools"/>
+<use  name="OSUT3Analysis/ExampleAnalysis"/>
 <use  name="lhapdf"/>
 <use  name="root"/>
 <use  name="rootrflx"/>
 <flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
-<library  file="CutCalculator.cc,CutFlowPlotter.cc,InfoPrinter.cc,ObjectSelector.cc,Plotter.cc,EventVariableProducer.cc,MyEventVariableProducer.cc"  name="OSUAnalysisAnaToolsPlugins">
+<library  file="MyEventVariableProducer.cc"  name="OSUAnalysisExampleAnalysisPlugins">
   <flags  EDM_PLUGIN="1"/>
 </library>

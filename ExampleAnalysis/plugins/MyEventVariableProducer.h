@@ -1,9 +1,7 @@
 #ifndef MY_EVENT_VARIABLE_PRODUCER
-
 #define MY_EVENT_VARIABLE_PRODUCER
 
-#include "OSUT3Analysis/AnaTools/plugins/EventVariableProducer.h"
-
+#include "OSUT3Analysis/AnaTools/interface/EventVariableProducer.h"
 
 class MyEventVariableProducer : public EventVariableProducer
   {
@@ -11,16 +9,10 @@ class MyEventVariableProducer : public EventVariableProducer
         MyEventVariableProducer (const edm::ParameterSet &);
 	~MyEventVariableProducer ();
 
-//    void produce (edm::Event &, const edm::EventSetup &);
-
     private:
 
-      // Functions
-
+	// Functions
 	void AddVariables(const edm::Event &, map<string, double> &);
-
-
-
   };
 
 #endif
