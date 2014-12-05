@@ -80,7 +80,7 @@ class Plotter : public edm::EDAnalyzer
       edm::Handle<BNtrackCollection>          tracks;
       edm::Handle<BNtriggerCollection>        triggers;
       edm::Handle<BNtrigobjCollection>        trigobjs;
-      edm::Handle<vector< map<string,double> > > userVariables;  
+      edm::Handle<vector< map<string,double> > > userVariables;
 
 
       vector<edm::ParameterSet> histogramSets_;
@@ -109,13 +109,19 @@ class Plotter : public edm::EDAnalyzer
       pair<string,string> getVariableAndFunction(const string);
 
       template <class InputCollection> void fillHistogram(const histoDef, const InputCollection);
-      template <class InputCollection1, class InputCollection2> void fillHistogram(const histoDef, const InputCollection1, const InputCollection2);
+      template <class InputCollection1, class InputCollection2> void fillHistogram(const histoDef,
+										   const InputCollection1,
+										   const InputCollection2);
 
       template <class InputCollection> void fill1DHistogram(const histoDef, const InputCollection);
-      template <class InputCollection1, class InputCollection2> void fill1DHistogram(const histoDef, const InputCollection1, const InputCollection2);
+      template <class InputCollection1, class InputCollection2> void fill1DHistogram(const histoDef,
+										     const InputCollection1,
+										     const InputCollection2);
 
       template <class InputCollection> void fill2DHistogram(const histoDef, const InputCollection);
-      template <class InputCollection1, class InputCollection2> void fill2DHistogram(const histoDef, const InputCollection1, const InputCollection2);
+      template <class InputCollection1, class InputCollection2> void fill2DHistogram(const histoDef,
+										     const InputCollection1,
+										     const InputCollection2);
 
       double getBinSize(TH1D *, const double);
       pair<double,double> getBinSize(TH2D *, const double, const double);
