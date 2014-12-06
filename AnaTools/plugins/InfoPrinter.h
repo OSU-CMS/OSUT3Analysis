@@ -2,6 +2,7 @@
 #define INFO_PRINTER
 
 #include <sstream>
+#include <unordered_set>
 
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
@@ -38,6 +39,7 @@ class InfoPrinter : public edm::EDAnalyzer
     bool printObjectFlags ();
     bool printTriggerFlags ();
     bool printVetoTriggerFlags ();
+    bool printValuesToPrint ();
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -46,14 +48,20 @@ class InfoPrinter : public edm::EDAnalyzer
     ////////////////////////////////////////////////////////////////////////////
     unsigned getMaxWidth (const vector<string> &) const;
     unsigned getMaxWidth (const vector<Cut> &) const;
+    unsigned getMaxWidth (const ValuesToPrint &) const;
     ////////////////////////////////////////////////////////////////////////////
 
     // Outputs the time on the stopwatch to the stringstream.
     void outputTime ();
 
+    void unpackValuesToPrint ();
+
+    bool initializeValueLookupForest (ValuesToPrint &, Collections * const);
+
     ////////////////////////////////////////////////////////////////////////////
     // Private variables initialized by the constructor.
     ////////////////////////////////////////////////////////////////////////////
+    edm::ParameterSet     collections_;
     edm::InputTag         cutDecisions_;
     vector<edm::EventID>  eventsToPrint_;
     bool                  printAllEvents_;
@@ -65,9 +73,13 @@ class InfoPrinter : public edm::EDAnalyzer
     bool                  printTriggerDecision_;
     bool                  printTriggerFlags_;
     bool                  printVetoTriggerFlags_;
+    edm::VParameterSet    valuesToPrint_;
     bool                  firstEvent_;
     unsigned              counter_;
     ////////////////////////////////////////////////////////////////////////////
+
+    // Object collections which can be gotten from the event.
+    Collections handles_;
 
     // Stopwatch for timing the code.
     TStopwatch *sw_;
@@ -79,6 +91,10 @@ class InfoPrinter : public edm::EDAnalyzer
     // Cut decisions which are gotten from the event.
     edm::Handle<CutCalculatorPayload> cutDecisions;
 
+    ValuesToPrint valuesToPrint;
+
+    unordered_set<string>  objectsToGet_;
+
     ////////////////////////////////////////////////////////////////////////////
     // Variables for holding the widths of columns of cut names and trigger
     // names.
@@ -86,6 +102,7 @@ class InfoPrinter : public edm::EDAnalyzer
     unsigned maxCutWidth_;
     unsigned maxTriggerWidth_;
     unsigned maxVetoTriggerWidth_;
+    unsigned maxValueWidth_;
     ////////////////////////////////////////////////////////////////////////////
 };
 

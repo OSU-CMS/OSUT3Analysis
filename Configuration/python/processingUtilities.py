@@ -297,8 +297,10 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         # Add a module for printing info, both general and for specific events.
         ########################################################################
         infoPrinter = cms.EDAnalyzer ("InfoPrinter",
-            cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions"),
-            eventsToPrint = cms.VEventID (),
+            collections                 =  collections,
+            cutDecisions                =  cms.InputTag (channelName + "CutCalculator", "cutDecisions"),
+            eventsToPrint               =  cms.VEventID (
+            ),
             printAllEvents              =  cms.bool  (False),
             printCumulativeObjectFlags  =  cms.bool  (False),
             printCutDecision            =  cms.bool  (False),
@@ -307,7 +309,9 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
             printObjectFlags            =  cms.bool  (False),
             printTriggerDecision        =  cms.bool  (False),
             printTriggerFlags           =  cms.bool  (False),
-            printVetoTriggerFlags       =  cms.bool  (False)
+            printVetoTriggerFlags       =  cms.bool  (False),
+            valuesToPrint               =  cms.VPSet (
+            )
         )
         channelPath += infoPrinter
         setattr (process, channelName + "InfoPrinter", infoPrinter)

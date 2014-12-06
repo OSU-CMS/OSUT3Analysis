@@ -32,6 +32,21 @@ ValueLookupTree::ValueLookupTree (const Cut &cut) :
   sort (inputCollections_.begin (), inputCollections_.end ());
 }
 
+ValueLookupTree::ValueLookupTree (const ValueToPrint &value) :
+  root_ (insert_ (value.valueToPrint, NULL)),
+  inputCollections_ (value.inputCollections),
+  evaluationError_ (false)
+{
+  pruneCommas (root_);
+  pruneParentheses (root_);
+
+  vector<string> inferredInputCollections;
+  inferInputCollections (root_, inferredInputCollections);
+  if (inferredInputCollections.size ())
+    inputCollections_ = inferredInputCollections;
+  sort (inputCollections_.begin (), inputCollections_.end ());
+}
+
 ValueLookupTree::ValueLookupTree (const string &expression, const vector<string> &inputCollections) :
   root_ (insert_ (expression, NULL)),
   inputCollections_ (inputCollections),

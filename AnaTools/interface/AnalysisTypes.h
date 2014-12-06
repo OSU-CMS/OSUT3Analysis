@@ -107,4 +107,14 @@ struct Collections
   edm::Handle<VariableProducerPayload>    userVariables;
 };
 
+struct ValueToPrint
+{
+  ValueLookupTree  *valueLookupTree;
+  string           inputLabel;
+  string           valueToPrint;
+  vector<string>   inputCollections;
+};
+
+typedef vector<ValueToPrint> ValuesToPrint;
+
 #endif

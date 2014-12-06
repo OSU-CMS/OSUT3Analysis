@@ -49,6 +49,7 @@ class ValueLookupTree
   public:
     ValueLookupTree ();
     ValueLookupTree (const Cut &);
+    ValueLookupTree (const ValueToPrint &);
     ValueLookupTree (const string &, const vector<string> &);
     ~ValueLookupTree ();
 

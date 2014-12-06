@@ -13,7 +13,7 @@
 #include <vector>
 
 // Return whether obj is contained in vec.
-#define VEC_CONTAINS(vec,obj) (find (vec.begin (), vec.end (), obj) != vec.end ())
+#define VEC_CONTAINS(vec, obj) (find (vec.begin (), vec.end (), obj) != vec.end ())
 
 using namespace std;
 

@@ -156,6 +156,7 @@ HistoDef Plotter::parseHistoDef(const edm::ParameterSet &definition, const vecto
   parsedDef.hasVariableBinsX = parsedDef.binsX.size() > 3;
   parsedDef.hasVariableBinsY = parsedDef.binsY.size() > 3;
   parsedDef.inputVariables = definition.getParameter<vector<string> >("inputVariables");
+  sort (parsedDef.inputVariables.begin (), parsedDef.inputVariables.end ());
   parsedDef.dimensions = parsedDef.inputVariables.size();
 
   // for 1D histograms, set the appropriate y-axis label
