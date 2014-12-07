@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import os
 import re
 import sys
@@ -8,6 +7,7 @@ import copy
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
+from OSUT3Analysis.Configuration.InfoPrinter_cff import *
 
 def split_composite_datasets(datasets, composite_dataset_definitions):
     for dataset in datasets:
@@ -296,23 +296,8 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         ########################################################################
         # Add a module for printing info, both general and for specific events.
         ########################################################################
-        infoPrinter = cms.EDAnalyzer ("InfoPrinter",
-            collections                 =  collections,
-            cutDecisions                =  cms.InputTag (channelName + "CutCalculator", "cutDecisions"),
-            eventsToPrint               =  cms.VEventID (
-            ),
-            printAllEvents              =  cms.bool  (False),
-            printCumulativeObjectFlags  =  cms.bool  (False),
-            printCutDecision            =  cms.bool  (False),
-            printEventDecision          =  cms.bool  (False),
-            printEventFlags             =  cms.bool  (False),
-            printObjectFlags            =  cms.bool  (False),
-            printTriggerDecision        =  cms.bool  (False),
-            printTriggerFlags           =  cms.bool  (False),
-            printVetoTriggerFlags       =  cms.bool  (False),
-            valuesToPrint               =  cms.VPSet (
-            )
-        )
+        infoPrinter.collections = collections
+        infoPrinter.cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
         channelPath += infoPrinter
         setattr (process, channelName + "InfoPrinter", infoPrinter)
         ########################################################################
