@@ -2,7 +2,7 @@
 #define INFO_PRINTER
 
 #include <sstream>
-
+#include <iomanip>
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 #include "DataFormats/Common/interface/Handle.h"

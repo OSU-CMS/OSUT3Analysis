@@ -1,6 +1,7 @@
 #ifndef CUT_FLOW_PLOTTER
 #define CUT_FLOW_PLOTTER
 
+#include <iomanip>
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
