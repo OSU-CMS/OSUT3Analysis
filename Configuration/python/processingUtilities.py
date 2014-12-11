@@ -300,10 +300,11 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         ########################################################################
         # Add a module for printing info, both general and for specific events.
         ########################################################################
-        infoPrinter.collections = collections
-        infoPrinter.cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
-        channelPath += infoPrinter
-        setattr (process, channelName + "InfoPrinter", infoPrinter)
+        channelInfoPrinter = copy.deepcopy (infoPrinter)
+        channelInfoPrinter.collections = collections
+        channelInfoPrinter.cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
+        channelPath += channelInfoPrinter
+        setattr (process, channelName + "InfoPrinter", channelInfoPrinter)
         ########################################################################
 
         ########################################################################

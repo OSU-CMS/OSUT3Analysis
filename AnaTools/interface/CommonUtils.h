@@ -22,24 +22,7 @@ using namespace std;
 
 namespace anatools
 {
-  template <class InputCollection> bool getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
-    // Get a collection with the specified type, and match the product instance name.
-    // Do not use Event::getByLabel() function, since it also matches the module name.
-    vector< edm::Handle<InputCollection> > objVec;
-    event.getManyByType(objVec);
-    for (uint i=0; i<objVec.size(); i++) {
-      if (label.instance() == objVec.at(i).provenance()->productInstanceName()) {
-        coll = objVec.at(i);
-        break;
-      }
-    }
-    if (!coll.isValid()) {
-      clog << "ERROR: could not get input collection with product instance label: " << label.instance()
-           << ", but found " << objVec.size() << " collections of the specified type." << endl;
-      return false;
-    }
-    return true;
-  }
+  template <class InputCollection> bool getCollection (const edm::InputTag &, edm::Handle<InputCollection> &, const edm::Event &);
 
   // Extracts the constituent collections from a composite collection name.
   vector<string> getSingleObjects (string);
@@ -74,5 +57,31 @@ namespace anatools
 
   void getRequiredCollections (const unordered_set<string> &, const edm::ParameterSet &, Collections &, const edm::Event &);
 };
+
+template <class InputCollection> bool anatools::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
+  // Get a collection with the specified type, and match the product instance name.
+  // Do not use Event::getByLabel() function, since it also matches the module name.
+  event.getByLabel(label, coll);
+  if (!coll.isValid()) {
+    vector<edm::Handle<InputCollection> > objVec;
+    event.getManyByType(objVec);
+    int collWithFewestParents = -1, fewestParents = -1;
+    for (uint i=0; i<objVec.size(); i++) {
+      int parents = objVec.at(i).provenance()->parents().size();
+      if (label.instance() == objVec.at(i).provenance()->productInstanceName() && parents > fewestParents) {
+        collWithFewestParents = i;
+        fewestParents = parents;
+      }
+    }
+    if (collWithFewestParents >= 0)
+      coll = objVec.at(collWithFewestParents);
+    if (!coll.isValid()) {
+      clog << "ERROR: could not get input collection with product instance label: " << label.instance()
+           << ", but found " << objVec.size() << " collections of the specified type." << endl;
+      return false;
+    }
+  }
+  return true;
+}
 
 #endif
