@@ -68,12 +68,17 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label):
 
 def MakeSpecificConfig(Dataset, Directory):
     os.system('touch ' + Directory + '/config_cfg.py')
+    print Directory
+    SkimChannelNames = SkimSitter('userConfig_cfg', Directory) 
     ConfigFile = open(Directory + '/config_cfg.py','r+w')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')        
     ConfigFile.write('import OSUT3Analysis.DBTools.osusub_cfg as osusub\n')
     ConfigFile.write('import re\n')
     ConfigFile.write('import userConfig_cfg as pset\n')
     ConfigFile.write('\n')
+    for channelName in SkimChannelNames:
+        StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
+    ConfigFile.write(StringToAdd)
     ConfigFile.write('fileName = pset.' + arguments.FileName + '\n')
     ConfigFile.write('fileName = fileName.pythonValue ()\n')
     ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
@@ -199,7 +204,24 @@ def GetCompleteOrderedArgumentsSet(InputArguments):
     for newArgument in NewArguments:
         CondorSubArgumentsSet.setdefault(len(CondorSubArgumentsSet.keys()) + 1,{newArgument : NewArguments[newArgument]})
 
-
+def SkimSitter(userConfig, Directory):
+    sys.path.append(Directory)
+    configTmp = open(Directory + '/' +userConfig + '.py','r')
+    skimChannelNames = []
+    for line in configTmp:
+        if "add_channels" not in line:
+            continue
+        elif "False" in line:
+            continue
+        else:
+            PatternOne = r'.*\[(.*)\].*'
+            DecodedOne = re.match(PatternOne,line)
+            channel = DecodedOne.group(1)
+            exec('from ' + userConfig + ' import ' + channel + ' as currentChannel')
+            PatternTwo = r'.*\'(.*)\'.*'
+            DecodedTwo = re.match(PatternTwo,str(currentChannel.name))
+            skimChannelNames.append(DecodedTwo.group(1))
+    return skimChannelNames
 
 
 ###############################################################################
