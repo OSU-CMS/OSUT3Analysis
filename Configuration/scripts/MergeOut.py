@@ -66,14 +66,20 @@ def GetTotalNumberOfEvents(FilesSet):
             print File + " is a bad root file."
             FilesSet.remove(File)
             continue
-        CutFlowObj = ScoutFile.Get("OSUAnalysis/cutFlow")
-	if not CutFlowObj:
-	    print "Could not find cutFlow histogram in " + str(File) + " !"
+        randomChannelDirectory = ""
+        for key in ScoutFile.GetListOfKeys():
+            if (key.GetClassName() != "TDirectoryFile"):
+                continue
+            randomChannelDirectory = key.GetName()
+            break
+        CounterObj = ScoutFile.Get(randomChannelDirectory + "/eventCounter")
+	if not CounterObj:
+	    print "Could not find eventCounter histogram in " + str(File) + " !"
 	    continue
         else:
-	    CutFlow = CutFlowObj.Clone()
-            CutFlow.SetDirectory(0)
-            TotalNumber = TotalNumber + CutFlow.GetBinContent(1) 
+	    Counter = CounterObj.Clone()
+            Counter.SetDirectory(0)
+            TotalNumber = TotalNumber + Counter.GetBinContent(1) 
     return TotalNumber
 ###############################################################################
 #                           Getting the working directory.                    #
@@ -135,7 +141,7 @@ for dataSet in split_datasets:
         continue
     Weight = 1.0
     crossSection = float(datasetInfo.crossSection)
-    if crossSection != -1:
+    if crossSection > 0:
         Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
     os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + dataSet + '.root' + ' -w ' + InputWeightString)
