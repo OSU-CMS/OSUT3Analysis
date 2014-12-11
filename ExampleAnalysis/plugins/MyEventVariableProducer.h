@@ -12,7 +12,7 @@ class MyEventVariableProducer : public EventVariableProducer
     private:
 
 	// Functions
-	void AddVariables(const edm::Event &, map<string, double> &);
+	void AddVariables(const edm::Event &, auto_ptr<EventVariableProducerPayload> &);
   };
 
 #endif

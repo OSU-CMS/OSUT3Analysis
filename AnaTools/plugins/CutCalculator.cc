@@ -36,60 +36,7 @@ CutCalculator::~CutCalculator ()
 void
 CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  //////////////////////////////////////////////////////////////////////////////
-  // Retrieve each object collection which we need and print a warning if it is
-  // missing.
-  //////////////////////////////////////////////////////////////////////////////
-  if  (VEC_CONTAINS  (objectsToGet_,  "bxlumis")         &&  collections_.exists  ("bxlumis"))         getCollection  (collections_.getParameter<edm::InputTag>  ("bxlumis"),         handles_.bxlumis,         event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "electrons")       &&  collections_.exists  ("electrons"))       getCollection  (collections_.getParameter<edm::InputTag>  ("electrons"),       handles_.electrons,       event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "events")          &&  collections_.exists  ("events"))          getCollection  (collections_.getParameter<edm::InputTag>  ("events"),          handles_.events,          event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "genjets")         &&  collections_.exists  ("genjets"))         getCollection  (collections_.getParameter<edm::InputTag>  ("genjets"),         handles_.genjets,         event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "jets")            &&  collections_.exists  ("jets"))            getCollection  (collections_.getParameter<edm::InputTag>  ("jets"),            handles_.jets,            event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "mcparticles")     &&  collections_.exists  ("mcparticles"))     getCollection  (collections_.getParameter<edm::InputTag>  ("mcparticles"),     handles_.mcparticles,     event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "mets")            &&  collections_.exists  ("mets"))            getCollection  (collections_.getParameter<edm::InputTag>  ("mets"),            handles_.mets,            event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "muons")           &&  collections_.exists  ("muons"))           getCollection  (collections_.getParameter<edm::InputTag>  ("muons"),           handles_.muons,           event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "photons")         &&  collections_.exists  ("photons"))         getCollection  (collections_.getParameter<edm::InputTag>  ("photons"),         handles_.photons,         event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "primaryvertexs")  &&  collections_.exists  ("primaryvertexs"))  getCollection  (collections_.getParameter<edm::InputTag>  ("primaryvertexs"),  handles_.primaryvertexs,  event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "superclusters")   &&  collections_.exists  ("superclusters"))   getCollection  (collections_.getParameter<edm::InputTag>  ("superclusters"),   handles_.superclusters,   event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "taus")            &&  collections_.exists  ("taus"))            getCollection  (collections_.getParameter<edm::InputTag>  ("taus"),            handles_.taus,            event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "tracks")          &&  collections_.exists  ("tracks"))          getCollection  (collections_.getParameter<edm::InputTag>  ("tracks"),          handles_.tracks,          event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "triggers")        &&  collections_.exists  ("triggers"))        getCollection  (collections_.getParameter<edm::InputTag>  ("triggers"),        handles_.triggers,        event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "trigobjs")        &&  collections_.exists  ("trigobjs"))        getCollection  (collections_.getParameter<edm::InputTag>  ("trigobjs"),        handles_.trigobjs,        event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "userVariables")   &&  collections_.exists  ("userVariables"))   getCollection  (collections_.getParameter<edm::InputTag>  ("userVariables"),   handles_.userVariables,   event);
-
-  if (firstEvent_ && !handles_.bxlumis.isValid ())
-    clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
-  if (firstEvent_ && !handles_.electrons.isValid ())
-    clog << "INFO: did not retrieve electrons collection from the event." << endl;
-  if (firstEvent_ && !handles_.events.isValid ())
-    clog << "INFO: did not retrieve events collection from the event." << endl;
-  if (firstEvent_ && !handles_.genjets.isValid ())
-    clog << "INFO: did not retrieve genjets collection from the event." << endl;
-  if (firstEvent_ && !handles_.jets.isValid ())
-    clog << "INFO: did not retrieve jets collection from the event." << endl;
-  if (firstEvent_ && !handles_.mcparticles.isValid ())
-    clog << "INFO: did not retrieve mcparticles collection from the event." << endl;
-  if (firstEvent_ && !handles_.mets.isValid ())
-    clog << "INFO: did not retrieve mets collection from the event." << endl;
-  if (firstEvent_ && !handles_.muons.isValid ())
-    clog << "INFO: did not retrieve muons collection from the event." << endl;
-  if (firstEvent_ && !handles_.photons.isValid ())
-    clog << "INFO: did not retrieve photons collection from the event." << endl;
-  if (firstEvent_ && !handles_.primaryvertexs.isValid ())
-    clog << "INFO: did not retrieve primaryvertexs collection from the event." << endl;
-  if (firstEvent_ && !handles_.superclusters.isValid ())
-    clog << "INFO: did not retrieve superclusters collection from the event." << endl;
-  if (firstEvent_ && !handles_.taus.isValid ())
-    clog << "INFO: did not retrieve taus collection from the event." << endl;
-  if (firstEvent_ && !handles_.tracks.isValid ())
-    clog << "INFO: did not retrieve tracks collection from the event." << endl;
-  if (firstEvent_ && !handles_.triggers.isValid ())
-    clog << "INFO: did not retrieve triggers collection from the event." << endl;
-  if (firstEvent_ && !handles_.trigobjs.isValid ())
-    clog << "INFO: did not retrieve trigobjs collection from the event." << endl;
-  if (firstEvent_ && !handles_.userVariables.isValid ())
-    clog << "INFO: did not retrieve userVariables collection from the event." << endl;
-  //////////////////////////////////////////////////////////////////////////////
+  anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);
 
   //////////////////////////////////////////////////////////////////////////////
   // Set all the private variables in the ValueLookup object before using it,
@@ -191,7 +138,7 @@ CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
   // Propagate forward any collections which have flags set for the previous
   // cut.
   string inputType = currentCut.inputLabel;
-  vector<string> singleObjects = getSingleObjects (inputType);
+  vector<string> singleObjects = anatools::getSingleObjects (inputType);
   if (currentCutIndex > 0)
     {
       for (const auto &collection : pl_->objectFlags.at (currentCutIndex - 1))
@@ -260,7 +207,7 @@ CutCalculator::updateCrossTalk (const Cut &currentCut, unsigned currentCutIndex)
         {
           if (pl_->objectFlags.at (currentCutIndex - 1).count (collection.first))
             continue;
-          singleObjects = getSingleObjects (inputType);
+          singleObjects = anatools::getSingleObjects (inputType);
           for (unsigned i = 0; i < currentCutIndex; i++)
             {
               vector<pair<bool, bool> > objectFlags (collection.second.size (), make_pair (true, true)),
@@ -327,7 +274,7 @@ CutCalculator::unpackCuts ()
       objectsToGet_.insert (tempInputCollection.begin (), tempInputCollection.end ());
       //////////////////////////////////////////////////////////////////////////
 
-      string catInputCollection = concatenateInputCollection (tempInputCollection);
+      string catInputCollection = anatools::concatenateInputCollection (tempInputCollection);
       tempCut.inputCollections = tempInputCollection;
       tempCut.inputLabel = catInputCollection;
 
@@ -540,7 +487,7 @@ CutCalculator::setEventFlags () const
 }
 
 bool
-CutCalculator::initializeValueLookupForest (vector<Cut> &cuts, Collections * const handles)
+CutCalculator::initializeValueLookupForest (Cuts &cuts, Collections * const handles)
 {
   //////////////////////////////////////////////////////////////////////////////
   // For each cut, parse its cut string into a new ValueLookupTree object which

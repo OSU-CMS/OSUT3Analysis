@@ -30,7 +30,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   // Get the collection and cut decisions from the event and print a warning if
   // there is a problem.
   //////////////////////////////////////////////////////////////////////////////
-  getCollection(collection_,   collection,   event);
+  anatools::getCollection (collection_, collection, event);
   event.getByLabel (cutDecisions_, cutDecisions);
   if (firstEvent_ && !collection.isValid ())
     clog << "WARNING: failed to retrieve requested collection from the event." << endl;

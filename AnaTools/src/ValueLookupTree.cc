@@ -173,7 +173,7 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
   // third argument, given a local index within the primitive collection named
   // by the second argument.
   //////////////////////////////////////////////////////////////////////////////
-  vector<string> singleObjects = getSingleObjects (inputLabel);
+  vector<string> singleObjects = anatools::getSingleObjects (inputLabel);
   set<unsigned> globalIndices;
   vector<unsigned> nCombinations (singleObjects.size (), 1), collectionSizes;
   unordered_set<unsigned> singleObjectIndices;
@@ -238,8 +238,8 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->tracks->size ();
   else if (name == "trigobjs")
     return handles_->trigobjs->size ();
-  else if (name == "userVariables")
-    return handles_->userVariables->size ();
+  else if (name == "eventVariables")
+    return 1;
   return 0;
 }
 
@@ -653,9 +653,11 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
       BNtrigobj *obj = new BNtrigobj (handles_->trigobjs->at (i));
       return obj;
     }
-  else if (name == "userVariables")
+  else if (name == "eventVariables")
     {
-      map<string, double> *obj = new map<string, double> (handles_->userVariables->at (i));
+      EventVariableProducerPayload *obj = new EventVariableProducerPayload ();
+      for (const auto &handle : handles_->eventVariables)
+        obj->insert (handle->begin (), handle->end ());
       return obj;
     }
   return NULL;
@@ -692,8 +694,8 @@ ValueLookupTree::deleteObject (const string &name, void * const obj) const
     delete ((BNtrack *) obj);
   else if (name == "trigobjs")
     delete ((BNtrigobj *) obj);
-  else if (name == "userVariables")
-    delete ((map<string, double> *) obj);
+  else if (name == "eventVariables")
+    delete ((EventVariableProducerPayload *) obj);
 }
 
 string
@@ -727,6 +729,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return "BNtrack";
   else if (name == "trigobjs")
     return "BNtrigobj";
+  else if (name == "eventVariables")
+    return "EventVariableProducerPayload";
   return "";
 }
 
@@ -761,7 +765,7 @@ ValueLookupTree::isCollection (const string &name) const
     return true;
   else if (name == "trigobjs")
     return true;
-  else if (name == "userVariables")
+  else if (name == "eventVariables")
     return true;
   return false;
 }
@@ -808,7 +812,7 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
       if (!vetoMatch (s, target, index, vetoTargets))
         indices.push_back (make_pair (index, target));
     }
-  sort (indices.begin (), indices.end (), firstOfPairAscending);
+  sort (indices.begin (), indices.end (), anatools::firstOfPairAscending);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -903,7 +907,7 @@ ValueLookupTree::isUniqueCase (const ObjMap &objs, const unordered_set<string> &
         {
           auto range = objs.equal_range (key);
           vector<pair<string, tuple<unsigned, unsigned, void *> > > objsOfThisType (range.first, range.second);
-          sort (objsOfThisType.begin (), objsOfThisType.end (), collectionIndexAscending);
+          sort (objsOfThisType.begin (), objsOfThisType.end (), anatools::collectionIndexAscending);
           int previousLocalIndex = -1;
           for (const auto &obj : objsOfThisType)
             {
@@ -942,8 +946,8 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, Node * const tree, 
       right = s.substr (i.first + i.second.length ());
       if (!splitParentheses (left) && !splitParentheses (right))
         {
-          trim (left);
-          trim (right);
+          anatools::trim (left);
+          anatools::trim (right);
 
           tree->value = i.second;
           tree->branches.push_back (insert_ (left, tree));
@@ -981,7 +985,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node * const tree, 
       right = s.substr (i.first + i.second.length ());
       if (!splitParentheses (left) && !splitParentheses (right))
         {
-          trim (right);
+          anatools::trim (right);
           tree->value = i.second;
           tree->branches.push_back (insert_ (right, tree));
           foundAnOperator = true;
@@ -1010,7 +1014,7 @@ ValueLookupTree::insertParentheses (const string &s, Node * const tree) const
   // true.
   //////////////////////////////////////////////////////////////////////////////
   string middle = s.substr (leftParenthesis + 1, rightParenthesis - leftParenthesis - 1);
-  trim (middle);
+  anatools::trim (middle);
   tree->value = "()";
   tree->branches.push_back (insert_ (middle, tree));
   return true;
@@ -1074,8 +1078,8 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
 
   try
     {
-      if (collection == "userVariables")
-        return (((map<string, double> *) obj)->at (variable));
+      if (collection == "eventVariables")
+        return (((EventVariableProducerPayload *) obj)->at (variable));
       return getMember (getCollectionType (collection), obj, variable);
     }
   catch (...)

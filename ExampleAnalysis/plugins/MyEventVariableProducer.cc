@@ -1,3 +1,4 @@
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/ExampleAnalysis/plugins/MyEventVariableProducer.h"
 
 MyEventVariableProducer::MyEventVariableProducer(const edm::ParameterSet &cfg) :
@@ -6,13 +7,13 @@ MyEventVariableProducer::MyEventVariableProducer(const edm::ParameterSet &cfg) :
 MyEventVariableProducer::~MyEventVariableProducer() {}
 
 void
-MyEventVariableProducer::AddVariables (const edm::Event &event, map<string, double> &myVars) {
-  
-  event.getByLabel (muons_, muons);
-  const BNmuonCollection *Muons = muons.product();
-  
-  myVars["numMuons"] = Muons->size();
+MyEventVariableProducer::AddVariables (const edm::Event &event, auto_ptr<EventVariableProducerPayload> &myVars) {
 
+  edm::Handle<BNmuonCollection> muons;
+  if (collections_.exists ("muons")) anatools::getCollection (collections_.getParameter<edm::InputTag> ("muons"), muons, event);
+
+  (*myVars)["numMuons"] = muons->size();
 }
 
+#include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(MyEventVariableProducer);
