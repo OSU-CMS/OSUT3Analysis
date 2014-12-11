@@ -68,7 +68,6 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label):
 
 def MakeSpecificConfig(Dataset, Directory):
     os.system('touch ' + Directory + '/config_cfg.py')
-    print Directory
     SkimChannelNames = SkimSitter('userConfig_cfg', Directory) 
     ConfigFile = open(Directory + '/config_cfg.py','r+w')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')        
