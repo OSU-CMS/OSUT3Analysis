@@ -34,8 +34,6 @@ typedef boost::variant<double, string> Leaf;
 
 typedef vector<map<string, vector<pair<bool, bool> > > > FlagMap;
 
-typedef vector<map<string, double> > VariableProducerPayload;
-
 struct Cut
 {
   ValueLookupTree  *valueLookupTree;
@@ -48,6 +46,8 @@ struct Cut
   vector<string>   inputCollections;
 };
 
+typedef vector<Cut> Cuts;
+
 struct CutCalculatorPayload
 {
   FlagMap         cumulativeObjectFlags;
@@ -56,7 +56,7 @@ struct CutCalculatorPayload
   bool            eventDecision;
   bool            isValid;
   bool            triggerDecision;
-  vector<Cut>     cuts;
+  Cuts            cuts;
   vector<bool>    eventFlags;
   vector<bool>    triggerFlags;
   vector<bool>    vetoTriggerFlags;
@@ -81,30 +81,42 @@ struct HistoDef {
 
 struct Node
 {
-  Node           *parent;
-  string         type;
-  string         value;
-  vector<Node*>  branches;
+  Node            *parent;
+  string          type;
+  string          value;
+  vector<Node *>  branches;
 };
+
+typedef map<string, double> EventVariableProducerPayload;
 
 struct Collections
 {
-  edm::Handle<BNbxlumiCollection>         bxlumis;
-  edm::Handle<BNelectronCollection>       electrons;
-  edm::Handle<BNeventCollection>          events;
-  edm::Handle<BNgenjetCollection>         genjets;
-  edm::Handle<BNjetCollection>            jets;
-  edm::Handle<BNmcparticleCollection>     mcparticles;
-  edm::Handle<BNmetCollection>            mets;
-  edm::Handle<BNmuonCollection>           muons;
-  edm::Handle<BNphotonCollection>         photons;
-  edm::Handle<BNprimaryvertexCollection>  primaryvertexs;
-  edm::Handle<BNsuperclusterCollection>   superclusters;
-  edm::Handle<BNtauCollection>            taus;
-  edm::Handle<BNtrackCollection>          tracks;
-  edm::Handle<BNtriggerCollection>        triggers;
-  edm::Handle<BNtrigobjCollection>        trigobjs;
-  edm::Handle<VariableProducerPayload>    userVariables;
+  edm::Handle<BNbxlumiCollection>                     bxlumis;
+  edm::Handle<BNelectronCollection>                   electrons;
+  edm::Handle<BNeventCollection>                      events;
+  edm::Handle<BNgenjetCollection>                     genjets;
+  edm::Handle<BNjetCollection>                        jets;
+  edm::Handle<BNmcparticleCollection>                 mcparticles;
+  edm::Handle<BNmetCollection>                        mets;
+  edm::Handle<BNmuonCollection>                       muons;
+  edm::Handle<BNphotonCollection>                     photons;
+  edm::Handle<BNprimaryvertexCollection>              primaryvertexs;
+  edm::Handle<BNsuperclusterCollection>               superclusters;
+  edm::Handle<BNtauCollection>                        taus;
+  edm::Handle<BNtrackCollection>                      tracks;
+  edm::Handle<BNtriggerCollection>                    triggers;
+  edm::Handle<BNtrigobjCollection>                    trigobjs;
+  vector<edm::Handle<EventVariableProducerPayload> >  eventVariables;
 };
+
+struct ValueToPrint
+{
+  ValueLookupTree  *valueLookupTree;
+  string           inputLabel;
+  string           valueToPrint;
+  vector<string>   inputCollections;
+};
+
+typedef vector<ValueToPrint> ValuesToPrint;
 
 #endif

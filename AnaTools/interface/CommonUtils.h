@@ -7,60 +7,83 @@
 #ifndef COMMON_UTILS
 #define COMMON_UTILS
 
-#include "DataFormats/Common/interface/Handle.h"
+#include <unordered_set>
+
 #include "FWCore/Framework/interface/Event.h"
 
-#include <vector>
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
 // Return whether obj is contained in vec.
-#define VEC_CONTAINS(vec,obj) (find (vec.begin (), vec.end (), obj) != vec.end ())
+#define VEC_CONTAINS(vec, obj) (find (vec.begin (), vec.end (), obj) != vec.end ())
 
 using namespace std;
 
-template <class InputCollection> void getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
+namespace anatools
+{
+  template <class InputCollection> bool getCollection (const edm::InputTag &, edm::Handle<InputCollection> &, const edm::Event &);
+
+  // Extracts the constituent collections from a composite collection name.
+  vector<string> getSingleObjects (string);
+
+  // Concatenates collection names with hyphens between.
+  string concatenateInputCollection (const vector<string> &);
+
+  // Capitalizes a string.
+  string capitalize (string);
+
+  // Removes the trailing 's' from a string.
+  string singular (string);
+
+  // Adds an 's' to the end of a string.
+  string plural (string);
+
+  // Removes whitespace from the left side of a string.
+  string &ltrim (string &);
+
+  // Removes whitespace from the right side of a string.
+  string &rtrim (string &);
+
+  // Removes whitespace from both sides of a string.
+  string &trim (string &);
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Comparison functions for sorting.
+  ////////////////////////////////////////////////////////////////////////////////
+  bool firstOfPairAscending (pair<size_t, string>, pair<size_t, string>);
+  bool collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> >, pair<string, tuple<unsigned, unsigned, void *> >);
+  ////////////////////////////////////////////////////////////////////////////////
+
+  // Retrieves all the collections from the event which are needed based on the
+  // first argument.
+  void getRequiredCollections (const unordered_set<string> &, const edm::ParameterSet &, Collections &, const edm::Event &);
+};
+
+template <class InputCollection> bool anatools::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
   // Get a collection with the specified type, and match the product instance name.
   // Do not use Event::getByLabel() function, since it also matches the module name.
-  vector< edm::Handle<InputCollection> > objVec;
-  event.getManyByType(objVec);
-  for (uint i=0; i<objVec.size(); i++) {
-    if (label.instance() == objVec.at(i).provenance()->productInstanceName()) {
-      coll = objVec.at(i);
-      break;
+  event.getByLabel(label, coll);
+  if (!coll.isValid()) {
+    vector<edm::Handle<InputCollection> > objVec;
+    event.getManyByType(objVec);
+    int collWithFewestParents = -1, fewestParents = -1;
+    for (uint i=0; i<objVec.size(); i++) {
+      int parents = objVec.at(i).provenance()->parents().size();
+      if (label.instance() == objVec.at(i).provenance()->productInstanceName() && parents > fewestParents) {
+        collWithFewestParents = i;
+        fewestParents = parents;
+      }
+    }
+    if (collWithFewestParents >= 0)
+      coll = objVec.at(collWithFewestParents);
+    if (!coll.isValid()) {
+      clog << "ERROR: could not get input collection with product instance label: " << label.instance()
+           << ", but found " << objVec.size() << " collections of the specified type." << endl;
+      return false;
     }
   }
-  if (!coll.product()) clog << "ERROR: could not get input collection with product instance label: " << label.instance()
-                         << ", but found " << objVec.size() << " collections of the specified type." << endl;
+  return true;
 }
-
-// Extracts the constituent collections from a composite collection name.
-vector<string> getSingleObjects (string);
-
-// Concatenates collection names with hyphens between.
-string concatenateInputCollection (const vector<string> &);
-
-// Capitalizes a string.
-string capitalize (string);
-
-// Removes the trailing 's' from a string.
-string singular (string);
-
-// Adds an 's' to the end of a string.
-string plural (string);
-
-// Removes whitespace from the left side of a string.
-string &ltrim (string &);
-
-// Removes whitespace from the right side of a string.
-string &rtrim (string &);
-
-// Removes whitespace from both sides of a string.
-string &trim (string &);
-
-////////////////////////////////////////////////////////////////////////////////
-// Comparison functions for sorting.
-////////////////////////////////////////////////////////////////////////////////
-bool firstOfPairAscending (pair<size_t, string>, pair<size_t, string>);
-bool collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> >, pair<string, tuple<unsigned, unsigned, void *> >);
-////////////////////////////////////////////////////////////////////////////////
 
 #endif

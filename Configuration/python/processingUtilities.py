@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import os
 import re
 import sys
@@ -8,6 +7,7 @@ import copy
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
+from OSUT3Analysis.Configuration.InfoPrinter_cff import *
 
 def split_composite_datasets(datasets, composite_dataset_definitions):
     for dataset in datasets:
@@ -70,7 +70,7 @@ def set_commandline_arguments(parser):
     parser.add_option("-r", "--ratio", action="store_true", dest="makeRatioPlots", default=False,
                       help="draw (data-MC)/MC plots below all 1D histograms")
     parser.add_option("-R", "--ratioYRange", dest="ratioYRange",
-                      help="maximum of range of vertical scale for ratio plots")  
+                      help="maximum of range of vertical scale for ratio plots")
     parser.add_option("-d", "--diff", action="store_true", dest="makeDiffPlots", default=False,
                       help="draw data-MC plots below all 1D histograms")
     parser.add_option("-b", "--rebin", dest="rebinFactor",
@@ -148,18 +148,18 @@ def add_stops (options, masses, ctaus, bottomBranchingRatios = [], rHadron = Tru
 
 def chargino_ctau (dataset):
     if not re.match (r"AMSB_chargino_.*GeV_RewtCtau.*cm", dataset):
-        return -99.0 
-    return float (re.sub (r"AMSB_chargino_[^_]*GeV_RewtCtau([^_]*)cm", r"\1", dataset))  
-    
+        return -99.0
+    return float (re.sub (r"AMSB_chargino_[^_]*GeV_RewtCtau([^_]*)cm", r"\1", dataset))
+
 def source_chargino_ctau (ctau):
     # Units of ctau are cm.
-    # Choose as the source the next sample with ctau larger than the target.  
+    # Choose as the source the next sample with ctau larger than the target.
     if ctau <= 10:
         src_ctau = 10
     elif ctau <= 100:
-        src_ctau = 100 
+        src_ctau = 100
     else:
-        src_ctau = 1000 
+        src_ctau = 1000
     return float(src_ctau)
 
 def get_collections (cuts):
@@ -184,7 +184,7 @@ def add_variables (process, modules, collections):
     if scheduleType == 'NoneType':
         process.schedule = cms.Schedule ()
     ############################################################################
-    
+
 
     ############################################################################
     # Add the variable production modules to a path
@@ -201,6 +201,15 @@ def add_variables (process, modules, collections):
         variableProducerPath += producer
 
     ############################################################################
+    # Each module is added to the list of event variables in the collections
+    # PSet.
+    ############################################################################
+    for module in modules:
+        if not hasattr (collections, "eventVariables"):
+            collections.eventVariables = cms.VInputTag ()
+        collections.eventVariables.append (cms.InputTag (module, "extraEventVariables"))
+
+    ############################################################################
     # Add the variable production path at the beginning of the schedule
     ############################################################################
     pathName = "variableProducerPath" + str(add_variables.pathIndex)
@@ -208,7 +217,6 @@ def add_variables (process, modules, collections):
     process.schedule.insert(0,variableProducerPath)
 
     add_variables.pathIndex += 1
-    
 
 
 def add_channels (process, channels, histogramSets, collections, skim = True):
@@ -220,7 +228,7 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
     if scheduleType == 'NoneType':
         process.schedule = cms.Schedule ()
     ############################################################################
-        
+
     ############################################################################
     # Suffix is appended to the name of the output file. In batch mode, an
     # underscore followed by the job number is appended.
@@ -243,7 +251,7 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
 
     ############################################################################
     # Change the process name to be unique, to avoid DuplicateProcess error
-    # in the case of running over skims.  
+    # in the case of running over skims.
     # To ensure a unique process name, use a date/time stamp.
     ############################################################################
     if not hasattr (add_channels, "processNameUpdated"):
@@ -296,21 +304,11 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         ########################################################################
         # Add a module for printing info, both general and for specific events.
         ########################################################################
-        infoPrinter = cms.EDAnalyzer ("InfoPrinter",
-            cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions"),
-            eventsToPrint = cms.VEventID (),
-            printAllEvents              =  cms.bool  (False),
-            printCumulativeObjectFlags  =  cms.bool  (False),
-            printCutDecision            =  cms.bool  (False),
-            printEventDecision          =  cms.bool  (False),
-            printEventFlags             =  cms.bool  (False),
-            printObjectFlags            =  cms.bool  (False),
-            printTriggerDecision        =  cms.bool  (False),
-            printTriggerFlags           =  cms.bool  (False),
-            printVetoTriggerFlags       =  cms.bool  (False)
-        )
-        channelPath += infoPrinter
-        setattr (process, channelName + "InfoPrinter", infoPrinter)
+        channelInfoPrinter = copy.deepcopy (infoPrinter)
+        channelInfoPrinter.collections = collections
+        channelInfoPrinter.cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
+        channelPath += channelInfoPrinter
+        setattr (process, channelName + "InfoPrinter", channelInfoPrinter)
         ########################################################################
 
         ########################################################################
@@ -320,7 +318,7 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         outputCommands = ["drop *"]
         outputCommands.append("keep *_*_extraEventVariables_*")
         outputCommands.append("keep *_*_extraObjectVariables_*")
-        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a))]:
+        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "eventVariables" and a is not "objectVariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep BN"
             outputCommand += collection
@@ -394,7 +392,7 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         process.schedule.append(getattr(process,channelName))
     setattr (process, "endPath", add_channels.endPath)
     set_endPath(process, add_channels.endPath)
-        
+
 def set_endPath(process, endPath):
 
     ############################################################################
@@ -408,7 +406,7 @@ def set_endPath(process, endPath):
             endPathIndex = index
     if endPathIndex > -1:
         del process.schedule[endPathIndex]
-        
+
     # add the new endpath at the end of the schedule
     process.schedule.append(endPath)
 

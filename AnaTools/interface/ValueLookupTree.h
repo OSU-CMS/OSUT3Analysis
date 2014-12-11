@@ -49,6 +49,7 @@ class ValueLookupTree
   public:
     ValueLookupTree ();
     ValueLookupTree (const Cut &);
+    ValueLookupTree (const ValueToPrint &);
     ValueLookupTree (const string &, const vector<string> &);
     ~ValueLookupTree ();
 
@@ -111,6 +112,8 @@ class ValueLookupTree
     void deleteObject (const string &, void * const) const;
     ////////////////////////////////////////////////////////////////////////////
 
+    // Returns the C++ type associated with the collection named in the first
+    // argument.
     string getCollectionType (const string &name) const;
 
     ////////////////////////////////////////////////////////////////////////////

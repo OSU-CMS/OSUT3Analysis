@@ -47,7 +47,7 @@ class CutCalculator : public edm::EDProducer
     // Private variables set after unpacking the cuts ParameterSet.
     ////////////////////////////////////////////////////////////////////////////
     unordered_set<string>  objectsToGet_;
-    vector<Cut>            unpackedCuts_;
+    Cuts                   unpackedCuts_;
     vector<string>         unpackedTriggersToVeto_;
     vector<string>         unpackedTriggers_;
     ////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ class CutCalculator : public edm::EDProducer
     auto_ptr<CutCalculatorPayload>  pl_;
 
     // Function for initializing the ValueLookupTree objects, one for each cut.
-    bool initializeValueLookupForest (vector<Cut> &, Collections * const);
+    bool initializeValueLookupForest (Cuts &, Collections * const);
 };
 
 #endif

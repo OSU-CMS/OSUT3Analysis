@@ -1,38 +1,36 @@
 <lcgdict>
   <class name="BNstop" />
   <class name="std::vector<BNstop>" />
-  <class pattern="edm::Wrapper<BNstop>"/>
+  <class name="edm::Wrapper<BNstop>"/>
   <class name="edm::Wrapper<std::vector<BNstop> >" />
 
   <class name="BNPFChgHad" />
   <class name="std::vector<BNPFChgHad>" />
-  <class pattern="edm::Wrapper<BNPFChgHad>"/>
+  <class name="edm::Wrapper<BNPFChgHad>"/>
   <class name="edm::Wrapper<std::vector<BNPFChgHad> >" />
 
-  <class name="std::map<std::string, double>" />
-  <class name="std::vector<std::map<std::string, double> >" />
-  <class pattern="edm::Wrapper<std::map<std::string, double> >"/>
-  <class name="edm::Wrapper<std::vector<std::map<std::string, double> > >" />
+  <class name="EventVariableProducerPayload" />
+  <class name="std::vector<EventVariableProducerPayload>" />
+  <class name="edm::Wrapper<EventVariableProducerPayload>"/>
+  <class name="edm::Wrapper<std::vector<EventVariableProducerPayload> >" />
 
   <class name="CutCalculatorPayload"/>
   <class name="std::vector<CutCalculatorPayload>"/>
-  <class pattern="edm::Wrapper<CutCalculatorPayload>"/>
+  <class name="edm::Wrapper<CutCalculatorPayload>"/>
   <class name="edm::Wrapper<std::vector<CutCalculatorPayload> >"/>
 
   <class name="Cut"/>
   <class name="std::vector<Cut>"/>
-  <class pattern="edm::Wrapper<Cut>"/>
+  <class name="edm::Wrapper<Cut>"/>
   <class name="edm::Wrapper<std::vector<Cut> >"/>
 
   <class name="std::map<std::basic_string<char>,std::vector<std::vector<bool> > >"/>
   <class name="std::vector<std::map<std::basic_string<char>,std::vector<std::vector<bool> > > >"/>
-  <class pattern="edm::Wrapper<std::map<std::basic_string<char>,std::vector<std::vector<bool> > > >"/>
+  <class name="edm::Wrapper<std::map<std::basic_string<char>,std::vector<std::vector<bool> > > >"/>
   <class name="edm::Wrapper<std::vector<std::map<std::basic_string<char>,std::vector<std::vector<bool> > > > >"/>
 
   <class name="std::vector<bool>"/>
   <class name="std::vector<std::vector<bool> >"/>
-  <class pattern="edm::Wrapper<std::vector<bool> >"/>
+  <class name="edm::Wrapper<std::vector<bool> >"/>
   <class name="edm::Wrapper<std::vector<std::vector<bool> > >"/>
-
-
 </lcgdict>
