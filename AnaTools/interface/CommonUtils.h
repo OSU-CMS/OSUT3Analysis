@@ -55,6 +55,8 @@ namespace anatools
   bool collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> >, pair<string, tuple<unsigned, unsigned, void *> >);
   ////////////////////////////////////////////////////////////////////////////////
 
+  // Retrieves all the collections from the event which are needed based on the
+  // first argument.
   void getRequiredCollections (const unordered_set<string> &, const edm::ParameterSet &, Collections &, const edm::Event &);
 };
 

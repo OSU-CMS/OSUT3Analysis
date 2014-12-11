@@ -112,6 +112,8 @@ class ValueLookupTree
     void deleteObject (const string &, void * const) const;
     ////////////////////////////////////////////////////////////////////////////
 
+    // Returns the C++ type associated with the collection named in the first
+    // argument.
     string getCollectionType (const string &name) const;
 
     ////////////////////////////////////////////////////////////////////////////

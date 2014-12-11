@@ -201,6 +201,15 @@ def add_variables (process, modules, collections):
         variableProducerPath += producer
 
     ############################################################################
+    # Each module is added to the list of event variables in the collections
+    # PSet.
+    ############################################################################
+    for module in modules:
+        if not hasattr (collections, "eventVariables"):
+            collections.eventVariables = cms.VInputTag ()
+        collections.eventVariables.append (cms.InputTag (module, "extraEventVariables"))
+
+    ############################################################################
     # Add the variable production path at the beginning of the schedule
     ############################################################################
     pathName = "variableProducerPath" + str(add_variables.pathIndex)
@@ -208,11 +217,6 @@ def add_variables (process, modules, collections):
     process.schedule.insert(0,variableProducerPath)
 
     add_variables.pathIndex += 1
-
-    if not hasattr (collections, "eventVariables"):
-        collections.eventVariables = cms.VInputTag ()
-    collections.eventVariables.append (cms.InputTag (module, "extraEventVariables"))
-
 
 
 def add_channels (process, channels, histogramSets, collections, skim = True):
@@ -314,7 +318,7 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
         outputCommands = ["drop *"]
         outputCommands.append("keep *_*_extraEventVariables_*")
         outputCommands.append("keep *_*_extraObjectVariables_*")
-        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "eventVariables" and a is not "extraObjectVariables"]:
+        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "eventVariables" and a is not "objectVariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep BN"
             outputCommand += collection
