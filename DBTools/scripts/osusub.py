@@ -318,7 +318,7 @@ if split_datasets:
         if not arguments.NotToExecute:
             os.chdir(WorkDir)
             if RealMaxEvents > 0 : 
-       		print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on ' + str(RealMaxEvents)  + ' events in ' + str(DatasetRead['numberOfFiles']) + ' files for ' + str(dataset) + ' dataset.\n'
+                print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on ' + str(RealMaxEvents)  + ' events in ' + str(DatasetRead['numberOfFiles']) + ' files for ' + str(dataset) + ' dataset.\n'
             else:
        		print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on all events in ' + str(DatasetRead['numberOfFiles'])  +' files for ' + str(dataset) + ' dataset.\n'
             if lxbatch: 
@@ -352,9 +352,9 @@ else:
     MakeSpecificConfig('',WorkDir)
 
     if lxbatch:
-	    MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
+        MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
     else:
-            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label)
+        MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label)
     if not arguments.NotToExecute:
         os.chdir(WorkDir)
         print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'
@@ -365,6 +365,3 @@ else:
 	os.chdir(SubmissionDir)
     else:
         print 'Configuration files created for ' + str(Config) + '  but no jobs submitted.\n'
-     
-        
-
