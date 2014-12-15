@@ -1,9 +1,11 @@
 import os
+import subprocess
 import re
 import sys
 import math
 import datetime
 import copy
+import ROOT
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
@@ -410,3 +412,39 @@ def set_endPath(process, endPath):
     # add the new endpath at the end of the schedule
     process.schedule.append(endPath)
 
+def set_input(process, input_string):
+    from OSUT3Analysis.Configuration.configurationOptions import dataset_names
+    
+    ############################################################################
+    # This function configures the input dataset
+    # It can take a dataset nickname, directory, or file as argument
+    ############################################################################
+    datasetInfo = cms.PSet ()
+    datasetInfo.name = cms.string ("NONE")
+    datasetInfo.type = cms.string ("NONE")
+    process.source = cms.Source ('PoolSource',
+                                 fileNames = cms.untracked.vstring ()
+                                 )
+
+    fileType = subprocess.check_output(['file',input_string]).split(":")[1]
+    # try opening 'input_string' as a ROOT file
+    if "ROOT" in fileType:
+        process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string))
+        return
+    
+    # try opening 'input_string' as a directory
+    elif "directory" in fileType:
+        for file in os.listdir(input_string):
+            filePath = input_string + "/" + file
+            fileType = subprocess.check_output(['file',filePath]).split(":")[1]
+            if "ROOT" in fileType:
+                process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string + "/" + file))
+        return
+
+    # try using 'input_string' as a registered dataset name        
+    datasetDirectory = dataset_names[input_string]
+    subprocess.call(['MySQLModule',datasetDirectory,'temp_datasetInfo.py','file:'])
+    from temp_datasetInfo import listOfFiles
+    process.source.fileNames.extend(cms.untracked.vstring(listOfFiles))
+    subprocess.call(['rm','temp_datasetInfo.py'])
+    subprocess.call(['rm','temp_datasetInfo.pyc'])
