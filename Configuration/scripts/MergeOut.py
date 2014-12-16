@@ -148,15 +148,18 @@ for dataSet in split_datasets:
     os.system('mv ' + dataSet + '.root ' + '../')
     print "\nFinish merging dataset " + dataSet + ":"
     print "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs."
-    print "    The targeting luminosity is " + str(IntLumi) + " inverse pb."
+    print "    "+ str(TotalNumber) + " events were successfully run over."
+    print "    The target luminosity is " + str(IntLumi) + " inverse pb."
     if crossSection != -1:
         print "    The crossSection of dataset " + dataSet + " is " + str(crossSection) + " pb."
-    print "    The weighting factor is " + str(Weight) + ", which is a nunitless number." 
+    print "    The weighting factor is " + str(Weight) + "." 
+    if crossSection != -1:
+    	print "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(TotalNumber/crossSection) + " inverse pb." 
     print "...............................................................\n"
     os.chdir(CondorDir) 
 
 for dataSet_component in composite_datasets:
-    print "................Merging composite dataset " + dataSet + " ................"
+    print "................Merging composite dataset " + dataSet_component + " ................"
     memberList = []
     for dataset in composite_dataset_definitions[dataSet_component]:
         if not os.path.exists(dataset + '.root'):
