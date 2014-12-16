@@ -47,8 +47,8 @@ getLocation
       print $tmpfile "numberOfFiles = ".$row[4]."\n"; 
       print $tmpfile 'status = "'.$row[5].'"'."\n"; 
       print $tmpfile "crossSection = ".$row[7]."\n" if $row[7] > 0;  
-      print $tmpfile "crossSection = ".$row[6]."\n" if $row[7] < 0 and $row[6] > 0;  
-      print $tmpfile "crossSection = "."-1"."\n" if $row[7] < 0 and $row[6] < 0;  
+      print $tmpfile "crossSection = ".$row[6]."\n" if $row[7] <= 0 and $row[6] > 0;  
+      print $tmpfile "crossSection = "."-1"."\n" if $row[7] <= 0 and $row[6] <= 0;  
       print $tmpfile "listOfFiles = [\n";
       my $length = @files;
       if ($length) { 

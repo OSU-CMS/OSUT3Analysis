@@ -66,14 +66,20 @@ def GetTotalNumberOfEvents(FilesSet):
             print File + " is a bad root file."
             FilesSet.remove(File)
             continue
-        CutFlowObj = ScoutFile.Get("OSUAnalysis/cutFlow")
-	if not CutFlowObj:
-	    print "Could not find cutFlow histogram in " + str(File) + " !"
+        randomChannelDirectory = ""
+        for key in ScoutFile.GetListOfKeys():
+            if (key.GetClassName() != "TDirectoryFile"):
+                continue
+            randomChannelDirectory = key.GetName()
+            break
+        CounterObj = ScoutFile.Get(randomChannelDirectory + "/eventCounter")
+	if not CounterObj:
+	    print "Could not find eventCounter histogram in " + str(File) + " !"
 	    continue
         else:
-	    CutFlow = CutFlowObj.Clone()
-            CutFlow.SetDirectory(0)
-            TotalNumber = TotalNumber + CutFlow.GetBinContent(1) 
+	    Counter = CounterObj.Clone()
+            Counter.SetDirectory(0)
+            TotalNumber = TotalNumber + Counter.GetBinContent(1) 
     return TotalNumber
 ###############################################################################
 #                           Getting the working directory.                    #
@@ -135,22 +141,25 @@ for dataSet in split_datasets:
         continue
     Weight = 1.0
     crossSection = float(datasetInfo.crossSection)
-    if crossSection != -1:
+    if crossSection > 0:
         Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
     os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + dataSet + '.root' + ' -w ' + InputWeightString)
     os.system('mv ' + dataSet + '.root ' + '../')
     print "\nFinish merging dataset " + dataSet + ":"
     print "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs."
-    print "    The targeting luminosity is " + str(IntLumi) + " inverse pb."
+    print "    "+ str(TotalNumber) + " events were successfully run over."
+    print "    The target luminosity is " + str(IntLumi) + " inverse pb."
     if crossSection != -1:
         print "    The crossSection of dataset " + dataSet + " is " + str(crossSection) + " pb."
-    print "    The weighting factor is " + str(Weight) + ", which is a nunitless number." 
+    print "    The weighting factor is " + str(Weight) + "." 
+    if crossSection != -1:
+    	print "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(TotalNumber/crossSection) + " inverse pb." 
     print "...............................................................\n"
     os.chdir(CondorDir) 
 
 for dataSet_component in composite_datasets:
-    print "................Merging composite dataset " + dataSet + " ................"
+    print "................Merging composite dataset " + dataSet_component + " ................"
     memberList = []
     for dataset in composite_dataset_definitions[dataSet_component]:
         if not os.path.exists(dataset + '.root'):

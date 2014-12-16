@@ -1,9 +1,51 @@
+#ifndef OBJECT_SELECTOR
+#define OBJECT_SELECTOR
+
 #include <iostream>
 
+#include "DataFormats/Common/interface/Handle.h"
+
+#include "FWCore/Framework/interface/EDFilter.h"
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Framework/interface/EventSetup.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-#include "OSUT3Analysis/AnaTools/plugins/ObjectSelector.h"
 
 #define EXIT_CODE 2
+
+template<class T>
+class ObjectSelector : public edm::EDFilter
+{
+  public:
+    ObjectSelector (const edm::ParameterSet &);
+    ~ObjectSelector ();
+
+    bool filter (edm::Event &, const edm::EventSetup &);
+
+  private:
+    ////////////////////////////////////////////////////////////////////////////
+    // Private variables initialized by the constructor.
+    ////////////////////////////////////////////////////////////////////////////
+    edm::ParameterSet  collections_;
+    string             collectionToFilter_;
+    edm::InputTag      cutDecisions_;
+    bool               firstEvent_;
+    ////////////////////////////////////////////////////////////////////////////
+
+    // InputTag for the collection which is to be filtered.
+    edm::InputTag            collection_;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Objects which can be gotten from the event.
+    ////////////////////////////////////////////////////////////////////////////
+    edm::Handle<vector<T> >            collection;
+    edm::Handle<CutCalculatorPayload>  cutDecisions;
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Payload for this EDFilter.
+    auto_ptr<vector<T> > pl_;
+};
 
 template<class T>
 ObjectSelector<T>::ObjectSelector (const edm::ParameterSet &cfg) :
@@ -30,7 +72,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   // Get the collection and cut decisions from the event and print a warning if
   // there is a problem.
   //////////////////////////////////////////////////////////////////////////////
-  getCollection(collection_,   collection,   event);
+  anatools::getCollection (collection_, collection, event);
   event.getByLabel (cutDecisions_, cutDecisions);
   if (firstEvent_ && !collection.isValid ())
     clog << "WARNING: failed to retrieve requested collection from the event." << endl;
@@ -56,7 +98,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
             {
               nCuts = cutDecisions->cumulativeObjectFlags.size ();
               if (nCuts > 0)
-                passes = cutDecisions->cumulativeObjectFlags.at (nCuts - 1).at (collectionToFilter_).at (iObject).first;
+                cutDecisions->cumulativeObjectFlags.at (nCuts - 1).at (collectionToFilter_).at (iObject).second && (passes = cutDecisions->cumulativeObjectFlags.at (nCuts - 1).at (collectionToFilter_).at (iObject).first);
             }
           if (passes)
             pl_->push_back (*object);
@@ -72,37 +114,4 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   return (cutDecisions.isValid () ? cutDecisions->eventDecision : true);
 }
 
-typedef  ObjectSelector<BNbxlumi>              BxlumiObjectSelector;
-typedef  ObjectSelector<BNelectron>            ElectronObjectSelector;
-typedef  ObjectSelector<BNevent>               EventObjectSelector;
-typedef  ObjectSelector<BNgenjet>              GenjetObjectSelector;
-typedef  ObjectSelector<BNjet>                 JetObjectSelector;
-typedef  ObjectSelector<BNmcparticle>          McparticleObjectSelector;
-typedef  ObjectSelector<BNmet>                 MetObjectSelector;
-typedef  ObjectSelector<BNmuon>                MuonObjectSelector;
-typedef  ObjectSelector<BNphoton>              PhotonObjectSelector;
-typedef  ObjectSelector<BNprimaryvertex>       PrimaryvertexObjectSelector;
-typedef  ObjectSelector<BNsupercluster>        SuperclusterObjectSelector;
-typedef  ObjectSelector<BNtau>                 TauObjectSelector;
-typedef  ObjectSelector<BNtrack>               TrackObjectSelector;
-typedef  ObjectSelector<BNtrigger>             TriggerObjectSelector;
-typedef  ObjectSelector<BNtrigobj>             TrigobjObjectSelector;
-typedef  ObjectSelector<map<string, double> >  UserVarObjectSelector;
-
-#include "FWCore/Framework/interface/MakerMacros.h"
-DEFINE_FWK_MODULE(BxlumiObjectSelector);
-DEFINE_FWK_MODULE(ElectronObjectSelector);
-DEFINE_FWK_MODULE(EventObjectSelector);
-DEFINE_FWK_MODULE(GenjetObjectSelector);
-DEFINE_FWK_MODULE(JetObjectSelector);
-DEFINE_FWK_MODULE(McparticleObjectSelector);
-DEFINE_FWK_MODULE(MetObjectSelector);
-DEFINE_FWK_MODULE(MuonObjectSelector);
-DEFINE_FWK_MODULE(PhotonObjectSelector);
-DEFINE_FWK_MODULE(PrimaryvertexObjectSelector);
-DEFINE_FWK_MODULE(SuperclusterObjectSelector);
-DEFINE_FWK_MODULE(TauObjectSelector);
-DEFINE_FWK_MODULE(TrackObjectSelector);
-DEFINE_FWK_MODULE(TriggerObjectSelector);
-DEFINE_FWK_MODULE(TrigobjObjectSelector);
-DEFINE_FWK_MODULE(UserVarObjectSelector);
+#endif

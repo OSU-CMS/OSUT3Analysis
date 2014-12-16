@@ -39,9 +39,9 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
 
     vector<string> inputCollection = histogramSets_.at(histoSet).getParameter<vector<string> > ("inputCollection");
     sort (inputCollection.begin (), inputCollection.end ());
-    string catInputCollection = concatenateInputCollection (inputCollection);
+    string catInputCollection = anatools::concatenateInputCollection (inputCollection);
 
-    objectsToGet_.insert (objectsToGet_.end (), inputCollection.begin (), inputCollection.end ());
+    objectsToGet_.insert (inputCollection.begin (), inputCollection.end ());
 
     // get the appropriate directory name
     string directoryName = getDirectoryName(catInputCollection);
@@ -60,9 +60,6 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
     } // end loop on histograms in the set
 
   } // end loop on histogram sets
-
-  sort (objectsToGet_.begin (), objectsToGet_.end ());
-  objectsToGet_.erase (unique (objectsToGet_.begin (), objectsToGet_.end ()), objectsToGet_.end ());
 
   // loop over each parsed histogram configuration
   vector<HistoDef>::iterator histogram;
@@ -83,24 +80,8 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
 void
 Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
-
   // get the required collections from the event
-  if  (VEC_CONTAINS  (objectsToGet_,  "bxlumis")         &&  collections_.exists  ("bxlumis"))         getCollection  (collections_.getParameter<edm::InputTag>  ("bxlumis"),         handles_.bxlumis,         event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "electrons")       &&  collections_.exists  ("electrons"))       getCollection  (collections_.getParameter<edm::InputTag>  ("electrons"),       handles_.electrons,       event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "events")          &&  collections_.exists  ("events"))          getCollection  (collections_.getParameter<edm::InputTag>  ("events"),          handles_.events,          event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "genjets")         &&  collections_.exists  ("genjets"))         getCollection  (collections_.getParameter<edm::InputTag>  ("genjets"),         handles_.genjets,         event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "jets")            &&  collections_.exists  ("jets"))            getCollection  (collections_.getParameter<edm::InputTag>  ("jets"),            handles_.jets,            event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "mcparticles")     &&  collections_.exists  ("mcparticles"))     getCollection  (collections_.getParameter<edm::InputTag>  ("mcparticles"),     handles_.mcparticles,     event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "mets")            &&  collections_.exists  ("mets"))            getCollection  (collections_.getParameter<edm::InputTag>  ("mets"),            handles_.mets,            event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "muons")           &&  collections_.exists  ("muons"))           getCollection  (collections_.getParameter<edm::InputTag>  ("muons"),           handles_.muons,           event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "photons")         &&  collections_.exists  ("photons"))         getCollection  (collections_.getParameter<edm::InputTag>  ("photons"),         handles_.photons,         event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "primaryvertexs")  &&  collections_.exists  ("primaryvertexs"))  getCollection  (collections_.getParameter<edm::InputTag>  ("primaryvertexs"),  handles_.primaryvertexs,  event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "superclusters")   &&  collections_.exists  ("superclusters"))   getCollection  (collections_.getParameter<edm::InputTag>  ("superclusters"),   handles_.superclusters,   event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "taus")            &&  collections_.exists  ("taus"))            getCollection  (collections_.getParameter<edm::InputTag>  ("taus"),            handles_.taus,            event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "tracks")          &&  collections_.exists  ("tracks"))          getCollection  (collections_.getParameter<edm::InputTag>  ("tracks"),          handles_.tracks,          event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "triggers")        &&  collections_.exists  ("triggers"))        getCollection  (collections_.getParameter<edm::InputTag>  ("triggers"),        handles_.triggers,        event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "trigobjs")        &&  collections_.exists  ("trigobjs"))        getCollection  (collections_.getParameter<edm::InputTag>  ("trigobjs"),        handles_.trigobjs,        event);
-  if  (VEC_CONTAINS  (objectsToGet_,  "userVariables")   &&  collections_.exists  ("userVariables"))   getCollection  (collections_.getParameter<edm::InputTag>  ("userVariables"),   handles_.userVariables,   event);
+  anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);
 
   if (!initializeValueLookupForest (histogramDefinitions, &handles_))
     {
@@ -128,7 +109,7 @@ Plotter::~Plotter ()
 // function to convert an input collection into a directory name
 string Plotter::getDirectoryName(string inputName){
 
-  string parsedName = capitalize(singular(inputName));
+  string parsedName = anatools::capitalize(anatools::singular(inputName));
 
   parsedName += " Plots";
 
@@ -156,6 +137,7 @@ HistoDef Plotter::parseHistoDef(const edm::ParameterSet &definition, const vecto
   parsedDef.hasVariableBinsX = parsedDef.binsX.size() > 3;
   parsedDef.hasVariableBinsY = parsedDef.binsY.size() > 3;
   parsedDef.inputVariables = definition.getParameter<vector<string> >("inputVariables");
+  sort (parsedDef.inputVariables.begin (), parsedDef.inputVariables.end ());
   parsedDef.dimensions = parsedDef.inputVariables.size();
 
   // for 1D histograms, set the appropriate y-axis label

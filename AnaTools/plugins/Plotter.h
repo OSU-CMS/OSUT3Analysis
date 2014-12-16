@@ -1,6 +1,8 @@
 #ifndef PLOTTER
 #define PLOTTER
 
+#include <unordered_set>
+
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
@@ -42,7 +44,7 @@ class Plotter : public edm::EDAnalyzer
 
       edm::Service<TFileService> fs_;
 
-      vector<string> objectsToGet_;
+      unordered_set<string> objectsToGet_;
 
       vector<TFileDirectory> subDirs;
 
