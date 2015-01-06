@@ -16,8 +16,6 @@ from optparse import OptionParser
 import copy
 from operator import itemgetter
 
-from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TArrow, THStack, TIter, TKey, TGraphErrors, Double 
-
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
@@ -40,6 +38,8 @@ parser.add_option("-d", "--singleDataset", dest="singleDataset",
                   help="Specify a single dataset to run over; overrides the list in the localOptions file") 
 
 (arguments, args) = parser.parse_args()  
+
+from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TArrow, THStack, TIter, TKey, TGraphErrors, Double 
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())

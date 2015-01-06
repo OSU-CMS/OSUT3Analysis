@@ -21,6 +21,26 @@ import subprocess
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 
+
+parser = OptionParser()
+parser = set_commandline_arguments(parser)
+
+###  Only used by makeBNTreePlot.py (maybe move to another file?)	 
+parser.remove_option("-p")
+parser.add_option("-D", "--dataset", dest="datasetName",	 
+                  help="Name of dataset (overrides value from local configuration file)")	 
+parser.add_option("-C", "--runOnCondor",  action="store_true", dest="runOnCondor", default=False,	 
+                  help="Run on condor instead of interactively")	 
+parser.add_option("-q", "--quickMerge",  action="store_true", dest="quickMerge", default=False,	 
+                  help="Run merge only")	 
+parser.add_option("-S", "--splitCondorJobs", action="store_true", dest="splitCondorJobs", default=False,	 	 
+                  help="Split condor jobs to have one for each file, rather than one for each dataset")	 
+parser.add_option("-p", "--condorProcessNum", dest="condorProcessNum", default=-1,	 
+                  help="Specify which condor process to run (default is to run over all).")	 
+
+(arguments, args) = parser.parse_args()
+ 
+
 from ROOT import TChain, TCut, TDirectory, TFile, TH1D, TH2D, TStopwatch, TTree, gROOT  
 
 gROOT.SetBatch(True)  # This is to prevent pop-up graphical windows
@@ -94,26 +114,6 @@ def RunOnCondor(arguments, split_datasets):
 watch  = TStopwatch()
 watch1 = TStopwatch()
 
-
-parser = OptionParser()
-parser = set_commandline_arguments(parser)
-
-###  Only used by makeBNTreePlot.py (maybe move to another file?)	 
-parser.remove_option("-p")
-parser.add_option("-D", "--dataset", dest="datasetName",	 
-                  help="Name of dataset (overrides value from local configuration file)")	 
-parser.add_option("-C", "--runOnCondor",  action="store_true", dest="runOnCondor", default=False,	 
-                  help="Run on condor instead of interactively")	 
-parser.add_option("-q", "--quickMerge",  action="store_true", dest="quickMerge", default=False,	 
-                  help="Run merge only")	 
-parser.add_option("-S", "--splitCondorJobs", action="store_true", dest="splitCondorJobs", default=False,	 	 
-                  help="Split condor jobs to have one for each file, rather than one for each dataset")	 
-parser.add_option("-p", "--condorProcessNum", dest="condorProcessNum", default=-1,	 
-                  help="Specify which condor process to run (default is to run over all).")	 
-
-
-(arguments, args) = parser.parse_args()
- 
 
 if not arguments.localConfig:
     sys.exit(" You must specify a localOptions.py file with -l")

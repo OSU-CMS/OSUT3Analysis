@@ -16,8 +16,6 @@ from optparse import OptionParser
 import copy
 from operator import itemgetter
 
-from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TArrow, THStack, TIter, TKey, TGraphErrors, Double 
-
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
@@ -28,6 +26,8 @@ parser = set_commandline_arguments(parser)
 parser.add_option("-m", "--getMean", action="store_true", dest="getMean", default=False,
                   help="report the mean for each histogram (upper and lower bounds are ignored)")  
 (arguments, args) = parser.parse_args()  
+
+from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TArrow, THStack, TIter, TKey, TGraphErrors, Double 
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())

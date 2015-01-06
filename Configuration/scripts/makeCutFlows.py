@@ -10,8 +10,6 @@ from optparse import OptionParser
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
-from OSUT3Analysis.Configuration.fileUtilities import *
-from ROOT import TFile  
 
 ###############################################################################
 ###############################################################################
@@ -55,6 +53,10 @@ parser.add_option("-i", "--inputFile", dest="inputFile",
                   help="specify inputFile; overrides condor directory")
 
 (arguments, args) = parser.parse_args()
+
+
+from OSUT3Analysis.Configuration.fileUtilities import *  # Import after parsing arguments, to avoid ROOT override of optionparser.  
+from ROOT import TFile  
 
 
 ###############################################################################

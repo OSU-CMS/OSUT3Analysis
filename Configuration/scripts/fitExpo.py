@@ -8,11 +8,6 @@
 
 from optparse import OptionParser
 
-
-from ROOT import TFile, TH1F, TCanvas, TF1, TPaveLabel, TStyle, gROOT  
-import ROOT  
-
-
 parser = OptionParser()
 parser.add_option("-i", "--infile", dest="infile",
                                     help="input root file")
@@ -29,6 +24,9 @@ parser.add_option("--hi", dest="hi",
 parser.add_option("--nobatch", action="store_true", dest="nobatch", default=False,
                   help="do not run in batch mode")   
 (arguments, args) = parser.parse_args()
+
+import ROOT  
+from ROOT import TFile, TH1F, TCanvas, TF1, TPaveLabel, TStyle, gROOT  
 
 if not arguments.nobatch: 
     ROOT.gROOT.SetBatch(True)  # To prevent pop-up of canvas  
