@@ -236,8 +236,8 @@ else:
 if not os.path.exists(CondorDir):
    os.system('mkdir ' + CondorDir)
 else:
-   print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Please check and corresponding submission aborted.' 
-   sys.exit()
+   print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Please be aware of this.' 
+   #sys.exit()
 
 ###############################################################################
 # Find the list of dataset to run over, either from arguments or localConfig. #
