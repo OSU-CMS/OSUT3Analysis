@@ -275,6 +275,12 @@ histograms = cms.PSet(
             binsX = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("pt"),
         ),
+        cms.PSet (
+            name = cms.string("muonEta"),
+            title = cms.string("Muon Pseudorapidity; muon #eta"),
+            binsX = cms.untracked.vdouble(100, -5, 5),
+            inputVariables = cms.vstring("eta"),
+            ),
   )
 )
 
@@ -284,8 +290,7 @@ variableProducers.append("MyEventVariableProducer")
 
 add_variables(process, variableProducers, collections)
 
-#add_channels  (process,  [eMuMinimal],    cms.VPSet  (histograms),  collections,  False)
 add_channels  (process,  [eMuMinimal],    cms.VPSet  (histograms),  collections)
-add_channels  (process,  [preselection],  cms.VPSet  (histograms),  collections)
+#add_channels  (process,  [preselection],  cms.VPSet  (histograms),  collections)
 
 outfile = open('dumpedConfig.py','w'); print >> outfile,process.dumpPython(); outfile.close()
