@@ -266,12 +266,15 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
   TH1D *histogram = fs_->getObject<TH1D>(definition.name, definition.directory);
 
   // loop over objects in input collection and fill histogram
-  for(vector<Leaf>::const_iterator value = definition.valueLookupTrees.at (0)->evaluate ().begin (); value != definition.valueLookupTrees.at (0)->evaluate ().end (); value++){
-    double weight = 1.0;
+  for(vector<Leaf>::const_iterator leaf = definition.valueLookupTrees.at (0)->evaluate ().begin (); leaf != definition.valueLookupTrees.at (0)->evaluate ().end (); leaf++){
+    double value = boost::get<double> (*leaf),
+           weight = 1.0;
+    if(value <= numeric_limits<int>::min () + 1)
+      continue;
     if(definition.hasVariableBinsX){
-      weight /= getBinSize(histogram,boost::get<double> (*value));
+      weight /= getBinSize(histogram,value);
     }
-    histogram->Fill(boost::get<double> (*value), weight);
+    histogram->Fill(value, weight);
   }
 
 }
@@ -284,16 +287,20 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
   TH2D *histogram = fs_->getObject<TH2D>(definition.name, definition.directory);
 
   // loop over objets in input collection and fill histogram
-  for(vector<Leaf>::const_iterator valueX = definition.valueLookupTrees.at (0)->evaluate ().begin (); valueX != definition.valueLookupTrees.at (0)->evaluate ().end (); valueX++){
-    for(vector<Leaf>::const_iterator valueY = definition.valueLookupTrees.at (1)->evaluate ().begin (); valueY != definition.valueLookupTrees.at (1)->evaluate ().end (); valueY++){
-      double weight = 1.0;
+  for(vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (); leafX != definition.valueLookupTrees.at (0)->evaluate ().end (); leafX++){
+    for(vector<Leaf>::const_iterator leafY = definition.valueLookupTrees.at (1)->evaluate ().begin (); leafY != definition.valueLookupTrees.at (1)->evaluate ().end (); leafY++){
+      double valueX = boost::get<double> (*leafX),
+             valueY = boost::get<double> (*leafY),
+             weight = 1.0;
+      if(valueX <= numeric_limits<int>::min () + 1 || valueY <= numeric_limits<int>::min () + 1)
+        continue;
       if(definition.hasVariableBinsX){
-        weight /= getBinSize(histogram,boost::get<double> (*valueX), boost::get<double> (*valueY)).first;
+        weight /= getBinSize(histogram,valueX,valueY).first;
       }
       if(definition.hasVariableBinsY){
-        weight /= getBinSize(histogram,boost::get<double> (*valueX), boost::get<double> (*valueY)).second;
+        weight /= getBinSize(histogram,valueX,valueY).second;
       }
-      histogram->Fill(boost::get<double> (*valueX), boost::get<double> (*valueY), weight);
+      histogram->Fill(valueX, valueY, weight);
     }
   }
 
