@@ -11,37 +11,37 @@ doubleElectronTriggerPath = cms.vstring("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_Trk
 
 #defining these cuts first since they will be used repeatedly 
 os_cut = cms.PSet (
-    inputCollection = cms.string("electron-secondary electron pairs"),
+    inputCollection = cms.vstring("electron-secondary electron pairs"),
     cutString = cms.string("chargeProduct < 0"),
     numberRequired = cms.string(">= 1")
 )
 
 electron_deltaPhi_cut = cms.PSet(
-    inputCollection = cms.string("electron-secondary electron pairs"),
+    inputCollection = cms.vstring("electron-secondary electron pairs"),
     cutString = cms.string("deltaPhi > 0"),
     numberRequired = cms.string(">= 1")
 )
 
 electron_deltaR_cut = cms.PSet(
-    inputCollection = cms.string("electron-secondary electron pairs"),
+    inputCollection = cms.vstring("electron-secondary electron pairs"),
     cutString = cms.string("deltaR > 0.5"),
     numberRequired = cms.string(">= 1")
 )
 zpeak_cut = cms.PSet (
-    inputCollection = cms.string("electron-secondary electron pairs"),
+    inputCollection = cms.vstring("electron-secondary electron pairs"),
     cutString = cms.string("invMass > 60 & invMass < 120"),
     numberRequired = cms.string(">= 1")
 )
 
 zpeak_veto = cms.PSet (
-    inputCollection = cms.string("electron-secondary electron pairs"),
+    inputCollection = cms.vstring("electron-secondary electron pairs"),
     cutString = cms.string("invMass < 75 | invMass > 105"),
     numberRequired = cms.string(">= 1")
 )
 
 ##########################################################################
 electron_blind_cut = cms.PSet(
-	inputCollection = cms.string("electrons"),
+	inputCollection = cms.vstring("electrons"),
         cutString = cms.string("abs(correctedD0) < 0.02"),
         numberRequired = cms.string(">= 1")
 )
@@ -50,7 +50,7 @@ secondary_electron_cuts = cms.VPSet()
 secondary_electron_cuts.extend(copy.deepcopy(Electron_Preselection.cuts))
 for cut in secondary_electron_cuts:
 	if cut.inputCollection == cms.string("electrons"):
-		cut.inputCollection = cms.string("secondary electrons")
+		cut.inputCollection = cms.vstring("secondary electrons")
                 cut.numberRequired = cms.string("== 2")
 
 ZtoEE_Selection = cms.PSet(
@@ -92,14 +92,14 @@ for cut in ZtoTauTautoEE_Selection.cuts:
         cut.numberRequired = cms.string('== 2')
 
 metMT_cut =  cms.PSet (
-    inputCollection = cms.string("electrons"),
+    inputCollection = cms.vstring("electrons"),
     cutString = cms.string("metMT < 50"),
     numberRequired = cms.string("== 2")
 )
 ZtoTauTautoEE_Selection.cuts.append(metMT_cut)
 
 ztotaupeak_cut = cms.PSet (
-    inputCollection = cms.string("electron-electron pairs"),
+    inputCollection = cms.vstring("electron-electron pairs"),
     cutString = cms.string("invMass > 20 & invMass < 75"),
     numberRequired = cms.string(">= 1")
 )
@@ -107,7 +107,7 @@ ZtoTauTautoEE_Selection.cuts.append(ztotaupeak_cut)
 
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 10"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 10")
@@ -129,7 +129,7 @@ for cut in WWtoEE_Selection.cuts:
         cut.numberRequired = cms.string('== 2')
 
 leptonpair_pt_cut =  cms.PSet (
-    inputCollection = cms.string("electron-electron pairs"),
+    inputCollection = cms.vstring("electron-electron pairs"),
     cutString = cms.string("pt > 45"),
     numberRequired = cms.string(">= 1"),
 )
@@ -140,14 +140,14 @@ WWtoEE_Selection.cuts.append(os_cut)
 WWtoEE_Selection.cuts.append(zpeak_veto)
 
 bjet_veto =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("pt > 30 | btagCombinedSecVertex > 0.244"),
     numberRequired = cms.string("== 0")
 )
 WWtoEE_Selection.cuts.append(bjet_veto)
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 60"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 60")
@@ -168,14 +168,14 @@ for cut in WZtoEEE_Selection.cuts:
         cut.numberRequired = cms.string('== 3')
 
 os_zpeak_cut = cms.PSet (
-    inputCollection = cms.string("electron-electron pairs"),
+    inputCollection = cms.vstring("electron-electron pairs"),
     cutString = cms.string("chargeProduct < 0 & invMass > 60 & invMass < 120"),
     numberRequired = cms.string("== 1")
 )
 WZtoEEE_Selection.cuts.append(os_zpeak_cut)
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 50"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 50")
@@ -196,7 +196,7 @@ for cut in ZZtoEEEE_Selection.cuts:
         cut.numberRequired = cms.string('== 4')
 
 double_os_zpeak_cut = cms.PSet (
-    inputCollection = cms.string("electron-electron pairs"),
+    inputCollection = cms.vstring("electron-electron pairs"),
     cutString = cms.string("chargeProduct < 0 & invMass > 60 & invMass < 120"),
     numberRequired = cms.string(">= 2")
 )
@@ -220,35 +220,35 @@ TTbartoEE_Selection.cuts.append(os_cut)
 TTbartoEE_Selection.cuts.append(zpeak_veto)
 
 invMass_cut = cms.PSet (
-    inputCollection = cms.string("electron-electron pairs"),
+    inputCollection = cms.vstring("electron-electron pairs"),
     cutString = cms.string("invMass > 20"),
     numberRequired = cms.string(">= 1")
 )
 TTbartoEE_Selection.cuts.append(invMass_cut)
 
 jet_eta_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("abs(eta) < 2.4"),
     numberRequired = cms.string(">= 2")
 )
 TTbartoEE_Selection.cuts.append(jet_eta_cut)
 
 jet_pt_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("pt > 30"),
     numberRequired = cms.string(">= 2")
 )
 TTbartoEE_Selection.cuts.append(jet_pt_cut)
 
 btag_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("btagCombinedSecVertex > 0.679"),
     numberRequired = cms.string(">= 1")
 )
 TTbartoEE_Selection.cuts.append(btag_cut)
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 60"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 60")
