@@ -10,7 +10,7 @@ import FWCore.ParameterSet.Config as cms
 ##############################################################################################
 
 MuonHistograms = cms.PSet(
-    inputCollection = cms.string("muons"),
+    inputCollection = cms.vstring("muons"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("muonPt"),
@@ -387,57 +387,57 @@ SecondaryMuonHistograms = cms.PSet(
 ##############################################################################################
 
 DiMuonHistograms = cms.PSet(
-    inputCollection = cms.string("muon-muon pairs"),
+    inputCollection = cms.vstring("muons", "muons"),   
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("diMuonInvMass"),
             title = cms.string("Di-muon Invariant Mass; M_{#mu#mu} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            inputVariables = cms.vstring("invMass"),
+            inputVariables = cms.vstring("invMass (muon, muon)"),
         ),
         cms.PSet (
             name = cms.string("diMuonChargeProduct"),
             title = cms.string("Di-muon Charge Product; charge_{#mu}_{1}*charge_{#mu}_{2}"),
             binsX = cms.untracked.vdouble(3, -1.5, 1.5),
-            inputVariables = cms.vstring("chargeProduct"),
+            inputVariables = cms.vstring("muon.charge * muon.charge"),
         ),
         cms.PSet (
             name = cms.string("diMuonDeltaPhi"),
             title = cms.string("Di-muon Phi Difference; |#Delta(#phi)|"),
             binsX = cms.untracked.vdouble(100, 0, 3.15),
-            inputVariables = cms.vstring("deltaPhi"),
+            inputVariables = cms.vstring("deltaPhi (muon, muon)"),
         ),
         cms.PSet (
             name = cms.string("diMuonDeltaEta"),
             title = cms.string("Di-muon Eta Difference; |#Delta(#eta)|"),
             binsX = cms.untracked.vdouble(100, 0, 6),
-            inputVariables = cms.vstring("deltaEta"),
+            inputVariables = cms.vstring("abs (muon.eta - muon.eta)"),
         ),
         cms.PSet (
             name = cms.string("diMuonDeltaR"),
             title = cms.string("Di-muon #DeltaR; #DeltaR"),
             binsX = cms.untracked.vdouble(100, 0, 6),
-            inputVariables = cms.vstring("deltaR"),
+            inputVariables = cms.vstring("deltaR (muon, muon)"),
         ),
-        cms.PSet (
-            name = cms.string("diMuonThreeDAngle"),
-            title = cms.string("Di-muon 3D angle; 3D angle"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
-            inputVariables = cms.vstring("threeDAngle"),
-        ),
+##         cms.PSet (
+##             name = cms.string("diMuonThreeDAngle"),
+##             title = cms.string("Di-muon 3D angle; 3D angle"),
+##             binsX = cms.untracked.vdouble(100, 0, 3.15),
+##             inputVariables = cms.vstring("threeDAngle"),
+##         ),
         cms.PSet (
             name = cms.string("muon1D0vsMuon2D0"),
             title = cms.string("Muon #1 d_{0} vs. Muon #2 d_{0}; d_{0} [cm]; d_{0} [cm]"),
             binsX = cms.untracked.vdouble(100, -0.02, 0.02),
             binsY = cms.untracked.vdouble(100, -0.02, 0.02),
-            inputVariables = cms.vstring("muon2CorrectedD0Vertex","muon1CorrectedD0Vertex"),
+            inputVariables = cms.vstring("muon.correctedD0Vertex","muon.correctedD0Vertex"),
         ),
         cms.PSet (
             name = cms.string("muon1AbsD0vsMuon2AbsD0"),
             title = cms.string("Muon #1 |d_{0}| vs. Muon #2 |d_{0}|; |d_{0}| [cm]; |d_{0}| [cm]"),
             binsX = cms.untracked.vdouble(100, 0, 0.02),
             binsY = cms.untracked.vdouble(100, 0, 0.02),
-            inputVariables = cms.vstring("abs(muon2CorrectedD0Vertex)","abs(muon1CorrectedD0Vertex)"),
+            inputVariables = cms.vstring("abs(muon.correctedD0Vertex)","abs(muon.correctedD0Vertex)"),  
         ),
     )
 )

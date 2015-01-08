@@ -47,7 +47,6 @@ ZtoMuMuSelection.cuts.extend(copy.deepcopy(Event_Preselection.cuts))
 ZtoMuMuSelection.cuts.extend(copy.deepcopy(Muon_Preselection.cuts))
 for cut in ZtoMuMuSelection.cuts:
     if "muons" in str(cut.inputCollection):
-        print "About to change cut for ", cut.cutString 
         cut.numberRequired = cms.string('== 2')
 ZtoMuMuSelection.cuts.append(os_cut)
 #ZtoMuMuSelection.cuts.append(zpeak_cut)
