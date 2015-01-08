@@ -405,7 +405,7 @@ DiMuonHistograms = cms.PSet(
             name = cms.string("diMuonDeltaPhi"),
             title = cms.string("Di-muon Phi Difference; |#Delta(#phi)|"),
             binsX = cms.untracked.vdouble(100, 0, 3.15),
-            inputVariables = cms.vstring("deltaPhi (muon, muon)"),
+            inputVariables = cms.vstring("abs ( deltaPhi (muon, muon) )"),
         ),
         cms.PSet (
             name = cms.string("diMuonDeltaEta"),
