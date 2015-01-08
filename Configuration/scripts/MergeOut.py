@@ -148,6 +148,14 @@ def GetTotalNumberOfEvents(FilesSet):
             TotalNumber = TotalNumber + Counter.GetBinContent(1) 
     return TotalNumber
 ###############################################################################
+#                 Produce important files for the skim directory.             #
+###############################################################################
+def MakeFilesForSkimDirectory(Directory, Number):
+    for Member in os.listdir(Directory):
+        if os.path.isfile(os.path.join(Directory, Member)):
+            continue;
+        os.system('echo ' + str(Number) + ' > ' +Directory + '/' + Member + '/OriginalNumberOfEvents.txt')
+###############################################################################
 #                           Getting the working directory.                    #
 ###############################################################################
 CondorDir = ''
@@ -212,6 +220,7 @@ for dataSet in split_datasets:
     if crossSection > 0:
         Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
+    MakeFilesForSkimDirectory(directory,TotalNumber)
     if not arguments.UseCondor: 
         os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + dataSet + '.root' + ' -w ' + InputWeightString)
         os.system('mv ' + dataSet + '.root ' + '../')
