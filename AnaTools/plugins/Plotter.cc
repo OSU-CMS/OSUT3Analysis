@@ -53,9 +53,18 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
     vector<edm::ParameterSet>::const_iterator histogram;
     for(histogram = histogramList.begin(); histogram != histogramList.end(); ++histogram){
 
-      // parse the definition and save the relevant info
+      // parse the definition to get the relevant info
       HistoDef histoDefinition = parseHistoDef(*histogram,inputCollection,catInputCollection,directoryName);
-      histogramDefinitions.push_back(histoDefinition);
+
+      // check whether a histogram of the same name / directory already exists; if not, add to the master list  
+      bool alreadyExists = false; 
+      for (vector<HistoDef>::iterator h = histogramDefinitions.begin(); h != histogramDefinitions.end(); ++h)
+	if (h->name      == histoDefinition.name &&
+	    h->directory == histoDefinition.directory) { alreadyExists = true; break; }  
+      if (alreadyExists) cerr << "WARNING:  Found duplicate histogram in directory " << histoDefinition.directory
+			      << " with name " << histoDefinition.name 
+			      << "; will only keep the first instance." << endl;  
+      else histogramDefinitions.push_back(histoDefinition); 
 
     } // end loop on histograms in the set
 
