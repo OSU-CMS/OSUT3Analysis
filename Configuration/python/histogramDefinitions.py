@@ -425,20 +425,20 @@ DiMuonHistograms = cms.PSet(
 ##             binsX = cms.untracked.vdouble(100, 0, 3.15),
 ##             inputVariables = cms.vstring("threeDAngle"),
 ##         ),
-        cms.PSet (
-            name = cms.string("muon1D0vsMuon2D0"),
-            title = cms.string("Muon #1 d_{0} vs. Muon #2 d_{0}; d_{0} [cm]; d_{0} [cm]"),
-            binsX = cms.untracked.vdouble(100, -0.02, 0.02),
-            binsY = cms.untracked.vdouble(100, -0.02, 0.02),
-            inputVariables = cms.vstring("muon.correctedD0Vertex","muon.correctedD0Vertex"),
-        ),
-        cms.PSet (
-            name = cms.string("muon1AbsD0vsMuon2AbsD0"),
-            title = cms.string("Muon #1 |d_{0}| vs. Muon #2 |d_{0}|; |d_{0}| [cm]; |d_{0}| [cm]"),
-            binsX = cms.untracked.vdouble(100, 0, 0.02),
-            binsY = cms.untracked.vdouble(100, 0, 0.02),
-            inputVariables = cms.vstring("abs(muon.correctedD0Vertex)","abs(muon.correctedD0Vertex)"),  
-        ),
+##         cms.PSet (
+##             name = cms.string("muon1D0vsMuon2D0"),
+##             title = cms.string("Muon #1 d_{0} vs. Muon #2 d_{0}; d_{0} [cm]; d_{0} [cm]"),
+##             binsX = cms.untracked.vdouble(100, -0.02, 0.02),
+##             binsY = cms.untracked.vdouble(100, -0.02, 0.02),
+##             inputVariables = cms.vstring("muon.correctedD0Vertex","muon.correctedD0Vertex"),
+##         ),
+##         cms.PSet (
+##             name = cms.string("muon1AbsD0vsMuon2AbsD0"),
+##             title = cms.string("Muon #1 |d_{0}| vs. Muon #2 |d_{0}|; |d_{0}| [cm]; |d_{0}| [cm]"),
+##             binsX = cms.untracked.vdouble(100, 0, 0.02),
+##             binsY = cms.untracked.vdouble(100, 0, 0.02),
+##             inputVariables = cms.vstring("abs(muon.correctedD0Vertex)","abs(muon.correctedD0Vertex)"),  
+##         ),
     )
 )
 
