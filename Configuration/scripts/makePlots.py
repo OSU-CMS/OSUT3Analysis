@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import time  
+import datetime
 from math import *
 from array import *
 from decimal import *
@@ -136,7 +137,6 @@ gStyle.SetPadTickX(1)
 gStyle.SetPadTickY(1)
 gROOT.ForceStyle()
 
-
 #set the text for the luminosity label
 if(intLumi < 1000.):
     LumiInPb = intLumi
@@ -145,6 +145,12 @@ if(intLumi < 1000.):
 else:
     LumiInFb = intLumi/1000.
     LumiText = str.format('{0:.1f}', LumiInFb) + " fb^{-1}"
+#book keeping, put time and condor directory on plot
+ts = time.time()
+TimeText = "Plot Created: " + datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S') 
+
+DirText = "Condor Dir Used: " + arguments.condorDir 
+    
 
 #bestest place for lumi. label, in top left corner
 topLeft_x_left    = 0.176
@@ -163,7 +169,18 @@ header_y_bottom  = 0.9458042
 header_x_right   = 0.9681208
 header_y_top     = 0.9965035
 
+#position for timestamp
+ts_x_left = 0.03691275
+ts_y_bottom = 0.003496503
+ts_x_right = 0.3573826
+ts_y_top = 0.1153846
 
+#position for condor dir
+0.1459732,0.003496503,0.2416107,0.04545455
+dir_x_left = 0.1459732
+dir_y_bottom = 0.003496503
+dir_x_right = 0.2416107
+dir_y_top = 0.04545455
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
@@ -558,6 +575,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     CMSLabel.SetBorderSize(0)
     CMSLabel.SetFillColor(0)
     CMSLabel.SetFillStyle(0)
+    
     if makeFancy:
         LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,"CMS","NDC")
         LumiLabel.SetTextFont(62)
@@ -566,11 +584,27 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
         LumiLabel.SetTextAlign(32)
         LumiLabel.SetTextFont(42)
+        TimeLabel = TPaveLabel(ts_x_left,ts_y_bottom,ts_x_right, ts_y_top,TimeText,"NDC")
+        TimeLabel.SetTextAlign(32)
+        TimeLabel.SetTextSize(0.2)
+        
+        DirLabel = TPaveLabel(dir_x_left,dir_y_bottom,dir_x_right, dir_y_top,DirText,"NDC")
+        DirLabel.SetTextAlign(32)
+        DirLabel.SetTextSize(0.55)
+
 
     LumiLabel.SetBorderSize(0)
     LumiLabel.SetFillColor(0)
     LumiLabel.SetFillStyle(0)
-    
+
+    TimeLabel.SetBorderSize(0)
+    TimeLabel.SetFillColor(0)
+    TimeLabel.SetFillStyle(0)
+
+    DirLabel.SetBorderSize(0)
+    DirLabel.SetFillColor(0)
+    DirLabel.SetFillStyle(0)
+
         
     BgMCLegend = TLegend()
 ##     BgTitle = BgMCLegend.AddEntry(0, "Data & Bkgd. MC", "H")
@@ -610,6 +644,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
+        condorDir = condor_dir
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         if not HistogramObj:
@@ -919,7 +954,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Canvas.cd(2)
         gPad.SetPad(0,0,1,0.25)
         #format: gPad.SetMargin(l,r,b,t)
-        gPad.SetMargin(0.15,0.05,0.4,0.01)
+#        gPad.SetMargin(0.15,0.05,0.4,0.01)
+        gPad.SetMargin(0.15,0.05,0.8,0.01)
         gPad.SetFillStyle(0)
         gPad.SetGridy(1)
         gPad.Update()
@@ -948,7 +984,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             gPad.RedrawAxis()
             #draw shaded error bands
             ErrorHisto.Draw("A E2 SAME")
-                
+            
         else: #draw the unstacked backgrounds
             BgMCHistograms[0].SetTitle(histoTitle)
             BgMCHistograms[0].Draw("HIST")
@@ -1066,12 +1102,18 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     # Deciding which text labels to draw and drawing them
     drawLumiLabel = False
     drawHeaderLabel = False
+    drawTimeLabel = False
+    drawDirLabel = False
 
     if not normalizeToUnitArea or numDataSamples > 0: #don't draw the lumi label if there's no data and it's scaled to unit area
         drawLumiLabel = True
+        drawTimeLabel = True
+        drawDirLabel = True
     if makeFancy:
         drawHeaderLabel = True
         drawLumiLabel = True
+        drawTimeLabel = False
+        drawDirLabel = False
 
     #now that flags are set, draw the appropriate labels
 
@@ -1080,7 +1122,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     if drawHeaderLabel:
         HeaderLabel.Draw()
-
+    if drawTimeLabel:
+        TimeLabel.Draw()
+    if drawDirLabel:
+        DirLabel.Draw()    
 
 
 
@@ -1308,22 +1353,31 @@ def MakeTwoDHist(pathToDir,histogramName):
     drawNormLabel = False
     offsetNormLabel = False
     drawHeaderLabel = False
-
+    drawTimeLabel = False
+    drawDirLabel = False
     if not arguments.normalizeToUnitArea or numDataSamples > 0: #don't draw the lumi label if there's no data and it's scaled to unit area
         drawLumiLabel = True
+        drawTimeLabel = True
+        drawDirLabel = True
         #move the normalization label down before drawing if we drew the lumi. label
         offsetNormLabel = True
     if arguments.normalizeToUnitArea or arguments.normalizeToData:
         drawNormLabel = True
+        drawTimeLabel = True
+        drawDirLabel = True
     if arguments.makeFancy:
         drawHeaderLabel = True
         drawLumiLabel = False
+        drawTimeLabel = False
+        drawDirLabel = False
 
     #now that flags are set, draw the appropriate labels
 
     if drawLumiLabel:
         LumiLabel.Draw()
 
+    if drawTimeLabel:
+        TimeLabel.Draw()
     if drawNormLabel:
         if offsetNormLabel:
             NormLabel.SetY1NDC(topLeft_y_bottom-topLeft_y_offset)
@@ -1335,7 +1389,6 @@ def MakeTwoDHist(pathToDir,histogramName):
 
     if drawHeaderLabel:
         HeaderLabel.Draw()
-
 
 
     
