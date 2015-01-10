@@ -19,31 +19,31 @@ muEGTriggerPath = cms.vstring("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_
 
 #defining these cuts first since they will be used repeatedly 
 e_os_cut = cms.PSet (
-    inputCollection = cms.string("electron-electron pairs"),
+    inputCollection = cms.vstring("electron-electron pairs"),
     cutString = cms.string("chargeProduct < 0"),
     numberRequired = cms.string(">= 1")
 )
 
 mu_os_cut = cms.PSet (
-    inputCollection = cms.string("muon-muon pairs"),
+    inputCollection = cms.vstring("muon-muon pairs"),
     cutString = cms.string("chargeProduct < 0"),
     numberRequired = cms.string(">= 1")
 )
 
 emu_os_cut = cms.PSet (
-    inputCollection = cms.string("electron-muon pairs"),
+    inputCollection = cms.vstring("electron-muon pairs"),
     cutString = cms.string("chargeProduct < 0"),
     numberRequired = cms.string(">= 1")
 )
 
 e_zpeak_cut = cms.PSet (
-    inputCollection = cms.string("electron-electron pairs"),
+    inputCollection = cms.vstring("electron-electron pairs"),
     cutString = cms.string("invMass > 60 & invMass < 120"),
     numberRequired = cms.string(">= 1")
 )
 
 mu_zpeak_cut = cms.PSet (
-    inputCollection = cms.string("muon-muon pairs"),
+    inputCollection = cms.vstring("muon-muon pairs"),
     cutString = cms.string("invMass > 60 & invMass < 120"),
     numberRequired = cms.string(">= 1")
 )
@@ -63,14 +63,14 @@ for cut in ZtoTauTautoEMu_Selection.cuts:
         cut.numberRequired = cms.string('== 1')
 
 e_metMT_cut =  cms.PSet (
-    inputCollection = cms.string("electrons"),
+    inputCollection = cms.vstring("electrons"),
     cutString = cms.string("metMT < 50"),
     numberRequired = cms.string("== 1")
 )
 ZtoTauTautoEMu_Selection.cuts.append(e_metMT_cut)
 
 mu_metMT_cut =  cms.PSet (
-    inputCollection = cms.string("muons"),
+    inputCollection = cms.vstring("muons"),
     cutString = cms.string("metMT < 50"),
     numberRequired = cms.string("== 1")
 )
@@ -93,7 +93,7 @@ for cut in WWtoEMu_Selection.cuts:
         cut.numberRequired = cms.string('== 1')
 
 leptonpair_pt_cut =  cms.PSet (
-    inputCollection = cms.string("electron-muon pairs"),
+    inputCollection = cms.vstring("electron-muon pairs"),
     cutString = cms.string("pt > 45"),
     numberRequired = cms.string(">= 1"),
 )
@@ -102,14 +102,14 @@ WWtoEMu_Selection.cuts.append(leptonpair_pt_cut)
 WWtoEMu_Selection.cuts.append(emu_os_cut)
 
 bjet_veto =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("pt > 30 | btagCombinedSecVertex > 0.244"),
     numberRequired = cms.string("== 0")
 )
 WWtoEMu_Selection.cuts.append(bjet_veto)
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 60"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 60")
@@ -138,7 +138,7 @@ WZtoEMuMu_Selection.cuts.append(mu_os_cut)
 WZtoEMuMu_Selection.cuts.append(mu_zpeak_cut)
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 30"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 30")
@@ -167,7 +167,7 @@ WZtoEEMu_Selection.cuts.append(e_os_cut)
 WZtoEEMu_Selection.cuts.append(e_zpeak_cut)
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 30"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 30")
@@ -216,21 +216,21 @@ for cut in TTbartoEMu_Selection.cuts:
 TTbartoEMu_Selection.cuts.append(emu_os_cut)
 
 jet_eta_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("abs(eta) < 2.4"),
     numberRequired = cms.string(">= 2")
 )
 TTbartoEMu_Selection.cuts.append(jet_eta_cut)
 
 jet_pt_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("pt > 30"),
     numberRequired = cms.string(">= 2")
 )
 TTbartoEMu_Selection.cuts.append(jet_pt_cut)
 
 btag_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("btagCombinedSecVertex > 0.679"),
     numberRequired = cms.string(">= 1")
 )

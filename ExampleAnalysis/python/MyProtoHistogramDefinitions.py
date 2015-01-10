@@ -5,6 +5,23 @@ import FWCore.ParameterSet.Config as cms
 ##### Set up the histograms to be plotted #####
 ###############################################
 
+histograms = cms.PSet(
+    inputCollection = cms.vstring("muons"),
+    histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("muonPt"),
+            title = cms.string("Muon Transverse Momentum; muon p_{T} [GeV]"),
+            binsX = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("pt"),
+        ),
+        cms.PSet (
+            name = cms.string("muonEta"),
+            title = cms.string("Muon Pseudorapidity; muon #eta"),
+            binsX = cms.untracked.vdouble(100, -5, 5),
+            inputVariables = cms.vstring("eta"),
+        ),
+    )
+)
 
 MyProtoHistograms = cms.PSet(
     # using "events" tells the code to pass the full event

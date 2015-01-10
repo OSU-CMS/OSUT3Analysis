@@ -11,37 +11,46 @@ doubleMuTriggerPath = cms.vstring("HLT_Mu17_Mu8_v")
 
 #defining these cuts first since they will be used repeatedly 
 os_cut = cms.PSet (
-    inputCollection = cms.string("muon-muon pairs"),
-    cutString = cms.string("chargeProduct < 0"),
+    inputCollection = cms.vstring("muons", "muons"),
+    cutString = cms.string("muon.charge * muon.charge < 0"),
     numberRequired = cms.string(">= 1")
 )
 
-zpeak_cut = cms.PSet (
-    inputCollection = cms.string("muon-muon pairs"),
-    cutString = cms.string("invMass > 60 & invMass < 120"),
+zpeak_cut = cms.VPSet (
+    cms.PSet(
+    inputCollection = cms.vstring("muons", "muons"),
+    cutString = cms.string("invMass (muon, muon) > 60"), 
+#    cutString = cms.string("invMass (muon, muon) > 60 && invMass (muon, muon) < 120"),  # causes a seg fault 
     numberRequired = cms.string(">= 1")
+    ),
+    cms.PSet(
+    inputCollection = cms.vstring("muons", "muons"),
+    cutString = cms.string("invMass (muon, muon) < 120"),
+    numberRequired = cms.string(">= 1")
+    ),       
 )
 
 zpeak_veto = cms.PSet (
-    inputCollection = cms.string("muon-muon pairs"),
+    inputCollection = cms.vstring("muon-muon pairs"),
     cutString = cms.string("invMass < 75 | invMass > 105"),
     numberRequired = cms.string(">= 1")
 )
 
 ##########################################################################
 
-ZtoMuMu_Selection = cms.PSet(
-    name = cms.string("Z to MuMu"),
+ZtoMuMuSelection = cms.PSet(
+    name = cms.string("ZtoMuMu"),
     triggers = doubleMuTriggerPath,
     cuts = cms.VPSet ()
 )
-ZtoMuMu_Selection.cuts.extend(copy.deepcopy(Event_Preselection.cuts))
-ZtoMuMu_Selection.cuts.extend(copy.deepcopy(Muon_Preselection.cuts))
-for cut in ZtoMuMu_Selection.cuts:
+ZtoMuMuSelection.cuts.extend(copy.deepcopy(Event_Preselection.cuts))
+ZtoMuMuSelection.cuts.extend(copy.deepcopy(Muon_Preselection.cuts))
+for cut in ZtoMuMuSelection.cuts:
     if "muons" in str(cut.inputCollection):
         cut.numberRequired = cms.string('== 2')
-ZtoMuMu_Selection.cuts.append(os_cut)
-ZtoMuMu_Selection.cuts.append(zpeak_cut)
+ZtoMuMuSelection.cuts.append(os_cut)
+#ZtoMuMuSelection.cuts.append(zpeak_cut)
+ZtoMuMuSelection.cuts.extend(copy.deepcopy(zpeak_cut))
 
 ##########################################################################
 
@@ -57,14 +66,14 @@ for cut in ZtoTauTautoMuMu_Selection.cuts:
         cut.numberRequired = cms.string('== 2')
 
 metMT_cut =  cms.PSet (
-    inputCollection = cms.string("muons"),
+    inputCollection = cms.vstring("muons"),
     cutString = cms.string("metMT < 50"),
     numberRequired = cms.string("== 2")
 )
 ZtoTauTautoMuMu_Selection.cuts.append(metMT_cut)
 
 ztotaupeak_cut = cms.PSet (
-    inputCollection = cms.string("muon-muon pairs"),
+    inputCollection = cms.vstring("muon-muon pairs"),
     cutString = cms.string("invMass > 20 & invMass < 75"),
     numberRequired = cms.string(">= 1")
 )
@@ -72,7 +81,7 @@ ZtoTauTautoMuMu_Selection.cuts.append(ztotaupeak_cut)
 
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 10"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 10")
@@ -94,7 +103,7 @@ for cut in WWtoMuMu_Selection.cuts:
         cut.numberRequired = cms.string('== 2')
 
 leptonpair_pt_cut =  cms.PSet (
-    inputCollection = cms.string("muon-muon pairs"),
+    inputCollection = cms.vstring("muon-muon pairs"),
     cutString = cms.string("pt > 45"),
     numberRequired = cms.string(">= 1"),
 )
@@ -105,14 +114,14 @@ WWtoMuMu_Selection.cuts.append(os_cut)
 WWtoMuMu_Selection.cuts.append(zpeak_veto)
 
 bjet_veto =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("pt > 30 | btagCombinedSecVertex > 0.244"),
     numberRequired = cms.string("== 0")
 )
 WWtoMuMu_Selection.cuts.append(bjet_veto)
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 60"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 60")
@@ -133,14 +142,14 @@ for cut in WZtoMuMuMu_Selection.cuts:
         cut.numberRequired = cms.string('== 3')
 
 os_zpeak_cut = cms.PSet (
-    inputCollection = cms.string("muon-muon pairs"),
+    inputCollection = cms.vstring("muon-muon pairs"),
     cutString = cms.string("chargeProduct < 0 & invMass > 60 & invMass < 120"),
     numberRequired = cms.string("== 1")
 )
 WZtoMuMuMu_Selection.cuts.append(os_zpeak_cut)
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 50"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 50")
@@ -161,7 +170,7 @@ for cut in ZZtoMuMuMuMu_Selection.cuts:
         cut.numberRequired = cms.string('== 4')
 
 double_os_zpeak_cut = cms.PSet (
-    inputCollection = cms.string("muon-muon pairs"),
+    inputCollection = cms.vstring("muon-muon pairs"),
     cutString = cms.string("chargeProduct < 0 & invMass > 60 & invMass < 120"),
     numberRequired = cms.string(">= 2")
 )
@@ -185,35 +194,35 @@ TTbartoMuMu_Selection.cuts.append(os_cut)
 TTbartoMuMu_Selection.cuts.append(zpeak_veto)
 
 invMass_cut = cms.PSet (
-    inputCollection = cms.string("muon-muon pairs"),
+    inputCollection = cms.vstring("muon-muon pairs"),
     cutString = cms.string("invMass > 20"),
     numberRequired = cms.string(">= 1")
 )
 TTbartoMuMu_Selection.cuts.append(invMass_cut)
 
 jet_eta_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("abs(eta) < 2.4"),
     numberRequired = cms.string(">= 2")
 )
 TTbartoMuMu_Selection.cuts.append(jet_eta_cut)
 
 jet_pt_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("pt > 30"),
     numberRequired = cms.string(">= 2")
 )
 TTbartoMuMu_Selection.cuts.append(jet_pt_cut)
 
 btag_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("btagCombinedSecVertex > 0.679"),
     numberRequired = cms.string(">= 1")
 )
 TTbartoMuMu_Selection.cuts.append(btag_cut)
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 60"),
     numberRequired = cms.string(">= 1"),
     alias = cms.string("met > 60")

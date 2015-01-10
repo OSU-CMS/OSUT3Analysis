@@ -14,12 +14,12 @@ import copy
 Event_Preselection = cms.PSet(
     cuts = cms.VPSet (
       cms.PSet (
-        inputCollection = cms.string("events"),
+        inputCollection = cms.vstring("events"),
         cutString = cms.string("FilterOutScraping > 0"),
         numberRequired = cms.string(">= 1")
       ),
       cms.PSet (
-        inputCollection = cms.string("primaryvertexs"),
+        inputCollection = cms.vstring("primaryvertexs"),
         cutString = cms.string("isGood > 0"),
         numberRequired = cms.string(">= 1")
       ),
@@ -29,24 +29,34 @@ Event_Preselection = cms.PSet(
 Muon_Preselection = cms.PSet(
     cuts = cms.VPSet (
       cms.PSet (
-        inputCollection = cms.string("muons"),
+        inputCollection = cms.vstring("muons"),
         cutString = cms.string("abs(eta) < 2.5"),
         numberRequired = cms.string(">= 1")
       ),    
       cms.PSet (
-        inputCollection = cms.string("muons"),
+        inputCollection = cms.vstring("muons"),
         cutString = cms.string("pt > 25"),
         numberRequired = cms.string(">= 1")
       ),
       cms.PSet (
-        inputCollection = cms.string("muons"),
-        cutString = cms.string("tightID > 0"),
-        numberRequired = cms.string(">= 1")
-      ),
+        inputCollection = cms.vstring("muons"),
+        cutString = cms.string("              \
+          isGlobalMuon                        \
+          && isPFMuon                            \
+          && (normalizedChi2 < 10.0)             \
+          && (numberOfValidMuonHits > 0)         \
+          && (numberOfMatchedStations > 1)       \
+          && (numberOfValidPixelHits > 0)        \
+          && (numberOfLayersWithMeasurement > 5) \
+          "),
+        numberRequired = cms.string(">= 1"),
+        alias = cms.string("muon ID")
+        ),
       cms.PSet (
-        inputCollection = cms.string("muons"),
-        cutString = cms.string("relPFdBetaIso < 0.12"),
-        numberRequired = cms.string(">= 1")
+        inputCollection = cms.vstring("muons"),
+        cutString = cms.string("((pfIsoR04SumChargedHadronPt + max (0.0, pfIsoR04SumNeutralHadronEt + pfIsoR04SumPhotonEt - 0.5 * pfIsoR04SumPUPt)) / pt) < 0.12"),
+        numberRequired = cms.string(">= 1"),
+        alias = cms.string("muon isolation")
       ),
    )   
 )
@@ -55,35 +65,35 @@ Muon_Preselection = cms.PSet(
 Electron_Preselection = cms.PSet(
     cuts = cms.VPSet (
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("abs(eta) < 2.5"),
         numberRequired = cms.string(">= 1")
       ),    
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("pt > 25"),
         numberRequired = cms.string(">= 1")
       ),
       # ELECTRON CRACK VETO
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("abs(eta) < 1.444 | abs(eta) > 1.566 "),
         numberRequired = cms.string(">= 1"),
         alias = cms.string("electron ECAL crack veto")
       ),
       # PHOTON CONVERSION VETO
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("passConvVeto > 0"),
         numberRequired = cms.string(">= 1")
       ),
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("mvaNonTrig_HtoZZto4l > 0"),
         numberRequired = cms.string(">= 1")
       ),
       cms.PSet (
-        inputCollection = cms.string("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("relPFrhoIso < 0.1"),
         numberRequired = cms.string(">= 1")
       ),

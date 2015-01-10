@@ -23,14 +23,14 @@ for cut in WtoE_Selection.cuts:
         cut.numberRequired = cms.string('== 1')
 
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt > 40"),
     numberRequired = cms.string("== 1")
 )
 WtoE_Selection.cuts.append(met_cut)
 
 metMT_cut =  cms.PSet (
-    inputCollection = cms.string("electrons"),
+    inputCollection = cms.vstring("electrons"),
     cutString = cms.string("metMT > 40"),
     numberRequired = cms.string("== 1")
 )
@@ -50,21 +50,21 @@ for cut in TTbartoEHad_Selection.cuts:
         cut.numberRequired = cms.string('== 1')
 
 jet_eta_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("abs(eta) < 2.4"),
     numberRequired = cms.string(">= 4")
 )
 TTbartoEHad_Selection.cuts.append(jet_eta_cut)
 
 jet_pt_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("pt > 30"),
     numberRequired = cms.string(">= 4")
 )
 TTbartoEHad_Selection.cuts.append(jet_pt_cut)
 
 btag_cut =  cms.PSet (
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     cutString = cms.string("btagCombinedSecVertex > 0.679"),
     numberRequired = cms.string(">= 2")
 )
@@ -85,7 +85,7 @@ for cut in QCDtoE_Selection.cuts:
     if "relPFrhoIso" in str(cut.cutString) and "electrons" in str(cut.inputCollection):
         cut.cutString = cms.string('relPFrhoIso > 0.3')
 met_cut =  cms.PSet (
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     cutString = cms.string("pt < 40"),
     numberRequired = cms.string("== 1")
 )
