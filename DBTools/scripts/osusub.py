@@ -43,6 +43,8 @@ parser.add_option("-u", "--userCondorSubFile", dest="CondorSubFilr", default = "
 parser.add_option("-U", "--uniqueEventId", action="store_true", dest="Unique", default=False, help="Assign unique and continuos event IDs")
 parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", default = False, help="Just generate necessary config files without executing them.")
 parser.add_option("-L", "--Label", dest="Label", default = "", help="Give the dataset a short label.")
+parser.add_option("-s", "--SkimDirectory", dest="SkimDirectory", default = "", help="Specicy the location of the skim.")
+parser.add_option("-a", "--SkimChannel", dest="SkimChannel", default = "", help="Determine the skim channel to run over.")
 
 (arguments, args) = parser.parse_args()
 
@@ -68,7 +70,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label):
 
 def MakeSpecificConfig(Dataset, Directory):
     os.system('touch ' + Directory + '/config_cfg.py')
-    SkimChannelNames = SkimSitter('userConfig_cfg', Directory) 
+    SkimChannelNames = SkimChannelFinder('userConfig_cfg', Directory) 
     ConfigFile = open(Directory + '/config_cfg.py','r+w')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')        
     ConfigFile.write('import OSUT3Analysis.DBTools.osusub_cfg as osusub\n')
@@ -77,7 +79,7 @@ def MakeSpecificConfig(Dataset, Directory):
     ConfigFile.write('\n')
     for channelName in SkimChannelNames:
         StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
-    ConfigFile.write(StringToAdd)
+        ConfigFile.write(StringToAdd)
     ConfigFile.write('fileName = pset.' + arguments.FileName + '\n')
     ConfigFile.write('fileName = fileName.pythonValue ()\n')
     ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
@@ -95,8 +97,8 @@ def MakeSpecificConfig(Dataset, Directory):
     ConfigFile.write('process = pset.process\n')
     if arguments.Process:
 	ConfigFile.write('process.setName_ (process.name_ () + \'' + arguments.Process + '\')\n')
-    else:
-	ConfigFile.write('process.setName_ (process.name_ () + \'' + str(arguments.Directory).replace('_','')  + '\')\n') 
+    #else:
+#	ConfigFile.write('process.setName_ (process.name_ () + \'' + str(arguments.Directory).replace('_','')  + '\')\n') 
     if arguments.Random:
         ConfigFile.write('pset.process.RandomNumberGeneratorService.generator.initialSeed = osusub.jobNumber\n')
     if arguments.Unique:
@@ -110,11 +112,11 @@ def MakeFileList(Dataset, FileType, Directory, Label):
     runList = []
     os.system('touch ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
     if FileType == 'AAA':	
-        os.system('das_client.py --query="file Dataset=' + Dataset + '" --limit 0 > ' + Directory + '/runList.py')
+        os.system('das_client.py --query="file Dataset=' + Dataset + '" --limit 0 > ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
         if lxbatch:
-	    os.system('sed -i \'s/^/root:\/\/xrootd.ba.infn.it\//g\' ' + Directory + '/runList.py')
+	    os.system('sed -i \'s/^/root:\/\/xrootd.ba.infn.it\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
         else:
-	    os.system('sed -i \'s/^/root:\/\/cmsxrootd.fnal.gov\//g\' ' + Directory + '/runList.py')
+	    os.system('sed -i \'s/^/root:\/\/cmsxrootd.fnal.gov\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
     if FileType == 'UserDir':
 	if not os.path.exists(Dataset):
 	    print "The directory you provided does not exist."
@@ -122,12 +124,13 @@ def MakeFileList(Dataset, FileType, Directory, Label):
         datasetRead['numberOfFiles'] = len(os.listdir(Dataset))
         datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
         #Get the list of the root files in the directory and modify it to have the standard format. 
+        os.system('ls ' + Dataset + '/*.root > ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
         if not remoteAccessT3:
             os.system('sed -i \'s/^/"file:/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
         else:
             os.system('sed -i \'s/^/"root:\/\/cms-0.mps.ohio-state.edu:1094\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
         os.system('sed -i \'1,$s/$/",/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-        os.system('sed -i "1i runList = [" ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+        os.system('sed -i "1i listOfFiles = [" ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
         os.system('sed -i \'$s/,//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
         os.system('sed -i \'$a ]\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
     if FileType == 'UserList':
@@ -143,7 +146,7 @@ def MakeFileList(Dataset, FileType, Directory, Label):
         else:
             os.system('sed -i \'s/^/"root:\/\/cms-0.mps.ohio-state.edu:1094\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
         os.system('sed -i \'1,$s/$/",/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-        os.system('sed -i "1i runLinst = [" ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+        os.system('sed -i "1i listOfFiles = [" ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
         os.system('sed -i \'$s/,//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
         os.system('sed -i \'$a ]\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
     if FileType == 'OSUT3Ntuple':
@@ -154,6 +157,8 @@ def MakeFileList(Dataset, FileType, Directory, Label):
             prefix = 'root://cms-0.mps.ohio-state.edu:1094/'
         #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py. 
         os.system('MySQLModule ' + Dataset + ' ' + Directory + '/datasetInfo_' + Label + '_cfg.py ' + prefix)
+        if RunOverSkim:
+            SkimModifier(Label, Directory)
         sys.path.append(Directory)
         exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
         location = datasetInfo.location 
@@ -203,7 +208,10 @@ def GetCompleteOrderedArgumentsSet(InputArguments):
     for newArgument in NewArguments:
         CondorSubArgumentsSet.setdefault(len(CondorSubArgumentsSet.keys()) + 1,{newArgument : NewArguments[newArgument]})
 
-def SkimSitter(userConfig, Directory):
+###############################################################################
+#        Function to find all the skim channels from the userConfig.          # 
+###############################################################################
+def SkimChannelFinder(userConfig, Directory):
     sys.path.append(Directory)
     configTmp = open(Directory + '/' +userConfig + '.py','r')
     skimChannelNames = []
@@ -211,6 +219,8 @@ def SkimSitter(userConfig, Directory):
         if "add_channels" not in line:
             continue
         elif "False" in line:
+            continue
+        elif line[0] == "#":
             continue
         else:
             PatternOne = r'.*\[(.*)\].*'
@@ -222,23 +232,50 @@ def SkimSitter(userConfig, Directory):
             skimChannelNames.append(DecodedTwo.group(1))
     return skimChannelNames
 
-
-###############################################################################
-#             First of all to set up the working directory                    #
-###############################################################################
+################################################################################
+#            Function to modify the dataset_*_Info_cfy file for skim.          #  
+################################################################################
+def SkimModifier(Label, Directory):
+    SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
+    os.system('sed -i \'s/listOfFiles/originalListOfFiles/g\' ' +  Directory + '/datasetInfo_' + Label + '_cfg.py' ) 
+    os.system('sed -i \'s/numberOfFiles/originalNumberOfFiles/g\' ' +  Directory + '/datasetInfo_' + Label + '_cfg.py' ) 
+    os.system('echo \'\nskimDirectory = "' + SkimDirectory + '"\' >> ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
+    os.system('echo \'listOfFiles = [\' >> ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
+    os.system('ls ' + SkimDirectory + '/*.root > ' + Directory + '/tmp')
+    os.system('sed -i \'s/^/"file:/g\' ' + Directory + '/tmp')
+    os.system('sed -i \'1,$s/$/",/g\' ' + Directory + '/tmp')
+    os.system('cat ' + Directory + '/tmp >> ' + Directory + '/datasetInfo_' + Label + '_cfg.py' )
+    NumberOfFiles = os.popen('wc -l ' + Directory + '/tmp').read().split(' ')[0]
+    os.system('sed -i \'$a ]\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+    os.system('sed -i \'$a numberOfFiles = ' + str(NumberOfFiles) + '\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+    OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read()
+    os.system('sed -i \'$a originalNumberOfEvents = ' + str(OriginalNumberOfEvents) + '\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+    SkimNumberOfEvents = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read()
+    os.system('sed -i \'$a skimNumberOfEvents = ' + str(SkimNumberOfEvents) + '\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+    os.system('rm ' + Directory + '/tmp')
+################################################################################
+#             First of all to set up the working directory                     #
+################################################################################
 CondorDir = ''
+Condor = os.getcwd() + '/condor/'
 if arguments.Directory == "":
    print "No working directory is given, aborting."
    sys.exit()
 else:
-   CondorDir = os.getcwd() + '/condor/' + arguments.Directory
-#Check whether the directory specified already exists and cancel the submission if so.
+   CondorDir = Condor + arguments.Directory
+#Check whether the directory specified already exists and warn the user if so.
 if not os.path.exists(CondorDir):
    os.system('mkdir ' + CondorDir)
 else:
    print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Please be aware of this.' 
-   #sys.exit()
 
+RunOverSkim = False
+if arguments.SkimDirectory != "" and arguments.SkimChannel != "":
+    RunOverSkim = True
+elif arguments.SkimDirectory == "" and arguments.SkimChannel == "":
+    RunOverSkim = False
+else:
+    print "Both skim directory and skim channel should be provided."
 ###############################################################################
 # Find the list of dataset to run over, either from arguments or localConfig. #
 ###############################################################################

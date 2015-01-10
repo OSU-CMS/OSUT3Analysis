@@ -124,8 +124,8 @@ def MakeWeightsString(Weight,FilesSet):
 ###############################################################################
 #   Get the total number of events from cutFlows to calculate the weights     #
 ###############################################################################
-def GetTotalNumberOfEvents(FilesSet):
-    TotalNumber = 0
+def GetNumberOfEvents(FilesSet):
+    NumberOfEvents = {'SkimNumber' : {}, 'TotalNumber' : 0}
     for File in FilesSet:
         ScoutFile = TFile(File)
         if ScoutFile.IsZombie(): 
@@ -133,28 +133,58 @@ def GetTotalNumberOfEvents(FilesSet):
             FilesSet.remove(File)
             continue
         randomChannelDirectory = ""
+	TotalNumberTmp = 0 
         for key in ScoutFile.GetListOfKeys():
-            if (key.GetClassName() != "TDirectoryFile"):
+            if key.GetClassName() != "TDirectoryFile" or "CutFlow" not in key.GetName():
                 continue
             randomChannelDirectory = key.GetName()
-            break
-        CounterObj = ScoutFile.Get(randomChannelDirectory + "/eventCounter")
-	if not CounterObj:
-	    print "Could not find eventCounter histogram in " + str(File) + " !"
-	    continue
-        else:
-	    Counter = CounterObj.Clone()
-            Counter.SetDirectory(0)
-            TotalNumber = TotalNumber + Counter.GetBinContent(1) 
-    return TotalNumber
+            channelName = randomChannelDirectory[0:len(randomChannelDirectory)-14]
+            if not NumberOfEvents['SkimNumber'].has_key(channelName):
+		NumberOfEvents['SkimNumber'][channelName] = 0
+            OriginalCounterObj = ScoutFile.Get(randomChannelDirectory + "/eventCounter")
+            SkimCounterObj = ScoutFile.Get(randomChannelDirectory + "/cutFlow")
+	    TotalNumberTmp = 0 
+            if not OriginalCounterObj:
+	        print "Could not find eventCounter histogram in " + str(File) + " !"
+	        continue
+            elif not SkimCounterObj:
+	        print "Could not find cutFlow histogram in " + str(File) + " !"
+            else:
+	        OriginalCounter = OriginalCounterObj.Clone()
+                OriginalCounter.SetDirectory(0)
+                TotalNumberTmp = TotalNumberTmp + OriginalCounter.GetBinContent(1) 
+	        SkimCounter = SkimCounterObj.Clone()
+                SkimCounter.SetDirectory(0)
+                NumberOfEvents['SkimNumber'][channelName] = NumberOfEvents['SkimNumber'][channelName] + SkimCounter.GetBinContent(SkimCounter.GetXaxis().GetNbins())
+        NumberOfEvents['TotalNumber'] = NumberOfEvents['TotalNumber'] + TotalNumberTmp 
+    return NumberOfEvents
 ###############################################################################
 #                 Produce important files for the skim directory.             #
 ###############################################################################
-def MakeFilesForSkimDirectory(Directory, Number):
+def MakeFilesForSkimDirectory(Directory, TotalNumber, SkimNumber):
     for Member in os.listdir(Directory):
         if os.path.isfile(os.path.join(Directory, Member)):
             continue;
-        os.system('echo ' + str(Number) + ' > ' +Directory + '/' + Member + '/OriginalNumberOfEvents.txt')
+        os.system('echo ' + str(TotalNumber) + ' > ' +Directory + '/' + Member + '/OriginalNumberOfEvents.txt')
+        os.system('echo ' + str(SkimNumber[Member]) + ' > ' +Directory + '/' + Member + '/SkimNumberOfEvents.txt')
+        os.chdir(Directory + '/' + Member)
+        listOfSkimFiles = os.popen('ls *.root').readlines()
+        sys.path.append(Directory + '/' + Member)
+        for file in listOfSkimFiles:
+            if not SkimFileValidator(file.rstrip('\n')):
+                os.system('rm ' + file.rstrip('\n'))
+            #print SkimFileValidator('/home/bing/CMSSW_6_2_7_patch2/src/OSUT3Analysis/AnaTools/test/condor/Jan9_test2/SingleT_s/Preselection/skim_16.root')
+        os.chdir(Directory)
+###############################################################################
+#                       Determine whether a skim file is valid.               #
+###############################################################################
+def SkimFileValidator(File):
+    FileToTest = TFile(File)
+    Valid = True
+    Valid = Valid and FileToTest.Get('MetaData') and FileToTest.Get('ParameterSets') and FileToTest.Get('Parentage') and FileToTest.Get('Events') and FileToTest.Get('LuminosityBlocks') and FileToTest.Get('Runs')
+    if Valid:
+	Valid = Valid and FileToTest.Get('Events').GetEntries()
+    return Valid
 ###############################################################################
 #                           Getting the working directory.                    #
 ###############################################################################
@@ -202,25 +232,32 @@ for dataSet in split_datasets:
         else:    
             GoodIndex = MessageDecoder(ReturnValues[i], True)
             GoodIndices.append(GoodIndex)
-
     for i in range(0,len(GoodIndices)):
         GoodRootFiles.append(GetGoodRootFiles(GoodIndices[i]))
-
     if not len(GoodRootFiles):
         print "Unfortunately there are no good root files to merge!"
         continue
     InputFileString = MakeInputFileString(GoodRootFiles)
     sys.path.append(directory)
     exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
-    TotalNumber = GetTotalNumberOfEvents(GoodRootFiles)
+    TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
+    SkimNumber = GetNumberOfEvents(GoodRootFiles)['SkimNumber']
     if not TotalNumber:
         continue
     Weight = 1.0
     crossSection = float(datasetInfo.crossSection)
+    runOverSkim = True
+    try:
+        datasetInfo.originalNumberOfEvents
+    except AttributeError:
+        runOverSkim = False
     if crossSection > 0:
-        Weight = IntLumi*crossSection/float(TotalNumber)
+        if runOverSkim:
+            Weight = IntLumi*crossSection*float(datasetInfo.skimNumberOfEvents)/(float(datasetInfo.originalNumberOfEvents)*float(TotalNumber))
+        else:
+            Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
-    MakeFilesForSkimDirectory(directory,TotalNumber)
+    MakeFilesForSkimDirectory(directory,TotalNumber,SkimNumber)
     if not arguments.UseCondor: 
         os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + dataSet + '.root' + ' -w ' + InputWeightString)
         os.system('mv ' + dataSet + '.root ' + '../')
