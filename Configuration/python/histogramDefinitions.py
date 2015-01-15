@@ -162,7 +162,7 @@ MuonHistograms = cms.PSet(
 
 ##############################################################################
 MuonIsoHistograms = cms.PSet(
-    inputCollection = cms.string("muons"),
+    inputCollection = cms.vstring("muons"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("muonPFdBetaIsoNoPUSubtracted"),
@@ -210,7 +210,7 @@ MuonIsoHistograms = cms.PSet(
 )
 ##########################################################################
 PhotonHistograms = cms.PSet(
-    inputCollection = cms.string("photons"),
+    inputCollection = cms.vstring("photons"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("photonPt"),
@@ -247,7 +247,7 @@ PhotonHistograms = cms.PSet(
 ##############################################################################################
 
 SecondaryMuonHistograms = cms.PSet(
-    inputCollection = cms.string("secondary muons"),
+    inputCollection = cms.vstring("secondary muons"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("secondaryMuonPt"),
@@ -445,7 +445,7 @@ DiMuonHistograms = cms.PSet(
 ##############################################################################################
 
 MuonSecondaryMuonHistograms = cms.PSet(
-    inputCollection = cms.string("muon-secondary muon pairs"),
+    inputCollection = cms.vstring("muon-secondary muon pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("muonSecondaryMuonInvMass"),
@@ -519,7 +519,7 @@ MuonSecondaryMuonHistograms = cms.PSet(
 ##############################################################################################
 
 MuonTauHistograms = cms.PSet(
-    inputCollection = cms.string("muon-tau pairs"),
+    inputCollection = cms.vstring("muon-tau pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("MuonTauInvMass"),
@@ -551,7 +551,7 @@ MuonTauHistograms = cms.PSet(
 ##############################################################################################
 
 ElectronHistograms = cms.PSet(
-    inputCollection = cms.string("electrons"),
+    inputCollection = cms.vstring("electrons"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("electronPt"),
@@ -720,7 +720,7 @@ ElectronHistograms = cms.PSet(
 )
 ####################################################################################
 ElectronIsoHistograms = cms.PSet(
-    inputCollection = cms.string("electrons"),
+    inputCollection = cms.vstring("electrons"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("electronPFrhoIsoNoPUSubtracted"),
@@ -769,7 +769,7 @@ ElectronIsoHistograms = cms.PSet(
 ##############################################################################################
 
 SecondaryElectronHistograms = cms.PSet(
-    inputCollection = cms.string("secondary electrons"),
+    inputCollection = cms.vstring("secondary electrons"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("secondaryElectronPt"),
@@ -926,7 +926,7 @@ SecondaryElectronHistograms = cms.PSet(
 )
 #############################################################################################
 SecondaryElectronIsoHistograms = cms.PSet(
-    inputCollection = cms.string("secondary electrons"),
+    inputCollection = cms.vstring("secondary electrons"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("secondaryElectronPFrhoIsoNoPUSubtracted"),
@@ -975,7 +975,7 @@ SecondaryElectronIsoHistograms = cms.PSet(
 ##############################################################################################
 
 DiElectronHistograms = cms.PSet(
-    inputCollection = cms.string("electron-electron pairs"),
+    inputCollection = cms.vstring("electron-electron pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("diElectronInvMass"),
@@ -1031,7 +1031,7 @@ DiElectronHistograms = cms.PSet(
 ##############################################################################################
 
 ElectronSecondaryElectronHistograms = cms.PSet(
-    inputCollection = cms.string("electron-secondary electron pairs"),
+    inputCollection = cms.vstring("electron-secondary electron pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("electronSecondaryElectronInvMass"),
@@ -1094,7 +1094,7 @@ ElectronSecondaryElectronHistograms = cms.PSet(
 ##############################################################################################
 
 ElectronMuonHistograms = cms.PSet(
-    inputCollection = cms.string("electron-muon pairs"),
+    inputCollection = cms.vstring("electron-muon pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("electronMuonPt"),
@@ -1192,7 +1192,7 @@ ElectronMuonHistograms = cms.PSet(
 ##############################################################################################
 
 MuonPhotonHistograms = cms.PSet(
-    inputCollection = cms.string("muon-photon pairs"),
+    inputCollection = cms.vstring("muon-photon pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("muonPhotonPt"),
@@ -1254,7 +1254,7 @@ MuonPhotonHistograms = cms.PSet(
 ##############################################################################################
 
 ElectronPhotonHistograms = cms.PSet(
-    inputCollection = cms.string("electron-photon pairs"),
+    inputCollection = cms.vstring("electron-photon pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("electronPhotonPt"),
@@ -1314,7 +1314,7 @@ ElectronPhotonHistograms = cms.PSet(
 )
 ############################################################################################
 TauHistograms = cms.PSet(
-    inputCollection = cms.string("taus"),
+    inputCollection = cms.vstring("taus"),
     histograms = cms.VPSet (
          cms.PSet (
              name = cms.string("tauPt"),
@@ -1389,7 +1389,7 @@ TauHistograms = cms.PSet(
 ##############################################################################################   
 
 DiTauHistograms = cms.PSet(
-    inputCollection = cms.string("tau-tau pairs"),
+    inputCollection = cms.vstring("tau-tau pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("diTauInvMass"),
@@ -1422,7 +1422,7 @@ DiTauHistograms = cms.PSet(
 ##############################################################################################   
 
 JetHistograms = cms.PSet(
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("jetPt"),
@@ -1501,7 +1501,7 @@ JetHistograms = cms.PSet(
 )
 #####################################################################################
 JetIsoHistograms = cms.PSet(
-    inputCollection = cms.string("jets"),
+    inputCollection = cms.vstring("jets"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("jetChargedHadronEnergy"),
@@ -1531,7 +1531,7 @@ JetIsoHistograms = cms.PSet(
 )
 #####################################################################################
 SecondaryJetHistograms = cms.PSet(
-    inputCollection = cms.string("secondary jets"),
+    inputCollection = cms.vstring("secondary jets"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("secondaryJetPt"),
@@ -1585,7 +1585,7 @@ SecondaryJetHistograms = cms.PSet(
 )
 ###########################################################################################
 SecondaryJetIsoHistograms = cms.PSet(
-    inputCollection = cms.string("secondary jets"),
+    inputCollection = cms.vstring("secondary jets"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("secondaryJetChargedHadronEnergy"),
@@ -1616,7 +1616,7 @@ SecondaryJetIsoHistograms = cms.PSet(
 ##############################################################################################
 
 DiJetHistograms = cms.PSet(
-    inputCollection = cms.string("jet-jet pairs"),
+    inputCollection = cms.vstring("jet-jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("diJetInvMass"),
@@ -1671,7 +1671,7 @@ DiJetHistograms = cms.PSet(
 
 ##############################################################################################
 JetSecondaryJetHistograms = cms.PSet(
-    inputCollection = cms.string("jet-secondary jet pairs"),
+    inputCollection = cms.vstring("jet-secondary jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("JetSecondaryJetInvMass"),
@@ -1719,7 +1719,7 @@ JetSecondaryJetHistograms = cms.PSet(
 )
 ##########################################################################################
 ElectronJetHistograms = cms.PSet(
-    inputCollection = cms.string("electron-jet pairs"),
+    inputCollection = cms.vstring("electron-jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("electronJetPt"),
@@ -1803,7 +1803,7 @@ ElectronJetHistograms = cms.PSet(
 )
 ##########################################################################################
 ElectronJetIsoHistograms = cms.PSet(
-    inputCollection = cms.string("electron-jet pairs"),
+    inputCollection = cms.vstring("electron-jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("electronPFrhoIsoNoPUByJet"),
@@ -1876,7 +1876,7 @@ ElectronJetIsoHistograms = cms.PSet(
 ##############################################################################################
 
 MuonJetHistograms = cms.PSet(
-    inputCollection = cms.string("muon-jet pairs"),
+    inputCollection = cms.vstring("muon-jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("muonJetPt"),
@@ -1960,7 +1960,7 @@ MuonJetHistograms = cms.PSet(
 )
 #########################################################################################
 MuonJetIsoHistograms = cms.PSet(
-    inputCollection = cms.string("muon-jet pairs"),
+    inputCollection = cms.vstring("muon-jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("muonPFdBetaIsoNoPUByJet"),
@@ -2032,7 +2032,7 @@ MuonJetIsoHistograms = cms.PSet(
 )
 ##############################################################################################
 MuonSecondaryJetHistograms = cms.PSet(
-    inputCollection = cms.string("muon-secondary jet pairs"),
+    inputCollection = cms.vstring("muon-secondary jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("muonSecondaryJetPt"),
@@ -2110,7 +2110,7 @@ MuonSecondaryJetHistograms = cms.PSet(
 )
 ##########################################################################################
 MuonSecondaryJetIsoHistograms = cms.PSet(
-    inputCollection = cms.string("muon-secondary jet pairs"),
+    inputCollection = cms.vstring("muon-secondary jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("muonPFdBetaIsoNoPUBySecondaryJet"),
@@ -2182,7 +2182,7 @@ MuonSecondaryJetIsoHistograms = cms.PSet(
 )
 ##############################################################################################
 ElectronSecondaryJetHistograms = cms.PSet(
-    inputCollection = cms.string("electron-secondary jet pairs"),
+    inputCollection = cms.vstring("electron-secondary jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("electronSecondaryJetPt"),
@@ -2260,7 +2260,7 @@ ElectronSecondaryJetHistograms = cms.PSet(
 )
 ########################################################################################
 ElectronSecondaryJetIsoHistograms = cms.PSet(
-    inputCollection = cms.string("electron-secondary jet pairs"),
+    inputCollection = cms.vstring("electron-secondary jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("electronPFrhoIsoNoPUBySecondaryJet"),
@@ -2332,7 +2332,7 @@ ElectronSecondaryJetIsoHistograms = cms.PSet(
 )
 #################################################################################
 PhotonSecondaryJetHistograms = cms.PSet(
-    inputCollection = cms.string("photon-secondary jet pairs"),
+    inputCollection = cms.vstring("photon-secondary jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("photonSecondaryJetPt"),
@@ -2398,7 +2398,7 @@ PhotonSecondaryJetHistograms = cms.PSet(
 )
 ############################################################################
 PhotonJetHistograms = cms.PSet(
-    inputCollection = cms.string("photon-jet pairs"),
+    inputCollection = cms.vstring("photon-jet pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("photonJetPt"),
@@ -2464,7 +2464,7 @@ PhotonJetHistograms = cms.PSet(
 )
 #######################################################################################
 MCParticleHistograms = cms.PSet(
-    inputCollection = cms.string("mcparticles"),
+    inputCollection = cms.vstring("mcparticles"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("mcparticlePt"),
@@ -2519,7 +2519,7 @@ MCParticleHistograms = cms.PSet(
 
 #######################################################################################
 SecondaryMCParticleHistograms = cms.PSet(
-    inputCollection = cms.string("secondary mcparticles"),
+    inputCollection = cms.vstring("secondary mcparticles"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("secondaryMcparticlePt"),
@@ -2575,7 +2575,7 @@ SecondaryMCParticleHistograms = cms.PSet(
 ##############################################################################################
 
 MetHistograms = cms.PSet(
-    inputCollection = cms.string("mets"),
+    inputCollection = cms.vstring("mets"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("metPt"),
@@ -2595,7 +2595,7 @@ MetHistograms = cms.PSet(
 ##############################################################################################
 
 TrackHistograms = cms.PSet(
-     inputCollection = cms.string("tracks"),
+     inputCollection = cms.vstring("tracks"),
      histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("trackPt"),
@@ -2651,7 +2651,7 @@ TrackHistograms = cms.PSet(
 ##############################################################################################
 
 ElectronTrackHistograms = cms.PSet(
-    inputCollection = cms.string("electron-track pairs"),
+    inputCollection = cms.vstring("electron-track pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("ElectronTrackInvMass"),
@@ -2689,7 +2689,7 @@ ElectronTrackHistograms = cms.PSet(
 ##############################################################################################
 
 MuonTrackHistograms = cms.PSet(
-    inputCollection = cms.string("muon-track pairs"),
+    inputCollection = cms.vstring("muon-track pairs"),
     histograms = cms.VPSet (
     cms.PSet (
         name = cms.string("MuonTrackInvMass"),
@@ -2739,7 +2739,7 @@ MuonTrackHistograms = cms.PSet(
 ##############################################################################################
 
 TauTrackHistograms = cms.PSet(
-    inputCollection = cms.string("tau-track pairs"),
+    inputCollection = cms.vstring("tau-track pairs"),
     histograms = cms.VPSet (
     cms.PSet (
         name = cms.string("TauTrackInvMass"),
@@ -2780,7 +2780,7 @@ TauTrackHistograms = cms.PSet(
 ##############################################################################################
 
 TrackMCParticleHistograms = cms.PSet(
-    inputCollection = cms.string("track-mcparticle pairs"),
+    inputCollection = cms.vstring("track-mcparticle pairs"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("TrackMCPartDeltaEta"),
@@ -2820,7 +2820,7 @@ TrackMCParticleHistograms = cms.PSet(
 ##############################################################################################
 
 EventHistograms = cms.PSet(
-    inputCollection = cms.string("events"),
+    inputCollection = cms.vstring("events"),
     histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("ht"),
