@@ -166,8 +166,13 @@ void Plotter::bookHistogram(const HistoDef definition){
   bool hasValidBinsY = definition.binsY.size() >= 3 || (definition.binsY.size() == 1 &&
                                                         definition.binsY.at(0) == -1);
 
+  // Check that bins are sorted if variable binning has been specified.  
+  if (definition.hasVariableBinsX && !std::is_sorted(definition.binsX.begin(),definition.binsX.end())) hasValidBinsX = false;  
+  if (definition.hasVariableBinsY && !std::is_sorted(definition.binsY.begin(),definition.binsY.end())) hasValidBinsY = false;  
+
   if(!hasValidBinsX || !hasValidBinsY){
-    cout << "WARNING - invalid histogram bins" << endl;
+    cout << "ERROR - invalid histogram bins for histogram " << definition.name 
+	 << " in directory " << definition.directory <<  endl;
     return;
   }
 
