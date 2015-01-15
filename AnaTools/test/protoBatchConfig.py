@@ -9,12 +9,16 @@ from OSUT3Analysis.Configuration.configurationOptions import *
 config_file = "muonAnalyzer_cfg.py"
 
 # choose luminosity used for MC normalization
-intLumi = 19495 # from 8 TeV double muon dataset
+intLumi = 19700 # from 8 TeV MuEG dataset
 
 # create list of datasets to process
 datasets = [
-    'DoubleMu',
-    'DYToMuMu_20',
-    'Wjets'
+    'MuEG_22Jan2013',
+    'WNjets',
+    'Diboson',
+    'SingleTop',
+    'DY',
+    'TTbar',
 ]
 
+InputCondorArguments = {}
