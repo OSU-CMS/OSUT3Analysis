@@ -6,7 +6,7 @@
 from OSUT3Analysis.Configuration.configurationOptions import *
 
 # specify which config file to pass to cmsRun
-config_file = "muonAnalyzer_cfg.py"
+config_file = "protoConfig_cfg.py"
 
 # choose luminosity used for MC normalization
 intLumi = 19700 # from 8 TeV MuEG dataset
