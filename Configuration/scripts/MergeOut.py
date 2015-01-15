@@ -243,6 +243,7 @@ for dataSet in split_datasets:
     TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
     SkimNumber = GetNumberOfEvents(GoodRootFiles)['SkimNumber']
     if not TotalNumber:
+        MakeFilesForSkimDirectory(directory,TotalNumber,SkimNumber)
         continue
     Weight = 1.0
     crossSection = float(datasetInfo.crossSection)
@@ -257,7 +258,10 @@ for dataSet in split_datasets:
         else:
             Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
-    MakeFilesForSkimDirectory(directory,TotalNumber,SkimNumber)
+    if runOverSkim:
+        MakeFilesForSkimDirectory(directory,datasetInfo.originalNumberOfEvents,SkimNumber)    
+    else:
+        MakeFilesForSkimDirectory(directory,TotalNumber,SkimNumber)
     if not arguments.UseCondor: 
         os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + dataSet + '.root' + ' -w ' + InputWeightString)
         os.system('mv ' + dataSet + '.root ' + '../')
