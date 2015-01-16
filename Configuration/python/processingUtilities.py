@@ -221,7 +221,7 @@ def add_variables (process, modules, collections):
     add_variables.pathIndex += 1
 
 
-def add_channels (process, channels, histogramSets, collections, skim = True):
+def add_channels (process, channels, histogramSets, collections, variableProducers, skim = True):
 
     ############################################################################
     # If only the default scheduler exists, create an empty one
@@ -354,6 +354,24 @@ def add_channels (process, channels, histogramSets, collections, skim = True):
             outputCommands.append ("keep BN" + collection + "_objectSelector" + str (add_channels.filterIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
             add_channels.filterIndex += 1
         ########################################################################
+
+        ########################################################################
+        # Add the variableProducers to the path. 
+        ########################################################################
+        for varProd in variableProducers:
+            producer = cms.EDProducer (varProd,
+                                       collections = collections
+                                       )
+            setattr (process, varProd, producer)
+            channelPath += producer 
+
+            if not hasattr (collections, "eventVariables"):
+                collections.eventVariables = cms.VInputTag ()
+            if not hasattr (channelCollections, "eventVariables"):
+                channelCollections.eventVariables = cms.VInputTag ()
+            collections.eventVariables.append        (cms.InputTag (varProd, "extraEventVariables"))
+            channelCollections.eventVariables.append (cms.InputTag (varProd, "extraEventVariables"))
+
 
         ########################################################################
         # Add a plotting module for this channel to the path.
