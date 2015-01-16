@@ -61,7 +61,6 @@ collections = cms.PSet (
 
 variableProducers = []
 variableProducers.append("MyEventVariableProducer")
-add_variables(process, variableProducers, collections)
 
 ################################################################################
 ##### Import the channels to be run ############################################
@@ -79,7 +78,7 @@ from OSUT3Analysis.ExampleAnalysis.MyProtoHistogramDefinitions import *
 ##### Attach the channels and histograms to the process ########################
 ################################################################################
 
-add_channels (process, [eMuMinimal], cms.VPSet (histograms), collections, False)
+add_channels (process, [eMuMinimal], cms.VPSet (histograms), collections, variableProducers, False)
 
 # uncomment to produce a full python configuration log file
 #outfile = open('dumpedConfig.py','w'); print >> outfile,process.dumpPython(); outfile.close()
