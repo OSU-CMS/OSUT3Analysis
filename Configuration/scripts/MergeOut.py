@@ -9,7 +9,6 @@ from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 from OSUT3Analysis.DBTools.condorSubArgumentsSet import *
-from ROOT import TFile
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
 
@@ -32,6 +31,7 @@ parser.add_option("-L", "--targetLumi", dest="IntLumi", default = "", help="Spec
 parser.add_option("-c", "--condor", dest="UseCondor", default = False,action = "store_true", help="Run merging jobs on condor.")
 
 (arguments, args) = parser.parse_args()
+from ROOT import TFile
 ###############################################################################
 #                     Make the submission script for condor.                  #
 ###############################################################################
