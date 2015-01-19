@@ -119,6 +119,9 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
         }
     }
 
+
+  if (firstEvent) 
+    clog << "Will print any collections not retrieved.  These INFO messages may be safely ignored." << endl;  
   if (firstEvent && !handles.bxlumis.isValid ())
     clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
   if (firstEvent && !handles.electrons.isValid ())
