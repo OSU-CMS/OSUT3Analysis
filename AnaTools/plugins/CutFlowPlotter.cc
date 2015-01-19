@@ -3,10 +3,14 @@
 
 #include "OSUT3Analysis/AnaTools/plugins/CutFlowPlotter.h"
 
+#include "TString.h"  
+
 #define EXIT_CODE 4
 
 CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
   cutDecisions_ (cfg.getParameter<edm::InputTag> ("cutDecisions")),
+  module_type_  (cfg.getParameter<std::string>("@module_type")),
+  module_label_ (cfg.getParameter<std::string>("@module_label")),
   firstEvent_ (true)
 {
   //////////////////////////////////////////////////////////////////////////////
@@ -24,6 +28,9 @@ CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
 CutFlowPlotter::~CutFlowPlotter ()
 {
 
+  TString channel = TString(module_label_).ReplaceAll(module_type_, "");  
+  // module_label_ = channel + module_type_  (module_type_ = "CutFlowPlotter")  
+
   TH1D* cutFlow_   = oneDHists_["cutFlow"];
   TH1D* selection_ = oneDHists_["selection"];
   TH1D* minusOne_  = oneDHists_["minusOne"];
@@ -33,28 +40,37 @@ CutFlowPlotter::~CutFlowPlotter ()
   clog << endl;
   clog.setf(std::ios::fixed);
   uint longestCutName = 30;
+  //  uint textWidth = 58;  // including minusOne
+  uint textWidth = 42;  // without minusOne
 
   for (int i=1; i<=cutFlow_->GetNbinsX(); i++) {
     string cutName = cutFlow_->GetXaxis()->GetBinLabel(i);
     if (cutName.size() > longestCutName) longestCutName = cutName.size();
   }
   longestCutName += 2;
-  clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
-  clog << setw (longestCutName) << left << "Cut Name" << right << setw (10) << setprecision(1) << "Events" << setw (16) << "Cumul. Eff." << setw (16) << "Indiv. Eff." << setw (16) << "Minus One" << endl;
-  clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
+  clog << channel << " channel:  " << endl;  
+  clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
+  clog << setw (longestCutName) << left << "Cut Name" << right 
+       << setw (10) << setprecision(1) << "Events" 
+       << setw (16) << "Cumul. Eff." 
+       << setw (16) << "Indiv. Eff." 
+    //       << setw (16) << "Minus One" // FIXME:  Minus one efficiencies are not correctly calculated.  
+       << endl;
+  clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
   totalEvents = cutFlow_->GetBinContent (1);
   for (int i = 1; i <= cutFlow_->GetNbinsX(); i++) {
     double cutFlow   =   cutFlow_->GetBinContent (i);
     double selection = selection_->GetBinContent (i);
-    double minusOne  =  minusOne_->GetBinContent (i);
+    double minusOne  =  minusOne_->GetBinContent (i);  
+    minusOne *= 1.0; // Dummy statement to avoid compilation error for unused variable.  
     TString name = cutFlow_->GetXaxis()->GetBinLabel(i);
     clog << setw (longestCutName) << left << name << right << setw (10) << setprecision(1) << cutFlow
          << setw (15) << setprecision(3) << 100.0 * (cutFlow   / (double) totalEvents) << "%"
          << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
-         << setw (15) << setprecision(3) << 100.0 * (minusOne  / (double) totalEvents) << "%"
+      //         << setw (15) << setprecision(3) << 100.0 * (minusOne  / (double) totalEvents) << "%"
          << endl;
   }
-  clog << setw (58+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
+  clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
 
 }
 

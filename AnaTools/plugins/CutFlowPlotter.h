@@ -29,6 +29,8 @@ class CutFlowPlotter : public edm::EDAnalyzer
     // Private variables initialized by the constructor.
     ////////////////////////////////////////////////////////////////////////////
     edm::InputTag  cutDecisions_;
+    string         module_type_;
+    string         module_label_;
     bool           firstEvent_;
     ////////////////////////////////////////////////////////////////////////////
 
