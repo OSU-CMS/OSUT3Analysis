@@ -430,7 +430,7 @@ def set_endPath(process, endPath):
     # add the new endpath at the end of the schedule
     process.schedule.append(endPath)
 
-def set_input(process, input_string):
+def set_input(process, input_string, maxFiles = 10):
     from OSUT3Analysis.Configuration.configurationOptions import dataset_names
     
     ############################################################################
@@ -452,11 +452,18 @@ def set_input(process, input_string):
     
     # try opening 'input_string' as a directory
     elif "directory" in fileType:
+        iFile = 0
         for file in os.listdir(input_string):
+            if file[0] == '.':
+                continue
             filePath = input_string + "/" + file
             fileType = subprocess.check_output(['file',filePath]).split(":")[1]
             if "ROOT" in fileType:
                 process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string + "/" + file))
+
+            iFile += 1
+            if iFile == maxFiles:
+                break
         return
 
     # try using 'input_string' as a registered dataset name        
