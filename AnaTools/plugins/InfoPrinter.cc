@@ -381,11 +381,13 @@ InfoPrinter::outputTime ()
 {
   ss_ << endl << "================================================================================" << endl;
 
-  double cpu, real;
+  double cpu, real, cpuPerEvt, realPerEvt;
   int days, hours, minutes;
 
-  cpu = sw_->CpuTime ();
   real = sw_->RealTime ();
+  cpu = sw_->CpuTime ();
+  cpuPerEvt  =  cpu / counter_;  
+  realPerEvt = real / counter_;  
 
   days = (int) (cpu / (60.0 * 60.0 * 24.0));
   cpu -= days * (60.0 * 60.0 * 24.0);
@@ -398,7 +400,9 @@ InfoPrinter::outputTime ()
   days && ss_ << days << " days, ";
   (days || hours) && ss_ << hours << " hours, ";
   (days || hours || minutes) && ss_ << minutes << " minutes, ";
-  (days || hours || minutes || cpu) && ss_ << cpu << " seconds" << endl;
+  (days || hours || minutes || cpu) && ss_ << cpu << " seconds"; 
+  ss_ << "  ("  <<  cpuPerEvt << " seconds per event)" << endl;  
+
 
   days = (int) (real / (60.0 * 60.0 * 24.0));
   real -= days * (60.0 * 60.0 * 24.0);
@@ -411,7 +415,8 @@ InfoPrinter::outputTime ()
   days && ss_ << days << " days, ";
   (days || hours) && ss_ << hours << " hours, ";
   (days || hours || minutes) && ss_ << minutes << " minutes, ";
-  (days || hours || minutes || cpu) && ss_ << real << " seconds" << endl;
+  (days || hours || minutes || cpu) && ss_ << real << " seconds"; 
+  ss_ << "  ("  <<  realPerEvt << " seconds per event)" << endl;  
 
   ss_ << "================================================================================" << endl;
 }
