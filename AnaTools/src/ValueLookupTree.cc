@@ -210,6 +210,13 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
 unsigned
 ValueLookupTree::getCollectionSize (const string &name) const
 {
+
+  if (!collectionIsFound(name)) {
+    clog << "ERROR [ValueLookupTree::getCollectionSize]:  Could not find collection named " << name << endl
+	 << "Please modify your configuration file.  Exiting..." << endl << endl << endl;
+    exit(0);  
+  }
+
   if (name == "bxlumis")
     return handles_->bxlumis->size ();
   else if (name == "electrons")
@@ -224,7 +231,7 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->mcparticles->size ();
   else if (name == "mets")
     return handles_->mets->size ();
-  else if (name == "muons")
+  else if (name == "muons")  
     return handles_->muons->size ();
   else if (name == "photons")
     return handles_->photons->size ();
@@ -242,6 +249,30 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return 1;
   return 0;
 }
+
+bool
+  ValueLookupTree::collectionIsFound (const string &name) const
+{
+  bool isFound = false;  
+  if      (name == "bxlumis")         isFound = handles_->bxlumis.isValid(); 
+  else if (name == "electrons")       isFound = handles_->electrons.isValid(); 
+  else if (name == "events")          isFound = handles_->events.isValid(); 
+  else if (name == "genjets")         isFound = handles_->genjets.isValid(); 
+  else if (name == "jets")            isFound = handles_->jets.isValid(); 
+  else if (name == "mcparticles")     isFound = handles_->mcparticles.isValid(); 
+  else if (name == "mets")            isFound = handles_->mets.isValid(); 
+  else if (name == "muons")           isFound = handles_->muons.isValid(); 
+  else if (name == "photons")         isFound = handles_->photons.isValid(); 
+  else if (name == "primaryvertexs")  isFound = handles_->primaryvertexs.isValid(); 
+  else if (name == "superclusters")   isFound = handles_->superclusters.isValid(); 
+  else if (name == "taus")            isFound = handles_->taus.isValid(); 
+  else if (name == "tracks")          isFound = handles_->tracks.isValid(); 
+  else if (name == "trigobjs")        isFound = handles_->trigobjs.isValid(); 
+  else if (name == "eventVariables")  isFound = true; // This vector is always present, even if its size is 0.  
+  return isFound;
+
+}
+
 
 void
 ValueLookupTree::destroy (Node * const x) const

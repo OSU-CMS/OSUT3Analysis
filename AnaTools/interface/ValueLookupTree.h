@@ -81,6 +81,7 @@ class ValueLookupTree
     unsigned getLocalIndex (unsigned, unsigned) const;
     set<unsigned> getGlobalIndices (unsigned, const string &, string) const;
     unsigned getCollectionSize (const string &name) const;
+    bool collectionIsFound (const string &name) const;
     ////////////////////////////////////////////////////////////////////////////
 
   private:
