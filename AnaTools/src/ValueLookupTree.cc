@@ -212,8 +212,11 @@ ValueLookupTree::getCollectionSize (const string &name) const
 {
 
   if (!collectionIsFound(name)) {
-    clog << "ERROR [ValueLookupTree::getCollectionSize]:  Could not find collection named " << name << endl
-	 << "Please modify your configuration file.  Exiting..." << endl << endl << endl;
+    clog << "ERROR [ValueLookupTree::getCollectionSize]:  Could not find collection named " << name 
+	 << " for expression: " << printNode(root_) << endl 
+	 << "List of input collections: " << endl;  
+    for (uint i=0; i<inputCollections_.size(); i++) clog << "  " << inputCollections_.at(i) << endl;  
+    clog << "Please modify your configuration file.  Exiting..." << endl << endl << endl;
     exit(0);  
   }
 
@@ -389,6 +392,22 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
   //////////////////////////////////////////////////////////////////////////////
 
   return tree;
+}
+
+string 
+ValueLookupTree::printNode (Node* tree) const
+{
+  string expression = "";  
+  if (!tree) return expression; 
+  if (tree->branches.size ()) {
+    for (const auto &branch : tree->branches)
+      expression += branch->value + " ";  
+  } else {
+    expression = tree->value;
+  }
+
+  return expression;
+
 }
 
 Leaf

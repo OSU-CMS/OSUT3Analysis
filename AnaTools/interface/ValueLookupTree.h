@@ -103,6 +103,9 @@ class ValueLookupTree
     Leaf evaluate_ (const Node * const, const ObjMap &);
     ////////////////////////////////////////////////////////////////////////////
 
+    // Mainly for debugging:
+    string printNode(Node* node) const;  
+
     // Returns the result of an operator acting on its operands.
     Leaf evaluateOperator (const string &, const vector<Leaf> &, const ObjMap &);
 
