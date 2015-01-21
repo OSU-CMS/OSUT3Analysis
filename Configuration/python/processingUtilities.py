@@ -360,7 +360,7 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         ########################################################################
         for varProd in variableProducers:
             producer = cms.EDProducer (varProd,
-                                       collections = collections
+                                       collections = channelCollections
                                        )
             setattr (process, varProd, producer)
             channelPath += producer 
