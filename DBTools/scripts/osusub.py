@@ -239,22 +239,34 @@ def SkimChannelFinder(userConfig, Directory):
 ################################################################################
 def SkimModifier(Label, Directory):
     SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
-    os.system('sed -i \'s/listOfFiles/originalListOfFiles/g\' ' +  Directory + '/datasetInfo_' + Label + '_cfg.py' ) 
-    os.system('sed -i \'s/numberOfFiles/originalNumberOfFiles/g\' ' +  Directory + '/datasetInfo_' + Label + '_cfg.py' ) 
-    os.system('echo \'\nskimDirectory = "' + SkimDirectory + '"\' >> ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-    os.system('echo \'listOfFiles = [\' >> ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-    os.system('ls ' + SkimDirectory + '/*.root > ' + Directory + '/tmp')
-    os.system('sed -i \'s/^/"file:/g\' ' + Directory + '/tmp')
-    os.system('sed -i \'1,$s/$/",/g\' ' + Directory + '/tmp')
-    os.system('cat ' + Directory + '/tmp >> ' + Directory + '/datasetInfo_' + Label + '_cfg.py' )
-    NumberOfFiles = os.popen('wc -l ' + Directory + '/tmp').read().split(' ')[0]
-    os.system('sed -i \'$a ]\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
-    os.system('sed -i \'$a numberOfFiles = ' + str(NumberOfFiles) + '\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
-    OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read()
-    os.system('sed -i \'$a originalNumberOfEvents = ' + str(OriginalNumberOfEvents) + '\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
-    SkimNumberOfEvents = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read()
-    os.system('sed -i \'$a skimNumberOfEvents = ' + str(SkimNumberOfEvents) + '\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
-    os.system('rm ' + Directory + '/tmp')
+    OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0]  
+    SkimNumberOfEvents = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] 
+
+    os.system('cp ' + Directory + '/datasetInfo_' + Label + '_cfg.py ' + Directory + '/datasetInfo_' + Label + '_cfg_beforeChanges.py ')
+    infoFile = Directory + '/datasetInfo_' + Label + '_cfg.py'
+    infoFileTest = infoFile.replace(".py", "-test.py")
+    fin = open(infoFile, "r")
+    orig = fin.read()
+    fin.close()
+    orig = orig.replace("listOfFiles",   "originalListOfFiles")  
+    orig = orig.replace("numberOfFiles", "originalNumberOfFiles")  
+    skimFiles = os.popen('ls ' + SkimDirectory + '/*.root').read().split('\n')  
+    add  = "\n"
+    add += 'skimDirectory = "' + SkimDirectory + '"\n'  
+    add += 'listOfFiles = [  \n' 
+    for s in skimFiles:
+        if ".root" in s: 
+            add += '"file:' + s + '",\n'  
+        else:
+            skimFiles.remove(s)  
+    add += ']  \n'  
+    add += 'numberOfFiles = ' + str(len(skimFiles)) + '\n'  
+    add += 'originalNumberOfEvents = ' + str(OriginalNumberOfEvents) + '\n'
+    add += 'skimNumberOfEvents = ' + str(SkimNumberOfEvents) + '\n'
+    fnew = open(infoFileTest, "w")
+    fnew.write(orig + add)
+    fnew.close()  
+
 ################################################################################
 #             First of all to set up the working directory                     #
 ################################################################################
