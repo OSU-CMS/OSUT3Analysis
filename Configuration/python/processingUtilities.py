@@ -445,8 +445,15 @@ def set_input(process, input_string, maxFiles = 10):
                                  )
 
     fileType = subprocess.check_output(['file',input_string]).split(":")[1]
+
+    # check for validity
+    if "No such file or directory" in fileType:  
+        print "WARNING [set_input]: ", input_string, "is not a valid file or directory."  
+        print "No files have been added to process.source.fileNames."  
+        return 
+
     # try opening 'input_string' as a ROOT file
-    if "ROOT" in fileType:
+    elif "ROOT" in fileType:
         process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string))
         return
     
