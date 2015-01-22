@@ -155,6 +155,8 @@ def MakeFileList(Dataset, FileType, Directory, Label):
 	    prefix = 'file:' 
         else:
             prefix = 'root://cms-0.mps.ohio-state.edu:1094/'
+        if RunOverSkim:
+            print "You have specified a skim as input.  Will obtain cross sections from the database."  
         #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py. 
         os.system('MySQLModule ' + Dataset + ' ' + Directory + '/datasetInfo_' + Label + '_cfg.py ' + prefix)
         if RunOverSkim:
@@ -267,7 +269,7 @@ else:
 if not os.path.exists(CondorDir):
    os.system('mkdir ' + CondorDir)
 else:
-   print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Please be aware of this.' 
+   print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Will proceed with job submission.' 
 
 RunOverSkim = False
 if arguments.SkimDirectory != "" and arguments.SkimChannel != "":
@@ -276,9 +278,11 @@ elif arguments.SkimDirectory == "" and arguments.SkimChannel == "":
     RunOverSkim = False
 else:
     print "Both skim directory and skim channel should be provided."
+
 ###############################################################################
 # Find the list of dataset to run over, either from arguments or localConfig. #
 ###############################################################################
+
 
 split_datasets = []
 
@@ -333,7 +337,11 @@ if split_datasets:
             GetCompleteOrderedArgumentsSet(InputCondorArguments)
         SubmissionDir = os.getcwd()
         WorkDir = CondorDir + '/' + str(dataset)
-        os.system('mkdir ' + WorkDir )
+        if os.path.exists(WorkDir): 
+            print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'  
+            continue 
+        else: 
+            os.system('mkdir ' + WorkDir )
 
         DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset)
         NumberOfFiles = int(DatasetRead['numberOfFiles'])
