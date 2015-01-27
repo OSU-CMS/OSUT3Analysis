@@ -170,17 +170,20 @@ header_x_right   = 0.9681208
 header_y_top     = 0.9965035
 
 #position for timestamp
-ts_x_left = 0.03691275
-ts_y_bottom = 0.003496503
-ts_x_right = 0.3573826
-ts_y_top = 0.1153846
+ts_x_left   = 0.00
+ts_y_bottom = 0.04 
+ts_x_right  = 0.35
+ts_y_top    = 0.08
 
-#position for condor dir
-0.1459732,0.003496503,0.2416107,0.04545455
-dir_x_left = 0.1459732
-dir_y_bottom = 0.003496503
-dir_x_right = 0.2416107
-dir_y_top = 0.04545455
+#position for condor dir, beneath the timestamp 
+dir_x_left   = ts_x_left
+dir_y_bottom = 0.0  
+dir_x_right  = ts_x_right
+dir_y_top    = ts_y_bottom
+
+
+##########################################################################################################################################
+
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
@@ -421,6 +424,9 @@ def setXAxisRangeUser(hist):
 def MakeOneDHist(pathToDir,histogramName,integrateDir): 
 
     global processed_datasets
+    global ts_x_left, ts_y_bottom, ts_x_right, ts_y_top
+    global dir_x_left, dir_y_bottom, dir_x_right, dir_y_top
+
     # let's just assume the root directory is "OSUAnalysis", because, come on, of course it is
     #channel = pathToDir.lstrip(rootDirectory).lstrip('/')
     channel = pathToDir.lstrip("OSUAnalysis").lstrip('/')
@@ -584,15 +590,22 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
         LumiLabel.SetTextAlign(32)
         LumiLabel.SetTextFont(42)
+
+        if makeRatioPlots:
+            ts_y_bottom  = 0.96
+            ts_y_top     = 1.0
+            dir_y_top    = ts_y_bottom
+            dir_y_bottom = 0.92
+
         TimeLabel = TPaveLabel(ts_x_left,ts_y_bottom,ts_x_right, ts_y_top,TimeText,"NDC")
-        TimeLabel.SetTextAlign(32)
-        TimeLabel.SetTextSize(0.2)
+        TimeLabel.SetTextAlign(12)  # 12 = 10 (left-justify horizontal) + 2 (center-justify vertical)  
+        TimeLabel.SetTextSize(0.55)
         TimeLabel.SetBorderSize(0)
         TimeLabel.SetFillColor(0)
         TimeLabel.SetFillStyle(0)
         
         DirLabel = TPaveLabel(dir_x_left,dir_y_bottom,dir_x_right, dir_y_top,DirText,"NDC")
-        DirLabel.SetTextAlign(32)
+        DirLabel.SetTextAlign(12)
         DirLabel.SetTextSize(0.55)
         DirLabel.SetBorderSize(0)
         DirLabel.SetFillColor(0)
@@ -953,8 +966,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Canvas.cd(2)
         gPad.SetPad(0,0,1,0.25)
         #format: gPad.SetMargin(l,r,b,t)
-#        gPad.SetMargin(0.15,0.05,0.4,0.01)
-        gPad.SetMargin(0.15,0.05,0.8,0.01)
+        gPad.SetMargin(0.15,0.05,0.4,0.01)
         gPad.SetFillStyle(0)
         gPad.SetGridy(1)
         gPad.Update()
