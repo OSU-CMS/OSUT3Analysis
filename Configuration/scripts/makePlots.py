@@ -587,23 +587,22 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         TimeLabel = TPaveLabel(ts_x_left,ts_y_bottom,ts_x_right, ts_y_top,TimeText,"NDC")
         TimeLabel.SetTextAlign(32)
         TimeLabel.SetTextSize(0.2)
+        TimeLabel.SetBorderSize(0)
+        TimeLabel.SetFillColor(0)
+        TimeLabel.SetFillStyle(0)
         
         DirLabel = TPaveLabel(dir_x_left,dir_y_bottom,dir_x_right, dir_y_top,DirText,"NDC")
         DirLabel.SetTextAlign(32)
         DirLabel.SetTextSize(0.55)
+        DirLabel.SetBorderSize(0)
+        DirLabel.SetFillColor(0)
+        DirLabel.SetFillStyle(0)
 
 
     LumiLabel.SetBorderSize(0)
     LumiLabel.SetFillColor(0)
     LumiLabel.SetFillStyle(0)
 
-    TimeLabel.SetBorderSize(0)
-    TimeLabel.SetFillColor(0)
-    TimeLabel.SetFillStyle(0)
-
-    DirLabel.SetBorderSize(0)
-    DirLabel.SetFillColor(0)
-    DirLabel.SetFillStyle(0)
 
         
     BgMCLegend = TLegend()
