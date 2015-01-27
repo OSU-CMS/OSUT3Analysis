@@ -266,7 +266,10 @@ def MakeIntegralHist(hist, integrateDir):
 ##########################################################################################################################################
                                                                                                                                                                                     
 
-def MakeOneDHist(histogramName,integrateDir): 
+def MakeOneDHist(pathToDir, histogramName,integrateDir): 
+    
+    if arguments.verbose:
+        print "Creating histogram", histogramName, "in directory", pathToDir
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
@@ -311,16 +314,23 @@ def MakeOneDHist(histogramName,integrateDir):
     for source in input_sources: # loop over different input sources in config file
         dataset_file = "condor/%s/%s.root" % (source['condor_dir'],source['dataset'])
         inputFile = TFile(dataset_file)
-        if arguments.generic:
-            HistogramObj = inputFile.Get(source['channel'] + "/" +histogramName)  
-        else: 
-            HistogramObj = inputFile.Get("OSUAnalysis/" + source['channel'] + "/" +histogramName)
+
+        HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
+#         if arguments.generic:
+#             HistogramObj = inputFile.Get(source['channel'] + "/" +histogramName)  
+#         else: 
+# #            HistogramObj = inputFile.Get("OSUAnalysis/" + source['channel'] + "/" +histogramName)
+#             HistogramObj = inputFile.Get(source['channel'] + "Plotter/" + histogramName)
         if not HistogramObj:
-            print "WARNING:  Could not find histogram " + source['channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+#            print "WARNING:  Could not find histogram " + source['channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + ".  Will skip it and continue."  
             return 
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
         inputFile.Close()
+
+        if arguments.verbose:
+            print "  Got histogram", Histogram.GetName(), "from file", dataset_file  
         if arguments.rebinFactor:
             RebinFactor = int(arguments.rebinFactor)
             #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
@@ -353,8 +363,10 @@ def MakeOneDHist(histogramName,integrateDir):
         if not arguments.makeFancy and not arguments.generic:  
             fullTitle = Histogram.GetTitle()
             splitTitle = fullTitle.split(":")
-            #    print splitTitle
-            histoTitle = splitTitle[1].lstrip(" ")
+            if len(splitTitle) > 1: 
+                histoTitle = splitTitle[1].lstrip(" ")
+            else: 
+                histoTitle = splitTitle[0]  
         else:
             histoTitle = ""
 
@@ -446,7 +458,7 @@ def MakeOneDHist(histogramName,integrateDir):
     for histogram in Histograms:
         histogram.SetTitle(histoTitle)
         if arguments.verbose:
-            print "Debug:  drawing hist " + histogram.GetName() + ", with plotting_options = " + plotting_options + ", with mean = " + str(histogram.GetMean()) + ", with color = " + str(histogram.GetLineColor())    
+            print "  Drawing hist " + histogram.GetName() + ", with plotting_options = " + plotting_options + ", with mean = " + str(histogram.GetMean()) + ", with color = " + str(histogram.GetLineColor())    
         histogram.Draw(plotting_options)
         histogram.GetXaxis().SetTitle(xAxisLabel)
         histogram.GetYaxis().SetTitle(yAxisLabel)
@@ -527,9 +539,11 @@ def MakeOneDHist(histogramName,integrateDir):
         Comparison.GetYaxis().SetNdivisions(205)
         Comparison.Draw("E0")
 
-    outputFile.cd()
+    outputFile.cd(pathToDir)
     Canvas.Write()
-    
+    if arguments.verbose:
+        print "  Finished writing canvas: ", Canvas.GetName()  
+
     if arguments.savePDFs:
         Canvas.SaveAs("comparison_histograms_pdfs/"+histogramName+".pdf")
 
@@ -550,22 +564,37 @@ first_input = input_sources[0]
 
 #### use the first input file as a template and make comparison versions of all its histograms
 testFile = TFile("condor/" + first_input['condor_dir'] + "/" + first_input['dataset'] + ".root")
+rootDirectory = ""
 if arguments.generic:
-    testFile.cd(first_input['channel'])  
+    rootDirectory = testFile.cd(first_input['channel'])  
 else:
-    testFile.cd("OSUAnalysis/" + first_input['channel'])
+    rootDirectory = first_input['channel'] + "Plotter" 
+
+testFile.cd(rootDirectory) 
+outputFile.mkdir(rootDirectory)
     
 if arguments.savePDFs:
     os.system("rm -rf comparison_histograms_pdfs")
     os.system("mkdir comparison_histograms_pdfs")
     
-for key in gDirectory.GetListOfKeys():
-    if re.match ('TH1', key.GetClassName()):  #found a 1D histogram
-        if arguments.makeSignificancePlots:
-            MakeOneDHist(key.GetName(),"left")
-            MakeOneDHist(key.GetName(),"right")
-        else:
-            MakeOneDHist(key.GetName(),"none")
+for key in gDirectory.GetListOfKeys():  # Loop over directories in same way as in makePlots.py  
+    if (key.GetClassName() != "TDirectoryFile"):
+        continue
+    if arguments.verbose:
+        print "Checking key: ", key.GetName()  
+
+    level2Directory = rootDirectory + "/" + key.GetName() 
+    outputFile.cd(rootDirectory)
+    gDirectory.mkdir(key.GetName())
+    outputFile.cd(level2Directory)
+    testFile.cd(level2Directory)
+    for key2 in gDirectory.GetListOfKeys():
+        if re.match ('TH1', key2.GetClassName()):  #found a 1D histogram
+            if arguments.makeSignificancePlots:
+                MakeOneDHist(level2Directory, key2.GetName(),"left")
+                MakeOneDHist(level2Directory, key2.GetName(),"right")
+            else:
+                MakeOneDHist(level2Directory, key2.GetName(),"none")
 
 testFile.Close()
 outputFile.Close()
