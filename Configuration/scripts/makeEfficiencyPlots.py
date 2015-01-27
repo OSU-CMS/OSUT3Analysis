@@ -223,7 +223,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
 ##########################################################################################################################################
 
 
-def MakeOneHist(histogramName): 
+def MakeOneHist(dirName, histogramName): 
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
@@ -263,18 +263,18 @@ def MakeOneHist(histogramName):
     for source in input_sources: # loop over different input sources in config file
         dataset_file = "condor/%s/%s.root" % (source['condor_dir'],source['dataset'])
         inputFile = TFile(dataset_file)
-        NumHistogramObj = inputFile.Get("OSUAnalysis/" + source['num_channel'] + "/" +histogramName)
+        NumHistogramObj = inputFile.Get(source['num_channel'] + "Plotter/" + dirName + "/" + histogramName)
         if 'condor_dir_den' in source:   # If specified, take the denominator histogram from a different condor directory.  
             dataset_fileDen = "condor/%s/%s.root" % (source['condor_dir_den'],source['dataset'])
             inputFileDen = TFile(dataset_fileDen)
-            DenHistogramObj = inputFileDen.Get("OSUAnalysis/" + source['den_channel'] + "/" +histogramName)
+            DenHistogramObj = inputFileDen.Get(source['den_channel'] + "Plotter/" + dirName + "/" + histogramName)
         else:   # Default is to use the same condor directory  
-            DenHistogramObj = inputFile.Get("OSUAnalysis/" + source['den_channel'] + "/" +histogramName)
+            DenHistogramObj = inputFile.Get(source['den_channel'] + "Plotter/" + dirName + "/" + histogramName)
         if not NumHistogramObj:
-            print "WARNING:  Could not find histogram " + source['num_channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+            print "WARNING:  Could not find histogram " + source['num_channel'] + "Plotter/" + dirName + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
             return 
         if not DenHistogramObj:
-            print "WARNING:  Could not find histogram " + source['den_channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+            print "WARNING:  Could not find histogram " + source['den_channel'] + "Plotter/" + dirName + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
             return 
 
         Histogram = NumHistogramObj.Clone()
@@ -314,7 +314,10 @@ def MakeOneHist(histogramName):
             fullTitle = Histogram.GetTitle()
             splitTitle = fullTitle.split(":")
             #    print splitTitle
-            histoTitle = splitTitle[1].lstrip(" ")
+            if len(splitTitle) > 1: 
+                histoTitle = splitTitle[1].lstrip(" ")
+            else:
+                histoTitle = splitTitle[0]  
         else:
             histoTitle = ""
 
@@ -500,7 +503,7 @@ def MakeOneHist(histogramName):
         Comparison.GetYaxis().SetNdivisions(205)
         Comparison.Draw("E0")
 
-    outputFile.cd()
+    outputFile.cd(dirName)
     Canvas.Write()
     
     if arguments.savePDFs:
@@ -526,19 +529,33 @@ os.system("cp " + arguments.localConfig + " " + outputConfigFile)  # make a copy
 
 first_input = input_sources[0]
 
-#### use the first input file as a template and make efficiency versions of all its histograms
+
+#### use the first input file as a template and make comparison versions of all its histograms
 testFile = TFile("condor/" + first_input['condor_dir'] + "/" + first_input['dataset'] + ".root")
-testFile.cd("OSUAnalysis/" + first_input['num_channel'])
+rootDirectory = first_input['num_channel'] + "Plotter"
+testFile.cd(rootDirectory)
 
 if arguments.savePDFs:
     os.system("rm -rf efficiency_histograms_pdfs")
     os.system("mkdir efficiency_histograms_pdfs")
     
-for key in gDirectory.GetListOfKeys():
-    if re.match ('TH1', key.GetClassName()):  # found a 1D histogram
-        MakeOneHist(key.GetName())
-    if arguments.draw2DPlots and re.match ('TH2', key.GetClassName()):  # make 2D histograms  
-        MakeOneHist(key.GetName())
+
+for key in gDirectory.GetListOfKeys(): # Loop over directories in same way as in makePlots.py
+    if (key.GetClassName() != "TDirectoryFile"):
+        continue
+
+    level2Directory = rootDirectory + "/" + key.GetName()
+    outputFile.cd() 
+    outputFile.mkdir(key.GetName())
+    outputFile.cd(key.GetName())  
+    testFile.cd(level2Directory)
+    for key2 in gDirectory.GetListOfKeys():
+        if re.match ('TH1', key2.GetClassName()): #found a 1D histogram
+            MakeOneHist(key.GetName(), key2.GetName())
+        if arguments.draw2DPlots and re.match ('TH2', key2.GetClassName()):  # make 2D histograms  
+            MakeOneHist(key.GetName(), key2.GetName())
 
 testFile.Close()
 outputFile.Close()
+print "Finished writing " + outputFile.GetName()  
+
