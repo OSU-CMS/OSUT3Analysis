@@ -357,6 +357,8 @@ if split_datasets:
 
         DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset)
         NumberOfFiles = int(DatasetRead['numberOfFiles'])
+        if NumberOfJobs > NumberOfFiles:
+            NumberOfJobs = NumberOfFiles
         if not arguments.localConfig:    
             NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
         if MaxEvents > 0:
