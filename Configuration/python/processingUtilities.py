@@ -454,7 +454,12 @@ def set_input(process, input_string):
                                  )
 
     # check for validity
-    fileType = subprocess.check_output(['file',input_string]).split(":")[1]
+    fileType = "No such file or directory"
+    try:
+        fileType = subprocess.check_output(['file', '-m', '/home/lantonel/Public/magic.mgc', input_string]).split(":")[1]
+    except:
+        pass
+
     isValidFileOrDir = "No such file or directory" not in fileType
     isValidDataset = input_string in dataset_names.keys()
 
