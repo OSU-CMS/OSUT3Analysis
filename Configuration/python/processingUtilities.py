@@ -430,13 +430,22 @@ def set_endPath(process, endPath):
     # add the new endpath at the end of the schedule
     process.schedule.append(endPath)
 
-def set_input(process, input_string, maxFiles = 10):
-    from OSUT3Analysis.Configuration.configurationOptions import dataset_names
+def set_input(process, input_string):
+    from OSUT3Analysis.Configuration.configurationOptions import dataset_names, composite_dataset_definitions
     
     ############################################################################
-    # This function configures the input dataset
-    # It can take a dataset nickname, directory, or file as argument
+    # This function configures the input dataset.
+    # It can take a dataset nickname, directory, or file as argument.
+    # Subsequent calls to this function will overwrite previous results.
     ############################################################################
+    
+    # print a warning if the input source has already been set
+    sourceType =  type(process.source).__name__
+    if sourceType != 'NoneType':
+        print "WARNING [set_input]: There are multiple calls to set_input!"
+        print "  The previous input source will be overwritten!"
+
+    # initialize the process source
     datasetInfo = cms.PSet ()
     datasetInfo.name = cms.string ("NONE")
     datasetInfo.type = cms.string ("NONE")
@@ -444,39 +453,44 @@ def set_input(process, input_string, maxFiles = 10):
                                  fileNames = cms.untracked.vstring ()
                                  )
 
-    fileType = subprocess.check_output(['file',input_string]).split(":")[1]
-
     # check for validity
-    if "No such file or directory" in fileType:  
-        print "WARNING [set_input]: ", input_string, "is not a valid file or directory."  
-        print "No files have been added to process.source.fileNames."  
+    fileType = subprocess.check_output(['file',input_string]).split(":")[1]
+    isValidFileOrDir = "No such file or directory" not in fileType
+    isValidDataset = input_string in dataset_names.keys()
+
+    # print error and exit if the input is invalid
+    if not isValidFileOrDir and not isValidDataset:
+        if input_string in composite_dataset_definitions.keys():
+            print "ERROR [set_input]: '" + input_string + "' is a composite dataset"
+            print "  Composite datasets should not processed interactively",
+            print "because their components won't have the proper relative weights."
+            print "  No files have been added to process.source.fileNames"          
+        else:
+            print "ERROR [set_input]: '" + input_string + "' is not a valid root file, directory, or dataset name."  
+            print "  No files have been added to process.source.fileNames"
         return 
 
+    # try using 'input_string' as a registered dataset name
+    if isValidDataset:
+        datasetDirectory = dataset_names[input_string]
+        subprocess.call(['MySQLModule', datasetDirectory, 'temp_datasetInfo.py', 'file:'])
+        import temp_datasetInfo
+        process.source.fileNames.extend(cms.untracked.vstring(temp_datasetInfo.listOfFiles))
+        subprocess.call(['rm', '-f', 'temp_datasetInfo.py'])
+        subprocess.call(['rm', '-f', 'temp_datasetInfo.pyc'])
+        return
+
     # try opening 'input_string' as a ROOT file
-    elif "ROOT" in fileType:
+    if isValidFileOrDir and "ROOT" in fileType:
         process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string))
         return
     
     # try opening 'input_string' as a directory
-    elif "directory" in fileType:
-        iFile = 0
-        for file in os.listdir(input_string):
-            if file[0] == '.':
+    if isValidFileOrDir and "directory" in fileType:
+        for fileName in os.listdir(input_string):
+            # ignore hidden files
+            if fileName[0] == '.':
                 continue
-            filePath = input_string + "/" + file
-            fileType = subprocess.check_output(['file',filePath]).split(":")[1]
-            if "ROOT" in fileType:
-                process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string + "/" + file))
-
-            iFile += 1
-            if iFile == maxFiles:
-                break
+            if fileName.endswith(".root"):
+                process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string + "/" + fileName))
         return
-
-    # try using 'input_string' as a registered dataset name        
-    datasetDirectory = dataset_names[input_string]
-    subprocess.call(['MySQLModule',datasetDirectory,'temp_datasetInfo.py','file:'])
-    from temp_datasetInfo import listOfFiles
-    process.source.fileNames.extend(cms.untracked.vstring(listOfFiles))
-    subprocess.call(['rm','temp_datasetInfo.py'])
-    subprocess.call(['rm','temp_datasetInfo.pyc'])
