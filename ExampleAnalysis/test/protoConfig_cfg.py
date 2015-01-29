@@ -15,10 +15,18 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 # input source when running interactively
 # ---------------------------------------
-# argument can be a file, directory, or dataset name *
+# argument can be a ROOT file, directory, or dataset name*
 # *registered dataset names are listed in 'datasets' in:
-#  OSUT3Analysis/Configuration/python/configurationOptions.py
+#    https://github.com/OSU-CMS/OSUT3Analysis/blob/master/Configuration/python/configurationOptions.py
+
+# sample direcotory
 set_input(process, "/store/user/ahart/BN_stopToBottom_M_800_10mm_Tune4C_8TeV_pythia8_lantonel-Summer12_DR53X-PU_S10_START53_V19-v1-ab45720b22c4f98257a2f100c39d504b_USER_1/")
+
+# sample ROOT file
+#set_input(process, "/store/user/ahart/BN_stopToBottom_M_800_10mm_Tune4C_8TeV_pythia8_lantonel-Summer12_DR53X-PU_S10_START53_V19-v1-ab45720b22c4f98257a2f100c39d504b_USER_1/stopToBottom_M_800_10mm_Tune4C_8TeV_pythia8_lantonel-Summer12_DR53X-PU_S10_START53_V19-v1-ab45720b22c4f98257a2f100c39d504b_USER_10_2_Dzw.root")
+
+# sample dataset nickname
+#set_input(process, "DYToTauTau_20")
 
 # output histogram file name when running interactively
 process.TFileService = cms.Service ('TFileService',
