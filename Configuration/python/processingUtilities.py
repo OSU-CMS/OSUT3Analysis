@@ -268,13 +268,27 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         channelPath = cms.Path ()
         channelCollections = copy.deepcopy (collections)
 
-        ########################################################################
-        # Get the name of the channel and try to make a directory with that
-        # name. If the directory already exists, an OSError exception will be
-        # raised, which we ignore.
-        ########################################################################
         channelName = channel.name.pythonValue ()
         channelName = channelName[1:-1]
+
+        ########################################################################
+        # Check to see if this channel has already been added. 
+        # Since all channels must have unique names, this will break everything.
+        # So we'll print a warning and skip this channel.
+        ########################################################################
+        if hasattr (process, channelName):
+            print ("WARNING [add_channels]: The '" + 
+                   channelName + 
+                   "' channel has been added more than once")
+            print "  Skipping this channel!"
+            continue
+
+        ########################################################################
+        # If a skim is requested, get the name of the channel 
+        # and try to make a directory with that name.
+        # If the directory already exists, an OSError exception will be
+        # raised, which we ignore.
+        ########################################################################
         if skim:
             try:
                 os.mkdir (channelName)
