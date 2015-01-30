@@ -456,8 +456,7 @@ def set_input(process, input_string):
     # check for validity
     fileType = "No such file or directory"
     try:
-#        fileType = subprocess.check_output(['file', '-m', '/home/lantonel/Public/magic.mgc', input_string]).split(":")[1]
-        fileType = subprocess.check_output(['file', input_string]).split(":")[1]
+        fileType = subprocess.check_output(['/usr/bin/file', input_string]).split(":")[1]
     except:
         pass
 
