@@ -9,24 +9,21 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 
-#include "BEAN/Collections/interface/BNbxlumi.h"
-#include "BEAN/Collections/interface/BNelectron.h"
-#include "BEAN/Collections/interface/BNevent.h"
-#include "BEAN/Collections/interface/BNjet.h"
-#include "BEAN/Collections/interface/BNmcparticle.h"
-#include "BEAN/Collections/interface/BNmet.h"
-#include "BEAN/Collections/interface/BNmuon.h"
-#include "BEAN/Collections/interface/BNphoton.h"
-#include "BEAN/Collections/interface/BNprimaryvertex.h"
-#include "BEAN/Collections/interface/BNskimbits.h"
-#include "BEAN/Collections/interface/BNsupercluster.h"
-#include "BEAN/Collections/interface/BNtrack.h"
-#include "BEAN/Collections/interface/BNtrigger.h"
-#include "BEAN/Collections/interface/BNtrigobj.h"
-#include "BEAN/Collections/interface/BNtau.h"
-#include "BEAN/Collections/interface/BNgenjet.h"
+#include "DataFormats/EgammaReco/interface/SuperCluster.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
+#include "DataFormats/PatCandidates/interface/Photon.h"
+#include "DataFormats/PatCandidates/interface/Tau.h"
+#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
 
-using namespace std;
+#include "DataFormats/Common/interface/TriggerResults.h"
+
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 class ValueLookupTree;
 
@@ -91,22 +88,23 @@ typedef map<string, double> EventVariableProducerPayload;
 
 struct Collections
 {
-  edm::Handle<BNbxlumiCollection>                     bxlumis;
-  edm::Handle<BNelectronCollection>                   electrons;
-  edm::Handle<BNeventCollection>                      events;
-  edm::Handle<BNgenjetCollection>                     genjets;
-  edm::Handle<BNjetCollection>                        jets;
-  edm::Handle<BNmcparticleCollection>                 mcparticles;
-  edm::Handle<BNmetCollection>                        mets;
-  edm::Handle<BNmuonCollection>                       muons;
-  edm::Handle<BNphotonCollection>                     photons;
-  edm::Handle<BNprimaryvertexCollection>              primaryvertexs;
-  edm::Handle<BNsuperclusterCollection>               superclusters;
-  edm::Handle<BNtauCollection>                        taus;
-  edm::Handle<BNtrackCollection>                      tracks;
-  edm::Handle<BNtriggerCollection>                    triggers;
-  edm::Handle<BNtrigobjCollection>                    trigobjs;
-  vector<edm::Handle<EventVariableProducerPayload> >  eventVariables;
+  edm::Handle<vector<TYPE(bxlumis)> >         bxlumis;
+  edm::Handle<vector<TYPE(electrons)> >       electrons;
+  edm::Handle<vector<TYPE(events)> >          events;
+  edm::Handle<vector<TYPE(genjets)> >         genjets;
+  edm::Handle<vector<TYPE(jets)> >            jets;
+  edm::Handle<vector<TYPE(mcparticles)> >     mcparticles;
+  edm::Handle<vector<TYPE(mets)> >            mets;
+  edm::Handle<vector<TYPE(muons)> >           muons;
+  edm::Handle<vector<TYPE(photons)> >         photons;
+  edm::Handle<vector<TYPE(primaryvertexs)> >  primaryvertexs;
+  edm::Handle<vector<TYPE(superclusters)> >   superclusters;
+  edm::Handle<vector<TYPE(taus)> >            taus;
+  edm::Handle<vector<TYPE(tracks)> >          tracks;
+  edm::Handle<vector<TYPE(trigobjs)> >        trigobjs;
+  vector<edm::Handle<TYPE(eventVariables)> >  eventVariables;
+
+  edm::Handle<TYPE(triggers)>        triggers;
 };
 
 struct ValueToPrint

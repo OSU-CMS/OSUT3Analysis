@@ -3,7 +3,8 @@
 #include <set>
 #include <unordered_map>
 
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
+#include "FWCore/Common/interface/TriggerNames.h"
+//#include "FWCore/MessageLogger/interface/MessageLogger.h"
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
@@ -87,7 +88,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
 
   // Decide whether the event passes the triggers specified by the user and
   // store the decision in the payload.
-  evaluateTriggers ();
+  evaluateTriggers (event);
   setEventFlags ();
 
   event.put (pl_, "cutDecisions");
@@ -375,7 +376,7 @@ CutCalculator::splitString (const string &inputString) const
 }
 
 bool
-CutCalculator::evaluateTriggers () const
+CutCalculator::evaluateTriggers (const edm::Event &event) const
 {
   //////////////////////////////////////////////////////////////////////////////
   // Initialize the flags for each trigger which is required and each trigger
@@ -388,8 +389,20 @@ CutCalculator::evaluateTriggers () const
 
   if (handles_.triggers.isValid ())
     {
+#if DATA_FORMAT == BEAN
       for (const auto &trigger : *handles_.triggers)
         {
+          string name = trigger.name;
+          bool pass = trigger.pass;
+#elif DATA_FORMAT == MINI_AOD
+      const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
+      for (unsigned i = 0; i < triggerNames.size (); i++)
+        {
+          string name = triggerNames.triggerName (i);
+          bool pass = handles_.triggers->accept (i);
+#else
+  #error "Data format is not valid."
+#endif
           //////////////////////////////////////////////////////////////////////////
           // If the current trigger matches one of the triggers to veto, record its
           // decision. If any of these triggers is true, set the event-wide flag to
@@ -397,10 +410,10 @@ CutCalculator::evaluateTriggers () const
           //////////////////////////////////////////////////////////////////////////
           for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
             {
-              if (trigger.name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+              if (name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
                 {
-                  vetoTriggerDecision = vetoTriggerDecision && !trigger.pass;
-                  pl_->vetoTriggerFlags.at (triggerIndex) = trigger.pass;
+                  vetoTriggerDecision = vetoTriggerDecision && !pass;
+                  pl_->vetoTriggerFlags.at (triggerIndex) = pass;
                 }
             }
           //////////////////////////////////////////////////////////////////////////
@@ -412,10 +425,10 @@ CutCalculator::evaluateTriggers () const
           //////////////////////////////////////////////////////////////////////////
           for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
             {
-              if (trigger.name.find (pl_->triggers.at (triggerIndex)) == 0)
+              if (name.find (pl_->triggers.at (triggerIndex)) == 0)
                 {
-                  triggerDecision = triggerDecision || trigger.pass;
-                  pl_->triggerFlags.at (triggerIndex) = trigger.pass;
+                  triggerDecision = triggerDecision || pass;
+                  pl_->triggerFlags.at (triggerIndex) = pass;
                 }
             }
           //////////////////////////////////////////////////////////////////////////

@@ -9,7 +9,7 @@ MyEventVariableProducer::~MyEventVariableProducer() {}
 void
 MyEventVariableProducer::AddVariables (const edm::Event &event, auto_ptr<EventVariableProducerPayload> &myVars) {
 
-  edm::Handle<BNmuonCollection> muons;
+  edm::Handle<vector<TYPE(muons)> > muons;
   if (collections_.exists ("muons")) anatools::getCollection (collections_.getParameter<edm::InputTag> ("muons"), muons, event);
 
   (*myVars)["numMuons"] = muons->size();

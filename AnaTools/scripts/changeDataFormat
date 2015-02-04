@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+DATA_FORMAT=$1
+
+if [ "$DATA_FORMAT" == "BEAN" ]
+then
+  sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT BEAN/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h
+elif [ "$DATA_FORMAT" == "MiniAOD" ]
+then
+  sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT MINI_AOD/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h
+else
+  echo "Not a valid data format: "$DATA_FORMAT
+  exit
+fi
+
+touch $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h
+echo "Data format changed to "$DATA_FORMAT"."
+sleep 1
+echo "Do not forget to recompile."

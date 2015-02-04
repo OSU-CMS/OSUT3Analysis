@@ -1,5 +1,7 @@
 #include "OSUT3Analysis/AnaTools/interface/ObjectSelector.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 
-typedef ObjectSelector<BNmet> MetObjectSelector;
-DEFINE_FWK_MODULE(MetObjectSelector);
+#if IS_VALID(mets)
+  typedef ObjectSelector<TYPE(mets)> MetObjectSelector;
+  DEFINE_FWK_MODULE(MetObjectSelector);
+#endif

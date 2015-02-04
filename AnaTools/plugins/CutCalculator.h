@@ -31,7 +31,7 @@ class CutCalculator : public edm::EDProducer
     bool evaluateComparison (int, const string &, int) const;
     string getObjToGet (string);
     vector<string> splitString (const string &) const;
-    bool evaluateTriggers () const;
+    bool evaluateTriggers (const edm::Event &) const;
     bool setEventFlags () const;
     ////////////////////////////////////////////////////////////////////////////
 
