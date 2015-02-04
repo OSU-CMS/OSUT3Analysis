@@ -5,6 +5,8 @@
 #include <string>
 #include <map>
 
+#include <typeinfo>
+
 #include "boost/variant.hpp"
 
 #include "DataFormats/Common/interface/Handle.h"
@@ -87,7 +89,15 @@ struct Node
   vector<Node *>  branches;
 };
 
-typedef map<string, double> EventVariableProducerPayload;
+// userVar type:
+//   vector<int> - hashes of all objects used
+//   double - value of the calculated variable
+typedef pair<vector<int>, double> userVar;
+
+// VariableProducerPayload type:
+//   string - user-defined name of variable
+//   vector - one userVar per combination of input objects
+typedef map<string, vector<userVar> > VariableProducerPayload;
 
 struct Collections
 {
@@ -106,7 +116,7 @@ struct Collections
   edm::Handle<BNtrackCollection>                      tracks;
   edm::Handle<BNtriggerCollection>                    triggers;
   edm::Handle<BNtrigobjCollection>                    trigobjs;
-  vector<edm::Handle<EventVariableProducerPayload> >  eventVariables;
+  vector<edm::Handle<VariableProducerPayload> >       userVariables;
 };
 
 struct ValueToPrint

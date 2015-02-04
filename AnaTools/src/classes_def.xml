@@ -9,10 +9,10 @@
   <class name="edm::Wrapper<BNPFChgHad>"/>
   <class name="edm::Wrapper<std::vector<BNPFChgHad> >" />
 
-  <class name="EventVariableProducerPayload" />
-  <class name="std::vector<EventVariableProducerPayload>" />
-  <class name="edm::Wrapper<EventVariableProducerPayload>"/>
-  <class name="edm::Wrapper<std::vector<EventVariableProducerPayload> >" />
+  <class name="VariableProducerPayload" />
+  <class name="std::vector<VariableProducerPayload>" />
+  <class name="edm::Wrapper<VariableProducerPayload>"/>
+  <class name="edm::Wrapper<std::vector<VariableProducerPayload> >" />
 
   <class name="CutCalculatorPayload"/>
   <class name="std::vector<CutCalculatorPayload>"/>

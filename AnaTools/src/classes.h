@@ -18,10 +18,10 @@ namespace {
      vector<BNPFChgHad> PFChgHaddummy2;
      edm::Wrapper<vector<BNPFChgHad> > PFChgHaddummy3;
 
-     EventVariableProducerPayload newvarsdummy0;
-     edm::Wrapper<EventVariableProducerPayload> newvarsdummy1;
-     vector<EventVariableProducerPayload> newvarsdummy2;
-     edm::Wrapper<vector<EventVariableProducerPayload> > newvarsdummy3;
+     VariableProducerPayload newvarsdummy0;
+     edm::Wrapper<VariableProducerPayload> newvarsdummy1;
+     vector<VariableProducerPayload> newvarsdummy2;
+     edm::Wrapper<vector<VariableProducerPayload> > newvarsdummy3;
 
      CutCalculatorPayload CutCalculatorPayloadDummy0;
      vector<CutCalculatorPayload> CutCalculatorPayloadDummy1;
