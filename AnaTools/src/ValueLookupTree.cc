@@ -248,7 +248,7 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->tracks->size ();
   else if (name == "trigobjs")
     return handles_->trigobjs->size ();
-  else if (name == "eventVariables")
+  else if (name == "userVariables")
     return 1;
   return 0;
 }
@@ -271,7 +271,7 @@ bool
   else if (name == "taus")            isFound = handles_->taus.isValid(); 
   else if (name == "tracks")          isFound = handles_->tracks.isValid(); 
   else if (name == "trigobjs")        isFound = handles_->trigobjs.isValid(); 
-  else if (name == "eventVariables")  isFound = true; // This vector is always present, even if its size is 0.  
+  else if (name == "userVariables")  isFound = true; // This vector is always present, even if its size is 0.  
   return isFound;
 
 }
@@ -703,10 +703,10 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
       BNtrigobj *obj = new BNtrigobj (handles_->trigobjs->at (i));
       return obj;
     }
-  else if (name == "eventVariables")
+  else if (name == "userVariables") // FIXME
     {
-      EventVariableProducerPayload *obj = new EventVariableProducerPayload ();
-      for (const auto &handle : handles_->eventVariables)
+      VariableProducerPayload *obj = new VariableProducerPayload ();
+      for (const auto &handle : handles_->userVariables)
         obj->insert (handle->begin (), handle->end ());
       return obj;
     }
@@ -744,8 +744,8 @@ ValueLookupTree::deleteObject (const string &name, void * const obj) const
     delete ((BNtrack *) obj);
   else if (name == "trigobjs")
     delete ((BNtrigobj *) obj);
-  else if (name == "eventVariables")
-    delete ((EventVariableProducerPayload *) obj);
+  else if (name == "userVariables")
+    delete ((VariableProducerPayload *) obj);
 }
 
 string
@@ -779,8 +779,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return "BNtrack";
   else if (name == "trigobjs")
     return "BNtrigobj";
-  else if (name == "eventVariables")
-    return "EventVariableProducerPayload";
+  else if (name == "userVariables")
+    return "VariableProducerPayload";
   return "";
 }
 
@@ -815,7 +815,7 @@ ValueLookupTree::isCollection (const string &name) const
     return true;
   else if (name == "trigobjs")
     return true;
-  else if (name == "eventVariables")
+  else if (name == "userVariables")
     return true;
   return false;
 }
@@ -1128,8 +1128,9 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
 
   try
     {
-      if (collection == "eventVariables")
-        return (((EventVariableProducerPayload *) obj)->at (variable));
+      if (collection == "userVariables")
+	return 1; // FIXME
+	//        return (((VariableProducerPayload *) obj)->at (variable));
       return getMember (getCollectionType (collection), obj, variable);
     }
   catch (...)
