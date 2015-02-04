@@ -207,9 +207,9 @@ def add_variables (process, modules, collections):
     # PSet.
     ############################################################################
     for module in modules:
-        if not hasattr (collections, "eventVariables"):
-            collections.eventVariables = cms.VInputTag ()
-        collections.eventVariables.append (cms.InputTag (module, "extraEventVariables"))
+        if not hasattr (collections, "userVariables"):
+            collections.userVariables = cms.VInputTag ()
+        collections.userVariables.append (cms.InputTag (module, "userVariables"))
 
     ############################################################################
     # Add the variable production path at the beginning of the schedule
@@ -332,9 +332,8 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         # collections given in the collections PSet.
         ########################################################################
         outputCommands = ["drop *"]
-        outputCommands.append("keep *_*_extraEventVariables_*")
-        outputCommands.append("keep *_*_extraObjectVariables_*")
-        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "eventVariables" and a is not "objectVariables"]:
+        outputCommands.append("keep *_*_userVariables_*")
+        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "userVariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep BN"
             outputCommand += collection
@@ -379,12 +378,12 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
             setattr (process, varProd, producer)
             channelPath += producer 
 
-            if not hasattr (collections, "eventVariables"):
-                collections.eventVariables = cms.VInputTag ()
-            if not hasattr (channelCollections, "eventVariables"):
-                channelCollections.eventVariables = cms.VInputTag ()
-            collections.eventVariables.append        (cms.InputTag (varProd, "extraEventVariables"))
-            channelCollections.eventVariables.append (cms.InputTag (varProd, "extraEventVariables"))
+            if not hasattr (collections, "userVariables"):
+                collections.userVariables = cms.VInputTag ()
+            if not hasattr (channelCollections, "userVariables"):
+                channelCollections.userVariables = cms.VInputTag ()
+            collections.userVariables.append        (cms.InputTag (varProd, "userVariables"))
+            channelCollections.userVariables.append (cms.InputTag (varProd, "userVariables"))
 
 
         ########################################################################
