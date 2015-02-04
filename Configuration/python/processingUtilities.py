@@ -252,15 +252,14 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
     ############################################################################
 
     ############################################################################
-    # Change the process name to be unique, to avoid DuplicateProcess error
-    # in the case of running over skims.
-    # To ensure a unique process name, use a date/time stamp.
+    # Change the process name, by adding the name of the first channel,
+    # to avoid DuplicateProcess error in the case of running over skims.
     ############################################################################
     if not hasattr (add_channels, "processNameUpdated"):
         add_channels.processNameUpdated = True
-        now = datetime.datetime.now()
-        date_hash = now.strftime("%YY%mM%dD%Hh%Mm%Ss")  # Non-alpha-numeric characters are not allowed in the process name.
-        process.setName_ (process.name_ () + date_hash)
+        channelName = str(channels[0].name.pythonValue())
+        channelName = channelName.replace("'", "").replace("_", "") # Non-alpha-numeric characters are not allowed in the process name.
+        process.setName_ (process.name_ () + channelName) 
     ############################################################################
 
 
@@ -269,7 +268,7 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         channelCollections = copy.deepcopy (collections)
 
         channelName = channel.name.pythonValue ()
-        channelName = channelName[1:-1]
+        channelName = channelName[1:-1]  # Remove quotation marks
 
         ########################################################################
         # Check to see if this channel has already been added. 
