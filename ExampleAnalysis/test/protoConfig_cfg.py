@@ -27,6 +27,7 @@ set_input(process, "/store/user/ahart/BN_stopToBottom_M_800_10mm_Tune4C_8TeV_pyt
 
 # sample dataset nickname
 #set_input(process, "DYToTauTau_20")
+#set_input(process, "DYToMuMu_20")
 
 # output histogram file name when running interactively
 process.TFileService = cms.Service ('TFileService',
@@ -68,7 +69,7 @@ collections = cms.PSet (
 ################################################################################
 
 variableProducers = []
-variableProducers.append("MyEventVariableProducer")
+variableProducers.append("MyVariableProducer")
 
 ################################################################################
 ##### Import the channels to be run ############################################
