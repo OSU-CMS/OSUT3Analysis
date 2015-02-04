@@ -109,13 +109,13 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "triggers")        &&  collections.exists  ("triggers"))        getCollection  (collections.getParameter<edm::InputTag>  ("triggers"),        handles.triggers,        event);
   if  (VEC_CONTAINS  (objectsToGet,  "trigobjs")        &&  collections.exists  ("trigobjs"))        getCollection  (collections.getParameter<edm::InputTag>  ("trigobjs"),        handles.trigobjs,        event);
 
-  if  (VEC_CONTAINS  (objectsToGet,  "eventVariables")  &&  collections.exists  ("eventVariables"))
+  if  (VEC_CONTAINS  (objectsToGet,  "userVariables")   &&  collections.exists  ("userVariables"))
     {
-      handles.eventVariables.clear ();
-      for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("eventVariables"))
+      handles.userVariables.clear ();
+      for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("userVariables"))
         {
-          handles.eventVariables.resize (handles.eventVariables.size () + 1);
-          getCollection (collection, handles.eventVariables.back (), event);
+          handles.userVariables.resize (handles.userVariables.size () + 1);
+          getCollection (collection, handles.userVariables.back (), event);
         }
     }
 
@@ -155,4 +155,28 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   //////////////////////////////////////////////////////////////////////////////
 
   firstEvent = false;
+}
+
+
+template<> int anatools::objectHash<BNevent> (const BNevent& object){
+  int run, lumi, evt;
+  run = abs(int(object.run));
+  lumi = abs(int(object.lumi));
+  evt = abs(int(object.evt));
+  return run + lumi + evt;
+}
+
+template<> int anatools::objectHash<BNmet> (const BNmet& object){
+  int px_mev, py_mev;
+  px_mev = fabs(int(1000 * object.px));
+  py_mev = fabs(int(1000 * object.py));
+  return px_mev + py_mev;
+}
+
+template<> int anatools::objectHash<BNprimaryvertex> (const BNprimaryvertex& object){
+  int x_mum, y_mum, z_mum;
+  x_mum = abs(int(10000 * object.x));
+  y_mum = abs(int(10000 * object.y));
+  z_mum = abs(int(10000 * object.z));
+  return x_mum + y_mum + z_mum;
 }
