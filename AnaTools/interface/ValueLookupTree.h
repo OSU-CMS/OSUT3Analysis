@@ -104,7 +104,7 @@ class ValueLookupTree
     ////////////////////////////////////////////////////////////////////////////
 
     // Mainly for debugging:
-    string printNode(Node* node) const;  
+    string printNode(Node* node) const;
 
     // Returns the result of an operator acting on its operands.
     Leaf evaluateOperator (const string &, const vector<Leaf> &, const ObjMap &);
@@ -161,9 +161,6 @@ class ValueLookupTree
     ////////////////////////////////////////////////////////////////////////////
     // Methods for retrieving values from objects.
     ////////////////////////////////////////////////////////////////////////////
-    double getMember (const string &, void * const, const string &) const;
-    template<class T> T invoke (const string &returnType, Reflex::Object * const o, const string &member) const;
-    void addDeclaringScope (const Reflex::Scope &scope, string &baseName) const;
     double valueLookup (const string &, const ObjMap &, const string &, const bool = true);
     ////////////////////////////////////////////////////////////////////////////
 

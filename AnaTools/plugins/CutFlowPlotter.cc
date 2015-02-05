@@ -3,7 +3,7 @@
 
 #include "OSUT3Analysis/AnaTools/plugins/CutFlowPlotter.h"
 
-#include "TString.h"  
+#include "TString.h"
 
 #define EXIT_CODE 4
 
@@ -28,8 +28,8 @@ CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
 CutFlowPlotter::~CutFlowPlotter ()
 {
 
-  TString channel = TString(module_label_).ReplaceAll(module_type_, "");  
-  // module_label_ = channel + module_type_  (module_type_ = "CutFlowPlotter")  
+  TString channel = TString(module_label_).ReplaceAll(module_type_, "");
+  // module_label_ = channel + module_type_  (module_type_ = "CutFlowPlotter")
 
   TH1D* cutFlow_   = oneDHists_["cutFlow"];
   TH1D* selection_ = oneDHists_["selection"];
@@ -48,21 +48,21 @@ CutFlowPlotter::~CutFlowPlotter ()
     if (cutName.size() > longestCutName) longestCutName = cutName.size();
   }
   longestCutName += 2;
-  clog << channel << " channel:  " << endl;  
+  clog << channel << " channel:  " << endl;
   clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
-  clog << setw (longestCutName) << left << "Cut Name" << right 
-       << setw (10) << setprecision(1) << "Events" 
-       << setw (16) << "Cumul. Eff." 
-       << setw (16) << "Indiv. Eff." 
-    //       << setw (16) << "Minus One" // FIXME:  Minus one efficiencies are not correctly calculated.  
+  clog << setw (longestCutName) << left << "Cut Name" << right
+       << setw (10) << setprecision(1) << "Events"
+       << setw (16) << "Cumul. Eff."
+       << setw (16) << "Indiv. Eff."
+    //       << setw (16) << "Minus One" // FIXME:  Minus one efficiencies are not correctly calculated.
        << endl;
   clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
   totalEvents = cutFlow_->GetBinContent (1);
   for (int i = 1; i <= cutFlow_->GetNbinsX(); i++) {
     double cutFlow   =   cutFlow_->GetBinContent (i);
     double selection = selection_->GetBinContent (i);
-    double minusOne  =  minusOne_->GetBinContent (i);  
-    minusOne *= 1.0; // Dummy statement to avoid compilation error for unused variable.  
+    double minusOne  =  minusOne_->GetBinContent (i);
+    minusOne *= 1.0; // Dummy statement to avoid compilation error for unused variable.
     TString name = cutFlow_->GetXaxis()->GetBinLabel(i);
     clog << setw (longestCutName) << left << name << right << setw (10) << setprecision(1) << cutFlow
          << setw (15) << setprecision(3) << 100.0 * (cutFlow   / (double) totalEvents) << "%"

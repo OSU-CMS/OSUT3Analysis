@@ -22,7 +22,7 @@
   #define  taus_TYPE            BNtau
   #define  tracks_TYPE          BNtrack
   #define  trigobjs_TYPE        BNtrigobj
-  #define  eventVariables_TYPE  EventVariableProducerPayload
+  #define  userVariables_TYPE   VariableProducerPayload
 
   #define  triggers_TYPE        BNtriggerCollection
 
@@ -57,7 +57,7 @@
   #define  taus_TYPE            pat::Tau
   #define  tracks_TYPE          INVALID_TYPE
   #define  trigobjs_TYPE        pat::TriggerObjectStandAlone
-  #define  eventVariables_TYPE  EventVariableProducerPayload
+  #define  userVariables_TYPE   VariableProducerPayload
 
   #define  bxlumis_INVALID
   #define  events_INVALID
@@ -88,7 +88,7 @@
 #define EQ_VALID(s,x) (string (XSTR(x##_TYPE)) != XSTR(INVALID_TYPE) && string (s) == XSTR(x))
 
 #define TYPE(x) x##_TYPE
-#define STR_TYPE(x) XSTR(x##_TYPE)
+#define TYPE_STR(x) XSTR(x##_TYPE)
 
 using namespace std;
 

@@ -17,6 +17,6 @@
 <use  name="root"/>
 <use  name="rootrflx"/>
 <flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
-<library  file="MyEventVariableProducer.cc"  name="OSUAnalysisExampleAnalysisPlugins">
+<library  file="MyVariableProducer.cc"  name="OSUAnalysisExampleAnalysisPlugins">
   <flags  EDM_PLUGIN="1"/>
 </library>

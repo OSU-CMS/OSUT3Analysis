@@ -56,15 +56,15 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
       // parse the definition to get the relevant info
       HistoDef histoDefinition = parseHistoDef(*histogram,inputCollection,catInputCollection,directoryName);
 
-      // check whether a histogram of the same name / directory already exists; if not, add to the master list  
-      bool alreadyExists = false; 
+      // check whether a histogram of the same name / directory already exists; if not, add to the master list
+      bool alreadyExists = false;
       for (vector<HistoDef>::iterator h = histogramDefinitions.begin(); h != histogramDefinitions.end(); ++h)
 	if (h->name      == histoDefinition.name &&
-	    h->directory == histoDefinition.directory) { alreadyExists = true; break; }  
+	    h->directory == histoDefinition.directory) { alreadyExists = true; break; }
       if (alreadyExists) cerr << "WARNING:  Found duplicate histogram in directory " << histoDefinition.directory
-			      << " with name " << histoDefinition.name 
-			      << "; will only keep the first instance." << endl;  
-      else histogramDefinitions.push_back(histoDefinition); 
+			      << " with name " << histoDefinition.name
+			      << "; will only keep the first instance." << endl;
+      else histogramDefinitions.push_back(histoDefinition);
 
     } // end loop on histograms in the set
 
@@ -166,12 +166,12 @@ void Plotter::bookHistogram(const HistoDef definition){
   bool hasValidBinsY = definition.binsY.size() >= 3 || (definition.binsY.size() == 1 &&
                                                         definition.binsY.at(0) == -1);
 
-  // Check that bins are sorted if variable binning has been specified.  
-  if (definition.hasVariableBinsX && !std::is_sorted(definition.binsX.begin(),definition.binsX.end())) hasValidBinsX = false;  
-  if (definition.hasVariableBinsY && !std::is_sorted(definition.binsY.begin(),definition.binsY.end())) hasValidBinsY = false;  
+  // Check that bins are sorted if variable binning has been specified.
+  if (definition.hasVariableBinsX && !std::is_sorted(definition.binsX.begin(),definition.binsX.end())) hasValidBinsX = false;
+  if (definition.hasVariableBinsY && !std::is_sorted(definition.binsY.begin(),definition.binsY.end())) hasValidBinsY = false;
 
   if(!hasValidBinsX || !hasValidBinsY){
-    cout << "ERROR - invalid histogram bins for histogram " << definition.name 
+    cout << "ERROR - invalid histogram bins for histogram " << definition.name
 	 << " in directory " << definition.directory <<  endl;
     return;
   }

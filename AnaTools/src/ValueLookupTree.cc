@@ -1,11 +1,6 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Reflex/Base.h"
-#include "Reflex/Member.h"
-#include "Reflex/Object.h"
-#include "Reflex/Type.h"
-
 #include "DataFormats/Math/interface/deltaR.h"
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
@@ -212,12 +207,12 @@ ValueLookupTree::getCollectionSize (const string &name) const
 {
 
   if (!collectionIsFound(name)) {
-    clog << "ERROR [ValueLookupTree::getCollectionSize]:  Could not find collection named " << name 
-	 << " for expression: " << printNode(root_) << endl 
-	 << "List of input collections: " << endl;  
-    for (uint i=0; i<inputCollections_.size(); i++) clog << "  " << inputCollections_.at(i) << endl;  
+    clog << "ERROR [ValueLookupTree::getCollectionSize]:  Could not find collection named " << name
+         << " for expression: " << printNode(root_) << endl
+         << "List of input collections: " << endl;
+    for (uint i=0; i<inputCollections_.size(); i++) clog << "  " << inputCollections_.at(i) << endl;
     clog << "Please modify your configuration file.  Exiting..." << endl << endl << endl;
-    exit(0);  
+    exit(0);
   }
 
   if (EQ_VALID(name,bxlumis))
@@ -248,7 +243,7 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->tracks->size ();
   else if (EQ_VALID(name,trigobjs))
     return handles_->trigobjs->size ();
-  else if (EQ_VALID(name,eventVariables))
+  else if (EQ_VALID(name,userVariables))
     return 1;
   return 0;
 }
@@ -256,22 +251,22 @@ ValueLookupTree::getCollectionSize (const string &name) const
 bool
   ValueLookupTree::collectionIsFound (const string &name) const
 {
-  bool isFound = false;  
-  if      (EQ_VALID(name,bxlumis))         isFound = handles_->bxlumis.isValid(); 
-  else if (EQ_VALID(name,electrons))       isFound = handles_->electrons.isValid(); 
-  else if (EQ_VALID(name,events))          isFound = handles_->events.isValid(); 
-  else if (EQ_VALID(name,genjets))         isFound = handles_->genjets.isValid(); 
-  else if (EQ_VALID(name,jets))            isFound = handles_->jets.isValid(); 
-  else if (EQ_VALID(name,mcparticles))     isFound = handles_->mcparticles.isValid(); 
-  else if (EQ_VALID(name,mets))            isFound = handles_->mets.isValid(); 
-  else if (EQ_VALID(name,muons))           isFound = handles_->muons.isValid(); 
-  else if (EQ_VALID(name,photons))         isFound = handles_->photons.isValid(); 
-  else if (EQ_VALID(name,primaryvertexs))  isFound = handles_->primaryvertexs.isValid(); 
-  else if (EQ_VALID(name,superclusters))   isFound = handles_->superclusters.isValid(); 
-  else if (EQ_VALID(name,taus))            isFound = handles_->taus.isValid(); 
-  else if (EQ_VALID(name,tracks))          isFound = handles_->tracks.isValid(); 
-  else if (EQ_VALID(name,trigobjs))        isFound = handles_->trigobjs.isValid(); 
-  else if (EQ_VALID(name,eventVariables))  isFound = true; // This vector is always present, even if its size is 0.  
+  bool isFound = false;
+  if      (EQ_VALID(name,bxlumis))         isFound = handles_->bxlumis.isValid();
+  else if (EQ_VALID(name,electrons))       isFound = handles_->electrons.isValid();
+  else if (EQ_VALID(name,events))          isFound = handles_->events.isValid();
+  else if (EQ_VALID(name,genjets))         isFound = handles_->genjets.isValid();
+  else if (EQ_VALID(name,jets))            isFound = handles_->jets.isValid();
+  else if (EQ_VALID(name,mcparticles))     isFound = handles_->mcparticles.isValid();
+  else if (EQ_VALID(name,mets))            isFound = handles_->mets.isValid();
+  else if (EQ_VALID(name,muons))           isFound = handles_->muons.isValid();
+  else if (EQ_VALID(name,photons))         isFound = handles_->photons.isValid();
+  else if (EQ_VALID(name,primaryvertexs))  isFound = handles_->primaryvertexs.isValid();
+  else if (EQ_VALID(name,superclusters))   isFound = handles_->superclusters.isValid();
+  else if (EQ_VALID(name,taus))            isFound = handles_->taus.isValid();
+  else if (EQ_VALID(name,tracks))          isFound = handles_->tracks.isValid();
+  else if (EQ_VALID(name,trigobjs))        isFound = handles_->trigobjs.isValid();
+  else if (EQ_VALID(name,userVariables))  isFound = true; // This vector is always present, even if its size is 0.
   return isFound;
 
 }
@@ -394,14 +389,14 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
   return tree;
 }
 
-string 
+string
 ValueLookupTree::printNode (Node* tree) const
 {
-  string expression = "";  
-  if (!tree) return expression; 
+  string expression = "";
+  if (!tree) return expression;
   if (tree->branches.size ()) {
     for (const auto &branch : tree->branches)
-      expression += branch->value + " ";  
+      expression += branch->value + " ";
   } else {
     expression = tree->value;
   }
@@ -703,10 +698,10 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
       TYPE(trigobjs) *obj = new TYPE(trigobjs) (handles_->trigobjs->at (i));
       return obj;
     }
-  else if (EQ_VALID(name,eventVariables))
+  else if (EQ_VALID(name,userVariables))
     {
-      TYPE(eventVariables) *obj = new TYPE(eventVariables) ();
-      for (const auto &handle : handles_->eventVariables)
+      TYPE(userVariables) *obj = new TYPE(userVariables) ();
+      for (const auto &handle : handles_->userVariables)
         obj->insert (handle->begin (), handle->end ());
       return obj;
     }
@@ -744,43 +739,43 @@ ValueLookupTree::deleteObject (const string &name, void * const obj) const
     delete ((TYPE(tracks) *) obj);
   else if (EQ_VALID(name,trigobjs))
     delete ((TYPE(trigobjs) *) obj);
-  else if (EQ_VALID(name,eventVariables))
-    delete ((TYPE(eventVariables) *) obj);
+  else if (EQ_VALID(name,userVariables))
+    delete ((TYPE(userVariables) *) obj);
 }
 
 string
 ValueLookupTree::getCollectionType (const string &name) const
 {
   if (EQ_VALID(name,bxlumis))
-    return STR_TYPE(bxlumis);
+    return TYPE_STR(bxlumis);
   else if (EQ_VALID(name,electrons))
-    return STR_TYPE(electrons);
+    return TYPE_STR(electrons);
   else if (EQ_VALID(name,events))
-    return STR_TYPE(events);
+    return TYPE_STR(events);
   else if (EQ_VALID(name,genjets))
-    return STR_TYPE(genjets);
+    return TYPE_STR(genjets);
   else if (EQ_VALID(name,jets))
-    return STR_TYPE(jets);
+    return TYPE_STR(jets);
   else if (EQ_VALID(name,mcparticles))
-    return STR_TYPE(mcparticles);
+    return TYPE_STR(mcparticles);
   else if (EQ_VALID(name,mets))
-    return STR_TYPE(mets);
+    return TYPE_STR(mets);
   else if (EQ_VALID(name,muons))
-    return STR_TYPE(muons);
+    return TYPE_STR(muons);
   else if (EQ_VALID(name,photons))
-    return STR_TYPE(photons);
+    return TYPE_STR(photons);
   else if (EQ_VALID(name,primaryvertexs))
-    return STR_TYPE(primaryvertexs);
+    return TYPE_STR(primaryvertexs);
   else if (EQ_VALID(name,superclusters))
-    return STR_TYPE(superclusters);
+    return TYPE_STR(superclusters);
   else if (EQ_VALID(name,taus))
-    return STR_TYPE(taus);
+    return TYPE_STR(taus);
   else if (EQ_VALID(name,tracks))
-    return STR_TYPE(tracks);
+    return TYPE_STR(tracks);
   else if (EQ_VALID(name,trigobjs))
-    return STR_TYPE(trigobjs);
-  else if (EQ_VALID(name,eventVariables))
-    return STR_TYPE(eventVariables);
+    return TYPE_STR(trigobjs);
+  else if (EQ_VALID(name,userVariables))
+    return TYPE_STR(userVariables);
   return "";
 }
 
@@ -815,7 +810,7 @@ ValueLookupTree::isCollection (const string &name) const
     return true;
   else if (EQ_VALID(name,trigobjs))
     return true;
-  else if (EQ_VALID(name,eventVariables))
+  else if (EQ_VALID(name,userVariables))
     return true;
   return false;
 }
@@ -1072,104 +1067,6 @@ ValueLookupTree::insertParentheses (const string &s, Node * const tree) const
 }
 
 double
-ValueLookupTree::getMember (const string &type, void * const obj, const string &member) const
-{
-  double value = numeric_limits<int>::min ();
-  Reflex::Type t = Reflex::Type::ByName (type);
-  Reflex::Object *o = new Reflex::Object (t, obj);
-  string dataMemberType, functionMemberType;
-
-  dataMemberType = t.DataMemberByName (member).TypeOf ().Name ();
-  functionMemberType = t.FunctionMemberByName (member).TypeOf ().ReturnType ().Name ();
-  try
-    {
-      if (dataMemberType != "")
-        {
-          if (dataMemberType == "float")
-            value = Reflex::Object_Cast<float> (o->Get (member));
-          else if (dataMemberType == "double")
-            value = Reflex::Object_Cast<double> (o->Get (member));
-          else if (dataMemberType == "long double")
-            value = Reflex::Object_Cast<long double> (o->Get (member));
-          else if (dataMemberType == "char")
-            value = Reflex::Object_Cast<char> (o->Get (member));
-          else if (dataMemberType == "int")
-            value = Reflex::Object_Cast<int> (o->Get (member));
-          else if (dataMemberType == "unsigned")
-            value = Reflex::Object_Cast<unsigned> (o->Get (member));
-          else if (dataMemberType == "bool")
-            value = Reflex::Object_Cast<bool> (o->Get (member));
-          else
-            clog << "WARNING: \"" << member << "\" has unrecognized type \"" << dataMemberType << "\"" << endl;
-        }
-      else if (functionMemberType != "")
-        {
-          if (functionMemberType == "float")
-            value = invoke<float> (functionMemberType, o, member);
-          else if (functionMemberType == "double")
-            value = invoke<double> (functionMemberType, o, member);
-          else if (functionMemberType == "long double")
-            value = invoke<long double> (functionMemberType, o, member);
-          else if (functionMemberType == "char")
-            value = invoke<char> (functionMemberType, o, member);
-          else if (functionMemberType == "int")
-            value = invoke<int> (functionMemberType, o, member);
-          else if (functionMemberType == "unsigned")
-            value = invoke<unsigned> (functionMemberType, o, member);
-          else if (functionMemberType == "bool")
-            value = invoke<bool> (functionMemberType, o, member);
-          else
-            clog << "WARNING: \"" << member << "()\" has unrecognized return type \"" << functionMemberType << "\"" << endl;
-        }
-      else
-        throw 0;
-    }
-  catch (...)
-    {
-      bool found = false;
-      for (auto bi = t.Base_Begin (); bi != t.Base_End (); bi++)
-        {
-          string baseName = bi->Name ();
-          addDeclaringScope (bi->ToScope (), baseName);
-          try
-            {
-              value = getMember (baseName, obj, member);
-              found = true;
-              break;
-            }
-          catch (...)
-            {
-              continue;
-            }
-        }
-      if (!found)
-        throw;
-    }
-  delete o;
-
-  return value;
-}
-
-template<class T> T
-ValueLookupTree::invoke (const string &returnType, Reflex::Object * const o, const string &member) const
-{
-  T mem;
-  Reflex::Object *value = new Reflex::Object (Reflex::Type::ByName (returnType), &mem);
-  o->Invoke (member, value);
-  return Reflex::Object_Cast<T> (*value);
-}
-
-void
-ValueLookupTree::addDeclaringScope (const Reflex::Scope &scope, string &baseName) const
-{
-  if (!scope.IsTopScope ())
-    {
-      baseName = scope.DeclaringScope ().Name () + "::" + baseName;
-      addDeclaringScope (scope.DeclaringScope (), baseName);
-    }
-}
-
-double
 ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, const string &variable, const bool iterateObj)
 {
   if (!objIterators_.count (collection))
@@ -1184,9 +1081,10 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
 
   try
     {
-      if (collection == "eventVariables")
-        return (((EventVariableProducerPayload *) obj)->at (variable));
-      return getMember (getCollectionType (collection), obj, variable);
+      if (collection == "userVariables")
+        return 1; // FIXME
+        //        return (((VariableProducerPayload *) obj)->at (variable));
+      return anatools::getMember (getCollectionType (collection), obj, variable);
     }
   catch (...)
     {

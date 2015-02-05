@@ -1,3 +1,8 @@
+#include "Reflex/Base.h"
+#include "Reflex/Member.h"
+#include "Reflex/Object.h"
+#include "Reflex/Type.h"
+
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 vector<string>
@@ -109,19 +114,19 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "triggers")        &&  collections.exists  ("triggers"))        getCollection  (collections.getParameter<edm::InputTag>  ("triggers"),        handles.triggers,        event);
   if  (VEC_CONTAINS  (objectsToGet,  "trigobjs")        &&  collections.exists  ("trigobjs"))        getCollection  (collections.getParameter<edm::InputTag>  ("trigobjs"),        handles.trigobjs,        event);
 
-  if  (VEC_CONTAINS  (objectsToGet,  "eventVariables")  &&  collections.exists  ("eventVariables"))
+  if  (VEC_CONTAINS  (objectsToGet,  "userVariables")   &&  collections.exists  ("userVariables"))
     {
-      handles.eventVariables.clear ();
-      for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("eventVariables"))
+      handles.userVariables.clear ();
+      for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("userVariables"))
         {
-          handles.eventVariables.resize (handles.eventVariables.size () + 1);
-          getCollection (collection, handles.eventVariables.back (), event);
+          handles.userVariables.resize (handles.userVariables.size () + 1);
+          getCollection (collection, handles.userVariables.back (), event);
         }
     }
 
 
-  if (firstEvent) 
-    clog << "Will print any collections not retrieved.  These INFO messages may be safely ignored." << endl;  
+  if (firstEvent)
+    clog << "Will print any collections not retrieved.  These INFO messages may be safely ignored." << endl;
   if (firstEvent && !handles.bxlumis.isValid ())
     clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
   if (firstEvent && !handles.electrons.isValid ())
@@ -155,4 +160,127 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   //////////////////////////////////////////////////////////////////////////////
 
   firstEvent = false;
+}
+
+#if DATA_FORMAT == BEAN
+template<> int anatools::objectHash<BNevent> (const BNevent& object){
+  int run, lumi, evt;
+  run = abs(int(object.run));
+  lumi = abs(int(object.lumi));
+  evt = abs(int(object.evt));
+  return run + lumi + evt;
+}
+
+template<> int anatools::objectHash<BNmet> (const BNmet& object){
+  int px_mev, py_mev;
+  px_mev = fabs(int(1000 * object.px));
+  py_mev = fabs(int(1000 * object.py));
+  return px_mev + py_mev;
+}
+
+template<> int anatools::objectHash<BNprimaryvertex> (const BNprimaryvertex& object){
+  int x_mum, y_mum, z_mum;
+  x_mum = abs(int(10000 * object.x));
+  y_mum = abs(int(10000 * object.y));
+  z_mum = abs(int(10000 * object.z));
+  return x_mum + y_mum + z_mum;
+}
+#endif
+
+double
+anatools::getMember (const string &type, void * const obj, const string &member)
+{
+  double value = numeric_limits<int>::min ();
+  Reflex::Type t = Reflex::Type::ByName (type);
+  Reflex::Object *o = new Reflex::Object (t, obj);
+  string dataMemberType, functionMemberType;
+
+  dataMemberType = t.DataMemberByName (member).TypeOf ().Name ();
+  functionMemberType = t.FunctionMemberByName (member).TypeOf ().ReturnType ().Name ();
+  try
+    {
+      if (dataMemberType != "")
+        {
+          if (dataMemberType == "float")
+            value = Reflex::Object_Cast<float> (o->Get (member));
+          else if (dataMemberType == "double")
+            value = Reflex::Object_Cast<double> (o->Get (member));
+          else if (dataMemberType == "long double")
+            value = Reflex::Object_Cast<long double> (o->Get (member));
+          else if (dataMemberType == "char")
+            value = Reflex::Object_Cast<char> (o->Get (member));
+          else if (dataMemberType == "int")
+            value = Reflex::Object_Cast<int> (o->Get (member));
+          else if (dataMemberType == "unsigned")
+            value = Reflex::Object_Cast<unsigned> (o->Get (member));
+          else if (dataMemberType == "bool")
+            value = Reflex::Object_Cast<bool> (o->Get (member));
+          else
+            clog << "WARNING: \"" << member << "\" has unrecognized type \"" << dataMemberType << "\"" << endl;
+        }
+      else if (functionMemberType != "")
+        {
+          if (functionMemberType == "float")
+            value = invoke<float> (functionMemberType, o, member);
+          else if (functionMemberType == "double")
+            value = invoke<double> (functionMemberType, o, member);
+          else if (functionMemberType == "long double")
+            value = invoke<long double> (functionMemberType, o, member);
+          else if (functionMemberType == "char")
+            value = invoke<char> (functionMemberType, o, member);
+          else if (functionMemberType == "int")
+            value = invoke<int> (functionMemberType, o, member);
+          else if (functionMemberType == "unsigned")
+            value = invoke<unsigned> (functionMemberType, o, member);
+          else if (functionMemberType == "bool")
+            value = invoke<bool> (functionMemberType, o, member);
+          else
+            clog << "WARNING: \"" << member << "()\" has unrecognized return type \"" << functionMemberType << "\"" << endl;
+        }
+      else
+        throw 0;
+    }
+  catch (...)
+    {
+      bool found = false;
+      for (auto bi = t.Base_Begin (); bi != t.Base_End (); bi++)
+        {
+          string baseName = bi->Name ();
+          addDeclaringScope (bi->ToScope (), baseName);
+          try
+            {
+              value = getMember (baseName, obj, member);
+              found = true;
+              break;
+            }
+          catch (...)
+            {
+              continue;
+            }
+        }
+      if (!found)
+        throw;
+    }
+  delete o;
+
+  return value;
+}
+
+template<class T> T
+anatools::invoke (const string &returnType, Reflex::Object * const o, const string &member)
+{
+  T mem;
+  Reflex::Object *value = new Reflex::Object (Reflex::Type::ByName (returnType), &mem);
+  o->Invoke (member, value);
+  return Reflex::Object_Cast<T> (*value);
+}
+
+void
+anatools::addDeclaringScope (const Reflex::Scope &scope, string &baseName)
+{
+  if (!scope.IsTopScope ())
+    {
+      baseName = scope.DeclaringScope ().Name () + "::" + baseName;
+      addDeclaringScope (scope.DeclaringScope (), baseName);
+    }
 }

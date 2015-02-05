@@ -24,6 +24,15 @@ namespace anatools
 {
   template <class InputCollection> bool getCollection (const edm::InputTag &, edm::Handle<InputCollection> &, const edm::Event &);
 
+  // Return a (hopefully) unique hashed integer for an object
+  template <class InputObject> int objectHash (const InputObject&);
+#if DATA_FORMAT == BEAN
+  // Treat special cases of objects without a 3-momentum
+  template<> int objectHash<BNevent> (const BNevent&);
+  template<> int objectHash<BNmet> (const BNmet&);
+  template<> int objectHash<BNprimaryvertex> (const BNprimaryvertex&);
+#endif
+
   // Extracts the constituent collections from a composite collection name.
   vector<string> getSingleObjects (string);
 
@@ -58,6 +67,10 @@ namespace anatools
   // Retrieves all the collections from the event which are needed based on the
   // first argument.
   void getRequiredCollections (const unordered_set<string> &, const edm::ParameterSet &, Collections &, const edm::Event &);
+
+  double getMember (const string &type, void * const obj, const string &member);
+  template<class T> T invoke (const string &returnType, Reflex::Object * const o, const string &member);
+  void addDeclaringScope (const Reflex::Scope &scope, string &baseName);
 };
 
 template <class InputCollection> bool anatools::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
@@ -84,6 +97,18 @@ template <class InputCollection> bool anatools::getCollection(const edm::InputTa
     }
   }
   return true;
+}
+
+// generic function to calculate a hash value of any input object
+// hash is based on the 3-vector where available.
+// if not, the 3-position is used.
+// some special cases exist as well.
+template <class InputObject> int anatools::objectHash(const InputObject& object){
+    int px_mev, py_mev, pz_mev;
+    px_mev = fabs(int(1000 * object.px));
+    py_mev = fabs(int(1000 * object.py));
+    pz_mev = fabs(int(1000 * object.pz));
+    return px_mev + py_mev + pz_mev;
 }
 
 #endif
