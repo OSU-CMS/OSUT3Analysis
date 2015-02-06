@@ -334,14 +334,15 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         outputCommands.append("keep *_*_userVariables_*")
         for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "userVariables"]:
             collectionTag = getattr (collections, collection)
-            outputCommand = "keep BN"
-            outputCommand += collection
-            outputCommand += "_"
+            outputCommand = "keep *_"
             outputCommand += collectionTag.getModuleLabel ()
             outputCommand += "_"
             outputCommand += collectionTag.getProductInstanceLabel ()
             outputCommand += "_"
-            outputCommand += "BEANs"
+            if collectionTag.getProcessName ():
+                outputCommand += collectionTag.getProcessName ()
+            else:
+                outputCommand += "*"
             outputCommands.append (outputCommand)
         ########################################################################
 
@@ -362,8 +363,13 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
             setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
             originalInputTag = getattr (collections, collection)
             setattr (channelCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
-            outputCommands.append ("drop BN" + collection + "_*_*_*")
-            outputCommands.append ("keep BN" + collection + "_objectSelector" + str (add_channels.filterIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
+            dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
+            if originalInputTag.getProcessName ():
+                dropCommand += originalInputTag.getProcessName ()
+            else:
+                dropCommand += "*"
+            outputCommands.append (dropCommand)
+            outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
             add_channels.filterIndex += 1
         ########################################################################
 

@@ -71,7 +71,7 @@ namespace anatools
   double getMember (const string &type, void * const obj, const string &member);
   template<class T> T invoke (const string &returnType, Reflex::Object * const o, const string &member);
   void addDeclaringScope (const Reflex::Scope &scope, string &baseName);
-};
+}
 
 template <class InputCollection> bool anatools::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
   // Get a collection with the specified type, and match the product instance name.

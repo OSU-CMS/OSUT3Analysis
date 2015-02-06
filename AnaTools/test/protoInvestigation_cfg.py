@@ -21,7 +21,7 @@ for file in os.listdir(dir):
         continue
     process.source.fileNames.extend(cms.untracked.vstring('file:' + dir + file))
 
-# configure output file 
+# configure output file
 process.TFileService = cms.Service ('TFileService',
     fileName = cms.string ('hist.root')
 )
@@ -36,7 +36,7 @@ process.maxEvents = cms.untracked.PSet (
 ####################### Set up the individual analyzers ########################
 ################################################################################
 
-# import the list of standard input collections 
+# import the list of standard input collections
 #from OSUT3Analysis.AnaTools.osuAnalysis_cfi import collectionMap  # miniAOD
 from OSUT3Analysis.AnaTools.osuAnalysis_cfi import collectionMapBEANs # BEANs
 
@@ -48,7 +48,7 @@ cuts = cms.PSet(
     cms.PSet (
     inputCollection = cms.string("muons"),
     cutString = cms.string("pt > -1"),
-    numberRequired = cms.string("== 2")  # require exactly 2 muons 
+    numberRequired = cms.string("== 2")  # require exactly 2 muons
     ),
 )
 )
@@ -73,16 +73,16 @@ process.CutCalculator = cms.EDProducer ('CutCalculator',
                                         cuts = cuts,
                                         )
 process.MuonObjectSelector = cms.EDFilter ('MuonObjectSelector',
-                                           collections = collectionMapBEANs,   
+                                           collections = collectionMapBEANs,
                                            collectionToFilter = cms.string ('muons'),
                                            cutDecisions = cms.InputTag ('CutCalculator', 'cutDecisions'),
                                            )
 
-collectionMapBEANsSelected = copy.deepcopy(collectionMapBEANs)  
-collectionMapBEANsSelected.muons = cms.InputTag ('MuonObjectSelector', 'selectedObjects') 
+collectionMapBEANsSelected = copy.deepcopy(collectionMapBEANs)
+collectionMapBEANsSelected.muons = cms.InputTag ('MuonObjectSelector', 'selectedObjects')
 
 # create module to define an event-wide variable
-# e.g. deltaPhi between Met and dimuon system 
+# e.g. deltaPhi between Met and dimuon system
 process.UserVariableProduction = cms.EDProducer ('VariableProducer',
                                                  inputsMap = collectionMapBEANsSelected,
                                                  )
@@ -91,7 +91,7 @@ process.UserVariableProduction = cms.EDProducer ('VariableProducer',
 process.Plotting = cms.EDAnalyzer ('Plotter',
                                    jets = cms.InputTag ('BNproducer', 'selectedPatJetsPFlow'),
 #                                   muons    = cms.InputTag ('BNproducer', 'selectedPatMuonsLoosePFlow'),
-                                   muons    = cms.InputTag ('MuonObjectSelector', 'selectedObjects'),  
+                                   muons    = cms.InputTag ('MuonObjectSelector', 'selectedObjects'),
                                    electrons = cms.InputTag ('BNproducer', 'selectedPatElectronsLoosePFlow'),
                                    taus = cms.InputTag ('BNproducer', 'selectedPatTaus'),
                                    mets = cms.InputTag ('BNproducer', 'patMETsPFlow'),
@@ -101,7 +101,7 @@ process.Plotting = cms.EDAnalyzer ('Plotter',
                                    photons = cms.InputTag ('BNproducer', 'none'),
                                    triggers = cms.InputTag('BNproducer','HLT'),
                                    histogramSets = cms.VPSet (),
-                                   verbose = cms.int32(0),                                   
+                                   verbose = cms.int32(0),
                                    )
 
 
@@ -129,7 +129,7 @@ process.Plotting.histogramSets.append(MyProtoHistograms)
 ################################################################################
 process.myPath = cms.Path (process.CutCalculator + process.MuonObjectSelector + process.UserVariableProduction + process.Plotting )
 
-# Include this to write out a skim:  
+# Include this to write out a skim:
 process.myEndPath0 = cms.EndPath(process.out0)
 
 

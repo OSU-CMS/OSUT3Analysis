@@ -62,32 +62,32 @@ class ElectronSFWeight
   };
 
 
-class TriggerMetSFWeight 
+class TriggerMetSFWeight
 // Class for assigning a scale factor according to the trigger efficiency as a function of Met
   {
     public:
-      TriggerMetSFWeight (const string &sfFile, const string &dataOverMC); 
+      TriggerMetSFWeight (const string &sfFile, const string &dataOverMC);
       ~TriggerMetSFWeight ();
       double at (const double &Met, const int &shiftUpDown = 0);
 
     private:
-      TH1F *triggerMetSFWeight_; 
+      TH1F *triggerMetSFWeight_;
   };
 
-class TrackNMissOutSFWeight 
+class TrackNMissOutSFWeight
 // Class for assigning a scale factor according to the number of missing out her hits for the selected track
   {
     public:
-      TrackNMissOutSFWeight (const string &sfFile, const string &dataOverMC); 
+      TrackNMissOutSFWeight (const string &sfFile, const string &dataOverMC);
       ~TrackNMissOutSFWeight ();
       double at (const double &NMissOut, const int &shiftUpDown = 0);
 
     private:
-      TH1F *trackNMissOutSFWeight_; 
+      TH1F *trackNMissOutSFWeight_;
   };
 
 class EcaloVarySFWeight
-// Class for assigning a scale factor according to the number of missing out her hits for the selected track        
+// Class for assigning a scale factor according to the number of missing out her hits for the selected track
 {
  public:
   EcaloVarySFWeight (const string &sfFile, const string &dataOverMC);
@@ -100,67 +100,67 @@ class EcaloVarySFWeight
 
 
 
-class IsrVarySFWeight 
-// Class for assigning a scale factor according to the pT of ISR, which is taken to be equivalent to the sum(pT) of all status 3 Susy particles  
+class IsrVarySFWeight
+// Class for assigning a scale factor according to the pT of ISR, which is taken to be equivalent to the sum(pT) of all status 3 Susy particles
   {
-    public:  
-      IsrVarySFWeight (const string &sfFile, const string &dataOverMC);  
-      ~IsrVarySFWeight ();  
-      double at (const double &ptSusy, const int &shiftUpDown = 0);  
+    public:
+      IsrVarySFWeight (const string &sfFile, const string &dataOverMC);
+      ~IsrVarySFWeight ();
+      double at (const double &ptSusy, const int &shiftUpDown = 0);
 
     private:
-      TH1F *isrVarySFWeight_; 
+      TH1F *isrVarySFWeight_;
   };
 
-class MuonCutWeight 
+class MuonCutWeight
 // Class for assigning a scale factor at gen level according to the efficiency to ...
   {
     public:
-      MuonCutWeight (const string &sfFile, const string &dataOverMC); 
+      MuonCutWeight (const string &sfFile, const string &dataOverMC);
       ~MuonCutWeight ();
       double at (const double &pt);
 
     private:
-      TH1F *muonCutWeight_; 
+      TH1F *muonCutWeight_;
   };
 
 
-class ElectronCutWeight 
+class ElectronCutWeight
 // Class for assigning a scale factor at gen level according to the efficiency to ...
   {
     public:
-      ElectronCutWeight (const string &sfFile, const string &dataOverMC); 
+      ElectronCutWeight (const string &sfFile, const string &dataOverMC);
       ~ElectronCutWeight ();
       double at (const double &d0);
 
     private:
-      TH1F *electronCutWeight_; 
+      TH1F *electronCutWeight_;
   };
 
 
-class RecoElectronWeight 
+class RecoElectronWeight
 // Class for assigning a scale factor at gen level according to the efficiency to ...
   {
     public:
-      RecoElectronWeight (const string &sfFile, const string &dataOverMC); 
+      RecoElectronWeight (const string &sfFile, const string &dataOverMC);
       ~RecoElectronWeight ();
       double at (const double &d0);
 
     private:
-      TH1F *recoElectronWeight_; 
+      TH1F *recoElectronWeight_;
   };
 
 
-class RecoMuonWeight 
+class RecoMuonWeight
 // Class for assigning a scale factor at gen level according to the efficiency to ...
   {
     public:
-      RecoMuonWeight (const string &sfFile, const string &dataOverMC); 
+      RecoMuonWeight (const string &sfFile, const string &dataOverMC);
       ~RecoMuonWeight ();
       double at (const double &d0);
 
     private:
-      TH1F *recoMuonWeight_; 
+      TH1F *recoMuonWeight_;
   };
 
 

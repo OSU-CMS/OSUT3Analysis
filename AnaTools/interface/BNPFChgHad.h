@@ -3,8 +3,8 @@
 
 #include <vector>
 
-// This class has been copied from BNtrack.h.  
-// Not all member values may be available for BNPFChgHad.  
+// This class has been copied from BNtrack.h.
+// Not all member values may be available for BNPFChgHad.
 
 // a simple class
 struct BNPFChgHad
@@ -14,11 +14,11 @@ BNPFChgHad():pt(-99),px(-99),py(-99),pz(-99),phi(-99),eta(-99),theta(-99),normCh
   double pt,px,py,pz,phi,eta,theta,normChi2,dZ,d0,d0err,vx,vy,vz;
   int    charge,numValidHits,isHighPurity;
 
-  double caloEMDeltaRp3;  
-  double caloHadDeltaRp3;  
-  double caloEMDeltaRp5;  
-  double caloHadDeltaRp5;  
-  
+  double caloEMDeltaRp3;
+  double caloHadDeltaRp3;
+  double caloEMDeltaRp5;
+  double caloHadDeltaRp5;
+
   double energy;
   double ecalEnergy;
   double rawEcalEnergy;
@@ -34,7 +34,7 @@ BNPFChgHad():pt(-99),px(-99),py(-99),pz(-99),phi(-99),eta(-99),theta(-99),normCh
 
 };
 
-// this is our new product, it is simply a 
+// this is our new product, it is simply a
 // collection of BNPFChgHad held in an std::vector
 typedef std::vector<BNPFChgHad> BNPFChgHadCollection;
 

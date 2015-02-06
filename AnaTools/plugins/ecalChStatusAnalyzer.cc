@@ -2,14 +2,14 @@
 //
 // Package:    ecalChStatusAnalyzer
 // Class:      ecalChStatusAnalyzer
-// 
+//
 /**\class ecalChStatusAnalyzer ecalChStatusAnalyzer.cc Demo/ecalChStatusAnalyzer/src/ecalChStatusAnalyzer.cc
 
 Description: Creates a text file with eta, phi coordinates of all dead channels in the Ecal (DeadEcalChannels.txt); Makes plots of dead Ecal channels in the barrel and in the e\
-ndcap (deadEcalMap.root)                                                                                                                                                          
-                                                                                                                                                                                  
- Implementation:                                                                                                                                                                  
- cmsRun ecalChStatusAnalyzer_cfg.py  
+ndcap (deadEcalMap.root)
+
+ Implementation:
+ cmsRun ecalChStatusAnalyzer_cfg.py
 
 */
 //
@@ -47,7 +47,7 @@ ndcap (deadEcalMap.root)
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 
-//needed for identifying the dead channels in the Ecal                                                                                                                             
+//needed for identifying the dead channels in the Ecal
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "CondFormats/DataRecord/interface/EcalChannelStatusRcd.h"
 #include "CondFormats/EcalObjects/interface/EcalChannelStatus.h"
@@ -84,11 +84,11 @@ class ecalChStatusAnalyzer : public edm::EDAnalyzer {
 
   void getChannelStatusMaps();
   double writeDeadEcalChannels();
-  
-  // ----------member data ---------------------------                                                                                                                             
+
+  // ----------member data ---------------------------
   edm::Service<TFileService> fs;
 
-  //needed for identifying the dead channels in the Ecal                                                                                                                           
+  //needed for identifying the dead channels in the Ecal
   edm::ESHandle<EcalChannelStatus>  chanstat_;
   edm::ESHandle<CaloGeometry>       geometry_;
   edm::ESHandle<EcalTrigTowerConstituentsMap> ttMap_;
@@ -99,9 +99,9 @@ class ecalChStatusAnalyzer : public edm::EDAnalyzer {
 
   const int maskedEcalChannelStatusThreshold_;
 
-  //                                                                                                                                                                               
-  //declare histograms                                                                                                                                                             
-  //                                                                                                                                                                               
+  //
+  //declare histograms
+  //
   TH2D* deadBarrelEtaVsPhi;
   TH2D* deadEndcapEtaVsPhi;
   TH2D* deadEcalEtaVsPhi;
@@ -127,7 +127,7 @@ ecalChStatusAnalyzer::ecalChStatusAnalyzer(const edm::ParameterSet& iConfig)
 
 ecalChStatusAnalyzer::~ecalChStatusAnalyzer()
 {
- 
+
    // do anything here that needs to be done at desctruction time
    // (e.g. close files, deallocate resources etc.)
 
@@ -156,7 +156,7 @@ ecalChStatusAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
    Handle<ExampleData> pIn;
    iEvent.getByLabel("example",pIn);
 #endif
-   
+
 #ifdef THIS_IS_AN_EVENTSETUP_EXAMPLE
    ESHandle<SetupData> pSetup;
    iSetup.get<SetupRecord>().get(pSetup);
@@ -166,19 +166,19 @@ ecalChStatusAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
 
 
 void ecalChStatusAnalyzer::getChannelStatusMaps(){
-  //written using code from the function getChannelStatusMaps() in http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/RecoMET/METFilters/plugins/EcalDeadCellDeltaRFilter.cc?revision=1.2&view=markup                                                                                                                                                                  
+  //written using code from the function getChannelStatusMaps() in http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/RecoMET/METFilters/plugins/EcalDeadCellDeltaRFilter.cc?revision=1.2&view=markup
   gStyle->SetOptStat(0000000);
   EcalAllDeadChannelsValMap_.clear();
   EcalAllDeadChannelsBitMap_.clear();
   // double deltaRLowestBarrel = 99.;
   // double deltaRLowestEndcap = 99.;
-  //looping over the barrel                                                                                                                                                         
+  //looping over the barrel
   for( int ieta=-85; ieta<=85; ieta++ ){
    for( int iphi=0; iphi<=360; iphi++ ){
      if(! EBDetId::validDetId( ieta, iphi ) )  continue;
      const EBDetId detid = EBDetId( ieta, iphi, EBDetId::ETAPHIMODE );
      EcalChannelStatus::const_iterator chit = chanstat_->find( detid );
-     // refer https://twiki.cern.ch/twiki/bin/viewauth/CMS/EcalChannelStatus                                                                                                       
+     // refer https://twiki.cern.ch/twiki/bin/viewauth/CMS/EcalChannelStatus
 
      int status = ( chit != chanstat_->end() ) ? chit->getStatusCode() & 0x1F : -1;
      const CaloSubdetectorGeometry*  subGeom = geometry_->getSubdetectorGeometry (detid);
@@ -187,7 +187,7 @@ void ecalChStatusAnalyzer::getChannelStatusMaps(){
      double phi = cellGeom->getPosition ().phi ();
 //      if(-0.68 > eta && -0.71 < eta && phi > -2.3 && phi < -2.0)
 //        std::cout << "Eta, pho coord in barrel: " << eta << ", " << phi << " with status " << status <<std::endl;
-     std::cout << ieta << " " << iphi << " " << "0" << " " << status <<  std::endl;  
+     std::cout << ieta << " " << iphi << " " << "0" << " " << status <<  std::endl;
 
      double theta = cellGeom->getPosition().theta();
      if(status >= maskedEcalChannelStatusThreshold_){
@@ -203,9 +203,9 @@ void ecalChStatusAnalyzer::getChannelStatusMaps(){
        EcalAllDeadChannelsBitMap_.insert( std::make_pair(detid, bitVec) );
      }
 
-   }//ieta                                                                                                                                                                         
- }//iphi                                                                                                                                                                           
- //looping over the endcap      
+   }//ieta
+ }//iphi
+ //looping over the endcap
  for( int ix=0; ix<=100; ix++ ){
    for( int iy=0; iy<=100; iy++ ){
      for( int iz=-1; iz<=1; iz++ ){
@@ -221,11 +221,11 @@ void ecalChStatusAnalyzer::getChannelStatusMaps(){
        double eta = cellGeom->getPosition ().eta () ;
        double phi = cellGeom->getPosition ().phi () ;
        double theta = cellGeom->getPosition().theta();
-       std::cout << ix << " " << iy << " " << iz << " " << status <<  std::endl; 
+       std::cout << ix << " " << iy << " " << iz << " " << status <<  std::endl;
 //        if(-0.68 > eta && -0.71 < eta && phi > -2.3 && phi < -2.0)
-// 	 std::cout << "Eta, pho coord in endcap: " << eta << ", " << phi << " with status " << status <<std::endl;
+//          std::cout << "Eta, pho coord in endcap: " << eta << ", " << phi << " with status " << status <<std::endl;
        if(status >= maskedEcalChannelStatusThreshold_){
-	 std::vector<double> valVec; std::vector<int> bitVec;
+         std::vector<double> valVec; std::vector<int> bitVec;
          valVec.push_back(eta); valVec.push_back(phi); valVec.push_back(theta);
          bitVec.push_back(2); bitVec.push_back(ix); bitVec.push_back(iy); bitVec.push_back(iz); bitVec.push_back(status);
          deadEndcapEtaVsPhi->Fill(eta, phi);
@@ -233,9 +233,9 @@ void ecalChStatusAnalyzer::getChannelStatusMaps(){
          EcalAllDeadChannelsValMap_.insert( std::make_pair(detid, valVec) );
          EcalAllDeadChannelsBitMap_.insert( std::make_pair(detid, bitVec) );
        }
-     } // end loop iz                                                                                                                                                              
-   } // end loop iy                                                                                                                                                                
- } // end loop ix                                                                                                                                                                  
+     } // end loop iz
+   } // end loop iy
+ } // end loop ix
 
  EcalAllDeadChannelsTTMap_.clear();
  std::map<DetId, std::vector<int> >::iterator bitItor;
@@ -264,20 +264,20 @@ double ecalChStatusAnalyzer::writeDeadEcalChannels() {
 }
 
 // ------------ method called once each job just before starting event loop  ------------
-void 
+void
 ecalChStatusAnalyzer::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
-void 
-ecalChStatusAnalyzer::endJob() 
+void
+ecalChStatusAnalyzer::endJob()
 {
 
   deadEcalEtaVsPhi = (TH2D*) deadEndcapEtaVsPhi->Clone("deadEcalEtaVsPhi");
   deadEcalEtaVsPhi ->SetTitle("Dead or Noisy ECAL Channels;#eta;#phi");
   deadEcalEtaVsPhi ->Add(deadBarrelEtaVsPhi);
-  
+
   deadEcalEtaVsPhi ->SetMarkerStyle(5);
   deadEcalEtaVsPhi ->SetMarkerSize(0.7);
   deadEcalEtaVsPhi ->SetMarkerColor(12);

@@ -13,12 +13,12 @@ TrackSFWeight::at(const double &correctedD0, const int &shiftUpDown)
       scaleFactor = 1;
       error = 0.0; // The prompt region is used by the whole collaboration and very well know and no correction from tracking SF are currently applied so we set the error to be 0
     }
-  else 
+  else
     {
       scaleFactor = 0.960;
       error = 0.012;
     }
-  return scaleFactor + shiftUpDown * error; 
+  return scaleFactor + shiftUpDown * error;
 }
 
 TrackSFWeight::~TrackSFWeight ()
@@ -38,9 +38,9 @@ MuonSFWeight::MuonSFWeight (const string &sfFile, const string &dataOverMC)
   delete fin;
  }
 
- 
+
 double
-MuonSFWeight::at(const double &eta, const double &pt, const int &shiftUpDown) 
+MuonSFWeight::at(const double &eta, const double &pt, const int &shiftUpDown)
 {
   double pt_hist= pt;
   double eta_hist= eta;
@@ -48,10 +48,10 @@ MuonSFWeight::at(const double &eta, const double &pt, const int &shiftUpDown)
   if (pt > 300 && abs(eta) < muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetLast()) )
     {
       pt_hist =( muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 1) + muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 2))/2;
-      if (pt > 300 && abs(eta) < 0.9) 
-	{
-	  pt_hist =( muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins()) + muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 1))/2;
-	}
+      if (pt > 300 && abs(eta) < 0.9)
+        {
+          pt_hist =( muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins()) + muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 1))/2;
+        }
     }
   else if (pt < 300 && abs(eta) > muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetLast()))
     {
@@ -62,8 +62,8 @@ MuonSFWeight::at(const double &eta, const double &pt, const int &shiftUpDown)
       pt_hist =( muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 1) + muonSFWeight_->GetYaxis()->GetBinUpEdge(muonSFWeight_->GetYaxis()->GetNbins() - 2))/2;
       eta_hist =(muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetLast()) + muonSFWeight_->GetXaxis()->GetBinUpEdge(muonSFWeight_->GetXaxis()->GetNbins() - 1))/2;
     }
-  
-  return muonSFWeight_->GetBinContent(muonSFWeight_->FindBin(abs(eta_hist),pt_hist)) + shiftUpDown * muonSFWeight_->GetBinError(muonSFWeight_->FindBin(abs(eta_hist),pt_hist)); 
+
+  return muonSFWeight_->GetBinContent(muonSFWeight_->FindBin(abs(eta_hist),pt_hist)) + shiftUpDown * muonSFWeight_->GetBinError(muonSFWeight_->FindBin(abs(eta_hist),pt_hist));
 }
 
 MuonSFWeight::~MuonSFWeight ()
@@ -371,7 +371,7 @@ TriggerMetSFWeight::at(const double &Met, const int &shiftUpDown)
 {
   int bin = triggerMetSFWeight_->FindBin(Met);
   return 1.0 + triggerMetSFWeight_->GetBinContent(bin) + shiftUpDown * triggerMetSFWeight_->GetBinError(bin);\
-  // Add 1.0 because the histogram bin content is (data-MC)/MC                                                      
+  // Add 1.0 because the histogram bin content is (data-MC)/MC
 }
 
 TriggerMetSFWeight::~TriggerMetSFWeight ()
@@ -383,7 +383,7 @@ TriggerMetSFWeight::TriggerMetSFWeight (const string &sfFile, const string &data
 {
   TFile *fin = TFile::Open (sfFile.c_str ());
   TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
-  if (!dataOverMCHist) cout << "Fatal Error [TriggerMetSFWeight::TriggerMetSFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  if (!dataOverMCHist) cout << "Fatal Error [TriggerMetSFWeight::TriggerMetSFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;
   triggerMetSFWeight_ = (TH1F*)  dataOverMCHist->Clone();
   triggerMetSFWeight_->GetEntries();// to avoid the crashing warning
   delete dataOverMCHist;
@@ -391,12 +391,12 @@ TriggerMetSFWeight::TriggerMetSFWeight (const string &sfFile, const string &data
   delete fin;
  }
 
- 
+
 double
-TrackNMissOutSFWeight::at(const double &NMissOut, const int &shiftUpDown) 
-{  
-  int bin = trackNMissOutSFWeight_->FindBin(NMissOut);  
-  return 1.0 + trackNMissOutSFWeight_->GetBinContent(bin) + shiftUpDown * trackNMissOutSFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
+TrackNMissOutSFWeight::at(const double &NMissOut, const int &shiftUpDown)
+{
+  int bin = trackNMissOutSFWeight_->FindBin(NMissOut);
+  return 1.0 + trackNMissOutSFWeight_->GetBinContent(bin) + shiftUpDown * trackNMissOutSFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC
 }
 
 TrackNMissOutSFWeight::~TrackNMissOutSFWeight ()
@@ -411,7 +411,7 @@ TrackNMissOutSFWeight::TrackNMissOutSFWeight (const string &sfFile, const string
 {
   TFile *fin = TFile::Open (sfFile.c_str ());
   TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
-  if (!dataOverMCHist) cout << "Fatal Error [TrackNMissOutSFWeight::TrackNMissOutSFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  if (!dataOverMCHist) cout << "Fatal Error [TrackNMissOutSFWeight::TrackNMissOutSFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;
   trackNMissOutSFWeight_ = (TH1F*)  dataOverMCHist->Clone();
   trackNMissOutSFWeight_->GetEntries();  // to avoid the crashing warning
   delete dataOverMCHist;
@@ -419,12 +419,12 @@ TrackNMissOutSFWeight::TrackNMissOutSFWeight (const string &sfFile, const string
   delete fin;
 }
 
- 
+
 double
-EcaloVarySFWeight::at(const double &EcaloVary, const int &shiftUpDown) 
-{  
-  int bin = EcaloVarySFWeight_->FindBin(EcaloVary);  
-  return 1.0 + EcaloVarySFWeight_->GetBinContent(bin) + shiftUpDown * EcaloVarySFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
+EcaloVarySFWeight::at(const double &EcaloVary, const int &shiftUpDown)
+{
+  int bin = EcaloVarySFWeight_->FindBin(EcaloVary);
+  return 1.0 + EcaloVarySFWeight_->GetBinContent(bin) + shiftUpDown * EcaloVarySFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC
 }
 
 EcaloVarySFWeight::~EcaloVarySFWeight ()
@@ -438,7 +438,7 @@ EcaloVarySFWeight::EcaloVarySFWeight (const string &sfFile, const string &dataOv
   TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
   if (!dataOverMCHist) cout << "Fatal Error [EcaloVarySFWeight::EcaloVarySFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;
   EcaloVarySFWeight_ = (TH1F*)  dataOverMCHist->Clone();
-  EcaloVarySFWeight_->GetEntries();  // to avoid the crashing warning                                           
+  EcaloVarySFWeight_->GetEntries();  // to avoid the crashing warning
   delete dataOverMCHist;
   fin->Close ();
   delete fin;
@@ -449,20 +449,20 @@ IsrVarySFWeight::IsrVarySFWeight (const string &sfFile, const string &dataOverMC
 {
   TFile *fin = TFile::Open (sfFile.c_str ());
   TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
-  if (!dataOverMCHist) cout << "Fatal Error [IsrVarySFWeight::IsrVarySFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  if (!dataOverMCHist) cout << "Fatal Error [IsrVarySFWeight::IsrVarySFWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;
   isrVarySFWeight_ = (TH1F*)  dataOverMCHist->Clone();
   isrVarySFWeight_->GetEntries();// to avoid the crashing warning
   delete dataOverMCHist;
-  clog << "Will use hist " << isrVarySFWeight_->GetName() << " from file " << sfFile << " to do ISR reweighting." << endl;  
+  clog << "Will use hist " << isrVarySFWeight_->GetName() << " from file " << sfFile << " to do ISR reweighting." << endl;
   fin->Close ();
   delete fin;
  }
- 
+
 double
-IsrVarySFWeight::at(const double &ptSusy, const int &shiftUpDown) 
-{  
-  int bin = isrVarySFWeight_->FindBin(ptSusy);  
-  return 1.0 + isrVarySFWeight_->GetBinContent(bin) + shiftUpDown * isrVarySFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC 
+IsrVarySFWeight::at(const double &ptSusy, const int &shiftUpDown)
+{
+  int bin = isrVarySFWeight_->FindBin(ptSusy);
+  return 1.0 + isrVarySFWeight_->GetBinContent(bin) + shiftUpDown * isrVarySFWeight_->GetBinError(bin);  // Add 1.0 because the histogram bin content is (data-MC)/MC
 }
 
 IsrVarySFWeight::~IsrVarySFWeight ()
@@ -478,7 +478,7 @@ MuonCutWeight::MuonCutWeight (const string &sfFile, const string &dataOverMC)
 {
   TFile *fin = TFile::Open (sfFile.c_str ());
   TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
-  if (!dataOverMCHist) cout << "Fatal Error [MuonCutWeight::MuonCutWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  if (!dataOverMCHist) cout << "Fatal Error [MuonCutWeight::MuonCutWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;
   muonCutWeight_ = (TH1F*)  dataOverMCHist->Clone();
   muonCutWeight_->GetEntries();  // to avoid the crashing warning
   delete dataOverMCHist;
@@ -486,11 +486,11 @@ MuonCutWeight::MuonCutWeight (const string &sfFile, const string &dataOverMC)
   delete fin;
 }
 
- 
+
 double
-MuonCutWeight::at(const double &pt) 
-{  
-  int bin = muonCutWeight_->FindBin(pt);  
+MuonCutWeight::at(const double &pt)
+{
+  int bin = muonCutWeight_->FindBin(pt);
   return  muonCutWeight_->GetBinContent(bin);
 }
 
@@ -505,7 +505,7 @@ ElectronCutWeight::ElectronCutWeight (const string &sfFile, const string &dataOv
 {
   TFile *fin = TFile::Open (sfFile.c_str ());
   TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
-  if (!dataOverMCHist) cout << "Fatal Error [ElectronCutWeight::ElectronCutWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  if (!dataOverMCHist) cout << "Fatal Error [ElectronCutWeight::ElectronCutWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;
   electronCutWeight_ = (TH1F*)  dataOverMCHist->Clone();
   electronCutWeight_->GetEntries();  // to avoid the crashing warning
   delete dataOverMCHist;
@@ -513,12 +513,12 @@ ElectronCutWeight::ElectronCutWeight (const string &sfFile, const string &dataOv
   delete fin;
 }
 
- 
+
 double
-ElectronCutWeight::at(const double &pt) 
-{  
-  int bin = electronCutWeight_->FindBin(pt);  
-  return  electronCutWeight_->GetBinContent(bin); 
+ElectronCutWeight::at(const double &pt)
+{
+  int bin = electronCutWeight_->FindBin(pt);
+  return  electronCutWeight_->GetBinContent(bin);
 }
 
 ElectronCutWeight::~ElectronCutWeight ()
@@ -531,20 +531,20 @@ RecoElectronWeight::RecoElectronWeight (const string &sfFile, const string &data
 {
   TFile *fin = TFile::Open (sfFile.c_str ());
   TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
-  if (!dataOverMCHist) cout << "Fatal Error [RecoElectronWeight::RecoElectronWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  if (!dataOverMCHist) cout << "Fatal Error [RecoElectronWeight::RecoElectronWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;
   recoElectronWeight_ = (TH1F*)  dataOverMCHist->Clone();
-  recoElectronWeight_->GetEntries();  
+  recoElectronWeight_->GetEntries();
   delete dataOverMCHist;
   fin->Close ();
   delete fin;
 }
 
- 
+
 double
-RecoElectronWeight::at(const double &d0) 
-{  
-  int bin = recoElectronWeight_->FindBin(d0);  
-  return recoElectronWeight_->GetBinContent(bin); 
+RecoElectronWeight::at(const double &d0)
+{
+  int bin = recoElectronWeight_->FindBin(d0);
+  return recoElectronWeight_->GetBinContent(bin);
 }
 
 RecoElectronWeight::~RecoElectronWeight ()
@@ -557,7 +557,7 @@ RecoMuonWeight::RecoMuonWeight (const string &sfFile, const string &dataOverMC)
 {
   TFile *fin = TFile::Open (sfFile.c_str ());
   TH1F* dataOverMCHist = (TH1F *) fin->Get(dataOverMC.c_str ());
-  if (!dataOverMCHist) cout << "Fatal Error [RecoMuonWeight::RecoMuonWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;  
+  if (!dataOverMCHist) cout << "Fatal Error [RecoMuonWeight::RecoMuonWeight]:  could not find histogram " << dataOverMC << " in " << sfFile << endl;
   recoMuonWeight_ = (TH1F*)  dataOverMCHist->Clone();
   recoMuonWeight_->GetEntries();  // to avoid the crashing warning
   delete dataOverMCHist;
@@ -565,12 +565,12 @@ RecoMuonWeight::RecoMuonWeight (const string &sfFile, const string &dataOverMC)
   delete fin;
 }
 
- 
+
 double
-RecoMuonWeight::at(const double &d0) 
-{  
-  int bin = recoMuonWeight_->FindBin(d0);  
-  return  recoMuonWeight_->GetBinContent(bin); 
+RecoMuonWeight::at(const double &d0)
+{
+  int bin = recoMuonWeight_->FindBin(d0);
+  return  recoMuonWeight_->GetBinContent(bin);
 }
 
 RecoMuonWeight::~RecoMuonWeight ()
@@ -617,5 +617,5 @@ MuonSFWeight::MuonSFWeight (const string &sfFile, const string &dataOverMC)
   fin->Close ();
   delete data;
 }
---- Used previously 
+--- Used previously
 */

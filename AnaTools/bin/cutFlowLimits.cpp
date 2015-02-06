@@ -93,12 +93,12 @@ getLimits (TH1D *cutFlow, TDirectoryFile *dir)
     {
       double events = cutFlow->GetBinContent (i), eventsLowerLimit, eventsUpperLimit;
 
-      // The calculation of upper and lower limits is taken from the PDG Statistics chapter.  
-      // "Poisson or binomal data", section 37.4.2.3 in 2013 version; Eqns. 37.71a, 37.71b.  
+      // The calculation of upper and lower limits is taken from the PDG Statistics chapter.
+      // "Poisson or binomal data", section 37.4.2.3 in 2013 version; Eqns. 37.71a, 37.71b.
       // Here ALPHA is the confidence level, so ALPHA = 0.68 corresponds to a 68% C.L.
-      // The PDG uses a different convention:  the C.L is 1 - \alpha.  
+      // The PDG uses a different convention:  the C.L is 1 - \alpha.
       // For example, the 68% CL upper limit on an observation of 0 events is:
-      // 0.5 * TMath::ChisquareQuantile (0.68, 2) = 1.139  
+      // 0.5 * TMath::ChisquareQuantile (0.68, 2) = 1.139
       eventsLowerLimit = 0.5 * TMath::ChisquareQuantile (1 - ALPHA, 2 * events);
       eventsUpperLimit = 0.5 * TMath::ChisquareQuantile (ALPHA, 2 * (events + 1));
       lowerLimit->SetBinContent (i, eventsLowerLimit);

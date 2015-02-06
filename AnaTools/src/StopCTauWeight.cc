@@ -22,21 +22,21 @@ StopCTauWeight::operator[] (const BNstopCollection &stops)
 {
 
   if (stops.size () > 2) cout << "Too many stops!: " << stops.size () << endl;
-  double  weight = 1.0;  
-  for (uint i=0; i<stops.size(); i++) { 
+  double  weight = 1.0;
+  for (uint i=0; i<stops.size(); i++) {
     double ctau = stops.at(i).ctau;
-    double wtTarget  = (1. /  targetCTau_) * exp(-(ctau) /  targetCTau_ );  
-    double wtCurrent = (1. / currentCTau_) * exp(-(ctau) / currentCTau_ );  
-    double wt = wtTarget / wtCurrent;  
+    double wtTarget  = (1. /  targetCTau_) * exp(-(ctau) /  targetCTau_ );
+    double wtCurrent = (1. / currentCTau_) * exp(-(ctau) / currentCTau_ );
+    double wt = wtTarget / wtCurrent;
     if (ctau==0) {
-      cout << "Warning[StopCTauWeight]:  Found event with ctau==0." << endl;  
-      //      wt = 0;  // Set 0 weight for any event with a ctau of identically 0; indicates that a problem occurred.  
+      cout << "Warning[StopCTauWeight]:  Found event with ctau==0." << endl;
+      //      wt = 0;  // Set 0 weight for any event with a ctau of identically 0; indicates that a problem occurred.
     }
     if (ctau < 0) {
-      cout << "Warning[StopCTauWeight]:  Found event with ctau<0." << endl;  
+      cout << "Warning[StopCTauWeight]:  Found event with ctau<0." << endl;
       wt = 0.0;
     }
-    weight *= wt;  
+    weight *= wt;
   }
 
 

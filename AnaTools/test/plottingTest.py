@@ -49,7 +49,7 @@ process.Plotting = cms.EDAnalyzer ('Plotter',
 
 
 ###########################################################################################
-    
+
 
 ###############################################################
 ##### Set Options for Running your Analyzer Interactively #####
@@ -61,7 +61,7 @@ for file in os.listdir(dir):
         continue
     process.source.fileNames.extend(cms.untracked.vstring('file:' + dir + file))
 
-            
+
 #output file name when running interactively
 #process.TFileService.fileName = 'hist.root'
 

@@ -84,11 +84,13 @@
 
 #define XSTR(x) STR(x)
 #define STR(x) #x
-#define IS_VALID(x) !(defined x##_INVALID)
+#define IS_VALID(x) !(defined (x##_INVALID))
 #define EQ_VALID(s,x) (string (XSTR(x##_TYPE)) != XSTR(INVALID_TYPE) && string (s) == XSTR(x))
 
 #define TYPE(x) x##_TYPE
 #define TYPE_STR(x) XSTR(x##_TYPE)
+
+#include <string>
 
 using namespace std;
 

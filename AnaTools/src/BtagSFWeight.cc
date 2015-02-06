@@ -1,7 +1,7 @@
 #include "../interface/BtagSFWeight.h"
 
 bool BtagSFWeight::filter(int t, int minTags)
-{  
+{
   return (t >= minTags);
 }
 
@@ -18,19 +18,19 @@ double BtagSFWeight::weight(vector<double> jets, int minTags)
     for(int j=0;j<njets;j++){
       bool tagged = ((i >> j) & 0x1) == 1;
       if(tagged){
-	ntagged++;
-	mc*=jets[j];
+        ntagged++;
+        mc*=jets[j];
       }
       else{
-	mc*=(1.-jets[j]);
+        mc*=(1.-jets[j]);
       }
-    }       
-   
+    }
+
     if(filter(ntagged, minTags)){
       pMC+=mc;
     }
   }
-  if( pMC > 0) 
+  if( pMC > 0)
       return pMC;
   else{
      pMC = 1;
@@ -41,25 +41,25 @@ double BtagSFWeight::weight(vector<double> jets, int minTags)
 double BtagSFWeight::sflookup(double jetCSV, double pt, double flavor, double jetEta)
 {
     double jetSF = 1;
-    
+
     if(abs(flavor) == 4 || abs(flavor) == 5)
        {
-    	if(jetCSV > 0.244 && jetCSV <= 0.679)
-       	{
-         	if( pt <= 20 ) 
-	     	 {
- 	       	   pt = 20;
-             	 }
+            if(jetCSV > 0.244 && jetCSV <= 0.679)
+               {
+                 if( pt <= 20 )
+                      {
+                           pt = 20;
+                      }
                 else if( pt >= 800 )
                   {
-  		    pt = 800;
- 		  }
+                      pt = 800;
+                   }
                  jetSF = 0.981149*((1.+(-0.000713295*pt))/(1.+(-0.000703264*pt)));
         }
-     	if(jetCSV > 0.679 && jetCSV <= 0.898 )
-       	{
-         	if( pt <= 20 ) 
-             	 {
+             if(jetCSV > 0.679 && jetCSV <= 0.898 )
+               {
+                 if( pt <= 20 )
+                      {
                     pt = 20;
                  }
                 else if( pt >= 800 )
@@ -70,7 +70,7 @@ double BtagSFWeight::sflookup(double jetCSV, double pt, double flavor, double je
          }
          if(jetCSV > 0.898 )
          {
-                 if( pt <= 20 ) 
+                 if( pt <= 20 )
                   {
                      pt = 20;
                   }
@@ -83,7 +83,7 @@ double BtagSFWeight::sflookup(double jetCSV, double pt, double flavor, double je
       }
     else if (abs(flavor) == 1 || abs(flavor) == 2 || abs(flavor) == 3 || abs(flavor) == 0)
           {
-	    if ( jetCSV >= 0.898 )
+            if ( jetCSV >= 0.898 )
                 {
                     if( pt <= 20 )
                       {
@@ -120,7 +120,7 @@ double BtagSFWeight::sflookup(double jetCSV, double pt, double flavor, double je
                                   pt = 800;
                                 }
                               jetSF = ((1.08048+(0.00110831*pt))+(-2.96189e-06*(pt*pt)))+(2.16266e-09*(pt*(pt*pt)));
-                           } 
+                           }
                         if( jetEta >= 1.6 && jetEta < 2.4 )
                           {
                              if( pt <= 20 )
@@ -133,7 +133,7 @@ double BtagSFWeight::sflookup(double jetCSV, double pt, double flavor, double je
                                 }
                              jetSF = ((1.09145+(0.000687171*pt))+(-2.45054e-06*(pt*pt)))+(1.7844e-09*(pt*(pt*pt)));
                            }
-                       }         
+                       }
             if ( jetCSV >= 0.244 && jetCSV < 0.679)
                 {
                       if( jetEta >= 0 && jetEta < 0.5 )
@@ -159,7 +159,7 @@ double BtagSFWeight::sflookup(double jetCSV, double pt, double flavor, double je
                                   pt = 800;
                                 }
                               jetSF = ((0.991915+(0.00172552*pt))+(-3.92652e-06*(pt*pt)))+(2.56816e-09*(pt*(pt*pt)));
-                           } 
+                           }
                         if( jetEta >= 1.0 && jetEta < 1.5 )
                           {
                              if( pt <= 20 )
@@ -184,13 +184,13 @@ double BtagSFWeight::sflookup(double jetCSV, double pt, double flavor, double je
                                 }
                              jetSF = ((1.06121+(0.000332747*pt))+(-8.81201e-07*(pt*pt)))+(7.43896e-10*(pt*(pt*pt)));
                            }
-                       }         
-                   
+                       }
+
         }
-            
+
     return jetSF;
 }
-    
+
 
 
 

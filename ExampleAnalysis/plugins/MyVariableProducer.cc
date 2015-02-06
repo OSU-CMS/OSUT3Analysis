@@ -75,7 +75,7 @@ MyVariableProducer::AddVariables (const edm::Event &event, auto_ptr<VariableProd
       hashes.push_back(objectHash(*muon2));
       hashes.push_back(objectHash(met));
       
-      userVar dimuonMetDeltaPhi = make_pair(hashes,deltaphi);
+      UserVar dimuonMetDeltaPhi = make_pair(hashes,deltaphi);
       (*myVars)["dimuonMetDeltaPhi"].push_back(dimuonMetDeltaPhi);
 
     }
@@ -86,7 +86,7 @@ MyVariableProducer::AddVariables (const edm::Event &event, auto_ptr<VariableProd
     // add objects to the list of hashes                                                                                                                                                                
     vector<int> hashes;
     hashes.push_back(objectHash(*muon1));
-    userVar muonSF = make_pair(hashes,muon1->pt);
+    UserVar muonSF = make_pair(hashes,muon1->pt);
     (*myVars)["muonSF"].push_back(muonSF);
   }
 #endif

@@ -2,26 +2,11 @@
 #define ANALYSIS_TYPES
 
 #include <vector>
-#include <string>
 #include <map>
 
 #include "boost/variant.hpp"
 
 #include "DataFormats/Common/interface/Handle.h"
-
-#include "DataFormats/EgammaReco/interface/SuperCluster.h"
-#include "DataFormats/JetReco/interface/GenJet.h"
-#include "DataFormats/PatCandidates/interface/Electron.h"
-#include "DataFormats/PatCandidates/interface/Jet.h"
-#include "DataFormats/PatCandidates/interface/MET.h"
-#include "DataFormats/PatCandidates/interface/Muon.h"
-#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
-#include "DataFormats/PatCandidates/interface/Photon.h"
-#include "DataFormats/PatCandidates/interface/Tau.h"
-#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
-#include "DataFormats/VertexReco/interface/Vertex.h"
-
-#include "DataFormats/Common/interface/TriggerResults.h"
 
 #include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
@@ -84,15 +69,15 @@ struct Node
   vector<Node *>  branches;
 };
 
-// userVar type:
+// UserVar type:
 //   vector<int> - hashes of all objects used
 //   double - value of the calculated variable
-typedef pair<vector<int>, double> userVar;
+typedef pair<vector<int>, double> UserVar;
 
 // VariableProducerPayload type:
 //   string - user-defined name of variable
-//   vector - one userVar per combination of input objects
-typedef map<string, vector<userVar> > VariableProducerPayload;
+//   vector - one UserVar per combination of input objects
+typedef map<string, vector<UserVar> > VariableProducerPayload;
 
 struct Collections
 {
@@ -112,7 +97,7 @@ struct Collections
   edm::Handle<vector<TYPE(trigobjs)> >        trigobjs;
   vector<edm::Handle<TYPE(userVariables)> >   userVariables;
 
-  edm::Handle<TYPE(triggers)>        triggers;
+  edm::Handle<TYPE(triggers)>                 triggers;
 };
 
 struct ValueToPrint

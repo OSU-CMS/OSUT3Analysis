@@ -19,7 +19,7 @@ for file in os.listdir(dir):
         continue
     process.source.fileNames.extend(cms.untracked.vstring('file:' + dir + file))
 
-# configure output file 
+# configure output file
 process.TFileService = cms.Service ('TFileService',
     fileName = cms.string ('hist.root')
 )
@@ -41,7 +41,7 @@ myMETs = cms.InputTag ('PAT', 'slimmedMETs')
 ################################################################################
 
 # create module to define an event-wide variable
-# e.g. deltaPhi between Met and dimuon system 
+# e.g. deltaPhi between Met and dimuon system
 # !!! needs to be written
 process.DiMuonMetDeltaPhiDefinition = cms.EDProducer ('VariableProducer',
                                                       muons = myMuons,
@@ -86,7 +86,7 @@ from OSUT3Analysis.AnaTools.MyProtoEventSelections import ZtoMuMu_Selection
 process.EventSelections.channels.append(ZtoMuMu_Selection)
 
 ################################################################################
-    
+
 # import the standard sequence to filter events based on the cuts
 # and produce the cutflow histogram in the output file
 # !!! needs to be written

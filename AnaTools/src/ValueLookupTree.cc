@@ -266,7 +266,7 @@ bool
   else if (EQ_VALID(name,taus))            isFound = handles_->taus.isValid();
   else if (EQ_VALID(name,tracks))          isFound = handles_->tracks.isValid();
   else if (EQ_VALID(name,trigobjs))        isFound = handles_->trigobjs.isValid();
-  else if (EQ_VALID(name,userVariables))  isFound = true; // This vector is always present, even if its size is 0.
+  else if (EQ_VALID(name,userVariables))   isFound = true; // This vector is always present, even if its size is 0.
   return isFound;
 
 }

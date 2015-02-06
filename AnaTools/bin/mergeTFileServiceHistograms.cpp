@@ -94,8 +94,8 @@ int main(int argc, char * argv[]) {
       double w = strtod(begin, &end);
       size_t s = end - begin;
       if(s < t->size()) {
-	cerr << "invalid weight: " << begin << endl;
-	exit(1);
+        cerr << "invalid weight: " << begin << endl;
+        exit(1);
       }
       weights.push_back(w);
     }
@@ -110,11 +110,11 @@ int main(int argc, char * argv[]) {
   gROOT->SetBatch();
 
   TFile out(outputFile.c_str(), "RECREATE");
-  if(!out.IsOpen()) { 
+  if(!out.IsOpen()) {
     cerr << "can't open output file: " << outputFile <<endl;
-    return -1;  
+    return -1;
   }
-  
+
   for(size_t i = 0; i < fileNames.size(); ++i) {
     string fileName = fileNames[i];
     TFile file(fileName.c_str(), "read");
@@ -130,8 +130,8 @@ int main(int argc, char * argv[]) {
       string name(key->GetName());
       TObject * obj = file.Get(name.c_str());
       if(obj == 0) {
-	cerr <<"error: key " << name << " not found in file " << fileName << endl;
-	return -1;
+        cerr <<"error: key " << name << " not found in file " << fileName << endl;
+        return -1;
       }
       make(out, obj);
     }
@@ -152,8 +152,8 @@ int main(int argc, char * argv[]) {
       string name(key->GetName());
       TObject * obj = file.Get(name.c_str());
       if(obj == 0) {
-	cerr <<"error: key " << name << " not found in file " << fileName << endl;
-	return -1;
+        cerr <<"error: key " << name << " not found in file " << fileName << endl;
+        return -1;
       }
       fill(out, obj, weights[i]);
     }
@@ -189,8 +189,8 @@ void make(TDirectory & out, TObject * o) {
       string name(key->GetName());
       TObject * obj = dir->Get(name.c_str());
       if(obj == 0) {
-	cerr <<"error: key " << name << " not found in directory " << dir->GetName() << endl;
-	exit(-1);
+        cerr <<"error: key " << name << " not found in directory " << dir->GetName() << endl;
+        exit(-1);
       }
       make(*outDir, obj);
     }
@@ -206,12 +206,12 @@ void make(TDirectory & out, TObject * o) {
     h->SetDirectory(&out);
   } else if((th2f = dynamic_cast<TH2F*>(o)) != 0) {
     TH2F *h = (TH2F*) th2f->Clone();
-    h->Reset();   
+    h->Reset();
     h->Sumw2();
     h->SetDirectory(&out);
   } else if((th2d = dynamic_cast<TH2D*>(o)) != 0) {
     TH2D *h = (TH2D*) th2d->Clone();
-    h->Reset();   
+    h->Reset();
     h->Sumw2();
     h->SetDirectory(&out);
   }
@@ -237,8 +237,8 @@ void fill(TDirectory & out, TObject * o, double w) {
       string name(key->GetName());
       TObject * obj = dir->Get(name.c_str());
       if(obj == 0) {
-	cerr <<"error: key " << name << " not found in directory " << dir->GetName() << endl;
-	exit(-1);
+        cerr <<"error: key " << name << " not found in directory " << dir->GetName() << endl;
+        exit(-1);
       }
       fill(*outDir, obj, w);
     }
@@ -247,7 +247,7 @@ void fill(TDirectory & out, TObject * o, double w) {
     TH1F * outTh1f = dynamic_cast<TH1F*>(out.Get(name));
     if(outTh1f == 0) {
       cerr <<"error: histogram TH1F" << name << " not found in directory " << out.GetName() << endl;
-      exit(-1);	
+      exit(-1);
     }
     th1f->Scale(w);
 
@@ -259,8 +259,8 @@ void fill(TDirectory & out, TObject * o, double w) {
     TH1D * outTh1d = dynamic_cast<TH1D*>(out.Get(name));
     if(outTh1d == 0) {
       cerr <<"error: histogram TH1D" << name << " not found in directory " << out.GetName() << endl;
-      exit(-1);	
-    } 
+      exit(-1);
+    }
     th1d->Scale(w);
 
     TList *list = new TList();
@@ -271,7 +271,7 @@ void fill(TDirectory & out, TObject * o, double w) {
     TH2F * outTh2f = dynamic_cast<TH2F*>(out.Get(name));
     if(outTh2f == 0) {
       cerr <<"error: histogram TH2F" << name << " not found in directory " << out.GetName() << endl;
-      exit(-1);	
+      exit(-1);
     }
     th2f->Scale(w);
 
@@ -283,7 +283,7 @@ void fill(TDirectory & out, TObject * o, double w) {
     TH2D * outTh2d = dynamic_cast<TH2D*>(out.Get(name));
     if(outTh2d == 0) {
       cerr <<"error: histogram TH2D" << name << " not found in directory " << out.GetName() << endl;
-      exit(-1);	
+      exit(-1);
     }
     th2d->Scale(w);
 

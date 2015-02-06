@@ -241,9 +241,9 @@ preselection = cms.PSet(
         cutString = cms.string("deltaR(muon, jet) < 0.5"),
         numberRequired = cms.string("== 0"),
         isVeto = cms.bool(True),
-        alias = cms.string("muon near jet veto"),        
+        alias = cms.string("muon near jet veto"),
       ),
-      ########### END OF ADDITIONAL CUTS TO REQUIRE LEPTON IS NOT IN A JET      
+      ########### END OF ADDITIONAL CUTS TO REQUIRE LEPTON IS NOT IN A JET
 
       # RESTRICT ELECTRONS TO RECONSTRUCTION ACCEPTANCE
       cms.PSet (

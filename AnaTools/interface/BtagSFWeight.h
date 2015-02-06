@@ -1,7 +1,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-using namespace std; 
+using namespace std;
 class BtagSFWeight {
  public:
   bool filter(int t, int minTags);

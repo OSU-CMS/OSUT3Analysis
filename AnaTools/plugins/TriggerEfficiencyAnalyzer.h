@@ -31,17 +31,17 @@ class TriggerEfficiencyAnalyzer : public edm::EDAnalyzer
       std::vector<string> TriggerTypes;
       std::map< string, std::vector<string> > TriggerNameMap;
       std::map< string, TH1D* > TriggerHistogramMap;
-      std::map< string, TH1D* > TriggerHistEffMap;  
+      std::map< string, TH1D* > TriggerHistEffMap;
       std::map< string, bool > InclusiveORMap;
 
       void analyze (const edm::Event &, const edm::EventSetup &);
       const edm::Service<TFileService> fs;
-   
+
     private:
       edm::Handle<BNtriggerCollection> TriggerCollection;
       edm::InputTag Trigger_;
       vector<edm::ParameterSet> triggers_;
-      TStopwatch* timer;  
+      TStopwatch* timer;
 
   };
 

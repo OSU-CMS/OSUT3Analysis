@@ -44,27 +44,27 @@ main (int argc, char *argv[])
   if ((opt.count ("diff") || opt.count ("ratio") || opt.count ("signalToBackground") || opt.count ("totalBkgd") )) {
     if (argVector.size () <= 3) {
       cerr << "ERROR[cutFlowTable.cpp]:  When using options diff, ratio, signalToBackground, or totalBkgd, more than one dataset must be specified." << endl;
-      return 0;  
+      return 0;
     }
     sb = true;
   }
   if (opt.count ("precision")) {
     myprecision_ = atoi(opt.at("precision").c_str());
-    cerr << "Will use precision of " << myprecision_ << endl;  
+    cerr << "Will use precision of " << myprecision_ << endl;
   }
 
-  map<string, double> xsecs;  
+  map<string, double> xsecs;
   if (opt.count ("xsecTheory")) {
-    ifstream xsecFile(opt.at("xsecTheory").c_str());  
+    ifstream xsecFile(opt.at("xsecTheory").c_str());
     if (!xsecFile) { cerr << "Error: file " << opt.at("xsecTheory") << " could not be opened." << endl; return 0; }
-    cerr << "Will use cross sections from " << opt.at("xsecTheory") << endl;  
+    cerr << "Will use cross sections from " << opt.at("xsecTheory") << endl;
     string sample;
-    double xsec;  
-    while (!xsecFile.eof()) { 
+    double xsec;
+    while (!xsecFile.eof()) {
       xsecFile >> sample >> xsec;
-      xsecs[sample] = xsec;  
+      xsecs[sample] = xsec;
     }
-  }  
+  }
   if (opt.count ("diff"))
     sbLabel = opt.at ("diff");
   if (opt.count ("ratio"))
@@ -96,19 +96,19 @@ main (int argc, char *argv[])
       TObject *obj0;
       TH1D *cutFlow = 0; //, *upperLimit = 0;
 
-      double yieldTheory = -99;  
-      double xsec = -99;  
+      double yieldTheory = -99;
+      double xsec = -99;
       if (opt.count ("xsecTheory")) {
-	TString fileNameStr(fileName);  
-	for (map<string, double>::iterator it = xsecs.begin(); it != xsecs.end(); it++) {
-	  TString sample = TString(it->first);  
-	  if (fileNameStr.Contains(sample.Data())) {
-	    xsec = it->second;
-	    yieldTheory = xsec * atof (opt["luminosity"].c_str ());  
-	    break;  
-	  }
-	}
-	cerr << "Found for fileName: " << fileName << ": xsec = " << xsec << ", yieldTheory = " << yieldTheory << endl;  
+        TString fileNameStr(fileName);
+        for (map<string, double>::iterator it = xsecs.begin(); it != xsecs.end(); it++) {
+          TString sample = TString(it->first);
+          if (fileNameStr.Contains(sample.Data())) {
+            xsec = it->second;
+            yieldTheory = xsec * atof (opt["luminosity"].c_str ());
+            break;
+          }
+        }
+        cerr << "Found for fileName: " << fileName << ": xsec = " << xsec << ", yieldTheory = " << yieldTheory << endl;
       }
 
       while (!cutFlow && (obj0 = next0 ()))
@@ -126,16 +126,16 @@ main (int argc, char *argv[])
                   string obj1Class = ((TKey *) obj1)->GetClassName (),
                          obj1Name = obj1->GetName ();
 
-		  TString objFullName = obj0->GetName();
-		  objFullName += TString("/") + TString(obj1->GetName());  
+                  TString objFullName = obj0->GetName();
+                  objFullName += TString("/") + TString(obj1->GetName());
 
-		  TString histNameStr = histName;  
+                  TString histNameStr = histName;
 
                   if (obj1Class == "TH1D" && objFullName == histNameStr)
                     {
                       cutFlow = (TH1D *) dir->Get (obj1Name.c_str ());
-		      if (!cutFlow) cerr << "Problem accessing cutFlow" << endl;  
-		      //                      upperLimit = (TH1D *) dir->Get ((obj1Name + "UpperLimit").c_str ());
+                      if (!cutFlow) cerr << "Problem accessing cutFlow" << endl;
+                      //                      upperLimit = (TH1D *) dir->Get ((obj1Name + "UpperLimit").c_str ());
                     }
                 }
             }
@@ -161,32 +161,32 @@ main (int argc, char *argv[])
       for (unsigned j = 1; j <= (unsigned) x->GetNbins (); j++)
         {
           double binContent = cutFlow->GetBinContent(j);
-	  //	  double binUpperLimit = upperLimit->GetBinContent (j);
-	  double binUpperLimit = cutFlow->GetBinContent(j) + cutFlow->GetBinError(j); 
-	  double binError = cutFlow->GetBinError(j);  
-	  if (j==1 && opt.count ("xsecTheory") && yieldTheory > 0.0) {
-	    binContent = yieldTheory;  
-	  }
+          //          double binUpperLimit = upperLimit->GetBinContent (j);
+          double binUpperLimit = cutFlow->GetBinContent(j) + cutFlow->GetBinError(j);
+          double binError = cutFlow->GetBinError(j);
+          if (j==1 && opt.count ("xsecTheory") && yieldTheory > 0.0) {
+            binContent = yieldTheory;
+          }
 
           string tableContent;
           if (binContent - binError > 0)
             {
               if (binContent >= BIG_INT)
                 {
-		  if (opt.count ("noErrors")) {
-		    tableContent = bigInt (binContent, "big") + " ";
-		  } else { 
-		    tableContent = "(" + bigInt (binContent, "big") + " \\pm ";
-		    tableContent += bigInt (binError, "error") + ") ";
-		  }
+                  if (opt.count ("noErrors")) {
+                    tableContent = bigInt (binContent, "big") + " ";
+                  } else {
+                    tableContent = "(" + bigInt (binContent, "big") + " \\pm ";
+                    tableContent += bigInt (binError, "error") + ") ";
+                  }
                   tableContent += bigInt (0.0, "exponent");
                 }
               else
-		if (opt.count ("noErrors")) {
-		  tableContent = bigInt (binContent);  
-		} else {
-		  tableContent = bigInt (binContent) + " \\pm " + bigInt (binError);
-		}
+                if (opt.count ("noErrors")) {
+                  tableContent = bigInt (binContent);
+                } else {
+                  tableContent = bigInt (binContent) + " \\pm " + bigInt (binError);
+                }
             }
           else
             {
@@ -207,8 +207,8 @@ main (int argc, char *argv[])
             marginalEffTable.back ().push_back (bigEff (100.0 * (cutFlow->GetBinContent (j) / (double) cutFlow->GetBinContent (j - 1))));
           if (i == 0)
             {
-	      string newlabel = x->GetBinLabel (j);
-	      ReplaceStringInPlace(newlabel, "&", "\\&");  // treat this as a special case, so that other instances of "&" in the tex file are not affected
+              string newlabel = x->GetBinLabel (j);
+              ReplaceStringInPlace(newlabel, "&", "\\&");  // treat this as a special case, so that other instances of "&" in the tex file are not affected
               ylabels.push_back (newlabel);
             }
           if (sb && fileName[0] == '<')
@@ -238,7 +238,7 @@ main (int argc, char *argv[])
                 }
             }
         }
-    }  
+    }
 
   numerator.resize (ylabels.size (), 0.0);
   denominator.resize (ylabels.size (), 0.0);
@@ -264,16 +264,16 @@ main (int argc, char *argv[])
         }
       else if (opt.count ("totalBkgd"))
         {
-          binContent = y; 
-          binError = dy;  
+          binContent = y;
+          binError = dy;
         }
       else if (opt.count ("signalToBackground"))
         {
           binContent = x / sqrt (x + y);
-	  // Calculate error with standard error propagation:
-	  // F = x / sqrt (x + y)
-	  // errF = sqrt ( (dF/dx)^2 * dx^2 + (dF/dy)^2 * dy^2 )  
-	  // A lot of algebra gives the expression below.  
+          // Calculate error with standard error propagation:
+          // F = x / sqrt (x + y)
+          // errF = sqrt ( (dF/dx)^2 * dx^2 + (dF/dy)^2 * dy^2 )
+          // A lot of algebra gives the expression below.
           binError = 4.0 * y * y * dx * dx + 4 * x * y * dx * dx + x * x * dy * dy + x * x * dx * dx;
           binError /= 4 * (x + y) * (x + y) * (x + y);
           binError = sqrt (binError);
@@ -290,20 +290,20 @@ main (int argc, char *argv[])
         }
       else if (fabs (binContent) >= BIG_INT)
         {
-	  if (opt.count ("noErrors")) {
-	    columnContent = bigInt (binContent, "big") + " "; 
-	  } else {
-	    columnContent = "(" + bigInt (binContent, "big") + " \\pm ";
-	    columnContent += bigInt (binError, "error") + ") ";
-	  }
-	    columnContent += bigInt (0.0, "exponent");
-	}
+          if (opt.count ("noErrors")) {
+            columnContent = bigInt (binContent, "big") + " ";
+          } else {
+            columnContent = "(" + bigInt (binContent, "big") + " \\pm ";
+            columnContent += bigInt (binError, "error") + ") ";
+          }
+            columnContent += bigInt (0.0, "exponent");
+        }
       else {
-	if (opt.count ("noErrors")) {
-	  columnContent = bigInt (binContent);  
-	} else {
-	  columnContent = bigInt (binContent) + " \\pm " + bigInt (binError);
-	}
+        if (opt.count ("noErrors")) {
+          columnContent = bigInt (binContent);
+        } else {
+          columnContent = bigInt (binContent) + " \\pm " + bigInt (binError);
+        }
       }
       extraColumn.push_back (columnContent);
     }
@@ -521,7 +521,7 @@ printHelp (const string &exeName)
   printf ("%-29s%s\n", "  -p, --precision VALUE", "set the precision (integer) of table values");
   printf ("%-29s%s\n", "  -t, --total LABEL", "add a column for Y");
   printf ("%-29s%s\n", "  -s, --sToB LABEL", "add a column for X/sqrt(X+Y)");
-  printf ("%-29s%s\n", "  -e, --noErrors", "do not print errors");  
+  printf ("%-29s%s\n", "  -e, --noErrors", "do not print errors");
   printf ("\n");
   printf ("For the \"-d\", \"-r\", and \"-s\" options, X is defined as the sum of those columns\n");
   printf ("whose FILE is prefixed with \"<\". Likewise, Y is defined by prefixing the FILE\n");
@@ -576,11 +576,11 @@ parseOptions (int argc, char *argv[], map<string, string> &opt, vector<string> &
       if (key == "p")
         {
           key = "precision";
-	}
+        }
       if (key == "x")
         {
           key = "xsecTheory";
-	}
+        }
       if (key == "t")
         {
           key = "totalBkgd";
@@ -590,7 +590,7 @@ parseOptions (int argc, char *argv[], map<string, string> &opt, vector<string> &
         }
       if (key == "luminosity" || key == "signalToBackground" || key == "diff" || key == "ratio" || key == "totalBkgd")
         value = argv[i++ + 1];
-      if (key == "precision" || key == "xsecTheory") 
+      if (key == "precision" || key == "xsecTheory")
         value = argv[i++ + 1];
       opt[key] = value;
     }

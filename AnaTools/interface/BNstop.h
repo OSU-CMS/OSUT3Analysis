@@ -11,7 +11,7 @@ struct BNstop
     pdgId(c),
     status(c),
     pt(v),eta(v),phi(v),px(v),py(v),pz(v),
-    energy(v),mass(v),beta(v),gamma(v),betaAtDecay(v),gammaAtDecay(v), 
+    energy(v),mass(v),beta(v),gamma(v),betaAtDecay(v),gammaAtDecay(v),
     vx(v),vy(v),vz(v),decayVx(v),decayVy(v),decayVz(v),
     decayLength(v),ctau(v),
     daughter0Id(c),daughter0Status(c),daughter0PT(v),daughter0Phi(v),daughter0Eta(v),
@@ -38,9 +38,9 @@ struct BNstop
     rHadronId(-99),rHadronStatus(-99),rHadronThreeCharge(-99)
   { }
   int pdgId;
-  int status;  
+  int status;
   double pt,eta,phi,px,py,pz,
-    energy,mass,beta,gamma,betaAtDecay,gammaAtDecay, 
+    energy,mass,beta,gamma,betaAtDecay,gammaAtDecay,
     vx,vy,vz,decayVx,decayVy,decayVz,
     decayLength,ctau,
     daughter0Id,daughter0Status,daughter0PT,daughter0Phi,daughter0Eta,
@@ -53,7 +53,7 @@ struct BNstop
 
 };
 
-// this is our new product, it is simply a 
+// this is our new product, it is simply a
 // collection of BNstop held in an std::vector
 typedef std::vector<BNstop> BNstopCollection;
 
