@@ -64,7 +64,6 @@ struct HistoDef {
 struct Node
 {
   Node            *parent;
-  string          type;
   string          value;
   vector<Node *>  branches;
 };
