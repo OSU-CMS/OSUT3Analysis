@@ -136,8 +136,6 @@ ValueLookupTree::evaluate ()
             values_.push_back (evaluate_ (root_, objs));
           else
             values_.push_back (numeric_limits<int>::min ());
-          for (const auto &obj : objs)
-            deleteObject (obj.first, get<2> (obj.second));
         }
     }
 
@@ -629,75 +627,33 @@ void *
 ValueLookupTree::getObject (const string &name, const unsigned i) const
 {
   if (EQ_VALID(name,bxlumis))
-    {
-      TYPE(bxlumis) *obj = new TYPE(bxlumis) (handles_->bxlumis->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->bxlumis->at (i));
   else if (EQ_VALID(name,electrons))
-    {
-      TYPE(electrons) *obj = new TYPE(electrons) (handles_->electrons->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->electrons->at (i));
   else if (EQ_VALID(name,events))
-    {
-      TYPE(events) *obj = new TYPE(events) (handles_->events->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->events->at (i));
   else if (EQ_VALID(name,genjets))
-    {
-      TYPE(genjets) *obj = new TYPE(genjets) (handles_->genjets->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->genjets->at (i));
   else if (EQ_VALID(name,jets))
-    {
-      TYPE(jets) *obj = new TYPE(jets) (handles_->jets->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->jets->at (i));
   else if (EQ_VALID(name,mcparticles))
-    {
-      TYPE(mcparticles) *obj = new TYPE(mcparticles) (handles_->mcparticles->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->mcparticles->at (i));
   else if (EQ_VALID(name,mets))
-    {
-      TYPE(mets) *obj = new TYPE(mets) (handles_->mets->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->mets->at (i));
   else if (EQ_VALID(name,muons))
-    {
-      TYPE(muons) *obj = new TYPE(muons) (handles_->muons->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->muons->at (i));
   else if (EQ_VALID(name,photons))
-    {
-      TYPE(photons) *obj = new TYPE(photons) (handles_->photons->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->photons->at (i));
   else if (EQ_VALID(name,primaryvertexs))
-    {
-      TYPE(primaryvertexs) *obj = new TYPE(primaryvertexs) (handles_->primaryvertexs->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->primaryvertexs->at (i));
   else if (EQ_VALID(name,superclusters))
-    {
-      TYPE(superclusters) *obj = new TYPE(superclusters) (handles_->superclusters->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->superclusters->at (i));
   else if (EQ_VALID(name,taus))
-    {
-      TYPE(taus) *obj = new TYPE(taus) (handles_->taus->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->taus->at (i));
   else if (EQ_VALID(name,tracks))
-    {
-      TYPE(tracks) *obj = new TYPE(tracks) (handles_->tracks->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->tracks->at (i));
   else if (EQ_VALID(name,trigobjs))
-    {
-      TYPE(trigobjs) *obj = new TYPE(trigobjs) (handles_->trigobjs->at (i));
-      return obj;
-    }
+    return ((void *) &handles_->trigobjs->at (i));
   else if (EQ_VALID(name,userVariables))
     {
       TYPE(userVariables) *obj = new TYPE(userVariables) ();
@@ -706,41 +662,6 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
       return obj;
     }
   return NULL;
-}
-
-void
-ValueLookupTree::deleteObject (const string &name, void * const obj) const
-{
-  if (EQ_VALID(name,bxlumis))
-    delete ((TYPE(bxlumis) *) obj);
-  else if (EQ_VALID(name,electrons))
-    delete ((TYPE(electrons) *) obj);
-  else if (EQ_VALID(name,events))
-    delete ((TYPE(events) *) obj);
-  else if (EQ_VALID(name,genjets))
-    delete ((TYPE(genjets) *) obj);
-  else if (EQ_VALID(name,jets))
-    delete ((TYPE(jets) *) obj);
-  else if (EQ_VALID(name,mcparticles))
-    delete ((TYPE(mcparticles) *) obj);
-  else if (EQ_VALID(name,mets))
-    delete ((TYPE(mets) *) obj);
-  else if (EQ_VALID(name,muons))
-    delete ((TYPE(muons) *) obj);
-  else if (EQ_VALID(name,photons))
-    delete ((TYPE(photons) *) obj);
-  else if (EQ_VALID(name,primaryvertexs))
-    delete ((TYPE(primaryvertexs) *) obj);
-  else if (EQ_VALID(name,superclusters))
-    delete ((TYPE(superclusters) *) obj);
-  else if (EQ_VALID(name,taus))
-    delete ((TYPE(taus) *) obj);
-  else if (EQ_VALID(name,tracks))
-    delete ((TYPE(tracks) *) obj);
-  else if (EQ_VALID(name,trigobjs))
-    delete ((TYPE(trigobjs) *) obj);
-  else if (EQ_VALID(name,userVariables))
-    delete ((TYPE(userVariables) *) obj);
 }
 
 string

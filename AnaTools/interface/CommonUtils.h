@@ -68,7 +68,7 @@ namespace anatools
   // first argument.
   void getRequiredCollections (const unordered_set<string> &, const edm::ParameterSet &, Collections &, const edm::Event &);
 
-  double getMember (const string &type, void * const obj, const string &member);
+  double getMember (const string &type, const void * const obj, const string &member);
   template<class T> T invoke (const string &returnType, Reflex::Object * const o, const string &member);
   void addDeclaringScope (const Reflex::Scope &scope, string &baseName);
 }

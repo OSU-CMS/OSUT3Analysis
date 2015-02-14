@@ -113,7 +113,6 @@ class ValueLookupTree
     // Methods for retrieving and deleting an object from a collection.
     ////////////////////////////////////////////////////////////////////////////
     void *getObject (const string &name, const unsigned i) const;
-    void deleteObject (const string &, void * const) const;
     ////////////////////////////////////////////////////////////////////////////
 
     // Returns the C++ type associated with the collection named in the first

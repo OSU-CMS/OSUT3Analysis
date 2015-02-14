@@ -188,11 +188,11 @@ template<> int anatools::objectHash<BNprimaryvertex> (const BNprimaryvertex& obj
 #endif
 
 double
-anatools::getMember (const string &type, void * const obj, const string &member)
+anatools::getMember (const string &type, const void * const obj, const string &member)
 {
   double value = numeric_limits<int>::min ();
   Reflex::Type t = Reflex::Type::ByName (type);
-  Reflex::Object *o = new Reflex::Object (t, obj);
+  Reflex::Object *o = new Reflex::Object (t, (void *) obj);
   string dataMemberType, functionMemberType;
 
   dataMemberType = t.DataMemberByName (member).TypeOf ().Name ();
