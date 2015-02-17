@@ -9,6 +9,12 @@ MyVariableProducer::~MyVariableProducer() {}
 void
 MyVariableProducer::AddVariables (const edm::Event &event, auto_ptr<VariableProducerPayload> &myVars) {
 
+  // Add all of the needed collections to objectsToGet_  
+  objectsToGet_.insert ("muons");
+
+  anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);
+
+
 #if DATA_FORMAT == BEAN
   if (!collections_.exists ("muons")) {cout << "no muons" << endl; return;}
 
@@ -81,12 +87,19 @@ MyVariableProducer::AddVariables (const edm::Event &event, auto_ptr<VariableProd
     }
   }
 
+  
+#endif
 
-  for (BNmuonCollection::const_iterator muon1 = muons->begin(); muon1 != muons->end(); muon1++){
-    addUserVar(myVars, "muonSF", muon1->pt, muon1);  
+  for (auto muon1 = handles_.muons->begin(); muon1 != handles_.muons->end(); muon1++) {  
+    // TYPE_STR(handles_.muons) will be something like "handles_.BNmuon", so we use: 
+    // string(TYPE_STR(handles_.muons)).substr(9) to remove the first 9 characters 
+    // and get something like "BNmuon".  
+    double value = anatools::getMember(string(TYPE_STR(handles_.muons)).substr(9), &(*muon1), "pt"); 
+    addUserVar(myVars, "muonSF", value, muon1);  
   }
 
-#endif
+
+
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
