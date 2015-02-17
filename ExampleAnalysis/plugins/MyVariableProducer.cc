@@ -83,12 +83,9 @@ MyVariableProducer::AddVariables (const edm::Event &event, auto_ptr<VariableProd
 
 
   for (BNmuonCollection::const_iterator muon1 = muons->begin(); muon1 != muons->end(); muon1++){
-    // add objects to the list of hashes                                                                                                                                                                
-    vector<int> hashes;
-    hashes.push_back(objectHash(*muon1));
-    UserVar muonSF = make_pair(hashes,muon1->pt);
-    (*myVars)["muonSF"].push_back(muonSF);
+    addUserVar(myVars, "muonSF", muon1->pt, muon1);  
   }
+
 #endif
 }
 
