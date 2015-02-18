@@ -26,6 +26,8 @@ class VariableProducer : public edm::EDProducer
     protected:
 
       edm::ParameterSet collections_;
+      Collections handles_;
+      unordered_set<string> objectsToGet_;
 
       template<typename... Objects> void addUserVar (auto_ptr<VariableProducerPayload> &myVars, string varName, double value, Objects... objs);  
       void addUserVar (auto_ptr<VariableProducerPayload> &myVars, string varName, double value, vector<int>& hashes);  
