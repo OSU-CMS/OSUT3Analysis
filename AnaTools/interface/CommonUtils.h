@@ -8,6 +8,7 @@
 #define COMMON_UTILS
 
 #include <unordered_set>
+#include <typeinfo>
 
 #include "FWCore/Framework/interface/Event.h"
 
@@ -24,13 +25,81 @@ namespace anatools
 {
   template <class InputCollection> bool getCollection (const edm::InputTag &, edm::Handle<InputCollection> &, const edm::Event &);
 
-  // Return a (hopefully) unique hashed integer for an object
-  template <class InputObject> int objectHash (const InputObject&);
 #if DATA_FORMAT == BEAN
+  // Returns the type of physics object, e.g. inputObject of type BNmuon returns "muon"
+  string getObjectType (const BNbxlumi&);
+  string getObjectType (const BNelectron&);
+  string getObjectType (const BNevent&);
+  string getObjectType (const BNgenjet&);
+  string getObjectType (const BNjet&);
+  string getObjectType (const BNmcparticle&);
+  string getObjectType (const BNmet&);
+  string getObjectType (const BNmuon&);
+  string getObjectType (const BNphoton&);
+  string getObjectType (const BNprimaryvertex&);
+  string getObjectType (const BNsupercluster&);
+  string getObjectType (const BNtau&);
+  string getObjectType (const BNtrack&);
+  string getObjectType (const BNtrigobj&);
+
+  // Returns class name, e.g. inputObject of type BNmuon returns "BNmuon"
+  string getObjectClass (const BNbxlumi&);
+  string getObjectClass (const BNelectron&);
+  string getObjectClass (const BNevent&);
+  string getObjectClass (const BNgenjet&);
+  string getObjectClass (const BNjet&);
+  string getObjectClass (const BNmcparticle&);
+  string getObjectClass (const BNmet&);
+  string getObjectClass (const BNmuon&);
+  string getObjectClass (const BNphoton&);
+  string getObjectClass (const BNprimaryvertex&);
+  string getObjectClass (const BNsupercluster&);
+  string getObjectClass (const BNtau&);
+  string getObjectClass (const BNtrack&);
+  string getObjectClass (const BNtrigobj&);
+
+#elif DATA_FORMAT == MINI_AOD
+  // Returns the type of physics object, e.g. inputObject of type pat::Muon returns "muon"
+  string getObjectType (const pat::Electron&);
+  string getObjectType (const reco::GenJet&);
+  string getObjectType (const pat::Jet&);
+  string getObjectType (const pat::PackedGenParticle&);
+  string getObjectType (const pat::MET&);
+  string getObjectType (const pat::Muon&);
+  string getObjectType (const pat::Photon&);
+  string getObjectType (const reco::Vertex&);
+  string getObjectType (const reco::SuperCluster&);
+  string getObjectType (const pat::Tau&);
+  string getObjectType (const pat::TriggerObjectStandAlone&);
+  string getObjectType (const edm::TriggerResults&);
+
+  // Returns class name, e.g. inputObject of type pat::Muon returns "pat::Muon"
+  string getObjectClass (const pat::Electron&);
+  string getObjectClass (const reco::GenJet&);
+  string getObjectClass (const pat::Jet&);
+  string getObjectClass (const pat::PackedGenParticle&);
+  string getObjectClass (const pat::MET&);
+  string getObjectClass (const pat::Muon&);
+  string getObjectClass (const pat::Photon&);
+  string getObjectClass (const reco::Vertex&);
+  string getObjectClass (const reco::SuperCluster&);
+  string getObjectClass (const pat::Tau&);
+  string getObjectClass (const pat::TriggerObjectStandAlone&);
+  string getObjectClass (const edm::TriggerResults&);
+#endif
+
+  // user-defined cases
+  string getObjectType (const VariableProducerPayload&);
+  string getObjectClass (const VariableProducerPayload&);
+
+
+#if DATA_FORMAT == BEAN
+  // Return a (hopefully) unique hashed integer for an object
+  template <class InputObject> int getObjectHash (const InputObject&);
   // Treat special cases of objects without a 3-momentum
-  template<> int objectHash<BNevent> (const BNevent&);
-  template<> int objectHash<BNmet> (const BNmet&);
-  template<> int objectHash<BNprimaryvertex> (const BNprimaryvertex&);
+  template<> int getObjectHash<BNevent> (const BNevent&);
+  template<> int getObjectHash<BNmet> (const BNmet&);
+  template<> int getObjectHash<BNprimaryvertex> (const BNprimaryvertex&);
 #endif
 
   // Extracts the constituent collections from a composite collection name.
@@ -69,6 +138,9 @@ namespace anatools
   void getRequiredCollections (const unordered_set<string> &, const edm::ParameterSet &, Collections &, const edm::Event &);
 
   double getMember (const string &type, const void * const obj, const string &member);
+
+  template <class InputObject> double getMember (const InputObject  &obj, const string &member);
+
   template<class T> T invoke (const string &returnType, Reflex::Object * const o, const string &member);
   void addDeclaringScope (const Reflex::Scope &scope, string &baseName);
 }
@@ -99,16 +171,29 @@ template <class InputCollection> bool anatools::getCollection(const edm::InputTa
   return true;
 }
 
+// version of getMember that doesn't require the "type" as an argument
+template <class InputObject> double anatools::getMember(const InputObject  &obj, const string &member)
+{
+  string type = getObjectClass(*obj);
+  return getMember(type, &(*obj), member);
+}
+
+
+#if DATA_FORMAT == BEAN
 // generic function to calculate a hash value of any input object
 // hash is based on the 3-vector where available.
 // if not, the 3-position is used.
 // some special cases exist as well.
-template <class InputObject> int anatools::objectHash(const InputObject& object){
+template <class InputObject> int anatools::getObjectHash(const InputObject& object){
     int px_mev, py_mev, pz_mev;
     px_mev = fabs(int(1000 * object.px));
     py_mev = fabs(int(1000 * object.py));
     pz_mev = fabs(int(1000 * object.pz));
     return px_mev + py_mev + pz_mev;
 }
+#endif
+
+
+
 
 #endif

@@ -163,7 +163,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 }
 
 #if DATA_FORMAT == BEAN
-template<> int anatools::objectHash<BNevent> (const BNevent& object){
+template<> int anatools::getObjectHash<BNevent> (const BNevent& object){
   int run, lumi, evt;
   run = abs(int(object.run));
   lumi = abs(int(object.lumi));
@@ -171,14 +171,14 @@ template<> int anatools::objectHash<BNevent> (const BNevent& object){
   return run + lumi + evt;
 }
 
-template<> int anatools::objectHash<BNmet> (const BNmet& object){
+template<> int anatools::getObjectHash<BNmet> (const BNmet& object){
   int px_mev, py_mev;
-  px_mev = fabs(int(1000 * object.px));
-  py_mev = fabs(int(1000 * object.py));
+  px_mev = fabs(int(10000 * object.px));
+  py_mev = fabs(int(10000 * object.py));
   return px_mev + py_mev;
 }
 
-template<> int anatools::objectHash<BNprimaryvertex> (const BNprimaryvertex& object){
+template<> int anatools::getObjectHash<BNprimaryvertex> (const BNprimaryvertex& object){
   int x_mum, y_mum, z_mum;
   x_mum = abs(int(10000 * object.x));
   y_mum = abs(int(10000 * object.y));
@@ -284,3 +284,66 @@ anatools::addDeclaringScope (const Reflex::Scope &scope, string &baseName)
       addDeclaringScope (scope.DeclaringScope (), baseName);
     }
 }
+
+#if DATA_FORMAT == BEAN
+string anatools::getObjectType (const BNbxlumi& obj){ return "bxlumi"; }
+string anatools::getObjectType (const BNelectron& obj){ return "electron"; }
+string anatools::getObjectType (const BNevent& obj){ return "event"; }
+string anatools::getObjectType (const BNgenjet& obj){ return "genjet"; }
+string anatools::getObjectType (const BNjet& obj){ return "jet"; }
+string anatools::getObjectType (const BNmcparticle& obj){ return "mcparticle"; }
+string anatools::getObjectType (const BNmet& obj){ return "met"; }
+string anatools::getObjectType (const BNmuon& obj){ return "muon"; }
+string anatools::getObjectType (const BNphoton& obj){ return "photon"; }
+string anatools::getObjectType (const BNprimaryvertex& obj){ return "primaryvertex"; }
+string anatools::getObjectType (const BNsupercluster& obj){ return "supercluster"; }
+string anatools::getObjectType (const BNtau& obj){ return "tau"; }
+string anatools::getObjectType (const BNtrack& obj){ return "track"; }
+string anatools::getObjectType (const BNtrigobj& obj){ return "trigobj"; }
+
+string anatools::getObjectClass (const BNbxlumi& obj){ return "BNbxlumi"; }
+string anatools::getObjectClass (const BNelectron& obj){ return "BNelectron"; }
+string anatools::getObjectClass (const BNevent& obj){ return "BNevent"; }
+string anatools::getObjectClass (const BNgenjet& obj){ return "BNgenjet"; }
+string anatools::getObjectClass (const BNjet& obj){ return "BNjet"; }
+string anatools::getObjectClass (const BNmcparticle& obj){ return "BNmcparticle"; }
+string anatools::getObjectClass (const BNmet& obj){ return "BNmet"; }
+string anatools::getObjectClass (const BNmuon& obj){ return "BNmuon"; }
+string anatools::getObjectClass (const BNphoton& obj){ return "BNphoton"; }
+string anatools::getObjectClass (const BNprimaryvertex& obj){ return "BNprimaryvertex"; }
+string anatools::getObjectClass (const BNsupercluster& obj){ return "BNsupercluster"; }
+string anatools::getObjectClass (const BNtau& obj){ return "BNtau"; }
+string anatools::getObjectClass (const BNtrack& obj){ return "BNtrack"; }
+string anatools::getObjectClass (const BNtrigobj& obj){ return "BNtrigobj"; }
+
+#elif DATA_FORMAT == MINI_AOD
+string anatools::getObjectType (const pat::Electron& obj){ return "electron"; }
+string anatools::getObjectType (const reco::GenJet& obj){ return "genjet"; }
+string anatools::getObjectType (const pat::Jet& obj){ return "jet"; }
+string anatools::getObjectType (const pat::PackedGenParticle& obj){ return "mcparticle"; }
+string anatools::getObjectType (const pat::MET& obj){ return "met"; }
+string anatools::getObjectType (const pat::Muon& obj){ return "muon"; }
+string anatools::getObjectType (const pat::Photon& obj){ return "photon"; }
+string anatools::getObjectType (const reco::Vertex& obj){ return "vertex"; }
+string anatools::getObjectType (const reco::SuperCluster& obj){ return "supercluster"; }
+string anatools::getObjectType (const pat::Tau& obj){ return "tau"; }
+string anatools::getObjectType (const pat::TriggerObjectStandAlone& obj){ return "trigobj"; }
+string anatools::getObjectType (const edm::TriggerResults& obj){ return "trigger"; }
+
+string anatools::getObjectClass (const pat::Electron& obj){ return "pat::Electron"; }
+string anatools::getObjectClass (const reco::GenJet& obj){ return "reco::GenJet"; }
+string anatools::getObjectClass (const pat::Jet& obj){ return "pat::Jet"; }
+string anatools::getObjectClass (const pat::PackedGenParticle& obj){ return "pat::PackedGenParticle"; }
+string anatools::getObjectClass (const pat::MET& obj){ return "pat::MET"; }
+string anatools::getObjectClass (const pat::Muon& obj){ return "pat::Muon"; }
+string anatools::getObjectClass (const pat::Photon& obj){ return "pat::Photon"; }
+string anatools::getObjectClass (const reco::Vertex& obj){ return "reco::Vertex"; }
+string anatools::getObjectClass (const reco::SuperCluster& obj){ return "reco::SuperCluster"; }
+string anatools::getObjectClass (const pat::Tau& obj){ return "pat::Tau"; }
+string anatools::getObjectClass (const pat::TriggerObjectStandAlone& obj){ return "pat::TriggerObjectStandAlone"; }
+string anatools::getObjectClass (const edm::TriggerResults& obj){ return "edm::TriggerResults"; }
+#endif
+
+// user-defined cases
+string anatools::getObjectType (const VariableProducerPayload& obj){ return "uservariable"; }
+string anatools::getObjectClass (const VariableProducerPayload& obj){ return "VariableProducerPayload"; }
