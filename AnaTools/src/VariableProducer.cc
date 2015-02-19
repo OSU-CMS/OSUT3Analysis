@@ -14,11 +14,11 @@ void
 VariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
 
-  auto_ptr<VariableProducerPayload> userVariables (new VariableProducerPayload);
+  userVariables = auto_ptr<VariableProducerPayload> (new VariableProducerPayload);
 
   ////////////////////////////////////////////////////////////////////////
 
-  AddVariables(event, userVariables);
+  AddVariables(event);
 
   // store all of our calculated quantities in the event
   event.put (userVariables, "userVariables");
@@ -27,4 +27,4 @@ VariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 // implementation left up to the daughter class
 void
-VariableProducer::AddVariables (const edm::Event &event, auto_ptr<VariableProducerPayload> &myVars) {}
+VariableProducer::AddVariables (const edm::Event &event) {}

@@ -9,11 +9,8 @@
 
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-using anatools::objectHash;
 
 using namespace std;
-
-
 
 class VariableProducer : public edm::EDProducer
   {
@@ -21,23 +18,30 @@ class VariableProducer : public edm::EDProducer
       VariableProducer (const edm::ParameterSet &);
       ~VariableProducer ();
 
+      // Methods
+
       void produce (edm::Event &, const edm::EventSetup &);
 
     protected:
 
+      // Variables
+
       edm::ParameterSet collections_;
       Collections handles_;
       unordered_set<string> objectsToGet_;
+      auto_ptr<VariableProducerPayload> userVariables;
 
-      template<typename... Objects> void addUserVar (auto_ptr<VariableProducerPayload> &myVars, string varName, double value, Objects... objs);  
-      void addUserVar (auto_ptr<VariableProducerPayload> &myVars, string varName, double value, vector<int>& hashes);  
-      template<typename Object, typename... Objects> void addUserVar (auto_ptr<VariableProducerPayload> &myVars, string varName, double value, vector<int>& hashes, Object obj, Objects... objs);  
+      // Methods
+
+      template<typename... Objects> void addUserVar (string varName, double value, Objects... objs);
+      void addUserVar (string varName, double value, ObjectList objects);
+      template<typename Object, typename... Objects> void addUserVar (string varName, double value, ObjectList objects, Object obj, Objects... objs);
 
     private:
 
       // Methods
 
-      virtual void AddVariables(const edm::Event &, auto_ptr<VariableProducerPayload> &);
+      virtual void AddVariables(const edm::Event &);
 
   };
 
@@ -45,32 +49,41 @@ class VariableProducer : public edm::EDProducer
 // Templated variadic functions are confusing!
 // Try these references:
 // https://www.ibm.com/developerworks/community/blogs/5894415f-be62-4bc0-81c5-3956e82276f3/entry/c_templates_what_is_a_variadic_template_function41?lang=en
-// http://en.cppreference.com/w/cpp/language/parameter_pack  
-// 
+// http://en.cppreference.com/w/cpp/language/parameter_pack
+
+
 // This version of addUserVar(), with no argument for "hashes", 
-// should be called in MyVariableProducer.cc.  
-template<typename... Objects> void VariableProducer::addUserVar (auto_ptr<VariableProducerPayload> &myVars, string varName, double value, Objects... objs) { 
-  vector<int> hashes;  
-  addUserVar(myVars, varName, value, hashes, objs...);  // Now call the recursive function.  
-}  
-
-
-// This is the recursive version.  
-template<typename Object, typename... Objects> void VariableProducer::addUserVar(auto_ptr<VariableProducerPayload> &myVars, string varName, double value, vector<int>& hashes, Object obj, Objects... objs) {
-  hashes.push_back(objectHash(*obj));
-  addUserVar(myVars, varName, value, hashes, objs...);  
-  // Recursively call itself until the size of objs is 0.  
-  // Then the non-recursive function will be called once.  
+// should be called in MyVariableProducer.cc.
+template<typename... Objects> void VariableProducer::addUserVar (string varName, double value, Objects... objs) { 
+  ObjectList objects;
+  addUserVar(varName, value, objects, objs...);  // Now call the recursive function.
 }
 
-// This is the non-recursive version.  
-void VariableProducer::addUserVar (auto_ptr<VariableProducerPayload> &myVars, string varName, double value, vector<int>& hashes) {
-  // Now there are no more objects to put into hashes, 
-  // so the new variable is created.  
-  UserVar newUserVar = make_pair(hashes, value);   
-  (*myVars)[varName].push_back(newUserVar);    
 
-}  
+// This is the recursive version.
+template<typename Object, typename... Objects> void VariableProducer::addUserVar (string varName, double value, ObjectList objects, Object obj, Objects... objs) {
+  // "obj" is the first object in the list
+  // calculate it's type and hash
+  // and add them into the list to save
+  auto type = anatools::getObjectType(*obj);
+  auto hash = anatools::getObjectHash(*obj);
+  objects.insert(make_pair(type, hash));
+
+  // Recursively call itself until the size of objs is 0.
+  // Then the non-recursive function will be called once.
+  addUserVar(varName, value, objects, objs...);
+}
+
+
+// This is the non-recursive version.
+void VariableProducer::addUserVar (string varName, double value, ObjectList objects) {
+  // Now there are no more objects to put into hashes, 
+  // so the new variable is created.
+  UserVariable userVar = {};
+  userVar.value = value;
+  userVar.objects = objects;
+  (*userVariables)[varName].push_back(userVar);  
+}
 
 
 #endif
