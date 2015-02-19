@@ -14,7 +14,7 @@ class MyVariableProducer : public VariableProducer
     private:
 
 	// Functions
-	void AddVariables(const edm::Event &, auto_ptr<VariableProducerPayload> &);
+	void AddVariables(const edm::Event &);
   };
 
 #endif
