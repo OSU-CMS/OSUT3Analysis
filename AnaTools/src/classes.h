@@ -33,6 +33,11 @@ namespace {
      vector<Cut> cutdummy2;
      edm::Wrapper<vector<Cut> > cutdummy3;
 
+     VariableProducerPayload VariableProducerPayloadDummy0;
+     vector<VariableProducerPayload> VariableProducerPayloadDummy1;
+     edm::Wrapper<VariableProducerPayload> VariableProducerPayloadDummy2;
+     edm::Wrapper<vector<VariableProducerPayload> > VariableProducerPayloadDummy3;
+
      map<string, vector<vector<bool> > > mapcharbooldummy0;
      edm::Wrapper<map<string, vector<vector<bool> > > > mapcharbooldummy1;
      vector<map<string, vector<vector<bool> > > > mapcharbooldummy2;

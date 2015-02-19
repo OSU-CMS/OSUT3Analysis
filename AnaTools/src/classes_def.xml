@@ -19,6 +19,11 @@
   <class name="edm::Wrapper<CutCalculatorPayload>"/>
   <class name="edm::Wrapper<std::vector<CutCalculatorPayload> >"/>
 
+  <class name="VariableProducerPayload"/>
+  <class name="std::vector<VariableProducerPayload>"/>
+  <class name="edm::Wrapper<VariableProducerPayload>"/>
+  <class name="edm::Wrapper<std::vector<VariableProducerPayload> >"/>
+
   <class name="Cut"/>
   <class name="std::vector<Cut>"/>
   <class name="edm::Wrapper<Cut>"/>

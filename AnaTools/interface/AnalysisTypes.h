@@ -68,15 +68,22 @@ struct Node
   vector<Node *>  branches;
 };
 
-// UserVar type:
-//   vector<int> - hashes of all objects used
-//   double - value of the calculated variable
-typedef pair<vector<int>, double> UserVar;
+// type to hold list of hashed indices corresponding to objects
+// string - object type
+// int - object hash
+typedef multimap <string, int>  ObjectList;
+
+// struct to connect objects to the calculated variable's value
+struct UserVariable
+{
+  double value;
+  ObjectList objects;
+};
 
 // VariableProducerPayload type:
 //   string - user-defined name of variable
-//   vector - one UserVar per combination of input objects
-typedef map<string, vector<UserVar> > VariableProducerPayload;
+//   vector - one UserVariable per combination of input objects
+typedef map<string, vector<UserVariable> > VariableProducerPayload;
 
 struct Collections
 {
