@@ -177,48 +177,6 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
-def add_variables (process, modules, collections):
-
-    ############################################################################
-    # If only the default scheduler exists, create an empty one
-    ############################################################################
-    scheduleType =  type(process.schedule).__name__
-    if scheduleType == 'NoneType':
-        process.schedule = cms.Schedule ()
-    ############################################################################
-
-
-    ############################################################################
-    # Add the variable production modules to a path
-    ############################################################################
-    if not hasattr (add_variables, "pathIndex"):
-        add_variables.pathIndex = 0
-
-    variableProducerPath = cms.Path ()
-    for module in modules:
-        producer = cms.EDProducer (module,
-                                   collections = collections
-                                   )
-        setattr (process, module, producer)
-        variableProducerPath += producer
-
-    ############################################################################
-    # Each module is added to the list of event variables in the collections
-    # PSet.
-    ############################################################################
-    for module in modules:
-        if not hasattr (collections, "userVariables"):
-            collections.userVariables = cms.VInputTag ()
-        collections.userVariables.append (cms.InputTag (module, "userVariables"))
-
-    ############################################################################
-    # Add the variable production path at the beginning of the schedule
-    ############################################################################
-    pathName = "variableProducerPath" + str(add_variables.pathIndex)
-    setattr(process, pathName, variableProducerPath)
-    process.schedule.insert(0,variableProducerPath)
-
-    add_variables.pathIndex += 1
 
 
 def add_channels (process, channels, histogramSets, collections, variableProducers, skim = True):
@@ -265,8 +223,6 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
 
     for channel in channels:
         channelPath = cms.Path ()
-        channelCollections = copy.deepcopy (collections)
-
         channelName = channel.name.pythonValue ()
         channelName = channelName[1:-1]  # Remove quotation marks
 
@@ -293,6 +249,43 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
                 os.mkdir (channelName)
             except OSError:
                 pass
+        ########################################################################
+
+        ########################################################################
+        # Add the variable production modules to a path
+        ########################################################################
+        variableProducerPath = cms.Path ()
+        for module in variableProducers:
+            if not hasattr (process, module):
+                producer = cms.EDProducer (module,
+                                           collections = collections
+                                           )
+                setattr (process, module, producer)
+                variableProducerPath += producer
+        ########################################################################
+
+        ########################################################################
+        # Each variable producer module is added to the list of user variable 
+        # collections in the collections PSet.
+        ########################################################################
+            if not hasattr (collections, "userVariables"):
+                collections.userVariables = cms.VInputTag ()
+            # verify this collection hasn't already been added
+            isDuplicate = False
+            for inputTag in collections.userVariables:
+                if inputTag.getModuleLabel() is module:
+                    isDuplicate = True
+                    break
+            if not isDuplicate:
+                collections.userVariables.append (cms.InputTag (module, "userVariables"))
+        ########################################################################
+
+        ########################################################################
+        # Add the variable production path at the beginning of the schedule
+        ########################################################################
+        if not hasattr (process, "variableProducerPath"):
+            setattr(process, "variableProducerPath", variableProducerPath)
+            process.schedule.insert(0,variableProducerPath)
         ########################################################################
 
         ########################################################################
@@ -351,6 +344,7 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         # corresponding object selector to the path. We also trade the original
         # collection for the slimmed collection in the output commands.
         ########################################################################
+        filteredCollections = copy.deepcopy (collections)
         cutCollections = get_collections (channel.cuts)
         for collection in cutCollections:
             filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
@@ -362,7 +356,7 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
             channelPath += objectSelector
             setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
             originalInputTag = getattr (collections, collection)
-            setattr (channelCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
+            setattr (filteredCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
             dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
             if originalInputTag.getProcessName ():
                 dropCommand += originalInputTag.getProcessName ()
@@ -374,29 +368,11 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         ########################################################################
 
         ########################################################################
-        # Add the variableProducers to the path. 
-        ########################################################################
-        for varProd in variableProducers:
-            producer = cms.EDProducer (varProd,
-                                       collections = channelCollections
-                                       )
-            setattr (process, varProd, producer)
-            channelPath += producer 
-
-            if not hasattr (collections, "userVariables"):
-                collections.userVariables = cms.VInputTag ()
-            if not hasattr (channelCollections, "userVariables"):
-                channelCollections.userVariables = cms.VInputTag ()
-            collections.userVariables.append        (cms.InputTag (varProd, "userVariables"))
-            channelCollections.userVariables.append (cms.InputTag (varProd, "userVariables"))
-
-
-        ########################################################################
         # Add a plotting module for this channel to the path.
         ########################################################################
         if len (histogramSets):
             plotter = cms.EDAnalyzer ("Plotter",
-                collections     =  channelCollections,
+                collections     =  filteredCollections,
                 histogramSets   =  histogramSets,
                 verbose         =  cms.int32 (0)
             )
