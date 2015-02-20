@@ -7,6 +7,7 @@
 #ifndef COMMON_UTILS
 #define COMMON_UTILS
 
+#include <iostream>
 #include <unordered_set>
 #include <typeinfo>
 
@@ -19,74 +20,41 @@
 // Return whether obj is contained in vec.
 #define VEC_CONTAINS(vec, obj) (find (vec.begin (), vec.end (), obj) != vec.end ())
 
-using namespace std;
-
 namespace anatools
 {
   template <class InputCollection> bool getCollection (const edm::InputTag &, edm::Handle<InputCollection> &, const edm::Event &);
 
-#if DATA_FORMAT == BEAN
   // Returns the type of physics object, e.g. inputObject of type BNmuon returns "muon"
-  string getObjectType (const BNbxlumi&);
-  string getObjectType (const BNelectron&);
-  string getObjectType (const BNevent&);
-  string getObjectType (const BNgenjet&);
-  string getObjectType (const BNjet&);
-  string getObjectType (const BNmcparticle&);
-  string getObjectType (const BNmet&);
-  string getObjectType (const BNmuon&);
-  string getObjectType (const BNphoton&);
-  string getObjectType (const BNprimaryvertex&);
-  string getObjectType (const BNsupercluster&);
-  string getObjectType (const BNtau&);
-  string getObjectType (const BNtrack&);
-  string getObjectType (const BNtrigobj&);
+  string getObjectType (const TYPE(bxlumis) &);
+  string getObjectType (const TYPE(electrons) &);
+  string getObjectType (const TYPE(events) &);
+  string getObjectType (const TYPE(genjets) &);
+  string getObjectType (const TYPE(jets) &);
+  string getObjectType (const TYPE(mcparticles) &);
+  string getObjectType (const TYPE(mets) &);
+  string getObjectType (const TYPE(muons) &);
+  string getObjectType (const TYPE(photons) &);
+  string getObjectType (const TYPE(primaryvertexs) &);
+  string getObjectType (const TYPE(superclusters) &);
+  string getObjectType (const TYPE(taus) &);
+  string getObjectType (const TYPE(tracks) &);
+  string getObjectType (const TYPE(trigobjs) &);
 
   // Returns class name, e.g. inputObject of type BNmuon returns "BNmuon"
-  string getObjectClass (const BNbxlumi&);
-  string getObjectClass (const BNelectron&);
-  string getObjectClass (const BNevent&);
-  string getObjectClass (const BNgenjet&);
-  string getObjectClass (const BNjet&);
-  string getObjectClass (const BNmcparticle&);
-  string getObjectClass (const BNmet&);
-  string getObjectClass (const BNmuon&);
-  string getObjectClass (const BNphoton&);
-  string getObjectClass (const BNprimaryvertex&);
-  string getObjectClass (const BNsupercluster&);
-  string getObjectClass (const BNtau&);
-  string getObjectClass (const BNtrack&);
-  string getObjectClass (const BNtrigobj&);
-
-#elif DATA_FORMAT == MINI_AOD
-  // Returns the type of physics object, e.g. inputObject of type pat::Muon returns "muon"
-  string getObjectType (const pat::Electron&);
-  string getObjectType (const reco::GenJet&);
-  string getObjectType (const pat::Jet&);
-  string getObjectType (const pat::PackedGenParticle&);
-  string getObjectType (const pat::MET&);
-  string getObjectType (const pat::Muon&);
-  string getObjectType (const pat::Photon&);
-  string getObjectType (const reco::Vertex&);
-  string getObjectType (const reco::SuperCluster&);
-  string getObjectType (const pat::Tau&);
-  string getObjectType (const pat::TriggerObjectStandAlone&);
-  string getObjectType (const edm::TriggerResults&);
-
-  // Returns class name, e.g. inputObject of type pat::Muon returns "pat::Muon"
-  string getObjectClass (const pat::Electron&);
-  string getObjectClass (const reco::GenJet&);
-  string getObjectClass (const pat::Jet&);
-  string getObjectClass (const pat::PackedGenParticle&);
-  string getObjectClass (const pat::MET&);
-  string getObjectClass (const pat::Muon&);
-  string getObjectClass (const pat::Photon&);
-  string getObjectClass (const reco::Vertex&);
-  string getObjectClass (const reco::SuperCluster&);
-  string getObjectClass (const pat::Tau&);
-  string getObjectClass (const pat::TriggerObjectStandAlone&);
-  string getObjectClass (const edm::TriggerResults&);
-#endif
+  string getObjectClass (const TYPE(bxlumis) &);
+  string getObjectClass (const TYPE(electrons) &);
+  string getObjectClass (const TYPE(events) &);
+  string getObjectClass (const TYPE(genjets) &);
+  string getObjectClass (const TYPE(jets) &);
+  string getObjectClass (const TYPE(mcparticles) &);
+  string getObjectClass (const TYPE(mets) &);
+  string getObjectClass (const TYPE(muons) &);
+  string getObjectClass (const TYPE(photons) &);
+  string getObjectClass (const TYPE(primaryvertexs) &);
+  string getObjectClass (const TYPE(superclusters) &);
+  string getObjectClass (const TYPE(taus) &);
+  string getObjectClass (const TYPE(tracks) &);
+  string getObjectClass (const TYPE(trigobjs) &);
 
   // user-defined cases
   string getObjectType (const VariableProducerPayload&);
@@ -141,8 +109,12 @@ namespace anatools
 
   template <class InputObject> double getMember (const InputObject  &obj, const string &member);
 
+#ifdef ROOT6
+  template<class T> T invoke (const string &returnType, edm::ObjectWithDict * const o, const string &member);
+#else
   template<class T> T invoke (const string &returnType, Reflex::Object * const o, const string &member);
   void addDeclaringScope (const Reflex::Scope &scope, string &baseName);
+#endif
 }
 
 template <class InputCollection> bool anatools::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
@@ -192,8 +164,5 @@ template <class InputObject> int anatools::getObjectHash(const InputObject& obje
     return px_mev + py_mev + pz_mev;
 }
 #endif
-
-
-
 
 #endif

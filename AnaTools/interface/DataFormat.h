@@ -91,6 +91,17 @@
 #define TYPE_STR(x) XSTR(x##_TYPE)
 
 #include <string>
+#include "RVersion.h"
+
+#if ROOT_VERSION_CODE >= ROOT_VERSION(6,0,0)
+  #define ROOT6
+#else
+  #define ROOT5
+#endif
+
+#ifdef ROOT6
+  #error "ROOT 6 is not yet supported."
+#endif
 
 using namespace std;
 

@@ -15,8 +15,6 @@
 #include "TH1.h"
 #include "TH2.h"
 
-using namespace std;
-
 class Plotter : public edm::EDAnalyzer
 {
     public:

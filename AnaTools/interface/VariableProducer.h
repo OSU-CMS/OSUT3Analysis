@@ -10,8 +10,6 @@
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
-using namespace std;
-
 class VariableProducer : public edm::EDProducer
   {
     public:

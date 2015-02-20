@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <map>
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include <fstream>
 
 #include "TFile.h"
@@ -279,9 +279,9 @@ main (int argc, char *argv[])
           binError = sqrt (binError);
         }
 
-      if (isnan (binContent ))
+      if (::isnan (binContent ))
         columnContent = "\\mathrm{nan}";
-      else if (isinf (binContent))
+      else if (::isinf (binContent))
         {
           if (binContent > 0)
             columnContent = "+\\infty";
@@ -488,7 +488,7 @@ bigEff (double n)
   stringstream ss;
   string num;
 
-  if (isnan (n) || isinf (n))
+  if (::isnan (n) || ::isinf (n))
     n = 0.0;
   ss << setprecision (myprecision_) << n;
   num = ss.str ();
