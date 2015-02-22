@@ -95,12 +95,10 @@
 
 #if ROOT_VERSION_CODE >= ROOT_VERSION(6,0,0)
   #define ROOT6
-#else
+#elif ROOT_VERSION_CODE >= ROOT_VERSION(5,0,0)
   #define ROOT5
-#endif
-
-#ifdef ROOT6
-  #error "ROOT 6 is not yet supported."
+#else
+  #error "Only ROOT 5 and 6 are supported."
 #endif
 
 using namespace std;

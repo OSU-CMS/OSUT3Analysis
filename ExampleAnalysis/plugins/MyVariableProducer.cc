@@ -18,7 +18,7 @@ MyVariableProducer::AddVariables (const edm::Event &event) {
   // calculate whatever variables you'd like
 
   // simple case, just muonPt
-  for (auto muon1 = handles_.muons->begin(); muon1 != handles_.muons->end(); muon1++) {
+  for (const auto &muon1 : *handles_.muons) {
     double value = anatools::getMember(muon1, "pt");
     addUserVar("muonPt", value, muon1);
   }

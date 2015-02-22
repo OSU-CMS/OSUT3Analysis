@@ -63,8 +63,8 @@ template<typename Object, typename... Objects> void VariableProducer::addUserVar
   // "obj" is the first object in the list
   // calculate it's type and hash
   // and add them into the list to save
-  auto type = anatools::getObjectType(*obj);
-  auto hash = anatools::getObjectHash(*obj);
+  auto type = anatools::getObjectType(obj);
+  auto hash = anatools::getObjectHash(obj);
   objects.insert(make_pair(type, hash));
 
   // Recursively call itself until the size of objs is 0.

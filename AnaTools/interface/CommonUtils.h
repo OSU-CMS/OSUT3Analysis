@@ -24,51 +24,72 @@ namespace anatools
 {
   template <class InputCollection> bool getCollection (const edm::InputTag &, edm::Handle<InputCollection> &, const edm::Event &);
 
-  // Returns the type of physics object, e.g. inputObject of type BNmuon returns "muon"
-  string getObjectType (const TYPE(bxlumis) &);
-  string getObjectType (const TYPE(electrons) &);
-  string getObjectType (const TYPE(events) &);
-  string getObjectType (const TYPE(genjets) &);
-  string getObjectType (const TYPE(jets) &);
-  string getObjectType (const TYPE(mcparticles) &);
-  string getObjectType (const TYPE(mets) &);
-  string getObjectType (const TYPE(muons) &);
-  string getObjectType (const TYPE(photons) &);
-  string getObjectType (const TYPE(primaryvertexs) &);
-  string getObjectType (const TYPE(superclusters) &);
-  string getObjectType (const TYPE(taus) &);
-  string getObjectType (const TYPE(tracks) &);
-  string getObjectType (const TYPE(trigobjs) &);
+  // Return a (hopefully) unique hashed integer for an object
+  template <class InputObject> int getObjectHash (const InputObject&);
 
-  // Returns class name, e.g. inputObject of type BNmuon returns "BNmuon"
+#if IS_VALID(bxlumis)
+  string getObjectType (const TYPE(bxlumis) &);
   string getObjectClass (const TYPE(bxlumis) &);
+#endif
+#if IS_VALID(electrons)
+  string getObjectType (const TYPE(electrons) &);
   string getObjectClass (const TYPE(electrons) &);
+#endif
+#if IS_VALID(events)
+  string getObjectType (const TYPE(events) &);
   string getObjectClass (const TYPE(events) &);
+  template<> int getObjectHash<TYPE(events)> (const TYPE(events) &);
+#endif
+#if IS_VALID(genjets)
+  string getObjectType (const TYPE(genjets) &);
   string getObjectClass (const TYPE(genjets) &);
+#endif
+#if IS_VALID(jets)
+  string getObjectType (const TYPE(jets) &);
   string getObjectClass (const TYPE(jets) &);
+#endif
+#if IS_VALID(mcparticles)
+  string getObjectType (const TYPE(mcparticles) &);
   string getObjectClass (const TYPE(mcparticles) &);
+#endif
+#if IS_VALID(mets)
+  string getObjectType (const TYPE(mets) &);
   string getObjectClass (const TYPE(mets) &);
+  template<> int getObjectHash<TYPE(mets)> (const TYPE(mets) &);
+#endif
+#if IS_VALID(muons)
+  string getObjectType (const TYPE(muons) &);
   string getObjectClass (const TYPE(muons) &);
+#endif
+#if IS_VALID(photons)
+  string getObjectType (const TYPE(photons) &);
   string getObjectClass (const TYPE(photons) &);
+#endif
+#if IS_VALID(primaryvertexs)
+  string getObjectType (const TYPE(primaryvertexs) &);
   string getObjectClass (const TYPE(primaryvertexs) &);
+  template<> int getObjectHash<TYPE(primaryvertexs)> (const TYPE(primaryvertexs) &);
+#endif
+#if IS_VALID(superclusters)
+  string getObjectType (const TYPE(superclusters) &);
   string getObjectClass (const TYPE(superclusters) &);
+#endif
+#if IS_VALID(taus)
+  string getObjectType (const TYPE(taus) &);
   string getObjectClass (const TYPE(taus) &);
+#endif
+#if IS_VALID(tracks)
+  string getObjectType (const TYPE(tracks) &);
   string getObjectClass (const TYPE(tracks) &);
+#endif
+#if IS_VALID(trigobjs)
+  string getObjectType (const TYPE(trigobjs) &);
   string getObjectClass (const TYPE(trigobjs) &);
+#endif
 
   // user-defined cases
   string getObjectType (const VariableProducerPayload&);
   string getObjectClass (const VariableProducerPayload&);
-
-
-#if DATA_FORMAT == BEAN
-  // Return a (hopefully) unique hashed integer for an object
-  template <class InputObject> int getObjectHash (const InputObject&);
-  // Treat special cases of objects without a 3-momentum
-  template<> int getObjectHash<BNevent> (const BNevent&);
-  template<> int getObjectHash<BNmet> (const BNmet&);
-  template<> int getObjectHash<BNprimaryvertex> (const BNprimaryvertex&);
-#endif
 
   // Extracts the constituent collections from a composite collection name.
   vector<string> getSingleObjects (string);
@@ -107,13 +128,13 @@ namespace anatools
 
   double getMember (const string &type, const void * const obj, const string &member);
 
-  template <class InputObject> double getMember (const InputObject  &obj, const string &member);
+  template <class InputObject> double getMember (const InputObject &obj, const string &member);
 
 #ifdef ROOT6
-  template<class T> T invoke (const string &returnType, edm::ObjectWithDict * const o, const string &member);
+  template<class T> T invoke (const string &, edm::ObjectWithDict * const, const edm::FunctionWithDict &);
 #else
-  template<class T> T invoke (const string &returnType, Reflex::Object * const o, const string &member);
-  void addDeclaringScope (const Reflex::Scope &scope, string &baseName);
+  template<class T> T invoke (const string &, Reflex::Object * const, const string &);
+  void addDeclaringScope (const Reflex::Scope &, string &);
 #endif
 }
 
@@ -144,25 +165,22 @@ template <class InputCollection> bool anatools::getCollection(const edm::InputTa
 }
 
 // version of getMember that doesn't require the "type" as an argument
-template <class InputObject> double anatools::getMember(const InputObject  &obj, const string &member)
+template <class InputObject> double anatools::getMember(const InputObject &obj, const string &member)
 {
-  string type = getObjectClass(*obj);
-  return getMember(type, &(*obj), member);
+  string type = getObjectClass(obj);
+  return getMember(type, &obj, member);
 }
 
-
-#if DATA_FORMAT == BEAN
 // generic function to calculate a hash value of any input object
 // hash is based on the 3-vector where available.
 // if not, the 3-position is used.
 // some special cases exist as well.
 template <class InputObject> int anatools::getObjectHash(const InputObject& object){
     int px_mev, py_mev, pz_mev;
-    px_mev = fabs(int(1000 * object.px));
-    py_mev = fabs(int(1000 * object.py));
-    pz_mev = fabs(int(1000 * object.pz));
+    px_mev = abs(int(1000 * getMember (object, "px")));
+    py_mev = abs(int(1000 * getMember (object, "py")));
+    pz_mev = abs(int(1000 * getMember (object, "pz")));
     return px_mev + py_mev + pz_mev;
 }
-#endif
 
 #endif

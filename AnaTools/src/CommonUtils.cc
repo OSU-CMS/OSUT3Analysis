@@ -157,33 +157,9 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   firstEvent = false;
 }
 
-#if DATA_FORMAT == BEAN
-template<> int anatools::getObjectHash<BNevent> (const BNevent& object){
-  int run, lumi, evt;
-  run = abs(int(object.run));
-  lumi = abs(int(object.lumi));
-  evt = abs(int(object.evt));
-  return run + lumi + evt;
-}
-
-template<> int anatools::getObjectHash<BNmet> (const BNmet& object){
-  int px_mev, py_mev;
-  px_mev = fabs(int(10000 * object.px));
-  py_mev = fabs(int(10000 * object.py));
-  return px_mev + py_mev;
-}
-
-template<> int anatools::getObjectHash<BNprimaryvertex> (const BNprimaryvertex& object){
-  int x_mum, y_mum, z_mum;
-  x_mum = abs(int(10000 * object.x));
-  y_mum = abs(int(10000 * object.y));
-  z_mum = abs(int(10000 * object.z));
-  return x_mum + y_mum + z_mum;
-}
-#endif
-
 #ifdef ROOT6
   #include "FWCore/Utilities/interface/BaseWithDict.h"
+  #include "FWCore/Utilities/interface/FunctionWithDict.h"
   #include "FWCore/Utilities/interface/MemberWithDict.h"
   #include "FWCore/Utilities/interface/ObjectWithDict.h"
   #include "FWCore/Utilities/interface/TypeWithDict.h"
@@ -196,11 +172,12 @@ template<> int anatools::getObjectHash<BNprimaryvertex> (const BNprimaryvertex& 
     edm::ObjectWithDict *o = new edm::ObjectWithDict (t, (void *) obj);
     const edm::MemberWithDict &dataMember = t.dataMemberByName (member);
     const edm::FunctionWithDict &functionMember = t.functionMemberByName (member);
-    string dataMemberType, functionMemberType;
+    string dataMemberType = "", functionMemberType = "";
 
-    dataMemberType = dataMember.typeOf ().name ();
-    functionMemberType = functionMember.finalReturnType ().name ();
-
+    if (dataMember)
+      dataMemberType = dataMember.typeOf ().name ();
+    if (functionMember)
+      functionMemberType = functionMember.finalReturnType ().name ();
     try
       {
         if (dataMemberType != "")
@@ -225,19 +202,19 @@ template<> int anatools::getObjectHash<BNprimaryvertex> (const BNprimaryvertex& 
         else if (functionMemberType != "")
           {
             if (functionMemberType == "float")
-              value = invoke<float> (functionMemberType, o, member);
+              value = invoke<float> (functionMemberType, o, functionMember);
             else if (functionMemberType == "double")
-              value = invoke<double> (functionMemberType, o, member);
+              value = invoke<double> (functionMemberType, o, functionMember);
             else if (functionMemberType == "long double")
-              value = invoke<long double> (functionMemberType, o, member);
+              value = invoke<long double> (functionMemberType, o, functionMember);
             else if (functionMemberType == "char")
-              value = invoke<char> (functionMemberType, o, member);
+              value = invoke<char> (functionMemberType, o, functionMember);
             else if (functionMemberType == "int")
-              value = invoke<int> (functionMemberType, o, member);
+              value = invoke<int> (functionMemberType, o, functionMember);
             else if (functionMemberType == "unsigned")
-              value = invoke<unsigned> (functionMemberType, o, member);
+              value = invoke<unsigned> (functionMemberType, o, functionMember);
             else if (functionMemberType == "bool")
-              value = invoke<bool> (functionMemberType, o, member);
+              value = invoke<bool> (functionMemberType, o, functionMember);
             else
               clog << "WARNING: \"" << member << "()\" has unrecognized return type \"" << functionMemberType << "\"" << endl;
           }
@@ -247,10 +224,10 @@ template<> int anatools::getObjectHash<BNprimaryvertex> (const BNprimaryvertex& 
     catch (...)
       {
         bool found = false;
-        for (auto bi = t.Base_Begin (); bi != t.Base_End (); bi++)
+        for (const auto &bi : edm::TypeBases (t))
           {
-            string baseName = bi->name ();
-  //          addDeclaringScope (bi->ToScope (), baseName);
+            edm::BaseWithDict baseClass (bi);
+            string baseName = baseClass.name ();
             try
               {
                 value = getMember (baseName, obj, member);
@@ -383,35 +360,82 @@ anatools::addDeclaringScope (const Reflex::Scope &scope, string &baseName)
 }
 #endif
 
-string  anatools::getObjectType  (const  TYPE(bxlumis)         &obj)  {  return  "bxlumi";         }
-string  anatools::getObjectType  (const  TYPE(electrons)       &obj)  {  return  "electron";       }
-string  anatools::getObjectType  (const  TYPE(events)          &obj)  {  return  "event";          }
-string  anatools::getObjectType  (const  TYPE(genjets)         &obj)  {  return  "genjet";         }
-string  anatools::getObjectType  (const  TYPE(jets)            &obj)  {  return  "jet";            }
-string  anatools::getObjectType  (const  TYPE(mcparticles)     &obj)  {  return  "mcparticle";     }
-string  anatools::getObjectType  (const  TYPE(mets)            &obj)  {  return  "met";            }
-string  anatools::getObjectType  (const  TYPE(muons)           &obj)  {  return  "muon";           }
-string  anatools::getObjectType  (const  TYPE(photons)         &obj)  {  return  "photon";         }
-string  anatools::getObjectType  (const  TYPE(primaryvertexs)  &obj)  {  return  "primaryvertex";  }
-string  anatools::getObjectType  (const  TYPE(superclusters)   &obj)  {  return  "supercluster";   }
-string  anatools::getObjectType  (const  TYPE(taus)            &obj)  {  return  "tau";            }
-string  anatools::getObjectType  (const  TYPE(tracks)          &obj)  {  return  "track";          }
-string  anatools::getObjectType  (const  TYPE(trigobjs)        &obj)  {  return  "trigobj";        }
-
-string  anatools::getObjectClass  (const  TYPE(bxlumis)         &obj)  {  return  TYPE_STR(bxlumis);         }
-string  anatools::getObjectClass  (const  TYPE(electrons)       &obj)  {  return  TYPE_STR(electrons);       }
-string  anatools::getObjectClass  (const  TYPE(events)          &obj)  {  return  TYPE_STR(events);          }
-string  anatools::getObjectClass  (const  TYPE(genjets)         &obj)  {  return  TYPE_STR(genjets);         }
-string  anatools::getObjectClass  (const  TYPE(jets)            &obj)  {  return  TYPE_STR(jets);            }
-string  anatools::getObjectClass  (const  TYPE(mcparticles)     &obj)  {  return  TYPE_STR(mcparticles);     }
-string  anatools::getObjectClass  (const  TYPE(mets)            &obj)  {  return  TYPE_STR(mets);            }
-string  anatools::getObjectClass  (const  TYPE(muons)           &obj)  {  return  TYPE_STR(muons);           }
-string  anatools::getObjectClass  (const  TYPE(photons)         &obj)  {  return  TYPE_STR(photons);         }
-string  anatools::getObjectClass  (const  TYPE(primaryvertexs)  &obj)  {  return  TYPE_STR(primaryvertexs);  }
-string  anatools::getObjectClass  (const  TYPE(superclusters)   &obj)  {  return  TYPE_STR(superclusters);   }
-string  anatools::getObjectClass  (const  TYPE(taus)            &obj)  {  return  TYPE_STR(taus);            }
-string  anatools::getObjectClass  (const  TYPE(tracks)          &obj)  {  return  TYPE_STR(tracks);          }
-string  anatools::getObjectClass  (const  TYPE(trigobjs)        &obj)  {  return  TYPE_STR(trigobjs);        }
+#if IS_VALID(bxlumis)
+  string  anatools::getObjectType  (const  TYPE(bxlumis)         &obj)  {  return  "bxlumi";         }
+  string  anatools::getObjectClass  (const  TYPE(bxlumis)         &obj)  {  return  TYPE_STR(bxlumis);         }
+#endif
+#if IS_VALID(electrons)
+  string  anatools::getObjectType  (const  TYPE(electrons)       &obj)  {  return  "electron";       }
+  string  anatools::getObjectClass  (const  TYPE(electrons)       &obj)  {  return  TYPE_STR(electrons);       }
+#endif
+#if IS_VALID(events)
+  string  anatools::getObjectType  (const  TYPE(events)          &obj)  {  return  "event";          }
+  string  anatools::getObjectClass  (const  TYPE(events)          &obj)  {  return  TYPE_STR(events);          }
+  template<> int anatools::getObjectHash<TYPE(events)> (const TYPE(events) &object){
+    int run, lumi, evt;
+    run = abs(int(getMember (object, "run")));
+    lumi = abs(int(getMember (object, "lumi")));
+    evt = abs(int(getMember (object, "evt")));
+    return run + lumi + evt;
+  }
+#endif
+#if IS_VALID(genjets)
+  string  anatools::getObjectType  (const  TYPE(genjets)         &obj)  {  return  "genjet";         }
+  string  anatools::getObjectClass  (const  TYPE(genjets)         &obj)  {  return  TYPE_STR(genjets);         }
+#endif
+#if IS_VALID(jets)
+  string  anatools::getObjectType  (const  TYPE(jets)            &obj)  {  return  "jet";            }
+  string  anatools::getObjectClass  (const  TYPE(jets)            &obj)  {  return  TYPE_STR(jets);            }
+#endif
+#if IS_VALID(mcparticles)
+  string  anatools::getObjectType  (const  TYPE(mcparticles)     &obj)  {  return  "mcparticle";     }
+  string  anatools::getObjectClass  (const  TYPE(mcparticles)     &obj)  {  return  TYPE_STR(mcparticles);     }
+#endif
+#if IS_VALID(mets)
+  string  anatools::getObjectType  (const  TYPE(mets)            &obj)  {  return  "met";            }
+  string  anatools::getObjectClass  (const  TYPE(mets)            &obj)  {  return  TYPE_STR(mets);            }
+  template<> int anatools::getObjectHash<TYPE(mets)> (const TYPE(mets)& object){
+    int px_mev, py_mev;
+    px_mev = fabs(int(10000 * getMember (object, "px")));
+    py_mev = fabs(int(10000 * getMember (object, "py")));
+    return px_mev + py_mev;
+  }
+#endif
+#if IS_VALID(muons)
+  string  anatools::getObjectType  (const  TYPE(muons)           &obj)  {  return  "muon";           }
+  string  anatools::getObjectClass  (const  TYPE(muons)           &obj)  {  return  TYPE_STR(muons);           }
+#endif
+#if IS_VALID(photons)
+  string  anatools::getObjectType  (const  TYPE(photons)         &obj)  {  return  "photon";         }
+  string  anatools::getObjectClass  (const  TYPE(photons)         &obj)  {  return  TYPE_STR(photons);         }
+#endif
+#if IS_VALID(primaryvertexs)
+  string  anatools::getObjectType  (const  TYPE(primaryvertexs)  &obj)  {  return  "primaryvertex";  }
+  string  anatools::getObjectClass  (const  TYPE(primaryvertexs)  &obj)  {  return  TYPE_STR(primaryvertexs);  }
+  template<> int anatools::getObjectHash<TYPE(primaryvertexs)> (const TYPE(primaryvertexs)& object){
+    int x_mum, y_mum, z_mum;
+    x_mum = abs(int(10000 * getMember (object, "x")));
+    y_mum = abs(int(10000 * getMember (object, "y")));
+    z_mum = abs(int(10000 * getMember (object, "z")));
+    return x_mum + y_mum + z_mum;
+  }
+#endif
+#if IS_VALID(superclusters)
+  string  anatools::getObjectType  (const  TYPE(superclusters)   &obj)  {  return  "supercluster";   }
+  string  anatools::getObjectClass  (const  TYPE(superclusters)   &obj)  {  return  TYPE_STR(superclusters);   }
+#endif
+#if IS_VALID(taus)
+  string  anatools::getObjectType  (const  TYPE(taus)            &obj)  {  return  "tau";            }
+  string  anatools::getObjectClass  (const  TYPE(taus)            &obj)  {  return  TYPE_STR(taus);            }
+#endif
+#if IS_VALID(tracks)
+  string  anatools::getObjectType  (const  TYPE(tracks)          &obj)  {  return  "track";          }
+  string  anatools::getObjectClass  (const  TYPE(tracks)          &obj)  {  return  TYPE_STR(tracks);          }
+#endif
+#if IS_VALID(trigobjs)
+  string  anatools::getObjectType  (const  TYPE(trigobjs)        &obj)  {  return  "trigobj";        }
+  string  anatools::getObjectClass  (const  TYPE(trigobjs)        &obj)  {  return  TYPE_STR(trigobjs);        }
+#endif
 
 // user-defined cases
 string anatools::getObjectType (const VariableProducerPayload& obj){ return "uservariable"; }
