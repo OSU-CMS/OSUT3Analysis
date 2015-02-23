@@ -215,9 +215,12 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
     ############################################################################
     if not hasattr (add_channels, "processNameUpdated"):
         add_channels.processNameUpdated = True
+        randomNumberSuffix = 0  # To get a different process name when running over a skim with the same channel.  
+        if len(process.source.fileNames) > 0:
+            randomNumberSuffix = len(process.source.fileNames[0])  # Use the length of the first input filename.  
         channelName = str(channels[0].name.pythonValue())
         channelName = channelName.replace("'", "").replace("_", "") # Non-alpha-numeric characters are not allowed in the process name.
-        process.setName_ (process.name_ () + channelName) 
+        process.setName_ (process.name_ () + channelName + str(randomNumberSuffix)) 
     ############################################################################
 
 
