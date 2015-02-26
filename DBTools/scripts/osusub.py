@@ -105,8 +105,9 @@ def MakeSpecificConfig(Dataset, Directory):
     if arguments.Random:
         ConfigFile.write('pset.process.RandomNumberGeneratorService.generator.initialSeed = osusub.jobNumber\n')
     if arguments.Unique:
-        #Make all the events IDs unique and continuos.
-        ConfigFile.write('pset.process.source.firstEvent = cms.untracked.uint32((osusub.jobNumber)*' + str(EventsPerJob) + '+1)\n')  # osusub.jobNumber starts with 0  
+        # Specify a different lumi section for each job so that all events have unique run / lumi / event numbers.  
+        # Instead of changing lumi section, could also change run number.  
+        ConfigFile.write('pset.process.source.firstLuminosityBlock = cms.untracked.uint32((osusub.jobNumber)+1) \n') # osusub.jobNumber starts with 0  
     ConfigFile.close()
 
 def MakeFileList(Dataset, FileType, Directory, Label):
