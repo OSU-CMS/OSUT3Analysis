@@ -11,6 +11,7 @@ use Sys::Hostname;
 
 select ((select (STDOUT), $| = 1)[0]);
 
+die "This file has been deprecated.  Please use osusub.py instead.\n";
 
 sub printHelp;
 sub outputPset;
@@ -389,6 +390,9 @@ printHelp
   my $exeName = $0;
   $exeName =~ s/^.*\/([^\/]*)$/$1/;
 
+  print "**********************************\n";
+  print "THIS FILE HAS BEEN DEPRECATED.  PLEASE USE osusub.py INSTEAD.\n";
+  print "**********************************\n\n\n\n";
   print "Usage: $exeName [OPTION]... [DATASET | LOCATION | LIST] CONFIG DIRECTORY NJOBS\n";
   print "Submits CMSSW jobs to the OSU Tier 3 compute nodes using Condor.\n";
   print "\n";
