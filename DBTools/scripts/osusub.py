@@ -106,7 +106,7 @@ def MakeSpecificConfig(Dataset, Directory):
         ConfigFile.write('pset.process.RandomNumberGeneratorService.generator.initialSeed = osusub.jobNumber\n')
     if arguments.Unique:
         #Make all the events IDs unique and continuos.
-        ConfigFile.write('pset.process.source.firstEvent = cms.untracked.uint32((osusub.jobNumber-1)*' + str(EventsPerJob) + '+1)\n')
+        ConfigFile.write('pset.process.source.firstEvent = cms.untracked.uint32((osusub.jobNumber)*' + str(EventsPerJob) + '+1)\n')  # osusub.jobNumber starts with 0  
     ConfigFile.close()
 
 def MakeFileList(Dataset, FileType, Directory, Label):
