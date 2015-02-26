@@ -45,6 +45,7 @@ parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", de
 parser.add_option("-L", "--Label", dest="Label", default = "", help="Give the dataset a short label.")
 parser.add_option("-s", "--SkimDirectory", dest="SkimDirectory", default = "", help="Specicy the location of the skim.")
 parser.add_option("-a", "--SkimChannel", dest="SkimChannel", default = "", help="Determine the skim channel to run over.")
+parser.add_option("-R", "--Requirements", dest="Requirements", default = "", help="Requirements to be added to condor.sub submssion script, e.g. 'Memory > 1900'.")  
 
 (arguments, args) = parser.parse_args()
 
@@ -57,11 +58,13 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label):
             SubmitFile.write('Executable = ' + cmsRunExecutable + '\n')
         elif CondorSubArgumentsSet[argument].has_key('Arguments') and CondorSubArgumentsSet[argument]['Arguments'] == "":
             SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
-        elif CondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and CondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
+        elif CondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and CondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":   
             if Dataset == '':
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py\n')
             else:
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py,datasetInfo_' + Label + '_cfg.py\n')
+        elif CondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
+            SubmitFile.write('Requirements = ' + arguments.Requirements + '\n')
         elif CondorSubArgumentsSet[argument].has_key('Queue'):
             SubmitFile.write('Queue ' + str(NumberOfJobs) +'\n')
         else:
