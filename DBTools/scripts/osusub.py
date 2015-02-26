@@ -267,16 +267,21 @@ def SkimModifier(Label, Directory):
     fnew.write(orig + add)
     fnew.close()  
 
+
+
 ################################################################################
 #             First of all to set up the working directory                     #
 ################################################################################
 CondorDir = ''
 Condor = os.getcwd() + '/condor/'
+if not os.path.exists(Condor):
+    print "The directory ", Condor, "does not exist.  Aborting."  
+    sys.exit()
 if arguments.Directory == "":
-   print "No working directory is given, aborting."
-   sys.exit()
+    print "No working directory is given, aborting."
+    sys.exit()
 else:
-   CondorDir = Condor + arguments.Directory
+    CondorDir = Condor + arguments.Directory
 #Check whether the directory specified already exists and warn the user if so.
 if not os.path.exists(CondorDir):
    os.system('mkdir ' + CondorDir)
