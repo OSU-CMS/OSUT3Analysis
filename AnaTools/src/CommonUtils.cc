@@ -108,14 +108,13 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "tracks")          &&  collections.exists  ("tracks"))          getCollection  (collections.getParameter<edm::InputTag>  ("tracks"),          handles.tracks,          event);
   if  (VEC_CONTAINS  (objectsToGet,  "triggers")        &&  collections.exists  ("triggers"))        getCollection  (collections.getParameter<edm::InputTag>  ("triggers"),        handles.triggers,        event);
   if  (VEC_CONTAINS  (objectsToGet,  "trigobjs")        &&  collections.exists  ("trigobjs"))        getCollection  (collections.getParameter<edm::InputTag>  ("trigobjs"),        handles.trigobjs,        event);
-
-  if  (VEC_CONTAINS  (objectsToGet,  "userVariables")   &&  collections.exists  ("userVariables"))
+  if  (VEC_CONTAINS  (objectsToGet,  "uservariables")   &&  collections.exists  ("uservariables"))
     {
-      handles.userVariables.clear ();
-      for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("userVariables"))
+      handles.uservariables.clear ();
+      for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("uservariables"))
         {
-          handles.userVariables.resize (handles.userVariables.size () + 1);
-          getCollection (collection, handles.userVariables.back (), event);
+          handles.uservariables.resize (handles.uservariables.size () + 1);
+          getCollection (collection, handles.uservariables.back (), event);
         }
     }
 

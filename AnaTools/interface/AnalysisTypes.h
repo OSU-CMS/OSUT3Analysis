@@ -101,7 +101,7 @@ struct Collections
   edm::Handle<vector<TYPE(taus)> >            taus;
   edm::Handle<vector<TYPE(tracks)> >          tracks;
   edm::Handle<vector<TYPE(trigobjs)> >        trigobjs;
-  vector<edm::Handle<TYPE(userVariables)> >   userVariables;
+  vector<edm::Handle<TYPE(uservariables)> >   uservariables;
 
   edm::Handle<TYPE(triggers)>                 triggers;
 };

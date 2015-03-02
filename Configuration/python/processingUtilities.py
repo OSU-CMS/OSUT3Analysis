@@ -271,16 +271,16 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         # Each variable producer module is added to the list of user variable 
         # collections in the collections PSet.
         ########################################################################
-            if not hasattr (collections, "userVariables"):
-                collections.userVariables = cms.VInputTag ()
+            if not hasattr (collections, "uservariables"):
+                collections.uservariables = cms.VInputTag ()
             # verify this collection hasn't already been added
             isDuplicate = False
-            for inputTag in collections.userVariables:
+            for inputTag in collections.uservariables:
                 if inputTag.getModuleLabel() is module:
                     isDuplicate = True
                     break
             if not isDuplicate:
-                collections.userVariables.append (cms.InputTag (module, "userVariables"))
+                collections.uservariables.append (cms.InputTag (module, "uservariables"))
         ########################################################################
 
         ########################################################################
@@ -327,8 +327,8 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         # collections given in the collections PSet.
         ########################################################################
         outputCommands = ["drop *"]
-        outputCommands.append("keep *_*_userVariables_*")
-        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "userVariables"]:
+        outputCommands.append("keep *_*_uservariables_*")
+        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep *_"
             outputCommand += collectionTag.getModuleLabel ()
@@ -350,6 +350,10 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         filteredCollections = copy.deepcopy (collections)
         cutCollections = get_collections (channel.cuts)
         for collection in cutCollections:
+            # Temporary fix for user-defined variables
+            # For the moment, they won't be filtered
+            if collection is "uservariables":
+                continue
             filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
             objectSelector = cms.EDFilter (filterName,
                 collections = collections,
