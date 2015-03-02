@@ -454,18 +454,26 @@ def set_input(process, input_string):
                                  fileNames = cms.untracked.vstring ()
                                  )
 
+    # remove leading "file:" in case the user included it out of habit
+    if input_string.startswith("file:"):
+        input_string = input_string.lstrip("file:")
+
+
     # check for validity
     fileType = "No such file or directory"
     try:
         fileType = subprocess.check_output(['/usr/bin/file', input_string]).split(":")[1]
     except:
         pass
-
     isValidFileOrDir = "No such file or directory" not in fileType
+
     isValidDataset = input_string in dataset_names.keys()
+    # if the file starts with "root:" it's a AAA file
+    isAAAFile = input_string.startswith("root:")
+
 
     # print error and exit if the input is invalid
-    if not isValidFileOrDir and not isValidDataset:
+    if not isValidFileOrDir and not isValidDataset and not isAAAFile:
         if input_string in composite_dataset_definitions.keys():
             print "ERROR [set_input]: '" + input_string + "' is a composite dataset"
             print "  Composite datasets should not processed interactively",
@@ -476,7 +484,8 @@ def set_input(process, input_string):
             print "  No files have been added to process.source.fileNames"
         return 
 
-    # try using 'input_string' as a registered dataset name
+    
+    # use 'input_string' as a registered dataset name
     if isValidDataset:
         datasetDirectory = dataset_names[input_string]
         subprocess.call(['MySQLModule', datasetDirectory, 'temp_datasetInfo.py', 'file:'])
@@ -486,12 +495,17 @@ def set_input(process, input_string):
         subprocess.call(['rm', '-f', 'temp_datasetInfo.pyc'])
         return
 
-    # try opening 'input_string' as a ROOT file
+    # open 'input_string' as a ROOT file
     if isValidFileOrDir and "ROOT" in fileType:
         process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string))
         return
-    
-    # try opening 'input_string' as a directory
+
+    # open 'input_string' as a ROOT file via xrootd
+    if isAAAFile:
+        process.source.fileNames.extend(cms.untracked.vstring(input_string))
+        return
+
+    # open 'input_string' as a directory
     if isValidFileOrDir and "directory" in fileType:
         for fileName in os.listdir(input_string):
             # ignore hidden files
