@@ -34,8 +34,8 @@ parser.add_option("-r", "--randomSeed", action="store_true", dest="Random", defa
 parser.add_option("-f", "--fileName", dest="FileName", default = 'process.TFileService.fileName', help="Set the parameter of output filename in config file.")
 parser.add_option("-m", "--maxEvents", dest="MaxEvents", default = -1, help="Set the maximum number of events to run per job.")
 parser.add_option("-p", "--process", dest="Process", default = '', help="Set the suffix for the process name.")
-parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files, ntuples from T3 or AAA via xrootd.")
-parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")
+parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files.  Options:  OSUT3Ntuple, AAA, UserDir, UserList.")
+parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")  # Dataset is also the name of the output directory in the working directory if FileType == 'OSUT3Ntuple'.  
 parser.add_option("-w", "--workDirectory", dest="Directory", default = "", help="Specify the working directroy.")
 parser.add_option("-c", "--configuration", dest="Config", default = "", help="Specify the configuration file to run.")
 parser.add_option("-n", "--numberOfJobs", dest="NumberOfJobs", default = -1, help="Specify how many jobs to submit.")
@@ -49,10 +49,21 @@ parser.add_option("-R", "--Requirements", dest="Requirements", default = "", hel
 
 (arguments, args) = parser.parse_args()
 
+def GetCommandLineString():
+    # Return string of all arguments specified on the command line
+    commandLine = ""  
+    for arg in sys.argv:
+        if len(arg.split(" ")) > 1:
+            commandLine = commandLine + " \"" + arg + "\""  # add quotation marks around a multiple-word argument  
+        else:
+            commandLine = commandLine + " " + arg
+    return commandLine  
+
 def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label):
     os.system('touch ' + Directory + '/condor.sub')
     SubmitFile = open(Directory + '/condor.sub','r+w')
     cmsRunExecutable = os.popen('which cmsRun').read()
+    SubmitFile.write("# Command line arguments: \n# " + GetCommandLineString() + " \n\n\n")  
     for argument in sorted(CondorSubArgumentsSet):
         if CondorSubArgumentsSet[argument].has_key('Executable') and CondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = ' + cmsRunExecutable + '\n')
@@ -122,8 +133,11 @@ def MakeFileList(Dataset, FileType, Directory, Label):
         else:
 	    os.system('sed -i \'s/^/root:\/\/cmsxrootd.fnal.gov\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
     if FileType == 'UserDir':
+        if not "/" in Dataset:
+            # Then assume it is in condor/ directory.  
+            Dataset = "condor/" + Dataset  
 	if not os.path.exists(Dataset):
-	    print "The directory you provided does not exist."
+	    print "The directory you provided does not exist: ", Dataset  
             sys.exit()
         datasetRead['numberOfFiles'] = len(os.listdir(Dataset))
         datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
@@ -288,10 +302,15 @@ else:
     CondorDir = Condor + arguments.Directory
 #Check whether the directory specified already exists and warn the user if so.
 if not os.path.exists(CondorDir):
-   os.system('mkdir ' + CondorDir)
+    os.system('mkdir ' + CondorDir)
 else:
-   print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Will proceed with job submission.' 
-
+    if arguments.FileType == "OSUT3Ntuple":
+        # Ok to proceed, since the working directory will be "CondorDir/dataset"
+        print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Will proceed with job submission.' 
+    else:
+        # Do not proceed because the working directory is CondorDir, and we do not want to overwrite existing files.  
+        print "Directory", CondorDir, " already exists.  Please remove it before proceeding."  
+        sys.exit()  
 RunOverSkim = False
 if arguments.SkimDirectory != "" and arguments.SkimChannel != "":
     RunOverSkim = True
@@ -357,12 +376,15 @@ if split_datasets:
             Config = config_file
             GetCompleteOrderedArgumentsSet(InputCondorArguments)
         SubmissionDir = os.getcwd()
-        WorkDir = CondorDir + '/' + str(dataset)
-        if os.path.exists(WorkDir): 
-            print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'  
-            continue 
-        else: 
-            os.system('mkdir ' + WorkDir )
+        if arguments.FileType == 'OSUT3Ntuple': 
+            WorkDir = CondorDir + '/' + str(dataset)
+            if os.path.exists(WorkDir): 
+                print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'  
+                continue 
+            else: 
+                os.system('mkdir ' + WorkDir )
+        else:
+            WorkDir = CondorDir 
 
         DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset)
         NumberOfFiles = int(DatasetRead['numberOfFiles'])
