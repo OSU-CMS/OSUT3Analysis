@@ -59,6 +59,14 @@ def GetCommandLineString():
             commandLine = commandLine + " " + arg
     return commandLine  
 
+def GetListOfRootFiles(Directory):
+    fileList = os.popen('ls ' + Directory + '/*.root').read().split('\n')  # remove '\n' from each word  
+    for f in fileList:
+        if len(f) is 0: 
+            fileList.remove(f)   # remove empty filename
+    return fileList  
+ 
+
 def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label):
     os.system('touch ' + Directory + '/condor.sub')
     SubmitFile = open(Directory + '/condor.sub','r+w')
@@ -125,39 +133,49 @@ def MakeFileList(Dataset, FileType, Directory, Label):
     numberOfFiles = -1
     datasetRead = {}
     runList = []
-    os.system('touch ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
+    datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
+    os.system('touch ' + datasetInfoName)  
     if FileType == 'AAA':	
-        os.system('das_client.py --query="file Dataset=' + Dataset + '" --limit 0 > ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
+        os.system('das_client.py --query="file Dataset=' + Dataset + '" --limit 0 > ' + datasetInfoName) 
         if lxbatch:
-	    os.system('sed -i \'s/^/root:\/\/xrootd.ba.infn.it\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
+	    os.system('sed -i \'s/^/root:\/\/xrootd.ba.infn.it\//g\' ' + datasetInfoName) 
         else:
-	    os.system('sed -i \'s/^/root:\/\/cmsxrootd.fnal.gov\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
+	    os.system('sed -i \'s/^/root:\/\/cmsxrootd.fnal.gov\//g\' ' + datasetInfoName) 
     if FileType == 'UserDir':
+        isInCondorDir = False
+        SubmissionDir = os.getcwd() 
         if not "/" in Dataset:
             # Then assume it is in condor/ directory.  
             Dataset = "condor/" + Dataset  
+            isInCondorDir = True 
 	if not os.path.exists(Dataset):
 	    print "The directory you provided does not exist: ", Dataset  
             sys.exit()
-        datasetRead['numberOfFiles'] = len(os.listdir(Dataset))
-        datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
         #Get the list of the root files in the directory and modify it to have the standard format. 
-        os.system('ls ' + Dataset + '/*.root > ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-        if not remoteAccessT3:
-            os.system('sed -i \'s/^/"file:/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-        else:
-            os.system('sed -i \'s/^/"root:\/\/cms-0.mps.ohio-state.edu:1094\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-        os.system('sed -i \'1,$s/$/",/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-        os.system('sed -i "1i listOfFiles = [" ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
-        os.system('sed -i \'$s/,//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
-        os.system('sed -i \'$a ]\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+        inputFiles = GetListOfRootFiles(Dataset)  
+        datasetRead['numberOfFiles'] = len(inputFiles)  
+        datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
+        text = 'listOfFiles = [  \n' 
+        for f in inputFiles:
+            if remoteAccessT3:
+                f = "root://cms-0.mps.ohio-state.edu:1094/" + f
+            else: 
+                if isInCondorDir:
+                    f = SubmissionDir + "/" + f  
+                f = "file:" + f 
+            text += '"' + f + '",\n'  
+        text += ']  \n'  
+        text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'          
+        fnew = open(datasetInfoName, "w") 
+        fnew.write(text)
+        fnew.close()  
     if FileType == 'UserList':
 	if not os.path.exists(Dataset):
             print "The list you provided does not exist."
             sys.exit()
         #Get the list of the files to datasetInfo_cfg.py and modify it to have the standard format. 
-        os.system('cp ' + Dataset + ' '  + Directory + '/datasetInfo_' + Label + '_cfg.py')	
-        datasetRead['numberOfFiles'] = os.popen('wc -l ' + Directory + '/datasetInfo_' + Label + '_cfg.py').read().split(' ')[0] 
+        os.system('cp ' + Dataset + ' '  + datasetInfoName) 
+        datasetRead['numberOfFiles'] = os.popen('wc -l ' + datasetInfoName).read().split(' ')[0] 
         datasetRead['realDatasetName'] = 'FilesInList:' + Dataset 
         if not remoteAccessT3:
             os.system('sed -i \'s/^/"file:/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
@@ -176,7 +194,7 @@ def MakeFileList(Dataset, FileType, Directory, Label):
         if RunOverSkim:
             print "You have specified a skim as input.  Will obtain cross sections from the database."  
         #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py. 
-        os.system('MySQLModule ' + Dataset + ' ' + Directory + '/datasetInfo_' + Label + '_cfg.py ' + prefix)
+        os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
         if RunOverSkim:
             SkimModifier(Label, Directory)
         sys.path.append(Directory)
@@ -268,15 +286,12 @@ def SkimModifier(Label, Directory):
     fin.close()
     orig = orig.replace("listOfFiles",   "originalListOfFiles")  
     orig = orig.replace("numberOfFiles", "originalNumberOfFiles")  
-    skimFiles = os.popen('ls ' + SkimDirectory + '/*.root').read().split('\n')  
+    skimFiles = GetListOfRootFiles(SkimDirectory)
     add  = "\n"
     add += 'skimDirectory = "' + SkimDirectory + '"\n'  
     add += 'listOfFiles = [  \n' 
     for s in skimFiles:
-        if ".root" in s: 
-            add += '"file:' + s + '",\n'  
-        else:
-            skimFiles.remove(s)  
+        add += '"file:' + s + '",\n'  
     add += ']  \n'  
     add += 'numberOfFiles = ' + str(len(skimFiles)) + '\n'  
     add += 'originalNumberOfEvents = ' + str(OriginalNumberOfEvents) + '\n'
