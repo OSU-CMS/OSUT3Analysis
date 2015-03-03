@@ -22,7 +22,7 @@
   #define  taus_TYPE            BNtau
   #define  tracks_TYPE          BNtrack
   #define  trigobjs_TYPE        BNtrigobj
-  #define  userVariables_TYPE   VariableProducerPayload
+  #define  uservariables_TYPE   VariableProducerPayload
 
   #define  triggers_TYPE        BNtriggerCollection
 
@@ -57,7 +57,7 @@
   #define  taus_TYPE            pat::Tau
   #define  tracks_TYPE          INVALID_TYPE
   #define  trigobjs_TYPE        pat::TriggerObjectStandAlone
-  #define  userVariables_TYPE   VariableProducerPayload
+  #define  uservariables_TYPE   VariableProducerPayload
 
   #define  bxlumis_INVALID
   #define  events_INVALID

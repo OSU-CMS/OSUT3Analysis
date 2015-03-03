@@ -27,7 +27,7 @@ class VariableProducer : public edm::EDProducer
       edm::ParameterSet collections_;
       Collections handles_;
       unordered_set<string> objectsToGet_;
-      auto_ptr<VariableProducerPayload> userVariables;
+      auto_ptr<VariableProducerPayload> uservariables;
 
       // Methods
 
@@ -80,7 +80,7 @@ void VariableProducer::addUserVar (string varName, double value, ObjectList obje
   UserVariable userVar = {};
   userVar.value = value;
   userVar.objects = objects;
-  (*userVariables)[varName].push_back(userVar);  
+  (*uservariables)[varName].push_back(userVar);  
 }
 
 

@@ -241,10 +241,19 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->tracks->size ();
   else if (EQ_VALID(name,trigobjs))
     return handles_->trigobjs->size ();
-  else if (EQ_VALID(name,userVariables))
-    return 1;
+  else if (EQ_VALID(name,uservariables)){
+    // !!!
+    //    return handles_->uservariables[printValue(root_)].size ();
+    //    return handles_->uservariables["electronPt"].size ();
+    //cout << handles_->uservariables.at(printValue(root_)).size () << endl;
+    //    auto isFound = handles_->uservariables.size();
+    //    cout << printValue(root_) << endl;
+    //    cout << "\t" << isFound << endl;
+    return 1;  // FIXME
+  }
   return 0;
 }
+
 
 bool
   ValueLookupTree::collectionIsFound (const string &name) const
@@ -264,7 +273,7 @@ bool
   else if (EQ_VALID(name,taus))            isFound = handles_->taus.isValid();
   else if (EQ_VALID(name,tracks))          isFound = handles_->tracks.isValid();
   else if (EQ_VALID(name,trigobjs))        isFound = handles_->trigobjs.isValid();
-  else if (EQ_VALID(name,userVariables))   isFound = true; // This vector is always present, even if its size is 0.
+  else if (EQ_VALID(name,uservariables))   isFound = true; // This vector is always present, even if its size is 0.
   return isFound;
 
 }
@@ -399,6 +408,22 @@ ValueLookupTree::printNode (Node* tree) const
     expression = tree->value;
   }
 
+  return expression;
+
+}
+
+string
+ValueLookupTree::printValue (Node* tree) const
+{
+  string expression = "";
+  if (!tree) return expression;
+  if (tree->branches.size () >= 1) {
+    expression += tree->branches.at(0)->value;
+  } 
+  else {
+    expression = tree->value;
+  }
+  cout << expression << endl;
   return expression;
 
 }
@@ -654,10 +679,11 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
     return ((void *) &handles_->tracks->at (i));
   else if (EQ_VALID(name,trigobjs))
     return ((void *) &handles_->trigobjs->at (i));
-  else if (EQ_VALID(name,userVariables))
+  else if (EQ_VALID(name,uservariables))
     {
-      TYPE(userVariables) *obj = new TYPE(userVariables) ();
-      for (const auto &handle : handles_->userVariables)
+      //!!!
+      TYPE(uservariables) *obj = new TYPE(uservariables) ();
+      for (const auto &handle : handles_->uservariables)
         obj->insert (handle->begin (), handle->end ());
       return obj;
     }
@@ -695,8 +721,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return TYPE_STR(tracks);
   else if (EQ_VALID(name,trigobjs))
     return TYPE_STR(trigobjs);
-  else if (EQ_VALID(name,userVariables))
-    return TYPE_STR(userVariables);
+  else if (EQ_VALID(name,uservariables))
+    return TYPE_STR(uservariables);
   return "";
 }
 
@@ -731,7 +757,7 @@ ValueLookupTree::isCollection (const string &name) const
     return true;
   else if (EQ_VALID(name,trigobjs))
     return true;
-  else if (EQ_VALID(name,userVariables))
+  else if (EQ_VALID(name,uservariables))
     return true;
   return false;
 }
@@ -1002,7 +1028,7 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
 
   try
     {
-      if (collection == "userVariables")
+      if (collection == "uservariables")
         return 1; // FIXME
         //        return (((VariableProducerPayload *) obj)->at (variable));
       return anatools::getMember (getCollectionType (collection), obj, variable);

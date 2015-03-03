@@ -271,16 +271,16 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         # Each variable producer module is added to the list of user variable 
         # collections in the collections PSet.
         ########################################################################
-            if not hasattr (collections, "userVariables"):
-                collections.userVariables = cms.VInputTag ()
+            if not hasattr (collections, "uservariables"):
+                collections.uservariables = cms.VInputTag ()
             # verify this collection hasn't already been added
             isDuplicate = False
-            for inputTag in collections.userVariables:
+            for inputTag in collections.uservariables:
                 if inputTag.getModuleLabel() is module:
                     isDuplicate = True
                     break
             if not isDuplicate:
-                collections.userVariables.append (cms.InputTag (module, "userVariables"))
+                collections.uservariables.append (cms.InputTag (module, "uservariables"))
         ########################################################################
 
         ########################################################################
@@ -327,8 +327,8 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         # collections given in the collections PSet.
         ########################################################################
         outputCommands = ["drop *"]
-        outputCommands.append("keep *_*_userVariables_*")
-        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "userVariables"]:
+        outputCommands.append("keep *_*_uservariables_*")
+        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep *_"
             outputCommand += collectionTag.getModuleLabel ()
@@ -350,6 +350,10 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         filteredCollections = copy.deepcopy (collections)
         cutCollections = get_collections (channel.cuts)
         for collection in cutCollections:
+            # Temporary fix for user-defined variables
+            # For the moment, they won't be filtered
+            if collection is "uservariables":
+                continue
             filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
             objectSelector = cms.EDFilter (filterName,
                 collections = collections,
@@ -450,18 +454,26 @@ def set_input(process, input_string):
                                  fileNames = cms.untracked.vstring ()
                                  )
 
+    # remove leading "file:" in case the user included it out of habit
+    if input_string.startswith("file:"):
+        input_string = input_string.lstrip("file:")
+
+
     # check for validity
     fileType = "No such file or directory"
     try:
         fileType = subprocess.check_output(['/usr/bin/file', input_string]).split(":")[1]
     except:
         pass
-
     isValidFileOrDir = "No such file or directory" not in fileType
+
     isValidDataset = input_string in dataset_names.keys()
+    # if the file starts with "root:" it's a AAA file
+    isAAAFile = input_string.startswith("root:")
+
 
     # print error and exit if the input is invalid
-    if not isValidFileOrDir and not isValidDataset:
+    if not isValidFileOrDir and not isValidDataset and not isAAAFile:
         if input_string in composite_dataset_definitions.keys():
             print "ERROR [set_input]: '" + input_string + "' is a composite dataset"
             print "  Composite datasets should not processed interactively",
@@ -472,7 +484,8 @@ def set_input(process, input_string):
             print "  No files have been added to process.source.fileNames"
         return 
 
-    # try using 'input_string' as a registered dataset name
+    
+    # use 'input_string' as a registered dataset name
     if isValidDataset:
         datasetDirectory = dataset_names[input_string]
         subprocess.call(['MySQLModule', datasetDirectory, 'temp_datasetInfo.py', 'file:'])
@@ -482,12 +495,17 @@ def set_input(process, input_string):
         subprocess.call(['rm', '-f', 'temp_datasetInfo.pyc'])
         return
 
-    # try opening 'input_string' as a ROOT file
+    # open 'input_string' as a ROOT file
     if isValidFileOrDir and "ROOT" in fileType:
         process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string))
         return
-    
-    # try opening 'input_string' as a directory
+
+    # open 'input_string' as a ROOT file via xrootd
+    if isAAAFile:
+        process.source.fileNames.extend(cms.untracked.vstring(input_string))
+        return
+
+    # open 'input_string' as a directory
     if isValidFileOrDir and "directory" in fileType:
         for fileName in os.listdir(input_string):
             # ignore hidden files

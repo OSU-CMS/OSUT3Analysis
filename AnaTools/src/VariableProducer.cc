@@ -3,7 +3,7 @@
 VariableProducer::VariableProducer(const edm::ParameterSet &cfg) :
   collections_  (cfg.getParameter<edm::ParameterSet>  ("collections"))
 {
-  produces<VariableProducerPayload> ("userVariables");
+  produces<VariableProducerPayload> ("uservariables");
 }
 
 VariableProducer::~VariableProducer()
@@ -14,14 +14,14 @@ void
 VariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
 
-  userVariables = auto_ptr<VariableProducerPayload> (new VariableProducerPayload);
+  uservariables = auto_ptr<VariableProducerPayload> (new VariableProducerPayload);
 
   ////////////////////////////////////////////////////////////////////////
 
   AddVariables(event);
 
   // store all of our calculated quantities in the event
-  event.put (userVariables, "userVariables");
+  event.put (uservariables, "uservariables");
 }
 
 
