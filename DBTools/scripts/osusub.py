@@ -174,17 +174,25 @@ def MakeFileList(Dataset, FileType, Directory, Label):
             print "The list you provided does not exist."
             sys.exit()
         #Get the list of the files to datasetInfo_cfg.py and modify it to have the standard format. 
-        os.system('cp ' + Dataset + ' '  + datasetInfoName) 
-        datasetRead['numberOfFiles'] = os.popen('wc -l ' + datasetInfoName).read().split(' ')[0] 
-        datasetRead['realDatasetName'] = 'FilesInList:' + Dataset 
-        if not remoteAccessT3:
-            os.system('sed -i \'s/^/"file:/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-        else:
-            os.system('sed -i \'s/^/"root:\/\/cms-0.mps.ohio-state.edu:1094\//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-        os.system('sed -i \'1,$s/$/",/g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')
-        os.system('sed -i "1i listOfFiles = [" ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
-        os.system('sed -i \'$s/,//g\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
-        os.system('sed -i \'$a ]\' ' + Directory + '/datasetInfo_' + Label + '_cfg.py')                  
+        inputFileList = open(Dataset, "r") 
+        inputFiles = inputFileList.read().split('\n')  
+        for f in reversed(range(len(inputFiles))): 
+            if not ".root" in inputFiles[f]: 
+                del inputFiles[f]  
+        datasetRead['numberOfFiles'] = len(inputFiles)  
+        datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
+        text = 'listOfFiles = [  \n' 
+        for f in inputFiles:
+            if remoteAccessT3:
+                f = "root://cms-0.mps.ohio-state.edu:1094/" + f
+            else: 
+                f = "file:" + f 
+            text += '"' + f + '",\n'  
+        text += ']  \n'  
+        text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'          
+        fnew = open(datasetInfoName, "w") 
+        fnew.write(text)
+        fnew.close()  
     if FileType == 'OSUT3Ntuple':
         prefix = ''
         if not remoteAccessT3 :
