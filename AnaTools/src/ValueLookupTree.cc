@@ -19,6 +19,7 @@ ValueLookupTree::ValueLookupTree (const Cut &cut) :
 {
   pruneCommas (root_);
   pruneParentheses (root_);
+  pruneDots (root_);
 
   vector<string> inferredInputCollections;
   inferInputCollections (root_, inferredInputCollections);
@@ -34,6 +35,7 @@ ValueLookupTree::ValueLookupTree (const ValueToPrint &value) :
 {
   pruneCommas (root_);
   pruneParentheses (root_);
+  pruneDots (root_);
 
   vector<string> inferredInputCollections;
   inferInputCollections (root_, inferredInputCollections);
@@ -49,6 +51,7 @@ ValueLookupTree::ValueLookupTree (const string &expression, const vector<string>
 {
   pruneCommas (root_);
   pruneParentheses (root_);
+  pruneDots (root_);
 
   vector<string> inferredInputCollections;
   inferInputCollections (root_, inferredInputCollections);
@@ -319,7 +322,21 @@ ValueLookupTree::pruneCommas (Node * const tree) const
 }
 
 void
-ValueLookupTree::pruneParentheses (Node * const tree) const
+ValueLookupTree::pruneParentheses (Node * &tree) const
+{
+  if (!tree->parent)
+    {
+      if (tree->value == "()")
+        {
+          tree = tree->branches.at (0);
+          tree->parent = NULL;
+        }
+    }
+  pruneParentheses_ (tree);
+}
+
+void
+ValueLookupTree::pruneParentheses_ (Node * const tree) const
 {
   //////////////////////////////////////////////////////////////////////////////
   // Recursively replaces any parentheses in the tree with the daughter.
@@ -345,7 +362,56 @@ ValueLookupTree::pruneParentheses (Node * const tree) const
   while (foundParenthesis);
 
   for (const auto &branch : tree->branches)
-    pruneParentheses (branch);
+    pruneParentheses_ (branch);
+  //////////////////////////////////////////////////////////////////////////////
+}
+
+void
+ValueLookupTree::pruneDots (Node * &tree) const
+{
+  if (!tree->parent)
+    {
+      if (tree->value == "." && !isCollection (tree->branches.at (0)->value + "s"))
+        {
+          tree->branches.at (0)->value += "." + tree->branches.at (1)->value;
+          tree = tree->branches.at (0);
+          tree->parent = NULL;
+        }
+    }
+  pruneDots_ (tree);
+}
+
+void
+ValueLookupTree::pruneDots_ (Node * const tree) const
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Recursively replaces any dots in the tree with the concatentation of the
+  // daughter values.
+  //////////////////////////////////////////////////////////////////////////////
+  bool foundDot;
+  do
+    {
+      foundDot = false;
+      for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+        {
+          if ((*branch)->value == "." && (((*branch)->parent && (*branch)->parent->value == ".")
+                                       || !isCollection ((*branch)->branches.at (0)->value + "s")))
+            {
+              foundDot = true;
+
+              size_t dot = branch - tree->branches.begin ();
+              (*branch)->branches.at (0)->value += "." + (*branch)->branches.at (1)->value;
+              tree->branches.insert (branch + 1, (*branch)->branches.at (0));
+              branch = tree->branches.begin () + dot;
+              tree->branches.erase (branch);
+              branch = tree->branches.begin () + dot;
+            }
+        }
+    }
+  while (foundDot);
+
+  for (const auto &branch : tree->branches)
+    pruneDots_ (branch);
   //////////////////////////////////////////////////////////////////////////////
 }
 

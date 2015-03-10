@@ -92,7 +92,10 @@ class ValueLookupTree
     // Methods for removing commas and parentheses from a tree.
     ////////////////////////////////////////////////////////////////////////////
     void pruneCommas (Node * const) const;
-    void pruneParentheses (Node * const) const;
+    void pruneParentheses (Node * &) const;
+    void pruneParentheses_ (Node * const) const;
+    void pruneDots (Node * &) const;
+    void pruneDots_ (Node * const) const;
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
