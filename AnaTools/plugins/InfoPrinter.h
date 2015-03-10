@@ -4,15 +4,12 @@
 #include <sstream>
 #include <unordered_set>
 
-#include "CommonTools/UtilAlgos/interface/TFileService.h"
-
 #include "DataFormats/Common/interface/Handle.h"
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "FWCore/ServiceRegistry/interface/Service.h"
 
 #include "TStopwatch.h"
 

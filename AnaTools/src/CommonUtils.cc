@@ -195,6 +195,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
               value = dataMember.get (*o).objectCast<unsigned> ();
             else if (dataMemberType == "bool")
               value = dataMember.get (*o).objectCast<bool> ();
+            else if (dataMemberType == "unsigned int")
+              value = dataMember.get (*o).objectCast<unsigned int> ();
             else
               clog << "WARNING: \"" << member << "\" has unrecognized type \"" << dataMemberType << "\"" << endl;
           }
@@ -214,6 +216,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
               value = invoke<unsigned> (functionMemberType, o, functionMember);
             else if (functionMemberType == "bool")
               value = invoke<bool> (functionMemberType, o, functionMember);
+            else if (functionMemberType == "unsigned int")
+              value = invoke<unsigned int> (functionMemberType, o, functionMember);
             else
               clog << "WARNING: \"" << member << "()\" has unrecognized return type \"" << functionMemberType << "\"" << endl;
           }
@@ -288,6 +292,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
               value = Reflex::Object_Cast<unsigned> (o->Get (member));
             else if (dataMemberType == "bool")
               value = Reflex::Object_Cast<bool> (o->Get (member));
+            else if (dataMemberType == "unsigned int")
+              value = Reflex::Object_Cast<unsigned int> (o->Get (member));
             else
               clog << "WARNING: \"" << member << "\" has unrecognized type \"" << dataMemberType << "\"" << endl;
           }
@@ -307,6 +313,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
               value = invoke<unsigned> (functionMemberType, o, member);
             else if (functionMemberType == "bool")
               value = invoke<bool> (functionMemberType, o, member);
+            else if (functionMemberType == "unsigned int")
+              value = invoke<unsigned int> (functionMemberType, o, member);
             else
               clog << "WARNING: \"" << member << "()\" has unrecognized return type \"" << functionMemberType << "\"" << endl;
           }
