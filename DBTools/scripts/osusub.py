@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import getpass
 import os
 import re
 import socket
@@ -80,6 +81,13 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label):
         elif CondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and CondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":   
             if Dataset == '':
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py\n')
+    	    elif arguments.FileType == 'AAA':
+	        userName = getpass.getuser()
+                userId = os.popen('id -u ' + userName).read()
+                userProxy = '/tmp/x509up_u' + str(userId)
+                SubmitFile.write('x509userproxy = ' + userProxy + '\n')
+                SubmitFile.write('should_transfer_files   = YES\n')
+                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy + '\n')
             else:
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py,datasetInfo_' + Label + '_cfg.py\n')
         elif CondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
@@ -134,13 +142,34 @@ def MakeFileList(Dataset, FileType, Directory, Label):
     datasetRead = {}
     runList = []
     datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
+    AAAFileList = Directory + '/AAAFileList.txt'
     os.system('touch ' + datasetInfoName)  
-    if FileType == 'AAA':	
-        os.system('das_client.py --query="file Dataset=' + Dataset + '" --limit 0 > ' + datasetInfoName) 
+    os.system('touch ' + AAAFileList)  
+    if FileType == 'AAA':
+        os.system('das_client.py --query="file dataset=' + Dataset + '" --limit 0 > ' + AAAFileList) 
         if lxbatch:
 	    os.system('sed -i \'s/^/root:\/\/xrootd.ba.infn.it\//g\' ' + datasetInfoName) 
         else:
 	    os.system('sed -i \'s/^/root:\/\/cmsxrootd.fnal.gov\//g\' ' + datasetInfoName) 
+        inputFileList = open(AAAFileList, "r")
+        inputFiles = inputFileList.read().split('\n')  
+        for f in reversed(range(len(inputFiles))): 
+            if not ".root" in inputFiles[f]: 
+                del inputFiles[f]  
+        datasetRead['numberOfFiles'] = len(inputFiles)  
+        datasetRead['realDatasetName'] = Dataset 
+        text = 'listOfFiles = [  \n' 
+        for f in inputFiles:
+            if lxbatch:
+                f = "root://xrootd.ba.infn.it/" + f
+            else: 
+                f = "root://cmsxrootd.fnal.gov/" + f 
+            text += '"' + f + '",\n'  
+        text += ']  \n'  
+        text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'          
+        fnew = open(datasetInfoName, "w") 
+        fnew.write(text)
+        fnew.close()  
     if FileType == 'UserDir':
         isInCondorDir = False
         SubmissionDir = os.getcwd() 
@@ -345,8 +374,6 @@ else:
 ###############################################################################
 # Find the list of dataset to run over, either from arguments or localConfig. #
 ###############################################################################
-
-
 split_datasets = []
 
 if arguments.localConfig:
@@ -409,6 +436,21 @@ if split_datasets:
         else:
             WorkDir = CondorDir 
 
+        if '/' in dataset:
+	    if dataset.split('/')[0] == "":
+                dataset = dataset.split('/')[1]
+            else:
+                dataset = dataset.split('/')[0]
+            if '_' in dataset:
+	        if dataset.split('_')[0] == "":
+                    dataset = dataset.split('_')[1]
+                else:
+                    dataset = dataset.split('_')[0]
+	        if '_' in dataset:    
+                    if dataset.split('_')[0] == "":
+                        dataset = dataset.split('_')[1]
+                    else:
+                        dataset = dataset.split('_')[0]
         DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset)
         NumberOfFiles = int(DatasetRead['numberOfFiles'])
         if NumberOfJobs > NumberOfFiles:
