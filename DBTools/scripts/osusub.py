@@ -446,11 +446,11 @@ if split_datasets:
                     dataset = dataset.split('_')[1]
                 else:
                     dataset = dataset.split('_')[0]
-	        if '_' in dataset:    
-                    if dataset.split('_')[0] == "":
-                        dataset = dataset.split('_')[1]
+	        if '-' in dataset:    
+                    if dataset.split('-')[0] == "":
+                        dataset = dataset.split('-')[1]
                     else:
-                        dataset = dataset.split('_')[0]
+                        dataset = dataset.split('-')[0]
         DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset)
         NumberOfFiles = int(DatasetRead['numberOfFiles'])
         if NumberOfJobs > NumberOfFiles:
