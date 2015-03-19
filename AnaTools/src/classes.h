@@ -6,62 +6,46 @@
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
 namespace {
-  struct OSUT3Analysis_AnaTools {
-    //add 'dummy' Wrapper variable for each class type you put into the Event
-    BNstop stopdummy0;
-    edm::Wrapper<BNstop> stopdummy1;
-    vector<BNstop> stopdummy2;
-    edm::Wrapper<vector<BNstop> > stopdummy3;
+   struct OSUT3Analysis_AnaTools {
+      //add 'dummy' Wrapper variable for each class type you put into the Event
+     BNstop stopdummy0;
+     edm::Wrapper<BNstop> stopdummy1;
+     vector<BNstop> stopdummy2;
+     edm::Wrapper<vector<BNstop> > stopdummy3;
 
-    BNPFChgHad PFChgHaddummy0;
-    edm::Wrapper<BNPFChgHad> PFChgHaddummy1;
-    vector<BNPFChgHad> PFChgHaddummy2;
-    edm::Wrapper<vector<BNPFChgHad> > PFChgHaddummy3;
+     BNPFChgHad PFChgHaddummy0;
+     edm::Wrapper<BNPFChgHad> PFChgHaddummy1;
+     vector<BNPFChgHad> PFChgHaddummy2;
+     edm::Wrapper<vector<BNPFChgHad> > PFChgHaddummy3;
 
-    std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > newvarsdummy0;
-    edm::Wrapper<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > newvarsdummy1;
-    vector<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > newvarsdummy2;
-    edm::Wrapper<vector<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > > newvarsdummy3;
+     std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > newvarsdummy0;
+     edm::Wrapper<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > newvarsdummy1;
+     vector<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > newvarsdummy2;
+     edm::Wrapper<vector<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > > newvarsdummy3;
 
-    CutCalculatorPayload CutCalculatorPayloadDummy0;
-    vector<CutCalculatorPayload> CutCalculatorPayloadDummy1;
-    edm::Wrapper<CutCalculatorPayload> CutCalculatorPayloadDummy2;
-    edm::Wrapper<vector<CutCalculatorPayload> > CutCalculatorPayloadDummy3;
+     CutCalculatorPayload CutCalculatorPayloadDummy0;
+     vector<CutCalculatorPayload> CutCalculatorPayloadDummy1;
+     edm::Wrapper<CutCalculatorPayload> CutCalculatorPayloadDummy2;
+     edm::Wrapper<vector<CutCalculatorPayload> > CutCalculatorPayloadDummy3;
 
-    Cut cutdummy0;
-    edm::Wrapper<Cut> cutdummy1;
-    vector<Cut> cutdummy2;
-    edm::Wrapper<vector<Cut> > cutdummy3;
+     Cut cutdummy0;
+     edm::Wrapper<Cut> cutdummy1;
+     vector<Cut> cutdummy2;
+     edm::Wrapper<vector<Cut> > cutdummy3;
 
-    VariableProducerPayload VariableProducerPayloadDummy0;
-    vector<VariableProducerPayload> VariableProducerPayloadDummy1;
-    edm::Wrapper<VariableProducerPayload> VariableProducerPayloadDummy2;
-    edm::Wrapper<vector<VariableProducerPayload> > VariableProducerPayloadDummy3;
+     VariableProducerPayload VariableProducerPayloadDummy0;
+     vector<VariableProducerPayload> VariableProducerPayloadDummy1;
+     edm::Wrapper<VariableProducerPayload> VariableProducerPayloadDummy2;
+     edm::Wrapper<vector<VariableProducerPayload> > VariableProducerPayloadDummy3;
 
-    map<string, vector<vector<bool> > > mapcharbooldummy0;
-    edm::Wrapper<map<string, vector<vector<bool> > > > mapcharbooldummy1;
-    vector<map<string, vector<vector<bool> > > > mapcharbooldummy2;
-    edm::Wrapper<vector<map<string, vector<vector<bool> > > > > mapcharbooldummy3;
+     map<string, vector<vector<bool> > > mapcharbooldummy0;
+     edm::Wrapper<map<string, vector<vector<bool> > > > mapcharbooldummy1;
+     vector<map<string, vector<vector<bool> > > > mapcharbooldummy2;
+     edm::Wrapper<vector<map<string, vector<vector<bool> > > > > mapcharbooldummy3;
 
-    vector<bool> booldummy0;
-    edm::Wrapper<vector<bool> > booldummy1;
-    vector<vector<bool> > booldummy2;
-    edm::Wrapper<vector<vector<bool> > > booldummy3;
-
-    std::pair<const std::string,std::vector<UserVariable> > mapUserVarsDummy0; 
-    edm::Wrapper<std::pair<const std::string,std::vector<UserVariable> > > mapUserVarsDummy1; 
-    vector<std::pair<const std::string,std::vector<UserVariable> > > mapUserVarsDummy2; 
-    edm::Wrapper<vector<std::pair<const std::string,std::vector<UserVariable> > > > mapUserVarsDummy3; 
-
-    // Use the following template to add a new type.  
-    // Replace "TYPE" with your type.   
-    // Replace "type" with a suitable nickname. 
-    // Be sure there are no instances of ">>", i.e., add a space to make it "> >".        
-    //     TYPE typedummy0;
-    //     edm::Wrapper<TYPE> typedummy1;
-    //     vector<TYPE> typedummy2;
-    //     edm::Wrapper<vector<TYPE> > typedummy3;
-
-
-  };
+     vector<bool> booldummy0;
+     edm::Wrapper<vector<bool> > booldummy1;
+     vector<vector<bool> > booldummy2;
+     edm::Wrapper<vector<vector<bool> > > booldummy3;
+   };
 }
