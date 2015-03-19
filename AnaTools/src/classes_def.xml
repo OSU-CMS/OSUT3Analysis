@@ -38,4 +38,19 @@
   <class name="std::vector<std::vector<bool> >"/>
   <class name="edm::Wrapper<std::vector<bool> >"/>
   <class name="edm::Wrapper<std::vector<std::vector<bool> > >"/>
+
+  <class name="std::pair<const std::string,std::vector<UserVariable> >"/>
+  <class name="std::vector<std::pair<const std::string,std::vector<UserVariable> > >"/>
+  <class name="edm::Wrapper<std::pair<const std::string,std::vector<UserVariable> > >"/>
+  <class name="edm::Wrapper<std::vector<std::pair<const std::string,std::vector<UserVariable> > > >"/>
+
+<!--
+Use the following template to add a new type.  Replace "TYPE" with your type.  
+Be sure there are no instances of ">>", i.e., add a space to make it "> >".  
+  <class name="TYPE"/>
+  <class name="std::vector<TYPE>"/>
+  <class name="edm::Wrapper<TYPE>"/>
+  <class name="edm::Wrapper<std::vector<TYPE> >"/>
+-->
+
 </lcgdict>
