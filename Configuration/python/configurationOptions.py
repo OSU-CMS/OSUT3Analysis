@@ -50,7 +50,11 @@ datasets = [
    'QCD_MuEnriched_20',
    'QCD_BtoMu',
    'QCD_bEnriched',
-
+   #MiniAOD not stored on T3.
+   'DYJetsToLLMiniAOD',
+   'WJetsToLNuMiniAOD',
+   'TTJetsMiniAOD',
+   'QCDMu20InfMiniAOD',  
 
    #Sum of all backgrounds
    'Background',
@@ -836,6 +840,12 @@ composite_dataset_definitions = {
 ############################################################################################################
 
 dataset_names = {
+    #MiniAOD not stored on T3.
+    'DYJetsToLLMiniAOD'        : "/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
+    'WJetsToLNuMiniAOD'        : "/WJetsToLNu_13TeV-madgraph-pythia8-tauola/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
+    'TTJetsMiniAOD'            : "/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
+    'QCDMu20InfMiniAOD'        : "/QCD_Pt-20toInf_MuEnrichedPt15_PionKaonDecay_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_PHYS14_25_V1-v2/MINIAODSIM",
+
 
     'SingleMu_2012A'       : "/SingleMu/Run2012A-22Jan2013-v1/AOD",
     'SingleMu_2012B'       : "/SingleMu/Run2012B-22Jan2013-v1/AOD", 
@@ -1287,6 +1297,11 @@ dataset_names = {
 }
 
 nJobs = {
+   #MiniAOD not stored on T3.
+   'DYJetsToLLMiniAOD'        : 59,
+   'WJetsToLNuMiniAOD'        : 205,
+   'TTJetsMiniAOD'        : 511,
+   'QCDMu20InfMiniAOD'       : 22,  
 
    'SingleMu_2012A'       : 30,
    'SingleMu_2012B'       : 300,
@@ -1707,6 +1722,11 @@ nJobs = {
 }
 
 maxEvents = {
+   #MiniAOD not stored on T3.
+   'DYJetsToLLMiniAOD'        : -1,
+   'WJetsToLNuMiniAOD'        : -1,
+   'TTJetsMiniAOD'            : -1,
+   'QCDMu20InfMiniAOD'           : -1,  
 
    'SingleMu_2012A'       : -1,
    'SingleMu_2012B'       : -1,
@@ -2128,7 +2148,13 @@ maxEvents = {
 # signalMC => signal MC process
 # data => data
 types = {
+   #MiniAOD not store on T3.
+   'DYJetsToLLMiniAOD'        : "bgMC",   
+   'WJetsToLNuMiniAOD'        : "bgMC",   
+   'TTJetsMiniAOD'            : "bgMC",
+   'QCDMu20InfMiniAOD'        : "bgMC",  
 
+ 
    'SingleMu'             : "data",
    'SingleMu_2012A'       : "data",
    'SingleMu_2012B'       : "data",
@@ -2668,7 +2694,12 @@ types = {
 }
 
 colors = {
-
+   #MiniAOD not store on T3.
+   'DYJetsToLLMiniAOD'          : 410,
+   'DYJetsToLLMiniAOD'          : 852,
+   'TTJetsMiniAOD'              : 872,
+   'QCDMu20InfMiniAOD'          : 791, 
+   
    'SingleMu'               : 1,
    'SingleMu_2012A'         : 1,
    'SingleMu_2012B'         : 1,
@@ -3223,6 +3254,12 @@ colors = {
 }
 
 labels = {
+   #MiniAOD not stored on T3.
+   'DYJetsToLLMiniAOD'        : "Z#rightarrowll M(50) (MiniAOD)",
+   'DYJetsToLLMiniAOD'        : "W#rightarrowl#nu (MiniAOD)",
+   'TTJetsMiniAOD'            : "t#bar{t} (MiniAOD)",
+   'QCDMu20InfMiniAOD'        : "QCD Pt 20-Inf",  
+   
 
    'SingleMu'             : "Single Muon data",
    'SingleMu_2012A'       : "SingleMu 2012A data",
@@ -3766,4 +3803,12 @@ labels = {
    'QCD_1400to1800_Reco'  : "QCD p_{T} 1400-1800",
    'QCD_1800_Reco'        : "QCD p_{T} 1800+",
 
+}
+
+crossSections = {
+   #MiniAOD not stored on T3.
+   'DYJetsToLLMiniAOD'        : 6025.2,
+   'WJetsToLNuMiniAOD'        : 61526.7,
+   'TTJetsMiniAOD'            : 831.76 ,
+   'QCDMu20InfMiniAOD'        : -1,   
 }

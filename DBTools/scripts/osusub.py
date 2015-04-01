@@ -35,7 +35,7 @@ parser.add_option("-r", "--randomSeed", action="store_true", dest="Random", defa
 parser.add_option("-f", "--fileName", dest="FileName", default = 'process.TFileService.fileName', help="Set the parameter of output filename in config file.")
 parser.add_option("-m", "--maxEvents", dest="MaxEvents", default = -1, help="Set the maximum number of events to run per job.")
 parser.add_option("-p", "--process", dest="Process", default = '', help="Set the suffix for the process name.")
-parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files.  Options:  OSUT3Ntuple, AAA, UserDir, UserList.")
+parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files.  Options:  OSUT3Ntuple, UserDir, UserList.")
 parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")  # Dataset is also the name of the output directory in the working directory if FileType == 'OSUT3Ntuple'.  
 parser.add_option("-w", "--workDirectory", dest="Directory", default = "", help="Specify the working directroy.")
 parser.add_option("-c", "--configuration", dest="Config", default = "", help="Specify the configuration file to run.")
@@ -47,6 +47,8 @@ parser.add_option("-L", "--Label", dest="Label", default = "", help="Give the da
 parser.add_option("-s", "--SkimDirectory", dest="SkimDirectory", default = "", help="Specicy the location of the skim.")
 parser.add_option("-a", "--SkimChannel", dest="SkimChannel", default = "", help="Determine the skim channel to run over.")
 parser.add_option("-R", "--Requirements", dest="Requirements", default = "", help="Requirements to be added to condor.sub submssion script, e.g. 'Memory > 1900'.")  
+parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")  
+parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")  
 
 (arguments, args) = parser.parse_args()
 
@@ -68,7 +70,7 @@ def GetListOfRootFiles(Directory):
     return fileList  
  
 
-def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label):
+def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
     os.system('touch ' + Directory + '/condor.sub')
     SubmitFile = open(Directory + '/condor.sub','r+w')
     cmsRunExecutable = os.popen('which cmsRun').read()
@@ -81,7 +83,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label):
         elif CondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and CondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":   
             if Dataset == '':
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py\n')
-    	    elif arguments.FileType == 'AAA':
+    	    elif UseAAA:
 	        userName = getpass.getuser()
                 userId = os.popen('id -u ' + userName).read()
                 userProxy = '/tmp/x509up_u' + str(userId)
@@ -137,39 +139,46 @@ def MakeSpecificConfig(Dataset, Directory):
         ConfigFile.write('pset.process.source.firstLuminosityBlock = cms.untracked.uint32((osusub.jobNumber)+1) \n') # osusub.jobNumber starts with 0  
     ConfigFile.close()
 
-def MakeFileList(Dataset, FileType, Directory, Label):
+def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
+    os.system('das_client.py --query="file dataset=' + Dataset + '" --limit 0 > ' + AAAFileList) 
+    if lxbatch:
+        os.system('sed -i \'s/^/root:\/\/xrootd.ba.infn.it\//g\' ' + datasetInfoName) 
+    else:
+	os.system('sed -i \'s/^/root:\/\/cmsxrootd.fnal.gov\//g\' ' + datasetInfoName)
+    inputFileList = open(AAAFileList, "r") 
+    inputFiles = inputFileList.read().split('\n')  
+    for f in reversed(range(len(inputFiles))): 
+        if not ".root" in inputFiles[f]: 
+            del inputFiles[f]  
+    datasetRead['numberOfFiles'] = len(inputFiles)  
+    datasetRead['realDatasetName'] = Dataset 
+    text = 'listOfFiles = [  \n' 
+    for f in inputFiles:
+        if lxbatch:
+            f = "root://xrootd.ba.infn.it/" + f
+        else: 
+            f = "root://cmsxrootd.fnal.gov/" + f 
+        text += '"' + f + '",\n'  
+    text += ']  \n'  
+    text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'          
+    text += 'datasetName = \'' + str(Dataset) +'\'\n'
+    text += 'crossSection = ' + str(crossSection) + '\n'          
+        
+    fnew = open(datasetInfoName, "w") 
+    fnew.write(text)
+    fnew.close()  
+    
+def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     numberOfFiles = -1
     datasetRead = {}
+    datasetRead['useAAA'] = UseAAA
     runList = []
     datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
     AAAFileList = Directory + '/AAAFileList.txt'
     os.system('touch ' + datasetInfoName)  
     os.system('touch ' + AAAFileList)  
-    if FileType == 'AAA':
-        os.system('das_client.py --query="file dataset=' + Dataset + '" --limit 0 > ' + AAAFileList) 
-        if lxbatch:
-	    os.system('sed -i \'s/^/root:\/\/xrootd.ba.infn.it\//g\' ' + datasetInfoName) 
-        else:
-	    os.system('sed -i \'s/^/root:\/\/cmsxrootd.fnal.gov\//g\' ' + datasetInfoName) 
-        inputFileList = open(AAAFileList, "r")
-        inputFiles = inputFileList.read().split('\n')  
-        for f in reversed(range(len(inputFiles))): 
-            if not ".root" in inputFiles[f]: 
-                del inputFiles[f]  
-        datasetRead['numberOfFiles'] = len(inputFiles)  
-        datasetRead['realDatasetName'] = Dataset 
-        text = 'listOfFiles = [  \n' 
-        for f in inputFiles:
-            if lxbatch:
-                f = "root://xrootd.ba.infn.it/" + f
-            else: 
-                f = "root://cmsxrootd.fnal.gov/" + f 
-            text += '"' + f + '",\n'  
-        text += ']  \n'  
-        text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'          
-        fnew = open(datasetInfoName, "w") 
-        fnew.write(text)
-        fnew.close()  
+    if FileType == 'OSUT3Ntuple' and UseAAA:
+         AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
     if FileType == 'UserDir':
         isInCondorDir = False
         SubmissionDir = os.getcwd() 
@@ -185,16 +194,26 @@ def MakeFileList(Dataset, FileType, Directory, Label):
         datasetRead['numberOfFiles'] = len(inputFiles)  
         datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
         text = 'listOfFiles = [  \n' 
-        for f in inputFiles:
-            if remoteAccessT3:
-                f = "root://cms-0.mps.ohio-state.edu:1094/" + f
-            else: 
-                if isInCondorDir:
-                    f = SubmissionDir + "/" + f  
-                f = "file:" + f 
-            text += '"' + f + '",\n'  
-        text += ']  \n'  
-        text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'          
+        if not UseAAA:
+            for f in inputFiles:
+                if remoteAccessT3:
+                    f = "root://cms-0.mps.ohio-state.edu:1094/" + f
+                else: 
+                    if isInCondorDir:
+                        f = SubmissionDir + "/" + f  
+                    f = "file:" + f 
+                text += '"' + f + '",\n'  
+            text += ']  \n'  
+        else:
+            for f in inputFiles:
+                if lxbatch:
+                    f = "root://xrootd.ba.infn.it/" + f   
+                else:
+                    f = "root://cmsxrootd.fnal.gov/" + f
+                text += '"' + f + '",\n'  
+            text += ']  \n'  
+        text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n' 
+        text += 'crossSection = ' + str(crossSection) + '\n'          
         fnew = open(datasetInfoName, "w") 
         fnew.write(text)
         fnew.close()  
@@ -211,14 +230,26 @@ def MakeFileList(Dataset, FileType, Directory, Label):
         datasetRead['numberOfFiles'] = len(inputFiles)  
         datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
         text = 'listOfFiles = [  \n' 
-        for f in inputFiles:
-            if remoteAccessT3:
-                f = "root://cms-0.mps.ohio-state.edu:1094/" + f
-            else: 
-                f = "file:" + f 
-            text += '"' + f + '",\n'  
-        text += ']  \n'  
-        text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'          
+        if not UseAAA:
+            for f in inputFiles:
+                if remoteAccessT3:
+                    f = "root://cms-0.mps.ohio-state.edu:1094/" + f
+                else: 
+                    if isInCondorDir:
+                        f = SubmissionDir + "/" + f  
+                    f = "file:" + f 
+                text += '"' + f + '",\n'  
+            text += ']  \n'  
+        else:
+            for f in inputFiles:
+                if lxbatch:
+                    f = "root://xrootd.ba.infn.it/" + f   
+                else:
+                    f = "root://cmsxrootd.fnal.gov/" + f
+                text += '"' + f + '",\n'  
+            text += ']  \n'  
+        text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'     
+        text += 'crossSection = ' + str(crossSection) + '\n'          
         fnew = open(datasetInfoName, "w") 
         fnew.write(text)
         fnew.close()  
@@ -232,22 +263,28 @@ def MakeFileList(Dataset, FileType, Directory, Label):
             print "You have specified a skim as input.  Will obtain cross sections from the database."  
         #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py. 
         os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
+        NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
+        InitializeAAA = ""
+        if NTupleExistCheck == 'Dataset does not exist on the Tier 3!': 
+            InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
+            if InitializeAAA == "y":
+                AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
+                datasetRead['useAAA'] = True
+            else:
+                return 
         if RunOverSkim:
             SkimModifier(Label, Directory)
         sys.path.append(Directory)
         exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
-        location = datasetInfo.location 
-        if location == 'Dataset does not exist on the Tier 3!':
- 	    print 'Dataset does not exist on the Tier 3!'
-            sys.exit() 
-        status = datasetInfo.status
-        continueForNonPresentDataset = True
-        if not status == 'present':
-	    userDecision = raw_input('The dataset you selected is not marked as present on Tier3, do you still want to continue?(Type "y" for yes and "n" for no.)')
-	    if userDecision == "n":
-                continueForNonPresentDataset = False 
-        if not continueForNonPresentDataset:
-	    sys.exit()    
+        if InitializeAAA == "":
+            status = datasetInfo.status
+            continueForNonPresentDataset = True
+            if not status == 'present':
+	        userDecision = raw_input('The dataset you selected is not marked as present on Tier3, do you still want to continue?(Type "y" for yes and "n" for no.)')
+	        if userDecision == "n":
+                    continueForNonPresentDataset = False 
+            if not continueForNonPresentDataset:
+	        return    
         datasetRead['realDatasetName'] = datasetInfo.datasetName
         datasetRead['numberOfFiles'] = datasetInfo.numberOfFiles
     return  datasetRead
@@ -376,6 +413,7 @@ else:
 ###############################################################################
 split_datasets = []
 
+        
 if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
@@ -397,7 +435,9 @@ if not arguments.localConfig:
 ###############################################################################
 #    Get the host name to determine whether you are using lxplus or OSU T3.   #
 ###############################################################################
-
+UseAAA = False
+if arguments.UseAAA:
+    UseAAA = True
 remoteAccessT3 = True
 lxbatch  = False
 hostname = socket.gethostname()
@@ -405,7 +445,6 @@ if 'cern.ch' in hostname:
     lxbatch = True
 if 'interactive' in hostname:
     remoteAccessT3 = False
-
 ###############################################################################
 #                End of Setup stage, will begin to submit jobs                #
 ###############################################################################
@@ -427,6 +466,7 @@ if split_datasets:
             GetCompleteOrderedArgumentsSet(InputCondorArguments)
         SubmissionDir = os.getcwd()
         if arguments.FileType == 'OSUT3Ntuple': 
+            DatasetName = dataset_names[dataset]
             WorkDir = CondorDir + '/' + str(dataset)
             if os.path.exists(WorkDir): 
                 print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'  
@@ -451,8 +491,14 @@ if split_datasets:
                         dataset = dataset.split('-')[1]
                     else:
                         dataset = dataset.split('-')[0]
-        DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset)
+        crossSection = -1
+        if crossSections.has_key(dataset):
+            crossSection = crossSections[dataset]       
+        elif arguments.crossSection != "":
+            crossSection = arguments.crossSection
+        DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, UseAAA, crossSection)
         NumberOfFiles = int(DatasetRead['numberOfFiles'])
+        UseAAA = DatasetRead['useAAA']
         if NumberOfJobs > NumberOfFiles:
             NumberOfJobs = NumberOfFiles
         if not arguments.localConfig:    
@@ -469,7 +515,7 @@ if split_datasets:
 	if lxbatch:
 	    MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
 	else:
-            MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset)
+            MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, UseAAA)
         if not arguments.NotToExecute:
             os.chdir(WorkDir)
             if RealMaxEvents > 0 : 
@@ -509,7 +555,7 @@ else:
     if lxbatch:
         MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
     else:
-        MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label)
+        MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, UseAAA)
     if not arguments.NotToExecute:
         os.chdir(WorkDir)
         print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'
