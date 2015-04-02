@@ -3,7 +3,7 @@
 #define  BEAN      0
 #define  MINI_AOD  1
 
-#define DATA_FORMAT MINI_AOD
+#define DATA_FORMAT BEAN
 
 #define INVALID_TYPE void *
 
