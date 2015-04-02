@@ -27,6 +27,10 @@ namespace anatools
   // Return a (hopefully) unique hashed integer for an object
   template <class InputObject> int getObjectHash (const InputObject&);
 
+#if IS_VALID(beamspots)
+  string getObjectType (const TYPE(beamspots) &);
+  string getObjectClass (const TYPE(beamspots) &);
+#endif
 #if IS_VALID(bxlumis)
   string getObjectType (const TYPE(bxlumis) &);
   string getObjectClass (const TYPE(bxlumis) &);
@@ -133,7 +137,8 @@ namespace anatools
 #ifdef ROOT6
   template<class T> T invoke (const string &, edm::ObjectWithDict * const, const edm::FunctionWithDict &);
 #else
-  template<class T> T invoke (const string &, Reflex::Object * const, const string &);
+  const Reflex::Object &getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType);
+  const Reflex::Object &invoke (const string &returnType, const Reflex::Object &o, const string &member);
   void addDeclaringScope (const Reflex::Scope &, string &);
 #endif
 }

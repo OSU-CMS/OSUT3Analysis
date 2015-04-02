@@ -87,6 +87,7 @@ typedef map<string, vector<UserVariable> > VariableProducerPayload;
 
 struct Collections
 {
+  edm::Handle<TYPE(beamspots)>                beamspots;
   edm::Handle<vector<TYPE(bxlumis)> >         bxlumis;
   edm::Handle<vector<TYPE(electrons)> >       electrons;
   edm::Handle<vector<TYPE(events)> >          events;

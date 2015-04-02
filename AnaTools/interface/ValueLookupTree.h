@@ -145,10 +145,6 @@ class ValueLookupTree
     bool vetoMatch (const string &, const string &, const size_t, const vector<string> &) const;
     ////////////////////////////////////////////////////////////////////////////
 
-    // Method which infers the input collection names from the given tree. The
-    // collection names are stored in the second argument.
-    void inferInputCollections (const Node * const, vector<string> &) const;
-
     // To avoid double counting. For a given set of objects, returns true only
     // if they are all unique and in a specific order.
     bool isUniqueCase (const ObjMap &, const unordered_set<string> &) const;

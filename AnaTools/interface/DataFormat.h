@@ -3,11 +3,13 @@
 #define  BEAN      0
 #define  MINI_AOD  1
 
-#define DATA_FORMAT BEAN
+#define DATA_FORMAT MINI_AOD
 
 #define INVALID_TYPE void *
 
 #if DATA_FORMAT == BEAN
+  #define  beamspots_TYPE       INVALID_TYPE
+  #define  bxlumis_TYPE         BNbxlumi
   #define  bxlumis_TYPE         BNbxlumi
   #define  electrons_TYPE       BNelectron
   #define  events_TYPE          BNevent
@@ -26,6 +28,8 @@
 
   #define  triggers_TYPE        BNtriggerCollection
 
+  #define  beamspot_INVALID
+
   #include "BEAN/Collections/interface/BNbxlumi.h"
   #include "BEAN/Collections/interface/BNelectron.h"
   #include "BEAN/Collections/interface/BNevent.h"
@@ -43,6 +47,7 @@
   #include "BEAN/Collections/interface/BNtrigobj.h"
 
 #elif DATA_FORMAT == MINI_AOD
+  #define  beamspots_TYPE       reco::BeamSpot
   #define  bxlumis_TYPE         INVALID_TYPE
   #define  electrons_TYPE       pat::Electron
   #define  events_TYPE          INVALID_TYPE
@@ -59,12 +64,13 @@
   #define  trigobjs_TYPE        pat::TriggerObjectStandAlone
   #define  uservariables_TYPE   VariableProducerPayload
 
+  #define  triggers_TYPE        edm::TriggerResults
+
   #define  bxlumis_INVALID
   #define  events_INVALID
   #define  tracks_INVALID
 
-  #define  triggers_TYPE        edm::TriggerResults
-
+  #include "DataFormats/BeamSpot/interface/BeamSpot.h"
   #include "DataFormats/Common/interface/TriggerResults.h"
   #include "DataFormats/EgammaReco/interface/SuperCluster.h"
   #include "DataFormats/JetReco/interface/GenJet.h"
