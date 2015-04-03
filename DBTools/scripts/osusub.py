@@ -100,6 +100,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
             SubmitFile.write(CondorSubArgumentsSet[argument].keys()[0] + ' = ' + CondorSubArgumentsSet[argument].values()[0] + '\n')
     SubmitFile.close()
 
+
 def MakeSpecificConfig(Dataset, Directory):
     os.system('touch ' + Directory + '/config_cfg.py')
     SkimChannelNames = SkimChannelFinder('userConfig_cfg', Directory) 
@@ -110,7 +111,7 @@ def MakeSpecificConfig(Dataset, Directory):
     ConfigFile.write('import userConfig_cfg as pset\n')
     ConfigFile.write('\n')
     for channelName in SkimChannelNames:
-        StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
+        StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory +'/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
         ConfigFile.write(StringToAdd)
     ConfigFile.write('fileName = pset.' + arguments.FileName + '\n')
     ConfigFile.write('fileName = fileName.pythonValue ()\n')
@@ -325,25 +326,14 @@ def GetCompleteOrderedArgumentsSet(InputArguments):
 ###############################################################################
 def SkimChannelFinder(userConfig, Directory):
     sys.path.append(Directory)
-    configTmp = open(Directory + '/' +userConfig + '.py','r')
     skimChannelNames = []
-    for line in configTmp:
-        if "add_channels" not in line:
-            continue
-        elif "False" in line:
-            continue
-        elif line[0] == "#":
-            continue
-        else:
-            PatternOne = r'.*\[(.*)\].*'
-            DecodedOne = re.match(PatternOne,line)
-            channel = DecodedOne.group(1)
-            exec('from ' + userConfig + ' import ' + channel + ' as currentChannel')
-            PatternTwo = r'.*\'(.*)\'.*'
-            DecodedTwo = re.match(PatternTwo,str(currentChannel.name))
-            skimChannelNames.append(DecodedTwo.group(1))
+    os.chdir(Directory)
+    exec('import ' + userConfig + ' as temPset')
+    outputModules = str(temPset.process.endPath).split('+') 
+    for outputModule in outputModules:
+        channelName = outputModule[0:len(outputModule)-16]
+        skimChannelNames.append(channelName)
     return skimChannelNames
-
 ################################################################################
 #            Function to modify the dataset_*_Info_cfy file for skim.          #  
 ################################################################################
@@ -509,7 +499,6 @@ if split_datasets:
         RealMaxEvents = EventsPerJob*NumberOfJobs
 
         os.system('cp ' + Config + ' ' + WorkDir + '/userConfig_cfg.py')
-
         MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir)
 
 	if lxbatch:
