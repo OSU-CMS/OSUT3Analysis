@@ -92,7 +92,10 @@ class ValueLookupTree
     // Methods for removing commas and parentheses from a tree.
     ////////////////////////////////////////////////////////////////////////////
     void pruneCommas (Node * const) const;
-    void pruneParentheses (Node * const) const;
+    void pruneParentheses (Node * &) const;
+    void pruneParentheses_ (Node * const) const;
+    void pruneDots (Node * &) const;
+    void pruneDots_ (Node * const) const;
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -141,10 +144,6 @@ class ValueLookupTree
     pair<size_t, string> findFirstOf (const string &, const vector<string> &, const vector<string> &, const size_t = 0) const;
     bool vetoMatch (const string &, const string &, const size_t, const vector<string> &) const;
     ////////////////////////////////////////////////////////////////////////////
-
-    // Method which infers the input collection names from the given tree. The
-    // collection names are stored in the second argument.
-    void inferInputCollections (const Node * const, vector<string> &) const;
 
     // To avoid double counting. For a given set of objects, returns true only
     // if they are all unique and in a specific order.

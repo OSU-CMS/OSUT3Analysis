@@ -19,11 +19,8 @@ ValueLookupTree::ValueLookupTree (const Cut &cut) :
 {
   pruneCommas (root_);
   pruneParentheses (root_);
+  pruneDots (root_);
 
-  vector<string> inferredInputCollections;
-  inferInputCollections (root_, inferredInputCollections);
-  if (inferredInputCollections.size ())
-    inputCollections_ = inferredInputCollections;
   sort (inputCollections_.begin (), inputCollections_.end ());
 }
 
@@ -34,11 +31,8 @@ ValueLookupTree::ValueLookupTree (const ValueToPrint &value) :
 {
   pruneCommas (root_);
   pruneParentheses (root_);
+  pruneDots (root_);
 
-  vector<string> inferredInputCollections;
-  inferInputCollections (root_, inferredInputCollections);
-  if (inferredInputCollections.size ())
-    inputCollections_ = inferredInputCollections;
   sort (inputCollections_.begin (), inputCollections_.end ());
 }
 
@@ -49,11 +43,8 @@ ValueLookupTree::ValueLookupTree (const string &expression, const vector<string>
 {
   pruneCommas (root_);
   pruneParentheses (root_);
+  pruneDots (root_);
 
-  vector<string> inferredInputCollections;
-  inferInputCollections (root_, inferredInputCollections);
-  if (inferredInputCollections.size ())
-    inputCollections_ = inferredInputCollections;
   sort (inputCollections_.begin (), inputCollections_.end ());
 }
 
@@ -213,7 +204,9 @@ ValueLookupTree::getCollectionSize (const string &name) const
     exit(0);
   }
 
-  if (EQ_VALID(name,bxlumis))
+  if (EQ_VALID(name,beamspots))
+    return 1;
+  else if (EQ_VALID(name,bxlumis))
     return handles_->bxlumis->size ();
   else if (EQ_VALID(name,electrons))
     return handles_->electrons->size ();
@@ -259,7 +252,8 @@ bool
   ValueLookupTree::collectionIsFound (const string &name) const
 {
   bool isFound = false;
-  if      (EQ_VALID(name,bxlumis))         isFound = handles_->bxlumis.isValid();
+  if      (EQ_VALID(name,beamspots))       isFound = handles_->beamspots.isValid();
+  else if (EQ_VALID(name,bxlumis))         isFound = handles_->bxlumis.isValid();
   else if (EQ_VALID(name,electrons))       isFound = handles_->electrons.isValid();
   else if (EQ_VALID(name,events))          isFound = handles_->events.isValid();
   else if (EQ_VALID(name,genjets))         isFound = handles_->genjets.isValid();
@@ -304,6 +298,7 @@ ValueLookupTree::pruneCommas (Node * const tree) const
               foundComma = true;
 
               size_t comma = branch - tree->branches.begin ();
+              (*branch)->branches.at (0)->parent = tree;
               tree->branches.insert (branch + 1, (*branch)->branches.begin (), (*branch)->branches.end ());
               branch = tree->branches.begin () + comma;
               tree->branches.erase (branch);
@@ -319,7 +314,21 @@ ValueLookupTree::pruneCommas (Node * const tree) const
 }
 
 void
-ValueLookupTree::pruneParentheses (Node * const tree) const
+ValueLookupTree::pruneParentheses (Node * &tree) const
+{
+  if (!tree->parent)
+    {
+      if (tree->value == "()")
+        {
+          tree = tree->branches.at (0);
+          tree->parent = NULL;
+        }
+    }
+  pruneParentheses_ (tree);
+}
+
+void
+ValueLookupTree::pruneParentheses_ (Node * const tree) const
 {
   //////////////////////////////////////////////////////////////////////////////
   // Recursively replaces any parentheses in the tree with the daughter.
@@ -335,6 +344,7 @@ ValueLookupTree::pruneParentheses (Node * const tree) const
               foundParenthesis = true;
 
               size_t parenthesis = branch - tree->branches.begin ();
+              (*branch)->branches.at (0)->parent = tree;
               tree->branches.insert (branch + 1, (*branch)->branches.begin (), (*branch)->branches.end ());
               branch = tree->branches.begin () + parenthesis;
               tree->branches.erase (branch);
@@ -345,7 +355,57 @@ ValueLookupTree::pruneParentheses (Node * const tree) const
   while (foundParenthesis);
 
   for (const auto &branch : tree->branches)
-    pruneParentheses (branch);
+    pruneParentheses_ (branch);
+  //////////////////////////////////////////////////////////////////////////////
+}
+
+void
+ValueLookupTree::pruneDots (Node * &tree) const
+{
+  if (!tree->parent)
+    {
+      if (tree->value == "." && !isCollection (tree->branches.at (0)->value + "s"))
+        {
+          tree->branches.at (0)->value += "." + tree->branches.at (1)->value;
+          tree = tree->branches.at (0);
+          tree->parent = NULL;
+        }
+    }
+  pruneDots_ (tree);
+}
+
+void
+ValueLookupTree::pruneDots_ (Node * const tree) const
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Recursively replaces any dots in the tree with the concatentation of the
+  // daughter values.
+  //////////////////////////////////////////////////////////////////////////////
+  bool foundDot;
+  do
+    {
+      foundDot = false;
+      for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
+        {
+          if ((*branch)->value == "." && (((*branch)->parent && (*branch)->parent->value == ".")
+                                       || !isCollection ((*branch)->branches.at (0)->value + "s")))
+            {
+              foundDot = true;
+
+              size_t dot = branch - tree->branches.begin ();
+              (*branch)->branches.at (0)->value += "." + (*branch)->branches.at (1)->value;
+              (*branch)->branches.at (0)->parent = tree;
+              tree->branches.insert (branch + 1, (*branch)->branches.at (0));
+              branch = tree->branches.begin () + dot;
+              tree->branches.erase (branch);
+              branch = tree->branches.begin () + dot;
+            }
+        }
+    }
+  while (foundDot);
+
+  for (const auto &branch : tree->branches)
+    pruneDots_ (branch);
   //////////////////////////////////////////////////////////////////////////////
 }
 
@@ -651,7 +711,9 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 void *
 ValueLookupTree::getObject (const string &name, const unsigned i) const
 {
-  if (EQ_VALID(name,bxlumis))
+  if (EQ_VALID(name,beamspots))
+    return ((void *) &(*handles_->beamspots));
+  else if (EQ_VALID(name,bxlumis))
     return ((void *) &handles_->bxlumis->at (i));
   else if (EQ_VALID(name,electrons))
     return ((void *) &handles_->electrons->at (i));
@@ -693,7 +755,9 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
 string
 ValueLookupTree::getCollectionType (const string &name) const
 {
-  if (EQ_VALID(name,bxlumis))
+  if (EQ_VALID(name,beamspots))
+    return TYPE_STR(beamspots);
+  else if (EQ_VALID(name,bxlumis))
     return TYPE_STR(bxlumis);
   else if (EQ_VALID(name,electrons))
     return TYPE_STR(electrons);
@@ -729,7 +793,9 @@ ValueLookupTree::getCollectionType (const string &name) const
 bool
 ValueLookupTree::isCollection (const string &name) const
 {
-  if (EQ_VALID(name,bxlumis))
+  if (EQ_VALID(name,beamspots))
+    return true;
+  else if (EQ_VALID(name,bxlumis))
     return true;
   else if (EQ_VALID(name,electrons))
     return true;
@@ -863,23 +929,6 @@ ValueLookupTree::vetoMatch (const string &s, const string &target, const size_t 
   //////////////////////////////////////////////////////////////////////////////
 
   return false;
-}
-
-void
-ValueLookupTree::inferInputCollections (const Node * const tree, vector<string> &inputCollections) const
-{
-  //////////////////////////////////////////////////////////////////////////////
-  // Recursively stores all the collection names located on nodes in the tree
-  // in the second argument.
-  //////////////////////////////////////////////////////////////////////////////
-  if (tree->branches.size ())
-    {
-      for (const auto &branch : tree->branches)
-        inferInputCollections (branch, inputCollections);
-    }
-  else if (isCollection (tree->value + "s"))
-    inputCollections.push_back (tree->value + "s");
-  //////////////////////////////////////////////////////////////////////////////
 }
 
 bool
