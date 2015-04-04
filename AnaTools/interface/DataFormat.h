@@ -28,7 +28,7 @@
 
   #define  triggers_TYPE        BNtriggerCollection
 
-  #define  beamspot_INVALID
+  #define  beamspots_INVALID
 
   #include "BEAN/Collections/interface/BNbxlumi.h"
   #include "BEAN/Collections/interface/BNelectron.h"
