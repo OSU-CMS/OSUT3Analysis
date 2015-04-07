@@ -39,9 +39,5 @@
   <class name="edm::Wrapper<std::vector<bool> >"/>
   <class name="edm::Wrapper<std::vector<std::vector<bool> > >"/>
 
-  <class name="std::pair<std::string,std::vector<UserVariable> >"/>
-  <class name="std::vector<std::pair<std::string,std::vector<UserVariable> > >"/>
-  <class name="edm::Wrapper<std::pair<std::string,std::vector<UserVariable> > >"/>
-  <class name="edm::Wrapper<std::vector<std::pair<std::string,std::vector<UserVariable> > > >"/>
-
+  <class name="std::pair<const std::string, std::vector<UserVariable> >"/>
 </lcgdict>

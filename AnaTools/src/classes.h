@@ -48,10 +48,6 @@ namespace {
      vector<vector<bool> > booldummy2;
      edm::Wrapper<vector<vector<bool> > > booldummy3;
 
-     std::pair<std::string,std::vector<UserVariable> > mapUserVarsDummy0;
-     edm::Wrapper<std::pair<std::string,std::vector<UserVariable> > > mapUserVarsDummy1;
-     vector<std::pair<std::string,std::vector<UserVariable> > > mapUserVarsDummy2;
-     edm::Wrapper<vector<std::pair<std::string,std::vector<UserVariable> > > > mapUserVarsDummy3; 
-
+     pair<const string, vector<UserVariable> > uservariabledummy0;
    };
 }
