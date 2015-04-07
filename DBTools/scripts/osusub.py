@@ -82,16 +82,16 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
             SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
         elif CondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and CondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":   
             if Dataset == '':
-                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py\n')
+                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label + '_cfg.py\n')
     	    elif UseAAA:
 	        userName = getpass.getuser()
                 userId = os.popen('id -u ' + userName).read()
                 userProxy = '/tmp/x509up_u' + str(userId)
                 SubmitFile.write('x509userproxy = ' + userProxy + '\n')
                 SubmitFile.write('should_transfer_files   = YES\n')
-                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy + '\n')
+                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy + '\n')
             else:
-                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_cfg.py,datasetInfo_' + Label + '_cfg.py\n')
+                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py\n')
         elif CondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
             SubmitFile.write('Requirements = ' + arguments.Requirements + '\n')
         elif CondorSubArgumentsSet[argument].has_key('Queue'):
@@ -101,17 +101,20 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
     SubmitFile.close()
 
 
-def MakeSpecificConfig(Dataset, Directory):
+def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
     os.system('touch ' + Directory + '/config_cfg.py')
-    SkimChannelNames = SkimChannelFinder('userConfig_cfg', Directory) 
+    if not SkimChannelNames:
+        SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory) 
     ConfigFile = open(Directory + '/config_cfg.py','r+w')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')        
     ConfigFile.write('import OSUT3Analysis.DBTools.osusub_cfg as osusub\n')
     ConfigFile.write('import re\n')
-    ConfigFile.write('import userConfig_cfg as pset\n')
+    ConfigFile.write('import userConfig_' + Label + '_cfg as pset\n')
     ConfigFile.write('\n')
     for channelName in SkimChannelNames:
-        StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory +'/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
+        if not os.path.exists(Directory + '/' + channelName):
+            os.system('mkdir ' + Directory + '/' + channelName )
+        StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory + '/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
         ConfigFile.write(StringToAdd)
     ConfigFile.write('fileName = pset.' + arguments.FileName + '\n')
     ConfigFile.write('fileName = fileName.pythonValue ()\n')
@@ -139,6 +142,7 @@ def MakeSpecificConfig(Dataset, Directory):
         # Instead of changing lumi section, could also change run number.  
         ConfigFile.write('pset.process.source.firstLuminosityBlock = cms.untracked.uint32((osusub.jobNumber)+1) \n') # osusub.jobNumber starts with 0  
     ConfigFile.close()
+    return SkimChannelNames
 
 def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
     os.system('das_client.py --query="file dataset=' + Dataset + '" --limit 0 > ' + AAAFileList) 
@@ -441,6 +445,8 @@ if 'interactive' in hostname:
 
 #Loop over the datasets in split_datasets.
 if split_datasets:
+    SubmissionDir = os.getcwd()
+    SkimChannelNames = []
     for dataset in split_datasets:
         EventsPerJob = -1 
         DatasetName = dataset
@@ -454,7 +460,6 @@ if split_datasets:
             MaxEvents = maxEvents[dataset]
             Config = config_file
             GetCompleteOrderedArgumentsSet(InputCondorArguments)
-        SubmissionDir = os.getcwd()
         if arguments.FileType == 'OSUT3Ntuple': 
             DatasetName = dataset_names[dataset]
             WorkDir = CondorDir + '/' + str(dataset)
@@ -491,15 +496,14 @@ if split_datasets:
         UseAAA = DatasetRead['useAAA']
         if NumberOfJobs > NumberOfFiles:
             NumberOfJobs = NumberOfFiles
-        if not arguments.localConfig:    
             NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
         if MaxEvents > 0:
 	    EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs)) 	
 
         RealMaxEvents = EventsPerJob*NumberOfJobs
-
-        os.system('cp ' + Config + ' ' + WorkDir + '/userConfig_cfg.py')
-        MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir)
+        userConfig = 'userConfig_' + dataset + '_cfg.py'
+        os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
+        SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,dataset, SkimChannelNames)
 
 	if lxbatch:
 	    MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
@@ -518,7 +522,7 @@ if split_datasets:
 	    os.chdir(SubmissionDir)
         else:
             print 'Configuration files created for ' + str(dataset) + ' dataset but no jobs submitted.\n'
-
+	    os.chdir(SubmissionDir)
 #If there are no input datasets specified and the user still continues.
 else:
     NumberOfJobs = arguments.NumberOfJobs
@@ -537,9 +541,10 @@ else:
     WorkDir = CondorDir
     if arguments.localConfig:	
         GetCompleteOrderedArgumentsSet(InputCondorArguments)
-    os.system('cp ' + Config + ' ' + WorkDir + '/userConfig_cfg.py')
+    userConfig = 'userConfig_' + dataset + '_cfg.py'
+    os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
     
-    MakeSpecificConfig('',WorkDir)
+    MakeSpecificConfig('',WorkDir,dataset, SkimChannelNames)
 
     if lxbatch:
         MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
