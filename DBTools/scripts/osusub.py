@@ -49,6 +49,7 @@ parser.add_option("-a", "--SkimChannel", dest="SkimChannel", default = "", help=
 parser.add_option("-R", "--Requirements", dest="Requirements", default = "", help="Requirements to be added to condor.sub submssion script, e.g. 'Memory > 1900'.")  
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")  
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")  
+parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config.")  
 
 (arguments, args) = parser.parse_args()
 
@@ -103,19 +104,21 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
 
 def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
     os.system('touch ' + Directory + '/config_cfg.py')
-    if not SkimChannelNames:
-        SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory) 
     ConfigFile = open(Directory + '/config_cfg.py','r+w')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')        
     ConfigFile.write('import OSUT3Analysis.DBTools.osusub_cfg as osusub\n')
     ConfigFile.write('import re\n')
     ConfigFile.write('import userConfig_' + Label + '_cfg as pset\n')
     ConfigFile.write('\n')
-    for channelName in SkimChannelNames:
-        if not os.path.exists(Directory + '/' + channelName):
-            os.system('mkdir ' + Directory + '/' + channelName )
-        StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory + '/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
-        ConfigFile.write(StringToAdd)
+    if not Generic:
+        if not SkimChannelNames:
+            SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory) 
+        if SkimChannelsNames:
+            for channelName in SkimChannelNames:
+                if not os.path.exists(Directory + '/' + channelName):
+                    os.system('mkdir ' + Directory + '/' + channelName )
+                StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory + '/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
+                ConfigFile.write(StringToAdd)
     ConfigFile.write('fileName = pset.' + arguments.FileName + '\n')
     ConfigFile.write('fileName = fileName.pythonValue ()\n')
     ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
@@ -430,6 +433,9 @@ if not arguments.localConfig:
 #    Get the host name to determine whether you are using lxplus or OSU T3.   #
 ###############################################################################
 UseAAA = False
+Generic = False
+if arguments.Generic:
+    Generic = True
 if arguments.UseAAA:
     UseAAA = True
 remoteAccessT3 = True
@@ -450,7 +456,7 @@ if split_datasets:
     for dataset in split_datasets:
         EventsPerJob = -1 
         DatasetName = dataset
-        NumberOfJobs = -1
+        NumberOfJobs = arguments.NumberOfJobs
         DatasetRead = {}
         MaxEvents = arguments.MaxEvents
         Config =  arguments.Config
