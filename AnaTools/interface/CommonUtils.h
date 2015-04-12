@@ -139,7 +139,6 @@ namespace anatools
 #else
   const Reflex::Object &getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType);
   const Reflex::Object &invoke (const string &returnType, const Reflex::Object &o, const string &member);
-  void addDeclaringScope (const Reflex::Scope &, string &);
 #endif
 }
 
