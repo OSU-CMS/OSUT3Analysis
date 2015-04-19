@@ -275,25 +275,32 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     Reflex::Object *o = new Reflex::Object (t, (void *) obj);
     string memberType;
 
-    const Reflex::Object &retObj = getMember (t, *o, member, memberType);
-    if (memberType == "float")
-      value = Reflex::Object_Cast<float> (retObj);
-    else if (memberType == "double")
-      value = Reflex::Object_Cast<double> (retObj);
-    else if (memberType == "long double")
-      value = Reflex::Object_Cast<long double> (retObj);
-    else if (memberType == "char")
-      value = Reflex::Object_Cast<char> (retObj);
-    else if (memberType == "int")
-      value = Reflex::Object_Cast<int> (retObj);
-    else if (memberType == "unsigned")
-      value = Reflex::Object_Cast<unsigned> (retObj);
-    else if (memberType == "bool")
-      value = Reflex::Object_Cast<bool> (retObj);
-    else if (memberType == "unsigned int")
-      value = Reflex::Object_Cast<unsigned int> (retObj);
-    else
-      clog << "WARNING: \"" << member << "\" has unrecognized type \"" << memberType << "\"" << endl;
+    try
+      {
+        const Reflex::Object &retObj = getMember (t, *o, member, memberType);
+        if (memberType == "float")
+          value = Reflex::Object_Cast<float> (retObj);
+        else if (memberType == "double")
+          value = Reflex::Object_Cast<double> (retObj);
+        else if (memberType == "long double")
+          value = Reflex::Object_Cast<long double> (retObj);
+        else if (memberType == "char")
+          value = Reflex::Object_Cast<char> (retObj);
+        else if (memberType == "int")
+          value = Reflex::Object_Cast<int> (retObj);
+        else if (memberType == "unsigned")
+          value = Reflex::Object_Cast<unsigned> (retObj);
+        else if (memberType == "bool")
+          value = Reflex::Object_Cast<bool> (retObj);
+        else if (memberType == "unsigned int")
+          value = Reflex::Object_Cast<unsigned int> (retObj);
+        else
+          clog << "WARNING: \"" << member << "\" has unrecognized type \"" << memberType << "\"" << endl;
+      }
+    catch (...)
+      {
+        clog << "WARNING: unable to access member \"" << member << "\" from \"" << type << "\"" << endl;
+      }
     delete o;
 
     return value;
@@ -302,48 +309,23 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   const Reflex::Object &
   anatools::getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType)
   {
-    size_t dot = member.find ('.');
+    string typeName = t.Name (Reflex::FINAL | Reflex::SCOPED);
+    size_t dot = member.find ('.'),
+           asterisk = typeName.rfind ('*');
 
-    if (dot == string::npos)
+    if (t.IsReference ())
       {
-        string dataMemberType, functionMemberType,
-               dataMemberScope, functionMemberScope;
-
-        dataMemberType = t.DataMemberByName (member).TypeOf ().Name (Reflex::FINAL | Reflex::SCOPED | Reflex::QUALIFIED);
-        functionMemberType = t.FunctionMemberByName (member).TypeOf ().ReturnType ().Name (Reflex::FINAL | Reflex::SCOPED | Reflex::QUALIFIED);
-        try
-          {
-            if (dataMemberType != "")
-              {
-                memberType = dataMemberType;
-                Reflex::Object *retObj = new Reflex::Object (o.Get (member));
-                return (*retObj);
-              }
-            else if (functionMemberType != "")
-              {
-                memberType = functionMemberType;
-                return invoke (memberType, o, member);
-              }
-            else
-              throw 0;
-          }
-        catch (...)
-          {
-            for (auto bi = t.Base_Begin (); bi != t.Base_End (); bi++)
-              {
-                try
-                  {
-                    return getMember (bi->ToType (), o.CastObject (bi->ToType ()), member, memberType);
-                  }
-                catch (...)
-                  {
-                    continue;
-                  }
-              }
-            throw;
-          }
+        clog << "WARNING: unable to access members which are references" << endl;
+        throw 0;
       }
-    else
+    if (t.IsPointer ())
+      {
+        Reflex::Type derefType = Reflex::Type::ByName (typeName.substr (0, asterisk) + typeName.substr (asterisk + 1));
+        void *obj = o.Address ();
+        Reflex::Object *derefObj = new Reflex::Object (derefType, (void *) *((void **) obj));
+        return getMember (derefType, *derefObj, member, memberType);
+      }
+    if (dot != string::npos)
       {
         try
           {
@@ -356,12 +338,51 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
           {
             const Reflex::Object &subObj = getMember (t, o, member.substr (0, dot), memberType);
             Reflex::Type subType = Reflex::Type::ByName (memberType);
-            string subMember = (member.substr (0, dot) == "operator*" ? "" : "operator*.") + member.substr (dot + 1);
+            string subMember = (member.substr (0, dot) == "operator->" ? "" : "operator->.") + member.substr (dot + 1);
             return getMember (subType, subObj, subMember, memberType);
           }
       }
 
-    return o;
+    Reflex::Type dataMemberType, functionMemberType;
+    string dataMemberTypeName, functionMemberTypeName;
+
+    dataMemberType = t.DataMemberByName (member).TypeOf ();
+    functionMemberType = t.FunctionMemberByName (member).TypeOf ().ReturnType ();
+    dataMemberTypeName = dataMemberType.Name (Reflex::FINAL | Reflex::SCOPED);
+    functionMemberTypeName = functionMemberType.Name (Reflex::FINAL | Reflex::SCOPED);
+    try
+      {
+        if (dataMemberTypeName != "")
+          {
+            memberType = dataMemberTypeName;
+            Reflex::Object *retObj = new Reflex::Object (o.Get (member));
+            return (*retObj);
+          }
+        else if (functionMemberTypeName != "")
+          {
+            memberType = functionMemberTypeName;
+            return invoke (memberType, o, member);
+          }
+        else
+          throw 0;
+      }
+    catch (...)
+      {
+        for (auto bi = t.Base_Begin (); bi != t.Base_End (); bi++)
+          {
+            try
+              {
+                return getMember (bi->ToType (), o.CastObject (bi->ToType ()), member, memberType);
+              }
+            catch (...)
+              {
+                continue;
+              }
+          }
+        throw;
+      }
+
+    throw 0;
   }
 
 const Reflex::Object &
