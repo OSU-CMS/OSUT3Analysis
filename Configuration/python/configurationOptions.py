@@ -51,10 +51,22 @@ datasets = [
    'QCD_BtoMu',
    'QCD_bEnriched',
    #MiniAOD not stored on T3.
-   'DYJetsToLLMiniAOD',
-   'WJetsToLNuMiniAOD',
-   'TTJetsMiniAOD',
-   'QCDMu20InfMiniAOD',  
+   'DYJetsToLL_50_MiniAOD',
+   'WJetsToLNu_MiniAOD',
+   'TTJets_MiniAOD',
+   #QCD MuEnriched
+   'QCD_MuEnriched_20toInf_MiniAOD'   
+   #QCD EMEnriched
+   'QCD_EMEnriched_5to10_MiniAOD', 
+   'QCD_EMEnriched_10to20_MiniAOD',
+   'QCD_EMEnriched_20to30_MiniAOD',   
+   'QCD_EMEnriched_30to80_MiniAOD',   
+   'QCD_EMEnriched_80to170_MiniAOD',  
+   #QCD bcToE
+   'QCD_bcToE_20to30_MiniAOD',   
+   'QCD_bcToE_30to80_MiniAOD',  
+   'QCD_bcToE_80to170_MiniAOD', 
+   'QCD_bcToE_170toInf_MiniAOD',
 
    #Sum of all backgrounds
    'Background',
@@ -673,6 +685,22 @@ composite_dataset_definitions = {
         'QCD_MuEnriched_800to1000',
         'QCD_MuEnriched_1000',
     ],
+    'QCD_MuEnriched_MiniAOD' : [
+        'QCD_MuEnriched_20toInf_MiniAOD' 
+    ],  
+    'QCD_EMEnriched_MiniAOD' : [
+        'QCD_EMEnriched_5to10_MiniAOD', 
+        'QCD_EMEnriched_10to20_MiniAOD',
+        'QCD_EMEnriched_20to30_MiniAOD',   
+        'QCD_EMEnriched_30to80_MiniAOD',   
+        'QCD_EMEnriched_80to170_MiniAOD',
+    ],  
+    'QCD_bcToE_MiniAOD' : [
+        'QCD_bcToE_20to30_MiniAOD',   
+        'QCD_bcToE_30to80_MiniAOD',  
+        'QCD_bcToE_80to170_MiniAOD', 
+        'QCD_bcToE_170toInf_MiniAOD',
+    ],
     'QCD_BtoMu' : [
         'QCD_BtoMu_15to30',
         'QCD_BtoMu_30to50',
@@ -841,10 +869,22 @@ composite_dataset_definitions = {
 
 dataset_names = {
     #MiniAOD not stored on T3.
-    'DYJetsToLLMiniAOD'        : "/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
-    'WJetsToLNuMiniAOD'        : "/WJetsToLNu_13TeV-madgraph-pythia8-tauola/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
-    'TTJetsMiniAOD'            : "/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
-    'QCDMu20InfMiniAOD'        : "/QCD_Pt-20toInf_MuEnrichedPt15_PionKaonDecay_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_PHYS14_25_V1-v2/MINIAODSIM",
+    'DYJetsToLL_50_MiniAOD'        : "/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
+    'WJetsToLNu_MiniAOD'        : "/WJetsToLNu_13TeV-madgraph-pythia8-tauola/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
+    'TTJets_MiniAOD'            : "/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
+    #QCD MuEnriched
+    'QCD_MuEnriched_20toInf_MiniAOD'         : "/QCD_Pt-20toInf_MuEnrichedPt15_PionKaonDecay_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_PHYS14_25_V1-v2/MINIAODSIM",
+    #QCD EMEnriched
+    'QCD_EMEnriched_5to10_MiniAOD'          : "/QCD_Pt-5to10_EMEnriched_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_castor_PHYS14_25_V1-v1/MINIAODSIM",
+    'QCD_EMEnriched_10to20_MiniAOD'         : "/QCD_Pt-10to20_EMEnriched_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_castor_PHYS14_25_V1-v1/MINIAODSIM",
+    'QCD_EMEnriched_20to30_MiniAOD'         : "/QCD_Pt-20to30_EMEnriched_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_castor_PHYS14_25_V1-v1/MINIAODSIM",
+    'QCD_EMEnriched_30to80_MiniAOD'         : "/QCD_Pt-30to80_EMEnriched_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_castor_PHYS14_25_V1-v1/MINIAODSIM",
+    'QCD_EMEnriched_80to170_MiniAOD'        : "/QCD_Pt-80to170_EMEnriched_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_castor_PHYS14_25_V1-v1/MINIAODSIM",
+    #QCD bcToE
+    'QCD_bcToE_20to30_MiniAOD'              : "/QCD_Pt_20to30_bcToE_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_PHYS14_25_V1-v2/MINIAODSIM",
+    'QCD_bcToE_30to80_MiniAOD'              : "/QCD_Pt_30to80_bcToE_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
+    'QCD_bcToE_80to170_MiniAOD'             : "/QCD_Pt_80to170_bcToE_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
+    'QCD_bcToE_170toInf_MiniAOD'            : "/QCD_Pt_170toInf_bcToE_Tune4C_13TeV_pythia8/Phys14DR-PU4bx50_PHYS14_25_V1-v1/MINIAODSIM",
 
 
     'SingleMu_2012A'       : "/SingleMu/Run2012A-22Jan2013-v1/AOD",
@@ -1298,10 +1338,22 @@ dataset_names = {
 
 nJobs = {
    #MiniAOD not stored on T3.
-   'DYJetsToLLMiniAOD'        : 59,
-   'WJetsToLNuMiniAOD'        : 205,
-   'TTJetsMiniAOD'        : 511,
-   'QCDMu20InfMiniAOD'       : 22,  
+   'DYJetsToLL_50_MiniAOD'        : 59,
+   'WJetsToLNu_MiniAOD'        : 205,
+   'TTJets_MiniAOD'        : 511,
+   #QCD MuEnriched
+   'QCD_MuEnriched_20toInf_MiniAOD'         : 22,
+   #QCD EMEnriched
+   'QCD_EMEnriched_5to10_MiniAOD'          : 42, 
+   'QCD_EMEnriched_10to20_MiniAOD'         : 42,
+   'QCD_EMEnriched_20to30_MiniAOD'         : 43,
+   'QCD_EMEnriched_30to80_MiniAOD'         : 42,
+   'QCD_EMEnriched_80to170_MiniAOD'        : 48,
+   #QCD bcToE
+   'QCD_bcToE_20to30_MiniAOD'              : 22,
+   'QCD_bcToE_30to80_MiniAOD'              : 22,
+   'QCD_bcToE_80to170_MiniAOD'             : 22,
+   'QCD_bcToE_170toInf_MiniAOD'            : 27,
 
    'SingleMu_2012A'       : 30,
    'SingleMu_2012B'       : 300,
@@ -1723,10 +1775,22 @@ nJobs = {
 
 maxEvents = {
    #MiniAOD not stored on T3.
-   'DYJetsToLLMiniAOD'        : -1,
-   'WJetsToLNuMiniAOD'        : -1,
-   'TTJetsMiniAOD'            : -1,
-   'QCDMu20InfMiniAOD'           : -1,  
+   'DYJetsToLL_50_MiniAOD'        : -1,
+   'WJetsToLNu_MiniAOD'        : -1,
+   'TTJets_MiniAOD'            : -1,
+   #QCD MuEnriched
+   'QCD_MuEnriched_20toInf_MiniAOD'         : -1,
+   #QCD EMEnriched
+   'QCD_EMEnriched_5to10_MiniAOD'          : -1, 
+   'QCD_EMEnriched_10to20_MiniAOD'         : -1,
+   'QCD_EMEnriched_20to30_MiniAOD'         : -1,
+   'QCD_EMEnriched_30to80_MiniAOD'         : -1,
+   'QCD_EMEnriched_80to170_MiniAOD'        : -1,
+   #QCD bcToE
+   'QCD_bcToE_20to30_MiniAOD'              : -1,
+   'QCD_bcToE_30to80_MiniAOD'              : -1,
+   'QCD_bcToE_80to170_MiniAOD'             : -1,
+   'QCD_bcToE_170toInf_MiniAOD'            : -1,
 
    'SingleMu_2012A'       : -1,
    'SingleMu_2012B'       : -1,
@@ -2149,10 +2213,22 @@ maxEvents = {
 # data => data
 types = {
    #MiniAOD not store on T3.
-   'DYJetsToLLMiniAOD'        : "bgMC",   
-   'WJetsToLNuMiniAOD'        : "bgMC",   
-   'TTJetsMiniAOD'            : "bgMC",
-   'QCDMu20InfMiniAOD'        : "bgMC",  
+   'DYJetsToLL_50_MiniAOD'     : "bgMC",   
+   'WJetsToLNu_MiniAOD'        : "bgMC",   
+   'TTJets_MiniAOD'            : "bgMC",
+   #QCD MuEnriched
+   'QCD_MuEnriched_20toInf_MiniAOD'         : "bgMC",
+   #QCD EMEnriched
+   'QCD_EMEnriched_5to10_MiniAOD'          : "bgMC", 
+   'QCD_EMEnriched_10to20_MiniAOD'         : "bgMC",
+   'QCD_EMEnriched_20to30_MiniAOD'         : "bgMC",
+   'QCD_EMEnriched_30to80_MiniAOD'         : "bgMC",
+   'QCD_EMEnriched_80to170_MiniAOD'        : "bgMC",
+   #QCD bcToE
+   'QCD_bcToE_20to30_MiniAOD'              : "bgMC",
+   'QCD_bcToE_30to80_MiniAOD'              : "bgMC",
+   'QCD_bcToE_80to170_MiniAOD'             : "bgMC",
+   'QCD_bcToE_170toInf_MiniAOD'            : "bgMC",
 
  
    'SingleMu'             : "data",
@@ -2695,11 +2771,24 @@ types = {
 
 colors = {
    #MiniAOD not store on T3.
-   'DYJetsToLLMiniAOD'          : 410,
-   'DYJetsToLLMiniAOD'          : 852,
-   'TTJetsMiniAOD'              : 872,
-   'QCDMu20InfMiniAOD'          : 791, 
+   'DYJetsToLL_50_MiniAOD'       : 410,
+   'DYJetsToLL_MiniAOD'          : 852,
+   'TTJets_MiniAOD'              : 872,
+   #QCD MuEnriched
+   'QCD_MuEnriched_20toInf_MiniAOD'         : 623,
+   #QCD EMEnriched
+   'QCD_EMEnriched_5to10_MiniAOD'          : 791, 
+   'QCD_EMEnriched_10to20_MiniAOD'         : 791,
+   'QCD_EMEnriched_20to30_MiniAOD'         : 791,
+   'QCD_EMEnriched_30to80_MiniAOD'         : 791,
+   'QCD_EMEnriched_80to170_MiniAOD'        : 791,
+   #QCD bcToE
+   'QCD_bcToE_20to30_MiniAOD'              : 794,
+   'QCD_bcToE_30to80_MiniAOD'              : 794,
+   'QCD_bcToE_80to170_MiniAOD'             : 794,
+   'QCD_bcToE_170toInf_MiniAOD'            : 794,
    
+
    'SingleMu'               : 1,
    'SingleMu_2012A'         : 1,
    'SingleMu_2012B'         : 1,
@@ -3255,10 +3344,22 @@ colors = {
 
 labels = {
    #MiniAOD not stored on T3.
-   'DYJetsToLLMiniAOD'        : "Z#rightarrowll M(50) (MiniAOD)",
-   'DYJetsToLLMiniAOD'        : "W#rightarrowl#nu (MiniAOD)",
-   'TTJetsMiniAOD'            : "t#bar{t} (MiniAOD)",
-   'QCDMu20InfMiniAOD'        : "QCD Pt 20-Inf",  
+   'DYJetsToLL_50_MiniAOD'                 : "Z#rightarrowll M(50) (MiniAOD)",
+   'DYJetsToLL_MiniAOD'                    : "W#rightarrowl#nu (MiniAOD)",
+   'TTJets_MiniAOD'                        : "t#bar{t} (MiniAOD)",
+   #QCD MuEnriched
+   'QCD_MuEnriched_20toInf_MiniAOD'        : "QCD MuEnriched Pt 20-Inf (MiniAOD)",  
+   #QCD EMEnriched
+   'QCD_EMEnriched_5to10_MiniAOD'          : "QCD EMEnriched Pt 5-10 (MiniAOD)", 
+   'QCD_EMEnriched_10to20_MiniAOD'         : "QCD EMEnriched Pt 10-20 (MiniAOD)",
+   'QCD_EMEnriched_20to30_MiniAOD'         : "QCD EMEnriched Pt 20-30 (MiniAOD)",
+   'QCD_EMEnriched_30to80_MiniAOD'         : "QCD EMEnriched Pt 30-80 (MiniAOD)",
+   'QCD_EMEnriched_80to170_MiniAOD'        : "QCD EMEnriched Pt 80-170 (MiniAOD)",
+   #QCD bcToE
+   'QCD_bcToE_20to30_MiniAOD'              : "QCD bcToE Pt 20-30 (MiniAOD)",
+   'QCD_bcToE_30to80_MiniAOD'              : "QCD bcToE Pt 30-80 (MiniAOD)",
+   'QCD_bcToE_80to170_MiniAOD'             : "QCD bcToE Pt 80-170 (MiniAOD)",
+   'QCD_bcToE_170toInf_MiniAOD'            : "QCD bcToE Pt 170-Inf (MiniAOD)",
    
 
    'SingleMu'             : "Single Muon data",
@@ -3807,8 +3908,20 @@ labels = {
 
 crossSections = {
    #MiniAOD not stored on T3.
-   'DYJetsToLLMiniAOD'        : 6025.2,
-   'WJetsToLNuMiniAOD'        : 61526.7,
-   'TTJetsMiniAOD'            : 831.76,
-   'QCDMu20InfMiniAOD'        : 868400000,   
+   'DYJetsToLL_50_MiniAOD'                 : 6025.2,
+   'WJetsToLNu_MiniAOD'                    : 61526.7,
+   'TTJets_MiniAOD'                        : 831.76,
+   #QCD MuEnriched
+   'QCD_MuEnriched_20toInf_MiniAOD'        : 868400000,
+   #QCD EMEnriched
+   'QCD_EMEnriched_5to10_MiniAOD'          : 80710000000, 
+   'QCD_EMEnriched_10to20_MiniAOD'         : 8838000000,
+   'QCD_EMEnriched_20to30_MiniAOD'         : 677300000,
+   'QCD_EMEnriched_30to80_MiniAOD'         : 185900000,
+   'QCD_EMEnriched_80to170_MiniAOD'        : 3529000,
+   #QCD bcToE
+   'QCD_bcToE_20to30_MiniAOD'              : 675900000, 
+   'QCD_bcToE_30to80_MiniAOD'              : 185900000,
+   'QCD_bcToE_80to170_MiniAOD'             : 3495000,
+   'QCD_bcToE_170toInf_MiniAOD'            : 128500,
 }
