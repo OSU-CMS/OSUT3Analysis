@@ -3809,6 +3809,6 @@ crossSections = {
    #MiniAOD not stored on T3.
    'DYJetsToLLMiniAOD'        : 6025.2,
    'WJetsToLNuMiniAOD'        : 61526.7,
-   'TTJetsMiniAOD'            : 831.76 ,
-   'QCDMu20InfMiniAOD'        : -1,   
+   'TTJetsMiniAOD'            : 831.76,
+   'QCDMu20InfMiniAOD'        : 868400000,   
 }
