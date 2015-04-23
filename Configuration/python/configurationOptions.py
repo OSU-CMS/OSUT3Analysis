@@ -2772,7 +2772,7 @@ types = {
 colors = {
    #MiniAOD not store on T3.
    'DYJetsToLL_50_MiniAOD'       : 410,
-   'DYJetsToLL_MiniAOD'          : 852,
+   'WJetsToLNu_MiniAOD'          : 852,
    'TTJets_MiniAOD'              : 872,
    #QCD MuEnriched
    'QCD_MuEnriched_20toInf_MiniAOD'         : 623,
@@ -3345,7 +3345,7 @@ colors = {
 labels = {
    #MiniAOD not stored on T3.
    'DYJetsToLL_50_MiniAOD'                 : "Z#rightarrowll M(50) (MiniAOD)",
-   'DYJetsToLL_MiniAOD'                    : "W#rightarrowl#nu (MiniAOD)",
+   'WJetsToLNu_MiniAOD'                    : "W#rightarrowl#nu (MiniAOD)",
    'TTJets_MiniAOD'                        : "t#bar{t} (MiniAOD)",
    #QCD MuEnriched
    'QCD_MuEnriched_20toInf_MiniAOD'        : "QCD MuEnriched Pt 20-Inf (MiniAOD)",  
