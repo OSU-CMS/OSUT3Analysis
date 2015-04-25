@@ -1,5 +1,12 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
+/**
+ * Splits the concatenated object label into a vector of individual labels.
+ *
+ * @param  inputLabel string giving the concatenation of multiple object labels
+ *         with hyphens between
+ * @return vector of strings corresponding to the individual object labels
+ */
 vector<string>
 anatools::getSingleObjects (string inputLabel)
 {
@@ -16,6 +23,12 @@ anatools::getSingleObjects (string inputLabel)
   return singleObjects;
 }
 
+/**
+ * Concatenates the input strings with hyphens between.
+ *
+ * @param  inputCollections vector of strings to concatenate
+ * @return concatenation of input strings with hyphens between
+ */
 string
 anatools::concatenateInputCollection (const vector<string> &inputCollections)
 {
@@ -29,6 +42,12 @@ anatools::concatenateInputCollection (const vector<string> &inputCollections)
   return plural (catInputCollection);
 }
 
+/**
+ * Capitalizes the input string without modifying the original string.
+ *
+ * @param  input string to capitalize
+ * @return capitalized string
+ */
 string
 anatools::capitalize (string input)
 {
@@ -36,6 +55,12 @@ anatools::capitalize (string input)
   return input;
 }
 
+/**
+ * Removes a trailing 's' from a string without modifying the original string.
+ *
+ * @param  input string from which to remove the 's'
+ * @return string with a trailing 's' removed
+ */
 string
 anatools::singular (string input)
 {
@@ -45,6 +70,12 @@ anatools::singular (string input)
     return input;
 }
 
+/**
+ * Appends an 's' to a string without modifying the original string.
+ *
+ * @param  input string to which to append the 's'
+ * @return string with the appended 's'
+ */
 string
 anatools::plural (string input)
 {
@@ -54,36 +85,90 @@ anatools::plural (string input)
     return input + "s";
 }
 
+/**
+ * Removes whitespace from the left of a string, modifying original string.
+ *
+ * @param  s string from which to remove whitespace
+ * @return reference to the original string
+ */
 string &
 anatools::ltrim (string &s)
 {
   return s.erase (0, s.find_first_not_of (" \t\f\n\r"));
 }
 
+/**
+ * Removes whitespace from the right of a string, modifying original string.
+ *
+ * @param  s string from which to remove whitespace
+ * @return reference to the original string
+ */
 string &
 anatools::rtrim (string &s)
 {
   return s.erase (s.find_last_not_of (" \t\f\n\r") + 1);
 }
 
+/**
+ * Removes whitespace from both sides of a string, modifying original string.
+ *
+ * @param  s string from which to remove whitespace
+ * @return reference to the original string
+ */
 string &
 anatools::trim (string &s)
 {
   return ltrim (rtrim (s));
 }
 
+/**
+ * Returns whether the first members of the pairs are in ascending order.
+ *
+ * This function is meant to be used with std::sort to sort a vector of pairs
+ * so that the first members of the pairs are in ascending order.
+ *
+ * @param  a first of two pairs to compare
+ * @param  b second of two pairs to compare
+ * @return boolean representing whether the first members of the two pairs are
+ *         in ascending order
+ */
 bool
 anatools::firstOfPairAscending (pair<size_t, string> a, pair<size_t, string> b)
 {
   return (a.first < b.first);
 }
 
+/**
+ * Returns whether the collection indices are in ascending order.
+ *
+ * This function is meant to be used with std::sort to sort a vector so that
+ * the collection indices are in ascending order. The collection index is the
+ * first member of the tuple in the input pairs. This sorting is used in
+ * determining which combinations of objects should be ignored to avoid double
+ * counting in ValueLookupTree.
+ *
+ * @param  a first of two objects to compare
+ * @param  b second of two objects to compare
+ * @return boolean representing whether the collection indices of the two
+ *         objects are in ascending order
+ */
 bool
 anatools::collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> > a, pair<string, tuple<unsigned, unsigned, void *> > b)
 {
   return (get<0> (a.second) < get<0> (b.second));
 }
 
+/**
+ * Retrieves all required collections from the event.
+ *
+ * @param  objectsToGet set of strings specifying which collections are
+ *         required
+ * @param  collections edm::ParameterSet giving the input tags for the
+ *         collections
+ * @param  handles structure containing the edm::Handle objects in which the
+ *         collections are to be stored
+ * @param  event edm::Event from which to get the collections
+ */
 void
 anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, const edm::ParameterSet &collections, Collections &handles, const edm::Event &event)
 {
@@ -267,6 +352,14 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   #include "Reflex/Object.h"
   #include "Reflex/Type.h"
 
+/**
+ * Returns the value of a member of an object.
+ *
+ * @param  type string giving the type of the object
+ * @param  obj void pointer to the object
+ * @param  member string giving the member, data or function, to evaluate
+ * @return value of the member of the given object
+ */
   double
   anatools::getMember (const string &type, const void * const obj, const string &member)
   {
@@ -306,6 +399,17 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     return value;
   }
 
+/**
+ * Helper function that returns a member of an object as a Reflex::Object.
+ *
+ * @param  t Reflex::Type corresponding to the type of the object
+ * @param  o Reflex::Object corresponding to the object
+ * @param  member string giving the member, data or function, to evaluate
+ * @param  memberType string in which the type of the retrieved member is
+ *         stored
+ * @return Reflex::Object corresponding to the value of the member of the given
+ *         object
+ */
   const Reflex::Object &
   anatools::getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType)
   {
@@ -390,6 +494,15 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     throw 0;
   }
 
+/**
+ * Invokes a function member of an object.
+ *
+ * @param  returnType type which the function returns
+ * @param  o Reflex::Object corresponding to the object whose function member
+ *         is to be called
+ * @param  member string giving the name of the function member
+ * @return Reflex::Object corresponding to what the function returned
+ */
   const Reflex::Object &
   anatools::invoke (const string &returnType, const Reflex::Object &o, const string &member)
   {
