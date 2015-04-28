@@ -393,6 +393,8 @@ ValueLookupTree::pruneDots_ (Node * const tree) const
               foundDot = true;
 
               size_t dot = branch - tree->branches.begin ();
+              if((*branch)->branches.at (1)->value == ".")
+                  pruneDots_ (*branch);
               (*branch)->branches.at (0)->value += "." + (*branch)->branches.at (1)->value;
               (*branch)->branches.at (0)->parent = tree;
               tree->branches.insert (branch + 1, (*branch)->branches.at (0));
