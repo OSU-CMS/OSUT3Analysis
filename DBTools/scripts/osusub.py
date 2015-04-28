@@ -113,7 +113,7 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
     if not Generic:
         if not SkimChannelNames:
             SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory) 
-        if SkimChannelsNames:
+        else:
             for channelName in SkimChannelNames:
                 if not os.path.exists(Directory + '/' + channelName):
                     os.system('mkdir ' + Directory + '/' + channelName )
