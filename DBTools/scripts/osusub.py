@@ -115,10 +115,11 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
             SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory) 
         else:
             for channelName in SkimChannelNames:
-                if not os.path.exists(Directory + '/' + channelName):
-                    os.system('mkdir ' + Directory + '/' + channelName )
-                StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory + '/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
-                ConfigFile.write(StringToAdd)
+                if not channelName == '':
+                    if not os.path.exists(Directory + '/' + channelName):
+                        os.system('mkdir ' + Directory + '/' + channelName )
+                    StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory + '/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
+                    ConfigFile.write(StringToAdd)
     ConfigFile.write('fileName = pset.' + arguments.FileName + '\n')
     ConfigFile.write('fileName = fileName.pythonValue ()\n')
     ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
