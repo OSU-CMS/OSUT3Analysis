@@ -352,6 +352,11 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     functionMemberType = t.FunctionMemberByName (member).TypeOf ().ReturnType ();
     dataMemberTypeName = dataMemberType.Name (Reflex::FINAL | Reflex::SCOPED);
     functionMemberTypeName = functionMemberType.Name (Reflex::FINAL | Reflex::SCOPED);
+    if (dataMemberType.IsReference () || functionMemberType.IsReference ())
+      {
+        clog << "WARNING: unable to access members which are references" << endl;
+        throw 0;
+      }
     try
       {
         if (dataMemberTypeName != "")
@@ -387,14 +392,14 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     throw 0;
   }
 
-const Reflex::Object &
-anatools::invoke (const string &returnType, const Reflex::Object &o, const string &member)
-{
-  Reflex::Type t = Reflex::Type::ByName (returnType);
-  Reflex::Object *value = new Reflex::Object (t.Construct ());
-  o.Invoke (member, value);
-  return (*value);
-}
+  const Reflex::Object &
+  anatools::invoke (const string &returnType, const Reflex::Object &o, const string &member)
+  {
+    Reflex::Type t = Reflex::Type::ByName (returnType);
+    Reflex::Object *value = new Reflex::Object (t.Construct ());
+    o.Invoke (member, value);
+    return (*value);
+  }
 #endif
 
 #if IS_VALID(beamspots)

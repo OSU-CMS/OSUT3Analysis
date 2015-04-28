@@ -316,6 +316,7 @@ ValueLookupTree::pruneCommas (Node * const tree) const
 void
 ValueLookupTree::pruneParentheses (Node * &tree) const
 {
+  pruneParentheses_ (tree);
   if (!tree->parent)
     {
       if (tree->value == "()")
@@ -324,7 +325,6 @@ ValueLookupTree::pruneParentheses (Node * &tree) const
           tree->parent = NULL;
         }
     }
-  pruneParentheses_ (tree);
 }
 
 void
@@ -362,16 +362,16 @@ ValueLookupTree::pruneParentheses_ (Node * const tree) const
 void
 ValueLookupTree::pruneDots (Node * &tree) const
 {
+  pruneDots_ (tree);
   if (!tree->parent)
     {
       if (tree->value == "." && !isCollection (tree->branches.at (0)->value + "s"))
         {
           tree->branches.at (0)->value += "." + tree->branches.at (1)->value;
+          tree->branches.at (0)->parent = NULL;
           tree = tree->branches.at (0);
-          tree->parent = NULL;
         }
     }
-  pruneDots_ (tree);
 }
 
 void

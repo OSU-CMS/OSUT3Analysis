@@ -566,7 +566,7 @@ first_input = input_sources[0]
 testFile = TFile("condor/" + first_input['condor_dir'] + "/" + first_input['dataset'] + ".root")
 rootDirectory = ""
 if arguments.generic:
-    rootDirectory = testFile.cd(first_input['channel'])  
+    rootDirectory = first_input['channel']  
 else:
     rootDirectory = first_input['channel'] + "Plotter" 
 
