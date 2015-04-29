@@ -387,6 +387,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
           value = Reflex::Object_Cast<bool> (retObj);
         else if (memberType == "unsigned int")
           value = Reflex::Object_Cast<unsigned int> (retObj);
+        else if (memberType == "unsigned short int")
+          value = Reflex::Object_Cast<unsigned short int> (retObj);
         else
           clog << "WARNING: \"" << member << "\" has unrecognized type \"" << memberType << "\"" << endl;
       }

@@ -40,6 +40,14 @@ Another example is an expression, e.g., "2 * abs(eta)", represented as:
     |
    eta
 In this case the evaluate function would return a continuous value.
+For a complex string such as innerTrack.hitPattern_.numberOfValidPixelHits > 0, the tree will have the following structure:
+               < 
+             /   \
+            .     0
+         /     \   
+    innerTrack  . 
+               / \
+    hitPattern_  numberOfValidPixelHits
 */
 
 typedef unordered_multimap<string, tuple<unsigned, unsigned, void *> > ObjMap;
