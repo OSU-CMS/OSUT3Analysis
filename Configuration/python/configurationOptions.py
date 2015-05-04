@@ -54,15 +54,15 @@ datasets = [
    'DYJetsToLL_50_MiniAOD',
    'WJetsToLNu_MiniAOD',
    'TTJets_MiniAOD',
-   #QCD MuEnriched
+   #QCD MuEnriched_MiniAOD 
    'QCD_MuEnriched_20toInf_MiniAOD'   
-   #QCD EMEnriched
+   #QCD EMEnriched_MiniAOD  
    'QCD_EMEnriched_5to10_MiniAOD', 
    'QCD_EMEnriched_10to20_MiniAOD',
    'QCD_EMEnriched_20to30_MiniAOD',   
    'QCD_EMEnriched_30to80_MiniAOD',   
    'QCD_EMEnriched_80to170_MiniAOD',  
-   #QCD bcToE
+   #QCD bcToE_MiniAOD
    'QCD_bcToE_20to30_MiniAOD',   
    'QCD_bcToE_30to80_MiniAOD',  
    'QCD_bcToE_80to170_MiniAOD', 
@@ -3908,20 +3908,21 @@ labels = {
 
 crossSections = {
    #MiniAOD not stored on T3.
-   'DYJetsToLL_50_MiniAOD'                 : 6025.2,
-   'WJetsToLNu_MiniAOD'                    : 61526.7,
-   'TTJets_MiniAOD'                        : 831.76,
-   #QCD MuEnriched
-   'QCD_MuEnriched_20toInf_MiniAOD'        : 868400000,
-   #QCD EMEnriched
-   'QCD_EMEnriched_5to10_MiniAOD'          : 80710000000, 
-   'QCD_EMEnriched_10to20_MiniAOD'         : 8838000000,
-   'QCD_EMEnriched_20to30_MiniAOD'         : 677300000,
-   'QCD_EMEnriched_30to80_MiniAOD'         : 185900000,
-   'QCD_EMEnriched_80to170_MiniAOD'        : 3529000,
-   #QCD bcToE
-   'QCD_bcToE_20to30_MiniAOD'              : 675900000, 
-   'QCD_bcToE_30to80_MiniAOD'              : 185900000,
-   'QCD_bcToE_80to170_MiniAOD'             : 3495000,
-   'QCD_bcToE_170toInf_MiniAOD'            : 128500,
+   'DYJetsToLL_50_MiniAOD'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)  
+   'WJetsToLNu_MiniAOD'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3) 
+   'TTJets_MiniAOD'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)  
+############################################################# 
+# Cross sections below obatined with crossSectionExtractor.py 
+    'QCD_MuEnriched_20toInf_MiniAOD'   :          866600000.0, 
+    'QCD_EMEnriched_5to10_MiniAOD'     :        80710000000.0, 
+    'QCD_EMEnriched_10to20_MiniAOD'    :         9123826940.52, # Use internal XSec, since external XSec has a bogus value
+    'QCD_EMEnriched_20to30_MiniAOD'    :          677300000.0, 
+    'QCD_EMEnriched_30to80_MiniAOD'    :          185900000.0,  # Bad xrootd files; use same Xsec as QCD_bcToE_30to80_MiniAOD 
+    'QCD_EMEnriched_80to170_MiniAOD'   :            3529000.0, 
+    'QCD_bcToE_20to30_MiniAOD'         :          675900000.0, 
+    'QCD_bcToE_30to80_MiniAOD'         :          185900000.0, 
+    'QCD_bcToE_80to170_MiniAOD'        :            3495000.0, 
+    'QCD_bcToE_170toInf_MiniAOD'       :             128500.0, 
+############################################################# 
 }
+
