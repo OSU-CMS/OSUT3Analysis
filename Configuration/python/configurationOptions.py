@@ -3917,7 +3917,7 @@ crossSections = {
     'QCD_EMEnriched_5to10_MiniAOD'     :        80710000000.0, 
     'QCD_EMEnriched_10to20_MiniAOD'    :         9123826940.52, # Use internal XSec, since external XSec has a bogus value
     'QCD_EMEnriched_20to30_MiniAOD'    :          677300000.0, 
-    'QCD_EMEnriched_30to80_MiniAOD'    :          185900000.0,  # Bad xrootd files; use same Xsec as QCD_bcToE_30to80_MiniAOD 
+    'QCD_EMEnriched_30to80_MiniAOD'    :          185900000.0,  
     'QCD_EMEnriched_80to170_MiniAOD'   :            3529000.0, 
     'QCD_bcToE_20to30_MiniAOD'         :          675900000.0, 
     'QCD_bcToE_30to80_MiniAOD'         :          185900000.0, 
