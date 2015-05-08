@@ -101,6 +101,7 @@
 
 #if ROOT_VERSION_CODE >= ROOT_VERSION(6,0,0)
   #define ROOT6
+  #warning "ROOT 6 is currently barely supported and many features may not work. Proceed at your own risk."
 #elif ROOT_VERSION_CODE >= ROOT_VERSION(5,0,0)
   #define ROOT5
 #else

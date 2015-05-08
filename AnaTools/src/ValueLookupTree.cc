@@ -293,6 +293,7 @@ ValueLookupTree::pruneCommas (Node * const tree) const
       foundComma = false;
       for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
         {
+          pruneCommas (*branch);
           if ((*branch)->value == ",")
             {
               foundComma = true;
@@ -307,9 +308,6 @@ ValueLookupTree::pruneCommas (Node * const tree) const
         }
     }
   while (foundComma);
-
-  for (const auto &branch : tree->branches)
-    pruneCommas (branch);
   //////////////////////////////////////////////////////////////////////////////
 }
 
@@ -339,6 +337,7 @@ ValueLookupTree::pruneParentheses_ (Node * const tree) const
       foundParenthesis = false;
       for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
         {
+          pruneParentheses_ (*branch);
           if ((*branch)->value == "()")
             {
               foundParenthesis = true;
@@ -353,9 +352,6 @@ ValueLookupTree::pruneParentheses_ (Node * const tree) const
         }
     }
   while (foundParenthesis);
-
-  for (const auto &branch : tree->branches)
-    pruneParentheses_ (branch);
   //////////////////////////////////////////////////////////////////////////////
 }
 
@@ -387,14 +383,13 @@ ValueLookupTree::pruneDots_ (Node * const tree) const
       foundDot = false;
       for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
         {
+          pruneDots_ (*branch);
           if ((*branch)->value == "." && (((*branch)->parent && (*branch)->parent->value == ".")
                                        || !isCollection ((*branch)->branches.at (0)->value + "s")))
             {
               foundDot = true;
 
               size_t dot = branch - tree->branches.begin ();
-              if((*branch)->branches.at (1)->value == ".")
-                  pruneDots_ (*branch);
               (*branch)->branches.at (0)->value += "." + (*branch)->branches.at (1)->value;
               (*branch)->branches.at (0)->parent = tree;
               tree->branches.insert (branch + 1, (*branch)->branches.at (0));
@@ -405,9 +400,6 @@ ValueLookupTree::pruneDots_ (Node * const tree) const
         }
     }
   while (foundDot);
-
-  for (const auto &branch : tree->branches)
-    pruneDots_ (branch);
   //////////////////////////////////////////////////////////////////////////////
 }
 
