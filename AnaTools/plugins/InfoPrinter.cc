@@ -41,6 +41,10 @@ InfoPrinter::~InfoPrinter ()
   outputTime ();
   clog << ss_.str ();
   //////////////////////////////////////////////////////////////////////////////
+
+  for (auto &value : valuesToPrint)
+    delete value.valueLookupTree;
+  delete sw_;
 }
 
 void

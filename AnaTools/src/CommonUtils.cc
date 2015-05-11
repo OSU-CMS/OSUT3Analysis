@@ -370,27 +370,28 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 
     try
       {
-        const Reflex::Object &retObj = getMember (t, *o, member, memberType);
+        const Reflex::Object * const retObj = getMember (t, *o, member, memberType);
         if (memberType == "float")
-          value = Reflex::Object_Cast<float> (retObj);
+          value = Reflex::Object_Cast<float> (*retObj);
         else if (memberType == "double")
-          value = Reflex::Object_Cast<double> (retObj);
+          value = Reflex::Object_Cast<double> (*retObj);
         else if (memberType == "long double")
-          value = Reflex::Object_Cast<long double> (retObj);
+          value = Reflex::Object_Cast<long double> (*retObj);
         else if (memberType == "char")
-          value = Reflex::Object_Cast<char> (retObj);
+          value = Reflex::Object_Cast<char> (*retObj);
         else if (memberType == "int")
-          value = Reflex::Object_Cast<int> (retObj);
+          value = Reflex::Object_Cast<int> (*retObj);
         else if (memberType == "unsigned")
-          value = Reflex::Object_Cast<unsigned> (retObj);
+          value = Reflex::Object_Cast<unsigned> (*retObj);
         else if (memberType == "bool")
-          value = Reflex::Object_Cast<bool> (retObj);
+          value = Reflex::Object_Cast<bool> (*retObj);
         else if (memberType == "unsigned int")
-          value = Reflex::Object_Cast<unsigned int> (retObj);
+          value = Reflex::Object_Cast<unsigned int> (*retObj);
         else if (memberType == "unsigned short int")
-          value = Reflex::Object_Cast<unsigned short int> (retObj);
+          value = Reflex::Object_Cast<unsigned short int> (*retObj);
         else
           clog << "WARNING: \"" << member << "\" has unrecognized type \"" << memberType << "\"" << endl;
+        delete retObj;
       }
     catch (...)
       {
@@ -412,7 +413,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
  * @return Reflex::Object corresponding to the value of the member of the given
  *         object
  */
-  const Reflex::Object &
+  const Reflex::Object * const
   anatools::getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType)
   {
     string typeName = t.Name (Reflex::FINAL | Reflex::SCOPED);
@@ -428,24 +429,28 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
       {
         Reflex::Type derefType = Reflex::Type::ByName (typeName.substr (0, asterisk) + typeName.substr (asterisk + 1));
         void *obj = o.Address ();
-        Reflex::Object *derefObj = new Reflex::Object (derefType, (void *) *((void **) obj));
-        return getMember (derefType, *derefObj, member, memberType);
+        Reflex::Object derefObj (derefType, (void *) *((void **) obj));
+        return getMember (derefType, derefObj, member, memberType);
       }
     if (dot != string::npos)
       {
         try
           {
-            const Reflex::Object &subObj = getMember (t, o, member.substr (0, dot), memberType);
+            const Reflex::Object * const subObj = getMember (t, o, member.substr (0, dot), memberType);
             Reflex::Type subType = Reflex::Type::ByName (memberType);
             string subMember = member.substr (dot + 1);
-            return getMember (subType, subObj, subMember, memberType);
+            const Reflex::Object * const retObj = getMember (subType, *subObj, subMember, memberType);
+            delete subObj;
+            return retObj;
           }
         catch (...)
           {
-            const Reflex::Object &subObj = getMember (t, o, member.substr (0, dot), memberType);
+            const Reflex::Object * const subObj = getMember (t, o, member.substr (0, dot), memberType);
             Reflex::Type subType = Reflex::Type::ByName (memberType);
             string subMember = (member.substr (0, dot) == "operator->" ? "" : "operator->.") + member.substr (dot + 1);
-            return getMember (subType, subObj, subMember, memberType);
+            const Reflex::Object * const retObj = getMember (subType, *subObj, subMember, memberType);
+            delete subObj;
+            return retObj;
           }
       }
 
@@ -467,7 +472,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
           {
             memberType = dataMemberTypeName;
             Reflex::Object *retObj = new Reflex::Object (o.Get (member));
-            return (*retObj);
+            return retObj;
           }
         else if (functionMemberTypeName != "")
           {
@@ -505,13 +510,13 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
  * @param  member string giving the name of the function member
  * @return Reflex::Object corresponding to what the function returned
  */
-  const Reflex::Object &
+  const Reflex::Object * const
   anatools::invoke (const string &returnType, const Reflex::Object &o, const string &member)
   {
     Reflex::Type t = Reflex::Type::ByName (returnType);
     Reflex::Object *value = new Reflex::Object (t.Construct ());
     o.Invoke (member, value);
-    return (*value);
+    return value;
   }
 #endif
 

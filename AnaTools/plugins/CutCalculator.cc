@@ -32,6 +32,8 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
 
 CutCalculator::~CutCalculator ()
 {
+  for (auto &cut : unpackedCuts_)
+    delete cut.valueLookupTree;
 }
 
 void
@@ -92,6 +94,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   setEventFlags ();
 
   event.put (pl_, "cutDecisions");
+  pl_.reset ();
   firstEvent_ = false;
 }
 

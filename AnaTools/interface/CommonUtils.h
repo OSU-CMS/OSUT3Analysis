@@ -137,8 +137,8 @@ namespace anatools
 #ifdef ROOT6
   template<class T> T invoke (const string &, edm::ObjectWithDict * const, const edm::FunctionWithDict &);
 #else
-  const Reflex::Object &getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType);
-  const Reflex::Object &invoke (const string &returnType, const Reflex::Object &o, const string &member);
+  const Reflex::Object * const getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType);
+  const Reflex::Object * const invoke (const string &returnType, const Reflex::Object &o, const string &member);
 #endif
 }
 

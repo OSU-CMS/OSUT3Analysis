@@ -107,6 +107,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   //////////////////////////////////////////////////////////////////////////////
 
   event.put (pl_, collection_.instance ());
+  pl_.reset ();
   firstEvent_ = false;
 
   // Return the global decision for the event. If the cut decisions could not

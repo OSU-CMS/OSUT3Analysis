@@ -111,6 +111,11 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 
 Plotter::~Plotter ()
 {
+  for (auto &histogram : histogramDefinitions)
+    {
+      for (auto &valueLookupTree : histogram.valueLookupTrees)
+        delete valueLookupTree;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////
