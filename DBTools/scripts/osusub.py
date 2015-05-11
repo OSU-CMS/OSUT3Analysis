@@ -111,7 +111,7 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
     ConfigFile.write('import userConfig_' + Label + '_cfg as pset\n')
     ConfigFile.write('\n')
     if not Generic:
-        if not SkimChannelNames:
+        if len(SkimChannelNames) == 0:
             SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory) 
         else:
             for channelName in SkimChannelNames:
@@ -239,13 +239,12 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         datasetRead['numberOfFiles'] = len(inputFiles)  
         datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
         text = 'listOfFiles = [  \n' 
+        #Please give the absolute paths of the files like /data/user/***/condor/dir or /store/....
         if not UseAAA:
             for f in inputFiles:
                 if remoteAccessT3:
                     f = "root://cms-0.mps.ohio-state.edu:1094/" + f
-                else: 
-                    if isInCondorDir:
-                        f = SubmissionDir + "/" + f  
+                else:    
                     f = "file:" + f 
                 text += '"' + f + '",\n'  
             text += ']  \n'  
@@ -275,12 +274,12 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
         InitializeAAA = ""
         if NTupleExistCheck == 'Dataset does not exist on the Tier 3!': 
-            InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
-            if InitializeAAA == "y":
-                AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
-                datasetRead['useAAA'] = True
-            else:
-                return 
+            #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
+            InitializeAAA = "y"
+            AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
+            datasetRead['useAAA'] = True
+            #else:
+            #    return 
         if RunOverSkim:
             SkimModifier(Label, Directory)
         sys.path.append(Directory)
@@ -463,7 +462,10 @@ if split_datasets:
         Config =  arguments.Config
         if arguments.localConfig:	
             NumberOfJobs = nJobs[dataset]
-            DatasetName = dataset_names[dataset]
+            if not arguments.Generic:
+                 DatasetName = dataset_names[dataset]
+             else:
+                 DatasetName = dataset 
             MaxEvents = maxEvents[dataset]
             Config = config_file
             GetCompleteOrderedArgumentsSet(InputCondorArguments)
@@ -532,6 +534,7 @@ if split_datasets:
 	    os.chdir(SubmissionDir)
 #If there are no input datasets specified and the user still continues.
 else:
+    SkimChannelNames = [] 
     NumberOfJobs = arguments.NumberOfJobs
     MaxEvents = -1
     Label = arguments.Label
@@ -548,10 +551,10 @@ else:
     WorkDir = CondorDir
     if arguments.localConfig:	
         GetCompleteOrderedArgumentsSet(InputCondorArguments)
-    userConfig = 'userConfig_' + dataset + '_cfg.py'
+    userConfig = 'userConfig_' + Label + '_cfg.py'
     os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
     
-    MakeSpecificConfig('',WorkDir,dataset, SkimChannelNames)
+    MakeSpecificConfig('',WorkDir,Label, SkimChannelNames)
 
     if lxbatch:
         MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
