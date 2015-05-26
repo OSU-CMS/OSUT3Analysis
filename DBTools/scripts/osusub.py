@@ -50,6 +50,7 @@ parser.add_option("-R", "--Requirements", dest="Requirements", default = "", hel
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")  
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")  
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config.")  
+parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")  
 
 (arguments, args) = parser.parse_args()
 
@@ -113,6 +114,12 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
     if not Generic:
         if len(SkimChannelNames) == 0:
             SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory) 
+            for channelName in SkimChannelNames:
+                if not channelName == '':
+                    if not os.path.exists(Directory + '/' + channelName):
+                        os.system('mkdir ' + Directory + '/' + channelName )
+                    StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory + '/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
+                    ConfigFile.write(StringToAdd)
         else:
             for channelName in SkimChannelNames:
                 if not channelName == '':
@@ -150,10 +157,6 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
 
 def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
     os.system('das_client.py --query="file dataset=' + Dataset + '" --limit 0 > ' + AAAFileList) 
-    if lxbatch:
-        os.system('sed -i \'s/^/root:\/\/xrootd.ba.infn.it\//g\' ' + datasetInfoName) 
-    else:
-	os.system('sed -i \'s/^/root:\/\/cmsxrootd.fnal.gov\//g\' ' + datasetInfoName)
     inputFileList = open(AAAFileList, "r") 
     inputFiles = inputFileList.read().split('\n')  
     for f in reversed(range(len(inputFiles))): 
@@ -166,7 +169,7 @@ def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSe
         if lxbatch:
             f = "root://xrootd.ba.infn.it/" + f
         else: 
-            f = "root://cmsxrootd.fnal.gov/" + f 
+            f = "root://cms-xrd-global.cern.ch/" + f 
         text += '"' + f + '",\n'  
     text += ']  \n'  
     text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'          
@@ -449,124 +452,137 @@ if 'interactive' in hostname:
 #                End of Setup stage, will begin to submit jobs                #
 ###############################################################################
 
-#Loop over the datasets in split_datasets.
-if split_datasets:
-    SubmissionDir = os.getcwd()
-    SkimChannelNames = []
-    for dataset in split_datasets:
-        EventsPerJob = -1 
-        DatasetName = dataset
-        NumberOfJobs = arguments.NumberOfJobs
-        DatasetRead = {}
-        MaxEvents = arguments.MaxEvents
-        Config =  arguments.Config
-        if arguments.localConfig:	
-            NumberOfJobs = nJobs[dataset]
-            if not arguments.Generic:
-                 DatasetName = dataset_names[dataset]
-             else:
-                 DatasetName = dataset 
-            MaxEvents = maxEvents[dataset]
-            Config = config_file
-            GetCompleteOrderedArgumentsSet(InputCondorArguments)
-        if arguments.FileType == 'OSUT3Ntuple': 
-            DatasetName = dataset_names[dataset]
-            WorkDir = CondorDir + '/' + str(dataset)
-            if os.path.exists(WorkDir): 
-                print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'  
-                continue 
-            else: 
-                os.system('mkdir ' + WorkDir )
-        else:
-            WorkDir = CondorDir 
-
-        if '/' in dataset:
-	    if dataset.split('/')[0] == "":
-                dataset = dataset.split('/')[1]
-            else:
-                dataset = dataset.split('/')[0]
-            if '_' in dataset:
-	        if dataset.split('_')[0] == "":
-                    dataset = dataset.split('_')[1]
+#Check whether the user wants to resubmit the failed condor jobs.
+if not arguments.Resubmit:
+    #Loop over the datasets in split_datasets.
+    if split_datasets:
+        SubmissionDir = os.getcwd()
+        SkimChannelNames = []
+        for dataset in split_datasets:
+            EventsPerJob = -1 
+            DatasetName = dataset
+            NumberOfJobs = arguments.NumberOfJobs
+            DatasetRead = {}
+            MaxEvents = arguments.MaxEvents
+            Config =  arguments.Config
+            if arguments.localConfig:	
+                NumberOfJobs = nJobs[dataset]
+                if not arguments.Generic:
+                     DatasetName = dataset_names[dataset]
                 else:
-                    dataset = dataset.split('_')[0]
-	        if '-' in dataset:    
-                    if dataset.split('-')[0] == "":
-                        dataset = dataset.split('-')[1]
+                     DatasetName = dataset 
+                MaxEvents = maxEvents[dataset]
+                Config = config_file
+                GetCompleteOrderedArgumentsSet(InputCondorArguments)
+            if arguments.FileType == 'OSUT3Ntuple': 
+                DatasetName = dataset_names[dataset]
+                WorkDir = CondorDir + '/' + str(dataset)
+                if os.path.exists(WorkDir): 
+                    print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'  
+                    continue 
+                else: 
+                    os.system('mkdir ' + WorkDir )
+            else:
+                WorkDir = CondorDir 
+    
+            if '/' in dataset:
+    	        if dataset.split('/')[0] == "":
+                    dataset = dataset.split('/')[1]
+                else:
+                    dataset = dataset.split('/')[0]
+                if '_' in dataset:
+    	            if dataset.split('_')[0] == "":
+                        dataset = dataset.split('_')[1]
                     else:
-                        dataset = dataset.split('-')[0]
-        crossSection = -1
-        if crossSections.has_key(dataset):
-            crossSection = crossSections[dataset]       
-        elif arguments.crossSection != "":
-            crossSection = arguments.crossSection
-        DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, UseAAA, crossSection)
-        NumberOfFiles = int(DatasetRead['numberOfFiles'])
-        UseAAA = DatasetRead['useAAA']
-        if NumberOfJobs > NumberOfFiles:
-            NumberOfJobs = NumberOfFiles
-            NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
-        if MaxEvents > 0:
-	    EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs)) 	
-
-        RealMaxEvents = EventsPerJob*NumberOfJobs
-        userConfig = 'userConfig_' + dataset + '_cfg.py'
+                        dataset = dataset.split('_')[0]
+    	            if '-' in dataset:    
+                        if dataset.split('-')[0] == "":
+                            dataset = dataset.split('-')[1]
+                        else:
+                            dataset = dataset.split('-')[0]
+            crossSection = -1
+            if crossSections.has_key(dataset):
+                crossSection = crossSections[dataset]       
+            elif arguments.crossSection != "":
+                crossSection = arguments.crossSection
+            DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, UseAAA, crossSection)
+            NumberOfFiles = int(DatasetRead['numberOfFiles'])
+            UseAAA = DatasetRead['useAAA']
+            if NumberOfJobs > NumberOfFiles:
+                NumberOfJobs = NumberOfFiles
+                NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
+            if MaxEvents > 0:
+    	        EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs)) 	
+    
+            RealMaxEvents = EventsPerJob*NumberOfJobs
+            userConfig = 'userConfig_' + dataset + '_cfg.py'
+            os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
+            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,dataset, SkimChannelNames)
+    
+    	    if lxbatch:
+    	        MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
+    	    else:
+                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, UseAAA)
+            if not arguments.NotToExecute:
+                os.chdir(WorkDir)
+                if RealMaxEvents > 0 : 
+                    print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on ' + str(RealMaxEvents)  + ' events in ' + str(DatasetRead['numberOfFiles']) + ' files for ' + str(dataset) + ' dataset.\n'
+                else:
+                    print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on all events in ' + str(DatasetRead['numberOfFiles'])  +' files for ' + str(dataset) + ' dataset.\n'
+                if lxbatch: 
+            	    os.syetem('./lxbatchSub.sh')
+    	        else:
+            	    os.system('condor_submit condor.sub')
+    	        os.chdir(SubmissionDir)
+            else:
+                print 'Configuration files created for ' + str(dataset) + ' dataset but no jobs submitted.\n'
+    	        os.chdir(SubmissionDir)
+    #If there are no input datasets specified and the user still continues.
+    else:
+        SkimChannelNames = [] 
+        NumberOfJobs = arguments.NumberOfJobs
+        MaxEvents = -1
+        Label = arguments.Label
+        if arguments.MaxEvents < 0:
+            print "Maximum number of events is negative and no input dataset is specified, Aborting!"
+            sys.exit()
+        else:
+            MaxEvents = int(arguments.MaxEvents)
+        EventsPerJob = int(math.ceil(float(MaxEvents)/float(NumberOfJobs)) )
+        #Make sure at last the number of total events is larger than the MaxEvents.
+        RealMaxEvents = EventsPerJob*int(NumberOfJobs)
+        Config =  arguments.Config
+        SubmissionDir = os.getcwd()
+        WorkDir = CondorDir
+        if arguments.localConfig:	
+            GetCompleteOrderedArgumentsSet(InputCondorArguments)
+        userConfig = 'userConfig_' + Label + '_cfg.py'
         os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
-        SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,dataset, SkimChannelNames)
-
-	if lxbatch:
-	    MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
-	else:
-            MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, UseAAA)
+        
+        MakeSpecificConfig('',WorkDir,Label, SkimChannelNames)
+    
+        if lxbatch:
+            MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
+        else:
+            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, UseAAA)
         if not arguments.NotToExecute:
             os.chdir(WorkDir)
-            if RealMaxEvents > 0 : 
-                print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on ' + str(RealMaxEvents)  + ' events in ' + str(DatasetRead['numberOfFiles']) + ' files for ' + str(dataset) + ' dataset.\n'
-            else:
-       		print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on all events in ' + str(DatasetRead['numberOfFiles'])  +' files for ' + str(dataset) + ' dataset.\n'
+            print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'
             if lxbatch: 
-        	os.syetem('./lxbatchSub.sh')
-	    else:
-        	os.system('condor_submit condor.sub')
-	    os.chdir(SubmissionDir)
+                os.syetem('./lxbatchSub.sh')
+    	    else:
+                os.system('condor_submit condor.sub')
+    	    os.chdir(SubmissionDir)
         else:
-            print 'Configuration files created for ' + str(dataset) + ' dataset but no jobs submitted.\n'
-	    os.chdir(SubmissionDir)
-#If there are no input datasets specified and the user still continues.
+            print 'Configuration files created for ' + str(Config) + '  but no jobs submitted.\n'
 else:
-    SkimChannelNames = [] 
-    NumberOfJobs = arguments.NumberOfJobs
-    MaxEvents = -1
-    Label = arguments.Label
-    if arguments.MaxEvents < 0:
-        print "Maximum number of events is negative and no input dataset is specified, Aborting!"
-        sys.exit()
-    else:
-        MaxEvents = int(arguments.MaxEvents)
-    EventsPerJob = int(math.ceil(float(MaxEvents)/float(NumberOfJobs)) )
-    #Make sure at last the number of total events is larger than the MaxEvents.
-    RealMaxEvents = EventsPerJob*int(NumberOfJobs)
-    Config =  arguments.Config
-    SubmissionDir = os.getcwd()
-    WorkDir = CondorDir
-    if arguments.localConfig:	
-        GetCompleteOrderedArgumentsSet(InputCondorArguments)
-    userConfig = 'userConfig_' + Label + '_cfg.py'
-    os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
-    
-    MakeSpecificConfig('',WorkDir,Label, SkimChannelNames)
-
-    if lxbatch:
-        MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
-    else:
-        MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, UseAAA)
-    if not arguments.NotToExecute:
-        os.chdir(WorkDir)
-        print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'
-        if lxbatch: 
-            os.syetem('./lxbatchSub.sh')
-	else:
-            os.system('condor_submit condor.sub')
-	os.chdir(SubmissionDir)
-    else:
-        print 'Configuration files created for ' + str(Config) + '  but no jobs submitted.\n'
+    if split_datasets:
+        SubmissionDir = os.getcwd()
+        for dataset in split_datasets: 
+            WorkDir = CondorDir + '/' + str(dataset)
+            if os.path.exists(WorkDir + '/condor_resubmit.sub'):
+                os.chdir(WorkDir)
+                print '################ Resubmit failed jobs for ' + str(dataset) + ' dataset #############'  
+                os.system('condor_submit condor_resubmit.sub')
+                os.chdir(SubmissionDir)
+        
