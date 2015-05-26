@@ -1339,8 +1339,8 @@ dataset_names = {
 nJobs = {
    #MiniAOD not stored on T3.
    'DYJetsToLL_50_MiniAOD'        : 59,
-   'WJetsToLNu_MiniAOD'        : 205,
-   'TTJets_MiniAOD'        : 511,
+   'WJetsToLNu_MiniAOD'        : 222,
+   'TTJets_MiniAOD'        : 552,
    #QCD MuEnriched
    'QCD_MuEnriched_20toInf_MiniAOD'         : 22,
    #QCD EMEnriched
