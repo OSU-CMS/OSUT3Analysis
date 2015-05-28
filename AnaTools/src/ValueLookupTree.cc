@@ -50,7 +50,7 @@ ValueLookupTree::ValueLookupTree (const string &expression, const vector<string>
 
 ValueLookupTree::~ValueLookupTree ()
 {
-  destroy (root_);
+    destroy (root_);
 }
 
 const Collections * const
@@ -276,10 +276,13 @@ bool
 void
 ValueLookupTree::destroy (Node * const x) const
 {
-  for (const auto &branch : x->branches)
-    destroy (branch);
-  delete x;
-}
+      if(x)
+        {
+          for (const auto &branch : x->branches)
+            destroy (branch);
+          delete x;
+        }
+} 
 
 void
 ValueLookupTree::pruneCommas (Node * const tree) const
@@ -430,9 +433,9 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
         insertBinaryInfixOperator  (cut,  tree,  {"&&", "&"})                     ||
         insertBinaryInfixOperator  (cut,  tree,  {"==", "!=", "="}, {"<=", ">="}) ||
         insertBinaryInfixOperator  (cut,  tree,  {"<", "<=", ">", ">="})          ||
-        insertBinaryInfixOperator  (cut,  tree,  {"+", "-"})                      ||
+        insertBinaryInfixOperator  (cut,  tree,  {"+","-"})                      ||
         insertBinaryInfixOperator  (cut,  tree,  {"*", "/", "%"})                 ||
-        insertUnaryPrefixOperator  (cut,  tree,  {"!"})                           ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"!","-"})                           ||
         insertUnaryPrefixOperator  (cut,  tree,  {"cos", "sin", "tan", "acos", "asin", "atan", "atan2",
                                                   "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
                                                   "exp", "ldexp", "log", "log10", "exp2", "expm1", "ilogb", "log1p", "log2", "logb",
@@ -557,7 +560,12 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
       else if (op == "+")
         return (boost::get<double> (operands.at (0)) + boost::get<double> (operands.at (1)));
       else if (op == "-")
-        return (boost::get<double> (operands.at (0)) - boost::get<double> (operands.at (1)));
+        {
+          if (operands.size() == 1)
+            return -boost::get<double> (operands.at (0));
+          else
+            return (boost::get<double> (operands.at (0)) - boost::get<double> (operands.at (1)));
+        }
       else if (op == "*")
         return (boost::get<double> (operands.at (0)) * boost::get<double> (operands.at (1)));
       else if (op == "/")
@@ -864,7 +872,7 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
       if (!vetoMatch (s, target, index, vetoTargets))
         indices.push_back (make_pair (index, target));
     }
-  sort (indices.begin (), indices.end (), anatools::firstOfPairAscending);
+  sort (indices.begin (), indices.end (), anatools::firstOfPairDescending);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -961,7 +969,6 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, Node * const tree, 
 {
   bool foundAnOperator = false;
   double x;
-
   //////////////////////////////////////////////////////////////////////////////
   // If the string is a number, then simply return false;
   //////////////////////////////////////////////////////////////////////////////
@@ -984,6 +991,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, Node * const tree, 
           anatools::trim (left);
           anatools::trim (right);
 
+          if (left == "" || right == "") continue;
           tree->value = i.second;
           tree->branches.push_back (insert_ (left, tree));
           tree->branches.push_back (insert_ (right, tree));

@@ -138,6 +138,11 @@ anatools::firstOfPairAscending (pair<size_t, string> a, pair<size_t, string> b)
   return (a.first < b.first);
 }
 
+bool
+anatools::firstOfPairDescending (pair<size_t, string> a, pair<size_t, string> b)
+{
+  return (a.first > b.first);
+}
 /**
  * Returns whether the collection indices are in ascending order.
  *
