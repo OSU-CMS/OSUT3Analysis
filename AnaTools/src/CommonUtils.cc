@@ -138,11 +138,23 @@ anatools::firstOfPairAscending (pair<size_t, string> a, pair<size_t, string> b)
   return (a.first < b.first);
 }
 
+/**
+ * Returns whether the first members of the pairs are in descending order.
+ *
+ * This function is meant to be used with std::sort to sort a vector of pairs
+ * so that the first members of the pairs are in descending order.
+ *
+ * @param  a first of two pairs to compare
+ * @param  b second of two pairs to compare
+ * @return boolean representing whether the first members of the two pairs are
+ *         in descending order
+ */
 bool
 anatools::firstOfPairDescending (pair<size_t, string> a, pair<size_t, string> b)
 {
   return (a.first > b.first);
 }
+
 /**
  * Returns whether the collection indices are in ascending order.
  *
