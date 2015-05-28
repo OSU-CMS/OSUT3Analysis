@@ -433,9 +433,9 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
         insertBinaryInfixOperator  (cut,  tree,  {"&&", "&"})                     ||
         insertBinaryInfixOperator  (cut,  tree,  {"==", "!=", "="}, {"<=", ">="}) ||
         insertBinaryInfixOperator  (cut,  tree,  {"<", "<=", ">", ">="})          ||
-        insertBinaryInfixOperator  (cut,  tree,  {"+","-"})                      ||
+        insertBinaryInfixOperator  (cut,  tree,  {"+", "-"})                      ||
         insertBinaryInfixOperator  (cut,  tree,  {"*", "/", "%"})                 ||
-        insertUnaryPrefixOperator  (cut,  tree,  {"!","-"})                           ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"!", "+", "-"})                           ||
         insertUnaryPrefixOperator  (cut,  tree,  {"cos", "sin", "tan", "acos", "asin", "atan", "atan2",
                                                   "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
                                                   "exp", "ldexp", "log", "log10", "exp2", "expm1", "ilogb", "log1p", "log2", "logb",
