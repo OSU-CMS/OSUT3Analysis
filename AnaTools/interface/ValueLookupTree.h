@@ -149,7 +149,7 @@ class ValueLookupTree
     // Methods for finding the first instance within a string of any one of a
     // vector of target strings.
     ////////////////////////////////////////////////////////////////////////////
-    pair<size_t, string> findFirstOf (const string &, const vector<string> &, const vector<string> &, const size_t = 0) const;
+    pair<size_t, string> findLastOf (const string &, const vector<string> &, const vector<string> &, const size_t = string::npos) const;
     bool vetoMatch (const string &, const string &, const size_t, const vector<string> &) const;
     ////////////////////////////////////////////////////////////////////////////
 

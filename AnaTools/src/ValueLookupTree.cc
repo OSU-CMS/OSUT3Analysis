@@ -558,10 +558,15 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
       else if (op == ">=")
         return (boost::get<double> (operands.at (0)) >= boost::get<double> (operands.at (1)));
       else if (op == "+")
-        return (boost::get<double> (operands.at (0)) + boost::get<double> (operands.at (1)));
+        {
+          if (operands.size () == 1)
+            return +boost::get<double> (operands.at (0));
+          else
+            return (boost::get<double> (operands.at (0)) + boost::get<double> (operands.at (1)));
+        }
       else if (op == "-")
         {
-          if (operands.size() == 1)
+          if (operands.size () == 1)
             return -boost::get<double> (operands.at (0));
           else
             return (boost::get<double> (operands.at (0)) - boost::get<double> (operands.at (1)));
@@ -857,7 +862,7 @@ ValueLookupTree::splitParentheses (string s) const
 }
 
 pair<size_t, string>
-ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos) const
+ValueLookupTree::findLastOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos) const
 {
   vector<pair<size_t, string> > indices;
   pair<size_t, string> firstHit, biggestHit;
@@ -868,7 +873,7 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
   //////////////////////////////////////////////////////////////////////////////
   for (const auto &target : targets)
     {
-      size_t index = s.find (target, pos);
+      size_t index = s.rfind (target, pos);
       if (!vetoMatch (s, target, index, vetoTargets))
         indices.push_back (make_pair (index, target));
     }
@@ -981,7 +986,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, Node * const tree, 
   // left and right substring. These substrings are inserted into the tree and
   // stored as branches for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (auto i = findFirstOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, vetoOperators, i.first + i.second.length ()))
+  for (auto i = findLastOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findLastOf (s, operators, vetoOperators, max ((size_t) 0, i.first - 1)))
     {
       string left, right;
       left = s.substr (0, i.first);
@@ -1021,7 +1026,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node * const tree, 
   // left and right substring. The right substring is inserted into the tree and
   // stored as a branch for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (auto i = findFirstOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, vetoOperators, i.first + i.second.length ()))
+  for (auto i = findLastOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findLastOf (s, operators, vetoOperators, max ((size_t) 0, i.first - 1)))
     {
       string left, right;
       left = s.substr (0, i.first);
