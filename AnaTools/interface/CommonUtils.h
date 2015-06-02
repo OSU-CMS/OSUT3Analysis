@@ -124,7 +124,7 @@ namespace anatools
   ////////////////////////////////////////////////////////////////////////////////
   bool firstOfPairAscending (pair<size_t, string>, pair<size_t, string>);
   bool firstOfPairDescending (pair<size_t, string>, pair<size_t, string>);
-  bool collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> >, pair<string, tuple<unsigned, unsigned, void *> >);
+  bool collectionIndexAscending (pair<string, DressedObject>, pair<string, DressedObject>);
   ////////////////////////////////////////////////////////////////////////////////
 
   // Retrieves all the collections from the event which are needed based on the

@@ -120,7 +120,7 @@ ValueLookupTree::evaluate ()
             {
               unsigned j = collection - inputCollections_.begin (),
                        localIndex = getLocalIndex (i, j);
-              objs.insert ({*collection, make_tuple (j, localIndex, getObject (*collection, localIndex))});
+              objs.insert ({*collection, {j, localIndex, getObject (*collection, localIndex)}});
               keys.insert (*collection);
             }
           if (isUniqueCase (objs, keys))
@@ -444,7 +444,7 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
                                                   "copysign", "nextafter",
                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
-        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass"}) ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass", "number"}) ||
         insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
         insertParentheses          (cut,  tree)))
     tree->value = cut;
@@ -697,6 +697,8 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 
           return sqrt (energy * energy - px * px - py * py - pz * pz);
         }
+      else if (op == "number")
+        return getCollectionSize (boost::get<string> (operands.at (0)) + "s");
       else if (op == ".")
         return valueLookup (boost::get<string> (operands.at (0)) + "s", objs, boost::get<string> (operands.at (1)));
     }
@@ -954,13 +956,13 @@ ValueLookupTree::isUniqueCase (const ObjMap &objs, const unordered_set<string> &
       else
         {
           auto range = objs.equal_range (key);
-          vector<pair<string, tuple<unsigned, unsigned, void *> > > objsOfThisType (range.first, range.second);
+          vector<pair<string, DressedObject> > objsOfThisType (range.first, range.second);
           sort (objsOfThisType.begin (), objsOfThisType.end (), anatools::collectionIndexAscending);
           int previousLocalIndex = -1;
           for (const auto &obj : objsOfThisType)
             {
-              pass = pass && ((int) get<1> (obj.second) > previousLocalIndex);
-              previousLocalIndex = get<1> (obj.second);
+              pass = pass && ((int) obj.second.localIndex > previousLocalIndex);
+              previousLocalIndex = obj.second.localIndex;
             }
         }
     }
@@ -1080,7 +1082,7 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
     }
   else if (shouldIterate_.at (collection) && iterateObj)
     objIterators_.at (collection)++;
-  void *obj = get<2> (objIterators_.at (collection)->second);
+  void *obj = objIterators_.at (collection)->second.addr;
 
   try
     {

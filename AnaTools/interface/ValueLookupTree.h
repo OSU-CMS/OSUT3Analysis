@@ -50,7 +50,7 @@ For a complex string such as innerTrack.hitPattern_.numberOfValidPixelHits > 0, 
     hitPattern_  numberOfValidPixelHits
 */
 
-typedef unordered_multimap<string, tuple<unsigned, unsigned, void *> > ObjMap;
+typedef unordered_multimap<string, DressedObject> ObjMap;
 
 class ValueLookupTree
 {

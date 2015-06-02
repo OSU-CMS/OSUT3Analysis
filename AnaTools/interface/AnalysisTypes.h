@@ -117,4 +117,11 @@ struct ValueToPrint
 
 typedef vector<ValueToPrint> ValuesToPrint;
 
+struct DressedObject
+{
+  unsigned collectionIndex;
+  unsigned localIndex;
+  void *addr;
+};
+
 #endif

@@ -170,9 +170,9 @@ anatools::firstOfPairDescending (pair<size_t, string> a, pair<size_t, string> b)
  *         objects are in ascending order
  */
 bool
-anatools::collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> > a, pair<string, tuple<unsigned, unsigned, void *> > b)
+anatools::collectionIndexAscending (pair<string, DressedObject> a, pair<string, DressedObject> b)
 {
-  return (get<0> (a.second) < get<0> (b.second));
+  return (a.second.collectionIndex < b.second.collectionIndex);
 }
 
 /**
