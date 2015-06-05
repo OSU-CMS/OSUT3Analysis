@@ -866,8 +866,9 @@ ValueLookupTree::splitParentheses (string s) const
 pair<size_t, string>
 ValueLookupTree::findLastOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos) const
 {
-  vector<pair<size_t, string> > indices;
-  pair<size_t, string> firstHit, biggestHit;
+  vector<tuple<size_t, size_t, string> > indices;
+  tuple<size_t, size_t, string> firstHit;
+  pair<size_t, string> biggestHit;
 
   //////////////////////////////////////////////////////////////////////////////
   // For each of the target strings, find the index of the first instance of
@@ -877,9 +878,9 @@ ValueLookupTree::findLastOf (const string &s, const vector<string> &targets, con
     {
       size_t index = s.rfind (target, pos);
       if (!vetoMatch (s, target, index, vetoTargets))
-        indices.push_back (make_pair (index, target));
+        indices.push_back (make_tuple (index + target.length () - 1, index, target));
     }
-  sort (indices.begin (), indices.end (), anatools::firstOfPairDescending);
+  sort (indices.begin (), indices.end (), anatools::firstOfTupleDescending);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -894,10 +895,10 @@ ValueLookupTree::findLastOf (const string &s, const vector<string> &targets, con
   // string, then only return the one which matches the most characters.
   //////////////////////////////////////////////////////////////////////////////
   firstHit = indices.at (0);
-  for (auto index = indices.begin (); index != indices.end () && index->first == firstHit.first; index++)
+  for (auto index = indices.begin (); index != indices.end () && get<0> (*index) == get<0> (firstHit); index++)
     {
-      if (index->second.length () > biggestHit.second.length ())
-        biggestHit = *index;
+      if (get<2> (*index).length () > biggestHit.second.length ())
+        biggestHit = make_pair (get<1> (*index), get<2> (*index));
     }
   return biggestHit;
   //////////////////////////////////////////////////////////////////////////////
