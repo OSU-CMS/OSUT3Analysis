@@ -4,10 +4,15 @@
 <use  name="BEAN/Collections"/>
 <use  name="DataFormats/BeamSpot"/>
 <use  name="DataFormats/Common"/>
+<use  name="DataFormats/EgammaCandidates"/>
 <use  name="DataFormats/EgammaReco"/>
 <use  name="DataFormats/JetReco"/>
+<use  name="DataFormats/METReco"/>
 <use  name="DataFormats/Math"/>
+<use  name="DataFormats/MuonReco"/>
 <use  name="DataFormats/PatCandidates"/>
+<use  name="DataFormats/TauReco"/>
+<use  name="DataFormats/TrackReco"/>
 <use  name="DataFormats/VertexReco"/>
 <use  name="FWCore/Framework"/>
 <use  name="FWCore/ParameterSet"/>

@@ -403,7 +403,7 @@ CutCalculator::evaluateTriggers (const edm::Event &event) const
         {
           string name = trigger.name;
           bool pass = trigger.pass;
-#elif DATA_FORMAT == MINI_AOD
+#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
       for (unsigned i = 0; i < triggerNames.size (); i++)
         {

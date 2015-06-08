@@ -8,6 +8,9 @@ then
 elif [ "$DATA_FORMAT" == "MiniAOD" ]
 then
   sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT MINI_AOD/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h
+elif [ "$DATA_FORMAT" == "AOD" ]
+then
+  sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT AOD/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h
 else
   echo "Not a valid data format: "$DATA_FORMAT
   exit
