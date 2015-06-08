@@ -8,6 +8,6 @@
 <use  name="FWCore/ServiceRegistry"/>
 <use  name="OSUT3Analysis/AnaTools"/>
 <flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
-<library  file="BeamspotObjectSelector.cc,CutCalculator.cc,CutFlowPlotter.cc,InfoPrinter.cc,Plotter.cc,BxlumiObjectSelector.cc,ElectronObjectSelector.cc,EventObjectSelector.cc,GenjetObjectSelector.cc,JetObjectSelector.cc,McparticleObjectSelector.cc,MetObjectSelector.cc,MuonObjectSelector.cc,PhotonObjectSelector.cc,PrimaryvertexObjectSelector.cc,SuperclusterObjectSelector.cc,TauObjectSelector.cc,TrackObjectSelector.cc,TriggerObjectSelector.cc,TrigobjObjectSelector.cc"  name="OSUAnalysisAnaToolsPlugins">
+<library  file="BeamspotObjectSelector.cc,CutCalculator.cc,CutFlowPlotter.cc,InfoPrinter.cc,Plotter.cc,BxlumiObjectSelector.cc,ElectronObjectSelector.cc,EventObjectSelector.cc,GenjetObjectSelector.cc,JetObjectSelector.cc,BasicjetObjectSelector.cc,McparticleObjectSelector.cc,MetObjectSelector.cc,MuonObjectSelector.cc,PhotonObjectSelector.cc,PrimaryvertexObjectSelector.cc,SuperclusterObjectSelector.cc,TauObjectSelector.cc,TrackObjectSelector.cc,TriggerObjectSelector.cc,TrigobjObjectSelector.cc"  name="OSUAnalysisAnaToolsPlugins">
   <flags  EDM_PLUGIN="1"/>
 </library>
