@@ -403,12 +403,14 @@ CutCalculator::evaluateTriggers (const edm::Event &event) const
         {
           string name = trigger.name;
           bool pass = trigger.pass;
-#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
+#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD 
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
+      //      cout << "Debug:  triggerNames.size() = " << triggerNames.size() << endl;  
       for (unsigned i = 0; i < triggerNames.size (); i++)
         {
           string name = triggerNames.triggerName (i);
           bool pass = handles_.triggers->accept (i);
+	  //	  cout << "Debug:  trigger with name " << name << " is set: " << pass << endl;  
 #else
   #error "Data format is not valid."
 #endif

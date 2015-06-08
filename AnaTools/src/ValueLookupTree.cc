@@ -214,6 +214,8 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->events->size ();
   else if (EQ_VALID(name,genjets))
     return handles_->genjets->size ();
+  else if (EQ_VALID(name,basicjets))
+    return handles_->basicjets->size ();
   else if (EQ_VALID(name,jets))
     return handles_->jets->size ();
   else if (EQ_VALID(name,mcparticles))
@@ -257,6 +259,7 @@ bool
   else if (EQ_VALID(name,electrons))       isFound = handles_->electrons.isValid();
   else if (EQ_VALID(name,events))          isFound = handles_->events.isValid();
   else if (EQ_VALID(name,genjets))         isFound = handles_->genjets.isValid();
+  else if (EQ_VALID(name,basicjets))       isFound = handles_->basicjets.isValid();
   else if (EQ_VALID(name,jets))            isFound = handles_->jets.isValid();
   else if (EQ_VALID(name,mcparticles))     isFound = handles_->mcparticles.isValid();
   else if (EQ_VALID(name,mets))            isFound = handles_->mets.isValid();
@@ -732,6 +735,8 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
     return ((void *) &handles_->genjets->at (i));
   else if (EQ_VALID(name,jets))
     return ((void *) &handles_->jets->at (i));
+  else if (EQ_VALID(name,basicjets))
+    return ((void *) &handles_->basicjets->at (i));
   else if (EQ_VALID(name,mcparticles))
     return ((void *) &handles_->mcparticles->at (i));
   else if (EQ_VALID(name,mets))
@@ -776,6 +781,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return TYPE_STR(genjets);
   else if (EQ_VALID(name,jets))
     return TYPE_STR(jets);
+  else if (EQ_VALID(name,basicjets))
+    return TYPE_STR(basicjets);
   else if (EQ_VALID(name,mcparticles))
     return TYPE_STR(mcparticles);
   else if (EQ_VALID(name,mets))
@@ -813,6 +820,8 @@ ValueLookupTree::isCollection (const string &name) const
   else if (EQ_VALID(name,genjets))
     return true;
   else if (EQ_VALID(name,jets))
+    return true;
+  else if (EQ_VALID(name,basicjets))
     return true;
   else if (EQ_VALID(name,mcparticles))
     return true;

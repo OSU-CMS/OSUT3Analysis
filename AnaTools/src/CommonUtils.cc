@@ -201,6 +201,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "events")          &&  collections.exists  ("events"))          getCollection  (collections.getParameter<edm::InputTag>  ("events"),          handles.events,          event);
   if  (VEC_CONTAINS  (objectsToGet,  "genjets")         &&  collections.exists  ("genjets"))         getCollection  (collections.getParameter<edm::InputTag>  ("genjets"),         handles.genjets,         event);
   if  (VEC_CONTAINS  (objectsToGet,  "jets")            &&  collections.exists  ("jets"))            getCollection  (collections.getParameter<edm::InputTag>  ("jets"),            handles.jets,            event);
+  if  (VEC_CONTAINS  (objectsToGet,  "basicjets")       &&  collections.exists  ("basicjets"))       getCollection  (collections.getParameter<edm::InputTag>  ("basicjets"),       handles.basicjets,       event);
   if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")     &&  collections.exists  ("mcparticles"))     getCollection  (collections.getParameter<edm::InputTag>  ("mcparticles"),     handles.mcparticles,     event);
   if  (VEC_CONTAINS  (objectsToGet,  "mets")            &&  collections.exists  ("mets"))            getCollection  (collections.getParameter<edm::InputTag>  ("mets"),            handles.mets,            event);
   if  (VEC_CONTAINS  (objectsToGet,  "muons")           &&  collections.exists  ("muons"))           getCollection  (collections.getParameter<edm::InputTag>  ("muons"),           handles.muons,           event);
@@ -236,6 +237,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     clog << "INFO: did not retrieve genjets collection from the event." << endl;
   if (firstEvent && !handles.jets.isValid ())
     clog << "INFO: did not retrieve jets collection from the event." << endl;
+  if (firstEvent && !handles.basicjets.isValid ())
+    clog << "INFO: did not retrieve basicjets collection from the event." << endl;
   if (firstEvent && !handles.mcparticles.isValid ())
     clog << "INFO: did not retrieve mcparticles collection from the event." << endl;
   if (firstEvent && !handles.mets.isValid ())
@@ -567,6 +570,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 #if IS_VALID(jets)
   string  anatools::getObjectType  (const  TYPE(jets)            &obj)  {  return  "jet";            }
   string  anatools::getObjectClass  (const  TYPE(jets)            &obj)  {  return  TYPE_STR(jets);            }
+#endif
+#if IS_VALID(basicjets)
+  string  anatools::getObjectType   (const  TYPE(basicjets)            &obj)  {  return  "basicjet";            }
+  string  anatools::getObjectClass  (const  TYPE(basicjets)            &obj)  {  return  TYPE_STR(basicjets);            }
 #endif
 #if IS_VALID(mcparticles)
   string  anatools::getObjectType  (const  TYPE(mcparticles)     &obj)  {  return  "mcparticle";     }

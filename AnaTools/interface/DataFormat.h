@@ -15,6 +15,7 @@
   #define  electrons_TYPE       BNelectron
   #define  events_TYPE          BNevent
   #define  genjets_TYPE         BNgenjet
+  #define  basicjets_TYPE       INVALID_TYPE
   #define  jets_TYPE            BNjet
   #define  mcparticles_TYPE     BNmcparticle
   #define  mets_TYPE            BNmet
@@ -53,6 +54,7 @@
   #define  electrons_TYPE       pat::Electron
   #define  events_TYPE          INVALID_TYPE
   #define  genjets_TYPE         reco::GenJet
+  #define  basicjets_TYPE       INVALID_TYPE
   #define  jets_TYPE            pat::Jet
   #define  mcparticles_TYPE     pat::PackedGenParticle
   #define  mets_TYPE            pat::MET
@@ -92,6 +94,7 @@
   #define  events_TYPE          INVALID_TYPE
   #define  genjets_TYPE         INVALID_TYPE
   #define  jets_TYPE            reco::PFJet
+  #define  basicjets_TYPE       reco::BasicJet
   #define  mcparticles_TYPE     INVALID_TYPE
   #define  mets_TYPE            reco::PFMET
   #define  muons_TYPE           reco::Muon
@@ -117,6 +120,7 @@
   #include "DataFormats/VertexReco/interface/Vertex.h"
   #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
   #include "DataFormats/JetReco/interface/PFJet.h"
+  #include "DataFormats/JetReco/interface/BasicJet.h"
   #include "DataFormats/METReco/interface/PFMET.h"
   #include "DataFormats/MuonReco/interface/Muon.h"
   #include "DataFormats/EgammaCandidates/interface/Photon.h"
