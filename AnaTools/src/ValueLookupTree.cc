@@ -1054,7 +1054,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node * const tree, 
   // left and right substring. The right substring is inserted into the tree and
   // stored as a branch for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (auto i = findLastOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos && i.first > 0; i = findLastOf (s, operators, vetoOperators, max ((size_t) 0, i.first - 1)))
+  for (auto i = findLastOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findLastOf (s, operators, vetoOperators, max ((size_t) 0, i.first - 1)))
     {
       string left, right;
       left = s.substr (0, i.first);
