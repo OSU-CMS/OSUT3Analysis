@@ -85,6 +85,11 @@ struct UserVariable
 //   vector - one UserVariable per combination of input objects
 typedef map<string, vector<UserVariable> > VariableProducerPayload;
 
+// EventVariableProducerPayload type:
+//   string - user-defined name of variable
+//   double - value of variable for the event
+typedef map<string, double > EventVariableProducerPayload;
+
 struct Collections
 {
   edm::Handle<TYPE(beamspots)>                beamspots;
@@ -104,6 +109,7 @@ struct Collections
   edm::Handle<vector<TYPE(tracks)> >          tracks;
   edm::Handle<vector<TYPE(trigobjs)> >        trigobjs;
   vector<edm::Handle<TYPE(uservariables)> >   uservariables;
+  vector<edm::Handle<TYPE(eventvariables)> >   eventvariables;
 
   edm::Handle<TYPE(triggers)>                 triggers;
 };

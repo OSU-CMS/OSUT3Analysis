@@ -38,6 +38,11 @@ namespace {
      edm::Wrapper<VariableProducerPayload> VariableProducerPayloadDummy2;
      edm::Wrapper<vector<VariableProducerPayload> > VariableProducerPayloadDummy3;
 
+     EventVariableProducerPayload EventVariableProducerPayloadDummy0;
+     vector<EventVariableProducerPayload> EventVariableProducerPayloadDummy1;
+     edm::Wrapper<EventVariableProducerPayload> EventVariableProducerPayloadDummy2;
+     edm::Wrapper<vector<EventVariableProducerPayload> > EventVariableProducerPayloadDummy3;
+
      map<string, vector<vector<bool> > > mapcharbooldummy0;
      edm::Wrapper<map<string, vector<vector<bool> > > > mapcharbooldummy1;
      vector<map<string, vector<vector<bool> > > > mapcharbooldummy2;
@@ -49,5 +54,6 @@ namespace {
      edm::Wrapper<vector<vector<bool> > > booldummy3;
 
      pair<const string, vector<UserVariable> > uservariabledummy0;
+     pair<const string, double > eventvariabledummy0;
    };
 }

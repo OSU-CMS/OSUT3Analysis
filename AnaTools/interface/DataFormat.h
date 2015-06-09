@@ -27,6 +27,7 @@
   #define  tracks_TYPE          BNtrack
   #define  trigobjs_TYPE        BNtrigobj
   #define  uservariables_TYPE   VariableProducerPayload
+  #define  eventvariables_TYPE  EventVariableProducerPayload
 
   #define  triggers_TYPE        BNtriggerCollection
 
@@ -66,6 +67,7 @@
   #define  tracks_TYPE          INVALID_TYPE
   #define  trigobjs_TYPE        pat::TriggerObjectStandAlone
   #define  uservariables_TYPE   VariableProducerPayload
+  #define  eventvariables_TYPE  EventVariableProducerPayload
 
   #define  triggers_TYPE        edm::TriggerResults
 
@@ -105,6 +107,7 @@
   #define  tracks_TYPE          reco::Track
   #define  trigobjs_TYPE        INVALID_TYPE
   #define  uservariables_TYPE   VariableProducerPayload
+  #define  eventvariables_TYPE  EventVariableProducerPayload
 
   #define  triggers_TYPE        edm::TriggerResults
 

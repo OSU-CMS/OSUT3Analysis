@@ -99,6 +99,11 @@ namespace anatools
   string getObjectType (const VariableProducerPayload&);
   string getObjectClass (const VariableProducerPayload&);
 #endif
+#if IS_VALID(eventvariables)
+  // user-defined cases
+  string getObjectType (const EventVariableProducerPayload&);
+  string getObjectClass (const EventVariableProducerPayload&);
+#endif
   // Extracts the constituent collections from a composite collection name.
   vector<string> getSingleObjects (string);
 

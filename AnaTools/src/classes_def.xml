@@ -24,6 +24,11 @@
   <class name="edm::Wrapper<VariableProducerPayload>"/>
   <class name="edm::Wrapper<std::vector<VariableProducerPayload> >"/>
 
+  <class name="EventVariableProducerPayload"/>
+  <class name="std::vector<EventVariableProducerPayload>"/>
+  <class name="edm::Wrapper<EventVariableProducerPayload>"/>
+  <class name="edm::Wrapper<std::vector<EventVariableProducerPayload> >"/>
+
   <class name="Cut"/>
   <class name="std::vector<Cut>"/>
   <class name="edm::Wrapper<Cut>"/>
@@ -40,4 +45,5 @@
   <class name="edm::Wrapper<std::vector<std::vector<bool> > >"/>
 
   <class name="std::pair<const std::string, std::vector<UserVariable> >"/>
+  <class name="std::pair<const std::string, double>"/>
 </lcgdict>
