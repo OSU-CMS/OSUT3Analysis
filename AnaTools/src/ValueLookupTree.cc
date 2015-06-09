@@ -461,7 +461,8 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
                                                   "copysign", "nextafter",
                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
         insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass", "number"}) ||
-        insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
+        insertDots                 (cut,  tree) ||
+        //insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
         insertParentheses          (cut,  tree)))
     tree->value = cut;
   //////////////////////////////////////////////////////////////////////////////
@@ -909,6 +910,47 @@ ValueLookupTree::splitParentheses (string s) const
 }
 
 pair<size_t, string>
+ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos) const
+{
+  vector<tuple<size_t, size_t, string> > indices;
+  tuple<size_t, size_t, string> firstHit;
+  pair<size_t, string> biggestHit;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // For each of the target strings, find the index of the first instance of
+  // it. Then sort the indices in ascending order.
+  //////////////////////////////////////////////////////////////////////////////
+  for (const auto &target : targets)
+    {
+      size_t index = s.find (target, pos);
+      if (!vetoMatch (s, target, index, vetoTargets))
+        indices.push_back (make_tuple (index, index, target));
+    }
+  sort (indices.begin (), indices.end (), anatools::firstOfTupleAscending);
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // If there are no matches, just return string::npos.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!indices.size ())
+    return make_pair (string::npos, "");
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // If there are multiple targets which match at the same position in the
+  // string, then only return the one which matches the most characters.
+  //////////////////////////////////////////////////////////////////////////////
+  firstHit = indices.at (0);
+  for (auto index = indices.begin (); index != indices.end () && get<0> (*index) == get<0> (firstHit); index++)
+    {
+      if (get<2> (*index).length () > biggestHit.second.length ())
+        biggestHit = make_pair (get<1> (*index), get<2> (*index));
+    }
+  return biggestHit;
+  //////////////////////////////////////////////////////////////////////////////
+}
+
+pair<size_t, string>
 ValueLookupTree::findLastOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos) const
 {
   vector<tuple<size_t, size_t, string> > indices;
@@ -1083,6 +1125,45 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node * const tree, 
         {
           anatools::trim (right);
           tree->value = i.second;
+          tree->branches.push_back (insert_ (right, tree));
+          foundAnOperator = true;
+        }
+    }
+  //////////////////////////////////////////////////////////////////////////////
+
+  return foundAnOperator;
+}
+
+bool
+ValueLookupTree::insertDots (const string &s, Node * const tree) const
+{
+  bool foundAnOperator = false;
+  double x;
+  //////////////////////////////////////////////////////////////////////////////
+  // If the string is a number, then simply return false;
+  //////////////////////////////////////////////////////////////////////////////
+  if (isnumber (s, x))
+    return false;
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // For each operator which is found in the string, split the string into a
+  // left and right substring. These substrings are inserted into the tree and
+  // stored as branches for the operator's node.
+  //////////////////////////////////////////////////////////////////////////////
+  for (auto i = findFirstOf (s, {"."}, {}); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, {"."}, {}, i.first + i.second.length ()))
+    {
+      string left, right;
+      left = s.substr (0, i.first);
+      right = s.substr (i.first + i.second.length ());
+      if (!splitParentheses (left) && !splitParentheses (right))
+        {
+          anatools::trim (left);
+          anatools::trim (right);
+
+          if (left == "" || right == "") continue;
+          tree->value = i.second;
+          tree->branches.push_back (insert_ (left, tree));
           tree->branches.push_back (insert_ (right, tree));
           foundAnOperator = true;
         }
