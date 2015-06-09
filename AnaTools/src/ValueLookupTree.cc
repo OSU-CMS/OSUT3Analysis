@@ -246,6 +246,9 @@ ValueLookupTree::getCollectionSize (const string &name) const
     //    cout << "\t" << isFound << endl;
     return 1;  // FIXME
   }
+  else if (EQ_VALID(name,eventvariables)){
+    return 1;  // FIXME
+  }
   return 0;
 }
 
@@ -271,6 +274,7 @@ bool
   else if (EQ_VALID(name,tracks))          isFound = handles_->tracks.isValid();
   else if (EQ_VALID(name,trigobjs))        isFound = handles_->trigobjs.isValid();
   else if (EQ_VALID(name,uservariables))   isFound = true; // This vector is always present, even if its size is 0.
+  else if (EQ_VALID(name,eventvariables))  isFound = true; // This vector is always present, even if its size is 0.
   return isFound;
 
 }
@@ -763,6 +767,14 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
         obj->insert (handle->begin (), handle->end ());
       return obj;
     }
+  else if (EQ_VALID(name,eventvariables))
+    {
+      //!!!
+      TYPE(eventvariables) *obj = new TYPE(eventvariables) ();
+      for (const auto &handle : handles_->eventvariables)
+        obj->insert (handle->begin (), handle->end ());
+      return obj;
+    }
   return NULL;
 }
 
@@ -803,6 +815,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return TYPE_STR(trigobjs);
   else if (EQ_VALID(name,uservariables))
     return TYPE_STR(uservariables);
+  else if (EQ_VALID(name,eventvariables))
+    return TYPE_STR(eventvariables);
   return "";
 }
 
@@ -842,6 +856,8 @@ ValueLookupTree::isCollection (const string &name) const
   else if (EQ_VALID(name,trigobjs))
     return true;
   else if (EQ_VALID(name,uservariables))
+    return true;
+  else if (EQ_VALID(name,eventvariables))
     return true;
   return false;
 }
@@ -1097,6 +1113,8 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
   try
     {
       if (collection == "uservariables")
+        return 1; // FIXME
+      if (collection == "eventvariables")
         return 1; // FIXME
         //        return (((VariableProducerPayload *) obj)->at (variable));
       return anatools::getMember (getCollectionType (collection), obj, variable);

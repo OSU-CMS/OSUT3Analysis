@@ -221,6 +221,17 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
           getCollection (collection, handles.uservariables.back (), event);
         }
     }
+  if  (VEC_CONTAINS  (objectsToGet,  "eventvariables")   &&  collections.exists  ("eventvariables"))
+    {
+      handles.eventvariables.clear ();
+      for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("eventvariables"))
+        {
+          handles.eventvariables.resize (handles.eventvariables.size () + 1);
+          getCollection (collection, handles.eventvariables.back (), event);
+        }
+    }
+
+
 
 
   if (firstEvent)
@@ -628,3 +639,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 // user-defined cases
 string anatools::getObjectType (const VariableProducerPayload& obj){ return "uservariable"; }
 string anatools::getObjectClass (const VariableProducerPayload& obj){ return "VariableProducerPayload"; }
+
+string anatools::getObjectType (const EventVariableProducerPayload& obj){ return "eventvariable"; }
+string anatools::getObjectClass (const EventVariableProducerPayload& obj){ return "EventVariableProducerPayload"; }
