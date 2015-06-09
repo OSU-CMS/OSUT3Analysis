@@ -181,6 +181,11 @@ class ValueLookupTree
     vector<Leaf>                                   values_;
     vector<unsigned>                               collectionSizes_;
     vector<unsigned>                               nCombinations_;
+
+    const int                                      verbose_ = 0;  // verbosity levels:  0, 1, ... 
+    // Typically you want to use verbosity of 1 when running over a single event.  
+    
+
 };
 
 #endif
