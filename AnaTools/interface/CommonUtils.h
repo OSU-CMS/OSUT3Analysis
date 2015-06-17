@@ -181,7 +181,9 @@ anatools::getCollection(const edm::InputTag& label, edm::Handle<T>& collection, 
     if (collWithFewestParents >= 0)
       collection = objVec.at(collWithFewestParents);
     else {
-      clog << "ERROR: did not find any collections of the specified type." << endl;
+      clog << "ERROR: did not find any collections that match input tag:  " << label 
+	   << ", with type:  " << typeid(collection).name()  
+	   << endl;  
       return false;
     }
     if (!collection.isValid()) {
