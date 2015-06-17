@@ -4,7 +4,7 @@
 #define  MINI_AOD  1
 #define  AOD       2
 
-#define DATA_FORMAT AOD
+#define DATA_FORMAT MINI_AOD
 
 #define INVALID_TYPE void *
 
@@ -31,6 +31,7 @@
 
   #define  triggers_TYPE        BNtriggerCollection
 
+  #define  basicjets_INVALID
   #define  beamspots_INVALID
 
   #include "BEAN/Collections/interface/BNbxlumi.h"
@@ -55,7 +56,7 @@
   #define  electrons_TYPE       pat::Electron
   #define  events_TYPE          INVALID_TYPE
   #define  genjets_TYPE         reco::GenJet
-  #define  basicjets_TYPE       INVALID_TYPE
+  #define  basicjets_TYPE       pat::Jet
   #define  jets_TYPE            pat::Jet
   #define  mcparticles_TYPE     pat::PackedGenParticle
   #define  mets_TYPE            pat::MET
@@ -78,6 +79,7 @@
   #include "DataFormats/BeamSpot/interface/BeamSpot.h"
   #include "DataFormats/Common/interface/TriggerResults.h"
   #include "DataFormats/EgammaReco/interface/SuperCluster.h"
+  #include "DataFormats/JetReco/interface/BasicJet.h"
   #include "DataFormats/JetReco/interface/GenJet.h"
   #include "DataFormats/PatCandidates/interface/Electron.h"
   #include "DataFormats/PatCandidates/interface/Jet.h"
