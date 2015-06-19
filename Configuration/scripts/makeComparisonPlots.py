@@ -169,10 +169,23 @@ markers = {
     'triangle' : 22,
 }
 
+markerStyleList = [
+    'circle',
+    'square',
+    'triangle',
+]
+
 fills = {
     'solid'  : 0,
     'hollow' : 4,
 }
+
+fillList = [
+    'solid',
+    'hollow',
+]
+
+
 
 ##########################################################################################################################################
 ##########################################################################################################################################
@@ -266,10 +279,10 @@ def MakeIntegralHist(hist, integrateDir):
 ##########################################################################################################################################
                                                                                                                                                                                     
 
-def MakeOneDHist(pathToDir, histogramName,integrateDir): 
+def MakeOneDHist(histogramDirectory, histogramName,integrateDir): 
     
     if arguments.verbose:
-        print "Creating histogram", histogramName, "in directory", pathToDir
+        print "Creating histogram", histogramName, "in directory", histogramDirectory
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
@@ -310,20 +323,23 @@ def MakeOneDHist(pathToDir, histogramName,integrateDir):
     LegendEntries = []
 
     colorIndex = 0
+    markerStyleIndex = 0
+    fillIndex = 0
     
     for source in input_sources: # loop over different input sources in config file
         dataset_file = "condor/%s/%s.root" % (source['condor_dir'],source['dataset'])
         inputFile = TFile(dataset_file)
+      
 
-        HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
-#         if arguments.generic:
-#             HistogramObj = inputFile.Get(source['channel'] + "/" +histogramName)  
-#         else: 
-# #            HistogramObj = inputFile.Get("OSUAnalysis/" + source['channel'] + "/" +histogramName)
-#             HistogramObj = inputFile.Get(source['channel'] + "Plotter/" + histogramName)
+#        HistogramObj = inputFile.Get(histogramDirectory+"/"+histogramName)
+        if arguments.generic:
+            HistogramObj = inputFile.Get(source['channel'] + "/" + histogramDirectory + "/" + histogramName)  
+        else: 
+#            HistogramObj = inputFile.Get("OSUAnalysis/" + source['channel'] + "/" +histogramName)
+            HistogramObj = inputFile.Get(source['channel'] + "Plotter/" + histogramDirectory + "/" + histogramName)
         if not HistogramObj:
-#            print "WARNING:  Could not find histogram " + source['channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
-            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + ".  Will skip it and continue."  
+            print "WARNING:  Could not find histogram " + source['channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+#            print "WARNING:  Could not find histogram " + histogramDirectory + "/" + histogramName + ".  Will skip it and continue."  
             return 
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
@@ -379,12 +395,23 @@ def MakeOneDHist(pathToDir, histogramName,integrateDir):
             colorIndex = colorIndex + 1
             if colorIndex is len(colorList):
                 colorIndex = 0
-        
-        markerStyle = 20 
+                markerStyleIndex = markerStyleIndex + 1
+                if markerStyleIndex is len(markerStyleList):
+                    markerStyleIndex = 0
+                    fillIndex = fillIndex + 1
+                
+
+        markerStyle = 20
         if 'marker' in source:
             markerStyle = markers[source['marker']]
+        else:
+            markerStyle = markers[markerStyleList[markerStyleIndex]]
+            
+        fillStyle = 0
         if 'fill' in source:
             markerStyle = markerStyle + fills[source['fill']]
+        else:
+            markerStyle = markerStyle + fills[fillList[fillIndex]]
 
         Histogram.SetMarkerStyle(markerStyle)
         
@@ -539,7 +566,7 @@ def MakeOneDHist(pathToDir, histogramName,integrateDir):
         Comparison.GetYaxis().SetNdivisions(205)
         Comparison.Draw("E0")
 
-    outputFile.cd(pathToDir)
+    outputFile.cd(histogramDirectory)
     Canvas.Write()
     if arguments.verbose:
         print "  Finished writing canvas: ", Canvas.GetName()  
@@ -564,37 +591,43 @@ first_input = input_sources[0]
 
 #### use the first input file as a template and make comparison versions of all its histograms
 testFile = TFile("condor/" + first_input['condor_dir'] + "/" + first_input['dataset'] + ".root")
-rootDirectory = ""
+channelDirectory = ""
 if arguments.generic:
-    rootDirectory = first_input['channel']  
+    channelDirectory = first_input['channel']  
 else:
-    rootDirectory = first_input['channel'] + "Plotter" 
+    channelDirectory = first_input['channel'] + "Plotter" 
 
-testFile.cd(rootDirectory) 
-outputFile.mkdir(rootDirectory)
+testFile.cd(channelDirectory) 
     
 if arguments.savePDFs:
     os.system("rm -rf comparison_histograms_pdfs")
     os.system("mkdir comparison_histograms_pdfs")
     
 for key in gDirectory.GetListOfKeys():  # Loop over directories in same way as in makePlots.py  
+    if re.match ('TH1', key.GetClassName()):  #found a 1D histogram
+        if arguments.makeSignificancePlots:
+            MakeOneDHist("", key.GetName(),"left")
+            MakeOneDHist("", key.GetName(),"right")
+        else:
+            MakeOneDHist("", key.GetName(),"none")
+
     if (key.GetClassName() != "TDirectoryFile"):
         continue
     if arguments.verbose:
         print "Checking key: ", key.GetName()  
 
-    level2Directory = rootDirectory + "/" + key.GetName() 
-    outputFile.cd(rootDirectory)
-    gDirectory.mkdir(key.GetName())
-    outputFile.cd(level2Directory)
-    testFile.cd(level2Directory)
+    histogramDirectory = key.GetName() 
+    outputFile.cd()
+    gDirectory.mkdir(histogramDirectory)
+    outputFile.cd(key.GetName())
+    testFile.cd(channelDirectory + "/" + histogramDirectory)
     for key2 in gDirectory.GetListOfKeys():
         if re.match ('TH1', key2.GetClassName()):  #found a 1D histogram
             if arguments.makeSignificancePlots:
-                MakeOneDHist(level2Directory, key2.GetName(),"left")
-                MakeOneDHist(level2Directory, key2.GetName(),"right")
+                MakeOneDHist(histogramDirectory, key2.GetName(),"left")
+                MakeOneDHist(histogramDirectory, key2.GetName(),"right")
             else:
-                MakeOneDHist(level2Directory, key2.GetName(),"none")
+                MakeOneDHist(histogramDirectory, key2.GetName(),"none")
 
 testFile.Close()
 outputFile.Close()
