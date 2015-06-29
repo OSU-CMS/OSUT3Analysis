@@ -50,7 +50,7 @@ ValueLookupTree::ValueLookupTree (const string &expression, const vector<string>
 
 ValueLookupTree::~ValueLookupTree ()
 {
-    destroy (root_);
+  destroy (root_);
 }
 
 const Collections * const
@@ -110,6 +110,8 @@ ValueLookupTree::evaluate ()
   if (!values_.size ())
     {
       evaluationError_ = false;
+      uservariablesToDelete_.clear ();
+      eventvariablesToDelete_.clear ();
       for (unsigned i = 0; i < nCombinations_.at (0); i++)
         {
           objIterators_.clear ();
@@ -137,6 +139,14 @@ ValueLookupTree::evaluate ()
 	  } else
             values_.push_back (numeric_limits<int>::min ());
         }
+#if IS_VALID(uservariables)
+      for (auto &uservariable : uservariablesToDelete_)
+        delete ((TYPE(uservariables) *) uservariable);
+#endif
+#if IS_VALID(eventvariables)
+      for (auto &eventvariable : eventvariablesToDelete_)
+        delete ((TYPE(eventvariables) *) eventvariable);
+#endif
     }
 
   return values_;
@@ -746,7 +756,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 }
 
 void *
-ValueLookupTree::getObject (const string &name, const unsigned i) const
+ValueLookupTree::getObject (const string &name, const unsigned i)
 {
   if (EQ_VALID(name,beamspots))
     return ((void *) &(*handles_->beamspots));
@@ -786,6 +796,7 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
       TYPE(uservariables) *obj = new TYPE(uservariables) ();
       for (const auto &handle : handles_->uservariables)
         obj->insert (handle->begin (), handle->end ());
+      uservariablesToDelete_.push_back (obj);
       return obj;
     }
   else if (EQ_VALID(name,eventvariables))
@@ -794,6 +805,7 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
       TYPE(eventvariables) *obj = new TYPE(eventvariables) ();
       for (const auto &handle : handles_->eventvariables)
         obj->insert (handle->begin (), handle->end ());
+      eventvariablesToDelete_.push_back (obj);
       return obj;
     }
   return NULL;

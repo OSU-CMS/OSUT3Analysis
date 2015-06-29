@@ -26,6 +26,7 @@ EventVariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   // store all of our calculated quantities in the event
   event.put (eventvariables, "eventvariables");
+  eventvariables.reset ();
 }
 
 // implementation left up to the daughter class

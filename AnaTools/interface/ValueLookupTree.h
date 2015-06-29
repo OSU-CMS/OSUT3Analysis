@@ -124,7 +124,7 @@ class ValueLookupTree
     ////////////////////////////////////////////////////////////////////////////
     // Methods for retrieving and deleting an object from a collection.
     ////////////////////////////////////////////////////////////////////////////
-    void *getObject (const string &name, const unsigned i) const;
+    void *getObject (const string &name, const unsigned i);
     ////////////////////////////////////////////////////////////////////////////
 
     // Returns the C++ type associated with the collection named in the first
@@ -183,6 +183,9 @@ class ValueLookupTree
     vector<Leaf>                                   values_;
     vector<unsigned>                               collectionSizes_;
     vector<unsigned>                               nCombinations_;
+
+    vector<void *> uservariablesToDelete_;
+    vector<void *> eventvariablesToDelete_;
 
     const int                                      verbose_ = 0;  // verbosity levels:  0, 1, ... 
     // Typically you want to use verbosity of 1 when running over a single event.  
