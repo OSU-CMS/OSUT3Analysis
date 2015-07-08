@@ -35,7 +35,7 @@ parser.add_option("-r", "--randomSeed", action="store_true", dest="Random", defa
 parser.add_option("-f", "--fileName", dest="FileName", default = 'process.TFileService.fileName', help="Set the parameter of output filename in config file.")
 parser.add_option("-m", "--maxEvents", dest="MaxEvents", default = -1, help="Set the maximum number of events to run over (sum of all jobs).")
 parser.add_option("-p", "--process", dest="Process", default = '', help="Set the suffix for the process name.")
-parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files.  Options:  OSUT3Ntuple, UserDir, UserList.")
+parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files.  Options:  OSUT3Ntuple, UserDir, UserList")
 parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")  # Dataset is also the name of the output directory in the working directory if FileType == 'OSUT3Ntuple'.  
 parser.add_option("-w", "--workDirectory", dest="Directory", default = "", help="Specify the working directroy.")
 parser.add_option("-c", "--configuration", dest="Config", default = "", help="Specify the configuration file to run.")
@@ -53,6 +53,22 @@ parser.add_option("-g", "--Generic", dest="Generic", action="store_true", defaul
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")  
 
 (arguments, args) = parser.parse_args()
+
+#A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.  
+def SpecialStringModifier(inputString, specialStringSplitList, specialStringReplaceList):
+    if len(specialStringSplitList):
+        for member in specialStringSplitList:
+            if member in inputString:
+                if inputString.split(member)[0] == '':
+                    inputString = inputString.split(member)[1]
+                else:
+                    inputString = inputString.split(member)[0]            
+    if len(specialStringReplaceList):
+        for member in specialStringReplaceList:
+            if member[0] in inputString: 
+                tmp = inputString.replace(member[0],member[1])   
+                inputString = tmp 
+    return inputString
 
 def GetCommandLineString():
     # Return string of all arguments specified on the command line
@@ -188,7 +204,8 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
     AAAFileList = Directory + '/AAAFileList.txt'
     os.system('touch ' + datasetInfoName)  
-    os.system('touch ' + AAAFileList)  
+    if UseAAA:
+        os.system('touch ' + AAAFileList)  
     if FileType == 'OSUT3Ntuple' and UseAAA:
          AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
     if FileType == 'UserDir':
@@ -240,7 +257,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             if not ".root" in inputFiles[f]: 
                 del inputFiles[f]  
         datasetRead['numberOfFiles'] = len(inputFiles)  
-        datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
+        datasetRead['realDatasetName'] = 'FilesInList:' + Dataset 
         text = 'listOfFiles = [  \n' 
         #Please give the absolute paths of the files like /data/user/***/condor/dir or /store/....
         if not UseAAA:
@@ -279,6 +296,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         if NTupleExistCheck == 'Dataset does not exist on the Tier 3!': 
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
             InitializeAAA = "y"
+            os.system('touch ' + AAAFileList)  
             AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
             datasetRead['useAAA'] = True
             #else:
@@ -475,8 +493,11 @@ if not arguments.Resubmit:
                 Config = config_file
                 GetCompleteOrderedArgumentsSet(InputCondorArguments)
             if arguments.FileType == 'OSUT3Ntuple': 
-                DatasetName = dataset_names[dataset]
-                WorkDir = CondorDir + '/' + str(dataset)
+                if dataset_names.has_key(dataset):
+                    DatasetName = dataset_names[dataset]
+                else:
+                    print str(dataset) + ' has not been registered on T3. Will try to find it on DAS.'
+                WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
                 if os.path.exists(WorkDir): 
                     print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'  
                     continue 
@@ -484,22 +505,8 @@ if not arguments.Resubmit:
                     os.system('mkdir ' + WorkDir )
             else:
                 WorkDir = CondorDir 
-    
-            if '/' in dataset:
-    	        if dataset.split('/')[0] == "":
-                    dataset = dataset.split('/')[1]
-                else:
-                    dataset = dataset.split('/')[0]
-                if '_' in dataset:
-    	            if dataset.split('_')[0] == "":
-                        dataset = dataset.split('_')[1]
-                    else:
-                        dataset = dataset.split('_')[0]
-    	            if '-' in dataset:    
-                        if dataset.split('-')[0] == "":
-                            dataset = dataset.split('-')[1]
-                        else:
-                            dataset = dataset.split('-')[0]
+       
+            dataset = SpecialStringModifier(dataset, ['/','.'], [['-','_']])
             crossSection = -1
             if crossSections.has_key(dataset):
                 crossSection = crossSections[dataset]       
