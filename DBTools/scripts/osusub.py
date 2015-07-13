@@ -30,7 +30,6 @@ parser.remove_option("--2D")
 parser.remove_option("-y")
 parser.remove_option("-p")
 
-
 parser.add_option("-r", "--randomSeed", action="store_true", dest="Random", default=False, help="Assign random seeds for each job.")
 parser.add_option("-f", "--fileName", dest="FileName", default = 'process.TFileService.fileName', help="Set the parameter of output filename in config file.")
 parser.add_option("-m", "--maxEvents", dest="MaxEvents", default = -1, help="Set the maximum number of events to run over (sum of all jobs).")
@@ -53,6 +52,57 @@ parser.add_option("-g", "--Generic", dest="Generic", action="store_true", defaul
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")  
 
 (arguments, args) = parser.parse_args()
+
+#Examples:
+#1. Submit generic jobs(-g). "Generic" means jobs that are not using OSUT3Analysis.cc as the analyzer. But it can still use whatever in the configurationOptions.py. This ELOG explains why we need 'g': https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/13
+#   1.1 Generate GEN-SIM step MC samples.
+#       It is the only case where the user does not need inputfiles. You should use a command like this:
+#       osusub.py -c Config.py -n 100 -m 10000 -U -f process.FEVTDEBUGoutput.fileName -R "Memory > 1900" -r -w WorkingDirectory -g -L Label 
+#       Notice that the argument following -f should be the one you have in your Config.py. -L will give your job a short label for the beauty of simplicity. 
+#   1.2 Run generic cmssw jobs with some inputs.  
+#       This includes running DIGI, HLT, RECO steps in MC generation or any standalone analyzers.
+#       There are several categories:
+#           1. Most general way: run over a list of files.
+#               Any input files can be included in this list. It can be even a mixture of files from different sources. Example:
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -g -d ListOfFiles -t UserList -A(if you are using files via xrootd)
+#           The rest of the special cases can be done automatically.
+#           2. Run over files in a given directory.
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -g -d inputDirectory -t UserDir
+#           3. Run over a dataset(s) on T3. 
+#               For a single dataset:
+#               osusub.py -d dataset(name shown in configurationOptions.py) -c Config.py -m -1 -n 100 -w WorkingDirectory -g
+#               Notice this dataset does not have to be available on T3. As long as it is added into the configurationOptions.py, osusub.py will automatically search for it via das_client.py.      
+#               For a list of datasets:
+#               You will need the localConfig.py. Example:
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -g
+#           4. Run over a dataset which has not been registered in configurationOptions.py.
+#               osusub.py -d /A/B/C(exact name shown on DAS) -c Config.py -A -m -1 -n 100 -w WorkingDirectory -g
+#               In this case the lable will be A with all the '-' in 'A' changed to '_'. 
+#           5. Run over a skim.
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -g -s SkimDirectory -a SkimChannel 
+#   Notice: Maybe in some generic jobs you want to also produce skimmed ntuples and histograms in the same time. For this case, osusub.py can not handle yet. But is is fairly straight forward. Just make --fileName a list of output modules(--fileNames).                
+#2 Submit OSUT3Analysis jobs. Well, just remove the -g option.
+#           2.1 Run over a dataset(s) on T3. 
+#               For a single dataset:
+#               osusub.py -d dataset(name shown in configurationOptions.py) -c Config.py -n 100 -m -1 -w WorkingDirectory 
+#               Notice this dataset does not have to be available on T3. As long as it is added into the configurationOptions.py, osusub.py will automatically search for it via das_client.py.      
+#               For a list of datasets:
+#               You will need the localConfig.py. Example:
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" 
+#           2.2 Run over files in a given directory.
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -d inputDirectory -t UserDir
+#           2.3 Run over a dataset which has not been registered in configurationOptions.py.
+#               osusub.py -d /A/B/C(exact name shown on DAS) -c Config.py -A -m -1 -n 100 -w WorkingDirectory 
+#               In this case the lable will be A with all the '-' in 'A' changed to '_'. 
+#           2.4 Run over a skim.
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -s SkimDirectory -a SkimChannel
+#3 Resubmit failed condor jobs. 
+#    After merging the output files, mergeOut.py will generate a condor_resubmit.sub for each dataset if it detects non 0 exit code. Simple add --resubmit to the original osusub.py command and it will automatically resubmit the failed jobs. 
+#
+#General advice to users:
+#    If you have problems in using the osusub.py. Try the most general case -t UserList. 
+#    Actually I vote for removing UserDir.....
+
 
 #A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.  
 def SpecialStringModifier(inputString, specialStringSplitList, specialStringReplaceList):
@@ -88,6 +138,7 @@ def GetListOfRootFiles(Directory):
     return fileList  
  
 
+#It generates the condor.sub file for each dataset. 
 def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
     os.system('touch ' + Directory + '/condor.sub')
     SubmitFile = open(Directory + '/condor.sub','r+w')
@@ -118,7 +169,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
             SubmitFile.write(CondorSubArgumentsSet[argument].keys()[0] + ' = ' + CondorSubArgumentsSet[argument].values()[0] + '\n')
     SubmitFile.close()
 
-
+#It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.  
 def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
     os.system('touch ' + Directory + '/config_cfg.py')
     ConfigFile = open(Directory + '/config_cfg.py','r+w')
@@ -171,6 +222,7 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
     ConfigFile.close()
     return SkimChannelNames
 
+#This is a generic function to get the dataset information via das_client.py. 
 def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
     os.system('das_client.py --query="file dataset=' + Dataset + '" --limit 0 > ' + AAAFileList) 
     inputFileList = open(AAAFileList, "r") 
@@ -196,6 +248,7 @@ def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSe
     fnew.write(text)
     fnew.close()  
     
+#It is the function which generates the list of input files for a given dataset type.
 def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     numberOfFiles = -1
     datasetRead = {}
