@@ -474,7 +474,10 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
         insertDots                 (cut,  tree) ||
         //insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
         insertParentheses          (cut,  tree)))
-    tree->value = cut;
+    {
+      tree->value = cut;
+      anatools::trim (tree->value);
+    }
   //////////////////////////////////////////////////////////////////////////////
 
   return tree;
