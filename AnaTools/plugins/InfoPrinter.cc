@@ -20,6 +20,7 @@ InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
   printTriggerDecision_        (cfg.getParameter<bool>                   ("printTriggerDecision")),
   printTriggerFlags_           (cfg.getParameter<bool>                   ("printTriggerFlags")),
   printVetoTriggerFlags_       (cfg.getParameter<bool>                   ("printVetoTriggerFlags")),
+  printAllTriggers_            (cfg.getParameter<bool>                   ("printAllTriggers")),
   valuesToPrint_               (cfg.getParameter<edm::VParameterSet>     ("valuesToPrint")),
   firstEvent_ (true),
   counter_ (0),
@@ -78,7 +79,7 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   // requested, print that information to the stringstream which is printed in
   // the destructor.
   //////////////////////////////////////////////////////////////////////////////
-  maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = 0;
+  maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = maxAllTriggerWidth_ = 0;
   for (auto eventToPrint = eventsToPrint_.begin (); printAllEvents_ || eventToPrint != eventsToPrint_.end (); eventToPrint++)
     {
       if (printAllEvents_ || ((*eventToPrint) == event.id ()))
@@ -94,6 +95,7 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
           printTriggerDecision_        &&  printTriggerDecision        ();
           printCutDecision_            &&  printCutDecision            ();
           printEventDecision_          &&  printEventDecision          ();
+          printAllTriggers_            &&  printAllTriggers            (event);
           ss_ << "================================================================================" << endl;
         }
       if (printAllEvents_)
@@ -323,6 +325,43 @@ InfoPrinter::printValuesToPrint ()
   return true;
 }
 
+bool
+InfoPrinter::printAllTriggers (const edm::Event &event)
+{
+  ss_ << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << "\033[1;35mavailable triggers\033[0m" << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  map<string, bool> triggers;
+#if DATA_FORMAT == BEAN
+  for (const auto &trigger : *handles_.triggers)
+    {
+      string name = trigger.name;
+      bool pass = trigger.pass;
+#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
+  const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
+  for (unsigned i = 0; i < triggerNames.size (); i++)
+    {
+      string name = triggerNames.triggerName (i);
+      bool pass = handles_.triggers->accept (i);
+#else
+  #error "Data format is not valid."
+#endif
+      triggers[name] = pass;
+    }
+  !maxAllTriggerWidth_ && (maxAllTriggerWidth_ = getMaxWidth (triggers));
+  for (const auto &trigger : triggers)
+    {
+      ss_ << "\033[1;34m" << setw (maxAllTriggerWidth_) << left << trigger.first << "\033[0m";
+      if (trigger.second)
+        ss_ << "\033[1;32maccept\033[0m" << endl;
+      else
+        ss_ << "\033[1;31mreject\033[0m" << endl;
+    }
+
+  return true;
+}
+
 unsigned
 InfoPrinter::getMaxWidth (const vector<string> &list) const
 {
@@ -334,6 +373,27 @@ InfoPrinter::getMaxWidth (const vector<string> &list) const
     {
       if (s.length () > w)
         w = s.length ();
+    }
+  //////////////////////////////////////////////////////////////////////////////
+
+  // Add two to the maximum length so that there are at least two spaces before
+  // the next column in the table.
+  w += 2;
+
+  return w;
+}
+
+unsigned
+InfoPrinter::getMaxWidth (const map<string, bool> &list) const
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Calculate the maximum length of the strings in a vector.
+  //////////////////////////////////////////////////////////////////////////////
+  unsigned w = 0;
+  for (const auto &s : list)
+    {
+      if (s.first.length () > w)
+        w = s.first.length ();
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -438,6 +498,8 @@ InfoPrinter::unpackValuesToPrint ()
 
       objectsToGet_.insert (valuesToPrint.back ().inputCollections.begin (), valuesToPrint.back ().inputCollections.end ());
     }
+  if (printAllTriggers_)
+    objectsToGet_.insert ("triggers");
 }
 
 bool
