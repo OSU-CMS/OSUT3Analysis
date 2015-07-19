@@ -26,6 +26,8 @@ InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
   counter_ (0),
   sw_ (new TStopwatch)
 {
+  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
+
   // Start the timer.
   sw_->Start ();
 

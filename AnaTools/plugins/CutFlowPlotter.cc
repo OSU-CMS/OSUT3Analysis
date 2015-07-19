@@ -13,6 +13,8 @@ CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
   module_label_ (cfg.getParameter<std::string>("@module_label")),
   firstEvent_ (true)
 {
+  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
+
   //////////////////////////////////////////////////////////////////////////////
   // Create a directory for this channel and book the cut flow histograms
   // within.

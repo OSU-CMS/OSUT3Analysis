@@ -8,6 +8,8 @@
     cutDecisions_        (cfg.getParameter<edm::InputTag>      ("cutDecisions")),
     firstEvent_          (true)
   {
+    assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
+
     // Retrieve the InputTag for the collection which is to be filtered.
     collection_ = collections_.getParameter<edm::InputTag> (collectionToFilter_);
 

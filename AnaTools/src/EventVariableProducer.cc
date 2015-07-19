@@ -3,6 +3,8 @@
 EventVariableProducer::EventVariableProducer(const edm::ParameterSet &cfg) :
   collections_  (cfg.getParameter<edm::ParameterSet>  ("collections"))
 {
+  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
+
   produces<EventVariableProducerPayload> ("eventvariables");
 }
 

@@ -17,6 +17,8 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   cuts_         (cfg.getParameter<edm::ParameterSet>  ("cuts")),
   firstEvent_   (true)
 {
+  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
+
   //////////////////////////////////////////////////////////////////////////////
   // Try to unpack the cuts ParameterSet and quit if there is a problem.
   //////////////////////////////////////////////////////////////////////////////

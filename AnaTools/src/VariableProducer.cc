@@ -3,6 +3,8 @@
 VariableProducer::VariableProducer(const edm::ParameterSet &cfg) :
   collections_  (cfg.getParameter<edm::ParameterSet>  ("collections"))
 {
+  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
+
   produces<VariableProducerPayload> ("uservariables");
 }
 

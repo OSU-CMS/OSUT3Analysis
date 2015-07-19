@@ -145,6 +145,7 @@
 #define TYPE_STR(x) XSTR(x##_TYPE)
 
 #include <string>
+#include "boost/config.hpp"
 #include "RVersion.h"
 
 #if ROOT_VERSION_CODE >= ROOT_VERSION(6,0,0)
@@ -154,6 +155,11 @@
   #define ROOT5
 #else
   #error "Only ROOT 5 and 6 are supported."
+#endif
+
+#define SUPPORTED_VERSION "CMSSW_7_4_5_ROOT5"
+#if !defined(BOOST_NO_CXX11_STATIC_ASSERT)
+  static_assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0, SUPPORTED_VERSION " is the currently supported release. Please switch.");
 #endif
 
 using namespace std;
