@@ -160,6 +160,15 @@ ValueLookupTree::getLocalIndex (unsigned globalIndex, unsigned collectionIndex) 
   // Returns the local index within the primitive collection indexed by the
   // second argument, given the global index within the composite collection of
   // this tree.
+  // The local index is the index within a single object collection.
+  // The collection index specifies the collection.  
+  // The global index is unique for each combination of objects.
+  // Example:  invMass(muon1,muon2).  In an event with 3 muons, there would be 
+  // 9 combinations:
+  // Global index:                 0  1  2  3  4  5  6  7  8
+  // Local index for collection 0: 0  0  0  1  1  1  2  2  2
+  // Local index for collection 1: 0  1  2  0  1  2  0  1  2 
+  // The function isUniqueCase() will return true only for global indices: 1, 2, 5. 
   //////////////////////////////////////////////////////////////////////////////
   if (collectionIndex + 1 != inputCollections_.size ())
     return ((globalIndex / nCombinations_.at (collectionIndex + 1)) % collectionSizes_.at (collectionIndex));
@@ -175,6 +184,8 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
   // Returns the global indices within the composite collection named by the
   // third argument, given a local index within the primitive collection named
   // by the second argument.
+  // Using the example from above (in the comments to getLocalIndices()), 
+  // the call to getGlobalIndices(0, "muon", "muon-muon") would return the set {0,1,2,3,6}.  
   //////////////////////////////////////////////////////////////////////////////
   vector<string> singleObjects = anatools::getSingleObjects (inputLabel);
   set<unsigned> globalIndices;
