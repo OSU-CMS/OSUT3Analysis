@@ -110,7 +110,9 @@ class ValueLookupTree
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for inserting an expression into the tree and for evaluating the
-    // expression.
+    // expression.  The evaluate() function returns values for each of the 
+    // objects in the event; that is why it returns a vector.  
+    // FIXME:  Check whether evaluate() should return vector<Leaf> or vector<double>.
     ////////////////////////////////////////////////////////////////////////////
     void insert (const string &);
     const vector<Leaf> &evaluate ();
@@ -119,8 +121,8 @@ class ValueLookupTree
     ////////////////////////////////////////////////////////////////////////////
     // Methods for retrieving various information about a collection.
     ////////////////////////////////////////////////////////////////////////////
-    unsigned getLocalIndex (unsigned, unsigned) const;
-    set<unsigned> getGlobalIndices (unsigned, const string &, string) const;
+    unsigned getLocalIndex (unsigned globalIndex, unsigned collectionIndex) const;
+    set<unsigned> getGlobalIndices (unsigned localIndex, const string &singleObjectCollection, string inputLabel) const;
     unsigned getCollectionSize (const string &name) const;
     bool collectionIsFound (const string &name) const;
     ////////////////////////////////////////////////////////////////////////////
