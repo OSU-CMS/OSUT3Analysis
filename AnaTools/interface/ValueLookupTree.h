@@ -40,6 +40,14 @@ Another example is an expression, e.g., "2 * abs(eta)", represented as:
     |
    eta
 In this case the evaluate function would return a continuous value.
+
+Note that the prunedParentheses function will convert this tree to:
+      *
+    /   \
+   abs   2
+    |
+   (eta)
+
 For a complex string such as innerTrack.hitPattern_.numberOfValidPixelHits > 0, the tree will have the following structure:
                < 
              /   \
@@ -48,6 +56,31 @@ For a complex string such as innerTrack.hitPattern_.numberOfValidPixelHits > 0, 
     innerTrack  . 
                / \
     hitPattern_  numberOfValidPixelHits
+
+Right after the tree is built, this tree will get pruned by the pruneDots() function
+to be the following:
+                                                  < 
+                                                /   \
+   innerTrack.hitPattern_.numberOfValidPixelHits     0
+
+Here is an example using commas:
+               < 
+             /   \
+         invMass   0
+            |
+            ()
+            |
+            ,
+          /   \
+       muon   muon
+
+This will be converted to the following, by the prunedCommas() and prunedParentheses() functions: 
+               < 
+             /   \
+         invMass   0
+          /   \
+       muon   muon
+
 */
 
 typedef unordered_multimap<string, DressedObject> ObjMap;
