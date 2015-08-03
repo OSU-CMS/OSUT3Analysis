@@ -154,10 +154,11 @@ class ValueLookupTree
     string printValue(Node* node) const;
 
     // Returns the result of an operator acting on its operands.
-    Leaf evaluateOperator (const string &, const vector<Leaf> &, const ObjMap &);
+    Leaf evaluateOperator (const string &op, const vector<Leaf> &operands, const ObjMap &objs);
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for retrieving and deleting an object from a collection.
+    // i is the local index
     ////////////////////////////////////////////////////////////////////////////
     void *getObject (const string &name, const unsigned i);
     ////////////////////////////////////////////////////////////////////////////
@@ -184,8 +185,8 @@ class ValueLookupTree
     // Methods for finding the first instance within a string of any one of a
     // vector of target strings.
     ////////////////////////////////////////////////////////////////////////////
-    pair<size_t, string> findFirstOf (const string &, const vector<string> &, const vector<string> &, const size_t = 0) const;
-    pair<size_t, string> findLastOf (const string &, const vector<string> &, const vector<string> &, const size_t = string::npos) const;
+    pair<size_t, string> findFirstOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos = 0) const;
+    pair<size_t, string> findLastOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos = string::npos) const;
     bool vetoMatch (const string &, const string &, const size_t, const vector<string> &) const;
     ////////////////////////////////////////////////////////////////////////////
 
@@ -205,7 +206,7 @@ class ValueLookupTree
     ////////////////////////////////////////////////////////////////////////////
     // Methods for retrieving values from objects.
     ////////////////////////////////////////////////////////////////////////////
-    double valueLookup (const string &, const ObjMap &, const string &, const bool = true);
+    double valueLookup (const string &collection, const ObjMap &objs, const string &variable, const bool iterateObj = true);
     ////////////////////////////////////////////////////////////////////////////
 
     Node            *root_;
@@ -213,11 +214,13 @@ class ValueLookupTree
     bool            evaluationError_;
 
     Collections                                    *handles_;
-    unordered_map<string, ObjMap::const_iterator>  objIterators_;
-    unordered_map<string, bool>                    shouldIterate_;
+    unordered_map<string, ObjMap::const_iterator>  objIterators_;  // defined for each collection
+    unordered_map<string, bool>                    shouldIterate_; // defined for each collection 
     vector<Leaf>                                   values_;
-    vector<unsigned>                               collectionSizes_;
-    vector<unsigned>                               nCombinations_;
+    vector<unsigned>                               collectionSizes_; // vector index corresponds to collection index
+    vector<unsigned>                               nCombinations_;   // vector index corresponds to collection index
+    // nCombinations[i] specifies the number of combinations that can be formed from objects 
+    // in collections i to N, where N is the number of collections 
 
     vector<void *> uservariablesToDelete_;
     vector<void *> eventvariablesToDelete_;
