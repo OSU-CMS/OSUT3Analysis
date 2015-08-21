@@ -122,6 +122,7 @@ CutFlowPlotter::initializeCutFlow ()
   //////////////////////////////////////////////////////////////////////////////
   unsigned nCuts = cutDecisions->cuts.size ();
   cutDecisions->triggers.size () && nCuts++;
+  cutDecisions->triggerFilters.size () && nCuts++;
   oneDHists_.at ("cutFlow")->SetBins    (nCuts + 1,  0.0,  nCuts + 1);
   oneDHists_.at ("selection")->SetBins  (nCuts + 1,  0.0,  nCuts + 1);
   oneDHists_.at ("minusOne")->SetBins   (nCuts + 1,  0.0,  nCuts + 1);
@@ -136,6 +137,13 @@ CutFlowPlotter::initializeCutFlow ()
       oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "trigger");
       oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "trigger");
       oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger");
+      bin++;
+    }
+  if (cutDecisions->triggerFilters.size ())
+    {
+      oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "trigger filter");
+      oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "trigger filter");
+      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger filter");
       bin++;
     }
   for (vector<Cut>::const_iterator cut = cutDecisions->cuts.begin (); cut != cutDecisions->cuts.end (); cut++, bin++)
@@ -174,12 +182,20 @@ CutFlowPlotter::fillCutFlow (double w)
   //////////////////////////////////////////////////////////////////////////////
   if (cutDecisions->triggers.size ())
     {
-      if (cutDecisions->triggerDecision)
-        {
-          oneDHists_.at ("cutFlow")->Fill    (bin,  w);
-          oneDHists_.at ("selection")->Fill  (bin,  w);
-        }
       passes = passes && cutDecisions->triggerDecision;
+      if (cutDecisions->triggerDecision)
+        oneDHists_.at ("selection")->Fill  (bin,  w);
+      if (passes)
+        oneDHists_.at ("cutFlow")->Fill    (bin,  w);
+      bin++;
+    }
+  if (cutDecisions->triggerFilters.size ())
+    {
+      passes = passes && cutDecisions->triggerFilterDecision;
+      if (cutDecisions->triggerFilterDecision)
+        oneDHists_.at ("selection")->Fill  (bin,  w);
+      if (passes)
+        oneDHists_.at ("cutFlow")->Fill    (bin,  w);
       bin++;
     }
   for (vector<bool>::const_iterator flag = cutDecisions->eventFlags.begin (); flag != cutDecisions->eventFlags.end (); flag++, bin++)

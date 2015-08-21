@@ -4,7 +4,6 @@
 #include <unordered_map>
 
 #include "FWCore/Common/interface/TriggerNames.h"
-//#include "FWCore/MessageLogger/interface/MessageLogger.h"
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
@@ -34,10 +33,10 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
 
 CutCalculator::~CutCalculator ()
 {
- 
+
    for (auto &cut : unpackedCuts_)
      {
-       if (cut.valueLookupTree) 
+       if (cut.valueLookupTree)
          delete cut.valueLookupTree;
      }
 }
@@ -67,6 +66,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_->cuts = unpackedCuts_;
   pl_->triggers = unpackedTriggers_;
   pl_->triggersToVeto = unpackedTriggersToVeto_;
+  pl_->triggerFilters = unpackedTriggerFilters_;
   //////////////////////////////////////////////////////////////////////////////
 
   // Loop over cuts to set flags for each object indicating whether it passed
@@ -97,6 +97,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   // Decide whether the event passes the triggers specified by the user and
   // store the decision in the payload.
   evaluateTriggers (event);
+  evaluateTriggerFilters (event);
   setEventFlags ();
 
   event.put (pl_, "cutDecisions");
@@ -264,6 +265,12 @@ CutCalculator::unpackCuts ()
       unpackedTriggersToVeto_ = cuts_.getParameter<vector<string> > ("triggersToVeto");
       objectsToGet_.insert ("triggers");
     }
+  if (cuts_.exists ("triggerFilters"))
+    {
+      unpackedTriggerFilters_ = cuts_.getParameter<vector<string> > ("triggerFilters");
+      objectsToGet_.insert ("triggers");
+      objectsToGet_.insert ("trigobjs");
+    }
   //////////////////////////////////////////////////////////////////////////////
 
   // Retrieve the cuts and clear the vector in which they will be stored after
@@ -405,14 +412,12 @@ CutCalculator::evaluateTriggers (const edm::Event &event) const
         {
           string name = trigger.name;
           bool pass = trigger.pass;
-#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD 
+#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
-      //      cout << "Debug:  triggerNames.size() = " << triggerNames.size() << endl;  
       for (unsigned i = 0; i < triggerNames.size (); i++)
         {
           string name = triggerNames.triggerName (i);
           bool pass = handles_.triggers->accept (i);
-	  //	  cout << "Debug:  trigger with name " << name << " is set: " << pass << endl;  
 #else
   #error "Data format is not valid."
 #endif
@@ -451,6 +456,38 @@ CutCalculator::evaluateTriggers (const edm::Event &event) const
   // Store the logical AND of the two event-wide flags as the event-wide
   // trigger decision in the payload and return it.
   return (pl_->triggerDecision = (triggerDecision && vetoTriggerDecision));
+}
+
+bool
+CutCalculator::evaluateTriggerFilters (const edm::Event &event) const
+{
+  bool triggerFilterDecision = !pl_->triggerFilters.size ();
+  pl_->triggerFilterFlags.resize (pl_->triggerFilters.size (), false);
+
+  if (handles_.triggers.isValid () && handles_.trigobjs.isValid ())
+    {
+      const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
+      for (unsigned i = 0; i < pl_->triggerFilters.size (); i++)
+        {
+#if DATA_FORMAT == MINI_AOD
+          for (auto trigobj : *handles_.trigobjs)
+            {
+              trigobj.unpackPathNames (triggerNames);
+              for (const auto &filter : trigobj.filterLabels ())
+                {
+                  pl_->triggerFilterFlags.at (i) = (pl_->triggerFilters.at (i) == filter);
+                  if (pl_->triggerFilterFlags.at (i))
+                    break;
+                }
+              if (pl_->triggerFilterFlags.at (i))
+                break;
+            }
+#endif
+          triggerFilterDecision = triggerFilterDecision || pl_->triggerFilterFlags.at (i);
+        }
+    }
+
+  return (pl_->triggerFilterDecision = triggerFilterDecision);
 }
 
 bool
@@ -509,7 +546,7 @@ CutCalculator::setEventFlags () const
 
   // Store the logical AND of the trigger decision and the global cut decision
   // as the global event decision in the payload and return it.
-  return (pl_->eventDecision = (pl_->triggerDecision && pl_->cutDecision));
+  return (pl_->eventDecision = (pl_->triggerDecision && pl_->triggerFilterDecision && pl_->cutDecision));
 }
 
 bool

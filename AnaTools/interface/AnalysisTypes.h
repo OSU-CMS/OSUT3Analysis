@@ -38,12 +38,15 @@ struct CutCalculatorPayload
   bool            eventDecision;
   bool            isValid;
   bool            triggerDecision;
+  bool            triggerFilterDecision;
   Cuts            cuts;
   vector<bool>    eventFlags;
   vector<bool>    triggerFlags;
   vector<bool>    vetoTriggerFlags;
+  vector<bool>    triggerFilterFlags;
   vector<string>  triggers;
   vector<string>  triggersToVeto;
+  vector<string>  triggerFilters;
 };
 
 struct HistoDef {
@@ -109,7 +112,7 @@ struct Collections
   edm::Handle<vector<TYPE(tracks)> >          tracks;
   edm::Handle<vector<TYPE(trigobjs)> >        trigobjs;
   vector<edm::Handle<TYPE(uservariables)> >   uservariables;
-  vector<edm::Handle<TYPE(eventvariables)> >   eventvariables;
+  vector<edm::Handle<TYPE(eventvariables)> >  eventvariables;
 
   edm::Handle<TYPE(triggers)>                 triggers;
 };
