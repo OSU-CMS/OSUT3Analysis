@@ -5,7 +5,6 @@ import sys
 import math
 import datetime
 import copy
-import ROOT
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
