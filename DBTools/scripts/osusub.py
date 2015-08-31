@@ -518,7 +518,10 @@ def SkimModifier(Label, Directory):
     add += 'skimNumberOfEvents = ' + str(SkimNumberOfEvents) + '\n'
     fnew = open(infoFileTest, "w")
     fnew.write(orig + add)
-    fnew.close()  
+    fnew.close()
+    os.system('rm ' + Directory + '/datasetInfo_' + Label + '_cfg.py')  
+    os.system('rm ' + Directory + '/datasetInfo_' + Label + '_cfg_beforeChanges.py')  
+    os.system('mv ' + Directory + '/datasetInfo_' + Label + '_cfg-test.py ' + Directory + '/datasetInfo_' + Label + '_cfg.py')  
 
 
 
@@ -645,6 +648,7 @@ if not arguments.Resubmit:
             UseAAA = DatasetRead['useAAA']
             if NumberOfJobs > NumberOfFiles:
                 NumberOfJobs = NumberOfFiles
+            if not arguments.localConfig:     
                 NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
             if MaxEvents > 0:
     	        EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs)) 	
