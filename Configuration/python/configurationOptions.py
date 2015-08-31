@@ -2423,6 +2423,7 @@ types = {
 
    'DoubleMu_2015B'   : "data",
    'DoubleMu_2015C'   : "data",
+   'DoubleMu_2015'   : "data",
    
    'MuEG'                 : "data",
    'MuEG_22Jan2013'       : "data",
@@ -3010,6 +3011,7 @@ colors = {
    
    'DoubleMu_2015B'   : 1,
    'DoubleMu_2015C'   : 1,
+   'DoubleMu_2015'   : 1,
    
    'MuEG'                   : 1,
    'MuEG_22Jan2013'         : 1,
