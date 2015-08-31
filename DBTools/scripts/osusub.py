@@ -657,9 +657,10 @@ if not arguments.Resubmit:
             userConfig = 'userConfig_' + dataset + '_cfg.py'
             os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
             jsonFile = ''
-            if(types[dataset] == 'data'):
-                jsonFile = getLatestJsonFile() 
-                os.system('mv ' + jsonFile + ' ' + WorkDir + '/')
+            if arguments.localConfig: 
+                if(types[dataset] == 'data'):
+                    jsonFile = getLatestJsonFile() 
+                    os.system('mv ' + jsonFile + ' ' + WorkDir + '/')
             SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,dataset, SkimChannelNames, jsonFile)
     
     	    if lxbatch:
