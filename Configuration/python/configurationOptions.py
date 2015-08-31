@@ -19,6 +19,7 @@ datasets = [
    'SingleElectron',
    'DoubleMu',
    'DoubleMu_22Jan2013',
+   'DoubleMu_2015',
    'DoubleElectron_22Jan2013',
    'MuEG',
    'MuEG_22Jan2013',
@@ -789,6 +790,10 @@ composite_dataset_definitions = {
         'DoubleMu_2012C_22Jan2013',
         'DoubleMu_2012D_22Jan2013',
     ],
+    'DoubleMu_2015' : [
+        'DoubleMu_2015B',
+        'DoubleMu_2015C',
+    ],
     'MuEG' : [
         'MuEG_2012A_1',
         'MuEG_2012A_2',
@@ -980,6 +985,9 @@ dataset_names = {
    'DoubleMu_2012C_22Jan2013'       : "/DoubleMuParked/Run2012C-22Jan2013-v1/AOD",
    'DoubleMu_2012D_22Jan2013'       : "/DoubleMuParked/Run2012D-22Jan2013-v1/AOD",
 
+   'DoubleMu_2015B'       : "/DoubleMuon/Run2015B-PromptReco-v1/MINIAOD",
+   'DoubleMu_2015C'       : "/DoubleMuon/Run2015C-PromptReco-v1/MINIAOD",
+   
    'MuEG_2012A_22Jan2013'         : "/MuEG/Run2012A-22Jan2013-v1/AOD",
    'MuEG_2012B_22Jan2013'         : "/MuEG/Run2012B-22Jan2013-v1/AOD",
    'MuEG_2012C_22Jan2013'         : "/MuEG/Run2012C-22Jan2013-v1/AOD",
@@ -1474,6 +1482,9 @@ nJobs = {
    'DoubleMu_2012C_22Jan2013'   : 150,
    'DoubleMu_2012D_22Jan2013'   : 150,
 
+   'DoubleMu_2015B'   :  40,
+   'DoubleMu_2015C'   : 187,
+   
    'MuEG_2012A_22Jan2013' : 50,
    'MuEG_2012B_22Jan2013' : 50,
    'MuEG_2012C_22Jan2013' : 100,
@@ -1937,6 +1948,9 @@ maxEvents = {
    'DoubleMu_2012C_22Jan2013'   :-1,
    'DoubleMu_2012D_22Jan2013'   :-1,
 
+   'DoubleMu_2015B'       : -1,
+   'DoubleMu_2015C'       : -1,
+   
    'MuEG_2012A_22Jan2013' : -1,
    'MuEG_2012B_22Jan2013' : -1,
    'MuEG_2012C_22Jan2013' : -1,
@@ -2407,6 +2421,9 @@ types = {
    'DoubleMu_2012C_22Jan2013'   : "data",
    'DoubleMu_2012D_22Jan2013'   : "data",
 
+   'DoubleMu_2015B'   : "data",
+   'DoubleMu_2015C'   : "data",
+   
    'MuEG'                 : "data",
    'MuEG_22Jan2013'       : "data",
    'MuEG_2012A_22Jan2013' : "data",
@@ -2990,6 +3007,9 @@ colors = {
    'DoubleMu_2012B_22Jan2013'   : 1,
    'DoubleMu_2012C_22Jan2013'   : 1,
    'DoubleMu_2012D_22Jan2013'   : 1,
+   
+   'DoubleMu_2015B'   : 1,
+   'DoubleMu_2015C'   : 1,
    
    'MuEG'                   : 1,
    'MuEG_22Jan2013'         : 1,
@@ -3584,6 +3604,10 @@ labels = {
    'DoubleMu_2012C_2'     : "DoubleMu 2012C data",
    'DoubleMu_2012D'       : "DoubleMu 2012D data",
 
+   'DoubleMu_2015'      : "Double Muon 2015 data",
+   'DoubleMu_2015B'     : "DoubleMu 2015B data",
+   'DoubleMu_2015C'     : "DoubleMu 2015C data",
+   
    'DoubleMu_22Jan2013'           : "Double Muon data",
    'DoubleMu_2012A_22Jan2013'     : "DoubleMu 2012A data",
    'DoubleMu_2012B_22Jan2013'     : "DoubleMu 2012B data",
