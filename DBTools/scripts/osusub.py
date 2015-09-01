@@ -429,12 +429,11 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             #    return 
         if RunOverSkim:
             SkimModifier(Label, Directory)
+            InitializeAAA = ""
         sys.path.append(Directory)
         exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
-        if InitializeAAA == "":
-            status = ''
-            if datasetInfo.status:
-               status = datasetInfo.status
+        if InitializeAAA == "" and not RunOverSkim:
+            status = datasetInfo.status
             continueForNonPresentDataset = True
             if not status == 'present':
 	        userDecision = raw_input('The dataset you selected is not marked as present on Tier3, do you still want to continue?(Type "y" for yes and "n" for no.)')
