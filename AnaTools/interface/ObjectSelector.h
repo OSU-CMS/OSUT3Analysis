@@ -54,6 +54,8 @@ ObjectSelector<T>::ObjectSelector (const edm::ParameterSet &cfg) :
   cutDecisions_        (cfg.getParameter<edm::InputTag>      ("cutDecisions")),
   firstEvent_          (true)
 {
+  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
+
   // Retrieve the InputTag for the collection which is to be filtered.
   collection_ = collections_.getParameter<edm::InputTag> (collectionToFilter_);
 
@@ -107,6 +109,7 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
   //////////////////////////////////////////////////////////////////////////////
 
   event.put (pl_, collection_.instance ());
+  pl_.reset ();
   firstEvent_ = false;
 
   // Return the global decision for the event. If the cut decisions could not

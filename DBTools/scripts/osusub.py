@@ -30,12 +30,11 @@ parser.remove_option("--2D")
 parser.remove_option("-y")
 parser.remove_option("-p")
 
-
 parser.add_option("-r", "--randomSeed", action="store_true", dest="Random", default=False, help="Assign random seeds for each job.")
 parser.add_option("-f", "--fileName", dest="FileName", default = 'process.TFileService.fileName', help="Set the parameter of output filename in config file.")
-parser.add_option("-m", "--maxEvents", dest="MaxEvents", default = -1, help="Set the maximum number of events to run per job.")
+parser.add_option("-m", "--maxEvents", dest="MaxEvents", default = -1, help="Set the maximum number of events to run over (sum of all jobs).")
 parser.add_option("-p", "--process", dest="Process", default = '', help="Set the suffix for the process name.")
-parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files.  Options:  OSUT3Ntuple, UserDir, UserList.")
+parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files.  Options:  OSUT3Ntuple, UserDir, UserList")
 parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")  # Dataset is also the name of the output directory in the working directory if FileType == 'OSUT3Ntuple'.  
 parser.add_option("-w", "--workDirectory", dest="Directory", default = "", help="Specify the working directroy.")
 parser.add_option("-c", "--configuration", dest="Config", default = "", help="Specify the configuration file to run.")
@@ -49,9 +48,141 @@ parser.add_option("-a", "--SkimChannel", dest="SkimChannel", default = "", help=
 parser.add_option("-R", "--Requirements", dest="Requirements", default = "", help="Requirements to be added to condor.sub submssion script, e.g. 'Memory > 1900'.")  
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")  
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")  
-parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config.")  
+parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")  
+parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")  
 
 (arguments, args) = parser.parse_args()
+
+#Examples:
+#1. Submit generic jobs(-g). "Generic" means jobs that are not using OSUT3Analysis.cc as the analyzer. But it can still use whatever in the configurationOptions.py. This ELOG explains why we need 'g': https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/13
+#   1.1 Generate GEN-SIM step MC samples.
+#       It is the only case where the user does not need inputfiles. You should use a command like this:
+#       osusub.py -c Config.py -n 100 -m 10000 -U -f process.FEVTDEBUGoutput.fileName -R "Memory > 1900" -r -w WorkingDirectory -g -L Label 
+#       Notice that the argument following -f should be the one you have in your Config.py. -L will give your job a short label for the beauty of simplicity. 
+#   1.2 Run generic cmssw jobs with some inputs.  
+#       This includes running DIGI, HLT, RECO steps in MC generation or any standalone analyzers.
+#       There are several categories:
+#           1. Most general way: run over a list of files.
+#               Any input files can be included in this list. It can be even a mixture of files from different sources. Example:
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -g -d ListOfFiles -t UserList -A(if you are using files via xrootd)
+#           The rest of the special cases can be done automatically.
+#           2. Run over files in a given directory.
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -g -d inputDirectory -t UserDir
+#           3. Run over a dataset(s) on T3. 
+#               For a single dataset:
+#               osusub.py -d dataset(name shown in configurationOptions.py) -c Config.py -m -1 -n 100 -w WorkingDirectory -g
+#               Notice this dataset does not have to be available on T3. As long as it is added into the configurationOptions.py, osusub.py will automatically search for it via das_client.py.      
+#               For a list of datasets:
+#               You will need the localConfig.py. Example:
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -g
+#           4. Run over a dataset which has not been registered in configurationOptions.py.
+#               osusub.py -d /A/B/C(exact name shown on DAS) -c Config.py -A -m -1 -n 100 -w WorkingDirectory -g
+#               In this case the lable will be A with all the '-' in 'A' changed to '_'. 
+#           5. Run over a skim.
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -g -s SkimDirectory -a SkimChannel 
+#   Notice: Maybe in some generic jobs you want to also produce skimmed ntuples and histograms in the same time. For this case, osusub.py can not handle yet. But is is fairly straight forward. Just make --fileName a list of output modules(--fileNames).                
+#2 Submit OSUT3Analysis jobs. Well, just remove the -g option.
+#           2.1 Run over a dataset(s) on T3. 
+#               For a single dataset:
+#               osusub.py -d dataset(name shown in configurationOptions.py) -c Config.py -n 100 -m -1 -w WorkingDirectory 
+#               Notice this dataset does not have to be available on T3. As long as it is added into the configurationOptions.py, osusub.py will automatically search for it via das_client.py.      
+#               For a list of datasets:
+#               You will need the localConfig.py. Example:
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" 
+#           2.2 Run over files in a given directory.
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -d inputDirectory -t UserDir
+#           2.3 Run over a dataset which has not been registered in configurationOptions.py.
+#               osusub.py -d /A/B/C(exact name shown on DAS) -c Config.py -A -m -1 -n 100 -w WorkingDirectory 
+#               In this case the lable will be A with all the '-' in 'A' changed to '_'. 
+#           2.4 Run over a skim.
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -s SkimDirectory -a SkimChannel
+#3 Resubmit failed condor jobs. 
+#    After merging the output files, mergeOut.py will generate a condor_resubmit.sub for each dataset if it detects non 0 exit code. Simple add --resubmit to the original osusub.py command and it will automatically resubmit the failed jobs. 
+#
+#General advice to users:
+#    If you have problems in using the osusub.py. Try the most general case -t UserList. 
+#    Actually I vote for removing UserDir.....
+
+
+#A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.  
+def getLatestJsonFile():
+    os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O jsonList.txt')
+    os.system('grep "Cert" jsonList.txt > CertList.txt')
+    Tmp = open('CertList.txt','r+w')
+    bannedString = 'MuonPhysCaloOnly'
+    jsonFileList = []
+    for line in Tmp:
+        startIndex = 0
+        endIndex = 0
+        for i in range(0,len(line)):
+          if line[i:i + 5] == '"Cert':
+              startIndex = i + 1
+          if line[i:i+4] == 'txt"':
+              endIndex = i + 3
+        if startIndex <= endIndex:
+            jsonFileList.append(line[startIndex: endIndex])
+    jsonFileFiltered = []
+    for fileName in jsonFileList:
+        nameSplit = fileName.split('_')
+        for i in range(0, len(nameSplit)):
+            if nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == 'JSON':
+                if nameSplit[i + 2].split('.')[0] not in bannedString:
+                    jsonFileFiltered.append(fileName)
+            elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == 'JSON.txt':
+                jsonFileFiltered.append(fileName)
+    bestJsons = []
+    bestJson = ''
+    runRange = 0
+    for json in jsonFileFiltered:
+        nameSplit = json.split('_')
+        if len(nameSplit[1].split('-')) > 1:
+            if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) > runRange:
+                runRange = float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0])
+                bestJson = json
+    for json in jsonFileFiltered:
+        nameSplit = json.split('_')
+        if len(nameSplit[1].split('-')) > 1:
+            if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) == runRange:
+                bestJsons.append(json)
+    versionNumber = 0
+    ultimateJson = ''
+    if len(bestJsons) == 1:
+        ultimateJson = bestJsons[0]
+    else:
+        for bestJson in bestJsons:
+            nameSplit = bestJson.split('_')
+            if nameSplit[len(nameSplit) - 1] != 'JSON.txt':
+                versionString =  nameSplit[len(nameSplit) - 1].split('.')[0]
+                if len(versionString) == 2: 
+                    currentVersionNumber = float(versionString[1])
+                    if currentVersionNumber > versionNumber:
+                        versionNumber = currentVersionNumber
+                        ultimateJson = bestJson 
+                else:
+                    currentVersionNumber = float(versionString[1 : ])
+                    if currentVersionNumber > versionNumber:
+                        versionNumber = currentVersionNumber
+                        ultimateJson = bestJson 
+    os.system('rm CertList.txt')
+    os.system('rm jsonList.txt')
+    os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/' + ultimateJson + ' -O ' + ultimateJson)
+    return ultimateJson
+
+
+def SpecialStringModifier(inputString, specialStringSplitList, specialStringReplaceList):
+    if len(specialStringSplitList):
+        for member in specialStringSplitList:
+            if member in inputString:
+                if inputString.split(member)[0] == '':
+                    inputString = inputString.split(member)[1]
+                else:
+                    inputString = inputString.split(member)[0]            
+    if len(specialStringReplaceList):
+        for member in specialStringReplaceList:
+            if member[0] in inputString: 
+                tmp = inputString.replace(member[0],member[1])   
+                inputString = tmp 
+    return inputString
 
 def GetCommandLineString():
     # Return string of all arguments specified on the command line
@@ -71,7 +202,8 @@ def GetListOfRootFiles(Directory):
     return fileList  
  
 
-def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
+#It generates the condor.sub file for each dataset. 
+def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA, jsonFile):
     os.system('touch ' + Directory + '/condor.sub')
     SubmitFile = open(Directory + '/condor.sub','r+w')
     cmsRunExecutable = os.popen('which cmsRun').read()
@@ -90,7 +222,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
                 userProxy = '/tmp/x509up_u' + str(userId)
                 SubmitFile.write('x509userproxy = ' + userProxy + '\n')
                 SubmitFile.write('should_transfer_files   = YES\n')
-                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy + '\n')
+                if jsonFile == '':
+                    SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy + '\n')
+                else:    
+                    SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy.strip('\n') + ',' + str(jsonFile) + '\n')
             else:
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py\n')
         elif CondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
@@ -101,18 +236,27 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
             SubmitFile.write(CondorSubArgumentsSet[argument].keys()[0] + ' = ' + CondorSubArgumentsSet[argument].values()[0] + '\n')
     SubmitFile.close()
 
-
-def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
+#It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.  
+def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     os.system('touch ' + Directory + '/config_cfg.py')
     ConfigFile = open(Directory + '/config_cfg.py','r+w')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')        
     ConfigFile.write('import OSUT3Analysis.DBTools.osusub_cfg as osusub\n')
     ConfigFile.write('import re\n')
     ConfigFile.write('import userConfig_' + Label + '_cfg as pset\n')
+    if jsonFile != '':
+        ConfigFile.write('import FWCore.PythonUtilities.LumiList as LumiList\n')
+        ConfigFile.write('myLumis = LumiList.LumiList(filename = \'' + str(jsonFile) + '\').getCMSSWString().split(\',\')\n')
     ConfigFile.write('\n')
     if not Generic:
-        if not SkimChannelNames:
+        if len(SkimChannelNames) == 0:
             SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory) 
+            for channelName in SkimChannelNames:
+                if not channelName == '':
+                    if not os.path.exists(Directory + '/' + channelName):
+                        os.system('mkdir ' + Directory + '/' + channelName )
+                    StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory + '/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
+                    ConfigFile.write(StringToAdd)
         else:
             for channelName in SkimChannelNames:
                 if not channelName == '':
@@ -132,6 +276,9 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
         if EventsPerJob < 0:
             ConfigFile.write('pset.process.maxEvents.input = cms.untracked.int32 (' + str(EventsPerJob) + ')\n')  
     #If there are no input datasets, one needs a positive MaxEvents.
+    if jsonFile != '':
+        ConfigFile.write('pset.process.source.lumisToProcess = cms.untracked.VLuminosityBlockRange()\n')
+        ConfigFile.write('pset.process.source.lumisToProcess.extend(myLumis)\n')
     if EventsPerJob > 0:
         ConfigFile.write('pset.process.maxEvents.input = cms.untracked.int32 (' + str(EventsPerJob) + ')\n')
     ConfigFile.write('process = pset.process\n')
@@ -148,12 +295,9 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
     ConfigFile.close()
     return SkimChannelNames
 
+#This is a generic function to get the dataset information via das_client.py. 
 def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
     os.system('das_client.py --query="file dataset=' + Dataset + '" --limit 0 > ' + AAAFileList) 
-    if lxbatch:
-        os.system('sed -i \'s/^/root:\/\/xrootd.ba.infn.it\//g\' ' + datasetInfoName) 
-    else:
-	os.system('sed -i \'s/^/root:\/\/cmsxrootd.fnal.gov\//g\' ' + datasetInfoName)
     inputFileList = open(AAAFileList, "r") 
     inputFiles = inputFileList.read().split('\n')  
     for f in reversed(range(len(inputFiles))): 
@@ -166,7 +310,7 @@ def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSe
         if lxbatch:
             f = "root://xrootd.ba.infn.it/" + f
         else: 
-            f = "root://cmsxrootd.fnal.gov/" + f 
+            f = "root://cms-xrd-global.cern.ch/" + f 
         text += '"' + f + '",\n'  
     text += ']  \n'  
     text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'          
@@ -177,6 +321,7 @@ def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSe
     fnew.write(text)
     fnew.close()  
     
+#It is the function which generates the list of input files for a given dataset type.
 def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     numberOfFiles = -1
     datasetRead = {}
@@ -185,7 +330,8 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
     AAAFileList = Directory + '/AAAFileList.txt'
     os.system('touch ' + datasetInfoName)  
-    os.system('touch ' + AAAFileList)  
+    if UseAAA:
+        os.system('touch ' + AAAFileList)  
     if FileType == 'OSUT3Ntuple' and UseAAA:
          AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
     if FileType == 'UserDir':
@@ -237,15 +383,14 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             if not ".root" in inputFiles[f]: 
                 del inputFiles[f]  
         datasetRead['numberOfFiles'] = len(inputFiles)  
-        datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset 
+        datasetRead['realDatasetName'] = 'FilesInList:' + Dataset 
         text = 'listOfFiles = [  \n' 
+        #Please give the absolute paths of the files like /data/user/***/condor/dir or /store/....
         if not UseAAA:
             for f in inputFiles:
                 if remoteAccessT3:
                     f = "root://cms-0.mps.ohio-state.edu:1094/" + f
-                else: 
-                    if isInCondorDir:
-                        f = SubmissionDir + "/" + f  
+                else:    
                     f = "file:" + f 
                 text += '"' + f + '",\n'  
             text += ']  \n'  
@@ -274,18 +419,20 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
         NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
         InitializeAAA = ""
-        if NTupleExistCheck == 'Dataset does not exist on the Tier 3!': 
-            InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
-            if InitializeAAA == "y":
-                AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
-                datasetRead['useAAA'] = True
-            else:
-                return 
+        if NTupleExistCheck == 'Dataset does not exist on the Tier 3!' or NTupleExistCheck == '': 
+            #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
+            InitializeAAA = "y"
+            os.system('touch ' + AAAFileList)  
+            AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
+            datasetRead['useAAA'] = True
+            #else:
+            #    return 
         if RunOverSkim:
             SkimModifier(Label, Directory)
+            InitializeAAA = ""
         sys.path.append(Directory)
         exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
-        if InitializeAAA == "":
+        if InitializeAAA == "" and not RunOverSkim:
             status = datasetInfo.status
             continueForNonPresentDataset = True
             if not status == 'present':
@@ -370,7 +517,10 @@ def SkimModifier(Label, Directory):
     add += 'skimNumberOfEvents = ' + str(SkimNumberOfEvents) + '\n'
     fnew = open(infoFileTest, "w")
     fnew.write(orig + add)
-    fnew.close()  
+    fnew.close()
+    os.system('rm ' + Directory + '/datasetInfo_' + Label + '_cfg.py')  
+    os.system('rm ' + Directory + '/datasetInfo_' + Label + '_cfg_beforeChanges.py')  
+    os.system('mv ' + Directory + '/datasetInfo_' + Label + '_cfg-test.py ' + Directory + '/datasetInfo_' + Label + '_cfg.py')  
 
 
 
@@ -450,120 +600,132 @@ if 'interactive' in hostname:
 #                End of Setup stage, will begin to submit jobs                #
 ###############################################################################
 
-#Loop over the datasets in split_datasets.
-if split_datasets:
-    SubmissionDir = os.getcwd()
-    SkimChannelNames = []
-    for dataset in split_datasets:
-        EventsPerJob = -1 
-        DatasetName = dataset
-        NumberOfJobs = arguments.NumberOfJobs
-        DatasetRead = {}
-        MaxEvents = arguments.MaxEvents
-        Config =  arguments.Config
-        if arguments.localConfig:	
-            NumberOfJobs = nJobs[dataset]
-            DatasetName = dataset_names[dataset]
-            MaxEvents = maxEvents[dataset]
-            Config = config_file
-            GetCompleteOrderedArgumentsSet(InputCondorArguments)
-        if arguments.FileType == 'OSUT3Ntuple': 
-            DatasetName = dataset_names[dataset]
-            WorkDir = CondorDir + '/' + str(dataset)
-            if os.path.exists(WorkDir): 
-                print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'  
-                continue 
-            else: 
-                os.system('mkdir ' + WorkDir )
-        else:
-            WorkDir = CondorDir 
-
-        if '/' in dataset:
-	    if dataset.split('/')[0] == "":
-                dataset = dataset.split('/')[1]
-            else:
-                dataset = dataset.split('/')[0]
-            if '_' in dataset:
-	        if dataset.split('_')[0] == "":
-                    dataset = dataset.split('_')[1]
+#Check whether the user wants to resubmit the failed condor jobs.
+if not arguments.Resubmit:
+    #Loop over the datasets in split_datasets.
+    if split_datasets:
+        SubmissionDir = os.getcwd()
+        SkimChannelNames = []
+        for dataset in split_datasets:
+            EventsPerJob = -1 
+            DatasetName = dataset
+            NumberOfJobs = arguments.NumberOfJobs
+            DatasetRead = {}
+            MaxEvents = arguments.MaxEvents
+            Config =  arguments.Config
+            if arguments.localConfig:	
+                NumberOfJobs = nJobs[dataset]
+                if not arguments.Generic:
+                     DatasetName = dataset_names[dataset]
                 else:
-                    dataset = dataset.split('_')[0]
-	        if '-' in dataset:    
-                    if dataset.split('-')[0] == "":
-                        dataset = dataset.split('-')[1]
-                    else:
-                        dataset = dataset.split('-')[0]
-        crossSection = -1
-        if crossSections.has_key(dataset):
-            crossSection = crossSections[dataset]       
-        elif arguments.crossSection != "":
-            crossSection = arguments.crossSection
-        DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, UseAAA, crossSection)
-        NumberOfFiles = int(DatasetRead['numberOfFiles'])
-        UseAAA = DatasetRead['useAAA']
-        if NumberOfJobs > NumberOfFiles:
-            NumberOfJobs = NumberOfFiles
-            NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
-        if MaxEvents > 0:
-	    EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs)) 	
-
-        RealMaxEvents = EventsPerJob*NumberOfJobs
-        userConfig = 'userConfig_' + dataset + '_cfg.py'
+                     DatasetName = dataset 
+                MaxEvents = maxEvents[dataset]
+                Config = config_file
+                GetCompleteOrderedArgumentsSet(InputCondorArguments)
+            if arguments.FileType == 'OSUT3Ntuple': 
+                if dataset_names.has_key(dataset):
+                    DatasetName = dataset_names[dataset]
+                else:
+                    print str(dataset) + ' has not been registered on T3. Will try to find it on DAS.'
+                WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
+                if os.path.exists(WorkDir): 
+                    print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'  
+                    continue 
+                else: 
+                    os.system('mkdir ' + WorkDir )
+            else:
+                WorkDir = CondorDir 
+       
+            dataset = SpecialStringModifier(dataset, ['/','.'], [['-','_']])
+            crossSection = -1
+            if crossSections.has_key(dataset):
+                crossSection = crossSections[dataset]       
+            elif arguments.crossSection != "":
+                crossSection = arguments.crossSection
+            DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, UseAAA, crossSection)
+            NumberOfFiles = int(DatasetRead['numberOfFiles'])
+            UseAAA = DatasetRead['useAAA']
+            if NumberOfJobs > NumberOfFiles:
+                NumberOfJobs = NumberOfFiles
+            if not arguments.localConfig:     
+                NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
+            if MaxEvents > 0:
+    	        EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs)) 	
+    
+            RealMaxEvents = EventsPerJob*NumberOfJobs
+            userConfig = 'userConfig_' + dataset + '_cfg.py'
+            os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
+            jsonFile = ''
+            if arguments.localConfig: 
+                if(types[dataset] == 'data'):
+                    jsonFile = getLatestJsonFile() 
+                    os.system('mv ' + jsonFile + ' ' + WorkDir + '/')
+            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,dataset, SkimChannelNames, jsonFile)
+    
+    	    if lxbatch:
+    	        MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
+    	    else:
+                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, UseAAA, jsonFile)
+            if not arguments.NotToExecute:
+                os.chdir(WorkDir)
+                if RealMaxEvents > 0 : 
+                    print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on ' + str(RealMaxEvents)  + ' events in ' + str(DatasetRead['numberOfFiles']) + ' files for ' + str(dataset) + ' dataset.\n'
+                else:
+                    print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on all events in ' + str(DatasetRead['numberOfFiles'])  +' files for ' + str(dataset) + ' dataset.\n'
+                if lxbatch: 
+            	    os.syetem('./lxbatchSub.sh')
+    	        else:
+            	    os.system('condor_submit condor.sub')
+    	        os.chdir(SubmissionDir)
+            else:
+                print 'Configuration files created for ' + str(dataset) + ' dataset but no jobs submitted.\n'
+    	        os.chdir(SubmissionDir)
+    #If there are no input datasets specified and the user still continues.
+    else:
+        SkimChannelNames = [] 
+        NumberOfJobs = arguments.NumberOfJobs
+        MaxEvents = -1
+        Label = arguments.Label
+        if arguments.MaxEvents < 0:
+            print "Maximum number of events is negative and no input dataset is specified, Aborting!"
+            sys.exit()
+        else:
+            MaxEvents = int(arguments.MaxEvents)
+        EventsPerJob = int(math.ceil(float(MaxEvents)/float(NumberOfJobs)) )
+        #Make sure at last the number of total events is larger than the MaxEvents.
+        RealMaxEvents = EventsPerJob*int(NumberOfJobs)
+        Config =  arguments.Config
+        SubmissionDir = os.getcwd()
+        WorkDir = CondorDir
+        if arguments.localConfig:	
+            GetCompleteOrderedArgumentsSet(InputCondorArguments)
+        userConfig = 'userConfig_' + Label + '_cfg.py'
         os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
-        SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,dataset, SkimChannelNames)
-
-	if lxbatch:
-	    MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
-	else:
-            MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, UseAAA)
+         
+        MakeSpecificConfig('',WorkDir,Label, SkimChannelNames,'')
+    
+        if lxbatch:
+            MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
+        else:
+            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, UseAAA,'')
         if not arguments.NotToExecute:
             os.chdir(WorkDir)
-            if RealMaxEvents > 0 : 
-                print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on ' + str(RealMaxEvents)  + ' events in ' + str(DatasetRead['numberOfFiles']) + ' files for ' + str(dataset) + ' dataset.\n'
-            else:
-       		print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on all events in ' + str(DatasetRead['numberOfFiles'])  +' files for ' + str(dataset) + ' dataset.\n'
+            print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'
             if lxbatch: 
-        	os.syetem('./lxbatchSub.sh')
-	    else:
-        	os.system('condor_submit condor.sub')
-	    os.chdir(SubmissionDir)
+                os.syetem('./lxbatchSub.sh')
+    	    else:
+                os.system('condor_submit condor.sub')
+    	    os.chdir(SubmissionDir)
         else:
-            print 'Configuration files created for ' + str(dataset) + ' dataset but no jobs submitted.\n'
-	    os.chdir(SubmissionDir)
-#If there are no input datasets specified and the user still continues.
+            print 'Configuration files created for ' + str(Config) + '  but no jobs submitted.\n'
 else:
-    NumberOfJobs = arguments.NumberOfJobs
-    MaxEvents = -1
-    Label = arguments.Label
-    if arguments.MaxEvents < 0:
-        print "Maximum number of events is negative and no input dataset is specified, Aborting!"
-        sys.exit()
-    else:
-        MaxEvents = int(arguments.MaxEvents)
-    EventsPerJob = int(math.ceil(float(MaxEvents)/float(NumberOfJobs)) )
-    #Make sure at last the number of total events is larger than the MaxEvents.
-    RealMaxEvents = EventsPerJob*int(NumberOfJobs)
-    Config =  arguments.Config
-    SubmissionDir = os.getcwd()
-    WorkDir = CondorDir
-    if arguments.localConfig:	
-        GetCompleteOrderedArgumentsSet(InputCondorArguments)
-    userConfig = 'userConfig_' + dataset + '_cfg.py'
-    os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
-    
-    MakeSpecificConfig('',WorkDir,dataset, SkimChannelNames)
-
-    if lxbatch:
-        MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
-    else:
-        MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, UseAAA)
-    if not arguments.NotToExecute:
-        os.chdir(WorkDir)
-        print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'
-        if lxbatch: 
-            os.syetem('./lxbatchSub.sh')
-	else:
-            os.system('condor_submit condor.sub')
-	os.chdir(SubmissionDir)
-    else:
-        print 'Configuration files created for ' + str(Config) + '  but no jobs submitted.\n'
+    if split_datasets:
+        SubmissionDir = os.getcwd()
+        for dataset in split_datasets: 
+            WorkDir = CondorDir + '/' + str(dataset)
+            if os.path.exists(WorkDir + '/condor_resubmit.sub'):
+                os.chdir(WorkDir)
+                print '################ Resubmit failed jobs for ' + str(dataset) + ' dataset #############'  
+                os.system('condor_submit condor_resubmit.sub')
+                os.chdir(SubmissionDir)
+        

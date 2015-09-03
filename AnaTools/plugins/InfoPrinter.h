@@ -6,6 +6,8 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 
+#include "FWCore/Common/interface/TriggerNames.h"
+
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
@@ -37,6 +39,7 @@ class InfoPrinter : public edm::EDAnalyzer
     bool printTriggerFlags ();
     bool printVetoTriggerFlags ();
     bool printValuesToPrint ();
+    bool printAllTriggers (const edm::Event &);
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -44,6 +47,7 @@ class InfoPrinter : public edm::EDAnalyzer
     // be.
     ////////////////////////////////////////////////////////////////////////////
     unsigned getMaxWidth (const vector<string> &) const;
+    unsigned getMaxWidth (const map<string, bool> &) const;
     unsigned getMaxWidth (const Cuts &) const;
     unsigned getMaxWidth (const ValuesToPrint &) const;
     ////////////////////////////////////////////////////////////////////////////
@@ -70,6 +74,7 @@ class InfoPrinter : public edm::EDAnalyzer
     bool                  printTriggerDecision_;
     bool                  printTriggerFlags_;
     bool                  printVetoTriggerFlags_;
+    bool                  printAllTriggers_;
     edm::VParameterSet    valuesToPrint_;
     bool                  firstEvent_;
     unsigned              counter_;
@@ -100,6 +105,7 @@ class InfoPrinter : public edm::EDAnalyzer
     unsigned maxTriggerWidth_;
     unsigned maxVetoTriggerWidth_;
     unsigned maxValueWidth_;
+    unsigned maxAllTriggerWidth_;
     ////////////////////////////////////////////////////////////////////////////
 };
 

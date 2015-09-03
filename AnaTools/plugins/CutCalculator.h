@@ -32,6 +32,7 @@ class CutCalculator : public edm::EDProducer
     string getObjToGet (string);
     vector<string> splitString (const string &) const;
     bool evaluateTriggers (const edm::Event &) const;
+    bool evaluateTriggerFilters (const edm::Event &) const;
     bool setEventFlags () const;
     ////////////////////////////////////////////////////////////////////////////
 
@@ -50,6 +51,7 @@ class CutCalculator : public edm::EDProducer
     Cuts                   unpackedCuts_;
     vector<string>         unpackedTriggersToVeto_;
     vector<string>         unpackedTriggers_;
+    vector<string>         unpackedTriggerFilters_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Object collections which can be gotten from the event.

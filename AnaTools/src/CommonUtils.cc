@@ -1,5 +1,12 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
+/**
+ * Splits the concatenated object label into a vector of individual labels.
+ *
+ * @param  inputLabel string giving the concatenation of multiple object labels
+ *         with hyphens between
+ * @return vector of strings corresponding to the individual object labels
+ */
 vector<string>
 anatools::getSingleObjects (string inputLabel)
 {
@@ -16,6 +23,12 @@ anatools::getSingleObjects (string inputLabel)
   return singleObjects;
 }
 
+/**
+ * Concatenates the input strings with hyphens between.
+ *
+ * @param  inputCollections vector of strings to concatenate
+ * @return concatenation of input strings with hyphens between
+ */
 string
 anatools::concatenateInputCollection (const vector<string> &inputCollections)
 {
@@ -29,6 +42,12 @@ anatools::concatenateInputCollection (const vector<string> &inputCollections)
   return plural (catInputCollection);
 }
 
+/**
+ * Capitalizes the input string without modifying the original string.
+ *
+ * @param  input string to capitalize
+ * @return capitalized string
+ */
 string
 anatools::capitalize (string input)
 {
@@ -36,6 +55,12 @@ anatools::capitalize (string input)
   return input;
 }
 
+/**
+ * Removes a trailing 's' from a string without modifying the original string.
+ *
+ * @param  input string from which to remove the 's'
+ * @return string with a trailing 's' removed
+ */
 string
 anatools::singular (string input)
 {
@@ -45,6 +70,12 @@ anatools::singular (string input)
     return input;
 }
 
+/**
+ * Appends an 's' to a string without modifying the original string.
+ *
+ * @param  input string to which to append the 's'
+ * @return string with the appended 's'
+ */
 string
 anatools::plural (string input)
 {
@@ -54,36 +85,107 @@ anatools::plural (string input)
     return input + "s";
 }
 
+/**
+ * Removes whitespace from the left of a string, modifying original string.
+ *
+ * @param  s string from which to remove whitespace
+ * @return reference to the original string
+ */
 string &
 anatools::ltrim (string &s)
 {
   return s.erase (0, s.find_first_not_of (" \t\f\n\r"));
 }
 
+/**
+ * Removes whitespace from the right of a string, modifying original string.
+ *
+ * @param  s string from which to remove whitespace
+ * @return reference to the original string
+ */
 string &
 anatools::rtrim (string &s)
 {
   return s.erase (s.find_last_not_of (" \t\f\n\r") + 1);
 }
 
+/**
+ * Removes whitespace from both sides of a string, modifying original string.
+ *
+ * @param  s string from which to remove whitespace
+ * @return reference to the original string
+ */
 string &
 anatools::trim (string &s)
 {
   return ltrim (rtrim (s));
 }
 
+/**
+ * Returns whether the first members of the tuples are in ascending order.
+ *
+ * This function is meant to be used with std::sort to sort a vector of tuples
+ * so that the first members of the tuples are in ascending order.
+ *
+ * @param  a first of two tuples to compare
+ * @param  b second of two tuples to compare
+ * @return boolean representing whether the first members of the two tuples are
+ *         in ascending order
+ */
 bool
-anatools::firstOfPairAscending (pair<size_t, string> a, pair<size_t, string> b)
+anatools::firstOfTupleAscending (tuple<size_t, size_t, string> a, tuple<size_t, size_t, string> b)
 {
-  return (a.first < b.first);
+  return (get<0> (a) < get<0> (b));
 }
 
+/**
+ * Returns whether the first members of the tuples are in descending order.
+ *
+ * This function is meant to be used with std::sort to sort a vector of tuples
+ * so that the first members of the tuples are in descending order.
+ *
+ * @param  a first of two tuples to compare
+ * @param  b second of two tuples to compare
+ * @return boolean representing whether the first members of the two tuples are
+ *         in descending order
+ */
 bool
-anatools::collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> > a, pair<string, tuple<unsigned, unsigned, void *> > b)
+anatools::firstOfTupleDescending (tuple<size_t, size_t, string> a, tuple<size_t, size_t, string> b)
 {
-  return (get<0> (a.second) < get<0> (b.second));
+  return (get<0> (a) > get<0> (b));
 }
 
+/**
+ * Returns whether the collection indices are in ascending order.
+ *
+ * This function is meant to be used with std::sort to sort a vector so that
+ * the collection indices are in ascending order. The collection index is the
+ * first member of the tuple in the input pairs. This sorting is used in
+ * determining which combinations of objects should be ignored to avoid double
+ * counting in ValueLookupTree.
+ *
+ * @param  a first of two objects to compare
+ * @param  b second of two objects to compare
+ * @return boolean representing whether the collection indices of the two
+ *         objects are in ascending order
+ */
+bool
+anatools::collectionIndexAscending (pair<string, DressedObject> a, pair<string, DressedObject> b)
+{
+  return (a.second.collectionIndex < b.second.collectionIndex);
+}
+
+/**
+ * Retrieves all required collections from the event.
+ *
+ * @param  objectsToGet set of strings specifying which collections are
+ *         required
+ * @param  collections edm::ParameterSet giving the input tags for the
+ *         collections
+ * @param  handles structure containing the edm::Handle objects in which the
+ *         collections are to be stored
+ * @param  event edm::Event from which to get the collections
+ */
 void
 anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, const edm::ParameterSet &collections, Collections &handles, const edm::Event &event)
 {
@@ -99,6 +201,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "events")          &&  collections.exists  ("events"))          getCollection  (collections.getParameter<edm::InputTag>  ("events"),          handles.events,          event);
   if  (VEC_CONTAINS  (objectsToGet,  "genjets")         &&  collections.exists  ("genjets"))         getCollection  (collections.getParameter<edm::InputTag>  ("genjets"),         handles.genjets,         event);
   if  (VEC_CONTAINS  (objectsToGet,  "jets")            &&  collections.exists  ("jets"))            getCollection  (collections.getParameter<edm::InputTag>  ("jets"),            handles.jets,            event);
+  if  (VEC_CONTAINS  (objectsToGet,  "basicjets")       &&  collections.exists  ("basicjets"))       getCollection  (collections.getParameter<edm::InputTag>  ("basicjets"),       handles.basicjets,       event);
   if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")     &&  collections.exists  ("mcparticles"))     getCollection  (collections.getParameter<edm::InputTag>  ("mcparticles"),     handles.mcparticles,     event);
   if  (VEC_CONTAINS  (objectsToGet,  "mets")            &&  collections.exists  ("mets"))            getCollection  (collections.getParameter<edm::InputTag>  ("mets"),            handles.mets,            event);
   if  (VEC_CONTAINS  (objectsToGet,  "muons")           &&  collections.exists  ("muons"))           getCollection  (collections.getParameter<edm::InputTag>  ("muons"),           handles.muons,           event);
@@ -118,6 +221,17 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
           getCollection (collection, handles.uservariables.back (), event);
         }
     }
+  if  (VEC_CONTAINS  (objectsToGet,  "eventvariables")   &&  collections.exists  ("eventvariables"))
+    {
+      handles.eventvariables.clear ();
+      for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("eventvariables"))
+        {
+          handles.eventvariables.resize (handles.eventvariables.size () + 1);
+          getCollection (collection, handles.eventvariables.back (), event);
+        }
+    }
+
+
 
 
   if (firstEvent)
@@ -134,6 +248,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     clog << "INFO: did not retrieve genjets collection from the event." << endl;
   if (firstEvent && !handles.jets.isValid ())
     clog << "INFO: did not retrieve jets collection from the event." << endl;
+  if (firstEvent && !handles.basicjets.isValid ())
+    clog << "INFO: did not retrieve basicjets collection from the event." << endl;
   if (firstEvent && !handles.mcparticles.isValid ())
     clog << "INFO: did not retrieve mcparticles collection from the event." << endl;
   if (firstEvent && !handles.mets.isValid ())
@@ -267,6 +383,14 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   #include "Reflex/Object.h"
   #include "Reflex/Type.h"
 
+/**
+ * Returns the value of a member of an object.
+ *
+ * @param  type string giving the type of the object
+ * @param  obj void pointer to the object
+ * @param  member string giving the member, data or function, to evaluate
+ * @return value of the member of the given object
+ */
   double
   anatools::getMember (const string &type, const void * const obj, const string &member)
   {
@@ -277,27 +401,28 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 
     try
       {
-        const Reflex::Object &retObj = getMember (t, *o, member, memberType);
+        const Reflex::Object * const retObj = getMember (t, *o, member, memberType);
         if (memberType == "float")
-          value = Reflex::Object_Cast<float> (retObj);
+          value = Reflex::Object_Cast<float> (*retObj);
         else if (memberType == "double")
-          value = Reflex::Object_Cast<double> (retObj);
+          value = Reflex::Object_Cast<double> (*retObj);
         else if (memberType == "long double")
-          value = Reflex::Object_Cast<long double> (retObj);
+          value = Reflex::Object_Cast<long double> (*retObj);
         else if (memberType == "char")
-          value = Reflex::Object_Cast<char> (retObj);
+          value = Reflex::Object_Cast<char> (*retObj);
         else if (memberType == "int")
-          value = Reflex::Object_Cast<int> (retObj);
+          value = Reflex::Object_Cast<int> (*retObj);
         else if (memberType == "unsigned")
-          value = Reflex::Object_Cast<unsigned> (retObj);
+          value = Reflex::Object_Cast<unsigned> (*retObj);
         else if (memberType == "bool")
-          value = Reflex::Object_Cast<bool> (retObj);
+          value = Reflex::Object_Cast<bool> (*retObj);
         else if (memberType == "unsigned int")
-          value = Reflex::Object_Cast<unsigned int> (retObj);
+          value = Reflex::Object_Cast<unsigned int> (*retObj);
         else if (memberType == "unsigned short int")
-          value = Reflex::Object_Cast<unsigned short int> (retObj);
+          value = Reflex::Object_Cast<unsigned short int> (*retObj);
         else
           clog << "WARNING: \"" << member << "\" has unrecognized type \"" << memberType << "\"" << endl;
+        delete retObj;
       }
     catch (...)
       {
@@ -308,7 +433,18 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     return value;
   }
 
-  const Reflex::Object &
+/**
+ * Helper function that returns a member of an object as a Reflex::Object.
+ *
+ * @param  t Reflex::Type corresponding to the type of the object
+ * @param  o Reflex::Object corresponding to the object
+ * @param  member string giving the member, data or function, to evaluate
+ * @param  memberType string in which the type of the retrieved member is
+ *         stored
+ * @return Reflex::Object corresponding to the value of the member of the given
+ *         object
+ */
+  const Reflex::Object * const
   anatools::getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType)
   {
     string typeName = t.Name (Reflex::FINAL | Reflex::SCOPED);
@@ -324,24 +460,28 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
       {
         Reflex::Type derefType = Reflex::Type::ByName (typeName.substr (0, asterisk) + typeName.substr (asterisk + 1));
         void *obj = o.Address ();
-        Reflex::Object *derefObj = new Reflex::Object (derefType, (void *) *((void **) obj));
-        return getMember (derefType, *derefObj, member, memberType);
+        Reflex::Object derefObj (derefType, (void *) *((void **) obj));
+        return getMember (derefType, derefObj, member, memberType);
       }
     if (dot != string::npos)
       {
         try
           {
-            const Reflex::Object &subObj = getMember (t, o, member.substr (0, dot), memberType);
+            const Reflex::Object * const subObj = getMember (t, o, member.substr (0, dot), memberType);
             Reflex::Type subType = Reflex::Type::ByName (memberType);
             string subMember = member.substr (dot + 1);
-            return getMember (subType, subObj, subMember, memberType);
+            const Reflex::Object * const retObj = getMember (subType, *subObj, subMember, memberType);
+            delete subObj;
+            return retObj;
           }
         catch (...)
           {
-            const Reflex::Object &subObj = getMember (t, o, member.substr (0, dot), memberType);
+            const Reflex::Object * const subObj = getMember (t, o, member.substr (0, dot), memberType);
             Reflex::Type subType = Reflex::Type::ByName (memberType);
             string subMember = (member.substr (0, dot) == "operator->" ? "" : "operator->.") + member.substr (dot + 1);
-            return getMember (subType, subObj, subMember, memberType);
+            const Reflex::Object * const retObj = getMember (subType, *subObj, subMember, memberType);
+            delete subObj;
+            return retObj;
           }
       }
 
@@ -363,7 +503,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
           {
             memberType = dataMemberTypeName;
             Reflex::Object *retObj = new Reflex::Object (o.Get (member));
-            return (*retObj);
+            return retObj;
           }
         else if (functionMemberTypeName != "")
           {
@@ -392,13 +532,22 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     throw 0;
   }
 
-  const Reflex::Object &
+/**
+ * Invokes a function member of an object.
+ *
+ * @param  returnType type which the function returns
+ * @param  o Reflex::Object corresponding to the object whose function member
+ *         is to be called
+ * @param  member string giving the name of the function member
+ * @return Reflex::Object corresponding to what the function returned
+ */
+  const Reflex::Object * const
   anatools::invoke (const string &returnType, const Reflex::Object &o, const string &member)
   {
     Reflex::Type t = Reflex::Type::ByName (returnType);
     Reflex::Object *value = new Reflex::Object (t.Construct ());
     o.Invoke (member, value);
-    return (*value);
+    return value;
   }
 #endif
 
@@ -432,6 +581,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 #if IS_VALID(jets)
   string  anatools::getObjectType  (const  TYPE(jets)            &obj)  {  return  "jet";            }
   string  anatools::getObjectClass  (const  TYPE(jets)            &obj)  {  return  TYPE_STR(jets);            }
+#endif
+#if IS_VALID(basicjets) && DATA_FORMAT != MINI_AOD
+  string  anatools::getObjectType   (const  TYPE(basicjets)            &obj)  {  return  "basicjet";            }
+  string  anatools::getObjectClass  (const  TYPE(basicjets)            &obj)  {  return  TYPE_STR(basicjets);            }
 #endif
 #if IS_VALID(mcparticles)
   string  anatools::getObjectType  (const  TYPE(mcparticles)     &obj)  {  return  "mcparticle";     }
@@ -486,3 +639,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 // user-defined cases
 string anatools::getObjectType (const VariableProducerPayload& obj){ return "uservariable"; }
 string anatools::getObjectClass (const VariableProducerPayload& obj){ return "VariableProducerPayload"; }
+
+string anatools::getObjectType (const EventVariableProducerPayload& obj){ return "eventvariable"; }
+string anatools::getObjectClass (const EventVariableProducerPayload& obj){ return "EventVariableProducerPayload"; }

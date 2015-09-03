@@ -110,6 +110,8 @@ ValueLookupTree::evaluate ()
   if (!values_.size ())
     {
       evaluationError_ = false;
+      uservariablesToDelete_.clear ();
+      eventvariablesToDelete_.clear ();
       for (unsigned i = 0; i < nCombinations_.at (0); i++)
         {
           objIterators_.clear ();
@@ -120,14 +122,31 @@ ValueLookupTree::evaluate ()
             {
               unsigned j = collection - inputCollections_.begin (),
                        localIndex = getLocalIndex (i, j);
-              objs.insert ({*collection, make_tuple (j, localIndex, getObject (*collection, localIndex))});
+              objs.insert ({*collection, {j, localIndex, getObject (*collection, localIndex)}});
               keys.insert (*collection);
             }
-          if (isUniqueCase (objs, keys))
+          if (isUniqueCase (objs, keys)) { 
             values_.push_back (evaluate_ (root_, objs));
-          else
+	    if (verbose_) { 
+	      cout << "ValueLookupTree::evaluate is adding the Leaf: " << endl;
+	      cout << "  " << evaluate_ (root_, objs) << endl;
+	      cout << "  printNode = " << endl;
+	      cout << "  " << printNode(root_) << endl;
+	      cout << "  printValue = " << endl;
+	      cout << "  " << printValue(root_) << endl;
+	    }
+
+	  } else
             values_.push_back (numeric_limits<int>::min ());
         }
+#if IS_VALID(uservariables)
+      for (auto &uservariable : uservariablesToDelete_)
+        delete ((TYPE(uservariables) *) uservariable);
+#endif
+#if IS_VALID(eventvariables)
+      for (auto &eventvariable : eventvariablesToDelete_)
+        delete ((TYPE(eventvariables) *) eventvariable);
+#endif
     }
 
   return values_;
@@ -141,6 +160,15 @@ ValueLookupTree::getLocalIndex (unsigned globalIndex, unsigned collectionIndex) 
   // Returns the local index within the primitive collection indexed by the
   // second argument, given the global index within the composite collection of
   // this tree.
+  // The local index is the index within a single object collection.
+  // The collection index specifies the collection.  
+  // The global index is unique for each combination of objects.
+  // Example:  invMass(muon1,muon2).  In an event with 3 muons, there would be 
+  // 9 combinations:
+  // Global index:                 0  1  2  3  4  5  6  7  8
+  // Local index for collection 0: 0  0  0  1  1  1  2  2  2
+  // Local index for collection 1: 0  1  2  0  1  2  0  1  2 
+  // The function isUniqueCase() will return true only for global indices: 1, 2, 5. 
   //////////////////////////////////////////////////////////////////////////////
   if (collectionIndex + 1 != inputCollections_.size ())
     return ((globalIndex / nCombinations_.at (collectionIndex + 1)) % collectionSizes_.at (collectionIndex));
@@ -156,6 +184,8 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
   // Returns the global indices within the composite collection named by the
   // third argument, given a local index within the primitive collection named
   // by the second argument.
+  // Using the example from above (in the comments to getLocalIndices()), 
+  // the call to getGlobalIndices(0, "muon", "muon-muon") would return the set {0,1,2,3,6}.  
   //////////////////////////////////////////////////////////////////////////////
   vector<string> singleObjects = anatools::getSingleObjects (inputLabel);
   set<unsigned> globalIndices;
@@ -214,6 +244,8 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->events->size ();
   else if (EQ_VALID(name,genjets))
     return handles_->genjets->size ();
+  else if (EQ_VALID(name,basicjets))
+    return handles_->basicjets->size ();
   else if (EQ_VALID(name,jets))
     return handles_->jets->size ();
   else if (EQ_VALID(name,mcparticles))
@@ -244,6 +276,9 @@ ValueLookupTree::getCollectionSize (const string &name) const
     //    cout << "\t" << isFound << endl;
     return 1;  // FIXME
   }
+  else if (EQ_VALID(name,eventvariables)){
+    return 1;  // FIXME
+  }
   return 0;
 }
 
@@ -257,6 +292,7 @@ bool
   else if (EQ_VALID(name,electrons))       isFound = handles_->electrons.isValid();
   else if (EQ_VALID(name,events))          isFound = handles_->events.isValid();
   else if (EQ_VALID(name,genjets))         isFound = handles_->genjets.isValid();
+  else if (EQ_VALID(name,basicjets))       isFound = handles_->basicjets.isValid();
   else if (EQ_VALID(name,jets))            isFound = handles_->jets.isValid();
   else if (EQ_VALID(name,mcparticles))     isFound = handles_->mcparticles.isValid();
   else if (EQ_VALID(name,mets))            isFound = handles_->mets.isValid();
@@ -268,6 +304,7 @@ bool
   else if (EQ_VALID(name,tracks))          isFound = handles_->tracks.isValid();
   else if (EQ_VALID(name,trigobjs))        isFound = handles_->trigobjs.isValid();
   else if (EQ_VALID(name,uservariables))   isFound = true; // This vector is always present, even if its size is 0.
+  else if (EQ_VALID(name,eventvariables))  isFound = true; // This vector is always present, even if its size is 0.
   return isFound;
 
 }
@@ -276,10 +313,13 @@ bool
 void
 ValueLookupTree::destroy (Node * const x) const
 {
-  for (const auto &branch : x->branches)
-    destroy (branch);
-  delete x;
-}
+      if(x)
+        {
+          for (const auto &branch : x->branches)
+            destroy (branch);
+          delete x;
+        }
+} 
 
 void
 ValueLookupTree::pruneCommas (Node * const tree) const
@@ -293,6 +333,7 @@ ValueLookupTree::pruneCommas (Node * const tree) const
       foundComma = false;
       for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
         {
+          pruneCommas (*branch);
           if ((*branch)->value == ",")
             {
               foundComma = true;
@@ -307,9 +348,6 @@ ValueLookupTree::pruneCommas (Node * const tree) const
         }
     }
   while (foundComma);
-
-  for (const auto &branch : tree->branches)
-    pruneCommas (branch);
   //////////////////////////////////////////////////////////////////////////////
 }
 
@@ -339,6 +377,7 @@ ValueLookupTree::pruneParentheses_ (Node * const tree) const
       foundParenthesis = false;
       for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
         {
+          pruneParentheses_ (*branch);
           if ((*branch)->value == "()")
             {
               foundParenthesis = true;
@@ -353,9 +392,6 @@ ValueLookupTree::pruneParentheses_ (Node * const tree) const
         }
     }
   while (foundParenthesis);
-
-  for (const auto &branch : tree->branches)
-    pruneParentheses_ (branch);
   //////////////////////////////////////////////////////////////////////////////
 }
 
@@ -387,14 +423,13 @@ ValueLookupTree::pruneDots_ (Node * const tree) const
       foundDot = false;
       for (auto branch = tree->branches.begin (); branch != tree->branches.end (); branch++)
         {
+          pruneDots_ (*branch);
           if ((*branch)->value == "." && (((*branch)->parent && (*branch)->parent->value == ".")
                                        || !isCollection ((*branch)->branches.at (0)->value + "s")))
             {
               foundDot = true;
 
               size_t dot = branch - tree->branches.begin ();
-              if((*branch)->branches.at (1)->value == ".")
-                  pruneDots_ (*branch);
               (*branch)->branches.at (0)->value += "." + (*branch)->branches.at (1)->value;
               (*branch)->branches.at (0)->parent = tree;
               tree->branches.insert (branch + 1, (*branch)->branches.at (0));
@@ -405,9 +440,6 @@ ValueLookupTree::pruneDots_ (Node * const tree) const
         }
     }
   while (foundDot);
-
-  for (const auto &branch : tree->branches)
-    pruneDots_ (branch);
   //////////////////////////////////////////////////////////////////////////////
 }
 
@@ -440,7 +472,7 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
         insertBinaryInfixOperator  (cut,  tree,  {"<", "<=", ">", ">="})          ||
         insertBinaryInfixOperator  (cut,  tree,  {"+", "-"})                      ||
         insertBinaryInfixOperator  (cut,  tree,  {"*", "/", "%"})                 ||
-        insertUnaryPrefixOperator  (cut,  tree,  {"!"})                           ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"!", "+", "-"})                           ||
         insertUnaryPrefixOperator  (cut,  tree,  {"cos", "sin", "tan", "acos", "asin", "atan", "atan2",
                                                   "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
                                                   "exp", "ldexp", "log", "log10", "exp2", "expm1", "ilogb", "log1p", "log2", "logb",
@@ -449,10 +481,14 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
                                                   "copysign", "nextafter",
                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
-        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass"}) ||
-        insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass", "number"}) ||
+        insertDots                 (cut,  tree) ||
+        //insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
         insertParentheses          (cut,  tree)))
-    tree->value = cut;
+    {
+      tree->value = cut;
+      anatools::trim (tree->value);
+    }
   //////////////////////////////////////////////////////////////////////////////
 
   return tree;
@@ -485,7 +521,6 @@ ValueLookupTree::printValue (Node* tree) const
   else {
     expression = tree->value;
   }
-  cout << expression << endl;
   return expression;
 
 }
@@ -509,6 +544,7 @@ ValueLookupTree::evaluate_ (const Node * const tree, const ObjMap &objs)
       vector<Leaf> operands;
       for (const auto &branch : tree->branches)
         operands.push_back (evaluate_ (branch, objs));
+      if (verbose_) cout << "    Debug evalute 0 (no branches) for tree->value = " << tree->value << endl;
       return evaluateOperator (tree->value, operands, objs);
     }
   //////////////////////////////////////////////////////////////////////////////
@@ -521,14 +557,25 @@ ValueLookupTree::evaluate_ (const Node * const tree, const ObjMap &objs)
   else
     {
       double value;
-      if (isnumber (tree->value, value))
+      if (isnumber (tree->value, value)) {
+	if (verbose_) cout << "    Debug evalute 1 (isnumber) for tree->value = " << tree->value
+			   << ", value = " << value << endl;      
         return value;
-      else if (isCollection (tree->value + "s") || (tree->parent && tree->parent->value == "."))
+      }
+      else if (isCollection (tree->value + "s") || (tree->parent && tree->parent->value == ".")) {
+	if (verbose_) cout << "    Debug evalute 2 for tree->value = " << tree->value 
+	     << ", value = " << value << endl;
         return tree->value;
+      }
       else
         {
-          if (inputCollections_.size () == 1)
+          if (inputCollections_.size () == 1) {
+	    if (verbose_) cout << "    Debug evalute 3" 
+			       << ", calling valueLookup for value: " << tree->value  
+			       << ", collection: " << inputCollections_.at (0)  
+			       << endl;
             return valueLookup (inputCollections_.at (0), objs, tree->value);
+	  }
           clog << "ERROR: cannot infer ownership of \"" << tree->value << "\"" << endl;
           evaluationError_ = true;
           return numeric_limits<int>::min ();
@@ -563,9 +610,19 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
       else if (op == ">=")
         return (boost::get<double> (operands.at (0)) >= boost::get<double> (operands.at (1)));
       else if (op == "+")
-        return (boost::get<double> (operands.at (0)) + boost::get<double> (operands.at (1)));
+        {
+          if (operands.size () == 1)
+            return +boost::get<double> (operands.at (0));
+          else
+            return (boost::get<double> (operands.at (0)) + boost::get<double> (operands.at (1)));
+        }
       else if (op == "-")
-        return (boost::get<double> (operands.at (0)) - boost::get<double> (operands.at (1)));
+        {
+          if (operands.size () == 1)
+            return -boost::get<double> (operands.at (0));
+          else
+            return (boost::get<double> (operands.at (0)) - boost::get<double> (operands.at (1)));
+        }
       else if (op == "*")
         return (boost::get<double> (operands.at (0)) * boost::get<double> (operands.at (1)));
       else if (op == "/")
@@ -692,6 +749,8 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 
           return sqrt (energy * energy - px * px - py * py - pz * pz);
         }
+      else if (op == "number")
+        return getCollectionSize (boost::get<string> (operands.at (0)) + "s");
       else if (op == ".")
         return valueLookup (boost::get<string> (operands.at (0)) + "s", objs, boost::get<string> (operands.at (1)));
     }
@@ -711,7 +770,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 }
 
 void *
-ValueLookupTree::getObject (const string &name, const unsigned i) const
+ValueLookupTree::getObject (const string &name, const unsigned i)
 {
   if (EQ_VALID(name,beamspots))
     return ((void *) &(*handles_->beamspots));
@@ -725,6 +784,8 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
     return ((void *) &handles_->genjets->at (i));
   else if (EQ_VALID(name,jets))
     return ((void *) &handles_->jets->at (i));
+  else if (EQ_VALID(name,basicjets))
+    return ((void *) &handles_->basicjets->at (i));
   else if (EQ_VALID(name,mcparticles))
     return ((void *) &handles_->mcparticles->at (i));
   else if (EQ_VALID(name,mets))
@@ -749,6 +810,16 @@ ValueLookupTree::getObject (const string &name, const unsigned i) const
       TYPE(uservariables) *obj = new TYPE(uservariables) ();
       for (const auto &handle : handles_->uservariables)
         obj->insert (handle->begin (), handle->end ());
+      uservariablesToDelete_.push_back (obj);
+      return obj;
+    }
+  else if (EQ_VALID(name,eventvariables))
+    {
+      //!!!
+      TYPE(eventvariables) *obj = new TYPE(eventvariables) ();
+      for (const auto &handle : handles_->eventvariables)
+        obj->insert (handle->begin (), handle->end ());
+      eventvariablesToDelete_.push_back (obj);
       return obj;
     }
   return NULL;
@@ -769,6 +840,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return TYPE_STR(genjets);
   else if (EQ_VALID(name,jets))
     return TYPE_STR(jets);
+  else if (EQ_VALID(name,basicjets))
+    return TYPE_STR(basicjets);
   else if (EQ_VALID(name,mcparticles))
     return TYPE_STR(mcparticles);
   else if (EQ_VALID(name,mets))
@@ -789,6 +862,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return TYPE_STR(trigobjs);
   else if (EQ_VALID(name,uservariables))
     return TYPE_STR(uservariables);
+  else if (EQ_VALID(name,eventvariables))
+    return TYPE_STR(eventvariables);
   return "";
 }
 
@@ -806,6 +881,8 @@ ValueLookupTree::isCollection (const string &name) const
   else if (EQ_VALID(name,genjets))
     return true;
   else if (EQ_VALID(name,jets))
+    return true;
+  else if (EQ_VALID(name,basicjets))
     return true;
   else if (EQ_VALID(name,mcparticles))
     return true;
@@ -826,6 +903,8 @@ ValueLookupTree::isCollection (const string &name) const
   else if (EQ_VALID(name,trigobjs))
     return true;
   else if (EQ_VALID(name,uservariables))
+    return true;
+  else if (EQ_VALID(name,eventvariables))
     return true;
   return false;
 }
@@ -859,8 +938,9 @@ ValueLookupTree::splitParentheses (string s) const
 pair<size_t, string>
 ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos) const
 {
-  vector<pair<size_t, string> > indices;
-  pair<size_t, string> firstHit, biggestHit;
+  vector<tuple<size_t, size_t, string> > indices;
+  tuple<size_t, size_t, string> firstHit;
+  pair<size_t, string> biggestHit;
 
   //////////////////////////////////////////////////////////////////////////////
   // For each of the target strings, find the index of the first instance of
@@ -870,9 +950,9 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
     {
       size_t index = s.find (target, pos);
       if (!vetoMatch (s, target, index, vetoTargets))
-        indices.push_back (make_pair (index, target));
+        indices.push_back (make_tuple (index, index, target));
     }
-  sort (indices.begin (), indices.end (), anatools::firstOfPairAscending);
+  sort (indices.begin (), indices.end (), anatools::firstOfTupleAscending);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -887,10 +967,51 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
   // string, then only return the one which matches the most characters.
   //////////////////////////////////////////////////////////////////////////////
   firstHit = indices.at (0);
-  for (auto index = indices.begin (); index != indices.end () && index->first == firstHit.first; index++)
+  for (auto index = indices.begin (); index != indices.end () && get<0> (*index) == get<0> (firstHit); index++)
     {
-      if (index->second.length () > biggestHit.second.length ())
-        biggestHit = *index;
+      if (get<2> (*index).length () > biggestHit.second.length ())
+        biggestHit = make_pair (get<1> (*index), get<2> (*index));
+    }
+  return biggestHit;
+  //////////////////////////////////////////////////////////////////////////////
+}
+
+pair<size_t, string>
+ValueLookupTree::findLastOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos) const
+{
+  vector<tuple<size_t, size_t, string> > indices;
+  tuple<size_t, size_t, string> firstHit;
+  pair<size_t, string> biggestHit;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // For each of the target strings, find the index of the first instance of
+  // it. Then sort the indices in ascending order.
+  //////////////////////////////////////////////////////////////////////////////
+  for (const auto &target : targets)
+    {
+      size_t index = s.rfind (target, pos);
+      if (!vetoMatch (s, target, index, vetoTargets))
+        indices.push_back (make_tuple (index + target.length () - 1, index, target));
+    }
+  sort (indices.begin (), indices.end (), anatools::firstOfTupleDescending);
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // If there are no matches, just return string::npos.
+  //////////////////////////////////////////////////////////////////////////////
+  if (!indices.size ())
+    return make_pair (string::npos, "");
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // If there are multiple targets which match at the same position in the
+  // string, then only return the one which matches the most characters.
+  //////////////////////////////////////////////////////////////////////////////
+  firstHit = indices.at (0);
+  for (auto index = indices.begin (); index != indices.end () && get<0> (*index) == get<0> (firstHit); index++)
+    {
+      if (get<2> (*index).length () > biggestHit.second.length ())
+        biggestHit = make_pair (get<1> (*index), get<2> (*index));
     }
   return biggestHit;
   //////////////////////////////////////////////////////////////////////////////
@@ -949,13 +1070,13 @@ ValueLookupTree::isUniqueCase (const ObjMap &objs, const unordered_set<string> &
       else
         {
           auto range = objs.equal_range (key);
-          vector<pair<string, tuple<unsigned, unsigned, void *> > > objsOfThisType (range.first, range.second);
+          vector<pair<string, DressedObject> > objsOfThisType (range.first, range.second);
           sort (objsOfThisType.begin (), objsOfThisType.end (), anatools::collectionIndexAscending);
           int previousLocalIndex = -1;
           for (const auto &obj : objsOfThisType)
             {
-              pass = pass && ((int) get<1> (obj.second) > previousLocalIndex);
-              previousLocalIndex = get<1> (obj.second);
+              pass = pass && ((int) obj.second.localIndex > previousLocalIndex);
+              previousLocalIndex = obj.second.localIndex;
             }
         }
     }
@@ -969,7 +1090,6 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, Node * const tree, 
 {
   bool foundAnOperator = false;
   double x;
-
   //////////////////////////////////////////////////////////////////////////////
   // If the string is a number, then simply return false;
   //////////////////////////////////////////////////////////////////////////////
@@ -982,7 +1102,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, Node * const tree, 
   // left and right substring. These substrings are inserted into the tree and
   // stored as branches for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (auto i = findFirstOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, vetoOperators, i.first + i.second.length ()))
+  for (auto i = findLastOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = i.first ? findLastOf (s, operators, vetoOperators, i.first - 1) : make_pair (string::npos, ""))
     {
       string left, right;
       left = s.substr (0, i.first);
@@ -992,6 +1112,7 @@ ValueLookupTree::insertBinaryInfixOperator (const string &s, Node * const tree, 
           anatools::trim (left);
           anatools::trim (right);
 
+          if (left == "" || right == "") continue;
           tree->value = i.second;
           tree->branches.push_back (insert_ (left, tree));
           tree->branches.push_back (insert_ (right, tree));
@@ -1021,7 +1142,7 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node * const tree, 
   // left and right substring. The right substring is inserted into the tree and
   // stored as a branch for the operator's node.
   //////////////////////////////////////////////////////////////////////////////
-  for (auto i = findFirstOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, operators, vetoOperators, i.first + i.second.length ()))
+  for (auto i = findLastOf (s, operators, vetoOperators); !foundAnOperator && i.first != string::npos; i = i.first ? findLastOf (s, operators, vetoOperators, i.first - 1) : make_pair (string::npos, ""))
     {
       string left, right;
       left = s.substr (0, i.first);
@@ -1030,6 +1151,45 @@ ValueLookupTree::insertUnaryPrefixOperator (const string &s, Node * const tree, 
         {
           anatools::trim (right);
           tree->value = i.second;
+          tree->branches.push_back (insert_ (right, tree));
+          foundAnOperator = true;
+        }
+    }
+  //////////////////////////////////////////////////////////////////////////////
+
+  return foundAnOperator;
+}
+
+bool
+ValueLookupTree::insertDots (const string &s, Node * const tree) const
+{
+  bool foundAnOperator = false;
+  double x;
+  //////////////////////////////////////////////////////////////////////////////
+  // If the string is a number, then simply return false;
+  //////////////////////////////////////////////////////////////////////////////
+  if (isnumber (s, x))
+    return false;
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // For each operator which is found in the string, split the string into a
+  // left and right substring. These substrings are inserted into the tree and
+  // stored as branches for the operator's node.
+  //////////////////////////////////////////////////////////////////////////////
+  for (auto i = findFirstOf (s, {"."}, {}); !foundAnOperator && i.first != string::npos; i = findFirstOf (s, {"."}, {}, i.first + i.second.length ()))
+    {
+      string left, right;
+      left = s.substr (0, i.first);
+      right = s.substr (i.first + i.second.length ());
+      if (!splitParentheses (left) && !splitParentheses (right))
+        {
+          anatools::trim (left);
+          anatools::trim (right);
+
+          if (left == "" || right == "") continue;
+          tree->value = i.second;
+          tree->branches.push_back (insert_ (left, tree));
           tree->branches.push_back (insert_ (right, tree));
           foundAnOperator = true;
         }
@@ -1075,13 +1235,14 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
     }
   else if (shouldIterate_.at (collection) && iterateObj)
     objIterators_.at (collection)++;
-  void *obj = get<2> (objIterators_.at (collection)->second);
+  void *obj = objIterators_.at (collection)->second.addr;
 
   try
     {
       if (collection == "uservariables")
         return 1; // FIXME
-        //        return (((VariableProducerPayload *) obj)->at (variable));
+      if (collection == "eventvariables")
+        return (((EventVariableProducerPayload *) obj)->at (variable));
       return anatools::getMember (getCollectionType (collection), obj, variable);
     }
   catch (...)

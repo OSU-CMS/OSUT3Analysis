@@ -22,10 +22,10 @@
 
 namespace anatools
 {
-  template <class InputCollection> bool getCollection (const edm::InputTag &, edm::Handle<InputCollection> &, const edm::Event &);
+  template <class T> bool getCollection (const edm::InputTag &, edm::Handle<T> &, const edm::Event &);
 
   // Return a (hopefully) unique hashed integer for an object
-  template <class InputObject> int getObjectHash (const InputObject&);
+  template <class T> int getObjectHash (const T &);
 
 #if IS_VALID(beamspots)
   string getObjectType (const TYPE(beamspots) &);
@@ -47,6 +47,10 @@ namespace anatools
 #if IS_VALID(genjets)
   string getObjectType (const TYPE(genjets) &);
   string getObjectClass (const TYPE(genjets) &);
+#endif
+#if IS_VALID(basicjets)
+  string getObjectType  (const TYPE(basicjets) &);
+  string getObjectClass (const TYPE(basicjets) &);
 #endif
 #if IS_VALID(jets)
   string getObjectType (const TYPE(jets) &);
@@ -95,6 +99,11 @@ namespace anatools
   string getObjectType (const VariableProducerPayload&);
   string getObjectClass (const VariableProducerPayload&);
 #endif
+#if IS_VALID(eventvariables)
+  // user-defined cases
+  string getObjectType (const EventVariableProducerPayload&);
+  string getObjectClass (const EventVariableProducerPayload&);
+#endif
   // Extracts the constituent collections from a composite collection name.
   vector<string> getSingleObjects (string);
 
@@ -122,8 +131,9 @@ namespace anatools
   ////////////////////////////////////////////////////////////////////////////////
   // Comparison functions for sorting.
   ////////////////////////////////////////////////////////////////////////////////
-  bool firstOfPairAscending (pair<size_t, string>, pair<size_t, string>);
-  bool collectionIndexAscending (pair<string, tuple<unsigned, unsigned, void *> >, pair<string, tuple<unsigned, unsigned, void *> >);
+  bool firstOfTupleAscending (tuple<size_t, size_t, string>, tuple<size_t, size_t, string>);
+  bool firstOfTupleDescending (tuple<size_t, size_t, string>, tuple<size_t, size_t, string>);
+  bool collectionIndexAscending (pair<string, DressedObject>, pair<string, DressedObject>);
   ////////////////////////////////////////////////////////////////////////////////
 
   // Retrieves all the collections from the event which are needed based on the
@@ -132,22 +142,33 @@ namespace anatools
 
   double getMember (const string &type, const void * const obj, const string &member);
 
-  template <class InputObject> double getMember (const InputObject &obj, const string &member);
+  template <class T> double getMember (const T &obj, const string &member);
 
 #ifdef ROOT6
   template<class T> T invoke (const string &, edm::ObjectWithDict * const, const edm::FunctionWithDict &);
 #else
-  const Reflex::Object &getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType);
-  const Reflex::Object &invoke (const string &returnType, const Reflex::Object &o, const string &member);
+  const Reflex::Object * const getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType);
+  const Reflex::Object * const invoke (const string &returnType, const Reflex::Object &o, const string &member);
 #endif
 }
 
-template <class InputCollection> bool anatools::getCollection(const edm::InputTag& label, edm::Handle<InputCollection>& coll, const edm::Event &event) {
-  // Get a collection with the specified type, and match the product instance name.
-  // Do not use Event::getByLabel() function, since it also matches the module name.
-  event.getByLabel(label, coll);
-  if (!coll.isValid()) {
-    vector<edm::Handle<InputCollection> > objVec;
+/**
+ * Retrieves a collection from the event, storing it in the second argument.
+ *
+ * First tries to get a collection with the given type and label. If that
+ * fails, gets all collections with the given type and picks the one with the
+ * fewest parents.
+ *
+ * @param  label product instance label of collection to retrieve
+ * @param  collection edm::Handle in which to store the retrieved collection
+ * @param  event edm::Event from which to get the collection
+ * @return boolean representing whether retrieval was successful
+ */
+template <class T> bool
+anatools::getCollection(const edm::InputTag& label, edm::Handle<T>& collection, const edm::Event &event) {
+  event.getByLabel(label, collection);
+  if (!collection.isValid()) {
+    vector<edm::Handle<T> > objVec;
     event.getManyByType(objVec);
     int collWithFewestParents = -1, fewestParents = -1;
     for (uint i=0; i<objVec.size(); i++) {
@@ -158,8 +179,14 @@ template <class InputCollection> bool anatools::getCollection(const edm::InputTa
       }
     }
     if (collWithFewestParents >= 0)
-      coll = objVec.at(collWithFewestParents);
-    if (!coll.isValid()) {
+      collection = objVec.at(collWithFewestParents);
+    else {
+      clog << "ERROR: did not find any collections that match input tag:  " << label 
+	   << ", with type:  " << typeid(collection).name()  
+	   << endl;  
+      return false;
+    }
+    if (!collection.isValid()) {
       clog << "ERROR: could not get input collection with product instance label: " << label.instance()
            << ", but found " << objVec.size() << " collections of the specified type." << endl;
       return false;
@@ -168,18 +195,31 @@ template <class InputCollection> bool anatools::getCollection(const edm::InputTa
   return true;
 }
 
-// version of getMember that doesn't require the "type" as an argument
-template <class InputObject> double anatools::getMember(const InputObject &obj, const string &member)
+/**
+ * Returns the value of a member of an object.
+ *
+ * @param  obj object whose member will be evaluated
+ * @param  member string giving the member, data or function, to evaluate
+ * @return value of the member of the given object
+ */
+template <class T> double
+anatools::getMember(const T &obj, const string &member)
 {
   string type = getObjectClass(obj);
   return getMember(type, &obj, member);
 }
 
-// generic function to calculate a hash value of any input object
-// hash is based on the 3-vector where available.
-// if not, the 3-position is used.
-// some special cases exist as well.
-template <class InputObject> int anatools::getObjectHash(const InputObject& object){
+/**
+ * Returns a hash value representing the given object.
+ *
+ * This version applies to objects with a momentum three-vector, and simply
+ * returns the sum of the Cartesian coordinates of this vector.
+ *
+ * @param  object object whose hash value will be calculated
+ * @return hash value corresponding to the object
+ */
+template <class T> int
+anatools::getObjectHash(const T& object){
     int px_mev, py_mev, pz_mev;
     px_mev = abs(int(1000 * getMember (object, "px")));
     py_mev = abs(int(1000 * getMember (object, "py")));

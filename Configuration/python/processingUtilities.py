@@ -5,7 +5,6 @@ import sys
 import math
 import datetime
 import copy
-import ROOT
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
@@ -303,6 +302,22 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         ########################################################################
 
         ########################################################################
+        # Each event variable producer module is added to the list of user variable 
+        # collections in the collections PSet.
+        ########################################################################
+            if not hasattr (collections, "eventvariables"):
+                collections.eventvariables = cms.VInputTag ()
+            # verify this collection hasn't already been added
+            isDuplicate = False
+            for inputTag in collections.eventvariables:
+                if inputTag.getModuleLabel() is module:
+                    isDuplicate = True
+                    break
+            if not isDuplicate:
+                collections.eventvariables.append (cms.InputTag (module, "eventvariables"))
+        ########################################################################
+
+        ########################################################################
         # Add the variable production path at the beginning of the schedule
         ########################################################################
         if not hasattr (process, "variableProducerPath"):
@@ -347,7 +362,8 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         ########################################################################
         outputCommands = ["drop *"]
         outputCommands.append("keep *_*_uservariables_*")
-        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables"]:
+        outputCommands.append("keep *_*_eventvariables_*")
+        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables" and a is not "eventvariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep *_"
             outputCommand += collectionTag.getModuleLabel ()
@@ -371,7 +387,7 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         for collection in cutCollections:
             # Temporary fix for user-defined variables
             # For the moment, they won't be filtered
-            if collection is "uservariables":
+            if collection is "uservariables" or collection is "eventvariables":
                 continue
             filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
             objectSelector = cms.EDFilter (filterName,

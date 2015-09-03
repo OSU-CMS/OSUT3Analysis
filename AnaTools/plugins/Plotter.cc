@@ -25,6 +25,7 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
   firstEvent_ (true)
 
 {
+  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
 
   if (verbose_) clog << "Beginning Plotter::Plotter constructor." << endl;
 
@@ -111,6 +112,11 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 
 Plotter::~Plotter ()
 {
+  for (auto &histogram : histogramDefinitions)
+    {
+      for (auto &valueLookupTree : histogram.valueLookupTrees)
+        delete valueLookupTree;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -40,6 +40,14 @@ Another example is an expression, e.g., "2 * abs(eta)", represented as:
     |
    eta
 In this case the evaluate function would return a continuous value.
+
+Note that the prunedParentheses function will convert this tree to:
+      *
+    /   \
+   abs   2
+    |
+   (eta)
+
 For a complex string such as innerTrack.hitPattern_.numberOfValidPixelHits > 0, the tree will have the following structure:
                < 
              /   \
@@ -48,9 +56,34 @@ For a complex string such as innerTrack.hitPattern_.numberOfValidPixelHits > 0, 
     innerTrack  . 
                / \
     hitPattern_  numberOfValidPixelHits
+
+Right after the tree is built, this tree will get pruned by the pruneDots() function
+to be the following:
+                                                  < 
+                                                /   \
+   innerTrack.hitPattern_.numberOfValidPixelHits     0
+
+Here is an example using commas:
+               < 
+             /   \
+         invMass   0
+            |
+            ()
+            |
+            ,
+          /   \
+       muon   muon
+
+This will be converted to the following, by the prunedCommas() and prunedParentheses() functions: 
+               < 
+             /   \
+         invMass   0
+          /   \
+       muon   muon
+
 */
 
-typedef unordered_multimap<string, tuple<unsigned, unsigned, void *> > ObjMap;
+typedef unordered_multimap<string, DressedObject> ObjMap;
 
 class ValueLookupTree
 {
@@ -77,7 +110,9 @@ class ValueLookupTree
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for inserting an expression into the tree and for evaluating the
-    // expression.
+    // expression.  The evaluate() function returns values for each of the 
+    // objects in the event; that is why it returns a vector.  
+    // FIXME:  Check whether evaluate() should return vector<Leaf> or vector<double>.
     ////////////////////////////////////////////////////////////////////////////
     void insert (const string &);
     const vector<Leaf> &evaluate ();
@@ -86,8 +121,8 @@ class ValueLookupTree
     ////////////////////////////////////////////////////////////////////////////
     // Methods for retrieving various information about a collection.
     ////////////////////////////////////////////////////////////////////////////
-    unsigned getLocalIndex (unsigned, unsigned) const;
-    set<unsigned> getGlobalIndices (unsigned, const string &, string) const;
+    unsigned getLocalIndex (unsigned globalIndex, unsigned collectionIndex) const;
+    set<unsigned> getGlobalIndices (unsigned localIndex, const string &singleObjectCollection, string inputLabel) const;
     unsigned getCollectionSize (const string &name) const;
     bool collectionIsFound (const string &name) const;
     ////////////////////////////////////////////////////////////////////////////
@@ -119,12 +154,13 @@ class ValueLookupTree
     string printValue(Node* node) const;
 
     // Returns the result of an operator acting on its operands.
-    Leaf evaluateOperator (const string &, const vector<Leaf> &, const ObjMap &);
+    Leaf evaluateOperator (const string &op, const vector<Leaf> &operands, const ObjMap &objs);
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for retrieving and deleting an object from a collection.
+    // i is the local index
     ////////////////////////////////////////////////////////////////////////////
-    void *getObject (const string &name, const unsigned i) const;
+    void *getObject (const string &name, const unsigned i);
     ////////////////////////////////////////////////////////////////////////////
 
     // Returns the C++ type associated with the collection named in the first
@@ -149,7 +185,8 @@ class ValueLookupTree
     // Methods for finding the first instance within a string of any one of a
     // vector of target strings.
     ////////////////////////////////////////////////////////////////////////////
-    pair<size_t, string> findFirstOf (const string &, const vector<string> &, const vector<string> &, const size_t = 0) const;
+    pair<size_t, string> findFirstOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos = 0) const;
+    pair<size_t, string> findLastOf (const string &s, const vector<string> &targets, const vector<string> &vetoTargets, const size_t pos = string::npos) const;
     bool vetoMatch (const string &, const string &, const size_t, const vector<string> &) const;
     ////////////////////////////////////////////////////////////////////////////
 
@@ -162,13 +199,14 @@ class ValueLookupTree
     ////////////////////////////////////////////////////////////////////////////
     bool insertBinaryInfixOperator (const string &, Node * const, const vector<string> &, const vector<string> & = {}) const;
     bool insertUnaryPrefixOperator (const string &, Node * const, const vector<string> &, const vector<string> & = {}) const;
+    bool insertDots (const string &, Node * const) const;
     bool insertParentheses (const string &, Node * const) const;
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for retrieving values from objects.
     ////////////////////////////////////////////////////////////////////////////
-    double valueLookup (const string &, const ObjMap &, const string &, const bool = true);
+    double valueLookup (const string &collection, const ObjMap &objs, const string &variable, const bool iterateObj = true);
     ////////////////////////////////////////////////////////////////////////////
 
     Node            *root_;
@@ -176,11 +214,21 @@ class ValueLookupTree
     bool            evaluationError_;
 
     Collections                                    *handles_;
-    unordered_map<string, ObjMap::const_iterator>  objIterators_;
-    unordered_map<string, bool>                    shouldIterate_;
+    unordered_map<string, ObjMap::const_iterator>  objIterators_;  // defined for each collection
+    unordered_map<string, bool>                    shouldIterate_; // defined for each collection 
     vector<Leaf>                                   values_;
-    vector<unsigned>                               collectionSizes_;
-    vector<unsigned>                               nCombinations_;
+    vector<unsigned>                               collectionSizes_; // vector index corresponds to collection index
+    vector<unsigned>                               nCombinations_;   // vector index corresponds to collection index
+    // nCombinations[i] specifies the number of combinations that can be formed from objects 
+    // in collections i to N, where N is the number of collections 
+
+    vector<void *> uservariablesToDelete_;
+    vector<void *> eventvariablesToDelete_;
+
+    const int                                      verbose_ = 0;  // verbosity levels:  0, 1, ... 
+    // Typically you want to use verbosity of 1 when running over a single event.  
+    
+
 };
 
 #endif

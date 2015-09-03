@@ -38,12 +38,15 @@ struct CutCalculatorPayload
   bool            eventDecision;
   bool            isValid;
   bool            triggerDecision;
+  bool            triggerFilterDecision;
   Cuts            cuts;
   vector<bool>    eventFlags;
   vector<bool>    triggerFlags;
   vector<bool>    vetoTriggerFlags;
+  vector<bool>    triggerFilterFlags;
   vector<string>  triggers;
   vector<string>  triggersToVeto;
+  vector<string>  triggerFilters;
 };
 
 struct HistoDef {
@@ -85,6 +88,11 @@ struct UserVariable
 //   vector - one UserVariable per combination of input objects
 typedef map<string, vector<UserVariable> > VariableProducerPayload;
 
+// EventVariableProducerPayload type:
+//   string - user-defined name of variable
+//   double - value of variable for the event
+typedef map<string, double > EventVariableProducerPayload;
+
 struct Collections
 {
   edm::Handle<TYPE(beamspots)>                beamspots;
@@ -93,6 +101,7 @@ struct Collections
   edm::Handle<vector<TYPE(events)> >          events;
   edm::Handle<vector<TYPE(genjets)> >         genjets;
   edm::Handle<vector<TYPE(jets)> >            jets;
+  edm::Handle<vector<TYPE(basicjets)> >       basicjets;
   edm::Handle<vector<TYPE(mcparticles)> >     mcparticles;
   edm::Handle<vector<TYPE(mets)> >            mets;
   edm::Handle<vector<TYPE(muons)> >           muons;
@@ -103,6 +112,7 @@ struct Collections
   edm::Handle<vector<TYPE(tracks)> >          tracks;
   edm::Handle<vector<TYPE(trigobjs)> >        trigobjs;
   vector<edm::Handle<TYPE(uservariables)> >   uservariables;
+  vector<edm::Handle<TYPE(eventvariables)> >  eventvariables;
 
   edm::Handle<TYPE(triggers)>                 triggers;
 };
@@ -116,5 +126,12 @@ struct ValueToPrint
 };
 
 typedef vector<ValueToPrint> ValuesToPrint;
+
+struct DressedObject
+{
+  unsigned collectionIndex;
+  unsigned localIndex;
+  void *addr;
+};
 
 #endif
