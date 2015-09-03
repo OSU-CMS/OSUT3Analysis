@@ -11,6 +11,13 @@ import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
 from OSUT3Analysis.Configuration.InfoPrinter_cff import *
 
+def get_date_time_stamp():
+    # Return a string that encodes the date and time
+    # Do not include ":" in string, because it is not allowed in a filename 
+    now = datetime.datetime.now()
+    date_hash = now.strftime("%Y_%m_%d_%Hh%Mm%Ss") # Format:  1970_01_01_12h00m30s  
+    return date_hash  
+
 def split_composite_datasets(datasets, composite_dataset_definitions):
     for dataset in datasets:
         if dataset in composite_dataset_definitions:
@@ -223,6 +230,18 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         process.setName_ (process.name_ () + channelName + str(randomNumberSuffix)) 
     ############################################################################
 
+    ############################################################################
+    # For interactive jobs only, 
+    # change the output filename to include the name of the first channel,
+    # as well as a date/time stamp.  
+    # For batch jobs, do not change filename; we want it identical for all jobs.  
+    ############################################################################
+    if not osusub.batchMode:
+        outputName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.  
+        suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp() 
+        outputName = outputName.replace(".root", suffix + ".root")  
+        process.TFileService.fileName = cms.string(outputName) 
+    ############################################################################
 
     for channel in channels:
         channelPath = cms.Path ()
