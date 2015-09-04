@@ -13,8 +13,9 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 process.source = cms.Source ('PoolSource',
   fileNames = cms.untracked.vstring (
-    'file:miniAODSample.root'
-    #'root://cmsxrootd.fnal.gov//store/mc/Phys14DR/DYJetsToLL_M-50_13TeV-madgraph-pythia8/MINIAODSIM/PU4bx50_PHYS14_25_V1-v1/00000/080957A7-C36E-E411-A5BC-00266CF327C4.root',
+        #    'file:miniAODSample.root'
+        'root://cmsxrootd.fnal.gov//store/mc/Phys14DR/DYJetsToLL_M-50_13TeV-madgraph-pythia8/MINIAODSIM/PU4bx50_PHYS14_25_V1-v1/00000/080957A7-C36E-E411-A5BC-00266CF327C4.root',
+        # 'file:/home/wulsin/LS1Upgrade/tutorial/test2/CMSSW_7_4_5_ROOT5/src/OSUT3Analysis/ExampleAnalysis/test/WJets_MiniAOD_numEvent10.root', 
   )
 )
 
@@ -23,7 +24,7 @@ process.TFileService = cms.Service ('TFileService',
     fileName = cms.string ('hist.root')
 )
 process.maxEvents = cms.untracked.PSet (
-    input = cms.untracked.int32 (-1)
+    input = cms.untracked.int32 (10)
 )
 
 #set_input(process,"/store/user/ahart/BN_stopToBottom_M_800_10mm_Tune4C_8TeV_pythia8_lantonel-Summer12_DR53X-PU_S10_START53_V19-v1-ab45720b22c4f98257a2f100c39d504b_USER_1/stopToBottom_M_800_10mm_Tune4C_8TeV_pythia8_lantonel-Summer12_DR53X-PU_S10_START53_V19-v1-ab45720b22c4f98257a2f100c39d504b_USER_10_2_Dzw.root")
@@ -37,21 +38,7 @@ process.maxEvents = cms.untracked.PSet (
 ##### Set up the analyzer #####
 ###########################################################
 
-miniAOD_collections = cms.PSet (
-  electrons       =  cms.InputTag  ('slimmedElectrons',               ''),
-  genjets         =  cms.InputTag  ('slimmedGenJets',                 ''),
-  jets            =  cms.InputTag  ('slimmedJets',                    ''),
-  mcparticles     =  cms.InputTag  ('packedGenParticles',             ''),
-  mets            =  cms.InputTag  ('slimmedMETs',                    ''),
-  muons           =  cms.InputTag  ('slimmedMuons',                   ''),
-  photons         =  cms.InputTag  ('slimmedPhotons',                 ''),
-  primaryvertexs  =  cms.InputTag  ('offlineSlimmedPrimaryVertices',  ''),
-  superclusters   =  cms.InputTag  ('reducedEgamma',                  'reducedSuperClusters'),
-  taus            =  cms.InputTag  ('slimmedTaus',                    ''),
-  triggers        =  cms.InputTag  ('TriggerResults',                 '',  'HLT'),
-  trigobjs        =  cms.InputTag  ('selectedPatTrigger',             ''),
-)
-
+from OSUT3Analysis.AnaTools.osuAnalysis_cfi import collectionMap  # miniAOD  
 
 eMu = cms.PSet(
     name = cms.string("EMu"),
@@ -379,7 +366,7 @@ electronHistograms = cms.PSet(
   )
 )
 
-add_channels  (process,  [doubleElectron, doubleMuon, eMu],  cms.VPSet  (electronHistograms, muonHistograms),  miniAOD_collections,[],False)
+add_channels  (process,  [doubleElectron, doubleMuon, eMu],  cms.VPSet  (electronHistograms, muonHistograms),  collectionMap,[],False)
 
 from Configuration.DataProcessing.Utils import addMonitoring
 process = addMonitoring (process)
