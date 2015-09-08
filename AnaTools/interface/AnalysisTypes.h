@@ -115,6 +115,7 @@ struct Collections
   vector<edm::Handle<TYPE(eventvariables)> >  eventvariables;
 
   edm::Handle<TYPE(triggers)>                 triggers;
+  edm::Handle<TYPE(prescales)>                prescales;
 };
 
 struct ValueToPrint

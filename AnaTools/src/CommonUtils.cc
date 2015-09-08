@@ -206,6 +206,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "mets")            &&  collections.exists  ("mets"))            getCollection  (collections.getParameter<edm::InputTag>  ("mets"),            handles.mets,            event);
   if  (VEC_CONTAINS  (objectsToGet,  "muons")           &&  collections.exists  ("muons"))           getCollection  (collections.getParameter<edm::InputTag>  ("muons"),           handles.muons,           event);
   if  (VEC_CONTAINS  (objectsToGet,  "photons")         &&  collections.exists  ("photons"))         getCollection  (collections.getParameter<edm::InputTag>  ("photons"),         handles.photons,         event);
+  if  (VEC_CONTAINS  (objectsToGet,  "prescales")       &&  collections.exists  ("prescales"))       getCollection  (collections.getParameter<edm::InputTag>  ("prescales"),       handles.prescales,       event);
   if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs")  &&  collections.exists  ("primaryvertexs"))  getCollection  (collections.getParameter<edm::InputTag>  ("primaryvertexs"),  handles.primaryvertexs,  event);
   if  (VEC_CONTAINS  (objectsToGet,  "superclusters")   &&  collections.exists  ("superclusters"))   getCollection  (collections.getParameter<edm::InputTag>  ("superclusters"),   handles.superclusters,   event);
   if  (VEC_CONTAINS  (objectsToGet,  "taus")            &&  collections.exists  ("taus"))            getCollection  (collections.getParameter<edm::InputTag>  ("taus"),            handles.taus,            event);
@@ -260,6 +261,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     clog << "INFO: did not retrieve photons collection from the event." << endl;
   if (firstEvent && !handles.primaryvertexs.isValid ())
     clog << "INFO: did not retrieve primaryvertexs collection from the event." << endl;
+  if (firstEvent && !handles.prescales.isValid ())
+    clog << "INFO: did not retrieve prescales collection from the event." << endl;
   if (firstEvent && !handles.superclusters.isValid ())
     clog << "INFO: did not retrieve superclusters collection from the event." << endl;
   if (firstEvent && !handles.taus.isValid ())

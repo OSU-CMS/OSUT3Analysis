@@ -334,31 +334,37 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
   ss_ << "--------------------------------------------------------------------------------" << endl;
   ss_ << "\033[1;35mavailable triggers\033[0m" << endl;
   ss_ << "--------------------------------------------------------------------------------" << endl;
-  map<string, bool> triggers;
+  map<string, pair<bool, unsigned> > triggers;
 #if DATA_FORMAT == BEAN
   for (const auto &trigger : *handles_.triggers)
     {
       string name = trigger.name;
       bool pass = trigger.pass;
+      unsigned prescale = trigger.prescale;
 #elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
   const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
   for (unsigned i = 0; i < triggerNames.size (); i++)
     {
       string name = triggerNames.triggerName (i);
       bool pass = handles_.triggers->accept (i);
+      unsigned prescale = handles_.prescales->getPrescaleForIndex (i);
 #else
   #error "Data format is not valid."
 #endif
-      triggers[name] = pass;
+      triggers[name] = make_pair (pass, prescale);
     }
   !maxAllTriggerWidth_ && (maxAllTriggerWidth_ = getMaxWidth (triggers));
   for (const auto &trigger : triggers)
     {
       ss_ << "\033[1;34m" << setw (maxAllTriggerWidth_) << left << trigger.first << "\033[0m";
-      if (trigger.second)
-        ss_ << "\033[1;32maccept\033[0m" << endl;
+      if (trigger.second.first)
+        ss_ << setw (8) << left << "\033[1;32maccept\033[0m";
       else
-        ss_ << "\033[1;31mreject\033[0m" << endl;
+        ss_ << setw (8) << left << "\033[1;31mreject\033[0m";
+      if (trigger.second.second == 1)
+        ss_ << "\033[1;33m" << trigger.second.second << "\033[0m" << endl;
+      else
+        ss_ << trigger.second.second << endl;
     }
 
   return true;
@@ -402,6 +408,25 @@ InfoPrinter::getMaxWidth (const map<string, bool> &list) const
   // Add two to the maximum length so that there are at least two spaces before
   // the next column in the table.
   w += 2;
+
+  return w;
+}
+
+unsigned
+InfoPrinter::getMaxWidth (const map<string, pair<bool, unsigned> > &list) const
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Calculate the maximum length of the strings in a vector.
+  //////////////////////////////////////////////////////////////////////////////
+  unsigned w = 0;
+  for (const auto &s : list)
+    {
+      if (s.first.length () > w)
+        w = s.first.length ();
+    }
+  //////////////////////////////////////////////////////////////////////////////
+
+  w += 8;
 
   return w;
 }
