@@ -412,7 +412,7 @@ CutCalculator::evaluateTriggers (const edm::Event &event) const
         {
           string name = trigger.name;
           bool pass = trigger.pass;
-#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
+#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM 
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
       for (unsigned i = 0; i < triggerNames.size (); i++)
         {
@@ -469,7 +469,7 @@ CutCalculator::evaluateTriggerFilters (const edm::Event &event) const
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
       for (unsigned i = 0; i < pl_->triggerFilters.size (); i++)
         {
-#if DATA_FORMAT == MINI_AOD
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM  
           for (auto trigobj : *handles_.trigobjs)
             {
               trigobj.unpackPathNames (triggerNames);

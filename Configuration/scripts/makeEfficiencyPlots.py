@@ -39,6 +39,8 @@ parser.add_option("--hist", action="store_true", dest="plot_hist", default=False
                                     help="plot as hollow histograms instead of error bar crosses")
 parser.add_option("--line-width", dest="line_width",
                                     help="set line width (default is 2)")
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                  help="verbose output") 
 
 (arguments, args) = parser.parse_args()
 
@@ -532,8 +534,12 @@ first_input = input_sources[0]
 
 #### use the first input file as a template and make comparison versions of all its histograms
 testFile = TFile("condor/" + first_input['condor_dir'] + "/" + first_input['dataset'] + ".root")
+if arguments.verbose:
+    print "Opened testFile: ", testFile.GetName()  
 rootDirectory = first_input['num_channel'] + "Plotter"
 testFile.cd(rootDirectory)
+if arguments.verbose:
+    print "Going to rootDirectory: ", rootDirectory  
 
 if arguments.savePDFs:
     os.system("rm -rf efficiency_histograms_pdfs")
@@ -541,18 +547,27 @@ if arguments.savePDFs:
     
 
 for key in gDirectory.GetListOfKeys(): # Loop over directories in same way as in makePlots.py
+    if arguments.verbose:
+        print "  Checking key: ", key.GetName()  
+
     if (key.GetClassName() != "TDirectoryFile"):
         continue
 
     level2Directory = rootDirectory + "/" + key.GetName()
+    if arguments.verbose:
+        print "  Checking directory: ", level2Directory  
     outputFile.cd() 
     outputFile.mkdir(key.GetName())
     outputFile.cd(key.GetName())  
     testFile.cd(level2Directory)
     for key2 in gDirectory.GetListOfKeys():
         if re.match ('TH1', key2.GetClassName()): #found a 1D histogram
+            if arguments.verbose:
+                print "    Will make 1D histogram: ", key2.GetName()
             MakeOneHist(key.GetName(), key2.GetName())
         if arguments.draw2DPlots and re.match ('TH2', key2.GetClassName()):  # make 2D histograms  
+            if arguments.verbose:
+                print "    Will make 2D histogram: ", key2.GetName()
             MakeOneHist(key.GetName(), key2.GetName())
 
 testFile.Close()

@@ -19,6 +19,9 @@ datasets = [
    'SingleElectron',
    'DoubleMu',
    'DoubleMu_22Jan2013',
+   'DoubleMu_2015',
+   'SingleMu_2015',
+   'DoubleEG_2015',
    'DoubleElectron_22Jan2013',
    'MuEG',
    'MuEG_22Jan2013',
@@ -52,9 +55,17 @@ datasets = [
    'QCD_bEnriched',
    #MiniAOD not stored on T3.
    'DYJetsToLL_50_MiniAOD',
+   'DYJetsToLL_10to50_MiniAOD',
    'WJetsToLNu_MiniAOD',
    'TTJets_MiniAOD',
+   'Diboson_MiniAOD',  
    
+   'DYJetsToLL_50_50ns_MiniAOD',
+   'DYJetsToLL_10to50_50ns_MiniAOD',
+   'WJetsToLNu_50ns_MiniAOD',
+   'TTJets_50ns_MiniAOD',
+   'Diboson_50ns_MiniAOD',  
+ 
     #QCD MuEnriched
    'QCD_MuEnriched_20toInf_MiniAOD', 
    'QCD_MuEnriched_15to20_MiniAOD', 
@@ -587,6 +598,24 @@ composite_dataset_definitions = {
         'ZG',
         'WG',
     ],
+    'DYJetsToLL_MiniAOD' : [
+        'DYJetsToLL_50_MiniAOD',
+        'DYJetsToLL_10to50_MiniAOD',
+    ],
+    'DYJetsToLL_50ns_MiniAOD' : [
+        'DYJetsToLL_50_50ns_MiniAOD',
+        'DYJetsToLL_10to50_50ns_MiniAOD',
+    ],
+    'Diboson_MiniAOD' : [
+        'WW_MiniAOD',
+        'WZ_MiniAOD',
+        'ZZ_MiniAOD',
+    ],
+    'Diboson_50ns_MiniAOD' : [
+        'WW_50ns_MiniAOD',
+        'WZ_50ns_MiniAOD',
+        'ZZ_50ns_MiniAOD',
+    ],
     'WjetsHighPt' : [
         'Wjets_PtW100',
         'W4jets',
@@ -789,6 +818,18 @@ composite_dataset_definitions = {
         'DoubleMu_2012C_22Jan2013',
         'DoubleMu_2012D_22Jan2013',
     ],
+    'DoubleMu_2015' : [
+        'DoubleMu_2015B',
+        'DoubleMu_2015C',
+    ],
+    'SingleMu_2015' : [
+        'SingleMu_2015B',
+        'SingleMu_2015C',
+    ],
+    'DoubleEG_2015' : [
+        'DoubleEG_2015B',
+        'DoubleEG_2015C',
+    ],
     'MuEG' : [
         'MuEG_2012A_1',
         'MuEG_2012A_2',
@@ -914,8 +955,20 @@ composite_dataset_definitions = {
 dataset_names = {
     #MiniAOD not stored on T3.
     'DYJetsToLL_50_MiniAOD'     : "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM",
+    'DYJetsToLL_10to50_MiniAOD' : "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'WJetsToLNu_MiniAOD'        : "/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'TTJets_MiniAOD'            : "/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
+    'ZZ_MiniAOD'                : "/ZZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM", 
+    'WW_MiniAOD'                : "/WW_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'WZ_MiniAOD'                : "/WZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    
+    'DYJetsToLL_50_50ns_MiniAOD'     : "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v2/MINIAODSIM",
+    'DYJetsToLL_10to50_50ns_MiniAOD' : "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v1/MINIAODSIM",
+    'WJetsToLNu_50ns_MiniAOD'        : "/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v1/MINIAODSIM",
+    'TTJets_50ns_MiniAOD'            : "/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v1/MINIAODSIM",
+    'ZZ_50ns_MiniAOD'                : "/ZZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v2/MINIAODSIM",
+    'WW_50ns_MiniAOD'                : "/WW_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v1/MINIAODSIM",
+    'WZ_50ns_MiniAOD'                : "/WZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v2/MINIAODSIM",
     #QCD MuEnriched
     'QCD_MuEnriched_20toInf_MiniAOD'        : "/QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'QCD_MuEnriched_15to20_MiniAOD'         : "/QCD_Pt-15to20_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
@@ -980,6 +1033,15 @@ dataset_names = {
    'DoubleMu_2012C_22Jan2013'       : "/DoubleMuParked/Run2012C-22Jan2013-v1/AOD",
    'DoubleMu_2012D_22Jan2013'       : "/DoubleMuParked/Run2012D-22Jan2013-v1/AOD",
 
+   'DoubleMu_2015B'       : "/DoubleMuon/Run2015B-PromptReco-v1/MINIAOD",
+   'DoubleMu_2015C'       : "/DoubleMuon/Run2015C-PromptReco-v1/MINIAOD",
+   
+   'SingleMu_2015B'       : "/SingleMuon/Run2015B-PromptReco-v1/MINIAOD",
+   'SingleMu_2015C'       : "/SingleMuon/Run2015C-PromptReco-v1/MINIAOD",
+   
+   'DoubleEG_2015B'       : "/DoubleEG/Run2015B-PromptReco-v1/MINIAOD",
+   'DoubleEG_2015C'       : "/DoubleEG/Run2015C-PromptReco-v1/MINIAOD",
+   
    'MuEG_2012A_22Jan2013'         : "/MuEG/Run2012A-22Jan2013-v1/AOD",
    'MuEG_2012B_22Jan2013'         : "/MuEG/Run2012B-22Jan2013-v1/AOD",
    'MuEG_2012C_22Jan2013'         : "/MuEG/Run2012C-22Jan2013-v1/AOD",
@@ -1405,8 +1467,20 @@ dataset_names = {
 nJobs = {
    #MiniAOD not stored on T3.
    'DYJetsToLL_50_MiniAOD'        : 671,
+   'DYJetsToLL_10to50_MiniAOD'    : 753,
    'WJetsToLNu_MiniAOD'        : 569,
    'TTJets_MiniAOD'        : 325,
+   'WW_MiniAOD'        : 44,
+   'ZZ_MiniAOD'        : 36,
+   'WZ_MiniAOD'        : 45,
+   
+   'DYJetsToLL_50_50ns_MiniAOD'        : 491,
+   'DYJetsToLL_10to50_50ns_MiniAOD'    : 396,
+   'WJetsToLNu_50ns_MiniAOD'        : 634,
+   'TTJets_50ns_MiniAOD'        : 150,
+   'WW_50ns_MiniAOD'        : 44,
+   'ZZ_50ns_MiniAOD'        : 36,
+   'WZ_50ns_MiniAOD'        : 45,
    
    #QCD MuEnriched
    'QCD_MuEnriched_20toInf_MiniAOD'        : 347, 
@@ -1474,6 +1548,15 @@ nJobs = {
    'DoubleMu_2012C_22Jan2013'   : 150,
    'DoubleMu_2012D_22Jan2013'   : 150,
 
+   'DoubleMu_2015B'   :  40,
+   'DoubleMu_2015C'   : 187,
+   
+   'SingleMu_2015B'   :  57,
+   'SingleMu_2015C'   : 220,
+   
+   'DoubleEG_2015B'   :  100,
+   'DoubleEG_2015C'   :  298,
+   
    'MuEG_2012A_22Jan2013' : 50,
    'MuEG_2012B_22Jan2013' : 50,
    'MuEG_2012C_22Jan2013' : 100,
@@ -1868,9 +1951,20 @@ nJobs = {
 maxEvents = {
    #MiniAOD not stored on T3.
    'DYJetsToLL_50_MiniAOD'        : -1,
+   'DYJetsToLL_10to50_MiniAOD'        : -1,
    'WJetsToLNu_MiniAOD'        : -1,
    'TTJets_MiniAOD'            : -1,
+   'WW_MiniAOD'            : -1,
+   'ZZ_MiniAOD'            : -1,
+   'WZ_MiniAOD'            : -1,
    
+   'DYJetsToLL_50_50ns_MiniAOD'        : -1,
+   'DYJetsToLL_10to50_50ns_MiniAOD'        : -1,
+   'WJetsToLNu_50ns_MiniAOD'        : -1,
+   'TTJets_50ns_MiniAOD'            : -1,
+   'WW_50ns_MiniAOD'            : -1,
+   'ZZ_50ns_MiniAOD'            : -1,
+   'WZ_50ns_MiniAOD'            : -1,
    #QCD MuEnriched
    'QCD_MuEnriched_20toInf_MiniAOD'        : -1, 
    'QCD_MuEnriched_15to20_MiniAOD'         : -1,
@@ -1937,6 +2031,15 @@ maxEvents = {
    'DoubleMu_2012C_22Jan2013'   :-1,
    'DoubleMu_2012D_22Jan2013'   :-1,
 
+   'DoubleMu_2015B'       : -1,
+   'DoubleMu_2015C'       : -1,
+   
+   'SingleMu_2015B'       : -1,
+   'SingleMu_2015C'       : -1,
+   
+   'DoubleEG_2015B'       : -1,
+   'DoubleEG_2015C'       : -1,
+   
    'MuEG_2012A_22Jan2013' : -1,
    'MuEG_2012B_22Jan2013' : -1,
    'MuEG_2012C_22Jan2013' : -1,
@@ -2331,10 +2434,25 @@ maxEvents = {
 # data => data
 types = {
    #MiniAOD not store on T3.
+   'DYJetsToLL_MiniAOD'                : "bgMC",
    'DYJetsToLL_50_MiniAOD'     : "bgMC",   
+   'DYJetsToLL_10to50_MiniAOD'     : "bgMC",   
    'WJetsToLNu_MiniAOD'        : "bgMC",   
    'TTJets_MiniAOD'            : "bgMC",
+   'Diboson_MiniAOD'            : "bgMC",
+   'WW_MiniAOD'            : "bgMC",
+   'ZZ_MiniAOD'            : "bgMC",
+   'WZ_MiniAOD'            : "bgMC",
   
+   'DYJetsToLL_50ns_MiniAOD'                : "bgMC",
+   'DYJetsToLL_50_50ns_MiniAOD'     : "bgMC",   
+   'DYJetsToLL_10to50_50ns_MiniAOD'     : "bgMC",   
+   'WJetsToLNu_50ns_MiniAOD'        : "bgMC",   
+   'TTJets_50ns_MiniAOD'            : "bgMC",
+   'Diboson_50ns_MiniAOD'            : "bgMC",
+   'WW_50ns_MiniAOD'            : "bgMC",
+   'ZZ_50ns_MiniAOD'            : "bgMC",
+   'WZ_50ns_MiniAOD'            : "bgMC",
    #QCD MuEnriched
    'QCD_MuEnriched_20toInf_MiniAOD'        : "bgMC", 
    'QCD_MuEnriched_15to20_MiniAOD'         : "bgMC",
@@ -2407,6 +2525,18 @@ types = {
    'DoubleMu_2012C_22Jan2013'   : "data",
    'DoubleMu_2012D_22Jan2013'   : "data",
 
+   'DoubleMu_2015B'   : "data",
+   'DoubleMu_2015C'   : "data",
+   'DoubleMu_2015'   : "data",
+   
+   'SingleMu_2015B'   : "data",
+   'SingleMu_2015C'   : "data",
+   'SingleMu_2015'   : "data",
+   
+   'DoubleEG_2015B'   : "data",
+   'DoubleEG_2015C'   : "data",
+   'DoubleEG_2015'   : "data",
+   
    'MuEG'                 : "data",
    'MuEG_22Jan2013'       : "data",
    'MuEG_2012A_22Jan2013' : "data",
@@ -2915,10 +3045,25 @@ types = {
 
 colors = {
    #MiniAOD not store on T3.
+   'DYJetsToLL_MiniAOD'          : 410,
    'DYJetsToLL_50_MiniAOD'       : 410,
+   'DYJetsToLL_10to50_MiniAOD'   : 410,
    'WJetsToLNu_MiniAOD'          : 852,
    'TTJets_MiniAOD'              : 872,
+   'Diboson_MiniAOD'             : 393,
+   'WZ_MiniAOD'                  : 393,
+   'ZZ_MiniAOD'                  : 397,
+   'WW_MiniAOD'                  : 390,
    
+   'DYJetsToLL_50ns_MiniAOD'          : 410,
+   'DYJetsToLL_50_50ns_MiniAOD'       : 410,
+   'DYJetsToLL_10to50_50ns_MiniAOD'   : 410,
+   'WJetsToLNu_50ns_MiniAOD'          : 852,
+   'TTJets_50ns_MiniAOD'              : 872,
+   'Diboson_50ns_MiniAOD'             : 393,
+   'WZ_50ns_MiniAOD'                  : 393,
+   'ZZ_50ns_MiniAOD'                  : 397,
+   'WW_50ns_MiniAOD'                  : 390,
    #QCD MuEnriched
    'QCD_MuEnriched_20toInf_MiniAOD'        : 623, 
    'QCD_MuEnriched_15to20_MiniAOD'         : 623,
@@ -2990,6 +3135,18 @@ colors = {
    'DoubleMu_2012B_22Jan2013'   : 1,
    'DoubleMu_2012C_22Jan2013'   : 1,
    'DoubleMu_2012D_22Jan2013'   : 1,
+   
+   'DoubleMu_2015B'   : 1,
+   'DoubleMu_2015C'   : 1,
+   'DoubleMu_2015'   : 1,
+   
+   'SingleMu_2015B'   : 1,
+   'SingleMu_2015C'   : 1,
+   'SingleMu_2015'   : 1,
+   
+   'DoubleEG_2015B'   : 1,
+   'DoubleEG_2015C'   : 1,
+   'DoubleEG_2015'   : 1,
    
    'MuEG'                   : 1,
    'MuEG_22Jan2013'         : 1,
@@ -3515,9 +3672,22 @@ colors = {
 labels = {
    #MiniAOD not stored on T3.
    'DYJetsToLL_50_MiniAOD'                 : "Z#rightarrowll M(50) (MiniAOD)",
+   'DYJetsToLL_10to50_MiniAOD'             : "Z#rightarrowll M(10to50) (MiniAOD)",
    'WJetsToLNu_MiniAOD'                    : "W#rightarrowl#nu (MiniAOD)",
    'TTJets_MiniAOD'                        : "t#bar{t} (MiniAOD)",
+   'Diboson_MiniAOD'                   : "diboson (MiniAOD)",
+   'WW_MiniAOD'                        : "WW",
+   'WZ_MiniAOD'                        : "WZ",
+   'ZZ_MiniAOD'                        : "ZZ",
    
+   'DYJetsToLL_50_50ns_MiniAOD'                 : "Z#rightarrowll M(50) 50ns (MiniAOD)",
+   'DYJetsToLL_10to50_50ns_MiniAOD'             : "Z#rightarrowll M(10to50) 50ns (MiniAOD)",
+   'WJetsToLNu_50ns_MiniAOD'                    : "W#rightarrowl#nu 50ns (MiniAOD)",
+   'TTJets_50ns_MiniAOD'                        : "t#bar{t} 50ns (MiniAOD)",
+   'Diboson_50ns_MiniAOD'                   : "diboson 50ns (MiniAOD)",
+   'WW_50ns_MiniAOD'                        : "WW 50ns",
+   'WZ_50ns_MiniAOD'                        : "WZ 50ns",
+   'ZZ_50ns_MiniAOD'                        : "ZZ 50ns",
    #QCD MuEnriched
    'QCD_MuEnriched_20toInf_MiniAOD'        : "QCD MuEnriched Pt 20-Inf (MiniAOD)", 
    'QCD_MuEnriched_15to20_MiniAOD'         : "QCD MuEnriched Pt 15-20 (MiniAOD)",
@@ -3584,6 +3754,18 @@ labels = {
    'DoubleMu_2012C_2'     : "DoubleMu 2012C data",
    'DoubleMu_2012D'       : "DoubleMu 2012D data",
 
+   'DoubleMu_2015'      : "Double Muon 2015 data",
+   'DoubleMu_2015B'     : "DoubleMu 2015B data",
+   'DoubleMu_2015C'     : "DoubleMu 2015C data",
+   
+   'SingleMu_2015'      : "Single Muon 2015 data",
+   'SingleMu_2015B'     : "SingleMu 2015B data",
+   'SingleMu_2015C'     : "SingleMu 2015C data",
+   
+   'DoubleEG_2015'      : "DoubleEG 2015 data",
+   'DoubleEG_2015B'     : "DoubleEG 2015B data",
+   'DoubleEG_2015C'     : "DoubleEG 2015C data",
+   
    'DoubleMu_22Jan2013'           : "Double Muon data",
    'DoubleMu_2012A_22Jan2013'     : "DoubleMu 2012A data",
    'DoubleMu_2012B_22Jan2013'     : "DoubleMu 2012B data",
@@ -4107,8 +4289,20 @@ crossSections = {
    'DYJetsToLL_50_MiniAOD'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)  
    'WJetsToLNu_MiniAOD'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3) 
    'TTJets_MiniAOD'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)  
+    'WW_MiniAOD'                       :                63.21, 
+    'WZ_MiniAOD'                       :                22.82, 
+    'ZZ_MiniAOD'                       :                10.32,  
+   #50ns
+   'DYJetsToLL_50_50ns_MiniAOD'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)  
+   'WJetsToLNu_50ns_MiniAOD'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3) 
+   'TTJets_50ns_MiniAOD'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)  
+    'WW_50ns_MiniAOD'                       :                63.21, 
+    'WZ_50ns_MiniAOD'                       :                22.82, 
+    'ZZ_50ns_MiniAOD'                       :                10.32,  
 ############################################################# 
 # Cross sections below obatined with crossSectionExtractor.py 
+    'DYJetsToLL_10to50_MiniAOD'        :              13638.7,      
+    'DYJetsToLL_10to50_50ns_MiniAOD'   :              13638.7,       
     'QCD_MuEnriched_20toInf_MiniAOD'   :          720648000.0, 
     'QCD_MuEnriched_15to20_MiniAOD'    :         1273190000.0, 
     'QCD_MuEnriched_20to30_MiniAOD'    :          558528000.0, 
@@ -4137,11 +4331,10 @@ crossSections = {
     'QCD_bcToE_170to250_MiniAOD'       :             105771.0, 
     'QCD_bcToE_250toInf_MiniAOD'       :              21094.1, 
 ############################################################# 
-   'stop200_1mm_MiniAOD'    : 0.0670476, 
-   'stop200_10mm_MiniAOD'   : 0.0670476,
-   'stop200_100mm_MiniAOD'  : 0.0670476,
-   'stop200_1000mm_MiniAOD' : 0.0670476,
-  
+    'stop200_1mm_MiniAOD'    : 0.0670476, 
+    'stop200_10mm_MiniAOD'   : 0.0670476,
+    'stop200_100mm_MiniAOD'  : 0.0670476,
+    'stop200_1000mm_MiniAOD' : 0.0670476,
 
 }
 

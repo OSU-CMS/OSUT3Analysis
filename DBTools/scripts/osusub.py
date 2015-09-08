@@ -105,6 +105,70 @@ parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = 
 
 
 #A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.  
+def getLatestJsonFile():
+    os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O jsonList.txt')
+    os.system('grep "Cert" jsonList.txt > CertList.txt')
+    Tmp = open('CertList.txt','r+w')
+    bannedString = 'MuonPhysCaloOnly'
+    jsonFileList = []
+    for line in Tmp:
+        startIndex = 0
+        endIndex = 0
+        for i in range(0,len(line)):
+          if line[i:i + 5] == '"Cert':
+              startIndex = i + 1
+          if line[i:i+4] == 'txt"':
+              endIndex = i + 3
+        if startIndex <= endIndex:
+            jsonFileList.append(line[startIndex: endIndex])
+    jsonFileFiltered = []
+    for fileName in jsonFileList:
+        nameSplit = fileName.split('_')
+        for i in range(0, len(nameSplit)):
+            if nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == 'JSON':
+                if nameSplit[i + 2].split('.')[0] not in bannedString:
+                    jsonFileFiltered.append(fileName)
+            elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == 'JSON.txt':
+                jsonFileFiltered.append(fileName)
+    bestJsons = []
+    bestJson = ''
+    runRange = 0
+    for json in jsonFileFiltered:
+        nameSplit = json.split('_')
+        if len(nameSplit[1].split('-')) > 1:
+            if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) > runRange:
+                runRange = float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0])
+                bestJson = json
+    for json in jsonFileFiltered:
+        nameSplit = json.split('_')
+        if len(nameSplit[1].split('-')) > 1:
+            if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) == runRange:
+                bestJsons.append(json)
+    versionNumber = 0
+    ultimateJson = ''
+    if len(bestJsons) == 1:
+        ultimateJson = bestJsons[0]
+    else:
+        for bestJson in bestJsons:
+            nameSplit = bestJson.split('_')
+            if nameSplit[len(nameSplit) - 1] != 'JSON.txt':
+                versionString =  nameSplit[len(nameSplit) - 1].split('.')[0]
+                if len(versionString) == 2: 
+                    currentVersionNumber = float(versionString[1])
+                    if currentVersionNumber > versionNumber:
+                        versionNumber = currentVersionNumber
+                        ultimateJson = bestJson 
+                else:
+                    currentVersionNumber = float(versionString[1 : ])
+                    if currentVersionNumber > versionNumber:
+                        versionNumber = currentVersionNumber
+                        ultimateJson = bestJson 
+    os.system('rm CertList.txt')
+    os.system('rm jsonList.txt')
+    os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/' + ultimateJson + ' -O ' + ultimateJson)
+    return ultimateJson
+
+
 def SpecialStringModifier(inputString, specialStringSplitList, specialStringReplaceList):
     if len(specialStringSplitList):
         for member in specialStringSplitList:
@@ -139,7 +203,7 @@ def GetListOfRootFiles(Directory):
  
 
 #It generates the condor.sub file for each dataset. 
-def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
+def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA, jsonFile):
     os.system('touch ' + Directory + '/condor.sub')
     SubmitFile = open(Directory + '/condor.sub','r+w')
     cmsRunExecutable = os.popen('which cmsRun').read()
@@ -158,7 +222,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
                 userProxy = '/tmp/x509up_u' + str(userId)
                 SubmitFile.write('x509userproxy = ' + userProxy + '\n')
                 SubmitFile.write('should_transfer_files   = YES\n')
-                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy + '\n')
+                if jsonFile == '':
+                    SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy + '\n')
+                else:    
+                    SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy.strip('\n') + ',' + str(jsonFile) + '\n')
             else:
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py\n')
         elif CondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
@@ -170,13 +237,16 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA):
     SubmitFile.close()
 
 #It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.  
-def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
+def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     os.system('touch ' + Directory + '/config_cfg.py')
     ConfigFile = open(Directory + '/config_cfg.py','r+w')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')        
     ConfigFile.write('import OSUT3Analysis.DBTools.osusub_cfg as osusub\n')
     ConfigFile.write('import re\n')
     ConfigFile.write('import userConfig_' + Label + '_cfg as pset\n')
+    if jsonFile != '':
+        ConfigFile.write('import FWCore.PythonUtilities.LumiList as LumiList\n')
+        ConfigFile.write('myLumis = LumiList.LumiList(filename = \'' + str(jsonFile) + '\').getCMSSWString().split(\',\')\n')
     ConfigFile.write('\n')
     if not Generic:
         if len(SkimChannelNames) == 0:
@@ -206,6 +276,9 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames):
         if EventsPerJob < 0:
             ConfigFile.write('pset.process.maxEvents.input = cms.untracked.int32 (' + str(EventsPerJob) + ')\n')  
     #If there are no input datasets, one needs a positive MaxEvents.
+    if jsonFile != '':
+        ConfigFile.write('pset.process.source.lumisToProcess = cms.untracked.VLuminosityBlockRange()\n')
+        ConfigFile.write('pset.process.source.lumisToProcess.extend(myLumis)\n')
     if EventsPerJob > 0:
         ConfigFile.write('pset.process.maxEvents.input = cms.untracked.int32 (' + str(EventsPerJob) + ')\n')
     ConfigFile.write('process = pset.process\n')
@@ -346,7 +419,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
         NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
         InitializeAAA = ""
-        if NTupleExistCheck == 'Dataset does not exist on the Tier 3!': 
+        if NTupleExistCheck == 'Dataset does not exist on the Tier 3!' or NTupleExistCheck == '': 
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
             InitializeAAA = "y"
             os.system('touch ' + AAAFileList)  
@@ -356,9 +429,10 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             #    return 
         if RunOverSkim:
             SkimModifier(Label, Directory)
+            InitializeAAA = ""
         sys.path.append(Directory)
         exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
-        if InitializeAAA == "":
+        if InitializeAAA == "" and not RunOverSkim:
             status = datasetInfo.status
             continueForNonPresentDataset = True
             if not status == 'present':
@@ -443,7 +517,10 @@ def SkimModifier(Label, Directory):
     add += 'skimNumberOfEvents = ' + str(SkimNumberOfEvents) + '\n'
     fnew = open(infoFileTest, "w")
     fnew.write(orig + add)
-    fnew.close()  
+    fnew.close()
+    os.system('rm ' + Directory + '/datasetInfo_' + Label + '_cfg.py')  
+    os.system('rm ' + Directory + '/datasetInfo_' + Label + '_cfg_beforeChanges.py')  
+    os.system('mv ' + Directory + '/datasetInfo_' + Label + '_cfg-test.py ' + Directory + '/datasetInfo_' + Label + '_cfg.py')  
 
 
 
@@ -570,6 +647,7 @@ if not arguments.Resubmit:
             UseAAA = DatasetRead['useAAA']
             if NumberOfJobs > NumberOfFiles:
                 NumberOfJobs = NumberOfFiles
+            if not arguments.localConfig:     
                 NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
             if MaxEvents > 0:
     	        EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs)) 	
@@ -577,12 +655,17 @@ if not arguments.Resubmit:
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
             os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
-            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,dataset, SkimChannelNames)
+            jsonFile = ''
+            if arguments.localConfig: 
+                if(types[dataset] == 'data'):
+                    jsonFile = getLatestJsonFile() 
+                    os.system('mv ' + jsonFile + ' ' + WorkDir + '/')
+            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,dataset, SkimChannelNames, jsonFile)
     
     	    if lxbatch:
     	        MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
     	    else:
-                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, UseAAA)
+                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, UseAAA, jsonFile)
             if not arguments.NotToExecute:
                 os.chdir(WorkDir)
                 if RealMaxEvents > 0 : 
@@ -618,13 +701,13 @@ if not arguments.Resubmit:
             GetCompleteOrderedArgumentsSet(InputCondorArguments)
         userConfig = 'userConfig_' + Label + '_cfg.py'
         os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
-        
-        MakeSpecificConfig('',WorkDir,Label, SkimChannelNames)
+         
+        MakeSpecificConfig('',WorkDir,Label, SkimChannelNames,'')
     
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
         else:
-            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, UseAAA)
+            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, UseAAA,'')
         if not arguments.NotToExecute:
             os.chdir(WorkDir)
             print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'
