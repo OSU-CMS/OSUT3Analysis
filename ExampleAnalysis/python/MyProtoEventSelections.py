@@ -7,18 +7,12 @@ import copy
 
 eMuMinimal = cms.PSet(
     name = cms.string("EMuMinimal"),
-    triggers = cms.vstring("HLT_Mu22_Photon22_CaloIdL_v"), # TRIGGER
+    triggers = cms.vstring("HLT_Mu23NoFiltersNoVtx_Photon23_CaloIdL_v1"), # TRIGGER
     cuts = cms.VPSet (
-        # EVENT CLEANING
-        cms.PSet (
-            inputCollection = cms.vstring("events"),
-            cutString = cms.string("FilterOutScraping > 0"),
-            numberRequired = cms.string(">= 1")
-        ),
         # EVENT HAS GOOD PV
         cms.PSet (
             inputCollection = cms.vstring("primaryvertexs"),
-            cutString = cms.string("isGood > 0"),
+            cutString = cms.string("isValid > 0 && ndof >= 4"),
             numberRequired = cms.string(">= 1")
         ),
         # ELECTRON ETA CUT
@@ -54,18 +48,12 @@ eMuMinimal = cms.PSet(
 
 preselection = cms.PSet(
     name = cms.string("Preselection"),
-    triggers = cms.vstring("HLT_Mu22_Photon22_CaloIdL_v"), # TRIGGER
+    triggers = cms.vstring("HLT_Mu23NoFiltersNoVtx_Photon23_CaloIdL_v1"), # TRIGGER
     cuts = cms.VPSet (
-        # EVENT CLEANING
-        cms.PSet (
-            inputCollection = cms.vstring("events"),
-            cutString = cms.string("FilterOutScraping > 0"),
-            numberRequired = cms.string(">= 1")
-        ),
         # EVENT HAS GOOD PV
         cms.PSet (
             inputCollection = cms.vstring("primaryvertexs"),
-            cutString = cms.string("isGood > 0"),
+            cutString = cms.string("isValid > 0 && ndof >= 4"),
             numberRequired = cms.string(">= 1")
         ),
         # ELECTRON ETA CUT

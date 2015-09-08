@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 DATA_FORMAT=$1
+CUSTOM_FILE=$2  # Only used for MINI_AOD_CUSTOM option, which requires a 
 
 if [ "$DATA_FORMAT" == "BEAN" ]
 then
@@ -11,6 +12,16 @@ then
 elif [ "$DATA_FORMAT" == "AOD" ]
 then
   sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT AOD/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h
+elif [ "$DATA_FORMAT" == "MINI_AOD_CUSTOM" ]
+then
+  if [ "$CUSTOM_FILE" == "" ]
+  then
+    echo "ERROR:  For MINI_AOD_CUSTOM format, must specify the path to a CustomDataFormat.h file.  Please try again."  
+    exit 
+  else 
+    sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT MINI_AOD_CUSTOM/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h
+    sed -i "s:CustomDataFormat.h:$CUSTOM_FILE:g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h  # Do not use slash ("/") as delimiter, since $CUSTOM_FILE probably contains several instances of "/"  
+  fi 
 else
   echo "Not a valid data format: "$DATA_FORMAT
   exit

@@ -1,10 +1,11 @@
 #ifndef DATA_FORMAT
 
-#define  BEAN      0
-#define  MINI_AOD  1
-#define  AOD       2
+#define  BEAN             0
+#define  MINI_AOD         1
+#define  AOD              2
+#define  MINI_AOD_CUSTOM  3
 
-#define DATA_FORMAT MINI_AOD
+#define DATA_FORMAT MINI_AOD  
 
 #define INVALID_TYPE void *
 
@@ -131,6 +132,9 @@
   #include "DataFormats/EgammaCandidates/interface/Photon.h"
   #include "DataFormats/TauReco/interface/PFTau.h"
   #include "DataFormats/TrackReco/interface/Track.h"
+
+#elif DATA_FORMAT == MINI_AOD_CUSTOM
+  #include "CustomDataFormat.h"  // Define collections in an external header file.  
 
 #else
   #error "Data format is not valid."

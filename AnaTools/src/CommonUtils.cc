@@ -582,7 +582,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   string  anatools::getObjectType  (const  TYPE(jets)            &obj)  {  return  "jet";            }
   string  anatools::getObjectClass  (const  TYPE(jets)            &obj)  {  return  TYPE_STR(jets);            }
 #endif
-#if IS_VALID(basicjets) && DATA_FORMAT != MINI_AOD
+#if IS_VALID(basicjets) && DATA_FORMAT == AOD
   string  anatools::getObjectType   (const  TYPE(basicjets)            &obj)  {  return  "basicjet";            }
   string  anatools::getObjectClass  (const  TYPE(basicjets)            &obj)  {  return  TYPE_STR(basicjets);            }
 #endif
