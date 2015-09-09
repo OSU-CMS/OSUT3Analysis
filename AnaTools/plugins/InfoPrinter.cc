@@ -358,13 +358,13 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
     {
       ss_ << "\033[1;34m" << setw (maxAllTriggerWidth_) << left << trigger.first << "\033[0m";
       if (trigger.second.first)
-        ss_ << setw (8) << left << "\033[1;32maccept\033[0m";
+        ss_ << "\033[1;32maccept\033[0m  ";
       else
-        ss_ << setw (8) << left << "\033[1;31mreject\033[0m";
+        ss_ << "\033[1;31mreject\033[0m  ";
       if (trigger.second.second == 1)
         ss_ << "\033[1;33m" << trigger.second.second << "\033[0m" << endl;
       else
-        ss_ << trigger.second.second << endl;
+        ss_ << "\033[2;33m" << trigger.second.second << "\033[0m" << endl;
     }
 
   return true;
@@ -426,7 +426,7 @@ InfoPrinter::getMaxWidth (const map<string, pair<bool, unsigned> > &list) const
     }
   //////////////////////////////////////////////////////////////////////////////
 
-  w += 8;
+  w += 2;
 
   return w;
 }
@@ -527,6 +527,7 @@ InfoPrinter::unpackValuesToPrint ()
     }
   if (printAllTriggers_)
     objectsToGet_.insert ("triggers");
+    objectsToGet_.insert ("prescales");
 }
 
 bool
