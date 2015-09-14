@@ -22,6 +22,7 @@ datasets = [
    'DoubleMu_2015',
    'SingleMu_2015',
    'DoubleEG_2015',
+   'MuonEG_2015',
    'DoubleElectron_22Jan2013',
    'MuEG',
    'MuEG_22Jan2013',
@@ -830,6 +831,10 @@ composite_dataset_definitions = {
         'DoubleEG_2015B',
         'DoubleEG_2015C',
     ],
+    'MuonEG_2015' : [
+        'MuonEG_2015B',
+        'MuonEG_2015C',
+    ],
     'MuEG' : [
         'MuEG_2012A_1',
         'MuEG_2012A_2',
@@ -1041,6 +1046,9 @@ dataset_names = {
    
    'DoubleEG_2015B'       : "/DoubleEG/Run2015B-PromptReco-v1/MINIAOD",
    'DoubleEG_2015C'       : "/DoubleEG/Run2015C-PromptReco-v1/MINIAOD",
+   
+   'MuonEG_2015B'       : "/MuonEG/Run2015B-PromptReco-v1/MINIAOD",
+   'MuonEG_2015C'       : "/MuonEG/Run2015C-PromptReco-v1/MINIAOD",
    
    'MuEG_2012A_22Jan2013'         : "/MuEG/Run2012A-22Jan2013-v1/AOD",
    'MuEG_2012B_22Jan2013'         : "/MuEG/Run2012B-22Jan2013-v1/AOD",
@@ -1557,6 +1565,9 @@ nJobs = {
    'DoubleEG_2015B'   :  100,
    'DoubleEG_2015C'   :  298,
    
+   'MuonEG_2015B'   :  30,
+   'MuonEG_2015C'   :  82,
+   
    'MuEG_2012A_22Jan2013' : 50,
    'MuEG_2012B_22Jan2013' : 50,
    'MuEG_2012C_22Jan2013' : 100,
@@ -2039,6 +2050,9 @@ maxEvents = {
    
    'DoubleEG_2015B'       : -1,
    'DoubleEG_2015C'       : -1,
+   
+   'MuonEG_2015B'       : -1,
+   'MuonEG_2015C'       : -1,
    
    'MuEG_2012A_22Jan2013' : -1,
    'MuEG_2012B_22Jan2013' : -1,
@@ -2527,15 +2541,19 @@ types = {
 
    'DoubleMu_2015B'   : "data",
    'DoubleMu_2015C'   : "data",
-   'DoubleMu_2015'   : "data",
+   'DoubleMu_2015'    : "data",
    
    'SingleMu_2015B'   : "data",
    'SingleMu_2015C'   : "data",
-   'SingleMu_2015'   : "data",
+   'SingleMu_2015'    : "data",
    
    'DoubleEG_2015B'   : "data",
    'DoubleEG_2015C'   : "data",
-   'DoubleEG_2015'   : "data",
+   'DoubleEG_2015'    : "data",
+   
+   'MuonEG_2015B'   : "data",
+   'MuonEG_2015C'   : "data",
+   'MuonEG_2015'    : "data",
    
    'MuEG'                 : "data",
    'MuEG_22Jan2013'       : "data",
@@ -3147,6 +3165,10 @@ colors = {
    'DoubleEG_2015B'   : 1,
    'DoubleEG_2015C'   : 1,
    'DoubleEG_2015'   : 1,
+   
+   'MuonEG_2015B'   : 1,
+   'MuonEG_2015C'   : 1,
+   'MuonEG_2015'    : 1,
    
    'MuEG'                   : 1,
    'MuEG_22Jan2013'         : 1,
@@ -3765,6 +3787,10 @@ labels = {
    'DoubleEG_2015'      : "DoubleEG 2015 data",
    'DoubleEG_2015B'     : "DoubleEG 2015B data",
    'DoubleEG_2015C'     : "DoubleEG 2015C data",
+   
+   'MuonEG_2015'      : "MuonEG 2015 data",
+   'MuonEG_2015B'     : "MuonEG 2015B data",
+   'MuonEG_2015C'     : "MuonEG 2015C data",
    
    'DoubleMu_22Jan2013'           : "Double Muon data",
    'DoubleMu_2012A_22Jan2013'     : "DoubleMu 2012A data",
