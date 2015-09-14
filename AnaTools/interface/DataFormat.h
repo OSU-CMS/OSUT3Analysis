@@ -31,9 +31,11 @@
   #define  eventvariables_TYPE  EventVariableProducerPayload
 
   #define  triggers_TYPE        BNtriggerCollection
+  #define  prescales_TYPE       INVALID_TYPE
 
   #define  basicjets_INVALID
   #define  beamspots_INVALID
+  #define  prescales_INVALID
 
   #include "BEAN/Collections/interface/BNbxlumi.h"
   #include "BEAN/Collections/interface/BNelectron.h"
@@ -72,6 +74,7 @@
   #define  eventvariables_TYPE  EventVariableProducerPayload
 
   #define  triggers_TYPE        edm::TriggerResults
+  #define  prescales_TYPE       pat::PackedTriggerPrescales
 
   #define  bxlumis_INVALID
   #define  events_INVALID
@@ -87,6 +90,7 @@
   #include "DataFormats/PatCandidates/interface/MET.h"
   #include "DataFormats/PatCandidates/interface/Muon.h"
   #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
+  #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
   #include "DataFormats/PatCandidates/interface/Photon.h"
   #include "DataFormats/PatCandidates/interface/Tau.h"
   #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
@@ -113,11 +117,13 @@
   #define  eventvariables_TYPE  EventVariableProducerPayload
 
   #define  triggers_TYPE        edm::TriggerResults
+  #define  prescales_TYPE       INVALID_TYPE
 
   #define  bxlumis_INVALID
   #define  events_INVALID
   #define  genjets_INVALID
   #define  mcparticles_INVALID
+  #define  prescales_INVALID
   #define  superclusters_INVALID
   #define  trigobjs_INVALID
 

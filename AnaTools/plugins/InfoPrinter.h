@@ -48,6 +48,7 @@ class InfoPrinter : public edm::EDAnalyzer
     ////////////////////////////////////////////////////////////////////////////
     unsigned getMaxWidth (const vector<string> &) const;
     unsigned getMaxWidth (const map<string, bool> &) const;
+    unsigned getMaxWidth (const map<string, pair<bool, unsigned> > &) const;
     unsigned getMaxWidth (const Cuts &) const;
     unsigned getMaxWidth (const ValuesToPrint &) const;
     ////////////////////////////////////////////////////////////////////////////
