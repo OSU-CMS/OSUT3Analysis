@@ -1,6 +1,6 @@
 import sys
 import math
-
+# For jobs with input datasets, normal cases: cmsRun config_cfg.py True 671 $(Process) /DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM DYJetsToLL_50_MiniAOD
 if len (sys.argv) == 7 and sys.argv[2] == "True":
   nJobs = float (sys.argv[3])
   Label = str(sys.argv[6])
@@ -17,9 +17,11 @@ if len (sys.argv) == 7 and sys.argv[2] == "True":
   datasetLabel = sys.argv[6]
   batchMode = True
 
-if len (sys.argv) == 5 and sys.argv[2] == "True":
+# For jobs without inputs such as MC generation: cmsRun config_cfg.py True 20 $(Process)  Stop200ToEMu_1000mm_GEN_745
+elif len (sys.argv) == 5 and sys.argv[2] == "True":
   nJobs = float (sys.argv[3])
   jobNumber = int (sys.argv[4])
   batchMode = True
 else:
   batchMode = False
+
