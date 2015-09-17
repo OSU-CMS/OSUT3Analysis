@@ -1486,12 +1486,12 @@ JetHistograms = cms.PSet(
             binsY = cms.untracked.vdouble(100, -3, 3), 
             inputVariables = cms.vstring("phi","eta"),
         ),
-        cms.PSet (
-            name = cms.string("jetFlavor"),
-            title = cms.string("Jet Flavor"),
-            binsX = cms.untracked.vdouble(42, -21, 21),
-            inputVariables = cms.vstring("flavour"),
-        ),
+        # cms.PSet (
+        #     name = cms.string("jetFlavor"),
+        #     title = cms.string("Jet Flavor"),
+        #     binsX = cms.untracked.vdouble(42, -21, 21),
+        #     inputVariables = cms.vstring("flavour"),
+        # ),
         cms.PSet (
             name = cms.string("jetChargedHadronEnergyFraction"),
             title = cms.string("Jet Charged Hadron Fraction"),
@@ -1516,18 +1516,18 @@ JetHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(120, -0.1, 1.1),
             inputVariables = cms.vstring("chargedEmEnergyFraction"),
         ),
-        cms.PSet (
-            name = cms.string("jetCSV"),
-            title = cms.string("Jet Combined Secondary Vertex B-tagging Discriminant"),
-            binsX = cms.untracked.vdouble(100, -1, 1),
-            inputVariables = cms.vstring("btagCombinedSecVertex"),
-        ),
-        cms.PSet (
-            name = cms.string("jetMetDeltaPhi"),
-            title = cms.string("Jet-MET Delta Phi; |#Delta(#phi)|"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
-            inputVariables = cms.vstring("dPhiMet"),
-        ),
+        # cms.PSet (
+        #     name = cms.string("jetCSV"),
+        #     title = cms.string("Jet Combined Secondary Vertex B-tagging Discriminant"),
+        #     binsX = cms.untracked.vdouble(100, -1, 1),
+        #     inputVariables = cms.vstring("btagCombinedSecVertex"),
+        # ),
+        # cms.PSet (
+        #     name = cms.string("jetMetDeltaPhi"),
+        #     title = cms.string("Jet-MET Delta Phi; |#Delta(#phi)|"),
+        #     binsX = cms.untracked.vdouble(100, 0, 3.15),
+        #     inputVariables = cms.vstring("dPhiMet"),
+        # ),
         
     )
 )
