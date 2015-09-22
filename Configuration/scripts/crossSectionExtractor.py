@@ -16,6 +16,7 @@ from array import *
 from ROOT import TFile  
 from DataFormats.FWLite import Events, Handle, Runs
 from OSUT3Analysis.Configuration.configurationOptions import *
+from OSUT3Analysis.Configuration.configurationOptions_13TeV import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 
