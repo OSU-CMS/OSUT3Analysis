@@ -526,8 +526,10 @@ InfoPrinter::unpackValuesToPrint ()
       objectsToGet_.insert (valuesToPrint.back ().inputCollections.begin (), valuesToPrint.back ().inputCollections.end ());
     }
   if (printAllTriggers_)
-    objectsToGet_.insert ("triggers");
-    objectsToGet_.insert ("prescales");
+    {
+      objectsToGet_.insert ("triggers");
+      objectsToGet_.insert ("prescales");
+    }
 }
 
 bool
