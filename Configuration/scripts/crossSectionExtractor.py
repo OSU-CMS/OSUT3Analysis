@@ -16,6 +16,7 @@ from array import *
 from ROOT import TFile  
 from DataFormats.FWLite import Events, Handle, Runs
 from OSUT3Analysis.Configuration.configurationOptions import *
+from OSUT3Analysis.Configuration.configurationOptions_13TeV import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 
@@ -67,7 +68,7 @@ for dataset in split_datasets:
         print "external NLO xsec of " + str(dataset) + " is: " + str(runGenInfo.externalXSecNLO().value())
         print "filterEfficiency of  " + str(dataset) + " is: " + str(runGenInfo.filterEfficiency())
     content += "    " + ("'"+dataset+"'").ljust(35) 
-    content += ": "   + str(runGenInfo.crossSection()).rjust(20)
+    content += ": "   + (str(runGenInfo.crossSection()) + "*" + str(runGenInfo.filterEfficiency())).rjust(20)
     content += ", \n"
     del datasetName
     del fileList
