@@ -125,10 +125,10 @@ def getLatestJsonFile():
     for fileName in jsonFileList:
         nameSplit = fileName.split('_')
         for i in range(0, len(nameSplit)):
-            if nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == 'JSON':
-                if nameSplit[i + 2].split('.')[0] not in bannedString:
+            if nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
+                if nameSplit[i + 3].split('.')[0] not in bannedString:
                     jsonFileFiltered.append(fileName)
-            elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == 'JSON.txt':
+            elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
                 jsonFileFiltered.append(fileName)
     bestJsons = []
     bestJson = ''
