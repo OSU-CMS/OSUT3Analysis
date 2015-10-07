@@ -146,11 +146,11 @@ header_y_top     = 0.9947552
 
 colors = {
     'black'  : 1,
-    'red'    : 623,
-    'green'  : 407,
-    'purple' : 871,
-    'blue'   : 591,
-    'yellow' : 393,
+    'red'    : 632,
+    'green'  : 416,
+    'purple' : 880,
+    'blue'   : 600,
+    'yellow' : 400,
 }
 
 colorList = [
