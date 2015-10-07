@@ -402,6 +402,9 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
                     fillIndex = fillIndex + 1
                 
 
+        if 'scale' in source:
+            Histogram.Scale(source['scale'])  
+
         markerStyle = 20
         if 'marker' in source:
             markerStyle = markers[source['marker']]
