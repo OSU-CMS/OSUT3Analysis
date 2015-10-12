@@ -2682,19 +2682,19 @@ TrackHistograms = cms.PSet(
             name = cms.string("trackdz"),
             title = cms.string("Track d_{z}; d_{z} [cm]"),
             binsX = cms.untracked.vdouble(100, -30, 30),
-            inputVariables = cms.vstring("dZ"),
+            inputVariables = cms.vstring("dz"),
          ),
         cms.PSet (
             name = cms.string("trackNumValidHits"),
             title = cms.string("Track Number of Valid Hits; Number of Valid Hits"),
             binsX = cms.untracked.vdouble(31, -0.5, 30.5),
-            inputVariables = cms.vstring("numValidHits"),
+            inputVariables = cms.vstring("numberOfValidHits"),
         ),
         cms.PSet (
             name = cms.string("trackChi2"),
             title = cms.string("Track Reduced Chi2; #chi^{2} / DOF"),
             binsX = cms.untracked.vdouble(100, 0, 30),
-            inputVariables = cms.vstring("normChi2"),
+            inputVariables = cms.vstring("normalizedChi2"),
         ),
         cms.PSet (
             name = cms.string("trackCharge"),
