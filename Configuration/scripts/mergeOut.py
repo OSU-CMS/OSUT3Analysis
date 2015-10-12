@@ -249,19 +249,26 @@ for dataSet in split_datasets:
     ReturnValues = []
     LogFiles = os.popen('ls condor_*.log').readlines()
     for i in range(0,len(LogFiles)):
-        ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep "return value" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
+        ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
     GoodIndices = []
     GoodRootFiles = []
     BadIndices = []   
- 
+    sys.path.append(directory)
     for i in range(0,len(ReturnValues)):
-        if "return value 0" not in ReturnValues[i] and "return value" in ReturnValues[i]:
-            print ReturnValues[i]
-            BadIndex = MessageDecoder(ReturnValues[i],False)
-            BadIndices.append(BadIndex) 
-        elif "return value" in ReturnValues[i]:    
+    	if "return value 0" in ReturnValues[i]:
             GoodIndex = MessageDecoder(ReturnValues[i], True)
             GoodIndices.append(GoodIndex)
+        elif "return value" in ReturnValues[i]:
+            print ReturnValues[i]
+            BadIndex = MessageDecoder(ReturnValues[i], False)
+            BadIndices.append(BadIndex)
+        else:
+            print ReturnValues[i]
+            Pattern = r'condor_(.*).log'
+            Decoded = re.match(Pattern,ReturnValues[i])
+            BadIndex = Decoded.group(1)
+            print "Warning!!! Job " + str(BadIndex) + " exited inproperly!"                                                         
+            BadIndices.append(BadIndex)
     if BadIndices:
         MakeResubmissionScript(BadIndices, 'condor.sub')
     for i in range(0,len(GoodIndices)):
@@ -270,7 +277,6 @@ for dataSet in split_datasets:
         print "Unfortunately there are no good root files to merge!"
         continue
     InputFileString = MakeInputFileString(GoodRootFiles)
-    sys.path.append(directory)
     exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
     TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
     SkimNumber = GetNumberOfEvents(GoodRootFiles)['SkimNumber']
