@@ -55,6 +55,8 @@ void
 InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
   counter_++;
+
+
   anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);
 
   //////////////////////////////////////////////////////////////////////////////
@@ -347,6 +349,15 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
   ss_ << "\033[1;35mavailable triggers\033[0m" << endl;
   ss_ << "--------------------------------------------------------------------------------" << endl;
   map<string, pair<bool, unsigned> > triggers;
+  if (!handles_.triggers.isValid()) {
+    ss_ << "\033[1;31mERROR\033[0m" << " [InfoPrinter::printAllTriggers]:  Invalid triggers handle." << endl;  
+    return false; 
+  } 
+  if (!handles_.prescales.isValid()) {
+    ss_ << "\033[1;31mERROR\033[0m" << " [InfoPrinter::printAllTriggers]:  Invalid prescales handle." << endl;  
+    return false; 
+  } 
+    
 #if DATA_FORMAT == BEAN
   for (const auto &trigger : *handles_.triggers)
     {
