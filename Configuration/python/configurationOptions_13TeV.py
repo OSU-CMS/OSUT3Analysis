@@ -103,6 +103,11 @@ composite_dataset_definitions = {
         'SingleTop_tW_MiniAOD',
         'SingleTop_tbarW_MiniAOD',
     ],
+    'TTJets_Lept_MiniAOD' : [
+        'TTJets_DiLept_MiniAOD',
+        'TTJets_SingleLeptFromT_MiniAOD',
+        'TTJets_SingleLeptFromTbar_MiniAOD',
+    ],
     'QCD_MuEnriched_MiniAOD' : [
         'QCD_MuEnriched_20toInf_MiniAOD', 
         'QCD_MuEnriched_15to20_MiniAOD', 
@@ -174,12 +179,17 @@ dataset_names = {
     'SingleTop_t_channel_MiniAOD'  :  "/ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
     'SingleTop_tW_MiniAOD'         :  "/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'SingleTop_tbarW_MiniAOD'      :  "/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
+    #TTJets
+    'TTJets_DiLept_MiniAOD'              :  "/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
+    'TTJets_SingleLeptFromT_MiniAOD'     :  "/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
+    'TTJets_SingleLeptFromTbar_MiniAOD'  :  "/TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
     ############################################################################
 
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
-    'DYJetsToLL_50_MiniAOD'     : "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'DYJetsToLL_50_MiniAOD'     : "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM",
     'DYJetsToLL_10to50_MiniAOD' : "/DYJetsToLL_M-5to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'WJetsToLNu_MiniAOD'        : "/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'TTJets_MiniAOD'            : "/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
@@ -259,6 +269,11 @@ nJobs = {
     'SingleTop_t_channel_MiniAOD'  :  9999,
     'SingleTop_tW_MiniAOD'         :  9999,
     'SingleTop_tbarW_MiniAOD'      :  9999,
+
+    #TTJets
+    'TTJets_DiLept_MiniAOD'              :  9999,
+    'TTJets_SingleLeptFromT_MiniAOD'     :  9999,
+    'TTJets_SingleLeptFromTbar_MiniAOD'  :  9999,
     ############################################################################
 
     ############################################################################
@@ -347,6 +362,11 @@ maxEvents = {
     'SingleTop_t_channel_MiniAOD'  :  -1,
     'SingleTop_tW_MiniAOD'         :  -1,
     'SingleTop_tbarW_MiniAOD'      :  -1,
+
+    #TTJets
+    'TTJets_DiLept_MiniAOD'              :  -1,
+    'TTJets_SingleLeptFromT_MiniAOD'     :  -1,
+    'TTJets_SingleLeptFromTbar_MiniAOD'  :  -1,
     ############################################################################
 
     ############################################################################
@@ -437,6 +457,12 @@ types = {
     'SingleTop_t_channel_MiniAOD'  :  "bgMC",
     'SingleTop_tW_MiniAOD'         :  "bgMC",
     'SingleTop_tbarW_MiniAOD'      :  "bgMC",
+
+    #TTJets
+    'TTJets_Lept_MiniAOD'                :  "bgMC",
+    'TTJets_DiLept_MiniAOD'              :  "bgMC",
+    'TTJets_SingleLeptFromT_MiniAOD'     :  "bgMC",
+    'TTJets_SingleLeptFromTbar_MiniAOD'  :  "bgMC",
     ############################################################################
 
     ############################################################################
@@ -533,6 +559,12 @@ colors = {
     'SingleTop_t_channel_MiniAOD'  :  907,
     'SingleTop_tW_MiniAOD'         :  909,
     'SingleTop_tbarW_MiniAOD'      :  910,
+
+    #TTJets
+    'TTJets_Lept_MiniAOD'                :  872,
+    'TTJets_DiLept_MiniAOD'              :  873,
+    'TTJets_SingleLeptFromT_MiniAOD'     :  872,
+    'TTJets_SingleLeptFromTbar_MiniAOD'  :  872,
     ############################################################################
 
     ############################################################################
@@ -629,6 +661,12 @@ labels = {
     'SingleTop_t_channel_MiniAOD'  :  "Single top (t-channel)",
     'SingleTop_tW_MiniAOD'         :  "Single top (tW)",
     'SingleTop_tbarW_MiniAOD'      :  "Single top (#bar{t}W)",
+
+    #TTJets
+    'TTJets_Lept_MiniAOD'                :  "t#bar{t}",
+    'TTJets_DiLept_MiniAOD'              :  "t#bar{t} (fully leptonic)",
+    'TTJets_SingleLeptFromT_MiniAOD'     :  "t#bar{t} (single lepton from t)",
+    'TTJets_SingleLeptFromTbar_MiniAOD'  :  "t#bar{t} (single lepton from #bar{t})",
     ############################################################################
 
     ############################################################################
