@@ -286,6 +286,8 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
       weight /= getBinSize(histogram,value);
     }
     histogram->Fill(value, weight);
+    if (verbose_) clog << "Filled histogram " << definition.name << " with value=" << value << ", weight=" << weight << endl;  
+
   }
 
 }
@@ -312,6 +314,8 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
         weight /= getBinSize(histogram,valueX,valueY).second;
       }
       histogram->Fill(valueX, valueY, weight);
+      if (verbose_) clog << "Filled histogram " << definition.name << " with valueX=" << valueX << ", valueY=" << valueY << ", weight=" << weight << endl;  
+
     }
   }
 
