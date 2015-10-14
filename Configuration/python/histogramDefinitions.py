@@ -2669,7 +2669,7 @@ TrackHistograms = cms.PSet(
         cms.PSet (
              name = cms.string("trackPhi"),
              title = cms.string("Track Phi; #phi"),
-             binsX = cms.untracked.vdouble(100, -3, 3),
+             binsX = cms.untracked.vdouble(100, -3.15, 3.15),
              inputVariables = cms.vstring("phi"),
         ),
         cms.PSet (
