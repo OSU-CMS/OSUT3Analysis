@@ -5,7 +5,7 @@ infoPrinter = cms.EDAnalyzer ("InfoPrinter",
 #        cms.EventID (1, 728, 7),
     ),
     printAllEvents              =  cms.bool  (False),  # print information for all events, overriding eventsToPrint
-    printPassedEvents           =  cms.bool  (True),   # print information for events that pass all cuts 
+    printPassedEvents           =  cms.bool  (False),  # print information for events that pass all cuts 
     valuesToPrint               =  cms.VPSet (
 #        cms.PSet (
 #            inputCollection = cms.vstring ("jets"),
