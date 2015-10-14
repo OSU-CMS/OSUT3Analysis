@@ -34,8 +34,8 @@ struct CutCalculatorPayload
 {
   FlagMap         cumulativeObjectFlags;
   FlagMap         objectFlags;
-  bool            cutDecision;
-  bool            eventDecision;
+  bool            cutDecision;         // whether event passes all cuts, without trigger
+  bool            eventDecision;       // whether event passes all cuts and the trigger 
   bool            isValid;
   bool            triggerDecision;
   bool            triggerFilterDecision;

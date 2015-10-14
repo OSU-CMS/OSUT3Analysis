@@ -286,6 +286,8 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
       weight /= getBinSize(histogram,value);
     }
     histogram->Fill(value, weight);
+    if (verbose_) clog << "Filled histogram " << definition.name << " with value=" << value << ", weight=" << weight << endl;  
+
   }
 
 }
@@ -295,27 +297,58 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
 // fill TH2 using one collection
 void Plotter::fill2DHistogram(const HistoDef &definition){
 
-  TH2D *histogram = fs_->getObject<TH2D>(definition.name, definition.directory);
-
-  // loop over objets in input collection and fill histogram
-  for(vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (); leafX != definition.valueLookupTrees.at (0)->evaluate ().end (); leafX++){
-    for(vector<Leaf>::const_iterator leafY = definition.valueLookupTrees.at (1)->evaluate ().begin (); leafY != definition.valueLookupTrees.at (1)->evaluate ().end (); leafY++){
+  if (definition.inputCollections.size() == 1) {
+    // If there is only one input collection, then fill the 2D histogram once per object.  
+    // To do that, increment each lookup tree in parallel.  
+    for (vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (), 
+	   leafY = definition.valueLookupTrees.at (1)->evaluate ().begin(); 
+	 leafX != definition.valueLookupTrees.at (0)->evaluate ().end () && 
+         leafY != definition.valueLookupTrees.at (1)->evaluate ().end (); 
+	 leafX++, leafY++) {
       double valueX = boost::get<double> (*leafX),
-             valueY = boost::get<double> (*leafY),
-             weight = 1.0;
-      if(valueX <= numeric_limits<int>::min () + 1 || valueY <= numeric_limits<int>::min () + 1)
-        continue;
-      if(definition.hasVariableBinsX){
-        weight /= getBinSize(histogram,valueX,valueY).first;
+	valueY = boost::get<double> (*leafY),
+	weight = 1.0;
+      fill2DHistogram(definition, valueX, valueY, weight);  
+    }
+    
+  } else {  
+    // If there is more than one input collection, then fill the 2D histogram for each combination of objects.  
+    // Warning:  This histogram may be difficult to interpret!      
+    for(vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (); leafX != definition.valueLookupTrees.at (0)->evaluate ().end (); leafX++){
+      for(vector<Leaf>::const_iterator leafY = definition.valueLookupTrees.at (1)->evaluate ().begin (); leafY != definition.valueLookupTrees.at (1)->evaluate ().end (); leafY++){
+	double valueX = boost::get<double> (*leafX),
+	  valueY = boost::get<double> (*leafY),
+	  weight = 1.0;
+	fill2DHistogram(definition, valueX, valueY, weight);  
       }
-      if(definition.hasVariableBinsY){
-        weight /= getBinSize(histogram,valueX,valueY).second;
-      }
-      histogram->Fill(valueX, valueY, weight);
     }
   }
 
 }
+
+////////////////////////////////////////////////////////////////////////
+
+void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double valueY, double weight) {  
+
+  TH2D *histogram = fs_->getObject<TH2D>(definition.name, definition.directory);
+  if (!histogram) {
+    clog << "ERROR [Plotter::fill2DHistogram]:  Could not find histogram with name " << definition.name
+	 << " in directory " << definition.directory << endl;  
+    return;
+  }  
+  if(valueX <= numeric_limits<int>::min () + 1 || valueY <= numeric_limits<int>::min () + 1)
+    return;
+  if(definition.hasVariableBinsX){
+    weight /= getBinSize(histogram,valueX,valueY).first;
+  }
+  if(definition.hasVariableBinsY){
+    weight /= getBinSize(histogram,valueX,valueY).second;
+  }
+  histogram->Fill(valueX, valueY, weight);
+  if (verbose_) clog << "Filled histogram " << definition.name << " with valueX=" << valueX << ", valueY=" << valueY << ", weight=" << weight << endl;  
+
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 

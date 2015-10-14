@@ -61,6 +61,7 @@ class Plotter : public edm::EDAnalyzer
       void fillHistogram(const HistoDef &);
       void fill1DHistogram(const HistoDef &);
       void fill2DHistogram(const HistoDef &);
+      void fill2DHistogram(const HistoDef & definition, double valueX, double valueY, double weight); 
 
       double getBinSize(TH1D *, const double);
       pair<double,double> getBinSize(TH2D *, const double, const double);

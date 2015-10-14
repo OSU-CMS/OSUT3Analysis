@@ -161,9 +161,9 @@ composite_dataset_definitions = {
 
 dataset_names = {
     #MiniAOD not stored on T3.
-    'DYJetsToLL_50_MiniAOD'     : "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM",
-    'DYJetsToLL_10to50_MiniAOD' : "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
-    'WJetsToLNu_MiniAOD'        : "/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'DYJetsToLL_50_MiniAOD'     : "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'DYJetsToLL_10to50_MiniAOD' : "/DYJetsToLL_M-5to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'WJetsToLNu_MiniAOD'        : "/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'TTJets_MiniAOD'            : "/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
     'ZZ_MiniAOD'                : "/ZZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM", 
     'WW_MiniAOD'                : "/WW_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
@@ -670,10 +670,10 @@ crossSections = {
     'QCD_EMEnriched_50to80_MiniAOD'    :    19800000.0*0.1145, 
     'QCD_EMEnriched_80to120_MiniAOD'   :     2800000.0*0.1507, 
     'QCD_EMEnriched_120to170_MiniAOD'  :      477000.0*0.1576, 
-# The filter efficiencies for 170to300 and 300toInf are dummy
-# numbers I added.......     
-    'QCD_EMEnriched_170to300_MiniAOD'  :      114000.0*0.1600, 
-    'QCD_EMEnriched_300toInf_MiniAOD'  :        9000.0*0.1650, 
+# Got from the McM Tool: https://cms-pdmv.cern.ch/mcm/requests?page=0&dataset_name=QCD_Pt-300toInf_EMEnriched_TuneCUETP8M1_13TeV_pythia8&
+#member_of_campaign=RunIIWinter15GS&shown=163213220927    
+    'QCD_EMEnriched_170to300_MiniAOD'  :      114000.0*0.1650, 
+    'QCD_EMEnriched_300toInf_MiniAOD'  :        9000.0*0.1500, 
 #############################################################    
     'QCD_bcToE_15to20_MiniAOD'         :  1272980000.0*0.0002, 
     'QCD_bcToE_20to30_MiniAOD'         :  557627000.0*0.00059, 

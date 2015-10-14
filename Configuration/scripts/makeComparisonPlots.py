@@ -146,11 +146,11 @@ header_y_top     = 0.9947552
 
 colors = {
     'black'  : 1,
-    'red'    : 623,
-    'green'  : 407,
-    'purple' : 871,
-    'blue'   : 591,
-    'yellow' : 393,
+    'red'    : 632,
+    'green'  : 416,
+    'purple' : 880,
+    'blue'   : 600,
+    'yellow' : 400,
 }
 
 colorList = [
@@ -331,15 +331,16 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
         inputFile = TFile(dataset_file)
       
 
-#        HistogramObj = inputFile.Get(histogramDirectory+"/"+histogramName)
         if arguments.generic:
-            HistogramObj = inputFile.Get(source['channel'] + "/" + histogramDirectory + "/" + histogramName)  
+            if histogramDirectory == "":
+                histPath = histogramName
+            else:
+                histPath = histogramDirectory + "/" + histogramName
+            HistogramObj = inputFile.Get(histPath) 
         else: 
-#            HistogramObj = inputFile.Get("OSUAnalysis/" + source['channel'] + "/" +histogramName)
             HistogramObj = inputFile.Get(source['channel'] + "Plotter/" + histogramDirectory + "/" + histogramName)
         if not HistogramObj:
             print "WARNING:  Could not find histogram " + source['channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
-#            print "WARNING:  Could not find histogram " + histogramDirectory + "/" + histogramName + ".  Will skip it and continue."  
             return 
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
@@ -400,6 +401,9 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
                     markerStyleIndex = 0
                     fillIndex = fillIndex + 1
                 
+
+        if 'scale' in source:
+            Histogram.Scale(source['scale'])  
 
         markerStyle = 20
         if 'marker' in source:
@@ -575,6 +579,34 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
         Canvas.SaveAs("comparison_histograms_pdfs/"+histogramName+".pdf")
 
 
+
+def MakeOnePlot(histDir, histName):
+    if arguments.makeSignificancePlots:
+        MakeOneDHist(histDir, histName,"left")
+        MakeOneDHist(histDir, histName,"right")
+    else:
+        MakeOneDHist(histDir, histName,"none")
+
+
+def LoopOverKeys(currentDir, testFile, outputFile):      
+    testFile.cd(currentDir) 
+    for key in gDirectory.GetListOfKeys():  # Loop over directories 
+        if re.match ('TH1', key.GetClassName()):  #found a 1D histogram
+            MakeOnePlot(currentDir, key.GetName())
+        
+        if (key.GetClassName() == "TDirectoryFile"):
+            if arguments.verbose:
+                print "Looping over directory: ", key.GetName()  
+            if currentDir == "":
+                histDir = key.GetName()
+            else: 
+                histDir = currentDir + "/" + key.GetName()
+            outputFile.cd()
+            gDirectory.mkdir(histDir)
+            outputFile.cd(histDir)
+            LoopOverKeys(histDir, testFile, outputFile)  
+
+
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
@@ -602,32 +634,30 @@ testFile.cd(channelDirectory)
 if arguments.savePDFs:
     os.system("rm -rf comparison_histograms_pdfs")
     os.system("mkdir comparison_histograms_pdfs")
-    
-for key in gDirectory.GetListOfKeys():  # Loop over directories in same way as in makePlots.py  
-    if re.match ('TH1', key.GetClassName()):  #found a 1D histogram
-        if arguments.makeSignificancePlots:
-            MakeOneDHist("", key.GetName(),"left")
-            MakeOneDHist("", key.GetName(),"right")
-        else:
-            MakeOneDHist("", key.GetName(),"none")
 
-    if (key.GetClassName() != "TDirectoryFile"):
-        continue
-    if arguments.verbose:
-        print "Checking key: ", key.GetName()  
 
-    histogramDirectory = key.GetName() 
+if arguments.generic:
     outputFile.cd()
-    gDirectory.mkdir(histogramDirectory)
-    outputFile.cd(key.GetName())
-    testFile.cd(channelDirectory + "/" + histogramDirectory)
-    for key2 in gDirectory.GetListOfKeys():
-        if re.match ('TH1', key2.GetClassName()):  #found a 1D histogram
-            if arguments.makeSignificancePlots:
-                MakeOneDHist(histogramDirectory, key2.GetName(),"left")
-                MakeOneDHist(histogramDirectory, key2.GetName(),"right")
-            else:
-                MakeOneDHist(histogramDirectory, key2.GetName(),"none")
+    gDirectory.mkdir(channelDirectory)
+    LoopOverKeys(channelDirectory, testFile, outputFile)    
+else:     
+    for key in gDirectory.GetListOfKeys():  # Loop over directories in same way as in makePlots.py  
+        if re.match ('TH1', key.GetClassName()):  #found a 1D histogram
+            MakeOnePlot("", key.GetName())
+
+        if (key.GetClassName() != "TDirectoryFile"):
+            continue
+        if arguments.verbose:
+            print "Checking key: ", key.GetName()  
+
+        histogramDirectory = key.GetName() 
+        outputFile.cd()
+        gDirectory.mkdir(histogramDirectory)
+        outputFile.cd(key.GetName())
+        testFile.cd(channelDirectory + "/" + histogramDirectory)
+        for key2 in gDirectory.GetListOfKeys():
+            if re.match ('TH1', key2.GetClassName()):  #found a 1D histogram
+                MakeOnePlot(histogramDirectory, key2.GetName()) 
 
 testFile.Close()
 outputFile.Close()
