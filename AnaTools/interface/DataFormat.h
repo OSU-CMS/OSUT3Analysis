@@ -18,6 +18,8 @@
   #define  genjets_TYPE         BNgenjet
   #define  basicjets_TYPE       INVALID_TYPE
   #define  jets_TYPE            BNjet
+  #define  bjets_TYPE           INVALID_TYPE
+  #define  candeles_TYPE        INVALID_TYPE
   #define  mcparticles_TYPE     BNmcparticle
   #define  mets_TYPE            BNmet
   #define  muons_TYPE           BNmuon
@@ -36,6 +38,8 @@
   #define  basicjets_INVALID
   #define  beamspots_INVALID
   #define  prescales_INVALID
+  #define  bjets_INVALID
+  #define  candeles_INVALID
 
   #include "BEAN/Collections/interface/BNbxlumi.h"
   #include "BEAN/Collections/interface/BNelectron.h"
@@ -61,6 +65,8 @@
   #define  genjets_TYPE         reco::GenJet
   #define  basicjets_TYPE       pat::Jet
   #define  jets_TYPE            pat::Jet
+  #define  bjets_TYPE           INVALID_TYPE
+  #define  candeles_TYPE        INVALID_TYPE
   #define  mcparticles_TYPE     pat::PackedGenParticle
   #define  mets_TYPE            pat::MET
   #define  muons_TYPE           pat::Muon
@@ -79,6 +85,8 @@
   #define  bxlumis_INVALID
   #define  events_INVALID
   #define  tracks_INVALID
+  #define  bjets_INVALID
+  #define  candeles_INVALID
 
   #include "DataFormats/BeamSpot/interface/BeamSpot.h"
   #include "DataFormats/Common/interface/TriggerResults.h"
@@ -103,6 +111,8 @@
   #define  events_TYPE          INVALID_TYPE
   #define  genjets_TYPE         INVALID_TYPE
   #define  jets_TYPE            reco::PFJet
+  #define  bjets_TYPE           INVALID_TYPE
+  #define  candeles_TYPE        INVALID_TYPE
   #define  basicjets_TYPE       reco::BasicJet
   #define  mcparticles_TYPE     INVALID_TYPE
   #define  mets_TYPE            reco::PFMET
@@ -126,6 +136,9 @@
   #define  prescales_INVALID
   #define  superclusters_INVALID
   #define  trigobjs_INVALID
+  #define  bjets_INVALID
+  #define  candeles_INVALID
+
 
   #include "DataFormats/BeamSpot/interface/BeamSpot.h"
   #include "DataFormats/Common/interface/TriggerResults.h"

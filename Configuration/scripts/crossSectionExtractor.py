@@ -23,17 +23,18 @@ from OSUT3Analysis.Configuration.formattingUtilities import *
 datasets = [
     # The following are the miniAOD datasets for which we want to take the cross sections 
     # from the AOD files.
-    'QCD_MuEnriched_MiniAOD',
-    'QCD_EMEnriched_MiniAOD', 
-    'QCD_bcToE_MiniAOD',
-
+    #'QCD_MuEnriched_MiniAOD',
+    #'QCD_EMEnriched_MiniAOD', 
+    #'QCD_bcToE_MiniAOD',
+    'SingleTop_MiniAOD',
     # Other datasets that may also be checked:  
-    #'DYJetsToLL_50_MiniAOD',
+    'DYJetsToLL_MiniAOD',
+    'TTJets_MiniAOD',
     #'DYToMuMu_50_MiniAOD',
     #'DYToEE_50_MiniAOD',
     #'DYToMuMu_MiniAOD',
     #'DYToEE_MiniAOD',
-    #'WJetsToLNu_MiniAOD',
+    'WJetsToLNu_MiniAOD',
     #'WToENu_MiniAOD',
     #'WToMuNu_MiniAOD',
     #'Top_MiniAOD',
