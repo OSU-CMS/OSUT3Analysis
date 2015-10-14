@@ -31,6 +31,7 @@ class InfoPrinter : public edm::EDAnalyzer
     // stringstream.
     ////////////////////////////////////////////////////////////////////////////
     bool printEventDecision ();
+    bool getEventDecision ();
     bool printCutDecision ();
     bool printTriggerDecision ();
     bool printEventFlags ();
@@ -67,6 +68,7 @@ class InfoPrinter : public edm::EDAnalyzer
     edm::InputTag         cutDecisions_;
     vector<edm::EventID>  eventsToPrint_;
     bool                  printAllEvents_;
+    bool                  printPassedEvents_;
     bool                  printCumulativeObjectFlags_;
     bool                  printCutDecision_;
     bool                  printEventDecision_;

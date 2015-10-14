@@ -12,6 +12,7 @@ InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
   cutDecisions_                (cfg.getParameter<edm::InputTag>          ("cutDecisions")),
   eventsToPrint_               (cfg.getParameter<vector<edm::EventID> >  ("eventsToPrint")),
   printAllEvents_              (cfg.getParameter<bool>                   ("printAllEvents")),
+  printPassedEvents_           (cfg.getParameter<bool>                   ("printPassedEvents")),
   printCumulativeObjectFlags_  (cfg.getParameter<bool>                   ("printCumulativeObjectFlags")),
   printCutDecision_            (cfg.getParameter<bool>                   ("printCutDecision")),
   printEventDecision_          (cfg.getParameter<bool>                   ("printEventDecision")),
@@ -82,26 +83,29 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   // the destructor.
   //////////////////////////////////////////////////////////////////////////////
   maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = maxAllTriggerWidth_ = 0;
-  for (auto eventToPrint = eventsToPrint_.begin (); printAllEvents_ || eventToPrint != eventsToPrint_.end (); eventToPrint++)
+
+  bool printEvent = printAllEvents_ || (printPassedEvents_ && getEventDecision()); 
+  for (auto eventToPrint = eventsToPrint_.begin (); eventToPrint != eventsToPrint_.end (); eventToPrint++)
     {
-      if (printAllEvents_ || ((*eventToPrint) == event.id ()))
-        {
-          ss_ << endl << "================================================================================" << endl;
-          ss_ << "\033[1;36minfo for " << event.id () << " (record " << counter_ << ")\033[0m" << endl;
-          valuesToPrint.size ()        &&  printValuesToPrint          ();
-          printObjectFlags_            &&  printObjectFlags            ();
-          printCumulativeObjectFlags_  &&  printCumulativeObjectFlags  ();
-          printTriggerFlags_           &&  printTriggerFlags           ();
-          printVetoTriggerFlags_       &&  printVetoTriggerFlags       ();
-          printEventFlags_             &&  printEventFlags             ();
-          printTriggerDecision_        &&  printTriggerDecision        ();
-          printCutDecision_            &&  printCutDecision            ();
-          printEventDecision_          &&  printEventDecision          ();
-          printAllTriggers_            &&  printAllTriggers            (event);
-          ss_ << "================================================================================" << endl;
-        }
-      if (printAllEvents_)
-        break;
+      if ((*eventToPrint) == event.id ()) 
+	printEvent = true;
+    }
+  
+  if (printEvent)
+    {
+      ss_ << endl << "================================================================================" << endl;
+      ss_ << "\033[1;36minfo for " << event.id () << " (record " << counter_ << ")\033[0m" << endl;
+      valuesToPrint.size ()        &&  printValuesToPrint          ();
+      printObjectFlags_            &&  printObjectFlags            ();
+      printCumulativeObjectFlags_  &&  printCumulativeObjectFlags  ();
+      printTriggerFlags_           &&  printTriggerFlags           ();
+      printVetoTriggerFlags_       &&  printVetoTriggerFlags       ();
+      printEventFlags_             &&  printEventFlags             ();
+      printTriggerDecision_        &&  printTriggerDecision        ();
+      printCutDecision_            &&  printCutDecision            ();
+      printEventDecision_          &&  printEventDecision          ();
+      printAllTriggers_            &&  printAllTriggers            (event);
+      ss_ << "================================================================================" << endl;
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -115,11 +119,19 @@ InfoPrinter::printEventDecision ()
     return false;
 
   ss_ << endl << "\033[1;34mevent decision\033[0m: ";
-  if (cutDecisions->eventDecision)
+  if (cutDecisions->eventDecision) 
     ss_ << "\033[1;32mtrue\033[0m" << endl;
   else
     ss_ << "\033[1;31mfalse\033[0m" << endl;
   return true;
+}
+
+bool
+InfoPrinter::getEventDecision ()
+{
+  if (!cutDecisions.isValid ())
+    return false;
+  return cutDecisions->eventDecision;  
 }
 
 bool
