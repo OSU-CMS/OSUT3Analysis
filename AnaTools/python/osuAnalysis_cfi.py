@@ -12,6 +12,7 @@ collectionMap = cms.PSet (
     mets            =  cms.InputTag  ('slimmedMETs',                    ''),
     muons           =  cms.InputTag  ('slimmedMuons',                   ''),
     photons         =  cms.InputTag  ('slimmedPhotons',                 ''),
+    prescales       =  cms.InputTag  ('patTrigger',                     ''),
     primaryvertexs  =  cms.InputTag  ('offlineSlimmedPrimaryVertices',  ''),
     superclusters   =  cms.InputTag  ('reducedEgamma',                  'reducedSuperClusters'),
     taus            =  cms.InputTag  ('slimmedTaus',                    ''),
