@@ -202,6 +202,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "genjets")         &&  collections.exists  ("genjets"))         getCollection  (collections.getParameter<edm::InputTag>  ("genjets"),         handles.genjets,         event);
   if  (VEC_CONTAINS  (objectsToGet,  "jets")            &&  collections.exists  ("jets"))            getCollection  (collections.getParameter<edm::InputTag>  ("jets"),            handles.jets,            event);
   if  (VEC_CONTAINS  (objectsToGet,  "basicjets")       &&  collections.exists  ("basicjets"))       getCollection  (collections.getParameter<edm::InputTag>  ("basicjets"),       handles.basicjets,       event);
+  if  (VEC_CONTAINS  (objectsToGet,  "bjets")       &&  collections.exists  ("bjets"))       getCollection  (collections.getParameter<edm::InputTag>  ("bjets"),       handles.bjets,       event);
+  if  (VEC_CONTAINS  (objectsToGet,  "candeles")       &&  collections.exists  ("candeles"))       getCollection  (collections.getParameter<edm::InputTag>  ("candeles"),       handles.candeles,       event);
   if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")     &&  collections.exists  ("mcparticles"))     getCollection  (collections.getParameter<edm::InputTag>  ("mcparticles"),     handles.mcparticles,     event);
   if  (VEC_CONTAINS  (objectsToGet,  "mets")            &&  collections.exists  ("mets"))            getCollection  (collections.getParameter<edm::InputTag>  ("mets"),            handles.mets,            event);
   if  (VEC_CONTAINS  (objectsToGet,  "muons")           &&  collections.exists  ("muons"))           getCollection  (collections.getParameter<edm::InputTag>  ("muons"),           handles.muons,           event);
@@ -251,6 +253,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     clog << "INFO: did not retrieve jets collection from the event." << endl;
   if (firstEvent && !handles.basicjets.isValid ())
     clog << "INFO: did not retrieve basicjets collection from the event." << endl;
+  if (firstEvent && !handles.bjets.isValid ())
+    clog << "INFO: did not retrieve bjets collection from the event." << endl;
+  if (firstEvent && !handles.candeles.isValid ())
+    clog << "INFO: did not retrieve candeles collection from the event." << endl;
   if (firstEvent && !handles.mcparticles.isValid ())
     clog << "INFO: did not retrieve mcparticles collection from the event." << endl;
   if (firstEvent && !handles.mets.isValid ())

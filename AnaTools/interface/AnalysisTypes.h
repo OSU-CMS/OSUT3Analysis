@@ -102,6 +102,8 @@ struct Collections
   edm::Handle<vector<TYPE(genjets)> >         genjets;
   edm::Handle<vector<TYPE(jets)> >            jets;
   edm::Handle<vector<TYPE(basicjets)> >       basicjets;
+  edm::Handle<vector<TYPE(bjets)> >           bjets;
+  edm::Handle<vector<TYPE(candeles)> >           candeles;
   edm::Handle<vector<TYPE(mcparticles)> >     mcparticles;
   edm::Handle<vector<TYPE(mets)> >            mets;
   edm::Handle<vector<TYPE(muons)> >           muons;

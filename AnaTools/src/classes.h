@@ -4,7 +4,6 @@
 #include "OSUT3Analysis/AnaTools/interface/BNstop.h"
 #include "OSUT3Analysis/AnaTools/interface/BNPFChgHad.h"
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
-
 namespace {
    struct OSUT3Analysis_AnaTools {
       //add 'dummy' Wrapper variable for each class type you put into the Event
@@ -17,7 +16,7 @@ namespace {
      edm::Wrapper<BNPFChgHad> PFChgHaddummy1;
      vector<BNPFChgHad> PFChgHaddummy2;
      edm::Wrapper<vector<BNPFChgHad> > PFChgHaddummy3;
-
+     
      std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > newvarsdummy0;
      edm::Wrapper<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > newvarsdummy1;
      vector<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > newvarsdummy2;
