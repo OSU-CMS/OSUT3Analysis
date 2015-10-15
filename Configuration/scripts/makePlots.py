@@ -688,19 +688,19 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
         if doRebin:
             #don't rebin any gen-matching or cutflow histograms, or numObject type histograms
-            if (Histogram.GetName().find("num") is -1 and
-                Histogram.GetName().find("Primaryvertexs") is -1 and
-                Histogram.GetName().find("CutFlow")  is -1 and
-                Histogram.GetName().find("cutFlow")  is -1 and
-                Histogram.GetName().find("Selection")  is -1 and
-                Histogram.GetName().find("selection")  is -1 and
-                Histogram.GetName().find("MinusOne")  is -1 and
-                Histogram.GetName().find("minusOne")  is -1 and
-                Histogram.GetName().find("status3OutgoingID")  is -1 and
-                Histogram.GetName().find("Charge")  is -1 and
-                Histogram.GetName().find("GenMatch") is -1):
+#            if (Histogram.GetName().find("num") is -1 and
+#                Histogram.GetName().find("Primaryvertexs") is -1 and
+#                Histogram.GetName().find("CutFlow")  is -1 and
+#                Histogram.GetName().find("cutFlow")  is -1 and
+#                Histogram.GetName().find("Selection")  is -1 and
+#                Histogram.GetName().find("selection")  is -1 and
+#                Histogram.GetName().find("MinusOne")  is -1 and
+#                Histogram.GetName().find("minusOne")  is -1 and
+#                Histogram.GetName().find("status3OutgoingID")  is -1 and
+#                Histogram.GetName().find("Charge")  is -1 and
+#                Histogram.GetName().find("GenMatch") is -1):
 
-                Histogram.Rebin(int(rebinFactor))
+            Histogram.Rebin(int(rebinFactor))
 
 
         xAxisLabel = Histogram.GetXaxis().GetTitle()
@@ -940,7 +940,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         finalMax = 1.0
 
     ### aaaaaand overwrite all that work we just did if the user wants us to
-    yAxisMin = 0.0001 if setLogY else 0.0
+    yAxisMin = 1.0e-4
     if arguments.setYMin:
         yAxisMin = float(arguments.setYMin)
     if arguments.setYMax:
