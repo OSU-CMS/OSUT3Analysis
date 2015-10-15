@@ -184,6 +184,9 @@ dataset_names = {
     'TTJets_DiLept_MiniAOD'              :  "/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
     'TTJets_SingleLeptFromT_MiniAOD'     :  "/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  "/TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
+
+    #MET data
+    'MET_2015D_05Oct2015' : "/MET/Run2015D-05Oct2015-v1/MINIAOD",
     ############################################################################
 
     ############################################################################
@@ -274,6 +277,9 @@ nJobs = {
     'TTJets_DiLept_MiniAOD'              :  9999,
     'TTJets_SingleLeptFromT_MiniAOD'     :  9999,
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  9999,
+
+    #MET data
+    'MET_2015D_05Oct2015' : 9999,
     ############################################################################
 
     ############################################################################
@@ -367,6 +373,9 @@ maxEvents = {
     'TTJets_DiLept_MiniAOD'              :  -1,
     'TTJets_SingleLeptFromT_MiniAOD'     :  -1,
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  -1,
+
+    #MET data
+    'MET_2015D_05Oct2015' : -1,
     ############################################################################
 
     ############################################################################
@@ -463,6 +472,9 @@ types = {
     'TTJets_DiLept_MiniAOD'              :  "bgMC",
     'TTJets_SingleLeptFromT_MiniAOD'     :  "bgMC",
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  "bgMC",
+
+    #MET data
+    'MET_2015D_05Oct2015' : "data",
     ############################################################################
 
     ############################################################################
@@ -565,6 +577,9 @@ colors = {
     'TTJets_DiLept_MiniAOD'              :  873,
     'TTJets_SingleLeptFromT_MiniAOD'     :  872,
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  872,
+
+    #MET data
+    'MET_2015D_05Oct2015' : 1,
     ############################################################################
 
     ############################################################################
@@ -667,6 +682,9 @@ labels = {
     'TTJets_DiLept_MiniAOD'              :  "t#bar{t} (fully leptonic)",
     'TTJets_SingleLeptFromT_MiniAOD'     :  "t#bar{t} (single lepton from t)",
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  "t#bar{t} (single lepton from #bar{t})",
+
+    #MET data
+    'MET_2015D_05Oct2015' : "MET 2015D data",
     ############################################################################
 
     ############################################################################
@@ -812,3 +830,4 @@ crossSections = {
 
 }
 
+InputCondorArguments = {}
