@@ -2,7 +2,7 @@
 import sys
 import os
 import re
-import time  
+import time
 import datetime
 from math import *
 from array import *
@@ -21,30 +21,30 @@ parser = set_commandline_arguments(parser)
 
 parser.add_option("-f", "--fancy", action="store_true", dest="makeFancy", default=False,
                   help="removes the title and replaces it with the official CMS plot heading")
-parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,		 
-                  help="Set logarithmic scale on vertical axis on all plots")	 
-parser.add_option("--ymin", dest="setYMin", 
-                  help="Minimum of y axis")	 
-parser.add_option("--ymax", dest="setYMax", 
-                  help="Maximum of y axis")	 
+parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,
+                  help="Set logarithmic scale on vertical axis on all plots")
+parser.add_option("--ymin", dest="setYMin",
+                  help="Minimum of y axis")
+parser.add_option("--ymax", dest="setYMax",
+                  help="Maximum of y axis")
 parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
-                  help="maximum error used in rebinning the ratio histogram")  
+                  help="maximum error used in rebinning the ratio histogram")
 parser.add_option("--SO", "--sortOrderByYields", action="store_true", dest="sortOrderByYields", default=False,
-                  help="will sort the order in the stacked histogram by yields")  
+                  help="will sort the order in the stacked histogram by yields")
 parser.add_option("-N", "--normalizeFactor", dest="normalizeFactor",
-                  help="scale bkgd MC by a specified scale factor")  
+                  help="scale bkgd MC by a specified scale factor")
 parser.add_option("-q", "--quickRun", dest="quickHistName",
-                  help="only make histograms that are named quickHistName")  
+                  help="only make histograms that are named quickHistName")
 parser.add_option("--qr", "--quickRename", dest="quickRename",
-                  help="only make histograms that are named quickHistName with a different label on x axis")  
+                  help="only make histograms that are named quickHistName with a different label on x axis")
 parser.add_option("-S", "--systematics", action="store_true", dest="includeSystematics", default=False,
                   help="also lists the systematic uncertainties")
-parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,		 
-                  help="Make significance plots")	 
-parser.add_option("-O", "--addOverUnderFlow", action="store_true", dest="addOverUnderFlow", default=False,		 
-                  help="Add the overflow and underflow entries to the last and first bins")	 
-parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,		 
-                  help="verbose output")	 
+parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,
+                  help="Make significance plots")
+parser.add_option("-O", "--addOverUnderFlow", action="store_true", dest="addOverUnderFlow", default=False,
+                  help="Add the overflow and underflow entries to the last and first bins")
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                  help="verbose output")
 parser.add_option("-P", "--paperConfig", dest="paperConfig",
                       help="paper configuration file")
 parser.add_option("--pe", "--poissonErrors", action="store_true", dest="poisErr",default=False,
@@ -86,17 +86,17 @@ if arguments.makeRatioPlots and arguments.makeDiffPlots:
     print "You have requested both ratio and difference plots.  Will make just ratio plots instead"
     arguments.makeRatioPlots = False
 if arguments.makeRatioPlots and arguments.noStack:
-    print "You have asked to make a ratio plot and to not stack the backgrounds.  This is a very strange request.  Will skip making the ratio plot." 
+    print "You have asked to make a ratio plot and to not stack the backgrounds.  This is a very strange request.  Will skip making the ratio plot."
     arguments.makeRatioPlots = False
 if arguments.makeDiffPlots and arguments.noStack:
-    print "You have asked to make a difference plot and to not stack the backgrounds.  This is a very strange request.  Will skip making the difference plot." 
+    print "You have asked to make a difference plot and to not stack the backgrounds.  This is a very strange request.  Will skip making the difference plot."
     arguments.makeDiffPlots = False
 if arguments.makeSignificancePlots and arguments.makeRatioPlots:
-    print "You have asked to make a ratio plot and significance plots. This is a very strange request.  Will skip making the ratio plot." 
+    print "You have asked to make a ratio plot and significance plots. This is a very strange request.  Will skip making the ratio plot."
     arguments.makeRatioPlots = False
-if arguments.makeSignificancePlots and arguments.makeDiffPlots:  
-    print "You have asked to make a difference plot and significance plots. This is a very strange request.  Will skip making the difference plot." 
-    arguments.makeDiffPlots = False  
+if arguments.makeSignificancePlots and arguments.makeDiffPlots:
+    print "You have asked to make a difference plot and significance plots. This is a very strange request.  Will skip making the difference plot."
+    arguments.makeDiffPlots = False
 
 from ROOT import Math, TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1, TH1F, TCanvas, TString, TLegend, TLegendEntry, THStack, TIter, TKey, TPaveLabel, gPad, TGraphAsymmErrors
 
@@ -121,18 +121,20 @@ gStyle.SetHistTopMargin(0)
 gStyle.SetTitleColor(1, "XYZ")
 gStyle.SetTitleFont(42, "XYZ")
 gStyle.SetTitleSize(0.05, "XYZ")
-gStyle.SetTitleXOffset(1.1)
-gStyle.SetTitleYOffset(1.45)
+gStyle.SetTitleXSize(0.04)
+gStyle.SetTitleXOffset(1.25)
+gStyle.SetTitleYSize(0.04)
+gStyle.SetTitleYOffset(1.5)
 #gStyle.SetTextFont(42)
 gStyle.SetTextAlign(12)
 gStyle.SetLabelColor(1, "XYZ")
 gStyle.SetLabelFont(42, "XYZ")
-gStyle.SetLabelOffset(0.007, "XYZ")
-gStyle.SetLabelSize(0.05, "XYZ")
+gStyle.SetLabelOffset(0.005, "XYZ")
+gStyle.SetLabelSize(0.04, "XYZ")
 gStyle.SetAxisColor(1, "XYZ")
 gStyle.SetStripDecimals(True)
 gStyle.SetTickLength(0.03, "XYZ")
-gStyle.SetNdivisions(509, "XYZ")
+gStyle.SetNdivisions(505, "XYZ")
 gStyle.SetPadTickX(1)
 gStyle.SetPadTickY(1)
 gROOT.ForceStyle()
@@ -147,37 +149,37 @@ else:
     LumiText = str.format('{0:.1f}', LumiInFb) + " fb^{-1}"
 #book keeping, put time and condor directory on plot
 ts = time.time()
-TimeText = "Plot Created: " + datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S') 
+TimeText = "Plot Created: " + datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-DirText = "Condor Dir Used: " + arguments.condorDir 
-    
+DirText = "Condor Dir Used: " + arguments.condorDir
+
 
 #bestest place for lumi. label, in top left corner
-topLeft_x_left    = 0.176
-topLeft_x_right   = 0.496
-topLeft_y_bottom  = 0.837
-topLeft_y_top     = 0.937
+topLeft_x_left    = 0.16129
+topLeft_y_bottom  = 0.832117
+topLeft_x_right   = 0.512673
+topLeft_y_top     = 0.892944
 topLeft_y_offset  = 0.04
 
 #set the text for the fancy heading
 #HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 8 TeV"
-HeaderText = LumiText + " (8 TeV)"
+HeaderText = LumiText + " (13 TeV)"
 
 #position for header
-header_x_left    = 0.08892617
-header_y_bottom  = 0.9458042
-header_x_right   = 0.9681208
-header_y_top     = 0.9965035
+header_x_left    = 0.602535
+header_y_bottom  = 0.928224
+header_x_right   = 0.963134
+header_y_top     = 0.980535
 
 #position for timestamp
 ts_x_left   = 0.00
-ts_y_bottom = 0.04 
+ts_y_bottom = 0.04
 ts_x_right  = 0.35
 ts_y_top    = 0.08
 
-#position for condor dir, beneath the timestamp 
+#position for condor dir, beneath the timestamp
 dir_x_left   = ts_x_left
-dir_y_bottom = 0.0  
+dir_y_bottom = 0.0
 dir_x_right  = ts_x_right
 dir_y_top    = ts_y_bottom
 
@@ -274,23 +276,23 @@ def addSystematicError(histogram, fractionalSysError):
 
 # some fancy-ass code from Andrzej Zuranski to merge bins in the ratio plot until the error goes below some threshold
 def ratioHistogram( dataHist, mcHist, relErrMax = 0.10):
-        
+
     if not dataHist:
-        print "Error:  trying to run ratioHistogram but dataHist is invalid" 
+        print "Error:  trying to run ratioHistogram but dataHist is invalid"
         return
 
     if not mcHist:
-        print "Error:  trying to run ratioHistogram but mcHist is invalid" 
+        print "Error:  trying to run ratioHistogram but mcHist is invalid"
         return
 
     def groupR(group):
         Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
         return (Data-MC)/MC if MC else 0
-    
+
     def groupErr(group):
         Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
         dataErr2,mcErr2 = [sum(hist.GetBinError(i)**2 for i in group) for hist in [dataHist,mcHist]]
-        if Data > 0 and MC > 0 and Data != MC: 
+        if Data > 0 and MC > 0 and Data != MC:
             return abs(math.sqrt( (dataErr2+mcErr2)/(Data-MC)**2 + mcErr2/MC**2 ) * (Data-MC)/MC)
         else:
             return 0
@@ -305,7 +307,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax = 0.10):
     #don't rebin the histograms of the number of a given object (except for the pileup ones)
     if ((dataHist.GetName().find("num") is not -1 and dataHist.GetName().find("Primaryvertexs") is -1) or
         dataHist.GetName().find("CutFlow")  is not -1 or
-        dataHist.GetName().find("GenMatch") is not -1): 
+        dataHist.GetName().find("GenMatch") is not -1):
         ratio = dataHist.Clone()
         ratio.Add(mcHist,-1)
         ratio.Divide(mcHist)
@@ -333,62 +335,62 @@ def signifHistograms(BgSum,SignalMCHistograms):
     signifHists = []
     for sigHist in SignalMCHistograms:
         signifHist = sigHist.Clone()
-        for i in range(0,signifHist.GetNbinsX()+1):  
+        for i in range(0,signifHist.GetNbinsX()+1):
             x = sigHist.GetBinContent(i)
             y =   BgSum.GetBinContent(i)
             dx = sigHist.GetBinError(i)
             dy =   BgSum.GetBinError(i)
-            if y > 0: 
+            if y > 0:
                 signif = x / math.sqrt(x + y)
             else:
-                signif = 0  
+                signif = 0
             signifHist.SetBinContent(i, signif)
             # Error calculation is same as in AnaTools/bin/cutFlowTable.cpp
-            binError = 4.0 * y * y * dx * dx + 4 * x * y * dx * dx + x * x * dy * dy + x * x * dx * dx;
+            binError = 4.0 * y * y * dx * dx + 4 * x * y * dx * dx + x * x * dy * dy + x * x * dx * dx
             if x + y > 0:   # protect against division by 0
-                binError /= 4.0 * (x + y) * (x + y) * (x + y);
-                binError = sqrt (binError);
+                binError /= 4.0 * (x + y) * (x + y) * (x + y)
+                binError = sqrt (binError)
             else:
-                binError = 0  
-            signifHist.SetBinError(i, binError)  
-        signifHists.append(signifHist)  
-    return signifHists  
+                binError = 0
+            signifHist.SetBinError(i, binError)
+        signifHists.append(signifHist)
+    return signifHists
 
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
 
 
-def MakeIntegralHist(hist, integrateDir): 
+def MakeIntegralHist(hist, integrateDir):
     # return the integrated histogram, in the direction specified
     # integrateDir values: "left", "right", "none"
     if integrateDir is "none":
-        return hist  # do nothing  
+        return hist  # do nothing
     integral = 0
-    error = 0  
-    nbins = hist.GetNbinsX()  
-    if integrateDir is "left": 
+    error = 0
+    nbins = hist.GetNbinsX()
+    if integrateDir is "left":
         for i in range(0,nbins+1):  # start with underflow bin
             integral += hist.GetBinContent(i)
-            error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature  
+            error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
             hist.SetBinContent(i, integral)
             hist.SetBinError  (i, error)
         # Then include overflow bin in the last bin
-        hist.SetBinContent(nbins, hist.GetBinContent(nbins) + hist.GetBinContent(nbins+1))     
-        hist.SetBinError  (nbins, math.sqrt(hist.GetBinError(nbins)*hist.GetBinError(nbins) + hist.GetBinError(nbins+1)*hist.GetBinError(nbins+1)))   
-    elif integrateDir is "right": 
+        hist.SetBinContent(nbins, hist.GetBinContent(nbins) + hist.GetBinContent(nbins+1))
+        hist.SetBinError  (nbins, math.sqrt(hist.GetBinError(nbins)*hist.GetBinError(nbins) + hist.GetBinError(nbins+1)*hist.GetBinError(nbins+1)))
+    elif integrateDir is "right":
         for i in xrange(nbins+1, 0, -1):  # start with overflow bin
             integral += hist.GetBinContent(i)
-            error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature  
+            error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
             hist.SetBinContent(i, integral)
             hist.SetBinError  (i, error)
         # Then include underflow bin in the first bin
-        hist.SetBinContent(1, hist.GetBinContent(1) + hist.GetBinContent(0))     
-        hist.SetBinError  (1, math.sqrt(hist.GetBinError(1)*hist.GetBinError(1) + hist.GetBinError(0)*hist.GetBinError(0)))     
-    return hist 
- 
+        hist.SetBinContent(1, hist.GetBinContent(1) + hist.GetBinContent(0))
+        hist.SetBinError  (1, math.sqrt(hist.GetBinError(1)*hist.GetBinError(1) + hist.GetBinError(0)*hist.GetBinError(0)))
+    return hist
 
-        
+
+
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
@@ -397,10 +399,10 @@ def YaxisTitleForVariableBinHist(histogram):
     binWidth = []
     variableBin['isVariable'] = False
     for i in range(1,histogram.GetNbinsX() + 1):
-	binWidth.append(histogram.GetXaxis().GetBinWidth(i))
+        binWidth.append(histogram.GetXaxis().GetBinWidth(i))
     binWidth.sort()
     if binWidth[0] < binWidth[-1]:
-	variableBin['isVariable'] = True
+        variableBin['isVariable'] = True
     variableBin['smallestBinWidth'] =  binWidth[0]
     return variableBin
 
@@ -418,10 +420,10 @@ def setXAxisRangeUser(hist):
         if 'setXMax' in paperHistogram:
             xAxisMax = float(paperHistogram['setXMax'])
         hist.GetXaxis().SetRangeUser(xAxisMin, xAxisMax)
-                                                                
 
-	
-def MakeOneDHist(pathToDir,histogramName,integrateDir): 
+
+
+def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     global processed_datasets
     global ts_x_left, ts_y_bottom, ts_x_right, ts_y_top
@@ -432,12 +434,12 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     channel = pathToDir.lstrip("OSUAnalysis").lstrip('/')
 
     blindData = False
-    # To blind histograms, define a list of histsToBlind in the localOptions.py file  
+    # To blind histograms, define a list of histsToBlind in the localOptions.py file
     try:  # Use "try" in case histsToBlind does not exist
-        if histsToBlind: 
+        if histsToBlind:
             for histToBlind in histsToBlind:
                 if histToBlind in histogramName:
-                    print "Blinding data for histogram " + histogramName 
+                    print "Blinding data for histogram " + histogramName
                     blindData = True
     except NameError:
         time.sleep(0.000001) # Do nothing if histsToBlind does not exist
@@ -456,13 +458,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     # we'll define all the options for each plot here,
     # in case the user is using a "paperConfig" with specific options for each plot
 
-        
+
 
     if arguments.paperConfig:
         # use the user-defined list of datasets if there is one
         if 'datasets' in paperHistogram:
             processed_datasets = paperHistogram['datasets']
-        # otherwise, use the default set from the supplied localOptions.py file 
+        # otherwise, use the default set from the supplied localOptions.py file
         else:
             processed_datasets = datasets
 
@@ -478,17 +480,17 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if 'normalizeFactor' in paperHistogram:
             scaleFactor = paperHistogram['normalizeFactor']
     ###############################################
-    noStack = arguments.noStack    
+    noStack = arguments.noStack
     if arguments.paperConfig:
         if 'noStack' in paperHistogram:
             noStack = paperHistogram['noStack']
     ###############################################
-    normalizeToUnitArea = arguments.normalizeToUnitArea    
+    normalizeToUnitArea = arguments.normalizeToUnitArea
     if arguments.paperConfig:
         if 'normalizeToUnitArea' in paperHistogram:
             normalizeToUnitArea = paperHistogram['normalizeToUnitArea']
     ###############################################
-    normalizeToData = arguments.normalizeToData    
+    normalizeToData = arguments.normalizeToData
     if arguments.paperConfig:
         if 'normalizeToData' in paperHistogram:
             normalizeToData = paperHistogram['normalizeToData']
@@ -507,7 +509,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     if arguments.paperConfig:
         if 'printYields' in paperHistogram:
             printYields = paperHistogram['printYields']
-    ###############################################            
+    ###############################################
     setLogY = arguments.setLogY
     if arguments.paperConfig:
         if 'setLogY' in paperHistogram:
@@ -571,6 +573,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
     HeaderLabel.SetTextFont(42)
+    HeaderLabel.SetTextSize(0.697674)
     HeaderLabel.SetBorderSize(0)
     HeaderLabel.SetFillColor(0)
     HeaderLabel.SetFillStyle(0)
@@ -578,13 +581,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     CMSLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     CMSLabel.SetTextAlign(32)
     CMSLabel.SetTextFont(42)
+    CMSLabel.SetTextSize(0.697674)
     CMSLabel.SetBorderSize(0)
     CMSLabel.SetFillColor(0)
     CMSLabel.SetFillStyle(0)
-    
+
     if makeFancy:
-        LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,"CMS","NDC")
+        LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,"CMS Preliminary","NDC")
         LumiLabel.SetTextFont(62)
+        LumiLabel.SetTextSize(0.8)
         LumiLabel.SetTextAlign(12)
     else:
         LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
@@ -598,12 +603,12 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             dir_y_bottom = 0.92
 
         TimeLabel = TPaveLabel(ts_x_left,ts_y_bottom,ts_x_right, ts_y_top,TimeText,"NDC")
-        TimeLabel.SetTextAlign(12)  # 12 = 10 (left-justify horizontal) + 2 (center-justify vertical)  
+        TimeLabel.SetTextAlign(12)  # 12 = 10 (left-justify horizontal) + 2 (center-justify vertical)
         TimeLabel.SetTextSize(0.55)
         TimeLabel.SetBorderSize(0)
         TimeLabel.SetFillColor(0)
         TimeLabel.SetFillStyle(0)
-        
+
         DirLabel = TPaveLabel(dir_x_left,dir_y_bottom,dir_x_right, dir_y_top,DirText,"NDC")
         DirLabel.SetTextAlign(12)
         DirLabel.SetTextSize(0.55)
@@ -617,7 +622,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     LumiLabel.SetFillStyle(0)
 
 
-        
+
     BgMCLegend = TLegend()
 ##     BgTitle = BgMCLegend.AddEntry(0, "Data & Bkgd. MC", "H")
 ##     BgTitle.SetTextAlign(22)
@@ -633,14 +638,27 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     SignalMCLegend.SetFillColor(0)
     SignalMCLegend.SetFillStyle(0)
 
-    if not arguments.paperConfig:    
+    if not arguments.paperConfig:
         outputFile.cd(pathToDir)
     canvasName = histogramName
     if integrateDir is "left":
-        canvasName += "_CumulativeLeft" 
+        canvasName += "_CumulativeLeft"
     if integrateDir is "right":
-        canvasName += "_CumulativeRight" 
-    Canvas = TCanvas(canvasName)
+        canvasName += "_CumulativeRight"
+    Canvas = TCanvas(canvasName,"",4,55,872,850)
+    Canvas.SetHighLightColor(2)
+    Canvas.Range(-72.16495,-10.50091,516.9367,82.84142)
+    Canvas.SetFillColor(0)
+    Canvas.SetBorderMode(0)
+    Canvas.SetBorderSize(2)
+    Canvas.SetTickx(1)
+    Canvas.SetTicky(1)
+    Canvas.SetLeftMargin(0.1225)
+    Canvas.SetRightMargin(0.0357143)
+    Canvas.SetTopMargin(0.0725)
+    Canvas.SetBottomMargin(0.1125)
+    Canvas.SetFrameBorderMode(0)
+    Canvas.SetFrameBorderMode(0)
     BgMCHistograms = []
     BgMCUncertainties = []
     BgMCLegendEntries = []
@@ -649,18 +667,18 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     SignalMCLegendEntries = []
     DataHistograms = []
     DataLegendEntries = []
-    BgMCHistYieldsDic = {}  
+    BgMCHistYieldsDic = {}
 
-    
+
     print pathToDir+"/"+histogramName
-    
+
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
         condorDir = condor_dir
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         if not HistogramObj:
-            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
+            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."
             continue
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
@@ -680,11 +698,11 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 Histogram.GetName().find("minusOne")  is -1 and
                 Histogram.GetName().find("status3OutgoingID")  is -1 and
                 Histogram.GetName().find("Charge")  is -1 and
-                Histogram.GetName().find("GenMatch") is -1): 
+                Histogram.GetName().find("GenMatch") is -1):
 
                 Histogram.Rebin(int(rebinFactor))
-                
-         
+
+
         xAxisLabel = Histogram.GetXaxis().GetTitle()
 
         if arguments.quickRename:
@@ -693,30 +711,30 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if renamePaperHistX:
                  xAxisLabel = Histogram.GetXaxis().SetTitle(quickRenameStringX)
                  xAxisLabel = Histogram.GetXaxis().GetTitle()
-                             
-            
+
+
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
         xAxisLabelVar = xAxisLabel
-        variableBinYaxisSet = YaxisTitleForVariableBinHist(Histogram)         
+        variableBinYaxisSet = YaxisTitleForVariableBinHist(Histogram)
 
         if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
             if variableBinYaxisSet['isVariable']:
-	    	yAxisLabel = "Entries / (Width_{Bin}/" + str(variableBinYaxisSet['smallestBinWidth']) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex] + ")"
+                    yAxisLabel = "Entries / (Width_{Bin}/" + str(variableBinYaxisSet['smallestBinWidth']) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex] + ")"
             else:
-	    	yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
-            xAxisLabelVar = xAxisLabel[0:unitBeginIndex]  
+                    yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
+            xAxisLabelVar = xAxisLabel[0:unitBeginIndex]
         elif variableBinYaxisSet['isVariable']:
             yAxisLabel = "Entries per bin (Width_{Bin}/" + str(variableBinYaxisSet['smallestBinWidth']) + ")"
-        else: 
+        else:
             yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
 
         if normalizeToUnitArea:
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
         if normalizeToData:
-            yAxisLabel = yAxisLabel + " (Bkgd. Normalized to Data)"  
+            yAxisLabel = yAxisLabel + " (Bkgd. Normalized to Data)"
         if scaleFactor is not 1:
-            yAxisLabel = yAxisLabel + " (Bkgd. Scaled by " + str(scaleFactor) + ")"  
+            yAxisLabel = yAxisLabel + " (Bkgd. Scaled by " + str(scaleFactor) + ")"
 
         if renamePaperHistY:
                  yAxisLabel = Histogram.GetYaxis().SetTitle(quickRenameStringY)
@@ -731,7 +749,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             yAxisLabel = unit + ", " + xAxisLabelVar + "< x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
         if integrateDir is "right":
             yAxisLabel = unit + ", " + xAxisLabelVar + "> x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
-        
+
         if not makeFancy:
             histoTitle = Histogram.GetTitle()
         else:
@@ -745,17 +763,17 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
         if (addOverUnderFlow):
             nbins = Histogram.GetNbinsX()
-            Histogram.SetBinContent(1,     Histogram.GetBinContent(1)     + Histogram.GetBinContent(0))       # Add underflow 
-            Histogram.SetBinContent(nbins, Histogram.GetBinContent(nbins) + Histogram.GetBinContent(nbins+1)) # Add overflow 
+            Histogram.SetBinContent(1,     Histogram.GetBinContent(1)     + Histogram.GetBinContent(0))       # Add underflow
+            Histogram.SetBinContent(nbins, Histogram.GetBinContent(nbins) + Histogram.GetBinContent(nbins+1)) # Add overflow
             # Set the errors to be the sum in quadrature
-            Histogram.SetBinError(1,     math.sqrt(math.pow(Histogram.GetBinError(1),    2) + math.pow(Histogram.GetBinError(0),      2))) 
+            Histogram.SetBinError(1,     math.sqrt(math.pow(Histogram.GetBinError(1),    2) + math.pow(Histogram.GetBinError(0),      2)))
             Histogram.SetBinError(nbins, math.sqrt(math.pow(Histogram.GetBinError(nbins),2) + math.pow(Histogram.GetBinError(nbins+1),2)))
 
         if( types[sample] == "bgMC"):
-            
+
             numBgMCSamples += 1
             backgroundIntegral += Histogram.Integral()
-            
+
             Histogram.SetLineStyle(1)
             if(noStack):
                 Histogram.SetFillStyle(0)
@@ -770,15 +788,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 BgMCHistograms.append(Histogram)
                 BgMCLegendEntries.append(legLabel)
 
-	    BgMCLegendLabelYieldsDic[Histogram.Integral()] = legLabel 
+            BgMCLegendLabelYieldsDic[Histogram.Integral()] = legLabel
             BgMCHistYieldsDic[Histogram.Integral()] = Histogram
             if includeSystematics:
                 BgMCUncertainties.append(getSystematicError(sample,channel))
-                    
+
         elif( types[sample] == "signalMC"):
-            
+
             numSignalSamples += 1
-            
+
             Histogram.SetFillStyle(0)
             Histogram.SetLineColor(colors[sample])
             if (arguments.paperConfig and 'SigLineStyle' in paperHistogram):
@@ -793,10 +811,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 Histogram.Scale(1./Histogram.Integral())
 
             Histogram = MakeIntegralHist(Histogram, integrateDir)
-                
+
             SignalMCLegendEntries.append(legLabel)
             SignalMCHistograms.append(Histogram)
-                    
+
         elif( types[sample] == "data" and not blindData):
 
             numDataSamples += 1
@@ -814,7 +832,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Histogram = MakeIntegralHist(Histogram, integrateDir)
             if arguments.poisErr or makePoisErrHist == True:
                 xBins = array ('d', [])
-                for i in range(1,Histogram.GetNbinsX()+2):  # Want n+1 bin boundaries for n bins  
+                for i in range(1,Histogram.GetNbinsX()+2):  # Want n+1 bin boundaries for n bins
                     xBins.append (Histogram.GetBinLowEdge (i))
                 newDataHist  = TH1F(Histogram.GetName(), Histogram.GetTitle(), Histogram.GetNbinsX(), xBins)
                 for i in range(1,Histogram.GetNbinsX()+1):
@@ -826,19 +844,19 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 newDataHist.SetLineColor(colors[sample])
                 newDataHist.SetLineWidth(2)
                 Histogram = newDataHist
-            
+
             DataLegendEntries.append(legLabel)
-            
+
             DataHistograms.append(Histogram)
-    
-    if sortOrderByYields: 
+
+    if sortOrderByYields:
         BgMCHistYieldsDic = sortedDictValues(BgMCHistYieldsDic)
         BgMCLegendLabelYieldsDic = sortedDictValues(BgMCLegendLabelYieldsDic)
         for hist in BgMCHistYieldsDic:
             BgMCHistograms.append(hist)
         for legend in BgMCLegendLabelYieldsDic:
-            BgMCLegendEntries.append(legend)	
-                    
+            BgMCLegendEntries.append(legend)
+
     #scaling histograms as per user's specifications
     for bgMCHist in BgMCHistograms:
 
@@ -851,13 +869,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             bgMCHist.Scale(1./backgroundIntegral)
         elif normalizeToUnitArea and noStack and bgMCHist.Integral() > 0:
             bgMCHist.Scale(1./bgMCHist.Integral())
-        
-	bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
-    
+
+        bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
+
         if not noStack:
-	    Stack.Add(bgMCHist)
-            
-                
+            Stack.Add(bgMCHist)
+
+
 
     ### formatting data histograms and adding to legend
     legendIndex = 0
@@ -867,7 +885,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     ### creating the histogram to represent the statistical errors on the stack
-    if numBgMCSamples is not 0 and not noStack: 
+    if numBgMCSamples is not 0 and not noStack:
         if includeSystematics:
             addSystematicError(BgMCHistograms[0],BgMCUncertainties[0])
         ErrorHisto = BgMCHistograms[0].Clone("errors")
@@ -882,7 +900,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if includeSystematics:
             BgMCLegend.AddEntry(ErrorHisto,"stat. & syst. errors","F")
         else:
-            BgMCLegend.AddEntry(ErrorHisto,"stat. errors","F")            
+            BgMCLegend.AddEntry(ErrorHisto,"stat. errors","F")
 
 
     ### formatting bgMC histograms and adding to legend
@@ -916,16 +934,16 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     for dataHist in DataHistograms:
         if(dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin()) > finalMax):
             finalMax = dataHist.GetMaximum() + dataHist.GetBinError(dataHist.GetMaximumBin())
-            
+
     finalMax = 1.15*finalMax
     if finalMax <= 0: # if it's an empty canvas, set ymax > ymin to avoid an error
         finalMax = 1.0
 
     ### aaaaaand overwrite all that work we just did if the user wants us to
-    yAxisMin = 0.0001
+    yAxisMin = 0.0001 if setLogY else 0.0
     if arguments.setYMin:
         yAxisMin = float(arguments.setYMin)
-    if arguments.setYMax:  
+    if arguments.setYMax:
         finalMax = float(arguments.setYMax)
 
     if arguments.paperConfig:
@@ -937,9 +955,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     ### Drawing histograms to canvas
 
     if not arguments.paperConfig:
-        outputFile.cd(pathToDir)        
-        
-    makeSignifPlots = arguments.makeSignificancePlots 
+        outputFile.cd(pathToDir)
+
+    makeSignifPlots = arguments.makeSignificancePlots
 
     if setLogY:
         gPad.SetLogy()
@@ -949,8 +967,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         makeDiffPlots = False
     if makeSignifPlots and (numBgMCSamples is 0 or numSignalSamples is 0):
         print "Error:  you have requested to make significance plots, but you are missing either signal or background samples.  Will skip making the significance plots."
-        print "numBgMCSamples = " + str(numBgMCSamples) + "; numSignalSamples = " + str(numSignalSamples)  
-        makeSignifPlots = False  
+        print "numBgMCSamples = " + str(numBgMCSamples) + "; numSignalSamples = " + str(numSignalSamples)
+        makeSignifPlots = False
     if makeRatioPlots or makeDiffPlots or makeSignifPlots:
         Canvas.SetFillStyle(0)
         Canvas.Divide(1,2)
@@ -971,7 +989,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         gPad.SetGridy(1)
         gPad.Update()
         gPad.Draw()
-        
+
         Canvas.cd(1)
 
     if numBgMCSamples is not 0: # the first thing to draw to the canvas is a bgMC sample
@@ -995,14 +1013,14 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             gPad.RedrawAxis()
             #draw shaded error bands
             ErrorHisto.Draw("A E2 SAME")
-            
+
         else: #draw the unstacked backgrounds
             BgMCHistograms[0].SetTitle(histoTitle)
             BgMCHistograms[0].Draw("HIST")
             BgMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
             BgMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
             BgMCHistograms[0].SetMaximum(finalMax)
-            BgMCHistograms[0].SetMinimum(yAxisMin)            
+            BgMCHistograms[0].SetMinimum(yAxisMin)
             setXAxisRangeUser(BgMCHistograms[0])
             for bgMCHist in BgMCHistograms:
                 bgMCHist.Draw("A HIST SAME")
@@ -1011,8 +1029,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             signalMCHist.Draw("A HIST SAME")
         for dataHist in DataHistograms:
             dataHist.Draw("A E X0 SAME")
-                                
-    elif numSignalSamples is not 0: # the first thing to draw to the canvas is a signalMC sample 
+
+    elif numSignalSamples is not 0: # the first thing to draw to the canvas is a signalMC sample
         SignalMCHistograms[0].SetTitle(histoTitle)
         SignalMCHistograms[0].Draw("HIST")
         SignalMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
@@ -1025,7 +1043,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 signalMCHist.Draw("A HIST SAME")
         for dataHist in DataHistograms:
             dataHist.Draw("A E X0 SAME")
-                                                                                                                
+
 
 
     elif(numDataSamples is not 0): # the first thing to draw to the canvas is a data sample
@@ -1043,16 +1061,16 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     #legend coordinates, empirically determined :-)
-    x_left = 0.6006711
-    x_right = 0.9328859
+    x_left = 0.576037
+    x_right = 0.907834
     x_width = x_right - x_left
-    y_max = 0.9178322
-    entry_height = 0.05
+    y_max = 0.884428
+    entry_height = 0.044404
 
     if(numBgMCSamples is not 0 or numDataSamples is not 0): #then draw the data & bgMC legend
 
 
-        numExtraEntries = 1 # count the legend title
+        numExtraEntries = 0 # count the legend title
         if (arguments.paperConfig and 'BkgdLegX1' in paperHistogram):
             BgMCLegend.SetX1NDC(float(paperHistogram['BkgdLegX1']))
         else:
@@ -1087,13 +1105,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             SignalMCLegend.Draw()
 
         if integrateDir is "left":
-            # Move the legend to the other side so it does not overlap with the cumulative histogram.  
+            # Move the legend to the other side so it does not overlap with the cumulative histogram.
             BgMCLegend.SetX1NDC(topLeft_x_left + 0.05)
             BgMCLegend.SetX2NDC(topLeft_x_left + 0.05 + x_width)
             BgMCLegend.SetY1NDC(-0.05 + y_max-entry_height*(numExtraEntries+numBgMCSamples+numDataSamples))
             BgMCLegend.SetY2NDC(-0.05 + y_max)
             BgMCLegend.Draw()
-            
+
 
     if(numSignalSamples is not 0 and arguments.paperConfig and 'SigLegX1' in paperHistogram):
         SignalMCLegend.SetX1NDC(float(paperHistogram['SigLegX1']))
@@ -1101,7 +1119,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         SignalMCLegend.SetX2NDC(float(paperHistogram['SigLegX2']))
         SignalMCLegend.SetY2NDC(float(paperHistogram['SigLegY2']))
         SignalMCLegend.Draw()
-        
+
     elif numSignalSamples is not 0: #draw the signalMC legend in the upper right corner
         SignalMCLegend.SetX1NDC(x_left)
         SignalMCLegend.SetY1NDC(y_max-entry_height*(numSignalSamples)) # add one for the title
@@ -1136,13 +1154,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     if drawTimeLabel:
         TimeLabel.Draw()
     if drawDirLabel:
-        DirLabel.Draw()    
+        DirLabel.Draw()
 
 
 
     #drawing the ratio or difference plot if requested
 
-    if (makeRatioPlots or makeDiffPlots or makeSignifPlots): 
+    if (makeRatioPlots or makeDiffPlots or makeSignifPlots):
         Canvas.cd(2)
         BgSum = Stack.GetStack().Last()
         if makeRatioPlots:
@@ -1157,7 +1175,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Comparison.GetYaxis().SetTitle("data-bkgd")
         elif makeSignifPlots:
             Comparisons = signifHistograms(BgSum,SignalMCHistograms)
-            Comparison = Comparisons[0]  
+            Comparison = Comparisons[0]
             Comparison.SetTitle("")
             Comparison.GetYaxis().SetTitle("S/#sqrt{S+B}")
         Comparison.GetXaxis().SetTitle(xAxisLabel)
@@ -1180,17 +1198,17 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Comparison.Draw("E0")
         if makeSignifPlots:  # Draw the other significance hists
             YMax = Comparison.GetMaximum()
-            YMin = Comparison.GetMinimum()            
+            YMin = Comparison.GetMinimum()
             for i in range(1, len(Comparisons)):
                 Comparisons[i].Draw("same")
                 if Comparisons[i].GetMaximum() > YMax:
-                    YMax = Comparisons[i].GetMaximum() 
+                    YMax = Comparisons[i].GetMaximum()
                 if Comparisons[i].GetMinimum() < YMin:
-                    YMax = Comparisons[i].GetMinimum() 
-            Comparison.GetYaxis().SetRangeUser(0, 1.2*YMax)  
-        
+                    YMax = Comparisons[i].GetMinimum()
+            Comparison.GetYaxis().SetRangeUser(0, 1.2*YMax)
 
-    if not arguments.paperConfig:            
+
+    if not arguments.paperConfig:
         Canvas.Write()
 
     if arguments.paperConfig:
@@ -1198,7 +1216,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Canvas.SaveAs("figures/"+paperHistogram['output_dir']+"/"+paperHistogram['output_name']+".pdf")
         else:
             Canvas.SaveAs("figures/"+paperHistogram['output_dir']+"/"+histogramName+".pdf")
-        
+
     if arguments.savePDFs:
         pathToDirString = plainTextString(pathToDir)
         Canvas.SaveAs(condor_dir+"/stacked_histograms_pdfs/"+pathToDirString+"/"+histogramName+".pdf")
@@ -1210,41 +1228,45 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 def MakeTwoDHist(pathToDir,histogramName):
     blindData = False
-    # To blind histograms, define a list of histsToBlind in the localOptions.py file  
+    # To blind histograms, define a list of histsToBlind in the localOptions.py file
     try:  # Use "try" in case histsToBlind does not exist
-        if histsToBlind: 
+        if histsToBlind:
             for histToBlind in histsToBlind:
                 if histToBlind in histogramName:
-                    print "Blinding data for histogram " + histogramName 
+                    print "Blinding data for histogram " + histogramName
                     blindData = True
     except NameError:
         time.sleep(0.000001) # Do nothing if histsToBlind does not exist
-                
+
     numBgMCSamples = 0
     numDataSamples = 0
     numSignalSamples = 0
 
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
+    HeaderLabel.SetTextFont(42)
+    HeaderLabel.SetTextSize(0.697674)
     HeaderLabel.SetTextAlign(32)
     HeaderLabel.SetBorderSize(0)
     HeaderLabel.SetFillColor(0)
     HeaderLabel.SetFillStyle(0)
 
     LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
+    LumiLabel.SetTextFont(42)
+    LumiLabel.SetTextSize(0.731707)
     LumiLabel.SetBorderSize(0)
     LumiLabel.SetFillColor(0)
     LumiLabel.SetFillStyle(0)
-    
+
     NormLabel = TPaveLabel()
     NormLabel.SetDrawOption("NDC")
     NormLabel.SetX1NDC(topLeft_x_left)
     NormLabel.SetX2NDC(topLeft_x_right)
-    
+
     NormLabel.SetBorderSize(0)
     NormLabel.SetFillColor(0)
     NormLabel.SetFillStyle(0)
-    
+
     NormText = ""
     if arguments.normalizeToUnitArea:
         NormText = "Scaled to unit area"
@@ -1252,21 +1274,37 @@ def MakeTwoDHist(pathToDir,histogramName):
         NormText = "MC scaled to data"
         NormLabel.SetLabel(NormText)
 
-    BgMCLegend = TLegend(0.76,0.65,0.99,0.9)
+    BgMCLegend = TLegend(0.572581,0.742092,0.904378,0.891727)
     BgMCLegend.AddEntry (0, "Data & Bkgd. MC", "H").SetTextFont (62)
+    BgMCLegend.SetTextFont(42)
+    BgMCLegend.SetTextSize(0.0364963)
     BgMCLegend.SetBorderSize(0)
     BgMCLegend.SetFillColor(0)
     BgMCLegend.SetFillStyle(0)
-    SignalMCLegend = TLegend(0.76,0.135,0.99,0.377)
+    SignalMCLegend = TLegend(0.572581,0.742092,0.904378,0.891727)
     SignalMCLegend.AddEntry (0, "Signal MC", "H").SetTextFont (62)
+    SignalMCLegend.SetTextFont(42)
+    SignalMCLegend.SetTextSize(0.0364963)
     SignalMCLegend.SetBorderSize(0)
     SignalMCLegend.SetFillColor(0)
     SignalMCLegend.SetFillStyle(0)
 
     if not arguments.paperConfig:
         outputFile.cd(pathToDir)
-    Canvas = TCanvas(histogramName)
-    Canvas.SetRightMargin(0.2413793);
+    Canvas = TCanvas(histogramName,"",4,55,872,850)
+    Canvas.SetHighLightColor(2)
+    Canvas.Range(-72.16495,-10.50091,516.9367,82.84142)
+    Canvas.SetFillColor(0)
+    Canvas.SetBorderMode(0)
+    Canvas.SetBorderSize(2)
+    Canvas.SetTickx(1)
+    Canvas.SetTicky(1)
+    Canvas.SetLeftMargin(0.1225)
+    Canvas.SetRightMargin(0.0357143)
+    Canvas.SetTopMargin(0.0725)
+    Canvas.SetBottomMargin(0.1125)
+    Canvas.SetFrameBorderMode(0)
+    Canvas.SetFrameBorderMode(0)
     BgMCHistograms = []
     SignalMCHistograms = []
     DataHistograms = []
@@ -1276,8 +1314,8 @@ def MakeTwoDHist(pathToDir,histogramName):
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
         if not HistogramObj:
-            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
-            continue 
+            print "WARNING:  Could not find histogram " + pathToDir + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."
+            continue
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
         inputFile.Close()
@@ -1292,17 +1330,17 @@ def MakeTwoDHist(pathToDir,histogramName):
             histoTitle = Histogram.GetTitle()
         else:
             histoTitle = ""
-    
+
         if( types[sample] == "bgMC"):
 
             numBgMCSamples += 1
             Histogram.SetMarkerColor(colors[sample])
             Histogram.SetMarkerStyle(24)
             Histogram.SetMarkerSize(1.2)
-            Histogram.SetFillColor(colors[sample])                    
+            Histogram.SetFillColor(colors[sample])
             BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             BgMCHistograms.append(Histogram)
-        
+
         elif( types[sample] == "signalMC"):
 
             numSignalSamples += 1
@@ -1325,23 +1363,23 @@ def MakeTwoDHist(pathToDir,histogramName):
             DataHistograms.append(Histogram)
 
     if not arguments.paperConfig:
-        outputFile.cd(pathToDir)        
+        outputFile.cd(pathToDir)
 
     if(numBgMCSamples is not 0):
         BgMCHistograms[0].SetTitle(histoTitle)
         BgMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
         BgMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
-        BgMCHistograms[0].Draw()            
+        BgMCHistograms[0].Draw()
         for signalMCHist in SignalMCHistograms:
             signalMCHist.Draw("SAME")
         for dataHist in DataHistograms:
             dataHist.Draw("SAME")
-                        
+
     elif(numSignalSamples is not 0):
         SignalMCHistograms[0].SetTitle(histoTitle)
         SignalMCHistograms[0].Draw()
         SignalMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
-        SignalMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)            
+        SignalMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
         for signalMCHist in SignalMCHistograms:
             if(signalMCHist is not SignalMCHistograms[0]):
                 signalMCHist.Draw("SAME")
@@ -1402,12 +1440,12 @@ def MakeTwoDHist(pathToDir,histogramName):
         HeaderLabel.Draw()
 
 
-    
+
     if(numBgMCSamples is not 0 or numDataSamples is not 0):
         BgMCLegend.Draw()
     if(numSignalSamples is not 0):
         SignalMCLegend.Draw()
-    if not arguments.paperConfig:            
+    if not arguments.paperConfig:
         Canvas.Write()
 
 
@@ -1425,13 +1463,13 @@ if arguments.paperConfig:
 
     os.system("rm -rf figures/")
     os.system("mkdir figures")
-    
+
     for paperHistogram in paper_histograms:
         # set up output directories for paper-ready plots
         pathToDir = "figures/"+paperHistogram['output_dir']
         if not os.path.exists(pathToDir):
             os.system("mkdir %s" % (pathToDir))
- 
+
         # make each canvas and save the pdf
         directory = "OSUAnalysis/" + paperHistogram['channel']
         condor_dir = "condor/" + paperHistogram['condor_dir']
@@ -1447,11 +1485,11 @@ condor_dir = set_condor_output_dir(arguments)
 #### check which input datasets have valid output files
 if arguments.verbose:
     print "Number of datasets: " + str(len(datasets))
-    print datasets  
+    print datasets
 for sample in datasets:
     fileName = condor_dir + "/" + sample + ".root"
     if arguments.verbose:
-        print "Adding fileName: " + fileName 
+        print "Adding fileName: " + fileName
     if not os.path.exists(fileName):
         print "WARNING: didn't find ",fileName
         continue
@@ -1470,7 +1508,7 @@ if arguments.savePDFs:
 #### make output file
 outputFileName = "stacked_histograms.root"
 if arguments.makeSignificancePlots:
-    outputFileName = "stacked_histogramsSignif.root"  
+    outputFileName = "stacked_histogramsSignif.root"
 if arguments.outputFileName:
     outputFileName = arguments.outputFileName
 
@@ -1500,7 +1538,7 @@ for key in inputFile.GetListOfKeys():
                 MakeOneDHist(rootDirectory,key2.GetName(),"right")
             else:
                 MakeOneDHist(rootDirectory,key2.GetName(),"none")
-        elif re.match ('TH2', key2.GetClassName()) and arguments.draw2DPlots: # found a 2-D histogram        
+        elif re.match ('TH2', key2.GetClassName()) and arguments.draw2DPlots: # found a 2-D histogram
             MakeTwoDHist(rootDirectory,key2.GetName())
 
         elif (key2.GetClassName() == "TDirectoryFile"): # found a directory, cd there and look for histograms
@@ -1518,9 +1556,9 @@ for key in inputFile.GetListOfKeys():
 
             inputFile.cd(level2Directory)
             for key3 in gDirectory.GetListOfKeys():
-#                if arguments.quickHistName and not arguments.quickHistName in key3.GetName():  
-                if arguments.quickHistName and not arguments.quickHistName == key3.GetName():  
-                    continue  
+#                if arguments.quickHistName and not arguments.quickHistName in key3.GetName():
+                if arguments.quickHistName and not arguments.quickHistName == key3.GetName():
+                    continue
                 if re.match ('TH1', key3.GetClassName()): # found a 1-D histogram
                     if arguments.makeSignificancePlots:
                         MakeOneDHist(level2Directory,key3.GetName(),"left")
@@ -1532,7 +1570,7 @@ for key in inputFile.GetListOfKeys():
 
                 elif (key3.GetClassName() == "TDirectoryFile"): # found a directory, cd there and look for histograms
                     level3Directory = level2Directory+"/"+key3.GetName()
-                    
+
                     #make a corresponding directory in the output file
                     outputFile.cd(level2Directory)
                     gDirectory.mkdir(key3.GetName())
@@ -1555,4 +1593,4 @@ for key in inputFile.GetListOfKeys():
                             MakeTwoDHist(level3Directory,key3.GetName())
 
 
-outputFile.Close()         
+outputFile.Close()
