@@ -52,9 +52,9 @@ namespace anatools
   string getObjectType  (const TYPE(basicjets) &);
   string getObjectClass (const TYPE(basicjets) &);
 #endif
-#if IS_VALID(bjets)
-  string getObjectType  (const TYPE(bjets) &);
-  string getObjectClass (const TYPE(bjets) &);
+#if IS_VALID(candjets)
+  string getObjectType  (const TYPE(candjets) &);
+  string getObjectClass (const TYPE(candjets) &);
 #endif
 #if IS_VALID(candeles)
   string getObjectType  (const TYPE(candeles) &);
