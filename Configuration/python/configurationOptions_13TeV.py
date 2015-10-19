@@ -18,6 +18,8 @@ datasets = [
    #data
    'DoubleMu_2015',
    'SingleMu_2015',
+   'SingleEle_2015',
+   'SinglePhoton_2015',
    'DoubleEG_2015',
    'MuonEG_2015',
 
@@ -153,6 +155,16 @@ composite_dataset_definitions = {
         'SingleMu_2015C',
         'SingleMu_2015D',
     ],
+    'SingleEle_2015' : [
+        'SingleEle_2015B',
+        'SingleEle_2015C',
+        'SingleEle_2015D',
+    ],
+    'SinglePhoton_2015' : [
+        'SinglePhoton_2015B',
+        'SinglePhoton_2015C',
+        'SinglePhoton_2015D',
+    ],
     'DoubleEG_2015' : [
         'DoubleEG_2015B',
         'DoubleEG_2015C',
@@ -249,6 +261,14 @@ dataset_names = {
     'SingleMu_2015B'       : "/SingleMuon/Run2015B-PromptReco-v1/MINIAOD",
     'SingleMu_2015C'       : "/SingleMuon/Run2015C-PromptReco-v1/MINIAOD",
     'SingleMu_2015D'       : "/SingleMuon/Run2015D-PromptReco-v3/MINIAOD",
+   
+    'SingleEle_2015B'      : "/SingleElectron/Run2015B-PromptReco-v1/MINIAOD",
+    'SingleEle_2015C'      : "/SingleElectron/Run2015C-PromptReco-v1/MINIAOD",
+    'SingleEle_2015D'      : "/SingleElectron/Run2015D-PromptReco-v3/MINIAOD",
+   
+    'SinglePhoton_2015B'   : "/SinglePhoton/Run2015B-PromptReco-v1/MINIAOD",
+    'SinglePhoton_2015C'   : "/SinglePhoton/Run2015C-PromptReco-v1/MINIAOD",
+    'SinglePhoton_2015D'   : "/SinglePhoton/Run2015D-PromptReco-v3/MINIAOD",
     
     'DoubleEG_2015B'       : "/DoubleEG/Run2015B-PromptReco-v1/MINIAOD",
     'DoubleEG_2015C'       : "/DoubleEG/Run2015C-PromptReco-v1/MINIAOD",
@@ -342,6 +362,14 @@ nJobs = {
     'SingleMu_2015B'   :  57,
     'SingleMu_2015C'   : 220,
     'SingleMu_2015D'   : 60,
+   
+    'SingleEle_2015B'   :  77,
+    'SingleEle_2015C'   : 137,
+    'SingleEle_2015D'   : 416,
+   
+    'SinglePhoton_2015B'   :  55,
+    'SinglePhoton_2015C'   : 130,
+    'SinglePhoton_2015D'   : 195,
     
     'DoubleEG_2015B'   :  100,
     'DoubleEG_2015C'   :  298,
@@ -433,6 +461,14 @@ maxEvents = {
     'SingleMu_2015B'       : -1,
     'SingleMu_2015C'       : -1,
     'SingleMu_2015D'       : -1,
+   
+    'SingleEle_2015B'       : -1,
+    'SingleEle_2015C'       : -1,
+    'SingleEle_2015D'       : -1,
+   
+    'SinglePhoton_2015B'       : -1,
+    'SinglePhoton_2015C'       : -1,
+    'SinglePhoton_2015D'       : -1,
     
     'DoubleEG_2015B'       : -1,
     'DoubleEG_2015C'       : -1,
@@ -536,6 +572,16 @@ types = {
     'SingleMu_2015C'   : "data",
     'SingleMu_2015D'   : "data",
     'SingleMu_2015'    : "data",
+   
+    'SingleEle_2015B'   : "data",
+    'SingleEle_2015C'   : "data",
+    'SingleEle_2015D'   : "data",
+    'SingleEle_2015'    : "data",
+   
+    'SinglePhoton_2015B'   : "data",
+    'SinglePhoton_2015C'   : "data",
+    'SinglePhoton_2015D'   : "data",
+    'SinglePhoton_2015'    : "data",
     
     'DoubleEG_2015B'   : "data",
     'DoubleEG_2015C'   : "data",
@@ -638,6 +684,16 @@ colors = {
     'SingleMu_2015C'   : 1,
     'SingleMu_2015D'   : 1,
     'SingleMu_2015'   : 1,
+   
+    'SingleEle_2015B'   : 1,
+    'SingleEle_2015C'   : 1,
+    'SingleEle_2015D'   : 1,
+    'SingleEle_2015'   : 1,
+   
+    'SinglePhoton_2015B'   : 1,
+    'SinglePhoton_2015C'   : 1,
+    'SinglePhoton_2015D'   : 1,
+    'SinglePhoton_2015'   : 1,
     
     'DoubleEG_2015B'   : 1,
     'DoubleEG_2015C'   : 1,
@@ -738,6 +794,16 @@ labels = {
     'SingleMu_2015B'     : "SingleMu 2015B data",
     'SingleMu_2015C'     : "SingleMu 2015C data",
     'SingleMu_2015D'     : "SingleMu 2015D data",
+   
+    'SingleEle_2015'      : "Single Electron 2015 data",
+    'SingleEle_2015B'     : "SingleEle 2015B data",
+    'SingleEle_2015C'     : "SingleEle 2015C data",
+    'SingleEle_2015D'     : "SingleEle 2015D data",
+   
+    'SinglePhoton_2015'      : "Single Photonctron 2015 data",
+    'SinglePhoton_2015B'     : "SinglePhoton 2015B data",
+    'SinglePhoton_2015C'     : "SinglePhoton 2015C data",
+    'SinglePhoton_2015D'     : "SinglePhoton 2015D data",
     
     'DoubleEG_2015'      : "DoubleEG 2015 data",
     'DoubleEG_2015B'     : "DoubleEG 2015B data",
