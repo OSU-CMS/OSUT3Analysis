@@ -41,8 +41,8 @@ parser.add_option("-S", "--systematics", action="store_true", dest="includeSyste
                   help="also lists the systematic uncertainties")
 parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,
                   help="Make significance plots")
-parser.add_option("-O", "--addOverUnderFlow", action="store_true", dest="addOverUnderFlow", default=True,
-                  help="Add the overflow and underflow entries to the last and first bins")
+parser.add_option("-O", "--addOverUnderFlow", action="store_false", dest="addOverUnderFlow", default=True,
+                  help="Do not add the overflow and underflow entries to the last and first bins")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                   help="verbose output")
 parser.add_option("-P", "--paperConfig", dest="paperConfig",
