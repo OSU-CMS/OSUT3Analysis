@@ -5,6 +5,7 @@ import FWCore.ParameterSet.Config as cms
 ###########################################################
 
 collectionMap = cms.PSet ( 
+    beamspots       =  cms.InputTag  ("offlineBeamSpot",                ""),
     electrons       =  cms.InputTag  ('slimmedElectrons',               ''),
     genjets         =  cms.InputTag  ('slimmedGenJets',                 ''),
     jets            =  cms.InputTag  ('slimmedJets',                    ''),
