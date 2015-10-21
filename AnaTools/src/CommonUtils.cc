@@ -572,6 +572,14 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   string  anatools::getObjectType  (const  TYPE(electrons)       &obj)  {  return  "electron";       }
   string  anatools::getObjectClass  (const  TYPE(electrons)       &obj)  {  return  TYPE_STR(electrons);       }
 #endif
+#if IS_VALID(candeles)
+  string  anatools::getObjectType  (const  TYPE(candeles)       &obj)  {  return  "candele";       }
+  string  anatools::getObjectClass  (const  TYPE(candeles)       &obj)  {  return  TYPE_STR(candeles);       }
+#endif
+#if IS_VALID(candjets)
+  string  anatools::getObjectType  (const  TYPE(candjets)       &obj)  {  return  "candjet";       }
+  string  anatools::getObjectClass  (const  TYPE(candjets)       &obj)  {  return  TYPE_STR(candjets);       }
+#endif
 #if IS_VALID(events)
   string  anatools::getObjectType  (const  TYPE(events)          &obj)  {  return  "event";          }
   string  anatools::getObjectClass  (const  TYPE(events)          &obj)  {  return  TYPE_STR(events);          }
