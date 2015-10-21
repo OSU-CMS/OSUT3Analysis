@@ -192,6 +192,33 @@ dataset_names = {
     ############################################################################
     #MiniAOD stored on T3.
     ############################################################################
+    #DY
+    'DYJetsToLL_50_MiniAOD'  :  "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM",
+    'DYJetsToNuNu_MiniAOD'   :  "/DYJetsToNuNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
+    #WJets
+    'WJetsToLNu_MiniAOD'  :  "/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
+    #WW
+    'WWToLNuQQ_MiniAOD'   :  "/WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'WWToLNuLNu_MiniAOD'  :  "/WWTo2L2Nu_13TeV-powheg/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
+    #WZ
+    'WZToLNuQQ_MiniAOD'    :  "/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'WZToLLQQ_MiniAOD'     :  "/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
+    'WZToLNuNuNu_MiniAOD'  :  "/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'WZToLLLNu_MiniAOD'    :  "/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
+    #ZZ
+    'ZZToNuNuQQ_MiniAOD'  :  "/ZZTo2Q2Nu_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'ZZToLLQQ_MiniAOD'    :  "/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'ZZToLLNuNu_MiniAOD'  :  "/ZZTo2L2Nu_13TeV_powheg_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'ZZToLLLL_MiniAOD'    :  "/ZZTo4L_13TeV_powheg_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
+    #VG
+    'WG_MiniAOD'  :  "/WGToLNuG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'ZG_MiniAOD'  :  "/ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
     #SingleTop
     'SingleTop_s_channel_MiniAOD'  :  "/ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'SingleTop_t_channel_MiniAOD'  :  "/ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
@@ -202,14 +229,32 @@ dataset_names = {
     'TTJets_DiLept_MiniAOD'              :  "/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
     'TTJets_SingleLeptFromT_MiniAOD'     :  "/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  "/TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9_ext1-v1/MINIAODSIM",
+
+    #MET data
+    'MET_2015D_05Oct2015' : "/MET/Run2015D-05Oct2015-v1/MINIAOD",
+
+    #AMSB chargino
+    'AMSB_chargino_100GeV_10cm'    :  "/AMSB_chargino_M-100_CTau-10_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'AMSB_chargino_100GeV_100cm'   :  "/AMSB_chargino_M-100_CTau-100_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'AMSB_chargino_100GeV_1000cm'  :  "/AMSB_chargino_M-100_CTau-1000_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
+    'AMSB_chargino_300GeV_10cm'    :  "/AMSB_chargino_M-300_CTau-10_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'AMSB_chargino_300GeV_100cm'   :  "/AMSB_chargino_M-300_CTau-100_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'AMSB_chargino_300GeV_1000cm'  :  "/AMSB_chargino_M-300_CTau-1000_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
+    'AMSB_chargino_500GeV_10cm'    :  "/AMSB_chargino_M-500_CTau-10_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'AMSB_chargino_500GeV_100cm'   :  "/AMSB_chargino_M-500_CTau-100_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'AMSB_chargino_500GeV_1000cm'  :  "/AMSB_chargino_M-500_CTau-1000_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
+    'AMSB_chargino_700GeV_10cm'    :  "/AMSB_chargino_M-700_CTau-10_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'AMSB_chargino_700GeV_100cm'   :  "/AMSB_chargino_M-700_CTau-100_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'AMSB_chargino_700GeV_1000cm'  :  "/AMSB_chargino_M-700_CTau-1000_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     ############################################################################
 
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
-    'DYJetsToLL_50_MiniAOD'     : "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM",
     'DYJetsToLL_10to50_MiniAOD' : "/DYJetsToLL_M-5to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
-    'WJetsToLNu_MiniAOD'        : "/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'TTJets_MiniAOD'            : "/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
     'ZZ_MiniAOD'                : "/ZZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM", 
     'WW_MiniAOD'                : "/WW_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
@@ -291,6 +336,33 @@ nJobs = {
     ############################################################################
     #MiniAOD stored on T3.
     ############################################################################
+    #DY
+    'DYJetsToLL_50_MiniAOD'  :  9999,
+    'DYJetsToNuNu_MiniAOD'   :  9999,
+
+    #WJets
+    'WJetsToLNu_MiniAOD'  :  9999,
+
+    #WW
+    'WWToLNuQQ_MiniAOD'   :  9999,
+    'WWToLNuLNu_MiniAOD'  :  9999,
+
+    #WZ
+    'WZToLNuQQ_MiniAOD'    :  9999,
+    'WZToLLQQ_MiniAOD'     :  9999,
+    'WZToLNuNuNu_MiniAOD'  :  9999,
+    'WZToLLLNu_MiniAOD'    :  9999,
+
+    #ZZ
+    'ZZToNuNuQQ_MiniAOD'  :  9999,
+    'ZZToLLQQ_MiniAOD'    :  9999,
+    'ZZToLLNuNu_MiniAOD'  :  9999,
+    'ZZToLLLL_MiniAOD'    :  9999,
+
+    #VG
+    'WG_MiniAOD'  :  9999,
+    'ZG_MiniAOD'  :  9999,
+
     #SingleTop
     'SingleTop_s_channel_MiniAOD'  :  9999,
     'SingleTop_t_channel_MiniAOD'  :  9999,
@@ -301,14 +373,32 @@ nJobs = {
     'TTJets_DiLept_MiniAOD'              :  9999,
     'TTJets_SingleLeptFromT_MiniAOD'     :  9999,
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  9999,
+
+    #MET data
+    'MET_2015D_05Oct2015' : 9999,
+
+    #AMSB chargino
+    'AMSB_chargino_100GeV_10cm'    :  9999,
+    'AMSB_chargino_100GeV_100cm'   :  9999,
+    'AMSB_chargino_100GeV_1000cm'  :  9999,
+
+    'AMSB_chargino_300GeV_10cm'    :  9999,
+    'AMSB_chargino_300GeV_100cm'   :  9999,
+    'AMSB_chargino_300GeV_1000cm'  :  9999,
+
+    'AMSB_chargino_500GeV_10cm'    :  9999,
+    'AMSB_chargino_500GeV_100cm'   :  9999,
+    'AMSB_chargino_500GeV_1000cm'  :  9999,
+
+    'AMSB_chargino_700GeV_10cm'    :  9999,
+    'AMSB_chargino_700GeV_100cm'   :  9999,
+    'AMSB_chargino_700GeV_1000cm'  :  9999,
     ############################################################################
 
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
-    'DYJetsToLL_50_MiniAOD'        : 671,
     'DYJetsToLL_10to50_MiniAOD'    : 753,
-    'WJetsToLNu_MiniAOD'        : 569,
     'TTJets_MiniAOD'        : 325,
     'WW_MiniAOD'        : 44,
     'ZZ_MiniAOD'        : 36,
@@ -393,6 +483,33 @@ maxEvents = {
     ############################################################################
     #MiniAOD stored on T3.
     ############################################################################
+    #DY
+    'DYJetsToLL_50_MiniAOD'  :  -1,
+    'DYJetsToNuNu_MiniAOD'   :  -1,
+
+    #WJets
+    'WJetsToLNu_MiniAOD'  :  -1,
+
+    #WW
+    'WWToLNuQQ_MiniAOD'   :  -1,
+    'WWToLNuLNu_MiniAOD'  :  -1,
+
+    #WZ
+    'WZToLNuQQ_MiniAOD'    :  -1,
+    'WZToLLQQ_MiniAOD'     :  -1,
+    'WZToLNuNuNu_MiniAOD'  :  -1,
+    'WZToLLLNu_MiniAOD'    :  -1,
+
+    #ZZ
+    'ZZToNuNuQQ_MiniAOD'  :  -1,
+    'ZZToLLQQ_MiniAOD'    :  -1,
+    'ZZToLLNuNu_MiniAOD'  :  -1,
+    'ZZToLLLL_MiniAOD'    :  -1,
+
+    #VG
+    'WG_MiniAOD'  :  -1,
+    'ZG_MiniAOD'  :  -1,
+
     #SingleTop
     'SingleTop_s_channel_MiniAOD'  :  -1,
     'SingleTop_t_channel_MiniAOD'  :  -1,
@@ -403,14 +520,32 @@ maxEvents = {
     'TTJets_DiLept_MiniAOD'              :  -1,
     'TTJets_SingleLeptFromT_MiniAOD'     :  -1,
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  -1,
+
+    #MET data
+    'MET_2015D_05Oct2015' : -1,
+
+    #AMSB chargino
+    'AMSB_chargino_100GeV_10cm'    :  -1,
+    'AMSB_chargino_100GeV_100cm'   :  -1,
+    'AMSB_chargino_100GeV_1000cm'  :  -1,
+
+    'AMSB_chargino_300GeV_10cm'    :  -1,
+    'AMSB_chargino_300GeV_100cm'   :  -1,
+    'AMSB_chargino_300GeV_1000cm'  :  -1,
+
+    'AMSB_chargino_500GeV_10cm'    :  -1,
+    'AMSB_chargino_500GeV_100cm'   :  -1,
+    'AMSB_chargino_500GeV_1000cm'  :  -1,
+
+    'AMSB_chargino_700GeV_10cm'    :  -1,
+    'AMSB_chargino_700GeV_100cm'   :  -1,
+    'AMSB_chargino_700GeV_1000cm'  :  -1,
     ############################################################################
 
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
-    'DYJetsToLL_50_MiniAOD'        : -1,
     'DYJetsToLL_10to50_MiniAOD'        : -1,
-    'WJetsToLNu_MiniAOD'        : -1,
     'TTJets_MiniAOD'            : -1,
     'WW_MiniAOD'            : -1,
     'ZZ_MiniAOD'            : -1,
@@ -496,6 +631,33 @@ types = {
     ############################################################################
     #MiniAOD stored on T3.
     ############################################################################
+    #DY
+    'DYJetsToLL_50_MiniAOD'  :  "bgMC",
+    'DYJetsToNuNu_MiniAOD'   :  "bgMC",
+
+    #WJets
+    'WJetsToLNu_MiniAOD'  :  "bgMC",
+
+    #WW
+    'WWToLNuQQ_MiniAOD'   :  "bgMC",
+    'WWToLNuLNu_MiniAOD'  :  "bgMC",
+
+    #WZ
+    'WZToLNuQQ_MiniAOD'    :  "bgMC",
+    'WZToLLQQ_MiniAOD'     :  "bgMC",
+    'WZToLNuNuNu_MiniAOD'  :  "bgMC",
+    'WZToLLLNu_MiniAOD'    :  "bgMC",
+
+    #ZZ
+    'ZZToNuNuQQ_MiniAOD'  :  "bgMC",
+    'ZZToLLQQ_MiniAOD'    :  "bgMC",
+    'ZZToLLNuNu_MiniAOD'  :  "bgMC",
+    'ZZToLLLL_MiniAOD'    :  "bgMC",
+
+    #VG
+    'WG_MiniAOD'  :  "bgMC",
+    'ZG_MiniAOD'  :  "bgMC",
+
     #SingleTop
     'SingleTop_MiniAOD'  :  "bgMC",
     'SingleTop_s_channel_MiniAOD'  :  "bgMC",
@@ -508,15 +670,33 @@ types = {
     'TTJets_DiLept_MiniAOD'              :  "bgMC",
     'TTJets_SingleLeptFromT_MiniAOD'     :  "bgMC",
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  "bgMC",
+
+    #MET data
+    'MET_2015D_05Oct2015' : "data",
+
+    #AMSB chargino
+    'AMSB_chargino_100GeV_10cm'    :  "signalMC",
+    'AMSB_chargino_100GeV_100cm'   :  "signalMC",
+    'AMSB_chargino_100GeV_1000cm'  :  "signalMC",
+
+    'AMSB_chargino_300GeV_10cm'    :  "signalMC",
+    'AMSB_chargino_300GeV_100cm'   :  "signalMC",
+    'AMSB_chargino_300GeV_1000cm'  :  "signalMC",
+
+    'AMSB_chargino_500GeV_10cm'    :  "signalMC",
+    'AMSB_chargino_500GeV_100cm'   :  "signalMC",
+    'AMSB_chargino_500GeV_1000cm'  :  "signalMC",
+
+    'AMSB_chargino_700GeV_10cm'    :  "signalMC",
+    'AMSB_chargino_700GeV_100cm'   :  "signalMC",
+    'AMSB_chargino_700GeV_1000cm'  :  "signalMC",
     ############################################################################
 
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
     'DYJetsToLL_MiniAOD'                : "bgMC",
-    'DYJetsToLL_50_MiniAOD'     : "bgMC",   
     'DYJetsToLL_10to50_MiniAOD'     : "bgMC",   
-    'WJetsToLNu_MiniAOD'        : "bgMC",   
     'TTJets_MiniAOD'            : "bgMC",
     'Diboson_MiniAOD'            : "bgMC",
     'WW_MiniAOD'            : "bgMC",
@@ -611,6 +791,33 @@ colors = {
     ############################################################################
     #MiniAOD stored on T3.
     ############################################################################
+    #DY
+    'DYJetsToLL_50_MiniAOD'  :  410,
+    'DYJetsToNuNu_MiniAOD'   :  831,
+
+    #WJets
+    'WJetsToLNu_MiniAOD'  :  852,
+
+    #WW
+    'WWToLNuQQ_MiniAOD'   :  390,
+    'WWToLNuLNu_MiniAOD'  :  390,
+
+    #WZ
+    'WZToLNuQQ_MiniAOD'    :  393,
+    'WZToLLQQ_MiniAOD'     :  393,
+    'WZToLNuNuNu_MiniAOD'  :  393,
+    'WZToLLLNu_MiniAOD'    :  393,
+
+    #ZZ
+    'ZZToNuNuQQ_MiniAOD'  :  397,
+    'ZZToLLQQ_MiniAOD'    :  397,
+    'ZZToLLNuNu_MiniAOD'  :  397,
+    'ZZToLLLL_MiniAOD'    :  397,
+
+    #VG
+    'WG_MiniAOD'  :  399,
+    'ZG_MiniAOD'  :  398,
+
     #SingleTop
     'SingleTop_MiniAOD'            :  607,
     'SingleTop_s_channel_MiniAOD'  :  905,
@@ -623,15 +830,33 @@ colors = {
     'TTJets_DiLept_MiniAOD'              :  873,
     'TTJets_SingleLeptFromT_MiniAOD'     :  872,
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  872,
+
+    #MET data
+    'MET_2015D_05Oct2015' : 1,
+
+    #AMSB chargino
+    'AMSB_chargino_100GeV_10cm'    :  628,
+    'AMSB_chargino_100GeV_100cm'   :  596,
+    'AMSB_chargino_100GeV_1000cm'  :  923,
+
+    'AMSB_chargino_300GeV_10cm'    :  628,
+    'AMSB_chargino_300GeV_100cm'   :  596,
+    'AMSB_chargino_300GeV_1000cm'  :  923,
+
+    'AMSB_chargino_500GeV_10cm'    :  628,
+    'AMSB_chargino_500GeV_100cm'   :  596,
+    'AMSB_chargino_500GeV_1000cm'  :  923,
+
+    'AMSB_chargino_700GeV_10cm'    :  628,
+    'AMSB_chargino_700GeV_100cm'   :  596,
+    'AMSB_chargino_700GeV_1000cm'  :  923,
     ############################################################################
 
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
     'DYJetsToLL_MiniAOD'          : 410,
-    'DYJetsToLL_50_MiniAOD'       : 410,
     'DYJetsToLL_10to50_MiniAOD'   : 410,
-    'WJetsToLNu_MiniAOD'          : 852,
     'TTJets_MiniAOD'              : 872,
     'Diboson_MiniAOD'             : 393,
     'WZ_MiniAOD'                  : 393,
@@ -726,6 +951,33 @@ labels = {
     ############################################################################
     #MiniAOD stored on T3.
     ############################################################################
+    #DY
+    'DYJetsToLL_50_MiniAOD'  :  "Z#rightarrowl^{+}l^{-} M(50) (MiniAOD)",
+    'DYJetsToNuNu_MiniAOD'   :  "Z#rightarrow#nu#bar{#nu} (MiniAOD)",
+
+    #WJets
+    'WJetsToLNu_MiniAOD'  :  "W#rightarrowl#nu (MiniAOD)",
+
+    #WW
+    'WWToLNuQQ_MiniAOD'   :  "WW#rightarrowl#nuqq",
+    'WWToLNuLNu_MiniAOD'  :  "WW#rightarrowl#nul#nu",
+
+    #WZ
+    'WZToLNuQQ_MiniAOD'    :  "WZ#rightarrowl#nuqq",
+    'WZToLLQQ_MiniAOD'     :  "WZ#rightarrowqqll",
+    'WZToLNuNuNu_MiniAOD'  :  "WZ#rightarrowl#nu#nu#nu",
+    'WZToLLLNu_MiniAOD'    :  "WZ#rightarrowl#null",
+
+    #ZZ
+    'ZZToNuNuQQ_MiniAOD'  :  "ZZ#rightarrow#nu#nuqq",
+    'ZZToLLQQ_MiniAOD'    :  "ZZ#rightarrowllqq",
+    'ZZToLLNuNu_MiniAOD'  :  "ZZ#rightarrowll#nu#nu",
+    'ZZToLLLL_MiniAOD'    :  "ZZ#rightarrowllll",
+
+    #VG
+    'WG_MiniAOD'  :  "W#gamma#rightarrowl#nu#gamma",
+    'ZG_MiniAOD'  :  "Z#gamma#rightarrowll#gamma",
+
     #SingleTop
     'SingleTop_MiniAOD'            :  "Single top",
     'SingleTop_s_channel_MiniAOD'  :  "Single top (s-channel)",
@@ -738,14 +990,32 @@ labels = {
     'TTJets_DiLept_MiniAOD'              :  "t#bar{t} (fully leptonic)",
     'TTJets_SingleLeptFromT_MiniAOD'     :  "t#bar{t} (single lepton from t)",
     'TTJets_SingleLeptFromTbar_MiniAOD'  :  "t#bar{t} (single lepton from #bar{t})",
+
+    #MET data
+    'MET_2015D_05Oct2015' : "MET 2015D data",
+
+    #AMSB chargino
+    'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}_{1}^{#pm} (100 GeV, 10cm)",
+    'AMSB_chargino_100GeV_100cm'   :  "AMSB #tilde{#chi}_{1}^{#pm} (100 GeV, 100cm)",
+    'AMSB_chargino_100GeV_1000cm'  :  "AMSB #tilde{#chi}_{1}^{#pm} (100 GeV, 1000cm)",
+
+    'AMSB_chargino_300GeV_10cm'    :  "AMSB #tilde{#chi}_{1}^{#pm} (300 GeV, 10cm)",
+    'AMSB_chargino_300GeV_100cm'   :  "AMSB #tilde{#chi}_{1}^{#pm} (300 GeV, 100cm)",
+    'AMSB_chargino_300GeV_1000cm'  :  "AMSB #tilde{#chi}_{1}^{#pm} (300 GeV, 1000cm)",
+
+    'AMSB_chargino_500GeV_10cm'    :  "AMSB #tilde{#chi}_{1}^{#pm} (500 GeV, 10cm)",
+    'AMSB_chargino_500GeV_100cm'   :  "AMSB #tilde{#chi}_{1}^{#pm} (500 GeV, 100cm)",
+    'AMSB_chargino_500GeV_1000cm'  :  "AMSB #tilde{#chi}_{1}^{#pm} (500 GeV, 1000cm)",
+
+    'AMSB_chargino_700GeV_10cm'    :  "AMSB #tilde{#chi}_{1}^{#pm} (700 GeV, 10cm)",
+    'AMSB_chargino_700GeV_100cm'   :  "AMSB #tilde{#chi}_{1}^{#pm} (700 GeV, 100cm)",
+    'AMSB_chargino_700GeV_1000cm'  :  "AMSB #tilde{#chi}_{1}^{#pm} (700 GeV, 1000cm)",
     ############################################################################
 
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
-    'DYJetsToLL_50_MiniAOD'                 : "Z#rightarrowll M(50) (MiniAOD)",
     'DYJetsToLL_10to50_MiniAOD'             : "Z#rightarrowll M(10to50) (MiniAOD)",
-    'WJetsToLNu_MiniAOD'                    : "W#rightarrowl#nu (MiniAOD)",
     'TTJets_MiniAOD'                        : "t#bar{t} (MiniAOD)",
     'Diboson_MiniAOD'                   : "diboson (MiniAOD)",
     'WW_MiniAOD'                        : "WW",
@@ -896,3 +1166,4 @@ crossSections = {
 
 }
 
+InputCondorArguments = {}
