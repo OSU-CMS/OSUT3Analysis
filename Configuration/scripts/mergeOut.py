@@ -179,6 +179,8 @@ def MakeFilesForSkimDirectory(Directory, TotalNumber, SkimNumber):
 #                 Make submission script for the failed jobs.                 #
 ###############################################################################
 def MakeResubmissionScript(badIndices, originalSubmissionScript):
+    if os.path.exists('condor_resubmit.sub'):
+      os.system('rm condor_resubmit.sub')
     os.system('touch condor_resubmit.sub')
     resubScript = open('condor_resubmit.sub','r+w') 
     originalScript = open(originalSubmissionScript,'r')
