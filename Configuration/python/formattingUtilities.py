@@ -131,7 +131,7 @@ def formatNumber(inputNumber):
 
 #function to round to a certain number of significant digits
 def round_sigfigs(num, sig_figs):
-    if num != 0:
+    if num != 0 and not math.isnan(num):
         return round(num, -int(math.floor(math.log10(abs(num))) - (sig_figs - 1)))
     else:
         return 0  # Can't take the log of 0   

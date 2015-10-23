@@ -22,6 +22,7 @@ datasets = [
    'SinglePhoton_2015',
    'DoubleEG_2015',
    'MuonEG_2015',
+   'MuonEG_2015D',
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50_MiniAOD',
@@ -111,7 +112,7 @@ composite_dataset_definitions = {
         'TTJets_SingleLeptFromTbar_MiniAOD',
     ],
     'QCD_MuEnriched_MiniAOD' : [
-        'QCD_MuEnriched_20toInf_MiniAOD', 
+        #'QCD_MuEnriched_20toInf_MiniAOD', 
         'QCD_MuEnriched_15to20_MiniAOD', 
         'QCD_MuEnriched_20to30_MiniAOD', 
         'QCD_MuEnriched_30to50_MiniAOD', 
@@ -173,7 +174,12 @@ composite_dataset_definitions = {
     'MuonEG_2015' : [
         'MuonEG_2015B',
         'MuonEG_2015C',
-        'MuonEG_2015D',
+        'MuonEG_2015D_v3',
+        'MuonEG_2015D_v4',
+    ],
+    'MuonEG_2015D' : [
+        'MuonEG_2015D_v3',
+        'MuonEG_2015D_v4',
     ],
 }
 
@@ -319,9 +325,10 @@ dataset_names = {
     'DoubleEG_2015C'       : "/DoubleEG/Run2015C-PromptReco-v1/MINIAOD",
     'DoubleEG_2015D'       : "/DoubleEG/Run2015D-PromptReco-v3/MINIAOD",
     
-    'MuonEG_2015B'       : "/MuonEG/Run2015B-PromptReco-v1/MINIAOD",
-    'MuonEG_2015C'       : "/MuonEG/Run2015C-PromptReco-v1/MINIAOD",
-    'MuonEG_2015D'       : "/MuonEG/Run2015D-PromptReco-v3/MINIAOD",
+    'MuonEG_2015B'         : "/MuonEG/Run2015B-PromptReco-v1/MINIAOD",
+    'MuonEG_2015C'         : "/MuonEG/Run2015C-PromptReco-v1/MINIAOD",
+    'MuonEG_2015D_v3'      : "/MuonEG/Run2015D-PromptReco-v3/MINIAOD",
+    'MuonEG_2015D_v4'      : "/MuonEG/Run2015D-PromptReco-v4/MINIAOD",
     ############################################################################
 }
 
@@ -461,13 +468,14 @@ nJobs = {
     'SinglePhoton_2015C'   : 130,
     'SinglePhoton_2015D'   : 195,
     
-    'DoubleEG_2015B'   :  100,
-    'DoubleEG_2015C'   :  298,
-    'DoubleEG_2015D'   :  78,
+    'DoubleEG_2015B'      :  100,
+    'DoubleEG_2015C'      :  298,
+    'DoubleEG_2015D'   :  1000,
     
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
-    'MuonEG_2015D'   :  21,
+    'MuonEG_2015D_v3'   :  1000,
+    'MuonEG_2015D_v4'   :  1000,
     ############################################################################
 }
 
@@ -611,7 +619,8 @@ maxEvents = {
     
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
-    'MuonEG_2015D'       : -1,
+    'MuonEG_2015D_v3'       : -1,
+    'MuonEG_2015D_v4'       : -1,
     ############################################################################
 }
 
@@ -705,6 +714,7 @@ types = {
     'WZ_50ns_MiniAOD'            : "bgMC",
     #QCD MuEnriched
     'QCD_MuEnriched_20toInf_MiniAOD'        : "bgMC", 
+    'QCD_MuEnriched_MiniAOD'        : "bgMC", 
     'QCD_MuEnriched_15to20_MiniAOD'         : "bgMC",
     'QCD_MuEnriched_20to30_MiniAOD'         : "bgMC",
     'QCD_MuEnriched_30to50_MiniAOD'         : "bgMC",
@@ -771,6 +781,8 @@ types = {
     'MuonEG_2015B'   : "data",
     'MuonEG_2015C'   : "data",
     'MuonEG_2015D'   : "data",
+    'MuonEG_2015D_v3'   : "data",
+    'MuonEG_2015D_v4'   : "data",
     'MuonEG_2015'    : "data",
     ############################################################################
 }
@@ -862,6 +874,7 @@ colors = {
     'WW_50ns_MiniAOD'                  : 390,
     #QCD MuEnriched
     'QCD_MuEnriched_20toInf_MiniAOD'        : 623, 
+    'QCD_MuEnriched_MiniAOD'        : 623, 
     'QCD_MuEnriched_15to20_MiniAOD'         : 623,
     'QCD_MuEnriched_20to30_MiniAOD'         : 623,
     'QCD_MuEnriched_30to50_MiniAOD'         : 623,
@@ -928,6 +941,8 @@ colors = {
     'MuonEG_2015B'   : 1,
     'MuonEG_2015C'   : 1,
     'MuonEG_2015D'   : 1,
+    'MuonEG_2015D_v3'   : 1,
+    'MuonEG_2015D_v4'   : 1,
     'MuonEG_2015'    : 1,
     ############################################################################
 }
@@ -1017,6 +1032,7 @@ labels = {
     'ZZ_50ns_MiniAOD'                        : "ZZ 50ns",
     #QCD MuEnriched
     'QCD_MuEnriched_20toInf_MiniAOD'        : "QCD MuEnriched Pt 20-Inf (MiniAOD)", 
+    'QCD_MuEnriched_MiniAOD'                : "QCD MuEnriched (MiniAOD)", 
     'QCD_MuEnriched_15to20_MiniAOD'         : "QCD MuEnriched Pt 15-20 (MiniAOD)",
     'QCD_MuEnriched_20to30_MiniAOD'         : "QCD MuEnriched Pt 20-30 (MiniAOD)",
     'QCD_MuEnriched_30to50_MiniAOD'         : "QCD MuEnriched Pt 30-50 (MiniAOD)",
@@ -1084,6 +1100,8 @@ labels = {
     'MuonEG_2015B'     : "MuonEG 2015B data",
     'MuonEG_2015C'     : "MuonEG 2015C data",
     'MuonEG_2015D'     : "MuonEG 2015D data",
+    'MuonEG_2015D_v3'     : "MuonEG 2015D_v3 data",
+    'MuonEG_2015D_v4'     : "MuonEG 2015D_v4 data",
     ############################################################################
 }
 
