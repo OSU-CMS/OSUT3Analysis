@@ -474,8 +474,8 @@ def GetCompleteOrderedArgumentsSet(InputArguments):
                 NewArguments.pop(argument)
                 break
     for newArgument in NewArguments:
-        CondorSubArgumentsSet.setdefault(len(CondorSubArgumentsSet.keys()) + 1,{newArgument : NewArguments[newArgument]})
-
+        CondorSubArgumentsSet.setdefault(len(CondorSubArgumentsSet.keys()) + 1, {newArgument : NewArguments[newArgument]})
+    CondorSubArgumentsSet.setdefault(len(CondorSubArgumentsSet.keys()) + 1, {'Queue': ''})
 ###############################################################################
 #        Function to find all the skim channels from the userConfig.          # 
 ###############################################################################
