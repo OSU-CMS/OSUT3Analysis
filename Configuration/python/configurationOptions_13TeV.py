@@ -72,11 +72,19 @@ datasets = [
 
    #Sum of all backgrounds
    'Background',
-   #Signal MC MiniAOD
+   #DisplacedSUSY Signal MC MiniAOD
    'stop200_1mm_MiniAOD',
    'stop200_10mm_MiniAOD',
    'stop200_100mm_MiniAOD',
    'stop200_1000mm_MiniAOD',
+   'stop500_1mm_MiniAOD',
+   'stop500_10mm_MiniAOD',
+   'stop500_100mm_MiniAOD',
+   'stop500_1000mm_MiniAOD',
+   'stop800_1mm_MiniAOD',
+   'stop800_10mm_MiniAOD',
+   'stop800_100mm_MiniAOD',
+   'stop800_1000mm_MiniAOD',
 
 
 ]
@@ -91,9 +99,21 @@ composite_dataset_definitions = {
         'DYJetsToLL_10to50_50ns_MiniAOD',
     ],
     'Diboson_MiniAOD' : [
-        'WW_MiniAOD',
-        'WZ_MiniAOD',
-        'ZZ_MiniAOD',
+        #'WW_MiniAOD',
+        #'WZ_MiniAOD',
+        #'ZZ_MiniAOD',
+        'WWToLNuQQ_MiniAOD',
+        'WWToLNuLNu_MiniAOD',
+        'WZToLNuQQ_MiniAOD',
+        'WZToLLQQ_MiniAOD',
+        'WZToLNuNuNu_MiniAOD',
+        'WZToLLLNu_MiniAOD',
+        'ZZToNuNuQQ_MiniAOD',
+        'ZZToLLQQ_MiniAOD',
+        'ZZToLLNuNu_MiniAOD',
+        'ZZToLLLL_MiniAOD',
+        'WG_MiniAOD',
+        'ZG_MiniAOD'
     ],
     'Diboson_50ns_MiniAOD' : [
         'WW_50ns_MiniAOD',
@@ -194,6 +214,8 @@ dataset_names = {
     ############################################################################
     #DY
     'DYJetsToLL_50_MiniAOD'  :  "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM",
+    #We have two DY samples, add another one commented out here for you convenience.  
+    #'DYJetsToLL_50_MiniAOD'  :  "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'DYJetsToNuNu_MiniAOD'   :  "/DYJetsToNuNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
 
     #WJets
@@ -298,11 +320,19 @@ dataset_names = {
     'QCD_bcToE_80to170_MiniAOD'             : "/QCD_Pt_80to170_bcToE_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
     'QCD_bcToE_170to250_MiniAOD'            : "/QCD_Pt_170to250_bcToE_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'QCD_bcToE_250toInf_MiniAOD'            : "/QCD_Pt_250toInf_bcToE_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
-    #Signal MC MiniAOD
+    #DisplacedSUSY Signal MC MiniAOD
     'stop200_1mm_MiniAOD'    : "/DisplacedSUSY_StopToBL_M-200_CTau-1_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'stop200_10mm_MiniAOD'   : "/DisplacedSUSY_StopToBL_M-200_CTau-10_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'stop200_100mm_MiniAOD'  : "/DisplacedSUSY_StopToBL_M-200_CTau-100_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     'stop200_1000mm_MiniAOD' : "/DisplacedSUSY_StopToBL_M-200_CTau-1000_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'stop500_1mm_MiniAOD'    : "/DisplacedSUSY_StopToBL_M-500_CTau-1_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'stop500_10mm_MiniAOD'   : "/DisplacedSUSY_StopToBL_M-500_CTau-10_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'stop500_100mm_MiniAOD'  : "/DisplacedSUSY_StopToBL_M-500_CTau-100_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
+    'stop500_1000mm_MiniAOD' : "/DisplacedSUSY_StopToBL_M-500_CTau-1000_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'stop800_1mm_MiniAOD'    : "/DisplacedSUSY_StopToBL_M-800_CTau-1_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'stop800_10mm_MiniAOD'   : "/DisplacedSUSY_StopToBL_M-800_CTau-10_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'stop800_100mm_MiniAOD'  : "/DisplacedSUSY_StopToBL_M-800_CTau-100_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'stop800_1000mm_MiniAOD' : "/DisplacedSUSY_StopToBL_M-800_CTau-1000_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
     
 
     'DoubleMu_2015B'       : "/DoubleMuon/Run2015B-PromptReco-v1/MINIAOD",
@@ -450,6 +480,14 @@ nJobs = {
     'stop200_10mm_MiniAOD'   : 1,
     'stop200_100mm_MiniAOD'  : 1,
     'stop200_1000mm_MiniAOD' : 1,
+    'stop500_1mm_MiniAOD'    : 1, 
+    'stop500_10mm_MiniAOD'   : 1,
+    'stop500_100mm_MiniAOD'  : 1,
+    'stop500_1000mm_MiniAOD' : 1,
+    'stop800_1mm_MiniAOD'    : 1, 
+    'stop800_10mm_MiniAOD'   : 1,
+    'stop800_100mm_MiniAOD'  : 1,
+    'stop800_1000mm_MiniAOD' : 1,
     
  
     'DoubleMu_2015B'   :  40,
@@ -591,11 +629,19 @@ maxEvents = {
     'QCD_bcToE_170to250_MiniAOD'            : -1,
     'QCD_bcToE_250toInf_MiniAOD'            : -1,
     
-    #Signal MC MiniAOD
+    #DisplacedSUSY Signal MC MiniAOD
     'stop200_1mm_MiniAOD'    : -1, 
     'stop200_10mm_MiniAOD'   : -1,
     'stop200_100mm_MiniAOD'  : -1,
     'stop200_1000mm_MiniAOD' : -1,
+    'stop500_1mm_MiniAOD'    : -1, 
+    'stop500_10mm_MiniAOD'   : -1,
+    'stop500_100mm_MiniAOD'  : -1,
+    'stop500_1000mm_MiniAOD' : -1,
+    'stop800_1mm_MiniAOD'    : -1, 
+    'stop800_10mm_MiniAOD'   : -1,
+    'stop800_100mm_MiniAOD'  : -1,
+    'stop800_1000mm_MiniAOD' : -1,
  
     'DoubleMu_2015B'       : -1,
     'DoubleMu_2015C'       : -1,
@@ -746,11 +792,19 @@ types = {
     'QCD_bcToE_170to250_MiniAOD'            : "bgMC",
     'QCD_bcToE_250toInf_MiniAOD'            : "bgMC",
      
-    #Signal MC MiniAOD
+    #DisplacedSUSY Signal MC MiniAOD
     'stop200_1mm_MiniAOD'    : "signalMC", 
     'stop200_10mm_MiniAOD'   : "signalMC",
     'stop200_100mm_MiniAOD'  : "signalMC",
     'stop200_1000mm_MiniAOD' : "signalMC",
+    'stop500_1mm_MiniAOD'    : "signalMC", 
+    'stop500_10mm_MiniAOD'   : "signalMC",
+    'stop500_100mm_MiniAOD'  : "signalMC",
+    'stop500_1000mm_MiniAOD' : "signalMC",
+    'stop800_1mm_MiniAOD'    : "signalMC", 
+    'stop800_10mm_MiniAOD'   : "signalMC",
+    'stop800_100mm_MiniAOD'  : "signalMC",
+    'stop800_1000mm_MiniAOD' : "signalMC",
  
  
     'DoubleMu_2015B'   : "data",
@@ -911,6 +965,14 @@ colors = {
     'stop200_10mm_MiniAOD'   : 3,
     'stop200_100mm_MiniAOD'  : 4,
     'stop200_1000mm_MiniAOD' : 5,
+    'stop500_1mm_MiniAOD'    : 12, 
+    'stop500_10mm_MiniAOD'   : 13,
+    'stop500_100mm_MiniAOD'  : 14,
+    'stop500_1000mm_MiniAOD' : 15,
+    'stop800_1mm_MiniAOD'    : 22, 
+    'stop800_10mm_MiniAOD'   : 23,
+    'stop800_100mm_MiniAOD'  : 24,
+    'stop800_1000mm_MiniAOD' : 25,
     
     
     'DoubleMu_2015B'   : 1,
@@ -941,8 +1003,8 @@ colors = {
     'MuonEG_2015B'   : 1,
     'MuonEG_2015C'   : 1,
     'MuonEG_2015D'   : 1,
-    'MuonEG_2015D_v3'   : 1,
-    'MuonEG_2015D_v4'   : 1,
+    'MuonEG_2015D_v3'   : 3,
+    'MuonEG_2015D_v4'   : 4,
     'MuonEG_2015'    : 1,
     ############################################################################
 }
@@ -1064,11 +1126,19 @@ labels = {
     'QCD_bcToE_170to250_MiniAOD'            : "QCD bcToE Pt 170-250 (MiniAOD)",
     'QCD_bcToE_250toInf_MiniAOD'            : "QCD bcToE Pt 250-Inf (MiniAOD)",
      
-    #Signal MC MiniAOD
+    #DisplacedSUSY Signal MC MiniAOD
     'stop200_1mm_MiniAOD'    : "#tilde{t}#tilde{t} M(200) c#tau(1mm)", 
     'stop200_10mm_MiniAOD'   : "#tilde{t}#tilde{t} M(200) c#tau(10mm)",
     'stop200_100mm_MiniAOD'  : "#tilde{t}#tilde{t} M(200) c#tau(100mm)",
     'stop200_1000mm_MiniAOD' : "#tilde{t}#tilde{t} M(200) c#tau(1000mm)",
+    'stop500_1mm_MiniAOD'    : "#tilde{t}#tilde{t} M(500) c#tau(1mm)", 
+    'stop500_10mm_MiniAOD'   : "#tilde{t}#tilde{t} M(500) c#tau(10mm)",
+    'stop500_100mm_MiniAOD'  : "#tilde{t}#tilde{t} M(500) c#tau(100mm)",
+    'stop500_1000mm_MiniAOD' : "#tilde{t}#tilde{t} M(500) c#tau(1000mm)",
+    'stop800_1mm_MiniAOD'    : "#tilde{t}#tilde{t} M(800) c#tau(1mm)", 
+    'stop800_10mm_MiniAOD'   : "#tilde{t}#tilde{t} M(800) c#tau(10mm)",
+    'stop800_100mm_MiniAOD'  : "#tilde{t}#tilde{t} M(800) c#tau(100mm)",
+    'stop800_1000mm_MiniAOD' : "#tilde{t}#tilde{t} M(800) c#tau(1000mm)",
     
  
     'DoubleMu_2015'      : "Double Muon 2015 data",
@@ -1159,11 +1229,19 @@ crossSections = {
     'QCD_bcToE_170to250_MiniAOD'       :     105771.0*0.02492, 
     'QCD_bcToE_250toInf_MiniAOD'       :      21094.1*0.03375, 
 #############################################################  
-    'stop200_1mm_MiniAOD'    : 0.0670476, 
-    'stop200_10mm_MiniAOD'   : 0.0670476,
-    'stop200_100mm_MiniAOD'  : 0.0670476,
-    'stop200_1000mm_MiniAOD' : 0.0670476,
-
+    'stop200_1mm_MiniAOD'    : 64.5085, 
+    'stop200_10mm_MiniAOD'   : 64.5085,
+    'stop200_100mm_MiniAOD'  : 64.5085,
+    'stop200_1000mm_MiniAOD' : 64.5085,
+    'stop500_1mm_MiniAOD'    : 0.51848, 
+    'stop500_10mm_MiniAOD'   : 0.51848,
+    'stop500_100mm_MiniAOD'  : 0.51848,
+    'stop500_1000mm_MiniAOD' : 0.51848,
+    'stop800_1mm_MiniAOD'    : 0.0283338, 
+    'stop800_10mm_MiniAOD'   : 0.0283338,
+    'stop800_100mm_MiniAOD'  : 0.0283338,
+    'stop800_1000mm_MiniAOD' : 0.0283338,
+    'WZToLLQQ_MiniAOD'       : 5.0764,
 }
 
 InputCondorArguments = {}
