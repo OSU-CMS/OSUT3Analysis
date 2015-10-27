@@ -158,6 +158,8 @@ namespace anatools
   const Reflex::Object * const getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType);
   const Reflex::Object * const invoke (const string &returnType, const Reflex::Object &o, const string &member);
 #endif
+
+  double getGeneratorWeight (const TYPE(generatorweights) &);
 }
 
 /**

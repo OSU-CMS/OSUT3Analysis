@@ -1,6 +1,7 @@
 #include <iomanip>
 #include <iostream>
 
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/plugins/CutFlowPlotter.h"
 
 #include "TString.h"
@@ -8,6 +9,7 @@
 #define EXIT_CODE 4
 
 CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
+  collections_  (cfg.getParameter<edm::ParameterSet> ("collections")),
   cutDecisions_ (cfg.getParameter<edm::InputTag> ("cutDecisions")),
   module_type_  (cfg.getParameter<std::string>("@module_type")),
   module_label_ (cfg.getParameter<std::string>("@module_label")),
@@ -84,8 +86,12 @@ CutFlowPlotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   // there is a problem.
   //////////////////////////////////////////////////////////////////////////////
   event.getByLabel (cutDecisions_, cutDecisions);
+  if (collections_.exists ("generatorweights"))
+    event.getByLabel (collections_.getParameter<edm::InputTag> ("generatorweights"), generatorweights);
   if (firstEvent_ && !cutDecisions.isValid ())
     clog << "WARNING: failed to retrieve cut decisions from the event." << endl;
+  if (firstEvent_ && !generatorweights.isValid ())
+    clog << "WARNING: failed to retrieve generator weights from the event." << endl;
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -93,7 +99,7 @@ CutFlowPlotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   // event.
   //////////////////////////////////////////////////////////////////////////////
   firstEvent_ && initializeCutFlow ();
-  fillCutFlow ();
+  fillCutFlow (generatorweights.isValid () ? anatools::getGeneratorWeight (*generatorweights) : 1.0);
   firstEvent_ = false;
   //////////////////////////////////////////////////////////////////////////////
 }

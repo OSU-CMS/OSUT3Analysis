@@ -28,14 +28,16 @@ class CutFlowPlotter : public edm::EDAnalyzer
     ////////////////////////////////////////////////////////////////////////////
     // Private variables initialized by the constructor.
     ////////////////////////////////////////////////////////////////////////////
-    edm::InputTag  cutDecisions_;
-    string         module_type_;
-    string         module_label_;
-    bool           firstEvent_;
+    edm::ParameterSet  collections_;
+    edm::InputTag      cutDecisions_;
+    string             module_type_;
+    string             module_label_;
+    bool               firstEvent_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Objects which can be gotten from the event.
     edm::Handle<CutCalculatorPayload> cutDecisions;
+    edm::Handle<TYPE(generatorweights)> generatorweights;
 
     ////////////////////////////////////////////////////////////////////////////
     // TFileService object used for interacting with the ROOT file of

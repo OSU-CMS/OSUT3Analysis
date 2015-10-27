@@ -195,27 +195,28 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   // Retrieve each object collection which we need and print a warning if it is
   // missing.
   //////////////////////////////////////////////////////////////////////////////
-  if  (VEC_CONTAINS  (objectsToGet,  "beamspots")       &&  collections.exists  ("beamspots"))       getCollection  (collections.getParameter<edm::InputTag>  ("beamspots"),       handles.beamspots,       event);
-  if  (VEC_CONTAINS  (objectsToGet,  "bxlumis")         &&  collections.exists  ("bxlumis"))         getCollection  (collections.getParameter<edm::InputTag>  ("bxlumis"),         handles.bxlumis,         event);
-  if  (VEC_CONTAINS  (objectsToGet,  "electrons")       &&  collections.exists  ("electrons"))       getCollection  (collections.getParameter<edm::InputTag>  ("electrons"),       handles.electrons,       event);
-  if  (VEC_CONTAINS  (objectsToGet,  "events")          &&  collections.exists  ("events"))          getCollection  (collections.getParameter<edm::InputTag>  ("events"),          handles.events,          event);
-  if  (VEC_CONTAINS  (objectsToGet,  "genjets")         &&  collections.exists  ("genjets"))         getCollection  (collections.getParameter<edm::InputTag>  ("genjets"),         handles.genjets,         event);
-  if  (VEC_CONTAINS  (objectsToGet,  "jets")            &&  collections.exists  ("jets"))            getCollection  (collections.getParameter<edm::InputTag>  ("jets"),            handles.jets,            event);
-  if  (VEC_CONTAINS  (objectsToGet,  "basicjets")       &&  collections.exists  ("basicjets"))       getCollection  (collections.getParameter<edm::InputTag>  ("basicjets"),       handles.basicjets,       event);
-  if  (VEC_CONTAINS  (objectsToGet,  "candjets")       &&  collections.exists  ("candjets"))       getCollection  (collections.getParameter<edm::InputTag>  ("candjets"),       handles.candjets,       event);
-  if  (VEC_CONTAINS  (objectsToGet,  "candeles")       &&  collections.exists  ("candeles"))       getCollection  (collections.getParameter<edm::InputTag>  ("candeles"),       handles.candeles,       event);
-  if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")     &&  collections.exists  ("mcparticles"))     getCollection  (collections.getParameter<edm::InputTag>  ("mcparticles"),     handles.mcparticles,     event);
-  if  (VEC_CONTAINS  (objectsToGet,  "mets")            &&  collections.exists  ("mets"))            getCollection  (collections.getParameter<edm::InputTag>  ("mets"),            handles.mets,            event);
-  if  (VEC_CONTAINS  (objectsToGet,  "muons")           &&  collections.exists  ("muons"))           getCollection  (collections.getParameter<edm::InputTag>  ("muons"),           handles.muons,           event);
-  if  (VEC_CONTAINS  (objectsToGet,  "photons")         &&  collections.exists  ("photons"))         getCollection  (collections.getParameter<edm::InputTag>  ("photons"),         handles.photons,         event);
-  if  (VEC_CONTAINS  (objectsToGet,  "prescales")       &&  collections.exists  ("prescales"))       getCollection  (collections.getParameter<edm::InputTag>  ("prescales"),       handles.prescales,       event);
-  if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs")  &&  collections.exists  ("primaryvertexs"))  getCollection  (collections.getParameter<edm::InputTag>  ("primaryvertexs"),  handles.primaryvertexs,  event);
-  if  (VEC_CONTAINS  (objectsToGet,  "superclusters")   &&  collections.exists  ("superclusters"))   getCollection  (collections.getParameter<edm::InputTag>  ("superclusters"),   handles.superclusters,   event);
-  if  (VEC_CONTAINS  (objectsToGet,  "taus")            &&  collections.exists  ("taus"))            getCollection  (collections.getParameter<edm::InputTag>  ("taus"),            handles.taus,            event);
-  if  (VEC_CONTAINS  (objectsToGet,  "tracks")          &&  collections.exists  ("tracks"))          getCollection  (collections.getParameter<edm::InputTag>  ("tracks"),          handles.tracks,          event);
-  if  (VEC_CONTAINS  (objectsToGet,  "triggers")        &&  collections.exists  ("triggers"))        getCollection  (collections.getParameter<edm::InputTag>  ("triggers"),        handles.triggers,        event);
-  if  (VEC_CONTAINS  (objectsToGet,  "trigobjs")        &&  collections.exists  ("trigobjs"))        getCollection  (collections.getParameter<edm::InputTag>  ("trigobjs"),        handles.trigobjs,        event);
-  if  (VEC_CONTAINS  (objectsToGet,  "uservariables")   &&  collections.exists  ("uservariables"))
+  if  (VEC_CONTAINS  (objectsToGet,  "beamspots")         &&  collections.exists  ("beamspots"))         getCollection  (collections.getParameter<edm::InputTag>  ("beamspots"),         handles.beamspots,         event);
+  if  (VEC_CONTAINS  (objectsToGet,  "bxlumis")           &&  collections.exists  ("bxlumis"))           getCollection  (collections.getParameter<edm::InputTag>  ("bxlumis"),           handles.bxlumis,           event);
+  if  (VEC_CONTAINS  (objectsToGet,  "electrons")         &&  collections.exists  ("electrons"))         getCollection  (collections.getParameter<edm::InputTag>  ("electrons"),         handles.electrons,         event);
+  if  (VEC_CONTAINS  (objectsToGet,  "events")            &&  collections.exists  ("events"))            getCollection  (collections.getParameter<edm::InputTag>  ("events"),            handles.events,            event);
+  if  (VEC_CONTAINS  (objectsToGet,  "genjets")           &&  collections.exists  ("genjets"))           getCollection  (collections.getParameter<edm::InputTag>  ("genjets"),           handles.genjets,           event);
+  if  (VEC_CONTAINS  (objectsToGet,  "jets")              &&  collections.exists  ("jets"))              getCollection  (collections.getParameter<edm::InputTag>  ("jets"),              handles.jets,              event);
+  if  (VEC_CONTAINS  (objectsToGet,  "basicjets")         &&  collections.exists  ("basicjets"))         getCollection  (collections.getParameter<edm::InputTag>  ("basicjets"),         handles.basicjets,         event);
+  if  (VEC_CONTAINS  (objectsToGet,  "candjets")          &&  collections.exists  ("candjets"))          getCollection  (collections.getParameter<edm::InputTag>  ("candjets"),          handles.candjets,          event);
+  if  (VEC_CONTAINS  (objectsToGet,  "candeles")          &&  collections.exists  ("candeles"))          getCollection  (collections.getParameter<edm::InputTag>  ("candeles"),          handles.candeles,          event);
+  if  (VEC_CONTAINS  (objectsToGet,  "generatorweights")  &&  collections.exists  ("generatorweights"))  getCollection  (collections.getParameter<edm::InputTag>  ("generatorweights"),  handles.generatorweights,  event);
+  if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")       &&  collections.exists  ("mcparticles"))       getCollection  (collections.getParameter<edm::InputTag>  ("mcparticles"),       handles.mcparticles,       event);
+  if  (VEC_CONTAINS  (objectsToGet,  "mets")              &&  collections.exists  ("mets"))              getCollection  (collections.getParameter<edm::InputTag>  ("mets"),              handles.mets,              event);
+  if  (VEC_CONTAINS  (objectsToGet,  "muons")             &&  collections.exists  ("muons"))             getCollection  (collections.getParameter<edm::InputTag>  ("muons"),             handles.muons,             event);
+  if  (VEC_CONTAINS  (objectsToGet,  "photons")           &&  collections.exists  ("photons"))           getCollection  (collections.getParameter<edm::InputTag>  ("photons"),           handles.photons,           event);
+  if  (VEC_CONTAINS  (objectsToGet,  "prescales")         &&  collections.exists  ("prescales"))         getCollection  (collections.getParameter<edm::InputTag>  ("prescales"),         handles.prescales,         event);
+  if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs")    &&  collections.exists  ("primaryvertexs"))    getCollection  (collections.getParameter<edm::InputTag>  ("primaryvertexs"),    handles.primaryvertexs,    event);
+  if  (VEC_CONTAINS  (objectsToGet,  "superclusters")     &&  collections.exists  ("superclusters"))     getCollection  (collections.getParameter<edm::InputTag>  ("superclusters"),     handles.superclusters,     event);
+  if  (VEC_CONTAINS  (objectsToGet,  "taus")              &&  collections.exists  ("taus"))              getCollection  (collections.getParameter<edm::InputTag>  ("taus"),              handles.taus,              event);
+  if  (VEC_CONTAINS  (objectsToGet,  "tracks")            &&  collections.exists  ("tracks"))            getCollection  (collections.getParameter<edm::InputTag>  ("tracks"),            handles.tracks,            event);
+  if  (VEC_CONTAINS  (objectsToGet,  "triggers")          &&  collections.exists  ("triggers"))          getCollection  (collections.getParameter<edm::InputTag>  ("triggers"),          handles.triggers,          event);
+  if  (VEC_CONTAINS  (objectsToGet,  "trigobjs")          &&  collections.exists  ("trigobjs"))          getCollection  (collections.getParameter<edm::InputTag>  ("trigobjs"),          handles.trigobjs,          event);
+  if  (VEC_CONTAINS  (objectsToGet,  "uservariables")     &&  collections.exists  ("uservariables"))
     {
       handles.uservariables.clear ();
       for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("uservariables"))
@@ -257,6 +258,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     clog << "INFO: did not retrieve candjets collection from the event." << endl;
   if (firstEvent && !handles.candeles.isValid ())
     clog << "INFO: did not retrieve candeles collection from the event." << endl;
+  if (firstEvent && !handles.generatorweights.isValid ())
+    clog << "INFO: did not retrieve generatorweights collection from the event." << endl;
   if (firstEvent && !handles.mcparticles.isValid ())
     clog << "INFO: did not retrieve mcparticles collection from the event." << endl;
   if (firstEvent && !handles.mets.isValid ())
@@ -659,3 +662,13 @@ string anatools::getObjectClass (const VariableProducerPayload& obj){ return "Va
 
 string anatools::getObjectType (const EventVariableProducerPayload& obj){ return "eventvariable"; }
 string anatools::getObjectClass (const EventVariableProducerPayload& obj){ return "EventVariableProducerPayload"; }
+
+double
+anatools::getGeneratorWeight (const TYPE(generatorweights) &weights)
+{
+#if TYPE(generatorweights) == GenEventInfoProduct
+  return (weights.weight () / fabs (weights.weight ()));
+#else
+  return 1.0;
+#endif
+}
