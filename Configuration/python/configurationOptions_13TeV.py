@@ -1241,6 +1241,7 @@ crossSections = {
     'stop800_10mm_MiniAOD'   : 0.0283338,
     'stop800_100mm_MiniAOD'  : 0.0283338,
     'stop800_1000mm_MiniAOD' : 0.0283338,
+    'WZToLLQQ_MiniAOD'       : 5.0764,
 }
 
 InputCondorArguments = {}

@@ -42,6 +42,7 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
     string catInputCollection = anatools::concatenateInputCollection (inputCollection);
 
     objectsToGet_.insert (inputCollection.begin (), inputCollection.end ());
+    objectsToGet_.insert ("generatorweights");
 
     // get the appropriate directory name
     string directoryName = getDirectoryName(catInputCollection);
@@ -283,6 +284,7 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
     if(definition.hasVariableBinsX){
       weight /= getBinSize(histogram,value);
     }
+    weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
     histogram->Fill(value, weight);
     if (verbose_) clog << "Filled histogram " << definition.name << " with value=" << value << ", weight=" << weight << endl;  
 
@@ -342,6 +344,7 @@ void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double
   if(definition.hasVariableBinsY){
     weight /= getBinSize(histogram,valueX,valueY).second;
   }
+  weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
   histogram->Fill(valueX, valueY, weight);
   if (verbose_) clog << "Filled histogram " << definition.name << " with valueX=" << valueX << ", valueY=" << valueY << ", weight=" << weight << endl;  
 

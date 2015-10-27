@@ -236,10 +236,13 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
     # For batch jobs, do not change filename; we want it identical for all jobs.  
     ############################################################################
     if not osusub.batchMode:
-        outputName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.  
+        originalName = outputName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.  
         suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp() 
         outputName = outputName.replace(".root", suffix + ".root")  
         process.TFileService.fileName = cms.string(outputName) 
+        if os.path.islink (originalName):
+            os.unlink (originalName)
+        os.symlink (outputName, originalName)
     ############################################################################
 
     for channel in channels:
@@ -340,6 +343,7 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         # Add a cut flow plotting module for this channel to the path.
         ########################################################################
         cutFlowPlotter = cms.EDAnalyzer ("CutFlowPlotter",
+            collections = collections,
             cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
         )
         channelPath += cutFlowPlotter

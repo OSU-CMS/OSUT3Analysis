@@ -118,6 +118,7 @@ struct Collections
 
   edm::Handle<TYPE(triggers)>                 triggers;
   edm::Handle<TYPE(prescales)>                prescales;
+  edm::Handle<TYPE(generatorweights)>         generatorweights;
 };
 
 struct ValueToPrint

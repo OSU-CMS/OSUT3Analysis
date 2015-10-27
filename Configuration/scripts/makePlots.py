@@ -1065,7 +1065,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     x_right = 0.907834
     x_width = x_right - x_left
     y_max = 0.884428
-    entry_height = 0.044404
+    entry_height = 0.037318
 
     if(numBgMCSamples is not 0 or numDataSamples is not 0): #then draw the data & bgMC legend
 
@@ -1277,14 +1277,14 @@ def MakeTwoDHist(pathToDir,histogramName):
     BgMCLegend = TLegend(0.572581,0.742092,0.904378,0.891727)
     BgMCLegend.AddEntry (0, "Data & Bkgd. MC", "H").SetTextFont (62)
     BgMCLegend.SetTextFont(42)
-    BgMCLegend.SetTextSize(0.0364963)
+    BgMCLegend.SetTextSize(0.0364078)
     BgMCLegend.SetBorderSize(0)
     BgMCLegend.SetFillColor(0)
     BgMCLegend.SetFillStyle(0)
     SignalMCLegend = TLegend(0.572581,0.742092,0.904378,0.891727)
     SignalMCLegend.AddEntry (0, "Signal MC", "H").SetTextFont (62)
     SignalMCLegend.SetTextFont(42)
-    SignalMCLegend.SetTextSize(0.0364963)
+    SignalMCLegend.SetTextSize(0.0364078)
     SignalMCLegend.SetBorderSize(0)
     SignalMCLegend.SetFillColor(0)
     SignalMCLegend.SetFillStyle(0)

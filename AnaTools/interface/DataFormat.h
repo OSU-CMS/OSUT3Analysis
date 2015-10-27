@@ -5,7 +5,7 @@
 #define  AOD              2
 #define  MINI_AOD_CUSTOM  3
 
-#define DATA_FORMAT MINI_AOD  
+#define DATA_FORMAT MINI_AOD_CUSTOM
 
 #define INVALID_TYPE void *
 
@@ -20,6 +20,7 @@
   #define  jets_TYPE            BNjet
   #define  bjets_TYPE           INVALID_TYPE
   #define  candeles_TYPE        INVALID_TYPE
+  #define  candjets_TYPE        INVALID_TYPE
   #define  mcparticles_TYPE     BNmcparticle
   #define  mets_TYPE            BNmet
   #define  muons_TYPE           BNmuon
@@ -32,14 +33,17 @@
   #define  uservariables_TYPE   VariableProducerPayload
   #define  eventvariables_TYPE  EventVariableProducerPayload
 
-  #define  triggers_TYPE        BNtriggerCollection
-  #define  prescales_TYPE       INVALID_TYPE
+  #define  triggers_TYPE          BNtriggerCollection
+  #define  prescales_TYPE         INVALID_TYPE
+  #define  generatorweights_TYPE  INVALID_TYPE
 
   #define  basicjets_INVALID
   #define  beamspots_INVALID
   #define  prescales_INVALID
   #define  bjets_INVALID
   #define  candeles_INVALID
+  #define  candjets_INVALID
+  #define  generatorweights_INVALID
 
   #include "BEAN/Collections/interface/BNbxlumi.h"
   #include "BEAN/Collections/interface/BNelectron.h"
@@ -58,35 +62,38 @@
   #include "BEAN/Collections/interface/BNtrigobj.h"
 
 #elif DATA_FORMAT == MINI_AOD
-  #define  beamspots_TYPE       reco::BeamSpot
-  #define  bxlumis_TYPE         INVALID_TYPE
-  #define  electrons_TYPE       pat::Electron
-  #define  events_TYPE          INVALID_TYPE
-  #define  genjets_TYPE         reco::GenJet
-  #define  basicjets_TYPE       pat::Jet
-  #define  jets_TYPE            pat::Jet
-  #define  bjets_TYPE           INVALID_TYPE
-  #define  candeles_TYPE        INVALID_TYPE
-  #define  mcparticles_TYPE     pat::PackedGenParticle
-  #define  mets_TYPE            pat::MET
-  #define  muons_TYPE           pat::Muon
-  #define  photons_TYPE         pat::Photon
-  #define  primaryvertexs_TYPE  reco::Vertex
-  #define  superclusters_TYPE   reco::SuperCluster
-  #define  taus_TYPE            pat::Tau
-  #define  tracks_TYPE          INVALID_TYPE
-  #define  trigobjs_TYPE        pat::TriggerObjectStandAlone
-  #define  uservariables_TYPE   VariableProducerPayload
-  #define  eventvariables_TYPE  EventVariableProducerPayload
+  #define  beamspots_TYPE         reco::BeamSpot
+  #define  bxlumis_TYPE           INVALID_TYPE
+  #define  electrons_TYPE         pat::Electron
+  #define  events_TYPE            INVALID_TYPE
+  #define  genjets_TYPE           reco::GenJet
+  #define  basicjets_TYPE         pat::Jet
+  #define  jets_TYPE              pat::Jet
+  #define  bjets_TYPE             INVALID_TYPE
+  #define  candeles_TYPE          INVALID_TYPE
+  #define  candjets_TYPE          INVALID_TYPE
+  #define  mcparticles_TYPE       pat::PackedGenParticle
+  #define  mets_TYPE              pat::MET
+  #define  muons_TYPE             pat::Muon
+  #define  photons_TYPE           pat::Photon
+  #define  primaryvertexs_TYPE    reco::Vertex
+  #define  superclusters_TYPE     reco::SuperCluster
+  #define  taus_TYPE              pat::Tau
+  #define  tracks_TYPE            INVALID_TYPE
+  #define  trigobjs_TYPE          pat::TriggerObjectStandAlone
+  #define  uservariables_TYPE     VariableProducerPayload
+  #define  eventvariables_TYPE    EventVariableProducerPayload
 
-  #define  triggers_TYPE        edm::TriggerResults
-  #define  prescales_TYPE       pat::PackedTriggerPrescales
+  #define  triggers_TYPE          edm::TriggerResults
+  #define  prescales_TYPE         pat::PackedTriggerPrescales
+  #define  generatorweights_TYPE  GenEventInfoProduct
 
   #define  bxlumis_INVALID
   #define  events_INVALID
   #define  tracks_INVALID
   #define  bjets_INVALID
   #define  candeles_INVALID
+  #define  candjets_INVALID
 
   #include "DataFormats/BeamSpot/interface/BeamSpot.h"
   #include "DataFormats/Common/interface/TriggerResults.h"
@@ -103,31 +110,34 @@
   #include "DataFormats/PatCandidates/interface/Tau.h"
   #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
   #include "DataFormats/VertexReco/interface/Vertex.h"
+  #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
 #elif DATA_FORMAT == AOD
-  #define  beamspots_TYPE       reco::BeamSpot
-  #define  bxlumis_TYPE         INVALID_TYPE
-  #define  electrons_TYPE       reco::GsfElectron
-  #define  events_TYPE          INVALID_TYPE
-  #define  genjets_TYPE         INVALID_TYPE
-  #define  jets_TYPE            reco::PFJet
-  #define  bjets_TYPE           INVALID_TYPE
-  #define  candeles_TYPE        INVALID_TYPE
-  #define  basicjets_TYPE       reco::BasicJet
-  #define  mcparticles_TYPE     INVALID_TYPE
-  #define  mets_TYPE            reco::PFMET
-  #define  muons_TYPE           reco::Muon
-  #define  photons_TYPE         reco::Photon
-  #define  primaryvertexs_TYPE  reco::Vertex
-  #define  superclusters_TYPE   INVALID_TYPE
-  #define  taus_TYPE            reco::PFTau
-  #define  tracks_TYPE          reco::Track
-  #define  trigobjs_TYPE        INVALID_TYPE
-  #define  uservariables_TYPE   VariableProducerPayload
-  #define  eventvariables_TYPE  EventVariableProducerPayload
+  #define  beamspots_TYPE         reco::BeamSpot
+  #define  bxlumis_TYPE           INVALID_TYPE
+  #define  electrons_TYPE         reco::GsfElectron
+  #define  events_TYPE            INVALID_TYPE
+  #define  genjets_TYPE           INVALID_TYPE
+  #define  jets_TYPE              reco::PFJet
+  #define  bjets_TYPE             INVALID_TYPE
+  #define  candeles_TYPE          INVALID_TYPE
+  #define  candjets_TYPE          INVALID_TYPE
+  #define  basicjets_TYPE         reco::BasicJet
+  #define  mcparticles_TYPE       INVALID_TYPE
+  #define  mets_TYPE              reco::PFMET
+  #define  muons_TYPE             reco::Muon
+  #define  photons_TYPE           reco::Photon
+  #define  primaryvertexs_TYPE    reco::Vertex
+  #define  superclusters_TYPE     INVALID_TYPE
+  #define  taus_TYPE              reco::PFTau
+  #define  tracks_TYPE            reco::Track
+  #define  trigobjs_TYPE          INVALID_TYPE
+  #define  uservariables_TYPE     VariableProducerPayload
+  #define  eventvariables_TYPE    EventVariableProducerPayload
 
   #define  triggers_TYPE        edm::TriggerResults
   #define  prescales_TYPE       INVALID_TYPE
+  #define  generatorweights_TYPE  GenEventInfoProduct
 
   #define  bxlumis_INVALID
   #define  events_INVALID
@@ -138,6 +148,7 @@
   #define  trigobjs_INVALID
   #define  bjets_INVALID
   #define  candeles_INVALID
+  #define  candjets_INVALID
 
 
   #include "DataFormats/BeamSpot/interface/BeamSpot.h"
@@ -151,9 +162,10 @@
   #include "DataFormats/EgammaCandidates/interface/Photon.h"
   #include "DataFormats/TauReco/interface/PFTau.h"
   #include "DataFormats/TrackReco/interface/Track.h"
+  #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
 #elif DATA_FORMAT == MINI_AOD_CUSTOM
-  #include "CustomDataFormat.h"  // Define collections in an external header file.  
+  #include "DisappTrks/StandardAnalysis/interface/CustomDataFormat.h"  // Define collections in an external header file.  
 
 #else
   #error "Data format is not valid."
