@@ -55,7 +55,7 @@ if ($ARGV[0] eq "uploadRelease")
     my $cmsswRelease = $opt{'release'};
     $cmsswRelease =~ s/^.*CMSSW_([^\/]*).*$/CMSSW_$1/;
     `tar -C $parentDir -czf $ARGV[1].tar.gz $opt{"release"}`;
-    $opt{"format"} = "BEAN" if !$opt{"format"};
+    $opt{"format"} = "MINIAOD" if !$opt{"format"};
     uploadRelease ($opt{"format"}, $cmsswRelease, "$ARGV[1].tar.gz", $opt{"pyConfig"}, $ARGV[1], "$ENV{'USER'}", $opt{"comment"}, $opt{"recipe"});
   }
 elsif ($ARGV[0] eq "downloadRelease")
@@ -89,7 +89,7 @@ else
     my $status = "present";
     $status = "" if $ARGV[0] eq "update";
     $status = "deprecated" if $ARGV[0] eq "deprecate";
-    $opt{"format"} = "BEAN" if $ARGV[0] eq "create" && !$opt{"format"};
+    $opt{"format"} = "MINIAOD" if $ARGV[0] eq "create" && !$opt{"format"};
     $opt{"lumiSummary"} = "/dev/null" if $ARGV[0] eq "finish" && !$opt{"lumiSummary"};
     ($opt{"location"}, my $nFiles, my $sizeInGB) = getLocation ($id) if $ARGV[0] eq "finish" && !$opt{"location"};
     if ($ARGV[0] eq "finish" && !$opt{"location"})
@@ -474,7 +474,7 @@ printHelp
       print "Mandatory arguments to long options are mandatory for short options too.\n";
       printf "%-29s%s\n", "  -b, --crabCfg FILE", "CRAB config used to submit ntuple jobs";
       printf "%-29s%s\n", "  -c, --comment COMMENT", "comment for the database entry";
-      printf "%-29s%s\n", "  -f, --format FORMAT", "ntuple format (default: BEAN)";
+      printf "%-29s%s\n", "  -f, --format FORMAT", "ntuple format (default: MINIAOD)";
       printf "%-29s%s\n", "  -g, --globalTag TAG", "global tag";
       printf "%-29s%s\n", "  -i, --configName NAME", "name of config used to produce ntuples";
       printf "%-29s%s\n", "  -j, --jsonFile FILE", "JSON file used for this dataset";
@@ -560,7 +560,7 @@ printHelp
       print "Mandatory arguments to long options are mandatory for short options too.\n";
       printf "%-29s%s\n", "  -c, --comment COMMENT", "comment for the database entry";
       printf "%-29s%s\n", "  -e, --recipe FILE", "file containing the recipe for the release";
-      printf "%-29s%s\n", "  -f, --format FORMAT", "ntuple format (default: BEAN)";
+      printf "%-29s%s\n", "  -f, --format FORMAT", "ntuple format (default: MINIAOD)";
       printf "%-29s%s\n", "  -p, --pyConfig FILE", "default Python config for the release";
       printf "%-29s%s\n", "  -r, --release DIRECTORY", "CMSSW release containing ntuple packages";
     }
