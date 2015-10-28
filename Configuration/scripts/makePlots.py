@@ -806,7 +806,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             if (arguments.paperConfig and 'SigLineWidth' in paperHistogram):
                 Histogram.SetLineWidth(paperHistogram['SigLineWidth'])
             else:
-                Histogram.SetLineWidth(2)
+                Histogram.SetLineWidth(3)
             if(normalizeToUnitArea and Histogram.Integral() > 0):
                 Histogram.Scale(1./Histogram.Integral())
 
@@ -821,7 +821,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             dataIntegral += Histogram.Integral()
 
             Histogram.SetMarkerStyle(20)
-            Histogram.SetMarkerSize(0.8)
+            Histogram.SetMarkerSize(1.0)
             Histogram.SetFillStyle(0)
             Histogram.SetLineColor(colors[sample])
             Histogram.SetLineStyle(1)
@@ -840,7 +840,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 newDataHist.SetBinErrorOption(TH1.kPoisson)
                 newDataHist.SetMarkerColor(colors[sample])
                 newDataHist.SetMarkerStyle(20)
-                newDataHist.SetMarkerSize(1.2)
+                newDataHist.SetMarkerSize(1.0)
                 newDataHist.SetLineColor(colors[sample])
                 newDataHist.SetLineWidth(2)
                 Histogram = newDataHist
@@ -1061,10 +1061,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     #legend coordinates, empirically determined :-)
-    x_left = 0.576037
-    x_right = 0.907834
+    x_left = 0.629885
+    x_right = 0.935632
     x_width = x_right - x_left
-    y_max = 0.884428
+    y_max = 0.882282
     entry_height = 0.037318
 
     if(numBgMCSamples is not 0 or numDataSamples is not 0): #then draw the data & bgMC legend
@@ -1087,6 +1087,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             BgMCLegend.SetY1NDC(y_max-entry_height*(numExtraEntries+numBgMCSamples+numDataSamples))
             BgMCLegend.SetX2NDC(x_right)
             BgMCLegend.SetY2NDC(y_max)
+            BgMCLegend.SetTextSize(0.0364078)
         BgMCLegend.Draw()
 
         if(numSignalSamples is not 0 and arguments.paperConfig and 'SigLegX1' in paperHistogram): #then draw the signalMC legend to the left of the other one
@@ -1098,10 +1099,11 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 SignalMCLegend.SetTextSize(paperHistogram['SigTextSize'])
             SignalMCLegend.Draw()
         elif (numSignalSamples is not 0):
-            SignalMCLegend.SetX1NDC(x_left-x_width)
-            SignalMCLegend.SetY1NDC(y_max-entry_height*(1+numSignalSamples)) # add one for the title
-            SignalMCLegend.SetX2NDC(x_left)
-            SignalMCLegend.SetY2NDC(y_max)
+            SignalMCLegend.SetX1NDC(0.157471)
+            SignalMCLegend.SetY1NDC(0.821602-entry_height*numSignalSamples) # add one for the title
+            SignalMCLegend.SetX2NDC(0.355172)
+            SignalMCLegend.SetY2NDC(0.821602)
+            SignalMCLegend.SetTextSize(0.0364078)
             SignalMCLegend.Draw()
 
         if integrateDir is "left":
@@ -1111,21 +1113,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             BgMCLegend.SetY1NDC(-0.05 + y_max-entry_height*(numExtraEntries+numBgMCSamples+numDataSamples))
             BgMCLegend.SetY2NDC(-0.05 + y_max)
             BgMCLegend.Draw()
-
-
-    if(numSignalSamples is not 0 and arguments.paperConfig and 'SigLegX1' in paperHistogram):
-        SignalMCLegend.SetX1NDC(float(paperHistogram['SigLegX1']))
-        SignalMCLegend.SetY1NDC(float(paperHistogram['SigLegY1'])) # add one for the title
-        SignalMCLegend.SetX2NDC(float(paperHistogram['SigLegX2']))
-        SignalMCLegend.SetY2NDC(float(paperHistogram['SigLegY2']))
-        SignalMCLegend.Draw()
-
-    elif numSignalSamples is not 0: #draw the signalMC legend in the upper right corner
-        SignalMCLegend.SetX1NDC(x_left)
-        SignalMCLegend.SetY1NDC(y_max-entry_height*(numSignalSamples)) # add one for the title
-        SignalMCLegend.SetX2NDC(x_right)
-        SignalMCLegend.SetY2NDC(y_max)
-        SignalMCLegend.Draw()
 
 
     # Deciding which text labels to draw and drawing them
@@ -1281,7 +1268,7 @@ def MakeTwoDHist(pathToDir,histogramName):
     BgMCLegend.SetBorderSize(0)
     BgMCLegend.SetFillColor(0)
     BgMCLegend.SetFillStyle(0)
-    SignalMCLegend = TLegend(0.572581,0.742092,0.904378,0.891727)
+    SignalMCLegend = TLegend(0.157471,0.709648,0.355172,0.821602)
     SignalMCLegend.AddEntry (0, "Signal MC", "H").SetTextFont (62)
     SignalMCLegend.SetTextFont(42)
     SignalMCLegend.SetTextSize(0.0364078)
@@ -1336,7 +1323,7 @@ def MakeTwoDHist(pathToDir,histogramName):
             numBgMCSamples += 1
             Histogram.SetMarkerColor(colors[sample])
             Histogram.SetMarkerStyle(24)
-            Histogram.SetMarkerSize(1.2)
+            Histogram.SetMarkerSize(1.0)
             Histogram.SetFillColor(colors[sample])
             BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             BgMCHistograms.append(Histogram)
@@ -1346,7 +1333,7 @@ def MakeTwoDHist(pathToDir,histogramName):
             numSignalSamples += 1
             Histogram.SetMarkerColor(colors[sample])
             Histogram.SetMarkerStyle(20)
-            Histogram.SetMarkerSize(1.2)
+            Histogram.SetMarkerSize(1.0)
             Histogram.SetFillColor(colors[sample])
 #            BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             SignalMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
@@ -1357,7 +1344,7 @@ def MakeTwoDHist(pathToDir,histogramName):
             numDataSamples += 1
             Histogram.SetMarkerColor(colors[sample])
             Histogram.SetMarkerStyle(34)
-            Histogram.SetMarkerSize(1.2)
+            Histogram.SetMarkerSize(1.0)
             Histogram.SetFillColor(colors[sample])
             BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             DataHistograms.append(Histogram)
