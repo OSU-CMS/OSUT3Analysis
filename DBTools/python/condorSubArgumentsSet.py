@@ -10,5 +10,4 @@ CondorSubArgumentsSet = {
     9:{'Transfer_Input_files' : ''},
     10:{'+IsLocalJob'         : 'true'},
     11:{'Rank'                : 'TARGET.IsLocalSlot\n'},
-    12:{'Queue'               : ''}
 }
