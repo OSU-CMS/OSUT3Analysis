@@ -48,6 +48,7 @@ parser.add_option("-a", "--SkimChannel", dest="SkimChannel", default = "", help=
 parser.add_option("-R", "--Requirements", dest="Requirements", default = "", help="Requirements to be added to condor.sub submssion script, e.g. 'Memory > 1900'.")  
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")  
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")  
+parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. Generic, MuonPhysics, CaloOnly, Silver, etc")  
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")  
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")  
 
@@ -109,7 +110,6 @@ def getLatestJsonFile():
     os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O jsonList.txt')
     os.system('grep "Cert" jsonList.txt > CertList.txt')
     Tmp = open('CertList.txt','r+w')
-    bannedString = 'MuonPhysCaloOnly'
     jsonFileList = []
     for line in Tmp:
         startIndex = 0
@@ -125,14 +125,18 @@ def getLatestJsonFile():
     for fileName in jsonFileList:
         nameSplit = fileName.split('_')
         for i in range(0, len(nameSplit)):
-            if nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
-                if nameSplit[i + 3].split('.')[0] not in bannedString:
-                    jsonFileFiltered.append(fileName)
-            elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
+            if arguments.JSONType == "" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
                 jsonFileFiltered.append(fileName)
+            elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
+                if nameSplit[i + 3].split('.')[0] == arguments.JSONType:
+                    jsonFileFiltered.append(fileName)
     bestJsons = []
     bestJson = ''
     runRange = 0
+    if len(jsonFileFiltered) == 0:
+          print "#######################################################"
+          print "Warning!!!!!!!!!!!Could not find wanted JSON file"
+          print "#######################################################"
     for json in jsonFileFiltered:
         nameSplit = json.split('_')
         if len(nameSplit[1].split('-')) > 1:
