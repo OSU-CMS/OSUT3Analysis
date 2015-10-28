@@ -208,12 +208,12 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA, jsonFil
     SubmitFile = open(Directory + '/condor.sub','r+w')
     cmsRunExecutable = os.popen('which cmsRun').read()
     SubmitFile.write("# Command line arguments: \n# " + GetCommandLineString() + " \n\n\n")  
-    for argument in sorted(CondorSubArgumentsSet):
-        if CondorSubArgumentsSet[argument].has_key('Executable') and CondorSubArgumentsSet[argument]['Executable'] == "":
+    for argument in sorted(currentCondorSubArgumentsSet):
+        if currentCondorSubArgumentsSet[argument].has_key('Executable') and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = ' + cmsRunExecutable + '\n')
-        elif CondorSubArgumentsSet[argument].has_key('Arguments') and CondorSubArgumentsSet[argument]['Arguments'] == "":
+        elif currentCondorSubArgumentsSet[argument].has_key('Arguments') and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
             SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
-        elif CondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and CondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":   
+        elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":   
             if Dataset == '':
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label + '_cfg.py\n')
     	    elif UseAAA:
@@ -228,12 +228,12 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA, jsonFil
                     SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy.strip('\n') + ',' + str(jsonFile) + '\n')
             else:
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py\n')
-        elif CondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
+        elif currentCondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
             SubmitFile.write('Requirements = ' + arguments.Requirements + '\n')
-        elif CondorSubArgumentsSet[argument].has_key('Queue'):
+        elif currentCondorSubArgumentsSet[argument].has_key('Queue'):
             SubmitFile.write('Queue ' + str(NumberOfJobs) +'\n')
         else:
-            SubmitFile.write(CondorSubArgumentsSet[argument].keys()[0] + ' = ' + CondorSubArgumentsSet[argument].values()[0] + '\n')
+            SubmitFile.write(currentCondorSubArgumentsSet[argument].keys()[0] + ' = ' + currentCondorSubArgumentsSet[argument].values()[0] + '\n')
     SubmitFile.close()
 
 #It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.  
@@ -468,14 +468,14 @@ def MakeBatchJobFile(WorkDir, Queue, NumberOfJobs):
 def GetCompleteOrderedArgumentsSet(InputArguments):
     NewArguments = copy.deepcopy(InputArguments)
     for argument in InputArguments:
-	for index in CondorSubArgumentsSet:
-	    if CondorSubArgumentsSet[index].has_key(argument):
-                CondorSubArgumentsSet[index][argument] = InputArguments[argument]
+	for index in currentCondorSubArgumentsSet:
+	    if currentCondorSubArgumentsSet[index].has_key(argument):
+                currentCondorSubArgumentsSet[index][argument] = InputArguments[argument]
                 NewArguments.pop(argument)
                 break
     for newArgument in NewArguments:
-        CondorSubArgumentsSet.setdefault(len(CondorSubArgumentsSet.keys()) + 1, {newArgument : NewArguments[newArgument]})
-    CondorSubArgumentsSet.setdefault(len(CondorSubArgumentsSet.keys()) + 1, {'Queue': ''})
+        currentCondorSubArgumentsSet.setdefault(len(currentCondorSubArgumentsSet.keys()) + 1, {newArgument : NewArguments[newArgument]})
+    currentCondorSubArgumentsSet.setdefault(len(currentCondorSubArgumentsSet.keys()) + 1, {'Queue': ''})
 ###############################################################################
 #        Function to find all the skim channels from the userConfig.          # 
 ###############################################################################
@@ -600,6 +600,7 @@ if 'interactive' in hostname:
 #                End of Setup stage, will begin to submit jobs                #
 ###############################################################################
 
+currentCondorSubArgumentsSet = {}
 #Check whether the user wants to resubmit the failed condor jobs.
 if not arguments.Resubmit:
     #Loop over the datasets in split_datasets.
@@ -607,6 +608,7 @@ if not arguments.Resubmit:
         SubmissionDir = os.getcwd()
         SkimChannelNames = []
         for dataset in split_datasets:
+            currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
             EventsPerJob = -1 
             DatasetName = dataset
             NumberOfJobs = arguments.NumberOfJobs
@@ -622,6 +624,7 @@ if not arguments.Resubmit:
                 MaxEvents = maxEvents[dataset]
                 Config = config_file
                 GetCompleteOrderedArgumentsSet(InputCondorArguments)
+            
             if arguments.FileType == 'OSUT3Ntuple': 
                 if dataset_names.has_key(dataset):
                     DatasetName = dataset_names[dataset]
