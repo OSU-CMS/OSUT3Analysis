@@ -5,7 +5,7 @@
 #define  AOD              2
 #define  MINI_AOD_CUSTOM  3
 
-#define DATA_FORMAT MINI_AOD_CUSTOM
+#define DATA_FORMAT MINI_AOD
 
 #define INVALID_TYPE void *
 
@@ -165,7 +165,7 @@
   #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
 #elif DATA_FORMAT == MINI_AOD_CUSTOM
-  #include "DisappTrks/StandardAnalysis/interface/CustomDataFormat.h"  // Define collections in an external header file.  
+  #include "CustomDataFormat.h"  // Define collections in an external header file.  
 
 #else
   #error "Data format is not valid."
