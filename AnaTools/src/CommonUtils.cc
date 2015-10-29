@@ -328,6 +328,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
               value = dataMember.get (*o).objectCast<bool> ();
             else if (dataMemberType == "unsigned int")
               value = dataMember.get (*o).objectCast<unsigned int> ();
+            else if (dataMemberType == "unsigned long int")
+              value = dataMember.get (*o).objectCast<unsigned long int> ();
             else
               clog << "WARNING: \"" << member << "\" has unrecognized type \"" << dataMemberType << "\"" << endl;
           }
@@ -432,6 +434,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
           value = Reflex::Object_Cast<unsigned int> (*retObj);
         else if (memberType == "unsigned short int")
           value = Reflex::Object_Cast<unsigned short int> (*retObj);
+        else if (memberType == "unsigned long int")
+          value = Reflex::Object_Cast<unsigned long int> (*retObj);
         else
           clog << "WARNING: \"" << member << "\" has unrecognized type \"" << memberType << "\"" << endl;
         delete retObj;
