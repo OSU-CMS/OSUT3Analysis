@@ -244,6 +244,8 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->events->size ();
   else if (EQ_VALID(name,genjets))
     return handles_->genjets->size ();
+  else if (EQ_VALID(name,generatorweights))
+    return 1;
   else if (EQ_VALID(name,basicjets))
     return handles_->basicjets->size ();
   else if (EQ_VALID(name,candjets))
@@ -291,26 +293,27 @@ bool
   ValueLookupTree::collectionIsFound (const string &name) const
 {
   bool isFound = false;
-  if      (EQ_VALID(name,beamspots))       isFound = handles_->beamspots.isValid();
-  else if (EQ_VALID(name,bxlumis))         isFound = handles_->bxlumis.isValid();
-  else if (EQ_VALID(name,electrons))       isFound = handles_->electrons.isValid();
-  else if (EQ_VALID(name,events))          isFound = handles_->events.isValid();
-  else if (EQ_VALID(name,genjets))         isFound = handles_->genjets.isValid();
-  else if (EQ_VALID(name,basicjets))       isFound = handles_->basicjets.isValid();
-  else if (EQ_VALID(name,candjets))       isFound = handles_->candjets.isValid();
-  else if (EQ_VALID(name,candeles))       isFound = handles_->candeles.isValid();
-  else if (EQ_VALID(name,jets))            isFound = handles_->jets.isValid();
-  else if (EQ_VALID(name,mcparticles))     isFound = handles_->mcparticles.isValid();
-  else if (EQ_VALID(name,mets))            isFound = handles_->mets.isValid();
-  else if (EQ_VALID(name,muons))           isFound = handles_->muons.isValid();
-  else if (EQ_VALID(name,photons))         isFound = handles_->photons.isValid();
-  else if (EQ_VALID(name,primaryvertexs))  isFound = handles_->primaryvertexs.isValid();
-  else if (EQ_VALID(name,superclusters))   isFound = handles_->superclusters.isValid();
-  else if (EQ_VALID(name,taus))            isFound = handles_->taus.isValid();
-  else if (EQ_VALID(name,tracks))          isFound = handles_->tracks.isValid();
-  else if (EQ_VALID(name,trigobjs))        isFound = handles_->trigobjs.isValid();
-  else if (EQ_VALID(name,uservariables))   isFound = true; // This vector is always present, even if its size is 0.
-  else if (EQ_VALID(name,eventvariables))  isFound = true; // This vector is always present, even if its size is 0.
+  if        (EQ_VALID(name,beamspots))         isFound = handles_->beamspots.isValid();
+  else  if  (EQ_VALID(name,bxlumis))           isFound  =  handles_->bxlumis.isValid();
+  else  if  (EQ_VALID(name,electrons))         isFound  =  handles_->electrons.isValid();
+  else  if  (EQ_VALID(name,events))            isFound  =  handles_->events.isValid();
+  else  if  (EQ_VALID(name,genjets))           isFound  =  handles_->genjets.isValid();
+  else  if  (EQ_VALID(name,generatorweights))  isFound  =  handles_->generatorweights.isValid();
+  else  if  (EQ_VALID(name,basicjets))         isFound  =  handles_->basicjets.isValid();
+  else  if  (EQ_VALID(name,candjets))          isFound  =  handles_->candjets.isValid();
+  else  if  (EQ_VALID(name,candeles))          isFound  =  handles_->candeles.isValid();
+  else  if  (EQ_VALID(name,jets))              isFound  =  handles_->jets.isValid();
+  else  if  (EQ_VALID(name,mcparticles))       isFound  =  handles_->mcparticles.isValid();
+  else  if  (EQ_VALID(name,mets))              isFound  =  handles_->mets.isValid();
+  else  if  (EQ_VALID(name,muons))             isFound  =  handles_->muons.isValid();
+  else  if  (EQ_VALID(name,photons))           isFound  =  handles_->photons.isValid();
+  else  if  (EQ_VALID(name,primaryvertexs))    isFound  =  handles_->primaryvertexs.isValid();
+  else  if  (EQ_VALID(name,superclusters))     isFound  =  handles_->superclusters.isValid();
+  else  if  (EQ_VALID(name,taus))              isFound  =  handles_->taus.isValid();
+  else  if  (EQ_VALID(name,tracks))            isFound  =  handles_->tracks.isValid();
+  else  if  (EQ_VALID(name,trigobjs))          isFound  =  handles_->trigobjs.isValid();
+  else if (EQ_VALID(name,uservariables))       isFound = true; // This vector is always present, even if its size is 0.
+  else if (EQ_VALID(name,eventvariables))      isFound = true; // This vector is always present, even if its size is 0.
   return isFound;
 
 }
@@ -788,6 +791,8 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
     return ((void *) &handles_->events->at (i));
   else if (EQ_VALID(name,genjets))
     return ((void *) &handles_->genjets->at (i));
+  else if (EQ_VALID(name,generatorweights))
+    return ((void *) &(*handles_->generatorweights));
   else if (EQ_VALID(name,jets))
     return ((void *) &handles_->jets->at (i));
   else if (EQ_VALID(name,basicjets))
@@ -848,6 +853,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return TYPE_STR(events);
   else if (EQ_VALID(name,genjets))
     return TYPE_STR(genjets);
+  else if (EQ_VALID(name,generatorweights))
+    return TYPE_STR(generatorweights);
   else if (EQ_VALID(name,jets))
     return TYPE_STR(jets);
   else if (EQ_VALID(name,basicjets))
@@ -893,6 +900,8 @@ ValueLookupTree::isCollection (const string &name) const
   else if (EQ_VALID(name,events))
     return true;
   else if (EQ_VALID(name,genjets))
+    return true;
+  else if (EQ_VALID(name,generatorweights))
     return true;
   else if (EQ_VALID(name,jets))
     return true;
