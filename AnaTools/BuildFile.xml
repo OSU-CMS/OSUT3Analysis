@@ -1,7 +1,6 @@
 <use  name="boost"/>
 <use  name="root"/>
 <use  name="rootrflx"/>
-<use  name="BEAN/Collections"/>
 <use  name="DataFormats/BeamSpot"/>
 <use  name="DataFormats/Common"/>
 <use  name="DataFormats/EgammaCandidates"/>
@@ -14,7 +13,6 @@
 <use  name="DataFormats/TauReco"/>
 <use  name="DataFormats/TrackReco"/>
 <use  name="DataFormats/VertexReco"/>
-<use  name="DisappTrks/CandidateTrackProducer"/>  
 <use  name="FWCore/Framework"/>
 <use  name="FWCore/ParameterSet"/>
 <use  name="FWCore/Utilities"/>
@@ -24,3 +22,15 @@
 <export>
   <lib  name="1"/>
 </export>
+
+<!--=========================================================================-->
+<!--Analysis-specific packages are listed below. These cause warnings when
+trying to build OSUT3Analysis/AnaTools if these packages are not present, but
+they can be safely ignored.-->
+<!--=========================================================================-->
+<!-- disappearing tracks packages -->
+<use  name="DisappTrks/CandidateTrackProducer"/>  
+
+<!-- BEANs packages -->
+<use  name="BEAN/Collections"/>
+<!--=========================================================================-->
