@@ -284,7 +284,8 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
     if(definition.hasVariableBinsX){
       weight /= getBinSize(histogram,value);
     }
-    weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
+    if (handles_.generatorweights.isValid ())
+      weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
     histogram->Fill(value, weight);
     if (verbose_) clog << "Filled histogram " << definition.name << " with value=" << value << ", weight=" << weight << endl;  
 
@@ -344,7 +345,8 @@ void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double
   if(definition.hasVariableBinsY){
     weight /= getBinSize(histogram,valueX,valueY).second;
   }
-  weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
+  if (handles_.generatorweights.isValid ())
+    weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
   histogram->Fill(valueX, valueY, weight);
   if (verbose_) clog << "Filled histogram " << definition.name << " with valueX=" << valueX << ", valueY=" << valueY << ", weight=" << weight << endl;  
 
