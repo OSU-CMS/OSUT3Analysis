@@ -1476,7 +1476,7 @@ JetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("jetCharge"),
             title = cms.string("Jet Charge;jet charge"),
-            binsX = cms.untracked.vdouble(41 * 2 - 1, -20.5, 20.5),
+            binsX = cms.untracked.vdouble(41, -20.5, 20.5),
             inputVariables = cms.vstring("charge"),
         ),
         cms.PSet (
@@ -2712,7 +2712,7 @@ TrackHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("trackNumValidHits"),
             title = cms.string("Track Number of Valid Hits;number of valid hits"),
-            binsX = cms.untracked.vdouble(31 * 2 - 1, -0.5, 30.5),
+            binsX = cms.untracked.vdouble(31, -0.5, 30.5),
             inputVariables = cms.vstring("numberOfValidHits"),
         ),
         cms.PSet (
@@ -2724,7 +2724,7 @@ TrackHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("trackCharge"),
             title = cms.string("Track Charge;track charge"),
-            binsX = cms.untracked.vdouble(3 * 2 - 1, -1.5, 1.5),
+            binsX = cms.untracked.vdouble(3, -1.5, 1.5),
             inputVariables = cms.vstring("charge"),
         ),
     )

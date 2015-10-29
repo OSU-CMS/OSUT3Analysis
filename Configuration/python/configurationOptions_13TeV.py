@@ -1057,21 +1057,21 @@ labels = {
     'MET_2015D_05Oct2015' : "MET 2015D data",
 
     #AMSB chargino
-    'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}_{1}^{#pm} (100 GeV, 10cm)",
-    'AMSB_chargino_100GeV_100cm'   :  "AMSB #tilde{#chi}_{1}^{#pm} (100 GeV, 100cm)",
-    'AMSB_chargino_100GeV_1000cm'  :  "AMSB #tilde{#chi}_{1}^{#pm} (100 GeV, 1000cm)",
+    'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 10cm)",
+    'AMSB_chargino_100GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 100cm)",
+    'AMSB_chargino_100GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 1000cm)",
 
-    'AMSB_chargino_300GeV_10cm'    :  "AMSB #tilde{#chi}_{1}^{#pm} (300 GeV, 10cm)",
-    'AMSB_chargino_300GeV_100cm'   :  "AMSB #tilde{#chi}_{1}^{#pm} (300 GeV, 100cm)",
-    'AMSB_chargino_300GeV_1000cm'  :  "AMSB #tilde{#chi}_{1}^{#pm} (300 GeV, 1000cm)",
+    'AMSB_chargino_300GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 10cm)",
+    'AMSB_chargino_300GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 100cm)",
+    'AMSB_chargino_300GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 1000cm)",
 
-    'AMSB_chargino_500GeV_10cm'    :  "AMSB #tilde{#chi}_{1}^{#pm} (500 GeV, 10cm)",
-    'AMSB_chargino_500GeV_100cm'   :  "AMSB #tilde{#chi}_{1}^{#pm} (500 GeV, 100cm)",
-    'AMSB_chargino_500GeV_1000cm'  :  "AMSB #tilde{#chi}_{1}^{#pm} (500 GeV, 1000cm)",
+    'AMSB_chargino_500GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 10cm)",
+    'AMSB_chargino_500GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 100cm)",
+    'AMSB_chargino_500GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 1000cm)",
 
-    'AMSB_chargino_700GeV_10cm'    :  "AMSB #tilde{#chi}_{1}^{#pm} (700 GeV, 10cm)",
-    'AMSB_chargino_700GeV_100cm'   :  "AMSB #tilde{#chi}_{1}^{#pm} (700 GeV, 100cm)",
-    'AMSB_chargino_700GeV_1000cm'  :  "AMSB #tilde{#chi}_{1}^{#pm} (700 GeV, 1000cm)",
+    'AMSB_chargino_700GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 10cm)",
+    'AMSB_chargino_700GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 100cm)",
+    'AMSB_chargino_700GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 1000cm)",
     ############################################################################
 
     ############################################################################
