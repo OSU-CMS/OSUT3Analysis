@@ -25,7 +25,7 @@ class CandjetProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE(candjets)> > pl_;
+    auto_ptr<vector<osu::Candjet> > pl_;
 };
 
 #endif

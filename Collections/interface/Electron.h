@@ -1,7 +1,7 @@
 #ifndef OSU_ELECTRON
 #define OSU_ELECTRON
 
-#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 #if IS_VALID(electrons)
 
@@ -14,6 +14,13 @@ namespace osu
         Electron (const TYPE(electrons) &);
         ~Electron ();
     };
+}
+
+#else
+
+namespace osu
+{
+  typedef TYPE(electrons) Electron;
 }
 
 #endif

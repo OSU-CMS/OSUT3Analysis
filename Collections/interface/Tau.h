@@ -1,7 +1,7 @@
 #ifndef OSU_TAU
 #define OSU_TAU
 
-#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 #if IS_VALID(taus)
 
@@ -14,6 +14,13 @@ namespace osu
         Tau (const TYPE(taus) &);
         ~Tau ();
     };
+}
+
+#else
+
+namespace osu
+{
+  typedef TYPE(taus) Tau;
 }
 
 #endif

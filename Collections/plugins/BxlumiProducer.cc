@@ -7,7 +7,7 @@ BxlumiProducer::BxlumiProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("bxlumis");
 
-  produces<vector<TYPE(bxlumis)> > (collection_.instance ());
+  produces<vector<osu::Bxlumi> > (collection_.instance ());
 }
 
 BxlumiProducer::~BxlumiProducer ()
@@ -20,8 +20,16 @@ BxlumiProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(bxlumis)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(bxlumis)> > (new vector<TYPE(bxlumis)> (*collection));
+  pl_ = auto_ptr<vector<osu::Bxlumi> > (new vector<osu::Bxlumi> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Bxlumi * const bxlumi = new osu::Bxlumi (object);
+      pl_->push_back (*bxlumi);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(BxlumiProducer);

@@ -7,7 +7,7 @@ ElectronProducer::ElectronProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
 
-  produces<vector<TYPE(electrons)> > (collection_.instance ());
+  produces<vector<osu::Electron> > (collection_.instance ());
 }
 
 ElectronProducer::~ElectronProducer ()
@@ -20,8 +20,16 @@ ElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(electrons)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(electrons)> > (new vector<TYPE(electrons)> (*collection));
+  pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Electron * const electron = new osu::Electron (object);
+      pl_->push_back (*electron);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(ElectronProducer);

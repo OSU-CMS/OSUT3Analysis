@@ -7,7 +7,7 @@ BjetProducer::BjetProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("bjets");
 
-  produces<vector<TYPE(bjets)> > (collection_.instance ());
+  produces<vector<osu::Bjet> > (collection_.instance ());
 }
 
 BjetProducer::~BjetProducer ()
@@ -20,8 +20,16 @@ BjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(bjets)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(bjets)> > (new vector<TYPE(bjets)> (*collection));
+  pl_ = auto_ptr<vector<osu::Bjet> > (new vector<osu::Bjet> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Bjet * const bjet = new osu::Bjet (object);
+      pl_->push_back (*bjet);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(BjetProducer);

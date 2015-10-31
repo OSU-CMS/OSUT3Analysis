@@ -7,7 +7,7 @@ SuperclusterProducer::SuperclusterProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("superclusters");
 
-  produces<vector<TYPE(superclusters)> > (collection_.instance ());
+  produces<vector<osu::Supercluster> > (collection_.instance ());
 }
 
 SuperclusterProducer::~SuperclusterProducer ()
@@ -20,8 +20,16 @@ SuperclusterProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(superclusters)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(superclusters)> > (new vector<TYPE(superclusters)> (*collection));
+  pl_ = auto_ptr<vector<osu::Supercluster> > (new vector<osu::Supercluster> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Supercluster * const supercluster = new osu::Supercluster (object);
+      pl_->push_back (*supercluster);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(SuperclusterProducer);

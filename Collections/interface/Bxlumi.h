@@ -1,7 +1,7 @@
 #ifndef OSU_BXLUMI
 #define OSU_BXLUMI
 
-#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 #if IS_VALID(bxlumis)
 
@@ -14,6 +14,13 @@ namespace osu
         Bxlumi (const TYPE(bxlumis) &);
         ~Bxlumi ();
     };
+}
+
+#else
+
+namespace osu
+{
+  typedef TYPE(bxlumis) Bxlumi;
 }
 
 #endif

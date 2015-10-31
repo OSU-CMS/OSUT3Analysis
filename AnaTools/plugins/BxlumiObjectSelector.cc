@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(bxlumis)
-  typedef ObjectSelector<TYPE(bxlumis)> BxlumiObjectSelector;
+  typedef ObjectSelector<osu::Bxlumi> BxlumiObjectSelector;
   DEFINE_FWK_MODULE(BxlumiObjectSelector);
 #endif

@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(candeles)
-  typedef ObjectSelector<TYPE(candeles)> CandeleObjectSelector;
+  typedef ObjectSelector<osu::Candele> CandeleObjectSelector;
   DEFINE_FWK_MODULE(CandeleObjectSelector);
 #endif

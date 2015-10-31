@@ -7,7 +7,7 @@ EventProducer::EventProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("events");
 
-  produces<vector<TYPE(events)> > (collection_.instance ());
+  produces<vector<osu::Event> > (collection_.instance ());
 }
 
 EventProducer::~EventProducer ()
@@ -20,8 +20,16 @@ EventProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(events)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(events)> > (new vector<TYPE(events)> (*collection));
+  pl_ = auto_ptr<vector<osu::Event> > (new vector<osu::Event> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Event * const event = new osu::Event (object);
+      pl_->push_back (*event);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(EventProducer);

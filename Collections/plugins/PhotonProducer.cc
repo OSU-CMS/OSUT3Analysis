@@ -7,7 +7,7 @@ PhotonProducer::PhotonProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("photons");
 
-  produces<vector<TYPE(photons)> > (collection_.instance ());
+  produces<vector<osu::Photon> > (collection_.instance ());
 }
 
 PhotonProducer::~PhotonProducer ()
@@ -20,8 +20,16 @@ PhotonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(photons)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(photons)> > (new vector<TYPE(photons)> (*collection));
+  pl_ = auto_ptr<vector<osu::Photon> > (new vector<osu::Photon> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Photon * const photon = new osu::Photon (object);
+      pl_->push_back (*photon);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(PhotonProducer);

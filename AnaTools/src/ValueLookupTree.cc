@@ -141,11 +141,11 @@ ValueLookupTree::evaluate ()
         }
 #if IS_VALID(uservariables)
       for (auto &uservariable : uservariablesToDelete_)
-        delete ((TYPE(uservariables) *) uservariable);
+        delete ((osu::Uservariable *) uservariable);
 #endif
 #if IS_VALID(eventvariables)
       for (auto &eventvariable : eventvariablesToDelete_)
-        delete ((TYPE(eventvariables) *) eventvariable);
+        delete ((osu::Eventvariable *) eventvariable);
 #endif
     }
 
@@ -822,7 +822,7 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
   else if (EQ_VALID(name,uservariables))
     {
       //!!!
-      TYPE(uservariables) *obj = new TYPE(uservariables) ();
+      osu::Uservariable *obj = new osu::Uservariable ();
       for (const auto &handle : handles_->uservariables)
         obj->insert (handle->begin (), handle->end ());
       uservariablesToDelete_.push_back (obj);
@@ -831,7 +831,7 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
   else if (EQ_VALID(name,eventvariables))
     {
       //!!!
-      TYPE(eventvariables) *obj = new TYPE(eventvariables) ();
+      osu::Eventvariable *obj = new osu::Eventvariable ();
       for (const auto &handle : handles_->eventvariables)
         obj->insert (handle->begin (), handle->end ());
       eventvariablesToDelete_.push_back (obj);
@@ -844,47 +844,47 @@ string
 ValueLookupTree::getCollectionType (const string &name) const
 {
   if (EQ_VALID(name,beamspots))
-    return TYPE_STR(beamspots);
+    return "osu::Beamspot";
   else if (EQ_VALID(name,bxlumis))
-    return TYPE_STR(bxlumis);
+    return "osu::Bxlumi";
   else if (EQ_VALID(name,electrons))
-    return TYPE_STR(electrons);
+    return "osu::Electron";
   else if (EQ_VALID(name,events))
-    return TYPE_STR(events);
+    return "osu::Event";
   else if (EQ_VALID(name,genjets))
-    return TYPE_STR(genjets);
+    return "osu::Genjet";
   else if (EQ_VALID(name,generatorweights))
-    return TYPE_STR(generatorweights);
+    return "osu::Generatorweight";
   else if (EQ_VALID(name,jets))
-    return TYPE_STR(jets);
+    return "osu::Jet";
   else if (EQ_VALID(name,basicjets))
-    return TYPE_STR(basicjets);
+    return "osu::Basicjet";
   else if (EQ_VALID(name,candjets))
-    return TYPE_STR(candjets);
+    return "osu::Candjet";
   else if (EQ_VALID(name,candeles))
-    return TYPE_STR(candeles);
+    return "osu::Candele";
   else if (EQ_VALID(name,mcparticles))
-    return TYPE_STR(mcparticles);
+    return "osu::Mcparticle";
   else if (EQ_VALID(name,mets))
-    return TYPE_STR(mets);
+    return "osu::Met";
   else if (EQ_VALID(name,muons))
-    return TYPE_STR(muons);
+    return "osu::Muon";
   else if (EQ_VALID(name,photons))
-    return TYPE_STR(photons);
+    return "osu::Photon";
   else if (EQ_VALID(name,primaryvertexs))
-    return TYPE_STR(primaryvertexs);
+    return "osu::Primaryvertex";
   else if (EQ_VALID(name,superclusters))
-    return TYPE_STR(superclusters);
+    return "osu::Supercluster";
   else if (EQ_VALID(name,taus))
-    return TYPE_STR(taus);
+    return "osu::Tau";
   else if (EQ_VALID(name,tracks))
-    return TYPE_STR(tracks);
+    return "osu::Track";
   else if (EQ_VALID(name,trigobjs))
-    return TYPE_STR(trigobjs);
+    return "osu::Trigobj";
   else if (EQ_VALID(name,uservariables))
-    return TYPE_STR(uservariables);
+    return "osu::Uservariable";
   else if (EQ_VALID(name,eventvariables))
-    return TYPE_STR(eventvariables);
+    return "osu::Eventvariable";
   return "";
 }
 

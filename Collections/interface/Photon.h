@@ -1,7 +1,7 @@
 #ifndef OSU_PHOTON
 #define OSU_PHOTON
 
-#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 #if IS_VALID(photons)
 
@@ -14,6 +14,13 @@ namespace osu
         Photon (const TYPE(photons) &);
         ~Photon ();
     };
+}
+
+#else
+
+namespace osu
+{
+  typedef TYPE(photons) Photon;
 }
 
 #endif

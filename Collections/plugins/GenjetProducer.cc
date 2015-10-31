@@ -7,7 +7,7 @@ GenjetProducer::GenjetProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("genjets");
 
-  produces<vector<TYPE(genjets)> > (collection_.instance ());
+  produces<vector<osu::Genjet> > (collection_.instance ());
 }
 
 GenjetProducer::~GenjetProducer ()
@@ -20,8 +20,16 @@ GenjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(genjets)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(genjets)> > (new vector<TYPE(genjets)> (*collection));
+  pl_ = auto_ptr<vector<osu::Genjet> > (new vector<osu::Genjet> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Genjet * const genjet = new osu::Genjet (object);
+      pl_->push_back (*genjet);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(GenjetProducer);

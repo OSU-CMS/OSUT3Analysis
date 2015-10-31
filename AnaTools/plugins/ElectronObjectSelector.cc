@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(electrons)
-  typedef ObjectSelector<TYPE(electrons)> ElectronObjectSelector;
+  typedef ObjectSelector<osu::Electron> ElectronObjectSelector;
   DEFINE_FWK_MODULE(ElectronObjectSelector);
 #endif

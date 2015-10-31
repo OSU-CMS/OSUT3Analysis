@@ -25,7 +25,7 @@ class SuperclusterProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE(superclusters)> > pl_;
+    auto_ptr<vector<osu::Supercluster> > pl_;
 };
 
 #endif

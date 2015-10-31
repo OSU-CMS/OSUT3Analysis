@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(genjets)
-  typedef ObjectSelector<TYPE(genjets)> GenjetObjectSelector;
+  typedef ObjectSelector<osu::Genjet> GenjetObjectSelector;
   DEFINE_FWK_MODULE(GenjetObjectSelector);
 #endif

@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(muons)
-  typedef ObjectSelector<TYPE(muons)> MuonObjectSelector;
+  typedef ObjectSelector<osu::Muon> MuonObjectSelector;
   DEFINE_FWK_MODULE(MuonObjectSelector);
 #endif

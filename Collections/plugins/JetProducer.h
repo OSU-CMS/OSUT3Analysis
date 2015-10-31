@@ -25,7 +25,7 @@ class JetProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE(jets)> > pl_;
+    auto_ptr<vector<osu::Jet> > pl_;
 };
 
 #endif

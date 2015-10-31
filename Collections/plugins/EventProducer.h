@@ -25,7 +25,7 @@ class EventProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE(events)> > pl_;
+    auto_ptr<vector<osu::Event> > pl_;
 };
 
 #endif

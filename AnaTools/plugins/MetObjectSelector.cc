@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(mets)
-  typedef ObjectSelector<TYPE(mets)> MetObjectSelector;
+  typedef ObjectSelector<osu::Met> MetObjectSelector;
   DEFINE_FWK_MODULE(MetObjectSelector);
 #endif

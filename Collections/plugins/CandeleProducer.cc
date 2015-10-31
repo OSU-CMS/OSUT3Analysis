@@ -7,7 +7,7 @@ CandeleProducer::CandeleProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("candeles");
 
-  produces<vector<TYPE(candeles)> > (collection_.instance ());
+  produces<vector<osu::Candele> > (collection_.instance ());
 }
 
 CandeleProducer::~CandeleProducer ()
@@ -20,8 +20,16 @@ CandeleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(candeles)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(candeles)> > (new vector<TYPE(candeles)> (*collection));
+  pl_ = auto_ptr<vector<osu::Candele> > (new vector<osu::Candele> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Candele * const candele = new osu::Candele (object);
+      pl_->push_back (*candele);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(CandeleProducer);

@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(tracks)
-  typedef ObjectSelector<TYPE(tracks)> TrackObjectSelector;
+  typedef ObjectSelector<osu::Track> TrackObjectSelector;
   DEFINE_FWK_MODULE(TrackObjectSelector);
 #endif

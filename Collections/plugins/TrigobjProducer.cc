@@ -7,7 +7,7 @@ TrigobjProducer::TrigobjProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("trigobjs");
 
-  produces<vector<TYPE(trigobjs)> > (collection_.instance ());
+  produces<vector<osu::Trigobj> > (collection_.instance ());
 }
 
 TrigobjProducer::~TrigobjProducer ()
@@ -20,8 +20,16 @@ TrigobjProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(trigobjs)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(trigobjs)> > (new vector<TYPE(trigobjs)> (*collection));
+  pl_ = auto_ptr<vector<osu::Trigobj> > (new vector<osu::Trigobj> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Trigobj * const trigobj = new osu::Trigobj (object);
+      pl_->push_back (*trigobj);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(TrigobjProducer);

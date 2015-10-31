@@ -2,7 +2,7 @@
 
 #if IS_VALID(beamspots)
   template<>
-  ObjectSelector<TYPE(beamspots)>::ObjectSelector (const edm::ParameterSet &cfg) :
+  ObjectSelector<osu::Beamspot>::ObjectSelector (const edm::ParameterSet &cfg) :
     collections_         (cfg.getParameter<edm::ParameterSet>  ("collections")),
     collectionToFilter_  (cfg.getParameter<string>             ("collectionToFilter")),
     cutDecisions_        (cfg.getParameter<edm::InputTag>      ("cutDecisions")),
@@ -13,17 +13,17 @@
     // Retrieve the InputTag for the collection which is to be filtered.
     collection_ = collections_.getParameter<edm::InputTag> (collectionToFilter_);
 
-    produces<TYPE(beamspots)> (collection_.instance ());
+    produces<osu::Beamspot> (collection_.instance ());
   }
 
   template<> bool
-  ObjectSelector<TYPE(beamspots)>::filter (edm::Event &event, const edm::EventSetup &setup)
+  ObjectSelector<osu::Beamspot>::filter (edm::Event &event, const edm::EventSetup &setup)
   {
     //////////////////////////////////////////////////////////////////////////////
     // Get the collection and cut decisions from the event and print a warning if
     // there is a problem.
     //////////////////////////////////////////////////////////////////////////////
-    edm::Handle<TYPE(beamspots)> collection;
+    edm::Handle<osu::Beamspot> collection;
     anatools::getCollection (collection_, collection, event);
     event.getByLabel (cutDecisions_, cutDecisions);
     if (firstEvent_ && !collection.isValid ())
@@ -37,10 +37,10 @@
     // If the collection could not be retrieved, the payload remains empty. If the
     // cut decisions could not be retrieved, no objects are cut.
     //////////////////////////////////////////////////////////////////////////////
-    auto_ptr<TYPE(beamspots)> pl_ = auto_ptr<TYPE(beamspots)> (new TYPE(beamspots) ());
+    auto_ptr<osu::Beamspot> pl_ = auto_ptr<osu::Beamspot> (new osu::Beamspot ());
     if (collection.isValid ())
       {
-        const TYPE(beamspots) * const object = &(*collection);
+        const osu::Beamspot * const object = &(*collection);
         unsigned iObject = 0,
                  nCuts;
         bool passes = true;

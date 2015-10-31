@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(events)
-  typedef ObjectSelector<TYPE(events)> EventObjectSelector;
+  typedef ObjectSelector<osu::Event> EventObjectSelector;
   DEFINE_FWK_MODULE(EventObjectSelector);
 #endif

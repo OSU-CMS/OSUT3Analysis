@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(photons)
-  typedef ObjectSelector<TYPE(photons)> PhotonObjectSelector;
+  typedef ObjectSelector<osu::Photon> PhotonObjectSelector;
   DEFINE_FWK_MODULE(PhotonObjectSelector);
 #endif

@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(jets)
-  typedef ObjectSelector<TYPE(jets)> JetObjectSelector;
+  typedef ObjectSelector<osu::Jet> JetObjectSelector;
   DEFINE_FWK_MODULE(JetObjectSelector);
 #endif

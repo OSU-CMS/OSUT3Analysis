@@ -28,79 +28,79 @@ namespace anatools
   template <class T> int getObjectHash (const T &);
 
 #if IS_VALID(beamspots)
-  string getObjectType (const TYPE(beamspots) &);
-  string getObjectClass (const TYPE(beamspots) &);
+  string getObjectType (const osu::Beamspot &);
+  string getObjectClass (const osu::Beamspot &);
 #endif
 #if IS_VALID(bxlumis)
-  string getObjectType (const TYPE(bxlumis) &);
-  string getObjectClass (const TYPE(bxlumis) &);
+  string getObjectType (const osu::Bxlumi &);
+  string getObjectClass (const osu::Bxlumi &);
 #endif
 #if IS_VALID(electrons)
-  string getObjectType (const TYPE(electrons) &);
-  string getObjectClass (const TYPE(electrons) &);
+  string getObjectType (const osu::Electron &);
+  string getObjectClass (const osu::Electron &);
 #endif
 #if IS_VALID(events)
-  string getObjectType (const TYPE(events) &);
-  string getObjectClass (const TYPE(events) &);
-  template<> int getObjectHash<TYPE(events)> (const TYPE(events) &);
+  string getObjectType (const osu::Event &);
+  string getObjectClass (const osu::Event &);
+  template<> int getObjectHash<osu::Event> (const osu::Event &);
 #endif
 #if IS_VALID(genjets)
-  string getObjectType (const TYPE(genjets) &);
-  string getObjectClass (const TYPE(genjets) &);
+  string getObjectType (const osu::Genjet &);
+  string getObjectClass (const osu::Genjet &);
 #endif
 #if IS_VALID(basicjets)
-  string getObjectType  (const TYPE(basicjets) &);
-  string getObjectClass (const TYPE(basicjets) &);
+  string getObjectType  (const osu::Basicjet &);
+  string getObjectClass (const osu::Basicjet &);
 #endif
 #if IS_VALID(candjets)
-  string getObjectType  (const TYPE(candjets) &);
-  string getObjectClass (const TYPE(candjets) &);
+  string getObjectType  (const osu::Candjet &);
+  string getObjectClass (const osu::Candjet &);
 #endif
 #if IS_VALID(candeles)
-  string getObjectType  (const TYPE(candeles) &);
-  string getObjectClass (const TYPE(candeles) &);
+  string getObjectType  (const osu::Candele &);
+  string getObjectClass (const osu::Candele &);
 #endif
 #if IS_VALID(jets)
-  string getObjectType (const TYPE(jets) &);
-  string getObjectClass (const TYPE(jets) &);
+  string getObjectType (const osu::Jet &);
+  string getObjectClass (const osu::Jet &);
 #endif
 #if IS_VALID(mcparticles)
-  string getObjectType (const TYPE(mcparticles) &);
-  string getObjectClass (const TYPE(mcparticles) &);
+  string getObjectType (const osu::Mcparticle &);
+  string getObjectClass (const osu::Mcparticle &);
 #endif
 #if IS_VALID(mets)
-  string getObjectType (const TYPE(mets) &);
-  string getObjectClass (const TYPE(mets) &);
-  template<> int getObjectHash<TYPE(mets)> (const TYPE(mets) &);
+  string getObjectType (const osu::Met &);
+  string getObjectClass (const osu::Met &);
+  template<> int getObjectHash<osu::Met> (const osu::Met &);
 #endif
 #if IS_VALID(muons)
-  string getObjectType (const TYPE(muons) &);
-  string getObjectClass (const TYPE(muons) &);
+  string getObjectType (const osu::Muon &);
+  string getObjectClass (const osu::Muon &);
 #endif
 #if IS_VALID(photons)
-  string getObjectType (const TYPE(photons) &);
-  string getObjectClass (const TYPE(photons) &);
+  string getObjectType (const osu::Photon &);
+  string getObjectClass (const osu::Photon &);
 #endif
 #if IS_VALID(primaryvertexs)
-  string getObjectType (const TYPE(primaryvertexs) &);
-  string getObjectClass (const TYPE(primaryvertexs) &);
-  template<> int getObjectHash<TYPE(primaryvertexs)> (const TYPE(primaryvertexs) &);
+  string getObjectType (const osu::Primaryvertex &);
+  string getObjectClass (const osu::Primaryvertex &);
+  template<> int getObjectHash<osu::Primaryvertex> (const osu::Primaryvertex &);
 #endif
 #if IS_VALID(superclusters)
-  string getObjectType (const TYPE(superclusters) &);
-  string getObjectClass (const TYPE(superclusters) &);
+  string getObjectType (const osu::Supercluster &);
+  string getObjectClass (const osu::Supercluster &);
 #endif
 #if IS_VALID(taus)
-  string getObjectType (const TYPE(taus) &);
-  string getObjectClass (const TYPE(taus) &);
+  string getObjectType (const osu::Tau &);
+  string getObjectClass (const osu::Tau &);
 #endif
 #if IS_VALID(tracks)
-  string getObjectType (const TYPE(tracks) &);
-  string getObjectClass (const TYPE(tracks) &);
+  string getObjectType (const osu::Track &);
+  string getObjectClass (const osu::Track &);
 #endif
 #if IS_VALID(trigobjs)
-  string getObjectType (const TYPE(trigobjs) &);
-  string getObjectClass (const TYPE(trigobjs) &);
+  string getObjectType (const osu::Trigobj &);
+  string getObjectClass (const osu::Trigobj &);
 #endif
 #if IS_VALID(uservariables)
   // user-defined cases

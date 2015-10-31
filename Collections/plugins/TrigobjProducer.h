@@ -25,7 +25,7 @@ class TrigobjProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE(trigobjs)> > pl_;
+    auto_ptr<vector<osu::Trigobj> > pl_;
 };
 
 #endif

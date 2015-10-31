@@ -1,7 +1,7 @@
 #ifndef OSU_USERVARIABLE
 #define OSU_USERVARIABLE
 
-#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 #if IS_VALID(uservariables)
 
@@ -14,6 +14,13 @@ namespace osu
         Uservariable (const TYPE(uservariables) &);
         ~Uservariable ();
     };
+}
+
+#else
+
+namespace osu
+{
+  typedef TYPE(uservariables) Uservariable;
 }
 
 #endif

@@ -25,7 +25,7 @@ class PhotonProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE(photons)> > pl_;
+    auto_ptr<vector<osu::Photon> > pl_;
 };
 
 #endif

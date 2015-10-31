@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(basicjets)
-  typedef ObjectSelector<TYPE(basicjets)> BasicjetObjectSelector;
+  typedef ObjectSelector<osu::Basicjet> BasicjetObjectSelector;
   DEFINE_FWK_MODULE(BasicjetObjectSelector);
 #endif

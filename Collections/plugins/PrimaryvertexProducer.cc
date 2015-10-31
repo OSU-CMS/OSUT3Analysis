@@ -7,7 +7,7 @@ PrimaryvertexProducer::PrimaryvertexProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
 
-  produces<vector<TYPE(primaryvertexs)> > (collection_.instance ());
+  produces<vector<osu::Primaryvertex> > (collection_.instance ());
 }
 
 PrimaryvertexProducer::~PrimaryvertexProducer ()
@@ -20,8 +20,16 @@ PrimaryvertexProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(primaryvertexs)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(primaryvertexs)> > (new vector<TYPE(primaryvertexs)> (*collection));
+  pl_ = auto_ptr<vector<osu::Primaryvertex> > (new vector<osu::Primaryvertex> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Primaryvertex * const primaryvertex = new osu::Primaryvertex (object);
+      pl_->push_back (*primaryvertex);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(PrimaryvertexProducer);

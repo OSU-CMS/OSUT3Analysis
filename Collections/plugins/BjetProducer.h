@@ -25,7 +25,7 @@ class BjetProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE(bjets)> > pl_;
+    auto_ptr<vector<osu::Bjet> > pl_;
 };
 
 #endif

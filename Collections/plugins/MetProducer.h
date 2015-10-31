@@ -25,7 +25,7 @@ class MetProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE(mets)> > pl_;
+    auto_ptr<vector<osu::Met> > pl_;
 };
 
 #endif

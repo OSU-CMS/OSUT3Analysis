@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(superclusters)
-  typedef ObjectSelector<TYPE(superclusters)> SuperclusterObjectSelector;
+  typedef ObjectSelector<osu::Supercluster> SuperclusterObjectSelector;
   DEFINE_FWK_MODULE(SuperclusterObjectSelector);
 #endif

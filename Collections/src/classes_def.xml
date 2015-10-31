@@ -1,0 +1,6 @@
+<lcgdict>
+  <class pattern="osu::*"/>
+  <class pattern="std::vector<osu::*>"/>
+  <class pattern="edm::Wrapper<osu::*>"/>
+  <class pattern="edm::Wrapper<std::vector<osu::*> >"/>
+</lcgdict>

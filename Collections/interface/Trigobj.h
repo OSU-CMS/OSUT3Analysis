@@ -1,7 +1,7 @@
 #ifndef OSU_TRIGOBJ
 #define OSU_TRIGOBJ
 
-#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 #if IS_VALID(trigobjs)
 
@@ -14,6 +14,13 @@ namespace osu
         Trigobj (const TYPE(trigobjs) &);
         ~Trigobj ();
     };
+}
+
+#else
+
+namespace osu
+{
+  typedef TYPE(trigobjs) Trigobj;
 }
 
 #endif

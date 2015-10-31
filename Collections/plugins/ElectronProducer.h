@@ -25,7 +25,7 @@ class ElectronProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE(electrons)> > pl_;
+    auto_ptr<vector<osu::Electron> > pl_;
 };
 
 #endif

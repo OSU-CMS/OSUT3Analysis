@@ -7,7 +7,7 @@ MuonProducer::MuonProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("muons");
 
-  produces<vector<TYPE(muons)> > (collection_.instance ());
+  produces<vector<osu::Muon> > (collection_.instance ());
 }
 
 MuonProducer::~MuonProducer ()
@@ -20,8 +20,16 @@ MuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(muons)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(muons)> > (new vector<TYPE(muons)> (*collection));
+  pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Muon * const muon = new osu::Muon (object);
+      pl_->push_back (*muon);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(MuonProducer);

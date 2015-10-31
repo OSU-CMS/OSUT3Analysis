@@ -179,7 +179,9 @@
 #define TYPE(x) x##_TYPE
 #define TYPE_STR(x) XSTR(x##_TYPE)
 
+#include <map>
 #include <string>
+#include <vector>
 #include "boost/config.hpp"
 #include "RVersion.h"
 
@@ -198,5 +200,27 @@
 #endif
 
 using namespace std;
+
+// type to hold list of hashed indices corresponding to objects
+// string - object type
+// int - object hash
+typedef multimap <string, int>  ObjectList;
+
+// struct to connect objects to the calculated variable's value
+struct UserVariable
+{
+  double value;
+  ObjectList objects;
+};
+
+// VariableProducerPayload type:
+//   string - user-defined name of variable
+//   vector - one UserVariable per combination of input objects
+typedef map<string, vector<UserVariable> > VariableProducerPayload;
+
+// EventVariableProducerPayload type:
+//   string - user-defined name of variable
+//   double - value of variable for the event
+typedef map<string, double > EventVariableProducerPayload;
 
 #endif

@@ -568,29 +568,29 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 #endif
 
 #if IS_VALID(beamspots)
-  string  anatools::getObjectType  (const  TYPE(beamspots)         &obj)  {  return  "beamspot";         }
-  string  anatools::getObjectClass  (const  TYPE(beamspots)         &obj)  {  return  TYPE_STR(beamspots);         }
+  string  anatools::getObjectType  (const  osu::Beamspot         &obj)  {  return  "beamspot";         }
+  string  anatools::getObjectClass  (const  osu::Beamspot         &obj)  {  return  "osu::Beamspot";         }
 #endif
 #if IS_VALID(bxlumis)
-  string  anatools::getObjectType  (const  TYPE(bxlumis)         &obj)  {  return  "bxlumi";         }
-  string  anatools::getObjectClass  (const  TYPE(bxlumis)         &obj)  {  return  TYPE_STR(bxlumis);         }
+  string  anatools::getObjectType  (const  osu::Bxlumi         &obj)  {  return  "bxlumi";         }
+  string  anatools::getObjectClass  (const  osu::Bxlumi         &obj)  {  return  "osu::Bxlumi";         }
 #endif
 #if IS_VALID(electrons)
-  string  anatools::getObjectType  (const  TYPE(electrons)       &obj)  {  return  "electron";       }
-  string  anatools::getObjectClass  (const  TYPE(electrons)       &obj)  {  return  TYPE_STR(electrons);       }
+  string  anatools::getObjectType  (const  osu::Electron       &obj)  {  return  "electron";       }
+  string  anatools::getObjectClass  (const  osu::Electron       &obj)  {  return  "osu::Electron";       }
 #endif
 #if IS_VALID(candeles)
-  string  anatools::getObjectType  (const  TYPE(candeles)       &obj)  {  return  "candele";       }
-  string  anatools::getObjectClass  (const  TYPE(candeles)       &obj)  {  return  TYPE_STR(candeles);       }
+  string  anatools::getObjectType  (const  osu::Candele       &obj)  {  return  "candele";       }
+  string  anatools::getObjectClass  (const  osu::Candele       &obj)  {  return  "osu::Candele";       }
 #endif
 #if IS_VALID(candjets)
-  string  anatools::getObjectType  (const  TYPE(candjets)       &obj)  {  return  "candjet";       }
-  string  anatools::getObjectClass  (const  TYPE(candjets)       &obj)  {  return  TYPE_STR(candjets);       }
+  string  anatools::getObjectType  (const  osu::Candjet       &obj)  {  return  "candjet";       }
+  string  anatools::getObjectClass  (const  osu::Candjet       &obj)  {  return  "osu::Candjet";       }
 #endif
 #if IS_VALID(events)
-  string  anatools::getObjectType  (const  TYPE(events)          &obj)  {  return  "event";          }
-  string  anatools::getObjectClass  (const  TYPE(events)          &obj)  {  return  TYPE_STR(events);          }
-  template<> int anatools::getObjectHash<TYPE(events)> (const TYPE(events) &object){
+  string  anatools::getObjectType  (const  osu::Event          &obj)  {  return  "event";          }
+  string  anatools::getObjectClass  (const  osu::Event          &obj)  {  return  "osu::Event";          }
+  template<> int anatools::getObjectHash<osu::Event> (const osu::Event &object){
     int run, lumi, evt;
     run = abs(int(getMember (object, "run")));
     lumi = abs(int(getMember (object, "lumi")));
@@ -599,25 +599,25 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   }
 #endif
 #if IS_VALID(genjets)
-  string  anatools::getObjectType  (const  TYPE(genjets)         &obj)  {  return  "genjet";         }
-  string  anatools::getObjectClass  (const  TYPE(genjets)         &obj)  {  return  TYPE_STR(genjets);         }
+  string  anatools::getObjectType  (const  osu::Genjet         &obj)  {  return  "genjet";         }
+  string  anatools::getObjectClass  (const  osu::Genjet         &obj)  {  return  "osu::Genjet";         }
 #endif
 #if IS_VALID(jets)
-  string  anatools::getObjectType  (const  TYPE(jets)            &obj)  {  return  "jet";            }
-  string  anatools::getObjectClass  (const  TYPE(jets)            &obj)  {  return  TYPE_STR(jets);            }
+  string  anatools::getObjectType  (const  osu::Jet            &obj)  {  return  "jet";            }
+  string  anatools::getObjectClass  (const  osu::Jet            &obj)  {  return  "osu::Jet";            }
 #endif
 #if IS_VALID(basicjets) && DATA_FORMAT == AOD
-  string  anatools::getObjectType   (const  TYPE(basicjets)            &obj)  {  return  "basicjet";            }
-  string  anatools::getObjectClass  (const  TYPE(basicjets)            &obj)  {  return  TYPE_STR(basicjets);            }
+  string  anatools::getObjectType   (const  osu::Basicjet            &obj)  {  return  "basicjet";            }
+  string  anatools::getObjectClass  (const  osu::Basicjet            &obj)  {  return  "osu::Basicjet";            }
 #endif
 #if IS_VALID(mcparticles)
-  string  anatools::getObjectType  (const  TYPE(mcparticles)     &obj)  {  return  "mcparticle";     }
-  string  anatools::getObjectClass  (const  TYPE(mcparticles)     &obj)  {  return  TYPE_STR(mcparticles);     }
+  string  anatools::getObjectType  (const  osu::Mcparticle     &obj)  {  return  "mcparticle";     }
+  string  anatools::getObjectClass  (const  osu::Mcparticle     &obj)  {  return  "osu::Mcparticle";     }
 #endif
 #if IS_VALID(mets)
-  string  anatools::getObjectType  (const  TYPE(mets)            &obj)  {  return  "met";            }
-  string  anatools::getObjectClass  (const  TYPE(mets)            &obj)  {  return  TYPE_STR(mets);            }
-  template<> int anatools::getObjectHash<TYPE(mets)> (const TYPE(mets)& object){
+  string  anatools::getObjectType  (const  osu::Met            &obj)  {  return  "met";            }
+  string  anatools::getObjectClass  (const  osu::Met            &obj)  {  return  "osu::Met";            }
+  template<> int anatools::getObjectHash<osu::Met> (const osu::Met& object){
     int px_mev, py_mev;
     px_mev = fabs(int(10000 * getMember (object, "px")));
     py_mev = fabs(int(10000 * getMember (object, "py")));
@@ -625,17 +625,17 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   }
 #endif
 #if IS_VALID(muons)
-  string  anatools::getObjectType  (const  TYPE(muons)           &obj)  {  return  "muon";           }
-  string  anatools::getObjectClass  (const  TYPE(muons)           &obj)  {  return  TYPE_STR(muons);           }
+  string  anatools::getObjectType  (const  osu::Muon           &obj)  {  return  "muon";           }
+  string  anatools::getObjectClass  (const  osu::Muon           &obj)  {  return  "osu::Muon";           }
 #endif
 #if IS_VALID(photons)
-  string  anatools::getObjectType  (const  TYPE(photons)         &obj)  {  return  "photon";         }
-  string  anatools::getObjectClass  (const  TYPE(photons)         &obj)  {  return  TYPE_STR(photons);         }
+  string  anatools::getObjectType  (const  osu::Photon         &obj)  {  return  "photon";         }
+  string  anatools::getObjectClass  (const  osu::Photon         &obj)  {  return  "osu::Photon";         }
 #endif
 #if IS_VALID(primaryvertexs)
-  string  anatools::getObjectType  (const  TYPE(primaryvertexs)  &obj)  {  return  "primaryvertex";  }
-  string  anatools::getObjectClass  (const  TYPE(primaryvertexs)  &obj)  {  return  TYPE_STR(primaryvertexs);  }
-  template<> int anatools::getObjectHash<TYPE(primaryvertexs)> (const TYPE(primaryvertexs)& object){
+  string  anatools::getObjectType  (const  osu::Primaryvertex  &obj)  {  return  "primaryvertex";  }
+  string  anatools::getObjectClass  (const  osu::Primaryvertex  &obj)  {  return  "osu::Primaryvertex";  }
+  template<> int anatools::getObjectHash<osu::Primaryvertex> (const osu::Primaryvertex& object){
     int x_mum, y_mum, z_mum;
     x_mum = abs(int(10000 * getMember (object, "x")));
     y_mum = abs(int(10000 * getMember (object, "y")));
@@ -644,20 +644,20 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   }
 #endif
 #if IS_VALID(superclusters)
-  string  anatools::getObjectType  (const  TYPE(superclusters)   &obj)  {  return  "supercluster";   }
-  string  anatools::getObjectClass  (const  TYPE(superclusters)   &obj)  {  return  TYPE_STR(superclusters);   }
+  string  anatools::getObjectType  (const  osu::Supercluster   &obj)  {  return  "supercluster";   }
+  string  anatools::getObjectClass  (const  osu::Supercluster   &obj)  {  return  "osu::Supercluster";   }
 #endif
 #if IS_VALID(taus)
-  string  anatools::getObjectType  (const  TYPE(taus)            &obj)  {  return  "tau";            }
-  string  anatools::getObjectClass  (const  TYPE(taus)            &obj)  {  return  TYPE_STR(taus);            }
+  string  anatools::getObjectType  (const  osu::Tau            &obj)  {  return  "tau";            }
+  string  anatools::getObjectClass  (const  osu::Tau            &obj)  {  return  "osu::Tau";            }
 #endif
 #if IS_VALID(tracks)
-  string  anatools::getObjectType  (const  TYPE(tracks)          &obj)  {  return  "track";          }
-  string  anatools::getObjectClass  (const  TYPE(tracks)          &obj)  {  return  TYPE_STR(tracks);          }
+  string  anatools::getObjectType  (const  osu::Track          &obj)  {  return  "track";          }
+  string  anatools::getObjectClass  (const  osu::Track          &obj)  {  return  "osu::Track";          }
 #endif
 #if IS_VALID(trigobjs)
-  string  anatools::getObjectType  (const  TYPE(trigobjs)        &obj)  {  return  "trigobj";        }
-  string  anatools::getObjectClass  (const  TYPE(trigobjs)        &obj)  {  return  TYPE_STR(trigobjs);        }
+  string  anatools::getObjectType  (const  osu::Trigobj        &obj)  {  return  "trigobj";        }
+  string  anatools::getObjectClass  (const  osu::Trigobj        &obj)  {  return  "osu::Trigobj";        }
 #endif
 
 // user-defined cases

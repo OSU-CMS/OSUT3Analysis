@@ -7,7 +7,7 @@ JetProducer::JetProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
 
-  produces<vector<TYPE(jets)> > (collection_.instance ());
+  produces<vector<osu::Jet> > (collection_.instance ());
 }
 
 JetProducer::~JetProducer ()
@@ -20,8 +20,16 @@ JetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(jets)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(jets)> > (new vector<TYPE(jets)> (*collection));
+  pl_ = auto_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Jet * const jet = new osu::Jet (object);
+      pl_->push_back (*jet);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(JetProducer);

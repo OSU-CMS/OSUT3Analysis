@@ -25,7 +25,7 @@ class TrackProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE(tracks)> > pl_;
+    auto_ptr<vector<osu::Track> > pl_;
 };
 
 #endif

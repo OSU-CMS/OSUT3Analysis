@@ -1,14 +1,31 @@
 #ifndef ANALYSIS_TYPES
 #define ANALYSIS_TYPES
 
-#include <vector>
-#include <map>
-
 #include "boost/variant.hpp"
 
 #include "DataFormats/Common/interface/Handle.h"
 
-#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
+#include "OSUT3Analysis/Collections/interface/Basicjet.h"
+#include "OSUT3Analysis/Collections/interface/Beamspot.h"
+#include "OSUT3Analysis/Collections/interface/Bjet.h"
+#include "OSUT3Analysis/Collections/interface/Bxlumi.h"
+#include "OSUT3Analysis/Collections/interface/Candele.h"
+#include "OSUT3Analysis/Collections/interface/Candjet.h"
+#include "OSUT3Analysis/Collections/interface/Electron.h"
+#include "OSUT3Analysis/Collections/interface/Event.h"
+#include "OSUT3Analysis/Collections/interface/Eventvariable.h"
+#include "OSUT3Analysis/Collections/interface/Genjet.h"
+#include "OSUT3Analysis/Collections/interface/Jet.h"
+#include "OSUT3Analysis/Collections/interface/Mcparticle.h"
+#include "OSUT3Analysis/Collections/interface/Met.h"
+#include "OSUT3Analysis/Collections/interface/Muon.h"
+#include "OSUT3Analysis/Collections/interface/Photon.h"
+#include "OSUT3Analysis/Collections/interface/Primaryvertex.h"
+#include "OSUT3Analysis/Collections/interface/Supercluster.h"
+#include "OSUT3Analysis/Collections/interface/Tau.h"
+#include "OSUT3Analysis/Collections/interface/Track.h"
+#include "OSUT3Analysis/Collections/interface/Trigobj.h"
+#include "OSUT3Analysis/Collections/interface/Uservariable.h"
 
 class ValueLookupTree;
 
@@ -71,50 +88,28 @@ struct Node
   vector<Node *>  branches;
 };
 
-// type to hold list of hashed indices corresponding to objects
-// string - object type
-// int - object hash
-typedef multimap <string, int>  ObjectList;
-
-// struct to connect objects to the calculated variable's value
-struct UserVariable
-{
-  double value;
-  ObjectList objects;
-};
-
-// VariableProducerPayload type:
-//   string - user-defined name of variable
-//   vector - one UserVariable per combination of input objects
-typedef map<string, vector<UserVariable> > VariableProducerPayload;
-
-// EventVariableProducerPayload type:
-//   string - user-defined name of variable
-//   double - value of variable for the event
-typedef map<string, double > EventVariableProducerPayload;
-
 struct Collections
 {
-  edm::Handle<TYPE(beamspots)>                beamspots;
-  edm::Handle<vector<TYPE(bxlumis)> >         bxlumis;
-  edm::Handle<vector<TYPE(electrons)> >       electrons;
-  edm::Handle<vector<TYPE(events)> >          events;
-  edm::Handle<vector<TYPE(genjets)> >         genjets;
-  edm::Handle<vector<TYPE(jets)> >            jets;
-  edm::Handle<vector<TYPE(basicjets)> >       basicjets;
-  edm::Handle<vector<TYPE(candjets)> >        candjets;
-  edm::Handle<vector<TYPE(candeles)> >        candeles;
-  edm::Handle<vector<TYPE(mcparticles)> >     mcparticles;
-  edm::Handle<vector<TYPE(mets)> >            mets;
-  edm::Handle<vector<TYPE(muons)> >           muons;
-  edm::Handle<vector<TYPE(photons)> >         photons;
-  edm::Handle<vector<TYPE(primaryvertexs)> >  primaryvertexs;
-  edm::Handle<vector<TYPE(superclusters)> >   superclusters;
-  edm::Handle<vector<TYPE(taus)> >            taus;
-  edm::Handle<vector<TYPE(tracks)> >          tracks;
-  edm::Handle<vector<TYPE(trigobjs)> >        trigobjs;
-  vector<edm::Handle<TYPE(uservariables)> >   uservariables;
-  vector<edm::Handle<TYPE(eventvariables)> >  eventvariables;
+  edm::Handle<osu::Beamspot>                beamspots;
+  edm::Handle<vector<osu::Bxlumi> >         bxlumis;
+  edm::Handle<vector<osu::Electron> >       electrons;
+  edm::Handle<vector<osu::Event> >          events;
+  edm::Handle<vector<osu::Genjet> >         genjets;
+  edm::Handle<vector<osu::Jet> >            jets;
+  edm::Handle<vector<osu::Basicjet> >       basicjets;
+  edm::Handle<vector<osu::Candjet> >        candjets;
+  edm::Handle<vector<osu::Candele> >        candeles;
+  edm::Handle<vector<osu::Mcparticle> >     mcparticles;
+  edm::Handle<vector<osu::Met> >            mets;
+  edm::Handle<vector<osu::Muon> >           muons;
+  edm::Handle<vector<osu::Photon> >         photons;
+  edm::Handle<vector<osu::Primaryvertex> >  primaryvertexs;
+  edm::Handle<vector<osu::Supercluster> >   superclusters;
+  edm::Handle<vector<osu::Tau> >            taus;
+  edm::Handle<vector<osu::Track> >          tracks;
+  edm::Handle<vector<osu::Trigobj> >        trigobjs;
+  vector<edm::Handle<osu::Uservariable> >   uservariables;
+  vector<edm::Handle<osu::Eventvariable> >  eventvariables;
 
   edm::Handle<TYPE(triggers)>                 triggers;
   edm::Handle<TYPE(prescales)>                prescales;

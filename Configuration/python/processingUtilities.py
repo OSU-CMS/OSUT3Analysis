@@ -183,8 +183,6 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
-
-
 def add_channels (process, channels, histogramSets, collections, variableProducers, skim = True):
 
     ############################################################################
@@ -209,6 +207,8 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
     # names. We use function attributes so that add_channels can be called
     # multiple times to add additional channels.
     ############################################################################
+    if not hasattr (add_channels, "producerIndex"):
+        add_channels.producerIndex = 0
     if not hasattr (add_channels, "filterIndex"):
         add_channels.filterIndex = 0
     if not hasattr (add_channels, "endPath"):
@@ -244,6 +244,8 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
             os.unlink (originalName)
         os.symlink (outputName, originalName)
     ############################################################################
+
+    plotCollections = get_collections (histogramSets)
 
     for channel in channels:
         channelPath = cms.Path ()
@@ -329,38 +331,6 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         ########################################################################
 
         ########################################################################
-        # Add a cut calculator module for this channel to the path.
-        ########################################################################
-        cutCalculator = cms.EDProducer ("CutCalculator",
-            collections = collections,
-            cuts = channel
-        )
-        channelPath += cutCalculator
-        setattr (process, channelName + "CutCalculator", cutCalculator)
-        ########################################################################
-
-        ########################################################################
-        # Add a cut flow plotting module for this channel to the path.
-        ########################################################################
-        cutFlowPlotter = cms.EDAnalyzer ("CutFlowPlotter",
-            collections = collections,
-            cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
-        )
-        channelPath += cutFlowPlotter
-        setattr (process, channelName + "CutFlowPlotter", cutFlowPlotter)
-        ########################################################################
-
-        ########################################################################
-        # Add a module for printing info, both general and for specific events.
-        ########################################################################
-        channelInfoPrinter = copy.deepcopy (infoPrinter)
-        channelInfoPrinter.collections = collections
-        channelInfoPrinter.cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
-        channelPath += channelInfoPrinter
-        setattr (process, channelName + "InfoPrinter", channelInfoPrinter)
-        ########################################################################
-
-        ########################################################################
         # Set up the output commands. For now, we drop everything except the
         # collections given in the collections PSet.
         ########################################################################
@@ -382,12 +352,68 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         ########################################################################
 
         ########################################################################
+        ########################################################################
+        producedCollections = copy.deepcopy (collections)
+        cutCollections = get_collections (channel.cuts)
+        usedCollections = sorted (list (set (cutCollections + plotCollections)))
+        for collection in usedCollections:
+            producerName = collection[0].upper () + collection[1:-1] + "Producer"
+            objectProducer = cms.EDProducer (producerName,
+                collections = collections
+            )
+            channelPath += objectProducer
+            setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+            originalInputTag = getattr (collections, collection)
+            setattr (producedCollections, collection, cms.InputTag ("objectProducer" + str (add_channels.producerIndex), originalInputTag.getProductInstanceLabel ()))
+            dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
+            if originalInputTag.getProcessName ():
+                dropCommand += originalInputTag.getProcessName ()
+            else:
+                dropCommand += "*"
+            outputCommands.append (dropCommand)
+            if collection not in cutCollections:
+                outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
+            add_channels.producerIndex += 1
+        ########################################################################
+
+        ########################################################################
+        # Add a cut calculator module for this channel to the path.
+        ########################################################################
+        cutCalculator = cms.EDProducer ("CutCalculator",
+            collections = producedCollections,
+            cuts = channel
+        )
+        channelPath += cutCalculator
+        setattr (process, channelName + "CutCalculator", cutCalculator)
+        ########################################################################
+
+        ########################################################################
+        # Add a cut flow plotting module for this channel to the path.
+        ########################################################################
+        cutFlowPlotter = cms.EDAnalyzer ("CutFlowPlotter",
+            collections = producedCollections,
+            cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
+        )
+        channelPath += cutFlowPlotter
+        setattr (process, channelName + "CutFlowPlotter", cutFlowPlotter)
+        ########################################################################
+
+        ########################################################################
+        # Add a module for printing info, both general and for specific events.
+        ########################################################################
+        channelInfoPrinter = copy.deepcopy (infoPrinter)
+        channelInfoPrinter.collections = producedCollections
+        channelInfoPrinter.cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
+        channelPath += channelInfoPrinter
+        setattr (process, channelName + "InfoPrinter", channelInfoPrinter)
+        ########################################################################
+
+        ########################################################################
         # For each collection on which cuts are applied, we add the
         # corresponding object selector to the path. We also trade the original
         # collection for the slimmed collection in the output commands.
         ########################################################################
-        filteredCollections = copy.deepcopy (collections)
-        cutCollections = get_collections (channel.cuts)
+        filteredCollections = copy.deepcopy (producedCollections)
         for collection in cutCollections:
             # Temporary fix for user-defined variables
             # For the moment, they won't be filtered
@@ -395,7 +421,7 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
                 continue
             filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
             objectSelector = cms.EDFilter (filterName,
-                collections = collections,
+                collections = producedCollections,
                 collectionToFilter = cms.string (collection),
                 cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
             )
@@ -403,12 +429,6 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
             setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
             originalInputTag = getattr (collections, collection)
             setattr (filteredCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
-            dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
-            if originalInputTag.getProcessName ():
-                dropCommand += originalInputTag.getProcessName ()
-            else:
-                dropCommand += "*"
-            outputCommands.append (dropCommand)
             outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
             add_channels.filterIndex += 1
         ########################################################################

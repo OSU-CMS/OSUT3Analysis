@@ -7,7 +7,7 @@ TrackProducer::TrackProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
-  produces<vector<TYPE(tracks)> > (collection_.instance ());
+  produces<vector<osu::Track> > (collection_.instance ());
 }
 
 TrackProducer::~TrackProducer ()
@@ -20,8 +20,16 @@ TrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(tracks)> > collection;
   anatools::getCollection (collection_, collection, event);
 
-  pl_ = auto_ptr<vector<TYPE(tracks)> > (new vector<TYPE(tracks)> (*collection));
+  pl_ = auto_ptr<vector<osu::Track> > (new vector<osu::Track> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Track * const track = new osu::Track (object);
+      pl_->push_back (*track);
+    }
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(TrackProducer);

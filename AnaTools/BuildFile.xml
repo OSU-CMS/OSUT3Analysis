@@ -16,6 +16,7 @@
 <use  name="FWCore/Framework"/>
 <use  name="FWCore/ParameterSet"/>
 <use  name="FWCore/Utilities"/>
+<use  name="OSUT3Analysis/Collections"/>
 <use  name="SimDataFormats/GeneratorProducts"/>
 <flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
 <!--flags  CXXFLAGS="-gdwarf-2 -g3 -O0 -pipe"/-->

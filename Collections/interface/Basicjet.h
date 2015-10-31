@@ -1,7 +1,7 @@
 #ifndef OSU_BASICJET
 #define OSU_BASICJET
 
-#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 #if IS_VALID(basicjets)
 
@@ -14,6 +14,13 @@ namespace osu
         Basicjet (const TYPE(basicjets) &);
         ~Basicjet ();
     };
+}
+
+#else
+
+namespace osu
+{
+  typedef TYPE(basicjets) Basicjet;
 }
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef OSU_CANDELE
 #define OSU_CANDELE
 
-#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 #if IS_VALID(candeles)
 
@@ -14,6 +14,13 @@ namespace osu
         Candele (const TYPE(candeles) &);
         ~Candele ();
     };
+}
+
+#else
+
+namespace osu
+{
+  typedef TYPE(candeles) Candele;
 }
 
 #endif

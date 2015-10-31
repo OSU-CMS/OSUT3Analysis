@@ -1,7 +1,7 @@
 #ifndef OSU_EVENT
 #define OSU_EVENT
 
-#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 #if IS_VALID(events)
 
@@ -14,6 +14,13 @@ namespace osu
         Event (const TYPE(events) &);
         ~Event ();
     };
+}
+
+#else
+
+namespace osu
+{
+  typedef TYPE(events) Event;
 }
 
 #endif

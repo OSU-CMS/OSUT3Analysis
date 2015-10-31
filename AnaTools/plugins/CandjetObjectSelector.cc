@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(candjets)
-  typedef ObjectSelector<TYPE(candjets)> CandjetObjectSelector;
+  typedef ObjectSelector<osu::Candjet> CandjetObjectSelector;
   DEFINE_FWK_MODULE(CandjetObjectSelector);
 #endif

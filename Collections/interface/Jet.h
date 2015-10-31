@@ -1,7 +1,7 @@
 #ifndef OSU_JET
 #define OSU_JET
 
-#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
 #if IS_VALID(jets)
 
@@ -14,6 +14,13 @@ namespace osu
         Jet (const TYPE(jets) &);
         ~Jet ();
     };
+}
+
+#else
+
+namespace osu
+{
+  typedef TYPE(jets) Jet;
 }
 
 #endif
