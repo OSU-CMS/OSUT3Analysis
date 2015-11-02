@@ -7,7 +7,7 @@ BeamspotProducer::BeamspotProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("beamspots");
 
-  produces<vector<osu::Beamspot> > (collection_.instance ());
+  produces<osu::Beamspot> (collection_.instance ());
 }
 
 BeamspotProducer::~BeamspotProducer ()
@@ -17,18 +17,13 @@ BeamspotProducer::~BeamspotProducer ()
 void
 BeamspotProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(beamspots)> > collection;
+  edm::Handle<TYPE(beamspots)> collection;
   anatools::getCollection (collection_, collection, event);
-
-  pl_ = auto_ptr<vector<osu::Beamspot> > (new vector<osu::Beamspot> ());
-  for (const auto &object : *collection)
-    {
-      const osu::Beamspot * const beamspot = new osu::Beamspot (object);
-      pl_->push_back (*beamspot);
-    }
-
+  pl_ = auto_ptr<osu::Beamspot>  (new osu::Beamspot ());
+  const osu::Beamspot * const beamspot = new osu::Beamspot (*collection);
+  *pl_ = *beamspot;
   event.put (pl_, collection_.instance ());
-  pl_.reset ();
+  pl_.reset();
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
