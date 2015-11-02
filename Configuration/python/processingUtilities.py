@@ -357,23 +357,48 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
         cutCollections = get_collections (channel.cuts)
         usedCollections = sorted (list (set (cutCollections + plotCollections)))
         for collection in usedCollections:
-            producerName = collection[0].upper () + collection[1:-1] + "Producer"
-            objectProducer = cms.EDProducer (producerName,
-                collections = collections
-            )
-            channelPath += objectProducer
-            setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
-            originalInputTag = getattr (collections, collection)
-            setattr (producedCollections, collection, cms.InputTag ("objectProducer" + str (add_channels.producerIndex), originalInputTag.getProductInstanceLabel ()))
-            dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
-            if originalInputTag.getProcessName ():
-                dropCommand += originalInputTag.getProcessName ()
+            if collection is "uservariables" or collection is "eventvariables":
+                newInputTags = cms.VInputTag()
+                inputTags = getattr (collections, collection)
+                for inputTag in inputTags:
+                    producerName = collection[0].upper () + collection[1:-1] + "Producer"
+                    eventvariableCollections = copy.deepcopy (collections)
+                    setattr (eventvariableCollections, collection, cms.InputTag ("",""))
+                    setattr (eventvariableCollections, collection,inputTag)
+                    objectProducer = cms.EDProducer (producerName,
+                        collections = eventvariableCollections
+                    )
+                    channelPath += objectProducer
+                    setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                    newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
+                    dropCommand = "drop *_" + inputTag.getModuleLabel () + "_" + inputTag.getProductInstanceLabel () + "_"
+                    if inputTag.getProcessName ():
+                        dropCommand += inputTag.getProcessName ()
+                    else:
+                        dropCommand += "*"
+                    outputCommands.append (dropCommand)
+                    if collection not in cutCollections: 
+                        outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + inputTag.getProductInstanceLabel () + "_" + process.name_ ())
+                    add_channels.producerIndex += 1
+                setattr (producedCollections, collection, newInputTags)
             else:
-                dropCommand += "*"
-            outputCommands.append (dropCommand)
-            if collection not in cutCollections:
-                outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
-            add_channels.producerIndex += 1
+                producerName = collection[0].upper () + collection[1:-1] + "Producer"
+                objectProducer = cms.EDProducer (producerName,
+                    collections = collections
+                )
+                channelPath += objectProducer
+                setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                originalInputTag = getattr (collections, collection)
+                setattr (producedCollections, collection, cms.InputTag ("objectProducer" + str (add_channels.producerIndex), originalInputTag.getProductInstanceLabel ()))
+                dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
+                if originalInputTag.getProcessName ():
+                    dropCommand += originalInputTag.getProcessName ()
+                else:
+                    dropCommand += "*"
+                outputCommands.append (dropCommand)
+                if collection not in cutCollections:
+                    outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
+                add_channels.producerIndex += 1
         ########################################################################
 
         ########################################################################
