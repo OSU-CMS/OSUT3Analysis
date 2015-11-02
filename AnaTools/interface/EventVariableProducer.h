@@ -10,6 +10,7 @@
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
+
 class EventVariableProducer : public edm::EDProducer
   {
     public:
@@ -19,13 +20,12 @@ class EventVariableProducer : public edm::EDProducer
       // Methods
 
       void produce (edm::Event &, const edm::EventSetup &);
-
+    
     protected:
 
       // Variables
 
       edm::ParameterSet collections_;
-      Collections handles_;
       unordered_set<string> objectsToGet_;
       auto_ptr<EventVariableProducerPayload> eventvariables;
 
