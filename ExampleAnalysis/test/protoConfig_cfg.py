@@ -17,9 +17,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 # ---------------------------------------
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-                                 "file:/data/users/wulsin/OSUT3AnalysisTutorial/DisplacedSUSY_StopToBL_M-1000_CTau-100_13TeV_MiniAOD_numEvent1000.root", # a local copy of the xrootd file on the next line
-                                 # "root://cmsxrootd.fnal.gov///store/mc/RunIISpring15DR74/DisplacedSUSY_StopToBL_M-1000_CTau-100_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v1/70000/02737839-2108-E511-AE42-0CC47A0107D0.root", 
-                             ),
+        'root://cmsxrootd.fnal.gov//store/mc/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v3/10000/009D49A5-7314-E511-84EF-0025905A605E.root',
+        ),
 )
 
 # FIXME:  set_input does not work (because of error with /usr/bin/file) in CMSSW_7_4_5_ROOT5   
@@ -54,11 +53,22 @@ process.maxEvents = cms.untracked.PSet (
 from OSUT3Analysis.AnaTools.osuAnalysis_cfi import collectionMap  # miniAOD
 
 ################################################################################
+##### Set up weights to be used in plotting and cutflows  ######################
+################################################################################
+
+weights = cms.VPSet (
+    cms.PSet (
+        inputCollections = cms.vstring("muons"),
+        inputVariable = cms.string("pt")
+    ),
+)
+
+################################################################################
 ##### Set up any user-defined variable producers ###############################
 ################################################################################
 
 variableProducers = []
-variableProducers.append("MyVariableProducer")
+#variableProducers.append("MyVariableProducer")
 
 ################################################################################
 ##### Import the channels to be run ############################################
@@ -76,7 +86,7 @@ from OSUT3Analysis.ExampleAnalysis.MyProtoHistogramDefinitions import *
 ##### Attach the channels and histograms to the process ########################
 ################################################################################
 
-add_channels (process, [eMuMinimal], cms.VPSet (histograms), collectionMap, variableProducers, False)
+add_channels (process, [eMuMinimal], cms.VPSet (histograms), weights, collectionMap, variableProducers, False)
 
 # uncomment to produce a full python configuration log file
 #outfile = open('dumpedConfig.py','w'); print >> outfile,process.dumpPython(); outfile.close()

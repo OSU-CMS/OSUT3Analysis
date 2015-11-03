@@ -26,19 +26,16 @@ class Plotter : public edm::EDAnalyzer
     private:
 
       edm::ParameterSet collections_;
-
-      //Collections
-
-      Collections handles_;
-
-
+      vector<edm::ParameterSet> weightDefs_;
       vector<edm::ParameterSet> histogramSets_;
-
       int verbose_;
-
       bool firstEvent_;
 
+      //Collections
+      Collections handles_;
+
       bool initializeValueLookupForest (vector<HistoDef> &, Collections *);
+      bool initializeValueLookupForest (vector<Weight> &, Collections *);
 
       edm::Service<TFileService> fs_;
 
@@ -47,6 +44,8 @@ class Plotter : public edm::EDAnalyzer
       vector<TFileDirectory> subDirs;
 
       vector<HistoDef> histogramDefinitions;
+
+      vector<Weight> weights;
 
       string getDirectoryName(const string);
       vector<string> getInputTypes(const string);

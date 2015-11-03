@@ -18,10 +18,9 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
 
   /// Retrieve parameters from the configuration file.
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
-
+  weightDefs_ (cfg.getParameter<vector<edm::ParameterSet> >("weights")),
   histogramSets_ (cfg.getParameter<vector<edm::ParameterSet> >("histogramSets")),
   verbose_ (cfg.getParameter<int> ("verbose")),
-
   firstEvent_ (true)
 
 {
@@ -80,6 +79,23 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
 
   } // end loop on parsed histograms
 
+  //////////////////////////////////
+  // parse the weight definitions //
+  //////////////////////////////////
+
+  for(unsigned weightDef = 0; weightDef != weightDefs_.size(); weightDef++){
+    vector<string> inputCollections = weightDefs_.at(weightDef).getParameter<vector<string> > ("inputCollections");
+    vector<string>::iterator inputCollection;
+    for(inputCollection = inputCollections.begin(); inputCollection != inputCollections.end(); ++inputCollection){
+      objectsToGet_.insert(*inputCollection);
+    }
+    string inputVariable = weightDefs_.at(weightDef).getParameter<string> ("inputVariable");
+    Weight weight;
+    weight.inputCollections = inputCollections;
+    weight.inputVariable = inputVariable;
+    weight.product = 1.0;
+    weights.push_back(weight);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -99,7 +115,25 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       exit (EXIT_CODE);
     }
 
-  // now that we have all the required objects, we'll loop over the histograms, filling each one as we go
+
+  // first we'll calculate all the weights for this event
+  if (!initializeValueLookupForest (weights, &handles_))
+    {
+      clog << "ERROR: failed to parse weight definitions. Quitting..." << endl;
+      exit (EXIT_CODE);
+    }
+
+  for (vector<Weight>::iterator weight = weights.begin (); weight != weights.end (); weight++)
+    {
+      for(vector<Leaf>::const_iterator leaf = weight->valueLookupTree->evaluate ().begin (); leaf != weight->valueLookupTree->evaluate ().end (); leaf++){
+	double value = boost::get<double> (*leaf);
+	if(value <= numeric_limits<int>::min () + 1)
+	  continue;
+	weight->product *= value;
+      }
+    }
+
+  // now we'll loop over the histograms, filling each one as we go
 
   vector<HistoDef>::iterator histogram;
   for(histogram = histogramDefinitions.begin(); histogram != histogramDefinitions.end(); ++histogram)
@@ -116,6 +150,10 @@ Plotter::~Plotter ()
     {
       for (auto &valueLookupTree : histogram.valueLookupTrees)
         delete valueLookupTree;
+    }
+  for (auto &weight : weights)
+    {
+      delete weight.valueLookupTree;
     }
 }
 
@@ -286,8 +324,10 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
     }
     if (handles_.generatorweights.isValid ())
       weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
+    for (vector<Weight>::iterator sf = weights.begin (); sf != weights.end (); sf++)
+      weight *= sf->product;
     histogram->Fill(value, weight);
-    if (verbose_) clog << "Filled histogram " << definition.name << " with value=" << value << ", weight=" << weight << endl;  
+    if (verbose_) clog << "Filled histogram " << definition.name << " with value=" << value << ", weight=" << weight << endl;
 
   }
 
@@ -298,29 +338,31 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
 // fill TH2 using one collection
 void Plotter::fill2DHistogram(const HistoDef &definition){
 
+  double weight = 1.0;
+  for (vector<Weight>::iterator sf = weights.begin (); sf != weights.end (); sf++)
+    weight *= sf->product;
+
   if (definition.inputCollections.size() == 1) {
-    // If there is only one input collection, then fill the 2D histogram once per object.  
-    // To do that, increment each lookup tree in parallel.  
-    for (vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (), 
-	   leafY = definition.valueLookupTrees.at (1)->evaluate ().begin(); 
-	 leafX != definition.valueLookupTrees.at (0)->evaluate ().end () && 
-         leafY != definition.valueLookupTrees.at (1)->evaluate ().end (); 
+    // If there is only one input collection, then fill the 2D histogram once per object.
+    // To do that, increment each lookup tree in parallel.
+    for (vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (),
+	   leafY = definition.valueLookupTrees.at (1)->evaluate ().begin();
+	 leafX != definition.valueLookupTrees.at (0)->evaluate ().end () &&
+         leafY != definition.valueLookupTrees.at (1)->evaluate ().end ();
 	 leafX++, leafY++) {
       double valueX = boost::get<double> (*leafX),
-	valueY = boost::get<double> (*leafY),
-	weight = 1.0;
-      fill2DHistogram(definition, valueX, valueY, weight);  
+	valueY = boost::get<double> (*leafY);
+      fill2DHistogram(definition, valueX, valueY, weight);
     }
-    
-  } else {  
-    // If there is more than one input collection, then fill the 2D histogram for each combination of objects.  
-    // Warning:  This histogram may be difficult to interpret!      
+
+  } else {
+    // If there is more than one input collection, then fill the 2D histogram for each combination of objects.
+    // Warning:  This histogram may be difficult to interpret!
     for(vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (); leafX != definition.valueLookupTrees.at (0)->evaluate ().end (); leafX++){
       for(vector<Leaf>::const_iterator leafY = definition.valueLookupTrees.at (1)->evaluate ().begin (); leafY != definition.valueLookupTrees.at (1)->evaluate ().end (); leafY++){
 	double valueX = boost::get<double> (*leafX),
-	  valueY = boost::get<double> (*leafY),
-	  weight = 1.0;
-	fill2DHistogram(definition, valueX, valueY, weight);  
+	  valueY = boost::get<double> (*leafY);
+	fill2DHistogram(definition, valueX, valueY, weight);
       }
     }
   }
@@ -329,14 +371,14 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
 
 ////////////////////////////////////////////////////////////////////////
 
-void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double valueY, double weight) {  
+void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double valueY, double weight) {
 
   TH2D *histogram = fs_->getObject<TH2D>(definition.name, definition.directory);
   if (!histogram) {
     clog << "ERROR [Plotter::fill2DHistogram]:  Could not find histogram with name " << definition.name
-	 << " in directory " << definition.directory << endl;  
+	 << " in directory " << definition.directory << endl;
     return;
-  }  
+  }
   if(valueX <= numeric_limits<int>::min () + 1 || valueY <= numeric_limits<int>::min () + 1)
     return;
   if(definition.hasVariableBinsX){
@@ -348,7 +390,7 @@ void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double
   if (handles_.generatorweights.isValid ())
     weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
   histogram->Fill(valueX, valueY, weight);
-  if (verbose_) clog << "Filled histogram " << definition.name << " with valueX=" << valueX << ", valueY=" << valueY << ", weight=" << weight << endl;  
+  if (verbose_) clog << "Filled histogram " << definition.name << " with valueX=" << valueX << ", valueY=" << valueY << ", weight=" << weight << endl;
 
 }
 
@@ -462,6 +504,29 @@ Plotter::initializeValueLookupForest (vector<HistoDef> &histograms, Collections 
         }
       for (vector<ValueLookupTree *>::iterator tree = histogram->valueLookupTrees.begin (); tree != histogram->valueLookupTrees.end (); tree++)
         (*tree)->setCollections (handles);
+    }
+  return true;
+  //////////////////////////////////////////////////////////////////////////////
+}
+
+
+bool
+Plotter::initializeValueLookupForest (vector<Weight> &weights, Collections *handles)
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // For each inputVariable of each weight, parse it into a new
+  // ValueLookupTree object which is stored in the weight definition
+  // structure.
+  //////////////////////////////////////////////////////////////////////////////
+  for (vector<Weight>::iterator weight = weights.begin (); weight != weights.end (); weight++)
+    {
+      if (firstEvent_)
+        {
+	  weight->valueLookupTree = new ValueLookupTree (weight->inputVariable, weight->inputCollections);
+	  if (!weight->valueLookupTree->isValid ())
+	    return false;
+        }
+      weight->valueLookupTree->setCollections (handles);
     }
   return true;
   //////////////////////////////////////////////////////////////////////////////

@@ -183,7 +183,7 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
-def add_channels (process, channels, histogramSets, collections, variableProducers, skim = True):
+def add_channels (process, channels, histogramSets, weights, collections, variableProducers, skim = True):
 
     ############################################################################
     # If only the default scheduler exists, create an empty one
@@ -465,6 +465,7 @@ def add_channels (process, channels, histogramSets, collections, variableProduce
             plotter = cms.EDAnalyzer ("Plotter",
                 collections     =  filteredCollections,
                 histogramSets   =  histogramSets,
+                weights         =  weights,
                 verbose         =  cms.int32 (0)
             )
             channelPath += plotter

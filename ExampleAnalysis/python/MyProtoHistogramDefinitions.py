@@ -20,6 +20,13 @@ histograms = cms.PSet(
             binsX = cms.untracked.vdouble(100, -5, 5),
             inputVariables = cms.vstring("eta"),
         ),
+        cms.PSet (
+            name = cms.string("muonEtaVsPhi"),
+            title = cms.string("Muon Pseudorapidity vs. Phi; muon #phi; muon #eta"),
+            binsX = cms.untracked.vdouble(100, -3.14, 3.14),
+            binsY = cms.untracked.vdouble(100, -5, 5),
+            inputVariables = cms.vstring("eta","phi"),
+        ),
     )
 )
 
