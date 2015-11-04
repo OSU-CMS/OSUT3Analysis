@@ -353,7 +353,7 @@ dataset_names = {
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
-    'DYJetsToLL_10to50_MiniAOD' : "/DYJetsToLL_M-5to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+    'DYJetsToLL_10to50_MiniAOD' : "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM",
     'TTJets_MiniAOD'            : "/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
     'ZZ_MiniAOD'                : "/ZZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM", 
     'WW_MiniAOD'                : "/WW_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
@@ -536,7 +536,7 @@ nJobs = {
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
-    'DYJetsToLL_10to50_MiniAOD'    : 753,
+    'DYJetsToLL_10to50_MiniAOD'    : 9999,
     'TTJets_MiniAOD'        : 325,
     'WW_MiniAOD'        : 44,
     'ZZ_MiniAOD'        : 36,
