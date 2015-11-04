@@ -23,8 +23,8 @@ JetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
   for (const auto &object : *collection)
     {
-      const osu::Jet * const jet = new osu::Jet (object);
-      pl_->push_back (*jet);
+      osu::Jet jet(object);
+      pl_->push_back (jet);
     }
 
   event.put (pl_, collection_.instance ());

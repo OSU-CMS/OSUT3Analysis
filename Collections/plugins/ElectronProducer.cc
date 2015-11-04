@@ -23,8 +23,8 @@ ElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
     {
-      const osu::Electron * const electron = new osu::Electron (object);
-      pl_->push_back (*electron);
+      osu::Electron electron(object);
+      pl_->push_back (electron);
     }
 
   event.put (pl_, collection_.instance ());

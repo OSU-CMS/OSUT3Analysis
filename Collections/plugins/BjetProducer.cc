@@ -23,8 +23,8 @@ BjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Bjet> > (new vector<osu::Bjet> ());
   for (const auto &object : *collection)
     {
-      const osu::Bjet * const bjet = new osu::Bjet (object);
-      pl_->push_back (*bjet);
+      osu::Bjet bjet(object);
+      pl_->push_back (bjet);
     }
 
   event.put (pl_, collection_.instance ());

@@ -20,8 +20,8 @@ BeamspotProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<TYPE(beamspots)> collection;
   anatools::getCollection (collection_, collection, event);
   pl_ = auto_ptr<osu::Beamspot>  (new osu::Beamspot ());
-  const osu::Beamspot * const beamspot = new osu::Beamspot (*collection);
-  *pl_ = *beamspot;
+  osu::Beamspot beamspot(*collection);
+  *pl_ = beamspot;
   event.put (pl_, collection_.instance ());
   pl_.reset();
 }

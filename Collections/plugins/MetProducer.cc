@@ -23,8 +23,8 @@ MetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Met> > (new vector<osu::Met> ());
   for (const auto &object : *collection)
     {
-      const osu::Met * const met = new osu::Met (object);
-      pl_->push_back (*met);
+      osu::Met met(object);  
+      pl_->push_back (met);
     }
 
   event.put (pl_, collection_.instance ());

@@ -23,8 +23,8 @@ BasicjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Basicjet> > (new vector<osu::Basicjet> ());
   for (const auto &object : *collection)
     {
-      const osu::Basicjet * const basicjet = new osu::Basicjet (object);
-      pl_->push_back (*basicjet);
+      osu::Basicjet basicjet(object);
+      pl_->push_back (basicjet);
     }
 
   event.put (pl_, collection_.instance ());

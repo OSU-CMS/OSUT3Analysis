@@ -21,8 +21,8 @@ EventvariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   anatools::getCollection (collection_, collection, event);
 
   pl_ = auto_ptr<osu::Eventvariable> (new osu::Eventvariable ());
-  const osu::Eventvariable * const eventvariable = new osu::Eventvariable (*collection);
-  *pl_ = *eventvariable;
+  osu::Eventvariable eventvariable(*collection); 
+  *pl_ = eventvariable;
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }

@@ -23,8 +23,8 @@ TrigobjProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Trigobj> > (new vector<osu::Trigobj> ());
   for (const auto &object : *collection)
     {
-      const osu::Trigobj * const trigobj = new osu::Trigobj (object);
-      pl_->push_back (*trigobj);
+      osu::Trigobj trigobj(object);
+      pl_->push_back (trigobj);
     }
 
   event.put (pl_, collection_.instance ());

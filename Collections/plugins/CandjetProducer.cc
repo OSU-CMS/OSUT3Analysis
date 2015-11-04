@@ -23,8 +23,8 @@ CandjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Candjet> > (new vector<osu::Candjet> ());
   for (const auto &object : *collection)
     {
-      const osu::Candjet * const candjet = new osu::Candjet (object);
-      pl_->push_back (*candjet);
+      osu::Candjet candjet(object);
+      pl_->push_back (candjet);
     }
 
   event.put (pl_, collection_.instance ());

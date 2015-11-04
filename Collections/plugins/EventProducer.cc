@@ -23,8 +23,8 @@ EventProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Event> > (new vector<osu::Event> ());
   for (const auto &object : *collection)
     {
-      const osu::Event * const event = new osu::Event (object);
-      pl_->push_back (*event);
+      osu::Event event(object);
+      pl_->push_back (event);
     }
 
   event.put (pl_, collection_.instance ());

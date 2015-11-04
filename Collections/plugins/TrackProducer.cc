@@ -23,8 +23,8 @@ TrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Track> > (new vector<osu::Track> ());
   for (const auto &object : *collection)
     {
-      const osu::Track * const track = new osu::Track (object);
-      pl_->push_back (*track);
+      osu::Track track(object);
+      pl_->push_back (track);
     }
 
   event.put (pl_, collection_.instance ());

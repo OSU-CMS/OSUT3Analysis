@@ -23,8 +23,8 @@ CandeleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Candele> > (new vector<osu::Candele> ());
   for (const auto &object : *collection)
     {
-      const osu::Candele * const candele = new osu::Candele (object);
-      pl_->push_back (*candele);
+      osu::Candele candele(object); 
+      pl_->push_back (candele);
     }
 
   event.put (pl_, collection_.instance ());

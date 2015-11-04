@@ -23,8 +23,8 @@ BxlumiProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Bxlumi> > (new vector<osu::Bxlumi> ());
   for (const auto &object : *collection)
     {
-      const osu::Bxlumi * const bxlumi = new osu::Bxlumi (object);
-      pl_->push_back (*bxlumi);
+      osu::Bxlumi bxlumi(object);
+      pl_->push_back (bxlumi);
     }
 
   event.put (pl_, collection_.instance ());

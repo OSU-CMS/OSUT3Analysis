@@ -23,8 +23,8 @@ UservariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Uservariable> > (new vector<osu::Uservariable> ());
   for (const auto &object : *collection)
     {
-      const osu::Uservariable * const uservariable = new osu::Uservariable (object);
-      pl_->push_back (*uservariable);
+      osu::Uservariable uservariable(object);
+      pl_->push_back (uservariable);
     }
 
   event.put (pl_, collection_.instance ());

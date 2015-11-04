@@ -23,8 +23,8 @@ TauProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Tau> > (new vector<osu::Tau> ());
   for (const auto &object : *collection)
     {
-      const osu::Tau * const tau = new osu::Tau (object);
-      pl_->push_back (*tau);
+      osu::Tau tau(object);
+      pl_->push_back (tau);
     }
 
   event.put (pl_, collection_.instance ());

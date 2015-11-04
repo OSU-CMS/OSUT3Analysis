@@ -23,8 +23,8 @@ SuperclusterProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Supercluster> > (new vector<osu::Supercluster> ());
   for (const auto &object : *collection)
     {
-      const osu::Supercluster * const supercluster = new osu::Supercluster (object);
-      pl_->push_back (*supercluster);
+      osu::Supercluster supercluster(object);
+      pl_->push_back (supercluster);
     }
 
   event.put (pl_, collection_.instance ());

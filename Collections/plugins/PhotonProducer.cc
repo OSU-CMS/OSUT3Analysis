@@ -23,8 +23,8 @@ PhotonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Photon> > (new vector<osu::Photon> ());
   for (const auto &object : *collection)
     {
-      const osu::Photon * const photon = new osu::Photon (object);
-      pl_->push_back (*photon);
+      osu::Photon photon(object);
+      pl_->push_back (photon);
     }
 
   event.put (pl_, collection_.instance ());

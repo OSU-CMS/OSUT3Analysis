@@ -23,8 +23,8 @@ GenjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Genjet> > (new vector<osu::Genjet> ());
   for (const auto &object : *collection)
     {
-      const osu::Genjet * const genjet = new osu::Genjet (object);
-      pl_->push_back (*genjet);
+      osu::Genjet genjet(object);
+      pl_->push_back (genjet);
     }
 
   event.put (pl_, collection_.instance ());

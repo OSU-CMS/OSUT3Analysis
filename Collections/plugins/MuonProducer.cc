@@ -23,8 +23,8 @@ MuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     {
-      const osu::Muon * const muon = new osu::Muon (object);
-      pl_->push_back (*muon);
+      osu::Muon muon(object);
+      pl_->push_back (muon);
     }
 
   event.put (pl_, collection_.instance ());

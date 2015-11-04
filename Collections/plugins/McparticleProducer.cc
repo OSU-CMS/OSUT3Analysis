@@ -23,8 +23,8 @@ McparticleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Mcparticle> > (new vector<osu::Mcparticle> ());
   for (const auto &object : *collection)
     {
-      const osu::Mcparticle * const mcparticle = new osu::Mcparticle (object);
-      pl_->push_back (*mcparticle);
+      osu::Mcparticle mcparticle(object);
+      pl_->push_back (mcparticle);
     }
 
   event.put (pl_, collection_.instance ());
