@@ -18,15 +18,15 @@ void
 CandjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(candjets)> > collection;
-  anatools::getCollection (collection_, collection, event);
-
+  bool valid = anatools::getCollection (collection_, collection, event);
+  if(!valid)
+    return;
   pl_ = auto_ptr<vector<osu::Candjet> > (new vector<osu::Candjet> ());
   for (const auto &object : *collection)
     {
       osu::Candjet candjet(object);
       pl_->push_back (candjet);
     }
-
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }

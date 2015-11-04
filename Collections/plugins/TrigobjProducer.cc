@@ -18,7 +18,9 @@ void
 TrigobjProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(trigobjs)> > collection;
-  anatools::getCollection (collection_, collection, event);
+  bool valid = anatools::getCollection (collection_, collection, event);
+  if(!valid)
+    return;
 
   pl_ = auto_ptr<vector<osu::Trigobj> > (new vector<osu::Trigobj> ());
   for (const auto &object : *collection)

@@ -18,7 +18,9 @@ void
 EventProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(events)> > collection;
-  anatools::getCollection (collection_, collection, event);
+  bool valid = anatools::getCollection (collection_, collection, event);
+  if(!valid)
+    return;
 
   pl_ = auto_ptr<vector<osu::Event> > (new vector<osu::Event> ());
   for (const auto &object : *collection)

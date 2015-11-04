@@ -18,7 +18,9 @@ void
 GenjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(genjets)> > collection;
-  anatools::getCollection (collection_, collection, event);
+  bool valid = anatools::getCollection (collection_, collection, event);
+  if(!valid)
+    return;
 
   pl_ = auto_ptr<vector<osu::Genjet> > (new vector<osu::Genjet> ());
   for (const auto &object : *collection)

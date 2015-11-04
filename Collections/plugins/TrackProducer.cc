@@ -18,7 +18,9 @@ void
 TrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(tracks)> > collection;
-  anatools::getCollection (collection_, collection, event);
+  bool valid = anatools::getCollection (collection_, collection, event);
+  if(!valid)
+    return;
 
   pl_ = auto_ptr<vector<osu::Track> > (new vector<osu::Track> ());
   for (const auto &object : *collection)

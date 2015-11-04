@@ -18,7 +18,9 @@ void
 MetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(mets)> > collection;
-  anatools::getCollection (collection_, collection, event);
+  bool valid = anatools::getCollection (collection_, collection, event);
+  if(!valid)
+    return;
 
   pl_ = auto_ptr<vector<osu::Met> > (new vector<osu::Met> ());
   for (const auto &object : *collection)

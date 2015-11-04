@@ -18,8 +18,9 @@ void
 MuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(muons)> > collection;
-  anatools::getCollection (collection_, collection, event);
-
+  bool valid = anatools::getCollection (collection_, collection, event);
+  if(!valid)
+    return;
   pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     {
