@@ -1444,24 +1444,25 @@ labels = {
 }
 
 crossSections = {
+   #source: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns
    #MiniAOD not stored on T3.
-   'DYJetsToLL_50_MiniAOD'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)  
-   'WJetsToLNu_MiniAOD'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3) 
-   'TTJets_MiniAOD'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)  
+   'DYJetsToLL_50_MiniAOD'                 : 6025.2,       
+   'WJetsToLNu_MiniAOD'                    : 61526.7,       
+   'TTJets_MiniAOD'                        : 831.76,       
     'WW_MiniAOD'                       :                63.21, 
     'WZ_MiniAOD'                       :                22.82, 
     'ZZ_MiniAOD'                       :                10.32,  
    #50ns
-   'DYJetsToLL_50_50ns_MiniAOD'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)  
-   'WJetsToLNu_50ns_MiniAOD'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3) 
-   'TTJets_50ns_MiniAOD'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)  
+   'DYJetsToLL_50_50ns_MiniAOD'                 : 6025.2,      
+   'WJetsToLNu_50ns_MiniAOD'                    : 61526.7,      
+   'TTJets_50ns_MiniAOD'                        : 831.76,        
     'WW_50ns_MiniAOD'                       :                63.21, 
     'WZ_50ns_MiniAOD'                       :                22.82, 
     'ZZ_50ns_MiniAOD'                       :                10.32,  
+    'DYJetsToLL_10to50_MiniAOD'        :                18610,      
+    'DYJetsToLL_10to50_50ns_MiniAOD'   :                18610,
 ############################################################# 
 # Cross sections below obatined with crossSectionExtractor.py 
-    'DYJetsToLL_10to50_MiniAOD'        :              13638.7,      
-    'DYJetsToLL_10to50_50ns_MiniAOD'   :              13638.7,       
     'QCD_MuEnriched_20toInf_MiniAOD'   :  720648000.0*0.00042, 
     'QCD_MuEnriched_15to20_MiniAOD'    :   1273190000.0*0.003, 
     'QCD_MuEnriched_20to30_MiniAOD'    :   558528000.0*0.0053, 
