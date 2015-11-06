@@ -5,7 +5,8 @@
 MuonProducer::MuonProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
 {
-  collection_ = collections_.getParameter<edm::InputTag> ("muons");
+  collection_         = collections_.getParameter<edm::InputTag> ("muons");
+  collPrimaryvertexs_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
 
   produces<vector<osu::Muon> > (collection_.instance ());
 }
@@ -18,13 +19,23 @@ void
 MuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(muons)> > collection;
+  edm::Handle<vector<TYPE(primaryvertexs)> > collPrimaryvertexs;
   bool valid = anatools::getCollection (collection_, collection, event);
-  if(!valid)
+  if(!valid) {
+    clog << "ERROR [MuonProducer::produce]:  could not get collection: " << collection_ << endl;  
     return;
+  } 
+  valid = anatools::getCollection (collPrimaryvertexs_, collPrimaryvertexs, event);
+  if(!valid) {
+    clog << "ERROR [MuonProducer::produce]:  could not get collection: " << collPrimaryvertexs_ << endl;  
+    return;
+  }
   pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     {
       osu::Muon muon(object);
+      const reco::Vertex vtx = collPrimaryvertexs->at(0);  
+      muon.set_isTightMuonWRTVtx(muon.isTightMuon(vtx));  
       pl_->push_back (muon);
     }
 

@@ -13,6 +13,13 @@ namespace osu
         Muon ();
         Muon (const TYPE(muons) &);
         ~Muon ();
+
+	const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }   
+	void   set_isTightMuonWRTVtx(bool isTightMuon);   
+
+      private:
+	bool isTightMuonWRTVtx_; 
+
     };
 }
 
