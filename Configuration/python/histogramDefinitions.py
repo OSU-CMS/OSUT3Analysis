@@ -97,6 +97,12 @@ MuonHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(2, 0, 2),
             inputVariables = cms.vstring("isPFMuon"),
         ),
+        cms.PSet (
+            name = cms.string("muonIsTightMuonWRTVtx"),
+            title = cms.string("Muon isTightMuon"),
+            binsX = cms.untracked.vdouble(2, 0, 2),
+            inputVariables = cms.vstring("isTightMuonWRTVtx"),
+        ),
     )
 )
 
