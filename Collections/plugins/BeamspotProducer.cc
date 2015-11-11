@@ -18,7 +18,8 @@ void
 BeamspotProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<TYPE(beamspots)> collection;
-  bool valid = anatools::getCollection (collection_, collection, event);
+  bool valid = anatools::getCollection (collection_, collection, event, false);
+  // Specify argument verbose = false to prevent error messages if collection is not found. 
   if(!valid)
     return;
   pl_ = auto_ptr<osu::Beamspot>  (new osu::Beamspot ());

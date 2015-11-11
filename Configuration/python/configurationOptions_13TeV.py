@@ -203,8 +203,6 @@ composite_dataset_definitions = {
         'DoubleMu_2015D',
     ],
     'SingleMu_2015' : [
-        'SingleMu_2015B',
-        'SingleMu_2015C',
         'SingleMu_2015D',
     ],
     'SingleEle_2015' : [
@@ -449,7 +447,7 @@ dataset_names = {
     
     'SingleMu_2015B'       : "/SingleMuon/Run2015B-PromptReco-v1/MINIAOD",
     'SingleMu_2015C'       : "/SingleMuon/Run2015C-PromptReco-v1/MINIAOD",
-    'SingleMu_2015D'       : "/SingleMuon/Run2015D-PromptReco-v3/MINIAOD",
+    'SingleMu_2015D'       : "/SingleMuon/Run2015D-05Oct2015-v1/MINIAOD", 
    
     'SingleEle_2015B'      : "/SingleElectron/Run2015B-PromptReco-v1/MINIAOD",
     'SingleEle_2015C'      : "/SingleElectron/Run2015C-PromptReco-v1/MINIAOD",

@@ -18,7 +18,8 @@ void
 CandjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(candjets)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event);
+  bool valid = anatools::getCollection (collection_, collection, event, false);
+  // Specify argument verbose = false to prevent error messages if collection is not found. 
   if(!valid)
     return;
   pl_ = auto_ptr<vector<osu::Candjet> > (new vector<osu::Candjet> ());
