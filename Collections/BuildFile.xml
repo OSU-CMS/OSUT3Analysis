@@ -8,10 +8,12 @@
 <use  name="DataFormats/METReco"/>
 <use  name="DataFormats/MuonReco"/>
 <use  name="DataFormats/PatCandidates"/>
+<use  name="SimDataFormats/PileupSummaryInfo"/>
 <use  name="DataFormats/TauReco"/>
 <use  name="DataFormats/TrackReco"/>
 <use  name="DataFormats/VertexReco"/>
-<use name="DisappTrks/CandidateTrackProducer"/>
+<use  name="DisplacedSUSY/CandidateElectronProducer"/>
+<use  name="DisplacedSUSY/CandidateJetProducer"/>
 <flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
 <!--flags  CXXFLAGS="-gdwarf-2 -g3 -O0 -pipe"/-->
 <export>

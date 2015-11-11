@@ -98,6 +98,10 @@ namespace anatools
   string getObjectType (const osu::Track &);
   string getObjectClass (const osu::Track &);
 #endif
+#if IS_VALID(pileupinfos)
+  string getObjectType (const osu::PileUpInfo &);
+  string getObjectClass (const osu::PileUpInfo &);
+#endif
 #if IS_VALID(trigobjs)
   string getObjectType (const osu::Trigobj &);
   string getObjectClass (const osu::Trigobj &);
