@@ -93,6 +93,7 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
     Weight weight;
     weight.inputCollections = inputCollections;
     weight.inputVariable = inputVariable;
+    weight.valueLookupTree = NULL;
     weight.product = 1.0;
     weights.push_back(weight);
   }
