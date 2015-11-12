@@ -154,7 +154,8 @@ Plotter::~Plotter ()
     }
   for (auto &weight : weights)
     {
-      delete weight.valueLookupTree;
+      if (weight.valueLookupTree)
+        delete weight.valueLookupTree;
     }
 }
 
