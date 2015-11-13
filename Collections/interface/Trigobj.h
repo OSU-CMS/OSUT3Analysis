@@ -1,17 +1,18 @@
 #ifndef OSU_TRIGOBJ
 #define OSU_TRIGOBJ
 
-#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
+#include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 
 #if IS_VALID(trigobjs)
 
 namespace osu
 {
-  class Trigobj : public TYPE(trigobjs)
+  class Trigobj : public GenMatchable<TYPE(trigobjs), 0>
     {
       public:
         Trigobj ();
         Trigobj (const TYPE(trigobjs) &);
+        Trigobj (const TYPE(trigobjs) &, const edm::Handle<vector<osu::Mcparticle> > &);
         ~Trigobj ();
     };
 }

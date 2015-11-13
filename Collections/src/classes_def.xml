@@ -3,4 +3,5 @@
   <class pattern="std::vector<osu::*>"/>
   <class pattern="edm::Wrapper<osu::*>"/>
   <class pattern="edm::Wrapper<std::vector<osu::*> >"/>
+  <class pattern="edm::Ref<std::vector<osu::*> >"/>
 </lcgdict>

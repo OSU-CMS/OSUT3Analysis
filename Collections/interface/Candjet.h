@@ -1,17 +1,18 @@
 #ifndef OSU_CANDJET
 #define OSU_CANDJET
 
-#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
+#include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 
 #if IS_VALID(candjets)
 
 namespace osu
 {
-  class Candjet : public TYPE(candjets)
+  class Candjet : public GenMatchable<TYPE(candjets), 0>
     {
       public:
         Candjet ();
         Candjet (const TYPE(candjets) &);
+        Candjet (const TYPE(candjets) &, const edm::Handle<vector<osu::Mcparticle> > &);
         ~Candjet ();
     };
 }

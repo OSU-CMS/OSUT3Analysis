@@ -1,17 +1,18 @@
 #ifndef OSU_CANDELE
 #define OSU_CANDELE
 
-#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
+#include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 
 #if IS_VALID(candeles)
 
 namespace osu
 {
-  class Candele : public TYPE(candeles)
+  class Candele : public GenMatchable<TYPE(candeles), 11>
     {
       public:
         Candele ();
         Candele (const TYPE(candeles) &);
+        Candele (const TYPE(candeles) &, const edm::Handle<vector<osu::Mcparticle> > &);
         ~Candele ();
     };
 }

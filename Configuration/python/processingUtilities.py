@@ -351,11 +351,20 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
             outputCommands.append (outputCommand)
         ########################################################################
 
+        collectionsToProduce = [
+            "mcparticles",  # needed for gen-matching
+        ]
+
         ########################################################################
         ########################################################################
         producedCollections = copy.deepcopy (collections)
         cutCollections = get_collections (channel.cuts)
         usedCollections = sorted (list (set (cutCollections + plotCollections)))
+        for collection in collectionsToProduce:
+            if collection in usedCollections:
+                usedCollections.remove (collection)
+            if hasattr (collections, collection):
+                usedCollections.insert (0, collection)
         for collection in usedCollections:
             if collection is "uservariables" or collection is "eventvariables":
                 newInputTags = cms.VInputTag()

@@ -1,17 +1,18 @@
 #ifndef OSU_JET
 #define OSU_JET
 
-#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
+#include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 
 #if IS_VALID(jets)
 
 namespace osu
 {
-  class Jet : public TYPE(jets)
+  class Jet : public GenMatchable<TYPE(jets), 0>
     {
       public:
         Jet ();
         Jet (const TYPE(jets) &);
+        Jet (const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &);
         ~Jet ();
     };
 }
