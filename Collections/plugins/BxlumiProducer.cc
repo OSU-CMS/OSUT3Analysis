@@ -17,10 +17,10 @@ BxlumiProducer::~BxlumiProducer ()
 }
 
 void
-BxlumiProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+BxlumiProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (bxlumis)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
 
   pl_ = auto_ptr<vector<osu::Bxlumi> > (new vector<osu::Bxlumi> ());
@@ -30,7 +30,7 @@ BxlumiProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
       pl_->push_back (bxlumi);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

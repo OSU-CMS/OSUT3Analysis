@@ -17,10 +17,10 @@ PrimaryvertexProducer::~PrimaryvertexProducer ()
 }
 
 void
-PrimaryvertexProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+PrimaryvertexProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (primaryvertexs)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
 
   pl_ = auto_ptr<vector<osu::Primaryvertex> > (new vector<osu::Primaryvertex> ());
@@ -30,7 +30,7 @@ PrimaryvertexProducer::produce (edm::Event &event,  const edm::EventSetup &setup
       pl_->push_back (primaryvertex);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

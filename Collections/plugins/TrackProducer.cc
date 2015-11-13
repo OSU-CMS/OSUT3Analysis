@@ -17,22 +17,22 @@ TrackProducer::~TrackProducer ()
 }
 
 void
-TrackProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+TrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (tracks)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("",  ""),  particles,  event);
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Track> > (new vector<osu::Track> ());
   for (const auto &object : *collection)
     {
-      const osu::Track track (object,  particles);
+      const osu::Track track (object, particles);
       pl_->push_back (track);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

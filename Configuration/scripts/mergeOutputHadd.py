@@ -42,7 +42,7 @@ if arguments.localConfig:
 
 for dataset in datasets:
     outputName = condor_dir + "/" + dataset + ".root"
-    inputFiles = condor_dir + "/" + dataset + "/hist*.root"  
+    inputFiles = condor_dir + "/" + dataset + "/*.root"  
     command = "hadd -f %s %s" % (outputName, inputFiles)
     print "About to execute: " + command
     os.system(command)

@@ -17,22 +17,22 @@ TrigobjProducer::~TrigobjProducer ()
 }
 
 void
-TrigobjProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+TrigobjProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (trigobjs)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("",  ""),  particles,  event);
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Trigobj> > (new vector<osu::Trigobj> ());
   for (const auto &object : *collection)
     {
-      const osu::Trigobj trigobj (object,  particles);
+      const osu::Trigobj trigobj (object, particles);
       pl_->push_back (trigobj);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

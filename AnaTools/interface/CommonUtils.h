@@ -22,7 +22,7 @@
 
 namespace anatools
 {
-  template <class T> bool getCollection (const edm::InputTag &, edm::Handle<T> &, const edm::Event &);
+  template <class T> bool getCollection (const edm::InputTag& label, edm::Handle<T>& collection, const edm::Event& event, bool verbose = true);
 
   // Return a (hopefully) unique hashed integer for an object
   template <class T> int getObjectHash (const T &);
@@ -97,6 +97,10 @@ namespace anatools
 #if IS_VALID(tracks)
   string getObjectType (const osu::Track &);
   string getObjectClass (const osu::Track &);
+#endif
+#if IS_VALID(pileupinfos)
+  string getObjectType (const osu::PileUpInfo &);
+  string getObjectClass (const osu::PileUpInfo &);
 #endif
 #if IS_VALID(trigobjs)
   string getObjectType (const osu::Trigobj &);
@@ -175,7 +179,7 @@ namespace anatools
  * @return boolean representing whether retrieval was successful
  */
 template <class T> bool
-anatools::getCollection(const edm::InputTag& label, edm::Handle<T>& collection, const edm::Event &event) {
+anatools::getCollection(const edm::InputTag& label, edm::Handle<T>& collection, const edm::Event &event, bool verbose) {
   event.getByLabel(label, collection);
   if (!collection.isValid()) {
     vector<edm::Handle<T> > objVec;
@@ -191,14 +195,14 @@ anatools::getCollection(const edm::InputTag& label, edm::Handle<T>& collection, 
     if (collWithFewestParents >= 0)
       collection = objVec.at(collWithFewestParents);
     else {
-      clog << "ERROR: did not find any collections that match input tag:  " << label 
-	   << ", with type:  " << typeid(collection).name()  
-	   << endl;  
+      if (verbose) clog << "ERROR: did not find any collections that match input tag:  " << label 
+			<< ", with type:  " << typeid(collection).name()  
+			<< endl;  
       return false;
     }
     if (!collection.isValid()) {
-      clog << "ERROR: could not get input collection with product instance label: " << label.instance()
-           << ", but found " << objVec.size() << " collections of the specified type." << endl;
+      if (verbose) clog << "ERROR: could not get input collection with product instance label: " << label.instance()
+			<< ", but found " << objVec.size() << " collections of the specified type." << endl;
       return false;
     }
   }

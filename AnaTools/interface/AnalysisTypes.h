@@ -26,6 +26,7 @@
 #include "OSUT3Analysis/Collections/interface/Track.h"
 #include "OSUT3Analysis/Collections/interface/Trigobj.h"
 #include "OSUT3Analysis/Collections/interface/Uservariable.h"
+#include "OSUT3Analysis/Collections/interface/PileUpInfo.h"
 
 class ValueLookupTree;
 
@@ -115,6 +116,7 @@ struct Collections
   edm::Handle<vector<osu::Supercluster> >   superclusters;
   edm::Handle<vector<osu::Tau> >            taus;
   edm::Handle<vector<osu::Track> >          tracks;
+  edm::Handle<vector<osu::PileUpInfo> >     pileupinfos;
   edm::Handle<vector<osu::Trigobj> >        trigobjs;
   vector<edm::Handle<osu::Uservariable> >   uservariables;
   vector<edm::Handle<osu::Eventvariable> >  eventvariables;

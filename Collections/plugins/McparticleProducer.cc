@@ -17,10 +17,10 @@ McparticleProducer::~McparticleProducer ()
 }
 
 void
-McparticleProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+McparticleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (mcparticles)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
 
   pl_ = auto_ptr<vector<osu::Mcparticle> > (new vector<osu::Mcparticle> ());
@@ -30,7 +30,7 @@ McparticleProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
       pl_->push_back (mcparticle);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

@@ -17,10 +17,10 @@ EventProducer::~EventProducer ()
 }
 
 void
-EventProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+EventProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (events)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
 
   pl_ = auto_ptr<vector<osu::Event> > (new vector<osu::Event> ());
@@ -30,7 +30,7 @@ EventProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
       pl_->push_back (event);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

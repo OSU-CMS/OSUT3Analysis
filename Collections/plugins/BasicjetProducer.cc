@@ -17,13 +17,13 @@ BasicjetProducer::~BasicjetProducer ()
 }
 
 void
-BasicjetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+BasicjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (basicjets)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("",  ""),  particles,  event);
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Basicjet> > (new vector<osu::Basicjet> ());
   for (const auto &object : *collection)
@@ -32,7 +32,7 @@ BasicjetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
       pl_->push_back (basicjet);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

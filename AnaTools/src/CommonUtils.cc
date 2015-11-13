@@ -214,6 +214,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "superclusters")     &&  collections.exists  ("superclusters"))     getCollection  (collections.getParameter<edm::InputTag>  ("superclusters"),     handles.superclusters,     event);
   if  (VEC_CONTAINS  (objectsToGet,  "taus")              &&  collections.exists  ("taus"))              getCollection  (collections.getParameter<edm::InputTag>  ("taus"),              handles.taus,              event);
   if  (VEC_CONTAINS  (objectsToGet,  "tracks")            &&  collections.exists  ("tracks"))            getCollection  (collections.getParameter<edm::InputTag>  ("tracks"),            handles.tracks,            event);
+  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos")            &&  collections.exists  ("pileupinfos"))            getCollection  (collections.getParameter<edm::InputTag>  ("pileupinfos"),            handles.pileupinfos,            event);
   if  (VEC_CONTAINS  (objectsToGet,  "triggers")          &&  collections.exists  ("triggers"))          getCollection  (collections.getParameter<edm::InputTag>  ("triggers"),          handles.triggers,          event);
   if  (VEC_CONTAINS  (objectsToGet,  "trigobjs")          &&  collections.exists  ("trigobjs"))          getCollection  (collections.getParameter<edm::InputTag>  ("trigobjs"),          handles.trigobjs,          event);
   if  (VEC_CONTAINS  (objectsToGet,  "uservariables")     &&  collections.exists  ("uservariables"))
@@ -278,6 +279,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     clog << "INFO: did not retrieve taus collection from the event." << endl;
   if (firstEvent && !handles.tracks.isValid ())
     clog << "INFO: did not retrieve tracks collection from the event." << endl;
+  if (firstEvent && !handles.pileupinfos.isValid ())
+    clog << "INFO: did not retrieve pileupinfos collection from the event." << endl;
   if (firstEvent && !handles.triggers.isValid ())
     clog << "INFO: did not retrieve triggers collection from the event." << endl;
   if (firstEvent && !handles.trigobjs.isValid ())
@@ -654,6 +657,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 #if IS_VALID(tracks)
   string  anatools::getObjectType  (const  osu::Track          &obj)  {  return  "track";          }
   string  anatools::getObjectClass  (const  osu::Track          &obj)  {  return  "osu::Track";          }
+#endif
+#if IS_VALID(pileupinfos)
+  string  anatools::getObjectType  (const  osu::PileUpInfo          &obj)  {  return  "pileupinfo";          }
+  string  anatools::getObjectClass  (const  osu::PileUpInfo          &obj)  {  return  "osu::PileUpInfo";          }
 #endif
 #if IS_VALID(trigobjs)
   string  anatools::getObjectType  (const  osu::Trigobj        &obj)  {  return  "trigobj";        }

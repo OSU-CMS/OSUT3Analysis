@@ -17,13 +17,13 @@ GenjetProducer::~GenjetProducer ()
 }
 
 void
-GenjetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+GenjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (genjets)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("",  ""),  particles,  event);
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Genjet> > (new vector<osu::Genjet> ());
   for (const auto &object : *collection)
@@ -32,7 +32,7 @@ GenjetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
       pl_->push_back (genjet);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

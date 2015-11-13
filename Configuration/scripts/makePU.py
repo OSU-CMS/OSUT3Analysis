@@ -5,7 +5,7 @@ import os
 import re
 from array import *
 from optparse import OptionParser
-from OSUT3Analysis.Configuration.configurationOptions import *
+from OSUT3Analysis.Configuration.configurationOptions_13TeV import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 
 parser = OptionParser()
@@ -21,7 +21,7 @@ condor_dir = set_condor_output_dir(arguments)
 from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TArrow, THStack, TIter, TKey, TPaveLabel
 
 gROOT.SetBatch()
-outputFile = TFile(condor_dir + "/pu.root", "RECREATE")
+outputFile = TFile(condor_dir + "/puMC.root", "RECREATE")
 
 processed_datasets = []
 
@@ -49,7 +49,7 @@ for sample in processed_datasets: # loop over different samples as listed in con
     inputFile = TFile(condor_dir + "/" + sample + ".root")
     if(inputFile.IsZombie()):
         continue
-    Histogram = inputFile.Get(rootDirectory+"/pu").Clone()
+    Histogram = inputFile.Get(rootDirectory+"/pileup").Clone()
     Histogram.SetDirectory(0)
     outputFile.cd()
     Histogram.Write (sample)

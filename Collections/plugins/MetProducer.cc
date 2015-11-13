@@ -17,10 +17,10 @@ MetProducer::~MetProducer ()
 }
 
 void
-MetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+MetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (mets)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
 
   pl_ = auto_ptr<vector<osu::Met> > (new vector<osu::Met> ());
@@ -30,7 +30,7 @@ MetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
       pl_->push_back (met);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

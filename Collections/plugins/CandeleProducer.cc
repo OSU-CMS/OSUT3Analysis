@@ -17,22 +17,22 @@ CandeleProducer::~CandeleProducer ()
 }
 
 void
-CandeleProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+CandeleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (candeles)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("",  ""),  particles,  event);
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Candele> > (new vector<osu::Candele> ());
   for (const auto &object : *collection)
     {
-      const osu::Candele candele (object,  particles);
+      const osu::Candele candele (object, particles);
       pl_->push_back (candele);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

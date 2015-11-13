@@ -17,14 +17,14 @@ EventvariableProducer::~EventvariableProducer ()
 }
 
 void
-EventvariableProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+EventvariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<TYPE (eventvariables)> collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
 
   pl_ = auto_ptr<osu::Eventvariable> (new osu::Eventvariable (*collection));
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

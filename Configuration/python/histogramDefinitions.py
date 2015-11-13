@@ -62,28 +62,16 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("phi","eta"),
         ),
         cms.PSet (
-            name = cms.string("muonTkNormChi2"),
-            title = cms.string("Muon Track NormChi2; #chi^{2}"),
-            binsX = cms.untracked.vdouble(50, 0, 50),
-            inputVariables = cms.vstring("tkNormChi2"),
-        ),
-        cms.PSet (
-            name = cms.string("muonTkValidHits"),
-            title = cms.string("Muon Track Number of Valid Hits; # Hits"),
+            name = cms.string("muonNumberOfValidHits"),
+            title = cms.string("Muon Number of Valid Hits; # Hits"),
             binsX = cms.untracked.vdouble(20, 0, 20),
-            inputVariables = cms.vstring("tkNumValidHits"),
+            inputVariables = cms.vstring("numberOfValidHits"),
         ),
         cms.PSet (
             name = cms.string("muonNormalizedChi2"),
             title = cms.string("Muon Chi Squared"),
             binsX = cms.untracked.vdouble(20, 0, 20),
-            inputVariables = cms.vstring("normalizedChi2"),
-        ),
-        cms.PSet (
-            name = cms.string("muonNumberOfValidMuonHits"),
-            title = cms.string("Muon Track Number of Valid Hits"),
-            binsX = cms.untracked.vdouble(20, 0, 20),
-            inputVariables = cms.vstring("numberOfValidMuonHits"),
+            inputVariables = cms.vstring("normChi2"),
         ),
         cms.PSet (
             name = cms.string("muonNumberOfMatchedStations"),
@@ -92,16 +80,10 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("numberOfMatchedStations"),
         ),
         cms.PSet (
-            name = cms.string("muonNumberOfValidPixelHits"),
-            title = cms.string("Muon Track Number of Valid Pixel Hits "),
-            binsX = cms.untracked.vdouble(10, 0, 10),
-            inputVariables = cms.vstring("numberOfValidPixelHits"),
-        ),
-        cms.PSet (
-            name = cms.string("muonNumberOfLayersWithMeasurement"),
-            title = cms.string("Muon Track Number of Layers With Measurement"),
-            binsX = cms.untracked.vdouble(20, 0, 20),
-            inputVariables = cms.vstring("numberOfLayersWithMeasurement"),
+            name = cms.string("muonIsTightMuon"),
+            title = cms.string("Muon isTightMuon"),
+            binsX = cms.untracked.vdouble(2, 0, 2),
+            inputVariables = cms.vstring("isTightMuonWRTVtx"),
         ),
         cms.PSet (
             name = cms.string("muonIsGlobalMuon"),
@@ -116,46 +98,10 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("isPFMuon"),
         ),
         cms.PSet (
-            name = cms.string("muonD0Vertex"),
-            title = cms.string("Muon d_{0} wrt PV; muon d_{0} [cm]"),
-            binsX = cms.untracked.vdouble(100, -0.02, 0.02),
-            inputVariables = cms.vstring("correctedD0Vertex"),
-        ),
-        cms.PSet (
-            name = cms.string("muonD0Beamspot"),
-            title = cms.string("Muon d_{0} wrt Beamspot; muon d_{0} [cm]"),
-            binsX = cms.untracked.vdouble(100, -0.02, 0.02),
-            inputVariables = cms.vstring("correctedD0"),
-        ),
-        cms.PSet (
-            name = cms.string("muonAbsD0Vertex"),
-            title = cms.string("Muon |d_{0}| wrt Vertex; muon |d_{0}| [cm]"),
-            binsX = cms.untracked.vdouble(100, 0, 0.02),
-            inputVariables = cms.vstring("abs(correctedD0Vertex)")
-        ),
-        cms.PSet (
-            name = cms.string("muonAbsD0Beamspot"),
-            title = cms.string("Muon |d_{0}| wrt Beamspot; muon |d_{0}| [cm]"),
-            binsX = cms.untracked.vdouble(100, 0, 0.02),
-            inputVariables = cms.vstring("abs(correctedD0)")
-        ),
-        cms.PSet (
-            name = cms.string("muonDz"),
-            title = cms.string("Muon d_{z}; muon d_{z} [cm]"),
-            binsX = cms.untracked.vdouble(100, -0.05, 0.05),
-            inputVariables = cms.vstring("correctedDZ"),
-        ),
-        cms.PSet (
-            name = cms.string("muonAbsDz"),
-            title = cms.string("Muon |d_{z}|; muon |d_{z}| [cm]"),
-            binsX = cms.untracked.vdouble(100, 0, 0.05),
-            inputVariables = cms.vstring("abs(correctedDZ)"),
-        ),
-        cms.PSet (
-            name = cms.string("muonPFdBetaIso"),
-            title = cms.string("Muon PF-based #Delta#beta-corrected Isolation; muon rel. iso."),
-            binsX = cms.untracked.vdouble(150, 0, 3),
-            inputVariables = cms.vstring("relPFdBetaIso"),
+            name = cms.string("muonIsTightMuonWRTVtx"),
+            title = cms.string("Muon isTightMuon"),
+            binsX = cms.untracked.vdouble(2, 0, 2),
+            inputVariables = cms.vstring("isTightMuonWRTVtx"),
         ),
     )
 )

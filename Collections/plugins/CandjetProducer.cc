@@ -17,13 +17,13 @@ CandjetProducer::~CandjetProducer ()
 }
 
 void
-CandjetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+CandjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (candjets)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("",  ""),  particles,  event);
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Candjet> > (new vector<osu::Candjet> ());
   for (const auto &object : *collection)
@@ -32,7 +32,7 @@ CandjetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
       pl_->push_back (candjet);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

@@ -29,6 +29,7 @@
   #define  superclusters_TYPE   BNsupercluster
   #define  taus_TYPE            BNtau
   #define  tracks_TYPE          BNtrack
+  #define  pileupinfos_TYPE     INVALID_TYPE
   #define  trigobjs_TYPE        BNtrigobj
   #define  uservariables_TYPE   VariableProducerPayload
   #define  eventvariables_TYPE  EventVariableProducerPayload
@@ -44,6 +45,7 @@
   #define  candeles_INVALID
   #define  candjets_INVALID
   #define  generatorweights_INVALID
+  #define  pileupinfos_INVALID
 
   #include "BEAN/Collections/interface/BNbxlumi.h"
   #include "BEAN/Collections/interface/BNelectron.h"
@@ -80,6 +82,7 @@
   #define  superclusters_TYPE     reco::SuperCluster
   #define  taus_TYPE              pat::Tau
   #define  tracks_TYPE            INVALID_TYPE
+  #define  pileupinfos_TYPE       PileupSummaryInfo    
   #define  trigobjs_TYPE          pat::TriggerObjectStandAlone
   #define  uservariables_TYPE     VariableProducerPayload
   #define  eventvariables_TYPE    EventVariableProducerPayload
@@ -111,6 +114,7 @@
   #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
   #include "DataFormats/VertexReco/interface/Vertex.h"
   #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+  #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
 #elif DATA_FORMAT == AOD
   #define  beamspots_TYPE         reco::BeamSpot
@@ -131,6 +135,7 @@
   #define  superclusters_TYPE     INVALID_TYPE
   #define  taus_TYPE              reco::PFTau
   #define  tracks_TYPE            reco::Track
+  #define  pileupinfos_TYPE       PileupSummaryInfo
   #define  trigobjs_TYPE          INVALID_TYPE
   #define  uservariables_TYPE     VariableProducerPayload
   #define  eventvariables_TYPE    EventVariableProducerPayload
@@ -163,6 +168,7 @@
   #include "DataFormats/TauReco/interface/PFTau.h"
   #include "DataFormats/TrackReco/interface/Track.h"
   #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+  #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
 #elif DATA_FORMAT == MINI_AOD_CUSTOM
   #include "CustomDataFormat.h"  // Define collections in an external header file.  

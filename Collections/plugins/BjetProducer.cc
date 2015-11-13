@@ -17,13 +17,13 @@ BjetProducer::~BjetProducer ()
 }
 
 void
-BjetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+BjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (bjets)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("",  ""),  particles,  event);
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Bjet> > (new vector<osu::Bjet> ());
   for (const auto &object : *collection)
@@ -32,7 +32,7 @@ BjetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
       pl_->push_back (bjet);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

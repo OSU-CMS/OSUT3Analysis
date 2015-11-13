@@ -17,13 +17,13 @@ JetProducer::~JetProducer ()
 }
 
 void
-JetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
+JetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (jets)> > collection;
-  if (!anatools::getCollection (collection_,  collection,  event))
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("",  ""),  particles,  event);
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
   for (const auto &object : *collection)
@@ -32,7 +32,7 @@ JetProducer::produce (edm::Event &event,  const edm::EventSetup &setup)
       pl_->push_back (jet);
     }
 
-  event.put (pl_,  collection_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 

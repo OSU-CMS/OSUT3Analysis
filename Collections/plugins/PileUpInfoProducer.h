@@ -1,18 +1,18 @@
-#ifndef MUON_PRODUCER
-#define MUON_PRODUCER
+#ifndef PILEUPINFO_PRODUCER
+#define PILEUPINFO_PRODUCER
 
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-#include "OSUT3Analysis/Collections/interface/Muon.h"
+#include "OSUT3Analysis/Collections/interface/PileUpInfo.h"
 
-class MuonProducer : public edm::EDProducer
+class PileUpInfoProducer : public edm::EDProducer
 {
   public:
-    MuonProducer (const edm::ParameterSet &);
-    ~MuonProducer ();
+    PileUpInfoProducer (const edm::ParameterSet &);
+    ~PileUpInfoProducer ();
 
     void produce (edm::Event &, const edm::EventSetup &);
 
@@ -22,11 +22,10 @@ class MuonProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
-    edm::InputTag      collPrimaryvertexs_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Muon> > pl_;
+    auto_ptr<vector<osu::PileUpInfo> > pl_;
 };
 
 #endif
