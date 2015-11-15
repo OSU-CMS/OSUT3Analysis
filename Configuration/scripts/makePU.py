@@ -21,7 +21,7 @@ condor_dir = set_condor_output_dir(arguments)
 from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TArrow, THStack, TIter, TKey, TPaveLabel
 
 gROOT.SetBatch()
-outputFile = TFile(condor_dir + "/puMC.root", "RECREATE")
+outputFile = TFile(condor_dir + "/pu.root", "RECREATE")
 
 processed_datasets = []
 
