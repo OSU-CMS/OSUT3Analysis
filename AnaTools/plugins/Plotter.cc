@@ -93,6 +93,7 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
     Weight weight;
     weight.inputCollections = inputCollections;
     weight.inputVariable = inputVariable;
+    weight.valueLookupTree = NULL;
     weight.product = 1.0;
     weights.push_back(weight);
   }
@@ -125,11 +126,12 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 
   for (vector<Weight>::iterator weight = weights.begin (); weight != weights.end (); weight++)
     {
+      weight->product = 1;
       for(vector<Leaf>::const_iterator leaf = weight->valueLookupTree->evaluate ().begin (); leaf != weight->valueLookupTree->evaluate ().end (); leaf++){
-	double value = boost::get<double> (*leaf);
-	if(value <= numeric_limits<int>::min () + 1)
-	  continue;
-	weight->product *= value;
+ 	double value = boost::get<double> (*leaf);
+ 	if(value <= numeric_limits<int>::min () + 1)
+ 	  continue;
+        weight->product *= value;
       }
     }
 
@@ -151,9 +153,11 @@ Plotter::~Plotter ()
       for (auto &valueLookupTree : histogram.valueLookupTrees)
         delete valueLookupTree;
     }
+  
   for (auto &weight : weights)
     {
-      delete weight.valueLookupTree;
+      if (weight.valueLookupTree)
+        delete weight.valueLookupTree;
     }
 }
 
