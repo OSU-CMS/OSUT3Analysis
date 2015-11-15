@@ -1,6 +1,5 @@
 <use  name="root"/>
 <use  name="rootrflx"/>
-<use  name="BEAN/Collections"/>
 <use  name="FWCore/Framework"/>
 <use  name="FWCore/ParameterSet"/>
 <use  name="FWCore/ServiceRegistry"/>
@@ -12,3 +11,12 @@
 <export>
   <lib  name="1"/>
 </export>
+
+<!--=========================================================================-->
+<!--Analysis-specific packages are listed below. These cause warnings when
+trying to build OSUT3Analysis/AnaTools if these packages are not present, but
+they can be safely ignored.-->
+<!--=========================================================================-->
+<!-- BEANs packages -->
+<use  name="BEAN/Collections"/>
+<!--=========================================================================-->
