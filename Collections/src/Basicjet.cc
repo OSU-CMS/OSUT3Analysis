@@ -16,6 +16,11 @@ osu::Basicjet::Basicjet (const TYPE(basicjets) &basicjet, const edm::Handle<vect
 {
 }
 
+osu::Basicjet::Basicjet (const TYPE(basicjets) &basicjet, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable (basicjet, particles, cfg)
+{
+}
+
 osu::Basicjet::~Basicjet ()
 {
 }

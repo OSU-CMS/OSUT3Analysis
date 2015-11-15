@@ -13,6 +13,7 @@ namespace osu
         Basicjet ();
         Basicjet (const TYPE(basicjets) &);
         Basicjet (const TYPE(basicjets) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Basicjet (const TYPE(basicjets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Basicjet ();
     };
 }

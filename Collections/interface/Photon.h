@@ -13,6 +13,7 @@ namespace osu
         Photon ();
         Photon (const TYPE(photons) &);
         Photon (const TYPE(photons) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Photon (const TYPE(photons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Photon ();
     };
 }

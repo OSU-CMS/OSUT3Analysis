@@ -9,6 +9,7 @@ from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
 from OSUT3Analysis.Configuration.InfoPrinter_cff import *
+from OSUT3Analysis.Configuration.CollectionProducer_cff import *
 
 def get_date_time_stamp():
     # Return a string that encodes the date and time
@@ -356,6 +357,8 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
         ]
 
         ########################################################################
+        # Add an OSU object producer for each collection used in a cut or
+        # histogram.
         ########################################################################
         producedCollections = copy.deepcopy (collections)
         cutCollections = get_collections (channel.cuts)
@@ -374,9 +377,8 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
                     eventvariableCollections = copy.deepcopy (collections)
                     setattr (eventvariableCollections, collection, cms.InputTag ("",""))
                     setattr (eventvariableCollections, collection,inputTag)
-                    objectProducer = cms.EDProducer (producerName,
-                        collections = eventvariableCollections
-                    )
+                    objectProducer = getattr (collectionProducer, collection)
+                    objectProducer.collections = eventvariableCollections
                     channelPath += objectProducer
                     setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                     newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
@@ -392,9 +394,8 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
                 setattr (producedCollections, collection, newInputTags)
             else:
                 producerName = collection[0].upper () + collection[1:-1] + "Producer"
-                objectProducer = cms.EDProducer (producerName,
-                    collections = collections
-                )
+                objectProducer = getattr (collectionProducer, collection)
+                objectProducer.collections = collections
                 channelPath += objectProducer
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 originalInputTag = getattr (collections, collection)

@@ -13,6 +13,7 @@ namespace osu
         Genjet ();
         Genjet (const TYPE(genjets) &);
         Genjet (const TYPE(genjets) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Genjet (const TYPE(genjets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Genjet ();
     };
 }

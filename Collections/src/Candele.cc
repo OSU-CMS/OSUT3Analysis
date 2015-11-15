@@ -16,6 +16,11 @@ osu::Candele::Candele (const TYPE(candeles) &candele, const edm::Handle<vector<o
 {
 }
 
+osu::Candele::Candele (const TYPE(candeles) &candele, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable (candele, particles, cfg)
+{
+}
+
 osu::Candele::~Candele ()
 {
 }

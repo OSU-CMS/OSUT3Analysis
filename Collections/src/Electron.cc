@@ -16,6 +16,11 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
 {
 }
 
+osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable (electron, particles, cfg)
+{
+}
+
 osu::Electron::~Electron ()
 {
 }

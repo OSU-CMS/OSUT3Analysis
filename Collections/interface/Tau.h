@@ -13,6 +13,7 @@ namespace osu
         Tau ();
         Tau (const TYPE(taus) &);
         Tau (const TYPE(taus) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Tau (const TYPE(taus) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Tau ();
     };
 }

@@ -5,7 +5,8 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 CandeleProducer::CandeleProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("candeles");
 
@@ -28,7 +29,7 @@ CandeleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Candele> > (new vector<osu::Candele> ());
   for (const auto &object : *collection)
     {
-      const osu::Candele candele (object, particles);
+      const osu::Candele candele (object, particles, cfg_);
       pl_->push_back (candele);
     }
 

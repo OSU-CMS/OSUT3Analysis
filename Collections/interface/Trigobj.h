@@ -13,6 +13,7 @@ namespace osu
         Trigobj ();
         Trigobj (const TYPE(trigobjs) &);
         Trigobj (const TYPE(trigobjs) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Trigobj (const TYPE(trigobjs) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Trigobj ();
     };
 }

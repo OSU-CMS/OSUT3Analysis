@@ -5,7 +5,8 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 GenjetProducer::GenjetProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("genjets");
 
@@ -28,7 +29,7 @@ GenjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Genjet> > (new vector<osu::Genjet> ());
   for (const auto &object : *collection)
     {
-      const osu::Genjet genjet (object, particles);
+      const osu::Genjet genjet (object, particles, cfg_);
       pl_->push_back (genjet);
     }
 

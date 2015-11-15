@@ -13,6 +13,7 @@ namespace osu
         Candjet ();
         Candjet (const TYPE(candjets) &);
         Candjet (const TYPE(candjets) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Candjet (const TYPE(candjets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Candjet ();
     };
 }

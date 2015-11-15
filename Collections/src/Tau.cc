@@ -16,6 +16,11 @@ osu::Tau::Tau (const TYPE(taus) &tau, const edm::Handle<vector<osu::Mcparticle> 
 {
 }
 
+osu::Tau::Tau (const TYPE(taus) &tau, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable (tau, particles, cfg)
+{
+}
+
 osu::Tau::~Tau ()
 {
 }

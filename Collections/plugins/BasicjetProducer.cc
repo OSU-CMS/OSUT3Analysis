@@ -5,7 +5,8 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 BasicjetProducer::BasicjetProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("basicjets");
 
@@ -28,7 +29,7 @@ BasicjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Basicjet> > (new vector<osu::Basicjet> ());
   for (const auto &object : *collection)
     {
-      const osu::Basicjet basicjet (object, particles);
+      const osu::Basicjet basicjet (object, particles, cfg_);
       pl_->push_back (basicjet);
     }
 

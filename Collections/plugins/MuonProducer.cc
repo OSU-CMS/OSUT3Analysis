@@ -5,7 +5,8 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 MuonProducer::MuonProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_         = collections_.getParameter<edm::InputTag> ("muons");
   collPrimaryvertexs_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
@@ -34,7 +35,7 @@ MuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     {
-      osu::Muon muon (object, particles);
+      osu::Muon muon (object, particles, cfg_);
       const reco::Vertex &vtx = collPrimaryvertexs->at(0);
       muon.set_isTightMuonWRTVtx(muon.isTightMuon(vtx));
       pl_->push_back (muon);

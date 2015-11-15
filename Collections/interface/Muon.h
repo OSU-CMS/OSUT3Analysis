@@ -13,13 +13,14 @@ namespace osu
         Muon ();
         Muon (const TYPE(muons) &);
         Muon (const TYPE(muons) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Muon (const TYPE(muons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Muon ();
 
-	const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }   
-	void   set_isTightMuonWRTVtx(const bool isTightMuon);   
+        const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }
+        void   set_isTightMuonWRTVtx(const bool isTightMuon);
 
       private:
-	bool isTightMuonWRTVtx_; 
+        bool isTightMuonWRTVtx_;
 
     };
 }

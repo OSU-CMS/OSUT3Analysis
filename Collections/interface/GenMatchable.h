@@ -3,6 +3,8 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+
 #include "OSUT3Analysis/Collections/interface/Mcparticle.h"
 
 namespace osu
@@ -53,6 +55,7 @@ namespace osu
         GenMatchable ();
         GenMatchable (const T &);
         GenMatchable (const T &, const edm::Handle<vector<osu::Mcparticle> > &);
+        GenMatchable (const T &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~GenMatchable ();
 
         const GenMatchedParticle genMatchedParticle () const;
@@ -68,6 +71,8 @@ namespace osu
         GenMatchedParticle genMatchedParticleOfSameType_;
         DRToGenMatchedParticle dRToGenMatchedParticleOfSameType_;
 
+        double maxDeltaR_;
+
         const GenMatchedParticle findGenMatchedParticle (const edm::Handle<vector<osu::Mcparticle> > &, GenMatchedParticle &, DRToGenMatchedParticle &, const bool = false);
     };
 }
@@ -77,7 +82,8 @@ osu::GenMatchable<T, PdgId>::GenMatchable () :
   genMatchedParticle_ (),
   dRToGenMatchedParticle_ (),
   genMatchedParticleOfSameType_ (),
-  dRToGenMatchedParticleOfSameType_ ()
+  dRToGenMatchedParticleOfSameType_ (),
+  maxDeltaR_ (-1.0)
 {
 }
 
@@ -87,7 +93,8 @@ osu::GenMatchable<T, PdgId>::GenMatchable (const T &object) :
   genMatchedParticle_ (),
   dRToGenMatchedParticle_ (),
   genMatchedParticleOfSameType_ (),
-  dRToGenMatchedParticleOfSameType_ ()
+  dRToGenMatchedParticleOfSameType_ (),
+  maxDeltaR_ (-1.0)
 {
 }
 
@@ -95,6 +102,18 @@ template<class T, int PdgId>
 osu::GenMatchable<T, PdgId>::GenMatchable (const T &object, const edm::Handle<vector<osu::Mcparticle> > &particles) :
   GenMatchable<T, PdgId> (object)
 {
+  if (particles.isValid ())
+    {
+      findGenMatchedParticle (particles, genMatchedParticle_, dRToGenMatchedParticle_);
+      findGenMatchedParticle (particles, genMatchedParticleOfSameType_, dRToGenMatchedParticleOfSameType_, true);
+    }
+}
+
+template<class T, int PdgId>
+osu::GenMatchable<T, PdgId>::GenMatchable (const T &object, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable<T, PdgId> (object)
+{
+  maxDeltaR_ = cfg.getParameter<double> ("maxDeltaRForGenMatching");
   if (particles.isValid ())
     {
       findGenMatchedParticle (particles, genMatchedParticle_, dRToGenMatchedParticle_);
@@ -124,6 +143,8 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
         continue;
 
       double dR = deltaR (*particle, *this);
+      if (maxDeltaR_ >= 0.0 && dR > maxDeltaR_)
+        continue;
 
       if (particle->isPromptFinalState ())
         {

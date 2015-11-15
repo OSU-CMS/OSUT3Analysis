@@ -5,7 +5,8 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 ElectronProducer::ElectronProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
 
@@ -28,7 +29,7 @@ ElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
     {
-      const osu::Electron electron (object, particles);
+      const osu::Electron electron (object, particles, cfg_);
       pl_->push_back (electron);
     }
 

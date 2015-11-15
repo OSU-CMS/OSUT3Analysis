@@ -5,7 +5,8 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 BjetProducer::BjetProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("bjets");
 
@@ -28,7 +29,7 @@ BjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Bjet> > (new vector<osu::Bjet> ());
   for (const auto &object : *collection)
     {
-      const osu::Bjet bjet (object, particles);
+      const osu::Bjet bjet (object, particles, cfg_);
       pl_->push_back (bjet);
     }
 

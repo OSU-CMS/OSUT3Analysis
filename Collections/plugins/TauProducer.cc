@@ -5,7 +5,8 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 TauProducer::TauProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("taus");
 
@@ -28,7 +29,7 @@ TauProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Tau> > (new vector<osu::Tau> ());
   for (const auto &object : *collection)
     {
-      const osu::Tau tau (object, particles);
+      const osu::Tau tau (object, particles, cfg_);
       pl_->push_back (tau);
     }
 

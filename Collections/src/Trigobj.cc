@@ -16,6 +16,11 @@ osu::Trigobj::Trigobj (const TYPE(trigobjs) &trigobj, const edm::Handle<vector<o
 {
 }
 
+osu::Trigobj::Trigobj (const TYPE(trigobjs) &trigobj, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable (trigobj, particles, cfg)
+{
+}
+
 osu::Trigobj::~Trigobj ()
 {
 }

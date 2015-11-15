@@ -13,6 +13,7 @@ namespace osu
         Candele ();
         Candele (const TYPE(candeles) &);
         Candele (const TYPE(candeles) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Candele (const TYPE(candeles) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Candele ();
     };
 }

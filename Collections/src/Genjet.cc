@@ -16,6 +16,11 @@ osu::Genjet::Genjet (const TYPE(genjets) &genjet, const edm::Handle<vector<osu::
 {
 }
 
+osu::Genjet::Genjet (const TYPE(genjets) &genjet, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable (genjet, particles, cfg)
+{
+}
+
 osu::Genjet::~Genjet ()
 {
 }

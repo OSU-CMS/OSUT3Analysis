@@ -16,6 +16,11 @@ osu::Photon::Photon (const TYPE(photons) &photon, const edm::Handle<vector<osu::
 {
 }
 
+osu::Photon::Photon (const TYPE(photons) &photon, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable (photon, particles, cfg)
+{
+}
+
 osu::Photon::~Photon ()
 {
 }

@@ -5,7 +5,8 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 TrackProducer::TrackProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
@@ -28,7 +29,7 @@ TrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Track> > (new vector<osu::Track> ());
   for (const auto &object : *collection)
     {
-      const osu::Track track (object, particles);
+      const osu::Track track (object, particles, cfg_);
       pl_->push_back (track);
     }
 

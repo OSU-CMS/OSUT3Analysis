@@ -13,6 +13,7 @@ namespace osu
         Track ();
         Track (const TYPE(tracks) &);
         Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Track ();
     };
 }

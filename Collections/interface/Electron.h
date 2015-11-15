@@ -13,6 +13,7 @@ namespace osu
         Electron ();
         Electron (const TYPE(electrons) &);
         Electron (const TYPE(electrons) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Electron (const TYPE(electrons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Electron ();
     };
 }

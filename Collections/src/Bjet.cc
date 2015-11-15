@@ -16,6 +16,11 @@ osu::Bjet::Bjet (const TYPE(bjets) &bjet, const edm::Handle<vector<osu::Mcpartic
 {
 }
 
+osu::Bjet::Bjet (const TYPE(bjets) &bjet, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable (bjet, particles, cfg)
+{
+}
+
 osu::Bjet::~Bjet ()
 {
 }

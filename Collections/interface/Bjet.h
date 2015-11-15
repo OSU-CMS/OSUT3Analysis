@@ -13,6 +13,7 @@ namespace osu
         Bjet ();
         Bjet (const TYPE(bjets) &);
         Bjet (const TYPE(bjets) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Bjet (const TYPE(bjets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Bjet ();
     };
 }

@@ -13,6 +13,7 @@ namespace osu
         Jet ();
         Jet (const TYPE(jets) &);
         Jet (const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Jet (const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Jet ();
     };
 }
