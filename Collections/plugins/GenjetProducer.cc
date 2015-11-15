@@ -1,9 +1,12 @@
-#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-
 #include "OSUT3Analysis/Collections/plugins/GenjetProducer.h"
 
+#if IS_VALID(genjets)
+
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
+
 GenjetProducer::GenjetProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("genjets");
 
@@ -17,16 +20,16 @@ GenjetProducer::~GenjetProducer ()
 void
 GenjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(genjets)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event, false);
-  // Specify argument verbose = false to prevent error messages if collection is not found. 
-  if(!valid)
+  edm::Handle<vector<TYPE (genjets)> > collection;
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
+  edm::Handle<vector<osu::Mcparticle> > particles;
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Genjet> > (new vector<osu::Genjet> ());
   for (const auto &object : *collection)
     {
-      osu::Genjet genjet(object);
+      const osu::Genjet genjet (object, particles, cfg_);
       pl_->push_back (genjet);
     }
 
@@ -36,3 +39,5 @@ GenjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(GenjetProducer);
+
+#endif

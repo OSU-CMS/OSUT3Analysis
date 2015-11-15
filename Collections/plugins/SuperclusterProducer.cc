@@ -1,6 +1,8 @@
-#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-
 #include "OSUT3Analysis/Collections/plugins/SuperclusterProducer.h"
+
+#if IS_VALID(superclusters)
+
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 SuperclusterProducer::SuperclusterProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
@@ -17,16 +19,14 @@ SuperclusterProducer::~SuperclusterProducer ()
 void
 SuperclusterProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(superclusters)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event, false);
-  // Specify argument verbose = false to prevent error messages if collection is not found. 
-  if(!valid)
+  edm::Handle<vector<TYPE (superclusters)> > collection;
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
 
   pl_ = auto_ptr<vector<osu::Supercluster> > (new vector<osu::Supercluster> ());
   for (const auto &object : *collection)
     {
-      osu::Supercluster supercluster(object);
+      const osu::Supercluster supercluster (object);
       pl_->push_back (supercluster);
     }
 
@@ -36,3 +36,5 @@ SuperclusterProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(SuperclusterProducer);
+
+#endif

@@ -1,24 +1,26 @@
 #ifndef OSU_MUON
 #define OSU_MUON
 
-#include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
+#include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 
 #if IS_VALID(muons)
 
 namespace osu
 {
-  class Muon : public TYPE(muons)
+  class Muon : public GenMatchable<TYPE(muons), 13>
     {
       public:
         Muon ();
         Muon (const TYPE(muons) &);
+        Muon (const TYPE(muons) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Muon (const TYPE(muons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Muon ();
 
-	const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }   
-	void   set_isTightMuonWRTVtx(bool isTightMuon);   
+        const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }
+        void   set_isTightMuonWRTVtx(const bool isTightMuon);
 
       private:
-	bool isTightMuonWRTVtx_; 
+        bool isTightMuonWRTVtx_;
 
     };
 }

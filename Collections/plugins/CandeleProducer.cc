@@ -1,9 +1,12 @@
-#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-
 #include "OSUT3Analysis/Collections/plugins/CandeleProducer.h"
 
+#if IS_VALID(candeles)
+
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
+
 CandeleProducer::CandeleProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("candeles");
 
@@ -17,15 +20,16 @@ CandeleProducer::~CandeleProducer ()
 void
 CandeleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(candeles)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event, false);
-  // Specify argument verbose = false to prevent error messages if collection is not found. 
-  if(!valid)
+  edm::Handle<vector<TYPE (candeles)> > collection;
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
+  edm::Handle<vector<osu::Mcparticle> > particles;
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
+
   pl_ = auto_ptr<vector<osu::Candele> > (new vector<osu::Candele> ());
   for (const auto &object : *collection)
     {
-      osu::Candele candele(object); 
+      const osu::Candele candele (object, particles, cfg_);
       pl_->push_back (candele);
     }
 
@@ -35,3 +39,5 @@ CandeleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(CandeleProducer);
+
+#endif

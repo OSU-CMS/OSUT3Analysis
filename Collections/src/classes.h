@@ -30,6 +30,7 @@ namespace {
     vector<osu::Basicjet>                     basicjet1;
     edm::Wrapper<osu::Basicjet>               basicjet2;
     edm::Wrapper<vector<osu::Basicjet> >      basicjet3;
+    edm::Ref<vector<osu::Basicjet> >          basicjet4;
 #endif
 
 #if IS_VALID(beamspots)
@@ -37,6 +38,7 @@ namespace {
     vector<osu::Beamspot>                     beamspot1;
     edm::Wrapper<osu::Beamspot>               beamspot2;
     edm::Wrapper<vector<osu::Beamspot> >      beamspot3;
+    edm::Ref<vector<osu::Beamspot> >          beamspot4;
 #endif
 
 #if IS_VALID(bjets)
@@ -44,6 +46,7 @@ namespace {
     vector<osu::Bjet>                         bjet1;
     edm::Wrapper<osu::Bjet>                   bjet2;
     edm::Wrapper<vector<osu::Bjet> >          bjet3;
+    edm::Ref<vector<osu::Bjet> >              bjet4;
 #endif
 
 #if IS_VALID(bxlumis)
@@ -51,6 +54,7 @@ namespace {
     vector<osu::Bxlumi>                       bxlumi1;
     edm::Wrapper<osu::Bxlumi>                 bxlumi2;
     edm::Wrapper<vector<osu::Bxlumi> >        bxlumi3;
+    edm::Ref<vector<osu::Bxlumi> >            bxlumi4;
 #endif
 
 #if IS_VALID(candeles)
@@ -58,6 +62,7 @@ namespace {
     vector<osu::Candele>                      candele1;
     edm::Wrapper<osu::Candele>                candele2;
     edm::Wrapper<vector<osu::Candele> >       candele3;
+    edm::Ref<vector<osu::Candele> >           candele4;
 #endif
 
 #if IS_VALID(candjets)
@@ -65,6 +70,7 @@ namespace {
     vector<osu::Candjet>                      candjet1;
     edm::Wrapper<osu::Candjet>                candjet2;
     edm::Wrapper<vector<osu::Candjet> >       candjet3;
+    edm::Ref<vector<osu::Candjet> >           candjet4;
 #endif
 
 #if IS_VALID(electrons)
@@ -72,6 +78,7 @@ namespace {
     vector<osu::Electron>                     electron1;
     edm::Wrapper<osu::Electron>               electron2;
     edm::Wrapper<vector<osu::Electron> >      electron3;
+    edm::Ref<vector<osu::Electron> >          electron4;
 #endif
 
 #if IS_VALID(events)
@@ -79,6 +86,7 @@ namespace {
     vector<osu::Event>                        event1;
     edm::Wrapper<osu::Event>                  event2;
     edm::Wrapper<vector<osu::Event> >         event3;
+    edm::Ref<vector<osu::Event> >             event4;
 #endif
 
 #if IS_VALID(eventvariables)
@@ -86,6 +94,7 @@ namespace {
     vector<osu::Eventvariable>                eventvariable1;
     edm::Wrapper<osu::Eventvariable>          eventvariable2;
     edm::Wrapper<vector<osu::Eventvariable> > eventvariable3;
+    edm::Ref<vector<osu::Eventvariable> >     eventvariable4;
 #endif
 
 #if IS_VALID(genjets)
@@ -93,6 +102,7 @@ namespace {
     vector<osu::Genjet>                       genjet1;
     edm::Wrapper<osu::Genjet>                 genjet2;
     edm::Wrapper<vector<osu::Genjet> >        genjet3;
+    edm::Ref<vector<osu::Genjet> >            genjet4;
 #endif
 
 #if IS_VALID(jets)
@@ -100,6 +110,7 @@ namespace {
     vector<osu::Jet>                          jet1;
     edm::Wrapper<osu::Jet>                    jet2;
     edm::Wrapper<vector<osu::Jet> >           jet3;
+    edm::Ref<vector<osu::Jet> >               jet4;
 #endif
 
 #if IS_VALID(mcparticles)
@@ -107,6 +118,7 @@ namespace {
     vector<osu::Mcparticle>                   mcparticle1;
     edm::Wrapper<osu::Mcparticle>             mcparticle2;
     edm::Wrapper<vector<osu::Mcparticle> >    mcparticle3;
+    edm::Ref<vector<osu::Mcparticle> >        mcparticle4;
 #endif
 
 #if IS_VALID(mets)
@@ -114,6 +126,7 @@ namespace {
     vector<osu::Met>                          met1;
     edm::Wrapper<osu::Met>                    met2;
     edm::Wrapper<vector<osu::Met> >           met3;
+    edm::Ref<vector<osu::Met> >               met4;
 #endif
 
 #if IS_VALID(muons)
@@ -121,6 +134,7 @@ namespace {
     vector<osu::Muon>                         muon1;
     edm::Wrapper<osu::Muon>                   muon2;
     edm::Wrapper<vector<osu::Muon> >          muon3;
+    edm::Ref<vector<osu::Muon> >              muon4;
 #endif
 
 #if IS_VALID(photons)
@@ -128,6 +142,7 @@ namespace {
     vector<osu::Photon>                       photon1;
     edm::Wrapper<osu::Photon>                 photon2;
     edm::Wrapper<vector<osu::Photon> >        photon3;
+    edm::Ref<vector<osu::Photon> >            photon4;
 #endif
 
 #if IS_VALID(primaryvertexs)
@@ -135,6 +150,7 @@ namespace {
     vector<osu::Primaryvertex>                primaryvertex1;
     edm::Wrapper<osu::Primaryvertex>          primaryvertex2;
     edm::Wrapper<vector<osu::Primaryvertex> > primaryvertex3;
+    edm::Ref<vector<osu::Primaryvertex> >     primaryvertex4;
 #endif
 
 #if IS_VALID(superclusters)
@@ -142,6 +158,7 @@ namespace {
     vector<osu::Supercluster>                 supercluster1;
     edm::Wrapper<osu::Supercluster>           supercluster2;
     edm::Wrapper<vector<osu::Supercluster> >  supercluster3;
+    edm::Ref<vector<osu::Supercluster> >      supercluster4;
 #endif
 
 #if IS_VALID(taus)
@@ -149,6 +166,7 @@ namespace {
     vector<osu::Tau>                          tau1;
     edm::Wrapper<osu::Tau>                    tau2;
     edm::Wrapper<vector<osu::Tau> >           tau3;
+    edm::Ref<vector<osu::Tau> >               tau4;
 #endif
 
 #if IS_VALID(tracks)
@@ -156,6 +174,7 @@ namespace {
     vector<osu::Track>                        track1;
     edm::Wrapper<osu::Track>                  track2;
     edm::Wrapper<vector<osu::Track> >         track3;
+    edm::Ref<vector<osu::Track> >             track4;
 #endif
 
 #if IS_VALID(trigobjs)
@@ -163,6 +182,7 @@ namespace {
     vector<osu::Trigobj>                      trigobj1;
     edm::Wrapper<osu::Trigobj>                trigobj2;
     edm::Wrapper<vector<osu::Trigobj> >       trigobj3;
+    edm::Ref<vector<osu::Trigobj> >           trigobj4;
 #endif
 
 #if IS_VALID(uservariables)
@@ -170,6 +190,7 @@ namespace {
     vector<osu::Uservariable>                 uservariable1;
     edm::Wrapper<osu::Uservariable>           uservariable2;
     edm::Wrapper<vector<osu::Uservariable> >  uservariable3;
+    edm::Ref<vector<osu::Uservariable> >      uservariable4;
 #endif
 
   };

@@ -1,6 +1,8 @@
-#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-
 #include "OSUT3Analysis/Collections/plugins/EventProducer.h"
+
+#if IS_VALID(events)
+
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 EventProducer::EventProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
@@ -17,16 +19,14 @@ EventProducer::~EventProducer ()
 void
 EventProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(events)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event, false);
-  // Specify argument verbose = false to prevent error messages if collection is not found. 
-  if(!valid)
+  edm::Handle<vector<TYPE (events)> > collection;
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
 
   pl_ = auto_ptr<vector<osu::Event> > (new vector<osu::Event> ());
   for (const auto &object : *collection)
     {
-      osu::Event event(object);
+      const osu::Event event (object);
       pl_->push_back (event);
     }
 
@@ -36,3 +36,5 @@ EventProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(EventProducer);
+
+#endif

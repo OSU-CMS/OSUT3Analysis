@@ -1,6 +1,8 @@
-#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-
 #include "OSUT3Analysis/Collections/plugins/MetProducer.h"
+
+#if IS_VALID(mets)
+
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 MetProducer::MetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
@@ -17,16 +19,14 @@ MetProducer::~MetProducer ()
 void
 MetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(mets)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event, false);
-  // Specify argument verbose = false to prevent error messages if collection is not found. 
-  if(!valid)
+  edm::Handle<vector<TYPE (mets)> > collection;
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
 
   pl_ = auto_ptr<vector<osu::Met> > (new vector<osu::Met> ());
   for (const auto &object : *collection)
     {
-      osu::Met met(object);  
+      const osu::Met met (object);
       pl_->push_back (met);
     }
 
@@ -36,3 +36,5 @@ MetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(MetProducer);
+
+#endif

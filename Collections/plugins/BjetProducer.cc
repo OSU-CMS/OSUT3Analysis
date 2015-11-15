@@ -1,9 +1,12 @@
-#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-
 #include "OSUT3Analysis/Collections/plugins/BjetProducer.h"
 
+#if IS_VALID(bjets)
+
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
+
 BjetProducer::BjetProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("bjets");
 
@@ -17,16 +20,16 @@ BjetProducer::~BjetProducer ()
 void
 BjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(bjets)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event, false);
-  // Specify argument verbose = false to prevent error messages if collection is not found. 
-  if(!valid)
+  edm::Handle<vector<TYPE (bjets)> > collection;
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
+  edm::Handle<vector<osu::Mcparticle> > particles;
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Bjet> > (new vector<osu::Bjet> ());
   for (const auto &object : *collection)
     {
-      osu::Bjet bjet(object);
+      const osu::Bjet bjet (object, particles, cfg_);
       pl_->push_back (bjet);
     }
 
@@ -36,3 +39,5 @@ BjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(BjetProducer);
+
+#endif

@@ -1,6 +1,8 @@
-#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-
 #include "OSUT3Analysis/Collections/plugins/UservariableProducer.h"
+
+#if IS_VALID(uservariables)
+
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 UservariableProducer::UservariableProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
@@ -17,16 +19,14 @@ UservariableProducer::~UservariableProducer ()
 void
 UservariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(uservariables)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event, false);
-  // Specify argument verbose = false to prevent error messages if collection is not found. 
-  if(!valid)
+  edm::Handle<vector<TYPE (uservariables)> > collection;
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
 
   pl_ = auto_ptr<vector<osu::Uservariable> > (new vector<osu::Uservariable> ());
   for (const auto &object : *collection)
     {
-      osu::Uservariable uservariable(object);
+      const osu::Uservariable uservariable (object);
       pl_->push_back (uservariable);
     }
 
@@ -36,3 +36,5 @@ UservariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(UservariableProducer);
+
+#endif

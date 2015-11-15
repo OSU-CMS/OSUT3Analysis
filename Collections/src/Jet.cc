@@ -7,7 +7,17 @@ osu::Jet::Jet ()
 }
 
 osu::Jet::Jet (const TYPE(jets) &jet) :
-  TYPE(jets) (jet)
+  GenMatchable (jet)
+{
+}
+
+osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> > &particles) :
+  GenMatchable (jet, particles)
+{
+}
+
+osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable (jet, particles, cfg)
 {
 }
 

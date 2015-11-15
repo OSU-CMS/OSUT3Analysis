@@ -1,9 +1,12 @@
-#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-
 #include "OSUT3Analysis/Collections/plugins/TrackProducer.h"
 
+#if IS_VALID(tracks)
+
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
+
 TrackProducer::TrackProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
@@ -17,16 +20,16 @@ TrackProducer::~TrackProducer ()
 void
 TrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(tracks)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event, false);
-  // Specify argument verbose = false to prevent error messages if collection is not found. 
-  if(!valid)
+  edm::Handle<vector<TYPE (tracks)> > collection;
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
+  edm::Handle<vector<osu::Mcparticle> > particles;
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
 
   pl_ = auto_ptr<vector<osu::Track> > (new vector<osu::Track> ());
   for (const auto &object : *collection)
     {
-      osu::Track track(object);
+      const osu::Track track (object, particles, cfg_);
       pl_->push_back (track);
     }
 
@@ -36,3 +39,5 @@ TrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(TrackProducer);
+
+#endif

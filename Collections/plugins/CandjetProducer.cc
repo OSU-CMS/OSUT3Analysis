@@ -1,9 +1,12 @@
-#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-
 #include "OSUT3Analysis/Collections/plugins/CandjetProducer.h"
 
+#if IS_VALID(candjets)
+
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
+
 CandjetProducer::CandjetProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("candjets");
 
@@ -17,20 +20,24 @@ CandjetProducer::~CandjetProducer ()
 void
 CandjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(candjets)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event, false);
-  // Specify argument verbose = false to prevent error messages if collection is not found. 
-  if(!valid)
+  edm::Handle<vector<TYPE (candjets)> > collection;
+  if (!anatools::getCollection (collection_, collection, event, false))
     return;
+  edm::Handle<vector<osu::Mcparticle> > particles;
+  anatools::getCollection (edm::InputTag ("", ""), particles, event);
+
   pl_ = auto_ptr<vector<osu::Candjet> > (new vector<osu::Candjet> ());
   for (const auto &object : *collection)
     {
-      osu::Candjet candjet(object);
+      const osu::Candjet candjet (object, particles, cfg_);
       pl_->push_back (candjet);
     }
+
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(CandjetProducer);
+
+#endif

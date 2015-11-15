@@ -7,7 +7,17 @@ osu::Track::Track ()
 }
 
 osu::Track::Track (const TYPE(tracks) &track) :
-  TYPE(tracks) (track)
+  GenMatchable (track)
+{
+}
+
+osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcparticle> > &particles) :
+  GenMatchable (track, particles)
+{
+}
+
+osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
+  GenMatchable (track, particles, cfg)
 {
 }
 
