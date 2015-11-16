@@ -274,6 +274,10 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
     ConfigFile.write('fileName = re.sub (r\'^(.*)\.([^\.]*)$\', r\'\\1_\' + str (osusub.jobNumber) + r\'.\\2\', fileName)\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
+    if types[Label] == "data":
+        for module in vars(temPset.process).values():
+            if hasattr(module, "weights"):
+                ConfigFile.write('pset.process.' + str(module) + '.weights = cms.VPSet()\n')
     if hasattr(temPset.process, "ScalingFactorProducer"):
         if types[Label] == "bgMC":
             ConfigFile.write('pset.process.ScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
