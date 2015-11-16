@@ -4,7 +4,8 @@
 ScalingFactorProducer::ScalingFactorProducer(const edm::ParameterSet &cfg) :
    EventVariableProducer(cfg),
    PU_               (cfg.getParameter<string>("PU")),
-   dataset_          (cfg.getParameter<string>("dataset"))
+   dataset_          (cfg.getParameter<string>("dataset")),
+   type_             (cfg.getParameter<string>("type"))
 {
 }
 
@@ -48,7 +49,10 @@ ScalingFactorProducer::AddVariables (const edm::Event &event) {
     if(pv1.getBunchCrossing() == 0)
       numTruePV = pv1.getTrueNumInteractions();
   }
-  (*eventvariables)["puScalingFactor"] = puWeight->GetBinContent(puWeight->FindBin(numTruePV));
+  if(type_.find("bgMC") < type_.length())
+    (*eventvariables)["puScalingFactor"] = puWeight->GetBinContent(puWeight->FindBin(numTruePV));
+  else
+    (*eventvariables)["puScalingFactor"] = 1;
   delete puWeight; 
  # endif
  }  

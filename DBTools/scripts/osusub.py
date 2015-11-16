@@ -275,8 +275,10 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
     if types[Label] = "bgMC"
         ConfigFile.write('pset.process.ScalingFactorProducer.dataset = cms.string("' +  Label + '")')
+        ConfigFile.write('pset.process.ScalingFactorProducer.type = cms.string("bgMC")')
     else:
         ConfigFile.write('pset.process.ScalingFactorProducer.dataset = cms.string("MuonEG_2015D")')
+        ConfigFile.write('pset.process.ScalingFactorProducer.type = cms.string("data")')
     ConfigFile.write('\n')
     if Dataset != '':
 	ConfigFile.write('pset.process.source.fileNames = cms.untracked.vstring (osusub.runList)\n')

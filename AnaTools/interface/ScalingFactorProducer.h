@@ -49,6 +49,7 @@ class ScalingFactorProducer : public EventVariableProducer
     private:
         string PU_;             
         string dataset_; 
+        string type_; 
         void AddVariables(const edm::Event &);
 };
 #endif
