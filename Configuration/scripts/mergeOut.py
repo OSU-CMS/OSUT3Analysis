@@ -249,6 +249,8 @@ for dataSet in split_datasets:
     print "....................Merging dataset " + dataSet + " ...................."
     os.chdir(directory)
     ReturnValues = []
+    if os.path.islink(directory + '/hist.root'):
+        os.system('rm ' + directory + '/hist.root')
     LogFiles = os.popen('ls condor_*.log').readlines()
     for i in range(0,len(LogFiles)):
         ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
