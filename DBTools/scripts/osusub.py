@@ -278,13 +278,13 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
         for module in vars(temPset.process).values():
             if hasattr(module, "weights"):
                 ConfigFile.write('pset.process.' + str(module) + '.weights = cms.VPSet()\n')
-    if hasattr(temPset.process, "ScalingFactorProducer"):
+    if hasattr(temPset.process, "PUScalingFactorProducer"):
         if types[Label] == "bgMC":
-            ConfigFile.write('pset.process.ScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
-            ConfigFile.write('pset.process.ScalingFactorProducer.datasetType = cms.string("bgMC")')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.datasetType = cms.string("bgMC")')
         else:
-            ConfigFile.write('pset.process.ScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n')
-            ConfigFile.write('pset.process.ScalingFactorProducer.datasetType = cms.string("data")')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.datasetType = cms.string("data")')
     ConfigFile.write('\n')
     if Dataset != '':
 	ConfigFile.write('pset.process.source.fileNames = cms.untracked.vstring (osusub.runList)\n')
