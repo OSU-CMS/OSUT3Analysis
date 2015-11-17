@@ -52,10 +52,6 @@ namespace anatools
   string getObjectType  (const osu::Basicjet &);
   string getObjectClass (const osu::Basicjet &);
 #endif
-#if IS_VALID(candjets)
-  string getObjectType  (const osu::Candjet &);
-  string getObjectClass (const osu::Candjet &);
-#endif
 #if IS_VALID(candeles)
   string getObjectType  (const osu::Candele &);
   string getObjectClass (const osu::Candele &);
