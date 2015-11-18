@@ -29,13 +29,15 @@ JetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
   for (const auto &object : *collection)
     {
-      const osu::Jet jet (object, particles, cfg_);
+      osu::Jet jet (object, particles, cfg_);
+      jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+      jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags")); 
       pl_->push_back (jet);
     }
-
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(JetProducer);

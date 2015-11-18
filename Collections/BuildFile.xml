@@ -28,5 +28,4 @@ they can be safely ignored.-->
 
 <!-- displaced SUSY packages -->
 <use  name="DisplacedSUSY/CandidateElectronProducer"/>
-<use  name="DisplacedSUSY/CandidateJetProducer"/>
 <!--=========================================================================-->
