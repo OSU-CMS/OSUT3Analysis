@@ -1,5 +1,5 @@
 import FWCore.ParameterSet.Config as cms
-
+from OSUT3Analysis.Configuration.pdgIdBins import *
 
 
 ###############################################
@@ -64,7 +64,7 @@ MuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonNumberOfValidHits"),
             title = cms.string("Muon Number of Valid Hits; # Hits"),
-            binsX = cms.untracked.vdouble(20, 0, 20),
+            binsX = cms.untracked.vdouble(40, 0, 40),
             inputVariables = cms.vstring("numberOfValidHits"),
         ),
         cms.PSet (
@@ -346,6 +346,12 @@ DiMuonHistograms = cms.PSet(
             name = cms.string("diMuonInvMass"),
             title = cms.string("Di-muon Invariant Mass; M_{#mu#mu} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("invMass (muon, muon)"),
+        ),
+        cms.PSet (
+            name = cms.string("diMuonInvMassZoom"),
+            title = cms.string("Di-muon Invariant Mass; M_{#mu#mu} [GeV]"),
+            binsX = cms.untracked.vdouble(100, 50, 150),
             inputVariables = cms.vstring("invMass (muon, muon)"),
         ),
         cms.PSet (
@@ -2672,6 +2678,42 @@ TrackHistograms = cms.PSet(
             title = cms.string("Track Charge;track charge"),
             binsX = cms.untracked.vdouble(3, -1.5, 1.5),
             inputVariables = cms.vstring("charge"),
+        ),
+        cms.PSet (
+            name = cms.string("genMatchedPromptFinalStateIsMatched"),
+            title = cms.string(";is matched"),
+            binsX = cms.untracked.vdouble(2.0, -0.5, 1.5),
+            inputVariables = cms.vstring("genMatchedParticle.promptFinalState.isNonnull"),
+        ),
+        cms.PSet (
+            name = cms.string("genMatchedPromptFinalStatePdgId"),
+            title = cms.string(";PDG ID"),
+            binsX = cms.untracked.vdouble(getPdgBins(["quarks", "leptons", "bosons", "hadrons"])),
+            inputVariables = cms.vstring("abs (genMatchedParticle.promptFinalState.pdgId)"),
+        ),
+        cms.PSet (
+            name = cms.string("genMatchedPromptFinalStatePdgIdNoHadrons"),
+            title = cms.string(";PDG ID"),
+            binsX = cms.untracked.vdouble(getPdgBins(["quarks", "leptons", "bosons"])),
+            inputVariables = cms.vstring("abs (genMatchedParticle.promptFinalState.pdgId)"),
+        ),
+        cms.PSet (
+            name = cms.string("genMatchedDirectPromptTauDecayProductFinalStateIsMatched"),
+            title = cms.string(";PDG ID"),
+            binsX = cms.untracked.vdouble(2.0, -0.5, 1.5),
+            inputVariables = cms.vstring("genMatchedParticle.directPromptTauDecayProductFinalState.isNonnull"),
+        ),
+        cms.PSet (
+            name = cms.string("genMatchedDirectPromptTauDecayProductFinalStatePdgId"),
+            title = cms.string(";PDG ID"),
+            binsX = cms.untracked.vdouble(getPdgBins(["quarks", "leptons", "bosons", "hadrons"])),
+            inputVariables = cms.vstring("abs (genMatchedParticle.directPromptTauDecayProductFinalState.pdgId)"),
+        ),
+        cms.PSet (
+            name = cms.string("genMatchedDirectPromptTauDecayProductFinalStatePdgIdNoHadrons"),
+            title = cms.string(";PDG ID"),
+            binsX = cms.untracked.vdouble(getPdgBins(["quarks", "leptons", "bosons"])),
+            inputVariables = cms.vstring("abs (genMatchedParticle.directPromptTauDecayProductFinalState.pdgId)"),
         ),
     )
 )

@@ -18,7 +18,6 @@ parser = OptionParser()
 parser = set_commandline_arguments(parser)
 
 parser.remove_option("-o")
-parser.remove_option("-c")
 parser.remove_option("-n")
 parser.remove_option("-u")
 parser.remove_option("-e")
@@ -36,7 +35,6 @@ parser.add_option("-m", "--maxEvents", dest="MaxEvents", default = -1, help="Set
 parser.add_option("-p", "--process", dest="Process", default = '', help="Set the suffix for the process name.")
 parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files.  Options:  OSUT3Ntuple, UserDir, UserList")
 parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")  # Dataset is also the name of the output directory in the working directory if FileType == 'OSUT3Ntuple'.  
-parser.add_option("-w", "--workDirectory", dest="Directory", default = "", help="Specify the working directroy.")
 parser.add_option("-c", "--configuration", dest="Config", default = "", help="Specify the configuration file to run.")
 parser.add_option("-n", "--numberOfJobs", dest="NumberOfJobs", default = -1, help="Specify how many jobs to submit.")
 parser.add_option("-u", "--userCondorSubFile", dest="CondorSubFilr", default = "", help="Specify the condor.sub file you want to use if you have to add arguments.")
@@ -301,7 +299,7 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     if arguments.Process:
 	ConfigFile.write('process.setName_ (process.name_ () + \'' + arguments.Process + '\')\n')
     #else:
-#	ConfigFile.write('process.setName_ (process.name_ () + \'' + str(arguments.Directory).replace('_','')  + '\')\n') 
+#	ConfigFile.write('process.setName_ (process.name_ () + \'' + str(arguments.condorDir).replace('_','')  + '\')\n') 
     if arguments.Random:
         ConfigFile.write('pset.process.RandomNumberGeneratorService.generator.initialSeed = osusub.jobNumber\n')
     if arguments.Unique:
@@ -548,11 +546,11 @@ Condor = os.getcwd() + '/condor/'
 if not os.path.exists(Condor):
     print "The directory ", Condor, "does not exist.  Aborting."  
     sys.exit()
-if arguments.Directory == "":
+if arguments.condorDir == "":
     print "No working directory is given, aborting."
     sys.exit()
 else:
-    CondorDir = Condor + arguments.Directory
+    CondorDir = Condor + arguments.condorDir
 #Check whether the directory specified already exists and warn the user if so.
 if not os.path.exists(CondorDir):
     os.system('mkdir ' + CondorDir)

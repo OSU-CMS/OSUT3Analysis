@@ -231,7 +231,7 @@ ValueLookupTree::getCollectionSize (const string &name) const
          << "List of input collections: " << endl;
     for (uint i=0; i<inputCollections_.size(); i++) clog << "  " << inputCollections_.at(i) << endl;
     clog << "Please modify your configuration file.  Exiting..." << endl << endl << endl;
-    exit(0);
+    exit(8);
   }
 
   if (EQ_VALID(name,beamspots))

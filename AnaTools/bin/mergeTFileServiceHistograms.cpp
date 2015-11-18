@@ -5,6 +5,7 @@
 #include <TH2.h>
 #include <TDirectory.h>
 #include <TList.h>
+#include <TMath.h>
 #include <boost/tokenizer.hpp>
 #include <boost/program_options.hpp>
 #include <string>
@@ -21,6 +22,9 @@ using namespace std;
 
 void make(TDirectory & out, TObject * o);
 void fill(TDirectory & out, TObject * o, double);
+double normCDF (const double);
+void generateUpperLimitCutFlow (TDirectoryFile &, TH1D * const, const double);
+void upperLimitCutFlow (TDirectoryFile &, const double);
 
 static const char * const kHelpOpt = "help";
 static const char * const kHelpCommandOpt = "help,h";
@@ -163,6 +167,11 @@ int main(int argc, char * argv[]) {
   out.Write();
   out.Close();
 
+  TFile fout (outputFile.c_str(), "UPDATE");
+  upperLimitCutFlow (fout, weights[0]);
+  fout.Write();
+  fout.Close();
+
   return 0;
 }
 
@@ -293,3 +302,44 @@ void fill(TDirectory & out, TObject * o, double w) {
   }
 }
 
+double
+normCDF (const double x)
+{
+  return 0.5 * (1.0 + TMath::Erf (x / TMath::Sqrt2 ()));
+}
+
+void
+generateUpperLimitCutFlow (TDirectoryFile &dirFile, TH1D * const cutFlow, const double w)
+{
+  vector<double> sigmas = {1.0, 2.0, 3.0};
+  cutFlow->SetDirectory (0);
+  for (const auto &sigma : sigmas)
+    {
+      double cl = 1.0 - 2.0 * normCDF (-sigma);
+      stringstream ss;
+      ss << ((int) (cl * 100.0));
+
+      TH1D * const upperLimitCutFlowHist = (TH1D *) cutFlow->Clone (("cutFlow_" + ss.str () + "CL").c_str ());
+      upperLimitCutFlowHist->SetDirectory (&dirFile);
+      for (int i = 0; i <= cutFlow->GetXaxis ()->GetNbins () + 1; i++)
+        {
+          double content = cutFlow->GetBinContent (i) / w, upperLimit;
+          upperLimit = 0.5 * TMath::ChisquareQuantile (cl, 2 * (content + 1));
+          upperLimitCutFlowHist->SetBinContent (i, upperLimit * w);
+        }
+    }
+}
+
+void
+upperLimitCutFlow (TDirectoryFile &dirFile, const double w)
+{
+  TIter next (dirFile.GetListOfKeys ());
+  TKey *key;
+  while ((key = (TKey *) next ()))
+    {
+      if (string (key->GetClassName ()) == "TDirectoryFile")
+        upperLimitCutFlow (*((TDirectoryFile *) dirFile.Get (key->GetName ())), w);
+      if (string (key->GetClassName ()) == "TH1D" && string (key->GetName ()) == "cutFlow")
+        generateUpperLimitCutFlow (dirFile, (TH1D *) dirFile.Get (key->GetName ()), w);
+    }
+}
