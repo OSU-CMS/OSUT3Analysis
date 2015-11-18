@@ -13,7 +13,6 @@ parser = OptionParser()
 parser = set_commandline_arguments(parser)
 
 parser.remove_option("-o")
-parser.remove_option("-c")
 parser.remove_option("-n")
 parser.remove_option("-u")
 parser.remove_option("-e")
@@ -26,7 +25,6 @@ parser.remove_option("-y")
 parser.remove_option("-p")
 
 parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")
-parser.add_option("-w", "--workDirectory", dest="Directory", default = "", help="Specify the working directroy.")
 parser.add_option("-L", "--targetLumi", dest="IntLumi", default = "", help="Specify the targeting luminosity.")
 parser.add_option("-c", "--condor", dest="UseCondor", default = False,action = "store_true", help="Run merging jobs on condor.")
 
@@ -214,11 +212,11 @@ def SkimFileValidator(File):
 #                           Getting the working directory.                    #
 ###############################################################################
 CondorDir = ''
-if arguments.Directory == "":
+if arguments.condorDir == "":
     print "No working directory is given, aborting."
     sys.exit()
 else:
-    CondorDir = os.getcwd() + '/condor/' + arguments.Directory
+    CondorDir = os.getcwd() + '/condor/' + arguments.condorDir
 ###############################################################################
 #Check whether the necessary arguments or the local config are given correctly#
 ###############################################################################
