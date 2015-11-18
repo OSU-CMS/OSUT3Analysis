@@ -244,6 +244,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA, jsonFil
 def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     os.system('touch ' + Directory + '/config_cfg.py')
     ConfigFile = open(Directory + '/config_cfg.py','r+w')
+    exec('import userConfig_' + Label + '_cfg' + ' as temPset')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')        
     ConfigFile.write('import OSUT3Analysis.DBTools.osusub_cfg as osusub\n')
     ConfigFile.write('import re\n')
@@ -273,6 +274,17 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
     ConfigFile.write('fileName = re.sub (r\'^(.*)\.([^\.]*)$\', r\'\\1_\' + str (osusub.jobNumber) + r\'.\\2\', fileName)\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
+    if types[Label] == "data":
+        for module in vars(temPset.process).values():
+            if hasattr(module, "weights"):
+                ConfigFile.write('pset.process.' + str(module) + '.weights = cms.VPSet()\n')
+    if hasattr(temPset.process, "PUScalingFactorProducer"):
+        if types[Label] == "bgMC":
+            ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.datasetType = cms.string("bgMC")')
+        else:
+            ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.datasetType = cms.string("data")')
     ConfigFile.write('\n')
     if Dataset != '':
 	ConfigFile.write('pset.process.source.fileNames = cms.untracked.vstring (osusub.runList)\n')

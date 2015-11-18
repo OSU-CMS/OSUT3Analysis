@@ -5,7 +5,6 @@
 #include "OSUT3Analysis/Collections/interface/Bjet.h"
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
 #include "OSUT3Analysis/Collections/interface/Candele.h"
-#include "OSUT3Analysis/Collections/interface/Candjet.h"
 #include "OSUT3Analysis/Collections/interface/Electron.h"
 #include "OSUT3Analysis/Collections/interface/Event.h"
 #include "OSUT3Analysis/Collections/interface/Eventvariable.h"
@@ -63,14 +62,6 @@ namespace {
     edm::Wrapper<osu::Candele>                candele2;
     edm::Wrapper<vector<osu::Candele> >       candele3;
     edm::Ref<vector<osu::Candele> >           candele4;
-#endif
-
-#if IS_VALID(candjets)
-    osu::Candjet                              candjet0;
-    vector<osu::Candjet>                      candjet1;
-    edm::Wrapper<osu::Candjet>                candjet2;
-    edm::Wrapper<vector<osu::Candjet> >       candjet3;
-    edm::Ref<vector<osu::Candjet> >           candjet4;
 #endif
 
 #if IS_VALID(electrons)

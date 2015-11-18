@@ -179,8 +179,6 @@ def MakeFilesForSkimDirectory(Directory, TotalNumber, SkimNumber):
 #                 Make submission script for the failed jobs.                 #
 ###############################################################################
 def MakeResubmissionScript(badIndices, originalSubmissionScript):
-    if os.path.exists('condor_resubmit.sub'):
-      os.system('rm condor_resubmit.sub')
     os.system('touch condor_resubmit.sub')
     resubScript = open('condor_resubmit.sub','r+w') 
     originalScript = open(originalSubmissionScript,'r')
@@ -249,6 +247,8 @@ for dataSet in split_datasets:
     print "....................Merging dataset " + dataSet + " ...................."
     os.chdir(directory)
     ReturnValues = []
+    if os.path.islink(directory + '/hist.root'):
+        os.system('rm ' + directory + '/hist.root')
     LogFiles = os.popen('ls condor_*.log').readlines()
     for i in range(0,len(LogFiles)):
         ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
@@ -271,6 +271,8 @@ for dataSet in split_datasets:
             BadIndex = Decoded.group(1)
             print "Warning!!! Job " + str(BadIndex) + " exited inproperly!"                                                         
             BadIndices.append(BadIndex)
+    if os.path.exists('condor_resubmit.sub'):
+        os.system('rm condor_resubmit.sub')
     if BadIndices:
         MakeResubmissionScript(BadIndices, 'condor.sub')
     for i in range(0,len(GoodIndices)):

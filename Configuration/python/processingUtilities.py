@@ -62,8 +62,8 @@ def set_commandline_arguments(parser):
     #### Configuration-related Options
     parser.add_option("-l", "--localConfig", dest="localConfig",
                   help="local configuration file")
-    parser.add_option("-c", "--condorDir", dest="condorDir",
-                      help="condor output directory")
+    parser.add_option("-w", "--workDirectory", dest="condorDir",
+                      help="condor working directory")
     parser.add_option("-o", "--output-file", dest="outputFileName",
                       help="specify an output file name for the histogram file, default is 'stacked_histograms.root'")
 

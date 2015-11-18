@@ -64,7 +64,7 @@ MuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonNumberOfValidHits"),
             title = cms.string("Muon Number of Valid Hits; # Hits"),
-            binsX = cms.untracked.vdouble(20, 0, 20),
+            binsX = cms.untracked.vdouble(40, 0, 40),
             inputVariables = cms.vstring("numberOfValidHits"),
         ),
         cms.PSet (
@@ -346,6 +346,12 @@ DiMuonHistograms = cms.PSet(
             name = cms.string("diMuonInvMass"),
             title = cms.string("Di-muon Invariant Mass; M_{#mu#mu} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("invMass (muon, muon)"),
+        ),
+        cms.PSet (
+            name = cms.string("diMuonInvMassZoom"),
+            title = cms.string("Di-muon Invariant Mass; M_{#mu#mu} [GeV]"),
+            binsX = cms.untracked.vdouble(100, 50, 150),
             inputVariables = cms.vstring("invMass (muon, muon)"),
         ),
         cms.PSet (
