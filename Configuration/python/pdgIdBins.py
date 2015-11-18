@@ -108,7 +108,7 @@ pdgId.susy = [
     1000039,  #  ~G
 ]
 
-pdgId.light_mesons_I0 = [
+pdgId.light_mesons_I1 = [
     111,      #  pi0
     211,      #  pi+
     9000111,  #  a_0(980)
@@ -157,7 +157,7 @@ pdgId.light_mesons_I0 = [
     219,      #  a_4(2040)+
 ]
 
-pdgId.light_mesons_I1 = [
+pdgId.light_mesons_I0 = [
     221,      # eta
     331,      # eta'(958)
     9000221,  # f_0(600)
@@ -436,6 +436,9 @@ bottom_baryons = [
     5544, # omega_bbc*0
     5554, # omega_bbb-
 ]
+
+pdgId.hadrons = pdgId.light_mesons_I1 + pdgId.light_mesons_I0 + pdgId.strange_mesons + pdgId.charmed_mesons + pdgId.bottom_mesons + pdgId.charmonium + pdgId.bottomonium + pdgId.light_baryons + pdgId.strange_baryons + charmed_baryons + bottom_baryons
+pdgId.heavy_flavor_hadrons = pdgId.charmed_mesons + pdgId.bottom_mesons + pdgId.charmonium + pdgId.bottomonium + charmed_baryons + bottom_baryons
 
 def getPdgBins (categories):
     ids = []
