@@ -4,6 +4,7 @@
 <use  name="DataFormats/Common"/>
 <use  name="DataFormats/EgammaCandidates"/>
 <use  name="DataFormats/EgammaReco"/>
+<use  name="RecoEgamma/EgammaTools"/>
 <use  name="DataFormats/JetReco"/>
 <use  name="DataFormats/METReco"/>
 <use  name="DataFormats/MuonReco"/>
@@ -26,6 +27,3 @@ they can be safely ignored.-->
 <!-- disappearing tracks packages -->
 <use  name="DisappTrks/CandidateTrackProducer"/>  
 
-<!-- displaced SUSY packages -->
-<use  name="DisplacedSUSY/CandidateElectronProducer"/>
-<!--=========================================================================-->

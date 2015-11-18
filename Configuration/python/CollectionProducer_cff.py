@@ -56,6 +56,10 @@ copyConfiguration (collectionProducer.candjets, collectionProducer.genMatchables
 #-------------------------------------------------------------------------------
 
 collectionProducer.electrons = cms.EDProducer ("ElectronProducer",
+    gsfElectrons = cms.InputTag("slimmedElectrons"),
+    conversions = cms.InputTag  ("reducedEgamma",    "reducedConversions",""),
+    rho = cms.InputTag  ("fixedGridRhoFastjetAll",    "",                ""),
+    beamSpot = cms.InputTag  ("offlineBeamSpot",           "",                "")
 )
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
