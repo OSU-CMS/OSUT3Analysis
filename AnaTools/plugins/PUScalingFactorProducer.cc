@@ -1,5 +1,5 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
-#include "OSUT3Analysis/AnaTools/interface/PUScalingFactorProducer.h"
+#include "OSUT3Analysis/AnaTools/plugins/PUScalingFactorProducer.h"
 
 PUScalingFactorProducer::PUScalingFactorProducer(const edm::ParameterSet &cfg) :
    EventVariableProducer(cfg),
