@@ -5,7 +5,6 @@
 #define  genjets_TYPE           INVALID_TYPE
 #define  jets_TYPE              reco::PFJet
 #define  bjets_TYPE             INVALID_TYPE
-#define  candeles_TYPE          INVALID_TYPE
 #define  basicjets_TYPE         reco::BasicJet
 #define  mcparticles_TYPE       INVALID_TYPE
 #define  mets_TYPE              reco::PFMET
@@ -32,7 +31,6 @@
 #define  superclusters_INVALID
 #define  trigobjs_INVALID
 #define  bjets_INVALID
-#define  candeles_INVALID
 
 
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
