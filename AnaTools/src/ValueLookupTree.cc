@@ -602,6 +602,18 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 
   try
     {
+      // if any of the operands are invalid numeric values, do nothing and
+      // return an invalid numeric value
+      for (const auto &operand : operands)
+        {
+          const double *operandValue = NULL;
+          if ((operandValue = boost::get<double> (&operand)))
+            {
+              if (*operandValue <= numeric_limits<int>::min () + 1)
+                return numeric_limits<int>::min ();
+            }
+        }
+
       if (op == "||" || op == "|")
         return (boost::get<double> (operands.at (0)) || boost::get<double> (operands.at (1)));
       else if (op == "&&" || op == "&")
