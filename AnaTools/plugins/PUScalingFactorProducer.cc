@@ -13,7 +13,7 @@ PUScalingFactorProducer::~PUScalingFactorProducer() {}
 
 void
 PUScalingFactorProducer::AddVariables (const edm::Event &event) {
-#if DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
   TFile *fin = TFile::Open (PU_.c_str ());
   if (!fin || fin->IsZombie()) {
     clog << "ERROR [PUScalingFactorProducer]: Could not find file: " << PU_
@@ -42,20 +42,24 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
   delete fin;
   delete mc;
   delete trimmedMC;
-  objectsToGet_.insert ("pileupinfos");
-  getOriginalCollections (objectsToGet_, collections_, handles_, event);
-  double numTruePV = 0;
- for (const auto &pv1 : *handles_.pileupinfos) {
-    if(pv1.getBunchCrossing() == 0)
-      numTruePV = pv1.getTrueNumInteractions();
-  }
   if(type_.find("bgMC") < type_.length())
-    (*eventvariables)["puScalingFactor"] = puWeight->GetBinContent(puWeight->FindBin(numTruePV));
+    {
+      objectsToGet_.insert ("pileupinfos");
+      getOriginalCollections (objectsToGet_, collections_, handles_, event);
+      double numTruePV = 0;
+      for (const auto &pv1 : *handles_.pileupinfos) {
+      if(pv1.getBunchCrossing() == 0)
+        numTruePV = pv1.getTrueNumInteractions();
+      }
+      (*eventvariables)["puScalingFactor"] = puWeight->GetBinContent(puWeight->FindBin(numTruePV));
+    }
   else
     (*eventvariables)["puScalingFactor"] = 1;
   delete puWeight; 
- # endif
- }  
+#else
+    (*eventvariables)["puScalingFactor"] = 1; 
+# endif
+}  
 
 void
 PUScalingFactorProducer::getOriginalCollections (const unordered_set<string> &objectsToGet, const edm::ParameterSet &collections, OriginalCollections &handles, const edm::Event &event)
