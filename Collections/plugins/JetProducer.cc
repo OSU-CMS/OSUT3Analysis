@@ -30,9 +30,11 @@ JetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   for (const auto &object : *collection)
     {
       osu::Jet jet (object, particles, cfg_);
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags")); 
-      pl_->push_back (jet);
+#endif     
+ pl_->push_back (jet);
     }
   event.put (pl_, collection_.instance ());
   pl_.reset ();
