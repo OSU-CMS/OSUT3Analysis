@@ -6,7 +6,6 @@
 #define  basicjets_TYPE         pat::Jet
 #define  jets_TYPE              pat::Jet
 #define  bjets_TYPE             INVALID_TYPE
-#define  candeles_TYPE          INVALID_TYPE
 #define  mcparticles_TYPE       pat::PackedGenParticle
 #define  mets_TYPE              pat::MET
 #define  muons_TYPE             pat::Muon
@@ -28,7 +27,6 @@
 #define  events_INVALID
 #define  tracks_INVALID
 #define  bjets_INVALID
-#define  candeles_INVALID
 
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 #include "DataFormats/Common/interface/TriggerResults.h"

@@ -202,7 +202,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "genjets")           &&  collections.exists  ("genjets"))           getCollection  (collections.getParameter<edm::InputTag>  ("genjets"),           handles.genjets,           event);
   if  (VEC_CONTAINS  (objectsToGet,  "jets")              &&  collections.exists  ("jets"))              getCollection  (collections.getParameter<edm::InputTag>  ("jets"),              handles.jets,              event);
   if  (VEC_CONTAINS  (objectsToGet,  "basicjets")         &&  collections.exists  ("basicjets"))         getCollection  (collections.getParameter<edm::InputTag>  ("basicjets"),         handles.basicjets,         event);
-  if  (VEC_CONTAINS  (objectsToGet,  "candeles")          &&  collections.exists  ("candeles"))          getCollection  (collections.getParameter<edm::InputTag>  ("candeles"),          handles.candeles,          event);
   if  (VEC_CONTAINS  (objectsToGet,  "generatorweights")  &&  collections.exists  ("generatorweights"))  getCollection  (collections.getParameter<edm::InputTag>  ("generatorweights"),  handles.generatorweights,  event);
   if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")       &&  collections.exists  ("mcparticles"))       getCollection  (collections.getParameter<edm::InputTag>  ("mcparticles"),       handles.mcparticles,       event);
   if  (VEC_CONTAINS  (objectsToGet,  "mets")              &&  collections.exists  ("mets"))              getCollection  (collections.getParameter<edm::InputTag>  ("mets"),              handles.mets,              event);
@@ -254,8 +253,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     clog << "INFO: did not retrieve jets collection from the event." << endl;
   if (firstEvent && !handles.basicjets.isValid ())
     clog << "INFO: did not retrieve basicjets collection from the event." << endl;
-  if (firstEvent && !handles.candeles.isValid ())
-    clog << "INFO: did not retrieve candeles collection from the event." << endl;
   if (firstEvent && !handles.generatorweights.isValid ())
     clog << "INFO: did not retrieve generatorweights collection from the event." << endl;
   if (firstEvent && !handles.mcparticles.isValid ())
@@ -578,10 +575,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 #if IS_VALID(electrons)
   string  anatools::getObjectType  (const  osu::Electron       &obj)  {  return  "electron";       }
   string  anatools::getObjectClass  (const  osu::Electron       &obj)  {  return  "osu::Electron";       }
-#endif
-#if IS_VALID(candeles)
-  string  anatools::getObjectType  (const  osu::Candele       &obj)  {  return  "candele";       }
-  string  anatools::getObjectClass  (const  osu::Candele       &obj)  {  return  "osu::Candele";       }
 #endif
 #if IS_VALID(events)
   string  anatools::getObjectType  (const  osu::Event          &obj)  {  return  "event";          }

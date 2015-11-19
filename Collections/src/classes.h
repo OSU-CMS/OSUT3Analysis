@@ -4,7 +4,6 @@
 #include "OSUT3Analysis/Collections/interface/Beamspot.h"
 #include "OSUT3Analysis/Collections/interface/Bjet.h"
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
-#include "OSUT3Analysis/Collections/interface/Candele.h"
 #include "OSUT3Analysis/Collections/interface/Electron.h"
 #include "OSUT3Analysis/Collections/interface/Event.h"
 #include "OSUT3Analysis/Collections/interface/Eventvariable.h"
@@ -54,14 +53,6 @@ namespace {
     edm::Wrapper<osu::Bxlumi>                 bxlumi2;
     edm::Wrapper<vector<osu::Bxlumi> >        bxlumi3;
     edm::Ref<vector<osu::Bxlumi> >            bxlumi4;
-#endif
-
-#if IS_VALID(candeles)
-    osu::Candele                              candele0;
-    vector<osu::Candele>                      candele1;
-    edm::Wrapper<osu::Candele>                candele2;
-    edm::Wrapper<vector<osu::Candele> >       candele3;
-    edm::Ref<vector<osu::Candele> >           candele4;
 #endif
 
 #if IS_VALID(electrons)

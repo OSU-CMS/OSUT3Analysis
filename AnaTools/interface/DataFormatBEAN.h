@@ -7,7 +7,6 @@
 #define  basicjets_TYPE       INVALID_TYPE
 #define  jets_TYPE            BNjet
 #define  bjets_TYPE           INVALID_TYPE
-#define  candeles_TYPE        INVALID_TYPE
 #define  mcparticles_TYPE     BNmcparticle
 #define  mets_TYPE            BNmet
 #define  muons_TYPE           BNmuon
@@ -29,7 +28,6 @@
 #define  beamspots_INVALID
 #define  prescales_INVALID
 #define  bjets_INVALID
-#define  candeles_INVALID
 #define  generatorweights_INVALID
 #define  pileupinfos_INVALID
 

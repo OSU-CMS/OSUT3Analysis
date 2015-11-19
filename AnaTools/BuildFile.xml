@@ -32,9 +32,6 @@ they can be safely ignored.-->
 <!--=========================================================================-->
 <!-- disappearing tracks packages -->
 <use  name="DisappTrks/CandidateTrackProducer"/>  
-<!-- displacedSUSY packages -->
-<use  name="DisplacedSUSY/CandidateElectronProducer"/> 
-<use  name="DisplacedSUSY/CandidateJetProducer"/> 
 <!-- BEANs packages -->
 <use  name="BEAN/Collections"/>
 <!--=========================================================================-->

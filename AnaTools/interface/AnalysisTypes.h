@@ -9,7 +9,6 @@
 #include "OSUT3Analysis/Collections/interface/Beamspot.h"
 #include "OSUT3Analysis/Collections/interface/Bjet.h"
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
-#include "OSUT3Analysis/Collections/interface/Candele.h"
 #include "OSUT3Analysis/Collections/interface/Electron.h"
 #include "OSUT3Analysis/Collections/interface/Event.h"
 #include "OSUT3Analysis/Collections/interface/Eventvariable.h"
@@ -105,7 +104,6 @@ struct Collections
   edm::Handle<vector<osu::Genjet> >         genjets;
   edm::Handle<vector<osu::Jet> >            jets;
   edm::Handle<vector<osu::Basicjet> >       basicjets;
-  edm::Handle<vector<osu::Candele> >        candeles;
   edm::Handle<vector<osu::Mcparticle> >     mcparticles;
   edm::Handle<vector<osu::Met> >            mets;
   edm::Handle<vector<osu::Muon> >           muons;
