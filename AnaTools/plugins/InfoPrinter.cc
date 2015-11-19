@@ -329,7 +329,7 @@ InfoPrinter::printValuesToPrint ()
           if (value != valueToPrint.valueLookupTree->evaluate ().begin ())
             ss_ << ", ";
           double v = boost::get<double> (*value);
-          if (v > numeric_limits<int>::min () + 1)
+          if (!IS_INVALID(v))
             ss_ << v;
           else
             ss_ << "-";

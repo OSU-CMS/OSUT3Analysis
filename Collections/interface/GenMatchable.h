@@ -44,10 +44,10 @@ namespace osu
             double directHardProcessTauDecayProductFinalState;
 
             DRToGenMatchedParticle () :
-              promptFinalState (numeric_limits<int>::min ()),
-              directPromptTauDecayProductFinalState (numeric_limits<int>::min ()),
-              hardProcessFinalState (numeric_limits<int>::min ()),
-              directHardProcessTauDecayProductFinalState (numeric_limits<int>::min ())
+              promptFinalState (INVALID_VALUE),
+              directPromptTauDecayProductFinalState (INVALID_VALUE),
+              hardProcessFinalState (INVALID_VALUE),
+              directHardProcessTauDecayProductFinalState (INVALID_VALUE)
             {
             }
           };
@@ -129,10 +129,10 @@ osu::GenMatchable<T, PdgId>::~GenMatchable ()
 template<class T, int PdgId> const typename osu::GenMatchable<T, PdgId>::GenMatchedParticle
 osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<osu::Mcparticle> > &particles, osu::GenMatchable<T, PdgId>::GenMatchedParticle &genMatchedParticle, osu::GenMatchable<T, PdgId>::DRToGenMatchedParticle &dRToGenMatchedParticle, const bool usePdgId)
 {
-  dRToGenMatchedParticle.promptFinalState = numeric_limits<int>::min ();
-  dRToGenMatchedParticle.directPromptTauDecayProductFinalState = numeric_limits<int>::min ();
-  dRToGenMatchedParticle.hardProcessFinalState = numeric_limits<int>::min ();
-  dRToGenMatchedParticle.directHardProcessTauDecayProductFinalState = numeric_limits<int>::min ();
+  dRToGenMatchedParticle.promptFinalState = INVALID_VALUE;
+  dRToGenMatchedParticle.directPromptTauDecayProductFinalState = INVALID_VALUE;
+  dRToGenMatchedParticle.hardProcessFinalState = INVALID_VALUE;
+  dRToGenMatchedParticle.directHardProcessTauDecayProductFinalState = INVALID_VALUE;
   for (vector<osu::Mcparticle>::const_iterator particle = particles->begin (); particle != particles->end (); particle++)
     {
       int pdgId = 0;

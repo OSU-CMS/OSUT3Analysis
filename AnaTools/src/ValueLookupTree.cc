@@ -137,7 +137,7 @@ ValueLookupTree::evaluate ()
 	    }
 
 	  } else
-            values_.push_back (numeric_limits<int>::min ());
+            values_.push_back (INVALID_VALUE);
         }
 #if IS_VALID(uservariables)
       for (auto &uservariable : uservariablesToDelete_)
@@ -538,7 +538,7 @@ ValueLookupTree::evaluate_ (const Node * const tree, const ObjMap &objs)
   // Do nothing if the tree is null.
   //////////////////////////////////////////////////////////////////////////////
   if (!tree)
-    return numeric_limits<int>::min ();
+    return INVALID_VALUE;
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -584,7 +584,7 @@ ValueLookupTree::evaluate_ (const Node * const tree, const ObjMap &objs)
 	  }
           clog << "ERROR: cannot infer ownership of \"" << tree->value << "\"" << endl;
           evaluationError_ = true;
-          return numeric_limits<int>::min ();
+          return INVALID_VALUE;
         }
     }
   //////////////////////////////////////////////////////////////////////////////
@@ -606,8 +606,8 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
           const double *operandValue = NULL;
           if ((operandValue = boost::get<double> (&operand)))
             {
-              if (*operandValue <= numeric_limits<int>::min () + 1)
-                return numeric_limits<int>::min ();
+              if (IS_INVALID(*operandValue))
+                return INVALID_VALUE;
             }
         }
 
@@ -784,7 +784,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
       clog << ")\"" << endl;
       evaluationError_ = true;
     }
-  return numeric_limits<int>::min ();
+  return INVALID_VALUE;
 }
 
 void *
@@ -1277,6 +1277,6 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
     }
   catch (...)
     {
-      return numeric_limits<int>::min ();
+      return INVALID_VALUE;
     }
 }

@@ -37,6 +37,12 @@
 #define TYPE(x) x##_TYPE
 #define TYPE_STR(x) XSTR(x##_TYPE)
 
+#define INVALID_VALUE (numeric_limits<int>::min ())
+#define IS_INVALID(x) (x <= INVALID_VALUE + 1)
+
+// Return whether obj is contained in vec.
+#define VEC_CONTAINS(vec, obj) (find (vec.begin (), vec.end (), obj) != vec.end ())
+
 #include <map>
 #include <string>
 #include <vector>

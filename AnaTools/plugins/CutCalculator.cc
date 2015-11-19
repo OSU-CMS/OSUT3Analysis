@@ -128,7 +128,7 @@ CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex) 
     {
       unsigned object = (cutDecision - currentCut.valueLookupTree->evaluate ().begin ());
       double value = boost::get<double> (*cutDecision);
-      pair<bool, bool> flag = make_pair (value, value > numeric_limits<int>::min () + 1);
+      pair<bool, bool> flag = make_pair (value, !IS_INVALID(value));
 
       if (currentCut.isVeto)
         flag.first = !flag.first;

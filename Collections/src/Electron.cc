@@ -12,21 +12,21 @@ osu::Electron::Electron ()
 osu::Electron::Electron (const reco::GsfElectron &electron) :
   GenMatchable (pat::Electron(electron)),
   vtxFitConversion_     (false),
-  rho_                  (numeric_limits<float>::min ())
+  rho_                  (INVALID_VALUE)
 {
 }
 
 osu::Electron::Electron (const reco::GsfElectron &electron, const edm::Handle<vector<osu::Mcparticle> > &particles) :
   GenMatchable (pat::Electron(electron), particles),
   vtxFitConversion_     (false),
-  rho_                  (numeric_limits<float>::min ())
+  rho_                  (INVALID_VALUE)
 {
 }
 
 osu::Electron::Electron (const reco::GsfElectron &electron, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
   GenMatchable (pat::Electron(electron), particles, cfg),
   vtxFitConversion_     (false),
-  rho_                  (numeric_limits<float>::min ())
+  rho_                  (INVALID_VALUE)
 {
 }
 
