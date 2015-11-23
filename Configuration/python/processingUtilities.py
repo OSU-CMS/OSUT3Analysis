@@ -373,11 +373,10 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
                 newInputTags = cms.VInputTag()
                 inputTags = getattr (collections, collection)
                 for inputTag in inputTags:
-                    producerName = collection[0].upper () + collection[1:-1] + "Producer"
                     eventvariableCollections = copy.deepcopy (collections)
                     setattr (eventvariableCollections, collection, cms.InputTag ("",""))
                     setattr (eventvariableCollections, collection,inputTag)
-                    objectProducer = getattr (collectionProducer, collection)
+                    objectProducer = getattr (collectionProducer, collection).clone()
                     objectProducer.collections = eventvariableCollections
                     channelPath += objectProducer
                     setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
@@ -393,8 +392,7 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
                     add_channels.producerIndex += 1
                 setattr (producedCollections, collection, newInputTags)
             else:
-                producerName = collection[0].upper () + collection[1:-1] + "Producer"
-                objectProducer = getattr (collectionProducer, collection)
+                objectProducer = getattr (collectionProducer, collection).clone()
                 objectProducer.collections = collections
                 channelPath += objectProducer
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)

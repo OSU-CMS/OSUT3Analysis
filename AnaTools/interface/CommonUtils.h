@@ -17,9 +17,6 @@
 
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
-// Return whether obj is contained in vec.
-#define VEC_CONTAINS(vec, obj) (find (vec.begin (), vec.end (), obj) != vec.end ())
-
 namespace anatools
 {
   template <class T> bool getCollection (const edm::InputTag& label, edm::Handle<T>& collection, const edm::Event& event, bool verbose = true);

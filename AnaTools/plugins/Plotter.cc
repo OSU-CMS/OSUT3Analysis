@@ -129,7 +129,7 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       weight->product = 1;
       for(vector<Leaf>::const_iterator leaf = weight->valueLookupTree->evaluate ().begin (); leaf != weight->valueLookupTree->evaluate ().end (); leaf++){
  	double value = boost::get<double> (*leaf);
- 	if(value <= numeric_limits<int>::min () + 1)
+ 	if(IS_INVALID(value))
  	  continue;
         weight->product *= value;
       }
@@ -321,7 +321,7 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
   for(vector<Leaf>::const_iterator leaf = definition.valueLookupTrees.at (0)->evaluate ().begin (); leaf != definition.valueLookupTrees.at (0)->evaluate ().end (); leaf++){
     double value = boost::get<double> (*leaf),
            weight = 1.0;
-    if(value <= numeric_limits<int>::min () + 1)
+    if(IS_INVALID(value))
       continue;
     if(definition.hasVariableBinsX){
       weight /= getBinSize(histogram,value);
@@ -383,7 +383,7 @@ void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double
 	 << " in directory " << definition.directory << endl;
     return;
   }
-  if(valueX <= numeric_limits<int>::min () + 1 || valueY <= numeric_limits<int>::min () + 1)
+  if(IS_INVALID(valueX) || IS_INVALID(valueY))
     return;
   if(definition.hasVariableBinsX){
     weight /= getBinSize(histogram,valueX,valueY).first;

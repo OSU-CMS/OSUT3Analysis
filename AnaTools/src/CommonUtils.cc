@@ -294,7 +294,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   double
   anatools::getMember (const string &type, const void * const obj, const string &member)
   {
-    double value = numeric_limits<int>::min ();
+    double value = INVALID_VALUE;
     edm::TypeWithDict t = edm::TypeWithDict::byName (type);
     edm::ObjectWithDict *o = new edm::ObjectWithDict (t, (void *) obj);
     const edm::MemberWithDict &dataMember = t.dataMemberByName (member);
@@ -405,7 +405,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   double
   anatools::getMember (const string &type, const void * const obj, const string &member)
   {
-    double value = numeric_limits<int>::min ();
+    double value = INVALID_VALUE;
     Reflex::Type t = Reflex::Type::ByName (type);
     Reflex::Object *o = new Reflex::Object (t, (void *) obj);
     string memberType;
