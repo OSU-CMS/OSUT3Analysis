@@ -4,6 +4,7 @@ import re
 import sys
 import math
 import datetime
+import time
 import copy
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
@@ -13,10 +14,10 @@ from OSUT3Analysis.Configuration.CollectionProducer_cff import *
 
 def get_date_time_stamp():
     # Return a string that encodes the date and time
-    # Do not include ":" in string, because it is not allowed in a filename 
+    # Do not include ":" in string, because it is not allowed in a filename
     now = datetime.datetime.now()
-    date_hash = now.strftime("%Y_%m_%d_%Hh%Mm%Ss") # Format:  1970_01_01_12h00m30s  
-    return date_hash  
+    date_hash = now.strftime("%Y_%m_%d_%Hh%Mm%Ss") # Format:  1970_01_01_12h00m30s
+    return date_hash
 
 def split_composite_datasets(datasets, composite_dataset_definitions):
     for dataset in datasets:
@@ -222,25 +223,25 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
     ############################################################################
     if not hasattr (add_channels, "processNameUpdated"):
         add_channels.processNameUpdated = True
-        randomNumberSuffix = 0  # To get a different process name when running over a skim with the same channel.  
-        if len(process.source.fileNames) > 0:
-            randomNumberSuffix = len(process.source.fileNames[0])  # Use the length of the first input filename.  
+        randomNumberSuffix = int (time.time ())  # Use the seconds since the Unix epoch to get a
+                                                 # different process name when running over a skim with the
+                                                 # same channel.
         channelName = str(channels[0].name.pythonValue())
         channelName = channelName.replace("'", "").replace("_", "") # Non-alpha-numeric characters are not allowed in the process name.
-        process.setName_ (process.name_ () + channelName + str(randomNumberSuffix)) 
+        process.setName_ (process.name_ () + channelName + str(randomNumberSuffix))
     ############################################################################
 
     ############################################################################
-    # For interactive jobs only, 
+    # For interactive jobs only,
     # change the output filename to include the name of the first channel,
-    # as well as a date/time stamp.  
-    # For batch jobs, do not change filename; we want it identical for all jobs.  
+    # as well as a date/time stamp.
+    # For batch jobs, do not change filename; we want it identical for all jobs.
     ############################################################################
     if not osusub.batchMode:
-        originalName = outputName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.  
-        suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp() 
-        outputName = outputName.replace(".root", suffix + ".root")  
-        process.TFileService.fileName = cms.string(outputName) 
+        originalName = outputName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.
+        suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
+        outputName = outputName.replace(".root", suffix + ".root")
+        process.TFileService.fileName = cms.string(outputName)
         if os.path.islink (originalName):
             os.unlink (originalName)
         os.symlink (outputName, originalName)
@@ -254,19 +255,19 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
         channelName = channelName[1:-1]  # Remove quotation marks
 
         ########################################################################
-        # Check to see if this channel has already been added. 
+        # Check to see if this channel has already been added.
         # Since all channels must have unique names, this will break everything.
         # So we'll print a warning and skip this channel.
         ########################################################################
         if hasattr (process, channelName):
-            print ("WARNING [add_channels]: The '" + 
-                   channelName + 
+            print ("WARNING [add_channels]: The '" +
+                   channelName +
                    "' channel has been added more than once")
             print "  Skipping this channel!"
             continue
 
         ########################################################################
-        # If a skim is requested, get the name of the channel 
+        # If a skim is requested, get the name of the channel
         # and try to make a directory with that name.
         # If the directory already exists, an OSError exception will be
         # raised, which we ignore.
@@ -292,7 +293,7 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
         ########################################################################
 
         ########################################################################
-        # Each variable producer module is added to the list of user variable 
+        # Each variable producer module is added to the list of user variable
         # collections in the collections PSet.
         ########################################################################
             if not hasattr (collections, "uservariables"):
@@ -308,7 +309,7 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
         ########################################################################
 
         ########################################################################
-        # Each event variable producer module is added to the list of user variable 
+        # Each event variable producer module is added to the list of user variable
         # collections in the collections PSet.
         ########################################################################
             if not hasattr (collections, "eventvariables"):
@@ -388,7 +389,7 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
                     else:
                         dropCommand += "*"
                     outputCommands.append (dropCommand)
-                    if collection not in cutCollections: 
+                    if collection not in cutCollections:
                         outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + inputTag.getProductInstanceLabel () + "_" + process.name_ ())
                     add_channels.producerIndex += 1
                 setattr (producedCollections, collection, newInputTags)
@@ -528,13 +529,13 @@ def set_endPath(process, endPath):
 
 def set_input(process, input_string):
     from OSUT3Analysis.Configuration.configurationOptions import dataset_names, composite_dataset_definitions
-    
+
     ############################################################################
     # This function configures the input dataset.
     # It can take a dataset nickname, directory, or file as argument.
     # Subsequent calls to this function will overwrite previous results.
     ############################################################################
-    
+
     # print a warning if the input source has already been set
     sourceType =  type(process.source).__name__
     if sourceType != 'NoneType':
@@ -573,13 +574,13 @@ def set_input(process, input_string):
             print "ERROR [set_input]: '" + input_string + "' is a composite dataset"
             print "  Composite datasets should not processed interactively",
             print "because their components won't have the proper relative weights."
-            print "  No files have been added to process.source.fileNames"          
-        else:
-            print "ERROR [set_input]: '" + input_string + "' is not a valid root file, directory, or dataset name."  
             print "  No files have been added to process.source.fileNames"
-        return 
+        else:
+            print "ERROR [set_input]: '" + input_string + "' is not a valid root file, directory, or dataset name."
+            print "  No files have been added to process.source.fileNames"
+        return
 
-    
+
     # use 'input_string' as a registered dataset name
     if isValidDataset:
         datasetDirectory = dataset_names[input_string]
