@@ -279,10 +279,10 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     if hasattr(temPset.process, "PUScalingFactorProducer"):
         if types[Label] == "bgMC":
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
-            ConfigFile.write('pset.process.PUScalingFactorProducer.datasetType = cms.string("bgMC")')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("bgMC")')
         else:
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n')
-            ConfigFile.write('pset.process.PUScalingFactorProducer.datasetType = cms.string("data")')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("data")')
     ConfigFile.write('\n')
     if Dataset != '':
 	ConfigFile.write('pset.process.source.fileNames = cms.untracked.vstring (osusub.runList)\n')
