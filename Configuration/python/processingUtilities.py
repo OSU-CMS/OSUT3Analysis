@@ -12,6 +12,18 @@ import FWCore.ParameterSet.Config as cms
 from OSUT3Analysis.Configuration.InfoPrinter_cff import *
 from OSUT3Analysis.Configuration.CollectionProducer_cff import *
 
+def GetCompleteOrderedArgumentsSet(InputArguments, currentCondorSubArgumentsSet):
+    NewArguments = copy.deepcopy(InputArguments)
+    for argument in InputArguments:
+        for index in currentCondorSubArgumentsSet:
+            if currentCondorSubArgumentsSet[index].has_key(argument):
+                currentCondorSubArgumentsSet[index][argument] = InputArguments[argument]
+                NewArguments.pop(argument)
+                break
+    for newArgument in NewArguments:
+        currentCondorSubArgumentsSet.setdefault(len(currentCondorSubArgumentsSet.keys()) + 1, {newArgument : NewArguments[newArgument]})
+    currentCondorSubArgumentsSet.setdefault(len(currentCondorSubArgumentsSet.keys()) + 1, {'Queue': ''})
+
 def get_date_time_stamp():
     # Return a string that encodes the date and time
     # Do not include ":" in string, because it is not allowed in a filename

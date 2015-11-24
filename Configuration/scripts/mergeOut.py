@@ -27,6 +27,7 @@ parser.remove_option("-p")
 parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")
 parser.add_option("-L", "--targetLumi", dest="IntLumi", default = "", help="Specify the targeting luminosity.")
 parser.add_option("-c", "--condor", dest="UseCondor", default = False,action = "store_true", help="Run merging jobs on condor.")
+parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", default = False, help="Just generate necessary config files without executing them.")
 
 (arguments, args) = parser.parse_args()
 from ROOT import TFile
@@ -40,32 +41,21 @@ def MakeSubmissionScriptForMerging(Directory):
     else:
 	os.system('touch ' + Directory + '/condorMerging.sub')
         SubmitFile = open(Directory + '/condorMerging.sub','r+w')
-    for argument in sorted(CondorSubArgumentsSet):
-        if CondorSubArgumentsSet[argument].has_key('Executable') and CondorSubArgumentsSet[argument]['Executable'] == "":
+    for argument in sorted(currentCondorSubArgumentsSet):
+        if currentCondorSubArgumentsSet[argument].has_key('Executable') and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = merge.py\n')
-        elif CondorSubArgumentsSet[argument].has_key('Arguments') and CondorSubArgumentsSet[argument]['Arguments'] == "":
+        elif currentCondorSubArgumentsSet[argument].has_key('Arguments') and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
             SubmitFile.write('Arguments = $(Process) ' + '\n\n')
-        elif CondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and CondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
+        elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
              datasetInfoString = ''
              for dataset in split_datasets:
                  datasetInfoString = datasetInfoString + './' + dataset + '/datasetInfo_' + dataset +'_cfg.py,'
              SubmitFile.write('Transfer_Input_files = merge.py,' + datasetInfoString + '\n')
-        elif CondorSubArgumentsSet[argument].has_key('Queue'):
+        elif currentCondorSubArgumentsSet[argument].has_key('Queue'):
             SubmitFile.write('Queue ' + str(len(split_datasets)) +'\n')
         else:
-            SubmitFile.write(CondorSubArgumentsSet[argument].keys()[0] + ' = ' + CondorSubArgumentsSet[argument].values()[0] + '\n')
+            SubmitFile.write(currentCondorSubArgumentsSet[argument].keys()[0] + ' = ' + currentCondorSubArgumentsSet[argument].values()[0] + '\n')
     SubmitFile.close()
-
-def GetCompleteOrderedArgumentsSet(InputArguments):
-    NewArguments = copy.deepcopy(InputArguments)
-    for argument in InputArguments:
-        for index in CondorSubArgumentsSet:
-            if CondorSubArgumentsSet[index].has_key(argument):
-                CondorSubArgumentsSet[index][argument] = InputArguments[argument]
-                NewArguments.pop(argument)
-                break
-    for newArgument in NewArguments:
-        CondorSubArgumentsSet.setdefault(len(CondorSubArgumentsSet.keys()) + 1,{newArgument : NewArguments[newArgument]})
 
 ###############################################################################
 #                 Make the configuration for condor to run over.              #
@@ -237,7 +227,9 @@ if not arguments.localConfig:
     IntLumi = float(arguments.IntLumi)
 
 
+currentCondorSubArgumentsSet = {}
 for dataSet in split_datasets:
+    currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
     directory = CondorDir + '/' + dataSet
     if not os.path.exists(directory):
         print directory + " does not exist, will skip it and continue!"
@@ -345,8 +337,11 @@ if not arguments.UseCondor:
 #Make necessary files for condor and submit condor jobs.
 if arguments.UseCondor:
     print '......................Using Condor!...........................'
-    GetCompleteOrderedArgumentsSet(InputCondorArguments)
+    GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
     MakeSubmissionScriptForMerging(CondorDir)
     MakeMergingConfigForCondor(CondorDir)
     os.chdir(CondorDir)
-    os.system('condor_submit condorMerging.sub')
+    if not arguments.NotToExecute:
+        os.system('condor_submit condorMerging.sub')
+    else:
+        print 'Configuration files created in ' + str(CondorDir) + ' directory but no jobs submitted.\n'

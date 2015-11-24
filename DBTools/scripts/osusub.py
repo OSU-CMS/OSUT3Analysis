@@ -479,17 +479,6 @@ def MakeBatchJobFile(WorkDir, Queue, NumberOfJobs):
     os.system('chmod +x ' + currentDir + '/' + WorkDir + '/lxbatchRun.sh' )
     os.system('chmod +x ' + currentDir + '/' + WorkDir + '/lxbatchSub.sh' )
 
-def GetCompleteOrderedArgumentsSet(InputArguments):
-    NewArguments = copy.deepcopy(InputArguments)
-    for argument in InputArguments:
-	for index in currentCondorSubArgumentsSet:
-	    if currentCondorSubArgumentsSet[index].has_key(argument):
-                currentCondorSubArgumentsSet[index][argument] = InputArguments[argument]
-                NewArguments.pop(argument)
-                break
-    for newArgument in NewArguments:
-        currentCondorSubArgumentsSet.setdefault(len(currentCondorSubArgumentsSet.keys()) + 1, {newArgument : NewArguments[newArgument]})
-    currentCondorSubArgumentsSet.setdefault(len(currentCondorSubArgumentsSet.keys()) + 1, {'Queue': ''})
 ###############################################################################
 #        Function to find all the skim channels from the userConfig.          # 
 ###############################################################################
@@ -637,7 +626,7 @@ if not arguments.Resubmit:
                      DatasetName = dataset 
                 MaxEvents = maxEvents[dataset]
                 Config = config_file
-                GetCompleteOrderedArgumentsSet(InputCondorArguments)
+                GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
             
             if arguments.FileType == 'OSUT3Ntuple': 
                 if dataset_names.has_key(dataset):
@@ -715,7 +704,7 @@ if not arguments.Resubmit:
         SubmissionDir = os.getcwd()
         WorkDir = CondorDir
         if arguments.localConfig:	
-            GetCompleteOrderedArgumentsSet(InputCondorArguments)
+            GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
         userConfig = 'userConfig_' + Label + '_cfg.py'
         os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
          
