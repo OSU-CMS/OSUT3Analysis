@@ -345,7 +345,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
         inputFile.Close()
-
+        Histogram.Sumw2()
         if arguments.verbose:
             print "  Got histogram", Histogram.GetName(), "from file", dataset_file  
         if arguments.rebinFactor:
@@ -421,7 +421,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
         
         Histogram.SetLineWidth(line_width)
         Histogram.SetFillStyle(0)
-
+        
         if arguments.normalizeToUnitArea and Histogram.Integral() > 0:
             Histogram.Scale(1./Histogram.Integral())
 
