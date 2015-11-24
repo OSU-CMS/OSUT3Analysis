@@ -41,7 +41,7 @@ parser.add_option("-S", "--systematics", action="store_true", dest="includeSyste
                   help="also lists the systematic uncertainties")
 parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,
                   help="Make significance plots")
-parser.add_option("-O", "--addOverUnderFlow", action="store_false", dest="addOverUnderFlow", default=True,
+parser.add_option("--NO", "--noOverUnderFlow", action="store_true", dest="noOverUnderFlow", default=False,
                   help="Do not add the overflow and underflow entries to the last and first bins")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                   help="verbose output")
@@ -520,10 +520,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if 'includeSystematics' in paperHistogram:
             includeSystematics = paperHistogram['includeSystematics']
     ###############################################
-    addOverUnderFlow = arguments.addOverUnderFlow
+    noOverUnderFlow = arguments.noOverUnderFlow
     if arguments.paperConfig:
-        if 'addOverUnderFlow' in paperHistogram:
-            addOverUnderFlow = paperHistogram['addOverUnderFlow']
+        if 'noOverUnderFlow' in paperHistogram:
+            noOverUnderFlow = paperHistogram['noOverUnderFlow']
     ###############################################
     sortOrderByYields = arguments.sortOrderByYields
     if arguments.paperConfig:
@@ -683,23 +683,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
 
-
         inputFile.Close()
 
-        if doRebin:
-            #don't rebin any gen-matching or cutflow histograms, or numObject type histograms
+        if doRebin and "CutFlowPlotter" not in pathToDir:
+#            #don't rebin any gen-matching or cutflow histograms, or numObject type histograms
 #            if (Histogram.GetName().find("num") is -1 and
 #                Histogram.GetName().find("Primaryvertexs") is -1 and
-#                Histogram.GetName().find("CutFlow")  is -1 and
-#                Histogram.GetName().find("cutFlow")  is -1 and
-#                Histogram.GetName().find("Selection")  is -1 and
-#                Histogram.GetName().find("selection")  is -1 and
-#                Histogram.GetName().find("MinusOne")  is -1 and
-#                Histogram.GetName().find("minusOne")  is -1 and
 #                Histogram.GetName().find("status3OutgoingID")  is -1 and
 #                Histogram.GetName().find("Charge")  is -1 and
 #                Histogram.GetName().find("GenMatch") is -1):
-
             Histogram.Rebin(int(rebinFactor))
 
 
@@ -732,7 +724,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if normalizeToUnitArea:
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
         if normalizeToData:
-            yAxisLabel = yAxisLabel + " (Bkgd. Normalized to Data)"
+            yAxisLabel = yAxisLabel + " (Bkgd. Scaled to Data)"
         if scaleFactor is not 1:
             yAxisLabel = yAxisLabel + " (Bkgd. Scaled by " + str(scaleFactor) + ")"
 
@@ -761,7 +753,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             yieldHist = Histogram.Integral()
             legLabel = legLabel + " (%.1f)" % yieldHist
 
-        if (addOverUnderFlow):
+        if not noOverUnderFlow:
             nbins = Histogram.GetNbinsX()
             Histogram.SetBinContent(1,     Histogram.GetBinContent(1)     + Histogram.GetBinContent(0))       # Add underflow
             Histogram.SetBinContent(nbins, Histogram.GetBinContent(nbins) + Histogram.GetBinContent(nbins+1)) # Add overflow
@@ -788,8 +780,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 BgMCHistograms.append(Histogram)
                 BgMCLegendEntries.append(legLabel)
 
-            BgMCLegendLabelYieldsDic[Histogram.Integral()] = legLabel
-            BgMCHistYieldsDic[Histogram.Integral()] = Histogram
+            # put histograms in a dictionary according to their yields
+            if Histogram.Integral() > 0:
+                BgMCLegendLabelYieldsDic[Histogram.Integral()] = legLabel
+                BgMCHistYieldsDic[Histogram.Integral()] = Histogram
+            # for empty histograms, put them as having negative yields (so multiple ones don't overwrite each other in the dictionary)
+            else:
+                BgMCLegendLabelYieldsDic[-1*numBgMCSamples] = legLabel
+                BgMCHistYieldsDic[-1*numBgMCSamples] = Histogram
+                
             if includeSystematics:
                 BgMCUncertainties.append(getSystematicError(sample,channel))
 
