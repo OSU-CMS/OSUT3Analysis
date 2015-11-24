@@ -147,10 +147,11 @@ if len(processed_datasets) is 0:
 channels = []
 dataset_file = "%s/%s.root" % (condor_dir,processed_datasets[0])
 inputFile = TFile(dataset_file)
-inputFile.cd("OSUAnalysis")
 
 for key in gDirectory.GetListOfKeys():
     if (key.GetClassName() != "TDirectoryFile"):
+        continue
+    if "CutFlowPlotter" not in key.GetName():
         continue
     channels.append(key.GetName())
 
@@ -176,7 +177,7 @@ for sample in processed_datasets:
     dataset_file = "%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     for channel in channels:
-        cutFlowHistogram = inputFile.Get("OSUAnalysis/"+channel+"CutFlow")
+        cutFlowHistogram = inputFile.Get(channel+"/cutFlow")
         if not cutFlowHistogram:
             print "WARNING: didn't find cutflow for ", sample, "dataset in", channel, "channel"
             continue
