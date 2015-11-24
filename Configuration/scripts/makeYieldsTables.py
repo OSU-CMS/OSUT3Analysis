@@ -207,7 +207,7 @@ for sample in processed_datasets:
 #write a table for each channel to a separate tex file
 
 for channel in channels:
-    outputFile = condor_dir + "/yields_" + plainTextString(channel) + ".tex"
+    outputFile = condor_dir + "/yields_" + plainTextString(channel.split("CutFlowPlotter")[0]) + ".tex"
     fout = open (outputFile, "w")
     if(arguments.standAlone):
         fout.write("\\documentclass{article}"+newLine+"\\begin{document}"+newLine)
