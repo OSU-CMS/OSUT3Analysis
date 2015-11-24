@@ -276,6 +276,11 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
         for module in vars(temPset.process).values():
             if hasattr(module, "weights"):
                 ConfigFile.write('pset.process.' + str(module) + '.weights = cms.VPSet()\n')
+    if hasattr(temPset.process, "DisplacedSUSYEventVariableProducer"):
+        if types[Label] == "bgMC":
+            ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("bgMC")')
+        else:
+            ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("data")')
     if hasattr(temPset.process, "PUScalingFactorProducer"):
         if types[Label] == "bgMC":
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
