@@ -173,16 +173,17 @@ anatools::getCollection(const edm::InputTag& label, edm::Handle<T>& collection, 
   if (!collection.isValid()) {
     vector<edm::Handle<T> > objVec;
     event.getManyByType(objVec);
-    int collWithFewestParents = -1, fewestParents = -1;
+    int collWithFewestParents = -1, fewestParents = 99;
     for (uint i=0; i<objVec.size(); i++) {
       int parents = objVec.at(i).provenance()->parents().size();
-      if (label.instance() == objVec.at(i).provenance()->productInstanceName() && parents > fewestParents) {
+      if (label.instance() == objVec.at(i).provenance()->productInstanceName() && parents < fewestParents) {
         collWithFewestParents = i;
         fewestParents = parents;
       }
     }
-    if (collWithFewestParents >= 0)
+    if (collWithFewestParents != -1){
       collection = objVec.at(collWithFewestParents);
+    }
     else {
       if (verbose) clog << "ERROR: did not find any collections that match input tag:  " << label 
 			<< ", with type:  " << typeid(collection).name()  
