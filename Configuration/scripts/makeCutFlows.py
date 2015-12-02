@@ -43,6 +43,8 @@ parser.add_option("-t", "--totBkgd", action="store_true", dest="totalBkgd", defa
                   help="add a column for total background to the tables")
 parser.add_option("-o", "--output-file", dest="outputFileName",
                   help="specify an output file base name for the cutflow table (suffix will be appended), default is 'cutFlow'")
+parser.add_option("-O", "--output-dir", dest="outputDirectory",
+                  help="specify an output directory for the cutflow table, default is to use the Condor directory")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                   help="verbose output")
 parser.add_option("-e", "--noErrors", action="store_true", dest="noErrors", default=False,
@@ -575,6 +577,8 @@ if arguments.inputFile:
 else: 
     condor_dir = set_condor_output_dir(arguments)
 
+outputDir = "condor/" + arguments.outputDirectory if arguments.outputDirectory else condor_dir
+
 from ROOT import TFile, gROOT, gStyle, gDirectory, TKey
 
 processed_datasets = []
@@ -584,7 +588,7 @@ if arguments.outputFileName:
     outputFileName = arguments.outputFileName
 outputFileName = outputFileName.partition(".")[0]  # If the input filename contains a period, take only the part before the period.  
 
-texfile = condor_dir + "/" + outputFileName + ".tex"
+texfile = outputDir + "/" + outputFileName + ".tex"
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
@@ -646,7 +650,7 @@ for channel in channels: # loop over final states, which each have their own dir
     # END LOOP OVER CHANNELS
 
 closeTexFile(texfile)  
-makePdf(condor_dir,texfile) 
+makePdf(outputDir,texfile) 
 
-print "Finished writing cutFlow to " + condor_dir + "/" + outputFileName + "{.tex,.pdf}"
+print "Finished writing cutFlow to " + outputDir + "/" + outputFileName + "{.tex,.pdf}"
 
