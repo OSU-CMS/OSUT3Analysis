@@ -276,6 +276,11 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
         for module in vars(temPset.process).values():
             if hasattr(module, "weights"):
                 ConfigFile.write('pset.process.' + str(module) + '.weights = cms.VPSet()\n')
+    if hasattr(temPset.process, "DisplacedSUSYEventVariableProducer"):
+        if types[Label] == "bgMC":
+            ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("bgMC")\n')
+        else:
+            ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("data")\n')
     if hasattr(temPset.process, "PUScalingFactorProducer"):
         if types[Label] == "bgMC":
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
@@ -479,17 +484,6 @@ def MakeBatchJobFile(WorkDir, Queue, NumberOfJobs):
     os.system('chmod +x ' + currentDir + '/' + WorkDir + '/lxbatchRun.sh' )
     os.system('chmod +x ' + currentDir + '/' + WorkDir + '/lxbatchSub.sh' )
 
-def GetCompleteOrderedArgumentsSet(InputArguments):
-    NewArguments = copy.deepcopy(InputArguments)
-    for argument in InputArguments:
-	for index in currentCondorSubArgumentsSet:
-	    if currentCondorSubArgumentsSet[index].has_key(argument):
-                currentCondorSubArgumentsSet[index][argument] = InputArguments[argument]
-                NewArguments.pop(argument)
-                break
-    for newArgument in NewArguments:
-        currentCondorSubArgumentsSet.setdefault(len(currentCondorSubArgumentsSet.keys()) + 1, {newArgument : NewArguments[newArgument]})
-    currentCondorSubArgumentsSet.setdefault(len(currentCondorSubArgumentsSet.keys()) + 1, {'Queue': ''})
 ###############################################################################
 #        Function to find all the skim channels from the userConfig.          # 
 ###############################################################################
@@ -637,7 +631,7 @@ if not arguments.Resubmit:
                      DatasetName = dataset 
                 MaxEvents = maxEvents[dataset]
                 Config = config_file
-                GetCompleteOrderedArgumentsSet(InputCondorArguments)
+                GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
             
             if arguments.FileType == 'OSUT3Ntuple': 
                 if dataset_names.has_key(dataset):
@@ -715,7 +709,7 @@ if not arguments.Resubmit:
         SubmissionDir = os.getcwd()
         WorkDir = CondorDir
         if arguments.localConfig:	
-            GetCompleteOrderedArgumentsSet(InputCondorArguments)
+            GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
         userConfig = 'userConfig_' + Label + '_cfg.py'
         os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
          
