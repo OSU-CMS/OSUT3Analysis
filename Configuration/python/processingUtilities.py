@@ -235,9 +235,12 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
     ############################################################################
     if not hasattr (add_channels, "processNameUpdated"):
         add_channels.processNameUpdated = True
-        randomNumberSuffix = int (time.time ())  # Use the seconds since the Unix epoch to get a
-                                                 # different process name when running over a skim with the
-                                                 # same channel.
+        if osusub.batchMode:
+            randomNumberSuffix = osusub.randomNumberSuffix
+        else:
+            randomNumberSuffix = int (time.time ())  # Use the seconds since the Unix epoch to get a
+                                                     # different process name when running over a skim with the
+                                                     # same channel.
         channelName = str(channels[0].name.pythonValue())
         channelName = channelName.replace("'", "").replace("_", "") # Non-alpha-numeric characters are not allowed in the process name.
         process.setName_ (process.name_ () + channelName + str(randomNumberSuffix))
