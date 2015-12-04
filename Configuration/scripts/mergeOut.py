@@ -284,7 +284,7 @@ for dataSet in split_datasets:
         datasetInfo.originalNumberOfEvents
     except AttributeError:
         runOverSkim = False
-    if crossSection > 0:
+    if crossSection > 0 and IntLumi > 0:
         if runOverSkim:
             Weight = IntLumi*crossSection*float(datasetInfo.skimNumberOfEvents)/(float(datasetInfo.originalNumberOfEvents)*float(TotalNumber))
         else:

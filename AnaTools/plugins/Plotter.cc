@@ -126,7 +126,7 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 
   for (vector<Weight>::iterator weight = weights.begin (); weight != weights.end (); weight++)
     {
-      weight->product = 1;
+      weight->product = 1.0;
       for(vector<Leaf>::const_iterator leaf = weight->valueLookupTree->evaluate ().begin (); leaf != weight->valueLookupTree->evaluate ().end (); leaf++){
  	double value = boost::get<double> (*leaf);
  	if(IS_INVALID(value))
