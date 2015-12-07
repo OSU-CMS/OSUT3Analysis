@@ -496,6 +496,8 @@ def SkimChannelFinder(userConfig, Directory):
     skimChannelNames = []
     os.chdir(Directory)
     exec('import ' + userConfig + ' as temPset')
+    if not hasattr(temPset.process, "endPath"):
+        return []
     outputModules = str(temPset.process.endPath).split('+') 
     for outputModule in outputModules:
         channelName = outputModule[0:len(outputModule)-16]
