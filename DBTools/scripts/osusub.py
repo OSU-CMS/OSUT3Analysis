@@ -104,7 +104,7 @@ parser.add_option("--redirector", dest="Redirector", default = "", help="Setup t
 #    Actually I vote for removing UserDir.....
 
 #Define the dictionary to look for the redirectors given the users input. 
-RedirectorDic = {'CERN':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Global':'cms-xrd-global.cern.ch'}
+RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Global':'cms-xrd-global.cern.ch'}
 
 #To get the JSON file the user specifies. Use -J 'TypeOfJSON' like -J Silver
 def getLatestJsonFile():
