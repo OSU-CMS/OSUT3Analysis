@@ -249,6 +249,10 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     exec('import userConfig_' + Label + '_cfg' + ' as temPset')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')        
     ConfigFile.write('import OSUT3Analysis.DBTools.osusub_cfg as osusub\n')
+    randomNumberSuffix = int (time.time ())  # Use the seconds since the Unix epoch to get a
+                                             # different process name when running over a skim with the
+                                             # same channel.
+    ConfigFile.write('osusub.randomNumberSuffix = ' + str (randomNumberSuffix) + '\n')
     ConfigFile.write('import re\n')
     ConfigFile.write('import userConfig_' + Label + '_cfg as pset\n')
     if jsonFile != '':
@@ -502,6 +506,8 @@ def SkimChannelFinder(userConfig, Directory):
     skimChannelNames = []
     os.chdir(Directory)
     exec('import ' + userConfig + ' as temPset')
+    if not hasattr(temPset.process, "endPath"):
+        return []
     outputModules = str(temPset.process.endPath).split('+') 
     for outputModule in outputModules:
         channelName = outputModule[0:len(outputModule)-16]

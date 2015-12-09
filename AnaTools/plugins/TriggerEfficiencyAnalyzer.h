@@ -17,8 +17,8 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 
-#include "BEAN/Collections/interface/BNtrigger.h"
-#include "BEAN/Collections/interface/BNtrigobj.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
+#include "FWCore/Common/interface/TriggerNames.h"
 
 using namespace std;
 
@@ -38,7 +38,7 @@ class TriggerEfficiencyAnalyzer : public edm::EDAnalyzer
       const edm::Service<TFileService> fs;
 
     private:
-      edm::Handle<BNtriggerCollection> TriggerCollection;
+      edm::Handle<edm::TriggerResults> TriggerCollection;
       edm::InputTag Trigger_;
       vector<edm::ParameterSet> triggers_;
       TStopwatch* timer;

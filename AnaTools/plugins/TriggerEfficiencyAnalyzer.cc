@@ -73,6 +73,7 @@ TriggerEfficiencyAnalyzer::analyze (const edm::Event &event, const edm::EventSet
 {
 
   event.getByLabel (Trigger_ , TriggerCollection);
+  const edm::TriggerNames &triggerNames = event.triggerNames(*TriggerCollection);
 
   //initialize maps
   for(std::vector<string>::const_iterator triggerType = TriggerTypes.begin(); triggerType != TriggerTypes.end(); triggerType++){
@@ -88,14 +89,17 @@ TriggerEfficiencyAnalyzer::analyze (const edm::Event &event, const edm::EventSet
 
 
   //loop over all trigger paths in the event
-  for (BNtriggerCollection::const_iterator trigger = TriggerCollection->begin(); trigger != TriggerCollection->end(); trigger++) {
-    if(trigger->pass != 1) continue;
+  for (unsigned triggerIndex = 0; triggerIndex < triggerNames.size (); triggerIndex++){
+    string name = triggerNames.triggerName(triggerIndex);
+    bool pass = TriggerCollection->accept(triggerIndex);
+    if(pass != 1) continue;
 
     //loop over the different types of triggers of interest
     for(std::vector<string>::const_iterator triggerType = TriggerTypes.begin(); triggerType != TriggerTypes.end(); triggerType++){
       //loop over the different trigger names as specified by the user
       for(std::vector<string>::const_iterator triggerName = TriggerNameMap[*triggerType].begin(); triggerName != TriggerNameMap[*triggerType].end(); triggerName++){
-        if(trigger->name.find(*triggerName)!=std::string::npos){
+        if(name.find(*triggerName)!=std::string::npos){
+	  //	  cout << name << "  " << *triggerName << " " << name.find(*triggerName) << endl;
           TriggerHistogramMap[*triggerType]->Fill(triggerName-TriggerNameMap[*triggerType].begin()+1);
           InclusiveORMap[*triggerType] = true;
         }
