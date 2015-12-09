@@ -103,10 +103,10 @@ parser.add_option("--redirector", dest="Redirector", default = "", help="Setup t
 #    If you have problems in using the osusub.py. Try the most general case -t UserList. 
 #    Actually I vote for removing UserDir.....
 
-
-#A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.  
+#Define the dictionary to look for the redirectors given the users input. 
 RedirectorDic = {'CERN':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Global':'cms-xrd-global.cern.ch'}
 
+#To get the JSON file the user specifies. Use -J 'TypeOfJSON' like -J Silver
 def getLatestJsonFile():
     os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O jsonList.txt')
     os.system('grep "Cert" jsonList.txt > CertList.txt')
@@ -174,6 +174,7 @@ def getLatestJsonFile():
     return ultimateJson
 
 
+#A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.  
 def SpecialStringModifier(inputString, specialStringSplitList, specialStringReplaceList):
     if len(specialStringSplitList):
         for member in specialStringSplitList:
@@ -763,6 +764,7 @@ else:
             WorkDir = CondorDir + '/' + str(dataset)
             if os.path.exists(WorkDir + '/condor_resubmit.sub'):
                 os.chdir(WorkDir)
+                #If a redirector is defined, switch to the new redirector.
                 if arguments.Redirector != "" :
                     if RedirectorDic.has_key(arguments.Redirector):
                         originalRedirector = ""
