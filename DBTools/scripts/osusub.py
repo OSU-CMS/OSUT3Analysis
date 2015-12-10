@@ -281,16 +281,17 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
     ConfigFile.write('fileName = re.sub (r\'^(.*)\.([^\.]*)$\', r\'\\1_\' + str (osusub.jobNumber) + r\'.\\2\', fileName)\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
-    if types[Label] == "data":
+    if not arguments.Generic:
+      if types[Label] == "data":
         for module in vars(temPset.process).values():
             if hasattr(module, "weights"):
                 ConfigFile.write('pset.process.' + str(module) + '.weights = cms.VPSet()\n')
-    if hasattr(temPset.process, "DisplacedSUSYEventVariableProducer"):
+      if hasattr(temPset.process, "DisplacedSUSYEventVariableProducer"):
         if types[Label] == "bgMC":
             ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("bgMC")\n')
         else:
             ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("data")\n')
-    if hasattr(temPset.process, "PUScalingFactorProducer"):
+      if hasattr(temPset.process, "PUScalingFactorProducer"):
         if types[Label] == "bgMC":
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
             ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("bgMC")')
@@ -653,7 +654,7 @@ if not arguments.Resubmit:
                      DatasetName = dataset 
                 MaxEvents = maxEvents[dataset]
                 Config = config_file
-                GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
+            GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
             
             if arguments.FileType == 'OSUT3Ntuple': 
                 if dataset_names.has_key(dataset):
