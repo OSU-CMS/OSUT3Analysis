@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+DIR=$1
+
+LOGS=`find ${DIR} -type f -regex ".*\/condor_[^/]*\.log$"`
+TOTAL=`ls ${LOGS} | wc -l`
+PASS=`grep "return value\|signal" ${LOGS} | grep "return value 0" | wc -l`
+FAIL=`grep "return value\|signal" ${LOGS} | grep -v "return value 0" | wc -l`
+EXECUTED=`grep "Job executing on host" ${LOGS} | wc -l`
+RUNNING=`echo "${EXECUTED} ${PASS} - ${FAIL} - p" | dc`
+QUEUED=`echo "${TOTAL} ${EXECUTED} - p" | dc`
+
+PASSFRAC=`echo "2 k ${PASS} 100 * ${TOTAL} / p" | dc`
+FAILFRAC=`echo "2 k ${FAIL} 100 * ${TOTAL} / p" | dc`
+RUNNINGFRAC=`echo "2 k ${RUNNING} 100 * ${TOTAL} / p" | dc`
+QUEUEDFRAC=`echo "2 k ${QUEUED} 100 * ${TOTAL} / p" | dc`
+
+echo "${PASS} / ${TOTAL} jobs have finished successfully (${PASSFRAC}%)."
+echo "${FAIL} / ${TOTAL} jobs have failed (${FAILFRAC}%)."
+echo "${RUNNING} / ${TOTAL} jobs are running (${RUNNINGFRAC}%)."
+echo "${QUEUED} / ${TOTAL} jobs are queued (${QUEUEDFRAC}%)."
