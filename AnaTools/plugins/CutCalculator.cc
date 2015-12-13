@@ -38,6 +38,8 @@ CutCalculator::~CutCalculator ()
      {
        if (cut.valueLookupTree)
          delete cut.valueLookupTree;
+       if (cut.arbitrationTree)
+         delete cut.arbitrationTree;
      }
 }
 
@@ -137,6 +139,44 @@ CutCalculator::setObjectFlags (const Cut &currentCut, unsigned currentCutIndex) 
       if (currentCutIndex > 0 && pl_->cumulativeObjectFlags.at (currentCutIndex - 1).count (inputType))
         flag.first = flag.first && pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (inputType).at (object).first;
       pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).push_back (flag);
+    }
+  ////////////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // If the user has given an expression for the arbitration, use it to pick
+  // one of the passing objects. For example, if arbitration == "pt", the
+  // passing object with the largest pt is chosen, and the flags for all others
+  // are changed to false. The special case of arbitration == "random" is used
+  // to chose a random object.
+  ////////////////////////////////////////////////////////////////////////////////
+  if (currentCut.arbitration != "")
+    {
+      vector<pair<unsigned, double> > indicesToArbitrate;
+      indicesToArbitrate.clear ();
+      for (auto arbitrationValue = currentCut.arbitrationTree->evaluate ().begin (); arbitrationValue != currentCut.arbitrationTree->evaluate ().end (); arbitrationValue++)
+        {
+          unsigned object = (arbitrationValue - currentCut.arbitrationTree->evaluate ().begin ());
+          double value = boost::get<double> (*arbitrationValue);
+          pair<bool, bool> flag = make_pair (value, !IS_INVALID(value));
+
+          if (!pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (object).first
+           || !pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (object).second
+           || !flag.second)
+            continue;
+          indicesToArbitrate.push_back (make_pair (object, value));
+        }
+      if (currentCut.arbitration != "random")
+        sort (indicesToArbitrate.begin (), indicesToArbitrate.end (), [](pair<unsigned, double> a, pair<unsigned, double> b) -> bool { return a.second > b.second; });
+      else
+        random_shuffle (indicesToArbitrate.begin (), indicesToArbitrate.end ());
+
+      bool isChosen = true;
+      for (const auto &index : indicesToArbitrate)
+        {
+          pl_->objectFlags.at (currentCutIndex).at (inputType).at (index.first).first = isChosen;
+          pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index.first).first = isChosen;
+          isChosen = false;
+        }
     }
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -343,9 +383,18 @@ CutCalculator::unpackCuts ()
         tempCut.isVeto = cuts.at (currentCut).getParameter<bool> ("isVeto");
       //////////////////////////////////////////////////////////////////////////
 
-      // Store the temporary cut variable into the vector of unpacked cuts.
-      //initialize the valueLookupTree to be NULL
+      //////////////////////////////////////////////////////////////////////////
+      // Set the arbitration method.
+      //////////////////////////////////////////////////////////////////////////
+      tempCut.arbitration = "";
+      if (cuts.at (currentCut).exists ("arbitration"))
+        tempCut.arbitration = cuts.at (currentCut).getParameter<string> ("arbitration");
+      //////////////////////////////////////////////////////////////////////////
+
+      // Store the temporary cut variable into the vector of unpacked cuts, and
+      // initialize the valueLookupTree pointers to be NULL.
       tempCut.valueLookupTree = NULL;
+      tempCut.arbitrationTree = NULL;
       unpackedCuts_.push_back (tempCut);
     }
 
@@ -561,10 +610,14 @@ CutCalculator::initializeValueLookupForest (Cuts &cuts, Collections * const hand
       if (firstEvent_)
         {
           cut.valueLookupTree = new ValueLookupTree (cut);
+          if (cut.arbitration != "")
+            cut.arbitrationTree = new ValueLookupTree (cut.arbitration != "random" ? cut.arbitration : "0.0", cut.inputCollections);
           if (!cut.valueLookupTree->isValid ())
             return false;
         }
       cut.valueLookupTree->setCollections (handles);
+      if (cut.arbitration != "")
+        cut.arbitrationTree->setCollections (handles);
     }
   return true;
   //////////////////////////////////////////////////////////////////////////////

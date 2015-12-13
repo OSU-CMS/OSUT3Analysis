@@ -35,6 +35,7 @@ typedef vector<map<string, vector<pair<bool, bool> > > > FlagMap;
 struct Cut
 {
   ValueLookupTree  *valueLookupTree;
+  ValueLookupTree  *arbitrationTree;
   bool             isVeto;
   int              numberRequired;
   string           cutString;
@@ -42,6 +43,7 @@ struct Cut
   string           inputLabel;
   string           name;
   vector<string>   inputCollections;
+  string           arbitration;
 };
 
 typedef vector<Cut> Cuts;
