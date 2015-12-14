@@ -305,7 +305,7 @@ for dataSet in split_datasets:
             print "    The crossSection of dataset " + dataSet + " is " + str(crossSection) + " pb."
         print "    The weighting factor is " + str(Weight) + "." 
         if crossSection != -1:
-    	    print "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(TotalNumber/crossSection) + " inverse pb." 
+    	    print "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(IntLumi/Weight) + " inverse pb." 
         print "...............................................................\n"
         os.chdir(CondorDir) 
     #If run on condor, save the parameters in outputInfo_*_cfg.py for condor jobs to use.
