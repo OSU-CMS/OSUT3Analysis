@@ -24,10 +24,12 @@ datasets = [
    'MuonEG_2015',
    'MuonEG_2015D',
 
+
    #MiniAOD not stored on T3.
    'DYJetsToLL_50_MiniAOD',
    'DYJetsToLL_10to50_MiniAOD',
    'WJetsToLNu_MiniAOD',
+   'WJetsToLNu_HT_MiniAOD',  # HT bins, starting with HT>100 GeV
    'TTJets_MiniAOD',
    'Diboson_MiniAOD',  
    
@@ -129,6 +131,12 @@ composite_dataset_definitions = {
         'DYJetsToLL_50_50ns_MiniAOD',
         'DYJetsToLL_10to50_50ns_MiniAOD',
     ],
+    'WJetsToLNu_HT_MiniAOD' : [
+        'WJetsToLNu_HT100to200_MiniAOD', 
+        'WJetsToLNu_HT200to400_MiniAOD', 
+        'WJetsToLNu_HT400to600_MiniAOD', 
+        'WJetsToLNu_HT600toInf_MiniAOD', 
+    ], 
     'Diboson_MiniAOD' : [
         #'WW_MiniAOD',
         #'WZ_MiniAOD',
@@ -295,6 +303,12 @@ dataset_names = {
 
     #WJets
     'WJetsToLNu_MiniAOD'  :  "/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+
+    #WJets_HT
+    'WJetsToLNu_HT100to200_MiniAOD' : "/WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM", 
+    'WJetsToLNu_HT200to400_MiniAOD' : "/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM", 
+    'WJetsToLNu_HT400to600_MiniAOD' : "/WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM", 
+    'WJetsToLNu_HT600toInf_MiniAOD' : "/WJetsToLNu_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM", 
 
     #WW
     'WWToLNuQQ_MiniAOD'   :  "/WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
@@ -478,7 +492,11 @@ nJobs = {
 
     #WJets
     'WJetsToLNu_MiniAOD'  :  9999,
-
+    'WJetsToLNu_HT100to200_MiniAOD'  :  9999,  
+    'WJetsToLNu_HT200to400_MiniAOD'  :  9999,  
+    'WJetsToLNu_HT400to600_MiniAOD'  :  9999,  
+    'WJetsToLNu_HT600toInf_MiniAOD'  :  9999,  
+    
     #WW
     'WWToLNuQQ_MiniAOD'   :  9999,
     'WWToLNuLNu_MiniAOD'  :  9999,
@@ -665,6 +683,11 @@ maxEvents = {
 
     #WJets
     'WJetsToLNu_MiniAOD'  :  -1,
+    'WJetsToLNu_HT100to200_MiniAOD'  :  -1, 
+    'WJetsToLNu_HT200to400_MiniAOD'  :  -1, 
+    'WJetsToLNu_HT400to600_MiniAOD'  :  -1, 
+    'WJetsToLNu_HT600toInf_MiniAOD'  :  -1, 
+
 
     #WW
     'WWToLNuQQ_MiniAOD'   :  -1,
@@ -853,6 +876,10 @@ types = {
 
     #WJets
     'WJetsToLNu_MiniAOD'  :  "bgMC",
+    'WJetsToLNu_HT100to200_MiniAOD'  :  "bgMC",  
+    'WJetsToLNu_HT200to400_MiniAOD'  :  "bgMC",  
+    'WJetsToLNu_HT400to600_MiniAOD'  :  "bgMC",  
+    'WJetsToLNu_HT600toInf_MiniAOD'  :  "bgMC",      
 
     #WW
     'WWToLNuQQ_MiniAOD'   :  "bgMC",
@@ -1053,6 +1080,10 @@ colors = {
 
     #WJets
     'WJetsToLNu_MiniAOD'  :  852,
+    'WJetsToLNu_HT100to200_MiniAOD'  :  852,  
+    'WJetsToLNu_HT200to400_MiniAOD'  :  852,  
+    'WJetsToLNu_HT400to600_MiniAOD'  :  852,  
+    'WJetsToLNu_HT600toInf_MiniAOD'  :  852,  
 
     #WW
     'WWToLNuQQ_MiniAOD'   :  390,
@@ -1252,7 +1283,13 @@ labels = {
     'DYJetsToNuNu_MiniAOD'   :  "Z#rightarrow#nu#bar{#nu} ",
 
     #WJets
-    'WJetsToLNu_MiniAOD'  :  "W#rightarrowl#nu ",
+    'WJetsToLNu_MiniAOD'            :  "W#rightarrowl#nu ",
+    'WJetsToLNu_HT_MiniAOD'         :  "W#rightarrowl#nu (H_{T}>100 GeV) ",
+    'WJetsToLNu_HT100to200_MiniAOD' :  "W#rightarrowl#nu (100<H_{T}<200 GeV) ",
+    'WJetsToLNu_HT200to400_MiniAOD' :  "W#rightarrowl#nu (200<H_{T}<400 GeV) ",
+    'WJetsToLNu_HT400to600_MiniAOD' :  "W#rightarrowl#nu (400<H_{T}<600 GeV) ",
+    'WJetsToLNu_HT600toInf_MiniAOD' :  "W#rightarrowl#nu (H_{T}>600 GeV) ",
+
 
     #WW
     'WWToLNuQQ_MiniAOD'   :  "WW#rightarrowl#nuqq",
@@ -1442,18 +1479,23 @@ labels = {
 }
 
 crossSections = {
-   #source: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns
-   #MiniAOD not stored on T3.
-   'DYJetsToLL_50_MiniAOD'                 : 6025.2,       
-   'WJetsToLNu_MiniAOD'                    : 61526.7,       
-   'TTJets_MiniAOD'                        : 831.76,       
+    #source: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns
+    #MiniAOD not stored on T3.
+    'DYJetsToLL_50_MiniAOD'                 :  6025.2,       
+    'WJetsToLNu_MiniAOD'                    : 61526.7,       
+    'WJetsToLNu_HT100to200_MiniAOD'         :  1345.,
+    'WJetsToLNu_HT200to400_MiniAOD'         :   359.7, 
+    'WJetsToLNu_HT400to600_MiniAOD'         :    48.91, 
+    'WJetsToLNu_HT600toInf_MiniAOD'         :    18.77, 
+
+    'TTJets_MiniAOD'                        : 831.76,       
     'WW_MiniAOD'                       :                63.21, 
     'WZ_MiniAOD'                       :                22.82, 
     'ZZ_MiniAOD'                       :                10.32,  
-   #50ns
-   'DYJetsToLL_50_50ns_MiniAOD'                 : 6025.2,      
-   'WJetsToLNu_50ns_MiniAOD'                    : 61526.7,      
-   'TTJets_50ns_MiniAOD'                        : 831.76,        
+    #50ns
+    'DYJetsToLL_50_50ns_MiniAOD'                 : 6025.2,      
+    'WJetsToLNu_50ns_MiniAOD'                    : 61526.7,      
+    'TTJets_50ns_MiniAOD'                        : 831.76,        
     'WW_50ns_MiniAOD'                       :                63.21, 
     'WZ_50ns_MiniAOD'                       :                22.82, 
     'ZZ_50ns_MiniAOD'                       :                10.32,  
