@@ -21,41 +21,29 @@ collectionProducer.genMatchables = {
 # Configuration for derived classes
 ################################################################################
 
-collectionProducer.basicjets = cms.EDProducer ("BasicjetProducer",
+collectionProducer.basicjets = cms.EDProducer ("OSUBasicjetProducer",
 )
 copyConfiguration (collectionProducer.basicjets, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.beamspots = cms.EDProducer ("BeamspotProducer",
+collectionProducer.beamspots = cms.EDProducer ("OSUBeamspotProducer",
 )
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.bjets = cms.EDProducer ("BjetProducer",
+collectionProducer.bjets = cms.EDProducer ("OSUBjetProducer",
 )
 copyConfiguration (collectionProducer.bjets, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.bxlumis = cms.EDProducer ("BxlumiProducer",
+collectionProducer.bxlumis = cms.EDProducer ("OSUBxlumiProducer",
 )
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.candeles = cms.EDProducer ("CandeleProducer",
-)
-copyConfiguration (collectionProducer.candeles, collectionProducer.genMatchables)
-
-#-------------------------------------------------------------------------------
-
-collectionProducer.candjets = cms.EDProducer ("CandjetProducer",
-)
-copyConfiguration (collectionProducer.candjets, collectionProducer.genMatchables)
-
-#-------------------------------------------------------------------------------
-
-collectionProducer.electrons = cms.EDProducer ("ElectronProducer",
+collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     gsfElectrons = cms.InputTag("slimmedElectrons"),
     conversions = cms.InputTag  ("reducedEgamma",    "reducedConversions",""),
     rho = cms.InputTag  ("fixedGridRhoFastjetAll",    "",                ""),
@@ -65,7 +53,7 @@ copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchable
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.events = cms.EDProducer ("EventProducer",
+collectionProducer.events = cms.EDProducer ("OSUEventProducer",
 )
 
 #-------------------------------------------------------------------------------
@@ -75,13 +63,13 @@ collectionProducer.eventvariables = cms.EDProducer ("EventvariableProducer",
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.genjets = cms.EDProducer ("GenjetProducer",
+collectionProducer.genjets = cms.EDProducer ("OSUGenjetProducer",
 )
 copyConfiguration (collectionProducer.genjets, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.jets = cms.EDProducer ("JetProducer",
+collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
 )
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
 
@@ -92,18 +80,18 @@ collectionProducer.mcparticles = cms.EDProducer ("McparticleProducer",
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.mets = cms.EDProducer ("MetProducer",
+collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
 )
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.muons = cms.EDProducer ("MuonProducer",
+collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
 )
 copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.photons = cms.EDProducer ("PhotonProducer",
+collectionProducer.photons = cms.EDProducer ("OSUPhotonProducer",
 )
 copyConfiguration (collectionProducer.photons, collectionProducer.genMatchables)
 
@@ -114,29 +102,29 @@ collectionProducer.pileUpInfos = cms.EDProducer ("PileUpInfoProducer",
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.primaryvertexs = cms.EDProducer ("PrimaryvertexProducer",
+collectionProducer.primaryvertexs = cms.EDProducer ("OSUPrimaryvertexProducer",
 )
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.superclusters = cms.EDProducer ("SuperclusterProducer",
+collectionProducer.superclusters = cms.EDProducer ("OSUSuperclusterProducer",
 )
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.taus = cms.EDProducer ("TauProducer",
+collectionProducer.taus = cms.EDProducer ("OSUTauProducer",
 )
 copyConfiguration (collectionProducer.taus, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.tracks = cms.EDProducer ("TrackProducer",
+collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
 )
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
 
-collectionProducer.trigobjs = cms.EDProducer ("TrigobjProducer",
+collectionProducer.trigobjs = cms.EDProducer ("OSUTrigobjProducer",
 )
 copyConfiguration (collectionProducer.trigobjs, collectionProducer.genMatchables)
 
