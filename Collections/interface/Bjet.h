@@ -15,6 +15,13 @@ namespace osu
         Bjet (const TYPE(bjets) &, const edm::Handle<vector<osu::Mcparticle> > &);
         Bjet (const TYPE(bjets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Bjet ();
+        const float pfCombinedSecondaryVertexV2BJetTags () const;
+        const float pfCombinedInclusiveSecondaryVertexV2BJetTags () const;
+        void set_pfCombinedSecondaryVertexV2BJetTags (float value) { pfCombinedSecondaryVertexV2BJetTags_ = value;}
+        void set_pfCombinedInclusiveSecondaryVertexV2BJetTags (float value) { pfCombinedInclusiveSecondaryVertexV2BJetTags_ = value;}  
+      private:
+        float pfCombinedSecondaryVertexV2BJetTags_;
+        float pfCombinedInclusiveSecondaryVertexV2BJetTags_;
     };
 }
 

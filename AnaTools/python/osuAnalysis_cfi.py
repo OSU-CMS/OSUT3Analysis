@@ -10,6 +10,7 @@ collectionMap = cms.PSet (
     generatorweights  =  cms.InputTag  ('generator',                      ''),
     genjets           =  cms.InputTag  ('slimmedGenJets',                 ''),
     jets              =  cms.InputTag  ('slimmedJets',                    ''),
+    bjets             =  cms.InputTag  ('slimmedJets',                    ''),
     mcparticles       =  cms.InputTag  ('packedGenParticles',             ''),
     mets              =  cms.InputTag  ('slimmedMETs',                    ''),
     muons             =  cms.InputTag  ('slimmedMuons',                   ''),
