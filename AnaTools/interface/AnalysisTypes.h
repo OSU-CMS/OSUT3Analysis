@@ -105,6 +105,7 @@ struct Collections
   edm::Handle<vector<osu::Event> >          events;
   edm::Handle<vector<osu::Genjet> >         genjets;
   edm::Handle<vector<osu::Jet> >            jets;
+  edm::Handle<vector<osu::Bjet> >           bjets;
   edm::Handle<vector<osu::Basicjet> >       basicjets;
   edm::Handle<vector<osu::Mcparticle> >     mcparticles;
   edm::Handle<vector<osu::Met> >            mets;

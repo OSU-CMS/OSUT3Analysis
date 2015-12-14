@@ -29,7 +29,11 @@ OSUBjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Bjet> > (new vector<osu::Bjet> ());
   for (const auto &object : *collection)
     {
-      const osu::Bjet bjet (object, particles, cfg_);
+      osu::Bjet bjet (object, particles, cfg_);
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+      bjet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(bjet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+      bjet.set_pfCombinedSecondaryVertexV2BJetTags(bjet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags")); 
+#endif     
       pl_->push_back (bjet);
     }
 
