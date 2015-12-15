@@ -5,7 +5,7 @@ import os
 import re
 from array import *
 from optparse import OptionParser
-from OSUT3Analysis.Configuration.configurationOptions_13TeV import *
+from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 
 parser = OptionParser()

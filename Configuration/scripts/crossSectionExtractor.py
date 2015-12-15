@@ -16,32 +16,31 @@ from array import *
 from ROOT import TFile  
 from DataFormats.FWLite import Events, Handle, Runs
 from OSUT3Analysis.Configuration.configurationOptions import *
-from OSUT3Analysis.Configuration.configurationOptions_13TeV import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 
 datasets = [
     # The following are the miniAOD datasets for which we want to take the cross sections 
     # from the AOD files.
-    #'QCD_MuEnriched_MiniAOD',
-    #'QCD_EMEnriched_MiniAOD', 
-    #'QCD_bcToE_MiniAOD',
-    'SingleTop_MiniAOD',
+    #'QCD_MuEnriched',
+    #'QCD_EMEnriched', 
+    #'QCD_bcToE',
+    'SingleTop',
     # Other datasets that may also be checked:  
-    'DYJetsToLL_MiniAOD',
-    'TTJets_MiniAOD',
-    #'DYToMuMu_50_MiniAOD',
-    #'DYToEE_50_MiniAOD',
-    #'DYToMuMu_MiniAOD',
-    #'DYToEE_MiniAOD',
-    'WJetsToLNu_MiniAOD',
-    #'WToENu_MiniAOD',
-    #'WToMuNu_MiniAOD',
-    #'Top_MiniAOD',
-    #'QCD_MiniAOD',
-    #'QCD_MuEnriched_MiniAOD',
-    #'QCD_bcToE_MiniAOD',
-    #'QCD_MuEnriched_20toInf_MiniAOD', 
+    'DYJetsToLL',
+    'TTJets',
+    #'DYToMuMu_50',
+    #'DYToEE_50',
+    #'DYToMuMu',
+    #'DYToEE',
+    'WJetsToLNu',
+    #'WToENu',
+    #'WToMuNu',
+    #'Top',
+    #'QCD',
+    #'QCD_MuEnriched',
+    #'QCD_bcToE',
+    #'QCD_MuEnriched_20toInf', 
 ]
 split_datasets = split_composite_datasets(datasets, composite_dataset_definitions)
 
