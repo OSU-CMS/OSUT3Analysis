@@ -24,26 +24,14 @@ from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 
 
+
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
+
+parser.add_option("-i", "--inputFile", dest="inputFile", default = "", help="Specify the inputFile")
 (arguments, args) = parser.parse_args()  
 
 from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TArrow, THStack, TIter, TKey, TGraphErrors, Double 
-
-if arguments.localConfig:
-    sys.path.append(os.getcwd())
-    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
-
-UseExisting = False
-if arguments.condorDir:
-    condor_dir = set_condor_output_dir(arguments)
-else:
-    overwrite = raw_input("Do you want to copy an existing pu distribution and rename it(Type y) or you just forget to type -c(Type n, BTW, Shame on you)? ")
-    if overwrite is "y":
-    	UseExisting = True
-    else:
-	sys.exit(0)
-    
 
 def copyOneFile(dataset):  
     # If the input and output files are defined outside the loop, histograms after the first instance are not found.
@@ -100,17 +88,48 @@ def copyAndRenameOneFile(fout, datasets):
     fout.cd()
     h2.Write()
 
-########################################################################################
-########################################################################################
-if not UseExisting:
-    for dataset in datasets:    
-     	copyOneFile(dataset)  
 
-else:
-    fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE"); 
-    copyAndRenameOneFile(fout, datasets)
-    fout.Close()
-        
+def addDataDistribution(fout, inputFile):  
+    fin = TFile(inputFile)
+    h1 = fin.Get('pileup')
+    if not (h1):
+        print fin + " doe not have pileup histograms"              
+        return 
+    else:
+        h1.SetName(str(inputFile.split('.')[0]))
+        fout.cd()
+        h1.Write()
+
+if arguments.localConfig:
+    sys.path.append(os.getcwd())
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
+
+    UseExisting = False
+    if arguments.condorDir:
+        condor_dir = set_condor_output_dir(arguments)
+    else:
+        overwrite = raw_input("Do you want to copy an existing pu distribution and rename it(Type y) or you just forget to type -c(Type n, BTW, Shame on you)? ")
+        if overwrite is "y":
+    	    UseExisting = True
+        else:
+	    sys.exit(0)
+    
+
+
+########################################################################################
+########################################################################################
+    if not UseExisting:
+        for dataset in datasets:    
+     	    copyOneFile(dataset)  
+    else:
+        fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE"); 
+        copyAndRenameOneFile(fout, datasets)
+        fout.Close()
+elif arguments.inputFile:
+    fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE");
+    addDataDistribution(fout, str(arguments.inputFile))
+     
+       
 print "Finished addPUHists.py successfully."  
     
 
