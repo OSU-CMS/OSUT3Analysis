@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
+# Usage:
+# $ checkJobs condor/MyCondorDir  
+
 DIR=$1
 
 LOGS=`find ${DIR} -type f -regex ".*\/condor_[^/]*\.log$"`
 TOTAL=`ls ${LOGS} | wc -l`
-PASS=`grep "return value\|signal" ${LOGS} | grep "return value 0" | wc -l`
-FAIL=`grep "return value\|signal" ${LOGS} | grep -v "return value 0" | wc -l`
+DONE=`grep -c "return value\|signal" ${LOGS} | grep -v ":0$" | wc -l`
+PASS=`grep -c "return value 0" ${LOGS} | grep -v ":0$" | wc -l`
+FAIL=`echo "${DONE} ${PASS} - p" | dc`
 EXECUTED=`grep "Job executing on host" ${LOGS} | wc -l`
 RUNNING=`echo "${EXECUTED} ${PASS} - ${FAIL} - p" | dc`
 QUEUED=`echo "${TOTAL} ${EXECUTED} - p" | dc`
