@@ -713,6 +713,7 @@ types = {
 
     #WJets
     'WJetsToLNu'  :  "bgMC",
+    'WJetsToLNu_HT'          :  "bgMC",
     'WJetsToLNu_HT100to200'  :  "bgMC",
     'WJetsToLNu_HT200to400'  :  "bgMC",
     'WJetsToLNu_HT400to600'  :  "bgMC",
@@ -928,7 +929,8 @@ colors = {
     'DYJetsToNuNu'   :  831,
 
     #WJets
-    'WJetsToLNu'  :  852,
+    'WJetsToLNu'             :  852,
+    'WJetsToLNu_HT'          :  852,
     'WJetsToLNu_HT100to200'  :  852,
     'WJetsToLNu_HT200to400'  :  852,
     'WJetsToLNu_HT400to600'  :  852,
@@ -1146,7 +1148,7 @@ labels = {
     'DYJetsToNuNu'   :  "Z#rightarrow#nu#bar{#nu} ",
 
     #WJets
-    'WJetsToLNu'  :  "W#rightarrowl#nu ",
+    'WJetsToLNu'            :  "W#rightarrowl#nu ",
     'WJetsToLNu_HT'         :  "W#rightarrowl#nu (H_{T}>100 GeV) ",
     'WJetsToLNu_HT100to200' :  "W#rightarrowl#nu (100<H_{T}<200 GeV) ",
     'WJetsToLNu_HT200to400' :  "W#rightarrowl#nu (200<H_{T}<400 GeV) ",
