@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Usage:
+# $ checkJobs condor/MyCondorDir  
+
 DIR=$1
 
 LOGS=`find ${DIR} -type f -regex ".*\/condor_[^/]*\.log$"`
