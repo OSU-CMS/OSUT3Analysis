@@ -9,12 +9,10 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   cfg_ (cfg),
   beamSpot_       (cfg.getParameter<edm::InputTag> ("beamSpot")),
   conversions_    (cfg.getParameter<edm::InputTag> ("conversions")),
-  rho_            (cfg.getParameter<edm::InputTag> ("rho")),
-  gsfElectrons_   (cfg.getParameter<edm::InputTag> ("gsfElectrons"))
+  rho_            (cfg.getParameter<edm::InputTag> ("rho"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
-  gsfeElectronsToken_ = mayConsume<edm::View<reco::GsfElectron> >(gsfElectrons_);
 }
 
 OSUElectronProducer::~OSUElectronProducer ()
@@ -28,23 +26,24 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   using namespace edm;
   using namespace reco;
   
-  edm::Handle<edm::View<reco::GsfElectron> > electrons;
+  edm::Handle<vector<TYPE (electrons)> > collection;
   edm::Handle<reco::ConversionCollection> conversions;
   edm::Handle<reco::BeamSpot> beamSpot;
   edm::Handle<double> rho;
   
   edm::Handle<vector<osu::Mcparticle> > particles;
   anatools::getCollection (edm::InputTag ("", ""), particles, event);
-  if(!event.getByToken(gsfeElectronsToken_,electrons))
-    return; 
+  if (!anatools::getCollection (collection_, collection, event, false))
+    return;
   pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
-  for (const auto &object : *electrons)
+  for (const auto &object : *collection)
     {
+      reco::GsfElectron gsfElectron = GsfElectron(object);  
       osu::Electron electron (object, particles, cfg_);
       if(event.getByLabel (rho_, rho))
         electron.set_rho((float)(*rho)); 
       if(event.getByLabel (beamSpot_, beamSpot) && event.getByLabel (conversions_, conversions))
-        electron.set_vtxFitConversion(ConversionTools::hasMatchedConversion(object, conversions, (*beamSpot).position()));
+        electron.set_vtxFitConversion(ConversionTools::hasMatchedConversion(gsfElectron, conversions, (*beamSpot).position()));
       electron.set_missingInnerHits(object.gsfTrack()->hitPattern ().numberOfHits(reco::HitPattern::MISSING_INNER_HITS));
       float effectiveArea = 0;
       if(abs(object.superCluster()->eta()) >= 0.0000 && abs(object.superCluster()->eta()) < 1.0000)
@@ -66,7 +65,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       pl_->push_back (electron);
     }
 
-  event.put (pl_, gsfElectrons_.instance ());
+  event.put (pl_, collection_.instance ());
   pl_.reset ();
 #else
   edm::Handle<vector<TYPE (electrons)> > collection;
