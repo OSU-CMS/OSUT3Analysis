@@ -26,11 +26,9 @@ class OSUElectronProducer : public edm::EDProducer
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
     edm::ParameterSet  cfg_;
-    edm::EDGetToken    gsfeElectronsToken_;
     edm::InputTag      beamSpot_;
     edm::InputTag      conversions_;
     edm::InputTag      rho_;
-    edm::InputTag      gsfElectrons_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.

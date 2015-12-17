@@ -44,7 +44,6 @@ collectionProducer.bxlumis = cms.EDProducer ("OSUBxlumiProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
-    gsfElectrons = cms.InputTag("slimmedElectrons"),
     conversions = cms.InputTag  ("reducedEgamma",    "reducedConversions",""),
     rho = cms.InputTag  ("fixedGridRhoFastjetAll",    "",                ""),
     beamSpot = cms.InputTag  ("offlineBeamSpot",           "",                "")
