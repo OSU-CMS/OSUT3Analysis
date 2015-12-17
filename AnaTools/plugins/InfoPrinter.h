@@ -34,9 +34,10 @@ class InfoPrinter : public edm::EDAnalyzer
     bool getEventDecision ();
     bool printCutDecision ();
     bool printTriggerDecision ();
-    bool printEventFlags ();
+    bool printCumulativeEventFlags ();
+    bool printIndividualEventFlags ();
     bool printCumulativeObjectFlags ();
-    bool printObjectFlags ();
+    bool printIndividualObjectFlags ();
     bool printTriggerFlags ();
     bool printVetoTriggerFlags ();
     bool printValuesToPrint ();
@@ -72,8 +73,9 @@ class InfoPrinter : public edm::EDAnalyzer
     bool                  printCumulativeObjectFlags_;
     bool                  printCutDecision_;
     bool                  printEventDecision_;
-    bool                  printEventFlags_;
-    bool                  printObjectFlags_;
+    bool                  printCumulativeEventFlags_;
+    bool                  printIndividualEventFlags_;
+    bool                  printIndividualObjectFlags_;
     bool                  printTriggerDecision_;
     bool                  printTriggerFlags_;
     bool                  printVetoTriggerFlags_;

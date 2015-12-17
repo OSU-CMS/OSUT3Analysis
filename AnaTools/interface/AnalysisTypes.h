@@ -51,14 +51,16 @@ typedef vector<Cut> Cuts;
 struct CutCalculatorPayload
 {
   FlagMap         cumulativeObjectFlags;
-  FlagMap         objectFlags;
-  bool            cutDecision;         // whether event passes all cuts, without trigger
+  FlagMap         individualObjectFlags;
+  bool            cutDecision;         // whether event passes current cut (independant from other cuts)
+  bool            cutsDecision;        // whether event passes all cuts, without trigger
   bool            eventDecision;       // whether event passes all cuts and the trigger 
   bool            isValid;
   bool            triggerDecision;
   bool            triggerFilterDecision;
   Cuts            cuts;
-  vector<bool>    eventFlags;
+  vector<bool>    cumulativeEventFlags;
+  vector<bool>    individualEventFlags;
   vector<bool>    triggerFlags;
   vector<bool>    vetoTriggerFlags;
   vector<bool>    triggerFilterFlags;

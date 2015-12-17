@@ -16,8 +16,9 @@ InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
   printCumulativeObjectFlags_  (cfg.getParameter<bool>                   ("printCumulativeObjectFlags")),
   printCutDecision_            (cfg.getParameter<bool>                   ("printCutDecision")),
   printEventDecision_          (cfg.getParameter<bool>                   ("printEventDecision")),
-  printEventFlags_             (cfg.getParameter<bool>                   ("printEventFlags")),
-  printObjectFlags_            (cfg.getParameter<bool>                   ("printObjectFlags")),
+  printCumulativeEventFlags_   (cfg.getParameter<bool>                   ("printCumulativeEventFlags")),
+  printIndividualEventFlags_   (cfg.getParameter<bool>                   ("printIndividualEventFlags")),
+  printIndividualObjectFlags_  (cfg.getParameter<bool>                   ("printIndividualObjectFlags")),
   printTriggerDecision_        (cfg.getParameter<bool>                   ("printTriggerDecision")),
   printTriggerFlags_           (cfg.getParameter<bool>                   ("printTriggerFlags")),
   printVetoTriggerFlags_       (cfg.getParameter<bool>                   ("printVetoTriggerFlags")),
@@ -98,11 +99,12 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       ss_ << endl << "================================================================================" << endl;
       ss_ << "\033[1;36minfo for " << event.id () << " (record " << counter_ << ")\033[0m" << endl;
       valuesToPrint.size ()        &&  printValuesToPrint          ();
-      printObjectFlags_            &&  printObjectFlags            ();
+      printIndividualObjectFlags_  &&  printIndividualObjectFlags  ();
       printCumulativeObjectFlags_  &&  printCumulativeObjectFlags  ();
       printTriggerFlags_           &&  printTriggerFlags           ();
       printVetoTriggerFlags_       &&  printVetoTriggerFlags       ();
-      printEventFlags_             &&  printEventFlags             ();
+      printCumulativeEventFlags_   &&  printCumulativeEventFlags   ();
+      printIndividualEventFlags_   &&  printIndividualEventFlags   ();
       printTriggerDecision_        &&  printTriggerDecision        ();
       printCutDecision_            &&  printCutDecision            ();
       printEventDecision_          &&  printEventDecision          ();
@@ -165,16 +167,41 @@ InfoPrinter::printTriggerDecision ()
 }
 
 bool
-InfoPrinter::printEventFlags ()
+InfoPrinter::printCumulativeEventFlags ()
 {
   if (!cutDecisions.isValid ())
     return false;
 
   ss_ << endl;
   !maxCutWidth_ && (maxCutWidth_ = getMaxWidth (cutDecisions->cuts));
-  for (auto flag = cutDecisions->eventFlags.begin (); flag != cutDecisions->eventFlags.end (); flag++)
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << "\033[1;35mcumulative event flags" << "\033[0m" << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  for (auto flag = cutDecisions->cumulativeEventFlags.begin (); flag != cutDecisions->cumulativeEventFlags.end (); flag++)
     {
-      ss_ << "\033[1;34m" << setw (maxCutWidth_) << left << cutDecisions->cuts.at (flag - cutDecisions->eventFlags.begin ()).name << "\033[0m";
+      ss_ << "\033[1;34m" << setw (maxCutWidth_) << left << cutDecisions->cuts.at (flag - cutDecisions->cumulativeEventFlags.begin ()).name << "\033[0m";
+      if (*flag)
+        ss_ << "\033[1;32mtrue\033[0m" << endl;
+      else
+        ss_ << "\033[1;31mfalse\033[0m" << endl;
+    }
+  return true;
+}
+
+bool
+InfoPrinter::printIndividualEventFlags ()
+{
+  if (!cutDecisions.isValid ())
+    return false;
+
+  ss_ << endl;
+  !maxCutWidth_ && (maxCutWidth_ = getMaxWidth (cutDecisions->cuts));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << "\033[1;35mindividual event flags" << "\033[0m" << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  for (auto flag = cutDecisions->individualEventFlags.begin (); flag != cutDecisions->individualEventFlags.end (); flag++)
+    {
+      ss_ << "\033[1;34m" << setw (maxCutWidth_) << left << cutDecisions->cuts.at (flag - cutDecisions->individualEventFlags.begin ()).name << "\033[0m";
       if (*flag)
         ss_ << "\033[1;32mtrue\033[0m" << endl;
       else
@@ -230,16 +257,16 @@ InfoPrinter::printCumulativeObjectFlags ()
 }
 
 bool
-InfoPrinter::printObjectFlags ()
+InfoPrinter::printIndividualObjectFlags ()
 {
   if (!cutDecisions.isValid ())
     return false;
 
   ss_ << endl;
-  if (!cutDecisions->objectFlags.size ())
+  if (!cutDecisions->individualObjectFlags.size ())
     return true;
   vector<string> collections;
-  for (const auto &collection : cutDecisions->objectFlags.at (0))
+  for (const auto &collection : cutDecisions->individualObjectFlags.at (0))
     collections.push_back (collection.first);
   sort (collections.begin (), collections.end ());
   !maxCutWidth_ && (maxCutWidth_ = getMaxWidth (cutDecisions->cuts));
@@ -248,11 +275,11 @@ InfoPrinter::printObjectFlags ()
       if (collection != collections.begin ())
         ss_ << endl;
       ss_ << "--------------------------------------------------------------------------------" << endl;
-      ss_ << "\033[1;35mobject flags for " << *collection << "\033[0m" << endl;
+      ss_ << "\033[1;35mindividual object flags for " << *collection << "\033[0m" << endl;
       ss_ << "--------------------------------------------------------------------------------" << endl;
-      for (auto cut = cutDecisions->objectFlags.begin (); cut != cutDecisions->objectFlags.end (); cut++)
+      for (auto cut = cutDecisions->individualObjectFlags.begin (); cut != cutDecisions->individualObjectFlags.end (); cut++)
         {
-          ss_ << "\033[1;34m" << setw (maxCutWidth_) << left << cutDecisions->cuts.at (cut - cutDecisions->objectFlags.begin ()).name << "\033[0m";
+          ss_ << "\033[1;34m" << setw (maxCutWidth_) << left << cutDecisions->cuts.at (cut - cutDecisions->individualObjectFlags.begin ()).name << "\033[0m";
           for (auto flag = cut->at (*collection).begin (); flag != cut->at (*collection).end (); flag++)
             {
               if (flag != cut->at (*collection).begin ())
