@@ -254,8 +254,11 @@ class CFCell(object):
         quot.err = quot.val * math.sqrt(pow(relErrNum, 2) + pow(relErrDen, 2))  
         return quot
     def getStr(self):
-        val = round_sigfigs(self.val, 3)
-        err = round_sigfigs(self.err, 3)
+        precision = 3 
+        if arguments.precision:
+            precision = int(arguments.precision)
+        val = round_sigfigs(self.val, precision)
+        err = round_sigfigs(self.err, precision)
         if self.roundValToInt:
             val = int(val)
         if self.printPercent: 

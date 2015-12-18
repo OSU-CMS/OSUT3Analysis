@@ -10,13 +10,13 @@
 namespace osu
 {
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
-  class Electron : public GenMatchable<pat::Electron, 11>
+  class Electron : public GenMatchable<TYPE(electrons), 11>
     {
       public:
         Electron ();
-        Electron (const reco::GsfElectron &);
-        Electron (const reco::GsfElectron &, const edm::Handle<vector<osu::Mcparticle> > &);
-        Electron (const reco::GsfElectron &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
+        Electron (const TYPE(electrons) &);
+        Electron (const TYPE(electrons) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Electron (const TYPE(electrons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         const int missingInnerHits () const;
         const float AEff () const;
         const float rho() const;

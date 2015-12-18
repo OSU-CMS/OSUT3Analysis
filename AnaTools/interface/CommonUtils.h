@@ -53,6 +53,10 @@ namespace anatools
   string getObjectType (const osu::Jet &);
   string getObjectClass (const osu::Jet &);
 #endif
+#if IS_VALID(bjets)
+  string getObjectType (const osu::Bjet &);
+  string getObjectClass (const osu::Bjet &);
+#endif
 #if IS_VALID(mcparticles)
   string getObjectType (const osu::Mcparticle &);
   string getObjectClass (const osu::Mcparticle &);

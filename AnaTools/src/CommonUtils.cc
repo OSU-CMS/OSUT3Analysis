@@ -201,6 +201,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "events")            &&  collections.exists  ("events"))            getCollection  (collections.getParameter<edm::InputTag>  ("events"),            handles.events,            event);
   if  (VEC_CONTAINS  (objectsToGet,  "genjets")           &&  collections.exists  ("genjets"))           getCollection  (collections.getParameter<edm::InputTag>  ("genjets"),           handles.genjets,           event);
   if  (VEC_CONTAINS  (objectsToGet,  "jets")              &&  collections.exists  ("jets"))              getCollection  (collections.getParameter<edm::InputTag>  ("jets"),              handles.jets,              event);
+  if  (VEC_CONTAINS  (objectsToGet,  "bjets")              &&  collections.exists  ("bjets"))              getCollection  (collections.getParameter<edm::InputTag>  ("bjets"),              handles.bjets,              event);
   if  (VEC_CONTAINS  (objectsToGet,  "basicjets")         &&  collections.exists  ("basicjets"))         getCollection  (collections.getParameter<edm::InputTag>  ("basicjets"),         handles.basicjets,         event);
   if  (VEC_CONTAINS  (objectsToGet,  "generatorweights")  &&  collections.exists  ("generatorweights"))  getCollection  (collections.getParameter<edm::InputTag>  ("generatorweights"),  handles.generatorweights,  event);
   if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")       &&  collections.exists  ("mcparticles"))       getCollection  (collections.getParameter<edm::InputTag>  ("mcparticles"),       handles.mcparticles,       event);
@@ -251,6 +252,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     clog << "INFO: did not retrieve genjets collection from the event." << endl;
   if (firstEvent && !handles.jets.isValid ())
     clog << "INFO: did not retrieve jets collection from the event." << endl;
+  if (firstEvent && !handles.bjets.isValid ())
+    clog << "INFO: did not retrieve bjets collection from the event." << endl;
   if (firstEvent && !handles.basicjets.isValid ())
     clog << "INFO: did not retrieve basicjets collection from the event." << endl;
   if (firstEvent && !handles.generatorweights.isValid ())
@@ -594,6 +597,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 #if IS_VALID(jets)
   string  anatools::getObjectType  (const  osu::Jet            &obj)  {  return  "jet";            }
   string  anatools::getObjectClass  (const  osu::Jet            &obj)  {  return  "osu::Jet";            }
+#endif
+#if IS_VALID(bjets)
+  string  anatools::getObjectType  (const  osu::Bjet            &obj)  {  return  "bjet";            }
+  string  anatools::getObjectClass  (const  osu::Bjet            &obj)  {  return  "osu::Bjet";            }
 #endif
 #if IS_VALID(basicjets) && DATA_FORMAT == AOD
   string  anatools::getObjectType   (const  osu::Basicjet            &obj)  {  return  "basicjet";            }

@@ -5,7 +5,7 @@ import os
 import re
 from array import *
 from optparse import OptionParser
-from OSUT3Analysis.Configuration.configurationOptions_13TeV import *
+from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 
 parser = OptionParser()
@@ -49,9 +49,12 @@ for sample in processed_datasets: # loop over different samples as listed in con
     inputFile = TFile(condor_dir + "/" + sample + ".root")
     if(inputFile.IsZombie()):
         continue
-    Histogram = inputFile.Get(rootDirectory+"/pileup").Clone()
-    Histogram.SetDirectory(0)
-    outputFile.cd()
-    Histogram.Write (sample)
-
+    if(inputFile.Get(rootDirectory+"/pileup")):
+        Histogram = inputFile.Get(rootDirectory+"/pileup").Clone()
+        Histogram.SetDirectory(0)
+        outputFile.cd()
+        Histogram.Write (sample)
+    else:
+        print rootDirectory+"/pileup does not exist in " + condor_dir + "/" + sample + ".root"  
+        continue
 outputFile.Close()

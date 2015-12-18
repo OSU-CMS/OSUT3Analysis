@@ -9,7 +9,7 @@ import copy
 from math import *
 from array import *
 from optparse import OptionParser
-from OSUT3Analysis.Configuration.configurationOptions_13TeV import *
+from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 from OSUT3Analysis.DBTools.condorSubArgumentsSet import *

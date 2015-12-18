@@ -89,9 +89,10 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory):
 def MessageDecoder(Message, Good):
     Pattern = r'condor_(.*).log.*value (.*)\)'
     Decoded = re.match(Pattern,Message)    
+    report = ""
     if not Good:
-        print "Warning!!! Job " + Decoded.group(1) +" has non ZERO exit code: " + Decoded.group(2)
-    return Decoded.group(1)   
+        report = "Warning!!! Job " + Decoded.group(1) +" has non ZERO exit code: " + Decoded.group(2) + "\n"
+    return (report, Decoded.group(1)) 
 ###############################################################################
 #  Get the string of good root files and the corresponding string of weights  #
 ###############################################################################
@@ -236,7 +237,9 @@ for dataSet in split_datasets:
     if not os.path.exists(directory):
         print directory + " does not exist, will skip it and continue!"
         continue
-    print "....................Merging dataset " + dataSet + " ...................."
+    flogName = directory + '/mergeOut.log'
+    flog = open (flogName, "w")  
+    log = "....................Merging dataset " + dataSet + " ....................\n"
     os.chdir(directory)
     ReturnValues = []
     if os.path.islink(directory + '/hist.root'):
@@ -250,18 +253,19 @@ for dataSet in split_datasets:
     sys.path.append(directory)
     for i in range(0,len(ReturnValues)):
     	if "return value 0" in ReturnValues[i]:
-            GoodIndex = MessageDecoder(ReturnValues[i], True)
+            (report, GoodIndex) = MessageDecoder(ReturnValues[i], True)
             GoodIndices.append(GoodIndex)
         elif "return value" in ReturnValues[i]:
-            print ReturnValues[i]
-            BadIndex = MessageDecoder(ReturnValues[i], False)
+            log += ReturnValues[i] + "\n"
+            (report, BadIndex) = MessageDecoder(ReturnValues[i], False)
+            log += report  
             BadIndices.append(BadIndex)
         else:
-            print ReturnValues[i]
+            log += ReturnValues[i] + "\n"
             Pattern = r'condor_(.*).log'
             Decoded = re.match(Pattern,ReturnValues[i])
             BadIndex = Decoded.group(1)
-            print "Warning!!! Job " + str(BadIndex) + " exited inproperly!"                                                         
+            log += "Warning!!! Job " + str(BadIndex) + " exited inproperly!\n" 
             BadIndices.append(BadIndex)
     if os.path.exists('condor_resubmit.sub'):
         os.system('rm condor_resubmit.sub')
@@ -270,7 +274,7 @@ for dataSet in split_datasets:
     for i in range(0,len(GoodIndices)):
         GoodRootFiles.append(GetGoodRootFiles(GoodIndices[i]))
     if not len(GoodRootFiles):
-        print "Unfortunately there are no good root files to merge!"
+        log += "Unfortunately there are no good root files to merge!\n"
         continue
     InputFileString = MakeInputFileString(GoodRootFiles)
     exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
@@ -298,16 +302,16 @@ for dataSet in split_datasets:
         MakeFilesForSkimDirectory(directory,TotalNumber,SkimNumber)
     if not arguments.UseCondor: 
         os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString)
-        print "\nFinish merging dataset " + dataSet + ":"
-        print "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs."
-        print "    "+ str(TotalNumber) + " events were successfully run over."
-        print "    The target luminosity is " + str(IntLumi) + " inverse pb."
+        log += "\nFinish merging dataset " + dataSet + ":\n"
+        log += "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs.\n"
+        log += "    "+ str(TotalNumber) + " events were successfully run over.\n"
+        log += "    The target luminosity is " + str(IntLumi) + " inverse pb.\n"
         if crossSection != -1:
-            print "    The crossSection of dataset " + dataSet + " is " + str(crossSection) + " pb."
-        print "    The weighting factor is " + str(Weight) + "." 
+            log += "    The crossSection of dataset " + dataSet + " is " + str(crossSection) + " pb.\n"
+        log += "    The weighting factor is " + str(Weight) + ".\n" 
         if crossSection != -1:
-    	    print "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(TotalNumber/crossSection) + " inverse pb." 
-        print "...............................................................\n"
+    	    log += "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(IntLumi/Weight) + " inverse pb.\n" 
+        log += "...............................................................\n"
         os.chdir(CondorDir) 
     #If run on condor, save the parameters in outputInfo_*_cfg.py for condor jobs to use.
     else:
@@ -321,6 +325,9 @@ for dataSet in split_datasets:
         configTmp.write('InputFileString = "' + InputFileString + '"\n')	
         configTmp.write('InputWeightString = "' + InputWeightString + '"')
         configTmp.close()	
+    flog.write(log)
+    flog.close()  
+    os.system("cat " + flogName) 
 
 if not arguments.UseCondor:
     for dataSet_component in composite_datasets:

@@ -25,7 +25,7 @@ CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
   oneDHists_["eventCounter"]  =  fs_->make<TH1D>  ("eventCounter",  ";;events",          1,  0.0,  1.0);
   oneDHists_["cutFlow"]       =  fs_->make<TH1D>  ("cutFlow",       ";;passing events",  1,  0.0,  1.0);
   oneDHists_["selection"]     =  fs_->make<TH1D>  ("selection",     ";;passing events",  1,  0.0,  1.0);
-  oneDHists_["minusOne"]      =  fs_->make<TH1D>  ("minusOne",      ";;passing events",  1,  0.0,  1.0);
+  //  oneDHists_["minusOne"]      =  fs_->make<TH1D>  ("minusOne",      ";;passing events",  1,  0.0,  1.0);
   //////////////////////////////////////////////////////////////////////////////
 }
 
@@ -37,7 +37,7 @@ CutFlowPlotter::~CutFlowPlotter ()
 
   TH1D* cutFlow_   = oneDHists_["cutFlow"];
   TH1D* selection_ = oneDHists_["selection"];
-  TH1D* minusOne_  = oneDHists_["minusOne"];
+  //  TH1D* minusOne_  = oneDHists_["minusOne"];
 
   // Print all the cutflow information stored in histograms when this class is destroyed.
   int totalEvents;
@@ -65,8 +65,8 @@ CutFlowPlotter::~CutFlowPlotter ()
   for (int i = 1; i <= cutFlow_->GetNbinsX(); i++) {
     double cutFlow   =   cutFlow_->GetBinContent (i);
     double selection = selection_->GetBinContent (i);
-    double minusOne  =  minusOne_->GetBinContent (i);
-    minusOne *= 1.0; // Dummy statement to avoid compilation error for unused variable.
+    //    double minusOne  =  minusOne_->GetBinContent (i);
+    //    minusOne *= 1.0; // Dummy statement to avoid compilation error for unused variable.
     TString name = cutFlow_->GetXaxis()->GetBinLabel(i);
     clog << setw (longestCutName) << left << name << right << setw (10) << setprecision(1) << cutFlow
          << setw (15) << setprecision(3) << 100.0 * (cutFlow   / (double) totalEvents) << "%"
@@ -115,7 +115,7 @@ CutFlowPlotter::initializeCutFlow ()
   unsigned bin = 1;
   oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "total");
   oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "total");
-  oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "total");
+  //  oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "total");
   bin++;
   if (!cutDecisions.isValid ())
     return false;
@@ -131,7 +131,7 @@ CutFlowPlotter::initializeCutFlow ()
   cutDecisions->triggerFilters.size () && nCuts++;
   oneDHists_.at ("cutFlow")->SetBins    (nCuts + 1,  0.0,  nCuts + 1);
   oneDHists_.at ("selection")->SetBins  (nCuts + 1,  0.0,  nCuts + 1);
-  oneDHists_.at ("minusOne")->SetBins   (nCuts + 1,  0.0,  nCuts + 1);
+  //  oneDHists_.at ("minusOne")->SetBins   (nCuts + 1,  0.0,  nCuts + 1);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -142,21 +142,21 @@ CutFlowPlotter::initializeCutFlow ()
     {
       oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "trigger");
       oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "trigger");
-      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger");
+      //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger");
       bin++;
     }
   if (cutDecisions->triggerFilters.size ())
     {
       oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "trigger filter");
       oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "trigger filter");
-      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger filter");
+      //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger filter");
       bin++;
     }
   for (vector<Cut>::const_iterator cut = cutDecisions->cuts.begin (); cut != cutDecisions->cuts.end (); cut++, bin++)
     {
       oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  cut->name.c_str  ());
       oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  cut->name.c_str  ());
-      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  cut->name.c_str  ());
+      //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  cut->name.c_str  ());
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -204,13 +204,18 @@ CutFlowPlotter::fillCutFlow (double w)
         oneDHists_.at ("cutFlow")->Fill    (bin,  w);
       bin++;
     }
-  for (vector<bool>::const_iterator flag = cutDecisions->eventFlags.begin (); flag != cutDecisions->eventFlags.end (); flag++, bin++)
+  double firstBin = bin;  // save the index of the first bin corresponding to an actual cut
+  for (vector<bool>::const_iterator flag = cutDecisions->cumulativeEventFlags.begin (); flag != cutDecisions->cumulativeEventFlags.end (); flag++, bin++)
     {
       passes = passes && (*flag);
-      if (*flag)
-        oneDHists_.at ("selection")->Fill (bin, w);
       if (passes)
         oneDHists_.at ("cutFlow")->Fill (bin, w);
+    }
+  bin = firstBin;  // reset to the first bin with an actual cut
+  for (vector<bool>::const_iterator flag = cutDecisions->individualEventFlags.begin (); flag != cutDecisions->individualEventFlags.end (); flag++, bin++)
+    {
+      if (*flag)
+        oneDHists_.at ("selection")->Fill (bin, w);
     }
   //////////////////////////////////////////////////////////////////////////////
 
