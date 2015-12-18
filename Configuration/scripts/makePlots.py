@@ -49,6 +49,8 @@ parser.add_option("-P", "--paperConfig", dest="paperConfig",
                       help="paper configuration file")
 parser.add_option("--pe", "--poissonErrors", action="store_true", dest="poisErr",default=False,
                       help="draw data histograms with poisson errorbars")
+parser.add_option("-O", "--output-dir", dest="outputDirectory",
+                  help="specify an output directory for output file, default is to use the Condor directory")
 
 
 (arguments, args) = parser.parse_args()
@@ -1497,8 +1499,9 @@ if arguments.makeSignificancePlots:
     outputFileName = "stacked_histogramsSignif.root"
 if arguments.outputFileName:
     outputFileName = arguments.outputFileName
+outputDir = "condor/" + arguments.outputDirectory if arguments.outputDirectory else condor_dir
 
-outputFile = TFile(condor_dir + "/" + outputFileName, "RECREATE")
+outputFile = TFile(outputDir + "/" + outputFileName, "RECREATE")
 
 #### use the first input file as a template and make stacked versions of all its histograms
 inputFile = TFile(condor_dir + "/" + processed_datasets[0] + ".root")

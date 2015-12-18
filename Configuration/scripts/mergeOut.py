@@ -28,6 +28,7 @@ parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify
 parser.add_option("-L", "--targetLumi", dest="IntLumi", default = "", help="Specify the targeting luminosity.")
 parser.add_option("-c", "--condor", dest="UseCondor", default = False,action = "store_true", help="Run merging jobs on condor.")
 parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", default = False, help="Just generate necessary config files without executing them.")
+parser.add_option("-O", "--output-dir", dest="outputDirectory", help="specify an output directory for output file, default is to use the Condor directory")
 
 (arguments, args) = parser.parse_args()
 from ROOT import TFile
@@ -60,7 +61,7 @@ def MakeSubmissionScriptForMerging(Directory):
 ###############################################################################
 #                 Make the configuration for condor to run over.              #
 ###############################################################################
-def MakeMergingConfigForCondor(Directory):
+def MakeMergingConfigForCondor(Directory, OutputDirectory):
         os.system('touch ' + Directory + '/merge.py')
         MergeScript = open(Directory + '/merge.py','r+w')
         MergeScript.write('#!/usr/bin/env python\n')
@@ -77,7 +78,7 @@ def MakeMergingConfigForCondor(Directory):
         MergeScript.write('exec(\'import outputInfo_\' + dataset +\'_cfg as outputInfo\')\n')
         MergeScript.write('InputFileString = outputInfo.InputFileString\n')
         MergeScript.write('InputWeightString = outputInfo.InputWeightString\n')
-        MergeScript.write('os.system(\'mergeTFileServiceHistograms -i \' + InputFileString + \' -o \' + \'../\' + dataset + \'.root\' + \' -w \' + InputWeightString)\n')
+        MergeScript.write('os.system(\'mergeTFileServiceHistograms -i \' + InputFileString + \' -o \' + \'' + OutputDirectory + '/\' + dataset + \'.root\' + \' -w \' + InputWeightString)\n')
         MergeScript.write('print \'Finish merging dataset \' + dataset')
         MergeScript.close()
         os.system('chmod 777 ' + Directory + '/merge.py')
@@ -207,6 +208,7 @@ if arguments.condorDir == "":
     sys.exit()
 else:
     CondorDir = os.getcwd() + '/condor/' + arguments.condorDir
+OutputDir = os.getcwd() + "/condor/" + arguments.outputDirectory if arguments.outputDirectory else CondorDir
 ###############################################################################
 #Check whether the necessary arguments or the local config are given correctly#
 ###############################################################################
@@ -295,8 +297,7 @@ for dataSet in split_datasets:
     else:
         MakeFilesForSkimDirectory(directory,TotalNumber,SkimNumber)
     if not arguments.UseCondor: 
-        os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + dataSet + '.root' + ' -w ' + InputWeightString)
-        os.system('mv ' + dataSet + '.root ' + '../')
+        os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString)
         print "\nFinish merging dataset " + dataSet + ":"
         print "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs."
         print "    "+ str(TotalNumber) + " events were successfully run over."
@@ -331,7 +332,7 @@ if not arguments.UseCondor:
                 continue  	
             memberList.append(dataset + '.root')
         InputFileString = MakeInputFileString(memberList)
-        os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + dataSet_component + '.root')
+        os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet_component + '.root')
         print 'Finish merging composite dataset ' + dataSet_component
         print "...............................................................\n"
 #Make necessary files for condor and submit condor jobs.
@@ -339,7 +340,7 @@ if arguments.UseCondor:
     print '......................Using Condor!...........................'
     GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
     MakeSubmissionScriptForMerging(CondorDir)
-    MakeMergingConfigForCondor(CondorDir)
+    MakeMergingConfigForCondor(CondorDir, OutputDir)
     os.chdir(CondorDir)
     if not arguments.NotToExecute:
         os.system('condor_submit condorMerging.sub')
