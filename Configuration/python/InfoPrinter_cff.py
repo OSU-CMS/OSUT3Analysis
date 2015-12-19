@@ -12,11 +12,12 @@ infoPrinter = cms.EDAnalyzer ("InfoPrinter",
 #            valueToPrint = cms.string ("pt")
 #        ),
     ),
-    printObjectFlags            =  cms.bool  (False),  # print the noncumulative flags for each object
+    printIndividualObjectFlags  =  cms.bool  (False),  # print the noncumulative flags for each object
     printCumulativeObjectFlags  =  cms.bool  (False),  # print the cumulative flags for each object
     printTriggerFlags           =  cms.bool  (False),  # print the decision for each trigger
     printVetoTriggerFlags       =  cms.bool  (False),  # print the decision for each trigger to veto
-    printEventFlags             =  cms.bool  (False),  # print the decision for each cut
+    printIndividualEventFlags   =  cms.bool  (False),  # print the decision for each cut, independent of any other cuts
+    printCumulativeEventFlags   =  cms.bool  (False),  # print the decision for each cut, based on objects selected by previous cuts
     printTriggerDecision        =  cms.bool  (False),  # print whether the event passes the triggers
     printCutDecision            =  cms.bool  (False),  # print whether the event passes all cuts, not including the triggers
     printEventDecision          =  cms.bool  (False),  # print whether the event passes the triggers and all cuts
