@@ -153,18 +153,12 @@ def getLatestJsonFile():
     else:
         for bestJson in bestJsons:
             nameSplit = bestJson.split('_')
-            if nameSplit[len(nameSplit) - 1] != 'JSON.txt':
+            if nameSplit[len(nameSplit) - 1][0] == 'v':
                 versionString =  nameSplit[len(nameSplit) - 1].split('.')[0]
-                if len(versionString) == 2: 
-                    currentVersionNumber = float(versionString[1])
-                    if currentVersionNumber > versionNumber:
-                        versionNumber = currentVersionNumber
-                        ultimateJson = bestJson 
-                else:
-                    currentVersionNumber = float(versionString[1 : ])
-                    if currentVersionNumber > versionNumber:
-                        versionNumber = currentVersionNumber
-                        ultimateJson = bestJson 
+                currentVersionNumber = float(versionString[1 : ])
+                if currentVersionNumber > versionNumber:
+                    versionNumber = currentVersionNumber
+                    ultimateJson = bestJson
     os.system('rm CertList.txt')
     os.system('rm jsonList.txt')
     os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/' + ultimateJson + ' -O ' + ultimateJson)
