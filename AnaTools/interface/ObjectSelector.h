@@ -92,15 +92,19 @@ ObjectSelector<T>::filter (edm::Event &event, const edm::EventSetup &setup)
     {
       for (auto object = collection->begin (); object != collection->end (); object++)
         {
-          unsigned iObject = object - collection->begin (),
-                   nCuts;
+          unsigned iObject = object - collection->begin ();
           bool passes = true;
 
           if (cutDecisions.isValid ())
             {
-              nCuts = cutDecisions->cumulativeObjectFlags.size ();
-              if (nCuts > 0)
-                cutDecisions->cumulativeObjectFlags.at (nCuts - 1).at (collectionToFilter_).at (iObject).second && (passes = cutDecisions->cumulativeObjectFlags.at (nCuts - 1).at (collectionToFilter_).at (iObject).first);
+              for (int iCut = cutDecisions->cumulativeObjectFlags.size () - 1; iCut >= 0; iCut--)
+                {
+                  if (cutDecisions->cumulativeObjectFlags.at (iCut).at (collectionToFilter_).at (iObject).second)
+                    {
+                      passes = cutDecisions->cumulativeObjectFlags.at (iCut).at (collectionToFilter_).at (iObject).first;
+                      break;
+                    }
+                }
             }
           if (passes)
             pl_->push_back (*object);
