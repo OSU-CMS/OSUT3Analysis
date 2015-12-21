@@ -49,6 +49,7 @@ parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default 
 parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. Generic, MuonPhysics, CaloOnly, Silver, etc")  
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")  
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")  
+parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")  
 
 (arguments, args) = parser.parse_args()
 
@@ -102,8 +103,10 @@ parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = 
 #    If you have problems in using the osusub.py. Try the most general case -t UserList. 
 #    Actually I vote for removing UserDir.....
 
+#Define the dictionary to look for the redirectors given the users input. 
+RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Global':'cms-xrd-global.cern.ch'}
 
-#A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.  
+#To get the JSON file the user specifies. Use -J 'TypeOfJSON' like -J Silver
 def getLatestJsonFile():
     os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O jsonList.txt')
     os.system('grep "Cert" jsonList.txt > CertList.txt')
@@ -153,18 +156,25 @@ def getLatestJsonFile():
     else:
         for bestJson in bestJsons:
             nameSplit = bestJson.split('_')
-            if nameSplit[len(nameSplit) - 1][0] == 'v':
+            if nameSplit[len(nameSplit) - 1] != 'JSON.txt':
                 versionString =  nameSplit[len(nameSplit) - 1].split('.')[0]
-                currentVersionNumber = float(versionString[1 : ])
-                if currentVersionNumber > versionNumber:
-                    versionNumber = currentVersionNumber
-                    ultimateJson = bestJson
+                if len(versionString) == 2: 
+                    currentVersionNumber = float(versionString[1])
+                    if currentVersionNumber > versionNumber:
+                        versionNumber = currentVersionNumber
+                        ultimateJson = bestJson 
+                else:
+                    currentVersionNumber = float(versionString[1 : ])
+                    if currentVersionNumber > versionNumber:
+                        versionNumber = currentVersionNumber
+                        ultimateJson = bestJson 
     os.system('rm CertList.txt')
     os.system('rm jsonList.txt')
     os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/' + ultimateJson + ' -O ' + ultimateJson)
     return ultimateJson
 
 
+#A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.  
 def SpecialStringModifier(inputString, specialStringSplitList, specialStringReplaceList):
     if len(specialStringSplitList):
         for member in specialStringSplitList:
@@ -236,6 +246,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA, jsonFil
 def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     os.system('touch ' + Directory + '/config_cfg.py')
     ConfigFile = open(Directory + '/config_cfg.py','r+w')
+    sys.path.append(Directory)
     exec('import userConfig_' + Label + '_cfg' + ' as temPset')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')        
     ConfigFile.write('import OSUT3Analysis.DBTools.osusub_cfg as osusub\n')
@@ -270,18 +281,18 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
     ConfigFile.write('fileName = re.sub (r\'^(.*)\.([^\.]*)$\', r\'\\1_\' + str (osusub.jobNumber) + r\'.\\2\', fileName)\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
-    sampleType = types[Label] if Label in types else "data"
-    if sampleType == "data":
+    if not arguments.Generic:
+      if types[Label] == "data":
         for module in vars(temPset.process).values():
             if hasattr(module, "weights"):
                 ConfigFile.write('pset.process.' + str(module) + '.weights = cms.VPSet()\n')
-    if hasattr(temPset.process, "DisplacedSUSYEventVariableProducer"):
-        if sampleType == "bgMC":
+      if hasattr(temPset.process, "DisplacedSUSYEventVariableProducer"):
+        if types[Label] == "bgMC":
             ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("bgMC")\n')
         else:
             ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("data")\n')
-    if hasattr(temPset.process, "PUScalingFactorProducer"):
-        if sampleType == "bgMC":
+      if hasattr(temPset.process, "PUScalingFactorProducer"):
+        if types[Label] == "bgMC":
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
             ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("bgMC")')
         else:
@@ -325,7 +336,9 @@ def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSe
     datasetRead['realDatasetName'] = Dataset 
     text = 'listOfFiles = [  \n' 
     for f in inputFiles:
-        if lxbatch:
+        if arguments.Redirector != "":
+            f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
+        elif lxbatch:
             f = "root://xrootd.ba.infn.it/" + f
         else: 
             f = "root://cms-xrd-global.cern.ch/" + f 
@@ -379,10 +392,12 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             text += ']  \n'  
         else:
             for f in inputFiles:
-                if lxbatch:
-                    f = "root://xrootd.ba.infn.it/" + f   
-                else:
-                    f = "root://cmsxrootd.fnal.gov/" + f
+                if arguments.Redirector != "":
+                    f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
+                elif lxbatch:
+                    f = "root://xrootd.ba.infn.it/" + f
+                else: 
+                    f = "root://cmsxrootd.fnal.gov/" + f 
                 text += '"' + f + '",\n'  
             text += ']  \n'  
         text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n' 
@@ -414,10 +429,12 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             text += ']  \n'  
         else:
             for f in inputFiles:
-                if lxbatch:
-                    f = "root://xrootd.ba.infn.it/" + f   
-                else:
-                    f = "root://cmsxrootd.fnal.gov/" + f
+                if arguments.Redirector != "":
+                    f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
+                elif lxbatch:
+                    f = "root://xrootd.ba.infn.it/" + f
+                else: 
+                    f = "root://cmsxrootd.fnal.gov/" + f 
                 text += '"' + f + '",\n'  
             text += ']  \n'  
         text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'     
@@ -605,6 +622,11 @@ if 'cern.ch' in hostname:
     lxbatch = True
 if 'interactive' in hostname:
     remoteAccessT3 = False
+if arguments.Redirector != "":
+    if not RedirectorDic.has_key(arguments.Redirector):
+        print "Warning! Invalid redirector provided!! Quit!!"
+        sys.exit()
+
 ###############################################################################
 #                End of Setup stage, will begin to submit jobs                #
 ###############################################################################
@@ -632,7 +654,7 @@ if not arguments.Resubmit:
                      DatasetName = dataset 
                 MaxEvents = maxEvents[dataset]
                 Config = config_file
-                GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
+            GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
             
             if arguments.FileType == 'OSUT3Ntuple': 
                 if dataset_names.has_key(dataset):
@@ -645,9 +667,15 @@ if not arguments.Resubmit:
                     continue 
                 else: 
                     os.system('mkdir ' + WorkDir )
+            elif arguments.FileType == 'UserList':
+                WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
+                if os.path.exists(WorkDir): 
+                    print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'  
+                    continue 
+                else: 
+                    os.system('mkdir ' + WorkDir )
             else:
                 WorkDir = CondorDir 
-       
             dataset = SpecialStringModifier(dataset, ['/','.'], [['-','_']])
             crossSection = -1
             if crossSections.has_key(dataset):
@@ -737,6 +765,17 @@ else:
             WorkDir = CondorDir + '/' + str(dataset)
             if os.path.exists(WorkDir + '/condor_resubmit.sub'):
                 os.chdir(WorkDir)
+                #If a redirector is defined, switch to the new redirector.
+                if arguments.Redirector != "" :
+                    if RedirectorDic.has_key(arguments.Redirector):
+                        originalRedirector = ""
+                        datasetInfoFileName = os.popen("ls datasetInfo_*_cfg.py").read().split('\n')[0] 
+                        datasetInfoFile = open(str(datasetInfoFileName),'r')
+                        for line in datasetInfoFile:
+                           if 'root:' in line:
+                               originalRedirector = line.split('/')[2]
+                               break
+                        os.system('sed \'s/' + str(originalRedirector) + '/' + str(RedirectorDic[arguments.Redirector]) + '/g\' '  +  str(datasetInfoFileName))
                 print '################ Resubmit failed jobs for ' + str(dataset) + ' dataset #############'  
                 os.system('condor_submit condor_resubmit.sub')
                 os.chdir(SubmissionDir)
