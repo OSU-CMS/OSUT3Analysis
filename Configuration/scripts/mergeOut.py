@@ -41,7 +41,7 @@ def MakeSubmissionScriptForMerging(Directory):
         sys.exit()
     else:
 	os.system('touch ' + Directory + '/condorMerging.sub')
-        SubmitFile = open(Directory + '/condorMerging.sub','r+w')
+        SubmitFile = open(Directory + '/condorMerging.sub','w')
     for argument in sorted(currentCondorSubArgumentsSet):
         if currentCondorSubArgumentsSet[argument].has_key('Executable') and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = merge.py\n')
@@ -63,7 +63,7 @@ def MakeSubmissionScriptForMerging(Directory):
 ###############################################################################
 def MakeMergingConfigForCondor(Directory, OutputDirectory):
         os.system('touch ' + Directory + '/merge.py')
-        MergeScript = open(Directory + '/merge.py','r+w')
+        MergeScript = open(Directory + '/merge.py','w')
         MergeScript.write('#!/usr/bin/env python\n')
         MergeScript.write('import sys\n')
         MergeScript.write('import os\n\n')
@@ -170,7 +170,7 @@ def MakeFilesForSkimDirectory(Directory, TotalNumber, SkimNumber):
 ###############################################################################
 def MakeResubmissionScript(badIndices, originalSubmissionScript):
     os.system('touch condor_resubmit.sub')
-    resubScript = open('condor_resubmit.sub','r+w') 
+    resubScript = open('condor_resubmit.sub','w') 
     originalScript = open(originalSubmissionScript,'r')
     indexDependence = []
 
@@ -321,7 +321,7 @@ for dataSet in split_datasets:
             os.system('touch ' + outputInfoPath)
         else:
             os.system('touch ' + outputInfoPath)
-        configTmp = open(outputInfoPath,'r+w') 
+        configTmp = open(outputInfoPath,'w') 
         configTmp.write('InputFileString = "' + InputFileString + '"\n')	
         configTmp.write('InputWeightString = "' + InputWeightString + '"')
         configTmp.close()	
