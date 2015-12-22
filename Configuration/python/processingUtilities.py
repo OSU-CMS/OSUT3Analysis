@@ -541,7 +541,9 @@ def set_endPath(process, endPath):
     process.schedule.append(endPath)
 
 def set_input(process, input_string):
-    from OSUT3Analysis.Configuration.configurationOptions import dataset_names, composite_dataset_definitions
+    from OSUT3Analysis.Configuration.configurationOptions import composite_dataset_definitions
+    # N.B. using miniAOD v2 samples by default
+    from OSUT3Analysis.Configuration.miniAODV2Samples import dataset_names
 
     ############################################################################
     # This function configures the input dataset.
@@ -571,7 +573,8 @@ def set_input(process, input_string):
     # check for validity
     fileType = "No such file or directory"
     try:
-        fileType = subprocess.check_output(['/usr/bin/file', input_string]).split(":")[1]
+#        fileType = subprocess.check_output(['/usr/bin/file', input_string]).split(":")[1]
+        fileType = subprocess.check_output(['file', input_string]).split(":")[1]
     except:
         pass
     isValidFileOrDir = "No such file or directory" not in fileType
