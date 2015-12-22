@@ -228,6 +228,8 @@ if not arguments.localConfig:
         print "There are no datasets to merge!"
     else:
         split_datasets.append(arguments.Dataset) 
+
+if arguments.IntLumi is not "":
     IntLumi = float(arguments.IntLumi)
 
 
