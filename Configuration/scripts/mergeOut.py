@@ -4,6 +4,7 @@ import imp
 import sys
 import os
 import re
+import glob
 from optparse import OptionParser
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
@@ -232,6 +233,7 @@ if not arguments.localConfig:
 
 currentCondorSubArgumentsSet = {}
 for dataSet in split_datasets:
+    os.chdir(CondorDir)
     currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
     directory = CondorDir + '/' + dataSet
     if not os.path.exists(directory):
@@ -244,6 +246,10 @@ for dataSet in split_datasets:
     ReturnValues = []
     if os.path.islink(directory + '/hist.root'):
         os.system('rm ' + directory + '/hist.root')
+    # check to see if any jobs ran
+    if not len(glob.glob('condor_*.log')):
+        print "no jobs were run for dataset '" + dataSet + "', will skip it and continue!"
+        continue
     LogFiles = os.popen('ls condor_*.log').readlines()
     for i in range(0,len(LogFiles)):
         ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
@@ -330,6 +336,7 @@ for dataSet in split_datasets:
     os.system("cat " + flogName) 
 
 if not arguments.UseCondor:
+    os.chdir(CondorDir)
     for dataSet_component in composite_datasets:
         print "................Merging composite dataset " + dataSet_component + " ................"
         memberList = []
