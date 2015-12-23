@@ -6,6 +6,7 @@ import re
 import socket
 import time
 import copy
+import glob
 from math import *
 from array import *
 from optparse import OptionParser
@@ -457,6 +458,11 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             #else:
             #    return 
         if RunOverSkim:
+            numInputFiles = len(glob.glob(Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel + "/*.root"))
+            if not numInputFiles:
+                print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
+                datasetRead['numberOfFiles'] = numInputFiles
+                return datasetRead
             SkimModifier(Label, Directory)
             InitializeAAA = ""
         sys.path.append(Directory)
@@ -542,6 +548,14 @@ def SkimModifier(Label, Directory):
     os.system('rm ' + Directory + '/datasetInfo_' + Label + '_cfg_beforeChanges.py')  
     os.system('mv ' + Directory + '/datasetInfo_' + Label + '_cfg-test.py ' + Directory + '/datasetInfo_' + Label + '_cfg.py')  
 
+
+################################################################################
+################################################################################
+################################################################################
+#                      END OF FUNCTION DEFINITIONS                             #
+################################################################################
+################################################################################
+################################################################################
 
 
 ################################################################################
@@ -678,6 +692,8 @@ if not arguments.Resubmit:
                 crossSection = arguments.crossSection
             DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, UseAAA, crossSection)
             NumberOfFiles = int(DatasetRead['numberOfFiles'])
+            if not NumberOfFiles:
+                continue
             UseAAA = DatasetRead['useAAA']
             if NumberOfJobs > NumberOfFiles:
                 NumberOfJobs = NumberOfFiles
