@@ -152,12 +152,13 @@ def GetNumberOfEvents(FilesSet):
 ###############################################################################
 #                 Produce important files for the skim directory.             #
 ###############################################################################
-def MakeFilesForSkimDirectory(Directory, TotalNumber, SkimNumber):
+def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber):
     for Member in os.listdir(Directory):
         if os.path.isfile(os.path.join(Directory, Member)):
             continue;
-        os.system('echo ' + str(TotalNumber) + ' > ' +Directory + '/' + Member + '/OriginalNumberOfEvents.txt')
-        os.system('echo ' + str(SkimNumber[Member]) + ' > ' +Directory + '/' + Member + '/SkimNumberOfEvents.txt')
+        os.system('mkdir -p ' + DirectoryOut + '/' + Member)
+        os.system('echo ' + str(TotalNumber)        + ' > ' +DirectoryOut + '/' + Member + '/OriginalNumberOfEvents.txt')
+        os.system('echo ' + str(SkimNumber[Member]) + ' > ' +DirectoryOut + '/' + Member + '/SkimNumberOfEvents.txt')
         os.chdir(Directory + '/' + Member)
         listOfSkimFiles = os.popen('ls *.root').readlines()
         sys.path.append(Directory + '/' + Member)
@@ -211,6 +212,9 @@ if arguments.condorDir == "":
 else:
     CondorDir = os.getcwd() + '/condor/' + arguments.condorDir
 OutputDir = os.getcwd() + "/condor/" + arguments.outputDirectory if arguments.outputDirectory else CondorDir
+os.system('mkdir -p ' + OutputDir)  
+print "Debug:  executing mkdir -p " + OutputDir 
+
 ###############################################################################
 #Check whether the necessary arguments or the local config are given correctly#
 ###############################################################################
@@ -241,7 +245,9 @@ for dataSet in split_datasets:
     if not os.path.exists(directory):
         print directory + " does not exist, will skip it and continue!"
         continue
-    flogName = directory + '/mergeOut.log'
+    directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory 
+    os.system("mkdir -p " + directoryOut)  
+    flogName = directoryOut + '/mergeOut.log' 
     flog = open (flogName, "w")  
     log = "....................Merging dataset " + dataSet + " ....................\n"
     os.chdir(directory)
@@ -289,7 +295,7 @@ for dataSet in split_datasets:
     TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
     SkimNumber = GetNumberOfEvents(GoodRootFiles)['SkimNumber']
     if not TotalNumber:
-        MakeFilesForSkimDirectory(directory,TotalNumber,SkimNumber)
+        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
         continue
     Weight = 1.0
     crossSection = float(datasetInfo.crossSection)
@@ -305,9 +311,9 @@ for dataSet in split_datasets:
             Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
     if runOverSkim:
-        MakeFilesForSkimDirectory(directory,datasetInfo.originalNumberOfEvents,SkimNumber)    
+        MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber)    
     else:
-        MakeFilesForSkimDirectory(directory,TotalNumber,SkimNumber)
+        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
     if not arguments.UseCondor: 
         os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString)
         log += "\nFinish merging dataset " + dataSet + ":\n"
