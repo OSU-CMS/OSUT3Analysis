@@ -30,6 +30,8 @@ parser.add_option("-L", "--targetLumi", dest="IntLumi", default = "", help="Spec
 parser.add_option("-c", "--condor", dest="UseCondor", default = False,action = "store_true", help="Run merging jobs on condor.")
 parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", default = False, help="Just generate necessary config files without executing them.")
 parser.add_option("-O", "--output-dir", dest="outputDirectory", help="specify an output directory for output file, default is to use the Condor directory")
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                  help="verbose output")
 
 (arguments, args) = parser.parse_args()
 from ROOT import TFile
@@ -237,6 +239,8 @@ if arguments.IntLumi is not "":
 
 
 currentCondorSubArgumentsSet = {}
+if arguments.verbose:
+    print "List of datasets: ", split_datasets  
 for dataSet in split_datasets:
     os.chdir(CondorDir)
     currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
