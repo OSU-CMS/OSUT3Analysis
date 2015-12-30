@@ -450,6 +450,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
         InitializeAAA = ""
         if NTupleExistCheck == 'Dataset does not exist on the Tier 3!' or NTupleExistCheck == '': 
+            # Do this even when using skim as input, in order to obtain the original list of files.  
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
             InitializeAAA = "y"
             os.system('touch ' + AAAFileList)  
@@ -521,11 +522,9 @@ def SkimChannelFinder(userConfig, Directory):
 def SkimModifier(Label, Directory):
     SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
     OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0]  
-    SkimNumberOfEvents = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] 
+    SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] 
 
-    os.system('cp ' + Directory + '/datasetInfo_' + Label + '_cfg.py ' + Directory + '/datasetInfo_' + Label + '_cfg_beforeChanges.py ')
     infoFile = Directory + '/datasetInfo_' + Label + '_cfg.py'
-    infoFileTest = infoFile.replace(".py", "-test.py")
     fin = open(infoFile, "r")
     orig = fin.read()
     fin.close()
@@ -541,12 +540,9 @@ def SkimModifier(Label, Directory):
     add += 'numberOfFiles = ' + str(len(skimFiles)) + '\n'  
     add += 'originalNumberOfEvents = ' + str(OriginalNumberOfEvents) + '\n'
     add += 'skimNumberOfEvents = ' + str(SkimNumberOfEvents) + '\n'
-    fnew = open(infoFileTest, "w")
+    fnew = open(infoFile, "w")
     fnew.write(orig + add)
     fnew.close()
-    os.system('rm ' + Directory + '/datasetInfo_' + Label + '_cfg.py')  
-    os.system('rm ' + Directory + '/datasetInfo_' + Label + '_cfg_beforeChanges.py')  
-    os.system('mv ' + Directory + '/datasetInfo_' + Label + '_cfg-test.py ' + Directory + '/datasetInfo_' + Label + '_cfg.py')  
 
 
 ################################################################################
