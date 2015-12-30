@@ -34,7 +34,7 @@ parser.add_option("-r", "--randomSeed", action="store_true", dest="Random", defa
 parser.add_option("-f", "--fileName", dest="FileName", default = 'process.TFileService.fileName', help="Set the parameter of output filename in config file.")
 parser.add_option("-m", "--maxEvents", dest="MaxEvents", default = -1, help="Set the maximum number of events to run over (sum of all jobs).")
 parser.add_option("-p", "--process", dest="Process", default = '', help="Set the suffix for the process name.")
-parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files.  Options:  OSUT3Ntuple, UserDir, UserList")
+parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntuple', help="Specify the type of input files.  Options:  OSUT3Ntuple, UserDir, UserList, Dataset")
 parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")  # Dataset is also the name of the output directory in the working directory if FileType == 'OSUT3Ntuple'.  
 parser.add_option("-c", "--configuration", dest="Config", default = "", help="Specify the configuration file to run.")
 parser.add_option("-n", "--numberOfJobs", dest="NumberOfJobs", default = -1, help="Specify how many jobs to submit.")
@@ -358,8 +358,8 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     os.system('touch ' + datasetInfoName)  
     if UseAAA:
         os.system('touch ' + AAAFileList)  
-    if FileType == 'OSUT3Ntuple' and UseAAA:
-         AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
+        if FileType == 'OSUT3Ntuple' or FileType == 'Dataset':  
+            AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
     if FileType == 'UserDir':
         isInCondorDir = False
         SubmissionDir = os.getcwd() 
