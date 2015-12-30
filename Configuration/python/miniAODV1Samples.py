@@ -56,6 +56,8 @@ dataset_names = {
 
     #MET data
     'MET_2015D_05Oct2015' : "/MET/Run2015D-05Oct2015-v1/MINIAOD",
+    'MET_2015D_v3'        : "/MET/Run2015D-PromptReco-v3/MINIAOD", 
+    'MET_2015D_v4'        : "/MET/Run2015D-PromptReco-v4/MINIAOD", 
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  "/AMSB_chargino_M-100_CTau-10_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
