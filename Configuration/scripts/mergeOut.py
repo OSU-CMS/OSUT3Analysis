@@ -254,6 +254,8 @@ for dataSet in split_datasets:
     flog = open (flogName, "w")  
     log = "....................Merging dataset " + dataSet + " ....................\n"
     os.chdir(directory)
+    if arguments.verbose:
+        print "Moved to directory: ", directory
     ReturnValues = []
     if os.path.islink(directory + '/hist.root'):
         os.system('rm ' + directory + '/hist.root')
@@ -291,12 +293,14 @@ for dataSet in split_datasets:
     for i in range(0,len(GoodIndices)):
         GoodRootFiles.append(GetGoodRootFiles(GoodIndices[i]))
     if not len(GoodRootFiles):
-        log += "Unfortunately there are no good root files to merge!\n"
+        print "For dataset", dataSet, ": Unfortunately there are no good root files to merge!\n"
         continue
     InputFileString = MakeInputFileString(GoodRootFiles)
     exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
     TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
     SkimNumber = GetNumberOfEvents(GoodRootFiles)['SkimNumber']
+    if arguments.verbose:
+        print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber  
     if not TotalNumber:
         MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
         continue
@@ -318,8 +322,11 @@ for dataSet in split_datasets:
     else:
         MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
     if not arguments.UseCondor: 
-        os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString)
-        log += "\nFinish merging dataset " + dataSet + ":\n"
+        cmd = 'mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString 
+        if arguments.verbose:  
+            print "Executing: ", cmd 
+        os.system(cmd) 
+        log += "\nFinished merging dataset " + dataSet + ":\n"
         log += "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs.\n"
         log += "    "+ str(TotalNumber) + " events were successfully run over.\n"
         log += "    The target luminosity is " + str(IntLumi) + " inverse pb.\n"
