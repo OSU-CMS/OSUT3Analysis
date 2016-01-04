@@ -353,8 +353,8 @@ nJobs = {
     'TTJets_SingleLeptFromTbar'  :  9999,
 
     #MET data
-    'MET_2015D_v3' : 9999,
-    'MET_2015D_v4' : 9999,
+    'MET_2015D_v3' : 500,
+    'MET_2015D_v4' : 500,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  9999,
