@@ -356,6 +356,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
     AAAFileList = Directory + '/AAAFileList.txt'
     os.system('touch ' + datasetInfoName)  
+    SkimExists = RunOverSkim and os.path.isdir (Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel)
     if UseAAA:
         os.system('touch ' + AAAFileList)  
         if FileType == 'OSUT3Ntuple' or FileType == 'Dataset':  
@@ -449,8 +450,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
         NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
         InitializeAAA = ""
-        if NTupleExistCheck == 'Dataset does not exist on the Tier 3!' or NTupleExistCheck == '': 
-            # Do this even when using skim as input, in order to obtain the original list of files.  
+        if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists: 
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
             InitializeAAA = "y"
             os.system('touch ' + AAAFileList)  
@@ -477,7 +477,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                     continueForNonPresentDataset = False 
             if not continueForNonPresentDataset:
 	        return    
-        datasetRead['realDatasetName'] = datasetInfo.datasetName
+        datasetRead['realDatasetName'] = datasetInfo.datasetName if hasattr (datasetInfo, "datasetName") else DatasetName
         datasetRead['numberOfFiles'] = datasetInfo.numberOfFiles
     return  datasetRead
 
