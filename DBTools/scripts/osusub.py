@@ -320,7 +320,7 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     return SkimChannelNames
 
 #This is a generic function to get the dataset information via das_client.py. 
-def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
+def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
     os.system('das_client.py --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + AAAFileList) 
     inputFileList = open(AAAFileList, "r") 
     inputFiles = inputFileList.read().split('\n')  
@@ -359,7 +359,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     if UseAAA:
         os.system('touch ' + AAAFileList)  
         if FileType == 'OSUT3Ntuple' or FileType == 'Dataset':  
-            AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
+            AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
     if FileType == 'UserDir':
         isInCondorDir = False
         SubmissionDir = os.getcwd() 
@@ -454,7 +454,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
             InitializeAAA = "y"
             os.system('touch ' + AAAFileList)  
-            AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
+            AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
             datasetRead['useAAA'] = True
             #else:
             #    return 
