@@ -284,12 +284,17 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
       if hasattr(temPset.process, "DisplacedSUSYEventVariableProducer"):
         if types[Label] == "bgMC":
             ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("bgMC")\n')
+        elif types[Label] == "signalMC":
+            ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("signalMC")\n')
         else:
             ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("data")\n')
       if hasattr(temPset.process, "PUScalingFactorProducer"):
         if types[Label] == "bgMC":
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
             ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("bgMC")')
+        elif types[Label] == "signalMC":
+            ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
         else:
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n')
             ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("data")')
