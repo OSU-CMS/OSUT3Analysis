@@ -397,14 +397,15 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
                     channelPath += objectProducer
                     setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                     newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
-                    dropCommand = "drop *_" + inputTag.getModuleLabel () + "_" + inputTag.getProductInstanceLabel () + "_"
-                    if inputTag.getProcessName ():
-                        dropCommand += inputTag.getProcessName ()
-                    else:
-                        dropCommand += "*"
-                    outputCommands.append (dropCommand)
-                    if collection not in cutCollections:
-                        outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + inputTag.getProductInstanceLabel () + "_" + process.name_ ())
+                    if collection in cutCollections: 
+                        dropCommand = "drop *_" + inputTag.getModuleLabel () + "_" + inputTag.getProductInstanceLabel () + "_"
+                        if inputTag.getProcessName ():
+                            dropCommand += inputTag.getProcessName ()
+                        else:
+                            dropCommand += "*"
+                        outputCommands.append (dropCommand)
+                    # if collection not in cutCollections:
+                    #     outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + inputTag.getProductInstanceLabel () + "_" + process.name_ ())
                     add_channels.producerIndex += 1
                 setattr (producedCollections, collection, newInputTags)
             else:
@@ -414,14 +415,15 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 originalInputTag = getattr (collections, collection)
                 setattr (producedCollections, collection, cms.InputTag ("objectProducer" + str (add_channels.producerIndex), originalInputTag.getProductInstanceLabel ()))
-                dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
-                if originalInputTag.getProcessName ():
-                    dropCommand += originalInputTag.getProcessName ()
-                else:
-                    dropCommand += "*"
-                outputCommands.append (dropCommand)
-                if collection not in cutCollections:
-                    outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
+                if collection in cutCollections:
+                    dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
+                    if originalInputTag.getProcessName ():
+                        dropCommand += originalInputTag.getProcessName ()
+                    else:
+                        dropCommand += "*"
+                    outputCommands.append (dropCommand)
+                # if collection not in cutCollections:
+                #     outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
                 add_channels.producerIndex += 1
         ########################################################################
 
@@ -478,7 +480,7 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
             setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
             originalInputTag = getattr (collections, collection)
             setattr (filteredCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
-            outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
+            outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_originalFormat_" + process.name_ ())
             add_channels.filterIndex += 1
         ########################################################################
 

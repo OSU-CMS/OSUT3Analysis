@@ -164,7 +164,8 @@ namespace anatools
  *
  * First tries to get a collection with the given type and label. If that
  * fails, gets all collections with the given type and picks the one with the
- * fewest parents.
+ * fewest parents, provided its instance label is equal to either the specified label 
+ * or "originalFormat", as is the case for a skim.  
  *
  * @param  label product instance label of collection to retrieve
  * @param  collection edm::Handle in which to store the retrieved collection
@@ -180,7 +181,9 @@ anatools::getCollection(const edm::InputTag& label, edm::Handle<T>& collection, 
     int collWithFewestParents = -1, fewestParents = 99;
     for (uint i=0; i<objVec.size(); i++) {
       int parents = objVec.at(i).provenance()->parents().size();
-      if (label.instance() == objVec.at(i).provenance()->productInstanceName() && parents < fewestParents) {
+      if ((objVec.at(i).provenance()->productInstanceName() == label.instance() || 
+	   objVec.at(i).provenance()->productInstanceName() == ORIGINAL_FORMAT) &&
+	  parents < fewestParents) {
         collWithFewestParents = i;
         fewestParents = parents;
       }

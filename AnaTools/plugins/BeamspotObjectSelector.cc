@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(beamspots)
-  typedef ObjectSelector<osu::Beamspot> BeamspotObjectSelector;
+typedef ObjectSelector<osu::Beamspot, TYPE(beamspots)> BeamspotObjectSelector;
   DEFINE_FWK_MODULE(BeamspotObjectSelector);
 #endif
