@@ -140,20 +140,48 @@ void
 OriginalFormatProducer::produce (edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
+#if IS_VALID(beamspots)
   //  if (makeBeamspots_)       produceCollection<osu::Beamspot,      reco::BeamSpot>               (iEvent); Doesn't work currently.  
+#endif
+#if IS_VALID(electrons)
   if (makeElectrons_)       produceCollection<osu::Electron,      pat::Electron>                (iEvent); 
+#endif
+#if IS_VALID(genjets)
   if (makeGenjets_)         produceCollection<osu::Genjet,        reco::GenJet>                 (iEvent); 
+#endif
+#if IS_VALID(jets)
   if (makeJets_)            produceCollection<osu::Jet,           pat::Jet>                     (iEvent); 
+#endif
+#if IS_VALID(mcparticles)
   if (makeMcparticles_)     produceCollection<osu::Mcparticle,    pat::PackedGenParticle>       (iEvent); 
+#endif
+#if IS_VALID(mets)
   if (makeMets_)   	    produceCollection<osu::Met,           pat::MET>                     (iEvent); 
+#endif
+#if IS_VALID(muons)
   if (makeMuons_)  	    produceCollection<osu::Muon,          pat::Muon>                    (iEvent); 
+#endif
+#if IS_VALID(photons)
   if (makePhotons_) 	    produceCollection<osu::Photon,        pat::Photon>                  (iEvent); 
+#endif
+#if IS_VALID(pileupinfos)
   //  if (makePileUpInfos_)     produceCollection<osu::PileUpInfo,    PileupSummaryInfo>            (iEvent); // Doesn't work currently.  
+#endif
+#if IS_VALID(primaryvertexs)
   if (makePrimaryvertexs_)  produceCollection<osu::Primaryvertex, reco::Vertex>                 (iEvent); 
+#endif
+#if IS_VALID(taus)
   if (makeTaus_) 	    produceCollection<osu::Tau,           pat::Tau>                     (iEvent); 
+#endif
+#if IS_VALID(tracks)
   if (makeTracks_)  	    produceCollection<osu::Track,         reco::Track>                  (iEvent); 
+#endif
+#if IS_VALID(trigobjs)
   if (makeTrigobjs_)        produceCollection<osu::Trigobj,       pat::TriggerObjectStandAlone> (iEvent); 
+#endif
+#if IS_VALID(superclusters)
   if (makeSuperclusters_)   produceCollection<osu::Supercluster,  reco::SuperCluster>           (iEvent); 
+#endif
 
 } 
 

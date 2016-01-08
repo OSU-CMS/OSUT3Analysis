@@ -69,7 +69,7 @@ getLocation
   if ($results->numrows () == 0)
     {
       open(my $tmpfile, '>', $outfile);
-      print $tmpfile "Dataset does not exist on the Tier 3!";
+      print $tmpfile "#Dataset does not exist on the Tier 3!";
       exit;
     }
   my %map;

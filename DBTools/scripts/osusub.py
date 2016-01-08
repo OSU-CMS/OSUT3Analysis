@@ -284,12 +284,17 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
       if hasattr(temPset.process, "DisplacedSUSYEventVariableProducer"):
         if types[Label] == "bgMC":
             ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("bgMC")\n')
+        elif types[Label] == "signalMC":
+            ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("signalMC")\n')
         else:
             ConfigFile.write('pset.process.DisplacedSUSYEventVariableProducer.type = cms.string("data")\n')
       if hasattr(temPset.process, "PUScalingFactorProducer"):
         if types[Label] == "bgMC":
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
             ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("bgMC")')
+        elif types[Label] == "signalMC":
+            ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
         else:
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n')
             ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("data")')
@@ -320,7 +325,7 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     return SkimChannelNames
 
 #This is a generic function to get the dataset information via das_client.py. 
-def AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
+def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
     os.system('das_client.py --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + AAAFileList) 
     inputFileList = open(AAAFileList, "r") 
     inputFiles = inputFileList.read().split('\n')  
@@ -356,10 +361,11 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
     AAAFileList = Directory + '/AAAFileList.txt'
     os.system('touch ' + datasetInfoName)  
+    SkimExists = RunOverSkim and os.path.isdir (Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel)
     if UseAAA:
         os.system('touch ' + AAAFileList)  
         if FileType == 'OSUT3Ntuple' or FileType == 'Dataset':  
-            AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
+            AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
     if FileType == 'UserDir':
         isInCondorDir = False
         SubmissionDir = os.getcwd() 
@@ -449,12 +455,11 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
         NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
         InitializeAAA = ""
-        if NTupleExistCheck == 'Dataset does not exist on the Tier 3!' or NTupleExistCheck == '': 
-            # Do this even when using skim as input, in order to obtain the original list of files.  
+        if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists: 
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')    
             InitializeAAA = "y"
             os.system('touch ' + AAAFileList)  
-            AquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
+            AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
             datasetRead['useAAA'] = True
             #else:
             #    return 
@@ -477,7 +482,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                     continueForNonPresentDataset = False 
             if not continueForNonPresentDataset:
 	        return    
-        datasetRead['realDatasetName'] = datasetInfo.datasetName
+        datasetRead['realDatasetName'] = datasetInfo.datasetName if hasattr (datasetInfo, "datasetName") else DatasetName
         datasetRead['numberOfFiles'] = datasetInfo.numberOfFiles
     return  datasetRead
 
