@@ -201,7 +201,8 @@ composite_dataset_definitions = {
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
         'DoubleMu_2015C',
-        'DoubleMu_2015D',
+        'DoubleMu_2015D_v3',
+        'DoubleMu_2015D_v4',
     ],
     'SingleMu_2015' : [
         'SingleMu_2015B',
@@ -235,7 +236,8 @@ composite_dataset_definitions = {
     'DoubleEG_2015' : [
         'DoubleEG_2015B',
         'DoubleEG_2015C',
-        'DoubleEG_2015D',
+        'DoubleEG_2015D_v3',
+        'DoubleEG_2015D_v4',
     ],
     'MuonEG_2015' : [
         'MuonEG_2015B',
@@ -473,7 +475,8 @@ nJobs = {
  
     'DoubleMu_2015B'   :  40,
     'DoubleMu_2015C'   : 187,
-    'DoubleMu_2015D'   : 40,
+    'DoubleMu_2015D_v3': 1000,
+    'DoubleMu_2015D_v4': 1000, 
     
     'SingleMu_2015B'      :  57,
     'SingleMu_2015C'      : 220,
@@ -491,7 +494,8 @@ nJobs = {
     
     'DoubleEG_2015B'      :  100,
     'DoubleEG_2015C'      :  298,
-    'DoubleEG_2015D'   :  1000,
+    'DoubleEG_2015D_v3'   :  1000,
+    'DoubleEG_2015D_v4'   :  1000,
     
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
@@ -669,7 +673,8 @@ maxEvents = {
  
     'DoubleMu_2015B'       : -1,
     'DoubleMu_2015C'       : -1,
-    'DoubleMu_2015D'       : -1,
+    'DoubleMu_2015D_v3'    : -1,
+    'DoubleMu_2015D_v4'    : -1,
     
     'SingleMu_2015B'       : -1,
     'SingleMu_2015C'       : -1,
@@ -687,7 +692,8 @@ maxEvents = {
     
     'DoubleEG_2015B'       : -1,
     'DoubleEG_2015C'       : -1,
-    'DoubleEG_2015D'       : -1,
+    'DoubleEG_2015D_v3'       : -1,
+    'DoubleEG_2015D_v4'       : -1,
     
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
@@ -881,6 +887,8 @@ types = {
     'DoubleMu_2015B'   : "data",
     'DoubleMu_2015C'   : "data",
     'DoubleMu_2015D'   : "data",
+    'DoubleMu_2015D_v3'   : "data",
+    'DoubleMu_2015D_v4'   : "data",
     'DoubleMu_2015'    : "data",
     
     'SingleMu_2015B'    : "data",
@@ -904,7 +912,8 @@ types = {
     
     'DoubleEG_2015B'   : "data",
     'DoubleEG_2015C'   : "data",
-    'DoubleEG_2015D'   : "data",
+    'DoubleEG_2015D_v3': "data",
+    'DoubleEG_2015D_v4': "data",
     'DoubleEG_2015'    : "data",
     
     'MuonEG_2015B'   : "data",
@@ -1097,7 +1106,8 @@ colors = {
     
     'DoubleMu_2015B'   : 1,
     'DoubleMu_2015C'   : 1,
-    'DoubleMu_2015D'   : 1,
+    'DoubleMu_2015D_v3'   : 1,
+    'DoubleMu_2015D_v4'   : 1,
     'DoubleMu_2015'   : 1,
     
     'SingleMu_2015B'   : 1,
@@ -1121,7 +1131,8 @@ colors = {
     
     'DoubleEG_2015B'   : 1,
     'DoubleEG_2015C'   : 1,
-    'DoubleEG_2015D'   : 1,
+    'DoubleEG_2015D_v3': 1,
+    'DoubleEG_2015D_v4': 1,
     'DoubleEG_2015'   : 1,
     
     'MuonEG_2015B'   : 1,
@@ -1315,7 +1326,8 @@ labels = {
     'DoubleMu_2015'      : "Double Muon 2015 data",
     'DoubleMu_2015B'     : "DoubleMu 2015B data",
     'DoubleMu_2015C'     : "DoubleMu 2015C data",
-    'DoubleMu_2015D'     : "DoubleMu 2015D data",
+    'DoubleMu_2015D_v3'  : "DoubleMu 2015D_v3 data",
+    'DoubleMu_2015D_v4'  : "DoubleMu 2015D_v4 data",
     
     'SingleMu_2015'      : "Single Muon 2015 data",
     'SingleMu_2015B'     : "SingleMu 2015B data",
@@ -1339,7 +1351,8 @@ labels = {
     'DoubleEG_2015'      : "DoubleEG 2015 data",
     'DoubleEG_2015B'     : "DoubleEG 2015B data",
     'DoubleEG_2015C'     : "DoubleEG 2015C data",
-    'DoubleEG_2015D'     : "DoubleEG 2015C data",
+    'DoubleEG_2015D_v3'  : "DoubleEG 2015D_v3 data",
+    'DoubleEG_2015D_v4' : "DoubleEG 2015D_v4 data",
     
     'MuonEG_2015'      : "MuonEG 2015 data",
     'MuonEG_2015B'     : "MuonEG 2015B data",
