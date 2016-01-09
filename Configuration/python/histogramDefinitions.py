@@ -118,7 +118,7 @@ MuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonDbetaIsolation"),
             title = cms.string("Muon Isolation; muon #Delta#beta Isolation"),
-            binsX = cms.untracked.vdouble(100, 0, 3.0),
+            binsX = cms.untracked.vdouble(200, 0, 6.0),
             inputVariables = cms.vstring("(pfIsolationR04_.sumChargedHadronPt + max(0.0,pfIsolationR04_.sumNeutralHadronEt + pfIsolationR04_.sumPhotonEt - 0.5*pfIsolationR04_.sumPUPt))/pt"),
         ),
     )
