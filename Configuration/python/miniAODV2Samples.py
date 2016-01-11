@@ -169,8 +169,9 @@ dataset_names = {
 
     'DoubleMu_2015B'       : "/DoubleMuon/Run2015B-PromptReco-v1/MINIAOD",
     'DoubleMu_2015C'       : "/DoubleMuon/Run2015C-PromptReco-v1/MINIAOD",
-    'DoubleMu_2015D'       : "/DoubleMuon/Run2015D-PromptReco-v3/MINIAOD",
-    
+    'DoubleMu_2015D_v3'    : "/DoubleMuon/Run2015D-05Oct2015-v1/MINIAOD",
+    'DoubleMu_2015D_v4'    : "/DoubleMuon/Run2015D-PromptReco-v4/MINIAOD",    
+
     'SingleMu_2015B'       : "/SingleMuon/Run2015B-PromptReco-v1/MINIAOD",
     'SingleMu_2015C'       : "/SingleMuon/Run2015C-PromptReco-v1/MINIAOD",
     'SingleMu_2015D_v3'    : "/SingleMuon/ahart-Run2015D-PromptReco-v3-DisappTrks-v1-5e1b2f90f66dd8f324805a21b41c0bb6/USER",
@@ -187,7 +188,8 @@ dataset_names = {
     
     'DoubleEG_2015B'       : "/DoubleEG/Run2015B-PromptReco-v1/MINIAOD",
     'DoubleEG_2015C'       : "/DoubleEG/Run2015C-PromptReco-v1/MINIAOD",
-    'DoubleEG_2015D'       : "/DoubleEG/Run2015D-PromptReco-v3/MINIAOD",
+    'DoubleEG_2015D_v3'    : "/DoubleEG/Run2015D-05Oct2015-v1/MINIAOD",
+    'DoubleEG_2015D_v4'    : "/DoubleEG/Run2015D-PromptReco-v4/MINIAOD",
     
     'MuonEG_2015B'         : "/MuonEG/Run2015B-PromptReco-v1/MINIAOD",
     'MuonEG_2015C'         : "/MuonEG/Run2015C-PromptReco-v1/MINIAOD",

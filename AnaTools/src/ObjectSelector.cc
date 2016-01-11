@@ -2,7 +2,7 @@
 
 #if IS_VALID(beamspots)
   template<>
-  ObjectSelector<osu::Beamspot>::ObjectSelector (const edm::ParameterSet &cfg) :
+  ObjectSelector<osu::Beamspot, TYPE(beamspots)>::ObjectSelector (const edm::ParameterSet &cfg) :
     collections_         (cfg.getParameter<edm::ParameterSet>  ("collections")),
     collectionToFilter_  (cfg.getParameter<string>             ("collectionToFilter")),
     cutDecisions_        (cfg.getParameter<edm::InputTag>      ("cutDecisions")),
@@ -17,7 +17,7 @@
   }
 
   template<> bool
-  ObjectSelector<osu::Beamspot>::filter (edm::Event &event, const edm::EventSetup &setup)
+  ObjectSelector<osu::Beamspot, TYPE(beamspots)>::filter (edm::Event &event, const edm::EventSetup &setup)
   {
     //////////////////////////////////////////////////////////////////////////////
     // Get the collection and cut decisions from the event and print a warning if

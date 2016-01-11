@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(mcparticles)
-  typedef ObjectSelector<osu::Mcparticle> McparticleObjectSelector;
+typedef ObjectSelector<osu::Mcparticle, TYPE(mcparticles)> McparticleObjectSelector;
   DEFINE_FWK_MODULE(McparticleObjectSelector);
 #endif

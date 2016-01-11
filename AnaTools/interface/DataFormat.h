@@ -9,6 +9,8 @@
 
 #define INVALID_TYPE void *
 
+#define ORIGINAL_FORMAT "originalFormat"  // Must match definition used in processingUtilities.py 
+
 #if DATA_FORMAT == BEAN
 
   #include "OSUT3Analysis/AnaTools/interface/DataFormatBEAN.h"

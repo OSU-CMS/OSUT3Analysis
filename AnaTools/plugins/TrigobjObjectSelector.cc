@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(trigobjs)
-  typedef ObjectSelector<osu::Trigobj> TrigobjObjectSelector;
+typedef ObjectSelector<osu::Trigobj, TYPE(trigobjs)> TrigobjObjectSelector;
   DEFINE_FWK_MODULE(TrigobjObjectSelector);
 #endif
