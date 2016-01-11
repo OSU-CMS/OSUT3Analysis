@@ -23,7 +23,7 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
   TH1D *mc;
   TH1D *puWeight;
   fin->GetObject(dataset_.c_str(), mc);  
-  fin->GetObject("MuEG_2015D", puWeight);
+  fin->GetObject("MuonEG_2015D", puWeight);
   if (!mc) {
     clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << dataset_ << "; will cause a seg fault." << endl;
     exit(1);
@@ -42,7 +42,7 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
   delete fin;
   delete mc;
   delete trimmedMC;
-  if(type_.find("bgMC") < type_.length())
+  if(type_.find("MC") < type_.length())
     {
       objectsToGet_.insert ("pileupinfos");
       getOriginalCollections (objectsToGet_, collections_, handles_, event);
