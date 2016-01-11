@@ -6,6 +6,7 @@ import math
 import datetime
 import time
 import copy
+import FWCore.ParameterSet.Modules
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
@@ -356,7 +357,7 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
         outputCommands.append("keep *_*_eventvariables_*")
         
         for collection in dir(collectionProducer):
-            if type(getattr(collectionProducer,collection)) is type(collectionProducer.muons):    
+            if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):    
                 dic = vars(getattr(collectionProducer,collection))
                 for p in dic: 
                     if 'InputTag' in str(dic[p]):
