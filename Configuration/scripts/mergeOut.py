@@ -237,6 +237,9 @@ if not arguments.localConfig:
 if arguments.IntLumi is not "":
     IntLumi = float(arguments.IntLumi)
 
+# Remove duplicates
+split_datasets     = list(set(split_datasets))
+composite_datasets = list(set(composite_datasets))
 
 currentCondorSubArgumentsSet = {}
 if arguments.verbose:
