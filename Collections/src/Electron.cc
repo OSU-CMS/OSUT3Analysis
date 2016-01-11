@@ -11,21 +11,18 @@ osu::Electron::Electron ()
 
 osu::Electron::Electron (const TYPE(electrons) &electron) :
   GenMatchable (electron),
-  vtxFitConversion_     (false),
   rho_                  (INVALID_VALUE)
 {
 }
 
 osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vector<osu::Mcparticle> > &particles) :
   GenMatchable (electron, particles),
-  vtxFitConversion_     (false),
   rho_                  (INVALID_VALUE)
 {
 }
 
 osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
   GenMatchable (electron, particles, cfg),
-  vtxFitConversion_     (false),
   rho_                  (INVALID_VALUE)
 {
 }
@@ -48,11 +45,6 @@ osu::Electron::rho () const
   return this->rho_;
 }
 
-const bool
-osu::Electron::vtxFitConversion () const
-{
-  return this->vtxFitConversion_;
-}
 #else
 
 osu::Electron::Electron (const TYPE(electrons) &electron) :
