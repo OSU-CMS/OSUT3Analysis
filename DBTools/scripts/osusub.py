@@ -639,6 +639,8 @@ if arguments.Redirector != "":
 ###############################################################################
 #                End of Setup stage, will begin to submit jobs                #
 ###############################################################################
+# Remove duplicates
+split_datasets = list(set(split_datasets))
 
 currentCondorSubArgumentsSet = {}
 #Check whether the user wants to resubmit the failed condor jobs.
