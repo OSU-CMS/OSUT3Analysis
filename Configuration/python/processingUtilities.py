@@ -6,6 +6,7 @@ import math
 import datetime
 import time
 import copy
+import FWCore.ParameterSet.Modules
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
@@ -354,6 +355,31 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
         outputCommands = ["drop *"]
         outputCommands.append("keep *_*_uservariables_*")
         outputCommands.append("keep *_*_eventvariables_*")
+        ########################################################################
+        #Check all the modules in collectionProducer, if a module is an EDProducer 
+        #and have extra InputTags specified, keep the correspoding collections 
+        #in the outputCommands
+        ########################################################################
+        for collection in dir(collectionProducer):
+            if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):    
+                dic = vars(getattr(collectionProducer,collection))
+                for p in dic: 
+                    if 'InputTag' in str(dic[p]):
+                        outputCommand = "keep *_"
+                        outputCommand += dic[p].getModuleLabel ()
+                        outputCommand += "_"
+                        outputCommand += dic[p].getProductInstanceLabel ()
+                        outputCommand += "_"
+                        if dic[p].getProcessName ():
+                            outputCommand += dic[p].getProcessName ()
+                        else:
+                            outputCommand += "*"
+                        outputCommands.append (outputCommand)
+                        
+        ########################################################################
+        # Add keep statements for all collections except uservariables and 
+        # eventvariables.  
+        ########################################################################        
         for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables" and a is not "eventvariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep *_"
