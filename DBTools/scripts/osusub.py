@@ -470,7 +470,10 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
                 datasetRead['numberOfFiles'] = numInputFiles
                 return datasetRead
+            SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' 
+            os.system('cp ' + SkimDirectory + 'datasetInfo_' + Label + '_cfg.py ' + datasetInfoName)
             SkimModifier(Label, Directory)
+            
             InitializeAAA = ""
         sys.path.append(Directory)
         exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
@@ -479,7 +482,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             continueForNonPresentDataset = True
             if not status == 'present':
 	        userDecision = raw_input('The dataset you selected is not marked as present on Tier3, do you still want to continue?(Type "y" for yes and "n" for no.)')
-	        if userDecision == "n":
+                if userDecision == "n":
                     continueForNonPresentDataset = False 
             if not continueForNonPresentDataset:
 	        return    
