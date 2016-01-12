@@ -357,7 +357,8 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
         outputCommands.append("keep *_*_eventvariables_*")
         ########################################################################
         #Check all the modules in collectionProducer, if a module is an EDProducer 
-        #and have extra InputTags specified, keep the correspoding collections. 
+        #and have extra InputTags specified, keep the correspoding collections 
+        #in the outputCommands
         ########################################################################
         for collection in dir(collectionProducer):
             if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):    
