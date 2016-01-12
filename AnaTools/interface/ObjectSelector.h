@@ -50,7 +50,7 @@ class ObjectSelector : public edm::EDFilter
 };
 
 template<class T, class TO>
-  ObjectSelector<T, TO>::ObjectSelector (const edm::ParameterSet &cfg) :
+ObjectSelector<T, TO>::ObjectSelector (const edm::ParameterSet &cfg) :
   collections_         (cfg.getParameter<edm::ParameterSet>  ("collections")),
   collectionToFilter_  (cfg.getParameter<string>             ("collectionToFilter")),
   cutDecisions_        (cfg.getParameter<edm::InputTag>      ("cutDecisions")),
@@ -82,8 +82,21 @@ template<class T, class TO> bool
   event.getByLabel (cutDecisions_, cutDecisions);  
   if (firstEvent_ && !collection.isValid ())
     clog << "WARNING: failed to retrieve requested collection from the event." << endl;
+  if (firstEvent_ && !collectionOrig.isValid ())
+    clog << "WARNING: failed to retrieve original collection from the event." << endl;
   if (firstEvent_ && !cutDecisions.isValid ())
     clog << "WARNING: failed to retrieve cut decisions from the event." << endl;
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  // The OSU collection and the original collection should always be the same
+  // size.
+  //////////////////////////////////////////////////////////////////////////////
+  if (collection->size () != collectionOrig->size ())
+    {
+      clog << "ERROR: original collection and OSU collection have different sizes." << endl;
+      exit (EXIT_CODE);
+    }
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
@@ -96,7 +109,7 @@ template<class T, class TO> bool
   if (collection.isValid () && collectionOrig.isValid())
     {
       auto objOrig = collectionOrig->begin();  
-      for (auto object = collection->begin (); object != collection->end (); object++)
+      for (auto object = collection->begin (); object != collection->end (); object++, objOrig++)
         {
           unsigned iObject = object - collection->begin ();
           bool passes = true;
@@ -113,15 +126,11 @@ template<class T, class TO> bool
                 }
             }
           if (passes)
-            pl_ ->push_back (*object);
-	  if (objOrig == collectionOrig->end()) {  
-	    clog << "ERROR:  Invalid original object found for iObject = " << iObject 
-		 << " in collection:  " << collectionToFilter_ << endl;  
-	  } else {
-            plO_->push_back (*objOrig);
-	  }  
+            {
+              pl_ ->push_back (*object);
+              plO_->push_back (*objOrig);
+            }
         }
-      objOrig++;  
     }
   //////////////////////////////////////////////////////////////////////////////
 
