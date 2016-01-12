@@ -371,6 +371,11 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
                         else:
                             outputCommand += "*"
                         outputCommands.append (outputCommand)
+                        
+        ########################################################################
+        # Add keep statements for all collections except uservariables and 
+        # eventvariables.  
+        ########################################################################        
         for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables" and a is not "eventvariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep *_"
