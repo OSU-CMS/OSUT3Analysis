@@ -45,13 +45,13 @@ MuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonEta"),
             title = cms.string("Muon Eta; muon #eta"),
-            binsX = cms.untracked.vdouble(100, -4, 4),
+            binsX = cms.untracked.vdouble(80, -4, 4),
             inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
             name = cms.string("muonPhi"),
             title = cms.string("Muon Phi; muon #phi"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("phi"),
         ),
         cms.PSet (
@@ -63,8 +63,8 @@ MuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonEtaPhi"),
             title = cms.string("Muon Eta vs. Phi; muon #phi; muon #eta"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
-            binsY = cms.untracked.vdouble(100, -3, 3),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            binsY = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("phi","eta"),
         ),
         cms.PSet (
@@ -73,12 +73,12 @@ MuonHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(40, 0, 40),
             inputVariables = cms.vstring("numberOfValidHits"),
         ),
-#        cms.PSet (
-#            name = cms.string("muonNormalizedChi2"),
-#            title = cms.string("Muon Chi Squared"),
-#            binsX = cms.untracked.vdouble(20, 0, 20),
-#            inputVariables = cms.vstring("normChi2"),
-#        ),
+        cms.PSet (
+            name = cms.string("muonNormalizedChi2"),
+            title = cms.string("Muon Chi Squared"),
+            binsX = cms.untracked.vdouble(20, 0, 20),
+            inputVariables = cms.vstring("globalTrack.normalizedChi2"),
+        ),
         cms.PSet (
             name = cms.string("muonNumberOfMatchedStations"),
             title = cms.string("Muon Track Number of Matched Stations; # matched stations"),
@@ -118,7 +118,7 @@ MuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonDbetaIsolation"),
             title = cms.string("Muon Isolation; muon #Delta#beta Isolation"),
-            binsX = cms.untracked.vdouble(200, 0, 6.0),
+            binsX = cms.untracked.vdouble(600, 0, 6.0),
             inputVariables = cms.vstring("(pfIsolationR04_.sumChargedHadronPt + max(0.0,pfIsolationR04_.sumNeutralHadronEt + pfIsolationR04_.sumPhotonEt - 0.5*pfIsolationR04_.sumPUPt))/pt"),
         ),
     )
@@ -201,19 +201,19 @@ DiMuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("diMuonDeltaPhi"),
             title = cms.string("Di-muon Phi Difference; |#Delta(#phi)|"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
             inputVariables = cms.vstring("abs ( deltaPhi (muon, muon) )"),
         ),
         cms.PSet (
             name = cms.string("diMuonDeltaEta"),
             title = cms.string("Di-muon Eta Difference; |#Delta(#eta)|"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs (muon.eta - muon.eta)"),
         ),
         cms.PSet (
             name = cms.string("diMuonDeltaR"),
             title = cms.string("Di-muon #DeltaR; #DeltaR"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("deltaR (muon, muon)"),
         ),
     )
@@ -257,13 +257,13 @@ ElectronHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronEta"),
             title = cms.string("Electron Eta; electron #eta"),
-            binsX = cms.untracked.vdouble(100, -3, 3),
+            binsX = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
             name = cms.string("electronPhi"),
             title = cms.string("Electron Phi; electron #phi"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("phi"),
         ),
         cms.PSet (
@@ -275,8 +275,8 @@ ElectronHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronEtaPhi"),
             title = cms.string("Electron Eta vs. Phi; electron #phi; electron #eta"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
-            binsY = cms.untracked.vdouble(100, -3, 3),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            binsY = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("phi","eta"),
         ),
         cms.PSet (
@@ -337,7 +337,7 @@ ElectronHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronPFrhoIso"),
             title = cms.string("Electron PF-based #rho-corrected Isolation; electron rel. iso."),
-            binsX = cms.untracked.vdouble(100, 0, 3),
+            binsX = cms.untracked.vdouble(300, 0, 3),
             inputVariables = cms.vstring("(pfIso_.sumChargedHadronPt + max(0.0,pfIso_.sumNeutralHadronEt + pfIso_.sumPhotonEt - rho*AEff))/pt"),
         ),
 #        cms.PSet (
@@ -419,19 +419,19 @@ DiElectronHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("diElectronDeltaPhi"),
             title = cms.string("Di-electron Phi Difference; |#Delta(#phi)|"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
             inputVariables = cms.vstring("abs(deltaPhi(electron, electron))"),
         ),
         cms.PSet (
             name = cms.string("diElectronDeltaEta"),
             title = cms.string("Di-electron Eta Difference; |#Delta(#eta)|"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(electron.eta - electron.eta)"),
         ),
         cms.PSet (
             name = cms.string("diElectronDeltaR"),
             title = cms.string("Di-electron #DeltaR; #DeltaR"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("deltaR(electron, electron)"),
         ),
    )
@@ -464,19 +464,19 @@ ElectronMuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronMuonDeltaPhi"),
             title = cms.string("Electron-muon Phi Difference; |#Delta(#phi)|"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
             inputVariables = cms.vstring("abs(deltaPhi(electron, muon))"),
         ),
         cms.PSet (
             name = cms.string("electronMuonDeltaEta"),
             title = cms.string("Electron-muon Eta Difference; |#Delta(#eta)|"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(electron.eta - muon.eta)"),
         ),
         cms.PSet (
             name = cms.string("electronMuonDeltaR"),
             title = cms.string("Electron-muon #DeltaR; #DeltaR"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("deltaR(electron, muon)"),
         ),
         cms.PSet (
@@ -485,18 +485,11 @@ ElectronMuonHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(100, -20, 20),
             inputVariables = cms.vstring("electron.vz - muon.vz"),
         ),
-#        cms.PSet (
-#            name = cms.string("electronMuonThreeDAngle"),
-#            title = cms.string("Electron-muon 3D angle; 3D angle"),
-#            binsX = cms.untracked.vdouble(100, 0, 3.15),
-#            inputVariables = cms.vstring("threeDAngle"),
-#        ),
-
         cms.PSet (
             name = cms.string("electronRhoIsoVsMuonDbetaIso"),
             title = cms.string("Electron #rho-corrected Isolation vs. Muon #Delta#beta-corrected Isolation; muon rel. iso.; electron rel. iso."),
-            binsX = cms.untracked.vdouble(100, 0, 3),
-            binsY = cms.untracked.vdouble(100, 0, 3),
+            binsX = cms.untracked.vdouble(300, 0, 3),
+            binsY = cms.untracked.vdouble(300, 0, 3),
             inputVariables = cms.vstring("(muon.pfIsolationR04_.sumChargedHadronPt + max(0.0,muon.pfIsolationR04_.sumNeutralHadronEt + muon.pfIsolationR04_.sumPhotonEt - 0.5*muon.pfIsolationR04_.sumPUPt))/muon.pt","(electron.pfIso_.sumChargedHadronPt + max(0.0,electron.pfIso_.sumNeutralHadronEt + electron.pfIso_.sumPhotonEt - electron.rho*electron.AEff))/electron.pt"),
         ),
     )
@@ -545,13 +538,13 @@ JetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("jetEta"),
             title = cms.string("Jet Eta;jet #eta"),
-            binsX = cms.untracked.vdouble(100, -3, 3),
+            binsX = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
             name = cms.string("jetPhi"),
             title = cms.string("Jet Phi;jet #phi"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("phi"),
         ),
         cms.PSet (
@@ -563,16 +556,10 @@ JetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("jetEtaPhi"),
             title = cms.string("Jet Eta vs. Phi;jet #phi;jet #eta"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
-            binsY = cms.untracked.vdouble(100, -3, 3),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            binsY = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("phi","eta"),
         ),
-        # cms.PSet (
-        #     name = cms.string("jetFlavor"),
-        #     title = cms.string("Jet Flavor"),
-        #     binsX = cms.untracked.vdouble(42, -21, 21),
-        #     inputVariables = cms.vstring("flavour"),
-        # ),
         cms.PSet (
             name = cms.string("jetChargedHadronEnergyFraction"),
             title = cms.string("Jet Charged Hadron Fraction;jet charged hadron energy fraction"),
@@ -603,12 +590,6 @@ JetHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(100, 0, 1),
             inputVariables = cms.vstring("pfCombinedInclusiveSecondaryVertexV2BJetTags"),
         ),
-        # cms.PSet (
-        #     name = cms.string("jetMetDeltaPhi"),
-        #     title = cms.string("Jet-MET Delta Phi; |#Delta(#phi)|"),
-        #     binsX = cms.untracked.vdouble(100, 0, 3.15),
-        #     inputVariables = cms.vstring("dPhiMet"),
-        # ),
     )
 )
 
@@ -632,13 +613,13 @@ BjetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("bjetEta"),
             title = cms.string("Bjet Eta;bjet #eta"),
-            binsX = cms.untracked.vdouble(100, -3, 3),
+            binsX = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
             name = cms.string("bjetPhi"),
             title = cms.string("Bjet Phi;bjet #phi"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("phi"),
         ),
         cms.PSet (
@@ -650,16 +631,10 @@ BjetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("bjetEtaPhi"),
             title = cms.string("Bjet Eta vs. Phi;bjet #phi;bjet #eta"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
-            binsY = cms.untracked.vdouble(100, -3, 3),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            binsY = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("phi","eta"),
         ),
-        # cms.PSet (
-        #     name = cms.string("bjetFlavor"),
-        #     title = cms.string("Bjet Flavor"),
-        #     binsX = cms.untracked.vdouble(42, -21, 21),
-        #     inputVariables = cms.vstring("flavour"),
-        # ),
         cms.PSet (
             name = cms.string("bjetChargedHadronEnergyFraction"),
             title = cms.string("Bjet Charged Hadron Fraction;bjet charged hadron energy fraction"),
@@ -739,19 +714,19 @@ JetBjetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("jetBjetDeltaPhi"),
             title = cms.string("Jet-bjet Phi Difference; |#Delta#phi(jet,bjet)|"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
             inputVariables = cms.vstring("abs(deltaPhi(jet,bjet))"),
         ),
         cms.PSet (
             name = cms.string("jetBjetDeltaEta"),
             title = cms.string("Jet-bjet Eta Difference; |#Delta#eta(jet,bjet)|"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(jet.eta - bjet.eta)"),
         ),
         cms.PSet (
             name = cms.string("jetBjetDeltaR"),
             title = cms.string("Jet-bjet #DeltaR; #DeltaR(jet,bjet)"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("deltaR(jet,bjet)"),
         ),
         cms.PSet (
@@ -763,29 +738,29 @@ JetBjetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("jetBjetDeltaRvsjetBjetDeltaEta"),
             title = cms.string("Jet-bjet #DeltaR vs #Delta#eta; |#Delta#eta(jet,bjet)|; #DeltaR(jet,bjet)"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
-            binsY = cms.untracked.vdouble(100, 0 ,6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
+            binsY = cms.untracked.vdouble(60, 0 ,6),
             inputVariables = cms.vstring("abs(jet.eta - bjet.eta)","deltaR(jet,bjet)"),
         ),
         cms.PSet (
             name = cms.string("jetBjetDeltaRvsjetBjetDeltaPhi"),
             title = cms.string("Jet-bjet #DeltaR vs #Delta#phi; |#Delta#phi(jet,bjet)|; #DeltaR(jet,bjet)"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
-            binsY = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
+            binsY = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(deltaPhi(jet,bjet))","deltaR(jet,bjet)"),
         ),
         cms.PSet (
             name = cms.string("jetEtavsBjetEta"),
             title = cms.string("Jet Eta.vs Bjet Eta; Bjet #eta; Jet #eta"),
-            binsX = cms.untracked.vdouble(100, -6, 6),
-            binsY = cms.untracked.vdouble(100, -6 ,6),
+            binsX = cms.untracked.vdouble(120, -6, 6),
+            binsY = cms.untracked.vdouble(120, -6 ,6),
             inputVariables = cms.vstring("bjet.eta","jet.eta"),
         ),
         cms.PSet (
             name = cms.string("jetPhivsBjetPhi"),
             title = cms.string("Jet Phi.vs Bjet Phi; Bjet #phi; Jet #phi"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
-            binsY = cms.untracked.vdouble(100, -3.15 ,3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            binsY = cms.untracked.vdouble(64, -3.2 ,3.2),
             inputVariables = cms.vstring("bjet.phi","jet.phi"),
         ),
     )
@@ -806,19 +781,19 @@ MuonJetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonJetDeltaPhi"),
             title = cms.string("Muon-jet Phi Difference; |#Delta#phi(#mu,jet)|"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
             inputVariables = cms.vstring("abs(deltaPhi(muon,jet))"),
         ),
         cms.PSet (
             name = cms.string("muonJetDeltaEta"),
             title = cms.string("Muon-jet Eta Difference; |#Delta#eta(#mu,jet)|"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(muon.eta - jet.eta)"),
         ),
         cms.PSet (
             name = cms.string("muonJetDeltaR"),
             title = cms.string("Muon-jet #DeltaR; #DeltaR(#mu,jet)"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("deltaR(muon,jet)"),
         ),
         cms.PSet (
@@ -830,29 +805,29 @@ MuonJetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonJetDeltaRvsmuonJetDeltaEta"),
             title = cms.string("Muon-jet #DeltaR vs #Delta#eta; |#Delta#eta(#mu,jet)|; #DeltaR(#mu,jet)"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
-            binsY = cms.untracked.vdouble(100, 0 ,6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
+            binsY = cms.untracked.vdouble(60, 0 ,6),
             inputVariables = cms.vstring("abs(muon.eta - jet.eta)","deltaR(muon,jet)"),
         ),
         cms.PSet (
             name = cms.string("muonJetDeltaRvsmuonJetDeltaPhi"),
             title = cms.string("Muon-jet #DeltaR vs #Delta#phi; |#Delta#phi(#mu,jet)|; #DeltaR(#mu,jet)"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
-            binsY = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
+            binsY = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(deltaPhi(muon,jet))","deltaR(muon,jet)"),
         ),
         cms.PSet (
             name = cms.string("muonEtavsJetEta"),
             title = cms.string("Muon Eta.vs Jet Eta; Jet #eta; Muon #eta"),
-            binsX = cms.untracked.vdouble(100, -6, 6),
-            binsY = cms.untracked.vdouble(100, -6 ,6),
+            binsX = cms.untracked.vdouble(120, -6, 6),
+            binsY = cms.untracked.vdouble(120, -6 ,6),
             inputVariables = cms.vstring("jet.eta","muon.eta"),
         ),
         cms.PSet (
             name = cms.string("muonPhivsJetPhi"),
             title = cms.string("Muon Phi.vs Jet Phi; Jet #phi; Muon #phi"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
-            binsY = cms.untracked.vdouble(100, -3.15 ,3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            binsY = cms.untracked.vdouble(64, -3.2 ,3.2),
             inputVariables = cms.vstring("jet.phi","muon.phi"),
         ),
     )
@@ -873,19 +848,19 @@ ElectronJetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronJetDeltaPhi"),
             title = cms.string("Electron-jet Phi Difference; |#Delta#phi(e,jet)|"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
             inputVariables = cms.vstring("abs(deltaPhi(electron,jet))"),
         ),
         cms.PSet (
             name = cms.string("electronJetDeltaEta"),
             title = cms.string("Electron-jet Eta Difference; |#Delta#eta(e,jet)|"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(electron.eta - jet.eta)"),
         ),
         cms.PSet (
             name = cms.string("electronJetDeltaR"),
             title = cms.string("Electron-jet #DeltaR; #DeltaR(e,jet)"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("deltaR(electron,jet)"),
         ),
         cms.PSet (
@@ -897,29 +872,29 @@ ElectronJetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronJetDeltaRvselectronJetDeltaEta"),
             title = cms.string("Electron-jet #DeltaR vs #Delta#eta; |#Delta#eta(e,jet)|; #DeltaR(e,jet)"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
-            binsY = cms.untracked.vdouble(100, 0 ,6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
+            binsY = cms.untracked.vdouble(60, 0 ,6),
             inputVariables = cms.vstring("abs(electron.eta - jet.eta)","deltaR(electron,jet)"),
         ),
         cms.PSet (
             name = cms.string("electronJetDeltaRvselectronJetDeltaPhi"),
             title = cms.string("Electron-jet #DeltaR vs #Delta#phi; |#Delta#phi(e,jet)|; #DeltaR(e,jet)"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
-            binsY = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
+            binsY = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(deltaPhi(electron,jet))","deltaR(electron,jet)"),
         ),
         cms.PSet (
             name = cms.string("electronEtavsJetEta"),
             title = cms.string("Electron Eta.vs Jet Eta; Jet #eta; Electron #eta"),
-            binsX = cms.untracked.vdouble(100, -6, 6),
-            binsY = cms.untracked.vdouble(100, -6 ,6),
+            binsX = cms.untracked.vdouble(120, -6, 6),
+            binsY = cms.untracked.vdouble(120, -6 ,6),
             inputVariables = cms.vstring("jet.eta","electron.eta"),
         ),
         cms.PSet (
             name = cms.string("electronPhivsJetPhi"),
             title = cms.string("Electron Phi.vs Jet Phi; Jet #phi; Electron #phi"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
-            binsY = cms.untracked.vdouble(100, -3.15 ,3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            binsY = cms.untracked.vdouble(64, -3.2 ,3.2),
             inputVariables = cms.vstring("jet.phi","electron.phi"),
         ),
     )
@@ -939,19 +914,19 @@ MuonBjetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonBjetDeltaPhi"),
             title = cms.string("Muon-bjet Phi Difference; |#Delta#phi(#mu,bjet)|"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
             inputVariables = cms.vstring("abs(deltaPhi(muon,bjet))"),
         ),
         cms.PSet (
             name = cms.string("muonBjetDeltaEta"),
             title = cms.string("Muon-bjet Eta Difference; |#Delta#eta(#mu,bjet)|"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(muon.eta - bjet.eta)"),
         ),
         cms.PSet (
             name = cms.string("muonBjetDeltaR"),
             title = cms.string("Muon-bjet #DeltaR; #DeltaR(#mu,bjet)"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("deltaR(muon,bjet)"),
         ),
         cms.PSet (
@@ -963,29 +938,29 @@ MuonBjetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonBjetDeltaRvsmuonBjetDeltaEta"),
             title = cms.string("Muon-bjet #DeltaR vs #Delta#eta; |#Delta#eta(#mu,bjet)|; #DeltaR(#mu,bjet)"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
-            binsY = cms.untracked.vdouble(100, 0 ,6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
+            binsY = cms.untracked.vdouble(60, 0 ,6),
             inputVariables = cms.vstring("abs(muon.eta - bjet.eta)","deltaR(muon,bjet)"),
         ),
         cms.PSet (
             name = cms.string("muonBjetDeltaRvsmuonBjetDeltaPhi"),
             title = cms.string("Muon-bjet #DeltaR vs #Delta#phi; |#Delta#phi(#mu,bjet)|; #DeltaR(#mu,bjet)"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
-            binsY = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
+            binsY = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(deltaPhi(muon,bjet))","deltaR(muon,bjet)"),
         ),
         cms.PSet (
             name = cms.string("muonEtavsBjetEta"),
             title = cms.string("Muon Eta.vs Bjet Eta; Bjet #eta; Muon #eta"),
-            binsX = cms.untracked.vdouble(100, -6, 6),
-            binsY = cms.untracked.vdouble(100, -6 ,6),
+            binsX = cms.untracked.vdouble(120, -6, 6),
+            binsY = cms.untracked.vdouble(120, -6 ,6),
             inputVariables = cms.vstring("bjet.eta","muon.eta"),
         ),
         cms.PSet (
             name = cms.string("muonPhivsBjetPhi"),
             title = cms.string("Muon Phi.vs Bjet Phi; Bjet #phi; Muon #phi"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
-            binsY = cms.untracked.vdouble(100, -3.15 ,3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            binsY = cms.untracked.vdouble(64, -3.2 ,3.2),
             inputVariables = cms.vstring("bjet.phi","muon.phi"),
         ),
     )
@@ -1004,19 +979,19 @@ ElectronBjetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronBjetDeltaPhi"),
             title = cms.string("Electron-bjet Phi Difference; |#Delta#phi(#mu,bjet)|"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
             inputVariables = cms.vstring("abs(deltaPhi(electron,bjet))"),
         ),
         cms.PSet (
             name = cms.string("electronBjetDeltaEta"),
             title = cms.string("Electron-bjet Eta Difference; |#Delta#eta(#mu,bjet)|"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(electron.eta - bjet.eta)"),
         ),
         cms.PSet (
             name = cms.string("electronBjetDeltaR"),
             title = cms.string("Electron-bjet #DeltaR; #DeltaR(#mu,bjet)"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("deltaR(electron,bjet)"),
         ),
         cms.PSet (
@@ -1028,29 +1003,29 @@ ElectronBjetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronBjetDeltaRvselectronBjetDeltaEta"),
             title = cms.string("Electron-bjet #DeltaR vs #Delta#eta; |#Delta#eta(#mu,bjet)|; #DeltaR(#mu,bjet)"),
-            binsX = cms.untracked.vdouble(100, 0, 6),
-            binsY = cms.untracked.vdouble(100, 0 ,6),
+            binsX = cms.untracked.vdouble(60, 0, 6),
+            binsY = cms.untracked.vdouble(60, 0 ,6),
             inputVariables = cms.vstring("abs(electron.eta - bjet.eta)","deltaR(electron,bjet)"),
         ),
         cms.PSet (
             name = cms.string("electronBjetDeltaRvselectronBjetDeltaPhi"),
             title = cms.string("Electron-bjet #DeltaR vs #Delta#phi; |#Delta#phi(#mu,bjet)|; #DeltaR(#mu,bjet)"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
-            binsY = cms.untracked.vdouble(100, 0, 6),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
+            binsY = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("abs(deltaPhi(electron,bjet))","deltaR(electron,bjet)"),
         ),
         cms.PSet (
             name = cms.string("electronEtavsBjetEta"),
             title = cms.string("Electron Eta.vs Bjet Eta; Bjet #eta; Electron #eta"),
-            binsX = cms.untracked.vdouble(100, -6, 6),
-            binsY = cms.untracked.vdouble(100, -6 ,6),
+            binsX = cms.untracked.vdouble(120, -6, 6),
+            binsY = cms.untracked.vdouble(120, -6 ,6),
             inputVariables = cms.vstring("bjet.eta","electron.eta"),
         ),
         cms.PSet (
             name = cms.string("electronPhivsBjetPhi"),
             title = cms.string("Electron Phi.vs Bjet Phi; Bjet #phi; Electron #phi"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
-            binsY = cms.untracked.vdouble(100, -3.15 ,3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            binsY = cms.untracked.vdouble(64, -3.2 ,3.2),
             inputVariables = cms.vstring("bjet.phi","electron.phi"),
         ),
     )
@@ -1069,26 +1044,26 @@ PhotonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("photonEta"),
             title = cms.string("Photon Eta; #eta"),
-            binsX = cms.untracked.vdouble(100, -3, 3),
+            binsX = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
             name = cms.string("photonGenEta"),
             title = cms.string("Photon Gen. Eta; #eta"),
-            binsX = cms.untracked.vdouble(100, -3, 3),
+            binsX = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("genEta"),
         ),
         cms.PSet (
             name = cms.string("photonPhi"),
             title = cms.string("Photon Phi; #phi"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("phi"),
         ),
         cms.PSet (
             name = cms.string("photonEtaPhi"),
             title = cms.string("Photon Eta vs. Phi; #phi; #eta"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
-            binsY = cms.untracked.vdouble(100, -3, 3),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            binsY = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("phi","eta"),
         ),
     )
@@ -1110,7 +1085,7 @@ MetHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("metPhi"),
             title = cms.string("Phi of Missing E_{T};#phi(E_{T}^{miss})"),
-            binsX = cms.untracked.vdouble(100, -3.15, 3.15),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("phi"),
         ),
     )
@@ -1130,26 +1105,26 @@ TrackHistograms = cms.PSet(
         cms.PSet (
              name = cms.string("trackEta"),
              title = cms.string("Track Eta;track #eta"),
-             binsX = cms.untracked.vdouble(100, -3, 3),
+             binsX = cms.untracked.vdouble(60, -3, 3),
              inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
              name = cms.string("trackEtaMag"),
              title = cms.string("Track Eta;track |#eta|"),
-             binsX = cms.untracked.vdouble(50, 0, 3),
+             binsX = cms.untracked.vdouble(30, 0, 3),
              inputVariables = cms.vstring("fabs(eta)"),
         ),
         cms.PSet (
              name = cms.string("trackPhi"),
              title = cms.string("Track Phi;track #phi"),
-             binsX = cms.untracked.vdouble(100, -3.15, 3.15),
+             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
              inputVariables = cms.vstring("phi"),
         ),
         cms.PSet (
             name = cms.string("trackEtaVsPhi"),
             title = cms.string("#eta vs #phi; #eta; #phi"),
-            binsX = cms.untracked.vdouble(100, -3, 3),
-            binsY = cms.untracked.vdouble(100, -3.15, 3.15),
+            binsX = cms.untracked.vdouble(60, -3, 3),
+            binsY = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("eta", "phi"),
         ),
         cms.PSet (
@@ -1167,13 +1142,13 @@ TrackHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("trackdz"),
             title = cms.string("Track d_{z};track d_{z} [cm]"),
-            binsX = cms.untracked.vdouble(100, -30, 30),
+            binsX = cms.untracked.vdouble(60, -30, 30),
             inputVariables = cms.vstring("dz"),
         ),
         cms.PSet (
             name = cms.string("trackdzMag"),
             title = cms.string("Track d_{z};track |d_{z}| [cm]"),
-            binsX = cms.untracked.vdouble(50, 0, 30),
+            binsX = cms.untracked.vdouble(30, 0, 30),
             inputVariables = cms.vstring("fabs(dz)"),
         ),
         cms.PSet (
@@ -1185,7 +1160,7 @@ TrackHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("trackChi2"),
             title = cms.string("Track Reduced Chi2;track #chi^{2}/ndf"),
-            binsX = cms.untracked.vdouble(100, 0, 30),
+            binsX = cms.untracked.vdouble(30, 0, 30),
             inputVariables = cms.vstring("normalizedChi2"),
         ),
         cms.PSet (
@@ -1253,13 +1228,13 @@ TrackBeamspotHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("trackdz"),
             title = cms.string("Track d_{z};track d_{z} [cm]"),
-            binsX = cms.untracked.vdouble(100, -30, 30),
+            binsX = cms.untracked.vdouble(60, -30, 30),
             inputVariables = cms.vstring("(track.vz - beamspot.z0) - ((track.vx - beamspot.x0) * track.px + (track.vy - beamspot.y0) * track.py) / track.pt * (track.pz / track.pt)"),
         ),
         cms.PSet (
             name = cms.string("trackdzMag"),
             title = cms.string("Track d_{z};track |d_{z}| [cm]"),
-            binsX = cms.untracked.vdouble(50, 0, 30),
+            binsX = cms.untracked.vdouble(30, 0, 30),
             inputVariables = cms.vstring("fabs((track.vz - beamspot.z0) - ((track.vx - beamspot.x0) * track.px + (track.vy - beamspot.y0) * track.py) / track.pt * (track.pz / track.pt))"),
         ),
     )
@@ -1281,7 +1256,7 @@ TrackMCParticleHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("TrackMCPartDeltaPhi"),
             title = cms.string("Track-MCParticle Phi Difference; |#Delta(#phi)|"),
-            binsX = cms.untracked.vdouble(100, 0, 3.15),
+            binsX = cms.untracked.vdouble(32, 0, 3.2),
             inputVariables = cms.vstring("deltaPhi"),
             ),
         cms.PSet (
