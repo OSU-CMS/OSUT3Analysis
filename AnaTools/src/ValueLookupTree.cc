@@ -238,6 +238,12 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return 1;
   else if (EQ_VALID(name,bxlumis))
     return handles_->bxlumis->size ();
+  else if (EQ_VALID(name,cschits))
+    return handles_->cschits->size ();
+  else if (EQ_VALID(name,cscsegs))
+    return handles_->cscsegs->size ();
+  else if (EQ_VALID(name,dtsegs))
+    return handles_->dtsegs->size ();
   else if (EQ_VALID(name,electrons))
     return handles_->electrons->size ();
   else if (EQ_VALID(name,events))
@@ -262,6 +268,8 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->photons->size ();
   else if (EQ_VALID(name,primaryvertexs))
     return handles_->primaryvertexs->size ();
+  else if (EQ_VALID(name,rpchits))
+    return handles_->rpchits->size ();
   else if (EQ_VALID(name,superclusters))
     return handles_->superclusters->size ();
   else if (EQ_VALID(name,taus))
@@ -295,6 +303,9 @@ bool
   bool isFound = false;
   if        (EQ_VALID(name,beamspots))         isFound = handles_->beamspots.isValid();
   else  if  (EQ_VALID(name,bxlumis))           isFound  =  handles_->bxlumis.isValid();
+  else  if  (EQ_VALID(name,cschits))           isFound  =  handles_->cschits.isValid();
+  else  if  (EQ_VALID(name,cscsegs))           isFound  =  handles_->cscsegs.isValid();
+  else  if  (EQ_VALID(name,dtsegs))            isFound  =  handles_->dtsegs.isValid();
   else  if  (EQ_VALID(name,electrons))         isFound  =  handles_->electrons.isValid();
   else  if  (EQ_VALID(name,events))            isFound  =  handles_->events.isValid();
   else  if  (EQ_VALID(name,genjets))           isFound  =  handles_->genjets.isValid();
@@ -307,6 +318,7 @@ bool
   else  if  (EQ_VALID(name,muons))             isFound  =  handles_->muons.isValid();
   else  if  (EQ_VALID(name,photons))           isFound  =  handles_->photons.isValid();
   else  if  (EQ_VALID(name,primaryvertexs))    isFound  =  handles_->primaryvertexs.isValid();
+  else  if  (EQ_VALID(name,rpchits))           isFound  =  handles_->rpchits.isValid();
   else  if  (EQ_VALID(name,superclusters))     isFound  =  handles_->superclusters.isValid();
   else  if  (EQ_VALID(name,taus))              isFound  =  handles_->taus.isValid();
   else  if  (EQ_VALID(name,tracks))            isFound  =  handles_->tracks.isValid();
@@ -797,6 +809,12 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
     return ((void *) &(*handles_->beamspots));
   else if (EQ_VALID(name,bxlumis))
     return ((void *) &handles_->bxlumis->at (i));
+  else if (EQ_VALID(name,cschits))
+    return ((void *) &handles_->cschits->at (i));
+  else if (EQ_VALID(name,cscsegs))
+    return ((void *) &handles_->cscsegs->at (i));
+  else if (EQ_VALID(name,dtsegs))
+    return ((void *) &handles_->dtsegs->at (i));
   else if (EQ_VALID(name,electrons))
     return ((void *) &handles_->electrons->at (i));
   else if (EQ_VALID(name,events))
@@ -821,6 +839,8 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
     return ((void *) &handles_->photons->at (i));
   else if (EQ_VALID(name,primaryvertexs))
     return ((void *) &handles_->primaryvertexs->at (i));
+  else if (EQ_VALID(name,rpchits))
+    return ((void *) &handles_->rpchits->at (i));
   else if (EQ_VALID(name,superclusters))
     return ((void *) &handles_->superclusters->at (i));
   else if (EQ_VALID(name,taus))
@@ -859,6 +879,12 @@ ValueLookupTree::getCollectionType (const string &name) const
     return "osu::Beamspot";
   else if (EQ_VALID(name,bxlumis))
     return "osu::Bxlumi";
+  else if (EQ_VALID(name,cschits))
+    return "osu::Cschit";
+  else if (EQ_VALID(name,cscsegs))
+    return "osu::Cscseg";
+  else if (EQ_VALID(name,dtsegs))
+    return "osu::Dtseg";
   else if (EQ_VALID(name,electrons))
     return "osu::Electron";
   else if (EQ_VALID(name,events))
@@ -883,6 +909,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return "osu::Photon";
   else if (EQ_VALID(name,primaryvertexs))
     return "osu::Primaryvertex";
+  else if (EQ_VALID(name,rpchits))
+    return "osu::Rpchit";
   else if (EQ_VALID(name,superclusters))
     return "osu::Supercluster";
   else if (EQ_VALID(name,taus))
@@ -907,6 +935,12 @@ ValueLookupTree::isCollection (const string &name) const
     return true;
   else if (EQ_VALID(name,bxlumis))
     return true;
+  else if (EQ_VALID(name,cschits))
+    return true;
+  else if (EQ_VALID(name,cscsegs))
+    return true;
+  else if (EQ_VALID(name,dtsegs))
+    return true;
   else if (EQ_VALID(name,electrons))
     return true;
   else if (EQ_VALID(name,events))
@@ -930,6 +964,8 @@ ValueLookupTree::isCollection (const string &name) const
   else if (EQ_VALID(name,photons))
     return true;
   else if (EQ_VALID(name,primaryvertexs))
+    return true;
+  else if (EQ_VALID(name,rpchits))
     return true;
   else if (EQ_VALID(name,superclusters))
     return true;

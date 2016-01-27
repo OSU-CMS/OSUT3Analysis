@@ -32,6 +32,18 @@ namespace anatools
   string getObjectType (const osu::Bxlumi &);
   string getObjectClass (const osu::Bxlumi &);
 #endif
+#if IS_VALID(cschits)
+  string getObjectType (const osu::Cschit &);
+  string getObjectClass (const osu::Cschit &);
+#endif
+#if IS_VALID(cscsegs)
+  string getObjectType (const osu::Cscseg &);
+  string getObjectClass (const osu::Cscseg &);
+#endif
+#if IS_VALID(dtsegs)
+  string getObjectType (const osu::Dtseg &);
+  string getObjectClass (const osu::Dtcseg &);
+#endif
 #if IS_VALID(electrons)
   string getObjectType (const osu::Electron &);
   string getObjectClass (const osu::Electron &);
@@ -78,6 +90,10 @@ namespace anatools
   string getObjectType (const osu::Primaryvertex &);
   string getObjectClass (const osu::Primaryvertex &);
   template<> int getObjectHash<osu::Primaryvertex> (const osu::Primaryvertex &);
+#endif
+#if IS_VALID(rpchits)
+  string getObjectType (const osu::Rpchit &);
+  string getObjectClass (const osu::Rpchit &);
 #endif
 #if IS_VALID(superclusters)
   string getObjectType (const osu::Supercluster &);

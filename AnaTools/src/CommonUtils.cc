@@ -197,6 +197,9 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   //////////////////////////////////////////////////////////////////////////////
   if  (VEC_CONTAINS  (objectsToGet,  "beamspots")         &&  collections.exists  ("beamspots"))         getCollection  (collections.getParameter<edm::InputTag>  ("beamspots"),         handles.beamspots,         event);
   if  (VEC_CONTAINS  (objectsToGet,  "bxlumis")           &&  collections.exists  ("bxlumis"))           getCollection  (collections.getParameter<edm::InputTag>  ("bxlumis"),           handles.bxlumis,           event);
+  if  (VEC_CONTAINS  (objectsToGet,  "cschits")           &&  collections.exists  ("cschits"))           getCollection  (collections.getParameter<edm::InputTag>  ("cschits"),           handles.cschits,           event);
+  if  (VEC_CONTAINS  (objectsToGet,  "cscsegs")           &&  collections.exists  ("cscsegs"))           getCollection  (collections.getParameter<edm::InputTag>  ("cscsegs"),           handles.cscsegs,           event);
+  if  (VEC_CONTAINS  (objectsToGet,  "dtsegs")           &&  collections.exists  ("dtsegs"))           getCollection  (collections.getParameter<edm::InputTag>  ("dtsegs"),           handles.dtsegs,           event);
   if  (VEC_CONTAINS  (objectsToGet,  "electrons")         &&  collections.exists  ("electrons"))         getCollection  (collections.getParameter<edm::InputTag>  ("electrons"),         handles.electrons,         event);
   if  (VEC_CONTAINS  (objectsToGet,  "events")            &&  collections.exists  ("events"))            getCollection  (collections.getParameter<edm::InputTag>  ("events"),            handles.events,            event);
   if  (VEC_CONTAINS  (objectsToGet,  "genjets")           &&  collections.exists  ("genjets"))           getCollection  (collections.getParameter<edm::InputTag>  ("genjets"),           handles.genjets,           event);
@@ -210,6 +213,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   if  (VEC_CONTAINS  (objectsToGet,  "photons")           &&  collections.exists  ("photons"))           getCollection  (collections.getParameter<edm::InputTag>  ("photons"),           handles.photons,           event);
   if  (VEC_CONTAINS  (objectsToGet,  "prescales")         &&  collections.exists  ("prescales"))         getCollection  (collections.getParameter<edm::InputTag>  ("prescales"),         handles.prescales,         event);
   if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs")    &&  collections.exists  ("primaryvertexs"))    getCollection  (collections.getParameter<edm::InputTag>  ("primaryvertexs"),    handles.primaryvertexs,    event);
+  if  (VEC_CONTAINS  (objectsToGet,  "rpchits")    &&  collections.exists  ("rpchits"))    getCollection  (collections.getParameter<edm::InputTag>  ("rpchits"),    handles.rpchits,    event);
   if  (VEC_CONTAINS  (objectsToGet,  "superclusters")     &&  collections.exists  ("superclusters"))     getCollection  (collections.getParameter<edm::InputTag>  ("superclusters"),     handles.superclusters,     event);
   if  (VEC_CONTAINS  (objectsToGet,  "taus")              &&  collections.exists  ("taus"))              getCollection  (collections.getParameter<edm::InputTag>  ("taus"),              handles.taus,              event);
   if  (VEC_CONTAINS  (objectsToGet,  "tracks")            &&  collections.exists  ("tracks"))            getCollection  (collections.getParameter<edm::InputTag>  ("tracks"),            handles.tracks,            event);
@@ -244,6 +248,12 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     clog << "INFO: did not retrieve beamspots collection from the event." << endl;
   if (firstEvent && !handles.bxlumis.isValid ())
     clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
+  if (firstEvent && !handles.cschits.isValid ())
+    clog << "INFO: did not retrieve cschits collection from the event." << endl;
+  if (firstEvent && !handles.cscsegs.isValid ())
+    clog << "INFO: did not retrieve cscsegs collection from the event." << endl;
+  if (firstEvent && !handles.dtsegs.isValid ())
+    clog << "INFO: did not retrieve dtsegs collection from the event." << endl;
   if (firstEvent && !handles.electrons.isValid ())
     clog << "INFO: did not retrieve electrons collection from the event." << endl;
   if (firstEvent && !handles.events.isValid ())
@@ -270,6 +280,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     clog << "INFO: did not retrieve primaryvertexs collection from the event." << endl;
   if (firstEvent && !handles.prescales.isValid ())
     clog << "INFO: did not retrieve prescales collection from the event." << endl;
+  if (firstEvent && !handles.rpchits.isValid ())
+    clog << "INFO: did not retrieve rpchits collection from the event." << endl;
   if (firstEvent && !handles.superclusters.isValid ())
     clog << "INFO: did not retrieve superclusters collection from the event." << endl;
   if (firstEvent && !handles.taus.isValid ())
@@ -575,6 +587,18 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   string  anatools::getObjectType  (const  osu::Bxlumi         &obj)  {  return  "bxlumi";         }
   string  anatools::getObjectClass  (const  osu::Bxlumi         &obj)  {  return  "osu::Bxlumi";         }
 #endif
+#if IS_VALID(cschits)
+  string  anatools::getObjectType  (const  osu::Cschit         &obj)  {  return  "cschit";         }
+  string  anatools::getObjectClass  (const  osu::Cschit         &obj)  {  return  "osu::Cschit";         }
+#endif
+#if IS_VALID(cscsegs)
+  string  anatools::getObjectType  (const  osu::Cscseg         &obj)  {  return  "cscseg";         }
+  string  anatools::getObjectClass  (const  osu::Cscseg         &obj)  {  return  "osu::Cscseg";         }
+#endif
+#if IS_VALID(dtsegs)
+  string  anatools::getObjectType  (const  osu::Dtseg         &obj)  {  return  "dtseg";         }
+  string  anatools::getObjectClass  (const  osu::Dtseg         &obj)  {  return  "osu::Dtseg";         }
+#endif
 #if IS_VALID(electrons)
   string  anatools::getObjectType  (const  osu::Electron       &obj)  {  return  "electron";       }
   string  anatools::getObjectClass  (const  osu::Electron       &obj)  {  return  "osu::Electron";       }
@@ -638,6 +662,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
     z_mum = abs(int(10000 * getMember (object, "z")));
     return x_mum + y_mum + z_mum;
   }
+#endif
+#if IS_VALID(rpchits)
+  string  anatools::getObjectType  (const  osu::Rpchit   &obj)  {  return  "rpchit";   }
+  string  anatools::getObjectClass  (const  osu::Rpchit   &obj)  {  return  "osu::Rpchit";   }
 #endif
 #if IS_VALID(superclusters)
   string  anatools::getObjectType  (const  osu::Supercluster   &obj)  {  return  "supercluster";   }
