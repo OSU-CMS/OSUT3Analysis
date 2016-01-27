@@ -450,6 +450,12 @@ ElectronMuonHistograms = cms.PSet(
             inputVariables = cms.vstring("muon.pt","electron.pt"),
         ),
         cms.PSet (
+            name = cms.string("electronMuonPt"),
+            title = cms.string("Momentum of Electron-Muon System; electron-muon p_{T} [GeV];"),
+            binsX = cms.untracked.vdouble(100,0,500),
+            inputVariables = cms.vstring("pT(electron, muon)"),
+        ),
+        cms.PSet (
             name = cms.string("electronMuonInvMass"),
             title = cms.string("Electron-muon Invariant Mass; M_{e#mu} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
@@ -517,6 +523,34 @@ ElectronMuonIPHistograms = cms.PSet(
     )
 )
 
+
+##############################################################################################
+
+ElectronMetHistograms = cms.PSet(
+    inputCollection = cms.vstring("electrons","mets"),
+    histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("electronMetMT"),
+            title = cms.string("Transverse Mass of Electron-E_{T}^{miss} System; m_{T}(e,E_{T}^{miss}) [GeV]"),
+            binsX = cms.untracked.vdouble(100, 0, 200),
+            inputVariables = cms.vstring("sqrt(2 * met.pt * electron.pt * (1.0 - cos(deltaPhi(electron,met))))"),
+        ),
+    )
+)
+
+##############################################################################################
+
+MuonMetHistograms = cms.PSet(
+    inputCollection = cms.vstring("muons","mets"),
+    histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("muonMetMT"),
+            title = cms.string("Transverse Mass of Muon-E_{T}^{miss} System; m_{T}(#mu,E_{T}^{miss}) [GeV]"),
+            binsX = cms.untracked.vdouble(100, 0, 200),
+            inputVariables = cms.vstring("sqrt(2 * met.pt * muon.pt * (1.0 - cos(deltaPhi(muon,met))))"),
+        ),
+    )
+)
 
 ##############################################################################################
 
@@ -779,6 +813,12 @@ MuonJetHistograms = cms.PSet(
             inputVariables = cms.vstring("invMass(muon,jet)"),
         ),
         cms.PSet (
+            name = cms.string("muonJetDeltaPt"),
+            title = cms.string("Muon-jet Pt Difference; |#Deltap_{T}(#mu,jet)|"),
+            binsX = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("abs(muon.pt - jet.pt)"),
+        ),
+        cms.PSet (
             name = cms.string("muonJetDeltaPhi"),
             title = cms.string("Muon-jet Phi Difference; |#Delta#phi(#mu,jet)|"),
             binsX = cms.untracked.vdouble(32, 0, 3.2),
@@ -844,6 +884,12 @@ ElectronJetHistograms = cms.PSet(
             title = cms.string("Electron-jet Invariant Mass; M(e,jet) [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("invMass(electron,jet)"),
+        ),
+        cms.PSet (
+            name = cms.string("electronJetDeltaPt"),
+            title = cms.string("Electron-jet Pt Difference; |#Deltap_{T}(e,jet)|"),
+            binsX = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("abs(electron.pt - jet.pt)"),
         ),
         cms.PSet (
             name = cms.string("electronJetDeltaPhi"),
@@ -912,6 +958,12 @@ MuonBjetHistograms = cms.PSet(
             inputVariables = cms.vstring("invMass(muon,bjet)"),
         ),
         cms.PSet (
+            name = cms.string("muonJetDeltaPt"),
+            title = cms.string("Muon-jet Pt Difference; |#Deltap_{T}(#mu,bjet)|"),
+            binsX = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("abs(muon.pt - bjet.pt)"),
+        ),
+        cms.PSet (
             name = cms.string("muonBjetDeltaPhi"),
             title = cms.string("Muon-bjet Phi Difference; |#Delta#phi(#mu,bjet)|"),
             binsX = cms.untracked.vdouble(32, 0, 3.2),
@@ -975,6 +1027,12 @@ ElectronBjetHistograms = cms.PSet(
             title = cms.string("Electron-bjet Invariant Mass; M(#mu,bjet) [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("invMass(electron,bjet)"),
+        ),
+        cms.PSet (
+            name = cms.string("electronBjetDeltaPt"),
+            title = cms.string("Electron-bjet Pt Difference; |#Deltap_{T}(e,bjet)|"),
+            binsX = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("abs(electron.pt - bjet.pt)"),
         ),
         cms.PSet (
             name = cms.string("electronBjetDeltaPhi"),
