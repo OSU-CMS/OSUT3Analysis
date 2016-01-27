@@ -20,6 +20,11 @@
 #define  uservariables_TYPE   VariableProducerPayload
 #define  eventvariables_TYPE  EventVariableProducerPayload
 
+#define  cschits_TYPE           INVALID_TYPE
+#define  cscsegs_TYPE           INVALID_TYPE
+#define  dtsegs_TYPE            INVALID_TYPE
+#define  rpchits_TYPE           INVALiD_TYPE
+
 #define  triggers_TYPE          BNtriggerCollection
 #define  prescales_TYPE         INVALID_TYPE
 #define  generatorweights_TYPE  INVALID_TYPE
@@ -30,6 +35,11 @@
 #define  bjets_INVALID
 #define  generatorweights_INVALID
 #define  pileupinfos_INVALID
+
+#define  cschits_INVALID
+#define  cscsegs_INVALID
+#define  dtsegs_INVALID
+#define  rpchits_INVALID
 
 #include "BEAN/Collections/interface/BNbxlumi.h"
 #include "BEAN/Collections/interface/BNelectron.h"
