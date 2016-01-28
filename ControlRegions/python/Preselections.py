@@ -40,21 +40,25 @@ Muon_Preselection = cms.PSet(
       ),
       cms.PSet (
         inputCollection = cms.vstring("muons"),
-        cutString = cms.string("              \
-          isGlobalMuon                        \
-          && isPFMuon                            \
-          && (normalizedChi2 < 10.0)             \
-          && (numberOfValidMuonHits > 0)         \
-          && (numberOfMatchedStations > 1)       \
-          && (numberOfValidPixelHits > 0)        \
-          && (numberOfLayersWithMeasurement > 5) \
-          "),
+        cutString = cms.string("\
+        globalTrack.hitPattern_.numberOfValidMuonHits > 0 & \
+        globalTrack.normalizedChi2 < 10 & \
+        numberOfMatchedStations > 1 & \
+        innerTrack.hitPattern_.numberOfValidPixelHits > 0 & \
+        innerTrack.hitPattern_.trackerLayersWithMeasurement > 5"),
         numberRequired = cms.string(">= 1"),
         alias = cms.string("muon ID")
         ),
       cms.PSet (
         inputCollection = cms.vstring("muons"),
-        cutString = cms.string("((pfIsoR04SumChargedHadronPt + max (0.0, pfIsoR04SumNeutralHadronEt + pfIsoR04SumPhotonEt - 0.5 * pfIsoR04SumPUPt)) / pt) < 0.12"),
+        cutString = cms.string("                \
+        (pfIsolationR04_.sumChargedHadronPt \
+        + max(0.0,                          \
+        pfIsolationR04_.sumNeutralHadronEt  \
+        + pfIsolationR04_.sumPhotonEt       \
+        - 0.5*pfIsolationR04_.sumPUPt))     \
+        /pt <= 0.15                         \
+       "),
         numberRequired = cms.string(">= 1"),
         alias = cms.string("muon isolation")
       ),
@@ -80,22 +84,6 @@ Electron_Preselection = cms.PSet(
         cutString = cms.string("abs(eta) < 1.444 | abs(eta) > 1.566 "),
         numberRequired = cms.string(">= 1"),
         alias = cms.string("electron ECAL crack veto")
-      ),
-      # PHOTON CONVERSION VETO
-      cms.PSet (
-        inputCollection = cms.vstring("electrons"),
-        cutString = cms.string("passConvVeto > 0"),
-        numberRequired = cms.string(">= 1")
-      ),
-      cms.PSet (
-        inputCollection = cms.vstring("electrons"),
-        cutString = cms.string("mvaNonTrig_HtoZZto4l > 0"),
-        numberRequired = cms.string(">= 1")
-      ),
-      cms.PSet (
-        inputCollection = cms.vstring("electrons"),
-        cutString = cms.string("relPFrhoIso < 0.1"),
-        numberRequired = cms.string(">= 1")
       ),
    )   
 )

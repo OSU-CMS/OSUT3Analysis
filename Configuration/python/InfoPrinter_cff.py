@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 infoPrinter = cms.EDAnalyzer ("InfoPrinter",
     eventsToPrint               =  cms.VEventID (
-#        cms.EventID (1, 728, 7),
+#        cms.EventID (1, 16, 2686),
     ),
     printAllEvents              =  cms.bool  (False),  # print information for all events, overriding eventsToPrint
     printPassedEvents           =  cms.bool  (False),  # print information for events that pass all cuts 
