@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(cschits)
-  typedef ObjectSelector<osu::Cschit> CschitObjectSelector;
+  typedef ObjectSelector<osu::Cschit, TYPE(cschits)> CschitObjectSelector;
   DEFINE_FWK_MODULE(CschitObjectSelector);
 #endif
