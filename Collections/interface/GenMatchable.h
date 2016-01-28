@@ -1,6 +1,8 @@
 #ifndef OSU_GEN_MATCHABLE
 #define OSU_GEN_MATCHABLE
 
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+
 #include "DataFormats/Common/interface/Handle.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -145,7 +147,7 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
       double dR = deltaR (*particle, *this);
       if (maxDeltaR_ >= 0.0 && dR > maxDeltaR_)
         continue;
-
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       if (particle->isPromptFinalState ())
         {
           if (dR < dRToGenMatchedParticle.promptFinalState || dRToGenMatchedParticle.promptFinalState < 0.0)
@@ -178,6 +180,7 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
               genMatchedParticle.directHardProcessTauDecayProductFinalState = edm::Ref<vector<osu::Mcparticle> > (particles, particle - particles->begin ());
             }
         }
+#endif
     }
 
   return genMatchedParticle;
@@ -206,5 +209,6 @@ osu::GenMatchable<T, PdgId>::dRToGenMatchedParticleOfSameType () const
 {
   return dRToGenMatchedParticleOfSameType_;
 }
+#endif
 
 #endif

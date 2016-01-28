@@ -5,6 +5,7 @@
 osu::Jet::Jet ()
 {
 }
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
 
 osu::Jet::Jet (const TYPE(jets) &jet) :
   GenMatchable (jet),
@@ -38,6 +39,13 @@ osu::Jet::pfCombinedInclusiveSecondaryVertexV2BJetTags () const
 {
   return pfCombinedInclusiveSecondaryVertexV2BJetTags_;
 }
+#elif DATA_FORMAT == AOD_CUSTOM
+osu::Jet::Jet (const TYPE(jets) &jet) :
+  TYPE(jets) (jet)
+{
+}
+
+#endif
 
 
 osu::Jet::~Jet ()

@@ -11,7 +11,7 @@ osu::Event::Event (const TYPE(events) &event) :
 {
 }
 
-osu::Event:::~Event ()
+osu::Event::~Event ()
 {
 }
 

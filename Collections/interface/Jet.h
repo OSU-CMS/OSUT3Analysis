@@ -5,6 +5,7 @@
 
 #if IS_VALID(jets)
 
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
 namespace osu
 {
   class Jet : public GenMatchable<TYPE(jets), 0>
@@ -25,6 +26,18 @@ namespace osu
         float pfCombinedInclusiveSecondaryVertexV2BJetTags_;
     };
 }
+#elif DATA_FORMAT == AOD_CUSTOM
+namespace osu
+{
+  class Jet : public TYPE(jets)
+    {
+      public:
+        Jet ();
+        Jet (const TYPE(jets) &);
+        ~Jet ();
+    };
+}
+#endif
 
 #else
 

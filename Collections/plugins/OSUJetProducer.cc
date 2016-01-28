@@ -23,13 +23,19 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE (jets)> > collection;
   if (!anatools::getCollection (collection_, collection, event, false))
     return;
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   edm::Handle<vector<osu::Mcparticle> > particles;
   anatools::getCollection (edm::InputTag ("", ""), particles, event);
+#endif
 
   pl_ = auto_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
   for (const auto &object : *collection)
     {
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
       osu::Jet jet (object, particles, cfg_);
+#elif DATA_FORMAT == AOD_CUSTOM
+      const osu::Jet jet (object);
+#endif
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags")); 

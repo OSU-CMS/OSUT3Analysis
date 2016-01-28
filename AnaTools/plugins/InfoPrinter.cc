@@ -391,7 +391,7 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
       string name = trigger.name;
       bool pass = trigger.pass;
       unsigned prescale = trigger.prescale;
-#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  
+#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
   const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
   for (unsigned i = 0; i < triggerNames.size (); i++)
     {

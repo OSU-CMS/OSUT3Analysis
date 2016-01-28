@@ -42,7 +42,7 @@ namespace anatools
 #endif
 #if IS_VALID(dtsegs)
   string getObjectType (const osu::Dtseg &);
-  string getObjectClass (const osu::Dtcseg &);
+  string getObjectClass (const osu::Dtseg &);
 #endif
 #if IS_VALID(electrons)
   string getObjectType (const osu::Electron &);

@@ -43,6 +43,21 @@ collectionProducer.bxlumis = cms.EDProducer ("OSUBxlumiProducer",
 
 #-------------------------------------------------------------------------------
 
+collectionProducer.cschits = cms.EDProducer ("OSUCschitProducer",
+)
+
+#-------------------------------------------------------------------------------
+
+collectionProducer.cscsegs = cms.EDProducer ("OSUCscsegProducer",
+)
+
+#-------------------------------------------------------------------------------
+
+collectionProducer.dtsegs = cms.EDProducer ("OSUDtsegProducer",
+)
+
+#-------------------------------------------------------------------------------
+
 collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     rho = cms.InputTag  ("fixedGridRhoFastjetAll",    "",                ""),
     beamSpot = cms.InputTag  ("offlineBeamSpot",           "",                ""),
@@ -102,6 +117,11 @@ collectionProducer.pileUpInfos = cms.EDProducer ("PileUpInfoProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.primaryvertexs = cms.EDProducer ("OSUPrimaryvertexProducer",
+)
+
+#-------------------------------------------------------------------------------
+
+collectionProducer.rpchits = cms.EDProducer ("OSURpchitProducer",
 )
 
 #-------------------------------------------------------------------------------
