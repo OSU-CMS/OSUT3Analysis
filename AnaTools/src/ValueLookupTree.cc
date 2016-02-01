@@ -490,7 +490,7 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
                                                   "copysign", "nextafter",
                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
-        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass", "number"}) ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass", "number", "transMass"}) ||
         insertDots                 (cut,  tree) ||
         //insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
         insertParentheses          (cut,  tree)))
@@ -769,6 +769,15 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
             }
 
           return sqrt (energy * energy - px * px - py * py - pz * pz);
+        }
+      else if (op == "transMass")
+        {
+          double pt0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "pt", false),
+                 pt1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "pt", false),
+                 dPhi = deltaPhi (valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "phi"),
+                                  valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi"));
+
+          return sqrt (2.0 * pt0 * pt1 * (1 - cos (dPhi)));
         }
       else if (op == "number")
         return getCollectionSize (boost::get<string> (operands.at (0)) + "s");
