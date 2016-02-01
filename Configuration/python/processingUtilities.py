@@ -6,6 +6,7 @@ import math
 import datetime
 import time
 import copy
+import FWCore.ParameterSet.Modules
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
@@ -354,6 +355,31 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
         outputCommands = ["drop *"]
         outputCommands.append("keep *_*_uservariables_*")
         outputCommands.append("keep *_*_eventvariables_*")
+        ########################################################################
+        #Check all the modules in collectionProducer, if a module is an EDProducer 
+        #and have extra InputTags specified, keep the correspoding collections 
+        #in the outputCommands
+        ########################################################################
+        for collection in dir(collectionProducer):
+            if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):    
+                dic = vars(getattr(collectionProducer,collection))
+                for p in dic: 
+                    if 'InputTag' in str(dic[p]):
+                        outputCommand = "keep *_"
+                        outputCommand += dic[p].getModuleLabel ()
+                        outputCommand += "_"
+                        outputCommand += dic[p].getProductInstanceLabel ()
+                        outputCommand += "_"
+                        if dic[p].getProcessName ():
+                            outputCommand += dic[p].getProcessName ()
+                        else:
+                            outputCommand += "*"
+                        outputCommands.append (outputCommand)
+                        
+        ########################################################################
+        # Add keep statements for all collections except uservariables and 
+        # eventvariables.  
+        ########################################################################        
         for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables" and a is not "eventvariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep *_"
@@ -397,14 +423,15 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
                     channelPath += objectProducer
                     setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                     newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
-                    dropCommand = "drop *_" + inputTag.getModuleLabel () + "_" + inputTag.getProductInstanceLabel () + "_"
-                    if inputTag.getProcessName ():
-                        dropCommand += inputTag.getProcessName ()
-                    else:
-                        dropCommand += "*"
-                    outputCommands.append (dropCommand)
-                    if collection not in cutCollections:
-                        outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + inputTag.getProductInstanceLabel () + "_" + process.name_ ())
+                    if collection in cutCollections: 
+                        dropCommand = "drop *_" + inputTag.getModuleLabel () + "_" + inputTag.getProductInstanceLabel () + "_"
+                        if inputTag.getProcessName ():
+                            dropCommand += inputTag.getProcessName ()
+                        else:
+                            dropCommand += "*"
+                        outputCommands.append (dropCommand)
+                    # if collection not in cutCollections:
+                    #     outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + inputTag.getProductInstanceLabel () + "_" + process.name_ ())
                     add_channels.producerIndex += 1
                 setattr (producedCollections, collection, newInputTags)
             else:
@@ -414,14 +441,15 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 originalInputTag = getattr (collections, collection)
                 setattr (producedCollections, collection, cms.InputTag ("objectProducer" + str (add_channels.producerIndex), originalInputTag.getProductInstanceLabel ()))
-                dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
-                if originalInputTag.getProcessName ():
-                    dropCommand += originalInputTag.getProcessName ()
-                else:
-                    dropCommand += "*"
-                outputCommands.append (dropCommand)
-                if collection not in cutCollections:
-                    outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
+                if collection in cutCollections:
+                    dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
+                    if originalInputTag.getProcessName ():
+                        dropCommand += originalInputTag.getProcessName ()
+                    else:
+                        dropCommand += "*"
+                    outputCommands.append (dropCommand)
+                # if collection not in cutCollections:
+                #     outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
                 add_channels.producerIndex += 1
         ########################################################################
 
@@ -478,7 +506,7 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
             setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
             originalInputTag = getattr (collections, collection)
             setattr (filteredCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
-            outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
+            outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_originalFormat_" + process.name_ ())
             add_channels.filterIndex += 1
         ########################################################################
 

@@ -201,7 +201,8 @@ composite_dataset_definitions = {
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
         'DoubleMu_2015C',
-        'DoubleMu_2015D',
+        'DoubleMu_2015D_v3',
+        'DoubleMu_2015D_v4',
     ],
     'SingleMu_2015' : [
         'SingleMu_2015B',
@@ -235,7 +236,8 @@ composite_dataset_definitions = {
     'DoubleEG_2015' : [
         'DoubleEG_2015B',
         'DoubleEG_2015C',
-        'DoubleEG_2015D',
+        'DoubleEG_2015D_v3',
+        'DoubleEG_2015D_v4',
     ],
     'MuonEG_2015' : [
         'MuonEG_2015B',
@@ -311,73 +313,73 @@ nJobs = {
     #MiniAOD stored on T3.
     ############################################################################
     #DY
-    'DYJetsToLL_50'  :  9999,
-    'DYJetsToNuNu'   :  9999,
+    'DYJetsToLL_50'  :  999,
+    'DYJetsToNuNu'   :  999,
 
     #WJets
-    'WJetsToLNu'  :  9999,
-    'WJetsToLNu_HT100to200'  :  9999,
-    'WJetsToLNu_HT200to400'  :  9999,
-    'WJetsToLNu_HT400to600'  :  9999,
-    'WJetsToLNu_HT600toInf'  :  9999,
+    'WJetsToLNu'  :  999,
+    'WJetsToLNu_HT100to200'  :  999,
+    'WJetsToLNu_HT200to400'  :  999,
+    'WJetsToLNu_HT400to600'  :  999,
+    'WJetsToLNu_HT600toInf'  :  999,
 
     #WW
-    'WWToLNuQQ'   :  9999,
-    'WWToLNuLNu'  :  9999,
+    'WWToLNuQQ'   :  999,
+    'WWToLNuLNu'  :  999,
 
     #WZ
-    'WZToLNuQQ'    :  9999,
-    'WZToLLQQ'     :  9999,
-    'WZToLNuNuNu'  :  9999,
-    'WZToLLLNu'    :  9999,
+    'WZToLNuQQ'    :  999,
+    'WZToLLQQ'     :  999,
+    'WZToLNuNuNu'  :  999,
+    'WZToLLLNu'    :  999,
 
     #ZZ
-    'ZZToNuNuQQ'  :  9999,
-    'ZZToLLQQ'    :  9999,
-    'ZZToLLNuNu'  :  9999,
-    'ZZToLLLL'    :  9999,
+    'ZZToNuNuQQ'  :  999,
+    'ZZToLLQQ'    :  999,
+    'ZZToLLNuNu'  :  999,
+    'ZZToLLLL'    :  999,
 
     #VG
-    'WG'  :  9999,
-    'ZG'  :  9999,
+    'WG'  :  999,
+    'ZG'  :  999,
 
     #SingleTop
-    'SingleTop_s_channel'  :  9999,
-    'SingleTop_t_channel'  :  9999,
-    'SingleTop_tW'         :  9999,
-    'SingleTop_tbarW'      :  9999,
+    'SingleTop_s_channel'  :  999,
+    'SingleTop_t_channel'  :  999,
+    'SingleTop_tW'         :  999,
+    'SingleTop_tbarW'      :  999,
 
     #TTJets
-    'TTJets_DiLept'              :  9999,
-    'TTJets_SingleLeptFromT'     :  9999,
-    'TTJets_SingleLeptFromTbar'  :  9999,
+    'TTJets_DiLept'              :  300,
+    'TTJets_SingleLeptFromT'     :  300,
+    'TTJets_SingleLeptFromTbar'  :  300,
 
     #MET data
-    'MET_2015D_v3' : 500,
-    'MET_2015D_v4' : 500,
+    'MET_2015D_v3' : 999, 
+    'MET_2015D_v4' : 999,
 
     #AMSB chargino
-    'AMSB_chargino_100GeV_10cm'    :  9999,
-    'AMSB_chargino_100GeV_100cm'   :  9999,
-    'AMSB_chargino_100GeV_1000cm'  :  9999,
+    'AMSB_chargino_100GeV_10cm'    :  99,
+    'AMSB_chargino_100GeV_100cm'   :  99,
+    'AMSB_chargino_100GeV_1000cm'  :  99,
 
-    'AMSB_chargino_300GeV_10cm'    :  9999,
-    'AMSB_chargino_300GeV_100cm'   :  9999,
-    'AMSB_chargino_300GeV_1000cm'  :  9999,
+    'AMSB_chargino_300GeV_10cm'    :  99,
+    'AMSB_chargino_300GeV_100cm'   :  99,
+    'AMSB_chargino_300GeV_1000cm'  :  99,
 
-    'AMSB_chargino_500GeV_10cm'    :  9999,
-    'AMSB_chargino_500GeV_100cm'   :  9999,
-    'AMSB_chargino_500GeV_1000cm'  :  9999,
+    'AMSB_chargino_500GeV_10cm'    :  99,
+    'AMSB_chargino_500GeV_100cm'   :  99,
+    'AMSB_chargino_500GeV_1000cm'  :  99,
 
-    'AMSB_chargino_700GeV_10cm'    :  9999,
-    'AMSB_chargino_700GeV_100cm'   :  9999,
-    'AMSB_chargino_700GeV_1000cm'  :  9999,
+    'AMSB_chargino_700GeV_10cm'    :  99,
+    'AMSB_chargino_700GeV_100cm'   :  99,
+    'AMSB_chargino_700GeV_1000cm'  :  99,
     ############################################################################
 
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
-    'DYJetsToLL_10to50'    : 9999,
+    'DYJetsToLL_10to50'    : 999,
     'TTJets'        : 325,
     'WW'        : 44,
     'ZZ'        : 36,
@@ -392,19 +394,19 @@ nJobs = {
     'WZ_50ns'        : 45,
     
     #QCD MuEnriched
-    'QCD_MuEnriched_20toInf'        : 9999, 
-    'QCD_MuEnriched_15to20'         : 9999,
-    'QCD_MuEnriched_20to30'         : 9999,
-    'QCD_MuEnriched_30to50'         : 9999,
-    'QCD_MuEnriched_50to80'         : 9999,
-    'QCD_MuEnriched_80to120'        : 9999,
-    'QCD_MuEnriched_120to170'       : 9999,
-    'QCD_MuEnriched_170to300'       : 9999,
-    'QCD_MuEnriched_300to470'       : 9999,
-    'QCD_MuEnriched_470to600'       : 9999,
-    'QCD_MuEnriched_600to800'       : 9999,
-    'QCD_MuEnriched_800to1000'      : 9999,
-    'QCD_MuEnriched_1000toInf'      : 9999,
+    'QCD_MuEnriched_20toInf'        : 999, 
+    'QCD_MuEnriched_15to20'         : 999,
+    'QCD_MuEnriched_20to30'         : 999,
+    'QCD_MuEnriched_30to50'         : 999,
+    'QCD_MuEnriched_50to80'         : 999,
+    'QCD_MuEnriched_80to120'        : 999,
+    'QCD_MuEnriched_120to170'       : 999,
+    'QCD_MuEnriched_170to300'       : 999,
+    'QCD_MuEnriched_300to470'       : 999,
+    'QCD_MuEnriched_470to600'       : 999,
+    'QCD_MuEnriched_600to800'       : 999,
+    'QCD_MuEnriched_800to1000'      : 999,
+    'QCD_MuEnriched_1000toInf'      : 999,
     
     #QCD EMEnriched
     'QCD_EMEnriched_15to20'         : 69,
@@ -425,55 +427,56 @@ nJobs = {
     'QCD_bcToE_250toInf'            : 99,
     
      #Signal MC MiniAOD
-    'stop200_1mm'     :  9999,     
-    'stop200_10mm'     :  9999,   
-    'stop200_100mm'     :  9999,   
-    'stop200_1000mm'     :  9999,  
-    'stop300_1mm'     :  9999,
-    'stop300_10mm'     :  9999,
-    'stop300_100mm'     :  9999,
-    'stop300_1000mm'     :  9999,
-    'stop400_1mm'     :  9999,
-    'stop400_10mm'     :  9999,
-    'stop400_100mm'     :  9999,
-    'stop400_1000mm'     :  9999,
-    'stop500_1mm'     :  9999,
-    'stop500_10mm'     :  9999,
-    'stop500_100mm'     :  9999,
-    'stop500_1000mm'     :  9999,
-    'stop600_1mm'     :  9999,
-    'stop600_10mm'     :  9999,
-    'stop600_100mm'     :  9999,
-    'stop600_1000mm'     :  9999,
-    'stop700_1mm'     :  9999,
-    'stop700_10mm'     :  9999,
-    'stop700_100mm'     :  9999,
-    'stop700_1000mm'     :  9999,
-    'stop800_1mm'     :  9999,
-    'stop800_10mm'     :  9999,
-    'stop800_100mm'     :  9999,
-    'stop800_1000mm'     :  9999,
-    'stop900_1mm'     :  9999,
-    'stop900_10mm'     :  9999,
-    'stop900_100mm'     :  9999,
-    'stop900_1000mm'     :  9999,
-    'stop1000_1mm'     :  9999,
-    'stop1000_10mm'     :  9999,
-    'stop1000_100mm'     :  9999,
-    'stop1000_1000mm'     :  9999,
-    'stop1100_1mm'     :  9999,
-    'stop1100_10mm'     :  9999,
-    'stop1100_100mm'     :  9999,
-    'stop1100_1000mm'     :  9999,
-    'stop1200_1mm'     :  9999,
-    'stop1200_10mm'     :  9999,
-    'stop1200_100mm'     :  9999,
-    'stop1200_1000mm'     :  9999,
+    'stop200_1mm'     :  99,     
+    'stop200_10mm'     :  99,   
+    'stop200_100mm'     :  99,   
+    'stop200_1000mm'     :  99,  
+    'stop300_1mm'     :  99,
+    'stop300_10mm'     :  99,
+    'stop300_100mm'     :  99,
+    'stop300_1000mm'     :  99,
+    'stop400_1mm'     :  99,
+    'stop400_10mm'     :  99,
+    'stop400_100mm'     :  99,
+    'stop400_1000mm'     :  99,
+    'stop500_1mm'     :  99,
+    'stop500_10mm'     :  99,
+    'stop500_100mm'     :  99,
+    'stop500_1000mm'     :  99,
+    'stop600_1mm'     :  99,
+    'stop600_10mm'     :  99,
+    'stop600_100mm'     :  99,
+    'stop600_1000mm'     :  99,
+    'stop700_1mm'     :  99,
+    'stop700_10mm'     :  99,
+    'stop700_100mm'     :  99,
+    'stop700_1000mm'     :  99,
+    'stop800_1mm'     :  99,
+    'stop800_10mm'     :  99,
+    'stop800_100mm'     :  99,
+    'stop800_1000mm'     :  99,
+    'stop900_1mm'     :  99,
+    'stop900_10mm'     :  99,
+    'stop900_100mm'     :  99,
+    'stop900_1000mm'     :  99,
+    'stop1000_1mm'     :  99,
+    'stop1000_10mm'     :  99,
+    'stop1000_100mm'     :  99,
+    'stop1000_1000mm'     :  99,
+    'stop1100_1mm'     :  99,
+    'stop1100_10mm'     :  99,
+    'stop1100_100mm'     :  99,
+    'stop1100_1000mm'     :  99,
+    'stop1200_1mm'     :  99,
+    'stop1200_10mm'     :  99,
+    'stop1200_100mm'     :  99,
+    'stop1200_1000mm'     :  99,
     
  
     'DoubleMu_2015B'   :  40,
     'DoubleMu_2015C'   : 187,
-    'DoubleMu_2015D'   : 40,
+    'DoubleMu_2015D_v3': 1000,
+    'DoubleMu_2015D_v4': 1000, 
     
     'SingleMu_2015B'      :  57,
     'SingleMu_2015C'      : 220,
@@ -491,7 +494,8 @@ nJobs = {
     
     'DoubleEG_2015B'      :  100,
     'DoubleEG_2015C'      :  298,
-    'DoubleEG_2015D'   :  1000,
+    'DoubleEG_2015D_v3'   :  1000,
+    'DoubleEG_2015D_v4'   :  1000,
     
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
@@ -499,8 +503,8 @@ nJobs = {
     'MuonEG_2015D_v4'   :  1000,
     
     #NoBPTX data
-    'NoBPTX_2015D_v3' : 9999,
-    'NoBPTX_2015D_v4' : 9999,
+    'NoBPTX_2015D_v3' : 999,
+    'NoBPTX_2015D_v4' : 999,
     ############################################################################
 }
 
@@ -669,7 +673,8 @@ maxEvents = {
  
     'DoubleMu_2015B'       : -1,
     'DoubleMu_2015C'       : -1,
-    'DoubleMu_2015D'       : -1,
+    'DoubleMu_2015D_v3'    : -1,
+    'DoubleMu_2015D_v4'    : -1,
     
     'SingleMu_2015B'       : -1,
     'SingleMu_2015C'       : -1,
@@ -687,7 +692,8 @@ maxEvents = {
     
     'DoubleEG_2015B'       : -1,
     'DoubleEG_2015C'       : -1,
-    'DoubleEG_2015D'       : -1,
+    'DoubleEG_2015D_v3'       : -1,
+    'DoubleEG_2015D_v4'       : -1,
     
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
@@ -881,6 +887,8 @@ types = {
     'DoubleMu_2015B'   : "data",
     'DoubleMu_2015C'   : "data",
     'DoubleMu_2015D'   : "data",
+    'DoubleMu_2015D_v3'   : "data",
+    'DoubleMu_2015D_v4'   : "data",
     'DoubleMu_2015'    : "data",
     
     'SingleMu_2015B'    : "data",
@@ -904,7 +912,8 @@ types = {
     
     'DoubleEG_2015B'   : "data",
     'DoubleEG_2015C'   : "data",
-    'DoubleEG_2015D'   : "data",
+    'DoubleEG_2015D_v3': "data",
+    'DoubleEG_2015D_v4': "data",
     'DoubleEG_2015'    : "data",
     
     'MuonEG_2015B'   : "data",
@@ -1097,7 +1106,8 @@ colors = {
     
     'DoubleMu_2015B'   : 1,
     'DoubleMu_2015C'   : 1,
-    'DoubleMu_2015D'   : 1,
+    'DoubleMu_2015D_v3'   : 1,
+    'DoubleMu_2015D_v4'   : 1,
     'DoubleMu_2015'   : 1,
     
     'SingleMu_2015B'   : 1,
@@ -1121,7 +1131,8 @@ colors = {
     
     'DoubleEG_2015B'   : 1,
     'DoubleEG_2015C'   : 1,
-    'DoubleEG_2015D'   : 1,
+    'DoubleEG_2015D_v3': 1,
+    'DoubleEG_2015D_v4': 1,
     'DoubleEG_2015'   : 1,
     
     'MuonEG_2015B'   : 1,
@@ -1315,7 +1326,8 @@ labels = {
     'DoubleMu_2015'      : "Double Muon 2015 data",
     'DoubleMu_2015B'     : "DoubleMu 2015B data",
     'DoubleMu_2015C'     : "DoubleMu 2015C data",
-    'DoubleMu_2015D'     : "DoubleMu 2015D data",
+    'DoubleMu_2015D_v3'  : "DoubleMu 2015D_v3 data",
+    'DoubleMu_2015D_v4'  : "DoubleMu 2015D_v4 data",
     
     'SingleMu_2015'      : "Single Muon 2015 data",
     'SingleMu_2015B'     : "SingleMu 2015B data",
@@ -1339,7 +1351,8 @@ labels = {
     'DoubleEG_2015'      : "DoubleEG 2015 data",
     'DoubleEG_2015B'     : "DoubleEG 2015B data",
     'DoubleEG_2015C'     : "DoubleEG 2015C data",
-    'DoubleEG_2015D'     : "DoubleEG 2015C data",
+    'DoubleEG_2015D_v3'  : "DoubleEG 2015D_v3 data",
+    'DoubleEG_2015D_v4' : "DoubleEG 2015D_v4 data",
     
     'MuonEG_2015'      : "MuonEG 2015 data",
     'MuonEG_2015B'     : "MuonEG 2015B data",

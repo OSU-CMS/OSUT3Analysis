@@ -38,6 +38,7 @@ parser.add_option("-t", "--typeOfSource", dest="FileType", default = 'OSUT3Ntupl
 parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")  # Dataset is also the name of the output directory in the working directory if FileType == 'OSUT3Ntuple'.  
 parser.add_option("-c", "--configuration", dest="Config", default = "", help="Specify the configuration file to run.")
 parser.add_option("-n", "--numberOfJobs", dest="NumberOfJobs", default = -1, help="Specify how many jobs to submit.")
+parser.add_option("-j", "--numberOfFilesPerJob", dest="NumberOfFilesPerJob", default = -1, help="Specify how many input files per job to submit. Overrides --numberOfJobs argument.")
 parser.add_option("-u", "--userCondorSubFile", dest="CondorSubFilr", default = "", help="Specify the condor.sub file you want to use if you have to add arguments.")
 parser.add_option("-U", "--uniqueEventId", action="store_true", dest="Unique", default=False, help="Assign unique and continuos event IDs")
 parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", default = False, help="Just generate necessary config files without executing them.")
@@ -639,6 +640,8 @@ if arguments.Redirector != "":
 ###############################################################################
 #                End of Setup stage, will begin to submit jobs                #
 ###############################################################################
+# Remove duplicates
+split_datasets = list(set(split_datasets))
 
 currentCondorSubArgumentsSet = {}
 #Check whether the user wants to resubmit the failed condor jobs.
@@ -651,18 +654,20 @@ if not arguments.Resubmit:
             currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
             EventsPerJob = -1 
             DatasetName = dataset
-            NumberOfJobs = arguments.NumberOfJobs
+            NumberOfJobs = int(arguments.NumberOfJobs)
             DatasetRead = {}
             MaxEvents = arguments.MaxEvents
             Config =  arguments.Config
             if arguments.localConfig:	
-                NumberOfJobs = nJobs[dataset]
+                if NumberOfJobs < 0:
+                    NumberOfJobs = nJobs[dataset]  # If user has specified NumberOfJobs, use that value.  
                 if not arguments.Generic:
                      DatasetName = dataset_names[dataset]
                 else:
                      DatasetName = dataset 
                 MaxEvents = maxEvents[dataset]
                 Config = config_file
+
             GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
             
             if arguments.FileType == 'OSUT3Ntuple': 
@@ -696,13 +701,17 @@ if not arguments.Resubmit:
             if not NumberOfFiles:
                 continue
             UseAAA = DatasetRead['useAAA']
+
             if NumberOfJobs > NumberOfFiles:
                 NumberOfJobs = NumberOfFiles
             if not arguments.localConfig:     
                 NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
+            if float(arguments.NumberOfFilesPerJob) > 0:
+                NumberOfJobs = int(math.ceil(NumberOfFiles/float(arguments.NumberOfFilesPerJob)))           
             if MaxEvents > 0:
     	        EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs)) 	
-    
+
+
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
             os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
@@ -713,6 +722,7 @@ if not arguments.Resubmit:
                     os.system('mv ' + jsonFile + ' ' + WorkDir + '/')
             SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,dataset, SkimChannelNames, jsonFile)
     
+
     	    if lxbatch:
     	        MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
     	    else:

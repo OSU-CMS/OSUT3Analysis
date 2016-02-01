@@ -40,7 +40,6 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
     {
-      reco::GsfElectron gsfElectron = GsfElectron(object);  
       osu::Electron electron (object, particles, cfg_);
       if(event.getByLabel (rho_, rho))
         electron.set_rho((float)(*rho)); 

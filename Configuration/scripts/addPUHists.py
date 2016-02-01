@@ -29,6 +29,7 @@ parser = OptionParser()
 parser = set_commandline_arguments(parser)
 
 parser.add_option("-i", "--inputFile", dest="inputFile", default = "", help="Specify the inputFile")
+parser.add_option("--delete", dest="delete", action="store_true", default=False, help="Delete given datasets in the pu.root")
 (arguments, args) = parser.parse_args()  
 
 from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TArrow, THStack, TIter, TKey, TGraphErrors, Double 
@@ -96,35 +97,53 @@ def addDataDistribution(fout, inputFile):
         print fin + " doe not have pileup histograms"              
         return 
     else:
+        h2 = fout.Get(str(inputFile.split('.')[0]))
+        if h2:
+            print "  The histogram " + h2.GetName() + " already exists in the destination file."
+            overwrite = raw_input("  Do you want to overwrite it? (y/n): ")
+            if not (overwrite is "y"):
+                print "  Will not overwrite existing histogram."
+                return # Only overwrite if the user enters "y"  
+
+        # delete all previously existing instances of the histogram
+            print "  Will overwrite existing histogram."
+            fout.Delete(str(inputFile.split('.')[0])+";*")
         h1.SetName(str(inputFile.split('.')[0]))
         fout.cd()
         h1.Write()
 
+def deletePUDistributions(fout,dataset):
+    h = fout.Get(dataset)
+    if h:
+        fout.Delete(dataset + ";*")
+
 if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
-
-    UseExisting = False
-    if arguments.condorDir:
-        condor_dir = set_condor_output_dir(arguments)
+ 
+    if arguments.delete:
+       for dataset in datasets:
+           fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE");
+           deletePUDistributions(fout,dataset)
     else:
-        overwrite = raw_input("Do you want to copy an existing pu distribution and rename it(Type y) or you just forget to type -c(Type n, BTW, Shame on you)? ")
-        if overwrite is "y":
-    	    UseExisting = True
+        UseExisting = False
+        if arguments.condorDir:
+            condor_dir = set_condor_output_dir(arguments)
         else:
-	    sys.exit(0)
-    
-
-
-########################################################################################
-########################################################################################
-    if not UseExisting:
-        for dataset in datasets:    
-     	    copyOneFile(dataset)  
-    else:
-        fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE"); 
-        copyAndRenameOneFile(fout, datasets)
-        fout.Close()
+            overwrite = raw_input("Do you want to copy an existing pu distribution and rename it(Type y) or you just forget to type -c(Type n, BTW, Shame on you)? ")
+            if overwrite is "y":
+        	UseExisting = True
+            else:
+    	        sys.exit(0)
+    ########################################################################################
+    ########################################################################################
+        if not UseExisting:
+            for dataset in datasets:    
+         	copyOneFile(dataset)  
+        else:
+            fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE"); 
+            copyAndRenameOneFile(fout, datasets)
+            fout.Close()
 elif arguments.inputFile:
     fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE");
     addDataDistribution(fout, str(arguments.inputFile))

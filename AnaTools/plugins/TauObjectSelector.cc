@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(taus)
-  typedef ObjectSelector<osu::Tau> TauObjectSelector;
+typedef ObjectSelector<osu::Tau, TYPE(taus)> TauObjectSelector;
   DEFINE_FWK_MODULE(TauObjectSelector);
 #endif
