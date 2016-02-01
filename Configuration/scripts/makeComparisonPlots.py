@@ -17,7 +17,6 @@ from OSUT3Analysis.Configuration.formattingUtilities import *
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
 
-parser.remove_option("-c")
 parser.remove_option("-e")
 parser.remove_option("-n")
 parser.remove_option("--2D")

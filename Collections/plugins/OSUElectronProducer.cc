@@ -26,7 +26,6 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   using namespace reco;
   
   edm::Handle<vector<TYPE (electrons)> > collection;
-  edm::Handle<reco::ConversionCollection> conversions;
   edm::Handle<reco::BeamSpot> beamSpot;
   edm::Handle<double> rho;
   

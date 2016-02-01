@@ -819,6 +819,7 @@ types = {
     
     #QCD EMEnriched
     'QCD_EMEnriched_15to20'         : "bgMC",
+    'QCD_EMEnriched'                : "bgMC",
     'QCD_EMEnriched_20to30'         : "bgMC",
     'QCD_EMEnriched_30to50'         : "bgMC",
     'QCD_EMEnriched_50to80'         : "bgMC",
@@ -828,6 +829,7 @@ types = {
     'QCD_EMEnriched_300toInf'       : "bgMC",
    
     #QCD bcToE
+    'QCD_bcToE'                     : "bgMC", 
     'QCD_bcToE_15to20'              : "bgMC", 
     'QCD_bcToE_20to30'              : "bgMC",
     'QCD_bcToE_30to80'              : "bgMC",
@@ -1023,7 +1025,7 @@ colors = {
     'WW_50ns'                  : 390,
     #QCD MuEnriched
     'QCD_MuEnriched_20toInf'        : 623, 
-    'QCD_MuEnriched'        : 623, 
+    'QCD_MuEnriched'                : 623, 
     'QCD_MuEnriched_15to20'         : 623,
     'QCD_MuEnriched_20to30'         : 623,
     'QCD_MuEnriched_30to50'         : 623,
@@ -1038,6 +1040,7 @@ colors = {
     'QCD_MuEnriched_1000toInf'      : 623,
     
     #QCD EMEnriched
+    'QCD_EMEnriched'                : 791,
     'QCD_EMEnriched_15to20'         : 791,
     'QCD_EMEnriched_20to30'         : 791,
     'QCD_EMEnriched_30to50'         : 791,
@@ -1048,6 +1051,7 @@ colors = {
     'QCD_EMEnriched_300toInf'       : 791,
    
     #QCD bcToE
+    'QCD_bcToE'                     : 794, 
     'QCD_bcToE_15to20'              : 794, 
     'QCD_bcToE_20to30'              : 794,
     'QCD_bcToE_30to80'              : 794,
@@ -1257,6 +1261,7 @@ labels = {
     'QCD_MuEnriched_1000toInf'      : "QCD MuEnriched Pt 1000-Inf ",
     
     #QCD EMEnriched
+    'QCD_EMEnriched'                : "QCD EMEnriched",
     'QCD_EMEnriched_15to20'         : "QCD EMEnriched Pt 15-20 ",
     'QCD_EMEnriched_20to30'         : "QCD EMEnriched Pt 20-30 ",
     'QCD_EMEnriched_30to50'         : "QCD EMEnriched Pt 30-50 ",
@@ -1267,6 +1272,7 @@ labels = {
     'QCD_EMEnriched_300toInf'       : "QCD EMEnriched Pt 300-Inf ",
    
     #QCD bcToE
+    'QCD_bcToE'                     : "QCD bcToE", 
     'QCD_bcToE_15to20'              : "QCD bcToE Pt 15-20 ", 
     'QCD_bcToE_20to30'              : "QCD bcToE Pt 20-30 ",
     'QCD_bcToE_30to80'              : "QCD bcToE Pt 30-80 ",
