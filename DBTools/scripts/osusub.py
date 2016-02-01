@@ -470,7 +470,12 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
                 datasetRead['numberOfFiles'] = numInputFiles
                 return datasetRead
-            SkimModifier(Label, Directory)
+            SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' 
+            #Copy the datasetInfo file from the skim directory.
+            os.system('cp ' + SkimDirectory + 'datasetInfo_' + Label + '_cfg.py ' + datasetInfoName)
+            #Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
+            SkimModifier(Label, Directory, crossSection)
+            
             InitializeAAA = ""
         sys.path.append(Directory)
         exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
@@ -479,7 +484,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             continueForNonPresentDataset = True
             if not status == 'present':
 	        userDecision = raw_input('The dataset you selected is not marked as present on Tier3, do you still want to continue?(Type "y" for yes and "n" for no.)')
-	        if userDecision == "n":
+                if userDecision == "n":
                     continueForNonPresentDataset = False 
             if not continueForNonPresentDataset:
 	        return    
@@ -525,7 +530,7 @@ def SkimChannelFinder(userConfig, Directory):
 ################################################################################
 #            Function to modify the dataset_*_Info_cfy file for skim.          #  
 ################################################################################
-def SkimModifier(Label, Directory):
+def SkimModifier(Label, Directory, crossSection):
     SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
     OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0]  
     SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] 
@@ -536,6 +541,9 @@ def SkimModifier(Label, Directory):
     fin.close()
     orig = orig.replace("listOfFiles",   "originalListOfFiles")  
     orig = orig.replace("numberOfFiles", "originalNumberOfFiles")  
+    #Use the up-to-date crossSection all the time and keep track of what value was used when making the skim. For a dataset not registered on T3, the corssSection entering this function will be -1, in this case we do not rewrite the crossSection. The value used when making the skim should be added by the -x option which is stored in the datasetInfo file. One rare case is that you want to change the crossSection to -1, but it can be done in the mergeing step where you merge the datasets with intLumi set to -1.  
+    if crossSection != -1:
+        orig = orig.replace("crossSection", "crossSection = " + str(crossSection) + "# Value used in making the skim is: ")  
     skimFiles = GetListOfRootFiles(SkimDirectory)
     add  = "\n"
     add += 'skimDirectory = "' + SkimDirectory + '"\n'  

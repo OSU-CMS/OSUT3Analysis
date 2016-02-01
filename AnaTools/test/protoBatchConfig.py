@@ -13,12 +13,14 @@ intLumi = 19700 # from 8 TeV MuEG dataset
 
 # create list of datasets to process
 datasets = [
-    'MuEG_22Jan2013',
-    'WNjets',
-    'Diboson',
-    'SingleTop',
-    'DY',
-    'TTbar',
+    'MuonEG_2015D',
+    'MuEG_2015D',
+    #'MuEG_22Jan2013',
+    #'WNjets',
+    #'Diboson',
+    #'SingleTop',
+    #'DY',
+    #'TTbar',
 ]
 
 InputCondorArguments = {}

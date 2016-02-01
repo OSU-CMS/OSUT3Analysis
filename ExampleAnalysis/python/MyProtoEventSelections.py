@@ -79,32 +79,44 @@ preselection = cms.PSet(
         cms.PSet (
             inputCollection = cms.vstring("electrons"),
             cutString = cms.string("                              \
-              (pt > 7 && pt < 10                                  \
-                && ((abs (scEta) < 0.8 && mvaNonTrigV0 > 0.47)    \
-                || (abs (scEta) >= 0.8 && abs (scEta) < 1.479 && mvaNonTrigV0 > 0.004) \
-                || (abs (scEta) >= 1.479 && abs (scEta) < 2.5 && mvaNonTrigV0 > 0.295))) \
-           || (pt >= 10                                           \
-                && ((abs (scEta) < 0.8 && mvaNonTrigV0 > -0.34)   \
-                || (abs (scEta) >= 0.8 && abs (scEta) < 1.479 && mvaNonTrigV0 > -0.65) \
-                || (abs (scEta) >= 1.479 && abs (scEta) < 2.5 && mvaNonTrigV0 > 0.60)))  \
-           "),
+          (isEB & \
+          missingInnerHits_ <= 2 & \
+          abs(deltaEtaSuperClusterTrackAtVtx) < 0.00926 & \
+          abs(deltaPhiSuperClusterTrackAtVtx) < 0.0336 & \
+          full5x5_sigmaIetaIeta < 0.0101 & \
+          hadronicOverEm < 0.0597 & \
+          abs(1/ecalEnergy - eSuperClusterOverP/ecalEnergy) < 0.012 & \
+          passConversionVeto)|\
+          (isEE & \
+          missingInnerHits_ <= 1 & \
+          abs(deltaEtaSuperClusterTrackAtVtx) < 0.00724 & \
+          abs(deltaPhiSuperClusterTrackAtVtx) < 0.0918 & \
+          full5x5_sigmaIetaIeta < 0.0279 & \
+          hadronicOverEm < 0.0615 & \
+          abs(1/ecalEnergy - eSuperClusterOverP/ecalEnergy) < 0.00999 & \
+          passConversionVeto)"),
             numberRequired = cms.string(">= 1"),
-            alias = cms.string("electron ID")
-        ),
-        # PHOTON CONVERSION VETO
-        cms.PSet (
-            inputCollection = cms.vstring("electrons"),
-            cutString = cms.string("passConvVeto > 0 && numberOfLostHits = 0"),
-            numberRequired = cms.string(">= 1"),
-            alias = cms.string("electron conversion rejection")
-        ),
+            alias = cms.string("electron tight displaced ID")
+            ),
         # ELECTRON ISOLATION
         cms.PSet (
             inputCollection = cms.vstring("electrons"),
-            cutString = cms.string("((chargedHadronIsoDR03 + max (0.0, neutralHadronIsoDR03 + photonIsoDR03 - AEffDr03 * rhoPrime)) / pt) < 0.1"),
+            cutString = cms.string("        \
+        ((pfIso_.sumChargedHadronPt   \
+        + max(0.0,                    \
+        pfIso_.sumNeutralHadronEt     \
+        + pfIso_.sumPhotonEt          \
+        - rho*AEff))                  \
+        /pt <= 0.0646 && isEE)  |        \
+        ((pfIso_.sumChargedHadronPt   \
+        + max(0.0,                    \
+        pfIso_.sumNeutralHadronEt     \
+        + pfIso_.sumPhotonEt          \
+        - rho_*AEff_))                \
+        /pt <= 0.0354 && isEB)"),
             numberRequired = cms.string(">= 1"),
             alias = cms.string("electron isolation")
-        ),
+            ),
         # MUON ETA CUT
         cms.PSet (
             inputCollection = cms.vstring("muons"),
@@ -120,25 +132,33 @@ preselection = cms.PSet(
         # MUON ID
         cms.PSet (
             inputCollection = cms.vstring("muons"),
-            cutString = cms.string("               \
-               isGlobalMuon                        \
-            && isPFMuon                            \
-            && (normalizedChi2 < 10.0)             \
-            && (numberOfValidMuonHits > 0)         \
-            && (numberOfMatchedStations > 1)       \
-            && (numberOfValidPixelHits > 0)        \
-            && (numberOfLayersWithMeasurement > 5) \
-            "),
+            # moving these selections to a separate cut
+            # to avoid non-global muons from passing the ID
+            #        isGlobalMuon & \
+                #        isPFMuon & \
+                cutString = cms.string("\
+        globalTrack.hitPattern_.numberOfValidMuonHits > 0 & \
+        globalTrack.normalizedChi2 < 10 & \
+        numberOfMatchedStations > 1 & \
+        innerTrack.hitPattern_.numberOfValidPixelHits > 0 & \
+        innerTrack.hitPattern_.trackerLayersWithMeasurement > 5"),
             numberRequired = cms.string(">= 1"),
-            alias = cms.string("muon ID")
-        ),
+            alias = cms.string("muon tight displaced ID")
+            ),
         # MUON ISOLATION
         cms.PSet (
             inputCollection = cms.vstring("muons"),
-            cutString = cms.string("((pfIsoR04SumChargedHadronPt + max (0.0, pfIsoR04SumNeutralHadronEt + pfIsoR04SumPhotonEt - 0.5 * pfIsoR04SumPUPt)) / pt) < 0.12"),
+            cutString = cms.string("                \
+        (pfIsolationR04_.sumChargedHadronPt \
+        + max(0.0,                          \
+        pfIsolationR04_.sumNeutralHadronEt  \
+        + pfIsolationR04_.sumPhotonEt       \
+        - 0.5*pfIsolationR04_.sumPUPt))     \
+        /pt <= 0.15                         \
+       "),
             numberRequired = cms.string(">= 1"),
             alias = cms.string("muon isolation")
-        ),
+            ),
         # VETO EVENTS WITH EXTRA ELECTRON
         cms.PSet (
             inputCollection = cms.vstring("electrons"),
@@ -166,44 +186,15 @@ preselection = cms.PSet(
             numberRequired = cms.string("== 1")
         ),
         #########START OF ADDITIONAL CUTS TO REQUIRE LEPTON IS NOT IN A JET
-        # ONLY CONSIDER 30 GEV JETS
+        # ONLY CONSIDER 10 GEV JETS
         cms.PSet (
             inputCollection = cms.vstring("jets"),
             cutString = cms.string("pt > 10"),
             numberRequired = cms.string(">= 0")
         ),
-        # ELECTRON NOT OVERLAPPING WITH JET
-        cms.PSet (
-            inputCollection = cms.vstring("electrons", "jets"),
-            cutString = cms.string("deltaR(electron, jet) < 0.5"),
-            numberRequired = cms.string("== 0"),
-            isVeto = cms.bool(True),
-            alias = cms.string("electron near jet veto"),
-        ),
-        # MUON NOT OVERLAPPING WITH JET
-        cms.PSet (
-            inputCollection = cms.vstring("muons", "jets"),
-            cutString = cms.string("deltaR(muon, jet) < 0.5"),
-            numberRequired = cms.string("== 0"),
-            isVeto = cms.bool(True),
-            alias = cms.string("muon near jet veto"),
-        ),
         ########### END OF ADDITIONAL CUTS TO REQUIRE LEPTON IS NOT IN A JET
-
-        # RESTRICT ELECTRONS TO RECONSTRUCTION ACCEPTANCE
-        cms.PSet (
-            inputCollection = cms.vstring("electrons"),
-            cutString = cms.string("abs(correctedD0) < 2"),
-            numberRequired = cms.string("== 1")
-        ),
-        # RESTRICT MUONS TO TRIGGER ACCEPTANCE
-        cms.PSet (
-            inputCollection = cms.vstring("muons"),
-            cutString = cms.string("abs(correctedD0) < 2"),
-            numberRequired = cms.string("== 1")
-        ),
+        )
     )
-)
 
 ##########################################################################
 
