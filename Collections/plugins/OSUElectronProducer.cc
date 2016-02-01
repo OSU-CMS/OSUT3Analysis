@@ -9,7 +9,8 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   cfg_ (cfg),
   beamSpot_       (cfg.getParameter<edm::InputTag> ("beamSpot")),
   conversions_    (cfg.getParameter<edm::InputTag> ("conversions")),
-  rho_            (cfg.getParameter<edm::InputTag> ("rho"))
+  rho_            (cfg.getParameter<edm::InputTag> ("rho")),
+  vertices_            (cfg.getParameter<edm::InputTag> ("vertices"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
@@ -30,6 +31,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<reco::ConversionCollection> conversions;
   edm::Handle<reco::BeamSpot> beamSpot;
   edm::Handle<double> rho;
+  edm::Handle<vector<TYPE(primaryvertexs)> > vertices;
   
   edm::Handle<vector<osu::Mcparticle> > particles;
   anatools::getCollection (edm::InputTag ("", ""), particles, event);
@@ -43,7 +45,11 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       if(event.getByLabel (rho_, rho))
         electron.set_rho((float)(*rho)); 
       if(event.getByLabel (beamSpot_, beamSpot) && event.getByLabel (conversions_, conversions))
-        electron.set_vtxFitConversion(ConversionTools::hasMatchedConversion(gsfElectron, conversions, (*beamSpot).position()));
+        {
+          electron.set_vtxFitConversion(ConversionTools::hasMatchedConversion(gsfElectron, conversions, beamSpot->position()));
+          if (event.getByLabel (vertices_, vertices) && vertices->size ())
+            electron.set_passesTightID_noIsolation (*beamSpot, vertices->at (0), conversions);
+        }
       electron.set_missingInnerHits(object.gsfTrack()->hitPattern ().numberOfHits(reco::HitPattern::MISSING_INNER_HITS));
       float effectiveArea = 0;
       if(abs(object.superCluster()->eta()) >= 0.0000 && abs(object.superCluster()->eta()) < 1.0000)

@@ -29,6 +29,7 @@ class OSUElectronProducer : public edm::EDProducer
     edm::InputTag      beamSpot_;
     edm::InputTag      conversions_;
     edm::InputTag      rho_;
+    edm::InputTag      vertices_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
