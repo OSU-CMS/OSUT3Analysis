@@ -12,7 +12,6 @@ osu::Electron::Electron ()
 
 osu::Electron::Electron (const TYPE(electrons) &electron) :
   GenMatchable               (electron),
-  vtxFitConversion_          (false),
   rho_                       (INVALID_VALUE),
   passesTightID_noIsolation_ (false)
 {
@@ -20,7 +19,6 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
 
 osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vector<osu::Mcparticle> > &particles) :
   GenMatchable               (electron, particles),
-  vtxFitConversion_          (false),
   rho_                       (INVALID_VALUE),
   passesTightID_noIsolation_ (false)
 {
@@ -28,7 +26,6 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
 
 osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
   GenMatchable               (electron, particles, cfg),
-  vtxFitConversion_          (false),
   rho_                       (INVALID_VALUE),
   passesTightID_noIsolation_ (false)
 {
@@ -50,12 +47,6 @@ const float
 osu::Electron::rho () const
 {
   return this->rho_;
-}
-
-const bool
-osu::Electron::vtxFitConversion () const
-{
-  return this->vtxFitConversion_;
 }
 
 const bool

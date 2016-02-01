@@ -24,6 +24,7 @@ class OSUElectronProducer : public edm::EDProducer
     edm::InputTag      collection_;
     edm::ParameterSet  cfg_;
     edm::InputTag      beamSpot_;
+    edm::InputTag      conversions_;
     edm::InputTag      rho_;
     edm::InputTag      vertices_;
     ////////////////////////////////////////////////////////////////////////////
