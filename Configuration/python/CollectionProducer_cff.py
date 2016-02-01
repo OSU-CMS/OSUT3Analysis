@@ -44,9 +44,10 @@ collectionProducer.bxlumis = cms.EDProducer ("OSUBxlumiProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
-    conversions = cms.InputTag  ("reducedEgamma",    "reducedConversions",""),
-    rho = cms.InputTag  ("fixedGridRhoFastjetAll",    "",                ""),
-    beamSpot = cms.InputTag  ("offlineBeamSpot",           "",                "")
+    conversions  =  cms.InputTag  ("reducedEgamma",                  "reducedConversions",  ""),
+    rho          =  cms.InputTag  ("fixedGridRhoFastjetAll",         "",                    ""),
+    beamSpot     =  cms.InputTag  ("offlineBeamSpot",                "",                    ""),
+    vertices     =  cms.InputTag  ('offlineSlimmedPrimaryVertices',  ''),
 )
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
