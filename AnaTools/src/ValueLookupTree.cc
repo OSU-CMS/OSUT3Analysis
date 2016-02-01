@@ -778,6 +778,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
                                   valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi"));
 
           return sqrt (2.0 * pt0 * pt1 * (1 - cos (dPhi)));
+        }
       else if (op == "pT")
         {
           double px = 0.0, py = 0.0;
