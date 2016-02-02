@@ -1,7 +1,115 @@
 <lcgdict>
-  <class pattern="osu::*"/>
-  <class pattern="std::vector<osu::*>"/>
-  <class pattern="edm::Wrapper<osu::*>"/>
-  <class pattern="edm::Wrapper<std::vector<osu::*> >"/>
-  <class pattern="edm::Ref<std::vector<osu::*> >"/>
+  <class name="osu::Basicjet"/>
+  <class name="std::vector<osu::Basicjet>"/>
+  <class name="edm::Wrapper<osu::Basicjet>"/>
+  <class name="edm::Wrapper<std::vector<osu::Basicjet> >"/>
+  <class name="edm::Ref<std::vector<osu::Basicjet> >"/>
+
+  <class name="osu::Beamspot"/>
+  <class name="std::vector<osu::Beamspot>"/>
+  <class name="edm::Wrapper<osu::Beamspot>"/>
+  <class name="edm::Wrapper<std::vector<osu::Beamspot> >"/>
+  <class name="edm::Ref<std::vector<osu::Beamspot> >"/>
+
+  <class name="osu::Bjet"/>
+  <class name="std::vector<osu::Bjet>"/>
+  <class name="edm::Wrapper<osu::Bjet>"/>
+  <class name="edm::Wrapper<std::vector<osu::Bjet> >"/>
+  <class name="edm::Ref<std::vector<osu::Bjet> >"/>
+
+  <class name="osu::Bxlumi"/>
+  <class name="std::vector<osu::Bxlumi>"/>
+  <class name="edm::Wrapper<osu::Bxlumi>"/>
+  <class name="edm::Wrapper<std::vector<osu::Bxlumi> >"/>
+  <class name="edm::Ref<std::vector<osu::Bxlumi> >"/>
+
+  <class name="osu::Electron"/>
+  <class name="std::vector<osu::Electron>"/>
+  <class name="edm::Wrapper<osu::Electron>"/>
+  <class name="edm::Wrapper<std::vector<osu::Electron> >"/>
+  <class name="edm::Ref<std::vector<osu::Electron> >"/>
+
+  <class name="osu::Event"/>
+  <class name="std::vector<osu::Event>"/>
+  <class name="edm::Wrapper<osu::Event>"/>
+  <class name="edm::Wrapper<std::vector<osu::Event> >"/>
+  <class name="edm::Ref<std::vector<osu::Event> >"/>
+
+  <class name="osu::Eventvariable"/>
+  <class name="std::vector<osu::Eventvariable>"/>
+  <class name="edm::Wrapper<osu::Eventvariable>"/>
+  <class name="edm::Wrapper<std::vector<osu::Eventvariable> >"/>
+  <class name="edm::Ref<std::vector<osu::Eventvariable> >"/>
+
+  <class name="osu::Genjet"/>
+  <class name="std::vector<osu::Genjet>"/>
+  <class name="edm::Wrapper<osu::Genjet>"/>
+  <class name="edm::Wrapper<std::vector<osu::Genjet> >"/>
+  <class name="edm::Ref<std::vector<osu::Genjet> >"/>
+
+  <class name="osu::Jet"/>
+  <class name="std::vector<osu::Jet>"/>
+  <class name="edm::Wrapper<osu::Jet>"/>
+  <class name="edm::Wrapper<std::vector<osu::Jet> >"/>
+  <class name="edm::Ref<std::vector<osu::Jet> >"/>
+
+  <class name="osu::Mcparticle"/>
+  <class name="std::vector<osu::Mcparticle>"/>
+  <class name="edm::Wrapper<osu::Mcparticle>"/>
+  <class name="edm::Wrapper<std::vector<osu::Mcparticle> >"/>
+  <class name="edm::Ref<std::vector<osu::Mcparticle> >"/>
+
+  <class name="osu::Met"/>
+  <class name="std::vector<osu::Met>"/>
+  <class name="edm::Wrapper<osu::Met>"/>
+  <class name="edm::Wrapper<std::vector<osu::Met> >"/>
+  <class name="edm::Ref<std::vector<osu::Met> >"/>
+
+  <class name="osu::Muon"/>
+  <class name="std::vector<osu::Muon>"/>
+  <class name="edm::Wrapper<osu::Muon>"/>
+  <class name="edm::Wrapper<std::vector<osu::Muon> >"/>
+  <class name="edm::Ref<std::vector<osu::Muon> >"/>
+
+  <class name="osu::Photon"/>
+  <class name="std::vector<osu::Photon>"/>
+  <class name="edm::Wrapper<osu::Photon>"/>
+  <class name="edm::Wrapper<std::vector<osu::Photon> >"/>
+  <class name="edm::Ref<std::vector<osu::Photon> >"/>
+
+  <class name="osu::Primaryvertex"/>
+  <class name="std::vector<osu::Primaryvertex>"/>
+  <class name="edm::Wrapper<osu::Primaryvertex>"/>
+  <class name="edm::Wrapper<std::vector<osu::Primaryvertex> >"/>
+  <class name="edm::Ref<std::vector<osu::Primaryvertex> >"/>
+
+  <class name="osu::Supercluster"/>
+  <class name="std::vector<osu::Supercluster>"/>
+  <class name="edm::Wrapper<osu::Supercluster>"/>
+  <class name="edm::Wrapper<std::vector<osu::Supercluster> >"/>
+  <class name="edm::Ref<std::vector<osu::Supercluster> >"/>
+
+  <class name="osu::Tau"/>
+  <class name="std::vector<osu::Tau>"/>
+  <class name="edm::Wrapper<osu::Tau>"/>
+  <class name="edm::Wrapper<std::vector<osu::Tau> >"/>
+  <class name="edm::Ref<std::vector<osu::Tau> >"/>
+
+  <class name="osu::Track"/>
+  <class name="std::vector<osu::Track>"/>
+  <class name="edm::Wrapper<osu::Track>"/>
+  <class name="edm::Wrapper<std::vector<osu::Track> >"/>
+  <class name="edm::Ref<std::vector<osu::Track> >"/>
+
+  <class name="osu::Trigobj"/>
+  <class name="std::vector<osu::Trigobj>"/>
+  <class name="edm::Wrapper<osu::Trigobj>"/>
+  <class name="edm::Wrapper<std::vector<osu::Trigobj> >"/>
+  <class name="edm::Ref<std::vector<osu::Trigobj> >"/>
+
+  <class name="osu::Uservariable"/>
+  <class name="std::vector<osu::Uservariable>"/>
+  <class name="edm::Wrapper<osu::Uservariable>"/>
+  <class name="edm::Wrapper<std::vector<osu::Uservariable> >"/>
+  <class name="edm::Ref<std::vector<osu::Uservariable> >"/>
 </lcgdict>
