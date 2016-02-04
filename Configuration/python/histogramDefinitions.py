@@ -172,6 +172,13 @@ MuonIPHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(200, 0, 20),
             inputVariables = cms.vstring("abs((muon.vz - beamspot.z0) - ((muon.vx - beamspot.x0)*muon.px + (muon.vy - beamspot.y0)*muon.py)/muon.pt*(muon.pz/muon.pt))"),
         ),
+        cms.PSet (
+            name = cms.string("muonDbetaIsolationVsMuonIp"),
+            title = cms.string("Muon Isolation vs Ip; muon Ip d_{xy} [cm]; muon #Delta#beta Isolation"),
+            binsX = cms.untracked.vdouble(500, 0, 0.5),
+            binsY = cms.untracked.vdouble(600, 0, 6.0),
+            inputVariables = cms.vstring("abs(-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt","(muon.pfIsolationR04_.sumChargedHadronPt + max(0.0,muon.pfIsolationR04_.sumNeutralHadronEt + muon.pfIsolationR04_.sumPhotonEt - 0.5*muon.pfIsolationR04_.sumPUPt))/muon.pt"),
+        ),
     )
 )
 
@@ -395,6 +402,13 @@ ElectronIPHistograms = cms.PSet(
             title = cms.string("Electron |d_{z}| wrt Beamspot; electron |d_{z}| [cm]"),
             binsX = cms.untracked.vdouble(200, 0, 20),
             inputVariables = cms.vstring("abs((electron.vz - beamspot.z0) - ((electron.vx - beamspot.x0)*electron.px + (electron.vy - beamspot.y0)*electron.py)/electron.pt*(electron.pz/electron.pt))"),
+        ),
+        cms.PSet (
+            name = cms.string("electronDbetaIsolationVsElectronIp"),
+            title = cms.string("Electron Isolation vs Ip; electron Ip d_{xy} [cm]; electron #Delta#beta Isolation"),
+            binsX = cms.untracked.vdouble(500, 0, 0.5),
+            binsY = cms.untracked.vdouble(300, 0, 3.0),
+            inputVariables = cms.vstring("abs(-(electron.vx - beamspot.x0)*electron.py + (electron.vy - beamspot.y0)*electron.px)/electron.pt","(electron.pfIso_.sumChargedHadronPt + max(0.0,electron.pfIso_.sumNeutralHadronEt + electron.pfIso_.sumPhotonEt - electron.rho*electron.AEff))/electron.pt"),
         ),
     )
 )
@@ -770,8 +784,15 @@ JetBjetHistograms = cms.PSet(
 ##########################################################################################
 
 MuonJetHistograms = cms.PSet(
-    inputCollection = cms.vstring("muons","jets"),
+    inputCollection = cms.vstring("muons","jets","beamspots"),
     histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("muonAbsIPvsJetCSV"),
+            title = cms.string("Muon Abs IP vs Jet CSV; Jet CSV"),
+            binsX = cms.untracked.vdouble(100, 0, 1),
+            binsY = cms.untracked.vdouble(500, 0, 0.5),
+            inputVariables = cms.vstring("jet.pfCombinedInclusiveSecondaryVertexV2BJetTags","abs((-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt)",),
+        ),
         cms.PSet (
             name = cms.string("muonJetInvMass"),
             title = cms.string("Muon-jet Invariant Mass; M(#mu,jet) [GeV]"),
@@ -837,8 +858,15 @@ MuonJetHistograms = cms.PSet(
 ##########################################################################################
 
 ElectronJetHistograms = cms.PSet(
-    inputCollection = cms.vstring("electrons","jets"),
+    inputCollection = cms.vstring("electrons","jets","beamspots"),
     histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("electronAbsIPvsJetCSV"),
+            title = cms.string("Electron Abs IP vs Jet CSV; Jet CSV"),
+            binsX = cms.untracked.vdouble(100, 0, 1),
+            binsY = cms.untracked.vdouble(500, 0, 0.5),
+            inputVariables = cms.vstring("jet.pfCombinedInclusiveSecondaryVertexV2BJetTags","abs((-(electron.vx - beamspot.x0)*electron.py + (electron.vy - beamspot.y0)*electron.px)/electron.pt)",),
+        ),
         cms.PSet (
             name = cms.string("electronJetInvMass"),
             title = cms.string("Electron-jet Invariant Mass; M(e,jet) [GeV]"),
@@ -903,8 +931,15 @@ ElectronJetHistograms = cms.PSet(
 ##########################################################################################
 
 MuonBjetHistograms = cms.PSet(
-    inputCollection = cms.vstring("muons","bjets"),
+    inputCollection = cms.vstring("muons","bjets","beamspots"),
     histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("muonAbsIPvsBjetCSV"),
+            title = cms.string("Muon Abs IP vs Bjet CSV; Bjet CSV"),
+            binsX = cms.untracked.vdouble(100, 0, 1),
+            binsY = cms.untracked.vdouble(500, 0, 0.5),
+            inputVariables = cms.vstring("bjet.pfCombinedInclusiveSecondaryVertexV2BJetTags","abs((-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt)",),
+        ),
         cms.PSet (
             name = cms.string("muonBjetInvMass"),
             title = cms.string("Muon-bjet Invariant Mass; M(#mu,bjet) [GeV]"),
@@ -968,8 +1003,15 @@ MuonBjetHistograms = cms.PSet(
 
 ##########################################################################
 ElectronBjetHistograms = cms.PSet(
-    inputCollection = cms.vstring("electrons","bjets"),
+    inputCollection = cms.vstring("electrons","bjets","beamspots"),
     histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("electronAbsIPvsBjetCSV"),
+            title = cms.string("Electron Abs IP vs Bjet CSV; Bjet CSV"),
+            binsX = cms.untracked.vdouble(100, 0, 1),
+            binsY = cms.untracked.vdouble(500, 0, 0.5),
+            inputVariables = cms.vstring("bjet.pfCombinedInclusiveSecondaryVertexV2BJetTags","abs((-(electron.vx - beamspot.x0)*electron.py + (electron.vy - beamspot.y0)*electron.px)/electron.pt)",),
+        ),
         cms.PSet (
             name = cms.string("electronBjetInvMass"),
             title = cms.string("Electron-bjet Invariant Mass; M(#mu,bjet) [GeV]"),
