@@ -1194,6 +1194,21 @@ colors = {
     'MuonEG_2015D_v3'   : 3,
     'MuonEG_2015D_v4'   : 4,
     'MuonEG_2015'    : 1,
+
+    ###########################################################################
+    #RECO stored on T3
+    ###########################################################################
+    #stopped particles stage2 signals
+    'GluinoToUUbarChi0_1200_200' : 21,
+    'GluinoToUUbarChi0_1200_600' : 22,
+    'GluinoToUUbarChi0_1200_1000' : 23,
+    'GluinoToGChi0_1200_200'  : 31,
+    'GluinoToGChi0_1200_400'  : 32,
+    'GluinoToGChi0_1200_600'  : 33,
+    'GluinoToGChi0_1200_800'  : 34,
+    'GluinoToGChi0_1200_1000'  : 35,
+
+    ############################################################################
    
     #NoBPTX data
     'NoBPTX_2015D_v3' : 1,
@@ -1415,6 +1430,22 @@ labels = {
     'MuonEG_2015D'     : "MuonEG 2015D data",
     'MuonEG_2015D_v3'     : "MuonEG 2015D_v3 data",
     'MuonEG_2015D_v4'     : "MuonEG 2015D_v4 data",
+
+    ###########################################################################
+    #RECO stored on T3
+    ###########################################################################
+    #stopped particles stage2 signals
+    'GluinoToUUbarChi0_1200_200' : "#tilde{g} #rightarrow u#topbar{u}#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 200 GeV)",
+    'GluinoToUUbarChi0_1200_600' : "#tilde{g} #rightarrow u#topbar{u}#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 600 GeV)",
+    'GluinoToUUbarChi0_1200_1000' : "#tilde{g} #rightarrow u#topbar{u}#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV)",
+    'GluinoToGChi0_1200_200'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 200 GeV)",
+    'GluinoToGChi0_1200_400'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 400 GeV)",
+    'GluinoToGChi0_1200_600'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 600 GeV)",
+    'GluinoToGChi0_1200_800'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 800 GeV)",
+    'GluinoToGChi0_1200_1000'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV)",
+
+    ############################################################################
+
     #NoBPTX Data 
     'NoBPTX_2015D_v3'     : "NoBPTX 2015D_v3 data",
     'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
@@ -1540,6 +1571,22 @@ crossSections = {
     'TTJets_DiLept'              :  88.31,
     'TTJets_SingleLeptFromT'     :  182.7,
     'TTJets_SingleLeptFromTbar'  :  182.7,
+
+    ###########################################################################
+    #RECO stored on T3
+    ###########################################################################
+    #stopped particles stage2 signals
+    #from https://github.com/quertenmont/cmssw/blob/Run2HSCP_v9/SUSYBSMAnalysis/HSCP/test/AnalysisCode/Analysis_Samples.txt
+    'GluinoToUUbarChi0_1200_200' : 8.3600000000E-02,
+    'GluinoToUUbarChi0_1200_600' : 8.3600000000E-02,
+    'GluinoToUUbarChi0_1200_1000' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_200'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_400'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_600'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_800'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000'  : 8.3600000000E-02,
+
+
 }
 
 InputCondorArguments = {}
