@@ -80,7 +80,7 @@ scalingfactorproducers = []
 #iteta_bin1/abseta_vs_pt')ObjectScalingFactorProducer['electronWp'] = cms.string('GlobalSF')
 #ObjectScalingFactorProducer['doEleSF'] = cms.bool(True)
 #ObjectScalingFactorProducer['doMuSF'] = cms.bool(False)
-
+#scalingfactorproducers.append(ObjectScalingFactorProducer)
 ################################################################################
 ##### Set up any user-defined variable producers ###############################
 ################################################################################
