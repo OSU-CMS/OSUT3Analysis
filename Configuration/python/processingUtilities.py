@@ -198,7 +198,7 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
-def add_channels (process, channels, histogramSets, weights, collections, variableProducers, skim = True):
+def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True):
 
     ############################################################################
     # If only the default scheduler exists, create an empty one
@@ -509,7 +509,27 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
             outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_originalFormat_" + process.name_ ())
             add_channels.filterIndex += 1
         ########################################################################
-
+        # Add producers for the scaling factors
+        ########################################################################
+        if len(scalingfactorproducers):
+            for module in scalingfactorproducers:
+                objectProducer = cms.EDProducer (str(module['name']),
+                                           collections = copy.deepcopy(filteredCollections)
+                                           )
+                setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                for key in module:
+                    if str(key) != 'name':
+                        setattr (objectProducer, key, module[key])
+                channelPath += objectProducer
+                add_channels.producerIndex += 1
+                objectProducer = getattr (collectionProducer, "eventvariables").clone()
+                objectProducer.collections = copy.deepcopy(filteredCollections)
+                channelPath += objectProducer
+                setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                
+                setattr(objectProducer.collections, "eventvariables" ,cms.InputTag ("objectProducer" + str (add_channels.producerIndex - 1), "eventvariables"))
+                filteredCollections.eventvariables.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), "eventvariables"))
+                add_channels.producerIndex += 1
         ########################################################################
         # Add a plotting module for this channel to the path.
         ########################################################################
