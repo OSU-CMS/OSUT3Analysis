@@ -2,6 +2,6 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #if IS_VALID(pileupinfos)
-  typedef ObjectSelector<osu::PileUpInfo> PileUpInfoObjectSelector;
+  typedef ObjectSelector<osu::PileUpInfo,TYPE(pileupinfos) > PileUpInfoObjectSelector;
   DEFINE_FWK_MODULE(PileUpInfoObjectSelector);
 #endif
