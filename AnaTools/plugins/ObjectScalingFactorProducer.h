@@ -7,6 +7,7 @@
 #include "DataFormats/Math/interface/deltaR.h"
 #include <string>
 #include "TH2D.h"
+#include "TH2F.h"
 #include "TFile.h"
 class ObjectScalingFactorProducer : public EventVariableProducer
   {
