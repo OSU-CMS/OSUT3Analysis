@@ -33,13 +33,22 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
       }
       TH2D *ele;   
       elesf->GetObject(electronWp_.c_str(),ele);
-      double eleSF = 1.0;
-      for (const auto &electron1 : *handles_.electrons) {
-        eleSF = eleSF * ele->GetBinContent(ele->FindBin(abs(electron1.eta()),electron1.pt()));
+      if(!elesf){
+        clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << electronWp_.c_str()
+         << "; will cause a seg fault." << endl;
+        exit(1);
       }
+      double eleSF = 1.0;
+      if(handles_.electrons->size()){
+        for (const auto &electron1 : *handles_.electrons) {
+          float eta = abs(electron1.eta()) > ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) ? ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) : abs(electron1.eta());
+          float pt = electron1.pt() > ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) ? ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) : electron1.pt();
+          eleSF = eleSF * ele->GetBinContent(ele->FindBin(eta,pt));
+       }}
       (*eventvariables)["electronScalingFactor"] = eleSF;
       delete ele; 
-    }
+      elesf->Close(); 
+   }
   if(doMuSF_)
     {
       TFile *musf = TFile::Open (muonFile_.c_str ());
@@ -48,14 +57,23 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
          << "; will cause a seg fault." << endl;
         exit(1);
       }
-      TH2D *mu;   
+      TH2F *mu;   
       musf->GetObject(muonWp_.c_str(),mu);
-      double muSF = 1.0;
-      for (const auto &muon1 : *handles_.muons) {
-        muSF = muSF*mu->GetBinContent(mu->FindBin(muon1.pt(),abs(muon1.eta())));
+      if(!musf){
+        clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << muonWp_.c_str()
+         << "; will cause a seg fault." << endl;
+        exit(1);
       }
+      double muSF = 1.0;
+      if(handles_.muons->size()){
+        for (const auto &muon1 : *handles_.muons) {
+          float eta = abs(muon1.eta()) > mu->GetYaxis()->GetBinCenter(mu->GetNbinsY()) ? mu->GetYaxis()->GetBinCenter(mu->GetNbinsY()): abs(muon1.eta());
+          float pt = muon1.pt() > mu->GetXaxis()->GetBinCenter(mu->GetNbinsX()) ? mu->GetXaxis()->GetBinCenter(mu->GetNbinsX()) : muon1.pt();
+          muSF = muSF*mu->GetBinContent(mu->FindBin(pt,eta));
+      }}
       (*eventvariables)["muonScalingFactor"] = muSF;
       delete mu; 
+      musf->Close(); 
     }
 #else
   (*eventvariables)["electronScalingFactor"] = 1; 
