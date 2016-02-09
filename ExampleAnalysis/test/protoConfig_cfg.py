@@ -76,11 +76,12 @@ scalingfactorproducers = []
 #sis/AnaTools/data/muonSF.root')
 #ObjectScalingFactorProducer['electronFile'] = cms.string(os.environ['CMSSW_BASE'] + '/src/OSUT3A
 #nalysis/AnaTools/data/electronSF.root')
+######Here the muonWp and electronWp refer to the histograms you want to use. #########
 #ObjectScalingFactorProducer['muonWp'] = cms.string('NUM_TightIDandIPCut_DEN_genTracks_PAR_pt_spl
 #iteta_bin1/abseta_vs_pt')ObjectScalingFactorProducer['electronWp'] = cms.string('GlobalSF')
 #ObjectScalingFactorProducer['doEleSF'] = cms.bool(True)
 #ObjectScalingFactorProducer['doMuSF'] = cms.bool(False)
-
+#scalingfactorproducers.append(ObjectScalingFactorProducer)
 ################################################################################
 ##### Set up any user-defined variable producers ###############################
 ################################################################################
