@@ -11,6 +11,9 @@ OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
   produces<vector<osu::Track> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(tracks)> > (collection_);
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (edm::InputTag ());
 }
 
 OSUTrackProducer::~OSUTrackProducer ()
@@ -20,11 +23,11 @@ OSUTrackProducer::~OSUTrackProducer ()
 void
 OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (tracks)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(tracks)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("", ""), particles, event);
+  event.getByToken (mcparticleToken_, particles);
 
   pl_ = auto_ptr<vector<osu::Track> > (new vector<osu::Track> ());
   for (const auto &object : *collection)

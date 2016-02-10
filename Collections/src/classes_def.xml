@@ -112,4 +112,8 @@
   <class name="edm::Wrapper<osu::Uservariable>"/>
   <class name="edm::Wrapper<std::vector<osu::Uservariable> >"/>
   <class name="edm::Ref<std::vector<osu::Uservariable> >"/>
+
+  <class pattern="osu::GenMatchable<*>"/>
+  <class pattern="osu::GenMatchable<*>::GenMatchedParticle"/>
+  <class pattern="osu::GenMatchable<*>::DRToGenMatchedParticle"/>
 </lcgdict>

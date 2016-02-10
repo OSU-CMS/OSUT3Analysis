@@ -14,6 +14,10 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   collPrimaryvertexs_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
 
   produces<vector<osu::Muon> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(muons)> > (collection_);
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (edm::InputTag ());
+  primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collPrimaryvertexs_);
 }
 
 OSUMuonProducer::~OSUMuonProducer ()
@@ -23,24 +27,28 @@ OSUMuonProducer::~OSUMuonProducer ()
 void
 OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (muons)> > collection;
+  edm::Handle<vector<TYPE(muons)> > collection;
   edm::Handle<vector<TYPE(primaryvertexs)> > collPrimaryvertexs;
-  edm::Handle<vector<osu::Primaryvertex> > collOSUPrimaryvertexs;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  if (!event.getByToken (token_, collection))
     return;
-  if (!anatools::getCollection (collPrimaryvertexs_, collPrimaryvertexs, event) && !anatools::getCollection (collPrimaryvertexs_, collOSUPrimaryvertexs, event)) {
+  if (!event.getByToken (primaryvertexToken_, collPrimaryvertexs)) {
     clog << "ERROR [OSUMuonProducer::produce]:  could not get collection: " << collPrimaryvertexs_ << endl;
     return;
   }
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("", ""), particles, event);
+  event.getByToken (mcparticleToken_, particles);
 
   pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     {
       osu::Muon muon (object, particles, cfg_);
-      const reco::Vertex &vtx = collPrimaryvertexs.isValid () ? collPrimaryvertexs->at (0) : collOSUPrimaryvertexs->at (0);
-      muon.set_isTightMuonWRTVtx(muon.isTightMuon(vtx));
+      if (collPrimaryvertexs->size ())
+        {
+          const reco::Vertex &vtx = collPrimaryvertexs->at (0);
+          muon.set_isTightMuonWRTVtx(muon.isTightMuon(vtx));
+        }
+      else
+          muon.set_isTightMuonWRTVtx(false);
       pl_->push_back (muon);
     }
 

@@ -10,6 +10,8 @@ EventvariableProducer::EventvariableProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("eventvariables");
 
   produces<osu::Eventvariable> (collection_.instance ());
+
+  token_ = consumes<TYPE(eventvariables)> (collection_);
 }
 
 EventvariableProducer::~EventvariableProducer ()
@@ -19,8 +21,8 @@ EventvariableProducer::~EventvariableProducer ()
 void
 EventvariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<TYPE (eventvariables)> collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<TYPE(eventvariables)> collection;
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<osu::Eventvariable> (new osu::Eventvariable (*collection));

@@ -11,6 +11,9 @@ OSUBasicjetProducer::OSUBasicjetProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("basicjets");
 
   produces<vector<osu::Basicjet> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(basicjets)> > (collection_);
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (edm::InputTag ());
 }
 
 OSUBasicjetProducer::~OSUBasicjetProducer ()
@@ -20,11 +23,11 @@ OSUBasicjetProducer::~OSUBasicjetProducer ()
 void
 OSUBasicjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (basicjets)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(basicjets)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("", ""), particles, event);
+  event.getByToken (mcparticleToken_, particles);
 
   pl_ = auto_ptr<vector<osu::Basicjet> > (new vector<osu::Basicjet> ());
   for (const auto &object : *collection)

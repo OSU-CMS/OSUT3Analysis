@@ -10,6 +10,8 @@ OSUMetProducer::OSUMetProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("mets");
 
   produces<vector<osu::Met> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(mets)> > (collection_);
 }
 
 OSUMetProducer::~OSUMetProducer ()
@@ -19,8 +21,8 @@ OSUMetProducer::~OSUMetProducer ()
 void
 OSUMetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (mets)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(mets)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::Met> > (new vector<osu::Met> ());

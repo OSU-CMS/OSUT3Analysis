@@ -22,6 +22,7 @@ class OSUSuperclusterProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
+    edm::EDGetTokenT<vector<TYPE(superclusters)> > token_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.

@@ -22,6 +22,8 @@ class OSUTrackProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
+    edm::EDGetTokenT<vector<TYPE(tracks)> > token_;
+    edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 

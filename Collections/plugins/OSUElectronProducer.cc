@@ -7,11 +7,14 @@
 OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   collections_    (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_ (cfg),
-  beamSpot_       (cfg.getParameter<edm::InputTag> ("beamSpot")),
   rho_            (cfg.getParameter<edm::InputTag> ("rho"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(electrons)> > (collection_);
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (edm::InputTag ());
+  rhoToken_ = consumes<double> (rho_);
 }
 
 OSUElectronProducer::~OSUElectronProducer ()
@@ -25,19 +28,18 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   using namespace edm;
   using namespace reco;
   
-  edm::Handle<vector<TYPE (electrons)> > collection;
-  edm::Handle<reco::BeamSpot> beamSpot;
+  edm::Handle<vector<TYPE(electrons)> > collection;
   edm::Handle<double> rho;
   
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("", ""), particles, event);
-  if (!anatools::getCollection (collection_, collection, event, false))
+  event.getByToken (mcparticleToken_, particles);
+  if (!event.getByToken (token_, collection))
     return;
   pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
     {
       osu::Electron electron (object, particles, cfg_);
-      if(event.getByLabel (rho_, rho))
+      if(event.getByToken (rhoToken_, rho))
         electron.set_rho((float)(*rho)); 
       electron.set_missingInnerHits(object.gsfTrack()->hitPattern ().numberOfHits(reco::HitPattern::MISSING_INNER_HITS));
       float effectiveArea = 0;
@@ -63,11 +65,11 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 #else
-  edm::Handle<vector<TYPE (electrons)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(electrons)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
-  edm:Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("", ""), particles, event);
+  edm::Handle<vector<osu::Mcparticle> > particles;
+  event.getByToken (mcparticleToken_, particles);
 
   pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)

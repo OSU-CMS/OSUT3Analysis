@@ -11,6 +11,9 @@ OSUTrigobjProducer::OSUTrigobjProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("trigobjs");
 
   produces<vector<osu::Trigobj> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(trigobjs)> > (collection_);
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (edm::InputTag ());
 }
 
 OSUTrigobjProducer::~OSUTrigobjProducer ()
@@ -20,11 +23,11 @@ OSUTrigobjProducer::~OSUTrigobjProducer ()
 void
 OSUTrigobjProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (trigobjs)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(trigobjs)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("", ""), particles, event);
+  event.getByToken (mcparticleToken_, particles);
 
   pl_ = auto_ptr<vector<osu::Trigobj> > (new vector<osu::Trigobj> ());
   for (const auto &object : *collection)

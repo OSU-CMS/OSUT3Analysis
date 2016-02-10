@@ -10,6 +10,8 @@ UservariableProducer::UservariableProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("uservariables");
 
   produces<vector<osu::Uservariable> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(uservariables)> > (collection_);
 }
 
 UservariableProducer::~UservariableProducer ()
@@ -19,8 +21,8 @@ UservariableProducer::~UservariableProducer ()
 void
 UservariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (uservariables)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(uservariables)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::Uservariable> > (new vector<osu::Uservariable> ());

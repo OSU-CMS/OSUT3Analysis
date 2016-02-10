@@ -10,6 +10,8 @@ OSUSuperclusterProducer::OSUSuperclusterProducer (const edm::ParameterSet &cfg) 
   collection_ = collections_.getParameter<edm::InputTag> ("superclusters");
 
   produces<vector<osu::Supercluster> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(superclusters)> > (collection_);
 }
 
 OSUSuperclusterProducer::~OSUSuperclusterProducer ()
@@ -19,8 +21,8 @@ OSUSuperclusterProducer::~OSUSuperclusterProducer ()
 void
 OSUSuperclusterProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (superclusters)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(superclusters)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::Supercluster> > (new vector<osu::Supercluster> ());

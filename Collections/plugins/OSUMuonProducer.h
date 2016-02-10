@@ -22,6 +22,9 @@ class OSUMuonProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
+    edm::EDGetTokenT<vector<TYPE(muons)> > token_;
+    edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
+    edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexToken_;
     edm::ParameterSet  cfg_;
     edm::InputTag      collPrimaryvertexs_;
     ////////////////////////////////////////////////////////////////////////////

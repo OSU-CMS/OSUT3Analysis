@@ -22,6 +22,7 @@ class OSUBeamspotProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
+    edm::EDGetTokenT<TYPE(beamspots)> token_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.

@@ -22,6 +22,7 @@ class EventvariableProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
+    edm::EDGetTokenT<TYPE(eventvariables)> token_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
