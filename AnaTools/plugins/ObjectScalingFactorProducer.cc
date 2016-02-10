@@ -10,6 +10,11 @@ ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet
    doEleSF_             (cfg.getParameter<bool>("doEleSF")),
    doMuSF_             (cfg.getParameter<bool>("doMuSF"))
 {
+  if (doEleSF_)
+    objectsToGet_.insert ("electrons");
+  if (doMuSF_)
+    objectsToGet_.insert ("muons");
+  anatools::getAllTokens (collections_, consumesCollector (), tokens_);
 }
 
 ObjectScalingFactorProducer::~ObjectScalingFactorProducer() {}
@@ -18,11 +23,7 @@ void
 ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
 #if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
   
-  if (doEleSF_)
-    objectsToGet_.insert ("electrons");
-  if (doMuSF_)
-    objectsToGet_.insert ("muons");
-  anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);
+  anatools::getRequiredCollections (objectsToGet_, handles_, event, tokens_);
   if (doEleSF_)
     {
       TFile *elesf = TFile::Open (electronFile_.c_str ());

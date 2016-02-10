@@ -15,6 +15,7 @@ class ObjectScalingFactorProducer : public EventVariableProducer
         ObjectScalingFactorProducer (const edm::ParameterSet &);
 	~ObjectScalingFactorProducer ();
         Collections handles_;
+        Tokens tokens_;
 
     private:
         string muonFile_; 
