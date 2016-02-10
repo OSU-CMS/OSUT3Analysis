@@ -7,6 +7,8 @@ PUScalingFactorProducer::PUScalingFactorProducer(const edm::ParameterSet &cfg) :
    dataset_          (cfg.getParameter<string>("dataset")),
    type_             (cfg.getParameter<string>("type"))
 {
+  if(type_.find("MC") < type_.length() && collections_.exists ("pileupinfos"))
+    pileUpInfosToken_ = consumes<vector<TYPE(pileupinfos)> > (collections_.getParameter<edm::InputTag> ("pileupinfos"));
 }
 
 PUScalingFactorProducer::~PUScalingFactorProducer() {}
@@ -45,7 +47,7 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
   if(type_.find("MC") < type_.length())
     {
       objectsToGet_.insert ("pileupinfos");
-      getOriginalCollections (objectsToGet_, collections_, handles_, event);
+      getOriginalCollections (event);
       double numTruePV = 0;
       for (const auto &pv1 : *handles_.pileupinfos) {
       if(pv1.getBunchCrossing() == 0)
@@ -62,14 +64,10 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
 }  
 
 void
-PUScalingFactorProducer::getOriginalCollections (const unordered_set<string> &objectsToGet, const edm::ParameterSet &collections, OriginalCollections &handles, const edm::Event &event)
+PUScalingFactorProducer::getOriginalCollections (const edm::Event &event)
 {
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Retrieve each object collection which we need and print a warning if it is
-  // missing.
-  //////////////////////////////////////////////////////////////////////////////
-  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos")    &&  collections.exists  ("pileupinfos"))    anatools::getCollection  (collections.getParameter<edm::InputTag>  ("pileupinfos"),    handles.pileupinfos,    event);
+  if (VEC_CONTAINS (objectsToGet_, "pileupinfos"))
+    event.getByToken (pileUpInfosToken_, handles_.pileupinfos);
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

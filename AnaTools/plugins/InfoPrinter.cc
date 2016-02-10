@@ -28,12 +28,13 @@ InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
   counter_ (0),
   sw_ (new TStopwatch)
 {
-  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
-
   // Start the timer.
   sw_->Start ();
 
   unpackValuesToPrint ();
+
+  anatools::getAllTokens (collections_, consumesCollector (), tokens_);
+  cutDecisionsToken_ = consumes<CutCalculatorPayload> (cutDecisions_);
 }
 
 InfoPrinter::~InfoPrinter ()
@@ -58,12 +59,12 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   counter_++;
 
 
-  anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);
+  anatools::getRequiredCollections (objectsToGet_, handles_, event, tokens_);
 
   //////////////////////////////////////////////////////////////////////////////
   // Get the cut decisions out of the event.
   //////////////////////////////////////////////////////////////////////////////
-  event.getByLabel (cutDecisions_, cutDecisions);
+  event.getByToken (cutDecisionsToken_, cutDecisions);
   if (firstEvent_ && !cutDecisions.isValid ())
     clog << "WARNING: failed to retrieve cut decisions from the event." << endl;
   //////////////////////////////////////////////////////////////////////////////

@@ -56,6 +56,7 @@ class CutCalculator : public edm::EDProducer
 
     // Object collections which can be gotten from the event.
     Collections handles_;
+    Tokens tokens_;
 
     // Payload for this EDProducer.
     auto_ptr<CutCalculatorPayload>  pl_;

@@ -24,8 +24,6 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
   firstEvent_ (true)
 
 {
-  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
-
   if (verbose_) clog << "Beginning Plotter::Plotter constructor." << endl;
 
   TH1::SetDefaultSumw2();
@@ -97,6 +95,8 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
     weight.product = 1.0;
     weights.push_back(weight);
   }
+
+  anatools::getAllTokens (collections_, consumesCollector (), tokens_);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ void
 Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
   // get the required collections from the event
-  anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);
+  anatools::getRequiredCollections (objectsToGet_, handles_, event, tokens_);
 
   if (!initializeValueLookupForest (histogramDefinitions, &handles_))
     {

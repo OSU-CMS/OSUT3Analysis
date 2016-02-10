@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "OSUT3Analysis/AnaTools/plugins/TriggerEfficiencyAnalyzer.h"
 
 TriggerEfficiencyAnalyzer::TriggerEfficiencyAnalyzer (const edm::ParameterSet &cfg) :
@@ -40,6 +42,7 @@ TriggerEfficiencyAnalyzer::TriggerEfficiencyAnalyzer (const edm::ParameterSet &c
     TriggerHistEffMap  [*triggerType]->SetTitle(effName);
   }
 
+  TriggerToken_ = consumes<edm::TriggerResults> (Trigger_);
 }
 
 TriggerEfficiencyAnalyzer::~TriggerEfficiencyAnalyzer ()
@@ -72,7 +75,7 @@ void
 TriggerEfficiencyAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
 
-  event.getByLabel (Trigger_ , TriggerCollection);
+  event.getByToken (TriggerToken_ , TriggerCollection);
   const edm::TriggerNames &triggerNames = event.triggerNames(*TriggerCollection);
 
   //initialize maps

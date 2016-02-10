@@ -16,8 +16,6 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
   cuts_         (cfg.getParameter<edm::ParameterSet>  ("cuts")),
   firstEvent_   (true)
 {
-  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
-
   //////////////////////////////////////////////////////////////////////////////
   // Try to unpack the cuts ParameterSet and quit if there is a problem.
   //////////////////////////////////////////////////////////////////////////////
@@ -27,6 +25,8 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
       exit (EXIT_CODE);
     }
   //////////////////////////////////////////////////////////////////////////////
+
+  anatools::getAllTokens (collections_, consumesCollector (), tokens_);
 
   produces<CutCalculatorPayload> ("cutDecisions");
 }
@@ -46,7 +46,7 @@ CutCalculator::~CutCalculator ()
 void
 CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);
+  anatools::getRequiredCollections (objectsToGet_, handles_, event, tokens_);
 
   //////////////////////////////////////////////////////////////////////////////
   // Set all the private variables in the ValueLookup object before using it,

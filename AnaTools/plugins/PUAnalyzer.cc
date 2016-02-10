@@ -6,6 +6,8 @@ PUAnalyzer::PUAnalyzer (const edm::ParameterSet &cfg) :
   TH1::SetDefaultSumw2 ();
   
   oneDHists_["pileup"] = fs_->make<TH1D> ("pileup",";pileup", 65, 0, 65);
+
+  pileUpInfoToken_ = consumes<edm::View<TYPE(pileupinfos)> > (pileUpInfo_);
 }
 
 PUAnalyzer::~PUAnalyzer ()
@@ -15,9 +17,9 @@ PUAnalyzer::~PUAnalyzer ()
 void
 PUAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<edm::View<PileupSummaryInfo> > pileUpInfos;
-  event.getByLabel (pileUpInfo_, pileUpInfos);
-  edm::View<PileupSummaryInfo>::const_iterator iterPU;
+  edm::Handle<edm::View<TYPE(pileupinfos)> > pileUpInfos;
+  event.getByToken (pileUpInfoToken_, pileUpInfos);
+  edm::View<TYPE(pileupinfos)>::const_iterator iterPU;
   double truePV = -1;
   for(iterPU = pileUpInfos->begin(); iterPU != pileUpInfos->end(); ++iterPU)
     {
