@@ -395,7 +395,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
 
     edm::MemberWithDict dataMember;
     edm::FunctionWithDict functionMember;
-    bool isReference;
+    bool isReference = false;
 
     dataMember = t.dataMemberByName (member);
     functionMember = t.functionMemberByName (member);
