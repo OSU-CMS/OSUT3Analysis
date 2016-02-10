@@ -500,6 +500,7 @@ def add_channels (process, channels, histogramSets, weights, collections, variab
             objectSelector = cms.EDFilter (filterName,
                 collections = producedCollections,
                 collectionToFilter = cms.string (collection),
+                originalCollection = getattr (collections, collection),
                 cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
             )
             channelPath += objectSelector
