@@ -6,6 +6,7 @@
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
+
 struct OriginalCollections
 {
   edm::Handle<vector<pat::Electron> >       electrons;
@@ -16,13 +17,24 @@ struct OriginalCollections
   edm::Handle<edm::TriggerResults>          triggers;
 };
 
+struct OriginalTokens
+{
+  edm::EDGetTokenT<vector<pat::Electron> >       electrons;
+  edm::EDGetTokenT<vector<pat::Jet> >            jets;
+  edm::EDGetTokenT<vector<pat::Muon> >           muons;
+  edm::EDGetTokenT<vector<reco::Vertex> >        primaryvertexs;
+  edm::EDGetTokenT<vector<PileupSummaryInfo>>    pileupinfos;
+  edm::EDGetTokenT<edm::TriggerResults>          triggers;
+};
+
 class MyVariableProducer : public EventVariableProducer
   {
     public:
         MyVariableProducer (const edm::ParameterSet &);
 	~MyVariableProducer ();
-        void getOriginalCollections (const unordered_set<string> &objectsToGet, const edm::ParameterSet &collections, OriginalCollections &handles, const edm::Event &event);
+        void getOriginalCollections (const unordered_set<string> &objectsToGet, const edm::Event &event);
 	OriginalCollections handles_;
+	OriginalTokens tokens_;
 
     private:
 

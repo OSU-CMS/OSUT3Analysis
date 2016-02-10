@@ -2,7 +2,21 @@
 #include "OSUT3Analysis/ExampleAnalysis/plugins/MyVariableProducer.h"
 
 MyVariableProducer::MyVariableProducer(const edm::ParameterSet &cfg) :
-  EventVariableProducer(cfg) {}
+  EventVariableProducer(cfg)
+{
+  if (collections_.exists ("electrons"))
+    tokens_.electrons = consumes<vector<pat::Electron> > (collections_.getParameter<edm::InputTag> ("electrons"));
+  if (collections_.exists ("jets"))
+    tokens_.jets = consumes<vector<pat::Jet> > (collections_.getParameter<edm::InputTag> ("jets"));
+  if (collections_.exists ("muons"))
+    tokens_.muons = consumes<vector<pat::Muon> > (collections_.getParameter<edm::InputTag> ("muons"));
+  if (collections_.exists ("primaryvertexs"))
+    tokens_.primaryvertexs = consumes<vector<reco::Vertex> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
+  if (collections_.exists ("pileupinfos"))
+    tokens_.pileupinfos = consumes<vector<PileupSummaryInfo> > (collections_.getParameter<edm::InputTag> ("pileupinfos"));
+  if (collections_.exists ("triggers"))
+    tokens_.triggers = consumes<edm::TriggerResults> (collections_.getParameter<edm::InputTag> ("triggers"));
+}
 
 MyVariableProducer::~MyVariableProducer() {}
 
@@ -14,7 +28,7 @@ MyVariableProducer::AddVariables (const edm::Event &event) {
 
   // get all the needed collections from the event and put them into the "handles_" collection
   //anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);
-  getOriginalCollections (objectsToGet_, collections_, handles_, event);
+  getOriginalCollections (objectsToGet_, event);
 
   // calculate whatever variables you'd like
   double muonPt = 0.;
@@ -30,19 +44,19 @@ MyVariableProducer::AddVariables (const edm::Event &event) {
 
 
 void
-MyVariableProducer::getOriginalCollections (const unordered_set<string> &objectsToGet, const edm::ParameterSet &collections, OriginalCollections &handles, const edm::Event &event)
+MyVariableProducer::getOriginalCollections (const unordered_set<string> &objectsToGet, const edm::Event &event)
 {
 
   //////////////////////////////////////////////////////////////////////////////
   // Retrieve each object collection which we need and print a warning if it is
   // missing.
   //////////////////////////////////////////////////////////////////////////////
-  if  (VEC_CONTAINS  (objectsToGet,  "electrons")         &&  collections.exists  ("electrons"))         anatools::getCollection  (collections.getParameter<edm::InputTag>  ("electrons"),         handles.electrons,         event);
-  if  (VEC_CONTAINS  (objectsToGet,  "jets")              &&  collections.exists  ("jets"))              anatools::getCollection  (collections.getParameter<edm::InputTag>  ("jets"),              handles.jets,              event);
-  if  (VEC_CONTAINS  (objectsToGet,  "muons")             &&  collections.exists  ("muons"))             anatools::getCollection  (collections.getParameter<edm::InputTag>  ("muons"),             handles.muons,             event);
-  if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs")    &&  collections.exists  ("primaryvertexs"))    anatools::getCollection  (collections.getParameter<edm::InputTag>  ("primaryvertexs"),    handles.primaryvertexs,    event);
-  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos")    &&  collections.exists  ("pileupinfos"))    anatools::getCollection  (collections.getParameter<edm::InputTag>  ("pileupinfos"),    handles.pileupinfos,    event);
-  if  (VEC_CONTAINS  (objectsToGet,  "triggers")    &&  collections.exists  ("triggers"))    anatools::getCollection  (collections.getParameter<edm::InputTag>  ("triggers"),    handles.triggers,    event);
+  if  (VEC_CONTAINS  (objectsToGet,  "electrons"))       event.getByToken  (tokens_.electrons,       handles_.electrons);
+  if  (VEC_CONTAINS  (objectsToGet,  "jets"))            event.getByToken  (tokens_.jets,            handles_.jets);
+  if  (VEC_CONTAINS  (objectsToGet,  "muons"))           event.getByToken  (tokens_.muons,           handles_.muons);
+  if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs"))  event.getByToken  (tokens_.primaryvertexs,  handles_.primaryvertexs);
+  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos"))     event.getByToken  (tokens_.pileupinfos,     handles_.pileupinfos);
+  if  (VEC_CONTAINS  (objectsToGet,  "triggers"))        event.getByToken  (tokens_.triggers,        handles_.triggers);
 }
 
 
