@@ -8,14 +8,16 @@
 
 ValueLookupTree::ValueLookupTree () :
   root_ (NULL),
-  evaluationError_ (false)
+  evaluationError_ (false),
+  allCollectionsNonEmpty_ (false)
 {
 }
 
 ValueLookupTree::ValueLookupTree (const Cut &cut) :
   root_ (insert_ (cut.cutString, NULL)),
   inputCollections_ (cut.inputCollections),
-  evaluationError_ (false)
+  evaluationError_ (false),
+  allCollectionsNonEmpty_ (false)
 {
   pruneCommas (root_);
   pruneParentheses (root_);
@@ -27,7 +29,8 @@ ValueLookupTree::ValueLookupTree (const Cut &cut) :
 ValueLookupTree::ValueLookupTree (const ValueToPrint &value) :
   root_ (insert_ (value.valueToPrint, NULL)),
   inputCollections_ (value.inputCollections),
-  evaluationError_ (false)
+  evaluationError_ (false),
+  allCollectionsNonEmpty_ (false)
 {
   pruneCommas (root_);
   pruneParentheses (root_);
@@ -39,7 +42,8 @@ ValueLookupTree::ValueLookupTree (const ValueToPrint &value) :
 ValueLookupTree::ValueLookupTree (const string &expression, const vector<string> &inputCollections) :
   root_ (insert_ (expression, NULL)),
   inputCollections_ (inputCollections),
-  evaluationError_ (false)
+  evaluationError_ (false),
+  allCollectionsNonEmpty_ (false)
 {
   pruneCommas (root_);
   pruneParentheses (root_);
@@ -69,12 +73,14 @@ ValueLookupTree::setCollections (Collections * const handles)
   nCombinations_.clear ();
   collectionSizes_.clear ();
   nCombinations_.assign (inputCollections_.size (), 1);
+  allCollectionsNonEmpty_ = true;
   for (auto collection = inputCollections_.begin (); collection != inputCollections_.end (); collection++)
     {
       unsigned currentSize = getCollectionSize (*collection);
       for (unsigned i = 0; i < (collection - inputCollections_.begin () + 1); i++)
         nCombinations_[i] *= currentSize;
       collectionSizes_.push_back (currentSize);
+      allCollectionsNonEmpty_ = allCollectionsNonEmpty_ && currentSize;
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -107,7 +113,7 @@ ValueLookupTree::evaluate ()
   // for each object. If it is empty when this method is called, it is filled.
   // Then the method returns it as a reference.
   //////////////////////////////////////////////////////////////////////////////
-  if (!values_.size ())
+  if (!values_.size () && allCollectionsNonEmpty_)
     {
       evaluationError_ = false;
       uservariablesToDelete_.clear ();

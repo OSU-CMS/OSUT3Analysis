@@ -219,6 +219,7 @@ class ValueLookupTree
     vector<Leaf>                                   values_;
     vector<unsigned>                               collectionSizes_; // vector index corresponds to collection index
     vector<unsigned>                               nCombinations_;   // vector index corresponds to collection index
+    bool                                           allCollectionsNonEmpty_;
     // nCombinations[i] specifies the number of combinations that can be formed from objects 
     // in collections i to N, where N is the number of collections 
 
