@@ -16,7 +16,7 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   produces<vector<osu::Muon> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(muons)> > (collection_);
-  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (edm::InputTag ());
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collPrimaryvertexs_);
 }
 

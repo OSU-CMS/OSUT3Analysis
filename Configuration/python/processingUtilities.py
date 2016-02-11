@@ -395,7 +395,7 @@ def add_channels (process, channels, histogramSets, weights, scalingfactorproduc
         ########################################################################
 
         collectionsToProduce = [
-            "mcparticles",  # needed for gen-matching
+            "mcparticles",  # needed for gen-matching, must be produced first
         ]
 
         ########################################################################
@@ -416,8 +416,9 @@ def add_channels (process, channels, histogramSets, weights, scalingfactorproduc
                 inputTags = getattr (collections, collection)
                 for inputTag in inputTags:
                     eventvariableCollections = copy.deepcopy (collections)
-                    setattr (eventvariableCollections, collection, cms.InputTag ("",""))
                     setattr (eventvariableCollections, collection,inputTag)
+                    if collection != "mcparticles":
+                        setattr (eventvariableCollections, "mcparticles", cms.InputTag ("objectProducer0", ""))
                     objectProducer = getattr (collectionProducer, collection).clone()
                     objectProducer.collections = eventvariableCollections
                     channelPath += objectProducer
@@ -436,7 +437,9 @@ def add_channels (process, channels, histogramSets, weights, scalingfactorproduc
                 setattr (producedCollections, collection, newInputTags)
             else:
                 objectProducer = getattr (collectionProducer, collection).clone()
-                objectProducer.collections = collections
+                objectProducer.collections = copy.deepcopy (collections)
+                if collection != "mcparticles":
+                    setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", ""))
                 channelPath += objectProducer
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 originalInputTag = getattr (collections, collection)
@@ -513,31 +516,30 @@ def add_channels (process, channels, histogramSets, weights, scalingfactorproduc
         # Add producers for the scaling factor producers which need the selected 
         # objects. For example the lepton scaling factors. 
         ########################################################################
-        if len(scalingfactorproducers):
-            for module in scalingfactorproducers:
-                # Here we try to add the original producer as specified in the config files. 
-                objectProducer = cms.EDProducer (str(module['name']),
-                                        # Use filteredCollections, the ones selected by the objectSelectors   
-                                        collections = copy.deepcopy(filteredCollections)
-                                           )
-                setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
-                # Add the user defined configable variables. 
-                for key in module:
-                    if str(key) != 'name':
-                        setattr (objectProducer, key, module[key])
-                # Add this producer in to the path of this channel. 
-                channelPath += objectProducer
-                add_channels.producerIndex += 1
-                # Now add osu eventvariable producer to produce <osu::eventvariable> for the plotter to use. 
-                objectProducer = getattr (collectionProducer, "eventvariables").clone()
-                objectProducer.collections = copy.deepcopy(filteredCollections)
-                channelPath += objectProducer
-                setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
-                # Use the eventvariables producered in the above specific producers. 
-                setattr(objectProducer.collections, "eventvariables" ,cms.InputTag ("objectProducer" + str (add_channels.producerIndex - 1), "eventvariables"))
-                # Add the eventvariables produced in this module to the filteredCollections for the plotter after to use. 
-                filteredCollections.eventvariables.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), "eventvariables"))
-                add_channels.producerIndex += 1
+        for module in scalingfactorproducers:
+            # Here we try to add the original producer as specified in the config files. 
+            objectProducer = cms.EDProducer (str(module['name']),
+                                    # Use filteredCollections, the ones selected by the objectSelectors   
+                                    collections = copy.deepcopy(filteredCollections)
+                                       )
+            setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+            # Add the user defined configable variables. 
+            for key in module:
+                if str(key) != 'name':
+                    setattr (objectProducer, key, module[key])
+            # Add this producer in to the path of this channel. 
+            channelPath += objectProducer
+            add_channels.producerIndex += 1
+            # Now add osu eventvariable producer to produce <osu::eventvariable> for the plotter to use. 
+            objectProducer = getattr (collectionProducer, "eventvariables").clone()
+            objectProducer.collections = copy.deepcopy(filteredCollections)
+            channelPath += objectProducer
+            setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+            # Use the eventvariables producered in the above specific producers. 
+            setattr(objectProducer.collections, "eventvariables" ,cms.InputTag ("objectProducer" + str (add_channels.producerIndex - 1), "eventvariables"))
+            # Add the eventvariables produced in this module to the filteredCollections for the plotter after to use. 
+            filteredCollections.eventvariables.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), "eventvariables"))
+            add_channels.producerIndex += 1
         ########################################################################
         # Add a plotting module for this channel to the path.
         ########################################################################

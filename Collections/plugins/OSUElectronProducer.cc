@@ -13,7 +13,7 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   produces<vector<osu::Electron> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(electrons)> > (collection_);
-  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (edm::InputTag ());
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   rhoToken_ = consumes<double> (rho_);
 }
 

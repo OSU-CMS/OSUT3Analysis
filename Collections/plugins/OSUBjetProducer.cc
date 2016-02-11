@@ -13,7 +13,7 @@ OSUBjetProducer::OSUBjetProducer (const edm::ParameterSet &cfg) :
   produces<vector<osu::Bjet> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(bjets)> > (collection_);
-  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (edm::InputTag ());
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
 }
 
 OSUBjetProducer::~OSUBjetProducer ()

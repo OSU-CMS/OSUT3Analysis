@@ -13,7 +13,7 @@ OSUTauProducer::OSUTauProducer (const edm::ParameterSet &cfg) :
   produces<vector<osu::Tau> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(taus)> > (collection_);
-  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (edm::InputTag ());
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
 }
 
 OSUTauProducer::~OSUTauProducer ()

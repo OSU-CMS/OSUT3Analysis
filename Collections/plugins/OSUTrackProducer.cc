@@ -13,7 +13,7 @@ OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
   produces<vector<osu::Track> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(tracks)> > (collection_);
-  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (edm::InputTag ());
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
 }
 
 OSUTrackProducer::~OSUTrackProducer ()
