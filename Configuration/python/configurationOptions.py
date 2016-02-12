@@ -977,6 +977,7 @@ types = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : 'data',
     'NoBPTX_2015D_v4' : 'data',
+    'NoBPTX_2015D' : 'data',
     ############################################################################
 }
 
@@ -1199,20 +1200,21 @@ colors = {
     #RECO stored on T3
     ###########################################################################
     #stopped particles stage2 signals
-    'GluinoToUUbarChi0_1200_200' : 21,
+    'GluinoToUUbarChi0_1200_200' : 4,
     'GluinoToUUbarChi0_1200_600' : 22,
-    'GluinoToUUbarChi0_1200_1000' : 23,
-    'GluinoToGChi0_1200_200'  : 31,
-    'GluinoToGChi0_1200_400'  : 32,
-    'GluinoToGChi0_1200_600'  : 33,
-    'GluinoToGChi0_1200_800'  : 34,
-    'GluinoToGChi0_1200_1000'  : 35,
+    'GluinoToUUbarChi0_1200_1000' : 2,
+    'GluinoToGChi0_1200_200'  : 2,
+    'GluinoToGChi0_1200_400'  : 3,
+    'GluinoToGChi0_1200_600'  : 6,
+    'GluinoToGChi0_1200_800'  : 7,
+    'GluinoToGChi0_1200_1000'  : 4,
 
     ############################################################################
    
     #NoBPTX data
     'NoBPTX_2015D_v3' : 1,
     'NoBPTX_2015D_v4' : 1,
+    'NoBPTX_2015D' : 1,
     ############################################################################
 }
 
@@ -1449,6 +1451,7 @@ labels = {
     #NoBPTX Data 
     'NoBPTX_2015D_v3'     : "NoBPTX 2015D_v3 data",
     'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
+    'NoBPTX_2015D'     : "Data",
     ############################################################################
 }
 
