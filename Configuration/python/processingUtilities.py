@@ -6,6 +6,7 @@ import math
 import datetime
 import time
 import copy
+import pickle
 import FWCore.ParameterSet.Modules
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
@@ -199,6 +200,21 @@ def get_collections (cuts):
     ############################################################################
 
 def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True):
+
+    ############################################################################
+    # Check the directory of the first input file for SkimInputTags.pkl. If it
+    # exists, update the input tags with those stored in the pickle file.
+    ############################################################################
+    fileName = process.source.fileNames[0]
+    if fileName.find ("file:") == 0:
+        fileName = fileName[5:]
+    skimDirectory = os.path.dirname (os.path.realpath (fileName))
+    if os.path.isfile (skimDirectory + "/SkimInputTags.pkl"):
+        fin = open (skimDirectory + "/SkimInputTags.pkl")
+        inputTags = pickle.load (fin)
+        for tag in inputTags:
+            setattr (collections, tag, inputTags[tag])
+    ############################################################################
 
     ############################################################################
     # If only the default scheduler exists, create an empty one
