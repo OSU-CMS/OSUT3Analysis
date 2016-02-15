@@ -5,11 +5,15 @@ import sys
 import os
 import re
 import glob
+import subprocess
+import pickle
 from optparse import OptionParser
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 from OSUT3Analysis.DBTools.condorSubArgumentsSet import *
+import FWCore.ParameterSet.Config as cms
+
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
 
@@ -168,7 +172,37 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber):
             if not SkimFileValidator(file.rstrip('\n')):
                 os.system('rm ' + file.rstrip('\n'))
             #print SkimFileValidator('/home/bing/CMSSW_6_2_7_patch2/src/OSUT3Analysis/AnaTools/test/condor/Jan9_test2/SingleT_s/Preselection/skim_16.root')
+        if listOfSkimFiles:
+            GetSkimInputTags(listOfSkimFiles[0])
         os.chdir(Directory)
+###############################################################################
+#           Produce a pickle file containing the skim input tags.             #
+###############################################################################
+def GetSkimInputTags(File):
+    eventContent = subprocess.check_output (["edmDumpEventContent", "--all", os.getcwd () + "/" + File])
+    parsing = False
+    cppTypes = []
+    inputTags = {}
+    for line in eventContent.splitlines ():
+        if line.find ("----------") == 0:
+            parsing = True
+            continue
+        if not parsing:
+            continue
+        splitLine = line.split ()
+        cppTypes.append (splitLine[0])
+        inputTags[splitLine[0]] = cms.InputTag (splitLine[1][1:-1], splitLine[2][1:-1], splitLine[3][1:-1])
+
+    collectionTypes = subprocess.check_output (["getCollectionType"] + cppTypes)
+    for i in range (0, len (cppTypes)):
+        collectionType = collectionTypes.splitlines ()[i]
+        if collectionType == "INVALID_TYPE":
+            inputTags.pop (cppTypes[i])
+        else:
+            inputTags[collectionType] = inputTags.pop (cppTypes[i])
+
+    fout = open ("SkimInputTags.pkl", "w")
+    pickle.dump (inputTags, fout)
 ###############################################################################
 #                 Make submission script for the failed jobs.                 #
 ###############################################################################
