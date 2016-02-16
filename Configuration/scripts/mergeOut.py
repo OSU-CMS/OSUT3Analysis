@@ -203,6 +203,7 @@ def GetSkimInputTags(File):
 
     fout = open ("SkimInputTags.pkl", "w")
     pickle.dump (inputTags, fout)
+    fout.close ()
 ###############################################################################
 #                 Make submission script for the failed jobs.                 #
 ###############################################################################

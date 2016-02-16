@@ -206,12 +206,15 @@ def add_channels (process, channels, histogramSets, weights, scalingfactorproduc
     # exists, update the input tags with those stored in the pickle file.
     ############################################################################
     fileName = process.source.fileNames[0]
+    if osusub.batchMode:
+      fileName = osusub.runList[0]
     if fileName.find ("file:") == 0:
         fileName = fileName[5:]
     skimDirectory = os.path.dirname (os.path.realpath (fileName))
     if os.path.isfile (skimDirectory + "/SkimInputTags.pkl"):
         fin = open (skimDirectory + "/SkimInputTags.pkl")
         inputTags = pickle.load (fin)
+        fin.close ()
         for tag in inputTags:
             setattr (collections, tag, inputTags[tag])
     ############################################################################
