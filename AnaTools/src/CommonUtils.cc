@@ -417,27 +417,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
     if (dataMember)
       return (new edm::ObjectWithDict (o.get (member)));
     else if (functionMember)
-/*    {
-      clog << "calling invoke for a \"" << t.name () << "\" object..." << endl;
-      clog << "================================================================================" << endl;
-      clog << "members of \"" << t.name () << "\"" << endl;
-      clog << "trying to access \"" << member << "\"" << endl;
-      clog << "--------------------------------------------------------------------------------" << endl;
-      edm::TypeDataMembers dataMembers (t);
-      edm::TypeFunctionMembers functionMembers (t);
-      for (auto mi = dataMembers.begin (); mi != dataMembers.end (); ++mi)
-        {
-          edm::MemberWithDict dataMember (*mi);
-          clog << dataMember.name () << endl;
-        }
-      for (auto mi = functionMembers.begin (); mi != functionMembers.end (); ++mi)
-        {
-          edm::FunctionWithDict functionMember (*mi);
-          clog << functionMember.name () << "()" << endl;
-        }
-      clog << "================================================================================" << endl;*/
       return invoke (memberType, o, functionMember);
-    //}
     else
       {
         edm::TypeBases bases (t);
