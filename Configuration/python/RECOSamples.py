@@ -14,4 +14,10 @@ dataset_names = {
 ########################## data ##########################
     'NoBPTX_2015D_v3' : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-v2p0-f01519ca7e946644c73f465aa3632aa9/USER",
     'NoBPTX_2015D_v4' : "/NoBPTX/wji-Run2015D-PromptReco-v4_SP-v2p0-f01519ca7e946644c73f465aa3632aa9/USER",
+
+################## SP ntuples no stored on T3 ############
+########################## data control samples ##########################
+    'Commissioning2015_controlSample' : "/NoBPTX/wji-Commissioning2015-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
+    'NoBPTX_2015B_controlSample' : "/NoBPTX/wji-Run2015B-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
+    'NoBPTX_2015C_controlSample' : "/NoBPTX/wji-Run2015C-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
 }

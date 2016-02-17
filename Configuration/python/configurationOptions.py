@@ -20,6 +20,7 @@ datasets = [
    'MuonEG_2015',
    'MuonEG_2015D',
    'NoBPTX_2015D',
+   'StpPtls_controlSample_2015',
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
@@ -253,6 +254,11 @@ composite_dataset_definitions = {
         'NoBPTX_2015D_v3',
         'NoBPTX_2015D_v4',
     ],
+   'StpPtls_controlSample_2015' : [
+        'Commissioning2015_controlSample',
+        'NoBPTX_2015B_controlSample',
+        'NoBPTX_2015C_controlSample',
+        ],
     'DisplacedSUSYSignal' : [
         'stop200_1mm',
         'stop200_10mm',
@@ -523,6 +529,12 @@ nJobs = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : 999,
     'NoBPTX_2015D_v4' : 999,
+
+    #control sample data
+    'Commissioning2015_controlSample' : 999,
+    'NoBPTX_2015B_controlSample' : 999,
+    'NoBPTX_2015C_controlSample' : 999,
+
 }
 
 maxEvents = {
@@ -737,6 +749,12 @@ maxEvents = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : -1,
     'NoBPTX_2015D_v4' : -1,
+
+    #control sample data
+    'Commissioning2015_controlSample' : -1,
+    'NoBPTX_2015B_controlSample' : -1,
+    'NoBPTX_2015C_controlSample' : -1,
+
 }
 
 # bgMC => background MC process
@@ -979,6 +997,12 @@ types = {
     'NoBPTX_2015D_v4' : 'data',
     'NoBPTX_2015D' : 'data',
     ############################################################################
+
+    #control sample data
+    'Commissioning2015_controlSample' : 'data',
+    'NoBPTX_2015B_controlSample' : 'data',
+    'NoBPTX_2015C_controlSample' : 'data',
+    'StpPtls_controlSample_2015' : 'data',
 }
 
 colors = {
@@ -1216,6 +1240,12 @@ colors = {
     'NoBPTX_2015D_v4' : 1,
     'NoBPTX_2015D' : 1,
     ############################################################################
+
+    #control sample data
+    'Commissioning2015_controlSample' : 1,
+    'NoBPTX_2015B_controlSample' : 1,
+    'NoBPTX_2015C_controlSample' : 1,
+    'StpPtls_controlSample_2015' : 1,
 }
 
 labels = {
@@ -1453,6 +1483,13 @@ labels = {
     'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
     'NoBPTX_2015D'     : "Data",
     ############################################################################
+
+    #control sample data
+    'Commissioning2015_controlSample' : "Commissioning 2015 control sample",
+    'NoBPTX_2015B_controlSample' : "NoBPTX 2015B control sample",
+    'NoBPTX_2015C_controlSample' : "NoBPTX 2015C control sample",
+    'StpPtls_controlSample_2015' : "Data control sample",
+
 }
 
 crossSections = {
