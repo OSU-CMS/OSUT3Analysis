@@ -1409,6 +1409,11 @@ def MakeTwoDHist(pathToDir,histogramName):
             DataHistograms[0].GetXaxis().SetTitle(xAxisLabel)
             DataHistograms[0].GetYaxis().SetTitle(yAxisLabel)
             DataHistograms[0].Draw("colz")
+        elif(numSignalSamples is not 0):
+            SignalMCHistograms[0].SetTitle(histoTitle)
+            SignalMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
+            SignalMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
+            SignalMCHistograms[0].Draw("colz")
 
     else:
         if(numBgMCSamples is not 0):
@@ -1491,7 +1496,8 @@ def MakeTwoDHist(pathToDir,histogramName):
         if not arguments.unique2D:
             BgMCLegend.Draw()
     if(numSignalSamples is not 0):
-        SignalMCLegend.Draw()
+        if not arguments.unique2D:
+            SignalMCLegend.Draw()
     if not arguments.paperConfig:
         Canvas.Write()
 
