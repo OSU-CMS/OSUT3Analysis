@@ -168,12 +168,15 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber):
         os.chdir(Directory + '/' + Member)
         listOfSkimFiles = os.popen('ls *.root').readlines()
         sys.path.append(Directory + '/' + Member)
+        createdSkimInputTags = False
         for file in listOfSkimFiles:
             if not SkimFileValidator(file.rstrip('\n')):
                 os.system('rm ' + file.rstrip('\n'))
+            else:
+                if not createdSkimInputTags:
+                  GetSkimInputTags(file.rstrip('\n'))
+                  createdSkimInputTags = True
             #print SkimFileValidator('/home/bing/CMSSW_6_2_7_patch2/src/OSUT3Analysis/AnaTools/test/condor/Jan9_test2/SingleT_s/Preselection/skim_16.root')
-        if listOfSkimFiles:
-            GetSkimInputTags(listOfSkimFiles[0])
         os.chdir(Directory)
 ###############################################################################
 #           Produce a pickle file containing the skim input tags.             #
