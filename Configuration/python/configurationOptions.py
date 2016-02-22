@@ -1537,7 +1537,7 @@ dstCTauForLifetimeReweighting = {
     # defined by pdgIdsForLifetimeReweighting to which the sample should be
     # reweighted.  The keys are dataset labels and the values are either single
     # lifetime values or lists of lifetimes, e.g.:
-    # 'stop1200_50mm'               : 10.0,
+    # 'stop1200_50mm'               : 5.0,
     # 'stopAndGluino1200_50mm_30mm' : [5.0, 3.0],
 }
 
