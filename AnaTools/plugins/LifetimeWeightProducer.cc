@@ -40,10 +40,8 @@ LifetimeWeightProducer::AddVariables (const edm::Event &event) {
   for (unsigned iPdgId = 0; iPdgId < pdgIds_.size (); iPdgId++)
     {
       unsigned index = 0;
-      clog << "ctau: "; // hart
       for (const auto &cTau : cTaus.at (iPdgId))
         {
-          clog << cTau << ", "; // hart
           suffix.str ("");
           suffix << "_" << abs (pdgIds_.at (iPdgId)) << "_" << index++;
           (*eventvariables)["cTau" + suffix.str ()] = cTau;
@@ -52,7 +50,6 @@ LifetimeWeightProducer::AddVariables (const edm::Event &event) {
                  dstPDF = exp (-cTau / dstCTau_.at (iPdgId)) / dstCTau_.at (iPdgId);
           weight *= (dstPDF / srcPDF);
         }
-      clog << endl; // hart
     }
 #endif
   (*eventvariables)["lifetimeWeight"] = weight;
