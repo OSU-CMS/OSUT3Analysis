@@ -13,6 +13,7 @@ import OSUT3Analysis.DBTools.osusub_cfg as osusub
 import FWCore.ParameterSet.Config as cms
 from OSUT3Analysis.Configuration.InfoPrinter_cff import *
 from OSUT3Analysis.Configuration.CollectionProducer_cff import *
+from OSUT3Analysis.Configuration.LifetimeWeightProducer_cff import *
 
 def GetCompleteOrderedArgumentsSet(InputArguments, currentCondorSubArgumentsSet):
     NewArguments = copy.deepcopy(InputArguments)
@@ -319,12 +320,18 @@ def add_channels (process, channels, histogramSets, weights, scalingfactorproduc
         ########################################################################
         variableProducerPath = cms.Path ()
         for module in variableProducers:
-            if not hasattr (process, module):
+            if module not in locals () and module not in globals ():
                 producer = cms.EDProducer (module,
-                                           collections = collections
-                                           )
+                    collections = collections
+                )
                 setattr (process, module, producer)
-                variableProducerPath += producer
+            elif module in locals ():
+                setattr (process, module, locals ()[module])
+                setattr (getattr (process, module), "collections", collections)
+            elif module in globals ():
+                setattr (process, module, globals ()[module])
+                setattr (getattr (process, module), "collections", collections)
+            variableProducerPath += getattr (process, module)
         ########################################################################
 
         ########################################################################
