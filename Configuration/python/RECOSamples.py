@@ -10,6 +10,11 @@ dataset_names = {
     'GluinoToGChi0_1200_800'  : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_800/USER",
     'GluinoToGChi0_1200_1000'  : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000/USER",
 
+################## SP ntuples stored on T3 ###############
+#################### cosmic sample #######################
+
+    'cosmic_preselection' : "/Cosmics_Preselction/Spring-74x/USER",
+
 ################## SP ntuples no stored on T3 ############
 ########################## data ##########################
     'NoBPTX_2015D_v3' : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-v2p0-f01519ca7e946644c73f465aa3632aa9/USER",

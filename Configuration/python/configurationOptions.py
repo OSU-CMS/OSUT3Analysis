@@ -523,6 +523,9 @@ nJobs = {
     'GluinoToGChi0_1200_800'  : 5,
     'GluinoToGChi0_1200_1000'  : 5,
 
+    #stopped particles cosmic events
+    'cosmic_preselection' : 300,
+
     ###########################################################################
     #RECO not stored on T3
     ###########################################################################
@@ -742,6 +745,8 @@ maxEvents = {
     'GluinoToGChi0_1200_600'  : -1,
     'GluinoToGChi0_1200_800'  : -1,
     'GluinoToGChi0_1200_1000'  : -1,
+    #stopped particles cosmic events
+    'cosmic_preselection' : -1,
 
     ###########################################################################
     #RECO not stored on T3
@@ -989,6 +994,9 @@ types = {
     'GluinoToGChi0_1200_800'  : "signalMC",
     'GluinoToGChi0_1200_1000'  : "signalMC",
 
+    #stopped particles cosmic events
+    'cosmic_preselection' : "bgMC",
+
     ###########################################################################
     #RECO not stored on T3
     ###########################################################################
@@ -1233,6 +1241,9 @@ colors = {
     'GluinoToGChi0_1200_800'  : 7,
     'GluinoToGChi0_1200_1000'  : 4,
 
+    #stopped particles cosmic events
+    'cosmic_preselection' : 2,
+
     ############################################################################
    
     #NoBPTX data
@@ -1476,6 +1487,9 @@ labels = {
     'GluinoToGChi0_1200_800'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 800 GeV)",
     'GluinoToGChi0_1200_1000'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV)",
 
+    #stopped particles cosmic events
+    'cosmic_preselection' : "Cosmic preselection",
+
     ############################################################################
 
     #NoBPTX Data 
@@ -1625,6 +1639,9 @@ crossSections = {
     'GluinoToGChi0_1200_600'  : 8.3600000000E-02,
     'GluinoToGChi0_1200_800'  : 8.3600000000E-02,
     'GluinoToGChi0_1200_1000'  : 8.3600000000E-02,
+
+    #stopped particles cosmic events
+    'cosmic_preselection' : 8.3600000000E-02,
 
 
 }
