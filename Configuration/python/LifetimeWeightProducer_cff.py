@@ -8,19 +8,19 @@ pdgIds = cms.vint32 ()
 
 if osusub.batchMode:
     if osusub.datasetLabel in types and types[osusub.datasetLabel] == "signalMC":
-        if osusub.datasetLabel in srcCTau and osusub.datasetLabel in dstCTau and osusub.datasetLabel in pdgIdsForLifetimeReweighting:
+        if osusub.datasetLabel in srcCTauForLifetimeReweighting and osusub.datasetLabel in dstCTauForLifetimeReweighting and osusub.datasetLabel in pdgIdsForLifetimeReweighting:
             try:
-                srcCTau.extend (srcCTau[osusub.datasetLabel])
+                srcCTau.extend (srcCTauForLifetimeReweighting[osusub.datasetLabel])
             except TypeError:
-                srcCTau.append (srcCTau[osusub.datasetLabel])
+                srcCTau.append (srcCTauForLifetimeReweighting[osusub.datasetLabel])
             try:
-                dstCTau.extend (srcCTau[osusub.datasetLabel])
+                dstCTau.extend (dstCTauForLifetimeReweighting[osusub.datasetLabel])
             except TypeError:
-                dstCTau.append (srcCTau[osusub.datasetLabel])
+                dstCTau.append (dstCTauForLifetimeReweighting[osusub.datasetLabel])
             try:
-                pdgIds.extend (srcCTau[osusub.datasetLabel])
+                pdgIds.extend (pdgIdsForLifetimeReweighting[osusub.datasetLabel])
             except TypeError:
-                pdgIds.append (srcCTau[osusub.datasetLabel])
+                pdgIds.append (pdgIdsForLifetimeReweighting[osusub.datasetLabel])
 
 LifetimeWeightProducer = cms.EDProducer ("LifetimeWeightProducer",
     srcCTau = srcCTau,
