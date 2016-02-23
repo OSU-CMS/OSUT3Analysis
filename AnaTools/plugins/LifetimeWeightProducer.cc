@@ -20,7 +20,11 @@ LifetimeWeightProducer::AddVariables (const edm::Event &event) {
   double weight = 1.0;
 #if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
   edm::Handle<vector<TYPE(hardInteractionMcparticles)> > mcparticles;
-  event.getByToken (mcparticlesToken_, mcparticles);
+  if (!event.getByToken (mcparticlesToken_, mcparticles))
+    {
+      (*eventvariables)["lifetimeWeight"] = weight;
+      return;
+    }
 
   vector<vector<double> > cTaus;
   cTaus.resize (pdgIds_.size ());
