@@ -5,6 +5,7 @@ import os
 import re
 import socket
 import time
+from time import gmtime, strftime
 import copy
 import glob
 from math import *
@@ -52,6 +53,7 @@ parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Deter
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")  
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")  
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")  
+parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  
 
 (arguments, args) = parser.parse_args()
 
@@ -317,7 +319,10 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     #else:
 #	ConfigFile.write('process.setName_ (process.name_ () + \'' + str(arguments.condorDir).replace('_','')  + '\')\n') 
     if arguments.Random:
-        ConfigFile.write('pset.process.RandomNumberGeneratorService.generator.initialSeed = osusub.jobNumber\n')
+        if not arguments.Extend:
+            ConfigFile.write('pset.process.RandomNumberGeneratorService.generator.initialSeed = osusub.jobNumber\n')
+        else:
+            ConfigFile.write('pset.process.RandomNumberGeneratorService.generator.initialSeed = ' + strftime("%Y%m%d%H%M%S", gmtime())[3:12])
     if arguments.Unique:
         # Specify a different lumi section for each job so that all events have unique run / lumi / event numbers.  
         # Instead of changing lumi section, could also change run number.  
