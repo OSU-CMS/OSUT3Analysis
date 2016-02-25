@@ -82,6 +82,7 @@ struct HistoDef {
   vector<string> inputVariables;
   vector<ValueLookupTree *> valueLookupTrees;
   int dimensions;
+  bool weight;
 };
 
 struct Weight

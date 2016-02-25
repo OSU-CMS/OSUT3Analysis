@@ -1519,4 +1519,30 @@ crossSections = {
     'TTJets_SingleLeptFromTbar'  :  182.7,
 }
 
+pdgIdsForLifetimeReweighting = {
+    # Defines the PDG IDs of the particles to be used for lifetime reweighting.
+    # The keys are dataset labels and the values are either single PDG IDs or
+    # lists of PDG IDs, e.g.:
+    # 'stop1200_50mm'               : 1000006,
+    # 'stopAndGluino1200_50mm_30mm' : [1000006, 1000021],
+}
+
+srcCTauForLifetimeReweighting = {
+    # Defines the proper lifetimes (in units of cm/c) of the particles defined
+    # by pdgIdsForLifetimeReweighting in the original samples before lifetime
+    # reweighting. The keys are dataset labels and the values are either single
+    # lifetime values or lists of lifetimes, e.g.:
+    # 'stop1200_50mm'               : 10.0,
+    # 'stopAndGluino1200_50mm_30mm' : [10.0, 10.0],
+}
+
+dstCTauForLifetimeReweighting = {
+    # Defines the target proper lifetimes (in units of cm/c) of the particles
+    # defined by pdgIdsForLifetimeReweighting to which the sample should be
+    # reweighted.  The keys are dataset labels and the values are either single
+    # lifetime values or lists of lifetimes, e.g.:
+    # 'stop1200_50mm'               : 5.0,
+    # 'stopAndGluino1200_50mm_30mm' : [5.0, 3.0],
+}
+
 InputCondorArguments = {}
