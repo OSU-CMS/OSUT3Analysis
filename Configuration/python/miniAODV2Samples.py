@@ -184,7 +184,8 @@ dataset_names = {
    
     'SinglePhoton_2015B'   : "/SinglePhoton/Run2015B-PromptReco-v1/MINIAOD",
     'SinglePhoton_2015C'   : "/SinglePhoton/Run2015C-PromptReco-v1/MINIAOD",
-    'SinglePhoton_2015D'   : "/SinglePhoton/Run2015D-PromptReco-v3/MINIAOD",
+    'SinglePhoton_2015D_v3'   : "/SinglePhoton/Run2015D-05Oct2015-v1/MINIAOD",
+    'SinglePhoton_2015D_v4'   : "/SinglePhoton/Run2015D-PromptReco-v4/MINIAOD",
     
     'DoubleEG_2015B'       : "/DoubleEG/Run2015B-PromptReco-v1/MINIAOD",
     'DoubleEG_2015C'       : "/DoubleEG/Run2015C-PromptReco-v1/MINIAOD",

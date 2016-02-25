@@ -198,359 +198,767 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
-def add_channels (process, channels, histogramSets, weights, collections, variableProducers, skim = True):
 
-    ############################################################################
-    # If only the default scheduler exists, create an empty one
-    ############################################################################
-    scheduleType =  type(process.schedule).__name__
-    if scheduleType == 'NoneType':
-        process.schedule = cms.Schedule ()
-    ############################################################################
 
-    ############################################################################
-    # Suffix is appended to the name of the output file. In batch mode, an
-    # underscore followed by the job number is appended.
-    ############################################################################
-    suffix = ""
-    if osusub.batchMode:
-        suffix = "_" + str (osusub.jobNumber)
-    ############################################################################
-
-    ############################################################################
-    # We append filterIndexnames of the filter PSets since they need unique
-    # names. We use function attributes so that add_channels can be called
-    # multiple times to add additional channels.
-    ############################################################################
-    if not hasattr (add_channels, "producerIndex"):
-        add_channels.producerIndex = 0
-    if not hasattr (add_channels, "filterIndex"):
-        add_channels.filterIndex = 0
-    if not hasattr (add_channels, "endPath"):
-        add_channels.endPath = cms.EndPath ()
-    ############################################################################
-
-    ############################################################################
-    # Change the process name, by adding the name of the first channel,
-    # to avoid DuplicateProcess error in the case of running over skims.
-    ############################################################################
-    if not hasattr (add_channels, "processNameUpdated"):
-        add_channels.processNameUpdated = True
+#def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True):
+def add_channels (process, channels, histogramSets = None, weights = None, scalingfactorproducers = None, collections = None, variableProducers = None, skim = None):
+    if histogramSets is None:
+        ############################################################################
+        # If only the default scheduler exists, create an empty one
+        ############################################################################
+        scheduleType =  type(process.schedule).__name__
+        if scheduleType == 'NoneType':
+            process.schedule = cms.Schedule ()
+        ############################################################################
+    
+        ############################################################################
+        # Suffix is appended to the name of the output file. In batch mode, an
+        # underscore followed by the job number is appended.
+        ############################################################################
+        suffix = ""
         if osusub.batchMode:
-            randomNumberSuffix = osusub.randomNumberSuffix
-        else:
-            randomNumberSuffix = int (time.time ())  # Use the seconds since the Unix epoch to get a
-                                                     # different process name when running over a skim with the
-                                                     # same channel.
-        channelName = str(channels[0].name.pythonValue())
-        channelName = channelName.replace("'", "").replace("_", "") # Non-alpha-numeric characters are not allowed in the process name.
-        process.setName_ (process.name_ () + channelName + str(randomNumberSuffix))
-    ############################################################################
-
-    ############################################################################
-    # For interactive jobs only,
-    # change the output filename to include the name of the first channel,
-    # as well as a date/time stamp.
-    # For batch jobs, do not change filename; we want it identical for all jobs.
-    ############################################################################
-    if not osusub.batchMode:
-        originalName = outputName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.
-        suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
-        outputName = outputName.replace(".root", suffix + ".root")
-        process.TFileService.fileName = cms.string(outputName)
-        if os.path.islink (originalName):
-            os.unlink (originalName)
-        os.symlink (outputName, originalName)
-    ############################################################################
-
-    plotCollections = get_collections (histogramSets)
-
-    for channel in channels:
-        channelPath = cms.Path ()
-        channelName = channel.name.pythonValue ()
-        channelName = channelName[1:-1]  # Remove quotation marks
-
-        ########################################################################
-        # Check to see if this channel has already been added.
-        # Since all channels must have unique names, this will break everything.
-        # So we'll print a warning and skip this channel.
-        ########################################################################
-        if hasattr (process, channelName):
-            print ("WARNING [add_channels]: The '" +
-                   channelName +
-                   "' channel has been added more than once")
-            print "  Skipping this channel!"
-            continue
-
-        ########################################################################
-        # If a skim is requested, get the name of the channel
-        # and try to make a directory with that name.
-        # If the directory already exists, an OSError exception will be
-        # raised, which we ignore.
-        ########################################################################
-        if skim:
-            try:
-                os.mkdir (channelName)
-            except OSError:
-                pass
-        ########################################################################
-
-        ########################################################################
-        # Add the variable production modules to a path
-        ########################################################################
-        variableProducerPath = cms.Path ()
-        for module in variableProducers:
-            if not hasattr (process, module):
-                producer = cms.EDProducer (module,
-                                           collections = collections
-                                           )
-                setattr (process, module, producer)
-                variableProducerPath += producer
-        ########################################################################
-
-        ########################################################################
-        # Each variable producer module is added to the list of user variable
-        # collections in the collections PSet.
-        ########################################################################
-            if not hasattr (collections, "uservariables"):
-                collections.uservariables = cms.VInputTag ()
-            # verify this collection hasn't already been added
-            isDuplicate = False
-            for inputTag in collections.uservariables:
-                if inputTag.getModuleLabel() is module:
-                    isDuplicate = True
-                    break
-            if not isDuplicate:
-                collections.uservariables.append (cms.InputTag (module, "uservariables"))
-        ########################################################################
-
-        ########################################################################
-        # Each event variable producer module is added to the list of user variable
-        # collections in the collections PSet.
-        ########################################################################
-            if not hasattr (collections, "eventvariables"):
-                collections.eventvariables = cms.VInputTag ()
-            # verify this collection hasn't already been added
-            isDuplicate = False
-            for inputTag in collections.eventvariables:
-                if inputTag.getModuleLabel() is module:
-                    isDuplicate = True
-                    break
-            if not isDuplicate:
-                collections.eventvariables.append (cms.InputTag (module, "eventvariables"))
-        ########################################################################
-
-        ########################################################################
-        # Add the variable production path at the beginning of the schedule
-        ########################################################################
-        if not hasattr (process, "variableProducerPath"):
-            setattr(process, "variableProducerPath", variableProducerPath)
-            process.schedule.insert(0,variableProducerPath)
-        ########################################################################
-
-        ########################################################################
-        # Set up the output commands. For now, we drop everything except the
-        # collections given in the collections PSet.
-        ########################################################################
-        outputCommands = ["drop *"]
-        outputCommands.append("keep *_*_uservariables_*")
-        outputCommands.append("keep *_*_eventvariables_*")
-        ########################################################################
-        #Check all the modules in collectionProducer, if a module is an EDProducer 
-        #and have extra InputTags specified, keep the correspoding collections 
-        #in the outputCommands
-        ########################################################################
-        for collection in dir(collectionProducer):
-            if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):    
-                dic = vars(getattr(collectionProducer,collection))
-                for p in dic: 
-                    if 'InputTag' in str(dic[p]):
-                        outputCommand = "keep *_"
-                        outputCommand += dic[p].getModuleLabel ()
-                        outputCommand += "_"
-                        outputCommand += dic[p].getProductInstanceLabel ()
-                        outputCommand += "_"
-                        if dic[p].getProcessName ():
-                            outputCommand += dic[p].getProcessName ()
-                        else:
-                            outputCommand += "*"
-                        outputCommands.append (outputCommand)
-                        
-        ########################################################################
-        # Add keep statements for all collections except uservariables and 
-        # eventvariables.  
-        ########################################################################        
-        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables" and a is not "eventvariables"]:
-            collectionTag = getattr (collections, collection)
-            outputCommand = "keep *_"
-            outputCommand += collectionTag.getModuleLabel ()
-            outputCommand += "_"
-            outputCommand += collectionTag.getProductInstanceLabel ()
-            outputCommand += "_"
-            if collectionTag.getProcessName ():
-                outputCommand += collectionTag.getProcessName ()
+            suffix = "_" + str (osusub.jobNumber)
+        ############################################################################
+    
+        ############################################################################
+        # We append filterIndexnames of the filter PSets since they need unique
+        # names. We use function attributes so that add_channels can be called
+        # multiple times to add additional channels.
+        ############################################################################
+        if not hasattr (add_channels, "producerIndex"):
+            add_channels.producerIndex = 0
+        if not hasattr (add_channels, "filterIndex"):
+            add_channels.filterIndex = 0
+        if not hasattr (add_channels, "endPath"):
+            add_channels.endPath = cms.EndPath ()
+        ############################################################################
+    
+        ############################################################################
+        # Change the process name, by adding the name of the first channel,
+        # to avoid DuplicateProcess error in the case of running over skims.
+        ############################################################################
+        if not hasattr (add_channels, "processNameUpdated"):
+            add_channels.processNameUpdated = True
+            if osusub.batchMode:
+                randomNumberSuffix = osusub.randomNumberSuffix
             else:
-                outputCommand += "*"
-            outputCommands.append (outputCommand)
-        ########################################################################
-
-        collectionsToProduce = [
-            "mcparticles",  # needed for gen-matching
-        ]
-
-        ########################################################################
-        # Add an OSU object producer for each collection used in a cut or
-        # histogram.
-        ########################################################################
-        producedCollections = copy.deepcopy (collections)
-        cutCollections = get_collections (channel.cuts)
-        usedCollections = sorted (list (set (cutCollections + plotCollections)))
-        for collection in collectionsToProduce:
-            if collection in usedCollections:
-                usedCollections.remove (collection)
-            if hasattr (collections, collection):
-                usedCollections.insert (0, collection)
-        for collection in usedCollections:
-            if collection is "uservariables" or collection is "eventvariables":
-                newInputTags = cms.VInputTag()
-                inputTags = getattr (collections, collection)
-                for inputTag in inputTags:
-                    eventvariableCollections = copy.deepcopy (collections)
-                    setattr (eventvariableCollections, collection, cms.InputTag ("",""))
-                    setattr (eventvariableCollections, collection,inputTag)
+                randomNumberSuffix = int (time.time ())  # Use the seconds since the Unix epoch to get a
+                                                         # different process name when running over a skim with the
+                                                         # same channel.
+            channelName = str(channels.channels[0].name.pythonValue())
+            channelName = channelName.replace("'", "").replace("_", "") # Non-alpha-numeric characters are not allowed in the process name.
+            process.setName_ (process.name_ () + channelName + str(randomNumberSuffix))
+        ############################################################################
+    
+        ############################################################################
+        # For interactive jobs only,
+        # change the output filename to include the name of the first channel,
+        # as well as a date/time stamp.
+        # For batch jobs, do not change filename; we want it identical for all jobs.
+        ############################################################################
+        if not osusub.batchMode:
+            originalName = outputName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.
+            suffix = "_" + str(channels.channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
+            outputName = outputName.replace(".root", suffix + ".root")
+            process.TFileService.fileName = cms.string(outputName)
+            if os.path.islink (originalName):
+                os.unlink (originalName)
+            os.symlink (outputName, originalName)
+        ############################################################################
+    
+        plotCollections = get_collections (channels.histogramSets)
+    
+        for channel in channels.channels:
+            channelPath = cms.Path ()
+            channelName = channel.name.pythonValue ()
+            channelName = channelName[1:-1]  # Remove quotation marks
+    
+            ########################################################################
+            # Check to see if this channel has already been added.
+            # Since all channels must have unique names, this will break everything.
+            # So we'll print a warning and skip this channel.
+            ########################################################################
+            if hasattr (process, channelName):
+                print ("WARNING [add_channels]: The '" +
+                       channelName +
+                       "' channel has been added more than once")
+                print "  Skipping this channel!"
+                continue
+    
+            ########################################################################
+            # If a skim is requested, get the name of the channel
+            # and try to make a directory with that name.
+            # If the directory already exists, an OSError exception will be
+            # raised, which we ignore.
+            ########################################################################
+            if channels.skim:
+                try:
+                    os.mkdir (channelName)
+                except OSError:
+                    pass
+            ########################################################################
+    
+            ########################################################################
+            # Add the variable production modules to a path
+            ########################################################################
+            variableProducerPath = cms.Path ()
+            for module in channels.variableProducers:
+                if not hasattr (process, module):
+                    producer = cms.EDProducer (module,
+                                               collections = channels.collections
+                                               )
+                    setattr (process, module, producer)
+                    variableProducerPath += producer
+            ########################################################################
+    
+            ########################################################################
+            # Each variable producer module is added to the list of user variable
+            # collections in the collections PSet.
+            ########################################################################
+                if not hasattr (channels.collections, "uservariables"):
+                    channels.collections.uservariables = cms.VInputTag ()
+                # verify this collection hasn't already been added
+                isDuplicate = False
+                for inputTag in channels.collections.uservariables:
+                    if inputTag.getModuleLabel() is module:
+                        isDuplicate = True
+                        break
+                if not isDuplicate:
+                    channels.collections.uservariables.append (cms.InputTag (module, "uservariables"))
+            ########################################################################
+    
+            ########################################################################
+            # Each event variable producer module is added to the list of user variable
+            # collections in the collections PSet.
+            ########################################################################
+                if not hasattr (channels.collections, "eventvariables"):
+                    channels.collections.eventvariables = cms.VInputTag ()
+                # verify this collection hasn't already been added
+                isDuplicate = False
+                for inputTag in channels.collections.eventvariables:
+                    if inputTag.getModuleLabel() is module:
+                        isDuplicate = True
+                        break
+                if not isDuplicate:
+                    channels.collections.eventvariables.append (cms.InputTag (module, "eventvariables"))
+            ########################################################################
+    
+            ########################################################################
+            # Add the variable production path at the beginning of the schedule
+            ########################################################################
+            if not hasattr (process, "variableProducerPath"):
+                setattr(process, "variableProducerPath", variableProducerPath)
+                process.schedule.insert(0,variableProducerPath)
+            ########################################################################
+    
+            ########################################################################
+            # Set up the output commands. For now, we drop everything except the
+            # collections given in the collections PSet.
+            ########################################################################
+            outputCommands = ["drop *"]
+            outputCommands.append("keep *_*_uservariables_*")
+            outputCommands.append("keep *_*_eventvariables_*")
+            ########################################################################
+            #Check all the modules in collectionProducer, if a module is an EDProducer 
+            #and have extra InputTags specified, keep the correspoding collections 
+            #in the outputCommands
+            ########################################################################
+            for collection in dir(collectionProducer):
+                if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):    
+                    dic = vars(getattr(collectionProducer,collection))
+                    for p in dic: 
+                        if 'InputTag' in str(dic[p]):
+                            outputCommand = "keep *_"
+                            outputCommand += dic[p].getModuleLabel ()
+                            outputCommand += "_"
+                            outputCommand += dic[p].getProductInstanceLabel ()
+                            outputCommand += "_"
+                            if dic[p].getProcessName ():
+                                outputCommand += dic[p].getProcessName ()
+                            else:
+                                outputCommand += "*"
+                            outputCommands.append (outputCommand)
+                            
+            ########################################################################
+            # Add keep statements for all collections except uservariables and 
+            # eventvariables.  
+            ########################################################################        
+            for collection in [a for a in dir (channels.collections) if not a.startswith('_') and not callable (getattr (channels.collections, a)) and a is not "uservariables" and a is not "eventvariables"]:
+                collectionTag = getattr (channels.collections, collection)
+                outputCommand = "keep *_"
+                outputCommand += collectionTag.getModuleLabel ()
+                outputCommand += "_"
+                outputCommand += collectionTag.getProductInstanceLabel ()
+                outputCommand += "_"
+                if collectionTag.getProcessName ():
+                    outputCommand += collectionTag.getProcessName ()
+                else:
+                    outputCommand += "*"
+                outputCommands.append (outputCommand)
+            ########################################################################
+    
+            collectionsToProduce = [
+                "mcparticles",  # needed for gen-matching
+            ]
+    
+            ########################################################################
+            # Add an OSU object producer for each collection used in a cut or
+            # histogram.
+            ########################################################################
+            producedCollections = copy.deepcopy (channels.collections)
+            cutCollections = get_collections (channel.cuts)
+            usedCollections = sorted (list (set (cutCollections + plotCollections)))
+            for collection in collectionsToProduce:
+                if collection in usedCollections:
+                    usedCollections.remove (collection)
+                if hasattr (channels.collections, collection):
+                    usedCollections.insert (0, collection)
+            for collection in usedCollections:
+                if collection is "uservariables" or collection is "eventvariables":
+                    newInputTags = cms.VInputTag()
+                    inputTags = getattr (channels.collections, collection)
+                    for inputTag in inputTags:
+                        eventvariableCollections = copy.deepcopy (channels.collections)
+                        setattr (eventvariableCollections, collection, cms.InputTag ("",""))
+                        setattr (eventvariableCollections, collection,inputTag)
+                        objectProducer = getattr (collectionProducer, collection).clone()
+                        objectProducer.collections = eventvariableCollections
+                        channelPath += objectProducer
+                        setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                        newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
+                        if collection in cutCollections: 
+                            dropCommand = "drop *_" + inputTag.getModuleLabel () + "_" + inputTag.getProductInstanceLabel () + "_"
+                            if inputTag.getProcessName ():
+                                dropCommand += inputTag.getProcessName ()
+                            else:
+                                dropCommand += "*"
+                            outputCommands.append (dropCommand)
+                        # if collection not in cutCollections:
+                        #     outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + inputTag.getProductInstanceLabel () + "_" + process.name_ ())
+                        add_channels.producerIndex += 1
+                    setattr (producedCollections, collection, newInputTags)
+                else:
                     objectProducer = getattr (collectionProducer, collection).clone()
-                    objectProducer.collections = eventvariableCollections
+                    objectProducer.collections = channels.collections
                     channelPath += objectProducer
                     setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
-                    newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
-                    if collection in cutCollections: 
-                        dropCommand = "drop *_" + inputTag.getModuleLabel () + "_" + inputTag.getProductInstanceLabel () + "_"
-                        if inputTag.getProcessName ():
-                            dropCommand += inputTag.getProcessName ()
+                    originalInputTag = getattr (channels.collections, collection)
+                    setattr (producedCollections, collection, cms.InputTag ("objectProducer" + str (add_channels.producerIndex), originalInputTag.getProductInstanceLabel ()))
+                    if collection in cutCollections:
+                        dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
+                        if originalInputTag.getProcessName ():
+                            dropCommand += originalInputTag.getProcessName ()
                         else:
                             dropCommand += "*"
                         outputCommands.append (dropCommand)
                     # if collection not in cutCollections:
-                    #     outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + inputTag.getProductInstanceLabel () + "_" + process.name_ ())
+                    #     outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
                     add_channels.producerIndex += 1
-                setattr (producedCollections, collection, newInputTags)
-            else:
-                objectProducer = getattr (collectionProducer, collection).clone()
-                objectProducer.collections = collections
-                channelPath += objectProducer
-                setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
-                originalInputTag = getattr (collections, collection)
-                setattr (producedCollections, collection, cms.InputTag ("objectProducer" + str (add_channels.producerIndex), originalInputTag.getProductInstanceLabel ()))
-                if collection in cutCollections:
-                    dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
-                    if originalInputTag.getProcessName ():
-                        dropCommand += originalInputTag.getProcessName ()
-                    else:
-                        dropCommand += "*"
-                    outputCommands.append (dropCommand)
-                # if collection not in cutCollections:
-                #     outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
-                add_channels.producerIndex += 1
-        ########################################################################
-
-        ########################################################################
-        # Add a cut calculator module for this channel to the path.
-        ########################################################################
-        cutCalculator = cms.EDProducer ("CutCalculator",
-            collections = producedCollections,
-            cuts = channel
-        )
-        channelPath += cutCalculator
-        setattr (process, channelName + "CutCalculator", cutCalculator)
-        ########################################################################
-
-        ########################################################################
-        # Add a cut flow plotting module for this channel to the path.
-        ########################################################################
-        cutFlowPlotter = cms.EDAnalyzer ("CutFlowPlotter",
-            collections = producedCollections,
-            cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
-        )
-        channelPath += cutFlowPlotter
-        setattr (process, channelName + "CutFlowPlotter", cutFlowPlotter)
-        ########################################################################
-
-        ########################################################################
-        # Add a module for printing info, both general and for specific events.
-        ########################################################################
-        channelInfoPrinter = copy.deepcopy (infoPrinter)
-        channelInfoPrinter.collections = producedCollections
-        channelInfoPrinter.cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
-        channelPath += channelInfoPrinter
-        setattr (process, channelName + "InfoPrinter", channelInfoPrinter)
-        ########################################################################
-
-        ########################################################################
-        # For each collection on which cuts are applied, we add the
-        # corresponding object selector to the path. We also trade the original
-        # collection for the slimmed collection in the output commands.
-        ########################################################################
-        filteredCollections = copy.deepcopy (producedCollections)
-        for collection in cutCollections:
-            # Temporary fix for user-defined variables
-            # For the moment, they won't be filtered
-            if collection is "uservariables" or collection is "eventvariables":
-                continue
-            filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
-            objectSelector = cms.EDFilter (filterName,
+            ########################################################################
+    
+            ########################################################################
+            # Add a cut calculator module for this channel to the path.
+            ########################################################################
+            cutCalculator = cms.EDProducer ("CutCalculator",
                 collections = producedCollections,
-                collectionToFilter = cms.string (collection),
+                cuts = channel
+            )
+            channelPath += cutCalculator
+            setattr (process, channelName + "CutCalculator", cutCalculator)
+            ########################################################################
+    
+            ########################################################################
+            # Add a cut flow plotting module for this channel to the path.
+            ########################################################################
+            cutFlowPlotter = cms.EDAnalyzer ("CutFlowPlotter",
+                collections = producedCollections,
                 cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
             )
-            channelPath += objectSelector
-            setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
-            originalInputTag = getattr (collections, collection)
-            setattr (filteredCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
-            outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_originalFormat_" + process.name_ ())
-            add_channels.filterIndex += 1
-        ########################################################################
-
-        ########################################################################
-        # Add a plotting module for this channel to the path.
-        ########################################################################
-        if len (histogramSets):
-            plotter = cms.EDAnalyzer ("Plotter",
-                collections     =  filteredCollections,
-                histogramSets   =  histogramSets,
-                weights         =  weights,
-                verbose         =  cms.int32 (0)
+            channelPath += cutFlowPlotter
+            setattr (process, channelName + "CutFlowPlotter", cutFlowPlotter)
+            ########################################################################
+    
+            ########################################################################
+            # Add a module for printing info, both general and for specific events.
+            ########################################################################
+            channelInfoPrinter = copy.deepcopy (infoPrinter)
+            channelInfoPrinter.collections = producedCollections
+            channelInfoPrinter.cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
+            channelPath += channelInfoPrinter
+            setattr (process, channelName + "InfoPrinter", channelInfoPrinter)
+            ########################################################################
+    
+            ########################################################################
+            # For each collection on which cuts are applied, we add the
+            # corresponding object selector to the path. We also trade the original
+            # collection for the slimmed collection in the output commands.
+            ########################################################################
+            filteredCollections = copy.deepcopy (producedCollections)
+            for collection in cutCollections:
+                # Temporary fix for user-defined variables
+                # For the moment, they won't be filtered
+                if collection is "uservariables" or collection is "eventvariables":
+                    continue
+                filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
+                objectSelector = cms.EDFilter (filterName,
+                    collections = producedCollections,
+                    collectionToFilter = cms.string (collection),
+                    cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
+                )
+                channelPath += objectSelector
+                setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
+                originalInputTag = getattr (channels.collections, collection)
+                setattr (filteredCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
+                outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_originalFormat_" + process.name_ ())
+                add_channels.filterIndex += 1
+            ########################################################################
+            # Add producers for the scaling factor producers which need the selected 
+            # objects. For example the lepton scaling factors. 
+            ########################################################################
+            if len(channels.scalingfactorproducers):
+                for module in channels.scalingfactorproducers:
+                    # Here we try to add the original producer as specified in the config files. 
+                    objectProducer = cms.EDProducer (str(module['name']),
+                                            # Use filteredCollections, the ones selected by the objectSelectors   
+                                            collections = copy.deepcopy(filteredCollections)
+                                               )
+                    setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                    # Add the user defined configable variables. 
+                    for key in module:
+                        if str(key) != 'name':
+                            setattr (objectProducer, key, module[key])
+                    # Add this producer in to the path of this channel. 
+                    channelPath += objectProducer
+                    add_channels.producerIndex += 1
+                    # Now add osu eventvariable producer to produce <osu::eventvariable> for the plotter to use. 
+                    objectProducer = getattr (collectionProducer, "eventvariables").clone()
+                    objectProducer.collections = copy.deepcopy(filteredCollections)
+                    channelPath += objectProducer
+                    setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                    # Use the eventvariables producered in the above specific producers. 
+                    setattr(objectProducer.collections, "eventvariables" ,cms.InputTag ("objectProducer" + str (add_channels.producerIndex - 1), "eventvariables"))
+                    # Add the eventvariables produced in this module to the filteredCollections for the plotter after to use. 
+                    filteredCollections.eventvariables.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), "eventvariables"))
+                    add_channels.producerIndex += 1
+            ########################################################################
+            # Add a plotting module for this channel to the path.
+            ########################################################################
+            if len (channels.histogramSets):
+                plotter = cms.EDAnalyzer ("Plotter",
+                    collections     =  filteredCollections,
+                    histogramSets   =  channels.histogramSets,
+                    weights         =  channels.weights,
+                    verbose         =  cms.int32 (0)
+                )
+                channelPath += plotter
+                setattr (process, channelName + "Plotter", plotter)
+            ########################################################################
+    
+            ########################################################################
+            # Add an output module for this channel to the path. We can use any of
+            # the object selectors for this channel as the "SelectEvents" parameter
+            # since they each return the global event decision. So we use the first
+            # which was added.
+            ########################################################################
+            if channels.skim:
+                SelectEvents = cms.vstring ()
+                if cutCollections:
+                    SelectEvents = cms.vstring (channelName)
+                poolOutputModule = cms.OutputModule ("PoolOutputModule",
+                    splitLevel = cms.untracked.int32 (0),
+                    eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
+                    fileName = cms.untracked.string (channelName + "/skim" + suffix + ".root"),
+                    SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
+                    outputCommands = cms.untracked.vstring (outputCommands),
+                    dropMetaData = cms.untracked.string ("ALL")
+                )
+                add_channels.endPath += poolOutputModule
+                setattr (process, channelName + "PoolOutputModule", poolOutputModule)
+            ########################################################################
+    
+            setattr (process, channelName, channelPath)
+            process.schedule.append(getattr(process,channelName))
+        setattr (process, "endPath", add_channels.endPath)
+        set_endPath(process, add_channels.endPath)
+    else:
+        ############################################################################
+        # If only the default scheduler exists, create an empty one
+        ############################################################################
+        scheduleType =  type(process.schedule).__name__
+        if scheduleType == 'NoneType':
+            process.schedule = cms.Schedule ()
+        ############################################################################
+    
+        ############################################################################
+        # Suffix is appended to the name of the output file. In batch mode, an
+        # underscore followed by the job number is appended.
+        ############################################################################
+        suffix = ""
+        if osusub.batchMode:
+            suffix = "_" + str (osusub.jobNumber)
+        ############################################################################
+    
+        ############################################################################
+        # We append filterIndexnames of the filter PSets since they need unique
+        # names. We use function attributes so that add_channels can be called
+        # multiple times to add additional channels.
+        ############################################################################
+        if not hasattr (add_channels, "producerIndex"):
+            add_channels.producerIndex = 0
+        if not hasattr (add_channels, "filterIndex"):
+            add_channels.filterIndex = 0
+        if not hasattr (add_channels, "endPath"):
+            add_channels.endPath = cms.EndPath ()
+        ############################################################################
+    
+        ############################################################################
+        # Change the process name, by adding the name of the first channel,
+        # to avoid DuplicateProcess error in the case of running over skims.
+        ############################################################################
+        if not hasattr (add_channels, "processNameUpdated"):
+            add_channels.processNameUpdated = True
+            if osusub.batchMode:
+                randomNumberSuffix = osusub.randomNumberSuffix
+            else:
+                randomNumberSuffix = int (time.time ())  # Use the seconds since the Unix epoch to get a
+                                                         # different process name when running over a skim with the
+                                                         # same channel.
+            channelName = str(channels[0].name.pythonValue())
+            channelName = channelName.replace("'", "").replace("_", "") # Non-alpha-numeric characters are not allowed in the process name.
+            process.setName_ (process.name_ () + channelName + str(randomNumberSuffix))
+        ############################################################################
+    
+        ############################################################################
+        # For interactive jobs only,
+        # change the output filename to include the name of the first channel,
+        # as well as a date/time stamp.
+        # For batch jobs, do not change filename; we want it identical for all jobs.
+        ############################################################################
+        if not osusub.batchMode:
+            originalName = outputName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.
+            suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
+            outputName = outputName.replace(".root", suffix + ".root")
+            process.TFileService.fileName = cms.string(outputName)
+            if os.path.islink (originalName):
+                os.unlink (originalName)
+            os.symlink (outputName, originalName)
+        ############################################################################
+    
+        plotCollections = get_collections (histogramSets)
+    
+        for channel in channels:
+            channelPath = cms.Path ()
+            channelName = channel.name.pythonValue ()
+            channelName = channelName[1:-1]  # Remove quotation marks
+    
+            ########################################################################
+            # Check to see if this channel has already been added.
+            # Since all channels must have unique names, this will break everything.
+            # So we'll print a warning and skip this channel.
+            ########################################################################
+            if hasattr (process, channelName):
+                print ("WARNING [add_channels]: The '" +
+                       channelName +
+                       "' channel has been added more than once")
+                print "  Skipping this channel!"
+                continue
+    
+            ########################################################################
+            # If a skim is requested, get the name of the channel
+            # and try to make a directory with that name.
+            # If the directory already exists, an OSError exception will be
+            # raised, which we ignore.
+            ########################################################################
+            if skim:
+                try:
+                    os.mkdir (channelName)
+                except OSError:
+                    pass
+            ########################################################################
+    
+            ########################################################################
+            # Add the variable production modules to a path
+            ########################################################################
+            variableProducerPath = cms.Path ()
+            for module in variableProducers:
+                if not hasattr (process, module):
+                    producer = cms.EDProducer (module,
+                                               collections = collections
+                                               )
+                    setattr (process, module, producer)
+                    variableProducerPath += producer
+            ########################################################################
+    
+            ########################################################################
+            # Each variable producer module is added to the list of user variable
+            # collections in the collections PSet.
+            ########################################################################
+                if not hasattr (collections, "uservariables"):
+                    collections.uservariables = cms.VInputTag ()
+                # verify this collection hasn't already been added
+                isDuplicate = False
+                for inputTag in collections.uservariables:
+                    if inputTag.getModuleLabel() is module:
+                        isDuplicate = True
+                        break
+                if not isDuplicate:
+                    collections.uservariables.append (cms.InputTag (module, "uservariables"))
+            ########################################################################
+    
+            ########################################################################
+            # Each event variable producer module is added to the list of user variable
+            # collections in the collections PSet.
+            ########################################################################
+                if not hasattr (collections, "eventvariables"):
+                    collections.eventvariables = cms.VInputTag ()
+                # verify this collection hasn't already been added
+                isDuplicate = False
+                for inputTag in collections.eventvariables:
+                    if inputTag.getModuleLabel() is module:
+                        isDuplicate = True
+                        break
+                if not isDuplicate:
+                    collections.eventvariables.append (cms.InputTag (module, "eventvariables"))
+            ########################################################################
+    
+            ########################################################################
+            # Add the variable production path at the beginning of the schedule
+            ########################################################################
+            if not hasattr (process, "variableProducerPath"):
+                setattr(process, "variableProducerPath", variableProducerPath)
+                process.schedule.insert(0,variableProducerPath)
+            ########################################################################
+    
+            ########################################################################
+            # Set up the output commands. For now, we drop everything except the
+            # collections given in the collections PSet.
+            ########################################################################
+            outputCommands = ["drop *"]
+            outputCommands.append("keep *_*_uservariables_*")
+            outputCommands.append("keep *_*_eventvariables_*")
+            ########################################################################
+            #Check all the modules in collectionProducer, if a module is an EDProducer 
+            #and have extra InputTags specified, keep the correspoding collections 
+            #in the outputCommands
+            ########################################################################
+            for collection in dir(collectionProducer):
+                if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):    
+                    dic = vars(getattr(collectionProducer,collection))
+                    for p in dic: 
+                        if 'InputTag' in str(dic[p]):
+                            outputCommand = "keep *_"
+                            outputCommand += dic[p].getModuleLabel ()
+                            outputCommand += "_"
+                            outputCommand += dic[p].getProductInstanceLabel ()
+                            outputCommand += "_"
+                            if dic[p].getProcessName ():
+                                outputCommand += dic[p].getProcessName ()
+                            else:
+                                outputCommand += "*"
+                            outputCommands.append (outputCommand)
+                            
+            ########################################################################
+            # Add keep statements for all collections except uservariables and 
+            # eventvariables.  
+            ########################################################################        
+            for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables" and a is not "eventvariables"]:
+                collectionTag = getattr (collections, collection)
+                outputCommand = "keep *_"
+                outputCommand += collectionTag.getModuleLabel ()
+                outputCommand += "_"
+                outputCommand += collectionTag.getProductInstanceLabel ()
+                outputCommand += "_"
+                if collectionTag.getProcessName ():
+                    outputCommand += collectionTag.getProcessName ()
+                else:
+                    outputCommand += "*"
+                outputCommands.append (outputCommand)
+            ########################################################################
+    
+            collectionsToProduce = [
+                "mcparticles",  # needed for gen-matching
+            ]
+    
+            ########################################################################
+            # Add an OSU object producer for each collection used in a cut or
+            # histogram.
+            ########################################################################
+            producedCollections = copy.deepcopy (collections)
+            cutCollections = get_collections (channel.cuts)
+            usedCollections = sorted (list (set (cutCollections + plotCollections)))
+            for collection in collectionsToProduce:
+                if collection in usedCollections:
+                    usedCollections.remove (collection)
+                if hasattr (collections, collection):
+                    usedCollections.insert (0, collection)
+            for collection in usedCollections:
+                if collection is "uservariables" or collection is "eventvariables":
+                    newInputTags = cms.VInputTag()
+                    inputTags = getattr (collections, collection)
+                    for inputTag in inputTags:
+                        eventvariableCollections = copy.deepcopy (collections)
+                        setattr (eventvariableCollections, collection, cms.InputTag ("",""))
+                        setattr (eventvariableCollections, collection,inputTag)
+                        objectProducer = getattr (collectionProducer, collection).clone()
+                        objectProducer.collections = eventvariableCollections
+                        channelPath += objectProducer
+                        setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                        newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
+                        if collection in cutCollections: 
+                            dropCommand = "drop *_" + inputTag.getModuleLabel () + "_" + inputTag.getProductInstanceLabel () + "_"
+                            if inputTag.getProcessName ():
+                                dropCommand += inputTag.getProcessName ()
+                            else:
+                                dropCommand += "*"
+                            outputCommands.append (dropCommand)
+                        # if collection not in cutCollections:
+                        #     outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + inputTag.getProductInstanceLabel () + "_" + process.name_ ())
+                        add_channels.producerIndex += 1
+                    setattr (producedCollections, collection, newInputTags)
+                else:
+                    objectProducer = getattr (collectionProducer, collection).clone()
+                    objectProducer.collections = collections
+                    channelPath += objectProducer
+                    setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                    originalInputTag = getattr (collections, collection)
+                    setattr (producedCollections, collection, cms.InputTag ("objectProducer" + str (add_channels.producerIndex), originalInputTag.getProductInstanceLabel ()))
+                    if collection in cutCollections:
+                        dropCommand = "drop *_" + originalInputTag.getModuleLabel () + "_" + originalInputTag.getProductInstanceLabel () + "_"
+                        if originalInputTag.getProcessName ():
+                            dropCommand += originalInputTag.getProcessName ()
+                        else:
+                            dropCommand += "*"
+                        outputCommands.append (dropCommand)
+                    # if collection not in cutCollections:
+                    #     outputCommands.append ("keep *_objectProducer" + str (add_channels.producerIndex) + "_" + originalInputTag.getProductInstanceLabel () + "_" + process.name_ ())
+                    add_channels.producerIndex += 1
+            ########################################################################
+    
+            ########################################################################
+            # Add a cut calculator module for this channel to the path.
+            ########################################################################
+            cutCalculator = cms.EDProducer ("CutCalculator",
+                collections = producedCollections,
+                cuts = channel
             )
-            channelPath += plotter
-            setattr (process, channelName + "Plotter", plotter)
-        ########################################################################
-
-        ########################################################################
-        # Add an output module for this channel to the path. We can use any of
-        # the object selectors for this channel as the "SelectEvents" parameter
-        # since they each return the global event decision. So we use the first
-        # which was added.
-        ########################################################################
-        if skim:
-            SelectEvents = cms.vstring ()
-            if cutCollections:
-                SelectEvents = cms.vstring (channelName)
-            poolOutputModule = cms.OutputModule ("PoolOutputModule",
-                splitLevel = cms.untracked.int32 (0),
-                eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
-                fileName = cms.untracked.string (channelName + "/skim" + suffix + ".root"),
-                SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
-                outputCommands = cms.untracked.vstring (outputCommands),
-                dropMetaData = cms.untracked.string ("ALL")
+            channelPath += cutCalculator
+            setattr (process, channelName + "CutCalculator", cutCalculator)
+            ########################################################################
+    
+            ########################################################################
+            # Add a cut flow plotting module for this channel to the path.
+            ########################################################################
+            cutFlowPlotter = cms.EDAnalyzer ("CutFlowPlotter",
+                collections = producedCollections,
+                cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
             )
-            add_channels.endPath += poolOutputModule
-            setattr (process, channelName + "PoolOutputModule", poolOutputModule)
-        ########################################################################
-
-        setattr (process, channelName, channelPath)
-        process.schedule.append(getattr(process,channelName))
-    setattr (process, "endPath", add_channels.endPath)
-    set_endPath(process, add_channels.endPath)
-
+            channelPath += cutFlowPlotter
+            setattr (process, channelName + "CutFlowPlotter", cutFlowPlotter)
+            ########################################################################
+    
+            ########################################################################
+            # Add a module for printing info, both general and for specific events.
+            ########################################################################
+            channelInfoPrinter = copy.deepcopy (infoPrinter)
+            channelInfoPrinter.collections = producedCollections
+            channelInfoPrinter.cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
+            channelPath += channelInfoPrinter
+            setattr (process, channelName + "InfoPrinter", channelInfoPrinter)
+            ########################################################################
+    
+            ########################################################################
+            # For each collection on which cuts are applied, we add the
+            # corresponding object selector to the path. We also trade the original
+            # collection for the slimmed collection in the output commands.
+            ########################################################################
+            filteredCollections = copy.deepcopy (producedCollections)
+            for collection in cutCollections:
+                # Temporary fix for user-defined variables
+                # For the moment, they won't be filtered
+                if collection is "uservariables" or collection is "eventvariables":
+                    continue
+                filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
+                objectSelector = cms.EDFilter (filterName,
+                    collections = producedCollections,
+                    collectionToFilter = cms.string (collection),
+                    cutDecisions = cms.InputTag (channelName + "CutCalculator", "cutDecisions")
+                )
+                channelPath += objectSelector
+                setattr (process, "objectSelector" + str (add_channels.filterIndex), objectSelector)
+                originalInputTag = getattr (collections, collection)
+                setattr (filteredCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
+                outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_originalFormat_" + process.name_ ())
+                add_channels.filterIndex += 1
+            ########################################################################
+            # Add producers for the scaling factor producers which need the selected 
+            # objects. For example the lepton scaling factors. 
+            ########################################################################
+            if len(scalingfactorproducers):
+                for module in scalingfactorproducers:
+                    # Here we try to add the original producer as specified in the config files. 
+                    objectProducer = cms.EDProducer (str(module['name']),
+                                            # Use filteredCollections, the ones selected by the objectSelectors   
+                                            collections = copy.deepcopy(filteredCollections)
+                                               )
+                    setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                    # Add the user defined configable variables. 
+                    for key in module:
+                        if str(key) != 'name':
+                            setattr (objectProducer, key, module[key])
+                    # Add this producer in to the path of this channel. 
+                    channelPath += objectProducer
+                    add_channels.producerIndex += 1
+                    # Now add osu eventvariable producer to produce <osu::eventvariable> for the plotter to use. 
+                    objectProducer = getattr (collectionProducer, "eventvariables").clone()
+                    objectProducer.collections = copy.deepcopy(filteredCollections)
+                    channelPath += objectProducer
+                    setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
+                    # Use the eventvariables producered in the above specific producers. 
+                    setattr(objectProducer.collections, "eventvariables" ,cms.InputTag ("objectProducer" + str (add_channels.producerIndex - 1), "eventvariables"))
+                    # Add the eventvariables produced in this module to the filteredCollections for the plotter after to use. 
+                    filteredCollections.eventvariables.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), "eventvariables"))
+                    add_channels.producerIndex += 1
+            ########################################################################
+            # Add a plotting module for this channel to the path.
+            ########################################################################
+            if len (histogramSets):
+                plotter = cms.EDAnalyzer ("Plotter",
+                    collections     =  filteredCollections,
+                    histogramSets   =  histogramSets,
+                    weights         =  weights,
+                    verbose         =  cms.int32 (0)
+                )
+                channelPath += plotter
+                setattr (process, channelName + "Plotter", plotter)
+            ########################################################################
+    
+            ########################################################################
+            # Add an output module for this channel to the path. We can use any of
+            # the object selectors for this channel as the "SelectEvents" parameter
+            # since they each return the global event decision. So we use the first
+            # which was added.
+            ########################################################################
+            if skim:
+                SelectEvents = cms.vstring ()
+                if cutCollections:
+                    SelectEvents = cms.vstring (channelName)
+                poolOutputModule = cms.OutputModule ("PoolOutputModule",
+                    splitLevel = cms.untracked.int32 (0),
+                    eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
+                    fileName = cms.untracked.string (channelName + "/skim" + suffix + ".root"),
+                    SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
+                    outputCommands = cms.untracked.vstring (outputCommands),
+                    dropMetaData = cms.untracked.string ("ALL")
+                )
+                add_channels.endPath += poolOutputModule
+                setattr (process, channelName + "PoolOutputModule", poolOutputModule)
+            ########################################################################
+    
+            setattr (process, channelName, channelPath)
+            process.schedule.append(getattr(process,channelName))
+        setattr (process, "endPath", add_channels.endPath)
+        set_endPath(process, add_channels.endPath)
+        
 def set_endPath(process, endPath):
 
     ############################################################################
