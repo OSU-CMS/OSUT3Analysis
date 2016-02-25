@@ -108,66 +108,100 @@ parser.add_option("--redirector", dest="Redirector", default = "", help="Setup t
 #Define the dictionary to look for the redirectors given the users input. 
 RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Global':'cms-xrd-global.cern.ch'}
 
-#To get the JSON file the user specifies. Use -J 'TypeOfJSON' like -J Silver
+#To get the JSON file the user specifies. Use -J 'TypeOfJSON' like -J R_Silver
 def getLatestJsonFile():
-    os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O jsonList.txt')
-    os.system('grep "Cert" jsonList.txt > CertList.txt')
-    Tmp = open('CertList.txt','r+w')
-    jsonFileList = []
-    for line in Tmp:
-        startIndex = 0
-        endIndex = 0
-        for i in range(0,len(line)):
-          if line[i:i + 5] == '"Cert':
-              startIndex = i + 1
-          if line[i:i+4] == 'txt"':
-              endIndex = i + 3
-        if startIndex <= endIndex:
-            jsonFileList.append(line[startIndex: endIndex])
-    jsonFileFiltered = []
-    for fileName in jsonFileList:
-        nameSplit = fileName.split('_')
-        for i in range(0, len(nameSplit)):
-            if arguments.JSONType == "" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
-                jsonFileFiltered.append(fileName)
-            elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
-                if nameSplit[i + 3].split('.')[0] == arguments.JSONType:
+    if arguments.JSONType.split('_')[0] == "P":
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O jsonList.txt')
+        os.system('grep "Cert" jsonList.txt > CertList.txt')
+        Tmp = open('CertList.txt','r+w')
+        jsonFileList = []
+        for line in Tmp:
+            startIndex = 0
+            endIndex = 0
+            for i in range(0,len(line)):
+              if line[i:i + 5] == '"Cert':
+                  startIndex = i + 1
+              if line[i:i+4] == 'txt"':
+                  endIndex = i + 3
+            if startIndex <= endIndex:
+                jsonFileList.append(line[startIndex: endIndex])
+        jsonFileFiltered = []
+        for fileName in jsonFileList:
+            nameSplit = fileName.split('_')
+            for i in range(0, len(nameSplit)):
+                if arguments.JSONType == "" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
                     jsonFileFiltered.append(fileName)
-    bestJsons = []
-    bestJson = ''
-    runRange = 0
-    if len(jsonFileFiltered) == 0:
-          print "#######################################################"
-          print "Warning!!!!!!!!!!!Could not find wanted JSON file"
-          print "#######################################################"
-    for json in jsonFileFiltered:
-        nameSplit = json.split('_')
-        if len(nameSplit[1].split('-')) > 1:
-            if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) > runRange:
-                runRange = float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0])
-                bestJson = json
-    for json in jsonFileFiltered:
-        nameSplit = json.split('_')
-        if len(nameSplit[1].split('-')) > 1:
-            if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) == runRange:
-                bestJsons.append(json)
-    versionNumber = 0
-    ultimateJson = ''
-    if len(bestJsons) == 1:
-        ultimateJson = bestJsons[0]
-    else:
-        for bestJson in bestJsons:
-            nameSplit = bestJson.split('_')
-            if nameSplit[len(nameSplit) - 1][0] == 'v':
-                versionString =  nameSplit[len(nameSplit) - 1].split('.')[0]
-                currentVersionNumber = float(versionString[1 : ])
-                if currentVersionNumber > versionNumber:
-                    versionNumber = currentVersionNumber
-                    ultimateJson = bestJson
-    os.system('rm CertList.txt')
-    os.system('rm jsonList.txt')
-    os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/' + ultimateJson + ' -O ' + ultimateJson)
-    return ultimateJson
+                elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
+                    if nameSplit[i + 3].split('.')[0] == arguments.JSONType.split('_')[1]:
+                        jsonFileFiltered.append(fileName)
+        bestJsons = []
+        bestJson = ''
+        runRange = 0
+        if len(jsonFileFiltered) == 0:
+              print "#######################################################"
+              print "Warning!!!!!!!!!!!Could not find wanted JSON file"
+              print "#######################################################"
+        for json in jsonFileFiltered:
+            nameSplit = json.split('_')
+            if len(nameSplit[1].split('-')) > 1:
+                if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) > runRange:
+                    runRange = float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0])
+                    bestJson = json
+        for json in jsonFileFiltered:
+            nameSplit = json.split('_')
+            if len(nameSplit[1].split('-')) > 1:
+                if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) == runRange:
+                    bestJsons.append(json)
+        versionNumber = 0
+        ultimateJson = ''
+        if len(bestJsons) == 1:
+            ultimateJson = bestJsons[0]
+        else:
+            for bestJson in bestJsons:
+                nameSplit = bestJson.split('_')
+                if nameSplit[len(nameSplit) - 1][0] == 'v':
+                    versionString =  nameSplit[len(nameSplit) - 1].split('.')[0]
+                    currentVersionNumber = float(versionString[1 : ])
+                    if currentVersionNumber > versionNumber:
+                        versionNumber = currentVersionNumber
+                        ultimateJson = bestJson
+        os.system('rm CertList.txt')
+        os.system('rm jsonList.txt')
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/' + ultimateJson + ' -O ' + ultimateJson)
+        return ultimateJson
+    if arguments.JSONType.split('_')[0] == "R":
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/ -O jsonList.txt')
+        os.system('grep "Cert" jsonList.txt > CertList.txt')
+        Tmp = open('CertList.txt','r+w')
+        jsonFileList = []
+        for line in Tmp:
+            startIndex = 0
+            endIndex = 0
+            for i in range(0,len(line)):
+              if line[i:i + 5] == '"Cert':
+                  startIndex = i + 1
+              if line[i:i+4] == 'txt"':
+                  endIndex = i + 3
+            if startIndex <= endIndex:
+                jsonFileList.append(line[startIndex: endIndex])
+        jsonFileFiltered = []
+        for fileName in jsonFileList:
+            nameSplit = fileName.split('_')
+            for i in range(0, len(nameSplit)):
+                if arguments.JSONType == "" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
+                    jsonFileFiltered.append(fileName)
+                elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
+                    if nameSplit[i + 3].split('.')[0] == arguments.JSONType.split('_')[1]:
+                        jsonFileFiltered.append(fileName)
+        if len(jsonFileFiltered) == 0:
+              print "#######################################################"
+              print "Warning!!!!!!!!!!!Could not find wanted JSON file"
+              print "#######################################################"
+        ultimateJson = jsonFileFiltered[-1]
+        os.system('rm CertList.txt')
+        os.system('rm jsonList.txt')
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/' + ultimateJson + ' -O ' + ultimateJson)
+        return ultimateJson
 
 
 #A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.  
