@@ -138,10 +138,9 @@ composite_dataset_definitions = {
     'Diboson' : [
         'WWToLNuQQ',
         'WWToLNuLNu',
-        'WZToLNuQQ',
-        'WZToLLQQ',
         'WZToLNuNuNu',
         'WZToLLLNu',
+        'WZToLNu2QorQQ2L',
         'ZZToNuNuQQ',
         'ZZToLLQQ',
         'ZZToLLNuNu',
@@ -257,8 +256,7 @@ composite_dataset_definitions = {
         'SinglePhoton_2015D_v4',
     ],
     'MuonEG_2015D' : [
-        'MuonEG_2015D_v3',
-        'MuonEG_2015D_v4',
+        'MuonEG_2015D',
     ],
     'NoBPTX_2015D' : [
         'NoBPTX_2015D_v3',
@@ -343,6 +341,7 @@ nJobs = {
     'WZToLLQQ'     :  999,
     'WZToLNuNuNu'  :  999,
     'WZToLLLNu'    :  999,
+    'WZToLNu2QorQQ2L' : 999,
 
     #ZZ
     'ZZToNuNuQQ'  :  999,
@@ -511,7 +510,7 @@ nJobs = {
     
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
-    'MuonEG_2015D_v3'   :  1000,
+    'MuonEG_2015D'   :  1000,
     'MuonEG_2015D_v4'   :  1000,
     
     #NoBPTX data
@@ -544,6 +543,7 @@ maxEvents = {
     'WZToLLQQ'     :  -1,
     'WZToLNuNuNu'  :  -1,
     'WZToLLLNu'    :  -1,
+    'WZToLNu2QorQQ2L' : -1,
 
     #ZZ
     'ZZToNuNuQQ'  :  -1,
@@ -710,7 +710,7 @@ maxEvents = {
     
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
-    'MuonEG_2015D_v3'       : -1,
+    'MuonEG_2015D'       : -1,
     'MuonEG_2015D_v4'       : -1,
     
     #NoBPTX data
@@ -747,6 +747,7 @@ types = {
     'WZToLLQQ'     :  "bgMC",
     'WZToLNuNuNu'  :  "bgMC",
     'WZToLLLNu'    :  "bgMC",
+    'WZToLNu2QorQQ2L' : "bgMC",
 
     #ZZ
     'ZZToNuNuQQ'  :  "bgMC",
@@ -972,6 +973,7 @@ colors = {
     'WZToLLQQ'     :  393,
     'WZToLNuNuNu'  :  393,
     'WZToLLLNu'    :  393,
+    'WZToLNu2QorQQ2L' : 393,
 
     #ZZ
     'ZZToNuNuQQ'  :  397,
@@ -1198,6 +1200,7 @@ labels = {
     'WZToLLQQ'     :  "WZ#rightarrowqqll",
     'WZToLNuNuNu'  :  "WZ#rightarrowl#nu#nu#nu",
     'WZToLLLNu'    :  "WZ#rightarrowl#null",
+    'WZToLNu2QorQQ2L' : "",
 
     #ZZ
     'ZZToNuNuQQ'  :  "ZZ#rightarrow#nu#nuqq",
@@ -1504,6 +1507,7 @@ crossSections = {
     'ZZToLLQQ'    :  3.22,
     'ZZToLLNuNu'  :  0.5644,
     'ZZToLLLL'    :  1.256,
+    'WZToLNu2QorQQ2L' :    9.82423165827*1.0,
     'WG'  :  489.0,
     'ZG'  :  117.864,
     'SingleTop_s_channel'  :  3.3623,
