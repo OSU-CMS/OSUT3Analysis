@@ -18,6 +18,7 @@ from DataFormats.FWLite import Events, Handle, Runs
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
+from OSUT3Analysis.Configuration.miniAODV2_76X_Samples import *
 
 datasets = [
     # The following are the miniAOD datasets for which we want to take the cross sections 
@@ -25,15 +26,16 @@ datasets = [
     #'QCD_MuEnriched',
     #'QCD_EMEnriched', 
     #'QCD_bcToE',
-    'SingleTop',
+    #'SingleTop',
     # Other datasets that may also be checked:  
-    'DYJetsToLL',
-    'TTJets',
+    #'DYJetsToLL',
+    #'TTJets',
     #'DYToMuMu_50',
     #'DYToEE_50',
     #'DYToMuMu',
     #'DYToEE',
-    'WJetsToLNu',
+    #'WJetsToLNu',
+    'WZToLNu2QorQQ2L'
     #'WToENu',
     #'WToMuNu',
     #'Top',
