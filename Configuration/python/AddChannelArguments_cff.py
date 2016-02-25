@@ -8,6 +8,7 @@ addChannelArguments = AddChannelArguments ()
 addChannelArguments.variableProducers = []
 addChannelArguments.weights = cms.VPSet()
 addChannelArguments.scalingfactorproducers = []
+addChannelArguments.standAloneAnalyzers = []
 addChannelArguments.channels = []
 addChannelArguments.histogramSets = cms.VPSet()
 addChannelArguments.collections = cms.PSet()
