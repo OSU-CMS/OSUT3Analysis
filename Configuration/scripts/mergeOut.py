@@ -26,6 +26,7 @@ parser.remove_option("-y")
 parser.remove_option("-p")
 
 parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify which dataset to run.")
+parser.add_option("-C", "--compositeOnly", dest="compositeOnly", default = False, action = "store_true", help="Only merge composite datasets; do not merge individual datasets.") 
 parser.add_option("-L", "--targetLumi", dest="IntLumi", default = "", help="Specify the targeting luminosity.")
 parser.add_option("-c", "--condor", dest="UseCondor", default = False,action = "store_true", help="Run merging jobs on condor.")
 parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", default = False, help="Just generate necessary config files without executing them.")
@@ -243,118 +244,121 @@ composite_datasets = list(set(composite_datasets))
 
 currentCondorSubArgumentsSet = {}
 if arguments.verbose:
-    print "List of datasets: ", split_datasets  
-for dataSet in split_datasets:
-    os.chdir(CondorDir)
-    currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
-    directory = CondorDir + '/' + dataSet
-    if not os.path.exists(directory):
-        print directory + " does not exist, will skip it and continue!"
-        continue
-    directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory 
-    os.system("mkdir -p " + directoryOut)  
-    flogName = directoryOut + '/mergeOut.log' 
-    flog = open (flogName, "w")  
-    log = "....................Merging dataset " + dataSet + " ....................\n"
-    os.chdir(directory)
-    if arguments.verbose:
-        print "Moved to directory: ", directory
-    ReturnValues = []
-    if os.path.islink(directory + '/hist.root'):
-        os.system('rm ' + directory + '/hist.root')
-    # check to see if any jobs ran
-    if not len(glob.glob('condor_*.log')):
-        print "no jobs were run for dataset '" + dataSet + "', will skip it and continue!"
-        continue
-    LogFiles = os.popen('ls condor_*.log').readlines()
-    for i in range(0,len(LogFiles)):
-        ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
-    GoodIndices = []
-    GoodRootFiles = []
-    BadIndices = []   
-    sys.path.append(directory)
-    for i in range(0,len(ReturnValues)):
-    	if "return value 0" in ReturnValues[i]:
-            (report, GoodIndex) = MessageDecoder(ReturnValues[i], True)
-            GoodIndices.append(GoodIndex)
-        elif "return value" in ReturnValues[i]:
-            log += ReturnValues[i] + "\n"
-            (report, BadIndex) = MessageDecoder(ReturnValues[i], False)
-            log += report  
-            BadIndices.append(BadIndex)
-        else:
-            log += ReturnValues[i] + "\n"
-            Pattern = r'condor_(.*).log'
-            Decoded = re.match(Pattern,ReturnValues[i])
-            BadIndex = Decoded.group(1)
-            log += "Warning!!! Job " + str(BadIndex) + " exited inproperly!\n" 
-            BadIndices.append(BadIndex)
-    if os.path.exists('condor_resubmit.sub'):
-        os.system('rm condor_resubmit.sub')
-    if BadIndices:
-        MakeResubmissionScript(BadIndices, 'condor.sub')
-    for i in range(0,len(GoodIndices)):
-        GoodRootFiles.append(GetGoodRootFiles(GoodIndices[i]))
-    if not len(GoodRootFiles):
-        print "For dataset", dataSet, ": Unfortunately there are no good root files to merge!\n"
-        continue
-    InputFileString = MakeInputFileString(GoodRootFiles)
-    exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
-    TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
-    SkimNumber = GetNumberOfEvents(GoodRootFiles)['SkimNumber']
-    if arguments.verbose:
-        print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber  
-    if not TotalNumber:
-        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
-        continue
-    Weight = 1.0
-    crossSection = float(datasetInfo.crossSection)
-    runOverSkim = True
-    try:
-        datasetInfo.originalNumberOfEvents
-    except AttributeError:
-        runOverSkim = False
-    if crossSection > 0 and IntLumi > 0:
+    print "List of datasets: ", split_datasets 
+if not arguments.compositeOnly:  
+    for dataSet in split_datasets:
+        os.chdir(CondorDir)
+        currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
+        directory = CondorDir + '/' + dataSet
+        if not os.path.exists(directory):
+            print directory + " does not exist, will skip it and continue!"
+            continue
+        directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory 
+        os.system("mkdir -p " + directoryOut)  
+        flogName = directoryOut + '/mergeOut.log' 
+        flog = open (flogName, "w")  
+        log = "....................Merging dataset " + dataSet + " ....................\n"
+        os.chdir(directory)
+        if arguments.verbose:
+            print "Moved to directory: ", directory
+        ReturnValues = []
+        if os.path.islink(directory + '/hist.root'):
+            os.system('rm ' + directory + '/hist.root')
+        # check to see if any jobs ran
+        if not len(glob.glob('condor_*.log')):
+            print "no jobs were run for dataset '" + dataSet + "', will skip it and continue!"
+            continue
+        LogFiles = os.popen('ls condor_*.log').readlines()
+        for i in range(0,len(LogFiles)):
+            ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
+        GoodIndices = []
+        GoodRootFiles = []
+        BadIndices = []   
+        sys.path.append(directory)
+        for i in range(0,len(ReturnValues)):
+            if "return value 0" in ReturnValues[i]:
+                (report, GoodIndex) = MessageDecoder(ReturnValues[i], True)
+                GoodIndices.append(GoodIndex)
+            elif "return value" in ReturnValues[i]:
+                log += ReturnValues[i] + "\n"
+                (report, BadIndex) = MessageDecoder(ReturnValues[i], False)
+                log += report  
+                BadIndices.append(BadIndex)
+            else:
+                log += ReturnValues[i] + "\n"
+                Pattern = r'condor_(.*).log'
+                Decoded = re.match(Pattern,ReturnValues[i])
+                BadIndex = Decoded.group(1)
+                log += "Warning!!! Job " + str(BadIndex) + " exited inproperly!\n" 
+                BadIndices.append(BadIndex)
+        if os.path.exists('condor_resubmit.sub'):
+            os.system('rm condor_resubmit.sub')
+        if BadIndices:
+            MakeResubmissionScript(BadIndices, 'condor.sub')
+        for i in range(0,len(GoodIndices)):
+            GoodRootFiles.append(GetGoodRootFiles(GoodIndices[i]))
+        if not len(GoodRootFiles):
+            print "For dataset", dataSet, ": Unfortunately there are no good root files to merge!\n"
+            continue
+        InputFileString = MakeInputFileString(GoodRootFiles)
+        exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
+        TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
+        SkimNumber = GetNumberOfEvents(GoodRootFiles)['SkimNumber']
+        if arguments.verbose:
+            print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber  
+        if not TotalNumber:
+            MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
+            continue
+        Weight = 1.0
+        crossSection = float(datasetInfo.crossSection)
+        runOverSkim = True
+        try:
+            datasetInfo.originalNumberOfEvents
+        except AttributeError:
+            runOverSkim = False
+        if crossSection > 0 and IntLumi > 0:
+            if runOverSkim:
+                Weight = IntLumi*crossSection*float(datasetInfo.skimNumberOfEvents)/(float(datasetInfo.originalNumberOfEvents)*float(TotalNumber))
+                # The factor TotalNumber / skimNumberOfEvents corresponds to the fraction of skim events that were actually processed,
+                # i.e., it accounts for the fact that perhaps not all of the jobs finished successfully.  
+            else:
+                Weight = IntLumi*crossSection/float(TotalNumber)
+        InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
         if runOverSkim:
-            Weight = IntLumi*crossSection*float(datasetInfo.skimNumberOfEvents)/(float(datasetInfo.originalNumberOfEvents)*float(TotalNumber))
+            MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber)    
         else:
-            Weight = IntLumi*crossSection/float(TotalNumber)
-    InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
-    if runOverSkim:
-        MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber)    
-    else:
-        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
-    if not arguments.UseCondor: 
-        cmd = 'mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString 
-        if arguments.verbose:  
-            print "Executing: ", cmd 
-        os.system(cmd) 
-        log += "\nFinished merging dataset " + dataSet + ":\n"
-        log += "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs.\n"
-        log += "    "+ str(TotalNumber) + " events were successfully run over.\n"
-        log += "    The target luminosity is " + str(IntLumi) + " inverse pb.\n"
-        if crossSection != -1:
-            log += "    The crossSection of dataset " + dataSet + " is " + str(crossSection) + " pb.\n"
-        log += "    The weighting factor is " + str(Weight) + ".\n" 
-        if crossSection != -1:
-    	    log += "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(IntLumi/Weight) + " inverse pb.\n" 
-        log += "...............................................................\n"
-        os.chdir(CondorDir) 
-    #If run on condor, save the parameters in outputInfo_*_cfg.py for condor jobs to use.
-    else:
-        outputInfoPath = directory + '/outputInfo_' + dataSet + '_cfg.py'
-        if os.path.exists(outputInfoPath):
-            os.system('rm ' + outputInfoPath)
-            os.system('touch ' + outputInfoPath)
+            MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
+        if not arguments.UseCondor: 
+            cmd = 'mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString 
+            if arguments.verbose:  
+                print "Executing: ", cmd 
+            os.system(cmd) 
+            log += "\nFinished merging dataset " + dataSet + ":\n"
+            log += "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs.\n"
+            log += "    "+ str(TotalNumber) + " events were successfully run over.\n"
+            log += "    The target luminosity is " + str(IntLumi) + " inverse pb.\n"
+            if crossSection != -1:
+                log += "    The crossSection of dataset " + dataSet + " is " + str(crossSection) + " pb.\n"
+            log += "    The weighting factor is " + str(Weight) + ".\n" 
+            if crossSection != -1:
+                log += "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(IntLumi/Weight) + " inverse pb.\n" 
+            log += "...............................................................\n"
+            os.chdir(CondorDir) 
+        #If run on condor, save the parameters in outputInfo_*_cfg.py for condor jobs to use.
         else:
-            os.system('touch ' + outputInfoPath)
-        configTmp = open(outputInfoPath,'w') 
-        configTmp.write('InputFileString = "' + InputFileString + '"\n')	
-        configTmp.write('InputWeightString = "' + InputWeightString + '"')
-        configTmp.close()	
-    flog.write(log)
-    flog.close()  
-    os.system("cat " + flogName) 
+            outputInfoPath = directory + '/outputInfo_' + dataSet + '_cfg.py'
+            if os.path.exists(outputInfoPath):
+                os.system('rm ' + outputInfoPath)
+                os.system('touch ' + outputInfoPath)
+            else:
+                os.system('touch ' + outputInfoPath)
+            configTmp = open(outputInfoPath,'w') 
+            configTmp.write('InputFileString = "' + InputFileString + '"\n')	
+            configTmp.write('InputWeightString = "' + InputWeightString + '"')
+            configTmp.close()	
+        flog.write(log)
+        flog.close()  
+        os.system("cat " + flogName) 
 
 if not arguments.UseCondor:
     os.chdir(CondorDir)
@@ -371,7 +375,7 @@ if not arguments.UseCondor:
         print 'Finish merging composite dataset ' + dataSet_component
         print "...............................................................\n"
 #Make necessary files for condor and submit condor jobs.
-if arguments.UseCondor:
+else: 
     print '......................Using Condor!...........................'
     GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
     MakeSubmissionScriptForMerging(CondorDir)
