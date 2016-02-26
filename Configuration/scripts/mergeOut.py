@@ -198,6 +198,8 @@ def GetSkimInputTags(File):
 
     collectionTypes = subprocess.check_output (["getCollectionType"] + cppTypes)
     for i in range (0, len (cppTypes)):
+        if cppTypes[i] not in inputTags:
+            continue
         collectionType = collectionTypes.splitlines ()[i]
         if collectionType == "INVALID_TYPE":
             inputTags.pop (cppTypes[i])
