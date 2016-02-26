@@ -17,6 +17,10 @@ parser.add_option("-c", "--channel", dest="channel", default = "", help="Channel
 parser.add_option("-r", "--replace", dest="replace", default = "", help="In the dataset name, replace orig with new.  Argument must be in form orig,new.  Example argument:  MINIAODSIM,AODSIM.")  
 parser.add_option("-e", "--eventsOnly", dest="eventsOnly", action="store_true", default = False, 
                   help="Create event list only.  Do not run edmPickEvents.py")  
+parser.add_option("-n", "--noExecute", dest="noExecute", action="store_true", default = False, 
+                  help="Create pickevents.src file but do not execute.")  
+parser.add_option("-m", "--maxEvents", dest="maxEvents", default = "-1", help="Maximum number of events to find.  In CMSSW_7_4_5_ROOT5, the maximum number of events to fetch interactively is 20.  Since CMSSW_7_4_7, the --maxEventsInteractive option can override the default of 20.")  
+parser.add_option("-p", "--parent", dest="parent", action="store_true", default = False, help="Use parent dataset; this option is useful if the dataset is a user-produced dataset in DBS instance prod/phys03, which edmPickEvents.py may have trouble accessing.")  
 parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default = False, help="Verbose output.")
 parser.add_option("--redirector", dest="Redirector", default = "FNAL", help="Setup the redirector for xrootd service to use.  Options:  Infn, FNAL (default), Global.")  
 
@@ -38,19 +42,24 @@ def createEventList():
             continue  # Skip blank lines.  
         nEvents = -1
         logFileUtil = os.popen('edmFileUtil    -f ' + f).read().split(' ')  # First get number of events
-        print "Debug: logFileUtil = ", logFileUtil  
+        if arguments.verbose:
+            print "Debug: logFileUtil = ", logFileUtil  
         for i in range(len(logFileUtil)-1, -1, -1):  # Iterate backwards over the words in the output.  
             if "events" in logFileUtil[i]:
                 nEvents = int(logFileUtil[i-1])  # The number of events comes immediately before the word "events"  
-        print "Debug:  nEvents = ", nEvents, "file = ", f  
+        if arguments.verbose:
+            print "Debug:  nEvents = ", nEvents, "file = ", f, " nEventsTot = ", nEventsTot, ", maxEvents = ", arguments.maxEvents  
         if nEvents < 0:
             print "ERROR: Failed to find valid number of events for file: ", f
             print "Will exit prematurely."
             exit(0)  
-        nEventsTot += nEvents
+        if nEventsTot > int(arguments.maxEvents) and int(arguments.maxEvents) > 0:
+            break  
         logFileUtil = os.popen('edmFileUtil -e -f ' + f).read().split('\n')  # Now get list of events
         nFoundEvts = 0
         for line in logFileUtil:
+            if nEventsTot + nFoundEvts > int(arguments.maxEvents) and int(arguments.maxEvents) > 0:
+                break  
             words = line.split(' ')  
             words = filter(None, words) # Remove empty elements  
             # Content of lines corresponding to a valid event is in the format: 
@@ -62,13 +71,15 @@ def createEventList():
                 evt  = words[2]
                 eventList += run + ":" + lumi + ":" + evt + "\n"
                 nFoundEvts += 1  
-                print "Debug:  filling words for line: ", line, ", run = ", run, "lumi = ", lumi 
-        if nFoundEvts != nEvents:
+                if arguments.verbose: 
+                    print "Debug:  filling words for line: ", line, ", run = ", run, "lumi = ", lumi 
+        if int(arguments.maxEvents) < 0 and nFoundEvts != nEvents:
             print "ERROR:  Number of found events = ", nFoundEvts, " does not match number of expected events = ", nEvents, ".  Please investigate."  
             exit(0) 
-        fout = open("pickevents.txt", "w")
-        fout.write(eventList)
-        fout.close() 
+        nEventsTot += nEvents
+    fout = open("pickevents.txt", "w")
+    fout.write(eventList)
+    fout.close() 
 
 
 def runEdmPickEvents(dataset): 
@@ -77,14 +88,25 @@ def runEdmPickEvents(dataset):
         orig = arguments.replace.split(",")[0]
         new  = arguments.replace.split(",")[1]
         datasetName = datasetName.replace(orig, new)  
+    if arguments.parent:
+        query = 'das_client.py --query="parent dataset=' + datasetName + ' instance=prod/phys03" --limit=0'
+        print "Executing query:  ", query
+        datasets = os.popen(query).read().split('\n')  
+        datasetName = datasets[0]  
+        print "Will use dataset: ", datasetName 
     cmd = 'edmPickEvents.py "' + datasetName + '" pickevents.txt --printInteractive > pickevents.src'      
     if arguments.verbose:  
         print "Running command: ", cmd 
+    os.system("rm -f pickevents.src")  
     os.system(cmd)  
     redirector = RedirectorDic[arguments.Redirector]  
     # Replace "/store/" with, e.g., root://cmsxrootd.fnal.gov///store/
     os.system('sed -i "s_/store/_root://' + redirector + '///store/_g" pickevents.src')  
-    os.system("source pickevents.src")  
+    if arguments.noExecute:
+        print "Created command file: " + os.getcwd() + "/pickevents.src"  
+    else:  
+        os.system("source pickevents.src")  
+        print "Created and executed command file: " + os.getcwd() + "/pickevents.src"  
     
 
 def doOneDirectory(directory):
@@ -95,7 +117,9 @@ def doOneDirectory(directory):
     createEventList()
     if not arguments.eventsOnly:
         runEdmPickEvents(dataset)  
-    print "Created and executed command file: " + os.getcwd() + "/pickevents.src"  
+    else:
+        print "Created event list: " + os.getcwd() + "/pickevents.txt"  
+        
 
 
 ###############################################################################
