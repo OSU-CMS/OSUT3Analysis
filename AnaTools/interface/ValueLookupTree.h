@@ -1,6 +1,7 @@
 #ifndef VALUE_LOOKUP_TREE
 #define VALUE_LOOKUP_TREE
 
+#include <map>
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
@@ -229,6 +230,7 @@ class ValueLookupTree
     const int                                      verbose_ = 0;  // verbosity levels:  0, 1, ... 
     // Typically you want to use verbosity of 1 when running over a single event.  
     
+    map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > functionLookupTable_;
 
 };
 

@@ -1299,7 +1299,7 @@ ValueLookupTree::valueLookup (const string &collection, const ObjMap &objs, cons
         return 1; // FIXME
       if (collection == "eventvariables")
         return (((EventVariableProducerPayload *) obj)->at (variable));
-      return anatools::getMember (getCollectionType (collection), obj, variable);
+      return anatools::getMember (getCollectionType (collection), obj, variable, &functionLookupTable_);
     }
   catch (...)
     {
