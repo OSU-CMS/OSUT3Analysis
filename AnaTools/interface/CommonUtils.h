@@ -8,13 +8,22 @@
 #define COMMON_UTILS
 
 #include <iostream>
+#include <map>
 #include <unordered_set>
+#include <unordered_map>
 #include <typeinfo>
 
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 #include "FWCore/Framework/interface/Event.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+
+#include "OSUT3Analysis/AnaTools/interface/BaseWithDict.h"
+#include "OSUT3Analysis/AnaTools/interface/FunctionWithDict.h"
+#include "OSUT3Analysis/AnaTools/interface/ObjectWithDict.h"
+#include "OSUT3Analysis/AnaTools/interface/IterWithDict.h"
+#include "OSUT3Analysis/AnaTools/interface/MemberWithDict.h"
+#include "OSUT3Analysis/AnaTools/interface/TypeWithDict.h"
 
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
@@ -173,13 +182,13 @@ namespace anatools
   // first argument.
   void getRequiredCollections (const unordered_set<string> &, Collections &, const edm::Event &, const Tokens &);
 
-  double getMember (const string &type, const void * const obj, const string &member);
+  double getMember (const string &type, const void * const obj, const string &member, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * const = NULL);
 
   template <class T> double getMember (const T &obj, const string &member);
 
 #ifdef ROOT6
-  const edm::ObjectWithDict * const getMember (const edm::TypeWithDict &t, const edm::ObjectWithDict &o, const string &member, string &memberType);
-  const edm::ObjectWithDict * const invoke (const string &returnType, const edm::ObjectWithDict &o, const edm::FunctionWithDict &f);
+  const anatools::ObjectWithDict * const getMember (const anatools::TypeWithDict &t, const anatools::ObjectWithDict &o, const string &member, string &memberType, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * const);
+  const anatools::ObjectWithDict * const invoke (const string &returnType, const anatools::ObjectWithDict &o, const anatools::FunctionWithDict &f);
 #else
   const Reflex::Object * const getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType);
   const Reflex::Object * const invoke (const string &returnType, const Reflex::Object &o, const string &member);
