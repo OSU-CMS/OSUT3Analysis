@@ -255,9 +255,6 @@ composite_dataset_definitions = {
         'SinglePhoton_2015D_v3',
         'SinglePhoton_2015D_v4',
     ],
-    'MuonEG_2015D' : [
-        'MuonEG_2015D',
-    ],
     'NoBPTX_2015D' : [
         'NoBPTX_2015D_v3',
         'NoBPTX_2015D_v4',
