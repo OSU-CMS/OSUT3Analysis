@@ -1065,10 +1065,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     #legend coordinates, empirically determined :-)
-    x_left = 0.629885
-    x_right = 0.935632
+    #x_left = 0.629885
+    #x_right = 0.935632
+    x_left = 0.157471
+    x_right = 0.355172
     x_width = x_right - x_left
-    y_max = 0.882282
+    #y_max = 0.882282
+    y_max = 0.73
     entry_height = 0.037318
 
     if(numBgMCSamples is not 0 or numDataSamples is not 0): #then draw the data & bgMC legend

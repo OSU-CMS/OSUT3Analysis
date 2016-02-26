@@ -1487,8 +1487,8 @@ labels = {
     'GluinoToGChi0_1200_800'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 800 GeV)",
     'GluinoToGChi0_1200_1000'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV)",
 
-    #stopped particles cosmic events
-    'cosmic_preselection' : "Cosmic preselection",
+    #stopped particles cosmic MC events
+    'cosmic_preselection' : "Cosmic MC preselection",
 
     ############################################################################
 
