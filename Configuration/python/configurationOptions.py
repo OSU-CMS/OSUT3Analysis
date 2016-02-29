@@ -138,9 +138,10 @@ composite_dataset_definitions = {
     'Diboson' : [
         'WWToLNuQQ',
         'WWToLNuLNu',
+        'WZToLNuQQ',
+        'WZToLLQQ',
         'WZToLNuNuNu',
         'WZToLLLNu',
-        'WZToLNu2QorQQ2L',
         'ZZToNuNuQQ',
         'ZZToLLQQ',
         'ZZToLLNuNu',
@@ -211,21 +212,9 @@ composite_dataset_definitions = {
         'SingleMu_2015D_v3',
         'SingleMu_2015D_v4',
     ],
-    'SingleMu_2015D' : [
-        'SingleMu_2015D_v3',
-        'SingleMu_2015D_v4',
-    ],
-    'MET_2015D' : [
-        'MET_2015D_v3',
-        'MET_2015D_v4',
-    ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
         'SingleEle_2015C',
-        'SingleEle_2015D_v3',
-        'SingleEle_2015D_v4',
-    ],
-    'SingleEle_2015D' : [
         'SingleEle_2015D_v3',
         'SingleEle_2015D_v4',
     ],
@@ -254,6 +243,10 @@ composite_dataset_definitions = {
     'SinglePhoton_2015D' : [
         'SinglePhoton_2015D_v3',
         'SinglePhoton_2015D_v4',
+    ],
+    'MuonEG_2015D' : [
+        'MuonEG_2015D_v3',
+        'MuonEG_2015D_v4',
     ],
     'NoBPTX_2015D' : [
         'NoBPTX_2015D_v3',
@@ -338,7 +331,6 @@ nJobs = {
     'WZToLLQQ'     :  999,
     'WZToLNuNuNu'  :  999,
     'WZToLLLNu'    :  999,
-    'WZToLNu2QorQQ2L' : 999,
 
     #ZZ
     'ZZToNuNuQQ'  :  999,
@@ -362,7 +354,8 @@ nJobs = {
     'TTJets_SingleLeptFromTbar'  :  300,
 
     #MET data
-    'MET_2015D_v3' : 999, 
+    'MET_2015D'    : 999,
+    'MET_2015D_v3' : 999,
     'MET_2015D_v4' : 999,
 
     #AMSB chargino
@@ -476,6 +469,7 @@ nJobs = {
     'stop1100_1000mm'     :  99,
     'stop1200_1mm'     :  99,
     'stop1200_10mm'     :  99,
+    'stop1200_50mm'     :  99,
     'stop1200_100mm'     :  99,
     'stop1200_1000mm'     :  99,
     
@@ -487,11 +481,13 @@ nJobs = {
     
     'SingleMu_2015B'      :  57,
     'SingleMu_2015C'      : 220,
+    'SingleMu_2015D'      : 1000,
     'SingleMu_2015D_v3'   : 1000,
     'SingleMu_2015D_v4'   : 1000,
    
     'SingleEle_2015B'    :  77,
     'SingleEle_2015C'    : 137,
+    'SingleEle_2015D'    : 1000,
     'SingleEle_2015D_v3' : 1000,
     'SingleEle_2015D_v4' : 1000,
    
@@ -507,7 +503,7 @@ nJobs = {
     
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
-    'MuonEG_2015D'   :  1000,
+    'MuonEG_2015D_v3'   :  1000,
     'MuonEG_2015D_v4'   :  1000,
     
     #NoBPTX data
@@ -540,7 +536,6 @@ maxEvents = {
     'WZToLLQQ'     :  -1,
     'WZToLNuNuNu'  :  -1,
     'WZToLLLNu'    :  -1,
-    'WZToLNu2QorQQ2L' : -1,
 
     #ZZ
     'ZZToNuNuQQ'  :  -1,
@@ -564,6 +559,7 @@ maxEvents = {
     'TTJets_SingleLeptFromTbar'  :  -1,
 
     #MET data
+    'MET_2015D'    : -1,
     'MET_2015D_v3' : -1,
     'MET_2015D_v4' : -1,
 
@@ -677,6 +673,7 @@ maxEvents = {
     'stop1100_1000mm'     :  -1,
     'stop1200_1mm'     :  -1,
     'stop1200_10mm'     :  -1,
+    'stop1200_50mm'     :  -1,
     'stop1200_100mm'     :  -1,
     'stop1200_1000mm'     :  -1,
  
@@ -687,11 +684,13 @@ maxEvents = {
     
     'SingleMu_2015B'       : -1,
     'SingleMu_2015C'       : -1,
+    'SingleMu_2015D'          : -1,
     'SingleMu_2015D_v3'       : -1,
     'SingleMu_2015D_v4'       : -1,
    
     'SingleEle_2015B'       : -1,
     'SingleEle_2015C'       : -1,
+    'SingleEle_2015D'          : -1,
     'SingleEle_2015D_v3'       : -1,
     'SingleEle_2015D_v4'       : -1,
    
@@ -707,7 +706,7 @@ maxEvents = {
     
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
-    'MuonEG_2015D'       : -1,
+    'MuonEG_2015D_v3'       : -1,
     'MuonEG_2015D_v4'       : -1,
     
     #NoBPTX data
@@ -744,7 +743,6 @@ types = {
     'WZToLLQQ'     :  "bgMC",
     'WZToLNuNuNu'  :  "bgMC",
     'WZToLLLNu'    :  "bgMC",
-    'WZToLNu2QorQQ2L' : "bgMC",
 
     #ZZ
     'ZZToNuNuQQ'  :  "bgMC",
@@ -893,6 +891,7 @@ types = {
     'stop1100_1000mm'     :  "signalMC",
     'stop1200_1mm'     :  "signalMC",
     'stop1200_10mm'     :  "signalMC",
+    'stop1200_50mm'     :  "signalMC",
     'stop1200_100mm'     :  "signalMC",
     'stop1200_1000mm'     :  "signalMC",
  
@@ -970,7 +969,6 @@ colors = {
     'WZToLLQQ'     :  393,
     'WZToLNuNuNu'  :  393,
     'WZToLLLNu'    :  393,
-    'WZToLNu2QorQQ2L' : 393,
 
     #ZZ
     'ZZToNuNuQQ'  :  397,
@@ -1119,6 +1117,7 @@ colors = {
     'stop1100_1000mm'     :  113,
     'stop1200_1mm'     :  120,
     'stop1200_10mm'     :  121,
+    'stop1200_50mm'     :  122,
     'stop1200_100mm'     :  122,
     'stop1200_1000mm'     :  123,
     
@@ -1197,7 +1196,6 @@ labels = {
     'WZToLLQQ'     :  "WZ#rightarrowqqll",
     'WZToLNuNuNu'  :  "WZ#rightarrowl#nu#nu#nu",
     'WZToLLLNu'    :  "WZ#rightarrowl#null",
-    'WZToLNu2QorQQ2L' : "",
 
     #ZZ
     'ZZToNuNuQQ'  :  "ZZ#rightarrow#nu#nuqq",
@@ -1344,6 +1342,7 @@ labels = {
     'stop1100_1000mm' : "#tilde{t}#tilde{t} M(1100) c#tau(1000mm)",
     'stop1200_1mm'    : "#tilde{t}#tilde{t} M(1200) c#tau(1mm)", 
     'stop1200_10mm'   : "#tilde{t}#tilde{t} M(1200) c#tau(10mm)",
+    'stop1200_50mm'  : "#tilde{t}#tilde{t} M(1200) c#tau(50mm)",
     'stop1200_100mm'  : "#tilde{t}#tilde{t} M(1200) c#tau(100mm)",
     'stop1200_1000mm' : "#tilde{t}#tilde{t} M(1200) c#tau(1000mm)",
     
@@ -1491,6 +1490,7 @@ crossSections = {
     'stop1100_1000mm' : 0.00307413,
     'stop1200_1mm'    : 0.00159844, 
     'stop1200_10mm'   : 0.00159844,
+    'stop1200_50mm'  : 0.00159844,
     'stop1200_100mm'  : 0.00159844,
     'stop1200_1000mm' : 0.00159844,
     'WZToLLQQ'       : 5.595,
@@ -1504,7 +1504,6 @@ crossSections = {
     'ZZToLLQQ'    :  3.22,
     'ZZToLLNuNu'  :  0.5644,
     'ZZToLLLL'    :  1.256,
-    'WZToLNu2QorQQ2L' :    9.82423165827*1.0,
     'WG'  :  489.0,
     'ZG'  :  117.864,
     'SingleTop_s_channel'  :  3.3623,
@@ -1515,6 +1514,8 @@ crossSections = {
     'TTJets_SingleLeptFromT'     :  182.7,
     'TTJets_SingleLeptFromTbar'  :  182.7,
 }
+
+InputCondorArguments = {}
 
 pdgIdsForLifetimeReweighting = {
     # Defines the PDG IDs of the particles to be used for lifetime reweighting.
@@ -1538,8 +1539,6 @@ dstCTauForLifetimeReweighting = {
     # defined by pdgIdsForLifetimeReweighting to which the sample should be
     # reweighted.  The keys are dataset labels and the values are either single
     # lifetime values or lists of lifetimes, e.g.:
-    # 'stop1200_50mm'               : 5.0,
+    # 'stop1200_50mm'               : 10.0,
     # 'stopAndGluino1200_50mm_30mm' : [5.0, 3.0],
 }
-
-InputCondorArguments = {}
