@@ -13,8 +13,11 @@ datasets = [
 
    #data
    'DoubleMu_2015',
+   'DoubleMu_2015D',
    'SingleMu_2015',
+   'SingleMu_2015D',
    'SingleEle_2015',
+   'SingleEle_2015D',
    'SinglePhoton_2015',
    'SinglePhoton_2015D',
    'DoubleEG_2015',
@@ -203,54 +206,32 @@ composite_dataset_definitions = {
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
         'DoubleMu_2015C',
-        'DoubleMu_2015D_v3',
-        'DoubleMu_2015D_v4',
+        'DoubleMu_2015D',
     ],
     'SingleMu_2015' : [
         'SingleMu_2015B',
         'SingleMu_2015C',
-        'SingleMu_2015D_v3',
-        'SingleMu_2015D_v4',
+        'SingleMu_2015D',
     ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
         'SingleEle_2015C',
-        'SingleEle_2015D_v3',
-        'SingleEle_2015D_v4',
+        'SingleEle_2015D',
     ],
     'SinglePhoton_2015' : [
         'SinglePhoton_2015B',
         'SinglePhoton_2015C',
-        'SinglePhoton_2015D_v3',
-        'SinglePhoton_2015D_v4',
+        'SinglePhoton_2015D',
     ],
     'DoubleEG_2015' : [
         'DoubleEG_2015B',
         'DoubleEG_2015C',
-        'DoubleEG_2015D_v3',
-        'DoubleEG_2015D_v4',
-    ],
-    'DoubleEG_2015D' : [
-        'DoubleEG_2015D_v3',
-        'DoubleEG_2015D_v4',
+        'DoubleEG_2015D',
     ],
     'MuonEG_2015' : [
         'MuonEG_2015B',
         'MuonEG_2015C',
-        'MuonEG_2015D_v3',
-        'MuonEG_2015D_v4',
-    ],
-    'SinglePhoton_2015D' : [
-        'SinglePhoton_2015D_v3',
-        'SinglePhoton_2015D_v4',
-    ],
-    'MuonEG_2015D' : [
-        'MuonEG_2015D_v3',
-        'MuonEG_2015D_v4',
-    ],
-    'NoBPTX_2015D' : [
-        'NoBPTX_2015D_v3',
-        'NoBPTX_2015D_v4',
+        'MuonEG_2015D',
     ],
     'DisplacedSUSYSignal' : [
         'stop200_1mm',
@@ -354,9 +335,7 @@ nJobs = {
     'TTJets_SingleLeptFromTbar'  :  300,
 
     #MET data
-    'MET_2015D'    : 999,
-    'MET_2015D_v3' : 999,
-    'MET_2015D_v4' : 999,
+    'MET_2015D' : 999, 
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  99,
@@ -476,39 +455,30 @@ nJobs = {
  
     'DoubleMu_2015B'   :  40,
     'DoubleMu_2015C'   : 187,
-    'DoubleMu_2015D_v3': 1000,
-    'DoubleMu_2015D_v4': 1000, 
+    'DoubleMu_2015D': 1000,
     
     'SingleMu_2015B'      :  57,
     'SingleMu_2015C'      : 220,
-    'SingleMu_2015D'      : 1000,
-    'SingleMu_2015D_v3'   : 1000,
-    'SingleMu_2015D_v4'   : 1000,
+    'SingleMu_2015D'   : 1000,
    
     'SingleEle_2015B'    :  77,
     'SingleEle_2015C'    : 137,
-    'SingleEle_2015D'    : 1000,
-    'SingleEle_2015D_v3' : 1000,
-    'SingleEle_2015D_v4' : 1000,
+    'SingleEle_2015D' : 1000,
    
     'SinglePhoton_2015B'   :  55,
     'SinglePhoton_2015C'   : 130,
-    'SinglePhoton_2015D_v3'   : 1000,
-    'SinglePhoton_2015D_v4'   : 1000,
+    'SinglePhoton_2015D'   : 1000,
     
     'DoubleEG_2015B'      :  100,
     'DoubleEG_2015C'      :  298,
-    'DoubleEG_2015D_v3'   :  1000,
-    'DoubleEG_2015D_v4'   :  1000,
+    'DoubleEG_2015D'   :  1000,
     
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
-    'MuonEG_2015D_v3'   :  1000,
-    'MuonEG_2015D_v4'   :  1000,
+    'MuonEG_2015D'   :  1000,
     
     #NoBPTX data
-    'NoBPTX_2015D_v3' : 999,
-    'NoBPTX_2015D_v4' : 999,
+    'NoBPTX_2015D' : 999,
     ############################################################################
 }
 
@@ -559,9 +529,7 @@ maxEvents = {
     'TTJets_SingleLeptFromTbar'  :  -1,
 
     #MET data
-    'MET_2015D'    : -1,
-    'MET_2015D_v3' : -1,
-    'MET_2015D_v4' : -1,
+    'MET_2015D' : -1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  -1,
@@ -679,39 +647,30 @@ maxEvents = {
  
     'DoubleMu_2015B'       : -1,
     'DoubleMu_2015C'       : -1,
-    'DoubleMu_2015D_v3'    : -1,
-    'DoubleMu_2015D_v4'    : -1,
+    'DoubleMu_2015D'    : -1,
     
     'SingleMu_2015B'       : -1,
     'SingleMu_2015C'       : -1,
-    'SingleMu_2015D'          : -1,
-    'SingleMu_2015D_v3'       : -1,
-    'SingleMu_2015D_v4'       : -1,
+    'SingleMu_2015D'       : -1,
    
     'SingleEle_2015B'       : -1,
     'SingleEle_2015C'       : -1,
-    'SingleEle_2015D'          : -1,
-    'SingleEle_2015D_v3'       : -1,
-    'SingleEle_2015D_v4'       : -1,
+    'SingleEle_2015D'       : -1,
    
     'SinglePhoton_2015B'       : -1,
     'SinglePhoton_2015C'       : -1,
-    'SinglePhoton_2015D_v3'       : -1,
-    'SinglePhoton_2015D_v4'       : -1,
+    'SinglePhoton_2015D'       : -1,
     
     'DoubleEG_2015B'       : -1,
     'DoubleEG_2015C'       : -1,
-    'DoubleEG_2015D_v3'       : -1,
-    'DoubleEG_2015D_v4'       : -1,
+    'DoubleEG_2015D'       : -1,
     
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
-    'MuonEG_2015D_v3'       : -1,
-    'MuonEG_2015D_v4'       : -1,
+    'MuonEG_2015D'       : -1,
     
     #NoBPTX data
-    'NoBPTX_2015D_v3' : -1,
-    'NoBPTX_2015D_v4' : -1,
+    'NoBPTX_2015D' : -1,
     ############################################################################
 }
 
@@ -768,8 +727,6 @@ types = {
     'TTJets_SingleLeptFromTbar'  :  "bgMC",
 
     #MET data
-    'MET_2015D_v3' : "data",
-    'MET_2015D_v4' : "data",
     'MET_2015D' : "data",
 
     #AMSB chargino
@@ -899,48 +856,35 @@ types = {
     'DoubleMu_2015B'   : "data",
     'DoubleMu_2015C'   : "data",
     'DoubleMu_2015D'   : "data",
-    'DoubleMu_2015D_v3'   : "data",
-    'DoubleMu_2015D_v4'   : "data",
     'DoubleMu_2015'    : "data",
     
     'SingleMu_2015B'    : "data",
     'SingleMu_2015C'    : "data",
     'SingleMu_2015D'    : "data",
-    'SingleMu_2015D_v3' : "data",
-    'SingleMu_2015D_v4' : "data",
 
     'SingleMu_2015'     : "data",
    
     'SingleEle_2015B'   : "data",
     'SingleEle_2015C'   : "data",
-    'SingleEle_2015D_v3': "data",
-    'SingleEle_2015D_v4': "data",
     'SingleEle_2015D'   : "data",
    
     'SinglePhoton_2015B'   : "data",
     'SinglePhoton_2015C'   : "data",
     'SinglePhoton_2015D'   : "data",
-    'SinglePhoton_2015D_v3'   : "data",
-    'SinglePhoton_2015D_v4'   : "data",
     'SinglePhoton_2015'    : "data",
     
     'DoubleEG_2015B'   : "data",
     'DoubleEG_2015C'   : "data",
-    'DoubleEG_2015D_v3': "data",
-    'DoubleEG_2015D_v4': "data",
     'DoubleEG_2015'    : "data",
     'DoubleEG_2015D'    : "data",
     
     'MuonEG_2015B'   : "data",
     'MuonEG_2015C'   : "data",
     'MuonEG_2015D'   : "data",
-    'MuonEG_2015D_v3'   : "data",
-    'MuonEG_2015D_v4'   : "data",
     'MuonEG_2015'    : "data",
     
     #NoBPTX data
-    'NoBPTX_2015D_v3' : 'data',
-    'NoBPTX_2015D_v4' : 'data',
+    'NoBPTX_2015D' : 'data',
     ############################################################################
 }
 
@@ -994,8 +938,6 @@ colors = {
     'TTJets_SingleLeptFromTbar'  :  872,
 
     #MET data
-    'MET_2015D_v3' : 1,
-    'MET_2015D_v4' : 1,
     'MET_2015D' : 1,
 
     #AMSB chargino
@@ -1124,48 +1066,36 @@ colors = {
     
     'DoubleMu_2015B'   : 1,
     'DoubleMu_2015C'   : 1,
-    'DoubleMu_2015D_v3'   : 1,
-    'DoubleMu_2015D_v4'   : 1,
+    'DoubleMu_2015D'   : 1,
     'DoubleMu_2015'   : 1,
     
     'SingleMu_2015B'   : 1,
     'SingleMu_2015C'   : 1,
-    'SingleMu_2015D_v4'   : 1,
-    'SingleMu_2015D_v4'   : 1,
     'SingleMu_2015D'   : 1,
     'SingleMu_2015'   : 1,
    
     'SingleEle_2015B'   : 1,
     'SingleEle_2015C'   : 1,
     'SingleEle_2015D'   : 1,
-    'SingleEle_2015D_v3'   : 1,
-    'SingleEle_2015D_v4'   : 1,
     'SingleEle_2015'   : 1,
    
     'SinglePhoton_2015B'   : 1,
     'SinglePhoton_2015C'   : 1,
     'SinglePhoton_2015D'   : 1,
-    'SinglePhoton_2015D_v3'   : 1,
-    'SinglePhoton_2015D_v4'   : 1,
     'SinglePhoton_2015'   : 1,
     
     'DoubleEG_2015B'   : 1,
     'DoubleEG_2015C'   : 1,
-    'DoubleEG_2015D_v3': 1,
-    'DoubleEG_2015D_v4': 1,
     'DoubleEG_2015'   : 1,
     'DoubleEG_2015D'   : 1,
     
     'MuonEG_2015B'   : 1,
     'MuonEG_2015C'   : 1,
     'MuonEG_2015D'   : 1,
-    'MuonEG_2015D_v3'   : 3,
-    'MuonEG_2015D_v4'   : 4,
     'MuonEG_2015'    : 1,
    
     #NoBPTX data
-    'NoBPTX_2015D_v3' : 1,
-    'NoBPTX_2015D_v4' : 1,
+    'NoBPTX_2015D' : 1,
     ############################################################################
 }
 
@@ -1221,8 +1151,6 @@ labels = {
     'TTJets_SingleLeptFromTbar'  :  "t#bar{t} (single lepton from #bar{t})",
 
     #MET data
-    'MET_2015D_v3' : "MET 2015D-v3 data",
-    'MET_2015D_v4' : "MET 2015D-v4 data",
     'MET_2015D' : "MET 2015D data",
 
     #AMSB chargino
@@ -1350,46 +1278,34 @@ labels = {
     'DoubleMu_2015'      : "Double Muon 2015 data",
     'DoubleMu_2015B'     : "DoubleMu 2015B data",
     'DoubleMu_2015C'     : "DoubleMu 2015C data",
-    'DoubleMu_2015D_v3'  : "DoubleMu 2015D_v3 data",
-    'DoubleMu_2015D_v4'  : "DoubleMu 2015D_v4 data",
+    'DoubleMu_2015D'     : "DoubleMu 2015D data",
     
     'SingleMu_2015'      : "Single Muon 2015 data",
     'SingleMu_2015B'     : "SingleMu 2015B data",
     'SingleMu_2015C'     : "SingleMu 2015C data",
     'SingleMu_2015D'     : "SingleMu 2015D data",
-    'SingleMu_2015D_v3'     : "SingleMu 2015D_v3 data",
-    'SingleMu_2015D_v4'     : "SingleMu 2015D_v4 data",
    
     'SingleEle_2015'      : "Single Electron 2015 data",
     'SingleEle_2015B'     : "SingleEle 2015B data",
     'SingleEle_2015C'     : "SingleEle 2015C data",
     'SingleEle_2015D'     : "SingleEle 2015D data",
-    'SingleEle_2015D_v3'     : "SingleEle 2015D_v3 data",
-    'SingleEle_2015D_v4'     : "SingleEle 2015D_v4 data",
    
     'SinglePhoton_2015'      : "SinglePhoton 2015 data",
     'SinglePhoton_2015B'     : "SinglePhoton 2015B data",
     'SinglePhoton_2015C'     : "SinglePhoton 2015C data",
     'SinglePhoton_2015D'     : "SinglePhoton 2015D data",
-    'SinglePhoton_2015D_v3'     : "SinglePhoton 2015D v3 data",
-    'SinglePhoton_2015D_v4'     : "SinglePhoton 2015D v4 data",
     
     'DoubleEG_2015'      : "DoubleEG 2015 data",
     'DoubleEG_2015D'     : "DoubleEG 2015D data",
     'DoubleEG_2015B'     : "DoubleEG 2015B data",
     'DoubleEG_2015C'     : "DoubleEG 2015C data",
-    'DoubleEG_2015D_v3'  : "DoubleEG 2015D_v3 data",
-    'DoubleEG_2015D_v4' : "DoubleEG 2015D_v4 data",
     
     'MuonEG_2015'      : "MuonEG 2015 data",
     'MuonEG_2015B'     : "MuonEG 2015B data",
     'MuonEG_2015C'     : "MuonEG 2015C data",
     'MuonEG_2015D'     : "MuonEG 2015D data",
-    'MuonEG_2015D_v3'     : "MuonEG 2015D_v3 data",
-    'MuonEG_2015D_v4'     : "MuonEG 2015D_v4 data",
     #NoBPTX Data 
-    'NoBPTX_2015D_v3'     : "NoBPTX 2015D_v3 data",
-    'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
+    'NoBPTX_2015D'     : "NoBPTX 2015D data",
     ############################################################################
 }
 
@@ -1508,8 +1424,8 @@ crossSections = {
     'ZG'  :  117.864,
     'SingleTop_s_channel'  :  3.3623,
     'SingleTop_t_channel'  :  70.695,
-    'SingleTop_tW'         :  35.6,
-    'SingleTop_tbarW'      :  35.6,
+    'SingleTop_tW'         :  19.418,
+    'SingleTop_tbarW'      :  19.418,
     'TTJets_DiLept'              :  87.31,
     'TTJets_SingleLeptFromT'     :  182.7,
     'TTJets_SingleLeptFromTbar'  :  182.7,
