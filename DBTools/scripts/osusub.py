@@ -53,7 +53,7 @@ parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Deter
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")  
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")  
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")  
-parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  
+parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  # See https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/65
 
 (arguments, args) = parser.parse_args()
 
