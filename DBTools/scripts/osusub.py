@@ -49,7 +49,7 @@ parser.add_option("-a", "--SkimChannel", dest="SkimChannel", default = "", help=
 parser.add_option("-R", "--Requirements", dest="Requirements", default = "", help="Requirements to be added to condor.sub submssion script, e.g. 'Memory > 1900'.")  
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")  
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")  
-parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. Generic, MuonPhysics, CaloOnly, Silver, etc")  
+parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc")  
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")  
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")  
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")  
@@ -112,6 +112,9 @@ RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Global'
 
 #To get the JSON file the user specifies. Use -J 'TypeOfJSON' like -J R_Silver
 def getLatestJsonFile():
+    if len(arguments.JSONType.split('_')) < 2:
+        print "Argument for -J is wrong, it needs to be in a format similar to \"R_Silver\""
+        sys.exit()
     if arguments.JSONType.split('_')[0] == "P":
         os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O jsonList.txt')
         os.system('grep "Cert" jsonList.txt > CertList.txt')
@@ -131,7 +134,7 @@ def getLatestJsonFile():
         for fileName in jsonFileList:
             nameSplit = fileName.split('_')
             for i in range(0, len(nameSplit)):
-                if arguments.JSONType == "" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
+                if arguments.JSONType.split('_')[1] == "Golden" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
                     jsonFileFiltered.append(fileName)
                 elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
                     if nameSplit[i + 3].split('.')[0] == arguments.JSONType.split('_')[1]:
@@ -190,7 +193,7 @@ def getLatestJsonFile():
         for fileName in jsonFileList:
             nameSplit = fileName.split('_')
             for i in range(0, len(nameSplit)):
-                if arguments.JSONType == "" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
+                if arguments.JSONType.split('_')[1] == "Golden" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
                     jsonFileFiltered.append(fileName)
                 elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
                     if nameSplit[i + 3].split('.')[0] == arguments.JSONType.split('_')[1]:
