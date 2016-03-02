@@ -227,6 +227,8 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         ############################################################################
         if not hasattr (add_channels, "producerIndex"):
             add_channels.producerIndex = 0
+        if not hasattr (add_channels, "standAloneAnalyzerIndex"):
+            add_channels.standAloneAnalyzerIndex = 0
         if not hasattr (add_channels, "filterIndex"):
             add_channels.filterIndex = 0
         if not hasattr (add_channels, "endPath"):
@@ -540,6 +542,22 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                     # Add the eventvariables produced in this module to the filteredCollections for the plotter after to use. 
                     filteredCollections.eventvariables.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), "eventvariables"))
                     add_channels.producerIndex += 1
+            
+            if len(channels.standAloneAnalyzers):
+                for module in channels.standAloneAnalyzers:
+                    # Here we try to add the original producer as specified in the config files. 
+                    standAloneAnalyzer = cms.EDAnalyzer (str(module['name']),
+                                            # Use filteredCollections, the ones selected by the objectSelectors   
+                                            collections = copy.deepcopy(filteredCollections)
+                                               )
+                    setattr (process, str(module['name']) + str (add_channels.standAloneAnalyzerIndex), standAloneAnalyzer)
+                    # Add the user defined configable variables. 
+                    for key in module:
+                        if str(key) != 'name':
+                            setattr (standAloneAnalyzer, key, module[key])
+                    # Add this stand alone analyzer  in to the path of this channel. 
+                    channelPath += standAloneAnalyzer
+                    add_channels.standAloneAnalyzerIndex += 1
             ########################################################################
             # Add a plotting module for this channel to the path.
             ########################################################################
