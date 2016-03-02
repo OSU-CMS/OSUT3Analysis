@@ -19,6 +19,9 @@ class PDFWeightsPlotter : public edm::EDAnalyzer
     private:
         string type_;             
         edm::InputTag lheProduct_; 
+        edm::InputTag genInfoProduct_;
+        uint numPDFWeights_;
+        uint pdfWeightsOffset_; 
         bool firstEvent_; 
 };
 #endif
