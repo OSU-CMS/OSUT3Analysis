@@ -37,6 +37,8 @@ parser.add_option("-d", "--diff", action="store_true", dest="makeDiffPlots", def
                   help="add a column for data-MC to the tables")
 parser.add_option("-r", "--ratio", action="store_true", dest="makeRatioPlots", default=False,
                   help="add a colunn for (data-MC)/MC to the tables")
+parser.add_option("-R", "--raw", action="store_true", dest="rawYields", default=False,
+                  help="Remove the luminosity weighting factor")
 parser.add_option("-s", "--sToB", action="store_true", dest="signalToBackground", default=False,
                   help="add a column for S/sqrt(S+B) to the tables")
 parser.add_option("-t", "--totBkgd", action="store_true", dest="totalBkgd", default=False,
@@ -341,6 +343,22 @@ def fillTableCuts(table, dataset_file):
         table.cutNames.append(cutFlow.GetXaxis().GetBinLabel(i))  
 
 
+def getLumiWt(dataset_file):
+    mergeLogName = dataset_file.replace(".root", "/mergeOut.log")
+    mergeLog = open(mergeLogName, "r") 
+    lumiWt = -99
+    for line in mergeLog.readlines():
+        # Look for line of type:
+        # The weighting factor is 0.171865466412.
+        if "weighting factor" in line: 
+            words = line.split(" ")
+            words = filter(None, words) # Remove empty entries.  
+            lumiWt = float(words[-1].rstrip(".\n"))  # Strip off the end-line and period from the last word in the line.  
+    if lumiWt <= 0:
+        print "ERROR:  Found invalid lumiWt from file:", mergeLogName 
+        exit(0)
+    return lumiWt   
+
 def fillTableColumn(table, dataset_file, dataset):  
     inputFile = TFile(dataset_file)
     cutFlow = inputFile.Get(table.channel + "/cutFlow") 
@@ -351,10 +369,15 @@ def fillTableColumn(table, dataset_file, dataset):
     newcol = CFColumn(dataset)
     newcol.label = getLabel(dataset)
     newcol.type = types[dataset]  
+    if arguments.rawYields: 
+        lumiWt = getLumiWt(dataset_file)
     for i in range(1, cutFlow.GetNbinsX()+1):  # Loop over cuts
         newcell = CFCell()
         newcell.val = cutFlow.GetBinContent(i)
         newcell.err = cutFlow.GetBinError(i)
+        if arguments.rawYields:
+            newcell.val /= lumiWt
+            newcell.err /= lumiWt
         newcol.yields.append(newcell)
     table.datasets.append(newcol)  
 
@@ -439,6 +462,8 @@ def addExtraColumn(table, option):
 def getLumiLabel():
     lumiStr = str(intLumi / 1000.) # convert /pb to /fb  
     label = "$\\mathrm{L} = " + lumiStr + "\\,\\mathrm{fb}^{-1}$"
+    if arguments.rawYields:
+        label = "Raw event counts" 
     return label  
 
 def makePdf(condor_dir,texfile):
