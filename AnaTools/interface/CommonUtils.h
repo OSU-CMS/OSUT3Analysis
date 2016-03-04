@@ -182,13 +182,13 @@ namespace anatools
   // first argument.
   void getRequiredCollections (const unordered_set<string> &, Collections &, const edm::Event &, const Tokens &);
 
-  double getMember (const string &type, const void * const obj, const string &member, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * const = NULL);
+  double getMember (const string &type, void *obj, const string &member, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * = NULL);
 
   template <class T> double getMember (const T &obj, const string &member);
 
 #ifdef ROOT6
-  const anatools::ObjectWithDict * const getMember (const anatools::TypeWithDict &t, const anatools::ObjectWithDict &o, const string &member, string &memberType, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * const);
-  const anatools::ObjectWithDict * const invoke (const string &returnType, const anatools::ObjectWithDict &o, const anatools::FunctionWithDict &f);
+  anatools::ObjectWithDict * getMember (const anatools::TypeWithDict &tDerived, const anatools::TypeWithDict &t, const anatools::ObjectWithDict &o, const string &member, string &memberType, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > *);
+  anatools::ObjectWithDict * invoke (const string &returnType, const anatools::ObjectWithDict &o, const anatools::FunctionWithDict &f);
 #else
   const Reflex::Object * const getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType);
   const Reflex::Object * const invoke (const string &returnType, const Reflex::Object &o, const string &member);
@@ -210,7 +210,7 @@ template <class T> double
 anatools::getMember(const T &obj, const string &member)
 {
   string type = getObjectClass(obj);
-  return getMember(type, &obj, member);
+  return getMember(type, (void *) &obj, member);
 }
 
 /**

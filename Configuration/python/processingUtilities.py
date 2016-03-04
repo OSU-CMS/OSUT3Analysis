@@ -464,6 +464,11 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                     setattr (eventvariableCollections, collection,inputTag)
                     objectProducer = getattr (collectionProducer, collection).clone()
                     objectProducer.collections = eventvariableCollections
+                    # Set the input tag for mcparticles to that produced by the
+                    # first object producer. Needed for gen-matching to work. DO
+                    # NOT ERASE!!!
+                    if collection != "mcparticles":
+                        setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", ""))
                     channelPath += objectProducer
                     setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                     newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
@@ -480,7 +485,12 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                 setattr (producedCollections, collection, newInputTags)
             else:
                 objectProducer = getattr (collectionProducer, collection).clone()
-                objectProducer.collections = collections
+                objectProducer.collections = copy.deepcopy (collections)
+                # Set the input tag for mcparticles to that produced by the
+                # first object producer. Needed for gen-matching to work. DO
+                # NOT ERASE!!!
+                if collection != "mcparticles":
+                    setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", ""))
                 channelPath += objectProducer
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 originalInputTag = getattr (collections, collection)

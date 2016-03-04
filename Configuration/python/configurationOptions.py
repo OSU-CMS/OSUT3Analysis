@@ -143,13 +143,27 @@ composite_dataset_definitions = {
     'Diboson' : [
         'WWToLNuQQ',
         'WWToLNuLNu',
+        'WZToLNuQQ',
+        'WZToLLQQ',
         'WZToLNuNuNu',
         'WZToLLLNu',
-        'WZToLNu2QorQQ2L',
+        # Switch to inclusive WZ sample when it is ready.  
         'ZZToNuNuQQ',
         'ZZToLLQQ',
         'ZZToLLNuNu',
         'ZZToLLLL',
+        'WG',
+        'ZG'
+    ],
+    'Diboson_Incl' : [  # Inclusive samples, where available  
+        'WWToLNuQQ',
+        'WWToLNuLNu',
+        'WZToLNuQQ',
+        'WZToLLQQ',
+        'WZToLNuNuNu',
+        'WZToLLLNu',
+        # Switch to inclusive WZ sample when it is ready.  
+        'ZZ',
         'WG',
         'ZG'
     ],
@@ -318,7 +332,6 @@ nJobs = {
     'WZToLLQQ'     :  999,
     'WZToLNuNuNu'  :  999,
     'WZToLLLNu'    :  999,
-    'WZToLNu2QorQQ2L' : 999,
 
     #ZZ
     'ZZToNuNuQQ'  :  999,
@@ -455,6 +468,7 @@ nJobs = {
     'stop1100_1000mm'     :  99,
     'stop1200_1mm'     :  99,
     'stop1200_10mm'     :  99,
+    'stop1200_50mm'     :  99,
     'stop1200_100mm'     :  99,
     'stop1200_1000mm'     :  99,
     
@@ -512,7 +526,6 @@ maxEvents = {
     'WZToLLQQ'     :  -1,
     'WZToLNuNuNu'  :  -1,
     'WZToLLLNu'    :  -1,
-    'WZToLNu2QorQQ2L' : -1,
 
     #ZZ
     'ZZToNuNuQQ'  :  -1,
@@ -648,6 +661,7 @@ maxEvents = {
     'stop1100_1000mm'     :  -1,
     'stop1200_1mm'     :  -1,
     'stop1200_10mm'     :  -1,
+    'stop1200_50mm'     :  -1,
     'stop1200_100mm'     :  -1,
     'stop1200_1000mm'     :  -1,
  
@@ -708,7 +722,6 @@ types = {
     'WZToLLQQ'     :  "bgMC",
     'WZToLNuNuNu'  :  "bgMC",
     'WZToLLLNu'    :  "bgMC",
-    'WZToLNu2QorQQ2L' : "bgMC",
 
     #ZZ
     'ZZToNuNuQQ'  :  "bgMC",
@@ -758,26 +771,27 @@ types = {
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
-    'DYJetsToLL'                : "bgMC",
-    'DYJetsToLL_10to50'     : "bgMC",   
-    'TTJets'            : "bgMC",
-    'Diboson'            : "bgMC",
-    'WW'            : "bgMC",
-    'ZZ'            : "bgMC",
-    'WZ'            : "bgMC",
+    'DYJetsToLL'             : "bgMC",
+    'DYJetsToLL_10to50'      : "bgMC",   
+    'TTJets'                 : "bgMC",
+    'Diboson'                : "bgMC",
+    'Diboson_Incl'           : "bgMC",
+    'WW'                     : "bgMC",
+    'ZZ'                     : "bgMC",
+    'WZ'                     : "bgMC",
    
-    'DYJetsToLL_50ns'                : "bgMC",
+    'DYJetsToLL_50ns'        : "bgMC",
     'DYJetsToLL_50_50ns'     : "bgMC",   
-    'DYJetsToLL_10to50_50ns'     : "bgMC",   
+    'DYJetsToLL_10to50_50ns' : "bgMC",   
     'WJetsToLNu_50ns'        : "bgMC",   
     'TTJets_50ns'            : "bgMC",
-    'Diboson_50ns'            : "bgMC",
-    'WW_50ns'            : "bgMC",
-    'ZZ_50ns'            : "bgMC",
-    'WZ_50ns'            : "bgMC",
+    'Diboson_50ns'           : "bgMC",
+    'WW_50ns'                : "bgMC",
+    'ZZ_50ns'                : "bgMC",
+    'WZ_50ns'                : "bgMC",
     #QCD MuEnriched
     'QCD_MuEnriched_20toInf'        : "bgMC", 
-    'QCD_MuEnriched'        : "bgMC", 
+    'QCD_MuEnriched'                : "bgMC", 
     'QCD_MuEnriched_15to20'         : "bgMC",
     'QCD_MuEnriched_20to30'         : "bgMC",
     'QCD_MuEnriched_30to50'         : "bgMC",
@@ -856,6 +870,7 @@ types = {
     'stop1100_1000mm'     :  "signalMC",
     'stop1200_1mm'     :  "signalMC",
     'stop1200_10mm'     :  "signalMC",
+    'stop1200_50mm'     :  "signalMC",
     'stop1200_100mm'     :  "signalMC",
     'stop1200_1000mm'     :  "signalMC",
  
@@ -920,7 +935,6 @@ colors = {
     'WZToLLQQ'     :  393,
     'WZToLNuNuNu'  :  393,
     'WZToLLLNu'    :  393,
-    'WZToLNu2QorQQ2L' : 393,
 
     #ZZ
     'ZZToNuNuQQ'  :  397,
@@ -974,6 +988,7 @@ colors = {
     'DYJetsToLL_10to50'   : 410,
     'TTJets'              : 872,
     'Diboson'             : 393,
+    'Diboson_Incl'        : 393,
     'WZ'                  : 393,
     'ZZ'                  : 397,
     'WW'                  : 390,
@@ -1068,6 +1083,7 @@ colors = {
     'stop1100_1000mm'     :  113,
     'stop1200_1mm'     :  120,
     'stop1200_10mm'     :  121,
+    'stop1200_50mm'     :  122,
     'stop1200_100mm'     :  122,
     'stop1200_1000mm'     :  123,
     
@@ -1134,7 +1150,6 @@ labels = {
     'WZToLLQQ'     :  "WZ#rightarrowqqll",
     'WZToLNuNuNu'  :  "WZ#rightarrowl#nu#nu#nu",
     'WZToLLLNu'    :  "WZ#rightarrowl#null",
-    'WZToLNu2QorQQ2L' : "",
 
     #ZZ
     'ZZToNuNuQQ'  :  "ZZ#rightarrow#nu#nuqq",
@@ -1187,6 +1202,7 @@ labels = {
     'DYJetsToLL_10to50'             : "Z#rightarrowll M(10to50) ",
     'TTJets'                        : "t#bar{t} ",
     'Diboson'                   : "diboson ",
+    'Diboson_Incl'              : "diboson ",
     'WW'                        : "WW ",
     'WZ'                        : "WZ ",
     'ZZ'                        : "ZZ ",
@@ -1280,6 +1296,7 @@ labels = {
     'stop1100_1000mm' : "#tilde{t}#tilde{t} M(1100) c#tau(1000mm)",
     'stop1200_1mm'    : "#tilde{t}#tilde{t} M(1200) c#tau(1mm)", 
     'stop1200_10mm'   : "#tilde{t}#tilde{t} M(1200) c#tau(10mm)",
+    'stop1200_50mm'  : "#tilde{t}#tilde{t} M(1200) c#tau(50mm)",
     'stop1200_100mm'  : "#tilde{t}#tilde{t} M(1200) c#tau(100mm)",
     'stop1200_1000mm' : "#tilde{t}#tilde{t} M(1200) c#tau(1000mm)",
     
@@ -1415,6 +1432,7 @@ crossSections = {
     'stop1100_1000mm' : 0.00307413,
     'stop1200_1mm'    : 0.00159844, 
     'stop1200_10mm'   : 0.00159844,
+    'stop1200_50mm'  : 0.00159844,
     'stop1200_100mm'  : 0.00159844,
     'stop1200_1000mm' : 0.00159844,
     'WZToLLQQ'       : 5.595,
@@ -1428,7 +1446,6 @@ crossSections = {
     'ZZToLLQQ'    :  3.22,
     'ZZToLLNuNu'  :  0.5644,
     'ZZToLLLL'    :  1.256,
-    'WZToLNu2QorQQ2L' :    9.82423165827*1.0,
     'WG'  :  489.0,
     'ZG'  :  117.864,
     'SingleTop_s_channel'  :  3.3623,
@@ -1439,6 +1456,8 @@ crossSections = {
     'TTJets_SingleLeptFromT'     :  182.7,
     'TTJets_SingleLeptFromTbar'  :  182.7,
 }
+
+InputCondorArguments = {}
 
 pdgIdsForLifetimeReweighting = {
     # Defines the PDG IDs of the particles to be used for lifetime reweighting.
@@ -1462,8 +1481,6 @@ dstCTauForLifetimeReweighting = {
     # defined by pdgIdsForLifetimeReweighting to which the sample should be
     # reweighted.  The keys are dataset labels and the values are either single
     # lifetime values or lists of lifetimes, e.g.:
-    # 'stop1200_50mm'               : 5.0,
+    # 'stop1200_50mm'               : 10.0,
     # 'stopAndGluino1200_50mm_30mm' : [5.0, 3.0],
 }
-
-InputCondorArguments = {}

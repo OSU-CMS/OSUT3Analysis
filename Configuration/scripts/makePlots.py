@@ -671,8 +671,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     DataLegendEntries = []
     BgMCHistYieldsDic = {}
 
-
-    print pathToDir+"/"+histogramName
+    if arguments.verbose:  
+        print pathToDir+"/"+histogramName
 
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
@@ -1583,3 +1583,5 @@ for key in inputFile.GetListOfKeys():
 
 
 outputFile.Close()
+print "Finished writing plots to ", str(outputDir + "/" + outputFileName)  
+

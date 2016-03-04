@@ -289,30 +289,58 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
 
 #ifdef ROOT6
   double
-  anatools::getMember (const string &type, const void * const obj, const string &member, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * const functionLookupTable)
+  anatools::getMember (const string &type, void *obj, const string &member, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * functionLookupTable)
   {
     double value = INVALID_VALUE;
     string memberType = "";
+    anatools::ObjectWithDict * retObj = NULL;
     void *retObjAdd = NULL;
     if (functionLookupTable && functionLookupTable->count (make_pair (type, member)))
       {
         memberType = functionLookupTable->at (make_pair (type, member)).first;
-        (*functionLookupTable->at (make_pair (type, member)).second) ((void *) obj, 0, NULL, retObjAdd);
+        if (memberType == "float")
+          retObjAdd = (void *) new float[1];
+        else if (memberType == "double")
+          retObjAdd = (void *) new double[1];
+        else if (memberType == "long double")
+          retObjAdd = (void *) new long double[1];
+        else if (memberType == "char")
+          retObjAdd = (void *) new char[1];
+        else if (memberType == "int")
+          retObjAdd = (void *) new int[1];
+        else if (memberType == "unsigned")
+          retObjAdd = (void *) new unsigned[1];
+        else if (memberType == "unsigned short")
+          retObjAdd = (void *) new unsigned short[1];
+        else if (memberType == "unsigned long")
+          retObjAdd = (void *) new unsigned long[1];
+        else if (memberType == "bool")
+          retObjAdd = (void *) new bool[1];
+        else if (memberType == "unsigned int")
+          retObjAdd = (void *) new unsigned int[1];
+        else if (memberType == "unsigned short int")
+          retObjAdd = (void *) new unsigned short int[1];
+        else if (memberType == "unsigned long int")
+          retObjAdd = (void *) new unsigned long int[1];
+        (*functionLookupTable->at (make_pair (type, member)).second) (obj, 0, NULL, retObjAdd);
       }
     else
       {
         anatools::TypeWithDict t = anatools::TypeWithDict::byName (type);
-        anatools::ObjectWithDict *o = new anatools::ObjectWithDict (t, (void *) obj);
+        anatools::ObjectWithDict *o = new anatools::ObjectWithDict (t, obj);
         try
           {
-            anatools::ObjectWithDict * const retObj = (anatools::ObjectWithDict * const) getMember (t, *o, member, memberType, functionLookupTable);
-            retObjAdd = retObj ? retObj->address () : NULL;
-            delete o;
+            retObj = getMember (t, t, *o, member, memberType, functionLookupTable);
+            if (retObj)
+              retObjAdd = retObj->address ();
           }
         catch (...)
           {
             clog << "WARNING: unable to access member \"" << member << "\" from \"" << type << "\"" << endl;
+            return value;
           }
+        if (o)
+          delete o;
       }
 
     if (retObjAdd)
@@ -320,72 +348,88 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         if (memberType == "float")
           {
             value = *((float *) retObjAdd);
-            delete ((float *) retObjAdd);
+            if (!retObj)
+              delete[] ((float *) retObjAdd);
           }
         else if (memberType == "double")
           {
             value = *((double *) retObjAdd);
-            delete ((double *) retObjAdd);
+            if (!retObj)
+              delete[] ((double *) retObjAdd);
           }
         else if (memberType == "long double")
           {
             value = *((long double *) retObjAdd);
-            delete ((long double *) retObjAdd);
+            if (!retObj)
+              delete[] ((long double *) retObjAdd);
           }
         else if (memberType == "char")
           {
             value = *((char *) retObjAdd);
-            delete ((char *) retObjAdd);
+            if (!retObj)
+              delete[] ((char *) retObjAdd);
           }
         else if (memberType == "int")
           {
             value = *((int *) retObjAdd);
-            delete ((int *) retObjAdd);
+            if (!retObj)
+              delete[] ((int *) retObjAdd);
           }
         else if (memberType == "unsigned")
           {
             value = *((unsigned *) retObjAdd);
-            delete ((unsigned *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned *) retObjAdd);
           }
         else if (memberType == "unsigned short")
           {
             value = *((unsigned short *) retObjAdd);
-            delete ((unsigned short *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned short *) retObjAdd);
           }
         else if (memberType == "unsigned long")
           {
             value = *((unsigned long *) retObjAdd);
-            delete ((unsigned long *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned long *) retObjAdd);
           }
         else if (memberType == "bool")
           {
             value = *((bool *) retObjAdd);
-            delete ((bool *) retObjAdd);
+            if (!retObj)
+              delete[] ((bool *) retObjAdd);
           }
         else if (memberType == "unsigned int")
           {
             value = *((unsigned int *) retObjAdd);
-            delete ((unsigned int *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned int *) retObjAdd);
           }
         else if (memberType == "unsigned short int")
           {
             value = *((unsigned short int *) retObjAdd);
-            delete ((unsigned short int *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned short int *) retObjAdd);
           }
         else if (memberType == "unsigned long int")
           {
             value = *((unsigned long int *) retObjAdd);
-            delete ((unsigned long int *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned long int *) retObjAdd);
           }
         else
           clog << "WARNING: \"" << member << "\" has unrecognized type \"" << memberType << "\"" << endl;
+        if (retObj)
+          delete retObj;
       }
+    else
+      clog << "WARNING: unable to access member \"" << member << "\" from \"" << type << "\"" << endl;
 
     return value;
   }
 
-  const anatools::ObjectWithDict * const
-  anatools::getMember (const anatools::TypeWithDict &t, const anatools::ObjectWithDict &o, const string &member, string &memberType, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * const functionLookupTable)
+  anatools::ObjectWithDict *
+  anatools::getMember (const anatools::TypeWithDict &tDerived, const anatools::TypeWithDict &t, const anatools::ObjectWithDict &o, const string &member, string &memberType, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * functionLookupTable)
   {
     string typeName = t.name ();
     size_t dot = member.find ('.'),
@@ -401,34 +445,37 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         anatools::TypeWithDict derefType = anatools::TypeWithDict::byName (typeName.substr (0, asterisk) + typeName.substr (asterisk + 1));
         void *obj = o.address ();
         anatools::ObjectWithDict derefObj (derefType, (void *) *((void **) obj));
-        return getMember (derefType, derefObj, member, memberType, functionLookupTable);
+        return getMember (tDerived, derefType, derefObj, member, memberType, NULL);
       }
     if (t.name ().find ("edm::Ref") == 0 && member == "operator->")
       {
-        anatools::ObjectWithDict * const isValid = (anatools::ObjectWithDict * const ) invoke ("bool", o, t.functionMemberByName ("isNonnull"));
+        anatools::ObjectWithDict * isValid = invoke ("bool", o, t.functionMemberByName ("isNonnull"));
+        functionLookupTable = NULL;
         if (!isValid->objectCast<bool> ())
-          return NULL;
+          {
+            delete isValid;
+            return NULL;
+          }
+        delete isValid;
       }
     if (dot != string::npos)
       {
-        try
+        anatools::ObjectWithDict * subObj = getMember (tDerived, t, o, member.substr (0, dot), memberType, NULL);
+        if (!subObj)
+          return NULL;
+        anatools::TypeWithDict subType = anatools::TypeWithDict::byName (memberType);
+        string subMember = member.substr (dot + 1);
+        anatools::ObjectWithDict * retObj = getMember (tDerived, subType, *subObj, subMember, memberType, NULL);
+        if (retObj)
           {
-            const anatools::ObjectWithDict * const subObj = getMember (t, o, member.substr (0, dot), memberType, functionLookupTable);
-            anatools::TypeWithDict subType = anatools::TypeWithDict::byName (memberType);
-            string subMember = member.substr (dot + 1);
-            const anatools::ObjectWithDict * const retObj = getMember (subType, *subObj, subMember, memberType, functionLookupTable);
             delete subObj;
             return retObj;
           }
-        catch (...)
-          {
-            const anatools::ObjectWithDict * const subObj = getMember (t, o, member.substr (0, dot), memberType, functionLookupTable);
-            anatools::TypeWithDict subType = anatools::TypeWithDict::byName (memberType);
-            string subMember = (member.substr (0, dot) == "operator->" ? "" : "operator->.") + member.substr (dot + 1);
-            const anatools::ObjectWithDict * const retObj = getMember (subType, *subObj, subMember, memberType, functionLookupTable);
-            delete subObj;
-            return retObj;
-          }
+
+        subMember = (member.substr (0, dot) == "operator->" ? "" : "operator->.") + member.substr (dot + 1);
+        retObj = getMember (tDerived, subType, *subObj, subMember, memberType, NULL);
+        delete subObj;
+        return retObj;
       }
 
     anatools::MemberWithDict dataMember;
@@ -457,7 +504,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
     else if (functionMember)
       {
         if (functionLookupTable)
-          (*functionLookupTable)[make_pair (typeName, member)] = make_pair (memberType, functionMember.address ());
+          (*functionLookupTable)[make_pair (tDerived.name (), member)] = make_pair (memberType, functionMember.address ());
         return invoke (memberType, o, functionMember);
       }
     else
@@ -466,25 +513,21 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         for (auto bi = bases.begin (); bi != bases.end (); ++bi)
           {
             anatools::BaseWithDict base (*bi);
-            try
-              {
-                return getMember (base.typeOf (), o.castObject (base.typeOf ()), member, memberType, functionLookupTable);
-              }
-            catch (...)
-              {
-                continue;
-              }
+            anatools::ObjectWithDict * retObj = getMember (tDerived, base.typeOf (), o.castObject (base.typeOf ()), member, memberType, functionLookupTable);
+            if (retObj)
+              return retObj;
+            continue;
           }
       }
 
-    throw 0;
+    return NULL;
   }
 
-  const anatools::ObjectWithDict * const
+  anatools::ObjectWithDict *
   anatools::invoke (const string &returnType, const anatools::ObjectWithDict &o, const anatools::FunctionWithDict &f)
   {
     anatools::TypeWithDict t = anatools::TypeWithDict::byName (returnType);
-    anatools::ObjectWithDict *value = new anatools::ObjectWithDict (t.construct ());
+    anatools::ObjectWithDict * value = new anatools::ObjectWithDict (t.construct ());
     f.invoke (o, value);
     return value;
   }
