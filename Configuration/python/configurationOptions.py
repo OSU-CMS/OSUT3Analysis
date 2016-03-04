@@ -537,6 +537,13 @@ nJobs = {
     'Commissioning2015_controlSample' : 999,
     'NoBPTX_2015B_controlSample' : 999,
     'NoBPTX_2015C_controlSample' : 999,
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : 5,
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : 5,
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : 5,
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : 5,
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : 5,
+    'GluinoToGChi0_1200_1000_nonoise' : 5,
 
 }
 
@@ -759,6 +766,13 @@ maxEvents = {
     'Commissioning2015_controlSample' : -1,
     'NoBPTX_2015B_controlSample' : -1,
     'NoBPTX_2015C_controlSample' : -1,
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : -1,
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : -1,
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : -1,
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : -1,
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : -1,
+    'GluinoToGChi0_1200_1000_nonoise' : -1,
 
 }
 
@@ -1011,6 +1025,14 @@ types = {
     'NoBPTX_2015B_controlSample' : 'data',
     'NoBPTX_2015C_controlSample' : 'data',
     'StpPtls_controlSample_2015' : 'data',
+
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : "signalMC",
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : "signalMC",
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : "signalMC",
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : "signalMC",
+    'GluinoToGChi0_1200_1000_nonoise' : "signalMC",
 }
 
 colors = {
@@ -1257,6 +1279,14 @@ colors = {
     'NoBPTX_2015B_controlSample' : 1,
     'NoBPTX_2015C_controlSample' : 1,
     'StpPtls_controlSample_2015' : 1,
+
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : 7,
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : 6,
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : 4,
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : 5,
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : 8,
+    'GluinoToGChi0_1200_1000_nonoise' : 9,
 }
 
 labels = {
@@ -1504,6 +1534,15 @@ labels = {
     'NoBPTX_2015C_controlSample' : "NoBPTX 2015C control sample",
     'StpPtls_controlSample_2015' : "Data control sample",
 
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p4)",
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p6)",
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p7)",
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p8)",
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate1p0)",
+    'GluinoToGChi0_1200_1000_nonoise' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, noNoise)",
+
+
 }
 
 crossSections = {
@@ -1642,6 +1681,13 @@ crossSections = {
 
     #stopped particles cosmic events
     'cosmic_preselection' : 8.3600000000E-02,
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000_nonoise' : 8.3600000000E-02,
 
 
 }

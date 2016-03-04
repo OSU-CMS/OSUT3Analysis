@@ -25,4 +25,11 @@ dataset_names = {
     'Commissioning2015_controlSample' : "/NoBPTX/wji-Commissioning2015-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
     'NoBPTX_2015B_controlSample' : "/NoBPTX/wji-Run2015B-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
     'NoBPTX_2015C_controlSample' : "/NoBPTX/wji-Run2015C-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
+################## SP ntuples to study rpc hits##################
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p4/USER",
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p6/USER",
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p7/USER",
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p8/USER",
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyWithBkg/USER",
+    'GluinoToGChi0_1200_1000_nonoise' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyNoBkg/USER"
 }
