@@ -7,7 +7,7 @@ config_file = "standardConfig_cfg.py"
 ###### 2012B = 4.9 fb-1
 ###### 2012B = 4.9 fb-1
 
-intLumi = 2538.43  #2015D Silver Json
+intLumi = 2613 #2015D Silver Json
 
 datasets = [
 
@@ -24,6 +24,8 @@ datasets = [
    'DoubleEG_2015D',
    'MuonEG_2015',
    'MuonEG_2015D',
+   'MET_2015',
+   'MET_2015D',
    'NoBPTX_2015D',
 
    #MiniAOD not stored on T3.
@@ -231,6 +233,11 @@ composite_dataset_definitions = {
         'MuonEG_2015B',
         'MuonEG_2015C',
         'MuonEG_2015D',
+    ],
+    'MET_2015' : [
+        'MET_2015B',
+        'MET_2015C',
+        'MET_2015D',
     ],
     'DisplacedSUSYSignal' : [
         'stop200_1mm',
@@ -728,6 +735,7 @@ types = {
 
     #MET data
     'MET_2015D' : "data",
+    'MET_2015'  : "data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  "signalMC",
@@ -939,6 +947,7 @@ colors = {
 
     #MET data
     'MET_2015D' : 1,
+    'MET_2015' : 1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  628,
@@ -1152,6 +1161,7 @@ labels = {
 
     #MET data
     'MET_2015D' : "MET 2015D data",
+    'MET_2015'  : "MET 2015 data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 10cm)",
