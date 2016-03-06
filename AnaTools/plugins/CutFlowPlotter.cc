@@ -75,6 +75,16 @@ CutFlowPlotter::~CutFlowPlotter ()
          << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
       //         << setw (15) << setprecision(3) << 100.0 * (minusOne  / (double) totalEvents) << "%"
          << endl;
+    if (name == "trigger") {
+      for (uint j=0; j<cutDecisions->triggers.size(); j++) {
+	clog << "  " << cutDecisions->triggers.at(j); 
+	if (j< cutDecisions->triggers.size() - 1) clog << " OR";  // all but the last one
+	clog << endl;  
+      }
+      for (uint j=0; j<cutDecisions->triggersToVeto.size(); j++) {
+	clog << "  AND NOT " << cutDecisions->triggersToVeto.at(j) << endl;
+      }
+    }
   }
   clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
 
