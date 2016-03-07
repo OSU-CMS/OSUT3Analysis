@@ -187,8 +187,9 @@ def GetSkimInputTags(File):
     parsing = False
     cppTypes = []
     inputTags = {}
+    # First get all of the collections in the output skim file.
     for line in eventContent.splitlines ():
-        if line.find ("----------") == 0:
+        if line.find ("----------") == 0:  # all of the collections will be after a line containing "---------" 
             parsing = True
             continue
         if not parsing:
@@ -198,6 +199,7 @@ def GetSkimInputTags(File):
         inputTags[splitLine[0]] = cms.InputTag (splitLine[1][1:-1], splitLine[2][1:-1], splitLine[3][1:-1])
 
     collectionTypes = subprocess.check_output (["getCollectionType"] + cppTypes)
+    # Save only the collections for which there is a valid type.
     for i in range (0, len (cppTypes)):
         if cppTypes[i] not in inputTags:
             continue
