@@ -1,5 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 from OSUT3Analysis.Configuration.pdgIdBins import *
+from OSUT3Analysis.Configuration.cutUtilities import *
 
 
 ###############################################
@@ -1317,13 +1318,13 @@ TrackBeamspotHistograms = cms.PSet(
             name = cms.string("trackd0"),
             title = cms.string("Track d_{0};track d_{0} [cm]"),
             binsX = cms.untracked.vdouble(100, -0.5, 0.5),
-            inputVariables = cms.vstring("((track.vx - beamspot.x0) * track.py - (track.vy - beamspot.y0) * track.px) / track.pt"),
+            inputVariables = cms.vstring(trackD0WRTBeamspot), 
         ),
         cms.PSet (
             name = cms.string("trackd0Mag"),
             title = cms.string("Track d_{0};track |d_{0}| [cm]"),
             binsX = cms.untracked.vdouble(50, 0, 0.5),
-            inputVariables = cms.vstring("fabs(((track.vx - beamspot.x0) * track.py - (track.vy - beamspot.y0) * track.px) / track.pt)"),
+            inputVariables = cms.vstring("fabs ( " + trackD0WRTBeamspot + " )"), 
         ),
         cms.PSet (
             name = cms.string("trackdz"),
