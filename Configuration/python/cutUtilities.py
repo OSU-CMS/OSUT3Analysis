@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-
 # Utilities for applying cuts.  
 
+import FWCore.ParameterSet.Config as cms
 
 ##################################################
 ## Functions for adding, removing cuts
