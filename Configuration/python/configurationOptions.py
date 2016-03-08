@@ -258,6 +258,8 @@ composite_dataset_definitions = {
         'Commissioning2015_controlSample',
         'NoBPTX_2015B_controlSample',
         'NoBPTX_2015C_controlSample',
+        'NoBPTX_2015Dv3_controlSample',
+        'NoBPTX_2015Dv4_controlSample'
         ],
     'DisplacedSUSYSignal' : [
         'stop200_1mm',
@@ -537,6 +539,8 @@ nJobs = {
     'Commissioning2015_controlSample' : 999,
     'NoBPTX_2015B_controlSample' : 999,
     'NoBPTX_2015C_controlSample' : 999,
+    'NoBPTX_2015Dv3_controlSample' : 999,
+    'NoBPTX_2015Dv4_controlSample' : 999,
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 5,
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : 5,
@@ -766,6 +770,8 @@ maxEvents = {
     'Commissioning2015_controlSample' : -1,
     'NoBPTX_2015B_controlSample' : -1,
     'NoBPTX_2015C_controlSample' : -1,
+    'NoBPTX_2015Dv3_controlSample' : -1,
+    'NoBPTX_2015Dv4_controlSample' : -1,
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : -1,
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : -1,
@@ -1024,7 +1030,10 @@ types = {
     'Commissioning2015_controlSample' : 'data',
     'NoBPTX_2015B_controlSample' : 'data',
     'NoBPTX_2015C_controlSample' : 'data',
+    'NoBPTX_2015Dv3_controlSample' : 'data',
+    'NoBPTX_2015Dv4_controlSample' : 'data',
     'StpPtls_controlSample_2015' : 'data',
+    
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
@@ -1257,7 +1266,7 @@ colors = {
     'GluinoToUUbarChi0_1200_200' : 4,
     'GluinoToUUbarChi0_1200_600' : 22,
     'GluinoToUUbarChi0_1200_1000' : 2,
-    'GluinoToGChi0_1200_200'  : 2,
+    'GluinoToGChi0_1200_200'  : 1,
     'GluinoToGChi0_1200_400'  : 3,
     'GluinoToGChi0_1200_600'  : 6,
     'GluinoToGChi0_1200_800'  : 7,
@@ -1278,6 +1287,8 @@ colors = {
     'Commissioning2015_controlSample' : 1,
     'NoBPTX_2015B_controlSample' : 1,
     'NoBPTX_2015C_controlSample' : 1,
+    'NoBPTX_2015Dv3_controlSample' : 1,
+    'NoBPTX_2015Dv4_controlSample' : 1,
     'StpPtls_controlSample_2015' : 1,
 
     #rpc study
@@ -1508,17 +1519,17 @@ labels = {
     #RECO stored on T3
     ###########################################################################
     #stopped particles stage2 signals
-    'GluinoToUUbarChi0_1200_200' : "#tilde{g} #rightarrow u#topbar{u}#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 200 GeV)",
+    'GluinoToUUbarChi0_1200_200' : "#tilde{g} #rightarrow u#topbar{u}#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 200 GeV, Frate1p0)",
     'GluinoToUUbarChi0_1200_600' : "#tilde{g} #rightarrow u#topbar{u}#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 600 GeV)",
     'GluinoToUUbarChi0_1200_1000' : "#tilde{g} #rightarrow u#topbar{u}#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV)",
-    'GluinoToGChi0_1200_200'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 200 GeV)",
+    'GluinoToGChi0_1200_200'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 200 GeV)Frate=1.0",
     'GluinoToGChi0_1200_400'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 400 GeV)",
     'GluinoToGChi0_1200_600'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 600 GeV)",
     'GluinoToGChi0_1200_800'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 800 GeV)",
     'GluinoToGChi0_1200_1000'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV)",
 
     #stopped particles cosmic MC events
-    'cosmic_preselection' : "Cosmic MC preselection",
+    'cosmic_preselection' : "Cosmic MC preselection, Frate1p0",
 
     ############################################################################
 
@@ -1532,6 +1543,8 @@ labels = {
     'Commissioning2015_controlSample' : "Commissioning 2015 control sample",
     'NoBPTX_2015B_controlSample' : "NoBPTX 2015B control sample",
     'NoBPTX_2015C_controlSample' : "NoBPTX 2015C control sample",
+    'NoBPTX_2015Dv3_controlSample': "NoBPTX 2015Dv3 control sample",
+    'NoBPTX_2015Dv4_controlSample': "NoBPTX 2015Dv4 control sample",
     'StpPtls_controlSample_2015' : "Data control sample",
 
     #rpc study
