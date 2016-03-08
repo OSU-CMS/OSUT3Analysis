@@ -25,6 +25,24 @@ def removeCuts(cutVPset, cutsToRemove):
 ##################################################
 trackD0WRTBeamspot = "((track.vx - beamspot.x0) * track.py - (track.vy - beamspot.y0) * track.px) / track.pt" 
 
+muonPFIsolation = "(pfIsolationR04_.sumChargedHadronPt \
++ max(0.0, pfIsolationR04_.sumNeutralHadronEt + pfIsolationR04_.sumPhotonEt - 0.5*pfIsolationR04_.sumPUPt )) / pt" 
+# See https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#Muon_Isolation
+
+
+
+##################################################
+## Common cut definitions 
+##################################################
+cutMuonPFIsoTight = cms.PSet (
+    inputCollection = cms.vstring("muons"),
+    cutString = cms.string(muonPFIsolation + " < 0.15"), 
+    numberRequired = cms.string(">= 1"),
+    alias = cms.string("muon tight PF isolation")
+) 
+
+
+
 
 
 
