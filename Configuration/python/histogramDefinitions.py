@@ -76,7 +76,7 @@ MuonHistograms = cms.PSet(
         ),
         cms.PSet (
             name = cms.string("muonNormalizedChi2"),
-            title = cms.string("Muon Chi Squared"),
+            title = cms.string("Muon Chi Squared; #chi^{2}/ndf"),
             binsX = cms.untracked.vdouble(20, 0, 20),
             inputVariables = cms.vstring("globalTrack.normalizedChi2"),
         ),
