@@ -1382,3 +1382,40 @@ TrackMCParticleHistograms = cms.PSet(
     )
 
 ##############################################################################################
+
+EventVariablePVHistograms = cms.PSet(
+    # EventVariable quantities associated with primary vertices
+    # To produce these variables, include in your PSet:
+    # variableProducers.append("PrimaryVtxVarProducer")  
+    inputCollection = cms.vstring("eventvariables"),
+    histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("numPVReco"),
+            title = cms.string(";Number of Primary Vertices"),
+            binsX = cms.untracked.vdouble(50, 0.0, 50.0),
+            inputVariables = cms.vstring("numPVReco"),
+        ),
+        cms.PSet (
+            name = cms.string("leadingPV_x"),
+            title = cms.string(";X Position of Leading Primary Vertex"),
+            binsX = cms.untracked.vdouble(50, -1.0, 1.0),
+            inputVariables = cms.vstring("leadingPV_x"),
+        ),
+        cms.PSet (
+            name = cms.string("leadingPV_y"),
+            title = cms.string(";Y Position of Leading Primary Vertex"),
+            binsX = cms.untracked.vdouble(50, -1.0, 1.0),
+            inputVariables = cms.vstring("leadingPV_y"),
+        ),
+        cms.PSet (
+            name = cms.string("leadingPV_z"),
+            title = cms.string(";Z Position of Leading Primary Vertex"),
+            binsX = cms.untracked.vdouble(50, -20.0, 20.0),
+            inputVariables = cms.vstring("leadingPV_z"),
+        ),
+    )
+)
+
+##############################################################################################
+
+
