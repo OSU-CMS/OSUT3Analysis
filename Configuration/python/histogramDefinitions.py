@@ -1,5 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 from OSUT3Analysis.Configuration.pdgIdBins import *
+from OSUT3Analysis.Configuration.cutUtilities import *
 
 
 ###############################################
@@ -82,7 +83,7 @@ MuonHistograms = cms.PSet(
         ),
         cms.PSet (
             name = cms.string("muonNormalizedChi2"),
-            title = cms.string("Muon Chi Squared"),
+            title = cms.string("Muon Chi Squared; #chi^{2}/ndf"),
             binsX = cms.untracked.vdouble(20, 0, 20),
             inputVariables = cms.vstring("globalTrack.normalizedChi2"),
         ),
@@ -1338,13 +1339,13 @@ TrackBeamspotHistograms = cms.PSet(
             name = cms.string("trackd0"),
             title = cms.string("Track d_{0};track d_{0} [cm]"),
             binsX = cms.untracked.vdouble(100, -0.5, 0.5),
-            inputVariables = cms.vstring("((track.vx - beamspot.x0) * track.py - (track.vy - beamspot.y0) * track.px) / track.pt"),
+            inputVariables = cms.vstring(trackD0WRTBeamspot), 
         ),
         cms.PSet (
             name = cms.string("trackd0Mag"),
             title = cms.string("Track d_{0};track |d_{0}| [cm]"),
             binsX = cms.untracked.vdouble(50, 0, 0.5),
-            inputVariables = cms.vstring("fabs(((track.vx - beamspot.x0) * track.py - (track.vy - beamspot.y0) * track.px) / track.pt)"),
+            inputVariables = cms.vstring("fabs ( " + trackD0WRTBeamspot + " )"), 
         ),
         cms.PSet (
             name = cms.string("trackdz"),
@@ -1361,6 +1362,40 @@ TrackBeamspotHistograms = cms.PSet(
     )
 )
 
+
+##############################################################################################
+
+TrackEventVarHistograms = cms.PSet(
+    # To produce these histograms, include in your PSet:
+    # variableProducers.append("PrimaryVtxVarProducer")  
+     inputCollection = cms.vstring("tracks", "eventvariables"),
+     histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("trackd0WRTPV"),
+            title = cms.string("Track d_{0} wrt leading PV;track d_{0} [cm]"),
+            binsX = cms.untracked.vdouble(100, -0.5, 0.5),
+            inputVariables = cms.vstring(trackD0WRTPV), 
+        ),
+        cms.PSet (
+            name = cms.string("trackd0WRTPVMag"),
+            title = cms.string("Track d_{0} wrt leading PV;track |d_{0}| [cm]"),
+            binsX = cms.untracked.vdouble(50, 0, 0.5),
+            inputVariables = cms.vstring("fabs ( " + trackD0WRTPV + " )"), 
+        ),
+        cms.PSet (
+            name = cms.string("trackdzWRTPV"),
+            title = cms.string("Track d_{z} wrt leading PV;track d_{z} [cm]"),
+            binsX = cms.untracked.vdouble(60, -30, 30),
+            inputVariables = cms.vstring(trackDZWRTPV), 
+        ),
+        cms.PSet (
+            name = cms.string("trackdzWRTPVMag"),
+            title = cms.string("Track d_{z} wrt leading PV;track |d_{z}| [cm]"),
+            binsX = cms.untracked.vdouble(30, 0, 30),
+            inputVariables = cms.vstring("fabs( " + trackDZWRTPV + " )" ), 
+        ),
+    )
+)
 
 
 ##############################################################################################
@@ -1402,3 +1437,40 @@ TrackMCParticleHistograms = cms.PSet(
     )
 
 ##############################################################################################
+
+EventVariablePVHistograms = cms.PSet(
+    # EventVariable quantities associated with primary vertices
+    # To produce these variables, include in your PSet:
+    # variableProducers.append("PrimaryVtxVarProducer")  
+    inputCollection = cms.vstring("eventvariables"),
+    histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("numPVReco"),
+            title = cms.string(";Number of Primary Vertices"),
+            binsX = cms.untracked.vdouble(50, 0.0, 50.0),
+            inputVariables = cms.vstring("numPVReco"),
+        ),
+        cms.PSet (
+            name = cms.string("leadingPV_x"),
+            title = cms.string(";X Position of Leading Primary Vertex"),
+            binsX = cms.untracked.vdouble(50, -1.0, 1.0),
+            inputVariables = cms.vstring("leadingPV_x"),
+        ),
+        cms.PSet (
+            name = cms.string("leadingPV_y"),
+            title = cms.string(";Y Position of Leading Primary Vertex"),
+            binsX = cms.untracked.vdouble(50, -1.0, 1.0),
+            inputVariables = cms.vstring("leadingPV_y"),
+        ),
+        cms.PSet (
+            name = cms.string("leadingPV_z"),
+            title = cms.string(";Z Position of Leading Primary Vertex"),
+            binsX = cms.untracked.vdouble(50, -20.0, 20.0),
+            inputVariables = cms.vstring("leadingPV_z"),
+        ),
+    )
+)
+
+##############################################################################################
+
+
