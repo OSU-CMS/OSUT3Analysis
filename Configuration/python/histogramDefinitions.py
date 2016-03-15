@@ -1261,7 +1261,7 @@ TrackHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("trackChi2"),
             title = cms.string("Track Reduced Chi2;track #chi^{2}/ndf"),
-            binsX = cms.untracked.vdouble(30, 0, 30),
+            binsX = cms.untracked.vdouble(50, 0, 10),
             inputVariables = cms.vstring("normalizedChi2"),
         ),
         cms.PSet (
@@ -1356,6 +1356,12 @@ TrackEventVarHistograms = cms.PSet(
             inputVariables = cms.vstring(trackD0WRTPV), 
         ),
         cms.PSet (
+            name = cms.string("trackd0WRTPV_Zoom"),
+            title = cms.string("Track d_{0} wrt leading PV;track d_{0} [cm]"),
+            binsX = cms.untracked.vdouble(100, -0.1, 0.1),
+            inputVariables = cms.vstring(trackD0WRTPV), 
+        ),
+        cms.PSet (
             name = cms.string("trackd0WRTPVMag"),
             title = cms.string("Track d_{0} wrt leading PV;track |d_{0}| [cm]"),
             binsX = cms.untracked.vdouble(50, 0, 0.5),
@@ -1364,13 +1370,19 @@ TrackEventVarHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("trackdzWRTPV"),
             title = cms.string("Track d_{z} wrt leading PV;track d_{z} [cm]"),
-            binsX = cms.untracked.vdouble(60, -30, 30),
+            binsX = cms.untracked.vdouble(100, -10, 10),
+            inputVariables = cms.vstring(trackDZWRTPV), 
+        ),
+        cms.PSet (
+            name = cms.string("trackdzWRTPV_Zoom"),
+            title = cms.string("Track d_{z} wrt leading PV;track d_{z} [cm]"),
+            binsX = cms.untracked.vdouble(100, -2, 2),
             inputVariables = cms.vstring(trackDZWRTPV), 
         ),
         cms.PSet (
             name = cms.string("trackdzWRTPVMag"),
             title = cms.string("Track d_{z} wrt leading PV;track |d_{z}| [cm]"),
-            binsX = cms.untracked.vdouble(30, 0, 30),
+            binsX = cms.untracked.vdouble(100, 0, 10),
             inputVariables = cms.vstring("fabs( " + trackDZWRTPV + " )" ), 
         ),
     )
