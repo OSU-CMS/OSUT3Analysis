@@ -24,8 +24,13 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     // Private methods used in calculating the cut decisions.
     ////////////////////////////////////////////////////////////////////////////
-    bool setObjectFlags (const Cut &, unsigned) const;
-    void updateCrossTalk (const Cut &, unsigned) const;
+
+    bool setInputCollectionFlags (const Cut &, unsigned) const;
+    bool arbitrateInputCollectionFlags (const Cut &, unsigned) const;
+    bool propagateToCompositeCollections (const Cut &, unsigned) const;
+    bool setOtherCollectionsFlags (const Cut &, unsigned, vector<string>) const;
+    bool propagateFromSingleCollections (const Cut &, unsigned, vector<string>) const;
+    bool propagateFromCompositeCollections (const Cut &, unsigned, vector<string>) const;
     bool unpackCuts ();
     void getTwoObjs (string, string &, string &);
     bool evaluateComparison (int, const string &, int) const;
@@ -34,6 +39,9 @@ class CutCalculator : public edm::EDProducer
     bool evaluateTriggers (const edm::Event &) const;
     bool evaluateTriggerFilters (const edm::Event &) const;
     bool setEventFlags () const;
+    vector<string> getListOfObjects (const Cuts &);
+    bool isUniqueCase (const Cut &, unsigned, string) const;
+
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
