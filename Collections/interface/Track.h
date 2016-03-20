@@ -15,6 +15,13 @@ namespace osu
         Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &);
         Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Track ();
+
+        const double dRMinJet() const { return dRMinJet_; }
+        void   set_dRMinJet(const double dRMinJet);
+
+    private:
+	double dRMinJet_;  
+
     };
 }
 
