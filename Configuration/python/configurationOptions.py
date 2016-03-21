@@ -130,6 +130,12 @@ composite_dataset_definitions = {
         'DYJetsToLL_50',
         'DYJetsToLL_10to50',
     ],
+    'ZJetsToNuNu' : [
+        'ZJetsToNuNu_HT100to200',
+        'ZJetsToNuNu_HT200to400',
+        'ZJetsToNuNu_HT400to600',
+        'ZJetsToNuNu_HT600toInf',
+    ],
     'DYJetsToLL_50ns' : [
         'DYJetsToLL_50_50ns',
         'DYJetsToLL_10to50_50ns',
@@ -312,7 +318,14 @@ nJobs = {
     ############################################################################
     #DY
     'DYJetsToLL_50'  :  999,
+
+    #ZJetsToNuNu
     'DYJetsToNuNu'   :  999,
+    'ZJetsToNuNu'   :  999,
+    'ZJetsToNuNu_HT100to200'   :  999,
+    'ZJetsToNuNu_HT200to400'   :  999,
+    'ZJetsToNuNu_HT400to600'   :  999,
+    'ZJetsToNuNu_HT600toInf'   :  999,
 
     #WJets
     'WJetsToLNu'  :  999,
@@ -503,7 +516,14 @@ maxEvents = {
     ############################################################################
     #DY
     'DYJetsToLL_50'  :  -1,
+
+    #ZJetsToNuNu
     'DYJetsToNuNu'   :  -1,
+    'ZJetsToNuNu'   :  -1,
+    'ZJetsToNuNu_HT100to200'   :  -1,
+    'ZJetsToNuNu_HT200to400'   :  -1,
+    'ZJetsToNuNu_HT400to600'   :  -1,
+    'ZJetsToNuNu_HT600toInf'   :  -1,
 
     #WJets
     'WJetsToLNu'  :  -1,
@@ -696,7 +716,14 @@ types = {
     ############################################################################
     #DY
     'DYJetsToLL_50'  :  "bgMC",
+
+    #ZJetsToNuNu
     'DYJetsToNuNu'   :  "bgMC",
+    'ZJetsToNuNu'   :  "bgMC",
+    'ZJetsToNuNu_HT100to200'   :  "bgMC",
+    'ZJetsToNuNu_HT200to400'   :  "bgMC",
+    'ZJetsToNuNu_HT400to600'   :  "bgMC",
+    'ZJetsToNuNu_HT600toInf'   :  "bgMC",
 
     #WJets
     'WJetsToLNu'  :  "bgMC",
@@ -908,7 +935,14 @@ colors = {
     ############################################################################
     #DY
     'DYJetsToLL_50'  :  410,
+
+    #ZJetsToNuNu
     'DYJetsToNuNu'   :  831,
+    'ZJetsToNuNu'   :  831,
+    'ZJetsToNuNu_HT100to200'   :  831,
+    'ZJetsToNuNu_HT200to400'   :  831,
+    'ZJetsToNuNu_HT400to600'   :  831,
+    'ZJetsToNuNu_HT600toInf'   :  831,
 
     #WJets
     'WJetsToLNu'             :  852,
@@ -1119,18 +1153,25 @@ labels = {
     #MiniAOD stored on T3.
     ############################################################################
     #DY
-    'DYJetsToLL_50'  :  "Z#rightarrowl^{+}l^{-} M(50) ",
-    'DYJetsToLL'     :  "Z#rightarrowl^{+}l^{-} M(10) ",
-    'DYJetsToLL_10to50'     :  "Z#rightarrowl^{+}l^{-} M(10-50) ",
-    'DYJetsToNuNu'   :  "Z#rightarrow#nu#bar{#nu} ",
+    'DYJetsToLL_50'  :  "Z#rightarrowl^{+}l^{-} M(50)",
+    'DYJetsToLL'     :  "Z#rightarrowl^{+}l^{-} M(10)",
+    'DYJetsToLL_10to50'     :  "Z#rightarrowl^{+}l^{-} M(10-50)",
+
+    #ZJetsToNuNu
+    'DYJetsToNuNu'   :  "Z#rightarrow#nu#bar{#nu}",
+    'ZJetsToNuNu'   :  "Z#rightarrow#nu#bar{#nu}",
+    'ZJetsToNuNu_HT100to200'   :  "Z#rightarrow#nu#bar{#nu} (100<H_{T}<200 GeV)",
+    'ZJetsToNuNu_HT200to400'   :  "Z#rightarrow#nu#bar{#nu} (200<H_{T}<400 GeV)",
+    'ZJetsToNuNu_HT400to600'   :  "Z#rightarrow#nu#bar{#nu} (400<H_{T}<600 GeV)",
+    'ZJetsToNuNu_HT600toInf'   :  "Z#rightarrow#nu#bar{#nu} (H_{T}>600 GeV)",
 
     #WJets
-    'WJetsToLNu'            :  "W#rightarrowl#nu ",
-    'WJetsToLNu_HT'         :  "W#rightarrowl#nu (H_{T}>100 GeV) ",
-    'WJetsToLNu_HT100to200' :  "W#rightarrowl#nu (100<H_{T}<200 GeV) ",
-    'WJetsToLNu_HT200to400' :  "W#rightarrowl#nu (200<H_{T}<400 GeV) ",
-    'WJetsToLNu_HT400to600' :  "W#rightarrowl#nu (400<H_{T}<600 GeV) ",
-    'WJetsToLNu_HT600toInf' :  "W#rightarrowl#nu (H_{T}>600 GeV) ",
+    'WJetsToLNu'            :  "W#rightarrowl#nu",
+    'WJetsToLNu_HT'         :  "W#rightarrowl#nu (H_{T}>100 GeV)",
+    'WJetsToLNu_HT100to200' :  "W#rightarrowl#nu (100<H_{T}<200 GeV)",
+    'WJetsToLNu_HT200to400' :  "W#rightarrowl#nu (200<H_{T}<400 GeV)",
+    'WJetsToLNu_HT400to600' :  "W#rightarrowl#nu (400<H_{T}<600 GeV)",
+    'WJetsToLNu_HT600toInf' :  "W#rightarrowl#nu (H_{T}>600 GeV)",
 
     #WW
     'WWToLNuQQ'   :  "WW#rightarrowl#nuqq",
@@ -1189,57 +1230,57 @@ labels = {
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
-    'DYJetsToLL_10to50'             : "Z#rightarrowll M(10to50) ",
-    'TTJets'                        : "t#bar{t} ",
-    'Diboson'                   : "diboson ",
-    'Diboson_Incl'              : "diboson ",
-    'WW'                        : "WW ",
-    'WZ'                        : "WZ ",
-    'ZZ'                        : "ZZ ",
+    'DYJetsToLL_10to50'             : "Z#rightarrowll M(10to50)",
+    'TTJets'                        : "t#bar{t}",
+    'Diboson'                   : "diboson",
+    'Diboson_Incl'              : "diboson",
+    'WW'                        : "WW",
+    'WZ'                        : "WZ",
+    'ZZ'                        : "ZZ",
     
-    'DYJetsToLL_50_50ns'                 : "Z#rightarrowll M(50) 50ns ",
-    'DYJetsToLL_10to50_50ns'             : "Z#rightarrowll M(10to50) 50ns ",
-    'WJetsToLNu_50ns'                    : "W#rightarrowl#nu 50ns ",
-    'TTJets_50ns'                        : "t#bar{t} 50ns ",
-    'Diboson_50ns'                   : "diboson 50ns ",
-    'WW_50ns'                        : "WW 50ns ",
-    'WZ_50ns'                        : "WZ 50ns ",
-    'ZZ_50ns'                        : "ZZ 50ns ",
+    'DYJetsToLL_50_50ns'                 : "Z#rightarrowll M(50) 50ns",
+    'DYJetsToLL_10to50_50ns'             : "Z#rightarrowll M(10to50) 50ns",
+    'WJetsToLNu_50ns'                    : "W#rightarrowl#nu 50ns",
+    'TTJets_50ns'                        : "t#bar{t} 50ns",
+    'Diboson_50ns'                   : "diboson 50ns",
+    'WW_50ns'                        : "WW 50ns",
+    'WZ_50ns'                        : "WZ 50ns",
+    'ZZ_50ns'                        : "ZZ 50ns",
     #QCD MuEnriched
-    'QCD_MuEnriched_20toInf'        : "QCD MuEnriched Pt 20-Inf ", 
-    'QCD_MuEnriched'                : "QCD MuEnriched ", 
-    'QCD_MuEnriched_15to20'         : "QCD MuEnriched Pt 15-20 ",
-    'QCD_MuEnriched_20to30'         : "QCD MuEnriched Pt 20-30 ",
-    'QCD_MuEnriched_30to50'         : "QCD MuEnriched Pt 30-50 ",
-    'QCD_MuEnriched_50to80'         : "QCD MuEnriched Pt 50-80 ",
-    'QCD_MuEnriched_80to120'        : "QCD MuEnriched Pt 80-120 ",
-    'QCD_MuEnriched_120to170'       : "QCD MuEnriched Pt 120-170 ",
-    'QCD_MuEnriched_170to300'       : "QCD MuEnriched Pt 170-300 ",
-    'QCD_MuEnriched_300to470'       : "QCD MuEnriched Pt 300-470 ",
-    'QCD_MuEnriched_470to600'       : "QCD MuEnriched Pt 470-600 ",
-    'QCD_MuEnriched_600to800'       : "QCD MuEnriched Pt 600-800 ",
-    'QCD_MuEnriched_800to1000'      : "QCD MuEnriched Pt 800-1000 ",
-    'QCD_MuEnriched_1000toInf'      : "QCD MuEnriched Pt 1000-Inf ",
+    'QCD_MuEnriched_20toInf'        : "QCD MuEnriched Pt 20-Inf",
+    'QCD_MuEnriched'                : "QCD MuEnriched",
+    'QCD_MuEnriched_15to20'         : "QCD MuEnriched Pt 15-20",
+    'QCD_MuEnriched_20to30'         : "QCD MuEnriched Pt 20-30",
+    'QCD_MuEnriched_30to50'         : "QCD MuEnriched Pt 30-50",
+    'QCD_MuEnriched_50to80'         : "QCD MuEnriched Pt 50-80",
+    'QCD_MuEnriched_80to120'        : "QCD MuEnriched Pt 80-120",
+    'QCD_MuEnriched_120to170'       : "QCD MuEnriched Pt 120-170",
+    'QCD_MuEnriched_170to300'       : "QCD MuEnriched Pt 170-300",
+    'QCD_MuEnriched_300to470'       : "QCD MuEnriched Pt 300-470",
+    'QCD_MuEnriched_470to600'       : "QCD MuEnriched Pt 470-600",
+    'QCD_MuEnriched_600to800'       : "QCD MuEnriched Pt 600-800",
+    'QCD_MuEnriched_800to1000'      : "QCD MuEnriched Pt 800-1000",
+    'QCD_MuEnriched_1000toInf'      : "QCD MuEnriched Pt 1000-Inf",
     
     #QCD EMEnriched
     'QCD_EMEnriched'                : "QCD EMEnriched",
-    'QCD_EMEnriched_15to20'         : "QCD EMEnriched Pt 15-20 ",
-    'QCD_EMEnriched_20to30'         : "QCD EMEnriched Pt 20-30 ",
-    'QCD_EMEnriched_30to50'         : "QCD EMEnriched Pt 30-50 ",
-    'QCD_EMEnriched_50to80'         : "QCD EMEnriched Pt 50-80 ",
-    'QCD_EMEnriched_80to120'        : "QCD EMEnriched Pt 80-120 ",
-    'QCD_EMEnriched_120to170'       : "QCD EMEnriched Pt 120-170 ",
-    'QCD_EMEnriched_170to300'       : "QCD EMEnriched Pt 170-300 ",
-    'QCD_EMEnriched_300toInf'       : "QCD EMEnriched Pt 300-Inf ",
+    'QCD_EMEnriched_15to20'         : "QCD EMEnriched Pt 15-20",
+    'QCD_EMEnriched_20to30'         : "QCD EMEnriched Pt 20-30",
+    'QCD_EMEnriched_30to50'         : "QCD EMEnriched Pt 30-50",
+    'QCD_EMEnriched_50to80'         : "QCD EMEnriched Pt 50-80",
+    'QCD_EMEnriched_80to120'        : "QCD EMEnriched Pt 80-120",
+    'QCD_EMEnriched_120to170'       : "QCD EMEnriched Pt 120-170",
+    'QCD_EMEnriched_170to300'       : "QCD EMEnriched Pt 170-300",
+    'QCD_EMEnriched_300toInf'       : "QCD EMEnriched Pt 300-Inf",
    
     #QCD bcToE
     'QCD_bcToE'                     : "QCD bcToE", 
-    'QCD_bcToE_15to20'              : "QCD bcToE Pt 15-20 ", 
-    'QCD_bcToE_20to30'              : "QCD bcToE Pt 20-30 ",
-    'QCD_bcToE_30to80'              : "QCD bcToE Pt 30-80 ",
-    'QCD_bcToE_80to170'             : "QCD bcToE Pt 80-170 ",
-    'QCD_bcToE_170to250'            : "QCD bcToE Pt 170-250 ",
-    'QCD_bcToE_250toInf'            : "QCD bcToE Pt 250-Inf ",
+    'QCD_bcToE_15to20'              : "QCD bcToE Pt 15-20",
+    'QCD_bcToE_20to30'              : "QCD bcToE Pt 20-30",
+    'QCD_bcToE_30to80'              : "QCD bcToE Pt 30-80",
+    'QCD_bcToE_80to170'             : "QCD bcToE Pt 80-170",
+    'QCD_bcToE_170to250'            : "QCD bcToE Pt 170-250",
+    'QCD_bcToE_250toInf'            : "QCD bcToE Pt 250-Inf",
 
     'QCDFromData'     : "data-driven QCD",
      
