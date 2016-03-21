@@ -394,11 +394,13 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
 
         ########################################################################
         # Set up the output commands. For now, we drop everything except the
-        # collections given in the collections PSet.
+        # collections given in the collections PSet, and a few other collections
+        # that are generally useful.  
         ########################################################################
         outputCommands = ["drop *"]
         outputCommands.append("keep *_*_uservariables_*")
         outputCommands.append("keep *_*_eventvariables_*")
+        outputCommands.append("keep *_*_reducedConversions_*")  
         ########################################################################
         #Check all the modules in collectionProducer, if a module is an EDProducer 
         #and have extra InputTags specified, keep the correspoding collections 
