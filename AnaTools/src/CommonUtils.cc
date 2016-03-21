@@ -337,6 +337,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         catch (...)
           {
             clog << "WARNING: unable to access member \"" << member << "\" from \"" << type << "\"" << endl;
+            if (o)
+              delete o;
+            if (retObj)
+              delete retObj;
             return value;
           }
         if (o)
