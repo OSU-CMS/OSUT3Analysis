@@ -17,7 +17,10 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
 
   token_ = consumes<vector<TYPE(electrons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
+  beamSpotToken_ = consumes<TYPE(beamspots)> (beamSpot_);
+  conversionsToken_ = consumes<vector<reco::Conversion> > (conversions_);
   rhoToken_ = consumes<double> (rho_);
+  verticesToken_ = consumes<vector<TYPE(primaryvertexs)> > (vertices_);
 }
 
 OSUElectronProducer::~OSUElectronProducer ()
@@ -32,7 +35,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   using namespace reco;
   
   edm::Handle<vector<TYPE (electrons)> > collection;
-  edm::Handle<reco::BeamSpot> beamSpot;
+  edm::Handle<TYPE(beamspots)> beamSpot;
   edm::Handle<vector<reco::Conversion> > conversions;
   edm::Handle<double> rho;
   edm::Handle<vector<TYPE(primaryvertexs)> > vertices;
@@ -47,7 +50,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       osu::Electron electron (object, particles, cfg_);
       if(event.getByToken (rhoToken_, rho))
         electron.set_rho((float)(*rho)); 
-      if(event.getByLabel (beamSpot_, beamSpot) && event.getByLabel (conversions_, conversions) && event.getByLabel (vertices_, vertices) && vertices->size ())
+      if(event.getByToken (beamSpotToken_, beamSpot) && event.getByToken (conversionsToken_, conversions) && event.getByToken (verticesToken_, vertices) && vertices->size ())
         electron.set_passesTightID_noIsolation (*beamSpot, vertices->at (0), conversions);
       electron.set_missingInnerHits(object.gsfTrack()->hitPattern ().numberOfHits(reco::HitPattern::MISSING_INNER_HITS));
       float effectiveArea = 0;

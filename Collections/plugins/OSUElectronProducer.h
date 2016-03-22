@@ -24,7 +24,10 @@ class OSUElectronProducer : public edm::EDProducer
     edm::InputTag      collection_;
     edm::EDGetTokenT<vector<TYPE(electrons)> > token_;
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
+    edm::EDGetTokenT<TYPE(beamspots)> beamSpotToken_;
+    edm::EDGetTokenT<vector<reco::Conversion> > conversionsToken_;
     edm::EDGetTokenT<double> rhoToken_;
+    edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > verticesToken_;
     edm::ParameterSet  cfg_;
     edm::InputTag      beamSpot_;
     edm::InputTag      conversions_;
