@@ -279,7 +279,7 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
     ConfigFile.write('fileName = re.sub (r\'^(.*)\.([^\.]*)$\', r\'\\1_\' + str (osusub.jobNumber) + r\'.\\2\', fileName)\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
-    if not arguments.Generic:
+    if (not arguments.Generic) or (arguments.Generic and arguments.localConfig):
       if types[Label] == "data":
         for module in vars(temPset.process).values():
             if hasattr(module, "weights"):
@@ -674,9 +674,9 @@ if not arguments.Resubmit:
             if arguments.localConfig:	
                 if NumberOfJobs < 0:
                     NumberOfJobs = nJobs[dataset]  # If user has specified NumberOfJobs, use that value.  
-                if not arguments.Generic:
+                if (not arguments.Generic) or (arguments.Generic and arguments.localConfig):
                      DatasetName = dataset_names[dataset]
-                else:
+                else:     
                      DatasetName = dataset 
                 MaxEvents = maxEvents[dataset]
                 Config = config_file
