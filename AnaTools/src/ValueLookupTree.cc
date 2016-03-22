@@ -131,18 +131,18 @@ ValueLookupTree::evaluate ()
               objs.insert ({*collection, {j, localIndex, getObject (*collection, localIndex)}});
               keys.insert (*collection);
             }
-          if (isUniqueCase (objs, keys)) { 
+          if (isUniqueCase (objs, keys)) {
             values_.push_back (evaluate_ (root_, objs));
-	    if (verbose_) { 
-	      cout << "ValueLookupTree::evaluate is adding the Leaf: " << endl;
-	      cout << "  " << evaluate_ (root_, objs) << endl;
-	      cout << "  printNode = " << endl;
-	      cout << "  " << printNode(root_) << endl;
-	      cout << "  printValue = " << endl;
-	      cout << "  " << printValue(root_) << endl;
-	    }
+            if (verbose_) {
+              cout << "ValueLookupTree::evaluate is adding the Leaf: " << endl;
+              cout << "  " << evaluate_ (root_, objs) << endl;
+              cout << "  printNode = " << endl;
+              cout << "  " << printNode(root_) << endl;
+              cout << "  printValue = " << endl;
+              cout << "  " << printValue(root_) << endl;
+            }
 
-	  } else
+          } else
             values_.push_back (INVALID_VALUE);
         }
 #if IS_VALID(uservariables)
@@ -167,14 +167,14 @@ ValueLookupTree::getLocalIndex (unsigned globalIndex, unsigned collectionIndex) 
   // second argument, given the global index within the composite collection of
   // this tree.
   // The local index is the index within a single object collection.
-  // The collection index specifies the collection.  
+  // The collection index specifies the collection.
   // The global index is unique for each combination of objects.
-  // Example:  invMass(muon1,muon2).  In an event with 3 muons, there would be 
+  // Example:  invMass(muon1,muon2).  In an event with 3 muons, there would be
   // 9 combinations:
   // Global index:                 0  1  2  3  4  5  6  7  8
   // Local index for collection 0: 0  0  0  1  1  1  2  2  2
-  // Local index for collection 1: 0  1  2  0  1  2  0  1  2 
-  // The function isUniqueCase() will return true only for global indices: 1, 2, 5. 
+  // Local index for collection 1: 0  1  2  0  1  2  0  1  2
+  // The function isUniqueCase() will return true only for global indices: 1, 2, 5.
   //////////////////////////////////////////////////////////////////////////////
   if (collectionIndex + 1 != inputCollections_.size ())
     return ((globalIndex / nCombinations_.at (collectionIndex + 1)) % collectionSizes_.at (collectionIndex));
@@ -190,8 +190,8 @@ ValueLookupTree::getGlobalIndices (unsigned localIndex, const string &singleObje
   // Returns the global indices within the composite collection named by the
   // third argument, given a local index within the primitive collection named
   // by the second argument.
-  // Using the example from above (in the comments to getLocalIndices()), 
-  // the call to getGlobalIndices(0, "muon", "muon-muon") would return the set {0,1,2,3,6}.  
+  // Using the example from above (in the comments to getLocalIndices()),
+  // the call to getGlobalIndices(0, "muon", "muon-muon") would return the set {0,1,2,3,6}.
   //////////////////////////////////////////////////////////////////////////////
   vector<string> singleObjects = anatools::getSingleObjects (inputLabel);
   set<unsigned> globalIndices;
@@ -334,7 +334,7 @@ ValueLookupTree::destroy (Node * const x) const
             destroy (branch);
           delete x;
         }
-} 
+}
 
 void
 ValueLookupTree::pruneCommas (Node * const tree) const
@@ -496,7 +496,7 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
                                                   "copysign", "nextafter",
                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
-        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass", "pT", "number"}) ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass", "number", "transMass", "pT"}) ||
         insertDots                 (cut,  tree) ||
         //insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
         insertParentheses          (cut,  tree)))
@@ -532,7 +532,7 @@ ValueLookupTree::printValue (Node* tree) const
   if (!tree) return expression;
   if (tree->branches.size () >= 1) {
     expression += tree->branches.at(0)->value;
-  } 
+  }
   else {
     expression = tree->value;
   }
@@ -573,24 +573,24 @@ ValueLookupTree::evaluate_ (const Node * const tree, const ObjMap &objs)
     {
       double value;
       if (isnumber (tree->value, value)) {
-	if (verbose_) cout << "    Debug evalute 1 (isnumber) for tree->value = " << tree->value
-			   << ", value = " << value << endl;      
+        if (verbose_) cout << "    Debug evalute 1 (isnumber) for tree->value = " << tree->value
+                           << ", value = " << value << endl;
         return value;
       }
       else if (isCollection (tree->value + "s") || (tree->parent && tree->parent->value == ".")) {
-	if (verbose_) cout << "    Debug evalute 2 for tree->value = " << tree->value 
-	     << ", value = " << value << endl;
+        if (verbose_) cout << "    Debug evalute 2 for tree->value = " << tree->value
+             << ", value = " << value << endl;
         return tree->value;
       }
       else
         {
           if (inputCollections_.size () == 1) {
-	    if (verbose_) cout << "    Debug evalute 3" 
-			       << ", calling valueLookup for value: " << tree->value  
-			       << ", collection: " << inputCollections_.at (0)  
-			       << endl;
+            if (verbose_) cout << "    Debug evalute 3"
+                               << ", calling valueLookup for value: " << tree->value
+                               << ", collection: " << inputCollections_.at (0)
+                               << endl;
             return valueLookup (inputCollections_.at (0), objs, tree->value);
-	  }
+          }
           clog << "ERROR: cannot infer ownership of \"" << tree->value << "\"" << endl;
           evaluationError_ = true;
           return INVALID_VALUE;
@@ -776,6 +776,15 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 
           return sqrt (energy * energy - px * px - py * py - pz * pz);
         }
+      else if (op == "transMass")
+        {
+          double pt0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "pt", false),
+                 pt1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "pt", false),
+                 dPhi = deltaPhi (valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "phi"),
+                                  valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi"));
+
+          return sqrt (2.0 * pt0 * pt1 * (1 - cos (dPhi)));
+        }
       else if (op == "pT")
         {
           double px = 0.0, py = 0.0;
@@ -785,7 +794,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
               px += valueLookup (boost::get<string> (operand) + "s", objs, "px", false);
               py += valueLookup (boost::get<string> (operand) + "s", objs, "py", false);
             }
-	  return hypot(px,py);
+          return hypot(px,py);
         }
       else if (op == "number")
         return getCollectionSize (boost::get<string> (operands.at (0)) + "s");

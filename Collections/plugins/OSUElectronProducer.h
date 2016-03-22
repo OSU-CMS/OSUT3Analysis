@@ -26,7 +26,10 @@ class OSUElectronProducer : public edm::EDProducer
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
     edm::EDGetTokenT<double> rhoToken_;
     edm::ParameterSet  cfg_;
+    edm::InputTag      beamSpot_;
+    edm::InputTag      conversions_;
     edm::InputTag      rho_;
+    edm::InputTag      vertices_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
