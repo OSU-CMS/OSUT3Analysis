@@ -1062,8 +1062,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     #legend coordinates, empirically determined :-)
-    x_left = 0.629885
-    x_right = 0.935632
+    x_left = 0.535714
+    x_right = 0.842166
     x_width = x_right - x_left
     y_max = 0.882282
     entry_height = 0.037318
@@ -1262,7 +1262,7 @@ def MakeTwoDHist(pathToDir,histogramName):
         NormText = "MC scaled to data"
         NormLabel.SetLabel(NormText)
 
-    BgMCLegend = TLegend(0.572581,0.742092,0.904378,0.891727)
+    BgMCLegend = TLegend(0.535714,0.742092,0.842166,0.891727)
     BgMCLegend.AddEntry (0, "Data & Bkgd. MC", "H").SetTextFont (62)
     BgMCLegend.SetTextFont(42)
     BgMCLegend.SetTextSize(0.0364078)

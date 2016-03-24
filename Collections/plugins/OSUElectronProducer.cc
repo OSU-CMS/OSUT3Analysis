@@ -7,14 +7,20 @@
 OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   collections_    (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_ (cfg),
-  rho_            (cfg.getParameter<edm::InputTag> ("rho"))
+  beamSpot_       (cfg.getParameter<edm::InputTag> ("beamSpot")),
+  conversions_    (cfg.getParameter<edm::InputTag> ("conversions")),
+  rho_            (cfg.getParameter<edm::InputTag> ("rho")),
+  vertices_            (cfg.getParameter<edm::InputTag> ("vertices"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(electrons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
+  beamSpotToken_ = consumes<TYPE(beamspots)> (beamSpot_);
+  conversionsToken_ = consumes<vector<reco::Conversion> > (conversions_);
   rhoToken_ = consumes<double> (rho_);
+  verticesToken_ = consumes<vector<TYPE(primaryvertexs)> > (vertices_);
 }
 
 OSUElectronProducer::~OSUElectronProducer ()
@@ -28,8 +34,11 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   using namespace edm;
   using namespace reco;
   
-  edm::Handle<vector<TYPE(electrons)> > collection;
+  edm::Handle<vector<TYPE (electrons)> > collection;
+  edm::Handle<TYPE(beamspots)> beamSpot;
+  edm::Handle<vector<reco::Conversion> > conversions;
   edm::Handle<double> rho;
+  edm::Handle<vector<TYPE(primaryvertexs)> > vertices;
   
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
@@ -41,8 +50,12 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       osu::Electron electron (object, particles, cfg_);
       if(event.getByToken (rhoToken_, rho))
         electron.set_rho((float)(*rho)); 
+      if(event.getByToken (beamSpotToken_, beamSpot) && event.getByToken (conversionsToken_, conversions) && event.getByToken (verticesToken_, vertices) && vertices->size ())
+        electron.set_passesTightID_noIsolation (*beamSpot, vertices->at (0), conversions);
       electron.set_missingInnerHits(object.gsfTrack()->hitPattern ().numberOfHits(reco::HitPattern::MISSING_INNER_HITS));
       float effectiveArea = 0;
+      // electron effective areas from https://indico.cern.ch/event/369239/contribution/4/attachments/1134761/1623262/talk_effective_areas_25ns.pdf
+      // (see slide 12)
       if(abs(object.superCluster()->eta()) >= 0.0000 && abs(object.superCluster()->eta()) < 1.0000)
         effectiveArea = 0.1752;
       if(abs(object.superCluster()->eta()) >= 1.0000 && abs(object.superCluster()->eta()) < 1.4790)
