@@ -15,6 +15,9 @@ namespace osu
         Tau (const TYPE(taus) &, const edm::Handle<vector<osu::Mcparticle> > &);
         Tau (const TYPE(taus) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Tau ();
+
+        const bool passesDecayModeReconstruction () const;
+        const bool passesLightFlavorRejection () const;
     };
 }
 

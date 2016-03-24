@@ -8,6 +8,7 @@ osu::Jet::Jet ()
 
 osu::Jet::Jet (const TYPE(jets) &jet) :
   GenMatchable (jet),
+  matchedToLepton_                               (INVALID_VALUE),
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE)
 {
@@ -15,6 +16,7 @@ osu::Jet::Jet (const TYPE(jets) &jet) :
 
 osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> > &particles) :
   GenMatchable (jet, particles),
+  matchedToLepton_                               (INVALID_VALUE),
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE)
 {
@@ -22,9 +24,16 @@ osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> 
 
 osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
   GenMatchable (jet, particles, cfg),
+  matchedToLepton_                               (INVALID_VALUE),
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE)
 {
+}
+
+const int
+osu::Jet::matchedToLepton () const
+{
+  return matchedToLepton_;
 }
 
 const float

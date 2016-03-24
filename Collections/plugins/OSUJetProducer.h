@@ -22,11 +22,17 @@ class OSUJetProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
+    edm::InputTag      electrons_;
+    edm::InputTag      muons_;
     edm::EDGetTokenT<vector<TYPE(jets)> > token_;
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
+    edm::EDGetTokenT<vector<TYPE(electrons)> > electronToken_;
+    edm::EDGetTokenT<vector<TYPE(muons)> > muonToken_;
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 
+    auto_ptr<vector<TYPE (electrons)> > goodElectrons_;
+    auto_ptr<vector<TYPE (muons)> > goodMuons_;
     // Payload for this EDFilter.
     auto_ptr<vector<osu::Jet> > pl_;
 };
