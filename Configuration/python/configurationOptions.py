@@ -7,7 +7,7 @@ config_file = "standardConfig_cfg.py"
 ###### 2012B = 4.9 fb-1
 ###### 2012B = 4.9 fb-1
 
-intLumi = 2538.43  #2015D Silver Json
+intLumi = 2613 #2015D Silver Json
 
 datasets = [
 
@@ -24,6 +24,8 @@ datasets = [
    'DoubleEG_2015D',
    'MuonEG_2015',
    'MuonEG_2015D',
+   'MET_2015',
+   'MET_2015D',
    'NoBPTX_2015D',
 
    #MiniAOD not stored on T3.
@@ -145,10 +147,8 @@ composite_dataset_definitions = {
         'WJetsToLNu_HT600toInf',
     ],
     'Diboson' : [
-        'WWToLNuQQ',
+        'WZToLNu2QorQQ2L',
         'WWToLNuLNu',
-        'WZToLNuQQ',
-        'WZToLLQQ',
         'WZToLNuNuNu',
         'WZToLLLNu',
         # Switch to inclusive WZ sample when it is ready.  
@@ -252,6 +252,11 @@ composite_dataset_definitions = {
         'MuonEG_2015C',
         'MuonEG_2015D',
     ],
+    'MET_2015' : [
+        'MET_2015B',
+        'MET_2015C',
+        'MET_2015D',
+    ],
     'DisplacedSUSYSignal' : [
         'stop200_1mm',
         'stop200_10mm',
@@ -334,11 +339,9 @@ nJobs = {
     'WWToLNuLNu'  :  999,
 
     #WZ
-    'WZToLNuQQ'    :  999,
-    'WZToLLQQ'     :  999,
     'WZToLNuNuNu'  :  999,
     'WZToLLLNu'    :  999,
-
+    'WZToLNu2QorQQ2L' : 999,
     #ZZ
     'ZZToNuNuQQ'  :  999,
     'ZZToLLQQ'    :  999,
@@ -389,7 +392,6 @@ nJobs = {
     'WW'        : 44,
     'ZZ'        : 36,
     'WZ'        : 45,
-    
     'DYJetsToLL_50_50ns'        : 491,
     'DYJetsToLL_10to50_50ns'    : 396,
     'WJetsToLNu_50ns'        : 634,
@@ -535,11 +537,9 @@ maxEvents = {
     'WWToLNuLNu'  :  -1,
 
     #WZ
-    'WZToLNuQQ'    :  -1,
-    'WZToLLQQ'     :  -1,
     'WZToLNuNuNu'  :  -1,
     'WZToLLLNu'    :  -1,
-
+    'WZToLNu2QorQQ2L' : -1,
     #ZZ
     'ZZToNuNuQQ'  :  -1,
     'ZZToLLQQ'    :  -1,
@@ -738,10 +738,9 @@ types = {
     'WWToLNuLNu'  :  "bgMC",
 
     #WZ
-    'WZToLNuQQ'    :  "bgMC",
-    'WZToLLQQ'     :  "bgMC",
     'WZToLNuNuNu'  :  "bgMC",
     'WZToLLLNu'    :  "bgMC",
+    'WZToLNu2QorQQ2L'    :  "bgMC",
 
     #ZZ
     'ZZToNuNuQQ'  :  "bgMC",
@@ -768,6 +767,7 @@ types = {
 
     #MET data
     'MET_2015D' : "data",
+    'MET_2015'  : "data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  "signalMC",
@@ -957,10 +957,9 @@ colors = {
     'WWToLNuLNu'  :  390,
 
     #WZ
-    'WZToLNuQQ'    :  393,
-    'WZToLLQQ'     :  393,
     'WZToLNuNuNu'  :  393,
     'WZToLLLNu'    :  393,
+    'WZToLNu2QorQQ2L'    :  393,
 
     #ZZ
     'ZZToNuNuQQ'  :  397,
@@ -987,6 +986,7 @@ colors = {
 
     #MET data
     'MET_2015D' : 1,
+    'MET_2015' : 1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  628,
@@ -1178,10 +1178,9 @@ labels = {
     'WWToLNuLNu'  :  "WW#rightarrowl#nul#nu",
 
     #WZ
-    'WZToLNuQQ'    :  "WZ#rightarrowl#nuqq",
-    'WZToLLQQ'     :  "WZ#rightarrowqqll",
     'WZToLNuNuNu'  :  "WZ#rightarrowl#nu#nu#nu",
     'WZToLLLNu'    :  "WZ#rightarrowl#null",
+    'WZToLNu2QorQQ2L'    :  "WZ#rightarrowqqll/l#nuqq",
 
     #ZZ
     'ZZToNuNuQQ'  :  "ZZ#rightarrow#nu#nuqq",
@@ -1208,6 +1207,7 @@ labels = {
 
     #MET data
     'MET_2015D' : "MET 2015D data",
+    'MET_2015'  : "MET 2015 data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 10cm)",
@@ -1466,13 +1466,12 @@ crossSections = {
     'stop1200_50mm'  : 0.00159844,
     'stop1200_100mm'  : 0.00159844,
     'stop1200_1000mm' : 0.00159844,
-    'WZToLLQQ'       : 5.595,
     
     'WWToLNuQQ'   :  49.997,
     'WWToLNuLNu'  :  12.178,
-    'WZToLNuQQ'   :  10.71,
     'WZToLNuNuNu' :  3.05,
     'WZToLLLNu'   :  4.42965,
+    'WZToLNu2QorQQ2L'  :  9.82423165827,
     'ZZToNuNuQQ'  :  4.04,
     'ZZToLLQQ'    :  3.22,
     'ZZToLLNuNu'  :  0.5644,

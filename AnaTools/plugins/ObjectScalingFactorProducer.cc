@@ -32,7 +32,7 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
     	 << "; will cause a seg fault." << endl;
         exit(1);
       }
-      TH2D *ele;   
+      TH2F *ele;   
       elesf->GetObject(electronWp_.c_str(),ele);
       if(!elesf){
         clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << electronWp_.c_str()
