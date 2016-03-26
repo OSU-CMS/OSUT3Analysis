@@ -44,10 +44,15 @@ collectionProducer.bxlumis = cms.EDProducer ("OSUBxlumiProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
-    conversions  =  cms.InputTag  ("reducedEgamma",                  "reducedConversions",  ""),
-    rho          =  cms.InputTag  ("fixedGridRhoFastjetAll",         "",                    ""),
-    beamSpot     =  cms.InputTag  ("offlineBeamSpot",                "",                    ""),
-    vertices     =  cms.InputTag  ('offlineSlimmedPrimaryVertices',  ''),
+    conversions      =  cms.InputTag  ("reducedEgamma",                  "reducedConversions",          ""),
+    rho              =  cms.InputTag  ("fixedGridRhoFastjetAll",         "",                            ""),
+    beamSpot         =  cms.InputTag  ("offlineBeamSpot",                "",                            ""),
+    vertices         =  cms.InputTag  ('offlineSlimmedPrimaryVertices',  ''),
+
+    # the following tag is not used by the OSUElectronProducer, but is needed
+    # so that the reco::GsfElectronCore collection is saved in skims, which is
+    # needed because the pat::Electron collection references it
+    gsfElectronCore  =  cms.InputTag  ("reducedEgamma",                  "reducedGedGsfElectronCores",  ""),
 )
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 

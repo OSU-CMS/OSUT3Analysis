@@ -511,6 +511,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             if not numInputFiles:
                 print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
                 datasetRead['numberOfFiles'] = numInputFiles
+                SkimModifier(Label, Directory, crossSection)
                 return datasetRead
             SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' 
             #Copy the datasetInfo file from the skim directory.
