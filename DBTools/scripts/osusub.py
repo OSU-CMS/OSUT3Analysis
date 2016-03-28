@@ -493,7 +493,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         else:
             prefix = 'root://cms-0.mps.ohio-state.edu:1094/'
         if RunOverSkim:
-            print "You have specified a skim as input.  Will obtain cross sections from the database."  
+            print "You have specified a skim as input.  Will obtain cross sections for dataset", Label, "from the database."  
         #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py. 
         os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
         NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()

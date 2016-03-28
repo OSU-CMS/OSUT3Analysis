@@ -10,6 +10,12 @@ def addCuts(cutVPset, cutsToAdd):
     for cut in cutsToAdd:
         cutVPset.append(cut)
 
+def addSingleCut(cutVPset, cutToAdd, previousExistingCut):
+    # Add cutToAdd immediately after previousExistingCut  
+    for i in xrange(0, len(cutVPset)): 
+        if cutVPset[i].cutString == previousExistingCut.cutString:
+            cutVPset.insert(i+1, cutToAdd) # Use i+1 to put cutToAdd afterward
+
 def removeCuts(cutVPset, cutsToRemove):
     for cut in cutsToRemove:
         for i in xrange(len(cutVPset) - 1, -1, -1):  # iterate backwards to avoid error
