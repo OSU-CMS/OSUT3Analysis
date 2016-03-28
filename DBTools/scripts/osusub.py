@@ -50,6 +50,7 @@ parser.add_option("-x", "--crossSection", dest="crossSection", default = "", hel
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")  
 parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. Generic, MuonPhysics, CaloOnly, Silver, etc")  
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")  
+parser.add_option("-W", "--AllowDataWeights", dest="AllowDataWeights", action="store_true", default = False, help="Use event weights, even for a data dataset.")  
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")  
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")  
 
@@ -297,8 +298,8 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
     ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
     ConfigFile.write('fileName = re.sub (r\'^(.*)\.([^\.]*)$\', r\'\\1_\' + str (osusub.jobNumber) + r\'.\\2\', fileName)\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
-    if not arguments.Generic:
-      if types[Label] == "data":
+    if (not arguments.Generic) or (arguments.Generic and arguments.localConfig):
+      if (types[Label] == "data" and not arguments.AllowDataWeights):
         for module in vars(temPset.process).values():
             if hasattr(module, "weights"):
                 ConfigFile.write('pset.process.' + str(module) + '.weights = cms.VPSet()\n')
@@ -689,7 +690,7 @@ if not arguments.Resubmit:
             if arguments.localConfig:	
                 if NumberOfJobs < 0:
                     NumberOfJobs = nJobs[dataset]  # If user has specified NumberOfJobs, use that value.  
-                if not arguments.Generic:
+                if (not arguments.Generic) or (arguments.Generic and arguments.localConfig):
                      DatasetName = dataset_names[dataset]
                 else:
                      DatasetName = dataset 
