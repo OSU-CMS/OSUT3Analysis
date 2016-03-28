@@ -1494,7 +1494,14 @@ if arguments.savePDFs:
     os.system("mkdir %s/stacked_histograms_pdfs" % (condor_dir))
 
 #### make output file
-outputFileName = "stacked_histograms.root"
+outputFileString = ''
+if arguments.rebinFactor:
+    outputFileString += '_Rebin' + str(arguments.rebinFactor)
+if arguments.makeRatioPlots:
+    outputFileString += '_Ratio'
+if arguments.normalizeToData:
+    outputFileString += '_Norm'
+outputFileName = "stacked_histograms" + outputFileString + ".root"
 if arguments.makeSignificancePlots:
     outputFileName = "stacked_histogramsSignif.root"
 if arguments.outputFileName:
