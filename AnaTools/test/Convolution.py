@@ -44,12 +44,12 @@ meanBin = ConvHist.FindBin(ConvHist.GetMean())
 rightInt = ConvHist.Integral(meanBin, ConvHist.GetNbinsX() + 1)
 for n in range(meanBin, ConvHist.GetNbinsX() + 1):
     if ConvHist.Integral(meanBin, n)/rightInt >= CLs:
-        print "68% Upper Limit is " + str(ConvHist.GetBinCenter(n-1))
+        print str(CLs) + "% Upper Limit is " + str(ConvHist.GetBinCenter(n-1))
         break
 leftInt = ConvHist.Integral(0, meanBin-1)
 for n in range(0, meanBin):
     if ConvHist.Integral(0, n)/leftInt >= 1 - CLs:
-        print "68% Lower Limit is " + str(ConvHist.GetBinCenter(n-1))
+        print str(CLs) + "% Lower Limit is " + str(ConvHist.GetBinCenter(n-1))
         break
 
 outPutFile.cd()
