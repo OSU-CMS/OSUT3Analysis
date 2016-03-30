@@ -20,7 +20,14 @@ datasets = [
    'MuonEG_2015',
    'MuonEG_2015D',
    'NoBPTX_2015D',
+   'NoBPTX_2015D_v3',
+   'NoBPTX_2015D_v4',
    'StpPtls_controlSample_2015',
+   'Commissioning2015_controlSample',
+   'NoBPTX_2015B_controlSample',
+   'NoBPTX_2015C_controlSample',
+   'NoBPTX_2015Dv3_controlSample',
+   'NoBPTX_2015Dv4_controlSample',
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
