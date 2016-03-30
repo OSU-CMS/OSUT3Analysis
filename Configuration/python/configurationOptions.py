@@ -34,50 +34,50 @@ datasets = [
    'WJetsToLNu',
    'WJetsToLNu_HT',  # HT bins, starting with HT>100 GeV
    'TTJets',
-   'Diboson',  
-   
+   'Diboson',
+
    'DYJetsToLL_50_50ns',
    'DYJetsToLL_10to50_50ns',
    'WJetsToLNu_50ns',
    'TTJets_50ns',
-   'Diboson_50ns',  
- 
+   'Diboson_50ns',
+
     #QCD MuEnriched
-   'QCD_MuEnriched_20toInf', 
-   'QCD_MuEnriched_15to20', 
-   'QCD_MuEnriched_20to30', 
-   'QCD_MuEnriched_30to50', 
-   'QCD_MuEnriched_50to80', 
-   'QCD_MuEnriched_80to120', 
-   'QCD_MuEnriched_120to170', 
-   'QCD_MuEnriched_170to300',  
-   'QCD_MuEnriched_300to470', 
-   'QCD_MuEnriched_470to600',  
-   'QCD_MuEnriched_600to800', 
-   'QCD_MuEnriched_800to1000', 
-   'QCD_MuEnriched_1000toInf',  
-   
+   'QCD_MuEnriched_20toInf',
+   'QCD_MuEnriched_15to20',
+   'QCD_MuEnriched_20to30',
+   'QCD_MuEnriched_30to50',
+   'QCD_MuEnriched_50to80',
+   'QCD_MuEnriched_80to120',
+   'QCD_MuEnriched_120to170',
+   'QCD_MuEnriched_170to300',
+   'QCD_MuEnriched_300to470',
+   'QCD_MuEnriched_470to600',
+   'QCD_MuEnriched_600to800',
+   'QCD_MuEnriched_800to1000',
+   'QCD_MuEnriched_1000toInf',
+
    #QCD EMEnriched
-   'QCD_EMEnriched_15to20',    
-   'QCD_EMEnriched_20to30',    
-   'QCD_EMEnriched_30to50',    
-   'QCD_EMEnriched_50to80',    
-   'QCD_EMEnriched_80to120',   
-   'QCD_EMEnriched_120to170',  
-   'QCD_EMEnriched_170to300',  
-   'QCD_EMEnriched_300toInf', 
-  
+   'QCD_EMEnriched_15to20',
+   'QCD_EMEnriched_20to30',
+   'QCD_EMEnriched_30to50',
+   'QCD_EMEnriched_50to80',
+   'QCD_EMEnriched_80to120',
+   'QCD_EMEnriched_120to170',
+   'QCD_EMEnriched_170to300',
+   'QCD_EMEnriched_300toInf',
+
    #QCD bcToE
-   'QCD_bcToE_15to20',       
-   'QCD_bcToE_20to30',       
-   'QCD_bcToE_30to80',       
-   'QCD_bcToE_80to170',      
-   'QCD_bcToE_170to250',     
-   'QCD_bcToE_250toInf',     
+   'QCD_bcToE_15to20',
+   'QCD_bcToE_20to30',
+   'QCD_bcToE_30to80',
+   'QCD_bcToE_80to170',
+   'QCD_bcToE_170to250',
+   'QCD_bcToE_250toInf',
 
    #Sum of all backgrounds
    'Background',
-   
+
    #DisplacedSUSY Signal MC MiniAOD
    'stop200_1mm',
    'stop200_10mm',
@@ -151,7 +151,7 @@ composite_dataset_definitions = {
         'WWToLNuLNu',
         'WZToLNuNuNu',
         'WZToLLLNu',
-        # Switch to inclusive WZ sample when it is ready.  
+        # Switch to inclusive WZ sample when it is ready.
         'ZZToNuNuQQ',
         'ZZToLLQQ',
         'ZZToLLNuNu',
@@ -159,14 +159,14 @@ composite_dataset_definitions = {
         'WG',
         'ZG'
     ],
-    'Diboson_Incl' : [  # Inclusive samples, where available  
+    'Diboson_Incl' : [  # Inclusive samples, where available
         'WWToLNuQQ',
         'WWToLNuLNu',
         'WZToLNuQQ',
         'WZToLLQQ',
         'WZToLNuNuNu',
         'WZToLLLNu',
-        # Switch to inclusive WZ sample when it is ready.  
+        # Switch to inclusive WZ sample when it is ready.
         'ZZ',
         'WG',
         'ZG'
@@ -187,40 +187,59 @@ composite_dataset_definitions = {
         'TTJets_SingleLeptFromT',
         'TTJets_SingleLeptFromTbar',
     ],
+    'QCD' : [
+        'QCD_5to10',
+        'QCD_10to15',
+        'QCD_15to30',
+        'QCD_30to50',
+        'QCD_50to80',
+        'QCD_80to120',
+        'QCD_120to170',
+        'QCD_170to300',
+        'QCD_300to470',
+        'QCD_470to600',
+        'QCD_600to800',
+        'QCD_800to1000',
+        'QCD_1000to1400',
+        'QCD_1400to1800',
+        'QCD_1800to2400',
+        'QCD_2400to3200',
+        'QCD_3200toInf',
+    ],
     'QCD_MuEnriched' : [
-        #'QCD_MuEnriched_20toInf', 
-        'QCD_MuEnriched_15to20', 
-        'QCD_MuEnriched_20to30', 
-        'QCD_MuEnriched_30to50', 
-        'QCD_MuEnriched_50to80', 
-        'QCD_MuEnriched_80to120', 
-        'QCD_MuEnriched_120to170', 
-        'QCD_MuEnriched_170to300',  
-        'QCD_MuEnriched_300to470', 
-        'QCD_MuEnriched_470to600',  
-        'QCD_MuEnriched_600to800', 
-        'QCD_MuEnriched_800to1000', 
-        'QCD_MuEnriched_1000toInf',  
-    ],  
-   
+        #'QCD_MuEnriched_20toInf',
+        'QCD_MuEnriched_15to20',
+        'QCD_MuEnriched_20to30',
+        'QCD_MuEnriched_30to50',
+        'QCD_MuEnriched_50to80',
+        'QCD_MuEnriched_80to120',
+        'QCD_MuEnriched_120to170',
+        'QCD_MuEnriched_170to300',
+        'QCD_MuEnriched_300to470',
+        'QCD_MuEnriched_470to600',
+        'QCD_MuEnriched_600to800',
+        'QCD_MuEnriched_800to1000',
+        'QCD_MuEnriched_1000toInf',
+    ],
+
     'QCD_EMEnriched' : [
-        'QCD_EMEnriched_15to20',    
-        'QCD_EMEnriched_20to30',    
-        'QCD_EMEnriched_30to50',    
-        'QCD_EMEnriched_50to80',    
-        'QCD_EMEnriched_80to120',   
-        'QCD_EMEnriched_120to170',  
-        'QCD_EMEnriched_170to300',  
-        'QCD_EMEnriched_300toInf', 
-    ],  
-    
+        'QCD_EMEnriched_15to20',
+        'QCD_EMEnriched_20to30',
+        'QCD_EMEnriched_30to50',
+        'QCD_EMEnriched_50to80',
+        'QCD_EMEnriched_80to120',
+        'QCD_EMEnriched_120to170',
+        'QCD_EMEnriched_170to300',
+        'QCD_EMEnriched_300toInf',
+    ],
+
     'QCD_bcToE' : [
-        'QCD_bcToE_15to20',       
-        'QCD_bcToE_20to30',       
-        'QCD_bcToE_30to80',       
-        'QCD_bcToE_80to170',      
-        'QCD_bcToE_170to250',     
-        'QCD_bcToE_250toInf',     
+        'QCD_bcToE_15to20',
+        'QCD_bcToE_20to30',
+        'QCD_bcToE_30to80',
+        'QCD_bcToE_80to170',
+        'QCD_bcToE_170to250',
+        'QCD_bcToE_250toInf',
     ],
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
@@ -364,7 +383,7 @@ nJobs = {
     'TTJets_SingleLeptFromTbar'  :  300,
 
     #MET data
-    'MET_2015D' : 999, 
+    'MET_2015D' : 999,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  99,
@@ -399,9 +418,27 @@ nJobs = {
     'WW_50ns'        : 44,
     'ZZ_50ns'        : 36,
     'WZ_50ns'        : 45,
-    
+
+    'QCD_5to10'       :  999,
+    'QCD_10to15'      :  999,
+    'QCD_15to30'      :  999,
+    'QCD_30to50'      :  999,
+    'QCD_50to80'      :  999,
+    'QCD_80to120'     :  999,
+    'QCD_120to170'    :  999,
+    'QCD_170to300'    :  999,
+    'QCD_300to470'    :  999,
+    'QCD_470to600'    :  999,
+    'QCD_600to800'    :  999,
+    'QCD_800to1000'   :  999,
+    'QCD_1000to1400'  :  999,
+    'QCD_1400to1800'  :  999,
+    'QCD_1800to2400'  :  999,
+    'QCD_2400to3200'  :  999,
+    'QCD_3200toInf'   :  999,
+
     #QCD MuEnriched
-    'QCD_MuEnriched_20toInf'        : 999, 
+    'QCD_MuEnriched_20toInf'        : 999,
     'QCD_MuEnriched_15to20'         : 999,
     'QCD_MuEnriched_20to30'         : 999,
     'QCD_MuEnriched_30to50'         : 999,
@@ -414,7 +451,7 @@ nJobs = {
     'QCD_MuEnriched_600to800'       : 999,
     'QCD_MuEnriched_800to1000'      : 999,
     'QCD_MuEnriched_1000toInf'      : 999,
-    
+
     #QCD EMEnriched
     'QCD_EMEnriched_15to20'         : 69,
     'QCD_EMEnriched_20to30'         : 261,
@@ -424,20 +461,20 @@ nJobs = {
     'QCD_EMEnriched_120to170'       : 233,
     'QCD_EMEnriched_170to300'       : 130,
     'QCD_EMEnriched_300toInf'       : 114,
-    
+
     #QCD bcToE
-    'QCD_bcToE_15to20'              : 21, 
+    'QCD_bcToE_15to20'              : 21,
     'QCD_bcToE_20to30'              : 123,
     'QCD_bcToE_30to80'              : 129,
     'QCD_bcToE_80to170'             : 153,
     'QCD_bcToE_170to250'            : 98,
     'QCD_bcToE_250toInf'            : 99,
-    
+
      #Signal MC MiniAOD
-    'stop200_1mm'     :  99,     
-    'stop200_10mm'     :  99,   
-    'stop200_100mm'     :  99,   
-    'stop200_1000mm'     :  99,  
+    'stop200_1mm'     :  99,
+    'stop200_10mm'     :  99,
+    'stop200_100mm'     :  99,
+    'stop200_1000mm'     :  99,
     'stop300_1mm'     :  99,
     'stop300_10mm'     :  99,
     'stop300_100mm'     :  99,
@@ -479,32 +516,32 @@ nJobs = {
     'stop1200_50mm'     :  99,
     'stop1200_100mm'     :  99,
     'stop1200_1000mm'     :  99,
-    
- 
+
+
     'DoubleMu_2015B'   :  40,
     'DoubleMu_2015C'   : 187,
     'DoubleMu_2015D': 1000,
-    
+
     'SingleMu_2015B'      :  57,
     'SingleMu_2015C'      : 220,
     'SingleMu_2015D'   : 1000,
-   
+
     'SingleEle_2015B'    :  77,
     'SingleEle_2015C'    : 137,
     'SingleEle_2015D' : 1000,
-   
+
     'SinglePhoton_2015B'   :  55,
     'SinglePhoton_2015C'   : 130,
     'SinglePhoton_2015D'   : 1000,
-    
+
     'DoubleEG_2015B'      :  100,
     'DoubleEG_2015C'      :  298,
     'DoubleEG_2015D'   :  1000,
-    
+
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
     'MuonEG_2015D'   :  1000,
-    
+
     #NoBPTX data
     'NoBPTX_2015D' : 999,
     ############################################################################
@@ -590,7 +627,7 @@ maxEvents = {
     'WW'            : -1,
     'ZZ'            : -1,
     'WZ'            : -1,
-    
+
     'DYJetsToLL_50_50ns'        : -1,
     'DYJetsToLL_10to50_50ns'        : -1,
     'WJetsToLNu_50ns'        : -1,
@@ -598,8 +635,27 @@ maxEvents = {
     'WW_50ns'            : -1,
     'ZZ_50ns'            : -1,
     'WZ_50ns'            : -1,
+
+    'QCD_5to10'       :  -1,
+    'QCD_10to15'      :  -1,
+    'QCD_15to30'      :  -1,
+    'QCD_30to50'      :  -1,
+    'QCD_50to80'      :  -1,
+    'QCD_80to120'     :  -1,
+    'QCD_120to170'    :  -1,
+    'QCD_170to300'    :  -1,
+    'QCD_300to470'    :  -1,
+    'QCD_470to600'    :  -1,
+    'QCD_600to800'    :  -1,
+    'QCD_800to1000'   :  -1,
+    'QCD_1000to1400'  :  -1,
+    'QCD_1400to1800'  :  -1,
+    'QCD_1800to2400'  :  -1,
+    'QCD_2400to3200'  :  -1,
+    'QCD_3200toInf'   :  -1,
+
     #QCD MuEnriched
-    'QCD_MuEnriched_20toInf'        : -1, 
+    'QCD_MuEnriched_20toInf'        : -1,
     'QCD_MuEnriched_15to20'         : -1,
     'QCD_MuEnriched_20to30'         : -1,
     'QCD_MuEnriched_30to50'         : -1,
@@ -612,7 +668,7 @@ maxEvents = {
     'QCD_MuEnriched_600to800'       : -1,
     'QCD_MuEnriched_800to1000'      : -1,
     'QCD_MuEnriched_1000toInf'      : -1,
-    
+
     #QCD EMEnriched
     'QCD_EMEnriched_15to20'         : -1,
     'QCD_EMEnriched_20to30'         : -1,
@@ -622,20 +678,20 @@ maxEvents = {
     'QCD_EMEnriched_120to170'       : -1,
     'QCD_EMEnriched_170to300'       : -1,
     'QCD_EMEnriched_300toInf'       : -1,
-   
+
     #QCD bcToE
-    'QCD_bcToE_15to20'              : -1, 
+    'QCD_bcToE_15to20'              : -1,
     'QCD_bcToE_20to30'              : -1,
     'QCD_bcToE_30to80'              : -1,
     'QCD_bcToE_80to170'             : -1,
     'QCD_bcToE_170to250'            : -1,
     'QCD_bcToE_250toInf'            : -1,
-    
+
     #DisplacedSUSY Signal MC MiniAOD
-    'stop200_1mm'     :  -1,     
-    'stop200_10mm'     :  -1,   
-    'stop200_100mm'     :  -1,   
-    'stop200_1000mm'     :  -1,  
+    'stop200_1mm'     :  -1,
+    'stop200_10mm'     :  -1,
+    'stop200_100mm'     :  -1,
+    'stop200_1000mm'     :  -1,
     'stop300_1mm'     :  -1,
     'stop300_10mm'     :  -1,
     'stop300_100mm'     :  -1,
@@ -677,31 +733,31 @@ maxEvents = {
     'stop1200_50mm'     :  -1,
     'stop1200_100mm'     :  -1,
     'stop1200_1000mm'     :  -1,
- 
+
     'DoubleMu_2015B'       : -1,
     'DoubleMu_2015C'       : -1,
     'DoubleMu_2015D'    : -1,
-    
+
     'SingleMu_2015B'       : -1,
     'SingleMu_2015C'       : -1,
     'SingleMu_2015D'       : -1,
-   
+
     'SingleEle_2015B'       : -1,
     'SingleEle_2015C'       : -1,
     'SingleEle_2015D'       : -1,
-   
+
     'SinglePhoton_2015B'       : -1,
     'SinglePhoton_2015C'       : -1,
     'SinglePhoton_2015D'       : -1,
-    
+
     'DoubleEG_2015B'       : -1,
     'DoubleEG_2015C'       : -1,
     'DoubleEG_2015D'       : -1,
-    
+
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
     'MuonEG_2015D'       : -1,
-    
+
     #NoBPTX data
     'NoBPTX_2015D' : -1,
     ############################################################################
@@ -791,26 +847,46 @@ types = {
     #MiniAOD not stored on T3.
     ############################################################################
     'DYJetsToLL'             : "bgMC",
-    'DYJetsToLL_10to50'      : "bgMC",   
+    'DYJetsToLL_10to50'      : "bgMC",
     'TTJets'                 : "bgMC",
     'Diboson'                : "bgMC",
     'Diboson_Incl'           : "bgMC",
     'WW'                     : "bgMC",
     'ZZ'                     : "bgMC",
     'WZ'                     : "bgMC",
-   
+
     'DYJetsToLL_50ns'        : "bgMC",
-    'DYJetsToLL_50_50ns'     : "bgMC",   
-    'DYJetsToLL_10to50_50ns' : "bgMC",   
-    'WJetsToLNu_50ns'        : "bgMC",   
+    'DYJetsToLL_50_50ns'     : "bgMC",
+    'DYJetsToLL_10to50_50ns' : "bgMC",
+    'WJetsToLNu_50ns'        : "bgMC",
     'TTJets_50ns'            : "bgMC",
     'Diboson_50ns'           : "bgMC",
     'WW_50ns'                : "bgMC",
     'ZZ_50ns'                : "bgMC",
     'WZ_50ns'                : "bgMC",
+
+    'QCD'             :  "bgMC",
+    'QCD_5to10'       :  "bgMC",
+    'QCD_10to15'      :  "bgMC",
+    'QCD_15to30'      :  "bgMC",
+    'QCD_30to50'      :  "bgMC",
+    'QCD_50to80'      :  "bgMC",
+    'QCD_80to120'     :  "bgMC",
+    'QCD_120to170'    :  "bgMC",
+    'QCD_170to300'    :  "bgMC",
+    'QCD_300to470'    :  "bgMC",
+    'QCD_470to600'    :  "bgMC",
+    'QCD_600to800'    :  "bgMC",
+    'QCD_800to1000'   :  "bgMC",
+    'QCD_1000to1400'  :  "bgMC",
+    'QCD_1400to1800'  :  "bgMC",
+    'QCD_1800to2400'  :  "bgMC",
+    'QCD_2400to3200'  :  "bgMC",
+    'QCD_3200toInf'   :  "bgMC",
+
     #QCD MuEnriched
-    'QCD_MuEnriched_20toInf'        : "bgMC", 
-    'QCD_MuEnriched'                : "bgMC", 
+    'QCD_MuEnriched_20toInf'        : "bgMC",
+    'QCD_MuEnriched'                : "bgMC",
     'QCD_MuEnriched_15to20'         : "bgMC",
     'QCD_MuEnriched_20to30'         : "bgMC",
     'QCD_MuEnriched_30to50'         : "bgMC",
@@ -823,7 +899,7 @@ types = {
     'QCD_MuEnriched_600to800'       : "bgMC",
     'QCD_MuEnriched_800to1000'      : "bgMC",
     'QCD_MuEnriched_1000toInf'      : "bgMC",
-    
+
     #QCD EMEnriched
     'QCD_EMEnriched_15to20'         : "bgMC",
     'QCD_EMEnriched'                : "bgMC",
@@ -834,10 +910,10 @@ types = {
     'QCD_EMEnriched_120to170'       : "bgMC",
     'QCD_EMEnriched_170to300'       : "bgMC",
     'QCD_EMEnriched_300toInf'       : "bgMC",
-   
+
     #QCD bcToE
-    'QCD_bcToE'                     : "bgMC", 
-    'QCD_bcToE_15to20'              : "bgMC", 
+    'QCD_bcToE'                     : "bgMC",
+    'QCD_bcToE_15to20'              : "bgMC",
     'QCD_bcToE_20to30'              : "bgMC",
     'QCD_bcToE_30to80'              : "bgMC",
     'QCD_bcToE_80to170'             : "bgMC",
@@ -845,12 +921,12 @@ types = {
     'QCD_bcToE_250toInf'            : "bgMC",
 
     'QCDFromData' : "bgMC",
-     
+
     #DisplacedSUSY Signal MC MiniAOD
-    'stop200_1mm'     :  "signalMC",     
-    'stop200_10mm'     :  "signalMC",   
-    'stop200_100mm'     :  "signalMC",   
-    'stop200_1000mm'     :  "signalMC",  
+    'stop200_1mm'     :  "signalMC",
+    'stop200_10mm'     :  "signalMC",
+    'stop200_100mm'     :  "signalMC",
+    'stop200_1000mm'     :  "signalMC",
     'stop300_1mm'     :  "signalMC",
     'stop300_10mm'     :  "signalMC",
     'stop300_100mm'     :  "signalMC",
@@ -892,38 +968,38 @@ types = {
     'stop1200_50mm'     :  "signalMC",
     'stop1200_100mm'     :  "signalMC",
     'stop1200_1000mm'     :  "signalMC",
- 
- 
+
+
     'DoubleMu_2015B'   : "data",
     'DoubleMu_2015C'   : "data",
     'DoubleMu_2015D'   : "data",
     'DoubleMu_2015'    : "data",
-    
+
     'SingleMu_2015B'    : "data",
     'SingleMu_2015C'    : "data",
     'SingleMu_2015D'    : "data",
 
     'SingleMu_2015'     : "data",
-   
+
     'SingleEle_2015B'   : "data",
     'SingleEle_2015C'   : "data",
     'SingleEle_2015D'   : "data",
-   
+
     'SinglePhoton_2015B'   : "data",
     'SinglePhoton_2015C'   : "data",
     'SinglePhoton_2015D'   : "data",
     'SinglePhoton_2015'    : "data",
-    
+
     'DoubleEG_2015B'   : "data",
     'DoubleEG_2015C'   : "data",
     'DoubleEG_2015'    : "data",
     'DoubleEG_2015D'    : "data",
-    
+
     'MuonEG_2015B'   : "data",
     'MuonEG_2015C'   : "data",
     'MuonEG_2015D'   : "data",
     'MuonEG_2015'    : "data",
-    
+
     #NoBPTX data
     'NoBPTX_2015D' : 'data',
     ############################################################################
@@ -1017,7 +1093,7 @@ colors = {
     'WZ'                  : 393,
     'ZZ'                  : 397,
     'WW'                  : 390,
-    
+
     'DYJetsToLL_50ns'          : 410,
     'DYJetsToLL_50_50ns'       : 410,
     'DYJetsToLL_10to50_50ns'   : 410,
@@ -1027,9 +1103,29 @@ colors = {
     'WZ_50ns'                  : 393,
     'ZZ_50ns'                  : 397,
     'WW_50ns'                  : 390,
+
+    'QCD'             :  623,
+    'QCD_5to10'       :  623,
+    'QCD_10to15'      :  623,
+    'QCD_15to30'      :  623,
+    'QCD_30to50'      :  623,
+    'QCD_50to80'      :  623,
+    'QCD_80to120'     :  623,
+    'QCD_120to170'    :  623,
+    'QCD_170to300'    :  623,
+    'QCD_300to470'    :  623,
+    'QCD_470to600'    :  623,
+    'QCD_600to800'    :  623,
+    'QCD_800to1000'   :  623,
+    'QCD_1000to1400'  :  623,
+    'QCD_1400to1800'  :  623,
+    'QCD_1800to2400'  :  623,
+    'QCD_2400to3200'  :  623,
+    'QCD_3200toInf'   :  623,
+
     #QCD MuEnriched
-    'QCD_MuEnriched_20toInf'        : 623, 
-    'QCD_MuEnriched'                : 623, 
+    'QCD_MuEnriched_20toInf'        : 623,
+    'QCD_MuEnriched'                : 623,
     'QCD_MuEnriched_15to20'         : 623,
     'QCD_MuEnriched_20to30'         : 623,
     'QCD_MuEnriched_30to50'         : 623,
@@ -1042,7 +1138,7 @@ colors = {
     'QCD_MuEnriched_600to800'       : 623,
     'QCD_MuEnriched_800to1000'      : 623,
     'QCD_MuEnriched_1000toInf'      : 623,
-    
+
     #QCD EMEnriched
     'QCD_EMEnriched'                : 791,
     'QCD_EMEnriched_15to20'         : 791,
@@ -1053,10 +1149,10 @@ colors = {
     'QCD_EMEnriched_120to170'       : 791,
     'QCD_EMEnriched_170to300'       : 791,
     'QCD_EMEnriched_300toInf'       : 791,
-   
+
     #QCD bcToE
-    'QCD_bcToE'                     : 794, 
-    'QCD_bcToE_15to20'              : 794, 
+    'QCD_bcToE'                     : 794,
+    'QCD_bcToE_15to20'              : 794,
     'QCD_bcToE_20to30'              : 794,
     'QCD_bcToE_30to80'              : 794,
     'QCD_bcToE_80to170'             : 794,
@@ -1064,12 +1160,12 @@ colors = {
     'QCD_bcToE_250toInf'            : 794,
 
     'QCDFromData' : 791,
-     
+
     #Signal MC MiniAOD
-    'stop200_1mm'     :  20,     
-    'stop200_10mm'     :  21,   
-    'stop200_100mm'     :  22,   
-    'stop200_1000mm'     :  23,  
+    'stop200_1mm'     :  20,
+    'stop200_10mm'     :  21,
+    'stop200_100mm'     :  22,
+    'stop200_1000mm'     :  23,
     'stop300_1mm'     :  30,
     'stop300_10mm'     :  31,
     'stop300_100mm'     :  32,
@@ -1111,38 +1207,38 @@ colors = {
     'stop1200_50mm'     :  122,
     'stop1200_100mm'     :  122,
     'stop1200_1000mm'     :  123,
-    
-    
+
+
     'DoubleMu_2015B'   : 1,
     'DoubleMu_2015C'   : 1,
     'DoubleMu_2015D'   : 1,
     'DoubleMu_2015'   : 1,
-    
+
     'SingleMu_2015B'   : 1,
     'SingleMu_2015C'   : 1,
     'SingleMu_2015D'   : 1,
     'SingleMu_2015'   : 1,
-   
+
     'SingleEle_2015B'   : 1,
     'SingleEle_2015C'   : 1,
     'SingleEle_2015D'   : 1,
     'SingleEle_2015'   : 1,
-   
+
     'SinglePhoton_2015B'   : 1,
     'SinglePhoton_2015C'   : 1,
     'SinglePhoton_2015D'   : 1,
     'SinglePhoton_2015'   : 1,
-    
+
     'DoubleEG_2015B'   : 1,
     'DoubleEG_2015C'   : 1,
     'DoubleEG_2015'   : 1,
     'DoubleEG_2015D'   : 1,
-    
+
     'MuonEG_2015B'   : 1,
     'MuonEG_2015C'   : 1,
     'MuonEG_2015D'   : 1,
     'MuonEG_2015'    : 1,
-   
+
     #NoBPTX data
     'NoBPTX_2015D' : 1,
     ############################################################################
@@ -1237,7 +1333,7 @@ labels = {
     'WW'                        : "WW",
     'WZ'                        : "WZ",
     'ZZ'                        : "ZZ",
-    
+
     'DYJetsToLL_50_50ns'                 : "Z#rightarrowll M(50) 50ns",
     'DYJetsToLL_10to50_50ns'             : "Z#rightarrowll M(10to50) 50ns",
     'WJetsToLNu_50ns'                    : "W#rightarrowl#nu 50ns",
@@ -1246,6 +1342,26 @@ labels = {
     'WW_50ns'                        : "WW 50ns",
     'WZ_50ns'                        : "WZ 50ns",
     'ZZ_50ns'                        : "ZZ 50ns",
+
+    'QCD'             :  "QCD",
+    'QCD_5to10'       :  "QCD 5<#hat{p}_{T}<10 GeV",
+    'QCD_10to15'      :  "QCD 10<#hat{p}_{T}<15 GeV",
+    'QCD_15to30'      :  "QCD 15<#hat{p}_{T}<30 GeV",
+    'QCD_30to50'      :  "QCD 30<#hat{p}_{T}<50 GeV",
+    'QCD_50to80'      :  "QCD 50<#hat{p}_{T}<80 GeV",
+    'QCD_80to120'     :  "QCD 80<#hat{p}_{T}<120 GeV",
+    'QCD_120to170'    :  "QCD 120<#hat{p}_{T}<170 GeV",
+    'QCD_170to300'    :  "QCD 170<#hat{p}_{T}<300 GeV",
+    'QCD_300to470'    :  "QCD 300<#hat{p}_{T}<470 GeV",
+    'QCD_470to600'    :  "QCD 470<#hat{p}_{T}<600 GeV",
+    'QCD_600to800'    :  "QCD 600<#hat{p}_{T}<800 GeV",
+    'QCD_800to1000'   :  "QCD 800<#hat{p}_{T}<1000 GeV",
+    'QCD_1000to1400'  :  "QCD 1000<#hat{p}_{T}<1400 GeV",
+    'QCD_1400to1800'  :  "QCD 1400<#hat{p}_{T}<1800 GeV",
+    'QCD_1800to2400'  :  "QCD 1800<#hat{p}_{T}<2400 GeV",
+    'QCD_2400to3200'  :  "QCD 2400<#hat{p}_{T}<3200 GeV",
+    'QCD_3200toInf'   :  "QCD #hat{p}_{T}>3200 GeV",
+
     #QCD MuEnriched
     'QCD_MuEnriched_20toInf'        : "QCD MuEnriched Pt 20-Inf",
     'QCD_MuEnriched'                : "QCD MuEnriched",
@@ -1261,7 +1377,7 @@ labels = {
     'QCD_MuEnriched_600to800'       : "QCD MuEnriched Pt 600-800",
     'QCD_MuEnriched_800to1000'      : "QCD MuEnriched Pt 800-1000",
     'QCD_MuEnriched_1000toInf'      : "QCD MuEnriched Pt 1000-Inf",
-    
+
     #QCD EMEnriched
     'QCD_EMEnriched'                : "QCD EMEnriched",
     'QCD_EMEnriched_15to20'         : "QCD EMEnriched Pt 15-20",
@@ -1272,9 +1388,9 @@ labels = {
     'QCD_EMEnriched_120to170'       : "QCD EMEnriched Pt 120-170",
     'QCD_EMEnriched_170to300'       : "QCD EMEnriched Pt 170-300",
     'QCD_EMEnriched_300toInf'       : "QCD EMEnriched Pt 300-Inf",
-   
+
     #QCD bcToE
-    'QCD_bcToE'                     : "QCD bcToE", 
+    'QCD_bcToE'                     : "QCD bcToE",
     'QCD_bcToE_15to20'              : "QCD bcToE Pt 15-20",
     'QCD_bcToE_20to30'              : "QCD bcToE Pt 20-30",
     'QCD_bcToE_30to80'              : "QCD bcToE Pt 30-80",
@@ -1283,190 +1399,190 @@ labels = {
     'QCD_bcToE_250toInf'            : "QCD bcToE Pt 250-Inf",
 
     'QCDFromData'     : "data-driven QCD",
-     
+
     #DisplacedSUSY Signal MC MiniAOD
-    'stop200_1mm'    : "#tilde{t}#tilde{t} M(200) c#tau(1mm)", 
+    'stop200_1mm'    : "#tilde{t}#tilde{t} M(200) c#tau(1mm)",
     'stop200_10mm'   : "#tilde{t}#tilde{t} M(200) c#tau(10mm)",
     'stop200_100mm'  : "#tilde{t}#tilde{t} M(200) c#tau(100mm)",
     'stop200_1000mm' : "#tilde{t}#tilde{t} M(200) c#tau(1000mm)",
-    'stop300_1mm'    : "#tilde{t}#tilde{t} M(300) c#tau(1mm)", 
+    'stop300_1mm'    : "#tilde{t}#tilde{t} M(300) c#tau(1mm)",
     'stop300_10mm'   : "#tilde{t}#tilde{t} M(300) c#tau(10mm)",
     'stop300_100mm'  : "#tilde{t}#tilde{t} M(300) c#tau(100mm)",
     'stop300_1000mm' : "#tilde{t}#tilde{t} M(300) c#tau(1000mm)",
-    'stop400_1mm'    : "#tilde{t}#tilde{t} M(400) c#tau(1mm)", 
+    'stop400_1mm'    : "#tilde{t}#tilde{t} M(400) c#tau(1mm)",
     'stop400_10mm'   : "#tilde{t}#tilde{t} M(400) c#tau(10mm)",
     'stop400_100mm'  : "#tilde{t}#tilde{t} M(400) c#tau(100mm)",
     'stop400_1000mm' : "#tilde{t}#tilde{t} M(400) c#tau(1000mm)",
-    'stop500_1mm'    : "#tilde{t}#tilde{t} M(500) c#tau(1mm)", 
+    'stop500_1mm'    : "#tilde{t}#tilde{t} M(500) c#tau(1mm)",
     'stop500_10mm'   : "#tilde{t}#tilde{t} M(500) c#tau(10mm)",
     'stop500_100mm'  : "#tilde{t}#tilde{t} M(500) c#tau(100mm)",
     'stop500_1000mm' : "#tilde{t}#tilde{t} M(500) c#tau(1000mm)",
-    'stop600_1mm'    : "#tilde{t}#tilde{t} M(600) c#tau(1mm)", 
+    'stop600_1mm'    : "#tilde{t}#tilde{t} M(600) c#tau(1mm)",
     'stop600_10mm'   : "#tilde{t}#tilde{t} M(600) c#tau(10mm)",
     'stop600_100mm'  : "#tilde{t}#tilde{t} M(600) c#tau(100mm)",
     'stop600_1000mm' : "#tilde{t}#tilde{t} M(600) c#tau(1000mm)",
-    'stop700_1mm'    : "#tilde{t}#tilde{t} M(700) c#tau(1mm)", 
+    'stop700_1mm'    : "#tilde{t}#tilde{t} M(700) c#tau(1mm)",
     'stop700_10mm'   : "#tilde{t}#tilde{t} M(700) c#tau(10mm)",
     'stop700_100mm'  : "#tilde{t}#tilde{t} M(700) c#tau(100mm)",
     'stop700_1000mm' : "#tilde{t}#tilde{t} M(700) c#tau(1000mm)",
-    'stop800_1mm'    : "#tilde{t}#tilde{t} M(800) c#tau(1mm)", 
+    'stop800_1mm'    : "#tilde{t}#tilde{t} M(800) c#tau(1mm)",
     'stop800_10mm'   : "#tilde{t}#tilde{t} M(800) c#tau(10mm)",
     'stop800_100mm'  : "#tilde{t}#tilde{t} M(800) c#tau(100mm)",
     'stop800_1000mm' : "#tilde{t}#tilde{t} M(800) c#tau(1000mm)",
-    'stop900_1mm'    : "#tilde{t}#tilde{t} M(900) c#tau(1mm)", 
+    'stop900_1mm'    : "#tilde{t}#tilde{t} M(900) c#tau(1mm)",
     'stop900_10mm'   : "#tilde{t}#tilde{t} M(900) c#tau(10mm)",
     'stop900_100mm'  : "#tilde{t}#tilde{t} M(900) c#tau(100mm)",
     'stop900_1000mm' : "#tilde{t}#tilde{t} M(900) c#tau(1000mm)",
-    'stop1000_1mm'    : "#tilde{t}#tilde{t} M(1000) c#tau(1mm)", 
+    'stop1000_1mm'    : "#tilde{t}#tilde{t} M(1000) c#tau(1mm)",
     'stop1000_10mm'   : "#tilde{t}#tilde{t} M(1000) c#tau(10mm)",
     'stop1000_100mm'  : "#tilde{t}#tilde{t} M(1000) c#tau(100mm)",
     'stop1000_1000mm' : "#tilde{t}#tilde{t} M(1000) c#tau(1000mm)",
-    'stop1100_1mm'    : "#tilde{t}#tilde{t} M(1100) c#tau(1mm)", 
+    'stop1100_1mm'    : "#tilde{t}#tilde{t} M(1100) c#tau(1mm)",
     'stop1100_10mm'   : "#tilde{t}#tilde{t} M(1100) c#tau(10mm)",
     'stop1100_100mm'  : "#tilde{t}#tilde{t} M(1100) c#tau(100mm)",
     'stop1100_1000mm' : "#tilde{t}#tilde{t} M(1100) c#tau(1000mm)",
-    'stop1200_1mm'    : "#tilde{t}#tilde{t} M(1200) c#tau(1mm)", 
+    'stop1200_1mm'    : "#tilde{t}#tilde{t} M(1200) c#tau(1mm)",
     'stop1200_10mm'   : "#tilde{t}#tilde{t} M(1200) c#tau(10mm)",
     'stop1200_50mm'  : "#tilde{t}#tilde{t} M(1200) c#tau(50mm)",
     'stop1200_100mm'  : "#tilde{t}#tilde{t} M(1200) c#tau(100mm)",
     'stop1200_1000mm' : "#tilde{t}#tilde{t} M(1200) c#tau(1000mm)",
-    
- 
+
+
     'DoubleMu_2015'      : "Double Muon 2015 data",
     'DoubleMu_2015B'     : "DoubleMu 2015B data",
     'DoubleMu_2015C'     : "DoubleMu 2015C data",
     'DoubleMu_2015D'     : "DoubleMu 2015D data",
-    
+
     'SingleMu_2015'      : "Single Muon 2015 data",
     'SingleMu_2015B'     : "SingleMu 2015B data",
     'SingleMu_2015C'     : "SingleMu 2015C data",
     'SingleMu_2015D'     : "SingleMu 2015D data",
-   
+
     'SingleEle_2015'      : "Single Electron 2015 data",
     'SingleEle_2015B'     : "SingleEle 2015B data",
     'SingleEle_2015C'     : "SingleEle 2015C data",
     'SingleEle_2015D'     : "SingleEle 2015D data",
-   
+
     'SinglePhoton_2015'      : "SinglePhoton 2015 data",
     'SinglePhoton_2015B'     : "SinglePhoton 2015B data",
     'SinglePhoton_2015C'     : "SinglePhoton 2015C data",
     'SinglePhoton_2015D'     : "SinglePhoton 2015D data",
-    
+
     'DoubleEG_2015'      : "DoubleEG 2015 data",
     'DoubleEG_2015D'     : "DoubleEG 2015D data",
     'DoubleEG_2015B'     : "DoubleEG 2015B data",
     'DoubleEG_2015C'     : "DoubleEG 2015C data",
-    
+
     'MuonEG_2015'      : "MuonEG 2015 data",
     'MuonEG_2015B'     : "MuonEG 2015B data",
     'MuonEG_2015C'     : "MuonEG 2015C data",
     'MuonEG_2015D'     : "MuonEG 2015D data",
-    #NoBPTX Data 
+    #NoBPTX Data
     'NoBPTX_2015D'     : "NoBPTX 2015D data",
     ############################################################################
 }
 
 crossSections = {
-    # Cross sections for samples stored on T3 should be registered in database.  
-    # Cross sections below are for MiniAOD not stored on T3.  
-    'DYJetsToLL_50'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)  
-    'WJetsToLNu'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3) 
-'TTJets'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)  
-    'WW'                       :                63.21, 
-    'WZ'                       :                22.82, 
-    'ZZ'                       :                10.32,  
+    # Cross sections for samples stored on T3 should be registered in database.
+    # Cross sections below are for MiniAOD not stored on T3.
+    'DYJetsToLL_50'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)
+    'WJetsToLNu'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3)
+'TTJets'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
+    'WW'                       :                63.21,
+    'WZ'                       :                22.82,
+    'ZZ'                       :                10.32,
 #50ns
-    'DYJetsToLL_50_50ns'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)  
-    'WJetsToLNu_50ns'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3) 
-    'TTJets_50ns'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)  
-'WW_50ns'                       :                63.21, 
-    'WZ_50ns'                       :                22.82, 
-    'ZZ_50ns'                       :                10.32,  
-############################################################# 
-    # Cross sections below obatined with crossSectionExtractor.py 
-    'DYJetsToLL_10to50'        :              18610.0,      
-    'DYJetsToLL_10to50_50ns'   :              18610.0,       
-    'QCD_MuEnriched_20toInf'   :  720648000.0*0.00042, 
-    'QCD_MuEnriched_15to20'    :   1273190000.0*0.003, 
-    'QCD_MuEnriched_20to30'    :   558528000.0*0.0053, 
-    'QCD_MuEnriched_30to50'    :  139803000.0*0.01182, 
-    'QCD_MuEnriched_50to80'    :   19222500.0*0.02276, 
-    'QCD_MuEnriched_80to120'   :    2758420.0*0.03844, 
-    'QCD_MuEnriched_120to170'  :     469797.0*0.05362, 
-    'QCD_MuEnriched_170to300'  :     117989.0*0.07335, 
-    'QCD_MuEnriched_300to470'  :      7820.25*0.10196, 
-    'QCD_MuEnriched_470to600'  :      645.528*0.12242, 
-    'QCD_MuEnriched_600to800'  :      187.109*0.13412, 
-    'QCD_MuEnriched_800to1000' :      32.3486*0.14552, 
-    'QCD_MuEnriched_1000toInf' :      10.4305*0.15544, 
+    'DYJetsToLL_50_50ns'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)
+    'WJetsToLNu_50ns'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3)
+    'TTJets_50ns'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
+'WW_50ns'                       :                63.21,
+    'WZ_50ns'                       :                22.82,
+    'ZZ_50ns'                       :                10.32,
+#############################################################
+    # Cross sections below obatined with crossSectionExtractor.py
+    'DYJetsToLL_10to50'        :              18610.0,
+    'DYJetsToLL_10to50_50ns'   :              18610.0,
+    'QCD_MuEnriched_20toInf'   :  720648000.0*0.00042,
+    'QCD_MuEnriched_15to20'    :   1273190000.0*0.003,
+    'QCD_MuEnriched_20to30'    :   558528000.0*0.0053,
+    'QCD_MuEnriched_30to50'    :  139803000.0*0.01182,
+    'QCD_MuEnriched_50to80'    :   19222500.0*0.02276,
+    'QCD_MuEnriched_80to120'   :    2758420.0*0.03844,
+    'QCD_MuEnriched_120to170'  :     469797.0*0.05362,
+    'QCD_MuEnriched_170to300'  :     117989.0*0.07335,
+    'QCD_MuEnriched_300to470'  :      7820.25*0.10196,
+    'QCD_MuEnriched_470to600'  :      645.528*0.12242,
+    'QCD_MuEnriched_600to800'  :      187.109*0.13412,
+    'QCD_MuEnriched_800to1000' :      32.3486*0.14552,
+    'QCD_MuEnriched_1000toInf' :      10.4305*0.15544,
     # The MC contacts of the EMEnriched samples did not put the
-    # filter efficiencies in the sample, these efficiencies are 
+    # filter efficiencies in the sample, these efficiencies are
     # took from https://github.com/silviodonato/RateEstimate/blob/
-    # master/datasetCrossSections/datasetCrossSectionsSpring15.py    
-    'QCD_EMEnriched_15to20'    :1279000000.0*0.001309, 
-    'QCD_EMEnriched_20to30'    : 557600000.0*0.009914, 
-    'QCD_EMEnriched_30to50'    :  136000000.0*0.04988, 
-    'QCD_EMEnriched_50to80'    :    19800000.0*0.1145, 
-    'QCD_EMEnriched_80to120'   :     2800000.0*0.1507, 
-    'QCD_EMEnriched_120to170'  :      477000.0*0.1576, 
+    # master/datasetCrossSections/datasetCrossSectionsSpring15.py
+    'QCD_EMEnriched_15to20'    :1279000000.0*0.001309,
+    'QCD_EMEnriched_20to30'    : 557600000.0*0.009914,
+    'QCD_EMEnriched_30to50'    :  136000000.0*0.04988,
+    'QCD_EMEnriched_50to80'    :    19800000.0*0.1145,
+    'QCD_EMEnriched_80to120'   :     2800000.0*0.1507,
+    'QCD_EMEnriched_120to170'  :      477000.0*0.1576,
     # Got from the McM Tool: https://cms-pdmv.cern.ch/mcm/requests?page=0&dataset_name=QCD_Pt-300toInf_EMEnriched_TuneCUETP8M1_13TeV_pythia8&
-    #member_of_campaign=RunIIWinter15GS&shown=163213220927    
-    'QCD_EMEnriched_170to300'  :      114000.0*0.1650, 
-    'QCD_EMEnriched_300toInf'  :        9000.0*0.1500, 
-    #############################################################    
-    'QCD_bcToE_15to20'         :  1272980000.0*0.0002, 
-    'QCD_bcToE_20to30'         :  557627000.0*0.00059, 
-    'QCD_bcToE_30to80'         :  159068000.0*0.00255, 
-    'QCD_bcToE_80to170'        :    3221000.0*0.01183, 
-    'QCD_bcToE_170to250'       :     105771.0*0.02492, 
-    'QCD_bcToE_250toInf'       :      21094.1*0.03375, 
-    #############################################################  
-    'stop200_1mm'    : 64.5085, 
+    #member_of_campaign=RunIIWinter15GS&shown=163213220927
+    'QCD_EMEnriched_170to300'  :      114000.0*0.1650,
+    'QCD_EMEnriched_300toInf'  :        9000.0*0.1500,
+    #############################################################
+    'QCD_bcToE_15to20'         :  1272980000.0*0.0002,
+    'QCD_bcToE_20to30'         :  557627000.0*0.00059,
+    'QCD_bcToE_30to80'         :  159068000.0*0.00255,
+    'QCD_bcToE_80to170'        :    3221000.0*0.01183,
+    'QCD_bcToE_170to250'       :     105771.0*0.02492,
+    'QCD_bcToE_250toInf'       :      21094.1*0.03375,
+    #############################################################
+    'stop200_1mm'    : 64.5085,
     'stop200_10mm'   : 64.5085,
     'stop200_100mm'  : 64.5085,
     'stop200_1000mm' : 64.5085,
-    'stop300_1mm'    : 8.51615, 
+    'stop300_1mm'    : 8.51615,
     'stop300_10mm'   : 8.51615,
     'stop300_100mm'  : 8.51615,
     'stop300_1000mm' : 8.51615,
-    'stop400_1mm'    : 1.83537, 
+    'stop400_1mm'    : 1.83537,
     'stop400_10mm'   : 1.83537,
     'stop400_100mm'  : 1.83537,
     'stop400_1000mm' : 1.83537,
-    'stop500_1mm'    : 0.51848, 
+    'stop500_1mm'    : 0.51848,
     'stop500_10mm'   : 0.51848,
     'stop500_100mm'  : 0.51848,
     'stop500_1000mm' : 0.51848,
-    'stop600_1mm'    : 0.174599, 
+    'stop600_1mm'    : 0.174599,
     'stop600_10mm'   : 0.174599,
     'stop600_100mm'  : 0.174599,
     'stop600_1000mm' : 0.174599,
-    'stop700_1mm'    : 0.0670476, 
+    'stop700_1mm'    : 0.0670476,
     'stop700_10mm'   : 0.0670476,
     'stop700_100mm'  : 0.0670476,
     'stop700_1000mm' : 0.0670476,
-    'stop800_1mm'    : 0.0283338, 
+    'stop800_1mm'    : 0.0283338,
     'stop800_10mm'   : 0.0283338,
     'stop800_100mm'  : 0.0283338,
     'stop800_1000mm' : 0.0283338,
-    'stop900_1mm'    : 0.0128895, 
+    'stop900_1mm'    : 0.0128895,
     'stop900_10mm'   : 0.0128895,
     'stop900_100mm'  : 0.0128895,
     'stop900_1000mm' : 0.0128895,
-    'stop1000_1mm'    : 0.00615134, 
+    'stop1000_1mm'    : 0.00615134,
     'stop1000_10mm'   : 0.00615134,
     'stop1000_100mm'  : 0.00615134,
     'stop1000_1000mm' : 0.00615134,
-    'stop1100_1mm'    : 0.00307413, 
+    'stop1100_1mm'    : 0.00307413,
     'stop1100_10mm'   : 0.00307413,
     'stop1100_100mm'  : 0.00307413,
     'stop1100_1000mm' : 0.00307413,
-    'stop1200_1mm'    : 0.00159844, 
+    'stop1200_1mm'    : 0.00159844,
     'stop1200_10mm'   : 0.00159844,
     'stop1200_50mm'  : 0.00159844,
     'stop1200_100mm'  : 0.00159844,
     'stop1200_1000mm' : 0.00159844,
-    
+
     'WWToLNuQQ'   :  49.997,
     'WWToLNuLNu'  :  12.178,
     'WZToLNuNuNu' :  3.05,

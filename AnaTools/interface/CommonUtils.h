@@ -197,6 +197,8 @@ namespace anatools
   double getGeneratorWeight (const TYPE(generatorweights) &);
 
   void getAllTokens (const edm::ParameterSet &, edm::ConsumesCollector &&, Tokens &);
+
+  template<class T> bool jetPassesTightLepVeto (const T &);
 }
 
 /**
@@ -229,6 +231,16 @@ anatools::getObjectHash(const T& object){
     py_mev = abs(int(1000 * getMember (object, "py")));
     pz_mev = abs(int(1000 * getMember (object, "pz")));
     return px_mev + py_mev + pz_mev;
+}
+
+template<class T> bool
+anatools::jetPassesTightLepVeto (const T &jet)
+{
+  // Taken from recommendations from the JetMET group for 13 TeV:
+  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID#Recommendations_for_13_TeV_data
+  //
+  return (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
+    || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0));
 }
 
 #endif
