@@ -36,6 +36,24 @@ dataset_names = {
     'GluinoToGChi0_1800_1407' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1800_chi0_1407/USER",
     'GluinoToGChi0_1800_1469' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1800_chi0_1469/USER",
     'GluinoToGChi0_1800_1529' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1800_chi0_1529/USER",
+###############Stop signal for energy scan###############################
+    'StopToTChi0_400_75' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_400_chi0_75/USER",
+    'StopToTChi0_400_150' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_400_chi0_150/USER",
+    'StopToTChi0_400_199' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_400_chi0_199/USER",
+    'StopToTChi0_400_250' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_400_chi0_250/USER",
+    'StopToTChi0_400_285' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_400_chi0_285/USER",
+    'StopToTChi0_400_300' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_400_chi0_300/USER",
+    'StopToTChi0_600_100' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_600_chi0_100/USER",
+    'StopToTChi0_600_300' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_600_chi0_300/USER",
+    'StopToTChi0_600_400' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_600_chi0_400/USER",
+    'StopToTChi0_600_500' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_600_chi0_500/USER",
+    'StopToTChi0_1000_100' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_1000_chi0_100/USER",
+    'StopToTChi0_1000_173' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_1000_chi0_173/USER",
+    'StopToTChi0_1000_360' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_1000_chi0_360/USER",
+    'StopToTChi0_1000_480' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_1000_chi0_480/USER",
+    'StopToTChi0_1000_574' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_1000_chi0_574/USER",
+    'StopToTChi0_1000_656' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_1000_chi0_656/USER",
+    'StopToTChi0_1000_728' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_1000_chi0_728/USER",
 
 ################## SP ntuples stored on T3 ###############
 #################### cosmic sample #######################
