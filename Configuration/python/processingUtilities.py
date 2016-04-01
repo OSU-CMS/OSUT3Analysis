@@ -291,13 +291,18 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
     # For batch jobs, do not change filename; we want it identical for all jobs.
     ############################################################################
     if not osusub.batchMode:
-        originalName = outputName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.
-        suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
-        outputName = outputName.replace(".root", suffix + ".root")
-        process.TFileService.fileName = cms.string(outputName)
-        if os.path.islink (originalName):
-            os.unlink (originalName)
-        os.symlink (outputName, originalName)
+        if not hasattr (add_channels, "originalName"):
+            add_channels.originalName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.
+            outputName = add_channels.originalName
+            print "originalName:", add_channels.originalName
+            print "outputName:  ", outputName
+            suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
+            outputName = outputName.replace(".root", suffix + ".root")
+            print "final outputName: ", outputName
+            process.TFileService.fileName = cms.string(outputName)
+            if os.path.islink (add_channels.originalName):
+                os.unlink (add_channels.originalName)
+            os.symlink (outputName, add_channels.originalName)
     ############################################################################
 
     plotCollections = get_collections (histogramSets)
