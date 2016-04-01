@@ -575,8 +575,8 @@ def SkimChannelFinder(userConfig, Directory):
 ################################################################################
 def SkimModifier(Label, Directory, crossSection):
     SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
-    OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0]
-    SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0]
+    OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/OriginalNumberOfEvents.txt') else 0.0
+    SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/SkimNumberOfEvents.txt') else 0.0
 
     infoFile = Directory + '/datasetInfo_' + Label + '_cfg.py'
     fin = open(infoFile, "r")
