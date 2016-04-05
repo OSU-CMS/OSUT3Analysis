@@ -197,7 +197,6 @@ for sample in processed_datasets:
             yield_ = inputHistogram.IntegralAndError(0, inputHistogram.GetNbinsX()+1, statError_)
 
         processed_datasets_channels[channel].append(sample)
-        print yield_, statError_
 
         if arguments.includeSystematics:
             fractionalSysError_ = getSystematicError(sample,channel)
@@ -239,7 +238,7 @@ for channel in channels:
             continue
         bgMCcounter = bgMCcounter + 1
         rawlabel = labels[sample]
-        label = rawlabel.replace("#bar{t}","$\\bar{\\mathrm{t}}$").replace("#tau","$\\tau$").replace("#nu","$\\nu$").replace("#rightarrow","${\\rightarrow}$").replace(" ","\\ ")
+        label = rawlabel.replace("#tilde{t}","\\tilde{\\mathrm{t}}").replace("#bar{t}","$\\bar{\\mathrm{t}}$").replace("#tau","$\\tau$").replace("#nu","$\\nu$").replace("#rightarrow","${\\rightarrow}$").replace(" ","\\ ")
         line = label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel]
         if arguments.includeSystematics:
             line = line + " $\pm$ " + sys_errors[sample][channel]
