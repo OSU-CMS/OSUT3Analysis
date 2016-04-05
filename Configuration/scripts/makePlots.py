@@ -1115,6 +1115,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             BgMCLegend.SetY2NDC(-0.05 + y_max)
             BgMCLegend.Draw()
 
+    elif (numSignalSamples is not 0):
+        SignalMCLegend.SetX1NDC(x_left)
+        SignalMCLegend.SetY1NDC(y_max-entry_height*numSignalSamples)
+        SignalMCLegend.SetX2NDC(x_right)
+        SignalMCLegend.SetY2NDC(y_max)
+        SignalMCLegend.SetTextSize(0.0364078)
+        SignalMCLegend.Draw()
 
     # Deciding which text labels to draw and drawing them
     drawLumiLabel = False
