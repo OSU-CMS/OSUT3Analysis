@@ -11,13 +11,13 @@ dataset_names = {
     #DY
     'DYJetsToLL_50'  :  "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
     'DYJetsToLL_5to50' :  "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext1-v1/MINIAODSIM",
-    'DYJetsToNuNu_HT100to200' : "/ZJetsToNuNu_HT-100To200_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", 
+    'DYJetsToNuNu_HT100to200' : "/ZJetsToNuNu_HT-100To200_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
     'DYJetsToNuNu_HT200to400' : "/ZJetsToNuNu_HT-200To400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
     'DYJetsToNuNu_HT600toInf' : "/ZJetsToNuNu_HT-600ToInf_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
-    
+
     #WJets
     'WJetsToLNu'  :  "/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
-    
+
     #WJets_HT
     'WJetsToLNu_HT100to200' : "/WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
     'WJetsToLNu_HT200to400' : "/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
@@ -83,7 +83,7 @@ dataset_names = {
     'ZZ'                : "/ZZ_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
     'WW'                : "/WW_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
     'WZ'                : "/WZJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
-    
+
     #QCD MuEnriched
     'QCD_MuEnriched_20toInf'        : "/QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
     'QCD_MuEnriched_15to20'         : "/QCD_Pt-15to20_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv1-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM",
@@ -163,14 +163,31 @@ dataset_names = {
     'DoubleMu_2015D'       : "/DoubleMuon/Run2015D-16Dec2015-v1/MINIAOD",
 
     'SingleMu_2015D'       : "/SingleMuon/Run2015D-16Dec2015-v1/MINIAOD",
-   
+
     'SingleEle_2015D'      : "/SingleElectron/Run2015D-16Dec2015-v1/MINIAOD",
-   
+
     'SinglePhoton_2015D'   : "/SinglePhoton/Run2015D-16Dec2015-v1/MINIAOD",
-    
+
     'DoubleEG_2015D'       : "/DoubleEG/Run2015D-16Dec2015-v1/MINIAOD",
-    
+
     'MuonEG_2015D'         : "/MuonEG/Run2015D-16Dec2015-v1/MINIAOD",
     ############################################################################
     'NoBPTX_2015D'         : "/NoBPTX/Run2015D-16Dec2015-v1/MINIAOD",
 }
+
+
+########################################################################################
+### code to propagate displaced SUSY sample names to the lifetime-reweighted samples ###
+########################################################################################
+
+def mass(sample):
+    start = sample.find("stop")+4
+    end = sample.find("_")
+    return sample[start:end]
+
+from OSUT3Analysis.Configuration.configurationOptions import signal_datasets, srcCTauForLifetimeReweighting
+
+for sample in signal_datasets:
+    dataset_names[sample] = dataset_names["stop"+mass(sample)+"_"+"%g" % (10*srcCTauForLifetimeReweighting[sample])+"mm"]
+
+########################################################################################
