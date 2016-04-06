@@ -124,6 +124,21 @@ copyConfiguration (collectionProducer.taus, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------
 
 collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
+    fiducialMaps = cms.PSet (
+        electrons = cms.PSet (
+            histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap.root"), # to be replaced by the map for electrons when it is ready
+            beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+            afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+            thresholdForVeto = cms.double (2.0),
+        ),
+        muons = cms.PSet (
+            histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap.root"),
+            beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+            afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+            thresholdForVeto = cms.double (2.0),
+        ),
+    ),
+    minDeltaRForFiducialTrack = cms.double (0.05),
 )
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 
