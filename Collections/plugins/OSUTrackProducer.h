@@ -28,8 +28,13 @@ class OSUTrackProducer : public edm::EDProducer
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 
+    EtaPhiList electronVetoList_;
+    EtaPhiList muonVetoList_;
+
     // Payload for this EDFilter.
     auto_ptr<vector<osu::Track> > pl_;
+
+    void extractFiducialMap (const edm::ParameterSet &, EtaPhiList &) const;
 };
 
 #endif
