@@ -147,8 +147,8 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     minDeltaRForFiducialTrack = cms.double (0.05),
 )
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
-    collectionProducer.fiducialMaps.electrons.histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_data.root")
-    collectionProducer.fiducialMaps.muons.histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_data.root")
+    collectionProducer.tracks.fiducialMaps.electrons.histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_data.root")
+    collectionProducer.tracks.fiducialMaps.muons.histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_data.root")
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
