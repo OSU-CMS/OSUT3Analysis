@@ -13,6 +13,7 @@ osu::Electron::Electron ()
 osu::Electron::Electron (const TYPE(electrons) &electron) :
   GenMatchable               (electron),
   rho_                       (INVALID_VALUE),
+  pfdRhoIsoCorr_             (INVALID_VALUE),
   passesTightID_noIsolation_ (false)
 {
 }
@@ -20,6 +21,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
 osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vector<osu::Mcparticle> > &particles) :
   GenMatchable               (electron, particles),
   rho_                       (INVALID_VALUE),
+  pfdRhoIsoCorr_             (INVALID_VALUE),
   passesTightID_noIsolation_ (false)
 {
 }
@@ -27,6 +29,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
 osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
   GenMatchable               (electron, particles, cfg),
   rho_                       (INVALID_VALUE),
+  pfdRhoIsoCorr_             (INVALID_VALUE),
   passesTightID_noIsolation_ (false)
 {
 }
@@ -41,6 +44,12 @@ const float
 osu::Electron::AEff () const
 {
   return AEff_;
+}
+
+const double
+osu::Electron::pfdRhoIsoCorr () const
+{
+  return pfdRhoIsoCorr_;
 }
 
 const float

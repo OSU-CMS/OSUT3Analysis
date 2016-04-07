@@ -48,6 +48,7 @@ collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     rho              =  cms.InputTag  ("fixedGridRhoFastjetAll",         "",                            ""),
     beamSpot         =  cms.InputTag  ("offlineBeamSpot",                "",                            ""),
     vertices         =  cms.InputTag  ('offlineSlimmedPrimaryVertices',  ''),
+    pfCandidate      =  cms.InputTag  ('packedPFCandidates','',''),
 
     # the following tag is not used by the OSUElectronProducer, but is needed
     # so that the reco::GsfElectronCore collection is saved in skims, which is
@@ -91,6 +92,7 @@ collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
+    pfCandidate =  cms.InputTag  ('packedPFCandidates','',''),
 )
 copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 
