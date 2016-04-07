@@ -1,4 +1,6 @@
 import FWCore.ParameterSet.Config as cms
+import OSUT3Analysis.DBTools.osusub_cfg as osusub
+from OSUT3Analysis.Configuration.configurationOptions import *
 
 def copyConfiguration (dst, src):
     for parameter in src:
@@ -48,6 +50,7 @@ collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     rho              =  cms.InputTag  ("fixedGridRhoFastjetAll",         "",                            ""),
     beamSpot         =  cms.InputTag  ("offlineBeamSpot",                "",                            ""),
     vertices         =  cms.InputTag  ('offlineSlimmedPrimaryVertices',  ''),
+    pfCandidate      =  cms.InputTag  ('packedPFCandidates','',''),
 
     # the following tag is not used by the OSUElectronProducer, but is needed
     # so that the reco::GsfElectronCore collection is saved in skims, which is
@@ -91,6 +94,7 @@ collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
+    pfCandidate =  cms.InputTag  ('packedPFCandidates','',''),
 )
 copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 
@@ -124,7 +128,27 @@ copyConfiguration (collectionProducer.taus, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------
 
 collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
+    fiducialMaps = cms.PSet (
+        electrons = cms.PSet (
+            histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_data.root"),
+            beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+            afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+            thresholdForVeto = cms.double (2.0), # in sigma
+            outputHotSpots = cms.bool (False),
+        ),
+        muons = cms.PSet (
+            histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_data.root"),
+            beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+            afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+            thresholdForVeto = cms.double (2.0), # in sigma
+            outputHotSpots = cms.bool (False),
+        ),
+    ),
+    minDeltaRForFiducialTrack = cms.double (0.05),
 )
+if osusub.batchMode and types[osusub.datasetLabel] == "data":
+    collectionProducer.fiducialMaps.electrons.histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_data.root")
+    collectionProducer.fiducialMaps.muons.histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_data.root")
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------

@@ -9,6 +9,7 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   cfg_ (cfg),
   beamSpot_       (cfg.getParameter<edm::InputTag> ("beamSpot")),
   conversions_    (cfg.getParameter<edm::InputTag> ("conversions")),
+  pfCandidate_    (cfg.getParameter<edm::InputTag> ("pfCandidate")),
   rho_            (cfg.getParameter<edm::InputTag> ("rho")),
   vertices_            (cfg.getParameter<edm::InputTag> ("vertices"))
 {
@@ -19,6 +20,7 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   beamSpotToken_ = consumes<TYPE(beamspots)> (beamSpot_);
   conversionsToken_ = consumes<vector<reco::Conversion> > (conversions_);
+  pfCandidateToken_ = consumes<vector<pat::PackedCandidate>>(pfCandidate_);
   rhoToken_ = consumes<double> (rho_);
   verticesToken_ = consumes<vector<TYPE(primaryvertexs)> > (vertices_);
 }
@@ -34,6 +36,8 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   using namespace edm;
   using namespace reco;
   
+  Handle<vector<pat::PackedCandidate>> cands; 
+  event.getByToken(pfCandidateToken_, cands);
   edm::Handle<vector<TYPE (electrons)> > collection;
   edm::Handle<TYPE(beamspots)> beamSpot;
   edm::Handle<vector<reco::Conversion> > conversions;
@@ -53,6 +57,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       if(event.getByToken (beamSpotToken_, beamSpot) && event.getByToken (conversionsToken_, conversions) && event.getByToken (verticesToken_, vertices) && vertices->size ())
         electron.set_passesTightID_noIsolation (*beamSpot, vertices->at (0), conversions);
       electron.set_missingInnerHits(object.gsfTrack()->hitPattern ().numberOfHits(reco::HitPattern::MISSING_INNER_HITS));
+      
       float effectiveArea = 0;
       // electron effective areas from https://indico.cern.ch/event/369239/contribution/4/attachments/1134761/1623262/talk_effective_areas_25ns.pdf
       // (see slide 12)
@@ -71,10 +76,64 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       if(abs(object.superCluster()->eta()) >= 2.4000 && abs(object.superCluster()->eta()) < 5.0000)
         effectiveArea = 0.2687;
       electron.set_AEff(effectiveArea);
-      
+      double pfdRhoIsoCorr = 0;
+      double chargedHadronPt = 0;
+      double puPt = 0;
+      int electronPVIndex = 0;
+      if(cands.isValid())
+        { 
+          for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+            {
+              if (!(abs(cand->pdgId()) == 11 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.001))
+                continue;  
+              else
+                {
+                  electronPVIndex = cand->vertexRef().index(); 
+                  break;
+                }
+            }
+          if(electronPVIndex == 0)
+            {
+              for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+                {
+                  if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.3)
+                    { 
+                      pat::PackedCandidate thatPFCandidate = (*cand); 
+                      int ivtx = cand->vertexRef().index();	
+                      if(ivtx == electronPVIndex || ivtx == -1)
+                        { 
+                          if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001 && cand->fromPV() >= 2)
+                            chargedHadronPt = cand->pt() + chargedHadronPt;
+                        }
+                      else if(cand->pt() >= 0.5 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.01)
+                        puPt = cand->pt() + puPt;
+                    }
+                }
+          pfdRhoIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationVariables().sumNeutralHadronEt + object.pfIsolationVariables().sumPhotonEt - double(effectiveArea *(float)(*rho))))/object.pt();  
+            } 
+          else
+            {
+              for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+                {
+                  if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.3)
+                    { 
+                      pat::PackedCandidate thatPFCandidate = (*cand); 
+                      int ivtx = cand->vertexRef().index();	
+                      if(ivtx == electronPVIndex || ivtx == -1)
+                        { 
+                          if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001)
+                            chargedHadronPt = cand->pt() + chargedHadronPt;
+                        }
+                      else if(cand->pt() >= 0.5 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.01)
+                        puPt = cand->pt() + puPt;
+                    }
+                }
+          pfdRhoIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationVariables().sumNeutralHadronEt + object.pfIsolationVariables().sumPhotonEt - double(effectiveArea *(float)(*rho))))/object.pt();  
+            } 
+       }
+      electron.set_pfdRhoIsoCorr(pfdRhoIsoCorr); 
       pl_->push_back (electron);
     }
-
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 #else

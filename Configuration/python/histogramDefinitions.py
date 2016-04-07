@@ -124,10 +124,22 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("isTightMuonWRTVtx"),
         ),
         cms.PSet (
-            name = cms.string("muonDbetaIsolation"),
-            title = cms.string("Muon Isolation; muon #Delta#beta Isolation"),
+            name = cms.string("muonPFdBetaIsolation"),
+            title = cms.string("Muon PF-based #Delta#beta Isolation; muon PF-based #Delta#beta Isolation"),
             binsX = cms.untracked.vdouble(600, 0, 6.0),
             inputVariables = cms.vstring("(pfIsolationR04_.sumChargedHadronPt + max(0.0,pfIsolationR04_.sumNeutralHadronEt + pfIsolationR04_.sumPhotonEt - 0.5*pfIsolationR04_.sumPUPt))/pt"),
+        ),
+        cms.PSet (
+            name = cms.string("muonPFdBetaIsolationCorr"),
+            title = cms.string("Muon PF-based #Delta#beta Isolation Corrected; muon PF-based #Delta#beta Isolation Corrected"),
+            binsX = cms.untracked.vdouble(600, 0, 6.0),
+            inputVariables = cms.vstring("pfdBetaIsoCorr"),
+        ),
+        cms.PSet (
+            name = cms.string("muonPFdBetaIsolationDiff"),
+            title = cms.string("Muon PF-based #Delta#beta Isolation Discrepancy; muon PF-based Iso_{default} - Iso_{customized}"),
+            binsX = cms.untracked.vdouble(2000, -1, 1),
+            inputVariables = cms.vstring("(pfIsolationR04_.sumChargedHadronPt + max(0.0,pfIsolationR04_.sumNeutralHadronEt + pfIsolationR04_.sumPhotonEt - 0.5*pfIsolationR04_.sumPUPt))/pt - pfdBetaIsoCorr"),
         ),
     )
 )
@@ -160,13 +172,6 @@ MuonIPHistograms = cms.PSet(
             title = cms.string("Muon |d_{0}/#sigma(d_{0})| wrt Beamspot; |d_{0}/#sigma(d_{0})|"),
             binsX = cms.untracked.vdouble(100, 0.0, 20),
             inputVariables = cms.vstring("abs(((-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt)/hypot(muon.innerTrack.d0Error, hypot(beamspot.x0Error, beamspot.y0Error)))"),
-        ),
-        cms.PSet (
-            name = cms.string("muonAbsD0BeamspotVsMuonAbsD0SigBeamspot"),
-            title = cms.string("Muon |d_{0}| wrt Beamspot vs. Muon |d_{0}/#sigma(d_{0})| wrt Beamspot; muon |d_{0}/#sigma(d_{0})| [cm]; muon |d_{0}| [cm]"),
-            binsX = cms.untracked.vdouble(100, 0, 20),
-            binsY = cms.untracked.vdouble(100, 0, 0.2),
-            inputVariables = cms.vstring("abs(((-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt)/hypot(muon.innerTrack.d0Error, hypot(beamspot.x0Error, beamspot.y0Error)))","abs((-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt)"),
         ),
         cms.PSet (
             name = cms.string("muonDz"),
@@ -357,10 +362,22 @@ ElectronHistograms = cms.PSet(
 #            inputVariables = cms.vstring("gsfTrack.numberOfValidHits"),
 #        ),
         cms.PSet (
-            name = cms.string("electronPFrhoIso"),
+            name = cms.string("electronPFrhoIsolation"),
             title = cms.string("Electron PF-based #rho-corrected Isolation; electron rel. iso."),
             binsX = cms.untracked.vdouble(300, 0, 3),
             inputVariables = cms.vstring("(pfIso_.sumChargedHadronPt + max(0.0,pfIso_.sumNeutralHadronEt + pfIso_.sumPhotonEt - rho*AEff))/pt"),
+        ),
+        cms.PSet (
+            name = cms.string("electronPFrhoIsolationCorr"),
+            title = cms.string("Electron PF-based #rho-corrected Isolation Corrected; electron #rho-corrected Isolation Corrected"),
+            binsX = cms.untracked.vdouble(300, 0, 3.0),
+            inputVariables = cms.vstring("pfdRhoIsoCorr"),
+        ),
+        cms.PSet (
+            name = cms.string("electronPFrhoIsolationDiff"),
+            title = cms.string("Electron PF-based #rho-corrected Isolation Discrepancy; electron PF-based Iso_{default} - Iso_{customized}"),
+            binsX = cms.untracked.vdouble(2000, -1, 1),
+            inputVariables = cms.vstring("(pfIso_.sumChargedHadronPt + max(0.0,pfIso_.sumNeutralHadronEt + pfIso_.sumPhotonEt - rho*AEff))/pt - pfdRhoIsoCorr"),
         ),
 #        cms.PSet (
 #            name = cms.string("electronFbrem"),
