@@ -3,8 +3,6 @@
 
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 
-#if IS_VALID(tracks)
-
 struct EtaPhi
 {
   double eta;
@@ -26,6 +24,8 @@ struct EtaPhiList : public vector<EtaPhi>
   {
   }
 };
+
+#if IS_VALID(tracks)
 
 namespace osu
 {
