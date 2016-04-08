@@ -425,11 +425,10 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     datasetRead['useAAA'] = UseAAA
     runList = []
     datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
-    AAAFileList = Directory + '/AAAFileList.txt'
     SkimExists = RunOverSkim and os.path.isdir (Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel)
     if UseAAA:
         if FileType == 'OSUT3Ntuple' or FileType == 'Dataset':
-            AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
+            AcquireAwesomeAAA(Dataset, datasetInfoName, 'AAAFileList.txt', datasetRead, crossSection)
     if FileType == 'UserDir':
         isInCondorDir = False
         SubmissionDir = os.getcwd()
@@ -523,7 +522,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists:
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')
             InitializeAAA = "y"
-            AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
+            AcquireAwesomeAAA(Dataset, datasetInfoName, 'AAAFileList.txt', datasetRead, crossSection)
             datasetRead['useAAA'] = True
             #else:
             #    return
