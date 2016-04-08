@@ -212,10 +212,10 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         weights                 =  channels.weights
         scalingfactorproducers  =  channels.scalingfactorproducers
         standAloneAnalyzers     =  channels.standAloneAnalyzers
-        channels                =  channels.channels
         histogramSets           =  channels.histogramSets
         collections             =  channels.collections
         skim                    =  channels.skim
+        channels                =  channels.channels
 
     ############################################################################
     # Check the directory of the first input file for SkimInputTags.pkl. If it
