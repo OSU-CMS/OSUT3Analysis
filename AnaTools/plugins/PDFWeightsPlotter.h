@@ -12,14 +12,15 @@
 class PDFWeightsPlotter : public edm::EDAnalyzer
   {
     public:
+        PDFWeightsPlotter (const edm::ParameterSet &);
         void analyze (const edm::Event &, const edm::EventSetup &);;
 	~PDFWeightsPlotter ();
-        PDFWeightsPlotter (const edm::ParameterSet &);
         edm::Service<TFileService> fs_;
+
     private:
         string type_;             
-        edm::InputTag lheProduct_; 
-        edm::InputTag genInfoProduct_;
+	edm::EDGetTokenT<GenEventInfoProduct> genInfoProductToken_;
+	edm::EDGetTokenT<LHEEventProduct> lheProductToken_;
         uint numPDFWeights_;
         uint pdfWeightsOffset_; 
         bool firstEvent_; 
