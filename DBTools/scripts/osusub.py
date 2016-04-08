@@ -8,6 +8,8 @@ import time
 from time import gmtime, strftime
 import copy
 import glob
+import tempfile
+import shutil
 from math import *
 from array import *
 from optparse import OptionParser
@@ -51,6 +53,7 @@ parser.add_option("-x", "--crossSection", dest="crossSection", default = "", hel
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")
 parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc")
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")
+parser.add_option("-H", "--skimToHadoop", dest="skimToHadoop", default = "", help="If producing a skim, put in on Hadoop, in the given directory.")
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")
 parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  # See https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/65
@@ -116,9 +119,10 @@ def getLatestJsonFile():
         print "Argument for -J is wrong, it needs to be in a format similar to \"R_Silver\""
         sys.exit()
     if arguments.JSONType.split('_')[0] == "P":
-        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O jsonList.txt')
-        os.system('grep "Cert" jsonList.txt > CertList.txt')
-        Tmp = open('CertList.txt','r+w')
+        tmpDir = tempfile.mkdtemp ()
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O ' + tmpDir + '/jsonList.txt')
+        os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
+        Tmp = open(tmpDir + '/CertList.txt','r+w')
         jsonFileList = []
         for line in Tmp:
             startIndex = 0
@@ -130,6 +134,7 @@ def getLatestJsonFile():
                   endIndex = i + 3
             if startIndex <= endIndex:
                 jsonFileList.append(line[startIndex: endIndex])
+        Tmp.close ()
         jsonFileFiltered = []
         for fileName in jsonFileList:
             nameSplit = fileName.split('_')
@@ -170,14 +175,15 @@ def getLatestJsonFile():
                     if currentVersionNumber > versionNumber:
                         versionNumber = currentVersionNumber
                         ultimateJson = bestJson
-        os.system('rm CertList.txt')
-        os.system('rm jsonList.txt')
-        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/' + ultimateJson + ' -O ' + ultimateJson)
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
+        shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
+        shutil.rmtree (tmpDir)
         return ultimateJson
     if arguments.JSONType.split('_')[0] == "R":
-        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/ -O jsonList.txt')
-        os.system('grep "Cert" jsonList.txt > CertList.txt')
-        Tmp = open('CertList.txt','r+w')
+        tmpDir = tempfile.mkdtemp ()
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/ -O ' + tmpDir + '/jsonList.txt')
+        os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
+        Tmp = open(tmpDir + '/CertList.txt','r+w')
         jsonFileList = []
         for line in Tmp:
             startIndex = 0
@@ -189,6 +195,7 @@ def getLatestJsonFile():
                   endIndex = i + 3
             if startIndex <= endIndex:
                 jsonFileList.append(line[startIndex: endIndex])
+        Tmp.close ()
         jsonFileFiltered = []
         for fileName in jsonFileList:
             nameSplit = fileName.split('_')
@@ -203,9 +210,9 @@ def getLatestJsonFile():
               print "Warning!!!!!!!!!!!Could not find wanted JSON file"
               print "#######################################################"
         ultimateJson = jsonFileFiltered[-1]
-        os.system('rm CertList.txt')
-        os.system('rm jsonList.txt')
-        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/' + ultimateJson + ' -O ' + ultimateJson)
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
+        shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
+        shutil.rmtree (tmpDir)
         return ultimateJson
 
 
@@ -244,9 +251,8 @@ def GetListOfRootFiles(Directory):
 
 
 #It generates the condor.sub file for each dataset.
-def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA, jsonFile):
-    os.system('touch ' + Directory + '/condor.sub')
-    SubmitFile = open(Directory + '/condor.sub','r+w')
+def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseAAA, jsonFile):
+    SubmitFile = open(Directory + '/condor.sub','w')
     cmsRunExecutable = os.popen('which cmsRun').read()
     SubmitFile.write("# Command line arguments: \n# " + GetCommandLineString() + " \n\n\n")
     for argument in sorted(currentCondorSubArgumentsSet):
@@ -269,6 +275,13 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA, jsonFil
                     SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy.strip('\n') + ',' + str(jsonFile) + '\n')
             else:
                 SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py\n')
+        elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Output_files') and currentCondorSubArgumentsSet[argument]['Transfer_Output_files'] == "":
+            SubmitFile.write ('Transfer_Output_files = hist_$(Process).root,')
+            for i in range (0, len (SkimChannelNames)):
+                SubmitFile.write (SkimChannelNames[i])
+                if i < len (SkimChannelNames) - 1:
+                    SubmitFile.write (',')
+            SubmitFile.write ('\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
             SubmitFile.write('Requirements = ' + arguments.Requirements + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Queue'):
@@ -278,9 +291,8 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, UseAAA, jsonFil
     SubmitFile.close()
 
 #It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.
-def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
-    os.system('touch ' + Directory + '/config_cfg.py')
-    ConfigFile = open(Directory + '/config_cfg.py','r+w')
+def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelNames,jsonFile):
+    ConfigFile = open(Directory + '/config_cfg.py','w')
     sys.path.append(Directory)
     exec('import userConfig_' + Label + '_cfg' + ' as temPset')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')
@@ -300,21 +312,28 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
             SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory)
             for channelName in SkimChannelNames:
                 if not channelName == '':
-                    if not os.path.exists(Directory + '/' + channelName):
-                        os.system('mkdir ' + Directory + '/' + channelName )
-                    StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory + '/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
+                    if not SkimDirectory and not os.path.exists(Directory + '/' + channelName):
+                        os.mkdir (Directory + '/' + channelName)
+                    elif SkimDirectory:
+                        if not os.path.exists(SkimDirectory + '/' + channelName):
+                            os.mkdir (SkimDirectory + '/' + channelName)
+                        if not os.path.exists(Directory + '/' + channelName):
+                            os.symlink (SkimDirectory + '/' + channelName, Directory + '/' + channelName)
+                    StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
                     ConfigFile.write(StringToAdd)
         else:
             for channelName in SkimChannelNames:
                 if not channelName == '':
-                    if not os.path.exists(Directory + '/' + channelName):
-                        os.system('mkdir ' + Directory + '/' + channelName )
-                    StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + Directory + '/' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
+                    if not SkimDirectory and not os.path.exists(Directory + '/' + channelName):
+                        os.mkdir (Directory + '/' + channelName)
+                    elif SkimDirectory:
+                        if not os.path.exists(SkimDirectory + '/' + channelName):
+                            os.mkdir (SkimDirectory + '/' + channelName)
+                        if not os.path.exists(Directory + '/' + channelName):
+                            os.symlink (SkimDirectory + '/' + channelName, Directory + '/' + channelName)
+                    StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
                     ConfigFile.write(StringToAdd)
-    ConfigFile.write('fileName = pset.' + arguments.FileName + '\n')
-    ConfigFile.write('fileName = fileName.pythonValue ()\n')
-    ConfigFile.write('fileName = fileName[1:(len (fileName) - 1)]\n')
-    ConfigFile.write('fileName = re.sub (r\'^(.*)\.([^\.]*)$\', r\'\\1_\' + str (osusub.jobNumber) + r\'.\\2\', fileName)\n')
+    ConfigFile.write('fileName = \'hist_\' + str (osusub.jobNumber) + \'.root\'\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
     if (not arguments.Generic) or (arguments.Generic and arguments.localConfig):
       if types[Label] == "data":
@@ -369,9 +388,11 @@ def MakeSpecificConfig(Dataset, Directory, Label, SkimChannelNames,jsonFile):
 
 #This is a generic function to get the dataset information via das_client.py.
 def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
-    os.system('das_client.py --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + AAAFileList)
-    inputFileList = open(AAAFileList, "r")
+    tmpDir = tempfile.mkdtemp ()
+    os.system('das_client.py --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + tmpDir + "/" + AAAFileList)
+    inputFileList = open(tmpDir + "/" + AAAFileList, "r")
     inputFiles = inputFileList.read().split('\n')
+    inputFileList.close ()
     for f in reversed(range(len(inputFiles))):
         if not ".root" in inputFiles[f]:
             del inputFiles[f]
@@ -395,6 +416,8 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
     fnew.write(text)
     fnew.close()
 
+    shutil.rmtree (tmpDir)
+
 #It is the function which generates the list of input files for a given dataset type.
 def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     numberOfFiles = -1
@@ -403,10 +426,8 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     runList = []
     datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
     AAAFileList = Directory + '/AAAFileList.txt'
-    os.system('touch ' + datasetInfoName)
     SkimExists = RunOverSkim and os.path.isdir (Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel)
     if UseAAA:
-        os.system('touch ' + AAAFileList)
         if FileType == 'OSUT3Ntuple' or FileType == 'Dataset':
             AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
     if FileType == 'UserDir':
@@ -456,6 +477,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         #Get the list of the files to datasetInfo_cfg.py and modify it to have the standard format.
         inputFileList = open(Dataset, "r")
         inputFiles = inputFileList.read().split('\n')
+        inputFileList.close ()
         for f in reversed(range(len(inputFiles))):
             if not ".root" in inputFiles[f]:
                 del inputFiles[f]
@@ -501,7 +523,6 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists:
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')
             InitializeAAA = "y"
-            os.system('touch ' + AAAFileList)
             AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection)
             datasetRead['useAAA'] = True
             #else:
@@ -515,7 +536,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 return datasetRead
             SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/'
             #Copy the datasetInfo file from the skim directory.
-            os.system('cp ' + SkimDirectory + 'datasetInfo_' + Label + '_cfg.py ' + datasetInfoName)
+            shutil.copy (SkimDirectory + 'datasetInfo_' + Label + '_cfg.py', datasetInfoName)
             #Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
             SkimModifier(Label, Directory, crossSection)
 
@@ -536,9 +557,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     return  datasetRead
 
 def MakeBatchJobFile(WorkDir, Queue, NumberOfJobs):
-    os.system('touch ' + currentDir + '/' + WorkDir + '/lxbatchSub.sh')
-    os.system('touch ' + currentDir + '/' + WorkDir + '/lxbatchRun.sh')
-    LxBatchSubFile = open(currentDir + WorkDir + '/lxbatchSub.sh','r+w')
+    LxBatchSubFile = open(currentDir + WorkDir + '/lxbatchSub.sh','w')
     LxBatchSubFile.write('#!/bin/sh \n')
     LxBatchSubFile.write('for i in {1..' + NumberOfJobs + '} \n')
     LxBatchSubFile.write('do \n')
@@ -546,14 +565,14 @@ def MakeBatchJobFile(WorkDir, Queue, NumberOfJobs):
     LxBatchSubFile.write('done \n')
     LxBatchSubFile.write('echo \"Finished submitting ' + NumberOfJobs + ' jobs.\" \n')
     LxBatchSubFile.close()
-    LxBatchRunFile = open(currentDir + WorkDir + '/lxbatchRun.sh','r+w')
+    LxBatchRunFile = open(currentDir + WorkDir + '/lxbatchRun.sh','w')
     LxBatchRunFile.write('#!/bin/sh \n')
     LxBatchRunFile.write('cd ' + currentDir + '/' + WorkDir + '\n')
     LxBatchRunFile.write('eval `scram runtime -sh` \n')
     LxBatchRunFile.write('cmsRun config_cfg.py True ' + NumberOfJobs + ' \$1 NULL NULL \n')
     LxBatchRunFile.close()
-    os.system('chmod +x ' + currentDir + '/' + WorkDir + '/lxbatchRun.sh' )
-    os.system('chmod +x ' + currentDir + '/' + WorkDir + '/lxbatchSub.sh' )
+    os.chmod (currentDir + '/' + WorkDir + '/lxbatchRun.sh', 0755)
+    os.chmod (currentDir + '/' + WorkDir + '/lxbatchSub.sh', 0755)
 
 ###############################################################################
 #        Function to find all the skim channels from the userConfig.          #
@@ -617,16 +636,25 @@ def SkimModifier(Label, Directory, crossSection):
 CondorDir = ''
 Condor = os.getcwd() + '/condor/'
 if not os.path.exists(Condor):
-    print "The directory ", Condor, "does not exist.  Aborting."
+    print "The directory ", Condor, " does not exist.  Aborting."
     sys.exit()
 if arguments.condorDir == "":
     print "No working directory is given, aborting."
     sys.exit()
 else:
     CondorDir = Condor + arguments.condorDir
+
+HadoopDir = ''
+if arguments.skimToHadoop:
+    if not os.path.exists(arguments.skimToHadoop):
+        print "The directory ", arguments.skimToHadoop, " does not exist.  Aborting."
+        sys.exit()
+    else:
+        HadoopDir = arguments.skimToHadoop + arguments.condorDir
+
 #Check whether the directory specified already exists and warn the user if so.
 if not os.path.exists(CondorDir):
-    os.system('mkdir ' + CondorDir)
+    os.mkdir (CondorDir)
 else:
     if arguments.FileType == "OSUT3Ntuple":
         # Ok to proceed, since the working directory will be "CondorDir/dataset"
@@ -635,6 +663,12 @@ else:
         # Do not proceed because the working directory is CondorDir, and we do not want to overwrite existing files.
         print "Directory", CondorDir, " already exists.  Please remove it before proceeding."
         sys.exit()
+
+if not os.path.exists(HadoopDir):
+    os.mkdir (HadoopDir)
+else:
+    print 'Directory "' + str(HadoopDir) + '" already exists in your condor directory. Will proceed with job submission.'
+
 RunOverSkim = False
 if arguments.SkimDirectory != "" and arguments.SkimChannel != "":
     RunOverSkim = True
@@ -727,20 +761,33 @@ if not arguments.Resubmit:
                 else:
                     print str(dataset) + ' has not been registered on T3. Will try to find it on DAS.'
                 WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
+                SkimDir = HadoopDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']]) if HadoopDir else ''
                 if os.path.exists(WorkDir):
                     print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'
                     continue
                 else:
-                    os.system('mkdir ' + WorkDir )
+                    os.mkdir (WorkDir)
+                if os.path.exists(SkimDir):
+                    print 'Directory "' + str(SkimDir) + '" already exists.  Please remove it and resubmit.'
+                    continue
+                else:
+                    os.mkdir (SkimDir)
             elif arguments.FileType == 'UserList':
                 WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
+                SkimDir = HadoopDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']]) if HadoopDir else ''
                 if os.path.exists(WorkDir):
                     print 'Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.'
                     continue
                 else:
-                    os.system('mkdir ' + WorkDir )
+                    os.mkdir (WorkDir)
+                if os.path.exists(SkimDir):
+                    print 'Directory "' + str(SkimDir) + '" already exists.  Please remove it and resubmit.'
+                    continue
+                else:
+                    os.mkdir (SkimDir)
             else:
                 WorkDir = CondorDir
+                SkimDir = HadoopDir
             dataset = SpecialStringModifier(dataset, ['/','.'], [['-','_']])
             crossSection = -1
             if crossSections.has_key(dataset):
@@ -765,19 +812,19 @@ if not arguments.Resubmit:
 
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
-            os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
+            shutil.copy (Config, WorkDir + '/' + userConfig)
             jsonFile = ''
             if arguments.localConfig:
                 if(types[dataset] == 'data'):
                     jsonFile = getLatestJsonFile()
-                    os.system('mv ' + jsonFile + ' ' + WorkDir + '/')
-            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,dataset, SkimChannelNames, jsonFile)
+                    shutil.move (jsonFile, WorkDir + "/" + jsonFile)
+            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,SkimDir,dataset, SkimChannelNames, jsonFile)
 
 
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
             else:
-                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, UseAAA, jsonFile)
+                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseAAA, jsonFile)
             if not arguments.NotToExecute:
                 os.chdir(WorkDir)
                 if RealMaxEvents > 0 :
@@ -809,17 +856,18 @@ if not arguments.Resubmit:
         Config =  arguments.Config
         SubmissionDir = os.getcwd()
         WorkDir = CondorDir
+        SkimDir = HadoopDir
         if arguments.localConfig:
             GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
         userConfig = 'userConfig_' + Label + '_cfg.py'
-        os.system('cp ' + Config + ' ' + WorkDir + '/' + userConfig)
+        shutil.copy (Config, WorkDir + "/" + userConfig)
 
-        MakeSpecificConfig('',WorkDir,Label, SkimChannelNames,'')
+        MakeSpecificConfig('',WorkDir,SkimDir,Label, SkimChannelNames,'')
 
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
         else:
-            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, UseAAA,'')
+            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseAAA,'')
         if not arguments.NotToExecute:
             os.chdir(WorkDir)
             print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'

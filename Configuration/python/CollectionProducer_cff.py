@@ -145,6 +145,9 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
         ),
     ),
     minDeltaRForFiducialTrack = cms.double (0.05),
+    EBRecHits          =  cms.InputTag  ("reducedEcalRecHitsEB"),
+    EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),
+    HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),                                     
 )
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
     collectionProducer.tracks.fiducialMaps.electrons.histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_data.root")
