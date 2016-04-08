@@ -643,15 +643,6 @@ if arguments.condorDir == "":
     sys.exit()
 else:
     CondorDir = Condor + arguments.condorDir
-
-HadoopDir = ''
-if arguments.skimToHadoop:
-    if not os.path.exists(arguments.skimToHadoop):
-        print "The directory ", arguments.skimToHadoop, " does not exist.  Aborting."
-        sys.exit()
-    else:
-        HadoopDir = arguments.skimToHadoop + arguments.condorDir
-
 #Check whether the directory specified already exists and warn the user if so.
 if not os.path.exists(CondorDir):
     os.mkdir (CondorDir)
@@ -664,10 +655,17 @@ else:
         print "Directory", CondorDir, " already exists.  Please remove it before proceeding."
         sys.exit()
 
-if not os.path.exists(HadoopDir):
-    os.mkdir (HadoopDir)
-else:
-    print 'Directory "' + str(HadoopDir) + '" already exists in your condor directory. Will proceed with job submission.'
+HadoopDir = ''
+if arguments.skimToHadoop:
+    if not os.path.exists(arguments.skimToHadoop):
+        print "The directory ", arguments.skimToHadoop, " does not exist.  Aborting."
+        sys.exit()
+    else:
+        HadoopDir = arguments.skimToHadoop + arguments.condorDir
+    if not os.path.exists(HadoopDir):
+        os.mkdir (HadoopDir)
+    else:
+        print 'Directory "' + str(HadoopDir) + '" already exists in your condor directory. Will proceed with job submission.'
 
 RunOverSkim = False
 if arguments.SkimDirectory != "" and arguments.SkimChannel != "":
@@ -767,11 +765,12 @@ if not arguments.Resubmit:
                     continue
                 else:
                     os.mkdir (WorkDir)
-                if os.path.exists(SkimDir):
-                    print 'Directory "' + str(SkimDir) + '" already exists.  Please remove it and resubmit.'
-                    continue
-                else:
-                    os.mkdir (SkimDir)
+                if SkimDir:
+                    if os.path.exists(SkimDir):
+                        print 'Directory "' + str(SkimDir) + '" already exists.  Please remove it and resubmit.'
+                        continue
+                    else:
+                        os.mkdir (SkimDir)
             elif arguments.FileType == 'UserList':
                 WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
                 SkimDir = HadoopDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']]) if HadoopDir else ''
@@ -780,11 +779,12 @@ if not arguments.Resubmit:
                     continue
                 else:
                     os.mkdir (WorkDir)
-                if os.path.exists(SkimDir):
-                    print 'Directory "' + str(SkimDir) + '" already exists.  Please remove it and resubmit.'
-                    continue
-                else:
-                    os.mkdir (SkimDir)
+                if SkimDir:
+                    if os.path.exists(SkimDir):
+                        print 'Directory "' + str(SkimDir) + '" already exists.  Please remove it and resubmit.'
+                        continue
+                    else:
+                        os.mkdir (SkimDir)
             else:
                 WorkDir = CondorDir
                 SkimDir = HadoopDir
