@@ -38,7 +38,7 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   dRMinJet_ (999),
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
   isFiducialElectronTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_)),
-  isFiducialMuonTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_))
+  isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_))
 {
 }
 
