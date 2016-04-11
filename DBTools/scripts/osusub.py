@@ -261,26 +261,24 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         elif currentCondorSubArgumentsSet[argument].has_key('Arguments') and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
             SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
-            SubmitFile.write('should_transfer_files   = YES\n')
-            if Dataset == '':
-                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label + '_cfg.py\n')
-            elif UseAAA:
+            FilesToTransfer = 'config_cfg.py,userConfig_' + Label + '_cfg.py'
+            if Dataset != '':
+                FilesToTransfer += ',datasetInfo_' + Label + '_cfg.py'
+            if UseAAA:
                 userName = getpass.getuser()
-                userId = os.popen('id -u ' + userName).read()
+                userId = os.popen('id -u ' + userName).read().rstrip('\n')
                 userProxy = '/tmp/x509up_u' + str(userId)
+                FilesToTransfer += ',' + userProxy
+            if jsonFile != '':
+                FilesToTransfer += ',' + jsonFile
+            SubmitFile.write('should_transfer_files   = YES\n')
+            SubmitFile.write('Transfer_Input_files = ' + FilesToTransfer + '\n')
+            if UseAAA:
                 SubmitFile.write('x509userproxy = ' + userProxy + '\n')
-                if jsonFile == '':
-                    SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy + '\n')
-                else:
-                    SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py,' + userProxy.strip('\n') + ',' + str(jsonFile) + '\n')
-            else:
-                SubmitFile.write('Transfer_Input_files = config_cfg.py,userConfig_' + Label +'_cfg.py,datasetInfo_' + Label + '_cfg.py\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Output_files') and currentCondorSubArgumentsSet[argument]['Transfer_Output_files'] == "":
-            SubmitFile.write ('Transfer_Output_files = hist_$(Process).root,')
+            SubmitFile.write ('Transfer_Output_files = hist_$(Process).root')
             for i in range (0, len (SkimChannelNames)):
-                SubmitFile.write (SkimChannelNames[i])
-                if i < len (SkimChannelNames) - 1:
-                    SubmitFile.write (',')
+                SubmitFile.write (',' + SkimChannelNames[i])
             SubmitFile.write ('\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
             SubmitFile.write('Requirements = ' + arguments.Requirements + '\n')
