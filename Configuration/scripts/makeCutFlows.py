@@ -251,8 +251,8 @@ class CFCell(object):
         quot = CFCell()
         quot.val = self.val / other.val if other.val  else float('nan')
         # Find error on quotient with standard error propagation
-        relErrNum =  self.val /  self.err if  self.err else float('nan')
-        relErrDen = other.val / other.err if other.err else float('nan')  
+        relErrNum =  self.err /  self.val if  self.val else float('nan')
+        relErrDen = other.err / other.val if other.val else float('nan')  
         quot.err = quot.val * math.sqrt(pow(relErrNum, 2) + pow(relErrDen, 2))  
         return quot
     def getStr(self):
@@ -441,7 +441,9 @@ def addExtraColumn(table, option):
         elif option is "diff":
             newcell = data - bkgd
         elif option is "ratio":
-            newcell = (data - bkgd) / bkgd 
+            # Define:  ratio = (data - bkgd) / bkgd = (data / bkgd) - 1.0 
+            newcell = data / bkgd
+            newcell.val -= 1.0 
         elif option is "signif":
             x  =  sig.val
             y  = bkgd.val
