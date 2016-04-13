@@ -164,8 +164,12 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber):
         if os.path.isfile(os.path.join(Directory, Member)):
             continue;
         os.system('mkdir -p ' + DirectoryOut + '/' + Member)
-        os.system('echo ' + str(TotalNumber)        + ' > ' +DirectoryOut + '/' + Member + '/OriginalNumberOfEvents.txt')
-        os.system('echo ' + str(SkimNumber[Member]) + ' > ' +DirectoryOut + '/' + Member + '/SkimNumberOfEvents.txt')
+        outfile = os.path.join(DirectoryOut, Member, 'OriginalNumberOfEvents.txt')
+        os.remove(outfile)
+        os.system('echo ' + str(TotalNumber) + ' > ' + outfile) 
+        outfile = os.path.join(DirectoryOut, Member, 'SkimNumberOfEvents.txt')
+        os.remove(outfile)
+        os.system('echo ' + str(SkimNumber[Member]) + ' > ' + outfile) 
         os.chdir(Directory + '/' + Member)
         listOfSkimFiles = os.popen('ls *.root').readlines()
         sys.path.append(Directory + '/' + Member)
@@ -263,6 +267,7 @@ os.system('mkdir -p ' + OutputDir)
 #Check whether the necessary arguments or the local config are given correctly#
 ###############################################################################
 split_datasets = []
+composite_datasets = []  
 IntLumi = 0.0
 if arguments.localConfig:
     sys.path.append(os.getcwd())
@@ -270,6 +275,9 @@ if arguments.localConfig:
     composite_datasets = get_composite_datasets(datasets, composite_dataset_definitions)
     split_datasets = split_composite_datasets(datasets, composite_dataset_definitions)
     IntLumi = intLumi    
+    if arguments.Dataset: 
+        print "ERROR:  The -d and -l options cannot be used simultaneously." 
+        exit(0)  
 
 if not arguments.localConfig:
     if arguments.Dataset == "":
