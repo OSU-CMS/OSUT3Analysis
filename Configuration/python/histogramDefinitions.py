@@ -53,7 +53,7 @@ MuonHistograms = cms.PSet(
             name = cms.string("muonEtaPt"),
             title = cms.string("Muon Eta vs. Pt; muon p_{T} [GeV]; muon #eta"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            binsY = cms.untracked.vdouble(2.5, 0, 25),
+            binsY = cms.untracked.vdouble(25, 0, 2.5),
             inputVariables = cms.vstring("pt","eta"),
         ),
         cms.PSet (
@@ -284,7 +284,7 @@ ElectronHistograms = cms.PSet(
             name = cms.string("electronEtaPt"),
             title = cms.string("Electron Eta vs. Pt; electron p_{T} [GeV]; electron #eta"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            binsY = cms.untracked.vdouble(2.5, 0, 25),
+            binsY = cms.untracked.vdouble(25, 0, 2.5),
             inputVariables = cms.vstring("pt","eta"),
         ),
         cms.PSet (
