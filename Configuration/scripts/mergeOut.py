@@ -48,7 +48,7 @@ def MakeSubmissionScriptForMerging(Directory):
         print "No local configuration file is provided! Submission quited!"
         sys.exit()
     else:
-	os.system('touch ' + Directory + '/condorMerging.sub')
+        os.system('touch ' + Directory + '/condorMerging.sub')
         SubmitFile = open(Directory + '/condorMerging.sub','w')
     for argument in sorted(currentCondorSubArgumentsSet):
         if currentCondorSubArgumentsSet[argument].has_key('Executable') and currentCondorSubArgumentsSet[argument]['Executable'] == "":
@@ -165,10 +165,12 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber):
             continue;
         os.system('mkdir -p ' + DirectoryOut + '/' + Member)
         outfile = os.path.join(DirectoryOut, Member, 'OriginalNumberOfEvents.txt')
-        os.remove(outfile)
+        if os.path.exists(outfile):
+            os.remove(outfile)
         os.system('echo ' + str(TotalNumber) + ' > ' + outfile) 
         outfile = os.path.join(DirectoryOut, Member, 'SkimNumberOfEvents.txt')
-        os.remove(outfile)
+        if os.path.exists(outfile):
+            os.remove(outfile)
         os.system('echo ' + str(SkimNumber[Member]) + ' > ' + outfile) 
         os.chdir(Directory + '/' + Member)
         listOfSkimFiles = os.popen('ls *.root').readlines()
@@ -213,7 +215,8 @@ def GetSkimInputTags(File):
         else:
             inputTags[collectionType] = inputTags.pop (cppTypes[i])
 
-    os.remove("SkimInputTags.pkl") 
+    if os.path.exists("SkimInputTags.pkl"): 
+        os.remove("SkimInputTags.pkl") 
     fout = open ("SkimInputTags.pkl", "w")
     pickle.dump (inputTags, fout)
     fout.close ()
