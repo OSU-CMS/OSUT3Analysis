@@ -26,30 +26,50 @@ OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
   jetsToken_ = consumes<vector<TYPE(jets)> > (collections_.getParameter<edm::InputTag> ("jets"));
 
   const edm::ParameterSet &fiducialMaps = cfg.getParameter<edm::ParameterSet> ("fiducialMaps");
-  const edm::ParameterSet &electronFiducialMap = fiducialMaps.getParameter<edm::ParameterSet> ("electrons");
-  const edm::ParameterSet &muonFiducialMap = fiducialMaps.getParameter<edm::ParameterSet> ("muons");
-  const bool &outputElectronHotSpots = electronFiducialMap.getParameter<bool> ("outputHotSpots");
-  const bool &outputMuonHotSpots = muonFiducialMap.getParameter<bool> ("outputHotSpots");
-  EBRecHitsTag_    = cfg.getParameter<edm::InputTag> ("EBRecHits");
-  EERecHitsTag_    = cfg.getParameter<edm::InputTag> ("EERecHits"); 
-  HBHERecHitsTag_  = cfg.getParameter<edm::InputTag> ("HBHERecHits"); 
+  const vector<edm::ParameterSet> &electronFiducialMaps = fiducialMaps.getParameter<vector<edm::ParameterSet> > ("electrons");
+  const vector<edm::ParameterSet> &muonFiducialMaps = fiducialMaps.getParameter<vector<edm::ParameterSet> > ("muons");
 
-  EBRecHitsToken_       =  consumes<EBRecHitCollection>         (EBRecHitsTag_);  
-  EERecHitsToken_       =  consumes<EERecHitCollection>         (EERecHitsTag_);  
-  HBHERecHitsToken_     =  consumes<HBHERecHitCollection>       (HBHERecHitsTag_);  
+  EBRecHitsTag_    =  cfg.getParameter<edm::InputTag>  ("EBRecHits");
+  EERecHitsTag_    =  cfg.getParameter<edm::InputTag>  ("EERecHits");
+  HBHERecHitsTag_  =  cfg.getParameter<edm::InputTag>  ("HBHERecHits");
 
+  EBRecHitsToken_    =  consumes<EBRecHitCollection>    (EBRecHitsTag_);
+  EERecHitsToken_    =  consumes<EERecHitCollection>    (EERecHitsTag_);
+  HBHERecHitsToken_  =  consumes<HBHERecHitCollection>  (HBHERecHitsTag_);
 
-  outputElectronHotSpots && clog << "================================================================================" << endl;
-  outputElectronHotSpots && clog << "calculating electron veto regions in (eta, phi)..." << endl;
-  outputElectronHotSpots && clog << "--------------------------------------------------------------------------------" << endl;
-  extractFiducialMap (electronFiducialMap, electronVetoList_);
-  outputElectronHotSpots && clog << "================================================================================" << endl;
+  bool outputElectronHotSpots = false;
+  for (const auto &electronFiducialMap : electronFiducialMaps)
+    {
+      const bool &outputHotSpots = electronFiducialMap.getParameter<bool> ("outputHotSpots");
+      const edm::FileInPath &histFile = electronFiducialMap.getParameter<edm::FileInPath> ("histFile");
+      outputElectronHotSpots = outputElectronHotSpots || outputHotSpots;
 
-  outputMuonHotSpots && clog << "================================================================================" << endl;
-  outputMuonHotSpots && clog << "calculating muon veto regions in (eta, phi)..." << endl;
-  outputMuonHotSpots && clog << "--------------------------------------------------------------------------------" << endl;
-  extractFiducialMap (muonFiducialMap, muonVetoList_);
-  outputMuonHotSpots && clog << "================================================================================" << endl;
+      outputHotSpots && clog << "================================================================================" << endl;
+      outputHotSpots && clog << "calculating electron veto regions in (eta, phi)..." << endl;
+      outputHotSpots && clog << "extracting histograms from \"" << histFile.relativePath () << "\"..." << endl;
+      outputHotSpots && clog << "--------------------------------------------------------------------------------" << endl;
+
+      extractFiducialMap (electronFiducialMap, electronVetoList_);
+
+      outputHotSpots && clog << "================================================================================" << endl;
+    }
+
+  bool outputMuonHotSpots = false;
+  for (const auto &muonFiducialMap : muonFiducialMaps)
+    {
+      const bool &outputHotSpots = muonFiducialMap.getParameter<bool> ("outputHotSpots");
+      const edm::FileInPath &histFile = muonFiducialMap.getParameter<edm::FileInPath> ("histFile");
+      outputMuonHotSpots = outputMuonHotSpots || outputHotSpots;
+
+      outputHotSpots && clog << "================================================================================" << endl;
+      outputHotSpots && clog << "calculating muon veto regions in (eta, phi)..." << endl;
+      outputHotSpots && clog << "extracting histograms from \"" << histFile.relativePath () << "\"..." << endl;
+      outputHotSpots && clog << "--------------------------------------------------------------------------------" << endl;
+
+      extractFiducialMap (muonFiducialMap, muonVetoList_);
+
+      outputHotSpots && clog << "================================================================================" << endl;
+    }
 
   sort (electronVetoList_.begin (), electronVetoList_.end (), [] (EtaPhi a, EtaPhi b) -> bool { return (a.eta < b.eta && a.phi < b.phi); });
   sort (muonVetoList_.begin (), muonVetoList_.end (), [] (EtaPhi a, EtaPhi b) -> bool { return (a.eta < b.eta && a.phi < b.phi); });
@@ -204,8 +224,8 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
     {
       for (int j = 1; j <= beforeVetoHist->GetYaxis ()->GetNbins (); j++)
         {
-          if (i == 1 && j == 1)
-            vetoList.minDeltaR = hypot (0.5 * beforeVetoHist->GetXaxis ()->GetBinWidth (i), 0.5 * beforeVetoHist->GetYaxis ()->GetBinWidth (j));
+          double binRadius = hypot (0.5 * beforeVetoHist->GetXaxis ()->GetBinWidth (i), 0.5 * beforeVetoHist->GetYaxis ()->GetBinWidth (j));
+          (vetoList.minDeltaR < binRadius) && (vetoList.minDeltaR = binRadius);
 
           double contentBeforeVeto = beforeVetoHist->GetBinContent (i, j),
                  errorBeforeVeto = beforeVetoHist->GetBinError (i, j);
