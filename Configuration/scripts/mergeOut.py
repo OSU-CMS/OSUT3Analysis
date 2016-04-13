@@ -213,9 +213,11 @@ def GetSkimInputTags(File):
         else:
             inputTags[collectionType] = inputTags.pop (cppTypes[i])
 
+    os.remove("SkimInputTags.pkl") 
     fout = open ("SkimInputTags.pkl", "w")
     pickle.dump (inputTags, fout)
     fout.close ()
+
 ###############################################################################
 #                 Make submission script for the failed jobs.                 #
 ###############################################################################
