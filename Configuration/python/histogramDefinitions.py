@@ -1261,7 +1261,7 @@ TrackHistograms = cms.PSet(
         ),
         cms.PSet (
             name = cms.string("trackEtaVsPhi"),
-            title = cms.string("#eta vs #phi; #eta; #phi"),
+            title = cms.string("#eta vs #phi;track #eta;track #phi"),
             binsX = cms.untracked.vdouble(60, -3, 3),
             binsY = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("eta", "phi"),
