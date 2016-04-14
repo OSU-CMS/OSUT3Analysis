@@ -22,6 +22,10 @@ def removeCuts(cutVPset, cutsToRemove):
             if cutVPset[i].cutString == cut.cutString:
                 del cutVPset[i]
 
+def printCuts(cutVPset):  # For debugging 
+    for i in xrange(len(cutVPset)): 
+        print cutVPset[i].cutString
+        
 
 ##################################################
 ## Variable string definitions   
