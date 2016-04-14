@@ -299,6 +299,8 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
             process.TFileService.fileName = cms.string(outputName)
             if os.path.islink (add_channels.originalName):
                 os.unlink (add_channels.originalName)
+            if os.path.exists (add_channels.originalName):
+                os.remove (add_channels.originalName)                
             os.symlink (outputName, add_channels.originalName)
     ############################################################################
 
