@@ -192,11 +192,9 @@ dir_y_top    = ts_y_bottom
 ##########################################################################################################################################
 ##########################################################################################################################################
 
-def getSystematicError(sample,channel):
+def getSystematicError(sample):
     errorSquared = 0.0
     if types[sample] is "data":
-        return 0.0
-    if len(channel) is 0:
         return 0.0
 
     # add uncertainty on normalization method
@@ -228,15 +226,10 @@ def getSystematicError(sample,channel):
 
     # add sample-specific uncertainties from text files
     for uncertainty in external_systematic_uncertainties:
-        input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
+        input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
         if not os.path.exists(input_file_path):
-            #print "WARNING: didn't find ",input_file_path
-            input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
-            if not os.path.exists(input_file_path):
-                print "   skipping",uncertainty,"systematic for the",channel,"channel"
-                return 0
-            #else:
-            #    print "   using default",uncertainty,"systematic for the",channel,"channel"
+            print "   skipping",uncertainty,"systematic for the",channel,"channel"
+            return 0
 
         input_file = open(input_file_path)
         for line in input_file:
@@ -321,7 +314,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax = 0.10):
             ratio.SetBinContent(i+1,groupR(g))
             ratio.SetBinError(i+1,groupErr(g))
 
-    ratio.GetYaxis().SetTitle("#frac{data-bkgd}{bkgd}")
+    ratio.GetYaxis().SetTitle("#frac{obs-exp}{exp}")
     ratio.GetYaxis().SetLabelSize(0.3)
     ratio.SetLineColor(1)
     ratio.SetLineWidth(2)
@@ -792,7 +785,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 BgMCHistYieldsDic[-1*numBgMCSamples] = Histogram
                 
             if includeSystematics:
-                BgMCUncertainties.append(getSystematicError(sample,channel))
+                BgMCUncertainties.append(getSystematicError(sample))
 
         elif( types[sample] == "signalMC"):
 
@@ -1167,7 +1160,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Comparison = DataHistograms[0].Clone("diff")
             Comparison.Add(BgSum,-1)
             Comparison.SetTitle("")
-            Comparison.GetYaxis().SetTitle("data-bkgd")
+            Comparison.GetYaxis().SetTitle("obs-exp")
         elif makeSignifPlots:
             Comparisons = signifHistograms(BgSum,SignalMCHistograms)
             Comparison = Comparisons[0]
