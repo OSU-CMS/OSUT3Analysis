@@ -225,7 +225,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
     if osusub.batchMode:
       fileName = osusub.runList[0]
     if fileName.find ("file:") == 0:
-        fileName = fileName[5:]
+        fileName = fileName[5:]    
     skimDirectory = os.path.dirname (os.path.realpath (fileName))
     if os.path.isfile (skimDirectory + "/SkimInputTags.pkl"):
         fin = open (skimDirectory + "/SkimInputTags.pkl")
@@ -233,6 +233,14 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         fin.close ()
         for tag in inputTags:
             setattr (collections, tag, inputTags[tag])
+    else:
+        rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
+        if rootFile.find("skim_") == 0:
+            print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found."
+            print "Input file is", fileName 
+            print "Be sure that you have run mergeOut.py."
+            exit(0)  
+
     ############################################################################
 
     ############################################################################
