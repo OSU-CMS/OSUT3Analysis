@@ -108,7 +108,7 @@ else:
 
 if arguments.UseCondor:
     print "After all condor merging jobs have finished, rerun mergeOut.py with the -C option to merge composite datasets."  
-else if not arguments.compositeOnly:
+elif not arguments.compositeOnly:
     print "Next time, consider using the -c option to send the merging jobs to the condor queue."  
 print "Finished mergeOut.py."  
 
