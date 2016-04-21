@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import py_compile
-import imp 
+import imp
 import sys
 import os
 import re
@@ -18,7 +18,7 @@ from ROOT import TFile
 ###############################################################################
 #                     Make the submission script for condor.                  #
 ###############################################################################
-def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, split_datasets):  
+def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, split_datasets):
     os.system('touch ' + Directory + '/condorMerging.sub')
     SubmitFile = open(Directory + '/condorMerging.sub','w')
     for argument in sorted(currentCondorSubArgumentsSet):
@@ -31,9 +31,9 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
              for dataset in split_datasets:
                  oneDataset = './' + dataset + '/datasetInfo_' + dataset +'_cfg.py'
                  if os.path.exists(os.path.join(Directory, oneDataset)):
-                     datasetInfoString = datasetInfoString + oneDataset + ","                 
+                     datasetInfoString = datasetInfoString + oneDataset + ","
                  else:
-                     print "ERROR: ", os.path.join(Directory, oneDataset), "does not exist.  Will proceed to merge other datasets."  
+                     print "ERROR: ", os.path.join(Directory, oneDataset), "does not exist.  Will proceed to merge other datasets."
              SubmitFile.write('Transfer_Input_files = merge.py,' + datasetInfoString + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Queue'):
             SubmitFile.write('Queue ' + str(len(split_datasets)) +'\n')
@@ -48,15 +48,15 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLu
     os.system('touch ' + Directory + '/merge.py')
     MergeScript = open(Directory + '/merge.py','w')
     MergeScript.write('#!/usr/bin/env python\n')
-    MergeScript.write('from OSUT3Analysis.Configuration.mergeUtilities import *\n')  
+    MergeScript.write('from OSUT3Analysis.Configuration.mergeUtilities import *\n')
     MergeScript.write('datasets = [\n')
     for dataset in split_datasets:
         MergeScript.write("'" + dataset + "',\n")
     MergeScript.write(']\n')
     MergeScript.write('Index = int(sys.argv[1])\n\n')
     MergeScript.write('dataset = datasets[Index]\n\n')
-    MergeScript.write('IntLumi = ' + str(IntLumi) + '\n')   
-    MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd())  \n')  
+    MergeScript.write('IntLumi = ' + str(IntLumi) + '\n')
+    MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd())  \n')
     MergeScript.write("print 'Finished merging dataset ' + dataset  \n")
     MergeScript.close()
     os.system('chmod 777 ' + Directory + '/merge.py')
@@ -66,11 +66,11 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLu
 ###############################################################################
 def MessageDecoder(Message, Good):
     Pattern = r'condor_(.*).log.*value (.*)\)'
-    Decoded = re.match(Pattern,Message)    
+    Decoded = re.match(Pattern,Message)
     report = ""
     if not Good:
         report = "Warning!!! Job " + Decoded.group(1) +" has non ZERO exit code: " + Decoded.group(2) + "\n"
-    return (report, Decoded.group(1)) 
+    return (report, Decoded.group(1))
 ###############################################################################
 #  Get the string of good root files and the corresponding string of weights  #
 ###############################################################################
@@ -96,12 +96,12 @@ def GetNumberOfEvents(FilesSet):
     NumberOfEvents = {'SkimNumber' : {}, 'TotalNumber' : 0}
     for File in FilesSet:
         ScoutFile = TFile(File)
-        if ScoutFile.IsZombie(): 
+        if ScoutFile.IsZombie():
             print File + " is a bad root file."
             FilesSet.remove(File)
             continue
         randomChannelDirectory = ""
-	TotalNumberTmp = 0 
+	TotalNumberTmp = 0
         for key in ScoutFile.GetListOfKeys():
             if key.GetClassName() != "TDirectoryFile" or "CutFlow" not in key.GetName():
                 continue
@@ -111,7 +111,7 @@ def GetNumberOfEvents(FilesSet):
 		NumberOfEvents['SkimNumber'][channelName] = 0
             OriginalCounterObj = ScoutFile.Get(randomChannelDirectory + "/eventCounter")
             SkimCounterObj = ScoutFile.Get(randomChannelDirectory + "/cutFlow")
-	    TotalNumberTmp = 0 
+	    TotalNumberTmp = 0
             if not OriginalCounterObj:
 	        print "Could not find eventCounter histogram in " + str(File) + " !"
 	        continue
@@ -120,11 +120,11 @@ def GetNumberOfEvents(FilesSet):
             else:
 	        OriginalCounter = OriginalCounterObj.Clone()
                 OriginalCounter.SetDirectory(0)
-                TotalNumberTmp = TotalNumberTmp + OriginalCounter.GetBinContent(1) 
+                TotalNumberTmp = TotalNumberTmp + OriginalCounter.GetBinContent(1)
 	        SkimCounter = SkimCounterObj.Clone()
                 SkimCounter.SetDirectory(0)
                 NumberOfEvents['SkimNumber'][channelName] = NumberOfEvents['SkimNumber'][channelName] + SkimCounter.GetBinContent(SkimCounter.GetXaxis().GetNbins())
-        NumberOfEvents['TotalNumber'] = NumberOfEvents['TotalNumber'] + TotalNumberTmp 
+        NumberOfEvents['TotalNumber'] = NumberOfEvents['TotalNumber'] + TotalNumberTmp
     return NumberOfEvents
 ###############################################################################
 #                 Produce important files for the skim directory.             #
@@ -137,11 +137,11 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber):
         outfile = os.path.join(DirectoryOut, Member, 'OriginalNumberOfEvents.txt')
         if os.path.exists(outfile):
             os.remove(outfile)
-        os.system('echo ' + str(TotalNumber) + ' > ' + outfile) 
+        os.system('echo ' + str(TotalNumber) + ' > ' + outfile)
         outfile = os.path.join(DirectoryOut, Member, 'SkimNumberOfEvents.txt')
         if os.path.exists(outfile):
             os.remove(outfile)
-        os.system('echo ' + str(SkimNumber[Member]) + ' > ' + outfile) 
+        os.system('echo ' + str(SkimNumber[Member]) + ' > ' + outfile)
         os.chdir(Directory + '/' + Member)
         listOfSkimFiles = glob.glob('*.root')
         sys.path.append(Directory + '/' + Member)
@@ -164,7 +164,7 @@ def GetSkimInputTags(File):
     inputTags = {}
     # First get all of the collections in the output skim file.
     for line in eventContent.splitlines ():
-        if line.find ("----------") == 0:  # all of the collections will be after a line containing "---------" 
+        if line.find ("----------") == 0:  # all of the collections will be after a line containing "---------"
             parsing = True
             continue
         if not parsing:
@@ -184,8 +184,8 @@ def GetSkimInputTags(File):
         else:
             inputTags[collectionType] = inputTags.pop (cppTypes[i])
 
-    if os.path.exists("SkimInputTags.pkl"): 
-        os.remove("SkimInputTags.pkl") 
+    if os.path.exists("SkimInputTags.pkl"):
+        os.remove("SkimInputTags.pkl")
     fout = open ("SkimInputTags.pkl", "w")
     pickle.dump (inputTags, fout)
     fout.close ()
@@ -195,16 +195,16 @@ def GetSkimInputTags(File):
 ###############################################################################
 def MakeResubmissionScript(badIndices, originalSubmissionScript):
     os.system('touch condor_resubmit.sub')
-    resubScript = open('condor_resubmit.sub','w') 
+    resubScript = open('condor_resubmit.sub','w')
     originalScript = open(originalSubmissionScript,'r')
     indexDependence = []
 
     for line in originalScript:
         if '$(Process)' not in line and 'Queue' not in line:
-            resubScript.write(line) 
+            resubScript.write(line)
         elif '$(Process)' in line:
             indexDependence.append(line)
-            resubScript.write(line.replace('$(Process)',str(badIndices[0])))      
+            resubScript.write(line.replace('$(Process)',str(badIndices[0])))
         else:
             resubScript.write('Queue 1\n\n')
 
@@ -231,18 +231,18 @@ def SkimFileValidator(File):
 ###############################################################################
 #                       Main function to do merging work.                     #
 ###############################################################################
-def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):  
+def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     os.chdir(CondorDir)
     directory = CondorDir + '/' + dataSet
     if not os.path.exists(directory):
         print directory + " does not exist, will skip it and continue!"
-        return 
+        return
     if not OutputDir:
-        OutputDir = CondorDir 
-    directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory 
-    os.system("mkdir -p " + directoryOut)  
-    flogName = directoryOut + '/mergeOut.log' 
-    flog = open (flogName, "w")  
+        OutputDir = CondorDir
+    directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory
+    os.system("mkdir -p " + directoryOut)
+    flogName = directoryOut + '/mergeOut.log'
+    flog = open (flogName, "w")
     log = "....................Merging dataset " + dataSet + " ....................\n"
     os.chdir(directory)
     if verbose:
@@ -259,7 +259,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
     GoodIndices = []
     GoodRootFiles = []
-    BadIndices = []   
+    BadIndices = []
     sys.path.append(directory)
     for i in range(0,len(ReturnValues)):
         if "return value 0" in ReturnValues[i]:
@@ -268,14 +268,14 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         elif "return value" in ReturnValues[i]:
             log += ReturnValues[i] + "\n"
             (report, BadIndex) = MessageDecoder(ReturnValues[i], False)
-            log += report  
+            log += report
             BadIndices.append(BadIndex)
         else:
             log += ReturnValues[i] + "\n"
             Pattern = r'condor_(.*).log'
             Decoded = re.match(Pattern,ReturnValues[i])
             BadIndex = Decoded.group(1)
-            log += "Warning!!! Job " + str(BadIndex) + " exited inproperly!\n" 
+            log += "Warning!!! Job " + str(BadIndex) + " exited inproperly!\n"
             BadIndices.append(BadIndex)
     if os.path.exists('condor_resubmit.sub'):
         os.remove('condor_resubmit.sub')
@@ -285,17 +285,17 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         GoodRootFiles.append(GetGoodRootFiles(GoodIndices[i]))
     if not len(GoodRootFiles):
         print "For dataset", dataSet, ": Unfortunately there are no good root files to merge!\n"
-        return 
+        return
     InputFileString = MakeInputFileString(GoodRootFiles)
     exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
 
     TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
     SkimNumber = GetNumberOfEvents(GoodRootFiles)['SkimNumber']
     if verbose:
-        print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber  
+        print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber
     if not TotalNumber:
         MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
-        return 
+        return
     Weight = 1.0
     crossSection = float(datasetInfo.crossSection)
     runOverSkim = True
@@ -307,7 +307,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         if runOverSkim:
             Weight = IntLumi*crossSection*float(datasetInfo.skimNumberOfEvents)/(float(datasetInfo.originalNumberOfEvents)*float(TotalNumber))
             # The factor TotalNumber / skimNumberOfEvents corresponds to the fraction of skim events that were actually processed,
-            # i.e., it accounts for the fact that perhaps not all of the jobs finished successfully.  
+            # i.e., it accounts for the fact that perhaps not all of the jobs finished successfully.
         else:
             Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
@@ -315,22 +315,21 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber)
     else:
         MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
-    cmd = 'mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString 
-    if verbose:  
-        print "Executing: ", cmd 
-    os.system(cmd) 
+    cmd = 'mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString
+    if verbose:
+        print "Executing: ", cmd
+    os.system(cmd)
     log += "\nFinished merging dataset " + dataSet + ":\n"
     log += "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs.\n"
     log += "    "+ str(TotalNumber) + " events were successfully run over.\n"
     log += "    The target luminosity is " + str(IntLumi) + " inverse pb.\n"
     if crossSection != -1:
         log += "    The crossSection of dataset " + dataSet + " is " + str(crossSection) + " pb.\n"
-    log += "    The weighting factor is " + str(Weight) + ".\n" 
+    log += "    The weighting factor is " + str(Weight) + ".\n"
     if crossSection != -1:
-        log += "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(IntLumi/Weight) + " inverse pb.\n" 
+        log += "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(IntLumi/Weight) + " inverse pb.\n"
     log += "...............................................................\n"
-    os.chdir(CondorDir) 
+    os.chdir(CondorDir)
     flog.write(log)
-    flog.close()  
-    os.system("cat " + flogName) 
-
+    flog.close()
+    os.system("cat " + flogName)
