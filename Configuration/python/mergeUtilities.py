@@ -29,7 +29,11 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
              datasetInfoString = ''
              for dataset in split_datasets:
-                 datasetInfoString = datasetInfoString + './' + dataset + '/datasetInfo_' + dataset +'_cfg.py,'
+                 oneDataset = './' + dataset + '/datasetInfo_' + dataset +'_cfg.py'
+                 if os.path.exists(os.path.join(Directory, oneDataset)):
+                     datasetInfoString = datasetInfoString + oneDataset + ","                 
+                 else:
+                     print "ERROR: ", os.path.join(Directory, oneDataset), "does not exist.  Will proceed to merge other datasets."  
              SubmitFile.write('Transfer_Input_files = merge.py,' + datasetInfoString + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Queue'):
             SubmitFile.write('Queue ' + str(len(split_datasets)) +'\n')
