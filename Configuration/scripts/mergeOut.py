@@ -87,10 +87,10 @@ if arguments.UseCondor:
     MakeSubmissionScriptForMerging(CondorDir, currentCondorSubArgumentsSet, split_datasets) 
     MakeMergingConfigForCondor(CondorDir, OutputDir, split_datasets, IntLumi)
     os.chdir(CondorDir)
-    if not arguments.NotToExecute:
-        os.system('condor_submit condorMerging.sub')
-    else:
+    if arguments.NotToExecute:
         print 'Configuration files created in ' + str(CondorDir) + ' directory but no jobs submitted.\n'
+    else:
+        os.system('condor_submit condorMerging.sub')  
 else:
     os.chdir(CondorDir)
     for dataSet_component in composite_datasets:
