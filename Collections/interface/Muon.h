@@ -21,6 +21,10 @@ namespace osu
         void set_isTightMuonWRTVtx(const bool isTightMuon);
         void set_pfdBetaIsoCorr (double value) { pfdBetaIsoCorr_  = value; }  
 
+        const int missingInnerHits () const;
+        const int missingMiddleHits () const;
+        const int missingOuterHits () const;
+
       private:
         bool isTightMuonWRTVtx_;
         double pfdBetaIsoCorr_;
