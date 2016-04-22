@@ -262,11 +262,12 @@ composite_dataset_definitions = {
         'NoBPTX_2015D_v4',
     ],
    'StpPtls_controlSample_2015' : [
-        'Commissioning2015_controlSample',
+        #'Commissioning2015_controlSample',
         'NoBPTX_2015B_controlSample',
         'NoBPTX_2015C_controlSample',
         'NoBPTX_2015Dv3_controlSample',
-        'NoBPTX_2015Dv4_controlSample'
+        'NoBPTX_2015Dv4_controlSample',
+        #'NoBPTX_2015E_controlSample'
         ],
     'DisplacedSUSYSignal' : [
         'stop200_1mm',
@@ -577,7 +578,8 @@ nJobs = {
     'StopToTChi0_1000_728' : 4,
 
     #stopped particles cosmic events
-    'cosmic_preselection' : 300,
+    #'cosmic_preselection' : 300,
+    'cosmic_preselection' : 999,
 
     ###########################################################################
     #RECO not stored on T3
@@ -585,13 +587,16 @@ nJobs = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : 999,
     'NoBPTX_2015D_v4' : 999,
+    #'NoBPTX_2015D_v3' : 30,
+    #'NoBPTX_2015D_v4' : 30,
 
     #control sample data
     'Commissioning2015_controlSample' : 999,
     'NoBPTX_2015B_controlSample' : 999,
     'NoBPTX_2015C_controlSample' : 999,
-    'NoBPTX_2015Dv3_controlSample' : 999,
-    'NoBPTX_2015Dv4_controlSample' : 999,
+    'NoBPTX_2015Dv3_controlSample' : 256,
+    'NoBPTX_2015Dv4_controlSample' : 662,
+    'NoBPTX_2015E_controlSample' : 31,
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 5,
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : 5,
@@ -868,6 +873,7 @@ maxEvents = {
     'NoBPTX_2015C_controlSample' : -1,
     'NoBPTX_2015Dv3_controlSample' : -1,
     'NoBPTX_2015Dv4_controlSample' : -1,
+    'NoBPTX_2015E_controlSample' : -1,
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : -1,
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : -1,
@@ -1172,6 +1178,7 @@ types = {
     'NoBPTX_2015C_controlSample' : 'data',
     'NoBPTX_2015Dv3_controlSample' : 'data',
     'NoBPTX_2015Dv4_controlSample' : 'data',
+    'NoBPTX_2015E_controlSample' : 'data',
     'StpPtls_controlSample_2015' : 'data',
     
 
@@ -1474,6 +1481,7 @@ colors = {
     'NoBPTX_2015C_controlSample' : 1,
     'NoBPTX_2015Dv3_controlSample' : 1,
     'NoBPTX_2015Dv4_controlSample' : 1,
+    'NoBPTX_2015E_controlSample' : 1,
     'StpPtls_controlSample_2015' : 1,
 
     #rpc study
@@ -1758,7 +1766,7 @@ labels = {
     'StopToTChi0_1000_728' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 728GeV)",
 
     #stopped particles cosmic MC events
-    'cosmic_preselection' : "Cosmic MC preselection, Frate1p0",
+    'cosmic_preselection' : "Cosmic MC preselection",
 
     ############################################################################
 
@@ -1774,6 +1782,7 @@ labels = {
     'NoBPTX_2015C_controlSample' : "NoBPTX 2015C control sample",
     'NoBPTX_2015Dv3_controlSample': "NoBPTX 2015Dv3 control sample",
     'NoBPTX_2015Dv4_controlSample': "NoBPTX 2015Dv4 control sample",
+    'NoBPTX_2015E_controlSample' : "NoBPTX 2015E control sample",
     'StpPtls_controlSample_2015' : "Data control sample",
 
     #rpc study
