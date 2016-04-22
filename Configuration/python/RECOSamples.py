@@ -58,7 +58,8 @@ dataset_names = {
 ################## SP ntuples stored on T3 ###############
 #################### cosmic sample #######################
 
-    'cosmic_preselection' : "/Cosmics_Preselction/Spring-74x/USER",
+    #'cosmic_preselection' : "/Cosmics_Preselction/Spring-74x/USER",
+    'cosmic_preselection' : "/Cosmics_Preselction_Apr5_16000_final/Spring-74x/USER",
 
 ################## SP ntuples no stored on T3 ############
 ########################## data ##########################
@@ -70,8 +71,11 @@ dataset_names = {
     'Commissioning2015_controlSample' : "/NoBPTX/wji-Commissioning2015-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
     'NoBPTX_2015B_controlSample' : "/NoBPTX/wji-Run2015B-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
     'NoBPTX_2015C_controlSample' : "/NoBPTX/wji-Run2015C-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
-    'NoBPTX_2015Dv3_controlSample'  : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-controlSample_v2_Mar06-0701c8de79205af8bf35872e3253801f/USER",
-    'NoBPTX_2015Dv4_controlSample'  : "/NoBPTX/wji-Run2015D-PromptReco-v4_SP-controlSample_v2_Mar06-0701c8de79205af8bf35872e3253801f/USER",
+    #'NoBPTX_2015Dv3_controlSample'  : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-controlSample_v2_Mar06-0701c8de79205af8bf35872e3253801f/USER",
+    'NoBPTX_2015Dv3_controlSample'  : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-controlSample_Apr11-0701c8de79205af8bf35872e3253801f/USER",
+    #'NoBPTX_2015Dv4_controlSample'  : "/NoBPTX/wji-Run2015D-PromptReco-v4_SP-controlSample_v2_Mar06-0701c8de79205af8bf35872e3253801f/USER",
+    'NoBPTX_2015Dv4_controlSample'  : "/NoBPTX/wji-Run2015D-PromptReco-v4_SP-controlSample_Apr11-0701c8de79205af8bf35872e3253801f/USER",
+    'NoBPTX_2015E_controlSample' : "/NoBPTX/wji-Run2015E-PromptReco-v1_SP-controlSample_Apr12-85d9858dc105eadee9c3c06455e2c80a/USER",
 ################## SP ntuples to study rpc hits##################
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p4/USER",
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p6/USER",
