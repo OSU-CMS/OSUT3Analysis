@@ -15,8 +15,6 @@ CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
   module_label_ (cfg.getParameter<std::string>("@module_label")),
   firstEvent_ (true)
 {
-  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
-
   //////////////////////////////////////////////////////////////////////////////
   // Create a directory for this channel and book the cut flow histograms
   // within.
@@ -27,6 +25,10 @@ CutFlowPlotter::CutFlowPlotter (const edm::ParameterSet &cfg) :
   oneDHists_["selection"]     =  fs_->make<TH1D>  ("selection",     ";;passing events",  1,  0.0,  1.0);
   //  oneDHists_["minusOne"]      =  fs_->make<TH1D>  ("minusOne",      ";;passing events",  1,  0.0,  1.0);
   //////////////////////////////////////////////////////////////////////////////
+
+  cutDecisionsToken_ = consumes<CutCalculatorPayload> (cutDecisions_);
+  if (collections_.exists ("generatorweights"))
+    generatorweightsToken_ = consumes<TYPE(generatorweights)> (collections_.getParameter<edm::InputTag> ("generatorweights"));
 }
 
 CutFlowPlotter::~CutFlowPlotter ()
@@ -73,6 +75,16 @@ CutFlowPlotter::~CutFlowPlotter ()
          << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
       //         << setw (15) << setprecision(3) << 100.0 * (minusOne  / (double) totalEvents) << "%"
          << endl;
+    // if (name == "trigger") {  // This code does not yet work reliably.  
+    //   for (uint j=0; j<cutDecisions->triggers.size(); j++) {
+    // 	clog << "  " << cutDecisions->triggers.at(j); 
+    // 	if (j< cutDecisions->triggers.size() - 1) clog << " OR";  // all but the last one
+    // 	clog << endl;  
+    //   }
+    //   for (uint j=0; j<cutDecisions->triggersToVeto.size(); j++) {
+    // 	clog << "  AND NOT " << cutDecisions->triggersToVeto.at(j) << endl;
+    //   }
+    // }
   }
   clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
 
@@ -85,9 +97,9 @@ CutFlowPlotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   // Try to retrieve the cut decisions from the event and print a warning if
   // there is a problem.
   //////////////////////////////////////////////////////////////////////////////
-  event.getByLabel (cutDecisions_, cutDecisions);
+  event.getByToken (cutDecisionsToken_, cutDecisions);
   if (collections_.exists ("generatorweights"))
-    event.getByLabel (collections_.getParameter<edm::InputTag> ("generatorweights"), generatorweights);
+    event.getByToken (generatorweightsToken_, generatorweights);
   if (firstEvent_ && !cutDecisions.isValid ())
     clog << "WARNING: failed to retrieve cut decisions from the event." << endl;
   if (firstEvent_ && !generatorweights.isValid ())

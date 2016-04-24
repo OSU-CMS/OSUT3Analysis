@@ -10,6 +10,8 @@ OSUPrimaryvertexProducer::OSUPrimaryvertexProducer (const edm::ParameterSet &cfg
   collection_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
 
   produces<vector<osu::Primaryvertex> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(primaryvertexs)> > (collection_);
 }
 
 OSUPrimaryvertexProducer::~OSUPrimaryvertexProducer ()
@@ -19,8 +21,8 @@ OSUPrimaryvertexProducer::~OSUPrimaryvertexProducer ()
 void
 OSUPrimaryvertexProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (primaryvertexs)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(primaryvertexs)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::Primaryvertex> > (new vector<osu::Primaryvertex> ());

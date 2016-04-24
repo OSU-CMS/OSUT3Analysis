@@ -21,7 +21,7 @@ void
 OSUDtsegProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (dtsegs)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::Dtseg> > (new vector<osu::Dtseg> ());

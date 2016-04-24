@@ -1,4 +1,6 @@
 import FWCore.ParameterSet.Config as cms
+import OSUT3Analysis.DBTools.osusub_cfg as osusub
+from OSUT3Analysis.Configuration.configurationOptions import *
 
 def copyConfiguration (dst, src):
     for parameter in src:
@@ -59,9 +61,16 @@ collectionProducer.dtsegs = cms.EDProducer ("OSUDtsegProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
-    rho = cms.InputTag  ("fixedGridRhoFastjetAll",    "",                ""),
-    beamSpot = cms.InputTag  ("offlineBeamSpot",           "",                ""),
-    gsfElectronCore = cms.InputTag ("reducedEgamma","reducedGedGsfElectronCores","")
+    conversions      =  cms.InputTag  ("reducedEgamma",                  "reducedConversions",          ""),
+    rho              =  cms.InputTag  ("fixedGridRhoFastjetAll",         "",                            ""),
+    beamSpot         =  cms.InputTag  ("offlineBeamSpot",                "",                            ""),
+    vertices         =  cms.InputTag  ('offlineSlimmedPrimaryVertices',  ''),
+    pfCandidate      =  cms.InputTag  ('packedPFCandidates','',''),
+
+    # the following tag is not used by the OSUElectronProducer, but is needed
+    # so that the reco::GsfElectronCore collection is saved in skims, which is
+    # needed because the pat::Electron collection references it
+    gsfElectronCore  =  cms.InputTag  ("reducedEgamma",                  "reducedGedGsfElectronCores",  ""),
 )
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
@@ -100,6 +109,7 @@ collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
+    pfCandidate =  cms.InputTag  ('packedPFCandidates','',''),
 )
 copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 
@@ -138,6 +148,44 @@ copyConfiguration (collectionProducer.taus, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------
 
 collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
+    fiducialMaps = cms.PSet (
+        electrons = cms.VPSet (
+            cms.PSet (
+                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_data.root"),
+                beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+                afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+                thresholdForVeto = cms.double (2.0), # in sigma
+                outputHotSpots = cms.bool (True),
+            ),
+            cms.PSet (
+                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_mc.root"),
+                beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+                afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+                thresholdForVeto = cms.double (2.0), # in sigma
+                outputHotSpots = cms.bool (True),
+            ),
+        ),
+        muons = cms.VPSet (
+            cms.PSet (
+                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_mc.root"),
+                beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+                afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+                thresholdForVeto = cms.double (2.0), # in sigma
+                outputHotSpots = cms.bool (True),
+            ),
+            cms.PSet (
+                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_data.root"),
+                beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+                afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+                thresholdForVeto = cms.double (2.0), # in sigma
+                outputHotSpots = cms.bool (True),
+            ),
+        )
+    ),
+    minDeltaRForFiducialTrack = cms.double (0.05),
+    EBRecHits          =  cms.InputTag  ("reducedEcalRecHitsEB"),
+    EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),
+    HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),                                     
 )
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 

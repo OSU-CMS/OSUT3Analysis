@@ -20,7 +20,7 @@ void
 OSUCschitProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (cschits)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::Cschit> > (new vector<osu::Cschit> ());

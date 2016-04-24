@@ -6,7 +6,7 @@
 #define  MINI_AOD_CUSTOM  3
 #define  AOD_CUSTOM       4
 
-#define DATA_FORMAT MINI_AOD_CUSTOM
+#define DATA_FORMAT AOD_CUSTOM
 
 #define INVALID_TYPE void *
 
@@ -26,10 +26,10 @@
 
 #elif DATA_FORMAT == MINI_AOD_CUSTOM
 
-  #include "CustomDataFormat.h"  // Define collections in an external header file.  
+  #include "StoppPtls/StandardAnalysis/interface/CustomDataFormat.h"  // Define collections in an external header file.  
 #elif DATA_FORMAT == AOD_CUSTOM
 
-  #include "CustomDataFormat.h"
+  #include "StoppPtls/StandardAnalysis/interface/CustomDataFormat.h"
 
 #else
   #error "Data format is not valid."
@@ -57,16 +57,10 @@
 
 #if ROOT_VERSION_CODE >= ROOT_VERSION(6,0,0)
   #define ROOT6
-  #warning "ROOT 6 is currently barely supported and many features may not work. Proceed at your own risk."
 #elif ROOT_VERSION_CODE >= ROOT_VERSION(5,0,0)
   #define ROOT5
 #else
   #error "Only ROOT 5 and 6 are supported."
-#endif
-
-#define SUPPORTED_VERSION "CMSSW_7_4_5_ROOT5"
-#if !defined(BOOST_NO_CXX11_STATIC_ASSERT)
-  static_assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0, SUPPORTED_VERSION " is the currently supported release. Please switch.");
 #endif
 
 using namespace std;

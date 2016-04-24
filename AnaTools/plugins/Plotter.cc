@@ -24,8 +24,6 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
   firstEvent_ (true)
 
 {
-  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
-
   if (verbose_) clog << "Beginning Plotter::Plotter constructor." << endl;
 
   TH1::SetDefaultSumw2();
@@ -97,6 +95,8 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
     weight.product = 1.0;
     weights.push_back(weight);
   }
+
+  anatools::getAllTokens (collections_, consumesCollector (), tokens_);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ void
 Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
   // get the required collections from the event
-  anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);
+  anatools::getRequiredCollections (objectsToGet_, handles_, event, tokens_);
 
   if (!initializeValueLookupForest (histogramDefinitions, &handles_))
     {
@@ -195,6 +195,7 @@ HistoDef Plotter::parseHistoDef(const edm::ParameterSet &definition, const vecto
   parsedDef.hasVariableBinsY = parsedDef.binsY.size() > 3;
   parsedDef.inputVariables = definition.getParameter<vector<string> >("inputVariables");
   parsedDef.dimensions = parsedDef.inputVariables.size();
+  parsedDef.weight = definition.getUntrackedParameter<bool>("weight", true);
 
   // for 1D histograms, set the appropriate y-axis label
   parsedDef.title = setYaxisLabel(parsedDef);
@@ -330,7 +331,7 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
       weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
     for (vector<Weight>::iterator sf = weights.begin (); sf != weights.end (); sf++)
       weight *= sf->product;
-    histogram->Fill(value, weight);
+    histogram->Fill(value, (definition.weight ? weight : 1.0));
     if (verbose_) clog << "Filled histogram " << definition.name << " with value=" << value << ", weight=" << weight << endl;
 
   }
@@ -393,7 +394,7 @@ void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double
   }
   if (handles_.generatorweights.isValid ())
     weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
-  histogram->Fill(valueX, valueY, weight);
+  histogram->Fill(valueX, valueY, (definition.weight ? weight : 1.0));
   if (verbose_) clog << "Filled histogram " << definition.name << " with valueX=" << valueX << ", valueY=" << valueY << ", weight=" << weight << endl;
 
 }

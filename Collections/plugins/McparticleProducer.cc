@@ -10,6 +10,8 @@ McparticleProducer::McparticleProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("mcparticles");
 
   produces<vector<osu::Mcparticle> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(mcparticles)> > (collection_);
 }
 
 McparticleProducer::~McparticleProducer ()
@@ -19,8 +21,8 @@ McparticleProducer::~McparticleProducer ()
 void
 McparticleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (mcparticles)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(mcparticles)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::Mcparticle> > (new vector<osu::Mcparticle> ());

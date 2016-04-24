@@ -10,12 +10,18 @@
 
 OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  pfCandidate_ (cfg.getParameter<edm::InputTag> ("pfCandidate")),
   cfg_ (cfg)
 {
   collection_         = collections_.getParameter<edm::InputTag> ("muons");
   collPrimaryvertexs_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
 
   produces<vector<osu::Muon> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(muons)> > (collection_);
+  pfCandidateToken_ = consumes<vector<pat::PackedCandidate>>(pfCandidate_);
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
+  primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collPrimaryvertexs_);
 }
 
 OSUMuonProducer::~OSUMuonProducer ()
@@ -25,24 +31,86 @@ OSUMuonProducer::~OSUMuonProducer ()
 void
 OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (muons)> > collection;
+  edm::Handle<vector<pat::PackedCandidate>> cands; 
+  event.getByToken(pfCandidateToken_, cands);
+  edm::Handle<vector<TYPE(muons)> > collection;
   edm::Handle<vector<TYPE(primaryvertexs)> > collPrimaryvertexs;
-  edm::Handle<vector<osu::Primaryvertex> > collOSUPrimaryvertexs;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  if (!event.getByToken (token_, collection))
     return;
-  if (!anatools::getCollection (collPrimaryvertexs_, collPrimaryvertexs, event) && !anatools::getCollection (collPrimaryvertexs_, collOSUPrimaryvertexs, event)) {
+  if (!event.getByToken (primaryvertexToken_, collPrimaryvertexs)) {
     clog << "ERROR [OSUMuonProducer::produce]:  could not get collection: " << collPrimaryvertexs_ << endl;
     return;
   }
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("", ""), particles, event);
+  event.getByToken (mcparticleToken_, particles);
 
   pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     {
       osu::Muon muon (object, particles, cfg_);
-      const reco::Vertex &vtx = collPrimaryvertexs.isValid () ? collPrimaryvertexs->at (0) : collOSUPrimaryvertexs->at (0);
-      muon.set_isTightMuonWRTVtx(muon.isTightMuon(vtx));
+      if (collPrimaryvertexs->size ())
+        {
+          const reco::Vertex &vtx = collPrimaryvertexs->at (0);
+          muon.set_isTightMuonWRTVtx(muon.isTightMuon(vtx));
+        }
+      else
+          muon.set_isTightMuonWRTVtx(false);
+      double pfdBetaIsoCorr = 0;
+      double chargedHadronPt = 0;
+      double puPt = 0;
+      int muonPVIndex = 0;
+      if(cands.isValid())
+        { 
+          for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+            {
+              if (!(abs(cand->pdgId()) == 13 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.001))
+                continue;  
+              else
+                {
+                  muonPVIndex = cand->vertexRef().index(); 
+                  break;
+                }
+            }
+          if(muonPVIndex == 0)
+           { 
+             for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+                {
+                  if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.4)
+                    { 
+                      pat::PackedCandidate thatPFCandidate = (*cand); 
+                      int ivtx = cand->vertexRef().index();	
+                      if(ivtx == muonPVIndex || ivtx == -1)
+                        { 
+                          if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001 && cand->fromPV() >= 2)
+                            chargedHadronPt = cand->pt() + chargedHadronPt;
+                        }
+                      else if(cand->pt() >= 0.5 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.01)
+                        puPt = cand->pt() + puPt;
+                    }
+                }
+             pfdBetaIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationR04().sumNeutralHadronEt + object.pfIsolationR04().sumPhotonEt - 0.5*puPt))/object.pt();
+           }
+          else
+            {
+             for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+               {
+                 if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.4)
+                    {
+                      pat::PackedCandidate thatPFCandidate = (*cand);
+                      int ivtx = cand->vertexRef().index();
+                      if(ivtx == muonPVIndex || ivtx == -1)
+                        {
+                          if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001)
+                            chargedHadronPt = cand->pt() + chargedHadronPt;
+                        }
+                      else if(cand->pt() >= 0.5 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.01)
+                        puPt = cand->pt() + puPt;
+                    }
+                }
+             pfdBetaIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationR04().sumNeutralHadronEt + object.pfIsolationR04().sumPhotonEt - 0.5*puPt))/object.pt();
+            }
+         }
+      muon.set_pfdBetaIsoCorr(pfdBetaIsoCorr); 
       pl_->push_back (muon);
     }
 
@@ -69,7 +137,7 @@ void
 OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (muons)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  if (!event.getByToken (token_, collection))
     return;
   pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)

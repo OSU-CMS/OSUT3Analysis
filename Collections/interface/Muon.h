@@ -17,11 +17,14 @@ namespace osu
         Muon (const TYPE(muons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Muon ();
 
+        const double pfdBetaIsoCorr () const;
         const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }
-        void   set_isTightMuonWRTVtx(const bool isTightMuon);
+        void set_isTightMuonWRTVtx(const bool isTightMuon);
+        void set_pfdBetaIsoCorr (double value) { pfdBetaIsoCorr_  = value; }  
 
       private:
         bool isTightMuonWRTVtx_;
+        double pfdBetaIsoCorr_;
 
     };
 }

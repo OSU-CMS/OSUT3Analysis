@@ -1,5 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 from OSUT3Analysis.Configuration.pdgIdBins import *
+from OSUT3Analysis.Configuration.cutUtilities import *
 
 
 ###############################################
@@ -20,106 +21,125 @@ MuonHistograms = cms.PSet(
         ),
         cms.PSet (
             name = cms.string("muonPt"),
-            title = cms.string("Muon Transverse Momentum; muon p_{T} [GeV]"),
+            title = cms.string("Muon Transverse Momentum;muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
             name = cms.string("muonPt_0"),
-            title = cms.string("Muon Transverse Momentum; muon p_{T} [GeV]"),
+            title = cms.string("Muon Transverse Momentum;muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,500),
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
             name = cms.string("muonPt_1"),
-            title = cms.string("Muon Transverse Momentum; muon p_{T} [GeV]"),
+            title = cms.string("Muon Transverse Momentum;muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(0,5,10,15,20,25,30,40,50,70,90,120,150,200,300,500),
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
             name = cms.string("muonPt_2"),
-            title = cms.string("Muon Transverse Momentum; muon p_{T} [GeV]"),
+            title = cms.string("Muon Transverse Momentum;muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(0,10,20,30,50,90,150,300,500),
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
             name = cms.string("muonEta"),
-            title = cms.string("Muon Eta; muon #eta"),
+            title = cms.string("Muon Eta;muon #eta"),
             binsX = cms.untracked.vdouble(80, -4, 4),
             inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
+            name = cms.string("muonEtaPt"),
+            title = cms.string("Muon Eta vs. Pt;muon p_{T} [GeV];muon #eta"),
+            binsX = cms.untracked.vdouble(100, 0, 500),
+            binsY = cms.untracked.vdouble(25, 0, 2.5),
+            inputVariables = cms.vstring("pt","eta"),
+        ),
+        cms.PSet (
             name = cms.string("muonPhi"),
-            title = cms.string("Muon Phi; muon #phi"),
+            title = cms.string("Muon Phi;muon #phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("phi"),
         ),
         cms.PSet (
             name = cms.string("muonCharge"),
-            title = cms.string("Muon Charge; muon charge"),
+            title = cms.string("Muon Charge;muon charge"),
             binsX = cms.untracked.vdouble(3, -1.5, 1.5),
             inputVariables = cms.vstring("charge"),
         ),
         cms.PSet (
             name = cms.string("muonEtaPhi"),
-            title = cms.string("Muon Eta vs. Phi; muon #phi; muon #eta"),
+            title = cms.string("Muon Eta vs. Phi;muon #phi;muon #eta"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
             binsY = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("phi","eta"),
         ),
         cms.PSet (
             name = cms.string("muonNumberOfValidHits"),
-            title = cms.string("Muon Number of Valid Hits; # Hits"),
+            title = cms.string("Muon Number of Valid Hits;muon number of valid hits"),
             binsX = cms.untracked.vdouble(40, 0, 40),
             inputVariables = cms.vstring("numberOfValidHits"),
         ),
         cms.PSet (
             name = cms.string("muonNormalizedChi2"),
-            title = cms.string("Muon Chi Squared"),
+            title = cms.string("Muon Chi Squared;muon #chi^{2}/ndf"),
             binsX = cms.untracked.vdouble(20, 0, 20),
             inputVariables = cms.vstring("globalTrack.normalizedChi2"),
         ),
         cms.PSet (
             name = cms.string("muonNumberOfMatchedStations"),
-            title = cms.string("Muon Track Number of Matched Stations; # matched stations"),
+            title = cms.string("Muon Track Number of Matched Stations;muon number of matched stations"),
             binsX = cms.untracked.vdouble(10, 0, 10),
             inputVariables = cms.vstring("numberOfMatchedStations"),
         ),
         cms.PSet (
             name = cms.string("muonNumberOfValidPixelHits"),
-            title = cms.string("Muon Number of Valid Pixel Hits;muon numberOfValidPixelHits"),
+            title = cms.string("Muon Number of Valid Pixel Hits;muon number of valid pixel hits"),
             binsX = cms.untracked.vdouble(30, 0, 30),
             inputVariables = cms.vstring("innerTrack.hitPattern_.numberOfValidPixelHits"),
         ),
         cms.PSet (
             name = cms.string("muonTrackerLayersWithMeasurement"),
-            title = cms.string("Muon Number of Tracker Layer with Measurement;muon trackerLayersWithMeasurement"),
+            title = cms.string("Muon Number of Tracker Layer with Measurement;muon tracker layers with measurement"),
             binsX = cms.untracked.vdouble(30, 0, 30),
             inputVariables = cms.vstring("innerTrack.hitPattern_.trackerLayersWithMeasurement"),
             ),
         cms.PSet (
             name = cms.string("muonIsGlobalMuon"),
-            title = cms.string("Muon isGlobalMuon; isGlobalMuon"),
+            title = cms.string("Muon isGlobalMuon;muon is global"),
             binsX = cms.untracked.vdouble(2, 0, 2),
             inputVariables = cms.vstring("isGlobalMuon"),
         ),
         cms.PSet (
             name = cms.string("muonIsPFMuon"),
-            title = cms.string("Muon isPFMuon; isPFMuon"),
+            title = cms.string("Muon isPFMuon;muon is PF"),
             binsX = cms.untracked.vdouble(2, 0, 2),
             inputVariables = cms.vstring("isPFMuon"),
         ),
         cms.PSet (
             name = cms.string("muonIsTightMuonWRTVtx"),
-            title = cms.string("Muon isTightMuon; isTightMuon"),
+            title = cms.string("Muon isTightMuon;muon passes tight ID"),
             binsX = cms.untracked.vdouble(2, 0, 2),
             inputVariables = cms.vstring("isTightMuonWRTVtx"),
         ),
         cms.PSet (
-            name = cms.string("muonDbetaIsolation"),
-            title = cms.string("Muon Isolation; muon #Delta#beta Isolation"),
+            name = cms.string("muonPFdBetaIsolation"),
+            title = cms.string("Muon PF-based #Delta#beta Isolation;muon PF-based #Delta#beta isolation"),
             binsX = cms.untracked.vdouble(600, 0, 6.0),
             inputVariables = cms.vstring("(pfIsolationR04_.sumChargedHadronPt + max(0.0,pfIsolationR04_.sumNeutralHadronEt + pfIsolationR04_.sumPhotonEt - 0.5*pfIsolationR04_.sumPUPt))/pt"),
+        ),
+        cms.PSet (
+            name = cms.string("muonPFdBetaIsolationCorr"),
+            title = cms.string("Muon PF-based #Delta#beta Isolation Corrected; muon PF-based #Delta#beta Isolation Corrected"),
+            binsX = cms.untracked.vdouble(600, 0, 6.0),
+            inputVariables = cms.vstring("pfdBetaIsoCorr"),
+        ),
+        cms.PSet (
+            name = cms.string("muonPFdBetaIsolationDiff"),
+            title = cms.string("Muon PF-based #Delta#beta Isolation Discrepancy; muon PF-based Iso_{default} - Iso_{customized}"),
+            binsX = cms.untracked.vdouble(2000, -1, 1),
+            inputVariables = cms.vstring("(pfIsolationR04_.sumChargedHadronPt + max(0.0,pfIsolationR04_.sumNeutralHadronEt + pfIsolationR04_.sumPhotonEt - 0.5*pfIsolationR04_.sumPUPt))/pt - pfdBetaIsoCorr"),
         ),
     )
 )
@@ -154,13 +174,6 @@ MuonIPHistograms = cms.PSet(
             inputVariables = cms.vstring("abs(((-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt)/hypot(muon.innerTrack.d0Error, hypot(beamspot.x0Error, beamspot.y0Error)))"),
         ),
         cms.PSet (
-            name = cms.string("muonAbsD0BeamspotVsMuonAbsD0SigBeamspot"),
-            title = cms.string("Muon |d_{0}| wrt Beamspot vs. Muon |d_{0}/#sigma(d_{0})| wrt Beamspot; muon |d_{0}/#sigma(d_{0})| [cm]; muon |d_{0}| [cm]"),
-            binsX = cms.untracked.vdouble(100, 0, 20),
-            binsY = cms.untracked.vdouble(100, 0, 0.2),
-            inputVariables = cms.vstring("abs(((-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt)/hypot(muon.innerTrack.d0Error, hypot(beamspot.x0Error, beamspot.y0Error)))","abs((-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt)"),
-        ),
-        cms.PSet (
             name = cms.string("muonDz"),
             title = cms.string("Muon d_{z} wrt Beamspot;muon d_{z} [cm]"),
             binsX = cms.untracked.vdouble(200, -20, 20),
@@ -171,6 +184,13 @@ MuonIPHistograms = cms.PSet(
             title = cms.string("Muon |d_{z}| wrt Beamspot; muon |d_{z}| [cm]"),
             binsX = cms.untracked.vdouble(200, 0, 20),
             inputVariables = cms.vstring("abs((muon.vz - beamspot.z0) - ((muon.vx - beamspot.x0)*muon.px + (muon.vy - beamspot.y0)*muon.py)/muon.pt*(muon.pz/muon.pt))"),
+        ),
+        cms.PSet (
+            name = cms.string("muonDbetaIsolationVsMuonIp"),
+            title = cms.string("Muon Isolation vs Ip; muon Ip d_{xy} [cm]; muon #Delta#beta Isolation"),
+            binsX = cms.untracked.vdouble(500, 0, 0.5),
+            binsY = cms.untracked.vdouble(600, 0, 6.0),
+            inputVariables = cms.vstring("abs(-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt","(muon.pfIsolationR04_.sumChargedHadronPt + max(0.0,muon.pfIsolationR04_.sumNeutralHadronEt + muon.pfIsolationR04_.sumPhotonEt - 0.5*muon.pfIsolationR04_.sumPUPt))/muon.pt"),
         ),
     )
 )
@@ -261,6 +281,13 @@ ElectronHistograms = cms.PSet(
             inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
+            name = cms.string("electronEtaPt"),
+            title = cms.string("Electron Eta vs. Pt; electron p_{T} [GeV]; electron #eta"),
+            binsX = cms.untracked.vdouble(100, 0, 500),
+            binsY = cms.untracked.vdouble(25, 0, 2.5),
+            inputVariables = cms.vstring("pt","eta"),
+        ),
+        cms.PSet (
             name = cms.string("electronPhi"),
             title = cms.string("Electron Phi; electron #phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
@@ -335,10 +362,22 @@ ElectronHistograms = cms.PSet(
 #            inputVariables = cms.vstring("gsfTrack.numberOfValidHits"),
 #        ),
         cms.PSet (
-            name = cms.string("electronPFrhoIso"),
+            name = cms.string("electronPFrhoIsolation"),
             title = cms.string("Electron PF-based #rho-corrected Isolation; electron rel. iso."),
             binsX = cms.untracked.vdouble(300, 0, 3),
             inputVariables = cms.vstring("(pfIso_.sumChargedHadronPt + max(0.0,pfIso_.sumNeutralHadronEt + pfIso_.sumPhotonEt - rho*AEff))/pt"),
+        ),
+        cms.PSet (
+            name = cms.string("electronPFrhoIsolationCorr"),
+            title = cms.string("Electron PF-based #rho-corrected Isolation Corrected; electron #rho-corrected Isolation Corrected"),
+            binsX = cms.untracked.vdouble(300, 0, 3.0),
+            inputVariables = cms.vstring("pfdRhoIsoCorr"),
+        ),
+        cms.PSet (
+            name = cms.string("electronPFrhoIsolationDiff"),
+            title = cms.string("Electron PF-based #rho-corrected Isolation Discrepancy; electron PF-based Iso_{default} - Iso_{customized}"),
+            binsX = cms.untracked.vdouble(2000, -1, 1),
+            inputVariables = cms.vstring("(pfIso_.sumChargedHadronPt + max(0.0,pfIso_.sumNeutralHadronEt + pfIso_.sumPhotonEt - rho*AEff))/pt - pfdRhoIsoCorr"),
         ),
 #        cms.PSet (
 #            name = cms.string("electronFbrem"),
@@ -396,6 +435,13 @@ ElectronIPHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(200, 0, 20),
             inputVariables = cms.vstring("abs((electron.vz - beamspot.z0) - ((electron.vx - beamspot.x0)*electron.px + (electron.vy - beamspot.y0)*electron.py)/electron.pt*(electron.pz/electron.pt))"),
         ),
+        cms.PSet (
+            name = cms.string("electronDbetaIsolationVsElectronIp"),
+            title = cms.string("Electron Isolation vs Ip; electron Ip d_{xy} [cm]; electron #Delta#beta Isolation"),
+            binsX = cms.untracked.vdouble(500, 0, 0.5),
+            binsY = cms.untracked.vdouble(300, 0, 3.0),
+            inputVariables = cms.vstring("abs(-(electron.vx - beamspot.x0)*electron.py + (electron.vy - beamspot.y0)*electron.px)/electron.pt","(electron.pfIso_.sumChargedHadronPt + max(0.0,electron.pfIso_.sumNeutralHadronEt + electron.pfIso_.sumPhotonEt - electron.rho*electron.AEff))/electron.pt"),
+        ),
     )
 )
 
@@ -448,6 +494,19 @@ ElectronMuonHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(100,0,500),
             binsY = cms.untracked.vdouble(100,0,500),
             inputVariables = cms.vstring("muon.pt","electron.pt"),
+        ),
+        cms.PSet (
+            name = cms.string("electronEtaMuonEta"),
+            title = cms.string("Electron Eta vs Muon Eta; muon #eta; electron #eta"),
+            binsX = cms.untracked.vdouble(25,0,2.5),
+            binsY = cms.untracked.vdouble(25,0,2.5),
+            inputVariables = cms.vstring("abs(muon.eta)","abs(electron.eta)"),
+        ),
+        cms.PSet (
+            name = cms.string("electronMuonPt"),
+            title = cms.string("Momentum of Electron-Muon System; electron-muon p_{T} [GeV];"),
+            binsX = cms.untracked.vdouble(100,0,500),
+            inputVariables = cms.vstring("pT(electron, muon)"),
         ),
         cms.PSet (
             name = cms.string("electronMuonInvMass"),
@@ -517,6 +576,34 @@ ElectronMuonIPHistograms = cms.PSet(
     )
 )
 
+
+##############################################################################################
+
+ElectronMetHistograms = cms.PSet(
+    inputCollection = cms.vstring("electrons","mets"),
+    histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("electronMetMT"),
+            title = cms.string("Transverse Mass of Electron-E_{T}^{miss} System; m_{T}(e,E_{T}^{miss}) [GeV]"),
+            binsX = cms.untracked.vdouble(100, 0, 200),
+            inputVariables = cms.vstring("sqrt(2 * met.pt * electron.pt * (1.0 - cos(deltaPhi(electron,met))))"),
+        ),
+    )
+)
+
+##############################################################################################
+
+MuonMetHistograms = cms.PSet(
+    inputCollection = cms.vstring("muons","mets"),
+    histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("muonMetMT"),
+            title = cms.string("Transverse Mass of Muon-E_{T}^{miss} System; m_{T}(#mu,E_{T}^{miss}) [GeV]"),
+            binsX = cms.untracked.vdouble(100, 0, 200),
+            inputVariables = cms.vstring("sqrt(2 * met.pt * muon.pt * (1.0 - cos(deltaPhi(muon,met))))"),
+        ),
+    )
+)
 
 ##############################################################################################
 
@@ -770,13 +857,26 @@ JetBjetHistograms = cms.PSet(
 ##########################################################################################
 
 MuonJetHistograms = cms.PSet(
-    inputCollection = cms.vstring("muons","jets"),
+    inputCollection = cms.vstring("muons","jets","beamspots"),
     histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("muonAbsIPvsJetCSV"),
+            title = cms.string("Muon Abs IP vs Jet CSV; Jet CSV"),
+            binsX = cms.untracked.vdouble(100, 0, 1),
+            binsY = cms.untracked.vdouble(500, 0, 0.5),
+            inputVariables = cms.vstring("jet.pfCombinedInclusiveSecondaryVertexV2BJetTags","abs((-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt)",),
+        ),
         cms.PSet (
             name = cms.string("muonJetInvMass"),
             title = cms.string("Muon-jet Invariant Mass; M(#mu,jet) [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("invMass(muon,jet)"),
+        ),
+        cms.PSet (
+            name = cms.string("muonJetDeltaPt"),
+            title = cms.string("Muon-jet Pt Difference; |#Deltap_{T}(#mu,jet)|"),
+            binsX = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("abs(muon.pt - jet.pt)"),
         ),
         cms.PSet (
             name = cms.string("muonJetDeltaPhi"),
@@ -837,13 +937,26 @@ MuonJetHistograms = cms.PSet(
 ##########################################################################################
 
 ElectronJetHistograms = cms.PSet(
-    inputCollection = cms.vstring("electrons","jets"),
+    inputCollection = cms.vstring("electrons","jets","beamspots"),
     histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("electronAbsIPvsJetCSV"),
+            title = cms.string("Electron Abs IP vs Jet CSV; Jet CSV"),
+            binsX = cms.untracked.vdouble(100, 0, 1),
+            binsY = cms.untracked.vdouble(500, 0, 0.5),
+            inputVariables = cms.vstring("jet.pfCombinedInclusiveSecondaryVertexV2BJetTags","abs((-(electron.vx - beamspot.x0)*electron.py + (electron.vy - beamspot.y0)*electron.px)/electron.pt)",),
+        ),
         cms.PSet (
             name = cms.string("electronJetInvMass"),
             title = cms.string("Electron-jet Invariant Mass; M(e,jet) [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("invMass(electron,jet)"),
+        ),
+        cms.PSet (
+            name = cms.string("electronJetDeltaPt"),
+            title = cms.string("Electron-jet Pt Difference; |#Deltap_{T}(e,jet)|"),
+            binsX = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("abs(electron.pt - jet.pt)"),
         ),
         cms.PSet (
             name = cms.string("electronJetDeltaPhi"),
@@ -903,13 +1016,26 @@ ElectronJetHistograms = cms.PSet(
 ##########################################################################################
 
 MuonBjetHistograms = cms.PSet(
-    inputCollection = cms.vstring("muons","bjets"),
+    inputCollection = cms.vstring("muons","bjets","beamspots"),
     histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("muonAbsIPvsBjetCSV"),
+            title = cms.string("Muon Abs IP vs Bjet CSV; Bjet CSV"),
+            binsX = cms.untracked.vdouble(100, 0, 1),
+            binsY = cms.untracked.vdouble(500, 0, 0.5),
+            inputVariables = cms.vstring("bjet.pfCombinedInclusiveSecondaryVertexV2BJetTags","abs((-(muon.vx - beamspot.x0)*muon.py + (muon.vy - beamspot.y0)*muon.px)/muon.pt)",),
+        ),
         cms.PSet (
             name = cms.string("muonBjetInvMass"),
             title = cms.string("Muon-bjet Invariant Mass; M(#mu,bjet) [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("invMass(muon,bjet)"),
+        ),
+        cms.PSet (
+            name = cms.string("muonJetDeltaPt"),
+            title = cms.string("Muon-jet Pt Difference; |#Deltap_{T}(#mu,bjet)|"),
+            binsX = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("abs(muon.pt - bjet.pt)"),
         ),
         cms.PSet (
             name = cms.string("muonBjetDeltaPhi"),
@@ -968,13 +1094,26 @@ MuonBjetHistograms = cms.PSet(
 
 ##########################################################################
 ElectronBjetHistograms = cms.PSet(
-    inputCollection = cms.vstring("electrons","bjets"),
+    inputCollection = cms.vstring("electrons","bjets","beamspots"),
     histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("electronAbsIPvsBjetCSV"),
+            title = cms.string("Electron Abs IP vs Bjet CSV; Bjet CSV"),
+            binsX = cms.untracked.vdouble(100, 0, 1),
+            binsY = cms.untracked.vdouble(500, 0, 0.5),
+            inputVariables = cms.vstring("bjet.pfCombinedInclusiveSecondaryVertexV2BJetTags","abs((-(electron.vx - beamspot.x0)*electron.py + (electron.vy - beamspot.y0)*electron.px)/electron.pt)",),
+        ),
         cms.PSet (
             name = cms.string("electronBjetInvMass"),
             title = cms.string("Electron-bjet Invariant Mass; M(#mu,bjet) [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("invMass(electron,bjet)"),
+        ),
+        cms.PSet (
+            name = cms.string("electronBjetDeltaPt"),
+            title = cms.string("Electron-bjet Pt Difference; |#Deltap_{T}(e,bjet)|"),
+            binsX = cms.untracked.vdouble(100, 0, 100),
+            inputVariables = cms.vstring("abs(electron.pt - bjet.pt)"),
         ),
         cms.PSet (
             name = cms.string("electronBjetDeltaPhi"),
@@ -1122,7 +1261,7 @@ TrackHistograms = cms.PSet(
         ),
         cms.PSet (
             name = cms.string("trackEtaVsPhi"),
-            title = cms.string("#eta vs #phi; #eta; #phi"),
+            title = cms.string("#eta vs #phi;track #eta;track #phi"),
             binsX = cms.untracked.vdouble(60, -3, 3),
             binsY = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("eta", "phi"),
@@ -1160,7 +1299,7 @@ TrackHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("trackChi2"),
             title = cms.string("Track Reduced Chi2;track #chi^{2}/ndf"),
-            binsX = cms.untracked.vdouble(30, 0, 30),
+            binsX = cms.untracked.vdouble(50, 0, 10),
             inputVariables = cms.vstring("normalizedChi2"),
         ),
         cms.PSet (
@@ -1217,13 +1356,13 @@ TrackBeamspotHistograms = cms.PSet(
             name = cms.string("trackd0"),
             title = cms.string("Track d_{0};track d_{0} [cm]"),
             binsX = cms.untracked.vdouble(100, -0.5, 0.5),
-            inputVariables = cms.vstring("((track.vx - beamspot.x0) * track.py - (track.vy - beamspot.y0) * track.px) / track.pt"),
+            inputVariables = cms.vstring(trackD0WRTBeamspot), 
         ),
         cms.PSet (
             name = cms.string("trackd0Mag"),
             title = cms.string("Track d_{0};track |d_{0}| [cm]"),
             binsX = cms.untracked.vdouble(50, 0, 0.5),
-            inputVariables = cms.vstring("fabs(((track.vx - beamspot.x0) * track.py - (track.vy - beamspot.y0) * track.px) / track.pt)"),
+            inputVariables = cms.vstring("fabs ( " + trackD0WRTBeamspot + " )"), 
         ),
         cms.PSet (
             name = cms.string("trackdz"),
@@ -1240,6 +1379,52 @@ TrackBeamspotHistograms = cms.PSet(
     )
 )
 
+
+##############################################################################################
+
+TrackEventVarHistograms = cms.PSet(
+    # To produce these histograms, include in your PSet:
+    # variableProducers.append("PrimaryVtxVarProducer")  
+     inputCollection = cms.vstring("tracks", "eventvariables"),
+     histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("trackd0WRTPV"),
+            title = cms.string("Track d_{0} wrt leading PV;track d_{0} [cm]"),
+            binsX = cms.untracked.vdouble(100, -0.5, 0.5),
+            inputVariables = cms.vstring(trackD0WRTPV), 
+        ),
+        cms.PSet (
+            name = cms.string("trackd0WRTPV_Zoom"),
+            title = cms.string("Track d_{0} wrt leading PV;track d_{0} [cm]"),
+            binsX = cms.untracked.vdouble(100, -0.1, 0.1),
+            inputVariables = cms.vstring(trackD0WRTPV), 
+        ),
+        cms.PSet (
+            name = cms.string("trackd0WRTPVMag"),
+            title = cms.string("Track d_{0} wrt leading PV;track |d_{0}| [cm]"),
+            binsX = cms.untracked.vdouble(50, 0, 0.5),
+            inputVariables = cms.vstring("fabs ( " + trackD0WRTPV + " )"), 
+        ),
+        cms.PSet (
+            name = cms.string("trackdzWRTPV"),
+            title = cms.string("Track d_{z} wrt leading PV;track d_{z} [cm]"),
+            binsX = cms.untracked.vdouble(100, -10, 10),
+            inputVariables = cms.vstring(trackDZWRTPV), 
+        ),
+        cms.PSet (
+            name = cms.string("trackdzWRTPV_Zoom"),
+            title = cms.string("Track d_{z} wrt leading PV;track d_{z} [cm]"),
+            binsX = cms.untracked.vdouble(100, -2, 2),
+            inputVariables = cms.vstring(trackDZWRTPV), 
+        ),
+        cms.PSet (
+            name = cms.string("trackdzWRTPVMag"),
+            title = cms.string("Track d_{z} wrt leading PV;track |d_{z}| [cm]"),
+            binsX = cms.untracked.vdouble(100, 0, 10),
+            inputVariables = cms.vstring("fabs( " + trackDZWRTPV + " )" ), 
+        ),
+    )
+)
 
 
 ##############################################################################################
@@ -1281,3 +1466,40 @@ TrackMCParticleHistograms = cms.PSet(
     )
 
 ##############################################################################################
+
+EventVariablePVHistograms = cms.PSet(
+    # EventVariable quantities associated with primary vertices
+    # To produce these variables, include in your PSet:
+    # variableProducers.append("PrimaryVtxVarProducer")  
+    inputCollection = cms.vstring("eventvariables"),
+    histograms = cms.VPSet (
+        cms.PSet (
+            name = cms.string("numPVReco"),
+            title = cms.string(";Number of Primary Vertices"),
+            binsX = cms.untracked.vdouble(50, 0.0, 50.0),
+            inputVariables = cms.vstring("numPVReco"),
+        ),
+        cms.PSet (
+            name = cms.string("leadingPV_x"),
+            title = cms.string(";X Position of Leading Primary Vertex"),
+            binsX = cms.untracked.vdouble(50, -1.0, 1.0),
+            inputVariables = cms.vstring("leadingPV_x"),
+        ),
+        cms.PSet (
+            name = cms.string("leadingPV_y"),
+            title = cms.string(";Y Position of Leading Primary Vertex"),
+            binsX = cms.untracked.vdouble(50, -1.0, 1.0),
+            inputVariables = cms.vstring("leadingPV_y"),
+        ),
+        cms.PSet (
+            name = cms.string("leadingPV_z"),
+            title = cms.string(";Z Position of Leading Primary Vertex"),
+            binsX = cms.untracked.vdouble(50, -20.0, 20.0),
+            inputVariables = cms.vstring("leadingPV_z"),
+        ),
+    )
+)
+
+##############################################################################################
+
+

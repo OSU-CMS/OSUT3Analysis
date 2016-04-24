@@ -22,6 +22,7 @@ class OSUEventProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
+    edm::EDGetTokenT<vector<TYPE(events)> > token_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.

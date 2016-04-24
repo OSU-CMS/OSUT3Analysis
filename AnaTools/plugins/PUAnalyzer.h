@@ -33,6 +33,7 @@ class PUAnalyzer : public edm::EDAnalyzer
 
  private:
   edm::InputTag pileUpInfo_;
+  edm::EDGetTokenT<edm::View<PileupSummaryInfo> > pileUpInfoToken_;
 
   std::map<std::string, TH1D*> oneDHists_;
   edm::Service<TFileService> fs_;

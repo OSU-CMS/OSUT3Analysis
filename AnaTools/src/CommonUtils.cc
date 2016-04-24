@@ -187,7 +187,7 @@ anatools::collectionIndexAscending (pair<string, DressedObject> a, pair<string, 
  * @param  event edm::Event from which to get the collections
  */
 void
-anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, const edm::ParameterSet &collections, Collections &handles, const edm::Event &event)
+anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Collections &handles, const edm::Event &event, const Tokens &tokens)
 {
   static bool firstEvent = true;
 
@@ -195,47 +195,47 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
   // Retrieve each object collection which we need and print a warning if it is
   // missing.
   //////////////////////////////////////////////////////////////////////////////
-  if  (VEC_CONTAINS  (objectsToGet,  "beamspots")         &&  collections.exists  ("beamspots"))         getCollection  (collections.getParameter<edm::InputTag>  ("beamspots"),         handles.beamspots,         event);
-  if  (VEC_CONTAINS  (objectsToGet,  "bxlumis")           &&  collections.exists  ("bxlumis"))           getCollection  (collections.getParameter<edm::InputTag>  ("bxlumis"),           handles.bxlumis,           event);
-  if  (VEC_CONTAINS  (objectsToGet,  "cschits")           &&  collections.exists  ("cschits"))           getCollection  (collections.getParameter<edm::InputTag>  ("cschits"),           handles.cschits,           event);
-  if  (VEC_CONTAINS  (objectsToGet,  "cscsegs")           &&  collections.exists  ("cscsegs"))           getCollection  (collections.getParameter<edm::InputTag>  ("cscsegs"),           handles.cscsegs,           event);
-  if  (VEC_CONTAINS  (objectsToGet,  "dtsegs")           &&  collections.exists  ("dtsegs"))           getCollection  (collections.getParameter<edm::InputTag>  ("dtsegs"),           handles.dtsegs,           event);
-  if  (VEC_CONTAINS  (objectsToGet,  "electrons")         &&  collections.exists  ("electrons"))         getCollection  (collections.getParameter<edm::InputTag>  ("electrons"),         handles.electrons,         event);
-  if  (VEC_CONTAINS  (objectsToGet,  "events")            &&  collections.exists  ("events"))            getCollection  (collections.getParameter<edm::InputTag>  ("events"),            handles.events,            event);
-  if  (VEC_CONTAINS  (objectsToGet,  "genjets")           &&  collections.exists  ("genjets"))           getCollection  (collections.getParameter<edm::InputTag>  ("genjets"),           handles.genjets,           event);
-  if  (VEC_CONTAINS  (objectsToGet,  "jets")              &&  collections.exists  ("jets"))              getCollection  (collections.getParameter<edm::InputTag>  ("jets"),              handles.jets,              event);
-  if  (VEC_CONTAINS  (objectsToGet,  "bjets")              &&  collections.exists  ("bjets"))              getCollection  (collections.getParameter<edm::InputTag>  ("bjets"),              handles.bjets,              event);
-  if  (VEC_CONTAINS  (objectsToGet,  "basicjets")         &&  collections.exists  ("basicjets"))         getCollection  (collections.getParameter<edm::InputTag>  ("basicjets"),         handles.basicjets,         event);
-  if  (VEC_CONTAINS  (objectsToGet,  "generatorweights")  &&  collections.exists  ("generatorweights"))  getCollection  (collections.getParameter<edm::InputTag>  ("generatorweights"),  handles.generatorweights,  event);
-  if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")       &&  collections.exists  ("mcparticles"))       getCollection  (collections.getParameter<edm::InputTag>  ("mcparticles"),       handles.mcparticles,       event);
-  if  (VEC_CONTAINS  (objectsToGet,  "mets")              &&  collections.exists  ("mets"))              getCollection  (collections.getParameter<edm::InputTag>  ("mets"),              handles.mets,              event);
-  if  (VEC_CONTAINS  (objectsToGet,  "muons")             &&  collections.exists  ("muons"))             getCollection  (collections.getParameter<edm::InputTag>  ("muons"),             handles.muons,             event);
-  if  (VEC_CONTAINS  (objectsToGet,  "photons")           &&  collections.exists  ("photons"))           getCollection  (collections.getParameter<edm::InputTag>  ("photons"),           handles.photons,           event);
-  if  (VEC_CONTAINS  (objectsToGet,  "prescales")         &&  collections.exists  ("prescales"))         getCollection  (collections.getParameter<edm::InputTag>  ("prescales"),         handles.prescales,         event);
-  if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs")    &&  collections.exists  ("primaryvertexs"))    getCollection  (collections.getParameter<edm::InputTag>  ("primaryvertexs"),    handles.primaryvertexs,    event);
-  if  (VEC_CONTAINS  (objectsToGet,  "rpchits")    &&  collections.exists  ("rpchits"))    getCollection  (collections.getParameter<edm::InputTag>  ("rpchits"),    handles.rpchits,    event);
-  if  (VEC_CONTAINS  (objectsToGet,  "superclusters")     &&  collections.exists  ("superclusters"))     getCollection  (collections.getParameter<edm::InputTag>  ("superclusters"),     handles.superclusters,     event);
-  if  (VEC_CONTAINS  (objectsToGet,  "taus")              &&  collections.exists  ("taus"))              getCollection  (collections.getParameter<edm::InputTag>  ("taus"),              handles.taus,              event);
-  if  (VEC_CONTAINS  (objectsToGet,  "tracks")            &&  collections.exists  ("tracks"))            getCollection  (collections.getParameter<edm::InputTag>  ("tracks"),            handles.tracks,            event);
-  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos")            &&  collections.exists  ("pileupinfos"))            getCollection  (collections.getParameter<edm::InputTag>  ("pileupinfos"),            handles.pileupinfos,            event);
-  if  (VEC_CONTAINS  (objectsToGet,  "triggers")          &&  collections.exists  ("triggers"))          getCollection  (collections.getParameter<edm::InputTag>  ("triggers"),          handles.triggers,          event);
-  if  (VEC_CONTAINS  (objectsToGet,  "trigobjs")          &&  collections.exists  ("trigobjs"))          getCollection  (collections.getParameter<edm::InputTag>  ("trigobjs"),          handles.trigobjs,          event);
-  if  (VEC_CONTAINS  (objectsToGet,  "uservariables")     &&  collections.exists  ("uservariables"))
+  if  (VEC_CONTAINS  (objectsToGet,  "beamspots"))         event.getByToken  (tokens.beamspots,         handles.beamspots);
+  if  (VEC_CONTAINS  (objectsToGet,  "bxlumis"))           event.getByToken  (tokens.bxlumis,           handles.bxlumis);
+  if  (VEC_CONTAINS  (objectsToGet,  "cschits"))           event.getByToken  (tokens.cschits,           handles.cschits);
+  if  (VEC_CONTAINS  (objectsToGet,  "cscsegs"))           event.getByToken  (tokens.cscsegs,           handles.cscsegs);
+  if  (VEC_CONTAINS  (objectsToGet,  "dtsegs"))           event.getByToken  (tokens.dtsegs,           handles.dtsegs);
+  if  (VEC_CONTAINS  (objectsToGet,  "electrons"))         event.getByToken  (tokens.electrons,         handles.electrons);
+  if  (VEC_CONTAINS  (objectsToGet,  "events"))            event.getByToken  (tokens.events,            handles.events);
+  if  (VEC_CONTAINS  (objectsToGet,  "genjets"))           event.getByToken  (tokens.genjets,           handles.genjets);
+  if  (VEC_CONTAINS  (objectsToGet,  "jets"))              event.getByToken  (tokens.jets,              handles.jets);
+  if  (VEC_CONTAINS  (objectsToGet,  "bjets"))             event.getByToken  (tokens.bjets,             handles.bjets);
+  if  (VEC_CONTAINS  (objectsToGet,  "basicjets"))         event.getByToken  (tokens.basicjets,         handles.basicjets);
+  if  (VEC_CONTAINS  (objectsToGet,  "generatorweights"))  event.getByToken  (tokens.generatorweights,  handles.generatorweights);
+  if  (VEC_CONTAINS  (objectsToGet,  "mcparticles"))       event.getByToken  (tokens.mcparticles,       handles.mcparticles);
+  if  (VEC_CONTAINS  (objectsToGet,  "mets"))              event.getByToken  (tokens.mets,              handles.mets);
+  if  (VEC_CONTAINS  (objectsToGet,  "muons"))             event.getByToken  (tokens.muons,             handles.muons);
+  if  (VEC_CONTAINS  (objectsToGet,  "photons"))           event.getByToken  (tokens.photons,           handles.photons);
+  if  (VEC_CONTAINS  (objectsToGet,  "prescales"))         event.getByToken  (tokens.prescales,         handles.prescales);
+  if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs"))    event.getByToken  (tokens.primaryvertexs,    handles.primaryvertexs);
+  if  (VEC_CONTAINS  (objectsToGet,  "rpchits"))    event.getByToken  (tokens.rpchits,    handles.rpchits);
+  if  (VEC_CONTAINS  (objectsToGet,  "superclusters"))     event.getByToken  (tokens.superclusters,     handles.superclusters);
+  if  (VEC_CONTAINS  (objectsToGet,  "taus"))              event.getByToken  (tokens.taus,              handles.taus);
+  if  (VEC_CONTAINS  (objectsToGet,  "tracks"))            event.getByToken  (tokens.tracks,            handles.tracks);
+  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos"))       event.getByToken  (tokens.pileupinfos,       handles.pileupinfos);
+  if  (VEC_CONTAINS  (objectsToGet,  "triggers"))          event.getByToken  (tokens.triggers,          handles.triggers);
+  if  (VEC_CONTAINS  (objectsToGet,  "trigobjs"))          event.getByToken  (tokens.trigobjs,          handles.trigobjs);
+  if  (VEC_CONTAINS  (objectsToGet,  "uservariables"))
     {
       handles.uservariables.clear ();
-      for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("uservariables"))
+      for (const auto &token : tokens.uservariables)
         {
           handles.uservariables.resize (handles.uservariables.size () + 1);
-          getCollection (collection, handles.uservariables.back (), event);
+          event.getByToken (token, handles.uservariables.back ());
         }
     }
-  if  (VEC_CONTAINS  (objectsToGet,  "eventvariables")   &&  collections.exists  ("eventvariables"))
+  if  (VEC_CONTAINS  (objectsToGet,  "eventvariables"))
     {
       handles.eventvariables.clear ();
-      for (const auto &collection : collections.getParameter<vector<edm::InputTag> >  ("eventvariables"))
+      for (const auto &token : tokens.eventvariables)
         {
           handles.eventvariables.resize (handles.eventvariables.size () + 1);
-          getCollection (collection, handles.eventvariables.back (), event);
+          event.getByToken (token, handles.eventvariables.back ());
         }
     }
 
@@ -300,109 +300,254 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, con
 }
 
 #ifdef ROOT6
-  #include "FWCore/Utilities/interface/BaseWithDict.h"
-  #include "FWCore/Utilities/interface/FunctionWithDict.h"
-  #include "FWCore/Utilities/interface/MemberWithDict.h"
-  #include "FWCore/Utilities/interface/ObjectWithDict.h"
-  #include "FWCore/Utilities/interface/TypeWithDict.h"
-
   double
-  anatools::getMember (const string &type, const void * const obj, const string &member)
+  anatools::getMember (const string &type, void *obj, const string &member, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * functionLookupTable)
   {
     double value = INVALID_VALUE;
-    edm::TypeWithDict t = edm::TypeWithDict::byName (type);
-    edm::ObjectWithDict *o = new edm::ObjectWithDict (t, (void *) obj);
-    const edm::MemberWithDict &dataMember = t.dataMemberByName (member);
-    const edm::FunctionWithDict &functionMember = t.functionMemberByName (member);
-    string dataMemberType = "", functionMemberType = "";
-
-    if (dataMember)
-      dataMemberType = dataMember.typeOf ().name ();
-    if (functionMember)
-      functionMemberType = functionMember.finalReturnType ().name ();
-    try
+    string memberType = "";
+    anatools::ObjectWithDict * retObj = NULL;
+    void *retObjAdd = NULL;
+    if (functionLookupTable && functionLookupTable->count (make_pair (type, member)))
       {
-        if (dataMemberType != "")
+        memberType = functionLookupTable->at (make_pair (type, member)).first;
+        if (memberType == "float")
+          retObjAdd = (void *) new float[1];
+        else if (memberType == "double")
+          retObjAdd = (void *) new double[1];
+        else if (memberType == "long double")
+          retObjAdd = (void *) new long double[1];
+        else if (memberType == "char")
+          retObjAdd = (void *) new char[1];
+        else if (memberType == "int")
+          retObjAdd = (void *) new int[1];
+        else if (memberType == "unsigned")
+          retObjAdd = (void *) new unsigned[1];
+        else if (memberType == "unsigned short")
+          retObjAdd = (void *) new unsigned short[1];
+        else if (memberType == "unsigned long")
+          retObjAdd = (void *) new unsigned long[1];
+        else if (memberType == "bool")
+          retObjAdd = (void *) new bool[1];
+        else if (memberType == "unsigned int")
+          retObjAdd = (void *) new unsigned int[1];
+        else if (memberType == "unsigned short int")
+          retObjAdd = (void *) new unsigned short int[1];
+        else if (memberType == "unsigned long int")
+          retObjAdd = (void *) new unsigned long int[1];
+        (*functionLookupTable->at (make_pair (type, member)).second) (obj, 0, NULL, retObjAdd);
+      }
+    else
+      {
+        anatools::TypeWithDict t = anatools::TypeWithDict::byName (type);
+        anatools::ObjectWithDict *o = new anatools::ObjectWithDict (t, obj);
+        try
           {
-            if (dataMemberType == "float")
-              value = dataMember.get (*o).objectCast<float> ();
-            else if (dataMemberType == "double")
-              value = dataMember.get (*o).objectCast<double> ();
-            else if (dataMemberType == "long double")
-              value = dataMember.get (*o).objectCast<long double> ();
-            else if (dataMemberType == "char")
-              value = dataMember.get (*o).objectCast<char> ();
-            else if (dataMemberType == "int")
-              value = dataMember.get (*o).objectCast<int> ();
-            else if (dataMemberType == "unsigned")
-              value = dataMember.get (*o).objectCast<unsigned> ();
-            else if (dataMemberType == "bool")
-              value = dataMember.get (*o).objectCast<bool> ();
-            else if (dataMemberType == "unsigned int")
-              value = dataMember.get (*o).objectCast<unsigned int> ();
-            else if (dataMemberType == "unsigned long int")
-              value = dataMember.get (*o).objectCast<unsigned long int> ();
-            else
-              clog << "WARNING: \"" << member << "\" has unrecognized type \"" << dataMemberType << "\"" << endl;
+            retObj = getMember (t, t, *o, member, memberType, functionLookupTable);
+            if (retObj)
+              retObjAdd = retObj->address ();
           }
-        else if (functionMemberType != "")
+        catch (...)
           {
-            if (functionMemberType == "float")
-              value = invoke<float> (functionMemberType, o, functionMember);
-            else if (functionMemberType == "double")
-              value = invoke<double> (functionMemberType, o, functionMember);
-            else if (functionMemberType == "long double")
-              value = invoke<long double> (functionMemberType, o, functionMember);
-            else if (functionMemberType == "char")
-              value = invoke<char> (functionMemberType, o, functionMember);
-            else if (functionMemberType == "int")
-              value = invoke<int> (functionMemberType, o, functionMember);
-            else if (functionMemberType == "unsigned")
-              value = invoke<unsigned> (functionMemberType, o, functionMember);
-            else if (functionMemberType == "bool")
-              value = invoke<bool> (functionMemberType, o, functionMember);
-            else if (functionMemberType == "unsigned int")
-              value = invoke<unsigned int> (functionMemberType, o, functionMember);
-            else
-              clog << "WARNING: \"" << member << "()\" has unrecognized return type \"" << functionMemberType << "\"" << endl;
+            clog << "WARNING: unable to access member \"" << member << "\" from \"" << type << "\"" << endl;
+            if (o)
+              delete o;
+            if (retObj)
+              delete retObj;
+            return value;
+          }
+        if (o)
+          delete o;
+      }
+
+    if (retObjAdd)
+      {
+        if (memberType == "float")
+          {
+            value = *((float *) retObjAdd);
+            if (!retObj)
+              delete[] ((float *) retObjAdd);
+          }
+        else if (memberType == "double")
+          {
+            value = *((double *) retObjAdd);
+            if (!retObj)
+              delete[] ((double *) retObjAdd);
+          }
+        else if (memberType == "long double")
+          {
+            value = *((long double *) retObjAdd);
+            if (!retObj)
+              delete[] ((long double *) retObjAdd);
+          }
+        else if (memberType == "char")
+          {
+            value = *((char *) retObjAdd);
+            if (!retObj)
+              delete[] ((char *) retObjAdd);
+          }
+        else if (memberType == "int")
+          {
+            value = *((int *) retObjAdd);
+            if (!retObj)
+              delete[] ((int *) retObjAdd);
+          }
+        else if (memberType == "unsigned")
+          {
+            value = *((unsigned *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned *) retObjAdd);
+          }
+        else if (memberType == "unsigned short")
+          {
+            value = *((unsigned short *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned short *) retObjAdd);
+          }
+        else if (memberType == "unsigned long")
+          {
+            value = *((unsigned long *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned long *) retObjAdd);
+          }
+        else if (memberType == "bool")
+          {
+            value = *((bool *) retObjAdd);
+            if (!retObj)
+              delete[] ((bool *) retObjAdd);
+          }
+        else if (memberType == "unsigned int")
+          {
+            value = *((unsigned int *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned int *) retObjAdd);
+          }
+        else if (memberType == "unsigned short int")
+          {
+            value = *((unsigned short int *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned short int *) retObjAdd);
+          }
+        else if (memberType == "unsigned long int")
+          {
+            value = *((unsigned long int *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned long int *) retObjAdd);
           }
         else
-          throw 0;
+          clog << "WARNING: \"" << member << "\" has unrecognized type \"" << memberType << "\"" << endl;
+        if (retObj)
+          delete retObj;
       }
-    catch (...)
-      {
-        bool found = false;
-        for (const auto &bi : edm::TypeBases (t))
-          {
-            edm::BaseWithDict baseClass (bi);
-            string baseName = baseClass.name ();
-            try
-              {
-                value = getMember (baseName, obj, member);
-                found = true;
-                break;
-              }
-            catch (...)
-              {
-                continue;
-              }
-          }
-        if (!found)
-          throw;
-      }
-    delete o;
+    else
+      clog << "WARNING: unable to access member \"" << member << "\" from \"" << type << "\"" << endl;
 
     return value;
   }
 
-  template<class T> T
-  anatools::invoke (const string &returnType, edm::ObjectWithDict * const o, const edm::FunctionWithDict &functionMember)
+  anatools::ObjectWithDict *
+  anatools::getMember (const anatools::TypeWithDict &tDerived, const anatools::TypeWithDict &t, const anatools::ObjectWithDict &o, const string &member, string &memberType, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * functionLookupTable)
   {
-    T mem;
-    edm::ObjectWithDict *value = new edm::ObjectWithDict (edm::TypeWithDict::byName (returnType), &mem);
-    functionMember.invoke (*o, value);
-    return value->objectCast<T> ();
+    string typeName = t.name ();
+    size_t dot = member.find ('.'),
+           asterisk = typeName.rfind ('*');
+
+    if (t.isReference ())
+      {
+        clog << "WARNING: unable to access members which are references" << endl;
+        throw 0;
+      }
+    if (t.isPointer ())
+      {
+        anatools::TypeWithDict derefType = anatools::TypeWithDict::byName (typeName.substr (0, asterisk) + typeName.substr (asterisk + 1));
+        void *obj = o.address ();
+        anatools::ObjectWithDict derefObj (derefType, (void *) *((void **) obj));
+        return getMember (tDerived, derefType, derefObj, member, memberType, NULL);
+      }
+    if (t.name ().find ("edm::Ref") == 0 && member == "operator->")
+      {
+        anatools::ObjectWithDict * isValid = invoke ("bool", o, t.functionMemberByName ("isNonnull"));
+        functionLookupTable = NULL;
+        if (!isValid->objectCast<bool> ())
+          {
+            delete isValid;
+            return NULL;
+          }
+        delete isValid;
+      }
+    if (dot != string::npos)
+      {
+        anatools::ObjectWithDict * subObj = getMember (tDerived, t, o, member.substr (0, dot), memberType, NULL);
+        if (!subObj)
+          return NULL;
+        anatools::TypeWithDict subType = anatools::TypeWithDict::byName (memberType);
+        string subMember = member.substr (dot + 1);
+        anatools::ObjectWithDict * retObj = getMember (tDerived, subType, *subObj, subMember, memberType, NULL);
+        if (retObj)
+          {
+            delete subObj;
+            return retObj;
+          }
+
+        subMember = (member.substr (0, dot) == "operator->" ? "" : "operator->.") + member.substr (dot + 1);
+        retObj = getMember (tDerived, subType, *subObj, subMember, memberType, NULL);
+        delete subObj;
+        return retObj;
+      }
+
+    anatools::MemberWithDict dataMember;
+    anatools::FunctionWithDict functionMember;
+    bool isReference = false;
+
+    dataMember = t.dataMemberByName (member);
+    functionMember = t.functionMemberByName (member);
+    if (dataMember)
+      {
+        memberType = dataMember.typeOf ().name ();
+        isReference = dataMember.typeOf ().isReference ();
+      }
+    else if (functionMember)
+      {
+        memberType = functionMember.finalReturnType ().name ();
+        isReference = functionMember.finalReturnType ().isReference ();
+      }
+    if (isReference)
+      {
+        clog << "WARNING: unable to access members which are references" << endl;
+        throw 0;
+      }
+    if (dataMember)
+      return (new anatools::ObjectWithDict (o.get (member)));
+    else if (functionMember)
+      {
+        if (functionLookupTable)
+          (*functionLookupTable)[make_pair (tDerived.name (), member)] = make_pair (memberType, functionMember.address ());
+        return invoke (memberType, o, functionMember);
+      }
+    else
+      {
+        anatools::TypeBases bases (t);
+        for (auto bi = bases.begin (); bi != bases.end (); ++bi)
+          {
+            anatools::BaseWithDict base (*bi);
+            anatools::ObjectWithDict * retObj = getMember (tDerived, base.typeOf (), o.castObject (base.typeOf ()), member, memberType, functionLookupTable);
+            if (retObj)
+              return retObj;
+            continue;
+          }
+      }
+
+    return NULL;
   }
+
+  anatools::ObjectWithDict *
+  anatools::invoke (const string &returnType, const anatools::ObjectWithDict &o, const anatools::FunctionWithDict &f)
+  {
+    anatools::TypeWithDict t = anatools::TypeWithDict::byName (returnType);
+    anatools::ObjectWithDict * value = new anatools::ObjectWithDict (t.construct ());
+    f.invoke (o, value);
+    return value;
+  }
+
 #else
   #include "Reflex/Base.h"
   #include "Reflex/Member.h"
@@ -703,4 +848,65 @@ anatools::getGeneratorWeight (const TYPE(generatorweights) &weights)
 #else
   return 1.0;
 #endif
+}
+
+void
+anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesCollector &&cc, Tokens &tokens)
+{
+  if (collections.exists ("bxlumis"))
+    tokens.bxlumis = cc.consumes<vector<osu::Bxlumi> > (collections.getParameter<edm::InputTag> ("bxlumis"));
+  if (collections.exists ("electrons"))
+    tokens.electrons = cc.consumes<vector<osu::Electron> > (collections.getParameter<edm::InputTag> ("electrons"));
+  if (collections.exists ("events"))
+    tokens.events = cc.consumes<vector<osu::Event> > (collections.getParameter<edm::InputTag> ("events"));
+  if (collections.exists ("genjets"))
+    tokens.genjets = cc.consumes<vector<osu::Genjet> > (collections.getParameter<edm::InputTag> ("genjets"));
+  if (collections.exists ("jets"))
+    tokens.jets = cc.consumes<vector<osu::Jet> > (collections.getParameter<edm::InputTag> ("jets"));
+  if (collections.exists ("bjets"))
+    tokens.bjets = cc.consumes<vector<osu::Bjet> > (collections.getParameter<edm::InputTag> ("bjets"));
+  if (collections.exists ("basicjets"))
+    tokens.basicjets = cc.consumes<vector<osu::Basicjet> > (collections.getParameter<edm::InputTag> ("basicjets"));
+  if (collections.exists ("mcparticles"))
+    tokens.mcparticles = cc.consumes<vector<osu::Mcparticle> > (collections.getParameter<edm::InputTag> ("mcparticles"));
+  if (collections.exists ("mets"))
+    tokens.mets = cc.consumes<vector<osu::Met> > (collections.getParameter<edm::InputTag> ("mets"));
+  if (collections.exists ("muons"))
+    tokens.muons = cc.consumes<vector<osu::Muon> > (collections.getParameter<edm::InputTag> ("muons"));
+  if (collections.exists ("photons"))
+    tokens.photons = cc.consumes<vector<osu::Photon> > (collections.getParameter<edm::InputTag> ("photons"));
+  if (collections.exists ("primaryvertexs"))
+    tokens.primaryvertexs = cc.consumes<vector<osu::Primaryvertex> > (collections.getParameter<edm::InputTag> ("primaryvertexs"));
+  if (collections.exists ("superclusters"))
+    tokens.superclusters = cc.consumes<vector<osu::Supercluster> > (collections.getParameter<edm::InputTag> ("superclusters"));
+  if (collections.exists ("taus"))
+    tokens.taus = cc.consumes<vector<osu::Tau> > (collections.getParameter<edm::InputTag> ("taus"));
+  if (collections.exists ("tracks"))
+    tokens.tracks = cc.consumes<vector<osu::Track> > (collections.getParameter<edm::InputTag> ("tracks"));
+  if (collections.exists ("pileupinfos"))
+    tokens.pileupinfos = cc.consumes<vector<osu::PileUpInfo> > (collections.getParameter<edm::InputTag> ("pileupinfos"));
+  if (collections.exists ("trigobjs"))
+    tokens.trigobjs = cc.consumes<vector<osu::Trigobj> > (collections.getParameter<edm::InputTag> ("trigobjs"));
+
+  if (collections.exists ("beamspots"))
+    tokens.beamspots = cc.consumes<osu::Beamspot> (collections.getParameter<edm::InputTag> ("beamspots"));
+  if (collections.exists ("generatorweights"))
+    tokens.generatorweights = cc.consumes<TYPE(generatorweights)> (collections.getParameter<edm::InputTag> ("generatorweights"));
+  if (collections.exists ("prescales"))
+    tokens.prescales = cc.consumes<TYPE(prescales)> (collections.getParameter<edm::InputTag> ("prescales"));
+  if (collections.exists ("triggers"))
+    tokens.triggers = cc.consumes<TYPE(triggers)> (collections.getParameter<edm::InputTag> ("triggers"));
+
+  if (collections.exists ("uservariables"))
+    {
+      tokens.uservariables.clear ();
+      for (const auto &collection : collections.getParameter<vector<edm::InputTag> > ("uservariables"))
+        tokens.uservariables.push_back (cc.consumes<osu::Uservariable> (collection));
+    }
+  if (collections.exists ("eventvariables"))
+    {
+      tokens.eventvariables.clear ();
+      for (const auto &collection : collections.getParameter<vector<edm::InputTag> > ("eventvariables"))
+        tokens.eventvariables.push_back (cc.consumes<osu::Eventvariable> (collection));
+    }
 }

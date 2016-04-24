@@ -40,6 +40,7 @@ class TriggerEfficiencyAnalyzer : public edm::EDAnalyzer
     private:
       edm::Handle<edm::TriggerResults> TriggerCollection;
       edm::InputTag Trigger_;
+      edm::EDGetTokenT<edm::TriggerResults> TriggerToken_;
       vector<edm::ParameterSet> triggers_;
       TStopwatch* timer;
 

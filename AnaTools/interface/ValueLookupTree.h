@@ -1,6 +1,7 @@
 #ifndef VALUE_LOOKUP_TREE
 #define VALUE_LOOKUP_TREE
 
+#include <map>
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
@@ -219,6 +220,7 @@ class ValueLookupTree
     vector<Leaf>                                   values_;
     vector<unsigned>                               collectionSizes_; // vector index corresponds to collection index
     vector<unsigned>                               nCombinations_;   // vector index corresponds to collection index
+    bool                                           allCollectionsNonEmpty_;
     // nCombinations[i] specifies the number of combinations that can be formed from objects 
     // in collections i to N, where N is the number of collections 
 
@@ -228,6 +230,7 @@ class ValueLookupTree
     const int                                      verbose_ = 0;  // verbosity levels:  0, 1, ... 
     // Typically you want to use verbosity of 1 when running over a single event.  
     
+    map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > functionLookupTable_;
 
 };
 

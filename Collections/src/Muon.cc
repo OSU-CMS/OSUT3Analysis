@@ -8,19 +8,22 @@ osu::Muon::Muon ()
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon) :
-  GenMatchable (muon)
+  GenMatchable (muon),
+  pfdBetaIsoCorr_             (INVALID_VALUE)
 {
   isTightMuonWRTVtx_ = false;
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles) :
-  GenMatchable (muon, particles)
+  GenMatchable (muon),
+  pfdBetaIsoCorr_             (INVALID_VALUE)
 {
   isTightMuonWRTVtx_ = false;
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
-  GenMatchable (muon, particles, cfg)
+  GenMatchable (muon),
+  pfdBetaIsoCorr_             (INVALID_VALUE)
 {
   isTightMuonWRTVtx_ = false;
 }
@@ -29,6 +32,12 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
 void osu::Muon::set_isTightMuonWRTVtx (const bool isTightMuon)
 {
   isTightMuonWRTVtx_ = isTightMuon;
+}
+
+const double
+osu::Muon::pfdBetaIsoCorr () const
+{
+  return pfdBetaIsoCorr_;
 }
 #elif DATA_FORMAT == AOD_CUSTOM
 osu::Muon::Muon ()
@@ -44,6 +53,7 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
 osu::Muon::~Muon ()
 {
 }
+
 
 
 #endif

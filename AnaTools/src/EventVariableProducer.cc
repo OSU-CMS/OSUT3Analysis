@@ -3,8 +3,6 @@
 EventVariableProducer::EventVariableProducer(const edm::ParameterSet &cfg) :
   collections_  (cfg.getParameter<edm::ParameterSet>  ("collections"))
 {
-  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
-
   produces<EventVariableProducerPayload> ("eventvariables");
 }
 
@@ -30,7 +28,3 @@ EventVariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.put (eventvariables, "eventvariables");
   eventvariables.reset ();
 }
-
-// implementation left up to the daughter class
-void
-EventVariableProducer::AddVariables (const edm::Event &event) {}

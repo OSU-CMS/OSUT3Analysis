@@ -20,7 +20,7 @@ void
 OSURpchitProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE (rpchits)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::Rpchit> > (new vector<osu::Rpchit> ());

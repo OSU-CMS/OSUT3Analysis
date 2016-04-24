@@ -5,8 +5,11 @@ PUScalingFactorProducer::PUScalingFactorProducer(const edm::ParameterSet &cfg) :
    EventVariableProducer(cfg),
    PU_               (cfg.getParameter<string>("PU")),
    dataset_          (cfg.getParameter<string>("dataset")),
+   target_           (cfg.getParameter<string>("target")),
    type_             (cfg.getParameter<string>("type"))
 {
+  if(type_.find("MC") < type_.length() && collections_.exists ("pileupinfos"))
+    pileUpInfosToken_ = consumes<vector<TYPE(pileupinfos)> > (collections_.getParameter<edm::InputTag> ("pileupinfos"));
 }
 
 PUScalingFactorProducer::~PUScalingFactorProducer() {}
@@ -23,13 +26,13 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
   TH1D *mc;
   TH1D *puWeight;
   fin->GetObject(dataset_.c_str(), mc);  
-  fin->GetObject("MuonEG_2015D", puWeight);
+  fin->GetObject(target_.c_str(), puWeight);
   if (!mc) {
     clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << dataset_ << "; will cause a seg fault." << endl;
     exit(1);
   }
   if (!puWeight) {
-    clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: MuonEG_2015D, will cause a seg fault." << endl;
+    clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << target_ <<", will cause a seg fault." << endl;
     exit(1);
   }
   mc->SetDirectory (0);
@@ -45,7 +48,7 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
   if(type_.find("MC") < type_.length())
     {
       objectsToGet_.insert ("pileupinfos");
-      getOriginalCollections (objectsToGet_, collections_, handles_, event);
+      getOriginalCollections (event);
       double numTruePV = 0;
       for (const auto &pv1 : *handles_.pileupinfos) {
       if(pv1.getBunchCrossing() == 0)
@@ -62,14 +65,10 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
 }  
 
 void
-PUScalingFactorProducer::getOriginalCollections (const unordered_set<string> &objectsToGet, const edm::ParameterSet &collections, OriginalCollections &handles, const edm::Event &event)
+PUScalingFactorProducer::getOriginalCollections (const edm::Event &event)
 {
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Retrieve each object collection which we need and print a warning if it is
-  // missing.
-  //////////////////////////////////////////////////////////////////////////////
-  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos")    &&  collections.exists  ("pileupinfos"))    anatools::getCollection  (collections.getParameter<edm::InputTag>  ("pileupinfos"),    handles.pileupinfos,    event);
+  if (VEC_CONTAINS (objectsToGet_, "pileupinfos"))
+    event.getByToken (pileUpInfosToken_, handles_.pileupinfos);
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

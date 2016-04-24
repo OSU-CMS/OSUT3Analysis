@@ -38,6 +38,8 @@ class CutFlowPlotter : public edm::EDAnalyzer
     // Objects which can be gotten from the event.
     edm::Handle<CutCalculatorPayload> cutDecisions;
     edm::Handle<TYPE(generatorweights)> generatorweights;
+    edm::EDGetTokenT<CutCalculatorPayload> cutDecisionsToken_;
+    edm::EDGetTokenT<TYPE(generatorweights)> generatorweightsToken_;
 
     ////////////////////////////////////////////////////////////////////////////
     // TFileService object used for interacting with the ROOT file of

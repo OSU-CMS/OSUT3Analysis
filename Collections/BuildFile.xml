@@ -4,7 +4,6 @@
 <use  name="DataFormats/Common"/>
 <use  name="DataFormats/EgammaCandidates"/>
 <use  name="DataFormats/EgammaReco"/>
-<use  name="RecoEgamma/EgammaTools"/>
 <use  name="DataFormats/JetReco"/>
 <use  name="DataFormats/METReco"/>
 <use  name="DataFormats/MuonReco"/>
@@ -13,6 +12,7 @@
 <use  name="DataFormats/TrackReco"/>
 <use  name="DataFormats/VertexReco"/>
 <use  name="FWCore/ParameterSet"/>
+<use  name="RecoEgamma/EgammaTools"/>
 <use  name="SimDataFormats/PileupSummaryInfo"/>
 <flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
 <export>
@@ -26,4 +26,3 @@ they can be safely ignored.-->
 <!--=========================================================================-->
 <!-- disappearing tracks packages -->
 <use  name="DisappTrks/CandidateTrackProducer"/>  
-

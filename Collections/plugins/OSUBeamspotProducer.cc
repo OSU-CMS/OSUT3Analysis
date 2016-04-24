@@ -10,6 +10,8 @@ OSUBeamspotProducer::OSUBeamspotProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("beamspots");
 
   produces<osu::Beamspot> (collection_.instance ());
+
+  token_ = consumes<TYPE(beamspots)> (collection_);
 }
 
 OSUBeamspotProducer::~OSUBeamspotProducer ()
@@ -19,8 +21,8 @@ OSUBeamspotProducer::~OSUBeamspotProducer ()
 void
 OSUBeamspotProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<TYPE (beamspots)> collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<TYPE(beamspots)> collection;
+  if (!event.getByToken (token_, collection))
     return;
   pl_ = auto_ptr<osu::Beamspot>  (new osu::Beamspot (*collection));
   event.put (pl_, collection_.instance ());

@@ -33,7 +33,7 @@ class EventVariableProducer : public edm::EDProducer
 
       // Methods
 
-      virtual void AddVariables(const edm::Event &);
+      virtual void AddVariables(const edm::Event &) = 0;
 
   };
 

@@ -11,6 +11,9 @@ OSUPhotonProducer::OSUPhotonProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("photons");
 
   produces<vector<osu::Photon> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(photons)> > (collection_);
+  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
 }
 
 OSUPhotonProducer::~OSUPhotonProducer ()
@@ -20,11 +23,11 @@ OSUPhotonProducer::~OSUPhotonProducer ()
 void
 OSUPhotonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (photons)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(photons)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
-  anatools::getCollection (edm::InputTag ("", ""), particles, event);
+  event.getByToken (mcparticleToken_, particles);
 
   pl_ = auto_ptr<vector<osu::Photon> > (new vector<osu::Photon> ());
   for (const auto &object : *collection)

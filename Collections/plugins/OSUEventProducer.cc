@@ -10,6 +10,8 @@ OSUEventProducer::OSUEventProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("events");
 
   produces<vector<osu::Event> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(events)> > (collection_);
 }
 
 OSUEventProducer::~OSUEventProducer ()
@@ -19,8 +21,8 @@ OSUEventProducer::~OSUEventProducer ()
 void
 OSUEventProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (events)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(events)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::Event> > (new vector<osu::Event> ());

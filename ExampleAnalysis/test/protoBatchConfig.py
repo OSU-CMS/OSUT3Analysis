@@ -9,16 +9,16 @@ from OSUT3Analysis.Configuration.configurationOptions import *
 config_file = "protoConfig_cfg.py"
 
 # choose luminosity used for MC normalization
-intLumi = 19700 # from 8 TeV MuEG dataset
+#intLumi = 19700 # from 8 TeV MuEG dataset
+intLumi = 2460 # from 13 TeV silver json file
 
 # create list of datasets to process
 datasets = [
-    'MuEG_22Jan2013',
-    'WNjets',
-    'Diboson',
-    'SingleTop',
-    'DY',
-    'TTbar',
+    'MuonEG_2015D_v4',
+    'WJetsToLNu',
+    'SingleTop_tW',
+    'DYJetsToLL_50'
+    'TTJets_DiLept'
 ]
 
 InputCondorArguments = {}

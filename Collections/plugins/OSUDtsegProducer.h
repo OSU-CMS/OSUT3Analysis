@@ -22,6 +22,7 @@ class OSUDtsegProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
+    edm::EDGetTokenT<vector<TYPE(dtsegs)> > token_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.

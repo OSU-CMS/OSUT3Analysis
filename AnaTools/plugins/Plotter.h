@@ -33,6 +33,7 @@ class Plotter : public edm::EDAnalyzer
 
       //Collections
       Collections handles_;
+      Tokens tokens_;
 
       bool initializeValueLookupForest (vector<HistoDef> &, Collections *);
       bool initializeValueLookupForest (vector<Weight> &, Collections *);

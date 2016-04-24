@@ -87,6 +87,7 @@ class InfoPrinter : public edm::EDAnalyzer
 
     // Object collections which can be gotten from the event.
     Collections handles_;
+    Tokens tokens_;
 
     // Stopwatch for timing the code.
     TStopwatch *sw_;
@@ -97,6 +98,7 @@ class InfoPrinter : public edm::EDAnalyzer
 
     // Cut decisions which are gotten from the event.
     edm::Handle<CutCalculatorPayload> cutDecisions;
+    edm::EDGetTokenT<CutCalculatorPayload> cutDecisionsToken_;
 
     ValuesToPrint valuesToPrint;
 

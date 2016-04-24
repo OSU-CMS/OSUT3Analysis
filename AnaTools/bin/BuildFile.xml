@@ -1,9 +1,11 @@
 <use   name="root"/>
 <use   name="boost_program_options"/>
-
+<use   name="OSUT3Analysis/AnaTools"/>
+<flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
 <environment>
   <bin   file="cutFlowLimits.cpp"></bin>
   <bin   file="cutFlowTable.cpp"></bin>
+  <bin   file="getCollectionType.cpp"></bin>
   <bin   file="getEventsFromCutFlow.cpp"></bin>
   <bin   file="weightTrees.cpp"></bin>
   <bin   file="mergeTFileServiceHistograms.cpp"></bin>

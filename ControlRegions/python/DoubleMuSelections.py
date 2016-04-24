@@ -7,7 +7,8 @@ import copy
 
 from OSUT3Analysis.ControlRegions.Preselections import *
 
-doubleMuTriggerPath = cms.vstring("HLT_Mu17_Mu8_v")
+#doubleMuTriggerPath = cms.vstring("HLT_Mu17_Mu8_v")
+doubleMuTriggerPath = cms.vstring("")
 
 #defining these cuts first since they will be used repeatedly 
 os_cut = cms.PSet (
@@ -43,7 +44,7 @@ ZtoMuMuSelection = cms.PSet(
     triggers = doubleMuTriggerPath,
     cuts = cms.VPSet ()
 )
-ZtoMuMuSelection.cuts.extend(copy.deepcopy(Event_Preselection.cuts))
+#ZtoMuMuSelection.cuts.extend(copy.deepcopy(Event_Preselection.cuts))
 ZtoMuMuSelection.cuts.extend(copy.deepcopy(Muon_Preselection.cuts))
 for cut in ZtoMuMuSelection.cuts:
     if "muons" in str(cut.inputCollection):

@@ -8,6 +8,8 @@ PileUpInfoProducer::PileUpInfoProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("pileupinfos");
 
   produces<vector<osu::PileUpInfo> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(pileupinfos)> > (collection_);
 }
 
 PileUpInfoProducer::~PileUpInfoProducer ()
@@ -18,9 +20,7 @@ void
 PileUpInfoProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(pileupinfos)> > collection;
-  bool valid = anatools::getCollection (collection_, collection, event, false);
-  // Specify argument verbose = false to prevent error messages if collection is not found. 
-  if(!valid)
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::PileUpInfo> > (new vector<osu::PileUpInfo> ());

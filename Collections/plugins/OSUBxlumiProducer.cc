@@ -10,6 +10,8 @@ OSUBxlumiProducer::OSUBxlumiProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("bxlumis");
 
   produces<vector<osu::Bxlumi> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(bxlumis)> > (collection_);
 }
 
 OSUBxlumiProducer::~OSUBxlumiProducer ()
@@ -19,8 +21,8 @@ OSUBxlumiProducer::~OSUBxlumiProducer ()
 void
 OSUBxlumiProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE (bxlumis)> > collection;
-  if (!anatools::getCollection (collection_, collection, event, false))
+  edm::Handle<vector<TYPE(bxlumis)> > collection;
+  if (!event.getByToken (token_, collection))
     return;
 
   pl_ = auto_ptr<vector<osu::Bxlumi> > (new vector<osu::Bxlumi> ());

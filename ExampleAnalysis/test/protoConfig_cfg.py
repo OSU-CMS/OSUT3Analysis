@@ -17,7 +17,9 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 # ---------------------------------------
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-        'root://cmsxrootd.fnal.gov//store/mc/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v3/10000/009D49A5-7314-E511-84EF-0025905A605E.root',
+        #'/store/mc/RunIISpring15DR74/DisplacedSUSY_StopToBL_M-500_CTau-10_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v1/50000/D68ED53F-BD09-E511-A265-008CFA064788.root'
+        '/store/user/ahart/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-DisappTrks-v1/160103_234642/0000/miniAODWithCandidateTracks_1.root'
+        #'root://cmsxrootd.fnal.gov//store/mc/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v3/10000/009D49A5-7314-E511-84EF-0025905A605E.root',
         ),
 )
 
@@ -61,8 +63,25 @@ weights = cms.VPSet (
         inputCollections = cms.vstring("muons"),
         inputVariable = cms.string("pt")
     ),
+    #cms.PSet (
+    #    inputCollections = cms.vstring("eventvariables"),
+    #    inputVariable = cms.string("electronScalingFactor")
+    #),
 )
 
+scalingfactorproducers = []
+#ObjectScalingFactorProducer = {}
+#ObjectScalingFactorProducer['name'] = 'ObjectScalingFactorProducer'
+#ObjectScalingFactorProducer['muonFile'] = cms.string(os.environ['CMSSW_BASE'] + '/src/OSUT3Analy
+#sis/AnaTools/data/muonSF.root')
+#ObjectScalingFactorProducer['electronFile'] = cms.string(os.environ['CMSSW_BASE'] + '/src/OSUT3A
+#nalysis/AnaTools/data/electronSF.root')
+######Here the muonWp and electronWp refer to the histograms you want to use. #########
+#ObjectScalingFactorProducer['muonWp'] = cms.string('NUM_TightIDandIPCut_DEN_genTracks_PAR_pt_spl
+#iteta_bin1/abseta_vs_pt')ObjectScalingFactorProducer['electronWp'] = cms.string('GlobalSF')
+#ObjectScalingFactorProducer['doEleSF'] = cms.bool(True)
+#ObjectScalingFactorProducer['doMuSF'] = cms.bool(False)
+#scalingfactorproducers.append(ObjectScalingFactorProducer)
 ################################################################################
 ##### Set up any user-defined variable producers ###############################
 ################################################################################
@@ -86,7 +105,7 @@ from OSUT3Analysis.ExampleAnalysis.MyProtoHistogramDefinitions import *
 ##### Attach the channels and histograms to the process ########################
 ################################################################################
 
-add_channels (process, [eMuMinimal], cms.VPSet (histograms), weights, collectionMap, variableProducers, False)
+add_channels (process, [eMuMinimal], cms.VPSet (histograms), weights,scalingfactorproducers, collectionMap, variableProducers, False)
 
 # uncomment to produce a full python configuration log file
 #outfile = open('dumpedConfig.py','w'); print >> outfile,process.dumpPython(); outfile.close()

@@ -17,15 +17,17 @@ class PUScalingFactorProducer : public EventVariableProducer
   {
     public:
         PUScalingFactorProducer (const edm::ParameterSet &);
-        void getOriginalCollections (const unordered_set<string> &objectsToGet, const edm::ParameterSet &collections, OriginalCollections &handles, const edm::Event &event);
-        bool passCleaning (double eta, double phi, OriginalCollections &handles);
-	~PUScalingFactorProducer ();
+        void getOriginalCollections (const edm::Event &event);
+        ~PUScalingFactorProducer ();
         OriginalCollections handles_;
 
     private:
-        string PU_;             
-        string dataset_; 
-        string type_; 
+        string PU_;
+        string dataset_;
+        string target_;
+        string type_;
         void AddVariables(const edm::Event &);
+
+        edm::EDGetTokenT<vector<TYPE(pileupinfos)> > pileUpInfosToken_;
 };
 #endif

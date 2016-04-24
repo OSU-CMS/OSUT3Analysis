@@ -8,19 +8,60 @@
 #define COMMON_UTILS
 
 #include <iostream>
+#include <map>
 #include <unordered_set>
+#include <unordered_map>
 #include <typeinfo>
 
+#include "FWCore/Framework/interface/ConsumesCollector.h"
 #include "FWCore/Framework/interface/Event.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
+#include "OSUT3Analysis/AnaTools/interface/BaseWithDict.h"
+#include "OSUT3Analysis/AnaTools/interface/FunctionWithDict.h"
+#include "OSUT3Analysis/AnaTools/interface/ObjectWithDict.h"
+#include "OSUT3Analysis/AnaTools/interface/IterWithDict.h"
+#include "OSUT3Analysis/AnaTools/interface/MemberWithDict.h"
+#include "OSUT3Analysis/AnaTools/interface/TypeWithDict.h"
+
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+
+struct Tokens
+{
+  edm::EDGetTokenT<vector<osu::Bxlumi> > bxlumis;
+  edm::EDGetTokenT<vector<osu::Cschit> > cschits;
+  edm::EDGetTokenT<vector<osu::Cscseg> > cscsegs;
+  edm::EDGetTokenT<vector<osu::Dtseg> > dtsegs;
+  edm::EDGetTokenT<vector<osu::Electron> > electrons;
+  edm::EDGetTokenT<vector<osu::Event> > events;
+  edm::EDGetTokenT<vector<osu::Genjet> > genjets;
+  edm::EDGetTokenT<vector<osu::Jet> > jets;
+  edm::EDGetTokenT<vector<osu::Bjet> > bjets;
+  edm::EDGetTokenT<vector<osu::Basicjet> > basicjets;
+  edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticles;
+  edm::EDGetTokenT<vector<osu::Met> > mets;
+  edm::EDGetTokenT<vector<osu::Muon> > muons;
+  edm::EDGetTokenT<vector<osu::Photon> > photons;
+  edm::EDGetTokenT<vector<osu::Primaryvertex> > primaryvertexs;
+  edm::EDGetTokenT<vector<osu::Rpchit> > rpchits;
+  edm::EDGetTokenT<vector<osu::Supercluster> > superclusters;
+  edm::EDGetTokenT<vector<osu::Tau> > taus;
+  edm::EDGetTokenT<vector<osu::Track> > tracks;
+  edm::EDGetTokenT<vector<osu::PileUpInfo> > pileupinfos;
+  edm::EDGetTokenT<vector<osu::Trigobj> > trigobjs;
+
+  edm::EDGetTokenT<osu::Beamspot> beamspots;
+  edm::EDGetTokenT<TYPE(generatorweights)> generatorweights;
+  edm::EDGetTokenT<TYPE(prescales)> prescales;
+  edm::EDGetTokenT<TYPE(triggers)> triggers;
+
+  vector<edm::EDGetTokenT<osu::Uservariable> > uservariables;
+  vector<edm::EDGetTokenT<osu::Eventvariable> > eventvariables;
+};
 
 namespace anatools
 {
-  template <class T> bool getCollection (const edm::InputTag& label, edm::Handle<T>& collection, const edm::Event& event, bool verbose = true);
-
   // Return a (hopefully) unique hashed integer for an object
   template <class T> int getObjectHash (const T &);
 
@@ -159,67 +200,25 @@ namespace anatools
 
   // Retrieves all the collections from the event which are needed based on the
   // first argument.
-  void getRequiredCollections (const unordered_set<string> &, const edm::ParameterSet &, Collections &, const edm::Event &);
+  void getRequiredCollections (const unordered_set<string> &, Collections &, const edm::Event &, const Tokens &);
 
-  double getMember (const string &type, const void * const obj, const string &member);
+  double getMember (const string &type, void *obj, const string &member, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * = NULL);
 
   template <class T> double getMember (const T &obj, const string &member);
 
 #ifdef ROOT6
-  template<class T> T invoke (const string &, edm::ObjectWithDict * const, const edm::FunctionWithDict &);
+  anatools::ObjectWithDict * getMember (const anatools::TypeWithDict &tDerived, const anatools::TypeWithDict &t, const anatools::ObjectWithDict &o, const string &member, string &memberType, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > *);
+  anatools::ObjectWithDict * invoke (const string &returnType, const anatools::ObjectWithDict &o, const anatools::FunctionWithDict &f);
 #else
   const Reflex::Object * const getMember (const Reflex::Type &t, const Reflex::Object &o, const string &member, string &memberType);
   const Reflex::Object * const invoke (const string &returnType, const Reflex::Object &o, const string &member);
 #endif
 
   double getGeneratorWeight (const TYPE(generatorweights) &);
-}
 
-/**
- * Retrieves a collection from the event, storing it in the second argument.
- *
- * First tries to get a collection with the given type and label. If that
- * fails, gets all collections with the given type and picks the one with the
- * fewest parents, provided its instance label is equal to either the specified label 
- * or "originalFormat", as is the case for a skim.  
- *
- * @param  label product instance label of collection to retrieve
- * @param  collection edm::Handle in which to store the retrieved collection
- * @param  event edm::Event from which to get the collection
- * @return boolean representing whether retrieval was successful
- */
-template <class T> bool
-anatools::getCollection(const edm::InputTag& label, edm::Handle<T>& collection, const edm::Event &event, bool verbose) {
-  event.getByLabel(label, collection);
-  if (!collection.isValid()) {
-    vector<edm::Handle<T> > objVec;
-    event.getManyByType(objVec);
-    int collWithFewestParents = -1, fewestParents = 99;
-    for (uint i=0; i<objVec.size(); i++) {
-      int parents = objVec.at(i).provenance()->parents().size();
-      if ((objVec.at(i).provenance()->productInstanceName() == label.instance() || 
-	   objVec.at(i).provenance()->productInstanceName() == ORIGINAL_FORMAT) &&
-	  parents < fewestParents) {
-        collWithFewestParents = i;
-        fewestParents = parents;
-      }
-    }
-    if (collWithFewestParents != -1){
-      collection = objVec.at(collWithFewestParents);
-    }
-    else {
-      if (verbose) clog << "ERROR: did not find any collections that match input tag:  " << label 
-			<< ", with type:  " << typeid(collection).name()  
-			<< endl;  
-      return false;
-    }
-    if (!collection.isValid()) {
-      if (verbose) clog << "ERROR: could not get input collection with product instance label: " << label.instance()
-			<< ", but found " << objVec.size() << " collections of the specified type." << endl;
-      return false;
-    }
-  }
-  return true;
+  void getAllTokens (const edm::ParameterSet &, edm::ConsumesCollector &&, Tokens &);
+
+  template<class T> bool jetPassesTightLepVeto (const T &);
 }
 
 /**
@@ -233,7 +232,7 @@ template <class T> double
 anatools::getMember(const T &obj, const string &member)
 {
   string type = getObjectClass(obj);
-  return getMember(type, &obj, member);
+  return getMember(type, (void *) &obj, member);
 }
 
 /**
@@ -252,6 +251,16 @@ anatools::getObjectHash(const T& object){
     py_mev = abs(int(1000 * getMember (object, "py")));
     pz_mev = abs(int(1000 * getMember (object, "pz")));
     return px_mev + py_mev + pz_mev;
+}
+
+template<class T> bool
+anatools::jetPassesTightLepVeto (const T &jet)
+{
+  // Taken from recommendations from the JetMET group for 13 TeV:
+  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID#Recommendations_for_13_TeV_data
+  //
+  return (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
+    || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0));
 }
 
 #endif

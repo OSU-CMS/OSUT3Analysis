@@ -29,6 +29,7 @@ class ObjectSelector : public edm::EDFilter
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     string             collectionToFilter_;
+    edm::InputTag      originalCollection_;
     edm::InputTag      cutDecisions_;
     bool               firstEvent_;
     ////////////////////////////////////////////////////////////////////////////
@@ -41,7 +42,14 @@ class ObjectSelector : public edm::EDFilter
     ////////////////////////////////////////////////////////////////////////////
     edm::Handle<vector<T> >            collection;
     edm::Handle<vector<TO> >           collectionOrig;  // original format collection
+    edm::Handle<T>                     singleton;
+    edm::Handle<TO>                    singletonOrig;  // original format singleton
     edm::Handle<CutCalculatorPayload>  cutDecisions;
+    edm::EDGetTokenT<vector<T> >            collectionToken_;
+    edm::EDGetTokenT<vector<TO> >           collectionOrigToken_;
+    edm::EDGetTokenT<T>                     singletonToken_;
+    edm::EDGetTokenT<TO>                    singletonOrigToken_;
+    edm::EDGetTokenT<CutCalculatorPayload>  cutDecisionsToken_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
@@ -53,16 +61,19 @@ template<class T, class TO>
 ObjectSelector<T, TO>::ObjectSelector (const edm::ParameterSet &cfg) :
   collections_         (cfg.getParameter<edm::ParameterSet>  ("collections")),
   collectionToFilter_  (cfg.getParameter<string>             ("collectionToFilter")),
+  originalCollection_  (cfg.getParameter<edm::InputTag>      ("originalCollection")),
   cutDecisions_        (cfg.getParameter<edm::InputTag>      ("cutDecisions")),
   firstEvent_          (true)
 {
-  assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
-
   // Retrieve the InputTag for the collection which is to be filtered.
   collection_ = collections_.getParameter<edm::InputTag> (collectionToFilter_);
 
   produces<vector<T> >  (collection_.instance ());
   produces<vector<TO> > (ORIGINAL_FORMAT);  
+
+  collectionToken_ = consumes<vector<T> > (collection_);
+  collectionOrigToken_ = consumes<vector<TO> > (originalCollection_);
+  cutDecisionsToken_ = consumes<CutCalculatorPayload> (cutDecisions_);
 }
 
 template<class T, class TO>
@@ -77,9 +88,9 @@ template<class T, class TO> bool
   // Get the collection and cut decisions from the event and print a warning if
   // there is a problem.
   //////////////////////////////////////////////////////////////////////////////
-  anatools::getCollection (collection_, collection,     event);
-  anatools::getCollection (collection_, collectionOrig, event);
-  event.getByLabel (cutDecisions_, cutDecisions);  
+  event.getByToken (collectionToken_, collection);
+  event.getByToken (collectionOrigToken_, collectionOrig);
+  event.getByToken (cutDecisionsToken_, cutDecisions);
   if (firstEvent_ && !collection.isValid ())
     clog << "WARNING: failed to retrieve requested collection from the event." << endl;
   if (firstEvent_ && !collectionOrig.isValid ())

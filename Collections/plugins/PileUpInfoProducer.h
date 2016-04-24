@@ -22,6 +22,7 @@ class PileUpInfoProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
+    edm::EDGetTokenT<vector<TYPE(pileupinfos)> > token_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.

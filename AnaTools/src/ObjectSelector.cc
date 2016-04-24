@@ -8,16 +8,19 @@
   ObjectSelector<osu::Beamspot, TYPE(beamspots)>::ObjectSelector (const edm::ParameterSet &cfg) :
     collections_         (cfg.getParameter<edm::ParameterSet>  ("collections")),
     collectionToFilter_  (cfg.getParameter<string>             ("collectionToFilter")),
+    originalCollection_  (cfg.getParameter<edm::InputTag>      ("originalCollection")),
     cutDecisions_        (cfg.getParameter<edm::InputTag>      ("cutDecisions")),
     firstEvent_          (true)
   {
-    assert (strcmp (PROJECT_VERSION, SUPPORTED_VERSION) == 0);
-
     // Retrieve the InputTag for the collection which is to be filtered.
     collection_ = collections_.getParameter<edm::InputTag> (collectionToFilter_);
 
     produces<osu::Beamspot> (collection_.instance ());
     produces<TYPE(beamspots)> (ORIGINAL_FORMAT);
+
+    singletonToken_ = consumes<osu::Beamspot> (collection_);
+    singletonOrigToken_ = consumes<TYPE(beamspots)> (originalCollection_);
+    cutDecisionsToken_ = consumes<CutCalculatorPayload> (cutDecisions_);
   }
 
   template<> bool
@@ -27,14 +30,12 @@
     // Get the collection and cut decisions from the event and print a warning if
     // there is a problem.
     //////////////////////////////////////////////////////////////////////////////
-    edm::Handle<osu::Beamspot> collection;
-    edm::Handle<TYPE(beamspots)> collectionOrig;
-    anatools::getCollection (collection_, collection,     event);
-    anatools::getCollection (collection_, collectionOrig, event);
-    event.getByLabel (cutDecisions_, cutDecisions);  
-    if (firstEvent_ && !collection.isValid ())
+    event.getByToken (singletonToken_, singleton);
+    event.getByToken (singletonOrigToken_, singletonOrig);
+    event.getByToken (cutDecisionsToken_, cutDecisions);
+    if (firstEvent_ && !singleton.isValid ())
       clog << "WARNING: failed to retrieve requested collection from the event." << endl;
-    if (firstEvent_ && !collectionOrig.isValid ())
+    if (firstEvent_ && !singletonOrig.isValid ())
       clog << "WARNING: failed to retrieve original collection from the event." << endl;
     if (firstEvent_ && !cutDecisions.isValid ())
       clog << "WARNING: failed to retrieve cut decisions from the event." << endl;
@@ -47,10 +48,10 @@
     //////////////////////////////////////////////////////////////////////////////
     auto_ptr<osu::Beamspot> pl_ = auto_ptr<osu::Beamspot> (new osu::Beamspot ());
     auto_ptr<TYPE(beamspots)> plO_ = auto_ptr<TYPE(beamspots)> (new TYPE(beamspots) ());
-    if (collection.isValid () && collectionOrig.isValid())
+    if (singleton.isValid () && singletonOrig.isValid())
       {
-        const osu::Beamspot * const object = &(*collection);
-        const TYPE(beamspots) * const objOrig = &(*collectionOrig);
+        const osu::Beamspot * const object = &(*singleton);
+        const TYPE(beamspots) * const objOrig = &(*singletonOrig);
         unsigned iObject = 0;
         bool passes = true;
 
@@ -74,7 +75,7 @@
     //////////////////////////////////////////////////////////////////////////////
 
     event.put (pl_,  collection_.instance ());
-    event.put (plO_, ORIGINAL_FORMAT);  
+    event.put (plO_, ORIGINAL_FORMAT);
     pl_.reset ();
     plO_.reset ();
     firstEvent_ = false;

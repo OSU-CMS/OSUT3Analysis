@@ -194,11 +194,9 @@ dir_y_top    = ts_y_bottom
 ##########################################################################################################################################
 ##########################################################################################################################################
 
-def getSystematicError(sample,channel):
+def getSystematicError(sample):
     errorSquared = 0.0
     if types[sample] is "data":
-        return 0.0
-    if len(channel) is 0:
         return 0.0
 
     # add uncertainty on normalization method
@@ -230,15 +228,10 @@ def getSystematicError(sample,channel):
 
     # add sample-specific uncertainties from text files
     for uncertainty in external_systematic_uncertainties:
-        input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
+        input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
         if not os.path.exists(input_file_path):
-            #print "WARNING: didn't find ",input_file_path
-            input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
-            if not os.path.exists(input_file_path):
-                print "   skipping",uncertainty,"systematic for the",channel,"channel"
-                return 0
-            #else:
-            #    print "   using default",uncertainty,"systematic for the",channel,"channel"
+            print "   skipping",uncertainty,"systematic for the",channel,"channel"
+            return 0
 
         input_file = open(input_file_path)
         for line in input_file:
@@ -323,7 +316,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax = 0.10):
             ratio.SetBinContent(i+1,groupR(g))
             ratio.SetBinError(i+1,groupErr(g))
 
-    ratio.GetYaxis().SetTitle("#frac{data-bkgd}{bkgd}")
+    ratio.GetYaxis().SetTitle("#frac{obs-exp}{exp}")
     ratio.GetYaxis().SetLabelSize(0.3)
     ratio.SetLineColor(1)
     ratio.SetLineWidth(2)
@@ -673,8 +666,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     DataLegendEntries = []
     BgMCHistYieldsDic = {}
 
-
-    print pathToDir+"/"+histogramName
+    if arguments.verbose:  
+        print pathToDir+"/"+histogramName
 
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         dataset_file = "%s/%s.root" % (condor_dir,sample)
@@ -796,7 +789,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 BgMCHistYieldsDic[-1*numBgMCSamples] = Histogram
                 
             if includeSystematics:
-                BgMCUncertainties.append(getSystematicError(sample,channel))
+                BgMCUncertainties.append(getSystematicError(sample))
 
         elif( types[sample] == "signalMC"):
 
@@ -1065,14 +1058,11 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     #legend coordinates, empirically determined :-)
-    #x_left = 0.629885
-    #x_right = 0.935632
-    x_left = 0.157471
-    x_right = 0.355172
+    x_left = 0.52765
+    x_right = 0.834101
     x_width = x_right - x_left
-    #y_max = 0.882282
-    y_max = 0.73
-    entry_height = 0.037318
+    y_max = 0.879562
+    entry_height = 0.037307
 
     if(numBgMCSamples is not 0 or numDataSamples is not 0): #then draw the data & bgMC legend
 
@@ -1121,6 +1111,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         BgMCLegend.SetY2NDC(-0.05 + y_max)
         BgMCLegend.Draw()
 
+    elif (numSignalSamples is not 0):
+        SignalMCLegend.SetX1NDC(x_left)
+        SignalMCLegend.SetY1NDC(y_max-entry_height*numSignalSamples)
+        SignalMCLegend.SetX2NDC(x_right)
+        SignalMCLegend.SetY2NDC(y_max)
+        SignalMCLegend.SetTextSize(0.0364078)
+        SignalMCLegend.Draw()
 
     # Deciding which text labels to draw and drawing them
     drawLumiLabel = False
@@ -1166,7 +1163,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Comparison = DataHistograms[0].Clone("diff")
             Comparison.Add(BgSum,-1)
             Comparison.SetTitle("")
-            Comparison.GetYaxis().SetTitle("data-bkgd")
+            Comparison.GetYaxis().SetTitle("obs-exp")
         elif makeSignifPlots:
             Comparisons = signifHistograms(BgSum,SignalMCHistograms)
             Comparison = Comparisons[0]
@@ -1310,7 +1307,7 @@ def MakeTwoDHist(pathToDir,histogramName):
         NormText = "MC scaled to data"
         NormLabel.SetLabel(NormText)
 
-    BgMCLegend = TLegend(0.572581,0.742092,0.904378,0.891727)
+    BgMCLegend = TLegend(0.52765,0.76764,0.834101,0.879562)
     BgMCLegend.AddEntry (0, "Data & Bkgd. MC", "H").SetTextFont (62)
     BgMCLegend.SetTextFont(42)
     BgMCLegend.SetTextSize(0.0364078)
@@ -1565,7 +1562,14 @@ if arguments.savePDFs:
     os.system("mkdir %s/stacked_histograms_pdfs" % (condor_dir))
 
 #### make output file
-outputFileName = "stacked_histograms.root"
+outputFileString = ''
+if arguments.rebinFactor:
+    outputFileString += '_Rebin' + str(arguments.rebinFactor)
+if arguments.makeRatioPlots:
+    outputFileString += '_Ratio'
+if arguments.normalizeToData:
+    outputFileString += '_Norm'
+outputFileName = "stacked_histograms" + outputFileString + ".root"
 if arguments.makeSignificancePlots:
     outputFileName = "stacked_histogramsSignif.root"
 if arguments.outputFileName:
@@ -1654,3 +1658,5 @@ for key in inputFile.GetListOfKeys():
 
 
 outputFile.Close()
+print "Finished writing plots to ", str(outputDir + "/" + outputFileName)  
+

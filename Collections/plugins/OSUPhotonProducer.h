@@ -22,6 +22,8 @@ class OSUPhotonProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
+    edm::EDGetTokenT<vector<TYPE(photons)> > token_;
+    edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 

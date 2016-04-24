@@ -34,8 +34,8 @@ parser.add_option("-s", "--standAlone", action="store_true", dest="standAlone", 
 
 parser.add_option("-S", "--systematics", action="store_true", dest="includeSystematics", default=False,
                                     help="also lists the systematic uncertainties")
-parser.add_option("--is", "--withSignal", action="store_true", dest="includeSignal", default=False,
-                                    help="include signal MC")
+parser.add_option("-i", "--inputHistogram", dest="inputHistogram",
+                  help="choose an input histogram and calculate the yield from its integral (histogram should be filled once per event)")
 
 (arguments, args) = parser.parse_args()
 
@@ -54,7 +54,7 @@ if arguments.includeSystematics:
 condor_dir = set_condor_output_dir(arguments)
 
 
-from ROOT import TFile, TH1F, gDirectory
+from ROOT import TFile, TH1F, gDirectory, Double
 
 
 hLine = "\\hline\n"
@@ -62,11 +62,9 @@ endLine = " \\\\ "
 newLine = " \n"
 
 
-def getSystematicError(sample,channel):
+def getSystematicError(sample):
     errorSquared = 0.0
     if types[sample] is "data":
-        return 0.0
-    if len(channel) is 0:
         return 0.0
 
     # add uncertainty on normalization method
@@ -92,16 +90,11 @@ def getSystematicError(sample,channel):
 
     # add sample-specific uncertainties from text files
     for uncertainty in external_systematic_uncertainties:
-        input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + "__" + channel + ".txt"
+        input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
         if not os.path.exists(input_file_path):
-            print "WARNING: didn't find ",input_file_path
-            input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
-            if not os.path.exists(input_file_path):
-                print "   skipping",uncertainty,"systematic for the",channel,"channel"
-                return 0
-            else:
-                print "   using default",uncertainty,"systematic for the",channel,"channel"
-                
+            print "   skipping",uncertainty,"systematic for the",channel,"channel"
+            return 0
+
         input_file = open(input_file_path)
         for line in input_file:
             line = line.rstrip("n").split(" ")
@@ -127,8 +120,6 @@ def getSystematicError(sample,channel):
 #### check which input datasets have valid output files
 processed_datasets = []
 for dataset in datasets:
-    if not arguments.includeSignal and  types[dataset] is "signalMC": #only include bgMC and data yields
-        continue
     fileName = condor_dir + "/" + dataset + ".root"
     if not os.path.exists(fileName):
         "input file not found for ",dataset,"dataset"
@@ -137,7 +128,7 @@ for dataset in datasets:
     if not (testFile.IsZombie()):
         processed_datasets.append(dataset)
 
-#### exit if no datasets found        
+#### exit if no datasets found
 if len(processed_datasets) is 0:
     print datasets
     sys.exit("Can't find any output root files for the given list of datasets")
@@ -155,7 +146,7 @@ for key in gDirectory.GetListOfKeys():
         continue
     channels.append(key.GetName())
 
-#get and store the yields and errors for each dataset                                                
+#get and store the yields and errors for each dataset
 yields = {}
 stat_errors = {}
 sys_errors = {}
@@ -177,17 +168,27 @@ for sample in processed_datasets:
     dataset_file = "%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     for channel in channels:
-        cutFlowHistogram = inputFile.Get(channel+"/cutFlow")
-        if not cutFlowHistogram:
-            print "WARNING: didn't find cutflow for ", sample, "dataset in", channel, "channel"
-            continue
+        if not arguments.inputHistogram:
+            cutFlowHistogram = inputFile.Get(channel+"/cutFlow")
+            if not cutFlowHistogram:
+                print "WARNING: didn't find cutflow for ", sample, "dataset in", channel, "channel"
+                continue
+            yield_ = cutFlowHistogram.GetBinContent(cutFlowHistogram.GetNbinsX())
+            statError_ = cutFlowHistogram.GetBinError(cutFlowHistogram.GetNbinsX())
+
+        else:
+            newChannel = channel.replace("CutFlow","")
+            inputHistogram = inputFile.Get(newChannel + "/" + arguments.inputHistogram)
+            if not inputHistogram:
+                print "WARNING: didn't find input histogram for ", sample, "dataset in", newChannel, "channel"
+                continue
+            statError_ = Double(0.0)
+            yield_ = inputHistogram.IntegralAndError(0, inputHistogram.GetNbinsX()+1, statError_)
+
         processed_datasets_channels[channel].append(sample)
 
-        yield_ = cutFlowHistogram.GetBinContent(cutFlowHistogram.GetNbinsX())
-        statError_ = cutFlowHistogram.GetBinError(cutFlowHistogram.GetNbinsX())
- 
         if arguments.includeSystematics:
-            fractionalSysError_ = getSystematicError(sample,channel)
+            fractionalSysError_ = getSystematicError(sample)
             sysError_ = fractionalSysError_ * yield_
         else:
             sysError_ = 0.0
@@ -207,7 +208,7 @@ for sample in processed_datasets:
 #write a table for each channel to a separate tex file
 
 for channel in channels:
-    outputFile = condor_dir + "/yields_" + plainTextString(channel.split("CutFlowPlotter")[0]) + ".tex"
+    outputFile = condor_dir + "/yields_" + plainTextString(channel.replace("CutFlowPlotter","")) + ".tex"
     fout = open (outputFile, "w")
     if(arguments.standAlone):
         fout.write("\\documentclass{article}"+newLine+"\\begin{document}"+newLine)
@@ -222,11 +223,12 @@ for channel in channels:
     #write a line for each background sample
     bgMCcounter = 0
     for sample in processed_datasets_channels[channel]:
-        if not arguments.includeSignal and  types[sample] is not "bgMC":
+        if types[sample] is not "bgMC":
             continue
+
         bgMCcounter = bgMCcounter + 1
         rawlabel = labels[sample]
-        label = rawlabel.replace("#bar{t}","$\\bar{\\mathrm{t}}$").replace("#tau","$\\tau$").replace("#nu","$\\nu$").replace("#rightarrow","${\\rightarrow}$").replace(" ","\\ ")
+        label = rawlabel.replace("#tilde{t}","\\tilde{\\mathrm{t}}").replace("#bar{t}","$\\bar{\\mathrm{t}}$").replace("#tau","$\\tau$").replace("#nu","$\\nu$").replace("#rightarrow","${\\rightarrow}$").replace(" ","\\ ")
         line = label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel]
         if arguments.includeSystematics:
             line = line + " $\pm$ " + sys_errors[sample][channel]
@@ -251,11 +253,31 @@ for channel in channels:
             continue
 
         label =  "Observation"
-        fout.write(label + " & " + yields[sample][channel] + endLine + newLine)        
-                                            
+        fout.write(label + " & " + yields[sample][channel] + endLine + newLine + hLine)
+
+
+    #write a line for each signal sample
+    signalCounter = 0
+    for sample in processed_datasets_channels[channel]:
+        if types[sample] is not "signalMC":
+            continue
+        signalCounter += 1
+        rawlabel = labels[sample]
+        label = rawlabel.replace("#tilde{t}","\\tilde{\\mathrm{t}}").replace("#bar{t}","$\\bar{\\mathrm{t}}$").replace("#tau","$\\tau$").replace("#nu","$\\nu$").replace("#rightarrow","${\\rightarrow}$").replace(" ","\\ ")
+        line = label + " & " + yields[sample][channel] + " $\pm$ " + stat_errors[sample][channel]
+        if arguments.includeSystematics:
+            line = line + " $\pm$ " + sys_errors[sample][channel]
+        line = line + endLine + newLine
+	fout.write(line)
+    if signalCounter > 0:
+        fout.write(hLine)
+
     fout.write("\\end{tabular}"+newLine)
     if(arguments.standAlone):
         fout.write("\\end{document}"+newLine)
+
+
+
 
     fout.close()
 

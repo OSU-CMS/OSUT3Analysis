@@ -7,6 +7,7 @@
 #define  bjets_TYPE             INVALID_TYPE
 #define  basicjets_TYPE         reco::BasicJet
 #define  mcparticles_TYPE       INVALID_TYPE
+#define hardInteractionMcparticles_TYPE INVALID_TYPE
 #define  mets_TYPE              reco::PFMET
 #define  muons_TYPE             reco::Muon
 #define  photons_TYPE           reco::Photon
@@ -32,6 +33,7 @@
 #define  events_INVALID
 #define  genjets_INVALID
 #define  mcparticles_INVALID
+#define  hardInteractionMcparticles_INVALID
 #define  prescales_INVALID
 #define  superclusters_INVALID
 #define  trigobjs_INVALID
