@@ -580,11 +580,12 @@ replacements = collections.OrderedDict([
     ("abs (eta)","|\\eta|"),
     ("abs(eta)","|\\eta|"),
     (" eta ","  \\eta "),
+    ("eta","\\eta"),
 
     ("#Delta","\\Delta"),
     ("DeltaR","$\\Delta$R"),
     ("#Phi","\\phi"),
-    ("#","Num"),
+    (" # "," Num "),
 
     ("\\rightarrow","{\\rightarrow}"),
     ("\\mu QCD","\\mu$ $QCD"),
@@ -615,7 +616,9 @@ replacements = collections.OrderedDict([
     ("M_ll","$M_{ll}$"),
 ])
 
-replacements_extra = {}
+replacements_extra = {
+    "#":"\\",
+    }
 
 
 ###############################################################################
