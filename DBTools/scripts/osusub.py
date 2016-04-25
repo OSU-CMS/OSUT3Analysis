@@ -658,7 +658,7 @@ if arguments.skimToHadoop:
         print "The directory ", arguments.skimToHadoop, " does not exist.  Aborting."
         sys.exit()
     else:
-        HadoopDir = arguments.skimToHadoop + arguments.condorDir
+        HadoopDir = arguments.skimToHadoop + '/' + arguments.condorDir
     if not os.path.exists(HadoopDir):
         os.mkdir (HadoopDir)
     else:
