@@ -855,6 +855,12 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
 {
   if (collections.exists ("bxlumis"))
     tokens.bxlumis = cc.consumes<vector<osu::Bxlumi> > (collections.getParameter<edm::InputTag> ("bxlumis"));
+  if (collections.exists ("cschits"))
+    tokens.cschits = cc.consumes<vector<osu::Cschit> > (collections.getParameter<edm::InputTag> ("cschits"));
+  if (collections.exists ("cscsegs"))
+    tokens.cscsegs = cc.consumes<vector<osu::Cscseg> > (collections.getParameter<edm::InputTag> ("cscsegs"));
+  if (collections.exists ("dtsegs"))
+    tokens.dtsegs = cc.consumes<vector<osu::Dtseg> > (collections.getParameter<edm::InputTag> ("dtsegs"));
   if (collections.exists ("electrons"))
     tokens.electrons = cc.consumes<vector<osu::Electron> > (collections.getParameter<edm::InputTag> ("electrons"));
   if (collections.exists ("events"))
@@ -877,6 +883,8 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     tokens.photons = cc.consumes<vector<osu::Photon> > (collections.getParameter<edm::InputTag> ("photons"));
   if (collections.exists ("primaryvertexs"))
     tokens.primaryvertexs = cc.consumes<vector<osu::Primaryvertex> > (collections.getParameter<edm::InputTag> ("primaryvertexs"));
+  if (collections.exists ("rpchits"))
+    tokens.rpchits = cc.consumes<vector<osu::Rpchit> > (collections.getParameter<edm::InputTag> ("rpchits"));
   if (collections.exists ("superclusters"))
     tokens.superclusters = cc.consumes<vector<osu::Supercluster> > (collections.getParameter<edm::InputTag> ("superclusters"));
   if (collections.exists ("taus"))

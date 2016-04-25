@@ -10,6 +10,8 @@ OSURpchitProducer::OSURpchitProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("rpchits");
 
   produces<vector<osu::Rpchit> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(rpchits)> > (collection_);
 }
 
 OSURpchitProducer::~OSURpchitProducer ()

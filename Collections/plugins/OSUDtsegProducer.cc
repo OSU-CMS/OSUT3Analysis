@@ -11,6 +11,7 @@ OSUDtsegProducer::OSUDtsegProducer (const edm::ParameterSet &cfg) :
 
   produces<vector<osu::Dtseg> > (collection_.instance ());
   std::cout << collection_.instance() << std::endl;
+  token_ = consumes<vector<TYPE(dtsegs)> > (collection_);
 }
 
 OSUDtsegProducer::~OSUDtsegProducer ()

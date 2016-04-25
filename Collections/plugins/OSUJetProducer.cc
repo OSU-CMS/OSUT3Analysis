@@ -9,14 +9,18 @@ OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
   cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   electrons_ = collections_.getParameter<edm::InputTag> ("electrons");
   muons_ = collections_.getParameter<edm::InputTag> ("muons");
+#endif
   produces<vector<osu::Jet> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(jets)> > (collection_);
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   electronToken_ = consumes<vector<TYPE(electrons)> > (electrons_);
   muonToken_ = consumes<vector<TYPE(muons)> > (muons_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
+#endif
 }
 
 OSUJetProducer::~OSUJetProducer ()

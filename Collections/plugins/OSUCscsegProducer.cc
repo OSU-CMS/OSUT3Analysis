@@ -10,6 +10,8 @@ OSUCscsegProducer::OSUCscsegProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("cscsegs");
 
   produces<vector<osu::Cscseg> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(cscsegs)> > (collection_);
 }
 
 OSUCscsegProducer::~OSUCscsegProducer ()

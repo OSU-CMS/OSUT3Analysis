@@ -10,6 +10,8 @@ OSUCschitProducer::OSUCschitProducer (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> ("cschits");
 
   produces<vector<osu::Cschit> > (collection_.instance ());
+
+  token_ = consumes<vector<TYPE(cschits)> > (collection_);
 }
 
 OSUCschitProducer::~OSUCschitProducer ()
