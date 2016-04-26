@@ -76,6 +76,24 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("phi","eta"),
         ),
         cms.PSet (
+            name = cms.string("muonNumberOfMissingInnerHits"),
+            title = cms.string("Muon Number of Missing Inner Hits;muon number of missing inner silicon hits"),
+            binsX = cms.untracked.vdouble(6, -0.5, 5.5),
+            inputVariables = cms.vstring("missingInnerHits"),
+        ),
+        cms.PSet (
+            name = cms.string("muonNumberOfMissingMiddleHits"),
+            title = cms.string("Muon Number of Missing Middle Hits;muon number of missing middle silicon hits"),
+            binsX = cms.untracked.vdouble(6, -0.5, 5.5),
+            inputVariables = cms.vstring("missingMiddleHits"),
+        ),
+        cms.PSet (
+            name = cms.string("muonNumberOfMissingOuterHits"),
+            title = cms.string("Muon Number of Missing Outer Hits;muon number of missing outer silicon hits"),
+            binsX = cms.untracked.vdouble(16, -0.5, 15.5),
+            inputVariables = cms.vstring("missingOuterHits"),
+        ),
+        cms.PSet (
             name = cms.string("muonNumberOfValidHits"),
             title = cms.string("Muon Number of Valid Hits;muon number of valid hits"),
             binsX = cms.untracked.vdouble(40, 0, 40),
@@ -308,9 +326,21 @@ ElectronHistograms = cms.PSet(
         ),
         cms.PSet (
             name = cms.string("electronNumberOfMissingInnerHits"),
-            title = cms.string("Electron  Number of Missing Inner Hits; electron # missing inner hits"),
-            binsX = cms.untracked.vdouble(30, 0, 30),
+            title = cms.string("Electron Number of Missing Inner Hits;electron number of missing inner hits"),
+            binsX = cms.untracked.vdouble(6, -0.5, 5.5),
             inputVariables = cms.vstring("missingInnerHits"),
+        ),
+        cms.PSet (
+            name = cms.string("electronNumberOfMissingMiddleHits"),
+            title = cms.string("Electron Number of Missing Middle Hits;electron number of missing middle silicon hits"),
+            binsX = cms.untracked.vdouble(6, -0.5, 5.5),
+            inputVariables = cms.vstring("missingMiddleHits"),
+        ),
+        cms.PSet (
+            name = cms.string("electronNumberOfMissingOuterHits"),
+            title = cms.string("Electron Number of Missing Outer Hits;electron number of missing outer hits"),
+            binsX = cms.untracked.vdouble(16, -0.5, 15.5),
+            inputVariables = cms.vstring("missingOuterHits"),
         ),
         cms.PSet (
             name = cms.string("electronDeltaEtaSuperClusterTrackAtVtx"),

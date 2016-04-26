@@ -55,5 +55,22 @@ osu::Muon::~Muon ()
 }
 
 
+const int
+osu::Muon::missingInnerHits () const
+{
+  return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS));
+}
+
+const int
+osu::Muon::missingMiddleHits () const
+{
+  return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS));
+}
+
+const int
+osu::Muon::missingOuterHits () const
+{
+  return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
 
 #endif

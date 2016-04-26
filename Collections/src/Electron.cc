@@ -37,7 +37,19 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
 const int
 osu::Electron::missingInnerHits () const
 {
-  return missingInnerHits_;
+  return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS));
+}
+
+const int
+osu::Electron::missingMiddleHits () const
+{
+  return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS));
+}
+
+const int
+osu::Electron::missingOuterHits () const
+{
+  return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
 }
 
 const float

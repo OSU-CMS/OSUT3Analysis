@@ -18,11 +18,12 @@ namespace osu
         const float AEff () const;
         const double pfdRhoIsoCorr () const;
         const int missingInnerHits () const;
+        const int missingMiddleHits () const;
+        const int missingOuterHits () const;
         const bool passesTightID_noIsolation () const;
         void set_rho (float value) { rho_  = value; }  
         void set_AEff (float value) { AEff_  = value; }  
         void set_pfdRhoIsoCorr (double value) { pfdRhoIsoCorr_  = value; }  
-        void set_missingInnerHits(int value) { missingInnerHits_ = value; }  
         void set_passesTightID_noIsolation (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
 #else
   class Electron : public GenMatchable<TYPE(electrons), 11>
@@ -38,7 +39,6 @@ namespace osu
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM     
       private:
         float rho_;
-        int missingInnerHits_;
         float AEff_;
         double pfdRhoIsoCorr_;
         bool passesTightID_noIsolation_;

@@ -56,7 +56,6 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         electron.set_rho((float)(*rho)); 
       if(event.getByToken (beamSpotToken_, beamSpot) && event.getByToken (conversionsToken_, conversions) && event.getByToken (verticesToken_, vertices) && vertices->size ())
         electron.set_passesTightID_noIsolation (*beamSpot, vertices->at (0), conversions);
-      electron.set_missingInnerHits(object.gsfTrack()->hitPattern ().numberOfHits(reco::HitPattern::MISSING_INNER_HITS));
       
       float effectiveArea = 0;
       // electron effective areas from https://indico.cern.ch/event/369239/contribution/4/attachments/1134761/1623262/talk_effective_areas_25ns.pdf
