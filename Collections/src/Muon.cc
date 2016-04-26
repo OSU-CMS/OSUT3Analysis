@@ -39,20 +39,6 @@ osu::Muon::pfdBetaIsoCorr () const
 {
   return pfdBetaIsoCorr_;
 }
-#elif DATA_FORMAT == AOD_CUSTOM
-osu::Muon::Muon ()
-{
-}
-
-osu::Muon::Muon (const TYPE(muons) &muon) :
-    TYPE(muons) (muon)
-{
-}
-#endif
-
-osu::Muon::~Muon ()
-{
-}
 
 
 const int
@@ -72,5 +58,20 @@ osu::Muon::missingOuterHits () const
 {
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
 }
+#elif DATA_FORMAT == AOD_CUSTOM
+osu::Muon::Muon ()
+{
+}
+
+osu::Muon::Muon (const TYPE(muons) &muon) :
+    TYPE(muons) (muon)
+{
+}
+#endif
+
+osu::Muon::~Muon ()
+{
+}
+
 
 #endif
