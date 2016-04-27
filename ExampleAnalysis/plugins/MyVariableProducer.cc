@@ -24,7 +24,7 @@ void
 MyVariableProducer::AddVariables (const edm::Event &event) {
 
   // Add all of the needed collections to objectsToGet_
-  objectsToGet_.insert ("muons");
+  objectsToGet_.insert ("muon");
 
   // get all the needed collections from the event and put them into the "handles_" collection
   //anatools::getRequiredCollections (objectsToGet_, collections_, handles_, event);

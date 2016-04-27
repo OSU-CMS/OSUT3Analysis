@@ -53,8 +53,10 @@ PDFWeightsPlotter::analyze(const edm::Event &event, const edm::EventSetup &setup
   }
 
   firstEvent_ = false; 
+#endif
 }
 
+#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(PDFWeightsPlotter);
 #endif

@@ -27,6 +27,14 @@ datasets = [
    'MET_2015',
    'MET_2015D',
    'NoBPTX_2015D',
+   'NoBPTX_2015D_v3',
+   'NoBPTX_2015D_v4',
+   'StpPtls_controlSample_2015',
+   'Commissioning2015_controlSample',
+   'NoBPTX_2015B_controlSample',
+   'NoBPTX_2015C_controlSample',
+   'NoBPTX_2015Dv3_controlSample',
+   'NoBPTX_2015Dv4_controlSample',
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
@@ -225,6 +233,18 @@ composite_dataset_definitions = {
         'MuonEG_2015C',
         'MuonEG_2015D',
     ],
+    'NoBPTX_2015D' : [
+        'NoBPTX_2015D_v3',
+        'NoBPTX_2015D_v4',
+    ],
+   'StpPtls_controlSample_2015' : [
+        #'Commissioning2015_controlSample',
+        'NoBPTX_2015B_controlSample',
+        'NoBPTX_2015C_controlSample',
+        'NoBPTX_2015Dv3_controlSample',
+        'NoBPTX_2015Dv4_controlSample',
+        #'NoBPTX_2015E_controlSample'
+        ],
     'MET_2015' : [
         'MET_2015B',
         'MET_2015C',
@@ -400,10 +420,96 @@ nJobs = {
 
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
+    
+    ############################################################################
+
+    ###########################################################################
+    #RECO stored on T3
+    ###########################################################################
+    #stopped particles stage2 signals
+    'GluinoToUUbarChi0_1200_200' : 1,
+    'GluinoToUUbarChi0_1200_600' : 3,
+    'GluinoToUUbarChi0_1200_1000': 5,
+    'GluinoToGChi0_1200_200'  : 2,
+    'GluinoToGChi0_1200_400'  : 5,
+    'GluinoToGChi0_1200_600'  : 4,
+    'GluinoToGChi0_1200_800'  : 5,
+    'GluinoToGChi0_1200_1000'  : 5,
+    #signals for energy scan
+    'GluinoToGChi0_600_309'  : 5,
+    'GluinoToGChi0_600_354'  : 5,
+    'GluinoToGChi0_600_424'  : 5,
+    'GluinoToGChi0_600_483'  : 5,
+    'GluinoToGChi0_600_495'  : 5,
+    'GluinoToGChi0_600_507'  : 5,
+    'GluinoToGChi0_600_519'  : 5,
+    'GluinoToGChi0_600_547'  : 5,
+    'GluinoToGChi0_1200_848'  : 5,
+    'GluinoToGChi0_1200_903'  : 5,
+    'GluinoToGChi0_1200_954'  : 5,
+    'GluinoToGChi0_1200_997'  : 5,
+    'GluinoToGChi0_1200_1044'  : 5,
+    'GluinoToGChi0_1200_1089'  : 5,
+    'GluinoToGChi0_1200_1100'  : 5,
+    'GluinoToGChi0_1200_1111'  : 5,
+    'GluinoToGChi0_1200_1122'  : 5,
+    'GluinoToGChi0_1200_1148'  : 5,
+    'GluinoToGChi0_1800_1047'  : 2,
+    'GluinoToGChi0_1800_1122'  : 1,
+    'GluinoToGChi0_1800_1200'  : 1,
+    'GluinoToGChi0_1800_1272'  : 2,
+    'GluinoToGChi0_1800_1341'  : 3,
+    'GluinoToGChi0_1800_1407'  : 3,
+    'GluinoToGChi0_1800_1469'  : 4,
+    'GluinoToGChi0_1800_1529'  : 4,
+    'StopToTChi0_400_75' : 4,
+    'StopToTChi0_400_150' : 4,
+    'StopToTChi0_400_199' : 4,
+    'StopToTChi0_400_250' : 4,
+    'StopToTChi0_400_285' : 4,
+    'StopToTChi0_400_300' : 4,
+    'StopToTChi0_600_100' : 5,
+    'StopToTChi0_600_300' : 5,
+    'StopToTChi0_600_400' : 5,
+    'StopToTChi0_600_500' : 5,
+    'StopToTChi0_1000_100' : 2,
+    'StopToTChi0_1000_173' : 4,
+    'StopToTChi0_1000_360' : 3,
+    'StopToTChi0_1000_480' : 3,
+    'StopToTChi0_1000_574' : 4,
+    'StopToTChi0_1000_656' : 4,
+    'StopToTChi0_1000_728' : 4,
+
+    #stopped particles cosmic events
+    #'cosmic_preselection' : 300,
+    'cosmic_preselection' : 999,
+
+    ###########################################################################
+    #RECO not stored on T3
+    ###########################################################################
+    #NoBPTX data
+    'NoBPTX_2015D_v3' : 999,
+    'NoBPTX_2015D_v4' : 999,
+    #'NoBPTX_2015D_v3' : 30,
+    #'NoBPTX_2015D_v4' : 30,
+
+    #control sample data
+    'Commissioning2015_controlSample' : 999,
+    'NoBPTX_2015B_controlSample' : 999,
+    'NoBPTX_2015C_controlSample' : 999,
+    'NoBPTX_2015Dv3_controlSample' : 256,
+    'NoBPTX_2015Dv4_controlSample' : 662,
+    'NoBPTX_2015E_controlSample' : 31,
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : 5,
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : 5,
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : 5,
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : 5,
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : 5,
+    'GluinoToGChi0_1200_1000_nonoise' : 5,
+
     'MuonEG_2015D'   :  1000,
 
-    #NoBPTX data
-    'NoBPTX_2015D' : 999,
     ############################################################################
 }
 
@@ -569,11 +675,92 @@ maxEvents = {
 
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
+    
+    ############################################################################
+    ###########################################################################
+    #RECO stored on T3
+    ###########################################################################
+    #stopped particles stage2 signals
+    'GluinoToUUbarChi0_1200_200' : -1,
+    'GluinoToUUbarChi0_1200_600' : -1,
+    'GluinoToUUbarChi0_1200_1000': -1,
+    'GluinoToGChi0_1200_200'  : -1,
+    'GluinoToGChi0_1200_400'  : -1,
+    'GluinoToGChi0_1200_600'  : -1,
+    'GluinoToGChi0_1200_800'  : -1,
+    'GluinoToGChi0_1200_1000'  : -1,
+    #signals for energy scan
+    'GluinoToGChi0_600_309'  : -1,
+    'GluinoToGChi0_600_354'  : -1,
+    'GluinoToGChi0_600_424'  : -1,
+    'GluinoToGChi0_600_483'  : -1,
+    'GluinoToGChi0_600_495'  : -1,
+    'GluinoToGChi0_600_507'  : -1,
+    'GluinoToGChi0_600_519'  : -1,
+    'GluinoToGChi0_600_547'  : -1,
+    'GluinoToGChi0_1200_848'  : -1,
+    'GluinoToGChi0_1200_903'  : -1,
+    'GluinoToGChi0_1200_954'  : -1,
+    'GluinoToGChi0_1200_997'  : -1,
+    'GluinoToGChi0_1200_1044'  : -1,
+    'GluinoToGChi0_1200_1089'  : -1,
+    'GluinoToGChi0_1200_1100'  : -1,
+    'GluinoToGChi0_1200_1111'  : -1,
+    'GluinoToGChi0_1200_1122'  : -1,
+    'GluinoToGChi0_1200_1148'  : -1,
+    'GluinoToGChi0_1800_1047'  : -1,
+    'GluinoToGChi0_1800_1122'  : -1,
+    'GluinoToGChi0_1800_1200'  : -1,
+    'GluinoToGChi0_1800_1272'  : -1,
+    'GluinoToGChi0_1800_1341'  : -1,
+    'GluinoToGChi0_1800_1407'  : -1,
+    'GluinoToGChi0_1800_1469'  : -1,
+    'GluinoToGChi0_1800_1529'  : -1,
+    'StopToTChi0_400_75' : -1,
+    'StopToTChi0_400_150' : -1,
+    'StopToTChi0_400_199' : -1,
+    'StopToTChi0_400_250' : -1,
+    'StopToTChi0_400_285' : -1,
+    'StopToTChi0_400_300' : -1,
+    'StopToTChi0_600_100' : -1,
+    'StopToTChi0_600_300' : -1,
+    'StopToTChi0_600_400' : -1,
+    'StopToTChi0_600_500' : -1,
+    'StopToTChi0_1000_100' : -1,
+    'StopToTChi0_1000_173' : -1,
+    'StopToTChi0_1000_360' : -1,
+    'StopToTChi0_1000_480' : -1,
+    'StopToTChi0_1000_574' : -1,
+    'StopToTChi0_1000_656' : -1,
+    'StopToTChi0_1000_728' : -1,
+
+    #stopped particles cosmic events
+    'cosmic_preselection' : -1,
+
+    ###########################################################################
+    #RECO not stored on T3
+    ###########################################################################
+    #NoBPTX data
+    'NoBPTX_2015D_v3' : -1,
+    'NoBPTX_2015D_v4' : -1,
+
+    #control sample data
+    'Commissioning2015_controlSample' : -1,
+    'NoBPTX_2015B_controlSample' : -1,
+    'NoBPTX_2015C_controlSample' : -1,
+    'NoBPTX_2015Dv3_controlSample' : -1,
+    'NoBPTX_2015Dv4_controlSample' : -1,
+    'NoBPTX_2015E_controlSample' : -1,
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : -1,
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : -1,
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : -1,
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : -1,
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : -1,
+    'GluinoToGChi0_1200_1000_nonoise' : -1,
+
     'MuonEG_2015D'       : -1,
 
-    #NoBPTX data
-    'NoBPTX_2015D' : -1,
-    ############################################################################
 }
 
 # bgMC => background MC process
@@ -764,10 +951,95 @@ types = {
     'MuonEG_2015C'   : "data",
     'MuonEG_2015D'   : "data",
     'MuonEG_2015'    : "data",
+    
+    ###########################################################################
+    #RECO stored on T3
+    ###########################################################################
+    #stopped particles stage2 signals
+    'GluinoToUUbarChi0_1200_200' : "signalMC",
+    'GluinoToUUbarChi0_1200_600' : "signalMC",
+    'GluinoToUUbarChi0_1200_1000' : "signalMC",
+    'GluinoToGChi0_1200_200'  : "signalMC",
+    'GluinoToGChi0_1200_400'  : "signalMC",
+    'GluinoToGChi0_1200_600'  : "signalMC",
+    'GluinoToGChi0_1200_800'  : "signalMC",
+    'GluinoToGChi0_1200_1000'  : "signalMC",
+    #signal for energy scan
+    'GluinoToGChi0_600_309'  : "signalMC",
+    'GluinoToGChi0_600_354'  : "signalMC",
+    'GluinoToGChi0_600_424'  : "signalMC",
+    'GluinoToGChi0_600_483'  : "signalMC",
+    'GluinoToGChi0_600_495'  : "signalMC",
+    'GluinoToGChi0_600_507'  : "signalMC",
+    'GluinoToGChi0_600_519'  : "signalMC",
+    'GluinoToGChi0_600_547'  : "signalMC",
+    'GluinoToGChi0_1200_848'  : "signalMC",
+    'GluinoToGChi0_1200_903'  : "signalMC",
+    'GluinoToGChi0_1200_954'  : "signalMC",
+    'GluinoToGChi0_1200_997'  : "signalMC",
+    'GluinoToGChi0_1200_1044'  : "signalMC",
+    'GluinoToGChi0_1200_1089'  : "signalMC",
+    'GluinoToGChi0_1200_1100'  : "signalMC",
+    'GluinoToGChi0_1200_1111'  : "signalMC",
+    'GluinoToGChi0_1200_1122'  : "signalMC",
+    'GluinoToGChi0_1200_1148'  : "signalMC",
+    'GluinoToGChi0_1800_1047'  : "signalMC",
+    'GluinoToGChi0_1800_1122'  : "signalMC",
+    'GluinoToGChi0_1800_1200'  : "signalMC",
+    'GluinoToGChi0_1800_1272'  : "signalMC",
+    'GluinoToGChi0_1800_1341'  : "signalMC",
+    'GluinoToGChi0_1800_1407'  : "signalMC",
+    'GluinoToGChi0_1800_1469'  : "signalMC",
+    'GluinoToGChi0_1800_1529'  : "signalMC",
+    'StopToTChi0_400_75' : "signalMC",
+    'StopToTChi0_400_150' : "signalMC",
+    'StopToTChi0_400_199' : "signalMC",
+    'StopToTChi0_400_250' : "signalMC",
+    'StopToTChi0_400_285' : "signalMC",
+    'StopToTChi0_400_300' : "signalMC",
+    'StopToTChi0_600_100' : "signalMC",
+    'StopToTChi0_600_300' : "signalMC",
+    'StopToTChi0_600_400' : "signalMC",
+    'StopToTChi0_600_500' : "signalMC",
+    'StopToTChi0_1000_100' : "signalMC",
+    'StopToTChi0_1000_173' : "signalMC",
+    'StopToTChi0_1000_360' : "signalMC",
+    'StopToTChi0_1000_480' : "signalMC",
+    'StopToTChi0_1000_574' : "signalMC",
+    'StopToTChi0_1000_656' : "signalMC",
+    'StopToTChi0_1000_728' : "signalMC",
+
+    #stopped particles cosmic events
+    'cosmic_preselection' : "bgMC",
+
+    ###########################################################################
+    #RECO not stored on T3
+    ###########################################################################
+    #NoBPTX data
+    'NoBPTX_2015D_v3' : 'data',
+    'NoBPTX_2015D_v4' : 'data',
 
     #NoBPTX data
     'NoBPTX_2015D' : 'data',
     ############################################################################
+
+    #control sample data
+    'Commissioning2015_controlSample' : 'data',
+    'NoBPTX_2015B_controlSample' : 'data',
+    'NoBPTX_2015C_controlSample' : 'data',
+    'NoBPTX_2015Dv3_controlSample' : 'data',
+    'NoBPTX_2015Dv4_controlSample' : 'data',
+    'NoBPTX_2015E_controlSample' : 'data',
+    'StpPtls_controlSample_2015' : 'data',
+    
+
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : "signalMC",
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : "signalMC",
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : "signalMC",
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : "signalMC",
+    'GluinoToGChi0_1200_1000_nonoise' : "signalMC",
 }
 
 colors = {
@@ -956,9 +1228,91 @@ colors = {
     'MuonEG_2015D'   : 1,
     'MuonEG_2015'    : 1,
 
+    ###########################################################################
+    #RECO stored on T3
+    ###########################################################################
+    #stopped particles stage2 signals
+    'GluinoToUUbarChi0_1200_200' : 4,
+    'GluinoToUUbarChi0_1200_600' : 22,
+    'GluinoToUUbarChi0_1200_1000' : 2,
+    'GluinoToGChi0_1200_200'  : 1,
+    'GluinoToGChi0_1200_400'  : 3,
+    'GluinoToGChi0_1200_600'  : 6,
+    'GluinoToGChi0_1200_800'  : 7,
+    'GluinoToGChi0_1200_1000'  : 4,
+    #signals for energy scan
+    'GluinoToGChi0_600_309'  : 1,
+    'GluinoToGChi0_600_354'  : 1,
+    'GluinoToGChi0_600_424'  : 1,
+    'GluinoToGChi0_600_483'  : 1,
+    'GluinoToGChi0_600_495'  : 1,
+    'GluinoToGChi0_600_507'  : 1,
+    'GluinoToGChi0_600_519'  : 1,
+    'GluinoToGChi0_600_547'  : 1,
+    'GluinoToGChi0_1200_848'  : 1,
+    'GluinoToGChi0_1200_903'  : 1,
+    'GluinoToGChi0_1200_954'  : 1,
+    'GluinoToGChi0_1200_997'  : 1,
+    'GluinoToGChi0_1200_1044'  : 2,
+    'GluinoToGChi0_1200_1089'  : 1,
+    'GluinoToGChi0_1200_1100'  : 1,
+    'GluinoToGChi0_1200_1111'  : 1,
+    'GluinoToGChi0_1200_1122'  : 1,
+    'GluinoToGChi0_1200_1148'  : 1,
+    'GluinoToGChi0_1800_1047'  : 1,
+    'GluinoToGChi0_1800_1122'  : 1,
+    'GluinoToGChi0_1800_1200'  : 1,
+    'GluinoToGChi0_1800_1272'  : 1,
+    'GluinoToGChi0_1800_1341'  : 1,
+    'GluinoToGChi0_1800_1407'  : 1,
+    'GluinoToGChi0_1800_1469'  : 1,
+    'GluinoToGChi0_1800_1529'  : 1,
+    'StopToTChi0_400_75' : 1,
+    'StopToTChi0_400_150' : 1,
+    'StopToTChi0_400_199' : 1,
+    'StopToTChi0_400_250' : 1,
+    'StopToTChi0_400_285' : 1,
+    'StopToTChi0_400_300' : 1,
+    'StopToTChi0_600_100' : 1,
+    'StopToTChi0_600_300' : 1,
+    'StopToTChi0_600_400' : 4,
+    'StopToTChi0_600_500' : 1,
+    'StopToTChi0_1000_100' : 1,
+    'StopToTChi0_1000_173' : 1,
+    'StopToTChi0_1000_360' : 1,
+    'StopToTChi0_1000_480' : 1,
+    'StopToTChi0_1000_574' : 1,
+    'StopToTChi0_1000_656' : 1,
+    'StopToTChi0_1000_728' : 1,
+
+
+    #stopped particles cosmic events
+    'cosmic_preselection' : 2,
+
+    ############################################################################
+   
     #NoBPTX data
+    'NoBPTX_2015D_v3' : 1,
+    'NoBPTX_2015D_v4' : 1,
     'NoBPTX_2015D' : 1,
     ############################################################################
+
+    #control sample data
+    'Commissioning2015_controlSample' : 1,
+    'NoBPTX_2015B_controlSample' : 1,
+    'NoBPTX_2015C_controlSample' : 1,
+    'NoBPTX_2015Dv3_controlSample' : 1,
+    'NoBPTX_2015Dv4_controlSample' : 1,
+    'NoBPTX_2015E_controlSample' : 1,
+    'StpPtls_controlSample_2015' : 1,
+
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : 7,
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : 6,
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : 4,
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : 5,
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : 8,
+    'GluinoToGChi0_1200_1000_nonoise' : 9,
 }
 
 labels = {
@@ -1146,9 +1500,93 @@ labels = {
     'MuonEG_2015B'     : "MuonEG 2015B data",
     'MuonEG_2015C'     : "MuonEG 2015C data",
     'MuonEG_2015D'     : "MuonEG 2015D data",
-    #NoBPTX Data
+
+    ###########################################################################
+    #RECO stored on T3
+    ###########################################################################
+    #stopped particles stage2 signals
+    'GluinoToUUbarChi0_1200_200' : "#tilde{g} #rightarrow u#topbar{u}#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 200 GeV, Frate1p0)",
+    'GluinoToUUbarChi0_1200_600' : "#tilde{g} #rightarrow u#topbar{u}#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 600 GeV)",
+    'GluinoToUUbarChi0_1200_1000' : "#tilde{g} #rightarrow u#topbar{u}#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV)",
+    'GluinoToGChi0_1200_200'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 200 GeV)Frate=1.0",
+    'GluinoToGChi0_1200_400'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 400 GeV)",
+    'GluinoToGChi0_1200_600'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 600 GeV)",
+    'GluinoToGChi0_1200_800'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 800 GeV)",
+    'GluinoToGChi0_1200_1000'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV)",
+    #signal for energy scan
+    'GluinoToGChi0_600_309'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 600 GeV, M_{#tilde{#chi}^{0}} = 309 GeV)",
+    'GluinoToGChi0_600_354'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 600 GeV, M_{#tilde{#chi}^{0}} = 354 GeV)",
+    'GluinoToGChi0_600_424'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 600 GeV, M_{#tilde{#chi}^{0}} = 424 GeV)",
+    'GluinoToGChi0_600_483'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 600 GeV, M_{#tilde{#chi}^{0}} = 483 GeV)",
+    'GluinoToGChi0_600_495'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 600 GeV, M_{#tilde{#chi}^{0}} = 495 GeV)",
+    'GluinoToGChi0_600_507'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 600 GeV, M_{#tilde{#chi}^{0}} = 507 GeV)",
+    'GluinoToGChi0_600_519'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 600 GeV, M_{#tilde{#chi}^{0}} = 519 GeV)",
+    'GluinoToGChi0_600_547'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 600 GeV, M_{#tilde{#chi}^{0}} = 547 GeV)",
+    'GluinoToGChi0_1200_848'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 848 GeV)",
+    'GluinoToGChi0_1200_903'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 903 GeV)",
+    'GluinoToGChi0_1200_954'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 954 GeV)",
+    'GluinoToGChi0_1200_997'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 997 GeV)",
+    'GluinoToGChi0_1200_1044'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1044 GeV)",
+    'GluinoToGChi0_1200_1089'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1089 GeV)",
+    'GluinoToGChi0_1200_1100'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1100 GeV)",
+    'GluinoToGChi0_1200_1111'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1111 GeV)",
+    'GluinoToGChi0_1200_1122'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1122 GeV)",
+    'GluinoToGChi0_1200_1148'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1148 GeV)",
+    'GluinoToGChi0_1800_1047'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1800 GeV, M_{#tilde{#chi}^{0}} = 1047 GeV)",
+    'GluinoToGChi0_1800_1122'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1800 GeV, M_{#tilde{#chi}^{0}} = 1122 GeV)",
+    'GluinoToGChi0_1800_1200'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1800 GeV, M_{#tilde{#chi}^{0}} = 1200 GeV)",
+    'GluinoToGChi0_1800_1272'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1800 GeV, M_{#tilde{#chi}^{0}} = 1272 GeV)",
+    'GluinoToGChi0_1800_1341'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1800 GeV, M_{#tilde{#chi}^{0}} = 1341 GeV)",
+    'GluinoToGChi0_1800_1407'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1800 GeV, M_{#tilde{#chi}^{0}} = 1407 GeV)",
+    'GluinoToGChi0_1800_1469'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1800 GeV, M_{#tilde{#chi}^{0}} = 1469 GeV)",
+    'GluinoToGChi0_1800_1529'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1800 GeV, M_{#tilde{#chi}^{0}} = 1529 GeV)",
+    'StopToTChi0_400_75' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 400 GeV, M_{#tilde{#chi}^{0}} = 75GeV)",
+    'StopToTChi0_400_150' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 400 GeV, M_{#tilde{#chi}^{0}} = 150GeV)",
+    'StopToTChi0_400_199' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 400 GeV, M_{#tilde{#chi}^{0}} = 199GeV)",
+    'StopToTChi0_400_250' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 400 GeV, M_{#tilde{#chi}^{0}} = 250GeV)",
+    'StopToTChi0_400_285' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 400 GeV, M_{#tilde{#chi}^{0}} = 285GeV)",
+    'StopToTChi0_400_300' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 400 GeV, M_{#tilde{#chi}^{0}} = 300GeV)",
+    'StopToTChi0_600_100' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 600 GeV, M_{#tilde{#chi}^{0}} = 100GeV)",
+    'StopToTChi0_600_300' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 600 GeV, M_{#tilde{#chi}^{0}} = 300GeV)",
+    'StopToTChi0_600_400' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 600 GeV, M_{#tilde{#chi}^{0}} = 400GeV)",
+    'StopToTChi0_600_500' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 600 GeV, M_{#tilde{#chi}^{0}} = 500GeV)",
+    'StopToTChi0_1000_100' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 100GeV)",
+    'StopToTChi0_1000_173' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 173GeV)",
+    'StopToTChi0_1000_360' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 360GeV)",
+    'StopToTChi0_1000_480' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 480GeV)",
+    'StopToTChi0_1000_574' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 574GeV)",
+    'StopToTChi0_1000_656' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 656GeV)",
+    'StopToTChi0_1000_728' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 728GeV)",
+
+    #stopped particles cosmic MC events
+    'cosmic_preselection' : "Cosmic MC preselection",
+
+    ############################################################################
+
+    #NoBPTX Data 
+    'NoBPTX_2015D_v3'     : "NoBPTX 2015D_v3 data",
+    'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
     'NoBPTX_2015D'     : "NoBPTX 2015D data",
     ############################################################################
+
+    #control sample data
+    'Commissioning2015_controlSample' : "Commissioning 2015 control sample",
+    'NoBPTX_2015B_controlSample' : "NoBPTX 2015B control sample",
+    'NoBPTX_2015C_controlSample' : "NoBPTX 2015C control sample",
+    'NoBPTX_2015Dv3_controlSample': "NoBPTX 2015Dv3 control sample",
+    'NoBPTX_2015Dv4_controlSample': "NoBPTX 2015Dv4 control sample",
+    'NoBPTX_2015E_controlSample' : "NoBPTX 2015E control sample",
+    'StpPtls_controlSample_2015' : "Data control sample",
+
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p4)",
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p6)",
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p7)",
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p8)",
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate1p0)",
+    'GluinoToGChi0_1200_1000_nonoise' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, noNoise)",
+
+
 }
 
 crossSections = {
@@ -1225,6 +1663,77 @@ crossSections = {
     'TTJets_DiLept'              :  87.31,
     'TTJets_SingleLeptFromT'     :  182.7,
     'TTJets_SingleLeptFromTbar'  :  182.7,
+
+    ###########################################################################
+    #RECO stored on T3
+    ###########################################################################
+    #stopped particles stage2 signals
+    #from https://github.com/quertenmont/cmssw/blob/Run2HSCP_v9/SUSYBSMAnalysis/HSCP/test/AnalysisCode/Analysis_Samples.txt
+    'GluinoToUUbarChi0_1200_200' : 8.3600000000E-02,
+    'GluinoToUUbarChi0_1200_600' : 8.3600000000E-02,
+    'GluinoToUUbarChi0_1200_1000' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_200'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_400'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_600'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_800'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000'  : 8.3600000000E-02,
+    #signal for energy scan
+    'GluinoToGChi0_600_309'  : 8.3600000000E-02,
+    'GluinoToGChi0_600_354'  : 8.3600000000E-02,
+    'GluinoToGChi0_600_424'  : 8.3600000000E-02,
+    'GluinoToGChi0_600_483'  : 8.3600000000E-02,
+    'GluinoToGChi0_600_495'  : 8.3600000000E-02,
+    'GluinoToGChi0_600_507'  : 8.3600000000E-02,
+    'GluinoToGChi0_600_519'  : 8.3600000000E-02,
+    'GluinoToGChi0_600_547'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_848'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_903'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_954'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_997'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1044'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1089'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1100'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1111'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1122'  : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1148'  : 8.3600000000E-02,
+    'GluinoToGChi0_1800_1047'  : 8.3600000000E-02,
+    'GluinoToGChi0_1800_1122'  : 8.3600000000E-02,
+    'GluinoToGChi0_1800_1200'  : 8.3600000000E-02,
+    'GluinoToGChi0_1800_1272'  : 8.3600000000E-02,
+    'GluinoToGChi0_1800_1341'  : 8.3600000000E-02,
+    'GluinoToGChi0_1800_1407'  : 8.3600000000E-02,
+    'GluinoToGChi0_1800_1469'  : 8.3600000000E-02,
+    'GluinoToGChi0_1800_1529'  : 8.3600000000E-02,
+    'StopToTChi0_400_75' : 8.3600000000E-02,
+    'StopToTChi0_400_150' : 8.3600000000E-02,
+    'StopToTChi0_400_199' : 8.3600000000E-02,
+    'StopToTChi0_400_250' : 8.3600000000E-02,
+    'StopToTChi0_400_285' : 8.3600000000E-02,
+    'StopToTChi0_400_300' : 8.3600000000E-02,
+    'StopToTChi0_600_100' : 8.3600000000E-02,
+    'StopToTChi0_600_300' : 8.3600000000E-02,
+    'StopToTChi0_600_400' : 8.3600000000E-02,
+    'StopToTChi0_600_500' : 8.3600000000E-02,
+    'StopToTChi0_1000_100' : 8.3600000000E-02,
+    'StopToTChi0_1000_173' : 8.3600000000E-02,
+    'StopToTChi0_1000_360' : 8.3600000000E-02,
+    'StopToTChi0_1000_480' : 8.3600000000E-02,
+    'StopToTChi0_1000_574' : 8.3600000000E-02,
+    'StopToTChi0_1000_656' : 8.3600000000E-02,
+    'StopToTChi0_1000_728' : 8.3600000000E-02,
+    
+
+    #stopped particles cosmic events
+    'cosmic_preselection' : 8.3600000000E-02,
+    #rpc study
+    'GluinoToGChi0_1200_1000_noiseFrate0p4' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000_noiseFrate0p6' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000_noiseFrate0p7' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000_noiseFrate0p8' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000_noiseFrate1p0' : 8.3600000000E-02,
+    'GluinoToGChi0_1200_1000_nonoise' : 8.3600000000E-02,
+
+
 }
 
 InputCondorArguments = {}

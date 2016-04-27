@@ -687,7 +687,7 @@ CutCalculator::evaluateTriggers (const edm::Event &event) const
         {
           string name = trigger.name;
           bool pass = trigger.pass;
-#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
       for (unsigned i = 0; i < triggerNames.size (); i++)
         {
@@ -741,7 +741,9 @@ CutCalculator::evaluateTriggerFilters (const edm::Event &event) const
 
   if (handles_.triggers.isValid () && handles_.trigobjs.isValid ())
     {
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM 
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
+#endif
       for (unsigned i = 0; i < pl_->triggerFilters.size (); i++)
         {
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM

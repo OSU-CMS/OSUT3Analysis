@@ -2,6 +2,8 @@
 
 #if IS_VALID(muons)
 
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+
 #include "OSUT3Analysis/Collections/interface/Primaryvertex.h"
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
@@ -115,6 +117,38 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }
+#elif DATA_FORMAT == AOD_CUSTOM
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
+
+OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_ (cfg)
+{
+  collection_ = collections_.getParameter<edm::InputTag> ("muons");
+
+  produces<vector<osu::Muon> > (collection_.instance ());
+}
+
+OSUMuonProducer::~OSUMuonProducer ()
+{
+}
+
+void
+OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
+{
+  edm::Handle<vector<TYPE (muons)> > collection;
+  if (!event.getByToken (token_, collection))
+    return;
+  pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
+  for (const auto &object : *collection)
+    {
+      const osu::Muon muon (object);
+      pl_->push_back (muon);
+    }
+  event.put (pl_, collection_.instance ());
+  pl_.reset ();
+}
+#endif
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(OSUMuonProducer);

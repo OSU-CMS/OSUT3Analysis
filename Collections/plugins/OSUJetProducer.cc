@@ -9,14 +9,18 @@ OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
   cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   electrons_ = collections_.getParameter<edm::InputTag> ("electrons");
   muons_ = collections_.getParameter<edm::InputTag> ("muons");
+#endif
   produces<vector<osu::Jet> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(jets)> > (collection_);
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   electronToken_ = consumes<vector<TYPE(electrons)> > (electrons_);
   muonToken_ = consumes<vector<TYPE(muons)> > (muons_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
+#endif
 }
 
 OSUJetProducer::~OSUJetProducer ()
@@ -29,6 +33,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(jets)> > collection;
   if (!event.getByToken (token_, collection))
     return;
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
 
@@ -82,11 +87,16 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
     goodMuons_->push_back(muon);
   }
 #endif
+#endif
 
   pl_ = auto_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
   for (const auto &object : *collection)
     {
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
       osu::Jet jet (object, particles, cfg_);
+#elif DATA_FORMAT == AOD_CUSTOM
+      const osu::Jet jet (object);
+#endif
 
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));

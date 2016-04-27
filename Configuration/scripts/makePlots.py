@@ -51,6 +51,8 @@ parser.add_option("--pe", "--poissonErrors", action="store_true", dest="poisErr"
                       help="draw data histograms with poisson errorbars")
 parser.add_option("-O", "--output-dir", dest="outputDirectory",
                   help="specify an output directory for output file, default is to use the Condor directory")
+parser.add_option("--unique", action="store_true", dest="unique2D",default=False,
+                  help="draw 2D plots on unique canvases with the colz option")
 
 
 (arguments, args) = parser.parse_args()
@@ -756,6 +758,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Histogram.SetBinError(1,     math.sqrt(math.pow(Histogram.GetBinError(1),    2) + math.pow(Histogram.GetBinError(0),      2)))
             Histogram.SetBinError(nbins, math.sqrt(math.pow(Histogram.GetBinError(nbins),2) + math.pow(Histogram.GetBinError(nbins+1),2)))
 
+        if arguments.verbose: 
+            print "Sample = ", sample, ", types[sample] = ", types[sample]  
         if( types[sample] == "bgMC"):
 
             numBgMCSamples += 1
@@ -912,7 +916,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     for Histogram in SignalMCHistograms:
         SignalMCLegend.AddEntry(Histogram,SignalMCLegendEntries[legendIndex],"L")
         legendIndex = legendIndex+1
-
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
     finalMax = 0
@@ -1084,29 +1087,29 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             BgMCLegend.SetTextSize(0.0364078)
         BgMCLegend.Draw()
 
-        if(numSignalSamples is not 0 and arguments.paperConfig and 'SigLegX1' in paperHistogram): #then draw the signalMC legend to the left of the other one
-            SignalMCLegend.SetX1NDC(float(paperHistogram['SigLegX1']))
-            SignalMCLegend.SetY1NDC(float(paperHistogram['SigLegY1'])) # add one for the title
-            SignalMCLegend.SetX2NDC(float(paperHistogram['SigLegX2']))
-            SignalMCLegend.SetY2NDC(float(paperHistogram['SigLegY2']))
-            if arguments.paperConfig and 'SigTextSize' in paperHistogram:
-                SignalMCLegend.SetTextSize(paperHistogram['SigTextSize'])
-            SignalMCLegend.Draw()
-        elif (numSignalSamples is not 0):
-            SignalMCLegend.SetX1NDC(0.157471)
-            SignalMCLegend.SetY1NDC(0.821602-entry_height*numSignalSamples) # add one for the title
-            SignalMCLegend.SetX2NDC(0.355172)
-            SignalMCLegend.SetY2NDC(0.821602)
-            SignalMCLegend.SetTextSize(0.0364078)
-            SignalMCLegend.Draw()
+    if (numSignalSamples is not 0 and arguments.paperConfig and 'SigLegX1' in paperHistogram): #then draw the signalMC legend to the left of the other one
+        SignalMCLegend.SetX1NDC(float(paperHistogram['SigLegX1']))
+        SignalMCLegend.SetY1NDC(float(paperHistogram['SigLegY1'])) # add one for the title
+        SignalMCLegend.SetX2NDC(float(paperHistogram['SigLegX2']))
+        SignalMCLegend.SetY2NDC(float(paperHistogram['SigLegY2']))
+        if arguments.paperConfig and 'SigTextSize' in paperHistogram:
+            SignalMCLegend.SetTextSize(paperHistogram['SigTextSize'])
+        SignalMCLegend.Draw()
+    elif (numSignalSamples is not 0):
+        SignalMCLegend.SetX1NDC(0.157471)
+        SignalMCLegend.SetY1NDC(0.821602-entry_height*numSignalSamples) # add one for the title
+        SignalMCLegend.SetX2NDC(0.355172)
+        SignalMCLegend.SetY2NDC(0.821602)
+        SignalMCLegend.SetTextSize(0.0364078)
+        SignalMCLegend.Draw()
 
-        if integrateDir is "left":
-            # Move the legend to the other side so it does not overlap with the cumulative histogram.
-            BgMCLegend.SetX1NDC(topLeft_x_left + 0.05)
-            BgMCLegend.SetX2NDC(topLeft_x_left + 0.05 + x_width)
-            BgMCLegend.SetY1NDC(-0.05 + y_max-entry_height*(numExtraEntries+numBgMCSamples+numDataSamples))
-            BgMCLegend.SetY2NDC(-0.05 + y_max)
-            BgMCLegend.Draw()
+    if integrateDir is "left":
+        # Move the legend to the other side so it does not overlap with the cumulative histogram.
+        BgMCLegend.SetX1NDC(topLeft_x_left + 0.05)
+        BgMCLegend.SetX2NDC(topLeft_x_left + 0.05 + x_width)
+        BgMCLegend.SetY1NDC(-0.05 + y_max-entry_height*(numExtraEntries+numBgMCSamples+numDataSamples))
+        BgMCLegend.SetY2NDC(-0.05 + y_max)
+        BgMCLegend.Draw()
 
     elif (numSignalSamples is not 0):
         SignalMCLegend.SetX1NDC(x_left)
@@ -1231,6 +1234,13 @@ def MakeTwoDHist(pathToDir,histogramName):
     numSignalSamples = 0
 
 
+    ###############################################
+    makeFancy = arguments.makeFancy
+    if arguments.paperConfig:
+        if 'makeFancy' in paperHistogram:
+            makeFancy = paperHistogram['makeFancy']
+    ###############################################
+
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextFont(42)
     HeaderLabel.SetTextSize(0.697674)
@@ -1242,6 +1252,41 @@ def MakeTwoDHist(pathToDir,histogramName):
     LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
     LumiLabel.SetTextFont(42)
     LumiLabel.SetTextSize(0.731707)
+    LumiLabel.SetBorderSize(0)
+    LumiLabel.SetFillColor(0)
+    LumiLabel.SetFillStyle(0)
+
+    if makeFancy:
+        LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,"CMS Preliminary","NDC")
+        LumiLabel.SetTextFont(62)
+        LumiLabel.SetTextSize(0.8)
+        LumiLabel.SetTextAlign(12)
+    else:
+        LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
+        LumiLabel.SetTextAlign(32)
+        LumiLabel.SetTextFont(42)
+
+        if makeRatioPlots:
+            ts_y_bottom  = 0.96
+            ts_y_top     = 1.0
+            dir_y_top    = ts_y_bottom
+            dir_y_bottom = 0.92
+
+        TimeLabel = TPaveLabel(ts_x_left,ts_y_bottom,ts_x_right, ts_y_top,TimeText,"NDC")
+        TimeLabel.SetTextAlign(12)  # 12 = 10 (left-justify horizontal) + 2 (center-justify vertical)
+        TimeLabel.SetTextSize(0.55)
+        TimeLabel.SetBorderSize(0)
+        TimeLabel.SetFillColor(0)
+        TimeLabel.SetFillStyle(0)
+
+        DirLabel = TPaveLabel(dir_x_left,dir_y_bottom,dir_x_right, dir_y_top,DirText,"NDC")
+        DirLabel.SetTextAlign(12)
+        DirLabel.SetTextSize(0.55)
+        DirLabel.SetBorderSize(0)
+        DirLabel.SetFillColor(0)
+        DirLabel.SetFillStyle(0)
+
+
     LumiLabel.SetBorderSize(0)
     LumiLabel.SetFillColor(0)
     LumiLabel.SetFillStyle(0)
@@ -1288,7 +1333,10 @@ def MakeTwoDHist(pathToDir,histogramName):
     Canvas.SetTickx(1)
     Canvas.SetTicky(1)
     Canvas.SetLeftMargin(0.1225)
-    Canvas.SetRightMargin(0.0357143)
+    if arguments.unique2D:
+        Canvas.SetRightMargin(0.14)
+    else:
+        Canvas.SetRightMargin(0.0357143)
     Canvas.SetTopMargin(0.0725)
     Canvas.SetBottomMargin(0.1125)
     Canvas.SetFrameBorderMode(0)
@@ -1298,6 +1346,8 @@ def MakeTwoDHist(pathToDir,histogramName):
     DataHistograms = []
 
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
+        if arguments.verbose:
+            print "Starting to process sample", sample  
         dataset_file = "%s/%s.root" % (condor_dir,sample)
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
@@ -1336,7 +1386,6 @@ def MakeTwoDHist(pathToDir,histogramName):
             Histogram.SetMarkerStyle(20)
             Histogram.SetMarkerSize(1.0)
             Histogram.SetFillColor(colors[sample])
-#            BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             SignalMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             SignalMCHistograms.append(Histogram)
 
@@ -1353,35 +1402,49 @@ def MakeTwoDHist(pathToDir,histogramName):
     if not arguments.paperConfig:
         outputFile.cd(pathToDir)
 
-    if(numBgMCSamples is not 0):
-        BgMCHistograms[0].SetTitle(histoTitle)
-        BgMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
-        BgMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
-        BgMCHistograms[0].Draw()
-        for signalMCHist in SignalMCHistograms:
-            signalMCHist.Draw("SAME")
-        for dataHist in DataHistograms:
-            dataHist.Draw("SAME")
+    #don't overlay the 2D plots, draw them separately with the colz option
+    if arguments.unique2D:
+        if(numDataSamples is not 0):
+            DataHistograms[0].SetTitle(histoTitle)
+            DataHistograms[0].GetXaxis().SetTitle(xAxisLabel)
+            DataHistograms[0].GetYaxis().SetTitle(yAxisLabel)
+            DataHistograms[0].Draw("colz")
+        elif(numSignalSamples is not 0):
+            SignalMCHistograms[0].SetTitle(histoTitle)
+            SignalMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
+            SignalMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
+            SignalMCHistograms[0].Draw("colz")
 
-    elif(numSignalSamples is not 0):
-        SignalMCHistograms[0].SetTitle(histoTitle)
-        SignalMCHistograms[0].Draw()
-        SignalMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
-        SignalMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
-        for signalMCHist in SignalMCHistograms:
-            if(signalMCHist is not SignalMCHistograms[0]):
+    else:
+        if(numBgMCSamples is not 0):
+            BgMCHistograms[0].SetTitle(histoTitle)
+            BgMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
+            BgMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
+            BgMCHistograms[0].Draw()
+            for signalMCHist in SignalMCHistograms:
                 signalMCHist.Draw("SAME")
-        for dataHist in DataHistograms:
-            dataHist.Draw("SAME")
-
-    elif(numDataSamples is not 0):
-        DataHistograms[0].SetTitle(histoTitle)
-        DataHistograms[0].GetXaxis().SetTitle(xAxisLabel)
-        DataHistograms[0].GetYaxis().SetTitle(yAxisLabel)
-        DataHistograms[0].Draw()
-        for dataHist in DataHistograms:
-            if(dataHist is not DataHistograms[0]):
+            for dataHist in DataHistograms:
                 dataHist.Draw("SAME")
+
+        elif(numSignalSamples is not 0):
+            SignalMCHistograms[0].SetTitle(histoTitle)
+            SignalMCHistograms[0].Draw()
+            SignalMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
+            SignalMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
+            for signalMCHist in SignalMCHistograms:
+                if(signalMCHist is not SignalMCHistograms[0]):
+                    signalMCHist.Draw("SAME")
+            for dataHist in DataHistograms:
+                dataHist.Draw("SAME")
+
+        elif(numDataSamples is not 0):
+            DataHistograms[0].SetTitle(histoTitle)
+            DataHistograms[0].GetXaxis().SetTitle(xAxisLabel)
+            DataHistograms[0].GetYaxis().SetTitle(yAxisLabel)
+            DataHistograms[0].Draw()
+            for dataHist in DataHistograms:
+                if(dataHist is not DataHistograms[0]):
+                    dataHist.Draw("SAME")
 
 
 
@@ -1404,7 +1467,7 @@ def MakeTwoDHist(pathToDir,histogramName):
         drawDirLabel = True
     if arguments.makeFancy:
         drawHeaderLabel = True
-        drawLumiLabel = False
+        drawLumiLabel = True
         drawTimeLabel = False
         drawDirLabel = False
 
@@ -1430,12 +1493,17 @@ def MakeTwoDHist(pathToDir,histogramName):
 
 
     if(numBgMCSamples is not 0 or numDataSamples is not 0):
-        BgMCLegend.Draw()
+        if not arguments.unique2D:
+            BgMCLegend.Draw()
     if(numSignalSamples is not 0):
-        SignalMCLegend.Draw()
+        if not arguments.unique2D:
+            SignalMCLegend.Draw()
     if not arguments.paperConfig:
         Canvas.Write()
 
+    if arguments.savePDFs:
+        pathToDirString = plainTextString(pathToDir)
+        Canvas.SaveAs(condor_dir+"/stacked_histograms_pdfs/"+pathToDirString+"/"+histogramName+".pdf")
 
 
 

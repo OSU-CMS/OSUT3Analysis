@@ -30,6 +30,9 @@
 struct Tokens
 {
   edm::EDGetTokenT<vector<osu::Bxlumi> > bxlumis;
+  edm::EDGetTokenT<vector<osu::Cschit> > cschits;
+  edm::EDGetTokenT<vector<osu::Cscseg> > cscsegs;
+  edm::EDGetTokenT<vector<osu::Dtseg> > dtsegs;
   edm::EDGetTokenT<vector<osu::Electron> > electrons;
   edm::EDGetTokenT<vector<osu::Event> > events;
   edm::EDGetTokenT<vector<osu::Genjet> > genjets;
@@ -41,6 +44,7 @@ struct Tokens
   edm::EDGetTokenT<vector<osu::Muon> > muons;
   edm::EDGetTokenT<vector<osu::Photon> > photons;
   edm::EDGetTokenT<vector<osu::Primaryvertex> > primaryvertexs;
+  edm::EDGetTokenT<vector<osu::Rpchit> > rpchits;
   edm::EDGetTokenT<vector<osu::Supercluster> > superclusters;
   edm::EDGetTokenT<vector<osu::Tau> > taus;
   edm::EDGetTokenT<vector<osu::Track> > tracks;
@@ -68,6 +72,18 @@ namespace anatools
 #if IS_VALID(bxlumis)
   string getObjectType (const osu::Bxlumi &);
   string getObjectClass (const osu::Bxlumi &);
+#endif
+#if IS_VALID(cschits)
+  string getObjectType (const osu::Cschit &);
+  string getObjectClass (const osu::Cschit &);
+#endif
+#if IS_VALID(cscsegs)
+  string getObjectType (const osu::Cscseg &);
+  string getObjectClass (const osu::Cscseg &);
+#endif
+#if IS_VALID(dtsegs)
+  string getObjectType (const osu::Dtseg &);
+  string getObjectClass (const osu::Dtseg &);
 #endif
 #if IS_VALID(electrons)
   string getObjectType (const osu::Electron &);
@@ -115,6 +131,10 @@ namespace anatools
   string getObjectType (const osu::Primaryvertex &);
   string getObjectClass (const osu::Primaryvertex &);
   template<> int getObjectHash<osu::Primaryvertex> (const osu::Primaryvertex &);
+#endif
+#if IS_VALID(rpchits)
+  string getObjectType (const osu::Rpchit &);
+  string getObjectClass (const osu::Rpchit &);
 #endif
 #if IS_VALID(superclusters)
   string getObjectType (const osu::Supercluster &);

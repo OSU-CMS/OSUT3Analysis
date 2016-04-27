@@ -4,8 +4,9 @@
 #define  MINI_AOD         1
 #define  AOD              2
 #define  MINI_AOD_CUSTOM  3
+#define  AOD_CUSTOM       4
 
-#define DATA_FORMAT MINI_AOD
+#define DATA_FORMAT AOD_CUSTOM
 
 #define INVALID_TYPE void *
 
@@ -25,7 +26,10 @@
 
 #elif DATA_FORMAT == MINI_AOD_CUSTOM
 
-  #include "CustomDataFormat.h"  // Define collections in an external header file.  
+  #include "StoppPtls/StandardAnalysis/interface/CustomDataFormat.h"  // Define collections in an external header file.  
+#elif DATA_FORMAT == AOD_CUSTOM
+
+  #include "StoppPtls/StandardAnalysis/interface/CustomDataFormat.h"
 
 #else
   #error "Data format is not valid."

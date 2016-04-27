@@ -19,6 +19,10 @@
 #include "OSUT3Analysis/Collections/interface/Track.h"
 #include "OSUT3Analysis/Collections/interface/Trigobj.h"
 #include "OSUT3Analysis/Collections/interface/Uservariable.h"
+#include "OSUT3Analysis/Collections/interface/Cschit.h"
+#include "OSUT3Analysis/Collections/interface/Cscseg.h"
+#include "OSUT3Analysis/Collections/interface/Dtseg.h"
+#include "OSUT3Analysis/Collections/interface/Rpchit.h"
 
 namespace {
   struct OSUT3Analysis_Collections {
@@ -53,6 +57,30 @@ namespace {
     edm::Wrapper<osu::Bxlumi>                 bxlumi2;
     edm::Wrapper<vector<osu::Bxlumi> >        bxlumi3;
     edm::Ref<vector<osu::Bxlumi> >            bxlumi4;
+//#endif
+
+//#if IS_VALID(cschits)
+    osu::Cschit                               cschit0;
+    vector<osu::Cschit>                       cschit1;
+    edm::Wrapper<osu::Cschit>                 cschit2;
+    edm::Wrapper<vector<osu::Cschit> >        cschit3;
+    edm::Ref<vector<osu::Cschit> >            cschit4;
+//#endif
+
+//#if IS_VALID(cscsegs)
+    osu::Cscseg                               cscseg0;
+    vector<osu::Cscseg>                       cscseg1;
+    edm::Wrapper<osu::Cscseg>                 cscseg2;
+    edm::Wrapper<vector<osu::Cscseg> >        cscseg3;
+    edm::Ref<vector<osu::Cscseg> >            cscseg4;
+//#endif
+
+//#if IS_VALID(dtsegs)
+    osu::Dtseg                                dtseg0;
+    vector<osu::Dtseg>                        dtseg1;
+    edm::Wrapper<osu::Dtseg>                  dtseg2;
+    edm::Wrapper<vector<osu::Dtseg> >         dtseg3;
+    edm::Ref<vector<osu::Dtseg> >             dtseg4;
 //#endif
 
 //#if IS_VALID(electrons)
@@ -133,6 +161,14 @@ namespace {
     edm::Wrapper<osu::Primaryvertex>          primaryvertex2;
     edm::Wrapper<vector<osu::Primaryvertex> > primaryvertex3;
     edm::Ref<vector<osu::Primaryvertex> >     primaryvertex4;
+//#endif
+
+//#if IS_VALID(rpchits)
+    osu::Rpchit                               rpchit0;
+    vector<osu::Rpchit>                       rpchit1;
+    edm::Wrapper<osu::Rpchit>                 rpchit2;
+    edm::Wrapper<vector<osu::Rpchit> >        rpchit3;
+    edm::Ref<vector<osu::Rpchit> >            rpchit4;
 //#endif
 
 //#if IS_VALID(superclusters)

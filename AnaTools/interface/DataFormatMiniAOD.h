@@ -20,6 +20,11 @@
 #define  uservariables_TYPE               VariableProducerPayload
 #define  eventvariables_TYPE              EventVariableProducerPayload
 
+#define  cschits_TYPE           INVALID_TYPE
+#define  cscsegs_TYPE           INVALID_TYPE
+#define  dtsegs_TYPE            INVALID_TYPE
+#define  rpchits_TYPE           INVALiD_TYPE
+
 #define  triggers_TYPE          edm::TriggerResults
 #define  prescales_TYPE         pat::PackedTriggerPrescales
 #define  generatorweights_TYPE  GenEventInfoProduct
@@ -27,6 +32,11 @@
 #define  bxlumis_INVALID
 #define  events_INVALID
 #define  tracks_INVALID
+
+#define  cschits_INVALID
+#define  cscsegs_INVALID
+#define  dtsegs_INVALID
+#define  rpchits_INVALID
 
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 #include "DataFormats/Common/interface/TriggerResults.h"

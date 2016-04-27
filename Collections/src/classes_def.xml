@@ -22,6 +22,24 @@
   <class name="edm::Wrapper<osu::Bxlumi>"/>
   <class name="edm::Wrapper<std::vector<osu::Bxlumi> >"/>
   <class name="edm::Ref<std::vector<osu::Bxlumi> >"/>
+      
+  <class name="osu::Cschit"/>
+  <class name="std::vector<osu::Cschit>"/>
+  <class name="edm::Wrapper<osu::Cschit>"/>
+  <class name="edm::Wrapper<std::vector<osu::Cschit> >"/>
+  <class name="edm::Ref<std::vector<osu::Cschit> >"/>
+
+  <class name="osu::Cscseg"/>
+  <class name="std::vector<osu::Cscseg>"/>
+  <class name="edm::Wrapper<osu::Cscseg>"/>
+  <class name="edm::Wrapper<std::vector<osu::Cscseg> >"/>
+  <class name="edm::Ref<std::vector<osu::Cscseg> >"/>
+
+  <class name="osu::Dtseg"/>
+  <class name="std::vector<osu::Dtseg>"/>
+  <class name="edm::Wrapper<osu::Dtseg>"/>
+  <class name="edm::Wrapper<std::vector<osu::Dtseg> >"/>
+  <class name="edm::Ref<std::vector<osu::Dtseg> >"/>
 
   <class name="osu::Electron"/>
   <class name="std::vector<osu::Electron>"/>
@@ -82,6 +100,12 @@
   <class name="edm::Wrapper<osu::Primaryvertex>"/>
   <class name="edm::Wrapper<std::vector<osu::Primaryvertex> >"/>
   <class name="edm::Ref<std::vector<osu::Primaryvertex> >"/>
+
+  <class name="osu::Rpchit"/>
+  <class name="std::vector<osu::Rpchit>"/>
+  <class name="edm::Wrapper<osu::Rpchit>"/>
+  <class name="edm::Wrapper<std::vector<osu::Rpchit> >"/>
+  <class name="edm::Ref<std::vector<osu::Rpchit> >"/>
 
   <class name="osu::Supercluster"/>
   <class name="std::vector<osu::Supercluster>"/>

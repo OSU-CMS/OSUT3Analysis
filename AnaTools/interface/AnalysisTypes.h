@@ -9,6 +9,9 @@
 #include "OSUT3Analysis/Collections/interface/Beamspot.h"
 #include "OSUT3Analysis/Collections/interface/Bjet.h"
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
+#include "OSUT3Analysis/Collections/interface/Cschit.h"
+#include "OSUT3Analysis/Collections/interface/Cscseg.h"
+#include "OSUT3Analysis/Collections/interface/Dtseg.h"
 #include "OSUT3Analysis/Collections/interface/Electron.h"
 #include "OSUT3Analysis/Collections/interface/Event.h"
 #include "OSUT3Analysis/Collections/interface/Eventvariable.h"
@@ -19,12 +22,14 @@
 #include "OSUT3Analysis/Collections/interface/Muon.h"
 #include "OSUT3Analysis/Collections/interface/Photon.h"
 #include "OSUT3Analysis/Collections/interface/Primaryvertex.h"
+#include "OSUT3Analysis/Collections/interface/Rpchit.h"
 #include "OSUT3Analysis/Collections/interface/Supercluster.h"
 #include "OSUT3Analysis/Collections/interface/Tau.h"
 #include "OSUT3Analysis/Collections/interface/Track.h"
 #include "OSUT3Analysis/Collections/interface/Trigobj.h"
 #include "OSUT3Analysis/Collections/interface/Uservariable.h"
 #include "OSUT3Analysis/Collections/interface/PileUpInfo.h"
+
 
 class ValueLookupTree;
 
@@ -104,6 +109,9 @@ struct Collections
 {
   edm::Handle<osu::Beamspot>                beamspots;
   edm::Handle<vector<osu::Bxlumi> >         bxlumis;
+  edm::Handle<vector<osu::Cschit> >         cschits;
+  edm::Handle<vector<osu::Cscseg> >         cscsegs;
+  edm::Handle<vector<osu::Dtseg> >          dtsegs;
   edm::Handle<vector<osu::Electron> >       electrons;
   edm::Handle<vector<osu::Event> >          events;
   edm::Handle<vector<osu::Genjet> >         genjets;
@@ -115,6 +123,7 @@ struct Collections
   edm::Handle<vector<osu::Muon> >           muons;
   edm::Handle<vector<osu::Photon> >         photons;
   edm::Handle<vector<osu::Primaryvertex> >  primaryvertexs;
+  edm::Handle<vector<osu::Rpchit> >         rpchits;
   edm::Handle<vector<osu::Supercluster> >   superclusters;
   edm::Handle<vector<osu::Tau> >            taus;
   edm::Handle<vector<osu::Track> >          tracks;

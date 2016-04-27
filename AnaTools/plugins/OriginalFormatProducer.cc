@@ -88,7 +88,7 @@ OriginalFormatProducer::OriginalFormatProducer (const edm::ParameterSet& iConfig
   if (makeBeamspots_)       produces<vector< reco::BeamSpot > > (); 
   if (makeElectrons_)       produces<vector< pat::Electron > > (); 
   if (makeGenjets_)         produces<vector< reco::GenJet > > (); 
-  if (makeJets_)            produces<vector< pat::Jet > > (); 
+  if (makeJets_)            produces<vector< TYPE(jets) > > (); 
   if (makeMcparticles_)     produces<vector< reco::GenParticle > > (); 
   if (makeMets_)   	    produces<vector< pat::MET > > (); 
   if (makeMuons_)  	    produces<vector< pat::Muon > > (); 
@@ -150,7 +150,7 @@ OriginalFormatProducer::produce (edm::Event& iEvent, const edm::EventSetup& iSet
   if (makeGenjets_)         produceCollection<osu::Genjet,        reco::GenJet>                 (iEvent); 
 #endif
 #if IS_VALID(jets)
-  if (makeJets_)            produceCollection<osu::Jet,           pat::Jet>                     (iEvent); 
+  if (makeJets_)            produceCollection<osu::Jet,           TYPE(jets)>                     (iEvent); 
 #endif
 #if IS_VALID(mcparticles)
   if (makeMcparticles_)     produceCollection<osu::Mcparticle,    pat::PackedGenParticle>       (iEvent); 

@@ -323,9 +323,19 @@ class CFTable(object):
         table.contents[-1][0] = "\\multicolumn{" + str(len(self.datasets)) + "}{r}{" + self.type + "}"
         table.initializeJustification()
         table.hlines = [1, 2, table.numRows()]
+        #print "Debug:  print all aliases for numRows = ", table.numRows 
+        #for r in range(table.numRows()):
+            #print r, ": ", table.contents[0][r] 
         table.makeAllReplacements(replacements)
-        return table
-    def printErrors(self, toprint):
+        #print "Debug:  print all aliases after replacement 1"
+        #for r in range(table.numRows()):
+            #print r, ": ", table.contents[0][r] 
+        #table.makeAllReplacements(secondary_replacements) 
+        #print "Debug:  print all aliases after replacement 2"
+        #for r in range(table.numRows()):
+            #print r, ": ", table.contents[0][r] 
+        return table 
+    def printErrors(self, toprint): 
         for d in self.datasets:
             for y in d.yields:
                 y.printErr = toprint
@@ -570,11 +580,12 @@ replacements = collections.OrderedDict([
     ("abs (eta)","|\\eta|"),
     ("abs(eta)","|\\eta|"),
     (" eta ","  \\eta "),
+    ("eta","\\eta"),
 
     ("#Delta","\\Delta"),
     ("DeltaR","$\\Delta$R"),
     ("#Phi","\\phi"),
-    ("#","Num"),
+    (" # "," Num "),
 
     ("\\rightarrow","{\\rightarrow}"),
     ("\\mu QCD","\\mu$ $QCD"),
@@ -605,7 +616,9 @@ replacements = collections.OrderedDict([
     ("M_ll","$M_{ll}$"),
 ])
 
-replacements_extra = {}
+replacements_extra = {
+    "#":"\\",
+    }
 
 
 ###############################################################################
