@@ -8,7 +8,7 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
 #include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
-#include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h" 
+#include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
 
 #include "OSUT3Analysis/Collections/interface/Track.h"
 
@@ -26,15 +26,16 @@ class OSUTrackProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
-    edm::InputTag      EBRecHitsTag_; 
-    edm::InputTag      EERecHitsTag_; 
-    edm::InputTag      HBHERecHitsTag_; 
+    edm::InputTag      EBRecHitsTag_;
+    edm::InputTag      EERecHitsTag_;
+    edm::InputTag      HBHERecHitsTag_;
     edm::EDGetTokenT<vector<TYPE(tracks)> >      token_;
     edm::EDGetTokenT<vector<osu::Mcparticle> >   mcparticleToken_;
-    edm::EDGetTokenT<vector<TYPE(jets)> >        jetsToken_;  
+    edm::EDGetTokenT<vector<TYPE(jets)> >        jetsToken_;
     edm::EDGetTokenT<EBRecHitCollection>         EBRecHitsToken_;
     edm::EDGetTokenT<EERecHitCollection>         EERecHitsToken_;
     edm::EDGetTokenT<HBHERecHitCollection>       HBHERecHitsToken_;
+    edm::EDGetTokenT<vector<reco::GsfTrack> >    gsfTracksToken_;
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 
@@ -48,7 +49,7 @@ class OSUTrackProducer : public edm::EDProducer
 
     edm::ESHandle<CaloGeometry> caloGeometry_;
     bool insideCone(TYPE(tracks)& track, const DetId& id, const double dR);
-    GlobalPoint getPosition( const DetId& id);  
+    GlobalPoint getPosition( const DetId& id);
 
 };
 

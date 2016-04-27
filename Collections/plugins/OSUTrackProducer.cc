@@ -5,7 +5,7 @@
 
 #include "OSUT3Analysis/Collections/plugins/OSUTrackProducer.h"
 
-#include "Geometry/Records/interface/CaloGeometryRecord.h" 
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
 #include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
 #include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
 
@@ -36,6 +36,8 @@ OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
   EBRecHitsToken_    =  consumes<EBRecHitCollection>    (EBRecHitsTag_);
   EERecHitsToken_    =  consumes<EERecHitCollection>    (EERecHitsTag_);
   HBHERecHitsToken_  =  consumes<HBHERecHitCollection>  (HBHERecHitsTag_);
+
+  gsfTracksToken_ = consumes<vector<reco::GsfTrack> > (cfg.getParameter<edm::InputTag> ("gsfTracks"));
 
   bool outputElectronHotSpots = false;
   for (const auto &electronFiducialMap : electronFiducialMaps)
@@ -110,22 +112,25 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   }
   edm::Handle<EBRecHitCollection> EBRecHits;
   event.getByToken(EBRecHitsToken_, EBRecHits);
-  if (!EBRecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find EBRecHitCollection in the event!\n";  
+  if (!EBRecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find EBRecHitCollection in the event!\n";
   edm::Handle<EERecHitCollection> EERecHits;
   event.getByToken(EERecHitsToken_, EERecHits);
-  if (!EERecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find EERecHitCollection in the event!\n";  
+  if (!EERecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find EERecHitCollection in the event!\n";
   edm::Handle<HBHERecHitCollection> HBHERecHits;
   event.getByToken(HBHERecHitsToken_, HBHERecHits);
-  if (!HBHERecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find HBHERecHitCollection in the event!\n";  
+  if (!HBHERecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find HBHERecHitCollection in the event!\n";
 
   setup.get<CaloGeometryRecord>().get(caloGeometry_);
   if (!caloGeometry_.isValid())
     throw cms::Exception("FatalError") << "Unable to find CaloGeometryRecord in event!\n";
 
+  edm::Handle<vector<reco::GsfTrack> > gsfTracks;
+  event.getByToken (gsfTracksToken_, gsfTracks);
+
   pl_ = auto_ptr<vector<osu::Track> > (new vector<osu::Track> ());
   for (const auto &object : *collection)
     {
-      osu::Track track (object, particles, cfg_, electronVetoList_, muonVetoList_);
+      osu::Track track (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_);
 
       double dRMinJet = 999;
       for (const auto &jet : *jets) {
@@ -141,31 +146,31 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       track.set_dRMinJet(dRMinJet);
 
       double eEM = 0;
-      double dR = 0.5;  
+      double dR = 0.5;
       for (EBRecHitCollection::const_iterator hit=EBRecHits->begin(); hit!=EBRecHits->end(); hit++) {
-	if (insideCone(track, (*hit).detid(), dR)) {
-	  eEM += (*hit).energy();
-	  // cout << "       Added EB rec hit with (eta, phi) = " 
-	  //      << getPosition((*hit).detid()).eta() << ", " 
-	  //      << getPosition((*hit).detid()).phi() << endl;  
-	}
+        if (insideCone(track, (*hit).detid(), dR)) {
+          eEM += (*hit).energy();
+          // cout << "       Added EB rec hit with (eta, phi) = "
+          //      << getPosition((*hit).detid()).eta() << ", "
+          //      << getPosition((*hit).detid()).phi() << endl;
+        }
       }
       for (EERecHitCollection::const_iterator hit=EERecHits->begin(); hit!=EERecHits->end(); hit++) {
-	if (insideCone(track, (*hit).detid(), dR)) {
-	  eEM += (*hit).energy();
-	  // cout << "       Added EE rec hit with (eta, phi) = " 
-	  //      << getPosition((*hit).detid()).eta() << ", " 
-	  //      << getPosition((*hit).detid()).phi() << endl;  
-	}
+        if (insideCone(track, (*hit).detid(), dR)) {
+          eEM += (*hit).energy();
+          // cout << "       Added EE rec hit with (eta, phi) = "
+          //      << getPosition((*hit).detid()).eta() << ", "
+          //      << getPosition((*hit).detid()).phi() << endl;
+        }
       }
-      double eHad = 0;  
+      double eHad = 0;
       for (HBHERecHitCollection::const_iterator hit = HBHERecHits->begin(); hit != HBHERecHits->end(); hit++) {
-	if (insideCone(track, (*hit).detid(), dR)) {
-	  eHad += (*hit).energy(); 
-	}
+        if (insideCone(track, (*hit).detid(), dR)) {
+          eHad += (*hit).energy();
+        }
       }
-      track.set_caloNewEMDRp5(eEM); 
-      track.set_caloNewHadDRp5(eHad); 
+      track.set_caloNewEMDRp5(eEM);
+      track.set_caloNewHadDRp5(eHad);
       pl_->push_back (track);
     }
 
@@ -173,19 +178,19 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_.reset ();
 }
 
-bool OSUTrackProducer::insideCone(TYPE(tracks)& candTrack, const DetId& id, const double dR) 
+bool OSUTrackProducer::insideCone(TYPE(tracks)& candTrack, const DetId& id, const double dR)
 {
    GlobalPoint idPosition = getPosition(id);
-   if (idPosition.mag()<0.01) return false;   
+   if (idPosition.mag()<0.01) return false;
    math::XYZVector idPositionRoot( idPosition.x(), idPosition.y(), idPosition.z() );
-   return deltaR(candTrack, idPositionRoot) < dR;  
+   return deltaR(candTrack, idPositionRoot) < dR;
 }
 
 GlobalPoint OSUTrackProducer::getPosition( const DetId& id)
 {
-   if ( ! caloGeometry_.isValid() || 
-	! caloGeometry_->getSubdetectorGeometry(id) ||
-	! caloGeometry_->getSubdetectorGeometry(id)->getGeometry(id) ) {
+   if ( ! caloGeometry_.isValid() ||
+        ! caloGeometry_->getSubdetectorGeometry(id) ||
+        ! caloGeometry_->getSubdetectorGeometry(id)->getGeometry(id) ) {
       throw cms::Exception("FatalError") << "Failed to access geometry for DetId: " << id.rawId();
       return GlobalPoint(0,0,0);
    }

@@ -75,7 +75,7 @@ namespace osu
 
         double maxDeltaR_;
 
-        const GenMatchedParticle findGenMatchedParticle (const edm::Handle<vector<osu::Mcparticle> > &, GenMatchedParticle &, DRToGenMatchedParticle &, const bool = false);
+        const GenMatchedParticle &findGenMatchedParticle (const edm::Handle<vector<osu::Mcparticle> > &, GenMatchedParticle &, DRToGenMatchedParticle &, const bool = false) const;
     };
 }
 
@@ -128,8 +128,8 @@ osu::GenMatchable<T, PdgId>::~GenMatchable ()
 {
 }
 
-template<class T, int PdgId> const typename osu::GenMatchable<T, PdgId>::GenMatchedParticle
-osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<osu::Mcparticle> > &particles, osu::GenMatchable<T, PdgId>::GenMatchedParticle &genMatchedParticle, osu::GenMatchable<T, PdgId>::DRToGenMatchedParticle &dRToGenMatchedParticle, const bool usePdgId)
+template<class T, int PdgId> const typename osu::GenMatchable<T, PdgId>::GenMatchedParticle &
+osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<osu::Mcparticle> > &particles, osu::GenMatchable<T, PdgId>::GenMatchedParticle &genMatchedParticle, osu::GenMatchable<T, PdgId>::DRToGenMatchedParticle &dRToGenMatchedParticle, const bool usePdgId) const
 {
   dRToGenMatchedParticle.promptFinalState = INVALID_VALUE;
   dRToGenMatchedParticle.directPromptTauDecayProductFinalState = INVALID_VALUE;
