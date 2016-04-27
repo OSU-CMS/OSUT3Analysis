@@ -131,19 +131,12 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     fiducialMaps = cms.PSet (
         electrons = cms.VPSet (
             cms.PSet (
-                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_data.root"),
-                beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
-                afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
-                thresholdForVeto = cms.double (2.0), # in sigma
-                outputHotSpots = cms.bool (True),
-            ),
-            cms.PSet (
                 histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_mc.root"),
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
                 thresholdForVeto = cms.double (2.0), # in sigma
                 outputHotSpots = cms.bool (True),
-            ),
+            )
         ),
         muons = cms.VPSet (
             cms.PSet (
@@ -152,21 +145,18 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
                 thresholdForVeto = cms.double (2.0), # in sigma
                 outputHotSpots = cms.bool (True),
-            ),
-            cms.PSet (
-                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_data.root"),
-                beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
-                afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
-                thresholdForVeto = cms.double (2.0), # in sigma
-                outputHotSpots = cms.bool (True),
-            ),
-        )
+            )
+        ),
     ),
     minDeltaRForFiducialTrack = cms.double (0.05),
-    EBRecHits          =  cms.InputTag  ("reducedEcalRecHitsEB"),
-    EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),
-    HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),                                     
+    EBRecHits    =  cms.InputTag  ("reducedEcalRecHitsEB"),
+    EERecHits    =  cms.InputTag  ("reducedEcalRecHitsEE"),
+    HBHERecHits  =  cms.InputTag  ("reducedHcalRecHits",     "hbhereco"),
+    gsfTracks    =  cms.InputTag  ("electronGsfTracks",      ""),
 )
+if osusub.batchMode and types[osusub.datasetLabel] == "data":
+    collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_data.root")
+    collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_data.root")
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
