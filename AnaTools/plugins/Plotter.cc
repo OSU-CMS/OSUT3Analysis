@@ -110,9 +110,7 @@ void
 Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
   // get the required collections from the event
-  std::cout << "before getting" << std::endl;
   anatools::getRequiredCollections (objectsToGet_, handles_, event, tokens_);
-  std::cout << "after getting" << std::endl;
 
   if (!initializeValueLookupForest (histogramDefinitions, &handles_))
     {
