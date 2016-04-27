@@ -10,7 +10,7 @@
 
 #define INVALID_TYPE void *
 
-#define ORIGINAL_FORMAT "originalFormat"  // Must match definition used in processingUtilities.py 
+#define ORIGINAL_FORMAT "originalFormat"  // Must match definition used in processingUtilities.py
 
 #if DATA_FORMAT == BEAN
 
@@ -26,10 +26,11 @@
 
 #elif DATA_FORMAT == MINI_AOD_CUSTOM
 
-  #include "StoppPtls/StandardAnalysis/interface/CustomDataFormat.h"  // Define collections in an external header file.  
+  #include "CustomDataFormat.h"  // Define collections in an external header file.
+
 #elif DATA_FORMAT == AOD_CUSTOM
 
-  #include "StoppPtls/StandardAnalysis/interface/CustomDataFormat.h"
+  #include "CustomDataFormat.h"
 
 #else
   #error "Data format is not valid."
