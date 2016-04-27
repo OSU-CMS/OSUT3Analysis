@@ -23,7 +23,7 @@
 #define  cschits_TYPE           INVALID_TYPE
 #define  cscsegs_TYPE           INVALID_TYPE
 #define  dtsegs_TYPE            INVALID_TYPE
-#define  rpchits_TYPE           INVALiD_TYPE
+#define  rpchits_TYPE           INVALID_TYPE
 
 #define  triggers_TYPE          edm::TriggerResults
 #define  prescales_TYPE         pat::PackedTriggerPrescales
