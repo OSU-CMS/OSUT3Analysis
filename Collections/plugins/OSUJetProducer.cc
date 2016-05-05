@@ -47,7 +47,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   if (!event.getByToken (muonToken_, muons))
     return;
 
-  // construct vectors of "good" leptons (ID+iso)
+  // construct vectors of "good" leptons (ID)
   goodElectrons_ = auto_ptr<vector<TYPE (electrons)> > (new vector<TYPE (electrons)> ());
   for (const auto &electron : *electrons){
     bool passElectronID = false;
