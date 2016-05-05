@@ -484,6 +484,18 @@ nJobs = {
     #'cosmic_preselection' : 300,
     'cosmic_preselection' : 999,
 
+    #stopped particles stage1 GEN-SIM
+    'mchamp100' : 999,
+    'mchamp200' : 999, 
+    'mchamp400' : 999, 
+    'mchamp600' : 999,
+    'mchamp800' : 999, 
+    'mchamp1000' : 999, 
+    'mchamp1400' : 999, 
+    'mchamp1800' : 999, 
+    'mchamp2200' : 999, 
+    'mchamp2600' : 999,
+
     ###########################################################################
     #RECO not stored on T3
     ###########################################################################
@@ -736,6 +748,18 @@ maxEvents = {
 
     #stopped particles cosmic events
     'cosmic_preselection' : -1,
+
+    #stopped particles stage1 GEN-SIM
+    'mchamp100' : -1,
+    'mchamp200' : -1, 
+    'mchamp400' : -1, 
+    'mchamp600' : -1,
+    'mchamp800' : -1, 
+    'mchamp1000' : -1, 
+    'mchamp1400' : -1, 
+    'mchamp1800' : -1, 
+    'mchamp2200' : -1, 
+    'mchamp2600' : -1,
 
     ###########################################################################
     #RECO not stored on T3
@@ -1011,6 +1035,18 @@ types = {
 
     #stopped particles cosmic events
     'cosmic_preselection' : "bgMC",
+
+    #stopped particles stage1 GEN-SIM
+    'mchamp100' : "signalMC",
+    'mchamp200' : "signalMC", 
+    'mchamp400' : "signalMC", 
+    'mchamp600' : "signalMC",
+    'mchamp800' : "signalMC", 
+    'mchamp1000' : "signalMC", 
+    'mchamp1400' : "signalMC", 
+    'mchamp1800' : "signalMC", 
+    'mchamp2200' : "signalMC", 
+    'mchamp2600' : "signalMC",
 
     ###########################################################################
     #RECO not stored on T3
@@ -1289,6 +1325,18 @@ colors = {
     #stopped particles cosmic events
     'cosmic_preselection' : 2,
 
+    #stopped particles stage1 GEN-SIM
+    'mchamp100' : 1,
+    'mchamp200' : 1, 
+    'mchamp400' : 1, 
+    'mchamp600' : 1,
+    'mchamp800' : 1, 
+    'mchamp1000' : 1, 
+    'mchamp1400' : 1, 
+    'mchamp1800' : 1, 
+    'mchamp2200' : 1, 
+    'mchamp2600' : 1,
+
     ############################################################################
    
     #NoBPTX data
@@ -1561,6 +1609,18 @@ labels = {
     #stopped particles cosmic MC events
     'cosmic_preselection' : "Cosmic MC preselection",
 
+    #stopped particles stage1 GEN-SIM
+    'mchamp100' : "Mchamp (Q = 2e, M = 100 GeV)",
+    'mchamp200' : "Mchamp (Q = 2e, M = 200 GeV)", 
+    'mchamp400' : "Mchamp (Q = 2e, M = 400 GeV)", 
+    'mchamp600' : "Mchamp (Q = 2e, M = 600 GeV)",
+    'mchamp800' : "Mchamp (Q = 2e, M = 800 GeV)", 
+    'mchamp1000' : "Mchamp (Q = 2e, M = 1000 GeV)", 
+    'mchamp1400' : "Mchamp (Q = 2e, M = 1400 GeV)", 
+    'mchamp1800' : "Mchamp (Q = 2e, M = 1800 GeV)", 
+    'mchamp2200' : "Mchamp (Q = 2e, M = 2200 GeV)", 
+    'mchamp2600' : "Mchamp (Q = 2e, M = 2600 GeV)",
+
     ############################################################################
 
     #NoBPTX Data 
@@ -1725,6 +1785,20 @@ crossSections = {
 
     #stopped particles cosmic events
     'cosmic_preselection' : 8.3600000000E-02,
+
+    #stopped particles stage1 GEN-SIM
+    #from https://github.com/quertenmont/cmssw/blob/HSCP2015_PAS-EXO-15-010/SUSYBSMAnalysis/HSCP/test/AnalysisCode/Analysis_Samples.txt
+    'mchamp100'  :  3.7779440000E+00,
+    'mchamp200'  :  2.9865270000E-01,
+    'mchamp400'  :  2.3099720000E-02,
+    'mchamp600'  :  3.4651160000E-03,
+    'mchamp800'  :  7.9696270000E-04,
+    'mchamp1000' :  2.4031900000E-04, 
+    'mchamp1400' :  2.6633380000E-05, 
+    'mchamp1800' :  3.9346950000E-06, 
+    'mchamp2200' :  5.5863300000E-07, 
+    'mchamp2600' :  7.3973180000E-08,
+
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 8.3600000000E-02,
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : 8.3600000000E-02,
