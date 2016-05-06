@@ -6,27 +6,32 @@
 DIR=$1
 
 LOGS=`find ${DIR} -type f -regex ".*\/condor_[^/]*\.log$"`
-EXECUTED_LOGS=`grep -c "Job executing on host" ${LOGS} | grep -v ":0$" | sed "s/\(.*\):[^:]*$/\1/g"`
-DONE_LOGS=`grep -c "return value\|signal" ${EXECUTED_LOGS} | grep -v ":0$" | sed "s/\(.*\):[^:]*$/\1/g"`
-PASS_LOGS=`grep -c "return value 0" ${DONE_LOGS} | grep -v ":0$" | sed "s/\(.*\):[^:]*$/\1/g"`
+TOTAL_ARR=($LOGS)
+TOTAL=${#TOTAL_ARR[@]}
 
-TOTAL=0
+EXECUTED=0
 DONE=0
 PASS=0
-if [ ${#LOGS[@]} -ne 0 ]
+if [ $TOTAL -ne 0 ]
 then
-  TOTAL=`ls ${LOGS} | wc -l`
-fi
-if [ ${#DONE_LOGS[@]} -ne 0 ]
-then
-  DONE=`ls ${DONE_LOGS} | wc -l`
-fi
-if [ ${#PASS_LOGS[@]} -ne 0 ]
-then
-  PASS=`ls ${PASS_LOGS} | wc -l`
+  EXECUTED_LOGS=`grep -Hc "Job executing on host" ${LOGS} | grep -v ":0$" | sed "s/\(.*\):[^:]*$/\1/g"`
+  EXECUTED_ARR=($EXECUTED_LOGS)
+  EXECUTED=${#EXECUTED_ARR[@]}
+
+  if [ $EXECUTED -ne 0 ]
+  then
+    DONE_LOGS=`grep -Hc "return value\|signal" ${EXECUTED_LOGS} | grep -v ":0$" | sed "s/\(.*\):[^:]*$/\1/g"`
+    DONE_ARR=($DONE_LOGS)
+    DONE=${#DONE_ARR[@]}
+    if [ $DONE -ne 0 ]
+    then
+      PASS_LOGS=`grep -Hc "return value 0" ${DONE_LOGS} | grep -v ":0$" | sed "s/\(.*\):[^:]*$/\1/g"`
+      PASS_ARR=($PASS_LOGS)
+      PASS=${#PASS_ARR[@]}
+    fi
+  fi
 fi
 FAIL=`echo "${DONE} ${PASS} - p" | dc`
-EXECUTED=`ls ${EXECUTED_LOGS} | wc -l`
 RUNNING=`echo "${EXECUTED} ${PASS} - ${FAIL} - p" | dc`
 QUEUED=`echo "${TOTAL} ${EXECUTED} - p" | dc`
 
