@@ -130,4 +130,69 @@ osu::Track::findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &gsf
   return matchedGsfTrack;
 }
 
+const int
+osu::Track::gsfTrackMissingInnerHits () const
+{
+  if (this->matchedGsfTrack_.isNonnull ())
+    return this->matchedGsfTrack_->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS);
+
+  return INVALID_VALUE;
+}
+
+const int
+osu::Track::gsfTrackMissingMiddleHits () const
+{
+  if (this->matchedGsfTrack_.isNonnull ())
+    return this->matchedGsfTrack_->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS);
+
+  return INVALID_VALUE;
+}
+
+const int
+osu::Track::gsfTrackMissingOuterHits () const
+{
+  if (this->matchedGsfTrack_.isNonnull ())
+    return this->matchedGsfTrack_->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS);
+
+  return INVALID_VALUE;
+}
+
+const double
+osu::Track::innerP () const
+{
+  double pInner = innerMomentum ().r ();
+  if (this->matchedGsfTrack_.isNonnull ())
+    pInner = this->matchedGsfTrack_->innerMomentum ().r ();
+
+  return pInner;
+}
+
+const double
+osu::Track::outerP () const
+{
+  double pInner = outerMomentum ().r ();
+  if (this->matchedGsfTrack_.isNonnull ())
+    pInner = this->matchedGsfTrack_->outerMomentum ().r ();
+
+  return pInner;
+}
+
+const double
+osu::Track::fbrem () const
+{
+  double pInner = this->innerP (),
+         pOuter = this->outerP ();
+
+  return (pInner ? max (0.0, pOuter - pInner) / pInner : 0.0);
+}
+
+const double
+osu::Track::bremEnergy () const
+{
+  double pInner = this->innerP (),
+         pOuter = this->outerP ();
+
+  return max (0.0, pOuter - pInner);
+}
+
 #endif

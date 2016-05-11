@@ -51,9 +51,10 @@ parser.add_option("-a", "--SkimChannel", dest="SkimChannel", default = "", help=
 parser.add_option("-R", "--Requirements", dest="Requirements", default = "", help="Requirements to be added to condor.sub submssion script, e.g. 'Memory > 1900'.")
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")
+parser.add_option("-P", "--UseGridProxy", dest="UseGridProxy", action="store_true", default = False, help="Use X509 grid proxy.")
 parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc")
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")
-parser.add_option("-W", "--AllowDataWeights", dest="AllowDataWeights", action="store_true", default = False, help="Use event weights, even for a data dataset.")  
+parser.add_option("-W", "--AllowDataWeights", dest="AllowDataWeights", action="store_true", default = False, help="Use event weights, even for a data dataset.")
 parser.add_option("-H", "--skimToHadoop", dest="skimToHadoop", default = "", help="If producing a skim, put in on Hadoop, in the given directory.")
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")
@@ -132,7 +133,7 @@ def getLatestJsonFile():
         if arguments.JSONType[:4] == 'http':
             os.system('wget ' + arguments.JSONType + ' -O ' + ultimateJson)
         else:
-            os.system('cp ' + arguments.JSONType + ' ' + ultimateJson)            
+            os.system('cp ' + arguments.JSONType + ' ' + ultimateJson)
         return ultimateJson
 
     else:
@@ -272,7 +273,7 @@ def GetListOfRootFiles(Directory):
 
 
 #It generates the condor.sub file for each dataset.
-def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseAAA, jsonFile):
+def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile):
     SubmitFile = open(Directory + '/condor.sub','w')
     cmsRunExecutable = os.popen('which cmsRun').read()
     SubmitFile.write("# Command line arguments: \n# " + GetCommandLineString() + " \n\n\n")
@@ -285,7 +286,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             FilesToTransfer = 'config_cfg.py,userConfig_' + Label + '_cfg.py'
             if Dataset != '':
                 FilesToTransfer += ',datasetInfo_' + Label + '_cfg.py'
-            if UseAAA:
+            if UseGridProxy:
                 userName = getpass.getuser()
                 userId = os.popen('id -u ' + userName).read().rstrip('\n')
                 userProxy = '/tmp/x509up_u' + str(userId)
@@ -294,7 +295,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
                 FilesToTransfer += ',' + jsonFile
             SubmitFile.write('should_transfer_files   = YES\n')
             SubmitFile.write('Transfer_Input_files = ' + FilesToTransfer + '\n')
-            if UseAAA:
+            if UseGridProxy:
                 SubmitFile.write('x509userproxy = ' + userProxy + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Output_files') and currentCondorSubArgumentsSet[argument]['Transfer_Output_files'] == "":
             SubmitFile.write ('Transfer_Output_files = hist_$(Process).root')
@@ -721,11 +722,13 @@ if not arguments.localConfig:
 #    Get the host name to determine whether you are using lxplus or OSU T3.   #
 ###############################################################################
 UseAAA = False
+UseGridProxy = False
 Generic = False
 if arguments.Generic:
     Generic = True
 if arguments.UseAAA:
     UseAAA = True
+UseGridProxy = UseAAA or arguments.UseGridProxy
 remoteAccessT3 = True
 lxbatch  = False
 hostname = socket.gethostname()
@@ -842,7 +845,7 @@ if not arguments.Resubmit:
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
             else:
-                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseAAA, jsonFile)
+                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile)
             if not arguments.NotToExecute:
                 os.chdir(WorkDir)
                 if RealMaxEvents > 0 :
@@ -885,7 +888,7 @@ if not arguments.Resubmit:
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
         else:
-            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseAAA,'')
+            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'')
         if not arguments.NotToExecute:
             os.chdir(WorkDir)
             print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'
