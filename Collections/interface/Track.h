@@ -50,6 +50,15 @@ namespace osu
         const edm::Ref<vector<reco::GsfTrack> > matchedGsfTrack () const;
         const double dRToMatchedGsfTrack () const;
 
+        const int gsfTrackMissingInnerHits () const;
+        const int gsfTrackMissingMiddleHits () const;
+        const int gsfTrackMissingOuterHits () const;
+
+        const double innerP () const;
+        const double outerP () const;
+        const double fbrem () const;
+        const double bremEnergy () const;
+
     private:
         double dRMinJet_;
         double minDeltaRForFiducialTrack_;
