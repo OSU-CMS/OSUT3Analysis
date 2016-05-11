@@ -5,6 +5,8 @@
 
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 
+#define MAX_DR (99.0)
+
 struct EtaPhi
 {
   double eta;
@@ -41,7 +43,7 @@ namespace osu
         Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const edm::Handle<vector<reco::GsfTrack> > &, const EtaPhiList &, const EtaPhiList &);
         ~Track ();
 
-        const double dRMinJet() const { return dRMinJet_; }
+        const double dRMinJet() const;
         void   set_dRMinJet(const double dRMinJet);
 
         const bool isFiducialElectronTrack () const;

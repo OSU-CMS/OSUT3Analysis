@@ -3,7 +3,7 @@
 #if IS_VALID(tracks)
 
 osu::Track::Track () :
-  dRMinJet_ (999),
+  dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
   matchedGsfTrack_ (),
@@ -14,7 +14,7 @@ osu::Track::Track () :
 
 osu::Track::Track (const TYPE(tracks) &track) :
   GenMatchable (track),
-  dRMinJet_ (999),
+  dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
   matchedGsfTrack_ (),
@@ -25,7 +25,7 @@ osu::Track::Track (const TYPE(tracks) &track) :
 
 osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcparticle> > &particles) :
   GenMatchable (track, particles),
-  dRMinJet_ (999),
+  dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
   matchedGsfTrack_ (),
@@ -36,7 +36,7 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
 
 osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
   GenMatchable (track, particles, cfg),
-  dRMinJet_ (999),
+  dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
   matchedGsfTrack_ (),
@@ -47,7 +47,7 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
 
 osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, const EtaPhiList &electronVetoList, const EtaPhiList &muonVetoList) :
   GenMatchable (track, particles, cfg),
-  dRMinJet_ (999),
+  dRMinJet_ (INVALID_VALUE),
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
   isFiducialElectronTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_)),
   isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_))
@@ -82,7 +82,17 @@ osu::Track::matchedGsfTrack () const
 const double
 osu::Track::dRToMatchedGsfTrack () const
 {
+  if (IS_INVALID(dRToMatchedGsfTrack_))
+    return MAX_DR;
   return dRToMatchedGsfTrack_;
+}
+
+const double
+osu::Track::dRMinJet () const
+{
+  if (IS_INVALID(dRMinJet_))
+    return MAX_DR;
+  return dRMinJet_;
 }
 
 void
