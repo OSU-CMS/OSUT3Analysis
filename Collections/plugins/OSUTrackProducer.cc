@@ -132,6 +132,9 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
     {
       osu::Track track (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_);
 
+#ifdef DISAPP_TRKS
+      // Calculate the associated calorimeter energy for the disappearing tracks search.
+
       double dRMinJet = 999;
       for (const auto &jet : *jets) {
         if (!(jet.pt() > 30))         continue;
@@ -144,9 +147,6 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       }
 
       track.set_dRMinJet(dRMinJet);
-
-#ifdef DISAPP_TRKS
-      // Calculate the associated calorimeter energy for the disappearing tracks search.
 
       double eEM = 0;
       double dR = 0.5;
