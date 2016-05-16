@@ -145,6 +145,9 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       track.set_dRMinJet(dRMinJet);
 
+#ifdef DISAPP_TRKS
+      // Calculate the associated calorimeter energy for the disappearing tracks search.
+
       double eEM = 0;
       double dR = 0.5;
       for (EBRecHitCollection::const_iterator hit=EBRecHits->begin(); hit!=EBRecHits->end(); hit++) {
@@ -169,8 +172,11 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
           eHad += (*hit).energy();
         }
       }
+
       track.set_caloNewEMDRp5(eEM);
       track.set_caloNewHadDRp5(eHad);
+#endif
+
       pl_->push_back (track);
     }
 
