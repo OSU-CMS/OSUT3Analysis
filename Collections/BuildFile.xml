@@ -27,3 +27,4 @@ they can be safely ignored.-->
 <!--=========================================================================-->
 <!-- disappearing tracks packages -->
 <use  name="DisappTrks/CandidateTrackProducer"/>  
+<use  name="StoppPtls/Collection"/>  
