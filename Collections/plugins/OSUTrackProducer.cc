@@ -39,6 +39,7 @@ OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
 
   gsfTracksToken_ = consumes<vector<reco::GsfTrack> > (cfg.getParameter<edm::InputTag> ("gsfTracks"));
 
+#ifdef DISAPP_TRKS
   bool outputElectronHotSpots = false;
   for (const auto &electronFiducialMap : electronFiducialMaps)
     {
@@ -91,6 +92,7 @@ OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
   for (const auto &etaPhi : muonVetoList_)
     clog << "(" << setw (10) << etaPhi.eta << "," << setw (10) << etaPhi.phi << ")" << endl;
   outputMuonHotSpots && clog << "================================================================================" << endl;
+#endif
 }
 
 OSUTrackProducer::~OSUTrackProducer ()
@@ -103,13 +105,20 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(tracks)> > collection;
   if (!event.getByToken (token_, collection))
     return;
+  if (!collection.isValid()) return;
+
+#ifdef DISAPP_TRKS
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
+  if (!particles.isValid()) return;
+
   edm::Handle<vector<TYPE(jets)> > jets;
   if (!event.getByToken (jetsToken_, jets)) {
     clog << "ERROR:  Could not find jets collection." << endl;
     return;
   }
+  if (!jets.isValid()) return;
+
   edm::Handle<EBRecHitCollection> EBRecHits;
   event.getByToken(EBRecHitsToken_, EBRecHits);
   if (!EBRecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find EBRecHitCollection in the event!\n";
@@ -126,11 +135,18 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   edm::Handle<vector<reco::GsfTrack> > gsfTracks;
   event.getByToken (gsfTracksToken_, gsfTracks);
+  if (!gsfTracks.isValid()) return;
+
+#endif
 
   pl_ = auto_ptr<vector<osu::Track> > (new vector<osu::Track> ());
   for (const auto &object : *collection)
     {
+#ifdef DISAPP_TRKS
       osu::Track track (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_);
+#else
+      osu::Track track (object);
+#endif
 
 #ifdef DISAPP_TRKS
       // Calculate the associated calorimeter energy for the disappearing tracks search.
@@ -176,7 +192,6 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       track.set_caloNewEMDRp5(eEM);
       track.set_caloNewHadDRp5(eHad);
 #endif
-
       pl_->push_back (track);
     }
 
