@@ -105,19 +105,16 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE(tracks)> > collection;
   if (!event.getByToken (token_, collection))
     return;
-  if (!collection.isValid()) return;
 
 #ifdef DISAPP_TRKS
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
-  if (!particles.isValid()) return;
 
   edm::Handle<vector<TYPE(jets)> > jets;
   if (!event.getByToken (jetsToken_, jets)) {
     clog << "ERROR:  Could not find jets collection." << endl;
     return;
   }
-  if (!jets.isValid()) return;
 
   edm::Handle<EBRecHitCollection> EBRecHits;
   event.getByToken(EBRecHitsToken_, EBRecHits);
@@ -135,7 +132,6 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   edm::Handle<vector<reco::GsfTrack> > gsfTracks;
   event.getByToken (gsfTracksToken_, gsfTracks);
-  if (!gsfTracks.isValid()) return;
 
 #endif
 
