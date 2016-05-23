@@ -35,6 +35,8 @@ datasets = [
    'NoBPTX_2015C_controlSample',
    'NoBPTX_2015Dv3_controlSample',
    'NoBPTX_2015Dv4_controlSample',
+   'NoBPTX_2015C_16Dec2015',
+   'NoBPTX_2015D_16Dec2015',
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
@@ -244,6 +246,10 @@ composite_dataset_definitions = {
         'NoBPTX_2015Dv3_controlSample',
         'NoBPTX_2015Dv4_controlSample',
         #'NoBPTX_2015E_controlSample'
+        ],
+    'NoBPTX_16Dec2015' : [
+        'NoBPTX_2015C_16Dec2015',
+        'NoBPTX_2015D_16Dec2015',
         ],
     'MET_2015' : [
         'MET_2015B',
@@ -532,6 +538,18 @@ nJobs = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :    999,
     #'mchamp2600_RecoSeparateEventsParticle0'  :    999,
 
+    #stopped particles stage2 Ntuples
+    #'mchamp100_NtupleSeparateEventsParticle0'   :    999,
+    #'mchamp200_NtupleSeparateEventsParticle0'   :    999,
+    #'mchamp400_NtupleSeparateEventsParticle0'   :    999,
+    'mchamp600_NtupleSeparateEventsParticle0'   :    999, 
+    #'mchamp800_NtupleSeparateEventsParticle0'   :    999,
+    #'mchamp1000_NtupleSeparateEventsParticle0'  :    999,
+    #'mchamp1400_NtupleSeparateEventsParticle0'  :    999,
+    #'mchamp1800_NtupleSeparateEventsParticle0'  :    999,
+    #'mchamp2200_NtupleSeparateEventsParticle0'  :    999,
+    #'mchamp2600_NtupleSeparateEventsParticle0'  :    999,
+
  
     ###########################################################################
     #RECO not stored on T3
@@ -541,6 +559,9 @@ nJobs = {
     'NoBPTX_2015D_v4' : 999,
     #'NoBPTX_2015D_v3' : 30,
     #'NoBPTX_2015D_v4' : 30,
+
+    'NoBPTX_2015C_16Dec2015' : 999,
+    'NoBPTX_2015D_16Dec2015' : 999,
 
     #control sample data
     'Commissioning2015_controlSample' : 999,
@@ -834,6 +855,18 @@ maxEvents = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :    -1,
     #'mchamp2600_RecoSeparateEventsParticle0'  :    -1,
 
+    #stopped particles stage2 Ntuple
+    #'mchamp100_NtupleSeparateEventsParticle0'   :    -1,
+    #'mchamp200_NtupleSeparateEventsParticle0'   :    -1,
+    #'mchamp400_NtupleSeparateEventsParticle0'   :    -1,
+    'mchamp600_NtupleSeparateEventsParticle0'   :    -1, 
+    #'mchamp800_NtupleSeparateEventsParticle0'   :    -1,
+    #'mchamp1000_NtupleSeparateEventsParticle0'  :    -1,
+    #'mchamp1400_NtupleSeparateEventsParticle0'  :    -1,
+    #'mchamp1800_NtupleSeparateEventsParticle0'  :    -1,
+    #'mchamp2200_NtupleSeparateEventsParticle0'  :    -1,
+    #'mchamp2600_NtupleSeparateEventsParticle0'  :    -1,
+
 
     ###########################################################################
     #RECO not stored on T3
@@ -841,6 +874,9 @@ maxEvents = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : -1,
     'NoBPTX_2015D_v4' : -1,
+
+    'NoBPTX_2015C_16Dec2015' : -1,
+    'NoBPTX_2015D_16Dec2015' : -1,
 
     #control sample data
     'Commissioning2015_controlSample' : -1,
@@ -1158,6 +1194,18 @@ types = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :    "signalMC",
     #'mchamp2600_RecoSeparateEventsParticle0'  :    "signalMC",
 
+    #stopped particles stage2 Ntuples
+    #'mchamp100_NtupleSeparateEventsParticle0'   :    "signalMC",
+    #'mchamp200_NtupleSeparateEventsParticle0'   :    "signalMC",
+    #'mchamp400_NtupleSeparateEventsParticle0'   :    "signalMC",
+    'mchamp600_NtupleSeparateEventsParticle0'   :    "signalMC", 
+    #'mchamp800_NtupleSeparateEventsParticle0'   :    "signalMC",
+    #'mchamp1000_NtupleSeparateEventsParticle0'  :    "signalMC",
+    #'mchamp1400_NtupleSeparateEventsParticle0'  :    "signalMC",
+    #'mchamp1800_NtupleSeparateEventsParticle0'  :    "signalMC",
+    #'mchamp2200_NtupleSeparateEventsParticle0'  :    "signalMC",
+    #'mchamp2600_NtupleSeparateEventsParticle0'  :    "signalMC",
+
     ###########################################################################
     #RECO not stored on T3
     ###########################################################################
@@ -1165,8 +1213,13 @@ types = {
     'NoBPTX_2015D_v3' : 'data',
     'NoBPTX_2015D_v4' : 'data',
 
+    'NoBPTX_2015C_16Dec2015' : 'data',
+    'NoBPTX_2015D_16Dec2015' : 'data',
+
     #NoBPTX data
     'NoBPTX_2015D' : 'data',
+    'NoBPTX_16Dec2015' : 'data',
+
     ############################################################################
 
     #control sample data
@@ -1483,12 +1536,28 @@ colors = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :    1,
     #'mchamp2600_RecoSeparateEventsParticle0'  :    1,
 
+    #stopped particles stage2 Ntuples
+    #'mchamp100_NtupleSeparateEventsParticle0'   :    1,
+    #'mchamp200_NtupleSeparateEventsParticle0'   :    1,
+    #'mchamp400_NtupleSeparateEventsParticle0'   :    1,
+    'mchamp600_NtupleSeparateEventsParticle0'   :    1, 
+    #'mchamp800_NtupleSeparateEventsParticle0'   :    1,
+    #'mchamp1000_NtupleSeparateEventsParticle0'  :    1,
+    #'mchamp1400_NtupleSeparateEventsParticle0'  :    1,
+    #'mchamp1800_NtupleSeparateEventsParticle0'  :    1,
+    #'mchamp2200_NtupleSeparateEventsParticle0'  :    1,
+    #'mchamp2600_NtupleSeparateEventsParticle0'  :    1,
+
     ############################################################################
    
     #NoBPTX data
     'NoBPTX_2015D_v3' : 1,
     'NoBPTX_2015D_v4' : 1,
     'NoBPTX_2015D' : 1,
+
+    'NoBPTX_2015C_16Dec2015' : 1,
+    'NoBPTX_2015D_16Dec2015' : 1,
+    'NoBPTX_16Dec2015' : 1,
     ############################################################################
 
     #control sample data
@@ -1803,12 +1872,28 @@ labels = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 2200 GeV, Separate Events, Particle 0)",
     #'mchamp2600_RecoSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 0)",
 
+    #stopped particles stage2 Ntuples
+    #'mchamp100_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)", 
+    #'mchamp200_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)", 
+    #'mchamp400_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 400 GeV, Separate Events, Particle 0)", 
+    'mchamp600_NtupleSeparateEventsParticle0'   :    "Mchamp (Q = 2e, M = 600 GeV, Separate Events, Particle 0)", 
+    #'mchamp800_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 800 GeV, Separate Events, Particle 0)", 
+    #'mchamp1000_NtupleSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 1000 GeV, Separate Events, Particle 0)",
+    #'mchamp1400_NtupleSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 1400 GeV, Separate Events, Particle 0)",
+    #'mchamp1800_NtupleSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 1800 GeV, Separate Events, Particle 0)",
+    #'mchamp2200_NtupleSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 2200 GeV, Separate Events, Particle 0)",
+    #'mchamp2600_NtupleSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 0)",
+
     ############################################################################
 
     #NoBPTX Data 
     'NoBPTX_2015D_v3'     : "NoBPTX 2015D_v3 data",
     'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
     'NoBPTX_2015D'     : "NoBPTX 2015D data",
+
+    'NoBPTX_2015C_16Dec2015'     : "NoBPTX 2015C Rerecoed data",
+    'NoBPTX_2015D_16Dec2015'     : "NoBPTX 2015D Rerecoed data",
+    'NoBPTX_16Dec2015'     : "NoBPTX 2015C,D Rerecoed data",
     ############################################################################
 
     #control sample data
@@ -2016,6 +2101,18 @@ crossSections = {
     #'mchamp1800_RecoSeparateEventsParticle0'  :  3.9346950000E-06,
     #'mchamp2200_RecoSeparateEventsParticle0'  :  5.5863300000E-07,
     #'mchamp2600_RecoSeparateEventsParticle0'  :  7.3973180000E-08,
+
+    #stopped particles stage2 Ntuples
+    #'mchamp100_NtupleSeparateEventsParticle0'   :  3.7779440000E+00,
+    #'mchamp200_NtupleSeparateEventsParticle0'   :  2.9865270000E-01,
+    #'mchamp400_NtupleSeparateEventsParticle0'   :  2.3099720000E-02,
+    'mchamp600_NtupleSeparateEventsParticle0'   :   3.4651160000E-03,
+    #'mchamp800_NtupleSeparateEventsParticle0'   :  7.9696270000E-04,
+    #'mchamp1000_NtupleSeparateEventsParticle0'  :  2.4031900000E-04,
+    #'mchamp1400_NtupleSeparateEventsParticle0'  :  2.6633380000E-05,
+    #'mchamp1800_NtupleSeparateEventsParticle0'  :  3.9346950000E-06,
+    #'mchamp2200_NtupleSeparateEventsParticle0'  :  5.5863300000E-07,
+    #'mchamp2600_NtupleSeparateEventsParticle0'  :  7.3973180000E-08,
 
 
     #rpc study

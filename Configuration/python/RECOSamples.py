@@ -66,6 +66,17 @@ dataset_names = {
     #'mchamp2200_RecoSeparateEventsParticle0'  : "/HSCPmchamp6_M-2200_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2RecoSeparateEventsParticle0/USER",    
     #'mchamp2600_RecoSeparateEventsParticle0'  : "/HSCPmchamp6_M-2600_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2RecoSeparateEventsParticle0/USER",   
 
+    #'mchamp100_NtupleSeparateEventsParticle0'   : "/HSCPmchamp6_M-100_TuneZ2star_13TeV-pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",     
+    #'mchamp200_NtupleSeparateEventsParticle0'   : "/HSCPmchamp6_M-200_TuneZ2star_13TeV-pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",     
+    #'mchamp400_NtupleSeparateEventsParticle0'   : "/HSCPmchamp6_M-400_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",     
+    'mchamp600_NtupleSeparateEventsParticle0'   : "/HSCPmchamp6_M-600_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",
+    #'mchamp800_NtupleSeparateEventsParticle0'   : "/HSCPmchamp6_M-800_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",     
+    #'mchamp1000_NtupleSeparateEventsParticle0'  : "/HSCPmchamp6_M-1000_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",    
+    #'mchamp1400_NtupleSeparateEventsParticle0'  : "/HSCPmchamp6_M-1400_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",    
+    #'mchamp1800_NtupleSeparateEventsParticle0'  : "/HSCPmchamp6_M-1800_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",    
+    #'mchamp2200_NtupleSeparateEventsParticle0'  : "/HSCPmchamp6_M-2200_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",    
+    #'mchamp2600_NtupleSeparateEventsParticle0'  : "/HSCPmchamp6_M-2600_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",   
+
 ################## SP ntuples stored on T3 ###############
 #################### cosmic sample #######################
 
@@ -76,6 +87,11 @@ dataset_names = {
 ########################## data ##########################
     'NoBPTX_2015D_v3' : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-v2p0-f01519ca7e946644c73f465aa3632aa9/USER",
     'NoBPTX_2015D_v4' : "/NoBPTX/wji-Run2015D-PromptReco-v4_SP-v2p0-f01519ca7e946644c73f465aa3632aa9/USER",
+
+################## Delayed Muon RECO not stored on T3 ############
+########################## data ##########################
+    'NoBPTX_2015C_16Dec2015' : "/NoBPTX/Run2015C_25ns-16Dec2015-v1/RECO",
+    'NoBPTX_2015D_16Dec2015' : "/NoBPTX/Run2015D-16Dec2015-v1/RECO",
 
 ################## SP ntuples no stored on T3 ############
 ########################## data control samples ##########################
