@@ -60,9 +60,9 @@ if (-e $directory)
   }
 mkdir $directory;
 my $host = hostname();
-my $useLxbatch = 0;    
+my $useLxbatch = 0;
 if (index($host, 'cern.ch') != -1) {
-  $useLxbatch = 1;  
+  $useLxbatch = 1;
 }
 my $nFiles = outputRunList ($dataset, $directory);
 my $realNJobs = $nJobs;
@@ -83,13 +83,13 @@ if (!$opt{"noexec"}) {
   print "Submitting $realNJobs jobs to run on $realMaxEvents events in $nFiles files.\n" if $realMaxEvents >= 0;
   print "Submitting $realNJobs jobs to run on all events in $nFiles files.\n" if $realMaxEvents < 0;
   if ($useLxbatch) {
-    system ("./lxbatchSub.sh"); 
+    system ("./lxbatchSub.sh");
   } else {
     system ("LD_LIBRARY_PATH=/usr/lib64/condor:\$LD_LIBRARY_PATH condor_submit condor.sub");
   }
 } else {
-  print "Configuration files created but no jobs submitted.\n"; 
-}  
+  print "Configuration files created but no jobs submitted.\n";
+}
 
 sub
 outputPset
@@ -100,10 +100,10 @@ outputPset
   my $eventsPerJob = shift;
   my $process = shift;
   my $filename = shift;
-  my $random = shift;  
+  my $random = shift;
 
   if (!$filename) {
-      $filename = "process.TFileService.fileName";  
+      $filename = "process.TFileService.fileName";
   }
 
   $process =~ s/[^[:alnum:]]//g;
@@ -115,7 +115,7 @@ outputPset
   print PSET "import re\n";
   print PSET "import userConfig_cfg as pset\n";
   print PSET "\n";
-  print PSET "fileName = pset.$filename\n";  
+  print PSET "fileName = pset.$filename\n";
   print PSET "fileName = fileName.pythonValue ()\n";
   print PSET "fileName = fileName[1:(len (fileName) - 1)]\n";
   print PSET "fileName = re.sub (r'^(.*)\\.([^\\.]*)\$', r'\\1_' + str (osusub.jobNumber) + r'.\\2', fileName)\n";
@@ -130,12 +130,12 @@ outputPset
   print PSET "process = pset.process\n";
   print PSET "process.setName_ (process.name_ () + '$process')\n" if $process;
 
-  if ($random) { 
+  if ($random) {
 # Change the random number seed for each job.
-# Follow instructions from https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookGeneration#RndmSeeds  
-      print PSET "pset.process.RandomNumberGeneratorService.generator.initialSeed = osusub.jobNumber \n";   
+# Follow instructions from https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookGeneration#RndmSeeds
+      print PSET "pset.process.RandomNumberGeneratorService.generator.initialSeed = osusub.jobNumber \n";
   }
-  
+
   close (PSET);
 }
 
@@ -205,19 +205,19 @@ outputRunList
   open (RUNLIST, ">$workingDir/runList.py");
   print RUNLIST "runList = [\n";
   $nFiles -= $nFiles;
-  if ($files) {  # Only loop if there are files found; otherwise an error results.  
+  if ($files) {  # Only loop if there are files found; otherwise an error results.
       for (my $i = 0; $i < @{$files}; $i++)
       {
-	  next if $files->[$i] eq ".";
-	  next if $files->[$i] eq "..";
-	  next if !($files->[$i] =~ m/\.root$/);
-	  print RUNLIST "'" . $prefix . $files->[$i] . "'";
-	  print RUNLIST "," if $i + 1 != @{$files};
-	  print RUNLIST "\n";
-	  $nFiles++;
+          next if $files->[$i] eq ".";
+          next if $files->[$i] eq "..";
+          next if !($files->[$i] =~ m/\.root$/);
+          print RUNLIST "'" . $prefix . $files->[$i] . "'";
+          print RUNLIST "," if $i + 1 != @{$files};
+          print RUNLIST "\n";
+          $nFiles++;
       }
   } else {
-      $nFiles = 1;    
+      $nFiles = 1;
   }
   print RUNLIST "]";
   close (RUNLIST);
@@ -317,9 +317,9 @@ outputCondor
       $condorFile .= "Error                   = condor_\$(Process).err\n";
       $condorFile .= "Log                     = condor_\$(Process).log\n";
       if (-d $dataset) {
-	  $condorFile .= "Transfer_Input_Files    = config_cfg.py,userConfig_cfg.py,runList.py\n";
+          $condorFile .= "Transfer_Input_Files    = config_cfg.py,userConfig_cfg.py,runList.py\n";
       } else {
-	  $condorFile .= "Transfer_Input_Files    = config_cfg.py,userConfig_cfg.py\n";  # Do not include runList.py if no dataset defined.  
+          $condorFile .= "Transfer_Input_Files    = config_cfg.py,userConfig_cfg.py\n";  # Do not include runList.py if no dataset defined.
       }
       $condorFile .= "\n";
       $condorFile .= "+IsLocalJob             = true\n";
@@ -339,7 +339,7 @@ outputCondor
       $condorFile =~ s/\$dataset/NULL/g if !$dataset;
       $condorFile =~ s/\$label/$label/g if $label;
       $condorFile =~ s/\$label/NULL/g if !$label;
-      $condorFile =~ s/,runList.py//g if !$dataset;  
+      $condorFile =~ s/,runList.py//g if !$dataset;
     }
 
   open (SUB, ">$workingDir/condor.sub");
@@ -354,32 +354,32 @@ outputLxbatch
   my $nJobs = shift;
   my $queue = shift;
   if (!$queue) {
-    $queue = "8nh";    
+    $queue = "8nh";
   }
 
-  my $currentDir = getcwd();  
+  my $currentDir = getcwd();
   my $batchFile = "";
-  $batchFile .= "#!/bin/sh \n";  
-  $batchFile .= "for i in {1..$nJobs} \n";  
-  $batchFile .= "do \n";  
-  $batchFile .= "  bsub -q $queue -oo $currentDir/$workingDir/lxbatch_\$i.log $currentDir/$workingDir/lxbatchRun.sh \$i \n";   
-  $batchFile .= "done \n";  
-  $batchFile .= "echo \"Finished submitting $nJobs jobs.\" \n";    
+  $batchFile .= "#!/bin/sh \n";
+  $batchFile .= "for i in {1..$nJobs} \n";
+  $batchFile .= "do \n";
+  $batchFile .= "  bsub -q $queue -oo $currentDir/$workingDir/lxbatch_\$i.log $currentDir/$workingDir/lxbatchRun.sh \$i \n";
+  $batchFile .= "done \n";
+  $batchFile .= "echo \"Finished submitting $nJobs jobs.\" \n";
   open (SUB, ">$workingDir/lxbatchSub.sh");
   print SUB $batchFile;
   close (SUB);
 
   $batchFile = "";
-  $batchFile .= "#!/bin/sh \n";  
-  $batchFile .= "cd $currentDir/$workingDir/ \n"; 
-  $batchFile .= "eval `scram runtime -sh` \n"; 
-  $batchFile .= "cmsRun config_cfg.py True $nJobs \$1 NULL NULL \n";  # Not set up to use a dataset with lxbatch.    
+  $batchFile .= "#!/bin/sh \n";
+  $batchFile .= "cd $currentDir/$workingDir/ \n";
+  $batchFile .= "eval `scram runtime -sh` \n";
+  $batchFile .= "cmsRun config_cfg.py True $nJobs \$1 NULL NULL \n";  # Not set up to use a dataset with lxbatch.
   open (SUB, ">$workingDir/lxbatchRun.sh");
   print SUB $batchFile;
   close (SUB);
 
-  system ("chmod +x $workingDir/lxbatchRun.sh"); 
-  system ("chmod +x $workingDir/lxbatchSub.sh"); 
+  system ("chmod +x $workingDir/lxbatchRun.sh");
+  system ("chmod +x $workingDir/lxbatchSub.sh");
 
 
 }
@@ -403,9 +403,9 @@ printHelp
   printf "%-29s%s\n", "  -p, --process PROCESS", "suffix for the process name";
   printf "%-29s%s\n", " ", "to run over all events";
   printf "%-29s%s\n", "  -f, --filename FILENAME", "parameter of output filename in config file; default is process.TFileService.fileName";
-  printf "%-29s%s\n", "  -r, --random", "set the random number seed equal to the job number; useful for signal generation";  
-  printf "%-29s%s\n", "  -q, --queue", "choose the lxbatch queue to use; default is 8nh";  
-  printf "%-29s%s\n", "  -n, --noexec", "set up the required configuration files, but do not submit jobs";  
+  printf "%-29s%s\n", "  -r, --random", "set the random number seed equal to the job number; useful for signal generation";
+  printf "%-29s%s\n", "  -q, --queue", "choose the lxbatch queue to use; default is 8nh";
+  printf "%-29s%s\n", "  -n, --noexec", "set up the required configuration files, but do not submit jobs";
   print "\n";
   print "The optional first argument must be either a DATASET registered in the Tier 3\n";
   print "ntuple database, a LOCATION which exists on disk, or a text file containing a\n";

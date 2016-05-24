@@ -88,13 +88,13 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   //////////////////////////////////////////////////////////////////////////////
   maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = maxAllTriggerWidth_ = 0;
 
-  bool printEvent = printAllEvents_ || (printPassedEvents_ && getEventDecision()); 
+  bool printEvent = printAllEvents_ || (printPassedEvents_ && getEventDecision());
   for (auto eventToPrint = eventsToPrint_.begin (); eventToPrint != eventsToPrint_.end (); eventToPrint++)
     {
-      if ((*eventToPrint) == event.id ()) 
-	printEvent = true;
+      if ((*eventToPrint) == event.id ())
+        printEvent = true;
     }
-  
+
   if (printEvent)
     {
       ss_ << endl << "================================================================================" << endl;
@@ -124,7 +124,7 @@ InfoPrinter::printEventDecision ()
     return false;
 
   ss_ << endl << "\033[1;34mevent decision\033[0m: ";
-  if (cutDecisions->eventDecision) 
+  if (cutDecisions->eventDecision)
     ss_ << "\033[1;32mtrue\033[0m" << endl;
   else
     ss_ << "\033[1;31mfalse\033[0m" << endl;
@@ -136,7 +136,7 @@ InfoPrinter::getEventDecision ()
 {
   if (!cutDecisions.isValid ())
     return false;
-  return cutDecisions->eventDecision;  
+  return cutDecisions->eventDecision;
 }
 
 bool
@@ -378,14 +378,14 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
   ss_ << "--------------------------------------------------------------------------------" << endl;
   map<string, pair<bool, unsigned> > triggers;
   if (!handles_.triggers.isValid()) {
-    ss_ << "\033[1;31mERROR\033[0m" << " [InfoPrinter::printAllTriggers]:  Invalid triggers handle." << endl;  
-    return false; 
-  } 
+    ss_ << "\033[1;31mERROR\033[0m" << " [InfoPrinter::printAllTriggers]:  Invalid triggers handle." << endl;
+    return false;
+  }
   if (!handles_.prescales.isValid()) {
-    ss_ << "\033[1;31mERROR\033[0m" << " [InfoPrinter::printAllTriggers]:  Invalid prescales handle." << endl;  
-    return false; 
-  } 
-    
+    ss_ << "\033[1;31mERROR\033[0m" << " [InfoPrinter::printAllTriggers]:  Invalid prescales handle." << endl;
+    return false;
+  }
+
 #if DATA_FORMAT == BEAN
   for (const auto &trigger : *handles_.triggers)
     {

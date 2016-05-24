@@ -1,5 +1,5 @@
 #ifndef PRIMARY_VTX_VAR_PRODUCER
-#define PRIMARY_VTX_VAR_PRODUCER  
+#define PRIMARY_VTX_VAR_PRODUCER
 
 #include "OSUT3Analysis/AnaTools/interface/EventVariableProducer.h"
 #include "TLorentzVector.h"
@@ -11,11 +11,11 @@ class PrimaryVtxVarProducer : public EventVariableProducer
    {
     public:
         PrimaryVtxVarProducer (const edm::ParameterSet &);
-	~PrimaryVtxVarProducer ();
+        ~PrimaryVtxVarProducer ();
 
     private:
-	void AddVariables(const edm::Event &);
-	edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > token_;
+        void AddVariables(const edm::Event &);
+        edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > token_;
   };
 
 #endif

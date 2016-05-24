@@ -323,11 +323,11 @@ generateUpperLimitCutFlow (TDirectoryFile &dirFile, TH1D * const cutFlow, const 
       upperLimitCutFlowHist->SetDirectory (&dirFile);
       for (int i = 0; i <= cutFlow->GetXaxis ()->GetNbins () + 1; i++)
         {
-          // The calculation of upper and lower limits is taken from the PDG Statistics chapter.  
-          // "Poisson or binomal data", section 37.4.2.3 in 2013 version; Eqns. 37.71a, 37.71b.  
+          // The calculation of upper and lower limits is taken from the PDG Statistics chapter.
+          // "Poisson or binomal data", section 37.4.2.3 in 2013 version; Eqns. 37.71a, 37.71b.
           // Here cl is the confidence level, so cl = 0.68 corresponds to a 68% C.L.
           // For example, the 68% CL upper limit on an observation of 0 events is:
-          // 0.5 * TMath::ChisquareQuantile (0.68, 2) = 1.139  
+          // 0.5 * TMath::ChisquareQuantile (0.68, 2) = 1.139
           double content = cutFlow->GetBinContent (i) / w, upperLimit;
           upperLimit = 0.5 * TMath::ChisquareQuantile (cl, 2 * (content + 1));
           upperLimitCutFlowHist->SetBinContent (i, upperLimit * w);

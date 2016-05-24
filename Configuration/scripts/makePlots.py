@@ -666,7 +666,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     DataLegendEntries = []
     BgMCHistYieldsDic = {}
 
-    if arguments.verbose:  
+    if arguments.verbose:
         print pathToDir+"/"+histogramName
 
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
@@ -758,8 +758,8 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Histogram.SetBinError(1,     math.sqrt(math.pow(Histogram.GetBinError(1),    2) + math.pow(Histogram.GetBinError(0),      2)))
             Histogram.SetBinError(nbins, math.sqrt(math.pow(Histogram.GetBinError(nbins),2) + math.pow(Histogram.GetBinError(nbins+1),2)))
 
-        if arguments.verbose: 
-            print "Sample = ", sample, ", types[sample] = ", types[sample]  
+        if arguments.verbose:
+            print "Sample = ", sample, ", types[sample] = ", types[sample]
         if( types[sample] == "bgMC"):
 
             numBgMCSamples += 1
@@ -787,7 +787,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             else:
                 BgMCLegendLabelYieldsDic[-1*numBgMCSamples] = legLabel
                 BgMCHistYieldsDic[-1*numBgMCSamples] = Histogram
-                
+
             if includeSystematics:
                 BgMCUncertainties.append(getSystematicError(sample))
 
@@ -1347,7 +1347,7 @@ def MakeTwoDHist(pathToDir,histogramName):
 
     for sample in processed_datasets: # loop over different samples as listed in configurationOptions.py
         if arguments.verbose:
-            print "Starting to process sample", sample  
+            print "Starting to process sample", sample
         dataset_file = "%s/%s.root" % (condor_dir,sample)
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+histogramName)
@@ -1658,5 +1658,5 @@ for key in inputFile.GetListOfKeys():
 
 
 outputFile.Close()
-print "Finished writing plots to ", str(outputDir + "/" + outputFileName)  
+print "Finished writing plots to ", str(outputDir + "/" + outputFileName)
 

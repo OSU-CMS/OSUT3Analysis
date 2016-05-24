@@ -15,7 +15,7 @@ from OSUT3Analysis.AnaTools.osuAnalysis_cfi import *
 
 #for file in os.listdir(dir):
 #        process.source.fileNames.extend(cms.untracked.vstring('file:' + dir + '/' + file))
-        
+
 #output file name when running interactively
 process.TFileService.fileName = 'hist.root'
 

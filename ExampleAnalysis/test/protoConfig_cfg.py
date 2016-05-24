@@ -23,7 +23,7 @@ process.source = cms.Source ("PoolSource",
         ),
 )
 
-# FIXME:  set_input does not work (because of error with /usr/bin/file) in CMSSW_7_4_5_ROOT5   
+# FIXME:  set_input does not work (because of error with /usr/bin/file) in CMSSW_7_4_5_ROOT5
 # argument can be a ROOT file, directory, or dataset name*
 # *registered dataset names are listed in 'datasets' in:
 #    https://github.com/OSU-CMS/OSUT3Analysis/blob/master/Configuration/python/configurationOptions.py

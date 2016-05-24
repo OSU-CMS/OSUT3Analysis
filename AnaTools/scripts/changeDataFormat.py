@@ -8,7 +8,7 @@ from optparse import OptionParser
 supported_formats = ["BEAN","AOD","MINI_AOD"]
 
 parser = OptionParser()
-parser.add_option("-f", "--format", dest="data_format", 
+parser.add_option("-f", "--format", dest="data_format",
                   help="data format to switch to - current options: " + ",".join(supported_formats))
 parser.add_option("-r", "--reset", action="store_true", dest="reset", default=False,
                   help="reset to original version and exit")
@@ -28,7 +28,7 @@ if arguments.version:
                 break
     print "Data type is currently '" + data_line.split()[2] + "'"
     sys.exit(0)
-    
+
 if arguments.reset:
     os.system('git checkout $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h')
     print "Data format has been reset."

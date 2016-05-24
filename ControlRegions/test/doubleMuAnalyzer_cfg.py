@@ -12,7 +12,7 @@ dir = "/mnt/hadoop/mc/ZZ_TuneZ2star_8TeV_pythia6_tauola_Summer12_DR53X-PU_S10_ST
 
 for file in os.listdir(dir):
         process.source.fileNames.extend(cms.untracked.vstring('file:' + dir + '/' + file))
-        
+
 #output file name when running interactively
 process.TFileService.fileName = 'hist.root'
 

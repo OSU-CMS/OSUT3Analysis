@@ -128,7 +128,7 @@ if arguments.showWeight:
     numColumns = numColumns + 1
     columnStructure = columnStructure + "c"
 columnStructure = columnStructure + "}"
-    
+
 
 
 fout = open (outputFile, "w")
@@ -232,7 +232,7 @@ for dataset in datasets:
 
         datasetLines = datasetLines.rstrip(" & ")
         datasetLines = datasetLines + endLine + newLine
-        
+
     fout.write(datasetLines)
     fout.write(hLine)
 

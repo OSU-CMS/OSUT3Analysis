@@ -55,6 +55,6 @@ for sample in processed_datasets: # loop over different samples as listed in con
         outputFile.cd()
         Histogram.Write (sample)
     else:
-        print rootDirectory+"/pileup does not exist in " + condor_dir + "/" + sample + ".root"  
+        print rootDirectory+"/pileup does not exist in " + condor_dir + "/" + sample + ".root"
         continue
 outputFile.Close()

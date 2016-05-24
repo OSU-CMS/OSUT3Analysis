@@ -13,18 +13,18 @@ Add verbose option, change isVeto behavior for cuts.  Fix bug in which
 histograms to fill (use objectsToPlot, not objectsToCut).  Do not
 apply single-object cuts in the fill{1,2}DHistograms() functions;
 these should be set correctly for the paired collection in the
-setObjectFlags() function.  
+setObjectFlags() function.
 
 V02-03-02
 =============
 2013-07-16 Wells
-New variables in OSUAnalysis; other script fixes.  
+New variables in OSUAnalysis; other script fixes.
 
 
 V02-03-01
 =============
 2013-07-03 Wells
-Andrew fixed submitToCondor.py and osusub, to enable option to merge datasets when done.  
+Andrew fixed submitToCondor.py and osusub, to enable option to merge datasets when done.
 
 V02-03-00
 =============
@@ -36,24 +36,24 @@ V02-02-00
 =============
 2013-05-31 Wells
 Add option to fill BNTree with events passing the selection.  Turned
-on by default.  
-Allow vetoing triggers.  
+on by default.
+Allow vetoing triggers.
 
 V02-01-01
 =============
 2013-05-28 Wells
 Added option for making plots after each step of cutflow.
-Added secondary jets collection.  
+Added secondary jets collection.
 
- 
+
 V02-01-00
 =============
 2013-05-15 Wells
-Seg fault fixed in OSUAnalysis.cc.  
+Seg fault fixed in OSUAnalysis.cc.
 
 
 V00-01-00
 =============
 2013-05-12 Wells
-Stable tag.  
+Stable tag.
 

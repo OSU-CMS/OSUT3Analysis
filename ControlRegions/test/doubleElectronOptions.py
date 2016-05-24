@@ -10,19 +10,19 @@ datasets = [
 ####################
 
     #'DoubleElectron_22Jan2013',
-    
+
 ##########################
 ### background samples ###
 ##########################
 
      'WNjets',
      'TTbar',
-     'Diboson', 
+     'Diboson',
      'DY',
      'QCD_MuEnriched',
      'SingleTop',
-    #'Wjets', 
-    #'WNjets', 
+    #'Wjets',
+    #'WNjets',
     #'TTbar_Had',
     #'TTbar_SemiLep',
     #'TTbar_Lep',

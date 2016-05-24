@@ -9,7 +9,7 @@ config_file = "TriggerEfficiencyAnalyzer_cfg.py"
 
 # choose luminosity used for MC normalization
 #intLumi = 19700 # from 8 TeV MuEG dataset
-intLumi = 2538.43 # for 13 TeV 
+intLumi = 2538.43 # for 13 TeV
 
 # create list of datasets to process
 datasets = [

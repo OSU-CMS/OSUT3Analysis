@@ -79,7 +79,7 @@ def GetGoodRootFiles(Index):
 def MakeInputFileString(FilesSet):
     Str = ''
     for i in range(0,len(FilesSet)):
-	Str = Str + ' ' + str(FilesSet[i])
+        Str = Str + ' ' + str(FilesSet[i])
     return Str
 def MakeWeightsString(Weight,FilesSet):
     Str = ''
@@ -101,27 +101,27 @@ def GetNumberOfEvents(FilesSet):
             FilesSet.remove(File)
             continue
         randomChannelDirectory = ""
-	TotalNumberTmp = 0
+        TotalNumberTmp = 0
         for key in ScoutFile.GetListOfKeys():
             if key.GetClassName() != "TDirectoryFile" or "CutFlow" not in key.GetName():
                 continue
             randomChannelDirectory = key.GetName()
             channelName = randomChannelDirectory[0:len(randomChannelDirectory)-14]
             if not NumberOfEvents['SkimNumber'].has_key(channelName):
-		NumberOfEvents['SkimNumber'][channelName] = 0
+                NumberOfEvents['SkimNumber'][channelName] = 0
             OriginalCounterObj = ScoutFile.Get(randomChannelDirectory + "/eventCounter")
             SkimCounterObj = ScoutFile.Get(randomChannelDirectory + "/cutFlow")
-	    TotalNumberTmp = 0
+            TotalNumberTmp = 0
             if not OriginalCounterObj:
-	        print "Could not find eventCounter histogram in " + str(File) + " !"
-	        continue
+                print "Could not find eventCounter histogram in " + str(File) + " !"
+                continue
             elif not SkimCounterObj:
-	        print "Could not find cutFlow histogram in " + str(File) + " !"
+                print "Could not find cutFlow histogram in " + str(File) + " !"
             else:
-	        OriginalCounter = OriginalCounterObj.Clone()
+                OriginalCounter = OriginalCounterObj.Clone()
                 OriginalCounter.SetDirectory(0)
                 TotalNumberTmp = TotalNumberTmp + OriginalCounter.GetBinContent(1)
-	        SkimCounter = SkimCounterObj.Clone()
+                SkimCounter = SkimCounterObj.Clone()
                 SkimCounter.SetDirectory(0)
                 NumberOfEvents['SkimNumber'][channelName] = NumberOfEvents['SkimNumber'][channelName] + SkimCounter.GetBinContent(SkimCounter.GetXaxis().GetNbins())
         NumberOfEvents['TotalNumber'] = NumberOfEvents['TotalNumber'] + TotalNumberTmp
@@ -223,7 +223,7 @@ def SkimFileValidator(File):
     Valid = True
     Valid = Valid and FileToTest.Get('MetaData') and FileToTest.Get('ParameterSets') and FileToTest.Get('Parentage') and FileToTest.Get('Events') and FileToTest.Get('LuminosityBlocks') and FileToTest.Get('Runs')
     if Valid:
-	Valid = Valid and FileToTest.Get('Events').GetEntries()
+        Valid = Valid and FileToTest.Get('Events').GetEntries()
     return Valid
 
 

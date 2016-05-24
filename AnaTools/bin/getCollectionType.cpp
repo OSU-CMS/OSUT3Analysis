@@ -38,7 +38,7 @@ main (int argc, char *argv[])
 #endif
 #if IS_VALID(basicjets)
       // Warning:  if jets and basicjets have the same type, this function
-      // will always return "jets" for that type, and not "basicjets".  
+      // will always return "jets" for that type, and not "basicjets".
       else if (cppType == "vector<" TYPE_STR(basicjets) ">")
         cout << "basicjets" << endl;
 #endif

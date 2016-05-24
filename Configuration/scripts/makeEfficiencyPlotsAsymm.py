@@ -17,7 +17,7 @@ print "makeEfficiencyPlotsAsymm.py has been deprecated."
 print "Please use makeEfficiencyPlots.py instead."
 print "********************************************************"
 print "********************************************************"
-sys.exit(0)  
+sys.exit(0)
 
 
 ### parse the command-line options
@@ -35,12 +35,12 @@ parser.add_option("-f", "--fancy", action="store_true", dest="makeFancy", defaul
 parser.add_option("--dontRebinRatio", action="store_true", dest="dontRebinRatio", default=False,
                   help="don't do the rebinning of ratio plots")
 
-parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,		 
-                  help="Set logarithmic scale on vertical axis on all plots")	 
-parser.add_option("--ymin", dest="setYMin", 
-                  help="Minimum of y axis")	 
-parser.add_option("--ymax", dest="setYMax", 
-                  help="Maximum of y axis")	 
+parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,
+                  help="Set logarithmic scale on vertical axis on all plots")
+parser.add_option("--ymin", dest="setYMin",
+                  help="Minimum of y axis")
+parser.add_option("--ymax", dest="setYMax",
+                  help="Maximum of y axis")
 parser.add_option("--hist", action="store_true", dest="plot_hist", default=False,
                                     help="plot as hollow histograms instead of error bar crosses")
 parser.add_option("--line-width", dest="line_width",
@@ -62,7 +62,7 @@ if arguments.makeRatioPlots or arguments.makeDiffPlots:
         print "You need to have exactly two input sources to produce ratio or difference plots, turning them off"
         arguments.makeRatioPlots = False
         arguments.makeDiffPlots = False
-        
+
 if arguments.makeRatioPlots and arguments.makeDiffPlots:
     print "You have requested both ratio and difference plots.  Will make just ratio plots instead"
     arguments.makeRatioPlots = False
@@ -180,8 +180,8 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
             return (Data-MC)/MC
         else:
             return 0
-        
-    
+
+
     def groupErr(group):
         Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
         dataErr2,mcErr2 = [sum(hist.GetBinError(i)**2 for i in group) for hist in [dataHist,mcHist]]
@@ -189,7 +189,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
             return abs(math.sqrt( (dataErr2+mcErr2)/(Data-MC)**2 + mcErr2/MC**2 ) * (Data-MC)/MC)
         else:
             return 0
-        
+
 
     def regroup(groups):
         err,iG = max( (groupErr(g),groups.index(g)) for g in groups )
@@ -202,7 +202,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
     if ((dataHist.GetName().find("num") is not -1 and dataHist.GetName().find("Primaryvertexs") is -1) or
         dataHist.GetName().find("CutFlow")  is not -1 or
         dataHist.GetName().find("GenMatch") is not -1 or
-        arguments.dontRebinRatio): 
+        arguments.dontRebinRatio):
         ratio = dataHist.Clone()
         ratio.Add(mcHist,-1)
         ratio.Divide(mcHist)
@@ -226,7 +226,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
 ##########################################################################################################################################
 
 
-def MakeOneDHist(histogramName): 
+def MakeOneDHist(histogramName):
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
@@ -238,20 +238,20 @@ def MakeOneDHist(histogramName):
     LumiLabel.SetBorderSize(0)
     LumiLabel.SetFillColor(0)
     LumiLabel.SetFillStyle(0)
-    
+
     NormLabel = TPaveLabel()
     NormLabel.SetDrawOption("NDC")
     NormLabel.SetX1NDC(topLeft_x_left)
     NormLabel.SetX2NDC(topLeft_x_right)
-    
+
     NormLabel.SetBorderSize(0)
     NormLabel.SetFillColor(0)
     NormLabel.SetFillStyle(0)
-    
+
     NormText = ""
     if arguments.normalizeToUnitArea:
         NormText = "Scaled to unit area"
-        
+
     Legend = TLegend()
     Legend.SetBorderSize(0)
     Legend.SetFillColor(0)
@@ -262,25 +262,25 @@ def MakeOneDHist(histogramName):
     LegendEntries = []
 
     colorIndex = 0
-    
+
     for source in input_sources: # loop over different input sources in config file
         dataset_file = "condor/%s/%s.root" % (source['condor_dir'],source['dataset'])
         inputFile = TFile(dataset_file)
         NumHistogramObj = inputFile.Get("OSUAnalysis/" + source['num_channel'] + "/" +histogramName)
         DenHistogramObj = inputFile.Get("OSUAnalysis/" + source['den_channel'] + "/" +histogramName)
         if not NumHistogramObj:
-            print "WARNING:  Could not find histogram " + source['num_channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
-            return 
+            print "WARNING:  Could not find histogram " + source['num_channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."
+            return
         if not DenHistogramObj:
-            print "WARNING:  Could not find histogram " + source['den_channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
-            return 
+            print "WARNING:  Could not find histogram " + source['den_channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."
+            return
 
         Histogram = ROOT.TGraphAsymmErrors(NumHistogramObj,DenHistogramObj)
 #        Histogram.SetDirectory(0)
 #        DenHistogram = DenHistogramObj.Clone()
 #        DenHistogram.SetDirectory(0)
         inputFile.Close()
-        
+
 #        if arguments.rebinFactor:
 #            RebinFactor = int(arguments.rebinFactor)
             #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
@@ -293,7 +293,7 @@ def MakeOneDHist(histogramName):
         xAxisLabel = Histogram.GetXaxis().GetTitle()
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
-        
+
         if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
             yAxisLabel = "#epsilon_{ " + cutName + "} (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex] + " width)"
         else:
@@ -301,7 +301,7 @@ def MakeOneDHist(histogramName):
         if arguments.normalizeToUnitArea:
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
 
-        
+
         if not arguments.makeFancy:
             fullTitle = Histogram.GetTitle()
             splitTitle = fullTitle.split(":")
@@ -319,19 +319,19 @@ def MakeOneDHist(histogramName):
             colorIndex = colorIndex + 1
             if colorIndex is len(colorList):
                 colorIndex = 0
-        
-        markerStyle = 20 
+
+        markerStyle = 20
         if 'marker' in source:
             markerStyle = markers[source['marker']]
         if 'fill' in source:
             markerStyle = markerStyle + fills[source['fill']]
 
         Histogram.SetMarkerStyle(markerStyle)
-        
+
         Histogram.SetLineWidth(line_width)
         Histogram.SetFillStyle(0)
 
-        LegendEntries.append(source['legend_entry']) 
+        LegendEntries.append(source['legend_entry'])
         Histograms.append(Histogram)
 
     ### scaling histograms as per user's specifications
@@ -355,7 +355,7 @@ def MakeOneDHist(histogramName):
     finalMax = 1.5*finalMax
     if finalMax is 0:
         finalMax = 1
-    if arguments.setYMax:  
+    if arguments.setYMax:
         finalMax = float(arguments.setYMax)
 
     ### Drawing histograms to canvas
@@ -398,7 +398,7 @@ def MakeOneDHist(histogramName):
         histogram.SetTitle(histoTitle)
         if histogram.InheritsFrom("TGraph") and histCounter==0:
             plotting_options = "AP"
-            
+
         histogram.Draw(plotting_options)
         histogram.GetXaxis().SetTitle(xAxisLabel)
         histogram.GetYaxis().SetTitle(yAxisLabel)
@@ -412,8 +412,8 @@ def MakeOneDHist(histogramName):
                 plotting_options = plotting_options + " SAME"
             elif histogram.InheritsFrom("TGraph"):
                 plotting_options = "P"
-                                
-            
+
+
         histCounter = histCounter + 1
 
     #legend coordinates, empirically determined :-)
@@ -479,13 +479,13 @@ def MakeOneDHist(histogramName):
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMax,1.2*YMax)
                 else:
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
-                            
+
         Comparison.GetYaxis().SetNdivisions(205)
         Comparison.Draw("E0")
 
     outputFile.cd()
     Canvas.Write()
-    
+
     if arguments.savePDFs:
         Canvas.SaveAs("efficiency_histograms_pdfs/"+histogramName+".pdf")
 
@@ -511,7 +511,7 @@ testFile.cd("OSUAnalysis/" + first_input['num_channel'])
 if arguments.savePDFs:
     os.system("rm -rf efficiency_histograms_pdfs")
     os.system("mkdir efficiency_histograms_pdfs")
-    
+
 for key in gDirectory.GetListOfKeys():
     if re.match ('TH1', key.GetClassName()):  #found a 1D histogram
         MakeOneDHist(key.GetName())

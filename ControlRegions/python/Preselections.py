@@ -5,7 +5,7 @@ import copy
 ##### Set up the event selections (channels) #####
 ###########################################################
 
-##### List of valid input collections #####   
+##### List of valid input collections #####
 # jets, muons, electrons, taus, photons, mets,
 # events, tracks, primaryvertexs,
 # genjets, mcparticles,
@@ -23,7 +23,7 @@ Event_Preselection = cms.PSet(
         cutString = cms.string("isGood > 0"),
         numberRequired = cms.string(">= 1")
       ),
-   )          
+   )
 )
 
 Muon_Preselection = cms.PSet(
@@ -32,7 +32,7 @@ Muon_Preselection = cms.PSet(
         inputCollection = cms.vstring("muons"),
         cutString = cms.string("abs(eta) < 2.5"),
         numberRequired = cms.string(">= 1")
-      ),    
+      ),
       cms.PSet (
         inputCollection = cms.vstring("muons"),
         cutString = cms.string("pt > 25"),
@@ -62,7 +62,7 @@ Muon_Preselection = cms.PSet(
         numberRequired = cms.string(">= 1"),
         alias = cms.string("muon isolation")
       ),
-   )   
+   )
 )
 
 
@@ -72,7 +72,7 @@ Electron_Preselection = cms.PSet(
         inputCollection = cms.vstring("electrons"),
         cutString = cms.string("abs(eta) < 2.5"),
         numberRequired = cms.string(">= 1")
-      ),    
+      ),
       cms.PSet (
         inputCollection = cms.vstring("electrons"),
         cutString = cms.string("pt > 25"),
@@ -85,7 +85,7 @@ Electron_Preselection = cms.PSet(
         numberRequired = cms.string(">= 1"),
         alias = cms.string("electron ECAL crack veto")
       ),
-   )   
+   )
 )
 
 ## Preselection_EMu_PF_withTrigger = copy.deepcopy(Preselection_EMu_PF)

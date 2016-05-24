@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-### this script has been done to overlaid on the same canva multiple efficency's curves. It uses the asymmetryc errors. 
+### this script has been done to overlaid on the same canva multiple efficency's curves. It uses the asymmetryc errors.
 
 
 
@@ -42,7 +42,7 @@ parser.add_option("--line-width", dest="line_width",
                   help="set line width (default is 2)")
 parser.add_option("--pdf", action="store_true", dest="plot_savePdf", default=False,
                   help="save plot as pdf in addition")
-    
+
 
 (arguments, args) = parser.parse_args()
 
@@ -54,7 +54,7 @@ if arguments.localConfig:
 outputFileName = "efficiency_plot.root"
 if arguments.outputFileName:
         outputFileName = arguments.outputFileName
-        
+
 
 if arguments.plot_hist:
     plotting_options = plotting_options + "HIST"
@@ -98,11 +98,11 @@ for histogram in input_histograms:
     inputFile = TFile(fileName)
     if inputFile.IsZombie() or not inputFile.GetNkeys():
         continue
-    
-    
+
+
     Numerator = inputFile.Get("OSUAnalysis/"+histogram['channel_numerator']+"/"+histogram['name']).Clone()
     Denominator = inputFile.Get("OSUAnalysis/"+histogram['channel_denominator']+"/"+histogram['name']).Clone()
-    
+
 
     Histogram = ROOT.TGraphAsymmErrors(Numerator,Denominator)
 
@@ -145,7 +145,7 @@ for Histogram in Histograms:
     if counter is 0:
         if Histogram.InheritsFrom("TGraph"):
             plotting_options = "P"
-    counter = counter+1 
+    counter = counter+1
 
 Legend.Draw()
 if arguments.normalizeToUnitArea:
@@ -159,10 +159,10 @@ outputFile.cd()
 Canvas.Write()
 
 if arguments.plot_savePdf:
-    pdfFileName = outputFileName.replace(".root", ".pdf")  
+    pdfFileName = outputFileName.replace(".root", ".pdf")
     Canvas.SaveAs(pdfFileName)
-    print "Saved file:  " + pdfFileName  
+    print "Saved file:  " + pdfFileName
 
 
-outputFile.Close()         
-print "Saved plot in file: " + outputFileName  
+outputFile.Close()
+print "Saved plot in file: " + outputFileName

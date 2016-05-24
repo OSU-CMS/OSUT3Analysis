@@ -44,7 +44,7 @@ MyProtoHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("metPt"),
             title = cms.string("MET;MET [GeV];"),
-            binsX = cms.untracked.vdouble(100, 0, 500),  
+            binsX = cms.untracked.vdouble(100, 0, 500),
             inputVariables = cms.vstring("metPt"),
         ),
         cms.PSet (

@@ -31,15 +31,15 @@ class MyVariableProducer : public EventVariableProducer
   {
     public:
         MyVariableProducer (const edm::ParameterSet &);
-	~MyVariableProducer ();
+        ~MyVariableProducer ();
         void getOriginalCollections (const unordered_set<string> &objectsToGet, const edm::Event &event);
-	OriginalCollections handles_;
-	OriginalTokens tokens_;
+        OriginalCollections handles_;
+        OriginalTokens tokens_;
 
     private:
 
-	// Functions
-	void AddVariables(const edm::Event &);
+        // Functions
+        void AddVariables(const edm::Event &);
   };
 
 #endif

@@ -20,7 +20,7 @@ class EventVariableProducer : public edm::EDProducer
       // Methods
 
       void produce (edm::Event &, const edm::EventSetup &);
-    
+
     protected:
 
       // Variables

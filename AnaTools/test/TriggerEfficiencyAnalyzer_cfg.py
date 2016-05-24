@@ -36,7 +36,7 @@ process.TriggerEfficiencyAnalyzer = cms.EDAnalyzer ('TriggerEfficiencyAnalyzer',
 
 #####################################################################
 ##### Define and Add the Desired Triggers to the List to be Run #####
-##### One histogram will be made for each trigger type          #####  
+##### One histogram will be made for each trigger type          #####
 #####################################################################
 EMu = cms.PSet(
     trigType = cms.string("EMu"),

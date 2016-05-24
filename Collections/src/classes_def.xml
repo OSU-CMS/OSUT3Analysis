@@ -22,7 +22,7 @@
   <class name="edm::Wrapper<osu::Bxlumi>"/>
   <class name="edm::Wrapper<std::vector<osu::Bxlumi> >"/>
   <class name="edm::Ref<std::vector<osu::Bxlumi> >"/>
-      
+
   <class name="osu::Cschit"/>
   <class name="std::vector<osu::Cschit>"/>
   <class name="edm::Wrapper<osu::Cschit>"/>

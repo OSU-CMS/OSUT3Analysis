@@ -9,10 +9,10 @@ if len (sys.argv) == 7 and sys.argv[2] == "True":
     exec("import datasetInfo_" + Label +"_cfg as datasetInfo")
     filesPerJob = int (math.floor (len (datasetInfo.listOfFiles) / nJobs))
     residualLength = int(len(datasetInfo.listOfFiles)%nJobs)
-    if jobNumber < residualLength:  
+    if jobNumber < residualLength:
         runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + jobNumber):(jobNumber * filesPerJob + filesPerJob + jobNumber + 1)]
     else:
-	runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + residualLength):(jobNumber * filesPerJob + residualLength + filesPerJob)]
+        runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + residualLength):(jobNumber * filesPerJob + residualLength + filesPerJob)]
   dataset = sys.argv[5]
   datasetLabel = sys.argv[6]
   batchMode = True

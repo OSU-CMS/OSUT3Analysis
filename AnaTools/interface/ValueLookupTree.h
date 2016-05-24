@@ -50,22 +50,22 @@ Note that the prunedParentheses function will convert this tree to:
    (eta)
 
 For a complex string such as innerTrack.hitPattern_.numberOfValidPixelHits > 0, the tree will have the following structure:
-               < 
+               <
              /   \
             .     0
-         /     \   
-    innerTrack  . 
+         /     \
+    innerTrack  .
                / \
     hitPattern_  numberOfValidPixelHits
 
 Right after the tree is built, this tree will get pruned by the pruneDots() function
 to be the following:
-                                                  < 
+                                                  <
                                                 /   \
    innerTrack.hitPattern_.numberOfValidPixelHits     0
 
 Here is an example using commas:
-               < 
+               <
              /   \
          invMass   0
             |
@@ -75,8 +75,8 @@ Here is an example using commas:
           /   \
        muon   muon
 
-This will be converted to the following, by the prunedCommas() and prunedParentheses() functions: 
-               < 
+This will be converted to the following, by the prunedCommas() and prunedParentheses() functions:
+               <
              /   \
          invMass   0
           /   \
@@ -111,8 +111,8 @@ class ValueLookupTree
 
     ////////////////////////////////////////////////////////////////////////////
     // Methods for inserting an expression into the tree and for evaluating the
-    // expression.  The evaluate() function returns values for each of the 
-    // objects in the event; that is why it returns a vector.  
+    // expression.  The evaluate() function returns values for each of the
+    // objects in the event; that is why it returns a vector.
     // FIXME:  Check whether evaluate() should return vector<Leaf> or vector<double>.
     ////////////////////////////////////////////////////////////////////////////
     void insert (const string &);
@@ -216,20 +216,20 @@ class ValueLookupTree
 
     Collections                                    *handles_;
     unordered_map<string, ObjMap::const_iterator>  objIterators_;  // defined for each collection
-    unordered_map<string, bool>                    shouldIterate_; // defined for each collection 
+    unordered_map<string, bool>                    shouldIterate_; // defined for each collection
     vector<Leaf>                                   values_;
     vector<unsigned>                               collectionSizes_; // vector index corresponds to collection index
     vector<unsigned>                               nCombinations_;   // vector index corresponds to collection index
     bool                                           allCollectionsNonEmpty_;
-    // nCombinations[i] specifies the number of combinations that can be formed from objects 
-    // in collections i to N, where N is the number of collections 
+    // nCombinations[i] specifies the number of combinations that can be formed from objects
+    // in collections i to N, where N is the number of collections
 
     vector<void *> uservariablesToDelete_;
     vector<void *> eventvariablesToDelete_;
 
-    const int                                      verbose_ = 0;  // verbosity levels:  0, 1, ... 
-    // Typically you want to use verbosity of 1 when running over a single event.  
-    
+    const int                                      verbose_ = 0;  // verbosity levels:  0, 1, ...
+    // Typically you want to use verbosity of 1 when running over a single event.
+
     map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > functionLookupTable_;
 
 };

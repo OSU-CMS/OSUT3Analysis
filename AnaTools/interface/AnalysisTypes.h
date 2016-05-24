@@ -59,7 +59,7 @@ struct CutCalculatorPayload
   FlagMap         individualObjectFlags;
   bool            cutDecision;         // whether event passes current cut (independant from other cuts)
   bool            cutsDecision;        // whether event passes all cuts, without trigger
-  bool            eventDecision;       // whether event passes all cuts and the trigger 
+  bool            eventDecision;       // whether event passes all cuts and the trigger
   bool            isValid;
   bool            triggerDecision;
   bool            triggerFilterDecision;

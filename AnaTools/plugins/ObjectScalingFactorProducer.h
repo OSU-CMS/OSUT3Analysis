@@ -13,17 +13,17 @@ class ObjectScalingFactorProducer : public EventVariableProducer
   {
     public:
         ObjectScalingFactorProducer (const edm::ParameterSet &);
-	~ObjectScalingFactorProducer ();
+        ~ObjectScalingFactorProducer ();
         Collections handles_;
         Tokens tokens_;
 
     private:
-        string muonFile_; 
-        string electronFile_; 
-        string electronWp_; 
-        string muonWp_; 
-        bool doEleSF_; 
-        bool doMuSF_; 
+        string muonFile_;
+        string electronFile_;
+        string electronWp_;
+        string muonWp_;
+        bool doEleSF_;
+        bool doMuSF_;
         void AddVariables(const edm::Event &);
 };
 #endif

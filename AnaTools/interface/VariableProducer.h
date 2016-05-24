@@ -50,9 +50,9 @@ class VariableProducer : public edm::EDProducer
 // http://en.cppreference.com/w/cpp/language/parameter_pack
 
 
-// This version of addUserVar(), with no argument for "hashes", 
+// This version of addUserVar(), with no argument for "hashes",
 // should be called in MyVariableProducer.cc.
-template<typename... Objects> void VariableProducer::addUserVar (string varName, double value, Objects... objs) { 
+template<typename... Objects> void VariableProducer::addUserVar (string varName, double value, Objects... objs) {
   ObjectList objects;
   addUserVar(varName, value, objects, objs...);  // Now call the recursive function.
 }
@@ -75,12 +75,12 @@ template<typename Object, typename... Objects> void VariableProducer::addUserVar
 
 // This is the non-recursive version.
 void VariableProducer::addUserVar (string varName, double value, ObjectList objects) {
-  // Now there are no more objects to put into hashes, 
+  // Now there are no more objects to put into hashes,
   // so the new variable is created.
   UserVariable userVar = {};
   userVar.value = value;
   userVar.objects = objects;
-  (*uservariables)[varName].push_back(userVar);  
+  (*uservariables)[varName].push_back(userVar);
 }
 
 

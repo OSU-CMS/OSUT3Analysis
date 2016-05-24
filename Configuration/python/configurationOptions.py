@@ -426,7 +426,7 @@ nJobs = {
 
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
-    
+
     ############################################################################
 
     ###########################################################################
@@ -492,21 +492,21 @@ nJobs = {
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : 999,
-    'mchamp200' : 999, 
-    'mchamp400' : 999, 
+    'mchamp200' : 999,
+    'mchamp400' : 999,
     'mchamp600' : 999,
-    'mchamp800' : 999, 
-    'mchamp1000' : 999, 
-    'mchamp1400' : 999, 
-    'mchamp1800' : 999, 
-    'mchamp2200' : 999, 
+    'mchamp800' : 999,
+    'mchamp1000' : 999,
+    'mchamp1400' : 999,
+    'mchamp1800' : 999,
+    'mchamp2200' : 999,
     'mchamp2600' : 999,
 
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : 999,
     #'mchamp200_Stage2SeparateEventsParticle0'   : 999,
     #'mchamp400_Stage2SeparateEventsParticle0'   : 999,
-    'mchamp600_Stage2SeparateEventsParticle0'   : 999, 
+    'mchamp600_Stage2SeparateEventsParticle0'   : 999,
     #'mchamp800_Stage2SeparateEventsParticle0'   : 999,
     #'mchamp1000_Stage2SeparateEventsParticle0'  : 999,
     #'mchamp1400_Stage2SeparateEventsParticle0'  : 999,
@@ -518,7 +518,7 @@ nJobs = {
     #'mchamp100_DigiHltSeparateEventsParticle0'   :    999,
     #'mchamp200_DigiHltSeparateEventsParticle0'   :    999,
     #'mchamp400_DigiHltSeparateEventsParticle0'   :    999,
-    'mchamp600_DigiHltSeparateEventsParticle0'   :    999, 
+    'mchamp600_DigiHltSeparateEventsParticle0'   :    999,
     #'mchamp800_DigiHltSeparateEventsParticle0'   :    999,
     #'mchamp1000_DigiHltSeparateEventsParticle0'  :    999,
     #'mchamp1400_DigiHltSeparateEventsParticle0'  :    999,
@@ -530,7 +530,7 @@ nJobs = {
     #'mchamp100_RecoSeparateEventsParticle0'   :    999,
     #'mchamp200_RecoSeparateEventsParticle0'   :    999,
     #'mchamp400_RecoSeparateEventsParticle0'   :    999,
-    'mchamp600_RecoSeparateEventsParticle0'   :    999, 
+    'mchamp600_RecoSeparateEventsParticle0'   :    999,
     #'mchamp800_RecoSeparateEventsParticle0'   :    999,
     #'mchamp1000_RecoSeparateEventsParticle0'  :    999,
     #'mchamp1400_RecoSeparateEventsParticle0'  :    999,
@@ -542,7 +542,7 @@ nJobs = {
     #'mchamp100_NtupleSeparateEventsParticle0'   :    999,
     #'mchamp200_NtupleSeparateEventsParticle0'   :    999,
     #'mchamp400_NtupleSeparateEventsParticle0'   :    999,
-    'mchamp600_NtupleSeparateEventsParticle0'   :    999, 
+    'mchamp600_NtupleSeparateEventsParticle0'   :    999,
     #'mchamp800_NtupleSeparateEventsParticle0'   :    999,
     #'mchamp1000_NtupleSeparateEventsParticle0'  :    999,
     #'mchamp1400_NtupleSeparateEventsParticle0'  :    999,
@@ -550,7 +550,7 @@ nJobs = {
     #'mchamp2200_NtupleSeparateEventsParticle0'  :    999,
     #'mchamp2600_NtupleSeparateEventsParticle0'  :    999,
 
- 
+
     ###########################################################################
     #RECO not stored on T3
     ###########################################################################
@@ -745,7 +745,7 @@ maxEvents = {
 
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
-    
+
     ############################################################################
     ###########################################################################
     #RECO stored on T3
@@ -809,14 +809,14 @@ maxEvents = {
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : -1,
-    'mchamp200' : -1, 
-    'mchamp400' : -1, 
+    'mchamp200' : -1,
+    'mchamp400' : -1,
     'mchamp600' : -1,
-    'mchamp800' : -1, 
-    'mchamp1000' : -1, 
-    'mchamp1400' : -1, 
-    'mchamp1800' : -1, 
-    'mchamp2200' : -1, 
+    'mchamp800' : -1,
+    'mchamp1000' : -1,
+    'mchamp1400' : -1,
+    'mchamp1800' : -1,
+    'mchamp2200' : -1,
     'mchamp2600' : -1,
 
     #stopped particles stage2 GEN-SIM
@@ -835,7 +835,7 @@ maxEvents = {
     #'mchamp100_DigiHltSeparateEventsParticle0'   :    -1,
     #'mchamp200_DigiHltSeparateEventsParticle0'   :    -1,
     #'mchamp400_DigiHltSeparateEventsParticle0'   :    -1,
-    'mchamp600_DigiHltSeparateEventsParticle0'   :    -1, 
+    'mchamp600_DigiHltSeparateEventsParticle0'   :    -1,
     #'mchamp800_DigiHltSeparateEventsParticle0'   :    -1,
     #'mchamp1000_DigiHltSeparateEventsParticle0'  :    -1,
     #'mchamp1400_DigiHltSeparateEventsParticle0'  :    -1,
@@ -847,7 +847,7 @@ maxEvents = {
     #'mchamp100_RecoSeparateEventsParticle0'   :    -1,
     #'mchamp200_RecoSeparateEventsParticle0'   :    -1,
     #'mchamp400_RecoSeparateEventsParticle0'   :    -1,
-    'mchamp600_RecoSeparateEventsParticle0'   :    -1, 
+    'mchamp600_RecoSeparateEventsParticle0'   :    -1,
     #'mchamp800_RecoSeparateEventsParticle0'   :    -1,
     #'mchamp1000_RecoSeparateEventsParticle0'  :    -1,
     #'mchamp1400_RecoSeparateEventsParticle0'  :    -1,
@@ -859,7 +859,7 @@ maxEvents = {
     #'mchamp100_NtupleSeparateEventsParticle0'   :    -1,
     #'mchamp200_NtupleSeparateEventsParticle0'   :    -1,
     #'mchamp400_NtupleSeparateEventsParticle0'   :    -1,
-    'mchamp600_NtupleSeparateEventsParticle0'   :    -1, 
+    'mchamp600_NtupleSeparateEventsParticle0'   :    -1,
     #'mchamp800_NtupleSeparateEventsParticle0'   :    -1,
     #'mchamp1000_NtupleSeparateEventsParticle0'  :    -1,
     #'mchamp1400_NtupleSeparateEventsParticle0'  :    -1,
@@ -1085,7 +1085,7 @@ types = {
     'MuonEG_2015C'   : "data",
     'MuonEG_2015D'   : "data",
     'MuonEG_2015'    : "data",
-    
+
     ###########################################################################
     #RECO stored on T3
     ###########################################################################
@@ -1148,14 +1148,14 @@ types = {
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : "signalMC",
-    'mchamp200' : "signalMC", 
-    'mchamp400' : "signalMC", 
+    'mchamp200' : "signalMC",
+    'mchamp400' : "signalMC",
     'mchamp600' : "signalMC",
-    'mchamp800' : "signalMC", 
-    'mchamp1000' : "signalMC", 
-    'mchamp1400' : "signalMC", 
-    'mchamp1800' : "signalMC", 
-    'mchamp2200' : "signalMC", 
+    'mchamp800' : "signalMC",
+    'mchamp1000' : "signalMC",
+    'mchamp1400' : "signalMC",
+    'mchamp1800' : "signalMC",
+    'mchamp2200' : "signalMC",
     'mchamp2600' : "signalMC",
 
     #stopped particles stage2 GEN-SIM
@@ -1174,7 +1174,7 @@ types = {
     #'mchamp100_DigiHltSeparateEventsParticle0'   :    "signalMC",
     #'mchamp200_DigiHltSeparateEventsParticle0'   :    "signalMC",
     #'mchamp400_DigiHltSeparateEventsParticle0'   :    "signalMC",
-    'mchamp600_DigiHltSeparateEventsParticle0'   :    "signalMC", 
+    'mchamp600_DigiHltSeparateEventsParticle0'   :    "signalMC",
     #'mchamp800_DigiHltSeparateEventsParticle0'   :    "signalMC",
     #'mchamp1000_DigiHltSeparateEventsParticle0'  :    "signalMC",
     #'mchamp1400_DigiHltSeparateEventsParticle0'  :    "signalMC",
@@ -1186,7 +1186,7 @@ types = {
     #'mchamp100_RecoSeparateEventsParticle0'   :    "signalMC",
     #'mchamp200_RecoSeparateEventsParticle0'   :    "signalMC",
     #'mchamp400_RecoSeparateEventsParticle0'   :    "signalMC",
-    'mchamp600_RecoSeparateEventsParticle0'   :    "signalMC", 
+    'mchamp600_RecoSeparateEventsParticle0'   :    "signalMC",
     #'mchamp800_RecoSeparateEventsParticle0'   :    "signalMC",
     #'mchamp1000_RecoSeparateEventsParticle0'  :    "signalMC",
     #'mchamp1400_RecoSeparateEventsParticle0'  :    "signalMC",
@@ -1198,7 +1198,7 @@ types = {
     #'mchamp100_NtupleSeparateEventsParticle0'   :    "signalMC",
     #'mchamp200_NtupleSeparateEventsParticle0'   :    "signalMC",
     #'mchamp400_NtupleSeparateEventsParticle0'   :    "signalMC",
-    'mchamp600_NtupleSeparateEventsParticle0'   :    "signalMC", 
+    'mchamp600_NtupleSeparateEventsParticle0'   :    "signalMC",
     #'mchamp800_NtupleSeparateEventsParticle0'   :    "signalMC",
     #'mchamp1000_NtupleSeparateEventsParticle0'  :    "signalMC",
     #'mchamp1400_NtupleSeparateEventsParticle0'  :    "signalMC",
@@ -1230,7 +1230,7 @@ types = {
     'NoBPTX_2015Dv4_controlSample' : 'data',
     'NoBPTX_2015E_controlSample' : 'data',
     'StpPtls_controlSample_2015' : 'data',
-    
+
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
@@ -1490,14 +1490,14 @@ colors = {
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : 1,
-    'mchamp200' : 1, 
-    'mchamp400' : 1, 
+    'mchamp200' : 1,
+    'mchamp400' : 1,
     'mchamp600' : 1,
-    'mchamp800' : 1, 
-    'mchamp1000' : 1, 
-    'mchamp1400' : 1, 
-    'mchamp1800' : 1, 
-    'mchamp2200' : 1, 
+    'mchamp800' : 1,
+    'mchamp1000' : 1,
+    'mchamp1400' : 1,
+    'mchamp1800' : 1,
+    'mchamp2200' : 1,
     'mchamp2600' : 1,
 
     #stopped particles stage2 GEN-SIM
@@ -1516,7 +1516,7 @@ colors = {
     #'mchamp100_DigiHltSeparateEventsParticle0'   :    1,
     #'mchamp200_DigiHltSeparateEventsParticle0'   :    1,
     #'mchamp400_DigiHltSeparateEventsParticle0'   :    1,
-    'mchamp600_DigiHltSeparateEventsParticle0'   :    1, 
+    'mchamp600_DigiHltSeparateEventsParticle0'   :    1,
     #'mchamp800_DigiHltSeparateEventsParticle0'   :    1,
     #'mchamp1000_DigiHltSeparateEventsParticle0'  :    1,
     #'mchamp1400_DigiHltSeparateEventsParticle0'  :    1,
@@ -1528,7 +1528,7 @@ colors = {
     #'mchamp100_RecoSeparateEventsParticle0'   :    1,
     #'mchamp200_RecoSeparateEventsParticle0'   :    1,
     #'mchamp400_RecoSeparateEventsParticle0'   :    1,
-    'mchamp600_RecoSeparateEventsParticle0'   :    1, 
+    'mchamp600_RecoSeparateEventsParticle0'   :    1,
     #'mchamp800_RecoSeparateEventsParticle0'   :    1,
     #'mchamp1000_RecoSeparateEventsParticle0'  :    1,
     #'mchamp1400_RecoSeparateEventsParticle0'  :    1,
@@ -1540,7 +1540,7 @@ colors = {
     #'mchamp100_NtupleSeparateEventsParticle0'   :    1,
     #'mchamp200_NtupleSeparateEventsParticle0'   :    1,
     #'mchamp400_NtupleSeparateEventsParticle0'   :    1,
-    'mchamp600_NtupleSeparateEventsParticle0'   :    1, 
+    'mchamp600_NtupleSeparateEventsParticle0'   :    1,
     #'mchamp800_NtupleSeparateEventsParticle0'   :    1,
     #'mchamp1000_NtupleSeparateEventsParticle0'  :    1,
     #'mchamp1400_NtupleSeparateEventsParticle0'  :    1,
@@ -1549,7 +1549,7 @@ colors = {
     #'mchamp2600_NtupleSeparateEventsParticle0'  :    1,
 
     ############################################################################
-   
+
     #NoBPTX data
     'NoBPTX_2015D_v3' : 1,
     'NoBPTX_2015D_v4' : 1,
@@ -1825,23 +1825,23 @@ labels = {
     'cosmic_preselection' : "Cosmic MC preselection",
 
     #stopped particles stage1 GEN-SIM
-    'mchamp100' : "Mchamp (Q = 2e, M = 100 GeV)", 
-    'mchamp200' : "Mchamp (Q = 2e, M = 200 GeV)", 
-    'mchamp400' : "Mchamp (Q = 2e, M = 400 GeV)", 
-    'mchamp600' : "Mchamp (Q = 2e, M = 600 GeV)", 
-    'mchamp800' : "Mchamp (Q = 2e, M = 800 GeV)", 
-    'mchamp1000' : "Mchamp (Q = 2e, M = 1000 GeV)", 
-    'mchamp1400' : "Mchamp (Q = 2e, M = 1400 GeV)", 
-    'mchamp1800' : "Mchamp (Q = 2e, M = 1800 GeV)", 
-    'mchamp2200' : "Mchamp (Q = 2e, M = 2200 GeV)", 
+    'mchamp100' : "Mchamp (Q = 2e, M = 100 GeV)",
+    'mchamp200' : "Mchamp (Q = 2e, M = 200 GeV)",
+    'mchamp400' : "Mchamp (Q = 2e, M = 400 GeV)",
+    'mchamp600' : "Mchamp (Q = 2e, M = 600 GeV)",
+    'mchamp800' : "Mchamp (Q = 2e, M = 800 GeV)",
+    'mchamp1000' : "Mchamp (Q = 2e, M = 1000 GeV)",
+    'mchamp1400' : "Mchamp (Q = 2e, M = 1400 GeV)",
+    'mchamp1800' : "Mchamp (Q = 2e, M = 1800 GeV)",
+    'mchamp2200' : "Mchamp (Q = 2e, M = 2200 GeV)",
     'mchamp2600' : "Mchamp (Q = 2e, M = 2600 GeV)",
 
     #stopped particles stage2 GEN-SIM
-    #'mchamp100_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)", 
-    #'mchamp200_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)", 
-    #'mchamp400_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 400 GeV, Separate Events, Particle 0)", 
-    'mchamp600_Stage2SeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 600 GeV, Separate Events, Particle 0)", 
-    #'mchamp800_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 800 GeV, Separate Events, Particle 0)", 
+    #'mchamp100_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)",
+    #'mchamp200_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)",
+    #'mchamp400_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 400 GeV, Separate Events, Particle 0)",
+    'mchamp600_Stage2SeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 600 GeV, Separate Events, Particle 0)",
+    #'mchamp800_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 800 GeV, Separate Events, Particle 0)",
     #'mchamp1000_Stage2SeparateEventsParticle0'  : "Mchamp (Q = 2e, M = 1000 GeV, Separate Events, Particle 0)",
     #'mchamp1400_Stage2SeparateEventsParticle0'  : "Mchamp (Q = 2e, M = 1400 GeV, Separate Events, Particle 0)",
     #'mchamp1800_Stage2SeparateEventsParticle0'  : "Mchamp (Q = 2e, M = 1800 GeV, Separate Events, Particle 0)",
@@ -1849,11 +1849,11 @@ labels = {
     #'mchamp2600_Stage2SeparateEventsParticle0'  : "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 0)",
 
     #stopped particles stage2 DIGI-HLT
-    #'mchamp100_DigiHltSeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)", 
-    #'mchamp200_DigiHltSeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)", 
-    #'mchamp400_DigiHltSeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 400 GeV, Separate Events, Particle 0)", 
-    'mchamp600_DigiHltSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 600 GeV, Separate Events, Particle 0)", 
-    #'mchamp800_DigiHltSeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 800 GeV, Separate Events, Particle 0)", 
+    #'mchamp100_DigiHltSeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)",
+    #'mchamp200_DigiHltSeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)",
+    #'mchamp400_DigiHltSeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 400 GeV, Separate Events, Particle 0)",
+    'mchamp600_DigiHltSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 600 GeV, Separate Events, Particle 0)",
+    #'mchamp800_DigiHltSeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 800 GeV, Separate Events, Particle 0)",
     #'mchamp1000_DigiHltSeparateEventsParticle0'  :  "Mchamp (Q = 2e, M = 1000 GeV, Separate Events, Particle 0)",
     #'mchamp1400_DigiHltSeparateEventsParticle0'  :  "Mchamp (Q = 2e, M = 1400 GeV, Separate Events, Particle 0)",
     #'mchamp1800_DigiHltSeparateEventsParticle0'  :  "Mchamp (Q = 2e, M = 1800 GeV, Separate Events, Particle 0)",
@@ -1861,11 +1861,11 @@ labels = {
     #'mchamp2600_DigiHltSeparateEventsParticle0'  :  "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 0)",
 
     #stopped particles stage2 RECO
-    #'mchamp100_RecoSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)", 
-    #'mchamp200_RecoSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)", 
-    #'mchamp400_RecoSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 400 GeV, Separate Events, Particle 0)", 
-    'mchamp600_RecoSeparateEventsParticle0'   :    "Mchamp (Q = 2e, M = 600 GeV, Separate Events, Particle 0)", 
-    #'mchamp800_RecoSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 800 GeV, Separate Events, Particle 0)", 
+    #'mchamp100_RecoSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)",
+    #'mchamp200_RecoSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)",
+    #'mchamp400_RecoSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 400 GeV, Separate Events, Particle 0)",
+    'mchamp600_RecoSeparateEventsParticle0'   :    "Mchamp (Q = 2e, M = 600 GeV, Separate Events, Particle 0)",
+    #'mchamp800_RecoSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 800 GeV, Separate Events, Particle 0)",
     #'mchamp1000_RecoSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 1000 GeV, Separate Events, Particle 0)",
     #'mchamp1400_RecoSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 1400 GeV, Separate Events, Particle 0)",
     #'mchamp1800_RecoSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 1800 GeV, Separate Events, Particle 0)",
@@ -1873,11 +1873,11 @@ labels = {
     #'mchamp2600_RecoSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 0)",
 
     #stopped particles stage2 Ntuples
-    #'mchamp100_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)", 
-    #'mchamp200_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)", 
-    #'mchamp400_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 400 GeV, Separate Events, Particle 0)", 
-    'mchamp600_NtupleSeparateEventsParticle0'   :    "Mchamp (Q = 2e, M = 600 GeV, Separate Events, Particle 0)", 
-    #'mchamp800_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 800 GeV, Separate Events, Particle 0)", 
+    #'mchamp100_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)",
+    #'mchamp200_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)",
+    #'mchamp400_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 400 GeV, Separate Events, Particle 0)",
+    'mchamp600_NtupleSeparateEventsParticle0'   :    "Mchamp (Q = 2e, M = 600 GeV, Separate Events, Particle 0)",
+    #'mchamp800_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 800 GeV, Separate Events, Particle 0)",
     #'mchamp1000_NtupleSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 1000 GeV, Separate Events, Particle 0)",
     #'mchamp1400_NtupleSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 1400 GeV, Separate Events, Particle 0)",
     #'mchamp1800_NtupleSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 1800 GeV, Separate Events, Particle 0)",
@@ -1886,7 +1886,7 @@ labels = {
 
     ############################################################################
 
-    #NoBPTX Data 
+    #NoBPTX Data
     'NoBPTX_2015D_v3'     : "NoBPTX 2015D_v3 data",
     'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
     'NoBPTX_2015D'     : "NoBPTX 2015D data",
@@ -2048,7 +2048,7 @@ crossSections = {
     'StopToTChi0_1000_574' : 8.3600000000E-02,
     'StopToTChi0_1000_656' : 8.3600000000E-02,
     'StopToTChi0_1000_728' : 8.3600000000E-02,
-    
+
 
     #stopped particles cosmic events
     'cosmic_preselection' : 8.3600000000E-02,
@@ -2060,10 +2060,10 @@ crossSections = {
     'mchamp400'  :  2.3099720000E-02,
     'mchamp600'  :  3.4651160000E-03,
     'mchamp800'  :  7.9696270000E-04,
-    'mchamp1000' :  2.4031900000E-04, 
-    'mchamp1400' :  2.6633380000E-05, 
-    'mchamp1800' :  3.9346950000E-06, 
-    'mchamp2200' :  5.5863300000E-07, 
+    'mchamp1000' :  2.4031900000E-04,
+    'mchamp1400' :  2.6633380000E-05,
+    'mchamp1800' :  3.9346950000E-06,
+    'mchamp2200' :  5.5863300000E-07,
     'mchamp2600' :  7.3973180000E-08,
 
     #stopped particles stage2 GEN-SIM

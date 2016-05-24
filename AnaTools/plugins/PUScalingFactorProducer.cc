@@ -20,12 +20,12 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
   TFile *fin = TFile::Open (PU_.c_str ());
   if (!fin || fin->IsZombie()) {
     clog << "ERROR [PUScalingFactorProducer]: Could not find file: " << PU_
-	 << "; will cause a seg fault." << endl;
+         << "; will cause a seg fault." << endl;
     exit(1);
-  }  
+  }
   TH1D *mc;
   TH1D *puWeight;
-  fin->GetObject(dataset_.c_str(), mc);  
+  fin->GetObject(dataset_.c_str(), mc);
   fin->GetObject(target_.c_str(), puWeight);
   if (!mc) {
     clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << dataset_ << "; will cause a seg fault." << endl;
@@ -58,11 +58,11 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
     }
   else
     (*eventvariables)["puScalingFactor"] = 1;
-  delete puWeight; 
+  delete puWeight;
 #else
-    (*eventvariables)["puScalingFactor"] = 1; 
+    (*eventvariables)["puScalingFactor"] = 1;
 # endif
-}  
+}
 
 void
 PUScalingFactorProducer::getOriginalCollections (const edm::Event &event)

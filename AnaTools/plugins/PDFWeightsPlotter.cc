@@ -3,17 +3,17 @@
 
 PDFWeightsPlotter::PDFWeightsPlotter(const edm::ParameterSet &cfg) :
    type_             (cfg.getParameter<string>("type")),
-   numPDFWeights_    (cfg.getParameter<uint>("NumPDFWeights")), 
-   pdfWeightsOffset_ (cfg.getParameter<uint>("PDFWeightsOffset")), 
+   numPDFWeights_    (cfg.getParameter<uint>("NumPDFWeights")),
+   pdfWeightsOffset_ (cfg.getParameter<uint>("PDFWeightsOffset")),
    firstEvent_       (true)
 {
   genInfoProductToken_ = consumes<GenEventInfoProduct> (cfg.getParameter<edm::InputTag> ("GenInfoProduct"));
   lheProductToken_     = consumes<LHEEventProduct> (cfg.getParameter<edm::InputTag> ("LHEProduct"));
 
   TH1::SetDefaultSumw2();
-  
+
   if(firstEvent_)
-    { 
+    {
       string directoryName = "Generatorweights Plots";
       TFileDirectory subdir = fs_->mkdir(directoryName);
       subdir.make<TH1D>("PDF Weights", "PDF Weights", numPDFWeights_ + 1, 0, numPDFWeights_ + 1);
@@ -52,7 +52,7 @@ PDFWeightsPlotter::analyze(const edm::Event &event, const edm::EventSetup &setup
     pdfweights->SetBinContent(i - pdfWeightsOffset_ + 2, oldWeight + lheProduct->weights()[i].wgt*generatorWeightSign/lheProduct->originalXWGTUP());
   }
 
-  firstEvent_ = false; 
+  firstEvent_ = false;
 #endif
 }
 

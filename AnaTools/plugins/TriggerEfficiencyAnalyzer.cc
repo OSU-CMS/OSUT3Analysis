@@ -102,7 +102,7 @@ TriggerEfficiencyAnalyzer::analyze (const edm::Event &event, const edm::EventSet
       //loop over the different trigger names as specified by the user
       for(std::vector<string>::const_iterator triggerName = TriggerNameMap[*triggerType].begin(); triggerName != TriggerNameMap[*triggerType].end(); triggerName++){
         if(name.find(*triggerName)!=std::string::npos){
-	  //	  cout << name << "  " << *triggerName << " " << name.find(*triggerName) << endl;
+          //          cout << name << "  " << *triggerName << " " << name.find(*triggerName) << endl;
           TriggerHistogramMap[*triggerType]->Fill(triggerName-TriggerNameMap[*triggerType].begin()+1);
           InclusiveORMap[*triggerType] = true;
         }

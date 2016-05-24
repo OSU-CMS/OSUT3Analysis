@@ -10,7 +10,7 @@ from OSUT3Analysis.ControlRegions.Preselections import *
 #doubleMuTriggerPath = cms.vstring("HLT_Mu17_Mu8_v")
 doubleMuTriggerPath = cms.vstring("")
 
-#defining these cuts first since they will be used repeatedly 
+#defining these cuts first since they will be used repeatedly
 os_cut = cms.PSet (
     inputCollection = cms.vstring("muons", "muons"),
     cutString = cms.string("muon.charge * muon.charge < 0"),
@@ -20,15 +20,15 @@ os_cut = cms.PSet (
 zpeak_cut = cms.VPSet (
     cms.PSet(
     inputCollection = cms.vstring("muons", "muons"),
-    cutString = cms.string("invMass (muon, muon) > 60"), 
-#    cutString = cms.string("invMass (muon, muon) > 60 && invMass (muon, muon) < 120"),  # causes a seg fault 
+    cutString = cms.string("invMass (muon, muon) > 60"),
+#    cutString = cms.string("invMass (muon, muon) > 60 && invMass (muon, muon) < 120"),  # causes a seg fault
     numberRequired = cms.string(">= 1")
     ),
     cms.PSet(
     inputCollection = cms.vstring("muons", "muons"),
     cutString = cms.string("invMass (muon, muon) < 120"),
     numberRequired = cms.string(">= 1")
-    ),       
+    ),
 )
 
 zpeak_veto = cms.PSet (

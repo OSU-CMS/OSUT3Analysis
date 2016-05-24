@@ -35,8 +35,8 @@ OSUBjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       osu::Bjet bjet (object, particles, cfg_);
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       bjet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(bjet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-      bjet.set_pfCombinedSecondaryVertexV2BJetTags(bjet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags")); 
-#endif     
+      bjet.set_pfCombinedSecondaryVertexV2BJetTags(bjet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
+#endif
       pl_->push_back (bjet);
     }
 

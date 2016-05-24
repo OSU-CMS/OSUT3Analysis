@@ -20,8 +20,8 @@ namespace osu
         const float pfCombinedInclusiveSecondaryVertexV2BJetTags () const;
         void set_matchedToLepton (float value) { matchedToLepton_  = value; }
         void set_pfCombinedSecondaryVertexV2BJetTags (float value) { pfCombinedSecondaryVertexV2BJetTags_ = value;}
-        void set_pfCombinedInclusiveSecondaryVertexV2BJetTags (float value) { pfCombinedInclusiveSecondaryVertexV2BJetTags_ = value;}  
-        
+        void set_pfCombinedInclusiveSecondaryVertexV2BJetTags (float value) { pfCombinedInclusiveSecondaryVertexV2BJetTags_ = value;}
+
       private:
         int matchedToLepton_;
         float pfCombinedSecondaryVertexV2BJetTags_;

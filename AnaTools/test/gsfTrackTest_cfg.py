@@ -15,14 +15,14 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 process.source = cms.Source ('PoolSource',
   fileNames = cms.untracked.vstring (
 #        'file:/data/users/lantonel/condor/DEC3__DisplacedControlRegionNoTriggerNoIsoSkim/TTJets_DiLept_MiniAOD/DisplacedControlRegionNoTriggerNoIso/skim_0.root'
-#'file:/data/users/bing/condor/EMuSkim13TeV/DYJetsToLL_50_MiniAOD/EMuSKim13TeV/skim_0.root',  
+#'file:/data/users/bing/condor/EMuSkim13TeV/DYJetsToLL_50_MiniAOD/EMuSKim13TeV/skim_0.root',
 'file:/data/users/bing/condor/EMuSkim13TeV/MuonEG_2015D_v4/EMuSKim13TeV/skim_0.root',
 #'file:/store/user/wulsin/SingleMuon/Run2015D-05Oct2015-v1/151103_163809/0000/miniAODWithCandidateTracks_1.root',
 
 #    'root://cmsxrootd.fnal.gov//store/mc/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v3/10000/009D49A5-7314-E511-84EF-0025905A605E.root',
 #    'root://cmsxrootd.fnal.gov//store/mc/RunIISpring15MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/50000/00759690-D16E-E511-B29E-00261894382D.root',
     #'file:/data/users/bing/condor/EMuSkim13TeV/TTJets_DiLept_MiniAOD/EMuSKim13TeV/skim_416.root',
-  
+
   )
 )
 
@@ -78,12 +78,12 @@ GsfTrackTest = cms.PSet(
     name = cms.string("GsfTrackTest"),
     triggers = cms.vstring(),
     cuts = cms.VPSet (
-        cms.PSet (                                                                                                                                                                                                                                                                        
+        cms.PSet (
             inputCollection = cms.vstring("electrons"),
             cutString = cms.string("gsfTrack.pt > 0"),
             numberRequired = cms.string(">= 1")
-        ),    
-    )    
+        ),
+    )
 )
 eventSelections = []
 eventSelections.append(GsfTrackTest)

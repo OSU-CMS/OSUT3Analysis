@@ -15,7 +15,7 @@ process.source = cms.Source ('PoolSource',
   fileNames = cms.untracked.vstring (
         #    'file:miniAODSample.root'
         'root://cmsxrootd.fnal.gov//store/mc/Phys14DR/DYJetsToLL_M-50_13TeV-madgraph-pythia8/MINIAODSIM/PU4bx50_PHYS14_25_V1-v1/00000/080957A7-C36E-E411-A5BC-00266CF327C4.root',
-        # 'file:/home/wulsin/LS1Upgrade/tutorial/test2/CMSSW_7_4_5_ROOT5/src/OSUT3Analysis/ExampleAnalysis/test/WJets_MiniAOD_numEvent10.root', 
+        # 'file:/home/wulsin/LS1Upgrade/tutorial/test2/CMSSW_7_4_5_ROOT5/src/OSUT3Analysis/ExampleAnalysis/test/WJets_MiniAOD_numEvent10.root',
   )
 )
 
@@ -38,11 +38,11 @@ process.maxEvents = cms.untracked.PSet (
 ##### Set up the analyzer #####
 ###########################################################
 
-from OSUT3Analysis.AnaTools.osuAnalysis_cfi import collectionMap  # miniAOD  
+from OSUT3Analysis.AnaTools.osuAnalysis_cfi import collectionMap  # miniAOD
 
 eMu = cms.PSet(
     name = cms.string("EMu"),
-    triggers = cms.vstring('HLT_Mu38NoFiltersNoVtx_Photon38_CaloIdL'), 
+    triggers = cms.vstring('HLT_Mu38NoFiltersNoVtx_Photon38_CaloIdL'),
     cuts = cms.VPSet (
       cms.PSet (
         inputCollection = cms.vstring("muons"),
@@ -178,7 +178,7 @@ eMu = cms.PSet(
 
 doubleMuon = cms.PSet(
     name = cms.string("DoubleMuon"),
-    triggers = cms.vstring("HLT_DoubleMu33NoFiltersNoVtx"), 
+    triggers = cms.vstring("HLT_DoubleMu33NoFiltersNoVtx"),
     cuts = cms.VPSet (
       cms.PSet (
         inputCollection = cms.vstring("muons"),

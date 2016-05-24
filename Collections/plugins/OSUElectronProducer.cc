@@ -101,7 +101,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
                   if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.3)
                     {
                       pat::PackedCandidate thatPFCandidate = (*cand);
-                      int ivtx = cand->vertexRef().index();	
+                      int ivtx = cand->vertexRef().index();
                       if(ivtx == electronPVIndex || ivtx == -1)
                         {
                           if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001 && cand->fromPV() >= 2)
@@ -120,7 +120,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
                   if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.3)
                     {
                       pat::PackedCandidate thatPFCandidate = (*cand);
-                      int ivtx = cand->vertexRef().index();	
+                      int ivtx = cand->vertexRef().index();
                       if(ivtx == electronPVIndex || ivtx == -1)
                         {
                           if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001)

@@ -9,7 +9,7 @@ from OSUT3Analysis.ControlRegions.Preselections import *
 
 doubleElectronTriggerPath = cms.vstring("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v")
 
-#defining these cuts first since they will be used repeatedly 
+#defining these cuts first since they will be used repeatedly
 os_cut = cms.PSet (
     inputCollection = cms.vstring("electron-secondary electron pairs"),
     cutString = cms.string("chargeProduct < 0"),
@@ -41,7 +41,7 @@ zpeak_veto = cms.PSet (
 
 ##########################################################################
 electron_blind_cut = cms.PSet(
-	inputCollection = cms.vstring("electrons"),
+        inputCollection = cms.vstring("electrons"),
         cutString = cms.string("abs(correctedD0) < 0.02"),
         numberRequired = cms.string(">= 1")
 )
@@ -49,8 +49,8 @@ electron_blind_cut = cms.PSet(
 secondary_electron_cuts = cms.VPSet()
 secondary_electron_cuts.extend(copy.deepcopy(Electron_Preselection.cuts))
 for cut in secondary_electron_cuts:
-	if cut.inputCollection == cms.string("electrons"):
-		cut.inputCollection = cms.vstring("secondary electrons")
+        if cut.inputCollection == cms.string("electrons"):
+                cut.inputCollection = cms.vstring("secondary electrons")
                 cut.numberRequired = cms.string("== 2")
 
 ZtoEE_Selection = cms.PSet(
@@ -75,8 +75,8 @@ QCDinZtoEE_Selection = cms.PSet(
 
 QCDinZtoEE_Selection.cuts.extend(copy.deepcopy(ZtoEE_Selection.cuts))
 for cut in QCDinZtoEE_Selection.cuts:
-	if "rel" in str(cut.cutString):
-		cut.cutString = cms.string("relPFrhoIso > 0.1 & relPFrhoIso < 1")
+        if "rel" in str(cut.cutString):
+                cut.cutString = cms.string("relPFrhoIso > 0.1 & relPFrhoIso < 1")
 
 ##########################################################################
 

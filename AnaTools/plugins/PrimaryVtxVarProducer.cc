@@ -15,15 +15,15 @@ PrimaryVtxVarProducer::AddVariables (const edm::Event &event) {
 
   edm::Handle<vector<TYPE(primaryvertexs)> > primaryvertexs;
   if (!event.getByToken (token_, primaryvertexs)) {
-    cout << "ERROR:  Could not find primaryvertexs collection." << endl; 
+    cout << "ERROR:  Could not find primaryvertexs collection." << endl;
     return;
-  } 
+  }
 
-  int numPVReco = primaryvertexs->size(); 
-  reco::Vertex pv = primaryvertexs->at(0); 
-  double leadingPV_x = pv.x(); 
+  int numPVReco = primaryvertexs->size();
+  reco::Vertex pv = primaryvertexs->at(0);
+  double leadingPV_x = pv.x();
   double leadingPV_y = pv.y();
-  double leadingPV_z = pv.z(); 
+  double leadingPV_z = pv.z();
 
   (*eventvariables)["numPVReco"]       = numPVReco;
   (*eventvariables)["leadingPV_x"]     = leadingPV_x;

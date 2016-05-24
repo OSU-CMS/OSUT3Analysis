@@ -1386,13 +1386,13 @@ TrackBeamspotHistograms = cms.PSet(
             name = cms.string("trackd0"),
             title = cms.string("Track d_{0};track d_{0} [cm]"),
             binsX = cms.untracked.vdouble(100, -0.5, 0.5),
-            inputVariables = cms.vstring(trackD0WRTBeamspot), 
+            inputVariables = cms.vstring(trackD0WRTBeamspot),
         ),
         cms.PSet (
             name = cms.string("trackd0Mag"),
             title = cms.string("Track d_{0};track |d_{0}| [cm]"),
             binsX = cms.untracked.vdouble(50, 0, 0.5),
-            inputVariables = cms.vstring("fabs ( " + trackD0WRTBeamspot + " )"), 
+            inputVariables = cms.vstring("fabs ( " + trackD0WRTBeamspot + " )"),
         ),
         cms.PSet (
             name = cms.string("trackdz"),
@@ -1414,44 +1414,44 @@ TrackBeamspotHistograms = cms.PSet(
 
 TrackEventVarHistograms = cms.PSet(
     # To produce these histograms, include in your PSet:
-    # variableProducers.append("PrimaryVtxVarProducer")  
+    # variableProducers.append("PrimaryVtxVarProducer")
      inputCollection = cms.vstring("tracks", "eventvariables"),
      histograms = cms.VPSet (
         cms.PSet (
             name = cms.string("trackd0WRTPV"),
             title = cms.string("Track d_{0} wrt leading PV;track d_{0} [cm]"),
             binsX = cms.untracked.vdouble(100, -0.5, 0.5),
-            inputVariables = cms.vstring(trackD0WRTPV), 
+            inputVariables = cms.vstring(trackD0WRTPV),
         ),
         cms.PSet (
             name = cms.string("trackd0WRTPV_Zoom"),
             title = cms.string("Track d_{0} wrt leading PV;track d_{0} [cm]"),
             binsX = cms.untracked.vdouble(100, -0.1, 0.1),
-            inputVariables = cms.vstring(trackD0WRTPV), 
+            inputVariables = cms.vstring(trackD0WRTPV),
         ),
         cms.PSet (
             name = cms.string("trackd0WRTPVMag"),
             title = cms.string("Track d_{0} wrt leading PV;track |d_{0}| [cm]"),
             binsX = cms.untracked.vdouble(50, 0, 0.5),
-            inputVariables = cms.vstring("fabs ( " + trackD0WRTPV + " )"), 
+            inputVariables = cms.vstring("fabs ( " + trackD0WRTPV + " )"),
         ),
         cms.PSet (
             name = cms.string("trackdzWRTPV"),
             title = cms.string("Track d_{z} wrt leading PV;track d_{z} [cm]"),
             binsX = cms.untracked.vdouble(100, -10, 10),
-            inputVariables = cms.vstring(trackDZWRTPV), 
+            inputVariables = cms.vstring(trackDZWRTPV),
         ),
         cms.PSet (
             name = cms.string("trackdzWRTPV_Zoom"),
             title = cms.string("Track d_{z} wrt leading PV;track d_{z} [cm]"),
             binsX = cms.untracked.vdouble(100, -2, 2),
-            inputVariables = cms.vstring(trackDZWRTPV), 
+            inputVariables = cms.vstring(trackDZWRTPV),
         ),
         cms.PSet (
             name = cms.string("trackdzWRTPVMag"),
             title = cms.string("Track d_{z} wrt leading PV;track |d_{z}| [cm]"),
             binsX = cms.untracked.vdouble(100, 0, 10),
-            inputVariables = cms.vstring("fabs( " + trackDZWRTPV + " )" ), 
+            inputVariables = cms.vstring("fabs( " + trackDZWRTPV + " )" ),
         ),
     )
 )
@@ -1500,7 +1500,7 @@ TrackMCParticleHistograms = cms.PSet(
 EventVariablePVHistograms = cms.PSet(
     # EventVariable quantities associated with primary vertices
     # To produce these variables, include in your PSet:
-    # variableProducers.append("PrimaryVtxVarProducer")  
+    # variableProducers.append("PrimaryVtxVarProducer")
     inputCollection = cms.vstring("eventvariables"),
     histograms = cms.VPSet (
         cms.PSet (

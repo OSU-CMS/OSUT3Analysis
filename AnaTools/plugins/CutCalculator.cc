@@ -164,10 +164,10 @@ CutCalculator::setInputCollectionFlags (const Cut &currentCut, unsigned currentC
       pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).push_back (flag);
 
     }
-  
+
   //!!!
   for (unsigned index = 0; index != pl_->cumulativeObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).size(); index++) {
-  
+
     // AND together cumulative flags from previous cuts with the one for the current cut
     for (unsigned cutIndex = 0; cutIndex != currentCutIndex; cutIndex++){
       pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (index).first = pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (index).first && pl_->cumulativeObjectFlags.at (cutIndex).at (currentCut.inputLabel).at (index).first;
@@ -243,17 +243,17 @@ CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned c
     {
       // don't reset flags for the input collection for this cut
       if (inputType == currentCut.inputLabel){
-	continue;
+        continue;
       }
       // skip irrelevant collections
       vector<string> components = anatools::getSingleObjects (inputType);
       if (find(components.begin(), components.end(), currentCut.inputLabel) == components.end())
-	continue;
+        continue;
 
       // determine total size of collection, since it's composed of multiple single objects
       int totalSize = 1;
       for (auto component : components){
-	totalSize *= currentCut.valueLookupTree->getCollectionSize (component);
+        totalSize *= currentCut.valueLookupTree->getCollectionSize (component);
       }
 
       // by default all composite objects pass
@@ -261,34 +261,34 @@ CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned c
 
       // mark non-unique combinations as invalid
       for (unsigned index = 0; index != pl_->individualObjectFlags.at(currentCutIndex).at(inputType).size(); index++) {
-	if (isUniqueCase(currentCut, index, inputType))
-	  continue;
-	pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(index) = make_pair (false, false);
+        if (isUniqueCase(currentCut, index, inputType))
+          continue;
+        pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(index) = make_pair (false, false);
       }
 
       // loop over objects in input collection for current cut
       for (unsigned index = 0; index != pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).size(); index++) {
-	bool flag = pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(index).first;
+        bool flag = pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(index).first;
 
-	// nothing to be done for good objects
-	if (flag){
-	  continue;
-	}
+        // nothing to be done for good objects
+        if (flag){
+          continue;
+        }
 
-	// get the list of global indices for the composite collection containing the object in question
-	set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, currentCut.inputLabel, inputType);
-	for (auto globalIndex : globalIndices){
-	  // set flags to false for any composite object containing the bad individual object
-	  pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = false;
-	}
+        // get the list of global indices for the composite collection containing the object in question
+        set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, currentCut.inputLabel, inputType);
+        for (auto globalIndex : globalIndices){
+          // set flags to false for any composite object containing the bad individual object
+          pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = false;
+        }
       }
       pl_->cumulativeObjectFlags.at (currentCutIndex)[inputType] = pl_->individualObjectFlags.at(currentCutIndex).at(inputType);
 
       // for each object, AND together cumulative flags from previous cuts with the one for the current cut
       for (unsigned index = 0; index != pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).size(); index++) {
-	for (unsigned cutIndex = 0; cutIndex != currentCutIndex; cutIndex++){
-	  pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first && pl_->cumulativeObjectFlags.at (cutIndex).at (inputType).at (index).first;
-	}
+        for (unsigned cutIndex = 0; cutIndex != currentCutIndex; cutIndex++){
+          pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first && pl_->cumulativeObjectFlags.at (cutIndex).at (inputType).at (index).first;
+        }
       }
     }
 
@@ -334,45 +334,45 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
     // non-veto case
     if (!currentCut.isVeto){
       for (unsigned index = 0; index != currentCut.valueLookupTree->getCollectionSize (singleObject); index++){
-	// initialize flags to false, reset them to true once we find a good composite object containing them
-	individualFlags.push_back(false);
-	cumulativeFlags.push_back(false);
+        // initialize flags to false, reset them to true once we find a good composite object containing them
+        individualFlags.push_back(false);
+        cumulativeFlags.push_back(false);
 
-	// get the list of global indices for the composite collection containing the object in question
-	set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, currentCut.inputLabel);
-	for (auto globalIndex : globalIndices){
-	  // if we find a "true" flag for any composite object, set the individual object flag to true
-	  if (pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(globalIndex).first){
-	    individualFlags.at(index) = true;
-	    cumulativeFlags.at(index) = true;
-	    break;
-	  }
-	}
+        // get the list of global indices for the composite collection containing the object in question
+        set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, currentCut.inputLabel);
+        for (auto globalIndex : globalIndices){
+          // if we find a "true" flag for any composite object, set the individual object flag to true
+          if (pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(globalIndex).first){
+            individualFlags.at(index) = true;
+            cumulativeFlags.at(index) = true;
+            break;
+          }
+        }
       }
     }
     // veto case
     else {
       for (unsigned index = 0; index != currentCut.valueLookupTree->getCollectionSize (singleObject); index++){
-	// initialize flags to true, reset them to false once we find a bad composite object containing them
+        // initialize flags to true, reset them to false once we find a bad composite object containing them
         individualFlags.push_back(true);
         cumulativeFlags.push_back(true);
 
-	// get the list of global indices for the composite collection containing the object in question
-	set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, currentCut.inputLabel);
-	for (auto globalIndex : globalIndices){
-	  // if we find a "false" flag for any composite object, set the individual object flag to false
-	  if (!pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(globalIndex).first){
-	    individualFlags.at(index) = false;
+        // get the list of global indices for the composite collection containing the object in question
+        set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, currentCut.inputLabel);
+        for (auto globalIndex : globalIndices){
+          // if we find a "false" flag for any composite object, set the individual object flag to false
+          if (!pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(globalIndex).first){
+            individualFlags.at(index) = false;
 
-	    // for calculating the cumulative flags, only consider composite objects passing all previous cuts
-	    if (currentCutIndex > 0){
-	      if(pl_->cumulativeObjectFlags.at(currentCutIndex-1).at(currentCut.inputLabel).at(globalIndex).first){
-		cumulativeFlags.at(index) = false;
-		break;
-	      }
-	    }
-	  }
-	}
+            // for calculating the cumulative flags, only consider composite objects passing all previous cuts
+            if (currentCutIndex > 0){
+              if(pl_->cumulativeObjectFlags.at(currentCutIndex-1).at(currentCut.inputLabel).at(globalIndex).first){
+                cumulativeFlags.at(index) = false;
+                break;
+              }
+            }
+          }
+        }
       }
     }
 
@@ -380,18 +380,18 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
     for (auto inputType : listOfObjects){
       // don't reset flags for the input collection for this cut
       if (inputType == currentCut.inputLabel){
-	continue;
+        continue;
       }
       // skip irrelevant collections
       vector<string> components = anatools::getSingleObjects (inputType);
       if (find(components.begin(), components.end(), singleObject) == components.end())
-	continue;
+        continue;
 
 
       // determine total size of collection, since it's potentially composed of multiple single objects
       int totalSize = 1;
       for (auto component : components){
-	totalSize *= currentCut.valueLookupTree->getCollectionSize (component);
+        totalSize *= currentCut.valueLookupTree->getCollectionSize (component);
       }
 
       //////////////////////////////////////////////////////////////////////////////////////////
@@ -408,24 +408,24 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
       // loop over flags for objects in the current inputType collection
       for (unsigned index = 0; index != individualFlags.size(); index++) {
 
-	// nothing to be done for bad objects
-	if (!individualFlags.at(index)){
-	  continue;
-	}
+        // nothing to be done for bad objects
+        if (!individualFlags.at(index)){
+          continue;
+        }
 
-	// get the list of global indices containing the object in question
-	set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, inputType);
-	for (auto globalIndex : globalIndices){
-	  // set flags to true for any (potentially composite) object containing the good individual object
-	  pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = true;
-	}
+        // get the list of global indices containing the object in question
+        set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, inputType);
+        for (auto globalIndex : globalIndices){
+          // set flags to true for any (potentially composite) object containing the good individual object
+          pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = true;
+        }
 
-	// mark non-unique combinations as invalid
-	for (unsigned index = 0; index != pl_->individualObjectFlags.at(currentCutIndex).at(inputType).size(); index++) {
-	  if (isUniqueCase(currentCut, index, inputType))
-	    continue;
-	  pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(index) = make_pair (false, false);
-	}
+        // mark non-unique combinations as invalid
+        for (unsigned index = 0; index != pl_->individualObjectFlags.at(currentCutIndex).at(inputType).size(); index++) {
+          if (isUniqueCase(currentCut, index, inputType))
+            continue;
+          pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(index) = make_pair (false, false);
+        }
       }
 
       ///////////////////////
@@ -438,31 +438,31 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
       // loop over flags for objects in the current inputType collection
       for (unsigned index = 0; index != cumulativeFlags.size(); index++) {
 
-	// nothing to be done for good objects
-	if (!cumulativeFlags.at(index)){
-	  continue;
-	}
+        // nothing to be done for good objects
+        if (!cumulativeFlags.at(index)){
+          continue;
+        }
 
-	// get the list of global indices containing the object in question
-	set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, inputType);
-	for (auto globalIndex : globalIndices){
-	  // set flags to true for any (potentially composite) object containing the good cumulative object
-	  pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = true;
-	}
+        // get the list of global indices containing the object in question
+        set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, inputType);
+        for (auto globalIndex : globalIndices){
+          // set flags to true for any (potentially composite) object containing the good cumulative object
+          pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = true;
+        }
 
-	// mark non-unique combinations as invalid
-	for (unsigned index = 0; index != pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).size(); index++) {
-	  if (isUniqueCase(currentCut, index, inputType))
-	    continue;
-	  pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).at(index) = make_pair (false, false);
-	}
+        // mark non-unique combinations as invalid
+        for (unsigned index = 0; index != pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).size(); index++) {
+          if (isUniqueCase(currentCut, index, inputType))
+            continue;
+          pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).at(index) = make_pair (false, false);
+        }
 
-	// for each object, AND together cumulative flags from previous cuts with the one for the current cut
-	for (unsigned index = 0; index != pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).size(); index++) {
-	  for (unsigned cutIndex = 0; cutIndex != currentCutIndex; cutIndex++){
-	    pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first && pl_->cumulativeObjectFlags.at (cutIndex).at (inputType).at (index).first;
-	  }
-	}
+        // for each object, AND together cumulative flags from previous cuts with the one for the current cut
+        for (unsigned index = 0; index != pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).size(); index++) {
+          for (unsigned cutIndex = 0; cutIndex != currentCutIndex; cutIndex++){
+            pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first && pl_->cumulativeObjectFlags.at (cutIndex).at (inputType).at (index).first;
+          }
+        }
       }
     }
   }
@@ -480,13 +480,13 @@ CutCalculator::setOtherCollectionsFlags (const Cut &currentCut, unsigned current
      {
        // skip if flags for this object already exist
        if (pl_->individualObjectFlags.at (currentCutIndex).find(inputType) != pl_->individualObjectFlags.at (currentCutIndex).end())
-	 continue;
+         continue;
 
        // determine total size of collection, since it may be composed of multiple single objects
        vector<string> singleObjects = anatools::getSingleObjects (inputType);
        int totalSize = 1;
        for (auto singleObject = singleObjects.begin (); singleObject != singleObjects.end (); singleObject++){
-	 totalSize *= currentCut.valueLookupTree->getCollectionSize (*singleObject);
+         totalSize *= currentCut.valueLookupTree->getCollectionSize (*singleObject);
        }
 
        // since these collections don't pertain to the current cut, they all pass by default
@@ -494,18 +494,18 @@ CutCalculator::setOtherCollectionsFlags (const Cut &currentCut, unsigned current
 
        // mark non-unique combinations as invalid
        for (unsigned index = 0; index != pl_->individualObjectFlags.at(currentCutIndex).at(inputType).size(); index++) {
-	 if (isUniqueCase(currentCut, index, inputType))
-	   continue;
-	 pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(index) = make_pair (false, false);
+         if (isUniqueCase(currentCut, index, inputType))
+           continue;
+         pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(index) = make_pair (false, false);
        }
 
        pl_->cumulativeObjectFlags.at (currentCutIndex)[inputType] = pl_->individualObjectFlags.at(currentCutIndex).at(inputType);
 
        // for each object, AND together cumulative flags from previous cuts with the one for the current cut
        for (unsigned index = 0; index != pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).size(); index++) {
-	 for (unsigned cutIndex = 0; cutIndex != currentCutIndex; cutIndex++){
-	   pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first && pl_->cumulativeObjectFlags.at (cutIndex).at (inputType).at (index).first;
-	 }
+         for (unsigned cutIndex = 0; cutIndex != currentCutIndex; cutIndex++){
+           pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first = pl_->cumulativeObjectFlags.at (currentCutIndex).at (inputType).at (index).first && pl_->cumulativeObjectFlags.at (cutIndex).at (inputType).at (index).first;
+         }
        }
      }
   return true;
@@ -741,7 +741,7 @@ CutCalculator::evaluateTriggerFilters (const edm::Event &event) const
 
   if (handles_.triggers.isValid () && handles_.trigobjs.isValid ())
     {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM 
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
 #endif
       for (unsigned i = 0; i < pl_->triggerFilters.size (); i++)
@@ -811,28 +811,28 @@ CutCalculator::setEventFlags () const
       bool cutDecision;
       bool cutDecisionIndividual;
       if (!currentCut.isVeto)
-	{
+        {
         cutDecision = evaluateComparison (numberPassing, currentCut.eventComparativeOperator, currentCut.numberRequired);
         cutDecisionIndividual = evaluateComparison (numberPassingIndividual, currentCut.eventComparativeOperator, currentCut.numberRequired);
-	}
+        }
       else
         {
-	  int numberTotalObjects = pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).size();
+          int numberTotalObjects = pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).size();
           if (currentCutIndex > 0)
             {
               for (const auto &flag : pl_->cumulativeObjectFlags.at (currentCutIndex - 1).at (currentCut.inputLabel))
                 (flag.second && flag.first) && numberPassingPrev++;
             }
-	  else
-	    {
-	      numberPassingPrev = numberTotalObjects;
-	    }
+          else
+            {
+              numberPassingPrev = numberTotalObjects;
+            }
           int numberFailIndividual = numberTotalObjects - numberPassingIndividual;
           int numberFailCumulative = numberPassingPrev - numberPassing;
-	  //	  cout << "numberFailIndividual: " <<  numberFailIndividual << endl;
-	  //	  cout << "numberFailCumulative: " << numberFailCumulative << endl;
+          //          cout << "numberFailIndividual: " <<  numberFailIndividual << endl;
+          //          cout << "numberFailCumulative: " << numberFailCumulative << endl;
           cutDecision = evaluateComparison (numberFailCumulative, currentCut.eventComparativeOperator, currentCut.numberRequired);
-	  cutDecisionIndividual = evaluateComparison (numberFailIndividual, currentCut.eventComparativeOperator, currentCut.numberRequired);
+          cutDecisionIndividual = evaluateComparison (numberFailIndividual, currentCut.eventComparativeOperator, currentCut.numberRequired);
         }
 
       // cout << "cutDecision: " << cutDecision << endl;
@@ -892,10 +892,10 @@ CutCalculator::getListOfObjects (const Cuts &cuts)
   for (auto &cut : cuts)
     {
       if (find(objects.begin(), objects.end(), cut.inputLabel) == objects.end())
-	objects.push_back(cut.inputLabel);
+        objects.push_back(cut.inputLabel);
       for (auto &collection : cut.inputCollections){
-	if (find(objects.begin(), objects.end(), collection) == objects.end())
-	  objects.push_back(collection);
+        if (find(objects.begin(), objects.end(), collection) == objects.end())
+          objects.push_back(collection);
       }
     }
 
@@ -976,7 +976,7 @@ bool
     for (auto objectIndex : objectIndexMap){
 
       if (objectIndex.first != singleObject)
-	continue;
+        continue;
 
       // pass remains true as long as the objects are in order
       pass = pass && ((int) objectIndex.second > prevIndex);

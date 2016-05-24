@@ -3,7 +3,7 @@
   <class name="std::vector<BNstop>" />
   <class name="edm::Wrapper<BNstop>"/>
   <class name="edm::Wrapper<std::vector<BNstop> >" />
-  
+
   <class name="BNPFChgHad" />
   <class name="std::vector<BNPFChgHad>" />
   <class name="edm::Wrapper<BNPFChgHad>"/>

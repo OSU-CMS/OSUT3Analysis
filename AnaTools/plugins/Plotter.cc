@@ -130,9 +130,9 @@ Plotter::analyze (const edm::Event &event, const edm::EventSetup &setup)
     {
       weight->product = 1.0;
       for(vector<Leaf>::const_iterator leaf = weight->valueLookupTree->evaluate ().begin (); leaf != weight->valueLookupTree->evaluate ().end (); leaf++){
- 	double value = boost::get<double> (*leaf);
- 	if(IS_INVALID(value))
- 	  continue;
+         double value = boost::get<double> (*leaf);
+         if(IS_INVALID(value))
+           continue;
         weight->product *= value;
       }
     }
@@ -155,7 +155,7 @@ Plotter::~Plotter ()
       for (auto &valueLookupTree : histogram.valueLookupTrees)
         delete valueLookupTree;
     }
-  
+
   for (auto &weight : weights)
     {
       if (weight.valueLookupTree)
@@ -353,12 +353,12 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
     // If there is only one input collection, then fill the 2D histogram once per object.
     // To do that, increment each lookup tree in parallel.
     for (vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (),
-	   leafY = definition.valueLookupTrees.at (1)->evaluate ().begin();
-	 leafX != definition.valueLookupTrees.at (0)->evaluate ().end () &&
+           leafY = definition.valueLookupTrees.at (1)->evaluate ().begin();
+         leafX != definition.valueLookupTrees.at (0)->evaluate ().end () &&
          leafY != definition.valueLookupTrees.at (1)->evaluate ().end ();
-	 leafX++, leafY++) {
+         leafX++, leafY++) {
       double valueX = boost::get<double> (*leafX),
-	valueY = boost::get<double> (*leafY);
+        valueY = boost::get<double> (*leafY);
       fill2DHistogram(definition, valueX, valueY, weight);
     }
 
@@ -367,9 +367,9 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
     // Warning:  This histogram may be difficult to interpret!
     for(vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (); leafX != definition.valueLookupTrees.at (0)->evaluate ().end (); leafX++){
       for(vector<Leaf>::const_iterator leafY = definition.valueLookupTrees.at (1)->evaluate ().begin (); leafY != definition.valueLookupTrees.at (1)->evaluate ().end (); leafY++){
-	double valueX = boost::get<double> (*leafX),
-	  valueY = boost::get<double> (*leafY);
-	fill2DHistogram(definition, valueX, valueY, weight);
+        double valueX = boost::get<double> (*leafX),
+          valueY = boost::get<double> (*leafY);
+        fill2DHistogram(definition, valueX, valueY, weight);
       }
     }
   }
@@ -383,7 +383,7 @@ void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double
   TH2D *histogram = fs_->getObject<TH2D>(definition.name, definition.directory);
   if (!histogram) {
     clog << "ERROR [Plotter::fill2DHistogram]:  Could not find histogram with name " << definition.name
-	 << " in directory " << definition.directory << endl;
+         << " in directory " << definition.directory << endl;
     return;
   }
   if(IS_INVALID(valueX) || IS_INVALID(valueY))
@@ -529,9 +529,9 @@ Plotter::initializeValueLookupForest (vector<Weight> &weights, Collections *hand
     {
       if (firstEvent_)
         {
-	  weight->valueLookupTree = new ValueLookupTree (weight->inputVariable, weight->inputCollections);
-	  if (!weight->valueLookupTree->isValid ())
-	    return false;
+          weight->valueLookupTree = new ValueLookupTree (weight->inputVariable, weight->inputCollections);
+          if (!weight->valueLookupTree->isValid ())
+            return false;
         }
       weight->valueLookupTree->setCollections (handles);
     }

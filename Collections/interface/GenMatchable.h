@@ -140,7 +140,7 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
     {
       int pdgId = 0;
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
-      //#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM 
+      //#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       pdgId = particle->pdgId ();
 #endif
       if (usePdgId && abs (pdgId) != PdgId)
@@ -150,7 +150,7 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
       if (maxDeltaR_ >= 0.0 && dR > maxDeltaR_)
         continue;
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD || DATA_FORMAT == AOD_CUSTOM
-      //#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM 
+      //#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       if (particle->isPromptFinalState ())
         {
           if (dR < dRToGenMatchedParticle.promptFinalState || dRToGenMatchedParticle.promptFinalState < 0.0)

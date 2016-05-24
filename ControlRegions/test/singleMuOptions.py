@@ -11,19 +11,19 @@ datasets = [
 ####################
 
     'SingleMu',
-    
+
 ##########################
 ### background samples ###
 ##########################
 
 ##     'Wjets',
 ##     'TTbar',
-##     'Diboson', 
+##     'Diboson',
 ##     'DY',
 ##     'QCD_MuEnriched',
 
-   
-    'Wjets', 
+
+    'Wjets',
     'TTbar_Had',
     'TTbar_SemiLep',
     'TTbar_Lep',

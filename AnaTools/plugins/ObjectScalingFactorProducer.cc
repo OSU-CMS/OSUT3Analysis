@@ -29,7 +29,7 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
       TFile *elesf = TFile::Open (electronFile_.c_str ());
       if (!elesf || elesf->IsZombie()) {
         clog << "ERROR [ObjectScalingFactorProducer]: Could not find file: " << electronFile_
-    	 << "; will cause a seg fault." << endl;
+             << "; will cause a seg fault." << endl;
         exit(1);
       }
 
@@ -48,13 +48,13 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
         for (const auto &electron1 : *handles_.electrons) {
           float eta = abs(electron1.eta()) > ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) ? ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) : abs(electron1.eta());
           float pt = electron1.pt() > ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) ? ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) : electron1.pt();
-	  float sf = ele->GetBinContent(ele->FindBin(eta,pt));
-	  if (shift == "up")
-	    sf += ele->GetBinError(ele->FindBin(eta,pt));
-	  else if (shift == "down")
-	    sf -= ele->GetBinError(ele->FindBin(eta,pt));
-	  eleSF = eleSF * sf;
-	}
+          float sf = ele->GetBinContent(ele->FindBin(eta,pt));
+          if (shift == "up")
+            sf += ele->GetBinError(ele->FindBin(eta,pt));
+          else if (shift == "down")
+            sf -= ele->GetBinError(ele->FindBin(eta,pt));
+          eleSF = eleSF * sf;
+        }
       }
       (*eventvariables)["electronScalingFactor"] = eleSF;
       delete ele;
@@ -90,7 +90,7 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
           else if (shift == "down")
             sf -= mu->GetBinError(mu->FindBin(pt,eta));
           muSF = muSF * sf;
-	}
+        }
       }
       (*eventvariables)["muonScalingFactor"] = muSF;
       delete mu;

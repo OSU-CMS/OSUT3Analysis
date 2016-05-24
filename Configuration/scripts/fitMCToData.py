@@ -419,13 +419,13 @@ def MakeOneDHist(pathToDir,distribution):
                         print "Scale up " + labels[FittingHistogramDatasets[i]] + " iteration " + str (k + 1) + "..."
                     Target.Fit ("fit", "QEMR0")
                 Target.Fit ("fit", "VEMR0")
-                
+
                 # save the new scale factors for each dataset
                 for k in range(0, len(HistogramsToFit)):
                     sfs.append(func.GetParameter(k))
 
             shiftedScaleFactors.append(sfs)
-                    
+
 
     # reset the parameters with the errors of each dataset to 0
     for i in range (len (HistogramsToFit), 2 * len (HistogramsToFit)):

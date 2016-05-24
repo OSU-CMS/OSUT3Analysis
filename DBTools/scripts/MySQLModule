@@ -14,7 +14,7 @@ sub getLocation;
 
 our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
 my $dataset;
-my $outfile; 
+my $outfile;
 my $prefix;
 
 $dataset = $ARGV[0];
@@ -26,7 +26,7 @@ getLocation($dataset,$outfile,$prefix);
 sub
 getLocation
 {
-  my $dataset = shift; 
+  my $dataset = shift;
   my $outfile = shift;
   my $results;
   my $queryDataset = $dataset;
@@ -35,24 +35,24 @@ getLocation
   my $query = "select dataset,user,creationTime,location,nFiles,status,crossSectionInPicobarn,higherOrderCrossSectionInPicobarn,fileList from ntuple where dataset like '$queryDataset' order by creationTime";
   $db->selectdb ("ntuple");
   $results = $db->query ($query);
-  
+
   if ($results->numrows () == 1)
     {
       my @row = $results->fetchrow ();
       my @files = split (/\n/, $row[8]);
       $row[7] += 0;
-      open(my $tmpfile, '>', $outfile); 
-      print $tmpfile 'datasetName = "'.$row[0].'"'."\n"; 
-      print $tmpfile 'location = "'.$row[3].'"'."\n"; 
-      print $tmpfile "numberOfFiles = ".$row[4]."\n"; 
-      print $tmpfile 'status = "'.$row[5].'"'."\n"; 
+      open(my $tmpfile, '>', $outfile);
+      print $tmpfile 'datasetName = "'.$row[0].'"'."\n";
+      print $tmpfile 'location = "'.$row[3].'"'."\n";
+      print $tmpfile "numberOfFiles = ".$row[4]."\n";
+      print $tmpfile 'status = "'.$row[5].'"'."\n";
       # Take the cross section from the database, if it is available.  If not, set to -1 so that analysis framework can assign the cross section.
-      print $tmpfile "crossSection = ".$row[7]."\n" if $row[7] > 0;  
-      print $tmpfile "crossSection = ".$row[6]."\n" if $row[7] <= 0 and $row[6] > 0;  
-      print $tmpfile "crossSection = "."-1"."\n" if $row[7] <= 0 and $row[6] <= 0;  
+      print $tmpfile "crossSection = ".$row[7]."\n" if $row[7] > 0;
+      print $tmpfile "crossSection = ".$row[6]."\n" if $row[7] <= 0 and $row[6] > 0;
+      print $tmpfile "crossSection = "."-1"."\n" if $row[7] <= 0 and $row[6] <= 0;
       print $tmpfile "listOfFiles = [\n";
       my $length = @files;
-      if ($length) { 
+      if ($length) {
       for (my $i = 0; $i < $length; $i++)
           {
              next if @files->[$i] eq ".";
@@ -64,7 +64,7 @@ getLocation
           }
       }
       print $tmpfile "]";
-      return 
+      return
    }
   if ($results->numrows () == 0)
     {
@@ -99,15 +99,15 @@ getLocation
       print "Your selection \"$response\" was not a valid option! Quitting.\n";
       exit;
     }
-  open(my $tmpfile, '>', $outfile); 
-  print $tmpfile 'datasetName = "'.$map{$response}[0].'"'."\n"; 
-  print $tmpfile 'location = "'.$map{$response}[1].'"'."\n"; 
-  print $tmpfile "numberOfFiles = ".$map{$response}[2]."\n"; 
-  print $tmpfile 'status = "'.$map{$response}[3].'"'."\n"; 
-  print $tmpfile "crossSection = ".$map{$response}[4]."\n" if $map{$response}[4]; 
-  print $tmpfile "crossSection = "."-1"."\n" if !$map{$response}[4]; 
-  print $tmpfile "listOfFiles = [\n";    
-  if ($map{$response}[5]) { 
+  open(my $tmpfile, '>', $outfile);
+  print $tmpfile 'datasetName = "'.$map{$response}[0].'"'."\n";
+  print $tmpfile 'location = "'.$map{$response}[1].'"'."\n";
+  print $tmpfile "numberOfFiles = ".$map{$response}[2]."\n";
+  print $tmpfile 'status = "'.$map{$response}[3].'"'."\n";
+  print $tmpfile "crossSection = ".$map{$response}[4]."\n" if $map{$response}[4];
+  print $tmpfile "crossSection = "."-1"."\n" if !$map{$response}[4];
+  print $tmpfile "listOfFiles = [\n";
+  if ($map{$response}[5]) {
       for (my $i = 0; $i < @{$map{$response}[5]}; $i++)
           {
              next if $map{$response}[5]->[$i] eq ".";
@@ -119,6 +119,6 @@ getLocation
           }
    }
   print $tmpfile "]";
-  return 
+  return
 }
 

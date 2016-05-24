@@ -16,7 +16,7 @@ namespace {
      edm::Wrapper<BNPFChgHad> PFChgHaddummy1;
      vector<BNPFChgHad> PFChgHaddummy2;
      edm::Wrapper<vector<BNPFChgHad> > PFChgHaddummy3;
-     
+
      std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > newvarsdummy0;
      edm::Wrapper<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > newvarsdummy1;
      vector<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > newvarsdummy2;

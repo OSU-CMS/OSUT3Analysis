@@ -12,7 +12,7 @@ dir = "/store/user/lantonel/BN_DoubleMu_Run2012A-recover-06Aug2012-v1_AOD"
 
 for file in os.listdir(dir):
         process.source.fileNames.extend(cms.untracked.vstring('file:' + dir + '/' + file))
-        
+
 #output file name when running interactively
 process.TFileService.fileName = 'hist.root'
 

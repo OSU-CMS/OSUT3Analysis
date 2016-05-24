@@ -4,7 +4,7 @@ import FWCore.ParameterSet.Config as cms
 ##### Set up the standard input collections in miniAOD ####
 ###########################################################
 
-collectionMap = cms.PSet ( 
+collectionMap = cms.PSet (
     beamspots                   =  cms.InputTag  ('offlineBeamSpot',                ''),
     electrons                   =  cms.InputTag  ('slimmedElectrons',               ''),
     generatorweights            =  cms.InputTag  ('generator',                      ''),

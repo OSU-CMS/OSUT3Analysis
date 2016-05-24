@@ -31,7 +31,7 @@ trying to build OSUT3Analysis/AnaTools if these packages are not present, but
 they can be safely ignored.-->
 <!--=========================================================================-->
 <!-- disappearing tracks packages -->
-<use  name="DisappTrks/CandidateTrackProducer"/>  
+<use  name="DisappTrks/CandidateTrackProducer"/>
 <!-- BEANs packages -->
 <use  name="BEAN/Collections"/>
 <!--=========================================================================-->

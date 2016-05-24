@@ -33,7 +33,7 @@ namespace anatools {
         name << ']';
       }
       return TypeWithDict::byName(name.str());
-    } 
+    }
     return TypeWithDict::byName(dataMember_->GetTrueTypeName());
   }
 

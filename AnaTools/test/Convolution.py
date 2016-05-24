@@ -7,7 +7,7 @@ import math
 import copy
 import re
 from array import *
-import numpy as np 
+import numpy as np
 from optparse import OptionParser
 from OSUT3Analysis.Configuration.processingUtilities import *
 from ROOT import *

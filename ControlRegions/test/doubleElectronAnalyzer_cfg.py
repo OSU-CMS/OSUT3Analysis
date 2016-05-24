@@ -12,7 +12,7 @@ dir = "/data/users/hart/condor/eMuMinimal/W0jets/EMu_Minimal/"
 
 for file in os.listdir(dir):
         process.source.fileNames.extend(cms.untracked.vstring('file:' + dir + '/' + file))
-        
+
 #output file name when running interactively
 process.TFileService.fileName = 'hist.root'
 

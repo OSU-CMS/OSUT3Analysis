@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-# Script to merge skim output files into a single file.  
+# Script to merge skim output files into a single file.
 
-import os 
-import re 
+import os
+import re
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from optparse import OptionParser
@@ -40,10 +40,10 @@ if arguments.localConfig:
     composite_datasets = get_composite_datasets(datasets, composite_dataset_definitions)
     split_datasets   = split_composite_datasets(datasets, composite_dataset_definitions)
 elif arguments.dataset != "":
-    split_datasets.append(arguments.dataset) 
+    split_datasets.append(arguments.dataset)
 else:
     print "There are no datasets to merge!"
-    
+
 
 ###############################################################################
 #                           Loop over datasets.                               #
@@ -55,21 +55,21 @@ for dataset in split_datasets:
         continue
     os.chdir(directory)
 
-    # Get a list of all skim channels, each of which is in a different directory 
-    channels = os.popen('ls -d */ -1').read().split('\n') 
-    for channel in channels: 
+    # Get a list of all skim channels, each of which is in a different directory
+    channels = os.popen('ls -d */ -1').read().split('\n')
+    for channel in channels:
         if channel == 'merged/' or channel == '':
-            continue  
-        skimFiles = os.popen('ls ' + channel + '*root -1').read().split('\n') 
+            continue
+        skimFiles = os.popen('ls ' + channel + '*root -1').read().split('\n')
         command = 'edmCopyPickMerge inputFiles="'
         for skimFile in skimFiles:
-            if ".root" in skimFile: 
+            if ".root" in skimFile:
                 command += "file:" + skimFile + ","
         command = command[:-1]  # Remove trailing comma
-        command += '" outputFile="' + channel + 'merged/skimMerged.root"' 
-        if arguments.verbose: 
-            print "command = ", command 
+        command += '" outputFile="' + channel + 'merged/skimMerged.root"'
+        if arguments.verbose:
+            print "command = ", command
         os.system("mkdir -p " + directory + "/" + channel + "merged/")
         os.system(command)
-        print "Created condor/" + arguments.condorDir + "/" + dataset + "/" + channel + "merged/skimMerged.root"  
+        print "Created condor/" + arguments.condorDir + "/" + dataset + "/" + channel + "merged/skimMerged.root"
 

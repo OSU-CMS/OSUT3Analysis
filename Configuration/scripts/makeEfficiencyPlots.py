@@ -28,25 +28,25 @@ parser.add_option("--dontRebinRatio", action="store_true", dest="dontRebinRatio"
                   help="don't do the rebinning of ratio plots")
 parser.add_option("--noTGraph", action="store_true", dest="noTGraph", default=False,
                   help="don't make a TGraph; just make a TH1")
-parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,		 
-                  help="Set logarithmic scale on vertical axis on all plots")	 
-parser.add_option("--ymin", dest="setYMin", 
-                  help="Minimum of y axis")	 
-parser.add_option("--ymax", dest="setYMax", 
-                  help="Maximum of y axis")	 
+parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,
+                  help="Set logarithmic scale on vertical axis on all plots")
+parser.add_option("--ymin", dest="setYMin",
+                  help="Minimum of y axis")
+parser.add_option("--ymax", dest="setYMax",
+                  help="Maximum of y axis")
 parser.add_option("--hist", action="store_true", dest="plot_hist", default=False,
                                     help="plot as hollow histograms instead of error bar crosses")
 parser.add_option("--line-width", dest="line_width",
                                     help="set line width (default is 2)")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                  help="verbose output") 
+                  help="verbose output")
 
 (arguments, args) = parser.parse_args()
 
 
 if arguments.localConfig:
     sys.path.append(os.getcwd())
-    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")  # Remove .py from end of config file first.  
+    exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")  # Remove .py from end of config file first.
 
 
 
@@ -57,18 +57,18 @@ if arguments.makeRatioPlots or arguments.makeDiffPlots:
         print "You need to have exactly two input sources to produce ratio or difference plots, turning them off"
         arguments.makeRatioPlots = False
         arguments.makeDiffPlots = False
-        
+
 if arguments.makeRatioPlots and arguments.makeDiffPlots:
     print "You have requested both ratio and difference plots.  Will make just ratio plots instead"
     arguments.makeRatioPlots = False
 
 if arguments.makeRatioPlots and not arguments.noTGraph:
-    print "You have requested ratio plots, but this is not supported with TGraph's.  Try again with -r --noTGraph."  
+    print "You have requested ratio plots, but this is not supported with TGraph's.  Try again with -r --noTGraph."
     arguments.makeRatioPlots = False
 
 
 
-from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, TH1F, TCanvas, TString, TLegend, TLegendEntry, TIter, TKey, TPaveLabel, gPad, TGraphAsymmErrors  
+from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, TH1F, TCanvas, TString, TLegend, TLegendEntry, TIter, TKey, TPaveLabel, gPad, TGraphAsymmErrors
 
 
 ### setting ROOT options so our plots will look awesome and everyone will love us
@@ -179,7 +179,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
             return (Data-MC)/MC
         else:
             return 0
-    
+
     def groupErr(group):
         Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
         dataErr2,mcErr2 = [sum(hist.GetBinError(i)**2 for i in group) for hist in [dataHist,mcHist]]
@@ -187,7 +187,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
             return abs(math.sqrt( (dataErr2+mcErr2)/(Data-MC)**2 + mcErr2/MC**2 ) * (Data-MC)/MC)
         else:
             return 0
-        
+
 
     def regroup(groups):
         err,iG = max( (groupErr(g),groups.index(g)) for g in groups )
@@ -200,7 +200,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
     if ((dataHist.GetName().find("num") is not -1 and dataHist.GetName().find("Primaryvertexs") is -1) or
         dataHist.GetName().find("CutFlow")  is not -1 or
         dataHist.GetName().find("GenMatch") is not -1 or
-        arguments.dontRebinRatio): 
+        arguments.dontRebinRatio):
         ratio = dataHist.Clone()
         ratio.Add(mcHist,-1)
         ratio.Divide(mcHist)
@@ -224,7 +224,7 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
 ##########################################################################################################################################
 
 
-def MakeOneHist(dirName, histogramName): 
+def MakeOneHist(dirName, histogramName):
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
@@ -236,20 +236,20 @@ def MakeOneHist(dirName, histogramName):
     LumiLabel.SetBorderSize(0)
     LumiLabel.SetFillColor(0)
     LumiLabel.SetFillStyle(0)
-    
+
     NormLabel = TPaveLabel()
     NormLabel.SetDrawOption("NDC")
     NormLabel.SetX1NDC(topLeft_x_left)
     NormLabel.SetX2NDC(topLeft_x_right)
-    
+
     NormLabel.SetBorderSize(0)
     NormLabel.SetFillColor(0)
     NormLabel.SetFillStyle(0)
-    
+
     NormText = ""
     if arguments.normalizeToUnitArea:
         NormText = "Scaled to unit area"
-        
+
     Legend = TLegend()
     Legend.SetBorderSize(0)
     Legend.SetFillColor(0)
@@ -260,36 +260,36 @@ def MakeOneHist(dirName, histogramName):
     LegendEntries = []
 
     colorIndex = 0
-    
+
     for source in input_sources: # loop over different input sources in config file
         dataset_file = "condor/%s/%s.root" % (source['condor_dir'],source['dataset'])
         inputFile = TFile(dataset_file)
         NumHistogramObj = inputFile.Get(source['num_channel'] + "Plotter/" + dirName + "/" + histogramName)
-        if 'condor_dir_den' in source:   # If specified, take the denominator histogram from a different condor directory.  
+        if 'condor_dir_den' in source:   # If specified, take the denominator histogram from a different condor directory.
             dataset_fileDen = "condor/%s/%s.root" % (source['condor_dir_den'],source['dataset'])
             inputFileDen = TFile(dataset_fileDen)
             DenHistogramObj = inputFileDen.Get(source['den_channel'] + "Plotter/" + dirName + "/" + histogramName)
-        else:   # Default is to use the same condor directory  
+        else:   # Default is to use the same condor directory
             DenHistogramObj = inputFile.Get(source['den_channel'] + "Plotter/" + dirName + "/" + histogramName)
         if not NumHistogramObj:
-            print "WARNING:  Could not find histogram " + source['num_channel'] + "Plotter/" + dirName + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
-            return 
+            print "WARNING:  Could not find histogram " + source['num_channel'] + "Plotter/" + dirName + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."
+            return
         if not DenHistogramObj:
-            print "WARNING:  Could not find histogram " + source['den_channel'] + "Plotter/" + dirName + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."  
-            return 
+            print "WARNING:  Could not find histogram " + source['den_channel'] + "Plotter/" + dirName + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."
+            return
 
         Histogram = NumHistogramObj.Clone()
-        if Histogram.Class().InheritsFrom("TH2"): 
+        if Histogram.Class().InheritsFrom("TH2"):
             Histogram.SetName(Histogram.GetName() + "__" + source['dataset'])
         Histogram.SetDirectory(0)
         DenHistogram = DenHistogramObj.Clone()
         DenHistogram.SetDirectory(0)
         inputFile.Close()
-        
+
         if arguments.rebinFactor:
             RebinFactor = int(arguments.rebinFactor)
             #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
-            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") is -1 and not Histogram.Class().InheritsFrom("TH2"):  
+            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") is -1 and not Histogram.Class().InheritsFrom("TH2"):
                 Histogram.Rebin(RebinFactor)
                 DenHistogram.Rebin(RebinFactor)
 
@@ -297,7 +297,7 @@ def MakeOneHist(dirName, histogramName):
         xAxisLabel = Histogram.GetXaxis().GetTitle()
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
-        
+
         if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
             yAxisLabel = "#epsilon_{ " + cutName + "} (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex] + " width)"
         else:
@@ -308,17 +308,17 @@ def MakeOneHist(dirName, histogramName):
         #Histogram = ROOT.TGraphAsymmErrors(NumHistogramObj,DenHistogramObj)
         if arguments.noTGraph or Histogram.Class().InheritsFrom("TH2"):
             Histogram.Divide(DenHistogram)
-        else: 
+        else:
             Histogram = TGraphAsymmErrors(Histogram,DenHistogram)
-        
+
         if not arguments.makeFancy:
             fullTitle = Histogram.GetTitle()
             splitTitle = fullTitle.split(":")
             #    print splitTitle
-            if len(splitTitle) > 1: 
+            if len(splitTitle) > 1:
                 histoTitle = splitTitle[1].lstrip(" ")
             else:
-                histoTitle = splitTitle[0]  
+                histoTitle = splitTitle[0]
         else:
             histoTitle = ""
 
@@ -331,19 +331,19 @@ def MakeOneHist(dirName, histogramName):
             colorIndex = colorIndex + 1
             if colorIndex is len(colorList):
                 colorIndex = 0
-        
-        markerStyle = 20 
+
+        markerStyle = 20
         if 'marker' in source:
             markerStyle = markers[source['marker']]
         if 'fill' in source:
             markerStyle = markerStyle + fills[source['fill']]
 
         Histogram.SetMarkerStyle(markerStyle)
-        
+
         Histogram.SetLineWidth(line_width)
         Histogram.SetFillStyle(0)
 
-        LegendEntries.append(source['legend_entry']) 
+        LegendEntries.append(source['legend_entry'])
         Histograms.append(Histogram)
 
     ### scaling histograms as per user's specifications
@@ -360,7 +360,7 @@ def MakeOneHist(dirName, histogramName):
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
     finalMax = 0
-    if arguments.noTGraph:  
+    if arguments.noTGraph:
         for histogram in Histograms:
             currentMax = histogram.GetMaximum() + histogram.GetBinError(histogram.GetMaximumBin())
             if(currentMax > finalMax):
@@ -368,7 +368,7 @@ def MakeOneHist(dirName, histogramName):
     finalMax = 1.5*finalMax
     if finalMax is 0:
         finalMax = 1
-    if arguments.setYMax:  
+    if arguments.setYMax:
         finalMax = float(arguments.setYMax)
 
     ### Drawing histograms to canvas
@@ -412,19 +412,19 @@ def MakeOneHist(dirName, histogramName):
             histogram.SetTitle(histoTitle)
             histogram.Draw("colz")
             DatasetName = histogram.GetName()
-            DatasetName = DatasetName[DatasetName.rfind('__')+2:]  # substring starting with the last underscore  
+            DatasetName = DatasetName[DatasetName.rfind('__')+2:]  # substring starting with the last underscore
             DatasetLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,DatasetName,"NDC")
             DatasetLabel.SetBorderSize(0)
             DatasetLabel.SetFillColor(0)
             DatasetLabel.SetFillStyle(0)
-            DatasetLabel.Draw()  
+            DatasetLabel.Draw()
             outputFile.cd()
-            Canvas.SetName(histogram.GetName())  
+            Canvas.SetName(histogram.GetName())
             Canvas.Write()
             if arguments.makeFancy:
                 HeaderLabel.Draw()
 
-        else: 
+        else:
             if histogram.InheritsFrom("TGraph") and histCounter==0:
                 plotting_options = "AP"
             histogram.SetTitle(histoTitle)
@@ -500,13 +500,13 @@ def MakeOneHist(dirName, histogramName):
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMax,1.2*YMax)
                 else:
                     Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
-                            
+
         Comparison.GetYaxis().SetNdivisions(205)
         Comparison.Draw("E0")
 
     outputFile.cd(dirName)
     Canvas.Write()
-    
+
     if arguments.savePDFs:
         Canvas.SaveAs("efficiency_histograms_pdfs/"+histogramName+".pdf")
 
@@ -524,9 +524,9 @@ if arguments.outputFileName:
 outputFile = TFile(outputFileName, "RECREATE")
 
 outputConfigFile = outputFileName.replace(".root", ".py")
-if os.path.exists(outputConfigFile):    
-    os.system("mv " + outputConfigFile + " " + outputConfigFile.replace(".py", "-bkup.py"))  # make a backup copy of a previous config file  
-os.system("cp " + arguments.localConfig + " " + outputConfigFile)  # make a copy of the config file 
+if os.path.exists(outputConfigFile):
+    os.system("mv " + outputConfigFile + " " + outputConfigFile.replace(".py", "-bkup.py"))  # make a backup copy of a previous config file
+os.system("cp " + arguments.localConfig + " " + outputConfigFile)  # make a copy of the config file
 
 first_input = input_sources[0]
 
@@ -534,42 +534,42 @@ first_input = input_sources[0]
 #### use the first input file as a template and make comparison versions of all its histograms
 testFile = TFile("condor/" + first_input['condor_dir'] + "/" + first_input['dataset'] + ".root")
 if arguments.verbose:
-    print "Opened testFile: ", testFile.GetName()  
+    print "Opened testFile: ", testFile.GetName()
 rootDirectory = first_input['num_channel'] + "Plotter"
 testFile.cd(rootDirectory)
 if arguments.verbose:
-    print "Going to rootDirectory: ", rootDirectory  
+    print "Going to rootDirectory: ", rootDirectory
 
 if arguments.savePDFs:
     os.system("rm -rf efficiency_histograms_pdfs")
     os.system("mkdir efficiency_histograms_pdfs")
-    
+
 
 for key in gDirectory.GetListOfKeys(): # Loop over directories in same way as in makePlots.py
     if arguments.verbose:
-        print "  Checking key: ", key.GetName()  
+        print "  Checking key: ", key.GetName()
 
     if (key.GetClassName() != "TDirectoryFile"):
         continue
 
     level2Directory = rootDirectory + "/" + key.GetName()
     if arguments.verbose:
-        print "  Checking directory: ", level2Directory  
-    outputFile.cd() 
+        print "  Checking directory: ", level2Directory
+    outputFile.cd()
     outputFile.mkdir(key.GetName())
-    outputFile.cd(key.GetName())  
+    outputFile.cd(key.GetName())
     testFile.cd(level2Directory)
     for key2 in gDirectory.GetListOfKeys():
         if re.match ('TH1', key2.GetClassName()): #found a 1D histogram
             if arguments.verbose:
                 print "    Will make 1D histogram: ", key2.GetName()
             MakeOneHist(key.GetName(), key2.GetName())
-        if arguments.draw2DPlots and re.match ('TH2', key2.GetClassName()):  # make 2D histograms  
+        if arguments.draw2DPlots and re.match ('TH2', key2.GetClassName()):  # make 2D histograms
             if arguments.verbose:
                 print "    Will make 2D histogram: ", key2.GetName()
             MakeOneHist(key.GetName(), key2.GetName())
 
 testFile.Close()
 outputFile.Close()
-print "Finished writing " + outputFile.GetName()  
+print "Finished writing " + outputFile.GetName()
 

@@ -17,7 +17,7 @@ from OSUT3Analysis.ControlRegions.Preselections import *
 
 muEGTriggerPath = cms.vstring("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v")
 
-#defining these cuts first since they will be used repeatedly 
+#defining these cuts first since they will be used repeatedly
 e_os_cut = cms.PSet (
     inputCollection = cms.vstring("electron-electron pairs"),
     cutString = cms.string("chargeProduct < 0"),

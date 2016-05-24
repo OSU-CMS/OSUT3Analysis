@@ -192,7 +192,7 @@ for sample in processed_datasets:
             sysError_ = fractionalSysError_ * yield_
         else:
             sysError_ = 0.0
-	roundedNumbersDictionary = roundingNumbers(yield_,statError_,sysError_)
+        roundedNumbersDictionary = roundingNumbers(yield_,statError_,sysError_)
         yields[sample][channel] = str(roundedNumbersDictionary['central_value'])
         stat_errors[sample][channel] = str(roundedNumbersDictionary['stat_error'])
         sys_errors[sample][channel] = str(roundedNumbersDictionary['syst_error'])
@@ -233,12 +233,12 @@ for channel in channels:
         if arguments.includeSystematics:
             line = line + " $\pm$ " + sys_errors[sample][channel]
         line = line + endLine + newLine
-	fout.write(line)
+        fout.write(line)
 
     #write a line with the sum of the backgrounds
     if bgMCcounter is not 0:
         roundedNumbersDictionary = roundingNumbers(bgMCSum[channel], math.sqrt(bgMCStatErrSquared[channel]),math.sqrt(bgMCSysErrSquared[channel]))
-	bgMCSum_ = str(roundedNumbersDictionary['central_value'])
+        bgMCSum_ = str(roundedNumbersDictionary['central_value'])
         bgMCStatErr_ = str(roundedNumbersDictionary['stat_error'])
         bgMCSysErr_ = str(roundedNumbersDictionary['syst_error'])
         line = hLine+"Total expected background & " + bgMCSum_ + " $\pm$ " + bgMCStatErr_
@@ -268,7 +268,7 @@ for channel in channels:
         if arguments.includeSystematics:
             line = line + " $\pm$ " + sys_errors[sample][channel]
         line = line + endLine + newLine
-	fout.write(line)
+        fout.write(line)
     if signalCounter > 0:
         fout.write(hLine)
 

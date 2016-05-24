@@ -53,8 +53,8 @@ class ObjectSelector : public edm::EDFilter
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<T> >  pl_;  
-    auto_ptr<vector<TO> > plO_; // original format  
+    auto_ptr<vector<T> >  pl_;
+    auto_ptr<vector<TO> > plO_; // original format
 };
 
 template<class T, class TO>
@@ -69,7 +69,7 @@ ObjectSelector<T, TO>::ObjectSelector (const edm::ParameterSet &cfg) :
   collection_ = collections_.getParameter<edm::InputTag> (collectionToFilter_);
 
   produces<vector<T> >  (collection_.instance ());
-  produces<vector<TO> > (ORIGINAL_FORMAT);  
+  produces<vector<TO> > (ORIGINAL_FORMAT);
 
   collectionToken_ = consumes<vector<T> > (collection_);
   collectionOrigToken_ = consumes<vector<TO> > (originalCollection_);
@@ -119,7 +119,7 @@ template<class T, class TO> bool
   plO_ = auto_ptr<vector<TO> > (new vector<TO> ());
   if (collection.isValid () && collectionOrig.isValid())
     {
-      auto objOrig = collectionOrig->begin();  
+      auto objOrig = collectionOrig->begin();
       for (auto object = collection->begin (); object != collection->end (); object++, objOrig++)
         {
           unsigned iObject = object - collection->begin ();
@@ -146,7 +146,7 @@ template<class T, class TO> bool
   //////////////////////////////////////////////////////////////////////////////
 
   event.put (pl_,  collection_.instance ());
-  event.put (plO_, ORIGINAL_FORMAT);  
+  event.put (plO_, ORIGINAL_FORMAT);
   pl_.reset ();
   plO_.reset ();
   firstEvent_ = false;
