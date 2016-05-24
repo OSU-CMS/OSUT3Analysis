@@ -22,6 +22,7 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   pfCandidateToken_ = consumes<vector<pat::PackedCandidate>>(pfCandidate_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collPrimaryvertexs_);
+  metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
 }
 
 OSUMuonProducer::~OSUMuonProducer ()
@@ -31,7 +32,7 @@ OSUMuonProducer::~OSUMuonProducer ()
 void
 OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<pat::PackedCandidate>> cands; 
+  edm::Handle<vector<pat::PackedCandidate>> cands;
   event.getByToken(pfCandidateToken_, cands);
   edm::Handle<vector<TYPE(muons)> > collection;
   edm::Handle<vector<TYPE(primaryvertexs)> > collPrimaryvertexs;
@@ -43,11 +44,13 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   }
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
+  edm::Handle<vector<osu::Met> > met;
+  event.getByToken (metToken_, met);
 
   pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     {
-      osu::Muon muon (object, particles, cfg_);
+      osu::Muon muon (object, particles, cfg_, met->at (0));
       if (collPrimaryvertexs->size ())
         {
           const reco::Vertex &vtx = collPrimaryvertexs->at (0);
@@ -60,27 +63,27 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       double puPt = 0;
       int muonPVIndex = 0;
       if(cands.isValid())
-        { 
-          for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+        {
+          for (auto cand = cands->begin(); cand != cands->end(); cand++)
             {
               if (!(abs(cand->pdgId()) == 13 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.001))
-                continue;  
+                continue;
               else
                 {
-                  muonPVIndex = cand->vertexRef().index(); 
+                  muonPVIndex = cand->vertexRef().index();
                   break;
                 }
             }
           if(muonPVIndex == 0)
-           { 
-             for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+           {
+             for (auto cand = cands->begin(); cand != cands->end(); cand++)
                 {
                   if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.4)
-                    { 
-                      pat::PackedCandidate thatPFCandidate = (*cand); 
+                    {
+                      pat::PackedCandidate thatPFCandidate = (*cand);
                       int ivtx = cand->vertexRef().index();	
                       if(ivtx == muonPVIndex || ivtx == -1)
-                        { 
+                        {
                           if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001 && cand->fromPV() >= 2)
                             chargedHadronPt = cand->pt() + chargedHadronPt;
                         }
@@ -92,7 +95,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
            }
           else
             {
-             for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+             for (auto cand = cands->begin(); cand != cands->end(); cand++)
                {
                  if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.4)
                     {
@@ -110,7 +113,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
              pfdBetaIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationR04().sumNeutralHadronEt + object.pfIsolationR04().sumPhotonEt - 0.5*puPt))/object.pt();
             }
          }
-      muon.set_pfdBetaIsoCorr(pfdBetaIsoCorr); 
+      muon.set_pfdBetaIsoCorr(pfdBetaIsoCorr);
       pl_->push_back (muon);
     }
 

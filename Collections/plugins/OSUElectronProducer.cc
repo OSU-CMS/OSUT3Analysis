@@ -5,13 +5,13 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
-  collections_    (cfg.getParameter<edm::ParameterSet> ("collections")),
+  collections_  (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_ (cfg),
-  beamSpot_       (cfg.getParameter<edm::InputTag> ("beamSpot")),
-  conversions_    (cfg.getParameter<edm::InputTag> ("conversions")),
-  pfCandidate_    (cfg.getParameter<edm::InputTag> ("pfCandidate")),
-  rho_            (cfg.getParameter<edm::InputTag> ("rho")),
-  vertices_            (cfg.getParameter<edm::InputTag> ("vertices"))
+  beamSpot_     (cfg.getParameter<edm::InputTag>  ("beamSpot")),
+  conversions_  (cfg.getParameter<edm::InputTag>  ("conversions")),
+  pfCandidate_  (cfg.getParameter<edm::InputTag>  ("pfCandidate")),
+  rho_          (cfg.getParameter<edm::InputTag>  ("rho")),
+  vertices_     (cfg.getParameter<edm::InputTag>  ("vertices"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
@@ -23,6 +23,7 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   pfCandidateToken_ = consumes<vector<pat::PackedCandidate>>(pfCandidate_);
   rhoToken_ = consumes<double> (rho_);
   verticesToken_ = consumes<vector<TYPE(primaryvertexs)> > (vertices_);
+  metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
 }
 
 OSUElectronProducer::~OSUElectronProducer ()
@@ -32,31 +33,33 @@ OSUElectronProducer::~OSUElectronProducer ()
 void
 OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM  
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
   using namespace edm;
   using namespace reco;
-  
-  Handle<vector<pat::PackedCandidate>> cands; 
+
+  Handle<vector<pat::PackedCandidate>> cands;
   event.getByToken(pfCandidateToken_, cands);
   edm::Handle<vector<TYPE (electrons)> > collection;
   edm::Handle<TYPE(beamspots)> beamSpot;
   edm::Handle<vector<reco::Conversion> > conversions;
   edm::Handle<double> rho;
   edm::Handle<vector<TYPE(primaryvertexs)> > vertices;
-  
+
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
+  edm::Handle<vector<osu::Met> > met;
+  event.getByToken (metToken_, met);
   if (!event.getByToken (token_, collection))
     return;
   pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
     {
-      osu::Electron electron (object, particles, cfg_);
+      osu::Electron electron (object, particles, cfg_, met->at (0));
       if(event.getByToken (rhoToken_, rho))
-        electron.set_rho((float)(*rho)); 
+        electron.set_rho((float)(*rho));
       if(event.getByToken (beamSpotToken_, beamSpot) && event.getByToken (conversionsToken_, conversions) && event.getByToken (verticesToken_, vertices) && vertices->size ())
         electron.set_passesTightID_noIsolation (*beamSpot, vertices->at (0), conversions);
-      
+
       float effectiveArea = 0;
       // electron effective areas from https://indico.cern.ch/event/369239/contribution/4/attachments/1134761/1623262/talk_effective_areas_25ns.pdf
       // (see slide 12)
@@ -80,27 +83,27 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       double puPt = 0;
       int electronPVIndex = 0;
       if(cands.isValid())
-        { 
-          for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+        {
+          for (auto cand = cands->begin(); cand != cands->end(); cand++)
             {
               if (!(abs(cand->pdgId()) == 11 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.001))
-                continue;  
+                continue;
               else
                 {
-                  electronPVIndex = cand->vertexRef().index(); 
+                  electronPVIndex = cand->vertexRef().index();
                   break;
                 }
             }
           if(electronPVIndex == 0)
             {
-              for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+              for (auto cand = cands->begin(); cand != cands->end(); cand++)
                 {
                   if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.3)
-                    { 
-                      pat::PackedCandidate thatPFCandidate = (*cand); 
+                    {
+                      pat::PackedCandidate thatPFCandidate = (*cand);
                       int ivtx = cand->vertexRef().index();	
                       if(ivtx == electronPVIndex || ivtx == -1)
-                        { 
+                        {
                           if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001 && cand->fromPV() >= 2)
                             chargedHadronPt = cand->pt() + chargedHadronPt;
                         }
@@ -108,18 +111,18 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
                         puPt = cand->pt() + puPt;
                     }
                 }
-          pfdRhoIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationVariables().sumNeutralHadronEt + object.pfIsolationVariables().sumPhotonEt - double(effectiveArea *(float)(*rho))))/object.pt();  
-            } 
+          pfdRhoIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationVariables().sumNeutralHadronEt + object.pfIsolationVariables().sumPhotonEt - double(effectiveArea *(float)(*rho))))/object.pt();
+            }
           else
             {
-              for (auto cand = cands->begin(); cand != cands->end(); cand++) 
+              for (auto cand = cands->begin(); cand != cands->end(); cand++)
                 {
                   if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.3)
-                    { 
-                      pat::PackedCandidate thatPFCandidate = (*cand); 
+                    {
+                      pat::PackedCandidate thatPFCandidate = (*cand);
                       int ivtx = cand->vertexRef().index();	
                       if(ivtx == electronPVIndex || ivtx == -1)
-                        { 
+                        {
                           if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001)
                             chargedHadronPt = cand->pt() + chargedHadronPt;
                         }
@@ -127,10 +130,10 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
                         puPt = cand->pt() + puPt;
                     }
                 }
-          pfdRhoIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationVariables().sumNeutralHadronEt + object.pfIsolationVariables().sumPhotonEt - double(effectiveArea *(float)(*rho))))/object.pt();  
-            } 
+          pfdRhoIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationVariables().sumNeutralHadronEt + object.pfIsolationVariables().sumPhotonEt - double(effectiveArea *(float)(*rho))))/object.pt();
+            }
        }
-      electron.set_pfdRhoIsoCorr(pfdRhoIsoCorr); 
+      electron.set_pfdRhoIsoCorr(pfdRhoIsoCorr);
       pl_->push_back (electron);
     }
   event.put (pl_, collection_.instance ());

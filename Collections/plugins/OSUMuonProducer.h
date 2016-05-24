@@ -26,6 +26,7 @@ class OSUMuonProducer : public edm::EDProducer
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
     edm::EDGetTokenT<vector<pat::PackedCandidate> > pfCandidateToken_;
     edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexToken_;
+    edm::EDGetTokenT<vector<osu::Met> > metToken_;
     edm::InputTag      pfCandidate_;
     edm::ParameterSet  cfg_;
     edm::InputTag      collPrimaryvertexs_;

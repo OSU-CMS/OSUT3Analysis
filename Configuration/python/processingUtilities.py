@@ -225,7 +225,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
     if osusub.batchMode:
       fileName = osusub.runList[0]
     if fileName.find ("file:") == 0:
-        fileName = fileName[5:]    
+        fileName = fileName[5:]
     skimDirectory = os.path.dirname (os.path.realpath (fileName))
     if os.path.isfile (skimDirectory + "/SkimInputTags.pkl"):
         fin = open (skimDirectory + "/SkimInputTags.pkl")
@@ -237,9 +237,9 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
         if rootFile.find("skim_") == 0:
             print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found."
-            print "Input file is", fileName 
+            print "Input file is", fileName
             print "Be sure that you have run mergeOut.py."
-            exit(0)  
+            exit(0)
 
     ############################################################################
 
@@ -308,7 +308,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
             if os.path.islink (add_channels.originalName):
                 os.unlink (add_channels.originalName)
             if os.path.exists (add_channels.originalName):
-                os.remove (add_channels.originalName)                
+                os.remove (add_channels.originalName)
             os.symlink (outputName, add_channels.originalName)
     ############################################################################
 
@@ -407,21 +407,21 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         ########################################################################
         # Set up the output commands. For now, we drop everything except the
         # collections given in the collections PSet, and a few other collections
-        # that are generally useful.  
+        # that are generally useful.
         ########################################################################
         outputCommands = ["drop *"]
         outputCommands.append("keep *_*_uservariables_*")
         outputCommands.append("keep *_*_eventvariables_*")
-        outputCommands.append("keep *_*_reducedConversions_*")  
+        outputCommands.append("keep *_*_reducedConversions_*")
         ########################################################################
-        #Check all the modules in collectionProducer, if a module is an EDProducer 
-        #and have extra InputTags specified, keep the correspoding collections 
+        #Check all the modules in collectionProducer, if a module is an EDProducer
+        #and have extra InputTags specified, keep the correspoding collections
         #in the outputCommands
         ########################################################################
         for collection in dir(collectionProducer):
-            if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):    
+            if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):
                 dic = vars(getattr(collectionProducer,collection))
-                for p in dic: 
+                for p in dic:
                     if 'InputTag' in str(dic[p]):
                         outputCommand = "keep *_"
                         outputCommand += dic[p].getModuleLabel ()
@@ -433,11 +433,11 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                         else:
                             outputCommand += "*"
                         outputCommands.append (outputCommand)
-                        
+
         ########################################################################
-        # Add keep statements for all collections except uservariables and 
-        # eventvariables.  
-        ########################################################################        
+        # Add keep statements for all collections except uservariables and
+        # eventvariables.
+        ########################################################################
         for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables" and a is not "eventvariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep *_"
@@ -452,7 +452,11 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
             outputCommands.append (outputCommand)
         ########################################################################
 
+        # The following collections are meant to be produced before any others.
+        # This is usually necessary because the production of other collections
+        # depends on these.
         collectionsToProduce = [
+            "mets",         # needed in order to use metNoMu in the lepton collections
             "mcparticles",  # needed for gen-matching
         ]
 
@@ -483,10 +487,14 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                     # NOT ERASE!!!
                     if collection != "mcparticles":
                         setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", ""))
+                    # Set the input tag for mets to that produced by the second
+                    # object producer. Needed for metNoMu. DO NOT ERASE!!!
+                    if collection != "mcparticles" and collection != "mets":
+                        setattr (objectProducer.collections, "mets", cms.InputTag ("objectProducer1", ""))
                     channelPath += objectProducer
                     setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                     newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
-                    if collection in cutCollections: 
+                    if collection in cutCollections:
                         dropCommand = "drop *_" + inputTag.getModuleLabel () + "_" + inputTag.getProductInstanceLabel () + "_"
                         if inputTag.getProcessName ():
                             dropCommand += inputTag.getProcessName ()
@@ -505,6 +513,10 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                 # NOT ERASE!!!
                 if collection != "mcparticles":
                     setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", ""))
+                # Set the input tag for mets to that produced by the second
+                # object producer. Needed for metNoMu. DO NOT ERASE!!!
+                if collection != "mcparticles" and collection != "mets":
+                    setattr (objectProducer.collections, "mets", cms.InputTag ("objectProducer1", ""))
                 channelPath += objectProducer
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 originalInputTag = getattr (collections, collection)
@@ -578,48 +590,48 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
             outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_originalFormat_" + process.name_ ())
             add_channels.filterIndex += 1
         ########################################################################
-        # Add producers for the scaling factor producers which need the selected 
-        # objects. For example the lepton scaling factors. 
+        # Add producers for the scaling factor producers which need the selected
+        # objects. For example the lepton scaling factors.
         ########################################################################
         if len(scalingfactorproducers):
             for module in scalingfactorproducers:
-                # Here we try to add the original producer as specified in the config files. 
+                # Here we try to add the original producer as specified in the config files.
                 objectProducer = cms.EDProducer (str(module['name']),
-                                        # Use filteredCollections, the ones selected by the objectSelectors   
+                                        # Use filteredCollections, the ones selected by the objectSelectors
                                         collections = copy.deepcopy(filteredCollections)
                                            )
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
-                # Add the user defined configable variables. 
+                # Add the user defined configable variables.
                 for key in module:
                     if str(key) != 'name':
                         setattr (objectProducer, key, module[key])
-                # Add this producer in to the path of this channel. 
+                # Add this producer in to the path of this channel.
                 channelPath += objectProducer
                 add_channels.producerIndex += 1
-                # Now add osu eventvariable producer to produce <osu::eventvariable> for the plotter to use. 
+                # Now add osu eventvariable producer to produce <osu::eventvariable> for the plotter to use.
                 objectProducer = getattr (collectionProducer, "eventvariables").clone()
                 objectProducer.collections = copy.deepcopy(filteredCollections)
                 channelPath += objectProducer
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
-                # Use the eventvariables producered in the above specific producers. 
+                # Use the eventvariables producered in the above specific producers.
                 setattr(objectProducer.collections, "eventvariables" ,cms.InputTag ("objectProducer" + str (add_channels.producerIndex - 1), "eventvariables"))
-                # Add the eventvariables produced in this module to the filteredCollections for the plotter after to use. 
+                # Add the eventvariables produced in this module to the filteredCollections for the plotter after to use.
                 filteredCollections.eventvariables.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), "eventvariables"))
                 add_channels.producerIndex += 1
-        
+
         if len(standAloneAnalyzers):
             for module in standAloneAnalyzers:
-                # Here we try to add the original producer as specified in the config files. 
+                # Here we try to add the original producer as specified in the config files.
                 standAloneAnalyzer = cms.EDAnalyzer (str(module['name']),
-                                        # Use filteredCollections, the ones selected by the objectSelectors   
+                                        # Use filteredCollections, the ones selected by the objectSelectors
                                         collections = copy.deepcopy(filteredCollections)
                                            )
                 setattr (process, str(module['name']) + str (add_channels.standAloneAnalyzerIndex), standAloneAnalyzer)
-                # Add the user defined configable variables. 
+                # Add the user defined configable variables.
                 for key in module:
                     if str(key) != 'name':
                         setattr (standAloneAnalyzer, key, module[key])
-                # Add this stand alone analyzer  in to the path of this channel. 
+                # Add this stand alone analyzer  in to the path of this channel.
                 channelPath += standAloneAnalyzer
                 add_channels.standAloneAnalyzerIndex += 1
         ########################################################################
@@ -662,7 +674,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         process.schedule.append(getattr(process,channelName))
     setattr (process, "endPath", add_channels.endPath)
     set_endPath(process, add_channels.endPath)
-        
+
 def set_endPath(process, endPath):
 
     ############################################################################

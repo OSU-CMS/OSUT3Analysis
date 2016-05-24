@@ -1,3 +1,5 @@
+#include "TVector2.h"
+
 #include "OSUT3Analysis/Collections/interface/Electron.h"
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 
@@ -7,31 +9,83 @@ osu::Electron::Electron ()
 {
 }
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM  
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
 
 
 osu::Electron::Electron (const TYPE(electrons) &electron) :
-  GenMatchable               (electron),
-  rho_                       (INVALID_VALUE),
-  pfdRhoIsoCorr_             (INVALID_VALUE),
-  passesTightID_noIsolation_ (false)
+  GenMatchable                (electron),
+  rho_                        (INVALID_VALUE),
+  pfdRhoIsoCorr_              (INVALID_VALUE),
+  passesTightID_noIsolation_  (false),
+  metMinusOnePt_              (INVALID_VALUE),
+  metMinusOnePx_              (INVALID_VALUE),
+  metMinusOnePy_              (INVALID_VALUE),
+  metMinusOnePhi_             (INVALID_VALUE),
+  metNoMuMinusOnePt_          (INVALID_VALUE),
+  metNoMuMinusOnePx_          (INVALID_VALUE),
+  metNoMuMinusOnePy_          (INVALID_VALUE),
+  metNoMuMinusOnePhi_         (INVALID_VALUE)
 {
 }
 
 osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vector<osu::Mcparticle> > &particles) :
-  GenMatchable               (electron, particles),
-  rho_                       (INVALID_VALUE),
-  pfdRhoIsoCorr_             (INVALID_VALUE),
-  passesTightID_noIsolation_ (false)
+  GenMatchable                (electron,        particles),
+  rho_                        (INVALID_VALUE),
+  pfdRhoIsoCorr_              (INVALID_VALUE),
+  passesTightID_noIsolation_  (false),
+  metMinusOnePt_              (INVALID_VALUE),
+  metMinusOnePx_              (INVALID_VALUE),
+  metMinusOnePy_              (INVALID_VALUE),
+  metMinusOnePhi_             (INVALID_VALUE),
+  metNoMuMinusOnePt_          (INVALID_VALUE),
+  metNoMuMinusOnePx_          (INVALID_VALUE),
+  metNoMuMinusOnePy_          (INVALID_VALUE),
+  metNoMuMinusOnePhi_         (INVALID_VALUE)
 {
 }
 
 osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
-  GenMatchable               (electron, particles, cfg),
-  rho_                       (INVALID_VALUE),
-  pfdRhoIsoCorr_             (INVALID_VALUE),
-  passesTightID_noIsolation_ (false)
+  GenMatchable                (electron,        particles,  cfg),
+  rho_                        (INVALID_VALUE),
+  pfdRhoIsoCorr_              (INVALID_VALUE),
+  passesTightID_noIsolation_  (false),
+  metMinusOnePt_              (INVALID_VALUE),
+  metMinusOnePx_              (INVALID_VALUE),
+  metMinusOnePy_              (INVALID_VALUE),
+  metMinusOnePhi_             (INVALID_VALUE),
+  metNoMuMinusOnePt_          (INVALID_VALUE),
+  metNoMuMinusOnePx_          (INVALID_VALUE),
+  metNoMuMinusOnePy_          (INVALID_VALUE),
+  metNoMuMinusOnePhi_         (INVALID_VALUE)
 {
+}
+
+osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const osu::Met &met) :
+  GenMatchable                (electron,        particles,  cfg),
+  rho_                        (INVALID_VALUE),
+  pfdRhoIsoCorr_              (INVALID_VALUE),
+  passesTightID_noIsolation_  (false),
+  metMinusOnePt_              (INVALID_VALUE),
+  metMinusOnePx_              (INVALID_VALUE),
+  metMinusOnePy_              (INVALID_VALUE),
+  metMinusOnePhi_             (INVALID_VALUE),
+  metNoMuMinusOnePt_          (INVALID_VALUE),
+  metNoMuMinusOnePx_          (INVALID_VALUE),
+  metNoMuMinusOnePy_          (INVALID_VALUE),
+  metNoMuMinusOnePhi_         (INVALID_VALUE)
+{
+  TVector2 p (met.px () + this->px (), met.py () + this->py ()),
+           pNoMu (met.noMuPx () + this->px (), met.noMuPy () + this->py ());
+
+  metMinusOnePt_ = p.Mod ();
+  metMinusOnePx_ = p.Px ();
+  metMinusOnePy_ = p.Py ();
+  metMinusOnePhi_ = p.Phi ();
+
+  metNoMuMinusOnePt_ = pNoMu.Mod ();
+  metNoMuMinusOnePx_ = pNoMu.Px ();
+  metNoMuMinusOnePy_ = pNoMu.Py ();
+  metNoMuMinusOnePhi_ = pNoMu.Phi ();
 }
 
 const int
@@ -104,6 +158,54 @@ osu::Electron::set_passesTightID_noIsolation (const reco::BeamSpot &beamspot, co
                                  && this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS)  <=  1
                                  && !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
     }
+}
+
+const double
+osu::Electron::metMinusOnePt () const
+{
+  return metMinusOnePt_;
+}
+
+const double
+osu::Electron::metMinusOnePx () const
+{
+  return metMinusOnePx_;
+}
+
+const double
+osu::Electron::metMinusOnePy () const
+{
+  return metMinusOnePy_;
+}
+
+const double
+osu::Electron::metMinusOnePhi () const
+{
+  return metMinusOnePhi_;
+}
+
+const double
+osu::Electron::metNoMuMinusOnePt () const
+{
+  return metNoMuMinusOnePt_;
+}
+
+const double
+osu::Electron::metNoMuMinusOnePx () const
+{
+  return metNoMuMinusOnePx_;
+}
+
+const double
+osu::Electron::metNoMuMinusOnePy () const
+{
+  return metNoMuMinusOnePy_;
+}
+
+const double
+osu::Electron::metNoMuMinusOnePhi () const
+{
+  return metNoMuMinusOnePhi_;
 }
 
 #else

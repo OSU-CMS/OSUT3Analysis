@@ -24,6 +24,7 @@ class OSUTauProducer : public edm::EDProducer
     edm::InputTag      collection_;
     edm::EDGetTokenT<vector<TYPE(taus)> > token_;
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
+    edm::EDGetTokenT<vector<osu::Met> > metToken_;
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 

@@ -14,6 +14,7 @@ OSUTauProducer::OSUTauProducer (const edm::ParameterSet &cfg) :
 
   token_ = consumes<vector<TYPE(taus)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
+  metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
 }
 
 OSUTauProducer::~OSUTauProducer ()
@@ -28,11 +29,13 @@ OSUTauProducer::produce (edm::Event &event, const edm::EventSetup &setup)
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
+  edm::Handle<vector<osu::Met> > met;
+  event.getByToken (metToken_, met);
 
   pl_ = auto_ptr<vector<osu::Tau> > (new vector<osu::Tau> ());
   for (const auto &object : *collection)
     {
-      const osu::Tau tau (object, particles, cfg_);
+      const osu::Tau tau (object, particles, cfg_, met->at (0));
       pl_->push_back (tau);
     }
 

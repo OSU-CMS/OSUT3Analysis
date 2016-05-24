@@ -104,6 +104,7 @@ collectionProducer.mcparticles = cms.EDProducer ("McparticleProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
+    pfCandidates  =  cms.InputTag  ('packedPFCandidates',  '',  ''),
 )
 
 #-------------------------------------------------------------------------------
@@ -186,7 +187,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
 
     EBRecHits          =  cms.InputTag  ("reducedEcalRecHitsEB"),
     EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),
-    HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),                                     
+    HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),
 
     gsfTracks    =  cms.InputTag  ("electronGsfTracks",      ""),
     maxDeltaRForGsfTrackMatching = cms.double (0.2), # if cutting on dRToMatchedGsfTrack, must set this to be greater than the cut threshold
