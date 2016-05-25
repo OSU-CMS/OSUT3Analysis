@@ -156,14 +156,12 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
                 thresholdForVeto = cms.double (2.0), # in sigma
-                outputHotSpots = cms.bool (True),
             ),
             cms.PSet (
                 histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_mc.root"),
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
                 thresholdForVeto = cms.double (2.0), # in sigma
-                outputHotSpots = cms.bool (True),
             ),
         ),
         muons = cms.VPSet (
@@ -172,14 +170,12 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
                 thresholdForVeto = cms.double (2.0), # in sigma
-                outputHotSpots = cms.bool (True),
             ),
             cms.PSet (
                 histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_data.root"),
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
                 thresholdForVeto = cms.double (2.0), # in sigma
-                outputHotSpots = cms.bool (True),
             ),
         )
     ),
