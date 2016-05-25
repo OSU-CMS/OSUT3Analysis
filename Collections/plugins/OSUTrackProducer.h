@@ -45,7 +45,7 @@ class OSUTrackProducer : public edm::EDProducer
     // Payload for this EDFilter.
     auto_ptr<vector<osu::Track> > pl_;
 
-    void extractFiducialMap (const edm::ParameterSet &, EtaPhiList &) const;
+    void extractFiducialMap (const edm::ParameterSet &, EtaPhiList &, stringstream &) const;
 
     edm::ESHandle<CaloGeometry> caloGeometry_;
     bool insideCone(TYPE(tracks)& track, const DetId& id, const double dR);

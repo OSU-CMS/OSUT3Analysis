@@ -40,58 +40,52 @@ OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
   gsfTracksToken_ = consumes<vector<reco::GsfTrack> > (cfg.getParameter<edm::InputTag> ("gsfTracks"));
 
 #ifdef DISAPP_TRKS
-  bool outputElectronHotSpots = false;
+  stringstream ss;
   for (const auto &electronFiducialMap : electronFiducialMaps)
     {
-      const bool &outputHotSpots = electronFiducialMap.getParameter<bool> ("outputHotSpots");
       const edm::FileInPath &histFile = electronFiducialMap.getParameter<edm::FileInPath> ("histFile");
-      outputElectronHotSpots = outputElectronHotSpots || outputHotSpots;
 
-      outputHotSpots && clog << "================================================================================" << endl;
-      outputHotSpots && clog << "calculating electron veto regions in (eta, phi)..." << endl;
-      outputHotSpots && clog << "extracting histograms from \"" << histFile.relativePath () << "\"..." << endl;
-      outputHotSpots && clog << "--------------------------------------------------------------------------------" << endl;
+      ss << "================================================================================" << endl;
+      ss << "calculating electron veto regions in (eta, phi)..." << endl;
+      ss << "extracting histograms from \"" << histFile.relativePath () << "\"..." << endl;
+      ss << "--------------------------------------------------------------------------------" << endl;
 
-      extractFiducialMap (electronFiducialMap, electronVetoList_);
+      extractFiducialMap (electronFiducialMap, electronVetoList_, ss);
 
-      outputHotSpots && clog << "================================================================================" << endl;
+      ss << "================================================================================" << endl;
     }
 
-  bool outputMuonHotSpots = false;
   for (const auto &muonFiducialMap : muonFiducialMaps)
     {
-      const bool &outputHotSpots = muonFiducialMap.getParameter<bool> ("outputHotSpots");
       const edm::FileInPath &histFile = muonFiducialMap.getParameter<edm::FileInPath> ("histFile");
-      outputMuonHotSpots = outputMuonHotSpots || outputHotSpots;
 
-      outputHotSpots && clog << "================================================================================" << endl;
-      outputHotSpots && clog << "calculating muon veto regions in (eta, phi)..." << endl;
-      outputHotSpots && clog << "extracting histograms from \"" << histFile.relativePath () << "\"..." << endl;
-      outputHotSpots && clog << "--------------------------------------------------------------------------------" << endl;
+      ss << "================================================================================" << endl;
+      ss << "calculating muon veto regions in (eta, phi)..." << endl;
+      ss << "extracting histograms from \"" << histFile.relativePath () << "\"..." << endl;
+      ss << "--------------------------------------------------------------------------------" << endl;
 
-      extractFiducialMap (muonFiducialMap, muonVetoList_);
+      extractFiducialMap (muonFiducialMap, muonVetoList_, ss);
 
-      outputHotSpots && clog << "================================================================================" << endl;
+      ss << "================================================================================" << endl;
     }
 
   sort (electronVetoList_.begin (), electronVetoList_.end (), [] (EtaPhi a, EtaPhi b) -> bool { return (a.eta < b.eta && a.phi < b.phi); });
   sort (muonVetoList_.begin (), muonVetoList_.end (), [] (EtaPhi a, EtaPhi b) -> bool { return (a.eta < b.eta && a.phi < b.phi); });
 
-  outputElectronHotSpots && clog << "================================================================================" << endl;
-  outputElectronHotSpots && clog << "electron veto regions in (eta, phi)" << endl;
-  outputElectronHotSpots && clog << "--------------------------------------------------------------------------------" << endl;
-  if (outputElectronHotSpots)
-    for (const auto &etaPhi : electronVetoList_)
-      clog << "(" << setw (10) << etaPhi.eta << "," << setw (10) << etaPhi.phi << ")" << endl;
-  outputElectronHotSpots && clog << "================================================================================" << endl;
+  ss << "================================================================================" << endl;
+  ss << "electron veto regions in (eta, phi)" << endl;
+  ss << "--------------------------------------------------------------------------------" << endl;
+  for (const auto &etaPhi : electronVetoList_)
+    ss << "(" << setw (10) << etaPhi.eta << "," << setw (10) << etaPhi.phi << ")" << endl;
+  ss << "================================================================================" << endl;
 
-  outputMuonHotSpots && clog << "================================================================================" << endl;
-  outputMuonHotSpots && clog << "muon veto regions in (eta, phi)" << endl;
-  outputMuonHotSpots && clog << "--------------------------------------------------------------------------------" << endl;
-  if (outputMuonHotSpots)
+  ss << "================================================================================" << endl;
+  ss << "muon veto regions in (eta, phi)" << endl;
+  ss << "--------------------------------------------------------------------------------" << endl;
   for (const auto &etaPhi : muonVetoList_)
-    clog << "(" << setw (10) << etaPhi.eta << "," << setw (10) << etaPhi.phi << ")" << endl;
-  outputMuonHotSpots && clog << "================================================================================" << endl;
+    ss << "(" << setw (10) << etaPhi.eta << "," << setw (10) << etaPhi.phi << ")" << endl;
+  ss << "================================================================================";
+  edm::LogInfo ("OSUTrackProducer") << ss.str ();
 #endif
 }
 
@@ -104,17 +98,18 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(tracks)> > collection;
   if (!event.getByToken (token_, collection))
-    return;
+    {
+      edm::LogWarning ("OSUTrackProducer") << "Track collection not found. Skipping production of osu::Track collection...";
+      return;
+    }
 
 #ifdef DISAPP_TRKS
+  edm::Handle<vector<TYPE(jets)> > jets;
+  if (!event.getByToken (jetsToken_, jets))
+    edm::LogWarning ("OSUTrackProducer") << "Jet collection not found.";
+
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
-
-  edm::Handle<vector<TYPE(jets)> > jets;
-  if (!event.getByToken (jetsToken_, jets)) {
-    clog << "ERROR:  Could not find jets collection." << endl;
-    return;
-  }
 
   edm::Handle<EBRecHitCollection> EBRecHits;
   event.getByToken(EBRecHitsToken_, EBRecHits);
@@ -147,18 +142,21 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 #ifdef DISAPP_TRKS
       // Calculate the associated calorimeter energy for the disappearing tracks search.
 
-      double dRMinJet = 999;
-      for (const auto &jet : *jets) {
-        if (!(jet.pt() > 30))         continue;
-        if (!(fabs(jet.eta()) < 4.5)) continue;
-        if (!anatools::jetPassesTightLepVeto(jet)) continue;
-        double dR = deltaR(track, jet);
-        if (dR < dRMinJet) {
-          dRMinJet = dR;
-        }
-      }
+      if (jets.isValid ())
+        {
+          double dRMinJet = 999;
+          for (const auto &jet : *jets) {
+            if (!(jet.pt() > 30))         continue;
+            if (!(fabs(jet.eta()) < 4.5)) continue;
+            if (!anatools::jetPassesTightLepVeto(jet)) continue;
+            double dR = deltaR(track, jet);
+            if (dR < dRMinJet) {
+              dRMinJet = dR;
+            }
+          }
 
-      track.set_dRMinJet(dRMinJet);
+          track.set_dRMinJet(dRMinJet);
+        }
 
       double eEM = 0;
       double dR = 0.5;
@@ -217,18 +215,17 @@ GlobalPoint OSUTrackProducer::getPosition( const DetId& id)
 
 
 void
-OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &vetoList) const
+OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &vetoList, stringstream &ss) const
 {
   const edm::FileInPath &histFile = cfg.getParameter<edm::FileInPath> ("histFile");
   const string &beforeVetoHistName = cfg.getParameter<string> ("beforeVetoHistName");
   const string &afterVetoHistName = cfg.getParameter<string> ("afterVetoHistName");
   const double &thresholdForVeto = cfg.getParameter<double> ("thresholdForVeto");
-  const bool &outputHotSpots = cfg.getParameter<bool> ("outputHotSpots");
 
   TFile *fin = TFile::Open (histFile.fullPath ().c_str ());
   if (!fin)
     {
-      clog << "No file named \"" << histFile.fullPath () << "\" found. Skipping..." << endl;
+      edm::LogWarning ("OSUTrackProducer") << "No file named \"" << histFile.fullPath () << "\" found. Skipping...";
       return;
     }
 
@@ -283,13 +280,13 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
                  eta = afterVetoHist->GetXaxis ()->GetBinCenter (i),
                  phi = afterVetoHist->GetYaxis ()->GetBinCenter (j);
 
-          outputHotSpots && content && clog << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << (content - mean) / hypot (error, meanErr) << " sigma above mean of " << setw (10) << mean;
+          content && ss << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << (content - mean) / hypot (error, meanErr) << " sigma above mean of " << setw (10) << mean;
           if ((content - mean) > thresholdForVeto * hypot (error, meanErr))
             {
               vetoList.push_back (EtaPhi (eta, phi));
-              outputHotSpots && clog << " * HOT SPOT *";
+              ss << " * HOT SPOT *";
             }
-          outputHotSpots && content && clog << endl;
+          content && ss << endl;
         }
     }
   //////////////////////////////////////////////////////////////////////////////

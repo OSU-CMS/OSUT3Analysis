@@ -239,61 +239,62 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         }
     }
 
-
-
-
   if (firstEvent)
-    clog << "Will print any collections not retrieved.  These INFO messages may be safely ignored." << endl;
-  if (firstEvent && !handles.beamspots.isValid ())
-    clog << "INFO: did not retrieve beamspots collection from the event." << endl;
-  if (firstEvent && !handles.bxlumis.isValid ())
-    clog << "INFO: did not retrieve bxlumis collection from the event." << endl;
-  if (firstEvent && !handles.cschits.isValid ())
-    clog << "INFO: did not retrieve cschits collection from the event." << endl;
-  if (firstEvent && !handles.cscsegs.isValid ())
-    clog << "INFO: did not retrieve cscsegs collection from the event." << endl;
-  if (firstEvent && !handles.dtsegs.isValid ())
-    clog << "INFO: did not retrieve dtsegs collection from the event." << endl;
-  if (firstEvent && !handles.electrons.isValid ())
-    clog << "INFO: did not retrieve electrons collection from the event." << endl;
-  if (firstEvent && !handles.events.isValid ())
-    clog << "INFO: did not retrieve events collection from the event." << endl;
-  if (firstEvent && !handles.genjets.isValid ())
-    clog << "INFO: did not retrieve genjets collection from the event." << endl;
-  if (firstEvent && !handles.jets.isValid ())
-    clog << "INFO: did not retrieve jets collection from the event." << endl;
-  if (firstEvent && !handles.bjets.isValid ())
-    clog << "INFO: did not retrieve bjets collection from the event." << endl;
-  if (firstEvent && !handles.basicjets.isValid ())
-    clog << "INFO: did not retrieve basicjets collection from the event." << endl;
-  if (firstEvent && !handles.generatorweights.isValid ())
-    clog << "INFO: did not retrieve generatorweights collection from the event." << endl;
-  if (firstEvent && !handles.mcparticles.isValid ())
-    clog << "INFO: did not retrieve mcparticles collection from the event." << endl;
-  if (firstEvent && !handles.mets.isValid ())
-    clog << "INFO: did not retrieve mets collection from the event." << endl;
-  if (firstEvent && !handles.muons.isValid ())
-    clog << "INFO: did not retrieve muons collection from the event." << endl;
-  if (firstEvent && !handles.photons.isValid ())
-    clog << "INFO: did not retrieve photons collection from the event." << endl;
-  if (firstEvent && !handles.primaryvertexs.isValid ())
-    clog << "INFO: did not retrieve primaryvertexs collection from the event." << endl;
-  if (firstEvent && !handles.prescales.isValid ())
-    clog << "INFO: did not retrieve prescales collection from the event." << endl;
-  if (firstEvent && !handles.rpchits.isValid ())
-    clog << "INFO: did not retrieve rpchits collection from the event." << endl;
-  if (firstEvent && !handles.superclusters.isValid ())
-    clog << "INFO: did not retrieve superclusters collection from the event." << endl;
-  if (firstEvent && !handles.taus.isValid ())
-    clog << "INFO: did not retrieve taus collection from the event." << endl;
-  if (firstEvent && !handles.tracks.isValid ())
-    clog << "INFO: did not retrieve tracks collection from the event." << endl;
-  if (firstEvent && !handles.pileupinfos.isValid ())
-    clog << "INFO: did not retrieve pileupinfos collection from the event." << endl;
-  if (firstEvent && !handles.triggers.isValid ())
-    clog << "INFO: did not retrieve triggers collection from the event." << endl;
-  if (firstEvent && !handles.trigobjs.isValid ())
-    clog << "INFO: did not retrieve trigobjs collection from the event." << endl;
+    {
+      stringstream ss;
+      ss << "Will print any collections not retrieved. These INFO messages may be safely ignored.";
+      if (!handles.beamspots.isValid ())
+        ss << endl << "Did not retrieve beamspots collection from the event.";
+      if (!handles.bxlumis.isValid ())
+        ss << endl << "Did not retrieve bxlumis collection from the event.";
+      if (!handles.cschits.isValid ())
+        ss << endl << "Did not retrieve cschits collection from the event.";
+      if (!handles.cscsegs.isValid ())
+        ss << endl << "Did not retrieve cscsegs collection from the event.";
+      if (!handles.dtsegs.isValid ())
+        ss << endl << "Did not retrieve dtsegs collection from the event.";
+      if (!handles.electrons.isValid ())
+        ss << endl << "Did not retrieve electrons collection from the event.";
+      if (!handles.events.isValid ())
+        ss << endl << "Did not retrieve events collection from the event.";
+      if (!handles.genjets.isValid ())
+        ss << endl << "Did not retrieve genjets collection from the event.";
+      if (!handles.jets.isValid ())
+        ss << endl << "Did not retrieve jets collection from the event.";
+      if (!handles.bjets.isValid ())
+        ss << endl << "Did not retrieve bjets collection from the event.";
+      if (!handles.basicjets.isValid ())
+        ss << endl << "Did not retrieve basicjets collection from the event.";
+      if (!handles.generatorweights.isValid ())
+        ss << endl << "Did not retrieve generatorweights collection from the event.";
+      if (!handles.mcparticles.isValid ())
+        ss << endl << "Did not retrieve mcparticles collection from the event.";
+      if (!handles.mets.isValid ())
+        ss << endl << "Did not retrieve mets collection from the event.";
+      if (!handles.muons.isValid ())
+        ss << endl << "Did not retrieve muons collection from the event.";
+      if (!handles.photons.isValid ())
+        ss << endl << "Did not retrieve photons collection from the event.";
+      if (!handles.primaryvertexs.isValid ())
+        ss << endl << "Did not retrieve primaryvertexs collection from the event.";
+      if (!handles.prescales.isValid ())
+        ss << endl << "Did not retrieve prescales collection from the event.";
+      if (!handles.rpchits.isValid ())
+        ss << endl << "Did not retrieve rpchits collection from the event.";
+      if (!handles.superclusters.isValid ())
+        ss << endl << "Did not retrieve superclusters collection from the event.";
+      if (!handles.taus.isValid ())
+        ss << endl << "Did not retrieve taus collection from the event.";
+      if (!handles.tracks.isValid ())
+        ss << endl << "Did not retrieve tracks collection from the event.";
+      if (!handles.pileupinfos.isValid ())
+        ss << endl << "Did not retrieve pileupinfos collection from the event.";
+      if (!handles.triggers.isValid ())
+        ss << endl << "Did not retrieve triggers collection from the event.";
+      if (!handles.trigobjs.isValid ())
+        ss << endl << "Did not retrieve trigobjs collection from the event.";
+      edm::LogInfo ("CommonUtils") << ss.str ();
+    }
   //////////////////////////////////////////////////////////////////////////////
 
   firstEvent = false;
@@ -348,7 +349,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
           }
         catch (...)
           {
-            clog << "WARNING: unable to access member \"" << member << "\" from \"" << type << "\"" << endl;
+            edm::LogInfo ("CommonUtils") << "Unable to access member \"" << member << "\" from \"" << type << "\".";
             if (o)
               delete o;
             if (retObj)
@@ -434,12 +435,12 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
               delete[] ((unsigned long int *) retObjAdd);
           }
         else
-          clog << "WARNING: \"" << member << "\" has unrecognized type \"" << memberType << "\"" << endl;
+          edm::LogWarning ("CommonUtils") << "\"" << member << "\" has unrecognized type \"" << memberType << "\".";
         if (retObj)
           delete retObj;
       }
     else
-      clog << "WARNING: unable to access member \"" << member << "\" from \"" << type << "\"" << endl;
+      edm::LogInfo ("CommonUtils") << "Unable to access member \"" << member << "\" from \"" << type << "\".";
 
     return value;
   }
@@ -453,7 +454,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
 
     if (t.isReference ())
       {
-        clog << "WARNING: unable to access members which are references" << endl;
+        edm::LogWarning ("CommonUtils") << "Unable to access members which are references.";
         throw 0;
       }
     if (t.isPointer ())
@@ -512,7 +513,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
       }
     if (isReference)
       {
-        clog << "WARNING: unable to access members which are references" << endl;
+        edm::LogWarning ("CommonUtils") << "Unable to access members which are references.";
         throw 0;
       }
     if (dataMember)
@@ -594,12 +595,12 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         else if (memberType == "unsigned long int")
           value = Reflex::Object_Cast<unsigned long int> (*retObj);
         else
-          clog << "WARNING: \"" << member << "\" has unrecognized type \"" << memberType << "\"" << endl;
+          edm::LogWarning ("CommonUtils") << "\"" << member << "\" has unrecognized type \"" << memberType << "\".";
         delete retObj;
       }
     catch (...)
       {
-        clog << "WARNING: unable to access member \"" << member << "\" from \"" << type << "\"" << endl;
+        edm::LogInfo ("CommonUtils") << "Unable to access member \"" << member << "\" from \"" << type << "\".";
       }
     delete o;
 
@@ -626,7 +627,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
 
     if (t.IsReference ())
       {
-        clog << "WARNING: unable to access members which are references" << endl;
+        edm::LogWarning ("CommonUtils") << "Unable to access members which are references.";
         throw 0;
       }
     if (t.IsPointer ())
@@ -667,7 +668,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
     functionMemberTypeName = functionMemberType.Name (Reflex::FINAL | Reflex::SCOPED);
     if (dataMemberType.IsReference () || functionMemberType.IsReference ())
       {
-        clog << "WARNING: unable to access members which are references" << endl;
+        edm::LogWarning ("CommonUtils") << "Unable to access members which are references.";
         throw 0;
       }
     try
