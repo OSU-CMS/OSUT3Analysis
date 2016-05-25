@@ -93,6 +93,14 @@ dataset_names = {
     'NoBPTX_2015C_16Dec2015' : "/NoBPTX/Run2015C_25ns-16Dec2015-v1/RECO",
     'NoBPTX_2015D_16Dec2015' : "/NoBPTX/Run2015D-16Dec2015-v1/RECO",
 
+################## Delayed Muon RECO not stored on T3 ############
+########################## data ##########################
+    'NoBPTX_2015B_PromptReco' : "/NoBPTX/Run2015B-PromptReco-v1/RECO",
+    'NoBPTX_2015C_PromptReco' : "/NoBPTX/Run2015C-PromptReco-v1/RECO",
+    'NoBPTX_2015Dv3_PromptReco'  : "/NoBPTX/Run2015D-PromptReco-v3/RECO",
+    'NoBPTX_2015Dv4_PromptReco'  : "/NoBPTX/Run2015D-PromptReco-v4/RECO",
+    'NoBPTX_2015E_PromptReco' : "/NoBPTX/Run2015E-PromptReco-v1/RECO",
+
 ################## SP ntuples no stored on T3 ############
 ########################## data control samples ##########################
     'Commissioning2015_controlSample' : "/NoBPTX/wji-Commissioning2015-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",

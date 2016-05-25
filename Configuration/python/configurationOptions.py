@@ -37,6 +37,11 @@ datasets = [
    'NoBPTX_2015Dv4_controlSample',
    'NoBPTX_2015C_16Dec2015',
    'NoBPTX_2015D_16Dec2015',
+   'NoBPTX_2015B_PromptReco',
+   'NoBPTX_2015C_PromptReco',
+   'NoBPTX_2015Dv3_PromptReco',
+   'NoBPTX_2015Dv4_PromptReco',
+   'NoBPTX_2015E_PromptReco',
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
@@ -239,6 +244,13 @@ composite_dataset_definitions = {
         'NoBPTX_2015D_v3',
         'NoBPTX_2015D_v4',
     ],
+    'NoBPTX_2015BCDE_PromptReco' : [
+        'NoBPTX_2015B_PromptReco',
+        'NoBPTX_2015C_PromptReco',
+        'NoBPTX_2015Dv3_PromptReco',
+        'NoBPTX_2015Dv4_PromptReco',
+        'NoBPTX_2015E_PromptReco',
+        ],
    'StpPtls_controlSample_2015' : [
         #'Commissioning2015_controlSample',
         'NoBPTX_2015B_controlSample',
@@ -563,6 +575,12 @@ nJobs = {
     'NoBPTX_2015C_16Dec2015' : 999,
     'NoBPTX_2015D_16Dec2015' : 999,
 
+    'NoBPTX_2015B_PromptReco' : 999,
+    'NoBPTX_2015C_PromptReco' : 999,
+    'NoBPTX_2015Dv3_PromptReco' : 999,
+    'NoBPTX_2015Dv4_PromptReco' : 999,
+    'NoBPTX_2015E_PromptReco' : 999,
+
     #control sample data
     'Commissioning2015_controlSample' : 999,
     'NoBPTX_2015B_controlSample' : 999,
@@ -877,6 +895,12 @@ maxEvents = {
 
     'NoBPTX_2015C_16Dec2015' : -1,
     'NoBPTX_2015D_16Dec2015' : -1,
+
+    'NoBPTX_2015B_PromptReco' : -1,
+    'NoBPTX_2015C_PromptReco' : -1,
+    'NoBPTX_2015Dv3_PromptReco' : -1,
+    'NoBPTX_2015Dv4_PromptReco' : -1,
+    'NoBPTX_2015E_PromptReco' : -1,
 
     #control sample data
     'Commissioning2015_controlSample' : -1,
@@ -1220,6 +1244,12 @@ types = {
     'NoBPTX_2015D' : 'data',
     'NoBPTX_16Dec2015' : 'data',
 
+    'NoBPTX_2015BCDE_PromptReco' : 'data',
+    'NoBPTX_2015B_PromptReco' : 'data',
+    'NoBPTX_2015C_PromptReco' : 'data',
+    'NoBPTX_2015Dv3_PromptReco' : 'data',
+    'NoBPTX_2015Dv4_PromptReco' : 'data',
+    'NoBPTX_2015E_PromptReco' : 'data',
     ############################################################################
 
     #control sample data
@@ -1558,6 +1588,14 @@ colors = {
     'NoBPTX_2015C_16Dec2015' : 1,
     'NoBPTX_2015D_16Dec2015' : 1,
     'NoBPTX_16Dec2015' : 1,
+
+    'NoBPTX_2015BCDE_PromptReco' : 1,
+    'NoBPTX_2015B_PromptReco' : 1,
+    'NoBPTX_2015C_PromptReco' : 1,
+    'NoBPTX_2015Dv3_PromptReco' : 1,
+    'NoBPTX_2015Dv4_PromptReco' : 1,
+    'NoBPTX_2015E_PromptReco' : 1,
+
     ############################################################################
 
     #control sample data
@@ -1894,6 +1932,13 @@ labels = {
     'NoBPTX_2015C_16Dec2015'     : "NoBPTX 2015C Rerecoed data",
     'NoBPTX_2015D_16Dec2015'     : "NoBPTX 2015D Rerecoed data",
     'NoBPTX_16Dec2015'     : "NoBPTX 2015C,D Rerecoed data",
+
+    'NoBPTX_2015BCDE_PromptReco' : "NoBPTX 2015 Prompt reco data",
+    'NoBPTX_2015B_PromptReco' : "NoBPTX 2015B Prompt reco data",
+    'NoBPTX_2015C_PromptReco' : "NoBPTX 2015C Prompt reco data",
+    'NoBPTX_2015Dv3_PromptReco' : "NoBPTX 2015D_v3 Prompt reco data",
+    'NoBPTX_2015Dv4_PromptReco' : "NoBPTX 2015D_v4 Prompt reco data",
+    'NoBPTX_2015E_PromptReco' : "NoBPTX 2015E Prompt reco data",
     ############################################################################
 
     #control sample data
