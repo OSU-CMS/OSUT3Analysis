@@ -63,6 +63,12 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("phi"),
         ),
         cms.PSet (
+            name = cms.string("muonPVIndex"),
+            title = cms.string("Muon PV Index;muon PV Index"),
+            binsX = cms.untracked.vdouble(10, 0, 10),
+            inputVariables = cms.vstring("muonPVIndex"),
+        ),
+        cms.PSet (
             name = cms.string("muonCharge"),
             title = cms.string("Muon Charge;muon charge"),
             binsX = cms.untracked.vdouble(3, -1.5, 1.5),
@@ -310,6 +316,12 @@ ElectronHistograms = cms.PSet(
             title = cms.string("Electron Phi; electron #phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
             inputVariables = cms.vstring("phi"),
+        ),
+        cms.PSet (
+            name = cms.string("electronPVIndex"),
+            title = cms.string("Electron PV Index;electron PV Index"),
+            binsX = cms.untracked.vdouble(10, 0, 10),
+            inputVariables = cms.vstring("electronPVIndex"),
         ),
         cms.PSet (
             name = cms.string("electronCharge"),
@@ -707,6 +719,12 @@ JetHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(100, 0, 1),
             inputVariables = cms.vstring("pfCombinedInclusiveSecondaryVertexV2BJetTags"),
         ),
+        cms.PSet (
+            name = cms.string("jetPileUpId"),
+            title = cms.string("Jet PileUp Id"),
+            binsX = cms.untracked.vdouble(200, -1, 1),
+            inputVariables = cms.vstring("pileupJetId"),
+        ),
     )
 )
 
@@ -781,6 +799,12 @@ BjetHistograms = cms.PSet(
             title = cms.string("Bjet Combined Secondary Vertex B-tagging Discriminant"),
             binsX = cms.untracked.vdouble(100, 0, 1),
             inputVariables = cms.vstring("pfCombinedInclusiveSecondaryVertexV2BJetTags"),
+        ),
+        cms.PSet (
+            name = cms.string("bjetPileUpId"),
+            title = cms.string("BJet PileUp Id"),
+            binsX = cms.untracked.vdouble(200, -1, 1),
+            inputVariables = cms.vstring("pileupJetId"),
         ),
     )
 )
@@ -1455,8 +1479,6 @@ TrackEventVarHistograms = cms.PSet(
         ),
     )
 )
-
-
 ##############################################################################################
 
 TrackMCParticleHistograms = cms.PSet(

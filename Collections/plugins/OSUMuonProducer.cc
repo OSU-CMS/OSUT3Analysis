@@ -113,7 +113,10 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
              pfdBetaIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationR04().sumNeutralHadronEt + object.pfIsolationR04().sumPhotonEt - 0.5*puPt))/object.pt();
             }
          }
-      muon.set_pfdBetaIsoCorr(pfdBetaIsoCorr);
+      muon.set_pfdBetaIsoCorr(pfdBetaIsoCorr); 
+      muon.set_sumChargedHadronPtCorr(chargedHadronPt); 
+      muon.set_sumPUPtCorr(puPt); 
+      muon.set_muonPVIndex(muonPVIndex); 
       pl_->push_back (muon);
     }
 

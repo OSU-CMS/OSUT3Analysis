@@ -101,8 +101,9 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
+      jet.set_pileupJetId(jet.userFloat("pileupJetId:fullDiscriminant"));
 
-      double maxDeltaR_ = 0.05;
+      double maxDeltaR_ = 0.3;
 
       int isMatchedToElectron = 0;
       for (const auto &electron : *goodElectrons_){

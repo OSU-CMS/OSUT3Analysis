@@ -16,6 +16,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   GenMatchable                (electron),
   rho_                        (INVALID_VALUE),
   pfdRhoIsoCorr_              (INVALID_VALUE),
+  sumChargedHadronPtCorr_     (INVALID_VALUE),
+  electronPVIndex_            (INVALID_VALUE),
+  sumPUPtCorr_                (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
@@ -32,6 +35,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   GenMatchable                (electron,        particles),
   rho_                        (INVALID_VALUE),
   pfdRhoIsoCorr_              (INVALID_VALUE),
+  sumChargedHadronPtCorr_     (INVALID_VALUE),
+  electronPVIndex_            (INVALID_VALUE),
+  sumPUPtCorr_                (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
@@ -48,6 +54,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   GenMatchable                (electron,        particles,  cfg),
   rho_                        (INVALID_VALUE),
   pfdRhoIsoCorr_              (INVALID_VALUE),
+  sumChargedHadronPtCorr_     (INVALID_VALUE),
+  electronPVIndex_            (INVALID_VALUE),
+  sumPUPtCorr_                (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
@@ -64,6 +73,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   GenMatchable                (electron,        particles,  cfg),
   rho_                        (INVALID_VALUE),
   pfdRhoIsoCorr_              (INVALID_VALUE),
+  sumChargedHadronPtCorr_     (INVALID_VALUE),
+  electronPVIndex_            (INVALID_VALUE),
+  sumPUPtCorr_                (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
@@ -122,6 +134,23 @@ const float
 osu::Electron::rho () const
 {
   return this->rho_;
+}
+
+const double
+osu::Electron::sumChargedHadronPtCorr () const
+{
+  return sumChargedHadronPtCorr_;
+}
+const int
+osu::Electron::electronPVIndex () const
+{
+  return electronPVIndex_;
+}
+
+const double
+osu::Electron::sumPUPtCorr () const
+{
+  return sumPUPtCorr_;
 }
 
 const bool
