@@ -8,62 +8,74 @@ osu::Muon::Muon ()
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon) :
-  GenMatchable         (muon),
-  isTightMuonWRTVtx_   (false),
-  pfdBetaIsoCorr_      (INVALID_VALUE),
-  metMinusOnePt_       (INVALID_VALUE),
-  metMinusOnePx_       (INVALID_VALUE),
-  metMinusOnePy_       (INVALID_VALUE),
-  metMinusOnePhi_      (INVALID_VALUE),
-  metNoMuMinusOnePt_   (INVALID_VALUE),
-  metNoMuMinusOnePx_   (INVALID_VALUE),
-  metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  GenMatchable             (muon),
+  isTightMuonWRTVtx_       (false),
+  pfdBetaIsoCorr_          (INVALID_VALUE),
+  sumChargedHadronPtCorr_  (INVALID_VALUE),
+  muonPVIndex_             (INVALID_VALUE),
+  sumPUPtCorr_             (INVALID_VALUE),
+  metMinusOnePt_           (INVALID_VALUE),
+  metMinusOnePx_           (INVALID_VALUE),
+  metMinusOnePy_           (INVALID_VALUE),
+  metMinusOnePhi_          (INVALID_VALUE),
+  metNoMuMinusOnePt_       (INVALID_VALUE),
+  metNoMuMinusOnePx_       (INVALID_VALUE),
+  metNoMuMinusOnePy_       (INVALID_VALUE),
+  metNoMuMinusOnePhi_      (INVALID_VALUE)
 {
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles) :
-  GenMatchable         (muon),
-  isTightMuonWRTVtx_   (false),
-  pfdBetaIsoCorr_      (INVALID_VALUE),
-  metMinusOnePt_       (INVALID_VALUE),
-  metMinusOnePx_       (INVALID_VALUE),
-  metMinusOnePy_       (INVALID_VALUE),
-  metMinusOnePhi_      (INVALID_VALUE),
-  metNoMuMinusOnePt_   (INVALID_VALUE),
-  metNoMuMinusOnePx_   (INVALID_VALUE),
-  metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  GenMatchable             (muon),
+  isTightMuonWRTVtx_       (false),
+  pfdBetaIsoCorr_          (INVALID_VALUE),
+  sumChargedHadronPtCorr_  (INVALID_VALUE),
+  muonPVIndex_             (INVALID_VALUE),
+  sumPUPtCorr_             (INVALID_VALUE),
+  metMinusOnePt_           (INVALID_VALUE),
+  metMinusOnePx_           (INVALID_VALUE),
+  metMinusOnePy_           (INVALID_VALUE),
+  metMinusOnePhi_          (INVALID_VALUE),
+  metNoMuMinusOnePt_       (INVALID_VALUE),
+  metNoMuMinusOnePx_       (INVALID_VALUE),
+  metNoMuMinusOnePy_       (INVALID_VALUE),
+  metNoMuMinusOnePhi_      (INVALID_VALUE)
 {
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
-  GenMatchable         (muon),
-  isTightMuonWRTVtx_   (false),
-  pfdBetaIsoCorr_      (INVALID_VALUE),
-  metMinusOnePt_       (INVALID_VALUE),
-  metMinusOnePx_       (INVALID_VALUE),
-  metMinusOnePy_       (INVALID_VALUE),
-  metMinusOnePhi_      (INVALID_VALUE),
-  metNoMuMinusOnePt_   (INVALID_VALUE),
-  metNoMuMinusOnePx_   (INVALID_VALUE),
-  metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  GenMatchable             (muon),
+  isTightMuonWRTVtx_       (false),
+  pfdBetaIsoCorr_          (INVALID_VALUE),
+  sumChargedHadronPtCorr_  (INVALID_VALUE),
+  muonPVIndex_             (INVALID_VALUE),
+  sumPUPtCorr_             (INVALID_VALUE),
+  metMinusOnePt_           (INVALID_VALUE),
+  metMinusOnePx_           (INVALID_VALUE),
+  metMinusOnePy_           (INVALID_VALUE),
+  metMinusOnePhi_          (INVALID_VALUE),
+  metNoMuMinusOnePt_       (INVALID_VALUE),
+  metNoMuMinusOnePx_       (INVALID_VALUE),
+  metNoMuMinusOnePy_       (INVALID_VALUE),
+  metNoMuMinusOnePhi_      (INVALID_VALUE)
 {
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const osu::Met &met) :
-  GenMatchable         (muon),
-  isTightMuonWRTVtx_   (false),
-  pfdBetaIsoCorr_      (INVALID_VALUE),
-  metMinusOnePt_       (INVALID_VALUE),
-  metMinusOnePx_       (INVALID_VALUE),
-  metMinusOnePy_       (INVALID_VALUE),
-  metMinusOnePhi_      (INVALID_VALUE),
-  metNoMuMinusOnePt_   (INVALID_VALUE),
-  metNoMuMinusOnePx_   (INVALID_VALUE),
-  metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  GenMatchable             (muon),
+  isTightMuonWRTVtx_       (false),
+  pfdBetaIsoCorr_          (INVALID_VALUE),
+  sumChargedHadronPtCorr_  (INVALID_VALUE),
+  muonPVIndex_             (INVALID_VALUE),
+  sumPUPtCorr_             (INVALID_VALUE),
+  metMinusOnePt_           (INVALID_VALUE),
+  metMinusOnePx_           (INVALID_VALUE),
+  metMinusOnePy_           (INVALID_VALUE),
+  metMinusOnePhi_          (INVALID_VALUE),
+  metNoMuMinusOnePt_       (INVALID_VALUE),
+  metNoMuMinusOnePx_       (INVALID_VALUE),
+  metNoMuMinusOnePy_       (INVALID_VALUE),
+  metNoMuMinusOnePhi_      (INVALID_VALUE)
 {
   TVector2 p (met.px () + this->px (), met.py () + this->py ()),
            pNoMu (met.noMuPx (), met.noMuPy ()); // we do not add the muon's pt
@@ -93,6 +105,22 @@ osu::Muon::pfdBetaIsoCorr () const
   return pfdBetaIsoCorr_;
 }
 
+const double
+osu::Muon::sumChargedHadronPtCorr () const
+{
+  return sumChargedHadronPtCorr_;
+}
+const int
+osu::Muon::muonPVIndex () const
+{
+  return muonPVIndex_;
+}
+
+const double
+osu::Muon::sumPUPtCorr () const
+{
+  return sumPUPtCorr_;
+}
 
 const int
 osu::Muon::missingInnerHits () const

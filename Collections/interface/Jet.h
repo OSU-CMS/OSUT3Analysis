@@ -18,14 +18,17 @@ namespace osu
         const int matchedToLepton () const;
         const float pfCombinedSecondaryVertexV2BJetTags () const;
         const float pfCombinedInclusiveSecondaryVertexV2BJetTags () const;
+        const float pileupJetId () const;
         void set_matchedToLepton (float value) { matchedToLepton_  = value; }
         void set_pfCombinedSecondaryVertexV2BJetTags (float value) { pfCombinedSecondaryVertexV2BJetTags_ = value;}
-        void set_pfCombinedInclusiveSecondaryVertexV2BJetTags (float value) { pfCombinedInclusiveSecondaryVertexV2BJetTags_ = value;}
-
+        void set_pfCombinedInclusiveSecondaryVertexV2BJetTags (float value) { pfCombinedInclusiveSecondaryVertexV2BJetTags_ = value;}  
+        void set_pileupJetId (float value) { pileupJetId_ = value;}  
+        
       private:
         int matchedToLepton_;
         float pfCombinedSecondaryVertexV2BJetTags_;
         float pfCombinedInclusiveSecondaryVertexV2BJetTags_;
+        float pileupJetId_;
     };
 }
 #elif DATA_FORMAT == AOD_CUSTOM

@@ -20,9 +20,15 @@ namespace osu
         ~Muon ();
 
         const double pfdBetaIsoCorr () const;
+        const double sumChargedHadronPtCorr () const;
+        const double sumPUPtCorr () const;
+        const int muonPVIndex () const;
         const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }
         void set_isTightMuonWRTVtx(const bool isTightMuon);
-        void set_pfdBetaIsoCorr (double value) { pfdBetaIsoCorr_  = value; }
+        void set_pfdBetaIsoCorr (double value) { pfdBetaIsoCorr_  = value; };  
+        void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };  
+        void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };  
+        void set_muonPVIndex (int value) { muonPVIndex_  = value; };  
 
         const int missingInnerHits () const;
         const int missingMiddleHits () const;
@@ -41,6 +47,9 @@ namespace osu
       private:
         bool isTightMuonWRTVtx_;
         double pfdBetaIsoCorr_;
+        double sumChargedHadronPtCorr_;
+        int muonPVIndex_;
+        double sumPUPtCorr_;
 
         double metMinusOnePt_;
         double metMinusOnePx_;
