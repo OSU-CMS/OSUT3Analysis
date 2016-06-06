@@ -24,7 +24,9 @@ class OSUPhotonProducer : public edm::EDProducer
     edm::InputTag      collection_;
     edm::EDGetTokenT<vector<TYPE(photons)> > token_;
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
+    edm::EDGetTokenT<double> rhoToken_;
     edm::ParameterSet  cfg_;
+    edm::InputTag      rho_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
