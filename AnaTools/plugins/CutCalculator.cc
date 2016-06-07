@@ -190,19 +190,21 @@ CutCalculator::arbitrateInputCollectionFlags (const Cut &currentCut, unsigned cu
   ////////////////////////////////////////////////////////////////////////////////
   if (currentCut.arbitration != "")
     {
-      vector<pair<unsigned, double> > indicesToArbitrate;
+      vector<pair<unsigned, double> > indicesToArbitrate, otherIndices;
       indicesToArbitrate.clear ();
+      otherIndices.clear ();
       for (auto arbitrationValue = currentCut.arbitrationTree->evaluate ().begin (); arbitrationValue != currentCut.arbitrationTree->evaluate ().end (); arbitrationValue++)
         {
           unsigned object = (arbitrationValue - currentCut.arbitrationTree->evaluate ().begin ());
           double value = boost::get<double> (*arbitrationValue);
           pair<bool, bool> flag = make_pair (value, !IS_INVALID(value));
 
-          if (!pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (object).first
-           || !pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (object).second
-           || !flag.second)
-            continue;
-          indicesToArbitrate.push_back (make_pair (object, value));
+          if (pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (object).first
+           && pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (object).second
+           && flag.second)
+            indicesToArbitrate.push_back (make_pair (object, value));
+          else
+            otherIndices.push_back (make_pair (object, value));
         }
       if (currentCut.arbitration != "random")
         sort (indicesToArbitrate.begin (), indicesToArbitrate.end (), [](pair<unsigned, double> a, pair<unsigned, double> b) -> bool { return a.second > b.second; });
@@ -215,6 +217,11 @@ CutCalculator::arbitrateInputCollectionFlags (const Cut &currentCut, unsigned cu
           pl_->individualObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (index.first).first = isChosen;
           pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (index.first).first = isChosen;
           isChosen = false;
+        }
+      for (const auto &index : otherIndices)
+        {
+          pl_->individualObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (index.first).first = isChosen;
+          pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (index.first).first = isChosen;
         }
     }
   ////////////////////////////////////////////////////////////////////////////////
