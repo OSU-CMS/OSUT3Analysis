@@ -211,7 +211,7 @@ CutCalculator::arbitrateInputCollectionFlags (const Cut &currentCut, unsigned cu
       else
         random_shuffle (indicesToArbitrate.begin (), indicesToArbitrate.end ());
 
-      bool isChosen = true;
+      bool isChosen = (indicesToArbitrate.size () ? true : false);
       for (const auto &index : indicesToArbitrate)
         {
           pl_->individualObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (index.first).first = isChosen;
