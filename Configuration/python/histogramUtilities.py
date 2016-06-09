@@ -136,3 +136,59 @@ def ratioHistogram( dataHist, mcHist, dontRebinRatio=False, addOne=False, relErr
         for i in range(1, ratio.GetNbinsX()+1):
             ratio.SetBinContent(i, ratio.GetBinContent(i) + 1.0) 
     return ratio
+
+
+
+def getUpperLimit(sample,condor_dir,channel):
+    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    inputFile = TFile(dataset_file)
+    cutFlowHistogram = inputFile.Get("OSUAnalysis/"+channel+"CutFlowUpperLimit")
+    if not cutFlowHistogram:
+        print "WARNING: didn't find cutflow histogram ", channel, "CutFlow in file ", dataset_file
+        return 0
+    limit = float(cutFlowHistogram.GetBinContent(cutFlowHistogram.GetNbinsX()))
+    inputFile.Close()
+    return (limit)
+
+def getTruthYield(sample,condor_dir,channel,truthParticle):
+    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    inputFile = TFile(dataset_file)
+    matchHistogram = inputFile.Get("OSUAnalysis/"+channel+"/trackGenMatchId")
+    if not matchHistogram:
+        print "WARNING: didn't find match histogram ", channel, "/trackGenMatchId in file ", dataset_file
+        return 0
+
+    idx = -1
+    for i in range(1,matchHistogram.GetNbinsX()+1):
+        if truthParticle == matchHistogram.GetXaxis().GetBinLabel(i):
+            idx = i
+    if idx < 0:
+        print "Error:  could not find bin with label " + truthParticle
+        yield_ = -1
+        statError_ = -1
+    else:
+        yield_     = float(matchHistogram.GetBinContent(idx))
+        statError_ = float(matchHistogram.GetBinError  (idx))
+    inputFile.Close()
+    return (yield_, statError_)
+
+
+# Find number of raw events that correspond to the weighted number num and weighted error err
+# num = w * N
+# err = w * sqrt(N)
+# N = num^2 / err^2
+# In data, w = 1, so N = num.
+def getRawEvts(num, err):
+    N = round(math.pow(num,2) / math.pow(err,2)) if err else 0
+    return N
+
+
+def getHist(sample,condor_dir,channel,hist):
+    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    inputFile = TFile(dataset_file)
+    h = inputFile.Get(channel + "/" + hist).Clone()
+    h.SetDirectory(0)  
+    inputFile.Close()
+    return h
+
+
