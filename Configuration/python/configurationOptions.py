@@ -352,13 +352,25 @@ nJobs = {
     'AMSB_chargino_100GeV_100cm'   :  99,
     'AMSB_chargino_100GeV_1000cm'  :  99,
 
+    'AMSB_chargino_200GeV_10cm'    :  99,
+    'AMSB_chargino_200GeV_100cm'   :  99,
+    'AMSB_chargino_200GeV_1000cm'  :  99,
+
     'AMSB_chargino_300GeV_10cm'    :  99,
     'AMSB_chargino_300GeV_100cm'   :  99,
     'AMSB_chargino_300GeV_1000cm'  :  99,
 
+    'AMSB_chargino_400GeV_10cm'    :  99,
+    'AMSB_chargino_400GeV_100cm'   :  99,
+    'AMSB_chargino_400GeV_1000cm'  :  99,
+
     'AMSB_chargino_500GeV_10cm'    :  99,
     'AMSB_chargino_500GeV_100cm'   :  99,
     'AMSB_chargino_500GeV_1000cm'  :  99,
+
+    'AMSB_chargino_600GeV_10cm'    :  99,
+    'AMSB_chargino_600GeV_100cm'   :  99,
+    'AMSB_chargino_600GeV_1000cm'  :  99,
 
     'AMSB_chargino_700GeV_10cm'    :  99,
     'AMSB_chargino_700GeV_100cm'   :  99,
@@ -679,13 +691,25 @@ maxEvents = {
     'AMSB_chargino_100GeV_100cm'   :  -1,
     'AMSB_chargino_100GeV_1000cm'  :  -1,
 
+    'AMSB_chargino_200GeV_10cm'    :  -1,
+    'AMSB_chargino_200GeV_100cm'   :  -1,
+    'AMSB_chargino_200GeV_1000cm'  :  -1,
+
     'AMSB_chargino_300GeV_10cm'    :  -1,
     'AMSB_chargino_300GeV_100cm'   :  -1,
     'AMSB_chargino_300GeV_1000cm'  :  -1,
 
+    'AMSB_chargino_400GeV_10cm'    :  -1,
+    'AMSB_chargino_400GeV_100cm'   :  -1,
+    'AMSB_chargino_400GeV_1000cm'  :  -1,
+
     'AMSB_chargino_500GeV_10cm'    :  -1,
     'AMSB_chargino_500GeV_100cm'   :  -1,
     'AMSB_chargino_500GeV_1000cm'  :  -1,
+
+    'AMSB_chargino_600GeV_10cm'    :  -1,
+    'AMSB_chargino_600GeV_100cm'   :  -1,
+    'AMSB_chargino_600GeV_1000cm'  :  -1,
 
     'AMSB_chargino_700GeV_10cm'    :  -1,
     'AMSB_chargino_700GeV_100cm'   :  -1,
@@ -1011,13 +1035,25 @@ types = {
     'AMSB_chargino_100GeV_100cm'   :  "signalMC",
     'AMSB_chargino_100GeV_1000cm'  :  "signalMC",
 
+    'AMSB_chargino_200GeV_10cm'    :  "signalMC",
+    'AMSB_chargino_200GeV_100cm'   :  "signalMC",
+    'AMSB_chargino_200GeV_1000cm'  :  "signalMC",
+
     'AMSB_chargino_300GeV_10cm'    :  "signalMC",
     'AMSB_chargino_300GeV_100cm'   :  "signalMC",
     'AMSB_chargino_300GeV_1000cm'  :  "signalMC",
 
+    'AMSB_chargino_400GeV_10cm'    :  "signalMC",
+    'AMSB_chargino_400GeV_100cm'   :  "signalMC",
+    'AMSB_chargino_400GeV_1000cm'  :  "signalMC",
+
     'AMSB_chargino_500GeV_10cm'    :  "signalMC",
     'AMSB_chargino_500GeV_100cm'   :  "signalMC",
     'AMSB_chargino_500GeV_1000cm'  :  "signalMC",
+
+    'AMSB_chargino_600GeV_10cm'    :  "signalMC",
+    'AMSB_chargino_600GeV_100cm'   :  "signalMC",
+    'AMSB_chargino_600GeV_1000cm'  :  "signalMC",
 
     'AMSB_chargino_700GeV_10cm'    :  "signalMC",
     'AMSB_chargino_700GeV_100cm'   :  "signalMC",
@@ -1366,13 +1402,25 @@ colors = {
     'AMSB_chargino_100GeV_100cm'   :  596,
     'AMSB_chargino_100GeV_1000cm'  :  923,
 
+    'AMSB_chargino_200GeV_10cm'    :  628,
+    'AMSB_chargino_200GeV_100cm'   :  596,
+    'AMSB_chargino_200GeV_1000cm'  :  923,
+
     'AMSB_chargino_300GeV_10cm'    :  628,
     'AMSB_chargino_300GeV_100cm'   :  596,
     'AMSB_chargino_300GeV_1000cm'  :  923,
 
+    'AMSB_chargino_400GeV_10cm'    :  628,
+    'AMSB_chargino_400GeV_100cm'   :  596,
+    'AMSB_chargino_400GeV_1000cm'  :  923,
+
     'AMSB_chargino_500GeV_10cm'    :  628,
     'AMSB_chargino_500GeV_100cm'   :  596,
     'AMSB_chargino_500GeV_1000cm'  :  923,
+
+    'AMSB_chargino_600GeV_10cm'    :  628,
+    'AMSB_chargino_600GeV_100cm'   :  596,
+    'AMSB_chargino_600GeV_1000cm'  :  923,
 
     'AMSB_chargino_700GeV_10cm'    :  628,
     'AMSB_chargino_700GeV_100cm'   :  596,
@@ -1719,13 +1767,25 @@ labels = {
     'AMSB_chargino_100GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 100cm)",
     'AMSB_chargino_100GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 1000cm)",
 
+    'AMSB_chargino_200GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 10cm)",
+    'AMSB_chargino_200GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 100cm)",
+    'AMSB_chargino_200GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 1000cm)",
+
     'AMSB_chargino_300GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 10cm)",
     'AMSB_chargino_300GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 100cm)",
     'AMSB_chargino_300GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 1000cm)",
 
+    'AMSB_chargino_400GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 10cm)",
+    'AMSB_chargino_400GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 100cm)",
+    'AMSB_chargino_400GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 1000cm)",
+
     'AMSB_chargino_500GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 10cm)",
     'AMSB_chargino_500GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 100cm)",
     'AMSB_chargino_500GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 1000cm)",
+
+    'AMSB_chargino_600GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 10cm)",
+    'AMSB_chargino_600GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 100cm)",
+    'AMSB_chargino_600GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 1000cm)",
 
     'AMSB_chargino_700GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 10cm)",
     'AMSB_chargino_700GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 100cm)",
