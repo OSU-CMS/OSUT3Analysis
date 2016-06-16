@@ -186,7 +186,11 @@ def getRawEvts(num, err):
 def getHist(sample,condor_dir,channel,hist):
     dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
-    h = inputFile.Get(channel + "/" + hist).Clone()
+    h0 = inputFile.Get(channel + "/" + hist)
+    if not h0:
+        print "ERROR [getHist]: didn't find histogram ", channel+str("/")+hist, "in file", dataset_file
+        return 0
+    h = h0.Clone() 
     h.SetDirectory(0)  
     inputFile.Close()
     return h
