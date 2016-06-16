@@ -11,7 +11,7 @@ def getYield(sample,condor_dir,channel):
     inputFile = TFile(dataset_file)
     cutFlowHistogram = inputFile.Get(channel + "/cutFlow")
     if not cutFlowHistogram:
-        print "WARNING: didn't find cutflow histogram ", channel, "/cutFlow in file ", dataset_file
+        print "ERROR: didn't find cutflow histogram ", channel+str("/cutFlow"), "in file ", dataset_file
         return 0
     yield_     = float(cutFlowHistogram.GetBinContent(cutFlowHistogram.GetNbinsX()))
     statError_ = float(cutFlowHistogram.GetBinError  (cutFlowHistogram.GetNbinsX()))
