@@ -33,6 +33,8 @@ class CutFlowPlotter : public edm::EDAnalyzer
     string             module_type_;
     string             module_label_;
     bool               firstEvent_;
+    vector<string>     triggers_;  
+    vector<string>     triggersToVeto_;  
     ////////////////////////////////////////////////////////////////////////////
 
     // Objects which can be gotten from the event.
