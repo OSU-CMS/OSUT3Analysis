@@ -26,6 +26,8 @@ datasets = [
    'SinglePhoton_2015D',
    'DoubleEG_2015',
    'DoubleEG_2015D',
+   'DoubleEG_2016',
+   'DoubleEG_2016B'
    'MuonEG_2015',
    'MuonEG_2015D',
    'MET_2015',
@@ -247,6 +249,9 @@ composite_dataset_definitions = {
         'DoubleEG_2015C',
         'DoubleEG_2015D',
     ],
+    'DoubleEG_2016' : [
+        'DoubleEG_2016B',
+    ]
     'MuonEG_2015' : [
         'MuonEG_2015B',
         'MuonEG_2015C',
@@ -457,7 +462,7 @@ nJobs = {
     'SingleEle_2015C'    : 137,
     'SingleEle_2015D' : 1000,
     'SingleEle_2016B' : 1000,
-    
+
     'SinglePhoton_2015B'   :  55,
     'SinglePhoton_2015C'   : 130,
     'SinglePhoton_2015D'   : 1000,
@@ -465,6 +470,7 @@ nJobs = {
     'DoubleEG_2015B'      :  100,
     'DoubleEG_2015C'      :  298,
     'DoubleEG_2015D'   :  1000,
+    'DoubleEG_2016B'      : 1000,
 
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
@@ -805,6 +811,7 @@ maxEvents = {
     'DoubleEG_2015B'       : -1,
     'DoubleEG_2015C'       : -1,
     'DoubleEG_2015D'       : -1,
+    'DoubleEG_2016B'       : -1,
 
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
@@ -1148,7 +1155,7 @@ types = {
     'SingleMu_2015C'    : "data",
     'SingleMu_2015D'    : "data",
     'SingleMu_2016B'    : "data",
-    
+
     'SingleMu_2015'     : "data",
     'SingleMu_2016'     : "data",
 
@@ -1159,7 +1166,7 @@ types = {
 
     'SingleEle_2015'    : "data",
     'SingleEle_2016'    : "data",
-    
+
     'SinglePhoton_2015B'   : "data",
     'SinglePhoton_2015C'   : "data",
     'SinglePhoton_2015D'   : "data",
@@ -1169,6 +1176,8 @@ types = {
     'DoubleEG_2015C'   : "data",
     'DoubleEG_2015'    : "data",
     'DoubleEG_2015D'    : "data",
+    'DoubleEG_2016'    : "data",
+    'DoubleEG_2016B'   : "data",
 
     'MuonEG_2015B'   : "data",
     'MuonEG_2015C'   : "data",
@@ -1517,7 +1526,7 @@ colors = {
     'SingleMu_2015'   : 1,
     'SingleMu_2016B'   : 1,
     'SingleMu_2016'  : 1,
-    
+
     'SingleEle_2015B'   : 1,
     'SingleEle_2015C'   : 1,
     'SingleEle_2015D'   : 1,
@@ -1534,6 +1543,8 @@ colors = {
     'DoubleEG_2015C'   : 1,
     'DoubleEG_2015'   : 1,
     'DoubleEG_2015D'   : 1,
+    'DoubleEG_2016'    : 1,
+    'DoubleEG_2016B'   : 1,
 
     'MuonEG_2015B'   : 1,
     'MuonEG_2015C'   : 1,
@@ -1887,7 +1898,7 @@ labels = {
     'SingleEle_2015D'     : "SingleEle 2015D data",
     'SingleEle_2016'      : "Single Electron 2016 data",
     'SingleEle_2016B'     : "SingleEle 2016B data",
-    
+
     'SinglePhoton_2015'      : "SinglePhoton 2015 data",
     'SinglePhoton_2015B'     : "SinglePhoton 2015B data",
     'SinglePhoton_2015C'     : "SinglePhoton 2015C data",
@@ -1897,6 +1908,8 @@ labels = {
     'DoubleEG_2015D'     : "DoubleEG 2015D data",
     'DoubleEG_2015B'     : "DoubleEG 2015B data",
     'DoubleEG_2015C'     : "DoubleEG 2015C data",
+    'DoubleEG_2016'      : "DoubleEG 2016 data",
+    'DoubleEG_2016B'     : "DoubleEG 2016B data",
 
     'MuonEG_2015'      : "MuonEG 2015 data",
     'MuonEG_2015B'     : "MuonEG 2015B data",
