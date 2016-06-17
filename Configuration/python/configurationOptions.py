@@ -27,7 +27,7 @@ datasets = [
    'DoubleEG_2015',
    'DoubleEG_2015D',
    'DoubleEG_2016',
-   'DoubleEG_2016B'
+   'DoubleEG_2016B',
    'MuonEG_2015',
    'MuonEG_2015D',
    'MET_2015',
@@ -251,7 +251,7 @@ composite_dataset_definitions = {
     ],
     'DoubleEG_2016' : [
         'DoubleEG_2016B',
-    ]
+    ],
     'MuonEG_2015' : [
         'MuonEG_2015B',
         'MuonEG_2015C',
