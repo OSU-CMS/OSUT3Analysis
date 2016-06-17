@@ -118,6 +118,7 @@ copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------
 
 collectionProducer.photons = cms.EDProducer ("OSUPhotonProducer",
+    rho = cms.InputTag ('fixedGridRhoFastjetAll', '', ''),
 )
 copyConfiguration (collectionProducer.photons, collectionProducer.genMatchables)
 
