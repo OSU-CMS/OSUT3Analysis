@@ -74,6 +74,12 @@ osu::Tau::~Tau ()
 {
 }
 
+// Tau ID and isolation discriminators are documented here:
+// https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV
+// The names of the discriminators are out-of-date though, with the current
+// names for 76X samples found here:
+// https://github.com/cms-sw/cmssw/blob/CMSSW_7_6_X/PhysicsTools/PatAlgos/python/producersLayer1/tauProducer_cfi.py#L62-L106
+
 const bool
 osu::Tau::passesDecayModeReconstruction () const
 {
@@ -84,6 +90,24 @@ const bool
 osu::Tau::passesLightFlavorRejection () const
 {
   return (this->tauID ("againstElectronLooseMVA5") > 0.5 && this->tauID ("againstMuonLoose3") > 0.5);
+}
+
+const bool
+osu::Tau::passesLooseCombinedIsolation () const
+{
+  return (this->tauID ("byLooseCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+}
+
+const bool
+osu::Tau::passesMediumCombinedIsolation () const
+{
+  return (this->tauID ("byMediumCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+}
+
+const bool
+osu::Tau::passesTightCombinedIsolation () const
+{
+  return (this->tauID ("byTightCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
 }
 
 const double

@@ -48,6 +48,7 @@ def getFirstBinWithLabel(sample,condor_dir,channel,label):
             break 
     if ibin < 0:
         print "ERROR:  could not find bin with label containing", label, "for channel", channel
+    inputFile.Close()
     return ibin
 
 def getNumEvents(sample,condor_dir,channel):  # Use in place of getYield if the cutflow histogram is not available
@@ -181,7 +182,6 @@ def getTruthYield(sample,condor_dir,channel,truthParticle):
 def getRawEvts(num, err):
     N = round(math.pow(num,2) / math.pow(err,2)) if err else 0
     return N
-
 
 def getHist(sample,condor_dir,channel,hist):
     dataset_file = "condor/%s/%s.root" % (condor_dir,sample)

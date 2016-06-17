@@ -20,6 +20,9 @@ namespace osu
 
         const bool passesDecayModeReconstruction () const;
         const bool passesLightFlavorRejection () const;
+        const bool passesLooseCombinedIsolation () const;
+        const bool passesMediumCombinedIsolation () const;
+        const bool passesTightCombinedIsolation () const;
 
         const double metMinusOnePt () const;
         const double metMinusOnePx () const;
