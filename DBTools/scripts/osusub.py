@@ -173,10 +173,13 @@ def getLatestJsonFile():
             Tmp.close ()
             jsonFileFiltered = []
             for fileName in jsonFileList:
-                if arguments.JSONType.split('_')[1] == "Golden" and (jsonMatchingPhrase + '.txt') in fileName:
-                    jsonFileFiltered.append(fileName)
-                elif jsonMatchingPhrase in fileName:
-                    if arguments.JSONType.split('_')[1] in fileName:
+                if jsonMatchingPhrase in fileName:
+                    if arguments.JSONType.split('_')[1] == "Golden":
+                        if fileName[-8:] == 'JSON.txt':
+                            jsonFileFiltered.append(fileName)
+                        elif 'JSON_v' in fileName:
+                            jsonFileFiltered.append(fileName)
+                    elif arguments.JSONType.split('_')[1] in fileName:
                         jsonFileFiltered.append(fileName)
             bestJsons = []
             bestJson = ''
@@ -232,10 +235,13 @@ def getLatestJsonFile():
             Tmp.close ()
             jsonFileFiltered = []
             for fileName in jsonFileList:
-                if arguments.JSONType.split('_')[1] == "Golden" and (jsonMatchingPhrase + '.txt') in fileName:
-                    jsonFileFiltered.append(fileName)
-                elif jsonMatchingPhrase in fileName:
-                    if arguments.JSONType.split('_')[1] in fileName:
+                if jsonMatchingPhrase in fileName:
+                    if arguments.JSONType.split('_')[1] == "Golden":
+                        if fileName[-8:] == 'JSON.txt':
+                            jsonFileFiltered.append(fileName)
+                        elif 'JSON_v' in fileName:
+                            jsonFileFiltered.append(fileName)
+                    elif arguments.JSONType.split('_')[1] in fileName:
                         jsonFileFiltered.append(fileName)
             if len(jsonFileFiltered) == 0:
                 print "#######################################################"
