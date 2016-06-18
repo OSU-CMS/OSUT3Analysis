@@ -2001,9 +2001,9 @@ crossSections = {
     'QCD_EMEnriched_15to20'    :1279000000.0*0.001309,
     'QCD_EMEnriched_20to30'    : 557600000.0*0.009914,
     'QCD_EMEnriched_30to50'    :  136000000.0*0.04988,
-    'QCD_EMEnriched_50to80'    :    19800000.0*0.1145,
-    'QCD_EMEnriched_80to120'   :     2800000.0*0.1507,
-    'QCD_EMEnriched_120to170'  :      477000.0*0.1576,
+    'QCD_EMEnriched_50to80'    :    19800000.0*0.146,
+    'QCD_EMEnriched_80to120'   :     2800000.0*0.125,
+    'QCD_EMEnriched_120to170'  :      477000.0*0.132,
     # Got from the McM Tool: https://cms-pdmv.cern.ch/mcm/requests?page=0&dataset_name=QCD_Pt-300toInf_EMEnriched_TuneCUETP8M1_13TeV_pythia8&
     #member_of_campaign=RunIIWinter15GS&shown=163213220927
     'QCD_EMEnriched_170to300'  :      114000.0*0.1650,
