@@ -52,7 +52,7 @@ parser.add_option("-R", "--Requirements", dest="Requirements", default = "", hel
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")
 parser.add_option("-P", "--UseGridProxy", dest="UseGridProxy", action="store_true", default = False, help="Use X509 grid proxy.")
-parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc")
+parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc. Appending 16 to this type gives Collisions16 JSONs (e.g. R_Silver16, P_MuonPhys16, etc).")
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")
 parser.add_option("-W", "--AllowDataWeights", dest="AllowDataWeights", action="store_true", default = False, help="Use event weights, even for a data dataset.")
 parser.add_option("-H", "--skimToHadoop", dest="skimToHadoop", default = "", help="If producing a skim, put in on Hadoop, in the given directory.")
@@ -140,9 +140,23 @@ def getLatestJsonFile():
         if len(arguments.JSONType.split('_')) < 2:
             print "Argument for -J is wrong, it needs to be in a format similar to \"R_Silver\""
             sys.exit()
+
+        collisionType = 'Collisions15'
+        bunchSpacing = '25ns'
+        if arguments.JSONType[-2:] == '16':
+            collisionType = 'Collisions16'
+            bunchSpacing = ''
+            arguments.JSONType = arguments.JSONType[:-2]
+
+        jsonMatchingPhrase = collisionType + '_'
+        if len(bunchSpacing) > 0:
+            jsonMatchingPhrase += bunchSpacing + '_JSON'
+        else:
+            jsonMatchingPhrase += 'JSON'
+
         if arguments.JSONType.split('_')[0] == "P":
             tmpDir = tempfile.mkdtemp ()
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O ' + tmpDir + '/jsonList.txt')
+            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/ -O ' + tmpDir + '/jsonList.txt')
             os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
             Tmp = open(tmpDir + '/CertList.txt','r+w')
             jsonFileList = []
@@ -159,13 +173,14 @@ def getLatestJsonFile():
             Tmp.close ()
             jsonFileFiltered = []
             for fileName in jsonFileList:
-                nameSplit = fileName.split('_')
-                for i in range(0, len(nameSplit)):
-                    if arguments.JSONType.split('_')[1] == "Golden" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
-                        jsonFileFiltered.append(fileName)
-                    elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
-                        if nameSplit[i + 3].split('.')[0] == arguments.JSONType.split('_')[1]:
+                if jsonMatchingPhrase in fileName:
+                    if arguments.JSONType.split('_')[1] == "Golden":
+                        if fileName[-8:] == 'JSON.txt':
                             jsonFileFiltered.append(fileName)
+                        elif 'JSON_v' in fileName:
+                            jsonFileFiltered.append(fileName)
+                    elif arguments.JSONType.split('_')[1] in fileName:
+                        jsonFileFiltered.append(fileName)
             bestJsons = []
             bestJson = ''
             runRange = 0
@@ -197,13 +212,13 @@ def getLatestJsonFile():
                         if currentVersionNumber > versionNumber:
                             versionNumber = currentVersionNumber
                             ultimateJson = bestJson
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
+            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
             shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
             shutil.rmtree (tmpDir)
             return ultimateJson
         if arguments.JSONType.split('_')[0] == "R":
             tmpDir = tempfile.mkdtemp ()
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/ -O ' + tmpDir + '/jsonList.txt')
+            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/Reprocessing/ -O ' + tmpDir + '/jsonList.txt')
             os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
             Tmp = open(tmpDir + '/CertList.txt','r+w')
             jsonFileList = []
@@ -220,19 +235,20 @@ def getLatestJsonFile():
             Tmp.close ()
             jsonFileFiltered = []
             for fileName in jsonFileList:
-                nameSplit = fileName.split('_')
-                for i in range(0, len(nameSplit)):
-                    if arguments.JSONType.split('_')[1] == "Golden" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
-                        jsonFileFiltered.append(fileName)
-                    elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
-                        if nameSplit[i + 3].split('.')[0] == arguments.JSONType.split('_')[1]:
+                if jsonMatchingPhrase in fileName:
+                    if arguments.JSONType.split('_')[1] == "Golden":
+                        if fileName[-8:] == 'JSON.txt':
                             jsonFileFiltered.append(fileName)
+                        elif 'JSON_v' in fileName:
+                            jsonFileFiltered.append(fileName)
+                    elif arguments.JSONType.split('_')[1] in fileName:
+                        jsonFileFiltered.append(fileName)
             if len(jsonFileFiltered) == 0:
                 print "#######################################################"
                 print "Warning!!!!!!!!!!!Could not find wanted JSON file"
                 print "#######################################################"
             ultimateJson = jsonFileFiltered[-1]
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
+            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType +'/13TeV/Reprocessing/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
             shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
             shutil.rmtree (tmpDir)
             return ultimateJson
@@ -920,4 +936,3 @@ else:
                 print '################ Resubmit failed jobs for ' + str(dataset) + ' dataset #############'
                 os.system('condor_submit condor_resubmit.sub')
                 os.chdir(SubmissionDir)
-

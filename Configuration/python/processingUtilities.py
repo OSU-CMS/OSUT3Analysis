@@ -486,11 +486,13 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                     # first object producer. Needed for gen-matching to work. DO
                     # NOT ERASE!!!
                     if collection != "mcparticles":
-                        setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", ""))
+                        label = getattr (collections, "mcparticles").getProductInstanceLabel () if hasattr (collections, "mcparticles") else ""
+                        setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", label))
                     # Set the input tag for mets to that produced by the second
                     # object producer. Needed for metNoMu. DO NOT ERASE!!!
                     if collection != "mcparticles" and collection != "mets":
-                        setattr (objectProducer.collections, "mets", cms.InputTag ("objectProducer1", ""))
+                        label = getattr (collections, "mets").getProductInstanceLabel () if hasattr (collections, "mets") else ""
+                        setattr (objectProducer.collections, "mets", cms.InputTag ("objectProducer1", label))
                     channelPath += objectProducer
                     setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                     newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
@@ -512,11 +514,13 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                 # first object producer. Needed for gen-matching to work. DO
                 # NOT ERASE!!!
                 if collection != "mcparticles":
-                    setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", ""))
+                    label = getattr (collections, "mcparticles").getProductInstanceLabel () if hasattr (collections, "mcparticles") else ""
+                    setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", label))
                 # Set the input tag for mets to that produced by the second
                 # object producer. Needed for metNoMu. DO NOT ERASE!!!
                 if collection != "mcparticles" and collection != "mets":
-                    setattr (objectProducer.collections, "mets", cms.InputTag ("objectProducer1", ""))
+                    label = getattr (collections, "mets").getProductInstanceLabel () if hasattr (collections, "mets") else ""
+                    setattr (objectProducer.collections, "mets", cms.InputTag ("objectProducer1", label))
                 channelPath += objectProducer
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 originalInputTag = getattr (collections, collection)

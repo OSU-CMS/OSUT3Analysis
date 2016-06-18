@@ -15,7 +15,8 @@ collectionProducer = CollectionProducer ()
 # Configuration for base classes
 ################################################################################
 collectionProducer.genMatchables = {
-    "maxDeltaRForGenMatching":  cms.double (0.1),
+    "maxDeltaRForGenMatching":  cms.double  (0.1),
+    "minPtForGenMatching":      cms.double  (10.0),
 }
 ################################################################################
 
@@ -117,6 +118,7 @@ copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------
 
 collectionProducer.photons = cms.EDProducer ("OSUPhotonProducer",
+    rho = cms.InputTag ('fixedGridRhoFastjetAll', '', ''),
 )
 copyConfiguration (collectionProducer.photons, collectionProducer.genMatchables)
 

@@ -16,16 +16,24 @@ datasets = [
    'DoubleMu_2015D',
    'SingleMu_2015',
    'SingleMu_2015D',
+   'SingleMu_2016',
+   'SingleMu_2016B',
    'SingleEle_2015',
    'SingleEle_2015D',
+   'SingleEle_2016',
+   'SingleEle_2016B',
    'SinglePhoton_2015',
    'SinglePhoton_2015D',
    'DoubleEG_2015',
    'DoubleEG_2015D',
+   'DoubleEG_2016',
+   'DoubleEG_2016B',
    'MuonEG_2015',
    'MuonEG_2015D',
    'MET_2015',
    'MET_2015D',
+   'MET_2016',
+   'MET_2016B',
    'NoBPTX_2015D',
    'NoBPTX_2015D_v3',
    'NoBPTX_2015D_v4',
@@ -220,10 +228,16 @@ composite_dataset_definitions = {
         'SingleMu_2015C',
         'SingleMu_2015D',
     ],
+    'SingleMu_2016' : [
+        'SingleMu_2016B',
+    ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
         'SingleEle_2015C',
         'SingleEle_2015D',
+    ],
+    'SingleEle_2016' : [
+        'SingleEle_2016B',
     ],
     'SinglePhoton_2015' : [
         'SinglePhoton_2015B',
@@ -234,6 +248,9 @@ composite_dataset_definitions = {
         'DoubleEG_2015B',
         'DoubleEG_2015C',
         'DoubleEG_2015D',
+    ],
+    'DoubleEG_2016' : [
+        'DoubleEG_2016B',
     ],
     'MuonEG_2015' : [
         'MuonEG_2015B',
@@ -267,6 +284,9 @@ composite_dataset_definitions = {
         'MET_2015B',
         'MET_2015C',
         'MET_2015D',
+    ],
+    'MET_2016' : [
+	'MET_2016B',
     ],
 }
 
@@ -330,19 +350,32 @@ nJobs = {
 
     #MET data
     'MET_2015D' : 999,
+    'MET_2016B' : 999,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  99,
     'AMSB_chargino_100GeV_100cm'   :  99,
     'AMSB_chargino_100GeV_1000cm'  :  99,
 
+    'AMSB_chargino_200GeV_10cm'    :  99,
+    'AMSB_chargino_200GeV_100cm'   :  99,
+    'AMSB_chargino_200GeV_1000cm'  :  99,
+
     'AMSB_chargino_300GeV_10cm'    :  99,
     'AMSB_chargino_300GeV_100cm'   :  99,
     'AMSB_chargino_300GeV_1000cm'  :  99,
 
+    'AMSB_chargino_400GeV_10cm'    :  99,
+    'AMSB_chargino_400GeV_100cm'   :  99,
+    'AMSB_chargino_400GeV_1000cm'  :  99,
+
     'AMSB_chargino_500GeV_10cm'    :  99,
     'AMSB_chargino_500GeV_100cm'   :  99,
     'AMSB_chargino_500GeV_1000cm'  :  99,
+
+    'AMSB_chargino_600GeV_10cm'    :  99,
+    'AMSB_chargino_600GeV_100cm'   :  99,
+    'AMSB_chargino_600GeV_1000cm'  :  99,
 
     'AMSB_chargino_700GeV_10cm'    :  99,
     'AMSB_chargino_700GeV_100cm'   :  99,
@@ -423,10 +456,12 @@ nJobs = {
     'SingleMu_2015B'      :  57,
     'SingleMu_2015C'      : 220,
     'SingleMu_2015D'   : 1000,
+    'SingleMu_2016B'   : 1000,
 
     'SingleEle_2015B'    :  77,
     'SingleEle_2015C'    : 137,
     'SingleEle_2015D' : 1000,
+    'SingleEle_2016B' : 1000,
 
     'SinglePhoton_2015B'   :  55,
     'SinglePhoton_2015C'   : 130,
@@ -435,6 +470,7 @@ nJobs = {
     'DoubleEG_2015B'      :  100,
     'DoubleEG_2015C'      :  298,
     'DoubleEG_2015D'   :  1000,
+    'DoubleEG_2016B'      : 1000,
 
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
@@ -654,19 +690,32 @@ maxEvents = {
 
     #MET data
     'MET_2015D' : -1,
+    'MET_2016B' : -1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  -1,
     'AMSB_chargino_100GeV_100cm'   :  -1,
     'AMSB_chargino_100GeV_1000cm'  :  -1,
 
+    'AMSB_chargino_200GeV_10cm'    :  -1,
+    'AMSB_chargino_200GeV_100cm'   :  -1,
+    'AMSB_chargino_200GeV_1000cm'  :  -1,
+
     'AMSB_chargino_300GeV_10cm'    :  -1,
     'AMSB_chargino_300GeV_100cm'   :  -1,
     'AMSB_chargino_300GeV_1000cm'  :  -1,
 
+    'AMSB_chargino_400GeV_10cm'    :  -1,
+    'AMSB_chargino_400GeV_100cm'   :  -1,
+    'AMSB_chargino_400GeV_1000cm'  :  -1,
+
     'AMSB_chargino_500GeV_10cm'    :  -1,
     'AMSB_chargino_500GeV_100cm'   :  -1,
     'AMSB_chargino_500GeV_1000cm'  :  -1,
+
+    'AMSB_chargino_600GeV_10cm'    :  -1,
+    'AMSB_chargino_600GeV_100cm'   :  -1,
+    'AMSB_chargino_600GeV_1000cm'  :  -1,
 
     'AMSB_chargino_700GeV_10cm'    :  -1,
     'AMSB_chargino_700GeV_100cm'   :  -1,
@@ -748,10 +797,12 @@ maxEvents = {
     'SingleMu_2015B'       : -1,
     'SingleMu_2015C'       : -1,
     'SingleMu_2015D'       : -1,
+    'SingleMu_2016B'       : -1,
 
     'SingleEle_2015B'       : -1,
     'SingleEle_2015C'       : -1,
     'SingleEle_2015D'       : -1,
+    'SingleEle_2016B'       : -1,
 
     'SinglePhoton_2015B'       : -1,
     'SinglePhoton_2015C'       : -1,
@@ -760,6 +811,7 @@ maxEvents = {
     'DoubleEG_2015B'       : -1,
     'DoubleEG_2015C'       : -1,
     'DoubleEG_2015D'       : -1,
+    'DoubleEG_2016B'       : -1,
 
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
@@ -982,19 +1034,33 @@ types = {
     #MET data
     'MET_2015D' : "data",
     'MET_2015'  : "data",
+    'MET_2016B' : "data",
+    'MET_2016' : "data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  "signalMC",
     'AMSB_chargino_100GeV_100cm'   :  "signalMC",
     'AMSB_chargino_100GeV_1000cm'  :  "signalMC",
 
+    'AMSB_chargino_200GeV_10cm'    :  "signalMC",
+    'AMSB_chargino_200GeV_100cm'   :  "signalMC",
+    'AMSB_chargino_200GeV_1000cm'  :  "signalMC",
+
     'AMSB_chargino_300GeV_10cm'    :  "signalMC",
     'AMSB_chargino_300GeV_100cm'   :  "signalMC",
     'AMSB_chargino_300GeV_1000cm'  :  "signalMC",
 
+    'AMSB_chargino_400GeV_10cm'    :  "signalMC",
+    'AMSB_chargino_400GeV_100cm'   :  "signalMC",
+    'AMSB_chargino_400GeV_1000cm'  :  "signalMC",
+
     'AMSB_chargino_500GeV_10cm'    :  "signalMC",
     'AMSB_chargino_500GeV_100cm'   :  "signalMC",
     'AMSB_chargino_500GeV_1000cm'  :  "signalMC",
+
+    'AMSB_chargino_600GeV_10cm'    :  "signalMC",
+    'AMSB_chargino_600GeV_100cm'   :  "signalMC",
+    'AMSB_chargino_600GeV_1000cm'  :  "signalMC",
 
     'AMSB_chargino_700GeV_10cm'    :  "signalMC",
     'AMSB_chargino_700GeV_100cm'   :  "signalMC",
@@ -1088,12 +1154,18 @@ types = {
     'SingleMu_2015B'    : "data",
     'SingleMu_2015C'    : "data",
     'SingleMu_2015D'    : "data",
+    'SingleMu_2016B'    : "data",
 
     'SingleMu_2015'     : "data",
+    'SingleMu_2016'     : "data",
 
     'SingleEle_2015B'   : "data",
     'SingleEle_2015C'   : "data",
     'SingleEle_2015D'   : "data",
+    'SingleEle_2016B'   : "data",
+
+    'SingleEle_2015'    : "data",
+    'SingleEle_2016'    : "data",
 
     'SinglePhoton_2015B'   : "data",
     'SinglePhoton_2015C'   : "data",
@@ -1104,6 +1176,8 @@ types = {
     'DoubleEG_2015C'   : "data",
     'DoubleEG_2015'    : "data",
     'DoubleEG_2015D'    : "data",
+    'DoubleEG_2016'    : "data",
+    'DoubleEG_2016B'   : "data",
 
     'MuonEG_2015B'   : "data",
     'MuonEG_2015C'   : "data",
@@ -1329,19 +1403,33 @@ colors = {
     #MET data
     'MET_2015D' : 1,
     'MET_2015' : 1,
+    'MET_2016B' : 1,
+    'MET_2016' : 1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  628,
     'AMSB_chargino_100GeV_100cm'   :  596,
     'AMSB_chargino_100GeV_1000cm'  :  923,
 
+    'AMSB_chargino_200GeV_10cm'    :  628,
+    'AMSB_chargino_200GeV_100cm'   :  596,
+    'AMSB_chargino_200GeV_1000cm'  :  923,
+
     'AMSB_chargino_300GeV_10cm'    :  628,
     'AMSB_chargino_300GeV_100cm'   :  596,
     'AMSB_chargino_300GeV_1000cm'  :  923,
 
+    'AMSB_chargino_400GeV_10cm'    :  628,
+    'AMSB_chargino_400GeV_100cm'   :  596,
+    'AMSB_chargino_400GeV_1000cm'  :  923,
+
     'AMSB_chargino_500GeV_10cm'    :  628,
     'AMSB_chargino_500GeV_100cm'   :  596,
     'AMSB_chargino_500GeV_1000cm'  :  923,
+
+    'AMSB_chargino_600GeV_10cm'    :  628,
+    'AMSB_chargino_600GeV_100cm'   :  596,
+    'AMSB_chargino_600GeV_1000cm'  :  923,
 
     'AMSB_chargino_700GeV_10cm'    :  628,
     'AMSB_chargino_700GeV_100cm'   :  596,
@@ -1436,11 +1524,15 @@ colors = {
     'SingleMu_2015C'   : 1,
     'SingleMu_2015D'   : 1,
     'SingleMu_2015'   : 1,
+    'SingleMu_2016B'   : 1,
+    'SingleMu_2016'  : 1,
 
     'SingleEle_2015B'   : 1,
     'SingleEle_2015C'   : 1,
     'SingleEle_2015D'   : 1,
     'SingleEle_2015'   : 1,
+    'SingleEle_2016B'   : 1,
+    'SingleEle_2016'    : 1,
 
     'SinglePhoton_2015B'   : 1,
     'SinglePhoton_2015C'   : 1,
@@ -1451,6 +1543,8 @@ colors = {
     'DoubleEG_2015C'   : 1,
     'DoubleEG_2015'   : 1,
     'DoubleEG_2015D'   : 1,
+    'DoubleEG_2016'    : 1,
+    'DoubleEG_2016B'   : 1,
 
     'MuonEG_2015B'   : 1,
     'MuonEG_2015C'   : 1,
@@ -1676,19 +1770,33 @@ labels = {
     #MET data
     'MET_2015D' : "MET 2015D data",
     'MET_2015'  : "MET 2015 data",
+    'MET_2016B' : "MET 2016B data",
+    'MET_2016'  : "MET 2016 data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 10cm)",
     'AMSB_chargino_100GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 100cm)",
     'AMSB_chargino_100GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 1000cm)",
 
+    'AMSB_chargino_200GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 10cm)",
+    'AMSB_chargino_200GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 100cm)",
+    'AMSB_chargino_200GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 1000cm)",
+
     'AMSB_chargino_300GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 10cm)",
     'AMSB_chargino_300GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 100cm)",
     'AMSB_chargino_300GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 1000cm)",
 
+    'AMSB_chargino_400GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 10cm)",
+    'AMSB_chargino_400GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 100cm)",
+    'AMSB_chargino_400GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 1000cm)",
+
     'AMSB_chargino_500GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 10cm)",
     'AMSB_chargino_500GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 100cm)",
     'AMSB_chargino_500GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 1000cm)",
+
+    'AMSB_chargino_600GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 10cm)",
+    'AMSB_chargino_600GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 100cm)",
+    'AMSB_chargino_600GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 1000cm)",
 
     'AMSB_chargino_700GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 10cm)",
     'AMSB_chargino_700GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 100cm)",
@@ -1781,11 +1889,15 @@ labels = {
     'SingleMu_2015B'     : "SingleMu 2015B data",
     'SingleMu_2015C'     : "SingleMu 2015C data",
     'SingleMu_2015D'     : "SingleMu 2015D data",
+    'SingleMu_2016'      : "Single Muon 2016 data",
+    'SingleMu_2016B'     : "SingleMu 2016B data",
 
     'SingleEle_2015'      : "Single Electron 2015 data",
     'SingleEle_2015B'     : "SingleEle 2015B data",
     'SingleEle_2015C'     : "SingleEle 2015C data",
     'SingleEle_2015D'     : "SingleEle 2015D data",
+    'SingleEle_2016'      : "Single Electron 2016 data",
+    'SingleEle_2016B'     : "SingleEle 2016B data",
 
     'SinglePhoton_2015'      : "SinglePhoton 2015 data",
     'SinglePhoton_2015B'     : "SinglePhoton 2015B data",
@@ -1796,6 +1908,8 @@ labels = {
     'DoubleEG_2015D'     : "DoubleEG 2015D data",
     'DoubleEG_2015B'     : "DoubleEG 2015B data",
     'DoubleEG_2015C'     : "DoubleEG 2015C data",
+    'DoubleEG_2016'      : "DoubleEG 2016 data",
+    'DoubleEG_2016B'     : "DoubleEG 2016B data",
 
     'MuonEG_2015'      : "MuonEG 2015 data",
     'MuonEG_2015B'     : "MuonEG 2015B data",

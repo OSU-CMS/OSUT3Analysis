@@ -75,6 +75,7 @@ namespace osu
         DRToGenMatchedParticle dRToGenMatchedParticleOfSameType_;
 
         double maxDeltaR_;
+        double minPt_;
 
         const GenMatchedParticle &findGenMatchedParticle (const edm::Handle<vector<osu::Mcparticle> > &, GenMatchedParticle &, DRToGenMatchedParticle &, const bool = false) const;
     };
@@ -86,7 +87,8 @@ osu::GenMatchable<T, PdgId>::GenMatchable () :
   dRToGenMatchedParticle_ (),
   genMatchedParticleOfSameType_ (),
   dRToGenMatchedParticleOfSameType_ (),
-  maxDeltaR_ (-1.0)
+  maxDeltaR_ (-1.0),
+  minPt_ (-1.0)
 {
 }
 
@@ -97,7 +99,8 @@ osu::GenMatchable<T, PdgId>::GenMatchable (const T &object) :
   dRToGenMatchedParticle_ (),
   genMatchedParticleOfSameType_ (),
   dRToGenMatchedParticleOfSameType_ (),
-  maxDeltaR_ (-1.0)
+  maxDeltaR_ (-1.0),
+  minPt_ (-1.0)
 {
 }
 
@@ -119,6 +122,7 @@ osu::GenMatchable<T, PdgId>::GenMatchable (const T &object, const edm::Handle<ve
   GenMatchable<T, PdgId> (object)
 {
   maxDeltaR_ = cfg.getParameter<double> ("maxDeltaRForGenMatching");
+  minPt_ = cfg.getParameter<double> ("minPtForGenMatching");
   if (particles.isValid ())
     {
       findGenMatchedParticle (particles, genMatchedParticle_, dRToGenMatchedParticle_);
@@ -147,6 +151,8 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
       //#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       pdgId = particle->pdgId ();
 #endif
+      if (minPt_ >= 0.0 && particle->pt () < minPt_)
+        continue;
       if (usePdgId && abs (pdgId) != PdgId)
         continue;
 

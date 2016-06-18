@@ -6,7 +6,7 @@
 #define  MINI_AOD_CUSTOM  3
 #define  AOD_CUSTOM       4
 
-#define DATA_FORMAT AOD_CUSTOM
+#define DATA_FORMAT MINI_AOD
 
 #define INVALID_TYPE void *
 

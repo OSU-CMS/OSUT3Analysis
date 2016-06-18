@@ -66,6 +66,10 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         {
           for (auto cand = cands->begin(); cand != cands->end(); cand++)
             {
+              // ignore candidates with invalid vertex references, since
+              // vertexRef() and fromPV() do not work in this case
+              if (cand->vertexRef().isNull() || !cand->vertexRef().isAvailable())
+                continue;
               if (!(abs(cand->pdgId()) == 13 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.001))
                 continue;
               else
@@ -78,10 +82,13 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
            {
              for (auto cand = cands->begin(); cand != cands->end(); cand++)
                 {
+                  // ignore candidates with invalid vertex references, since
+                  // vertexRef() and fromPV() do not work in this case
+                  if (cand->vertexRef().isNull() || !cand->vertexRef().isAvailable())
+                    continue;
                   if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.4)
                     {
-                      pat::PackedCandidate thatPFCandidate = (*cand);
-                      int ivtx = cand->vertexRef().index();
+                      int ivtx = (cand->vertexRef().isNonnull() && cand->vertexRef().isAvailable() ? cand->vertexRef().index() : 0);
                       if(ivtx == muonPVIndex || ivtx == -1)
                         {
                           if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001 && cand->fromPV() >= 2)
@@ -97,10 +104,13 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
             {
              for (auto cand = cands->begin(); cand != cands->end(); cand++)
                {
+                  // ignore candidates with invalid vertex references, since
+                  // vertexRef() and fromPV() do not work in this case
+                  if (cand->vertexRef().isNull() || !cand->vertexRef().isAvailable())
+                   continue;
                  if((abs(cand->pdgId()) == 211 || abs(cand->pdgId()) == 321 || abs(cand->pdgId()) == 999211 || abs(cand->pdgId()) == 2212) && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) <= 0.4)
                     {
-                      pat::PackedCandidate thatPFCandidate = (*cand);
-                      int ivtx = cand->vertexRef().index();
+                      int ivtx = (cand->vertexRef().isNonnull() && cand->vertexRef().isAvailable() ? cand->vertexRef().index() : 0);
                       if(ivtx == muonPVIndex || ivtx == -1)
                         {
                           if(deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) > 0.0001)

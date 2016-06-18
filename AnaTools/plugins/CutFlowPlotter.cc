@@ -75,16 +75,16 @@ CutFlowPlotter::~CutFlowPlotter ()
          << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
       //         << setw (15) << setprecision(3) << 100.0 * (minusOne  / (double) totalEvents) << "%"
          << endl;
-    // if (name == "trigger") {  // This code does not yet work reliably.
-    //   for (uint j=0; j<cutDecisions->triggers.size(); j++) {
-    //         clog << "  " << cutDecisions->triggers.at(j);
-    //         if (j< cutDecisions->triggers.size() - 1) clog << " OR";  // all but the last one
-    //         clog << endl;
-    //   }
-    //   for (uint j=0; j<cutDecisions->triggersToVeto.size(); j++) {
-    //         clog << "  AND NOT " << cutDecisions->triggersToVeto.at(j) << endl;
-    //   }
-    // }
+    if (name.Contains("trigger")) {  
+      for (uint j=0; j<triggers_.size(); j++) { 
+      	clog << "  " << triggers_.at(j);
+      	if (j< triggers_.size() - 1) clog << " OR";  // all but the last one
+      	clog << endl;
+      }
+      for (uint j=0; j<triggersToVeto_.size(); j++) {
+      	clog << "  AND NOT " << triggersToVeto_.at(j) << endl;
+      }
+    }
   }
   clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
 
@@ -172,6 +172,20 @@ CutFlowPlotter::initializeCutFlow ()
     }
   //////////////////////////////////////////////////////////////////////////////
 
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Save in triggers_ a private copy of the list of triggers (which is the same for every event).
+  // This is needed because the CutCalculatorPayload object is not available in the
+  // destructor, when the terminal output is produced.  
+  //////////////////////////////////////////////////////////////////////////////
+  for (vector<string>::const_iterator it = cutDecisions->triggers.begin(); it != cutDecisions->triggers.end(); ++it) {
+    triggers_.push_back(*it);
+  } 
+  for (vector<string>::const_iterator it = cutDecisions->triggersToVeto.begin(); it != cutDecisions->triggersToVeto.end(); ++it) {
+    triggersToVeto_.push_back(*it);
+  } 
+  //////////////////////////////////////////////////////////////////////////////
+ 
   // Return true if the initialization was successful.
   return true;
 }
