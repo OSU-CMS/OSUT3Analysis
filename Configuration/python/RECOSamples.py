@@ -117,5 +117,19 @@ dataset_names = {
     'GluinoToGChi0_1200_1000_noiseFrate0p7' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p7/USER",
     'GluinoToGChi0_1200_1000_noiseFrate0p8' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p8/USER",
     'GluinoToGChi0_1200_1000_noiseFrate1p0' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyWithBkg/USER",
-    'GluinoToGChi0_1200_1000_nonoise' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyNoBkg/USER"
+    'GluinoToGChi0_1200_1000_nonoise' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyNoBkg/USER",
+
+################## Delayed Muon Ntuples stored on T3 ############
+########################## data ##########################
+    'NoBPTX_2015C_16Dec2015_Ntuple' : "/NoBPTX/Run2015C_25ns-16Dec2015-v1/USER",
+    'NoBPTX_2015D_16Dec2015_Ntuple' : "/NoBPTX/Run2015D_25ns-16Dec2015-v1/USER",
+
+################## Delayed Muon Ntuples stored on T3 ############
+########################## data ##########################
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : "/NoBPTX/Run2015B_Cosmic-PromptReco-v1/USER",
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : "/NoBPTX/Run2015C_Cosmic-PromptReco-v1/USER",
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple'  : "/NoBPTX/Run2015D_Cosmic-PromptReco-v3/USER",
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple'  : "/NoBPTX/Run2015D_Cosmic-PromptReco-v4/USER",
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : "/NoBPTX/Run2015E_Cosmic-PromptReco-v1/USER",
+
 }

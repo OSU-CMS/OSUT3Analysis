@@ -51,6 +51,15 @@ datasets = [
    'NoBPTX_2015Dv4_PromptReco',
    'NoBPTX_2015E_PromptReco',
 
+   'NoBPTX_2015C_16Dec2015_Ntuple',
+   'NoBPTX_2015D_16Dec2015_Ntuple',
+   
+   'NoBPTX_2015B_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015C_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015E_PromptReco_Cosmic_Ntuple',
+   
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
    'DYJetsToLL_10to50',
@@ -279,6 +288,17 @@ composite_dataset_definitions = {
     'NoBPTX_16Dec2015' : [
         'NoBPTX_2015C_16Dec2015',
         'NoBPTX_2015D_16Dec2015',
+        ],
+    'NoBPTX_16Dec2015_Ntuple' : [
+        'NoBPTX_2015C_16Dec2015_Ntuple',
+        'NoBPTX_2015D_16Dec2015_Ntuple',
+        ],  
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : [
+        'NoBPTX_2015B_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015C_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015E_PromptReco_Cosmic_Ntuple',
         ],
     'MET_2015' : [
         'MET_2015B',
@@ -617,6 +637,15 @@ nJobs = {
     'NoBPTX_2015Dv4_PromptReco' : 999,
     'NoBPTX_2015E_PromptReco' : 999,
 
+    'NoBPTX_2015C_16Dec2015_Ntuple' : 999,
+    'NoBPTX_2015D_16Dec2015_Ntuple' : 999,
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 999,
+
     #control sample data
     'Commissioning2015_controlSample' : 999,
     'NoBPTX_2015B_controlSample' : 999,
@@ -953,6 +982,15 @@ maxEvents = {
     'NoBPTX_2015Dv3_PromptReco' : -1,
     'NoBPTX_2015Dv4_PromptReco' : -1,
     'NoBPTX_2015E_PromptReco' : -1,
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : -1,
+    'NoBPTX_2015D_16Dec2015_Ntuple' : -1,
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : -1,
 
     #control sample data
     'Commissioning2015_controlSample' : -1,
@@ -1324,6 +1362,16 @@ types = {
     'NoBPTX_2015Dv3_PromptReco' : 'data',
     'NoBPTX_2015Dv4_PromptReco' : 'data',
     'NoBPTX_2015E_PromptReco' : 'data',
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : 'data',
+    'NoBPTX_2015D_16Dec2015_Ntuple' : 'data',
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 'data',
+
     ############################################################################
 
     #control sample data
@@ -1690,6 +1738,16 @@ colors = {
     'NoBPTX_2015Dv4_PromptReco' : 1,
     'NoBPTX_2015E_PromptReco' : 1,
 
+    'NoBPTX_2015C_16Dec2015_Ntuple' : 1,
+    'NoBPTX_2015D_16Dec2015_Ntuple' : 1,
+    'NoBPTX_16Dec2015_Ntuple' : 1,
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : 1,
     ############################################################################
 
     #control sample data
@@ -2047,12 +2105,24 @@ labels = {
     'NoBPTX_2015D_16Dec2015'     : "NoBPTX 2015D Rerecoed data",
     'NoBPTX_16Dec2015'     : "NoBPTX 2015C,D Rerecoed data",
 
-    'NoBPTX_2015BCDE_PromptReco' : "NoBPTX 2015 Prompt reco data",
+    'NoBPTX_2015BCDE_PromptReco' : "NoBPTX 2015B-E Prompt reco data",
     'NoBPTX_2015B_PromptReco' : "NoBPTX 2015B Prompt reco data",
     'NoBPTX_2015C_PromptReco' : "NoBPTX 2015C Prompt reco data",
     'NoBPTX_2015Dv3_PromptReco' : "NoBPTX 2015D_v3 Prompt reco data",
     'NoBPTX_2015Dv4_PromptReco' : "NoBPTX 2015D_v4 Prompt reco data",
     'NoBPTX_2015E_PromptReco' : "NoBPTX 2015E Prompt reco data",
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : "NoBPTX 2015C Rerecoed data",
+    'NoBPTX_2015D_16Dec2015_Ntuple' : "NoBPTX 2015D Rerecoed data",
+    'NoBPTX_16Dec2015_Ntuple' : "NoBPTX 2015C,D Rerecoed data",
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015B cosmic data",
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015C cosmic data",
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015D_v3 cosmic data",
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015D_v4 cosmic data",
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015E cosmic data",
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015B-E cosmic data",
+
     ############################################################################
 
     #control sample data
