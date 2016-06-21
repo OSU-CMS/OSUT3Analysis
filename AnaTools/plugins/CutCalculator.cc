@@ -357,10 +357,12 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
             break;
             }
           }
-            else
+            else{
               cumulativeFlags.at(index) = true;
-        }
-      }
+              break;
+            }
+          }
+       }
     }
   }
     // veto case
