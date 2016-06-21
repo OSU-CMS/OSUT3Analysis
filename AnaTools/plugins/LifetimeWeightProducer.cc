@@ -99,8 +99,6 @@ LifetimeWeightProducer::getFinalPosition (const reco::Candidate &mcparticle, con
       v1 = mcparticle.vertex ();
       firstDaughter = false;
     }
-  else
-    return;
   for (const auto &daughter : mcparticle)
     getFinalPosition (daughter, pdgId, firstDaughter, v1);
 #endif
