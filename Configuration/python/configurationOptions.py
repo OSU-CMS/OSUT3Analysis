@@ -51,6 +51,15 @@ datasets = [
    'NoBPTX_2015Dv4_PromptReco',
    'NoBPTX_2015E_PromptReco',
 
+   'NoBPTX_2015C_16Dec2015_Ntuple',
+   'NoBPTX_2015D_16Dec2015_Ntuple',
+   
+   'NoBPTX_2015B_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015C_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015E_PromptReco_Cosmic_Ntuple',
+   
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
    'DYJetsToLL_10to50',
@@ -279,6 +288,17 @@ composite_dataset_definitions = {
     'NoBPTX_16Dec2015' : [
         'NoBPTX_2015C_16Dec2015',
         'NoBPTX_2015D_16Dec2015',
+        ],
+    'NoBPTX_16Dec2015_Ntuple' : [
+        'NoBPTX_2015C_16Dec2015_Ntuple',
+        'NoBPTX_2015D_16Dec2015_Ntuple',
+        ],  
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : [
+        'NoBPTX_2015B_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015C_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015E_PromptReco_Cosmic_Ntuple',
         ],
     'MET_2015' : [
         'MET_2015B',
@@ -550,6 +570,21 @@ nJobs = {
     'mchamp2200' : 999,
     'mchamp2600' : 999,
 
+    'gluino100'   : 999,
+    'gluino200'   : 999,
+    'gluino400'   : 999,
+    'gluino600'   : 999,
+    'gluino800'   : 999,
+    'gluino1000'  : 999,
+    'gluino1200'  : 999,
+    'gluino1400'  : 999,
+    'gluino1600'  : 999,
+    'gluino1800'  : 999,
+    'gluino2000'  : 999,
+    'gluino2200'  : 999,
+    'gluino2400'  : 999,
+    'gluino2600'  : 999,
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : 999,
     #'mchamp200_Stage2SeparateEventsParticle0'   : 999,
@@ -616,6 +651,15 @@ nJobs = {
     'NoBPTX_2015Dv3_PromptReco' : 999,
     'NoBPTX_2015Dv4_PromptReco' : 999,
     'NoBPTX_2015E_PromptReco' : 999,
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : 999,
+    'NoBPTX_2015D_16Dec2015_Ntuple' : 999,
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 999,
 
     #control sample data
     'Commissioning2015_controlSample' : 999,
@@ -889,6 +933,21 @@ maxEvents = {
     'mchamp2200' : -1,
     'mchamp2600' : -1,
 
+    'gluino100'   : -1,
+    'gluino200'   : -1,
+    'gluino400'   : -1,
+    'gluino600'   : -1,
+    'gluino800'   : -1,
+    'gluino1000'  : -1,
+    'gluino1200'  : -1,
+    'gluino1400'  : -1,
+    'gluino1600'  : -1,
+    'gluino1800'  : -1,
+    'gluino2000'  : -1,
+    'gluino2200'  : -1,
+    'gluino2400'  : -1,
+    'gluino2600'  : -1,
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : -1,
     #'mchamp200_Stage2SeparateEventsParticle0'   : -1,
@@ -953,6 +1012,15 @@ maxEvents = {
     'NoBPTX_2015Dv3_PromptReco' : -1,
     'NoBPTX_2015Dv4_PromptReco' : -1,
     'NoBPTX_2015E_PromptReco' : -1,
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : -1,
+    'NoBPTX_2015D_16Dec2015_Ntuple' : -1,
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : -1,
 
     #control sample data
     'Commissioning2015_controlSample' : -1,
@@ -1256,6 +1324,21 @@ types = {
     'mchamp2200' : "signalMC",
     'mchamp2600' : "signalMC",
 
+    'gluino100'   : "signalMC",
+    'gluino200'   : "signalMC",
+    'gluino400'   : "signalMC",
+    'gluino600'   : "signalMC",
+    'gluino800'   : "signalMC",
+    'gluino1000'  : "signalMC",
+    'gluino1200'  : "signalMC",
+    'gluino1400'  : "signalMC",
+    'gluino1600'  : "signalMC",
+    'gluino1800'  : "signalMC",
+    'gluino2000'  : "signalMC",
+    'gluino2200'  : "signalMC",
+    'gluino2400'  : "signalMC",
+    'gluino2600'  : "signalMC",
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : "signalMC",
     #'mchamp200_Stage2SeparateEventsParticle0'   : "signalMC",
@@ -1324,6 +1407,18 @@ types = {
     'NoBPTX_2015Dv3_PromptReco' : 'data',
     'NoBPTX_2015Dv4_PromptReco' : 'data',
     'NoBPTX_2015E_PromptReco' : 'data',
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : 'data',
+    'NoBPTX_2015D_16Dec2015_Ntuple' : 'data',
+    'NoBPTX_16Dec2015_Ntuple' : 'data',
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : 'data',
+
     ############################################################################
 
     #control sample data
@@ -1624,6 +1719,21 @@ colors = {
     'mchamp2200' : 1,
     'mchamp2600' : 1,
 
+    'gluino100'   : 1,
+    'gluino200'   : 1,
+    'gluino400'   : 1,
+    'gluino600'   : 1,
+    'gluino800'   : 1,
+    'gluino1000'  : 1,
+    'gluino1200'  : 1,
+    'gluino1400'  : 1,
+    'gluino1600'  : 1,
+    'gluino1800'  : 1,
+    'gluino2000'  : 1,
+    'gluino2200'  : 1,
+    'gluino2400'  : 1,
+    'gluino2600'  : 1,
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : 1,
     #'mchamp200_Stage2SeparateEventsParticle0'   : 1,
@@ -1690,6 +1800,16 @@ colors = {
     'NoBPTX_2015Dv4_PromptReco' : 1,
     'NoBPTX_2015E_PromptReco' : 1,
 
+    'NoBPTX_2015C_16Dec2015_Ntuple' : 1,
+    'NoBPTX_2015D_16Dec2015_Ntuple' : 1,
+    'NoBPTX_16Dec2015_Ntuple' : 1,
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : 1,
     ############################################################################
 
     #control sample data
@@ -1988,6 +2108,21 @@ labels = {
     'mchamp2200' : "Mchamp (Q = 2e, M = 2200 GeV)",
     'mchamp2600' : "Mchamp (Q = 2e, M = 2600 GeV)",
 
+    'gluino100'   : "Gluino (M=100 GeV)",
+    'gluino200'   : "Gluino (M=200 GeV)",
+    'gluino400'   : "Gluino (M=400 GeV)",
+    'gluino600'   : "Gluino (M=600 GeV)",
+    'gluino800'   : "Gluino (M=800 GeV)",
+    'gluino1000'  : "Gluino (M=1000 GeV)",
+    'gluino1200'  : "Gluino (M=1200 GeV)",
+    'gluino1400'  : "Gluino (M=1400 GeV)",
+    'gluino1600'  : "Gluino (M=1600 GeV)",
+    'gluino1800'  : "Gluino (M=1800 GeV)",
+    'gluino2000'  : "Gluino (M=2000 GeV)",
+    'gluino2200'  : "Gluino (M=2200 GeV)",
+    'gluino2400'  : "Gluino (M=2400 GeV)",
+    'gluino2600'  : "Gluino (M=2600 GeV)",
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)",
     #'mchamp200_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)",
@@ -2047,12 +2182,24 @@ labels = {
     'NoBPTX_2015D_16Dec2015'     : "NoBPTX 2015D Rerecoed data",
     'NoBPTX_16Dec2015'     : "NoBPTX 2015C,D Rerecoed data",
 
-    'NoBPTX_2015BCDE_PromptReco' : "NoBPTX 2015 Prompt reco data",
+    'NoBPTX_2015BCDE_PromptReco' : "NoBPTX 2015B-E Prompt reco data",
     'NoBPTX_2015B_PromptReco' : "NoBPTX 2015B Prompt reco data",
     'NoBPTX_2015C_PromptReco' : "NoBPTX 2015C Prompt reco data",
     'NoBPTX_2015Dv3_PromptReco' : "NoBPTX 2015D_v3 Prompt reco data",
     'NoBPTX_2015Dv4_PromptReco' : "NoBPTX 2015D_v4 Prompt reco data",
     'NoBPTX_2015E_PromptReco' : "NoBPTX 2015E Prompt reco data",
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : "NoBPTX 2015C Rerecoed data",
+    'NoBPTX_2015D_16Dec2015_Ntuple' : "NoBPTX 2015D Rerecoed data",
+    'NoBPTX_16Dec2015_Ntuple' : "NoBPTX 2015C,D Rerecoed data",
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015B cosmic data",
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015C cosmic data",
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015D_v3 cosmic data",
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015D_v4 cosmic data",
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015E cosmic data",
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015B-E cosmic data",
+
     ############################################################################
 
     #control sample data
@@ -2224,6 +2371,21 @@ crossSections = {
     'mchamp1800' :  3.9346950000E-06,
     'mchamp2200' :  5.5863300000E-07,
     'mchamp2600' :  7.3973180000E-08,
+
+    'gluino100'   : 8.1700000000E+04,
+    'gluino200'   : 3.4000000000E+03,
+    'gluino400'   : 9.4800000000E+01,
+    'gluino600'   : 9.0700000000E+00,
+    'gluino800'   : 1.4700000000E+00,
+    'gluino1000'  : 3.2000000000E-01,
+    'gluino1200'  : 8.3600000000E-02,
+    'gluino1400'  : 2.4700000000E-02,
+    'gluino1600'  : 7.9600000000E-03,
+    'gluino1800'  : 2.7300000000E-03,
+    'gluino2000'  : 9.7400000000E-04,
+    'gluino2200'  : 3.5800000000E-04,
+    'gluino2400'  : 1.3400000000E-04,
+    'gluino2600'  : 5.0300000000E-05,
 
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : 3.7779440000E+00,
