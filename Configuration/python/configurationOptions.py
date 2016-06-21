@@ -1410,12 +1410,14 @@ types = {
 
     'NoBPTX_2015C_16Dec2015_Ntuple' : 'data',
     'NoBPTX_2015D_16Dec2015_Ntuple' : 'data',
+    'NoBPTX_16Dec2015_Ntuple' : 'data',
 
     'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 'data',
     'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 'data',
     'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 'data',
     'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : 'data',
     'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : 'data',
 
     ############################################################################
 
