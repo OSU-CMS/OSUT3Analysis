@@ -1894,33 +1894,33 @@ labels = {
     'MET_2016'  : "MET 2016 data",
 
     #AMSB chargino
-    'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 10cm)",
-    'AMSB_chargino_100GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 100cm)",
-    'AMSB_chargino_100GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 1000cm)",
+    'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 10 cm)",
+    'AMSB_chargino_100GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 100 cm)",
+    'AMSB_chargino_100GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 1000 cm)",
 
-    'AMSB_chargino_200GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 10cm)",
-    'AMSB_chargino_200GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 100cm)",
-    'AMSB_chargino_200GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 1000cm)",
+    'AMSB_chargino_200GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 10 cm)",
+    'AMSB_chargino_200GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 100 cm)",
+    'AMSB_chargino_200GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 1000 cm)",
 
-    'AMSB_chargino_300GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 10cm)",
-    'AMSB_chargino_300GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 100cm)",
-    'AMSB_chargino_300GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 1000cm)",
+    'AMSB_chargino_300GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 10 cm)",
+    'AMSB_chargino_300GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 100 cm)",
+    'AMSB_chargino_300GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 1000 cm)",
 
-    'AMSB_chargino_400GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 10cm)",
-    'AMSB_chargino_400GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 100cm)",
-    'AMSB_chargino_400GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 1000cm)",
+    'AMSB_chargino_400GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 10 cm)",
+    'AMSB_chargino_400GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 100 cm)",
+    'AMSB_chargino_400GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 1000 cm)",
 
-    'AMSB_chargino_500GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 10cm)",
-    'AMSB_chargino_500GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 100cm)",
-    'AMSB_chargino_500GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 1000cm)",
+    'AMSB_chargino_500GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 10 cm)",
+    'AMSB_chargino_500GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 100 cm)",
+    'AMSB_chargino_500GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 1000 cm)",
 
-    'AMSB_chargino_600GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 10cm)",
-    'AMSB_chargino_600GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 100cm)",
-    'AMSB_chargino_600GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 1000cm)",
+    'AMSB_chargino_600GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 10 cm)",
+    'AMSB_chargino_600GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 100 cm)",
+    'AMSB_chargino_600GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 1000 cm)",
 
-    'AMSB_chargino_700GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 10cm)",
-    'AMSB_chargino_700GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 100cm)",
-    'AMSB_chargino_700GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 1000cm)",
+    'AMSB_chargino_700GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 10 cm)",
+    'AMSB_chargino_700GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 100 cm)",
+    'AMSB_chargino_700GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 1000 cm)",
     ############################################################################
 
     ############################################################################
@@ -2475,7 +2475,6 @@ dstCTauForLifetimeReweighting = {
     # 'stopAndGluino1200_50mm_30mm' : [5.0, 3.0],
 }
 
-
 ##########################################################################
 ### code to set relevant parameters for displaced SUSY signal samples, ###
 ### which are a scan in the plane of stop mass and lifetime            ###
@@ -2538,3 +2537,36 @@ for index, sample in enumerate(signal_datasets):
     # special case
     if lifetime(sample) == "0.1":
         srcCTauForLifetimeReweighting[sample] = 0.1*1.0
+
+################################################################################
+### code to set relevant parameters for disappearing tracks signal samples,  ###
+### which are a scan in the plane of chargino mass and lifetime              ###
+################################################################################
+
+import re
+
+new_nJobs = {}
+for dataset0 in nJobs:
+    if not re.match (r'AMSB_chargino_[^_]*GeV_[^_]*cm', dataset0):
+        continue
+    mass = re.sub (r'AMSB_chargino_([^_]*)GeV_[^_]*cm', r'\1', dataset0)
+    ctau0 = float (re.sub (r'AMSB_chargino_[^_]*GeV_([^_]*)cm', r'\1', dataset0))
+    for i in range (2, 9):
+        ctau = ctauP = 0.1 * i * ctau0
+        if int (ctau) * 10 == int (ctau * 10):
+            ctau = ctauP = str (int (ctau))
+        else:
+            ctau = ctauP = str (ctau)
+            ctauP = re.sub (r'\.', r'p', ctau)
+        dataset = 'AMSB_chargino_' + mass + 'GeV_' + ctauP + 'cm'
+
+        new_nJobs[dataset] = nJobs[dataset0]
+        maxEvents[dataset] = maxEvents[dataset0]
+        types[dataset] = types[dataset0]
+        colors[dataset] = colors[dataset0]
+        labels[dataset] = "AMSB #tilde{#chi}^{#pm} (" + mass + " GeV, " + ctau + " cm)"
+        pdgIdsForLifetimeReweighting[dataset] = 1000024
+        srcCTauForLifetimeReweighting[dataset] = ctau0
+        dstCTauForLifetimeReweighting[dataset] = float (ctau)
+
+nJobs.update (new_nJobs)
