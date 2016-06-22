@@ -14,6 +14,8 @@ datasets = [
    #data
    'DoubleMu_2015',
    'DoubleMu_2015D',
+   'Tau_2015',
+   'Tau_2015D',
    'SingleMu_2015',
    'SingleMu_2015D',
    'SingleMu_2016',
@@ -231,6 +233,11 @@ composite_dataset_definitions = {
         'DoubleMu_2015B',
         'DoubleMu_2015C',
         'DoubleMu_2015D',
+    ],
+    'Tau_2015' : [
+        'Tau_2015B',
+        'Tau_2015C',
+        'Tau_2015D',
     ],
     'SingleMu_2015' : [
         'SingleMu_2015B',
@@ -472,6 +479,10 @@ nJobs = {
     'DoubleMu_2015B'   :  40,
     'DoubleMu_2015C'   : 187,
     'DoubleMu_2015D': 1000,
+
+    'Tau_2015B'      :  57,
+    'Tau_2015C'      : 220,
+    'Tau_2015D'   : 1000,
 
     'SingleMu_2015B'      :  57,
     'SingleMu_2015C'      : 220,
@@ -837,6 +848,10 @@ maxEvents = {
     'DoubleMu_2015B'       : -1,
     'DoubleMu_2015C'       : -1,
     'DoubleMu_2015D'    : -1,
+
+    'Tau_2015B'       : -1,
+    'Tau_2015C'       : -1,
+    'Tau_2015D'       : -1,
 
     'SingleMu_2015B'       : -1,
     'SingleMu_2015C'       : -1,
@@ -1218,6 +1233,12 @@ types = {
     'DoubleMu_2015C'   : "data",
     'DoubleMu_2015D'   : "data",
     'DoubleMu_2015'    : "data",
+
+    'Tau_2015B'    : "data",
+    'Tau_2015C'    : "data",
+    'Tau_2015D'    : "data",
+
+    'Tau_2015'     : "data",
 
     'SingleMu_2015B'    : "data",
     'SingleMu_2015C'    : "data",
@@ -1615,6 +1636,11 @@ colors = {
     'DoubleMu_2015D'   : 1,
     'DoubleMu_2015'   : 1,
 
+    'Tau_2015B'   : 1,
+    'Tau_2015C'   : 1,
+    'Tau_2015D'   : 1,
+    'Tau_2015'   : 1,
+
     'SingleMu_2015B'   : 1,
     'SingleMu_2015C'   : 1,
     'SingleMu_2015D'   : 1,
@@ -2004,6 +2030,11 @@ labels = {
     'DoubleMu_2015B'     : "DoubleMu 2015B data",
     'DoubleMu_2015C'     : "DoubleMu 2015C data",
     'DoubleMu_2015D'     : "DoubleMu 2015D data",
+
+    'Tau_2015'      : "Tau 2015 data",
+    'Tau_2015B'     : "Tau 2015B data",
+    'Tau_2015C'     : "Tau 2015C data",
+    'Tau_2015D'     : "Tau 2015D data",
 
     'SingleMu_2015'      : "Single Muon 2015 data",
     'SingleMu_2015B'     : "SingleMu 2015B data",
