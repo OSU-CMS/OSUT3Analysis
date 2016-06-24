@@ -352,19 +352,19 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
           if (pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(globalIndex).first){
             individualFlags.at(index) = true;
             if (currentCutIndex > 0){
-            if(pl_->cumulativeObjectFlags.at(currentCutIndex-1).at(currentCut.inputLabel).at(globalIndex).first){
-            cumulativeFlags.at(index) = true;
-            break;
+              if(pl_->cumulativeObjectFlags.at(currentCutIndex-1).at(currentCut.inputLabel).at(globalIndex).first){
+                cumulativeFlags.at(index) = true;
+                break;
+              }
             }
-          }
             else{
               cumulativeFlags.at(index) = true;
               break;
             }
           }
-       }
+        }
+      }
     }
-  }
     // veto case
     else {
       for (unsigned index = 0; index != currentCut.valueLookupTree->getCollectionSize (singleObject); index++){
@@ -385,6 +385,10 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
                 cumulativeFlags.at(index) = false;
                 break;
               }
+            }
+            else{
+              cumulativeFlags.at(index) = false;
+              break;
             }
           }
         }
