@@ -114,6 +114,8 @@ parser.add_option("--extend", dest="Extend", action="store_true", default = Fals
 
 #Define the dictionary to look for the redirectors given the users input.
 RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Purdue':'xrootd.rcac.purdue.edu','Global':'cms-xrd-global.cern.ch'}
+secondaryCollections ={}
+
 
 #To get the JSON file the user specifies. Use -J 'TypeOfJSON' like -J R_Silver
 def getLatestJsonFile():
@@ -269,6 +271,29 @@ def SpecialStringModifier(inputString, specialStringSplitList, specialStringRepl
                 tmp = inputString.replace(member[0],member[1])
                 inputString = tmp
     return inputString
+
+def SecondaryCollectionInstance(SkimDirectory, SkimChannel):
+    strings = []    
+    if len(secondaryCollections):
+        for collection in secondaryCollections:
+            skimFileList = os.popen("ls " + SkimDirectory + '/' + SkimChannel + "/skim_*.root").readlines()
+            if len(skimFileList):
+                newString = os.popen("edmDumpEventContent " + skimFileList[0].rstrip('\n') + " | grep " + secondaryCollections[str(collection)]).readlines()[0]
+                newString = "\"" + newString.split("\"")[1] + "\",\"" + newString.split("\"")[3] + "\",\"" +newString.split("\"")[5] + "\""
+                strings.append("collections." + str(collection) + " =  cms.InputTag (" + newString + ")")
+    return strings
+
+def ModifyUserConfigForSecondaryCollections(configPath, instances):
+    Config = open(configPath,'r')
+    StringToWrite = ""
+    for line in Config:
+        if "add_channels" in line:
+            for instance in instances:
+                line = instance + '\n' + line
+        StringToWrite = StringToWrite + line
+    Config.close()
+    Config = open(configPath,'w')
+    Config.write(StringToWrite)
 
 def GetCommandLineString():
     # Return string of all arguments specified on the command line
@@ -570,6 +595,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 SkimModifier(Label, Directory, crossSection)
                 return datasetRead
             SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/'
+            secondaryCollectionModifications = SecondaryCollectionInstance(SkimDirectory, arguments.SkimChannel)
             #Copy the datasetInfo file from the skim directory.
             shutil.copy (SkimDirectory + 'datasetInfo_' + Label + '_cfg.py', datasetInfoName)
             #Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
@@ -589,6 +615,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 return
         datasetRead['realDatasetName'] = datasetInfo.datasetName if hasattr (datasetInfo, "datasetName") else DatasetName
         datasetRead['numberOfFiles'] = datasetInfo.numberOfFiles
+        datasetRead['secondaryCollections'] = secondaryCollectionModifications
     return  datasetRead
 
 def MakeBatchJobFile(WorkDir, Queue, NumberOfJobs):
@@ -850,6 +877,7 @@ if not arguments.Resubmit:
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
             shutil.copy (Config, WorkDir + '/' + userConfig)
+            ModifyUserConfigForSecondaryCollections(WorkDir + '/' + userConfig, DatasetRead['secondaryCollections'])
             jsonFile = ''
             if arguments.localConfig:
                 if(types[dataset] == 'data'):
