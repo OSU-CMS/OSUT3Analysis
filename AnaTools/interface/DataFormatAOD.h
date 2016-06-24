@@ -15,6 +15,7 @@
 #define  superclusters_TYPE     INVALID_TYPE
 #define  taus_TYPE              reco::PFTau
 #define  tracks_TYPE            reco::Track
+#define  secondaryTracks_TYPE   reco::Track
 #define  pileupinfos_TYPE       PileupSummaryInfo
 #define  trigobjs_TYPE          INVALID_TYPE
 #define  uservariables_TYPE     VariableProducerPayload
