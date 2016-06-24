@@ -282,6 +282,8 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->taus->size ();
   else if (EQ_VALID(name,tracks))
     return handles_->tracks->size ();
+  else if (EQ_VALID(name,secondaryTracks))
+    return handles_->secondaryTracks->size ();
   else if (EQ_VALID(name,pileupinfos))
     return handles_->pileupinfos->size ();
   else if (EQ_VALID(name,trigobjs))
@@ -328,7 +330,8 @@ bool
   else  if  (EQ_VALID(name,superclusters))     isFound  =  handles_->superclusters.isValid();
   else  if  (EQ_VALID(name,taus))              isFound  =  handles_->taus.isValid();
   else  if  (EQ_VALID(name,tracks))            isFound  =  handles_->tracks.isValid();
-  else  if  (EQ_VALID(name,pileupinfos))            isFound  =  handles_->pileupinfos.isValid();
+  else  if  (EQ_VALID(name,secondaryTracks))   isFound  =  handles_->secondaryTracks.isValid();
+  else  if  (EQ_VALID(name,pileupinfos))       isFound  =  handles_->pileupinfos.isValid();
   else  if  (EQ_VALID(name,trigobjs))          isFound  =  handles_->trigobjs.isValid();
   else if (EQ_VALID(name,uservariables))       isFound = true; // This vector is always present, even if its size is 0.
   else if (EQ_VALID(name,eventvariables))      isFound = true; // This vector is always present, even if its size is 0.
@@ -873,6 +876,8 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
     return ((void *) &handles_->taus->at (i));
   else if (EQ_VALID(name,tracks))
     return ((void *) &handles_->tracks->at (i));
+  else if (EQ_VALID(name,secondaryTracks))
+    return ((void *) &handles_->secondaryTracks->at (i));
   else if (EQ_VALID(name,pileupinfos))
     return ((void *) &handles_->pileupinfos->at (i));
   else if (EQ_VALID(name,trigobjs))
@@ -943,6 +948,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return "osu::Tau";
   else if (EQ_VALID(name,tracks))
     return "osu::Track";
+  else if (EQ_VALID(name,secondaryTracks))
+    return "osu::SecondaryTrack";
   else if (EQ_VALID(name,pileupinfos))
     return "osu::PileUpInfo";
   else if (EQ_VALID(name,trigobjs))
@@ -1000,6 +1007,8 @@ ValueLookupTree::isCollection (const string &name) const
   else if (EQ_VALID(name,pileupinfos))
     return true;
   else if (EQ_VALID(name,tracks))
+    return true;
+  else if (EQ_VALID(name,secondaryTracks))
     return true;
   else if (EQ_VALID(name,trigobjs))
     return true;

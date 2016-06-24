@@ -125,6 +125,12 @@
   <class name="edm::Wrapper<std::vector<osu::Track> >"/>
   <class name="edm::Ref<std::vector<osu::Track> >"/>
 
+  <class name="osu::SecondaryTrack"/>
+  <class name="std::vector<osu::SecondaryTrack>"/>
+  <class name="edm::Wrapper<osu::SecondaryTrack>"/>
+  <class name="edm::Wrapper<std::vector<osu::SecondaryTrack> >"/>
+  <class name="edm::Ref<std::vector<osu::SecondaryTrack> >"/>
+
   <class name="osu::Trigobj"/>
   <class name="std::vector<osu::Trigobj>"/>
   <class name="edm::Wrapper<osu::Trigobj>"/>
