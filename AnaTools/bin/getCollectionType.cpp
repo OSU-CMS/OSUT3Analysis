@@ -78,6 +78,10 @@ main (int argc, char *argv[])
       else if (cppType == "vector<" TYPE_STR(tracks) ">")
         cout << "tracks" << endl;
 #endif
+#if IS_VALID(secondaryTracks)
+      else if (cppType == "vector<" TYPE_STR(secondaryTracks) ">")
+        cout << "secondaryTracks" << endl;
+#endif
 #if IS_VALID(pileupinfos)
       else if (cppType == "vector<" TYPE_STR(pileupinfos) ">")
         cout << "pileupinfos" << endl;

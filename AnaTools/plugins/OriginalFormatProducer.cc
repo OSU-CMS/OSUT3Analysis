@@ -58,6 +58,7 @@ private:
   bool makePrimaryvertexs_;
   bool makeTaus_;
   bool makeTracks_;
+  bool makeSecondaryTracks_;
   bool makeTrigobjs_;
   bool makeSuperclusters_;
 
@@ -81,6 +82,7 @@ OriginalFormatProducer::OriginalFormatProducer (const edm::ParameterSet& iConfig
   makePrimaryvertexs_  = iConfig.getParameter<bool> ("makePrimaryvertexs");
   makeTaus_                = iConfig.getParameter<bool> ("makeTaus");
   makeTracks_                 = iConfig.getParameter<bool> ("makeTracks");
+  makeSecondaryTracks_                 = iConfig.getParameter<bool> ("makeSecondaryTracks");
   makeTrigobjs_        = iConfig.getParameter<bool> ("makeTrigobjs");
   makeSuperclusters_   = iConfig.getParameter<bool> ("makeSuperclusters");
 
@@ -97,6 +99,7 @@ OriginalFormatProducer::OriginalFormatProducer (const edm::ParameterSet& iConfig
   if (makePrimaryvertexs_)  produces<vector< reco::Vertex > > ();
   if (makeTaus_)             produces<vector< pat::Tau > > ();
   if (makeTracks_)              produces<vector< reco::Track > > ();
+  if (makeSecondaryTracks_)              produces<vector< reco::Track > > ();
   if (makeTrigobjs_)        produces<vector< pat::TriggerObjectStandAlone > > ();
   if (makeSuperclusters_)   produces<vector< reco::SuperCluster > > ();
 
@@ -175,6 +178,9 @@ OriginalFormatProducer::produce (edm::Event& iEvent, const edm::EventSetup& iSet
 #endif
 #if IS_VALID(tracks)
   if (makeTracks_)              produceCollection<osu::Track,         reco::Track>                  (iEvent);
+#endif
+#if IS_VALID(secondaryTracks)
+  if (makeSecondaryTracks_)              produceCollection<osu::SecondaryTrack,         reco::Track>                  (iEvent);
 #endif
 #if IS_VALID(trigobjs)
   if (makeTrigobjs_)        produceCollection<osu::Trigobj,       pat::TriggerObjectStandAlone> (iEvent);

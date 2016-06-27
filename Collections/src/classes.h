@@ -17,6 +17,7 @@
 #include "OSUT3Analysis/Collections/interface/Supercluster.h"
 #include "OSUT3Analysis/Collections/interface/Tau.h"
 #include "OSUT3Analysis/Collections/interface/Track.h"
+#include "OSUT3Analysis/Collections/interface/SecondaryTrack.h"
 #include "OSUT3Analysis/Collections/interface/Trigobj.h"
 #include "OSUT3Analysis/Collections/interface/Uservariable.h"
 #include "OSUT3Analysis/Collections/interface/Cschit.h"
@@ -193,6 +194,14 @@ namespace {
     edm::Wrapper<osu::Track>                  track2;
     edm::Wrapper<vector<osu::Track> >         track3;
     edm::Ref<vector<osu::Track> >             track4;
+//#endif
+
+//#if IS_VALID(secondaryTracks)
+    osu::SecondaryTrack                                secondaryTrack0;
+    vector<osu::SecondaryTrack>                        secondaryTrack1;
+    edm::Wrapper<osu::SecondaryTrack>                  secondaryTrack2;
+    edm::Wrapper<vector<osu::SecondaryTrack> >         secondaryTrack3;
+    edm::Ref<vector<osu::SecondaryTrack> >             secondaryTrack4;
 //#endif
 
 //#if IS_VALID(trigobjs)
