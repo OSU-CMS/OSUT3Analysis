@@ -51,12 +51,11 @@ parser.add_option("-a", "--SkimChannel", dest="SkimChannel", default = "", help=
 parser.add_option("-R", "--Requirements", dest="Requirements", default = "", help="Requirements to be added to condor.sub submssion script, e.g. 'Memory > 1900'.")
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")
-parser.add_option("-P", "--UseGridProxy", dest="UseGridProxy", action="store_true", default = False, help="Use X509 grid proxy.")
-parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc. Appending 16 to this type gives Collisions16 JSONs (e.g. R_Silver16, P_MuonPhys16, etc).")
+parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc")
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")
-parser.add_option("-W", "--AllowDataWeights", dest="AllowDataWeights", action="store_true", default = False, help="Use event weights, even for a data dataset.")
 parser.add_option("-H", "--skimToHadoop", dest="skimToHadoop", default = "", help="If producing a skim, put in on Hadoop, in the given directory.")
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")
+parser.add_option("--justsubmit", dest="JustSubmit", action="store_true", default = False, help="Only submit condor jobs.")
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")
 parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  # See https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/65
 
@@ -114,146 +113,108 @@ parser.add_option("--extend", dest="Extend", action="store_true", default = Fals
 
 #Define the dictionary to look for the redirectors given the users input.
 RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Purdue':'xrootd.rcac.purdue.edu','Global':'cms-xrd-global.cern.ch'}
-secondaryCollections ={}
-
 
 #To get the JSON file the user specifies. Use -J 'TypeOfJSON' like -J R_Silver
 def getLatestJsonFile():
-    if arguments.JSONType[-4:] == ".txt":
-        startIndex = 0
-        endIndex = 0
+    if len(arguments.JSONType.split('_')) < 2:
+        print "Argument for -J is wrong, it needs to be in a format similar to \"R_Silver\""
+        sys.exit()
+    if arguments.JSONType.split('_')[0] == "P":
+        tmpDir = tempfile.mkdtemp ()
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/ -O ' + tmpDir + '/jsonList.txt')
+        os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
+        Tmp = open(tmpDir + '/CertList.txt','r+w')
+        jsonFileList = []
+        for line in Tmp:
+            startIndex = 0
+            endIndex = 0
+            for i in range(0,len(line)):
+              if line[i:i + 5] == '"Cert':
+                  startIndex = i + 1
+              if line[i:i+4] == 'txt"':
+                  endIndex = i + 3
+            if startIndex <= endIndex:
+                jsonFileList.append(line[startIndex: endIndex])
+        Tmp.close ()
+        jsonFileFiltered = []
+        for fileName in jsonFileList:
+            nameSplit = fileName.split('_')
+            for i in range(0, len(nameSplit)):
+                if arguments.JSONType.split('_')[1] == "Golden" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
+                    jsonFileFiltered.append(fileName)
+                elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
+                    if nameSplit[i + 3].split('.')[0] == arguments.JSONType.split('_')[1]:
+                        jsonFileFiltered.append(fileName)
+        bestJsons = []
+        bestJson = ''
+        runRange = 0
+        if len(jsonFileFiltered) == 0:
+              print "#######################################################"
+              print "Warning!!!!!!!!!!!Could not find wanted JSON file"
+              print "#######################################################"
+        for json in jsonFileFiltered:
+            nameSplit = json.split('_')
+            if len(nameSplit[1].split('-')) > 1:
+                if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) > runRange:
+                    runRange = float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0])
+                    bestJson = json
+        for json in jsonFileFiltered:
+            nameSplit = json.split('_')
+            if len(nameSplit[1].split('-')) > 1:
+                if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) == runRange:
+                    bestJsons.append(json)
+        versionNumber = 0
         ultimateJson = ''
-        for i in range(0,len(arguments.JSONType)):
-            if arguments.JSONType[-(i+1)] == '/':
-                startIndex = len(arguments.JSONType)-i
-                break
-        for i in range(0,len(arguments.JSONType)):
-            if arguments.JSONType[i:i+3] == 'txt':
-                endIndex = i+3
-        if startIndex <= endIndex:
-            ultimateJson = arguments.JSONType[startIndex: endIndex]
-        if arguments.JSONType[:4] == 'http':
-            os.system('wget ' + arguments.JSONType + ' -O ' + ultimateJson)
+        if len(bestJsons) == 1:
+            ultimateJson = bestJsons[0]
         else:
-            os.system('cp ' + arguments.JSONType + ' ' + ultimateJson)
+            for bestJson in bestJsons:
+                nameSplit = bestJson.split('_')
+                if nameSplit[len(nameSplit) - 1][0] == 'v':
+                    versionString =  nameSplit[len(nameSplit) - 1].split('.')[0]
+                    currentVersionNumber = float(versionString[1 : ])
+                    if currentVersionNumber > versionNumber:
+                        versionNumber = currentVersionNumber
+                        ultimateJson = bestJson
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
+        shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
+        shutil.rmtree (tmpDir)
         return ultimateJson
-
-    else:
-        if len(arguments.JSONType.split('_')) < 2:
-            print "Argument for -J is wrong, it needs to be in a format similar to \"R_Silver\""
-            sys.exit()
-
-        collisionType = 'Collisions15'
-        bunchSpacing = '25ns'
-        if arguments.JSONType[-2:] == '16':
-            collisionType = 'Collisions16'
-            bunchSpacing = ''
-            arguments.JSONType = arguments.JSONType[:-2]
-
-        jsonMatchingPhrase = collisionType + '_'
-        if len(bunchSpacing) > 0:
-            jsonMatchingPhrase += bunchSpacing + '_JSON'
-        else:
-            jsonMatchingPhrase += 'JSON'
-
-        if arguments.JSONType.split('_')[0] == "P":
-            tmpDir = tempfile.mkdtemp ()
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/ -O ' + tmpDir + '/jsonList.txt')
-            os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
-            Tmp = open(tmpDir + '/CertList.txt','r+w')
-            jsonFileList = []
-            for line in Tmp:
-                startIndex = 0
-                endIndex = 0
-                for i in range(0,len(line)):
-                    if line[i:i + 5] == '"Cert':
-                        startIndex = i + 1
-                    if line[i:i+4] == 'txt"':
-                        endIndex = i + 3
-                if startIndex <= endIndex:
-                    jsonFileList.append(line[startIndex: endIndex])
-            Tmp.close ()
-            jsonFileFiltered = []
-            for fileName in jsonFileList:
-                if jsonMatchingPhrase in fileName:
-                    if arguments.JSONType.split('_')[1] == "Golden":
-                        if fileName[-8:] == 'JSON.txt':
-                            jsonFileFiltered.append(fileName)
-                        elif 'JSON_v' in fileName:
-                            jsonFileFiltered.append(fileName)
-                    elif arguments.JSONType.split('_')[1] in fileName:
+    if arguments.JSONType.split('_')[0] == "R":
+        tmpDir = tempfile.mkdtemp ()
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/ -O ' + tmpDir + '/jsonList.txt')
+        os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
+        Tmp = open(tmpDir + '/CertList.txt','r+w')
+        jsonFileList = []
+        for line in Tmp:
+            startIndex = 0
+            endIndex = 0
+            for i in range(0,len(line)):
+              if line[i:i + 5] == '"Cert':
+                  startIndex = i + 1
+              if line[i:i+4] == 'txt"':
+                  endIndex = i + 3
+            if startIndex <= endIndex:
+                jsonFileList.append(line[startIndex: endIndex])
+        Tmp.close ()
+        jsonFileFiltered = []
+        for fileName in jsonFileList:
+            nameSplit = fileName.split('_')
+            for i in range(0, len(nameSplit)):
+                if arguments.JSONType.split('_')[1] == "Golden" and nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON.txt':
+                    jsonFileFiltered.append(fileName)
+                elif nameSplit[i] == 'Collisions15' and nameSplit[i + 1] == '25ns' and nameSplit[i + 2] == 'JSON':
+                    if nameSplit[i + 3].split('.')[0] == arguments.JSONType.split('_')[1]:
                         jsonFileFiltered.append(fileName)
-            bestJsons = []
-            bestJson = ''
-            runRange = 0
-            if len(jsonFileFiltered) == 0:
-                print "#######################################################"
-                print "Warning!!!!!!!!!!!Could not find wanted JSON file"
-                print "#######################################################"
-            for json in jsonFileFiltered:
-                nameSplit = json.split('_')
-                if len(nameSplit[1].split('-')) > 1:
-                    if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) > runRange:
-                        runRange = float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0])
-                        bestJson = json
-            for json in jsonFileFiltered:
-                nameSplit = json.split('_')
-                if len(nameSplit[1].split('-')) > 1:
-                    if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) == runRange:
-                        bestJsons.append(json)
-            versionNumber = 0
-            ultimateJson = ''
-            if len(bestJsons) == 1:
-                ultimateJson = bestJsons[0]
-            else:
-                for bestJson in bestJsons:
-                    nameSplit = bestJson.split('_')
-                    if nameSplit[len(nameSplit) - 1][0] == 'v':
-                        versionString =  nameSplit[len(nameSplit) - 1].split('.')[0]
-                        currentVersionNumber = float(versionString[1 : ])
-                        if currentVersionNumber > versionNumber:
-                            versionNumber = currentVersionNumber
-                            ultimateJson = bestJson
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
-            shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
-            shutil.rmtree (tmpDir)
-            return ultimateJson
-        if arguments.JSONType.split('_')[0] == "R":
-            tmpDir = tempfile.mkdtemp ()
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/Reprocessing/ -O ' + tmpDir + '/jsonList.txt')
-            os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
-            Tmp = open(tmpDir + '/CertList.txt','r+w')
-            jsonFileList = []
-            for line in Tmp:
-                startIndex = 0
-                endIndex = 0
-                for i in range(0,len(line)):
-                    if line[i:i + 5] == '"Cert':
-                        startIndex = i + 1
-                    if line[i:i+4] == 'txt"':
-                        endIndex = i + 3
-                if startIndex <= endIndex:
-                    jsonFileList.append(line[startIndex: endIndex])
-            Tmp.close ()
-            jsonFileFiltered = []
-            for fileName in jsonFileList:
-                if jsonMatchingPhrase in fileName:
-                    if arguments.JSONType.split('_')[1] == "Golden":
-                        if fileName[-8:] == 'JSON.txt':
-                            jsonFileFiltered.append(fileName)
-                        elif 'JSON_v' in fileName:
-                            jsonFileFiltered.append(fileName)
-                    elif arguments.JSONType.split('_')[1] in fileName:
-                        jsonFileFiltered.append(fileName)
-            if len(jsonFileFiltered) == 0:
-                print "#######################################################"
-                print "Warning!!!!!!!!!!!Could not find wanted JSON file"
-                print "#######################################################"
-            ultimateJson = jsonFileFiltered[-1]
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType +'/13TeV/Reprocessing/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
-            shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
-            shutil.rmtree (tmpDir)
-            return ultimateJson
+        if len(jsonFileFiltered) == 0:
+              print "#######################################################"
+              print "Warning!!!!!!!!!!!Could not find wanted JSON file"
+              print "#######################################################"
+        ultimateJson = jsonFileFiltered[-1]
+        os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
+        shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
+        shutil.rmtree (tmpDir)
+        return ultimateJson
 
 
 #A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.
@@ -271,29 +232,6 @@ def SpecialStringModifier(inputString, specialStringSplitList, specialStringRepl
                 tmp = inputString.replace(member[0],member[1])
                 inputString = tmp
     return inputString
-
-def SecondaryCollectionInstance(SkimDirectory, SkimChannel):
-    strings = []    
-    if len(secondaryCollections):
-        for collection in secondaryCollections:
-            skimFileList = os.popen("ls " + SkimDirectory + '/' + SkimChannel + "/skim_*.root").readlines()
-            if len(skimFileList):
-                newString = os.popen("edmDumpEventContent " + skimFileList[0].rstrip('\n') + " | grep " + secondaryCollections[str(collection)]).readlines()[0]
-                newString = "\"" + newString.split("\"")[1] + "\",\"" + newString.split("\"")[3] + "\",\"" +newString.split("\"")[5] + "\""
-                strings.append("collections." + str(collection) + " =  cms.InputTag (" + newString + ")")
-    return strings
-
-def ModifyUserConfigForSecondaryCollections(configPath, instances):
-    Config = open(configPath,'r')
-    StringToWrite = ""
-    for line in Config:
-        if "add_channels" in line:
-            for instance in instances:
-                line = instance + '\n' + line
-        StringToWrite = StringToWrite + line
-    Config.close()
-    Config = open(configPath,'w')
-    Config.write(StringToWrite)
 
 def GetCommandLineString():
     # Return string of all arguments specified on the command line
@@ -314,7 +252,7 @@ def GetListOfRootFiles(Directory):
 
 
 #It generates the condor.sub file for each dataset.
-def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile):
+def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseAAA, jsonFile):
     SubmitFile = open(Directory + '/condor.sub','w')
     cmsRunExecutable = os.popen('which cmsRun').read()
     SubmitFile.write("# Command line arguments: \n# " + GetCommandLineString() + " \n\n\n")
@@ -327,7 +265,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             FilesToTransfer = 'config_cfg.py,userConfig_' + Label + '_cfg.py'
             if Dataset != '':
                 FilesToTransfer += ',datasetInfo_' + Label + '_cfg.py'
-            if UseGridProxy:
+            if UseAAA:
                 userName = getpass.getuser()
                 userId = os.popen('id -u ' + userName).read().rstrip('\n')
                 userProxy = '/tmp/x509up_u' + str(userId)
@@ -336,7 +274,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
                 FilesToTransfer += ',' + jsonFile
             SubmitFile.write('should_transfer_files   = YES\n')
             SubmitFile.write('Transfer_Input_files = ' + FilesToTransfer + '\n')
-            if UseGridProxy:
+            if UseAAA:
                 SubmitFile.write('x509userproxy = ' + userProxy + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Output_files') and currentCondorSubArgumentsSet[argument]['Transfer_Output_files'] == "":
             SubmitFile.write ('Transfer_Output_files = hist_$(Process).root')
@@ -397,7 +335,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     ConfigFile.write('fileName = \'hist_\' + str (osusub.jobNumber) + \'.root\'\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
     if (not arguments.Generic) or (arguments.Generic and arguments.localConfig):
-      if (types[Label] == "data" and not arguments.AllowDataWeights):
+      if types[Label] == "data":
         for module in vars(temPset.process).values():
             if hasattr(module, "weights"):
                 ConfigFile.write('pset.process.' + str(module) + '.weights = cms.VPSet()\n')
@@ -480,13 +418,13 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
     shutil.rmtree (tmpDir)
 
 #It is the function which generates the list of input files for a given dataset type.
-def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
+def MakeFileList(Dataset, FileType, Directory, Label, DummyLabel, UseAAA, crossSection):
     numberOfFiles = -1
     datasetRead = {}
     datasetRead['useAAA'] = UseAAA
     runList = []
     datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
-    SkimExists = RunOverSkim and os.path.isdir (Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel)
+    SkimExists = RunOverSkim and os.path.isdir (Condor + arguments.SkimDirectory + '/' + DummyLabel + '/' + arguments.SkimChannel)
     if UseAAA:
         if FileType == 'OSUT3Ntuple' or FileType == 'Dataset':
             AcquireAwesomeAAA(Dataset, datasetInfoName, 'AAAFileList.txt', datasetRead, crossSection)
@@ -580,7 +518,6 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
         NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
         InitializeAAA = ""
-        secondaryCollectionModifications = []
         if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists:
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')
             InitializeAAA = "y"
@@ -589,18 +526,17 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             #else:
             #    return
         if RunOverSkim:
-            numInputFiles = len(glob.glob(Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel + "/*.root"))
+            numInputFiles = len(glob.glob(Condor + arguments.SkimDirectory + '/' + DummyLabel + '/' + arguments.SkimChannel + "/*.root"))
             if not numInputFiles:
                 print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
                 datasetRead['numberOfFiles'] = numInputFiles
-                SkimModifier(Label, Directory, crossSection)
+                SkimModifier(Label, DummyLabel, Directory, crossSection)
                 return datasetRead
-            SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/'
-            secondaryCollectionModifications = SecondaryCollectionInstance(SkimDirectory, arguments.SkimChannel)
+            SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(DummyLabel) + '/'
             #Copy the datasetInfo file from the skim directory.
-            shutil.copy (SkimDirectory + 'datasetInfo_' + Label + '_cfg.py', datasetInfoName)
+            shutil.copy (SkimDirectory + 'datasetInfo_' + DummyLabel + '_cfg.py', datasetInfoName)
             #Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
-            SkimModifier(Label, Directory, crossSection)
+            SkimModifier(Label, DummyLabel, Directory, crossSection)
 
             InitializeAAA = ""
         sys.path.append(Directory)
@@ -616,7 +552,6 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 return
         datasetRead['realDatasetName'] = datasetInfo.datasetName if hasattr (datasetInfo, "datasetName") else DatasetName
         datasetRead['numberOfFiles'] = datasetInfo.numberOfFiles
-        datasetRead['secondaryCollections'] = secondaryCollectionModifications
     return  datasetRead
 
 def MakeBatchJobFile(WorkDir, Queue, NumberOfJobs):
@@ -655,8 +590,8 @@ def SkimChannelFinder(userConfig, Directory):
 ################################################################################
 #            Function to modify the dataset_*_Info_cfy file for skim.          #
 ################################################################################
-def SkimModifier(Label, Directory, crossSection):
-    SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
+def SkimModifier(Label, DummyLabel, Directory, crossSection):
+    SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(DummyLabel) + '/' + str(arguments.SkimChannel)
     OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/OriginalNumberOfEvents.txt') else 0.0
     SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/SkimNumberOfEvents.txt') else 0.0
 
@@ -724,7 +659,7 @@ if arguments.skimToHadoop:
         print "The directory ", arguments.skimToHadoop, " does not exist.  Aborting."
         sys.exit()
     else:
-        HadoopDir = arguments.skimToHadoop + '/' + arguments.condorDir
+        HadoopDir = arguments.skimToHadoop + arguments.condorDir
     if not os.path.exists(HadoopDir):
         os.mkdir (HadoopDir)
     else:
@@ -766,13 +701,11 @@ if not arguments.localConfig:
 #    Get the host name to determine whether you are using lxplus or OSU T3.   #
 ###############################################################################
 UseAAA = False
-UseGridProxy = False
 Generic = False
 if arguments.Generic:
     Generic = True
 if arguments.UseAAA:
     UseAAA = True
-UseGridProxy = UseAAA or arguments.UseGridProxy
 remoteAccessT3 = True
 lxbatch  = False
 hostname = socket.gethostname()
@@ -791,6 +724,19 @@ if arguments.Redirector != "":
 # Remove duplicates
 split_datasets = list(set(split_datasets))
 
+if arguments.JustSubmit:
+    for dataset in split_datasets:
+        SubmissionDir = os.getcwd()
+        WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
+        os.chdir(WorkDir)
+        os.system("sed -i 's/Requirements/request_memory/' condor.sub")
+        os.system("sed -i 's/Memory//' condor.sub")
+        os.system("sed -i 's/>//' condor.sub")
+        os.system("sed -i 's/1900/2048MB/' condor.sub")
+        os.system('condor_submit condor.sub')
+        os.chdir(SubmissionDir)
+    sys.exit()
+    
 currentCondorSubArgumentsSet = {}
 #Check whether the user wants to resubmit the failed condor jobs.
 if not arguments.Resubmit:
@@ -859,7 +805,13 @@ if not arguments.Resubmit:
                 crossSection = crossSections[dataset]
             elif arguments.crossSection != "":
                 crossSection = arguments.crossSection
-            DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, UseAAA, crossSection)
+            DummyLabel = dataset
+            if types[dataset] == "signalMC":
+               if dataset.split('_')[1] not in ['1mm','10mm','100mm','1000mm']:
+                   targetLifetime = float(dataset.split('_')[1][0:len(dataset.split('_')[1]) - 2].replace('p','.'))
+                   originalLifetime = pow(10, int(log10(targetLifetime)) + 1) 
+                   DummyLabel = dataset.split('_')[0] + "_" + str(originalLifetime).split('.')[0] + "mm" 
+            DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, DummyLabel,UseAAA, crossSection)
             NumberOfFiles = int(DatasetRead['numberOfFiles'])
             if not NumberOfFiles:
                 continue
@@ -878,7 +830,6 @@ if not arguments.Resubmit:
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
             shutil.copy (Config, WorkDir + '/' + userConfig)
-            ModifyUserConfigForSecondaryCollections(WorkDir + '/' + userConfig, DatasetRead['secondaryCollections'])
             jsonFile = ''
             if arguments.localConfig:
                 if(types[dataset] == 'data'):
@@ -890,7 +841,7 @@ if not arguments.Resubmit:
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
             else:
-                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile)
+                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseAAA, jsonFile)
             if not arguments.NotToExecute:
                 os.chdir(WorkDir)
                 if RealMaxEvents > 0 :
@@ -933,7 +884,7 @@ if not arguments.Resubmit:
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
         else:
-            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'')
+            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseAAA,'')
         if not arguments.NotToExecute:
             os.chdir(WorkDir)
             print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'
@@ -965,3 +916,4 @@ else:
                 print '################ Resubmit failed jobs for ' + str(dataset) + ' dataset #############'
                 os.system('condor_submit condor_resubmit.sub')
                 os.chdir(SubmissionDir)
+
