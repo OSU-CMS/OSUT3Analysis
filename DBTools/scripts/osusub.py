@@ -729,7 +729,7 @@ if arguments.skimToHadoop:
         os.mkdir (HadoopDir)
     else:
         print 'Directory "' + str(HadoopDir) + '" already exists in your condor directory. Will proceed with job submission.'
-HadoopDir = os.getcwd() + '/' + HadoopDir 
+    HadoopDir = os.getcwd() + '/' + HadoopDir 
 
 RunOverSkim = False
 if arguments.SkimDirectory != "" and arguments.SkimChannel != "":
