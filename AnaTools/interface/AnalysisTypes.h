@@ -26,6 +26,7 @@
 #include "OSUT3Analysis/Collections/interface/Supercluster.h"
 #include "OSUT3Analysis/Collections/interface/Tau.h"
 #include "OSUT3Analysis/Collections/interface/Track.h"
+#include "OSUT3Analysis/Collections/interface/SecondaryTrack.h"
 #include "OSUT3Analysis/Collections/interface/Trigobj.h"
 #include "OSUT3Analysis/Collections/interface/Uservariable.h"
 #include "OSUT3Analysis/Collections/interface/PileUpInfo.h"
@@ -127,6 +128,7 @@ struct Collections
   edm::Handle<vector<osu::Supercluster> >   superclusters;
   edm::Handle<vector<osu::Tau> >            taus;
   edm::Handle<vector<osu::Track> >          tracks;
+  edm::Handle<vector<osu::SecondaryTrack> > secondaryTracks;
   edm::Handle<vector<osu::PileUpInfo> >     pileupinfos;
   edm::Handle<vector<osu::Trigobj> >        trigobjs;
   vector<edm::Handle<osu::Uservariable> >   uservariables;

@@ -3,16 +3,12 @@
 
 import FWCore.ParameterSet.Config as cms
 
+def cutsAreEqual(a, b):
+    return (sorted (a.inputCollection) == sorted (b.inputCollection) and a.cutString == b.cutString and a.numberRequired == b.numberRequired)
+
 ##################################################
 ## Functions for adding, removing cuts
 ##################################################
-def cutsMatch(cut1, cut2):
-    if cut1.cutString       == cut2.cutString       and \
-       cut1.inputCollection == cut2.inputCollection and \
-       cut1.numberRequired  == cut2.numberRequired:
-        return True
-    else:
-        return False  
 
 def addCuts(cutVPset, cutsToAdd):
     for cut in cutsToAdd:
@@ -21,13 +17,13 @@ def addCuts(cutVPset, cutsToAdd):
 def addSingleCut(cutVPset, cutToAdd, previousExistingCut):
     # Add cutToAdd immediately after previousExistingCut
     for i in xrange(0, len(cutVPset)):
-        if cutsMatch(cutVPset[i], previousExistingCut): 
+        if cutsAreEqual(cutVPset[i], previousExistingCut):
             cutVPset.insert(i+1, cutToAdd) # Use i+1 to put cutToAdd afterward
 
 def removeCuts(cutVPset, cutsToRemove):
     for cut in cutsToRemove:
         for i in xrange(len(cutVPset) - 1, -1, -1):  # iterate backwards to avoid error
-            if cutsMatch(cutVPset[i], cut):  
+            if cutsAreEqual(cutVPset[i], cut):
                 del cutVPset[i]
 
 def printCuts(cutVPset):  # For debugging

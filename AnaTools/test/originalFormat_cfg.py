@@ -27,6 +27,7 @@ process.originalFormat = cms.EDProducer("OriginalFormatProducer",
                                        makePrimaryvertexs  =  cms.bool(True),
                                        makeTaus            =  cms.bool(True),
                                        makeTracks          =  cms.bool(True),
+                                       makeSecondaryTracks =  cms.bool(False),
                                        makeTrigobjs        =  cms.bool(True),
                                        makeSuperclusters   =  cms.bool(True),
 )

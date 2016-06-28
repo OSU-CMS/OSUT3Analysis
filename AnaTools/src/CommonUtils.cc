@@ -217,6 +217,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   if  (VEC_CONTAINS  (objectsToGet,  "superclusters"))     event.getByToken  (tokens.superclusters,     handles.superclusters);
   if  (VEC_CONTAINS  (objectsToGet,  "taus"))              event.getByToken  (tokens.taus,              handles.taus);
   if  (VEC_CONTAINS  (objectsToGet,  "tracks"))            event.getByToken  (tokens.tracks,            handles.tracks);
+  if  (VEC_CONTAINS  (objectsToGet,  "secondaryTracks"))   event.getByToken  (tokens.secondaryTracks,   handles.secondaryTracks);
   if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos"))       event.getByToken  (tokens.pileupinfos,       handles.pileupinfos);
   if  (VEC_CONTAINS  (objectsToGet,  "triggers"))          event.getByToken  (tokens.triggers,          handles.triggers);
   if  (VEC_CONTAINS  (objectsToGet,  "trigobjs"))          event.getByToken  (tokens.trigobjs,          handles.trigobjs);
@@ -287,6 +288,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         ss << endl << "Did not retrieve taus collection from the event.";
       if (!handles.tracks.isValid ())
         ss << endl << "Did not retrieve tracks collection from the event.";
+      if (!handles.secondaryTracks.isValid ())
+        ss << endl << "Did not retrieve secondaryTracks collection from the event.";
       if (!handles.pileupinfos.isValid ())
         ss << endl << "Did not retrieve pileupinfos collection from the event.";
       if (!handles.triggers.isValid ())
@@ -825,6 +828,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   string  anatools::getObjectType  (const  osu::Track          &obj)  {  return  "track";          }
   string  anatools::getObjectClass  (const  osu::Track          &obj)  {  return  "osu::Track";          }
 #endif
+#if IS_VALID(secondaryTracks)
+  string  anatools::getObjectType  (const  osu::SecondaryTrack          &obj)  {  return  "secondaryTrack";          }
+  string  anatools::getObjectClass  (const  osu::SecondaryTrack          &obj)  {  return  "osu::SecondaryTrack";          }
+#endif
 #if IS_VALID(pileupinfos)
   string  anatools::getObjectType  (const  osu::PileUpInfo          &obj)  {  return  "pileupinfo";          }
   string  anatools::getObjectClass  (const  osu::PileUpInfo          &obj)  {  return  "osu::PileUpInfo";          }
@@ -892,6 +899,8 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     tokens.taus = cc.consumes<vector<osu::Tau> > (collections.getParameter<edm::InputTag> ("taus"));
   if (collections.exists ("tracks"))
     tokens.tracks = cc.consumes<vector<osu::Track> > (collections.getParameter<edm::InputTag> ("tracks"));
+  if (collections.exists ("secondaryTracks"))
+    tokens.secondaryTracks = cc.consumes<vector<osu::SecondaryTrack> > (collections.getParameter<edm::InputTag> ("secondaryTracks"));
   if (collections.exists ("pileupinfos"))
     tokens.pileupinfos = cc.consumes<vector<osu::PileUpInfo> > (collections.getParameter<edm::InputTag> ("pileupinfos"));
   if (collections.exists ("trigobjs"))

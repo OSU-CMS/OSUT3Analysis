@@ -18,7 +18,7 @@ class LifetimeWeightProducer : public EventVariableProducer
 
         bool isOriginalParticle (const TYPE(hardInteractionMcparticles) &, const int) const;
         double getCTau (const TYPE(hardInteractionMcparticles) &) const;
-        void getFinalPosition (const reco::Candidate &, const int, math::XYZPoint &) const;
+        void getFinalPosition (const reco::Candidate &, const int, bool, math::XYZPoint &) const;
 
         void AddVariables(const edm::Event &);
 };

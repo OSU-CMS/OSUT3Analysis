@@ -78,7 +78,7 @@ LifetimeWeightProducer::getCTau (const TYPE(hardInteractionMcparticles) &mcparti
   math::XYZPoint v0 = mcparticle.vertex (), v1;
   double boost = 1.0 / (mcparticle.p4 ().Beta () * mcparticle.p4 ().Gamma ());
 
-  getFinalPosition (mcparticle, mcparticle.pdgId (), v1);
+  getFinalPosition (mcparticle, mcparticle.pdgId (), true, v1);
   return ((v1 - v0).r () * boost);
 #else
   return 0.0;
@@ -86,15 +86,21 @@ LifetimeWeightProducer::getCTau (const TYPE(hardInteractionMcparticles) &mcparti
 }
 
 void
-LifetimeWeightProducer::getFinalPosition (const reco::Candidate &mcparticle, const int pdgId, math::XYZPoint &v1) const
+LifetimeWeightProducer::getFinalPosition (const reco::Candidate &mcparticle, const int pdgId, bool firstDaughter, math::XYZPoint &v1) const
 {
 #if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
-  if (!mcparticle.numberOfDaughters ())
-    return;
   if (mcparticle.pdgId () == pdgId)
-    v1 = mcparticle.vertex ();
+    {
+      v1 = mcparticle.vertex ();
+      firstDaughter = true;
+    }
+  else if (firstDaughter)
+    {
+      v1 = mcparticle.vertex ();
+      firstDaughter = false;
+    }
   for (const auto &daughter : mcparticle)
-    getFinalPosition (daughter, pdgId, v1);
+    getFinalPosition (daughter, pdgId, firstDaughter, v1);
 #endif
 }
 

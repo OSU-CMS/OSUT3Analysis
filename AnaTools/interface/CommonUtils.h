@@ -48,6 +48,7 @@ struct Tokens
   edm::EDGetTokenT<vector<osu::Supercluster> > superclusters;
   edm::EDGetTokenT<vector<osu::Tau> > taus;
   edm::EDGetTokenT<vector<osu::Track> > tracks;
+  edm::EDGetTokenT<vector<osu::SecondaryTrack> > secondaryTracks;
   edm::EDGetTokenT<vector<osu::PileUpInfo> > pileupinfos;
   edm::EDGetTokenT<vector<osu::Trigobj> > trigobjs;
 
@@ -147,6 +148,10 @@ namespace anatools
 #if IS_VALID(tracks)
   string getObjectType (const osu::Track &);
   string getObjectClass (const osu::Track &);
+#endif
+#if IS_VALID(secondaryTracks)
+  string getObjectType (const osu::SecondaryTrack &);
+  string getObjectClass (const osu::SecondaryTrack &);
 #endif
 #if IS_VALID(pileupinfos)
   string getObjectType (const osu::PileUpInfo &);

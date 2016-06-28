@@ -15,6 +15,7 @@
 #define  superclusters_TYPE               reco::SuperCluster
 #define  taus_TYPE                        pat::Tau
 #define  tracks_TYPE                      INVALID_TYPE
+#define  secondaryTracks_TYPE             INVALID_TYPE
 #define  pileupinfos_TYPE                 PileupSummaryInfo
 #define  trigobjs_TYPE                    pat::TriggerObjectStandAlone
 #define  uservariables_TYPE               VariableProducerPayload
@@ -32,6 +33,7 @@
 #define  bxlumis_INVALID
 #define  events_INVALID
 #define  tracks_INVALID
+#define  secondaryTracks_INVALID
 
 #define  cschits_INVALID
 #define  cscsegs_INVALID

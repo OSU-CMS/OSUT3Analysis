@@ -351,8 +351,16 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
           // if we find a "true" flag for any composite object, set the individual object flag to true
           if (pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(globalIndex).first){
             individualFlags.at(index) = true;
-            cumulativeFlags.at(index) = true;
-            break;
+            if (currentCutIndex > 0){
+              if(pl_->cumulativeObjectFlags.at(currentCutIndex-1).at(currentCut.inputLabel).at(globalIndex).first){
+                cumulativeFlags.at(index) = true;
+                break;
+              }
+            }
+            else{
+              cumulativeFlags.at(index) = true;
+              break;
+            }
           }
         }
       }
@@ -377,6 +385,10 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
                 cumulativeFlags.at(index) = false;
                 break;
               }
+            }
+            else{
+              cumulativeFlags.at(index) = false;
+              break;
             }
           }
         }

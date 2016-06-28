@@ -14,6 +14,8 @@ datasets = [
    #data
    'DoubleMu_2015',
    'DoubleMu_2015D',
+   'Tau_2015',
+   'Tau_2015D',
    'SingleMu_2015',
    'SingleMu_2015D',
    'SingleMu_2016',
@@ -26,6 +28,8 @@ datasets = [
    'SinglePhoton_2015D',
    'DoubleEG_2015',
    'DoubleEG_2015D',
+   'DoubleEG_2016',
+   'DoubleEG_2016B',
    'MuonEG_2015',
    'MuonEG_2015D',
    'MET_2015',
@@ -49,6 +53,15 @@ datasets = [
    'NoBPTX_2015Dv4_PromptReco',
    'NoBPTX_2015E_PromptReco',
 
+   'NoBPTX_2015C_16Dec2015_Ntuple',
+   'NoBPTX_2015D_16Dec2015_Ntuple',
+   
+   'NoBPTX_2015B_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015C_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple',
+   'NoBPTX_2015E_PromptReco_Cosmic_Ntuple',
+   
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
    'DYJetsToLL_10to50',
@@ -221,6 +234,11 @@ composite_dataset_definitions = {
         'DoubleMu_2015C',
         'DoubleMu_2015D',
     ],
+    'Tau_2015' : [
+        'Tau_2015B',
+        'Tau_2015C',
+        'Tau_2015D',
+    ],
     'SingleMu_2015' : [
         'SingleMu_2015B',
         'SingleMu_2015C',
@@ -246,6 +264,9 @@ composite_dataset_definitions = {
         'DoubleEG_2015B',
         'DoubleEG_2015C',
         'DoubleEG_2015D',
+    ],
+    'DoubleEG_2016' : [
+        'DoubleEG_2016B',
     ],
     'MuonEG_2015' : [
         'MuonEG_2015B',
@@ -274,6 +295,17 @@ composite_dataset_definitions = {
     'NoBPTX_16Dec2015' : [
         'NoBPTX_2015C_16Dec2015',
         'NoBPTX_2015D_16Dec2015',
+        ],
+    'NoBPTX_16Dec2015_Ntuple' : [
+        'NoBPTX_2015C_16Dec2015_Ntuple',
+        'NoBPTX_2015D_16Dec2015_Ntuple',
+        ],  
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : [
+        'NoBPTX_2015B_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015C_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple',
+        'NoBPTX_2015E_PromptReco_Cosmic_Ntuple',
         ],
     'MET_2015' : [
         'MET_2015B',
@@ -448,6 +480,10 @@ nJobs = {
     'DoubleMu_2015C'   : 187,
     'DoubleMu_2015D': 1000,
 
+    'Tau_2015B'      :  57,
+    'Tau_2015C'      : 220,
+    'Tau_2015D'   : 1000,
+
     'SingleMu_2015B'      :  57,
     'SingleMu_2015C'      : 220,
     'SingleMu_2015D'   : 1000,
@@ -457,7 +493,7 @@ nJobs = {
     'SingleEle_2015C'    : 137,
     'SingleEle_2015D' : 1000,
     'SingleEle_2016B' : 1000,
-    
+
     'SinglePhoton_2015B'   :  55,
     'SinglePhoton_2015C'   : 130,
     'SinglePhoton_2015D'   : 1000,
@@ -465,6 +501,7 @@ nJobs = {
     'DoubleEG_2015B'      :  100,
     'DoubleEG_2015C'      :  298,
     'DoubleEG_2015D'   :  1000,
+    'DoubleEG_2016B'      : 1000,
 
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
@@ -544,6 +581,21 @@ nJobs = {
     'mchamp2200' : 999,
     'mchamp2600' : 999,
 
+    'gluino100'   : 999,
+    'gluino200'   : 999,
+    'gluino400'   : 999,
+    'gluino600'   : 999,
+    'gluino800'   : 999,
+    'gluino1000'  : 999,
+    'gluino1200'  : 999,
+    'gluino1400'  : 999,
+    'gluino1600'  : 999,
+    'gluino1800'  : 999,
+    'gluino2000'  : 999,
+    'gluino2200'  : 999,
+    'gluino2400'  : 999,
+    'gluino2600'  : 999,
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : 999,
     #'mchamp200_Stage2SeparateEventsParticle0'   : 999,
@@ -610,6 +662,15 @@ nJobs = {
     'NoBPTX_2015Dv3_PromptReco' : 999,
     'NoBPTX_2015Dv4_PromptReco' : 999,
     'NoBPTX_2015E_PromptReco' : 999,
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : 999,
+    'NoBPTX_2015D_16Dec2015_Ntuple' : 999,
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : 999,
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 999,
 
     #control sample data
     'Commissioning2015_controlSample' : 999,
@@ -788,6 +849,10 @@ maxEvents = {
     'DoubleMu_2015C'       : -1,
     'DoubleMu_2015D'    : -1,
 
+    'Tau_2015B'       : -1,
+    'Tau_2015C'       : -1,
+    'Tau_2015D'       : -1,
+
     'SingleMu_2015B'       : -1,
     'SingleMu_2015C'       : -1,
     'SingleMu_2015D'       : -1,
@@ -805,6 +870,7 @@ maxEvents = {
     'DoubleEG_2015B'       : -1,
     'DoubleEG_2015C'       : -1,
     'DoubleEG_2015D'       : -1,
+    'DoubleEG_2016B'       : -1,
 
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
@@ -882,6 +948,21 @@ maxEvents = {
     'mchamp2200' : -1,
     'mchamp2600' : -1,
 
+    'gluino100'   : -1,
+    'gluino200'   : -1,
+    'gluino400'   : -1,
+    'gluino600'   : -1,
+    'gluino800'   : -1,
+    'gluino1000'  : -1,
+    'gluino1200'  : -1,
+    'gluino1400'  : -1,
+    'gluino1600'  : -1,
+    'gluino1800'  : -1,
+    'gluino2000'  : -1,
+    'gluino2200'  : -1,
+    'gluino2400'  : -1,
+    'gluino2600'  : -1,
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : -1,
     #'mchamp200_Stage2SeparateEventsParticle0'   : -1,
@@ -946,6 +1027,15 @@ maxEvents = {
     'NoBPTX_2015Dv3_PromptReco' : -1,
     'NoBPTX_2015Dv4_PromptReco' : -1,
     'NoBPTX_2015E_PromptReco' : -1,
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : -1,
+    'NoBPTX_2015D_16Dec2015_Ntuple' : -1,
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : -1,
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : -1,
 
     #control sample data
     'Commissioning2015_controlSample' : -1,
@@ -1144,11 +1234,17 @@ types = {
     'DoubleMu_2015D'   : "data",
     'DoubleMu_2015'    : "data",
 
+    'Tau_2015B'    : "data",
+    'Tau_2015C'    : "data",
+    'Tau_2015D'    : "data",
+
+    'Tau_2015'     : "data",
+
     'SingleMu_2015B'    : "data",
     'SingleMu_2015C'    : "data",
     'SingleMu_2015D'    : "data",
     'SingleMu_2016B'    : "data",
-    
+
     'SingleMu_2015'     : "data",
     'SingleMu_2016'     : "data",
 
@@ -1159,7 +1255,7 @@ types = {
 
     'SingleEle_2015'    : "data",
     'SingleEle_2016'    : "data",
-    
+
     'SinglePhoton_2015B'   : "data",
     'SinglePhoton_2015C'   : "data",
     'SinglePhoton_2015D'   : "data",
@@ -1169,6 +1265,8 @@ types = {
     'DoubleEG_2015C'   : "data",
     'DoubleEG_2015'    : "data",
     'DoubleEG_2015D'    : "data",
+    'DoubleEG_2016'    : "data",
+    'DoubleEG_2016B'   : "data",
 
     'MuonEG_2015B'   : "data",
     'MuonEG_2015C'   : "data",
@@ -1247,6 +1345,21 @@ types = {
     'mchamp2200' : "signalMC",
     'mchamp2600' : "signalMC",
 
+    'gluino100'   : "signalMC",
+    'gluino200'   : "signalMC",
+    'gluino400'   : "signalMC",
+    'gluino600'   : "signalMC",
+    'gluino800'   : "signalMC",
+    'gluino1000'  : "signalMC",
+    'gluino1200'  : "signalMC",
+    'gluino1400'  : "signalMC",
+    'gluino1600'  : "signalMC",
+    'gluino1800'  : "signalMC",
+    'gluino2000'  : "signalMC",
+    'gluino2200'  : "signalMC",
+    'gluino2400'  : "signalMC",
+    'gluino2600'  : "signalMC",
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : "signalMC",
     #'mchamp200_Stage2SeparateEventsParticle0'   : "signalMC",
@@ -1315,6 +1428,18 @@ types = {
     'NoBPTX_2015Dv3_PromptReco' : 'data',
     'NoBPTX_2015Dv4_PromptReco' : 'data',
     'NoBPTX_2015E_PromptReco' : 'data',
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : 'data',
+    'NoBPTX_2015D_16Dec2015_Ntuple' : 'data',
+    'NoBPTX_16Dec2015_Ntuple' : 'data',
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 'data',
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : 'data',
+
     ############################################################################
 
     #control sample data
@@ -1511,13 +1636,18 @@ colors = {
     'DoubleMu_2015D'   : 1,
     'DoubleMu_2015'   : 1,
 
+    'Tau_2015B'   : 1,
+    'Tau_2015C'   : 1,
+    'Tau_2015D'   : 1,
+    'Tau_2015'   : 1,
+
     'SingleMu_2015B'   : 1,
     'SingleMu_2015C'   : 1,
     'SingleMu_2015D'   : 1,
     'SingleMu_2015'   : 1,
     'SingleMu_2016B'   : 1,
     'SingleMu_2016'  : 1,
-    
+
     'SingleEle_2015B'   : 1,
     'SingleEle_2015C'   : 1,
     'SingleEle_2015D'   : 1,
@@ -1534,6 +1664,8 @@ colors = {
     'DoubleEG_2015C'   : 1,
     'DoubleEG_2015'   : 1,
     'DoubleEG_2015D'   : 1,
+    'DoubleEG_2016'    : 1,
+    'DoubleEG_2016B'   : 1,
 
     'MuonEG_2015B'   : 1,
     'MuonEG_2015C'   : 1,
@@ -1613,6 +1745,21 @@ colors = {
     'mchamp2200' : 1,
     'mchamp2600' : 1,
 
+    'gluino100'   : 1,
+    'gluino200'   : 1,
+    'gluino400'   : 1,
+    'gluino600'   : 1,
+    'gluino800'   : 1,
+    'gluino1000'  : 1,
+    'gluino1200'  : 1,
+    'gluino1400'  : 1,
+    'gluino1600'  : 1,
+    'gluino1800'  : 1,
+    'gluino2000'  : 1,
+    'gluino2200'  : 1,
+    'gluino2400'  : 1,
+    'gluino2600'  : 1,
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : 1,
     #'mchamp200_Stage2SeparateEventsParticle0'   : 1,
@@ -1679,6 +1826,16 @@ colors = {
     'NoBPTX_2015Dv4_PromptReco' : 1,
     'NoBPTX_2015E_PromptReco' : 1,
 
+    'NoBPTX_2015C_16Dec2015_Ntuple' : 1,
+    'NoBPTX_2015D_16Dec2015_Ntuple' : 1,
+    'NoBPTX_16Dec2015_Ntuple' : 1,
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 1,
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : 1,
     ############################################################################
 
     #control sample data
@@ -1763,33 +1920,33 @@ labels = {
     'MET_2016'  : "MET 2016 data",
 
     #AMSB chargino
-    'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 10cm)",
-    'AMSB_chargino_100GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 100cm)",
-    'AMSB_chargino_100GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 1000cm)",
+    'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 10 cm)",
+    'AMSB_chargino_100GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 100 cm)",
+    'AMSB_chargino_100GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 1000 cm)",
 
-    'AMSB_chargino_200GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 10cm)",
-    'AMSB_chargino_200GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 100cm)",
-    'AMSB_chargino_200GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 1000cm)",
+    'AMSB_chargino_200GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 10 cm)",
+    'AMSB_chargino_200GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 100 cm)",
+    'AMSB_chargino_200GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (200 GeV, 1000 cm)",
 
-    'AMSB_chargino_300GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 10cm)",
-    'AMSB_chargino_300GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 100cm)",
-    'AMSB_chargino_300GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 1000cm)",
+    'AMSB_chargino_300GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 10 cm)",
+    'AMSB_chargino_300GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 100 cm)",
+    'AMSB_chargino_300GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (300 GeV, 1000 cm)",
 
-    'AMSB_chargino_400GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 10cm)",
-    'AMSB_chargino_400GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 100cm)",
-    'AMSB_chargino_400GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 1000cm)",
+    'AMSB_chargino_400GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 10 cm)",
+    'AMSB_chargino_400GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 100 cm)",
+    'AMSB_chargino_400GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (400 GeV, 1000 cm)",
 
-    'AMSB_chargino_500GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 10cm)",
-    'AMSB_chargino_500GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 100cm)",
-    'AMSB_chargino_500GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 1000cm)",
+    'AMSB_chargino_500GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 10 cm)",
+    'AMSB_chargino_500GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 100 cm)",
+    'AMSB_chargino_500GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (500 GeV, 1000 cm)",
 
-    'AMSB_chargino_600GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 10cm)",
-    'AMSB_chargino_600GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 100cm)",
-    'AMSB_chargino_600GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 1000cm)",
+    'AMSB_chargino_600GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 10 cm)",
+    'AMSB_chargino_600GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 100 cm)",
+    'AMSB_chargino_600GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (600 GeV, 1000 cm)",
 
-    'AMSB_chargino_700GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 10cm)",
-    'AMSB_chargino_700GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 100cm)",
-    'AMSB_chargino_700GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 1000cm)",
+    'AMSB_chargino_700GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 10 cm)",
+    'AMSB_chargino_700GeV_100cm'   :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 100 cm)",
+    'AMSB_chargino_700GeV_1000cm'  :  "AMSB #tilde{#chi}^{#pm} (700 GeV, 1000 cm)",
     ############################################################################
 
     ############################################################################
@@ -1874,6 +2031,11 @@ labels = {
     'DoubleMu_2015C'     : "DoubleMu 2015C data",
     'DoubleMu_2015D'     : "DoubleMu 2015D data",
 
+    'Tau_2015'      : "Tau 2015 data",
+    'Tau_2015B'     : "Tau 2015B data",
+    'Tau_2015C'     : "Tau 2015C data",
+    'Tau_2015D'     : "Tau 2015D data",
+
     'SingleMu_2015'      : "Single Muon 2015 data",
     'SingleMu_2015B'     : "SingleMu 2015B data",
     'SingleMu_2015C'     : "SingleMu 2015C data",
@@ -1887,7 +2049,7 @@ labels = {
     'SingleEle_2015D'     : "SingleEle 2015D data",
     'SingleEle_2016'      : "Single Electron 2016 data",
     'SingleEle_2016B'     : "SingleEle 2016B data",
-    
+
     'SinglePhoton_2015'      : "SinglePhoton 2015 data",
     'SinglePhoton_2015B'     : "SinglePhoton 2015B data",
     'SinglePhoton_2015C'     : "SinglePhoton 2015C data",
@@ -1897,6 +2059,8 @@ labels = {
     'DoubleEG_2015D'     : "DoubleEG 2015D data",
     'DoubleEG_2015B'     : "DoubleEG 2015B data",
     'DoubleEG_2015C'     : "DoubleEG 2015C data",
+    'DoubleEG_2016'      : "DoubleEG 2016 data",
+    'DoubleEG_2016B'     : "DoubleEG 2016B data",
 
     'MuonEG_2015'      : "MuonEG 2015 data",
     'MuonEG_2015B'     : "MuonEG 2015B data",
@@ -1975,6 +2139,21 @@ labels = {
     'mchamp2200' : "Mchamp (Q = 2e, M = 2200 GeV)",
     'mchamp2600' : "Mchamp (Q = 2e, M = 2600 GeV)",
 
+    'gluino100'   : "Gluino (M=100 GeV)",
+    'gluino200'   : "Gluino (M=200 GeV)",
+    'gluino400'   : "Gluino (M=400 GeV)",
+    'gluino600'   : "Gluino (M=600 GeV)",
+    'gluino800'   : "Gluino (M=800 GeV)",
+    'gluino1000'  : "Gluino (M=1000 GeV)",
+    'gluino1200'  : "Gluino (M=1200 GeV)",
+    'gluino1400'  : "Gluino (M=1400 GeV)",
+    'gluino1600'  : "Gluino (M=1600 GeV)",
+    'gluino1800'  : "Gluino (M=1800 GeV)",
+    'gluino2000'  : "Gluino (M=2000 GeV)",
+    'gluino2200'  : "Gluino (M=2200 GeV)",
+    'gluino2400'  : "Gluino (M=2400 GeV)",
+    'gluino2600'  : "Gluino (M=2600 GeV)",
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)",
     #'mchamp200_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)",
@@ -2034,12 +2213,24 @@ labels = {
     'NoBPTX_2015D_16Dec2015'     : "NoBPTX 2015D Rerecoed data",
     'NoBPTX_16Dec2015'     : "NoBPTX 2015C,D Rerecoed data",
 
-    'NoBPTX_2015BCDE_PromptReco' : "NoBPTX 2015 Prompt reco data",
+    'NoBPTX_2015BCDE_PromptReco' : "NoBPTX 2015B-E Prompt reco data",
     'NoBPTX_2015B_PromptReco' : "NoBPTX 2015B Prompt reco data",
     'NoBPTX_2015C_PromptReco' : "NoBPTX 2015C Prompt reco data",
     'NoBPTX_2015Dv3_PromptReco' : "NoBPTX 2015D_v3 Prompt reco data",
     'NoBPTX_2015Dv4_PromptReco' : "NoBPTX 2015D_v4 Prompt reco data",
     'NoBPTX_2015E_PromptReco' : "NoBPTX 2015E Prompt reco data",
+
+    'NoBPTX_2015C_16Dec2015_Ntuple' : "NoBPTX 2015C Rerecoed data",
+    'NoBPTX_2015D_16Dec2015_Ntuple' : "NoBPTX 2015D Rerecoed data",
+    'NoBPTX_16Dec2015_Ntuple' : "NoBPTX 2015C,D Rerecoed data",
+
+    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015B cosmic data",
+    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015C cosmic data",
+    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015D_v3 cosmic data",
+    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015D_v4 cosmic data",
+    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015E cosmic data",
+    'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015B-E cosmic data",
+
     ############################################################################
 
     #control sample data
@@ -2102,9 +2293,9 @@ crossSections = {
     'QCD_EMEnriched_15to20'    :1279000000.0*0.001309,
     'QCD_EMEnriched_20to30'    : 557600000.0*0.009914,
     'QCD_EMEnriched_30to50'    :  136000000.0*0.04988,
-    'QCD_EMEnriched_50to80'    :    19800000.0*0.1145,
-    'QCD_EMEnriched_80to120'   :     2800000.0*0.1507,
-    'QCD_EMEnriched_120to170'  :      477000.0*0.1576,
+    'QCD_EMEnriched_50to80'    :    19800000.0*0.146,
+    'QCD_EMEnriched_80to120'   :     2800000.0*0.125,
+    'QCD_EMEnriched_120to170'  :      477000.0*0.132,
     # Got from the McM Tool: https://cms-pdmv.cern.ch/mcm/requests?page=0&dataset_name=QCD_Pt-300toInf_EMEnriched_TuneCUETP8M1_13TeV_pythia8&
     #member_of_campaign=RunIIWinter15GS&shown=163213220927
     'QCD_EMEnriched_170to300'  :      114000.0*0.1650,
@@ -2212,6 +2403,21 @@ crossSections = {
     'mchamp2200' :  5.5863300000E-07,
     'mchamp2600' :  7.3973180000E-08,
 
+    'gluino100'   : 8.1700000000E+04,
+    'gluino200'   : 3.4000000000E+03,
+    'gluino400'   : 9.4800000000E+01,
+    'gluino600'   : 9.0700000000E+00,
+    'gluino800'   : 1.4700000000E+00,
+    'gluino1000'  : 3.2000000000E-01,
+    'gluino1200'  : 8.3600000000E-02,
+    'gluino1400'  : 2.4700000000E-02,
+    'gluino1600'  : 7.9600000000E-03,
+    'gluino1800'  : 2.7300000000E-03,
+    'gluino2000'  : 9.7400000000E-04,
+    'gluino2200'  : 3.5800000000E-04,
+    'gluino2400'  : 1.3400000000E-04,
+    'gluino2600'  : 5.0300000000E-05,
+
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : 3.7779440000E+00,
     #'mchamp200_Stage2SeparateEventsParticle0'   : 2.9865270000E-01,
@@ -2300,7 +2506,6 @@ dstCTauForLifetimeReweighting = {
     # 'stopAndGluino1200_50mm_30mm' : [5.0, 3.0],
 }
 
-
 ##########################################################################
 ### code to set relevant parameters for displaced SUSY signal samples, ###
 ### which are a scan in the plane of stop mass and lifetime            ###
@@ -2363,3 +2568,36 @@ for index, sample in enumerate(signal_datasets):
     # special case
     if lifetime(sample) == "0.1":
         srcCTauForLifetimeReweighting[sample] = 0.1*1.0
+
+################################################################################
+### code to set relevant parameters for disappearing tracks signal samples,  ###
+### which are a scan in the plane of chargino mass and lifetime              ###
+################################################################################
+
+import re
+
+new_nJobs = {}
+for dataset0 in nJobs:
+    if not re.match (r'AMSB_chargino_[^_]*GeV_[^_]*cm', dataset0):
+        continue
+    mass = re.sub (r'AMSB_chargino_([^_]*)GeV_[^_]*cm', r'\1', dataset0)
+    ctau0 = float (re.sub (r'AMSB_chargino_[^_]*GeV_([^_]*)cm', r'\1', dataset0))
+    for i in range (2, 10):
+        ctau = ctauP = 0.1 * i * ctau0
+        if int (ctau) * 10 == int (ctau * 10):
+            ctau = ctauP = str (int (ctau))
+        else:
+            ctau = ctauP = str (ctau)
+            ctauP = re.sub (r'\.', r'p', ctau)
+        dataset = 'AMSB_chargino_' + mass + 'GeV_' + ctauP + 'cm'
+
+        new_nJobs[dataset] = nJobs[dataset0]
+        maxEvents[dataset] = maxEvents[dataset0]
+        types[dataset] = types[dataset0]
+        colors[dataset] = colors[dataset0]
+        labels[dataset] = "AMSB #tilde{#chi}^{#pm} (" + mass + " GeV, " + ctau + " cm)"
+        pdgIdsForLifetimeReweighting[dataset] = 1000024
+        srcCTauForLifetimeReweighting[dataset] = ctau0
+        dstCTauForLifetimeReweighting[dataset] = float (ctau)
+
+nJobs.update (new_nJobs)

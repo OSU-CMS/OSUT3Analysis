@@ -48,6 +48,8 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
         for (const auto &electron1 : *handles_.electrons) {
           float eta = abs(electron1.eta()) > ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) ? ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) : abs(electron1.eta());
           float pt = electron1.pt() > ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) ? ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) : electron1.pt();
+          if (ele->GetXaxis()->FindBin(electron1.eta()))
+              eta = electron1.eta() > 0 ? eta : -eta;
           float sf = ele->GetBinContent(ele->FindBin(eta,pt));
           if (shift == "up")
             sf += ele->GetBinError(ele->FindBin(eta,pt));

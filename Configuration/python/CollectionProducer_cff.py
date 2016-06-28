@@ -1,6 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 from OSUT3Analysis.Configuration.configurationOptions import *
+import copy
 
 def copyConfiguration (dst, src):
     for parameter in src:
@@ -118,6 +119,7 @@ copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------
 
 collectionProducer.photons = cms.EDProducer ("OSUPhotonProducer",
+    rho = cms.InputTag ('fixedGridRhoFastjetAll', '', ''),
 )
 copyConfiguration (collectionProducer.photons, collectionProducer.genMatchables)
 
@@ -190,6 +192,49 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     maxDeltaRForGsfTrackMatching = cms.double (0.2), # if cutting on dRToMatchedGsfTrack, must set this to be greater than the cut threshold
 )
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
+#-------------------------------------------------------------------------------
+
+collectionProducer.secondaryTracks = cms.EDProducer ("OSUSecondaryTrackProducer",
+    fiducialMaps = cms.PSet (
+        electrons = cms.VPSet (
+            cms.PSet (
+                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_data.root"),
+                beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+                afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+                thresholdForVeto = cms.double (2.0), # in sigma
+            ),
+            cms.PSet (
+                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_mc.root"),
+                beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+                afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+                thresholdForVeto = cms.double (2.0), # in sigma
+            ),
+        ),
+        muons = cms.VPSet (
+            cms.PSet (
+                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_mc.root"),
+                beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+                afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+                thresholdForVeto = cms.double (2.0), # in sigma
+            ),
+            cms.PSet (
+                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_data.root"),
+                beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
+                afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
+                thresholdForVeto = cms.double (2.0), # in sigma
+            ),
+        )
+    ),
+    minDeltaRForFiducialTrack = cms.double (0.05),
+
+    EBRecHits          =  cms.InputTag  ("reducedEcalRecHitsEB"),
+    EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),
+    HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),
+
+    gsfTracks    =  cms.InputTag  ("electronGsfTracks",      ""),
+    maxDeltaRForGsfTrackMatching = cms.double (0.2), # if cutting on dRToMatchedGsfTrack, must set this to be greater than the cut threshold
+)
+copyConfiguration (collectionProducer.secondaryTracks, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
 
