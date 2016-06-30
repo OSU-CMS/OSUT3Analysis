@@ -501,6 +501,8 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             print "The directory you provided does not exist: ", Dataset
             sys.exit()
         #Get the list of the root files in the directory and modify it to have the standard format.
+        secondaryCollectionModifications = []
+        datasetRead['secondaryCollections'] = secondaryCollectionModifications
         inputFiles = GetListOfRootFiles(Dataset)
         datasetRead['numberOfFiles'] = len(inputFiles)
         datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset
@@ -535,6 +537,8 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             print "The list you provided does not exist."
             sys.exit()
         #Get the list of the files to datasetInfo_cfg.py and modify it to have the standard format.
+        secondaryCollectionModifications = []
+        datasetRead['secondaryCollections'] = secondaryCollectionModifications
         inputFileList = open(Dataset, "r")
         inputFiles = inputFileList.read().split('\n')
         inputFileList.close ()
@@ -580,7 +584,6 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
         NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
         InitializeAAA = ""
-        secondaryCollectionModifications = []
         if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists:
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')
             InitializeAAA = "y"
@@ -729,7 +732,7 @@ if arguments.skimToHadoop:
         os.mkdir (HadoopDir)
     else:
         print 'Directory "' + str(HadoopDir) + '" already exists in your condor directory. Will proceed with job submission.'
-HadoopDir = os.getcwd() + '/' + HadoopDir 
+    HadoopDir = os.getcwd() + '/' + HadoopDir 
 
 RunOverSkim = False
 if arguments.SkimDirectory != "" and arguments.SkimChannel != "":
