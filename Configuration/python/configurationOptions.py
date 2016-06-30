@@ -651,6 +651,7 @@ nJobs = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : 999,
     'NoBPTX_2015D_v4' : 999,
+    'NoBPTX_2016B_v2' : 1,
     #'NoBPTX_2015D_v3' : 30,
     #'NoBPTX_2015D_v4' : 30,
 
@@ -1018,6 +1019,7 @@ maxEvents = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : -1,
     'NoBPTX_2015D_v4' : -1,
+    'NoBPTX_2016B_v2' : -1,
 
     'NoBPTX_2015C_16Dec2015' : -1,
     'NoBPTX_2015D_16Dec2015' : -1,
@@ -1414,6 +1416,7 @@ types = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : 'data',
     'NoBPTX_2015D_v4' : 'data',
+    'NoBPTX_2016B_v2' : 'data',
 
     'NoBPTX_2015C_16Dec2015' : 'data',
     'NoBPTX_2015D_16Dec2015' : 'data',
@@ -1813,6 +1816,7 @@ colors = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : 1,
     'NoBPTX_2015D_v4' : 1,
+    'NoBPTX_2016B_v2' : 1,
     'NoBPTX_2015D' : 1,
 
     'NoBPTX_2015C_16Dec2015' : 1,
@@ -2207,6 +2211,7 @@ labels = {
     #NoBPTX Data
     'NoBPTX_2015D_v3'     : "NoBPTX 2015D_v3 data",
     'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
+    'NoBPTX_2016B_v2'     : "NoBPTX 2016B_v2 data",
     'NoBPTX_2015D'     : "NoBPTX 2015D data",
 
     'NoBPTX_2015C_16Dec2015'     : "NoBPTX 2015C Rerecoed data",
