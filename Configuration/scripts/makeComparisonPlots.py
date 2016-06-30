@@ -134,7 +134,7 @@ topLeft_y_top     = 0.9475524
 topLeft_y_offset  = 0.035
 
 #set the text for the fancy heading
-HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 8 TeV"
+HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 13 TeV"
 
 #position for header
 header_x_left    = 0.2181208
@@ -145,11 +145,11 @@ header_y_top     = 0.9947552
 
 colors = {
     'black'  : 1,
-    'red'    : 632,
-    'green'  : 416,
-    'purple' : 880,
-    'blue'   : 600,
-    'yellow' : 400,
+    'red'    : 2,
+    'green'  : 3,
+    'purple' : 6,
+    'blue'   : 4,
+    'yellow' : 5,
 }
 
 colorList = [
