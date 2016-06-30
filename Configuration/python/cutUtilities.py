@@ -9,6 +9,7 @@ def cutsAreEqual(a, b):
 ##################################################
 ## Functions for adding, removing cuts
 ##################################################
+
 def addCuts(cutVPset, cutsToAdd):
     for cut in cutsToAdd:
         cutVPset.append(cut)
