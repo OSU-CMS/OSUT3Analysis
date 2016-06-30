@@ -66,6 +66,21 @@ dataset_names = {
     #'mchamp2200_RecoSeparateEventsParticle0'  : "/HSCPmchamp6_M-2200_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2RecoSeparateEventsParticle0/USER",
     #'mchamp2600_RecoSeparateEventsParticle0'  : "/HSCPmchamp6_M-2600_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2RecoSeparateEventsParticle0/USER",
 
+    #'gluino100_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-100_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino200_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino400_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino600_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino800_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-800_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino1000_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-1000_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino1200_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-1200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino1400_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-1400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino1600_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-1600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino1800_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-1800_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino2000_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-2000_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino2200_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-2200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino2400_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-2400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+    #'gluino2600_RecoSeparateEventsParticle0'   : "/HSCPgluino_M-2600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2RecoSeparateEventsParticle0/USER",
+
     #'mchamp100_NtupleSeparateEventsParticle0'   : "/HSCPmchamp6_M-100_TuneZ2star_13TeV-pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",
     #'mchamp200_NtupleSeparateEventsParticle0'   : "/HSCPmchamp6_M-200_TuneZ2star_13TeV-pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",
     #'mchamp400_NtupleSeparateEventsParticle0'   : "/HSCPmchamp6_M-400_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",
@@ -77,6 +92,21 @@ dataset_names = {
     #'mchamp2200_NtupleSeparateEventsParticle0'  : "/HSCPmchamp6_M-2200_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",
     #'mchamp2600_NtupleSeparateEventsParticle0'  : "/HSCPmchamp6_M-2600_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_765_Stage2NtupleSeparateEventsParticle0/USER",
 
+    #'gluino100_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-100_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino200_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino400_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino600_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino800_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-800_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino1000_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-1000_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino1200_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-1200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino1400_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-1400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino1600_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-1600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino1800_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-1800_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino2000_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-2000_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino2200_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-2200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino2400_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-2400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+    #'gluino2600_NtupleSeparateEventsParticle0'   : "/HSCPgluino_M-2600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2NtupleSeparateEventsParticle0/USER",
+
 ################## SP ntuples stored on T3 ###############
 #################### cosmic sample #######################
 
@@ -87,6 +117,8 @@ dataset_names = {
 ########################## data ##########################
     'NoBPTX_2015D_v3' : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-v2p0-f01519ca7e946644c73f465aa3632aa9/USER",
     'NoBPTX_2015D_v4' : "/NoBPTX/wji-Run2015D-PromptReco-v4_SP-v2p0-f01519ca7e946644c73f465aa3632aa9/USER",
+    #'NoBPTX_2016B_v2' : "/NoBPTX/wji-crab_Run2016B-PromptReco-v2_OSUT3Ntuples_Jun29v2_273158_275125-dc141c86edfeca6fdfe24dad24de6205/USER",
+    'NoBPTX_2016B_v2' : "/NoBPTX/Data_2016_271036_275125/USER",
 
 ################## Delayed Muon RECO not stored on T3 ############
 ########################## data ##########################

@@ -166,7 +166,8 @@ composite_dataset_definitions = {
     ],
     'SingleTop' : [
         'SingleTop_s_channel',
-        'SingleTop_t_channel',
+        'SingleTop_t_channel_top',
+        'SingleTop_t_channel_antitop',
         'SingleTop_tW',
         'SingleTop_tbarW',
     ],
@@ -365,10 +366,12 @@ nJobs = {
     'ZG'  :  999,
 
     #SingleTop
-    'SingleTop_s_channel'  :  999,
-    'SingleTop_t_channel'  :  999,
-    'SingleTop_tW'         :  999,
-    'SingleTop_tbarW'      :  999,
+    'SingleTop_s_channel'          :  999,
+    'SingleTop_t_channel'          :  999,
+    'SingleTop_t_channel_top'      :  999,
+    'SingleTop_t_channel_antitop'  :  999,
+    'SingleTop_tW'                 :  999,
+    'SingleTop_tbarW'              :  999,
 
     #TTJets
     'TTJets_DiLept'              :  300,
@@ -608,6 +611,21 @@ nJobs = {
     #'mchamp2200_Stage2SeparateEventsParticle0'  : 999,
     #'mchamp2600_Stage2SeparateEventsParticle0'  : 999,
 
+    #'gluino100_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino200_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino400_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino600_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino800_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino1000_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino1200_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino1400_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino1600_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino1800_Stage2SeparateEventsParticle0'   : 999,
+    'gluino2000_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino2200_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino2400_Stage2SeparateEventsParticle0'   : 999,
+    #'gluino2600_Stage2SeparateEventsParticle0'   : 999,
+
     #stopped particles stage2 DIGI-HLT
     #'mchamp100_DigiHltSeparateEventsParticle0'   :    999,
     #'mchamp200_DigiHltSeparateEventsParticle0'   :    999,
@@ -619,6 +637,21 @@ nJobs = {
     #'mchamp1800_DigiHltSeparateEventsParticle0'  :    999,
     #'mchamp2200_DigiHltSeparateEventsParticle0'  :    999,
     #'mchamp2600_DigiHltSeparateEventsParticle0'  :    999,
+
+    #'gluino100_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino200_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino400_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino600_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino800_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino1000_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino1200_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino1400_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino1600_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino1800_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino2000_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino2200_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino2400_DigiHltSeparateEventsParticle0'   : 999,
+    #'gluino2600_DigiHltSeparateEventsParticle0'   : 999,
 
     #stopped particles stage2 RECO
     #'mchamp100_RecoSeparateEventsParticle0'   :    999,
@@ -632,6 +665,21 @@ nJobs = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :    999,
     #'mchamp2600_RecoSeparateEventsParticle0'  :    999,
 
+    #'gluino100_RecoSeparateEventsParticle0'   : 999,
+    #'gluino200_RecoSeparateEventsParticle0'   : 999,
+    #'gluino400_RecoSeparateEventsParticle0'   : 999,
+    #'gluino600_RecoSeparateEventsParticle0'   : 999,
+    #'gluino800_RecoSeparateEventsParticle0'   : 999,
+    #'gluino1000_RecoSeparateEventsParticle0'   : 999,
+    #'gluino1200_RecoSeparateEventsParticle0'   : 999,
+    #'gluino1400_RecoSeparateEventsParticle0'   : 999,
+    #'gluino1600_RecoSeparateEventsParticle0'   : 999,
+    #'gluino1800_RecoSeparateEventsParticle0'   : 999,
+    #'gluino2000_RecoSeparateEventsParticle0'   : 999,
+    #'gluino2200_RecoSeparateEventsParticle0'   : 999,
+    #'gluino2400_RecoSeparateEventsParticle0'   : 999,
+    #'gluino2600_RecoSeparateEventsParticle0'   : 999,
+
     #stopped particles stage2 Ntuples
     #'mchamp100_NtupleSeparateEventsParticle0'   :    999,
     #'mchamp200_NtupleSeparateEventsParticle0'   :    999,
@@ -644,6 +692,20 @@ nJobs = {
     #'mchamp2200_NtupleSeparateEventsParticle0'  :    999,
     #'mchamp2600_NtupleSeparateEventsParticle0'  :    999,
 
+    #'gluino100_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino200_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino400_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino600_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino800_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino1000_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino1200_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino1400_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino1600_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino1800_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino2000_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino2200_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino2400_NtupleSeparateEventsParticle0'   : 999,
+    #'gluino2600_NtupleSeparateEventsParticle0'   : 999,
 
     ###########################################################################
     #RECO not stored on T3
@@ -651,6 +713,7 @@ nJobs = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : 999,
     'NoBPTX_2015D_v4' : 999,
+    'NoBPTX_2016B_v2' : 1,
     #'NoBPTX_2015D_v3' : 30,
     #'NoBPTX_2015D_v4' : 30,
 
@@ -733,10 +796,12 @@ maxEvents = {
     'ZG'  :  -1,
 
     #SingleTop
-    'SingleTop_s_channel'  :  -1,
-    'SingleTop_t_channel'  :  -1,
-    'SingleTop_tW'         :  -1,
-    'SingleTop_tbarW'      :  -1,
+    'SingleTop_s_channel'          :  -1,
+    'SingleTop_t_channel'          :  -1,
+    'SingleTop_t_channel_top'      :  -1,
+    'SingleTop_t_channel_antitop'  :  -1,
+    'SingleTop_tW'                 :  -1,
+    'SingleTop_tbarW'              :  -1,
 
     #TTJets
     'TTJets_DiLept'              :  -1,
@@ -975,6 +1040,21 @@ maxEvents = {
     #'mchamp2200_Stage2SeparateEventsParticle0'  : -1,
     #'mchamp2600_Stage2SeparateEventsParticle0'  : -1,
 
+    #'gluino100_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino200_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino400_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino600_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino800_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino1000_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino1200_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino1400_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino1600_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino1800_Stage2SeparateEventsParticle0'   : -1,
+    'gluino2000_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino2200_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino2400_Stage2SeparateEventsParticle0'   : -1,
+    #'gluino2600_Stage2SeparateEventsParticle0'   : -1,
+
     #stopped particles stage2 DIGI-HLT
     #'mchamp100_DigiHltSeparateEventsParticle0'   :    -1,
     #'mchamp200_DigiHltSeparateEventsParticle0'   :    -1,
@@ -986,6 +1066,21 @@ maxEvents = {
     #'mchamp1800_DigiHltSeparateEventsParticle0'  :    -1,
     #'mchamp2200_DigiHltSeparateEventsParticle0'  :    -1,
     #'mchamp2600_DigiHltSeparateEventsParticle0'  :    -1,
+
+    #'gluino100_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino200_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino400_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino600_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino800_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino1000_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino1200_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino1400_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino1600_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino1800_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino2000_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino2200_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino2400_DigiHltSeparateEventsParticle0'   : -1,
+    #'gluino2600_DigiHltSeparateEventsParticle0'   : -1,
 
     #stopped particles stage2 RECO
     #'mchamp100_RecoSeparateEventsParticle0'   :    -1,
@@ -999,6 +1094,21 @@ maxEvents = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :    -1,
     #'mchamp2600_RecoSeparateEventsParticle0'  :    -1,
 
+    #'gluino100_RecoSeparateEventsParticle0'   : -1,
+    #'gluino200_RecoSeparateEventsParticle0'   : -1,
+    #'gluino400_RecoSeparateEventsParticle0'   : -1,
+    #'gluino600_RecoSeparateEventsParticle0'   : -1,
+    #'gluino800_RecoSeparateEventsParticle0'   : -1,
+    #'gluino1000_RecoSeparateEventsParticle0'   : -1,
+    #'gluino1200_RecoSeparateEventsParticle0'   : -1,
+    #'gluino1400_RecoSeparateEventsParticle0'   : -1,
+    #'gluino1600_RecoSeparateEventsParticle0'   : -1,
+    #'gluino1800_RecoSeparateEventsParticle0'   : -1,
+    #'gluino2000_RecoSeparateEventsParticle0'   : -1,
+    #'gluino2200_RecoSeparateEventsParticle0'   : -1,
+    #'gluino2400_RecoSeparateEventsParticle0'   : -1,
+    #'gluino2600_RecoSeparateEventsParticle0'   : -1,
+
     #stopped particles stage2 Ntuple
     #'mchamp100_NtupleSeparateEventsParticle0'   :    -1,
     #'mchamp200_NtupleSeparateEventsParticle0'   :    -1,
@@ -1011,6 +1121,20 @@ maxEvents = {
     #'mchamp2200_NtupleSeparateEventsParticle0'  :    -1,
     #'mchamp2600_NtupleSeparateEventsParticle0'  :    -1,
 
+    #'gluino100_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino200_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino400_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino600_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino800_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino1000_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino1200_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino1400_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino1600_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino1800_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino2000_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino2200_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino2400_NtupleSeparateEventsParticle0'   : -1,
+    #'gluino2600_NtupleSeparateEventsParticle0'   : -1,
 
     ###########################################################################
     #RECO not stored on T3
@@ -1018,6 +1142,7 @@ maxEvents = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : -1,
     'NoBPTX_2015D_v4' : -1,
+    'NoBPTX_2016B_v2' : -1,
 
     'NoBPTX_2015C_16Dec2015' : -1,
     'NoBPTX_2015D_16Dec2015' : -1,
@@ -1102,11 +1227,13 @@ types = {
     'ZG'  :  "bgMC",
 
     #SingleTop
-    'SingleTop'  :  "bgMC",
-    'SingleTop_s_channel'  :  "bgMC",
-    'SingleTop_t_channel'  :  "bgMC",
-    'SingleTop_tW'         :  "bgMC",
-    'SingleTop_tbarW'      :  "bgMC",
+    'SingleTop'                    :  "bgMC",
+    'SingleTop_s_channel'          :  "bgMC",
+    'SingleTop_t_channel'          :  "bgMC",
+    'SingleTop_t_channel_top'      :  "bgMC",
+    'SingleTop_t_channel_antitop'  :  "bgMC",
+    'SingleTop_tW'                 :  "bgMC",
+    'SingleTop_tbarW'              :  "bgMC",
 
     #TTJets
     'TTJets_Lept'                :  "bgMC",
@@ -1372,6 +1499,21 @@ types = {
     #'mchamp2200_Stage2SeparateEventsParticle0'  : "signalMC",
     #'mchamp2600_Stage2SeparateEventsParticle0'  : "signalMC",
 
+    #'gluino100_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino200_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino400_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino600_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino800_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino1000_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino1200_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino1400_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino1600_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino1800_Stage2SeparateEventsParticle0'   : "signalMC",
+    'gluino2000_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino2200_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino2400_Stage2SeparateEventsParticle0'   : "signalMC",
+    #'gluino2600_Stage2SeparateEventsParticle0'   : "signalMC",
+
     #stopped particles stage2 DIGI-HLT
     #'mchamp100_DigiHltSeparateEventsParticle0'   :    "signalMC",
     #'mchamp200_DigiHltSeparateEventsParticle0'   :    "signalMC",
@@ -1383,6 +1525,21 @@ types = {
     #'mchamp1800_DigiHltSeparateEventsParticle0'  :    "signalMC",
     #'mchamp2200_DigiHltSeparateEventsParticle0'  :    "signalMC",
     #'mchamp2600_DigiHltSeparateEventsParticle0'  :    "signalMC",
+
+    #'gluino100_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino200_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino400_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino600_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino800_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino1000_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino1200_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino1400_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino1600_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino1800_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino2000_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino2200_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino2400_DigiHltSeparateEventsParticle0'   : "signalMC",
+    #'gluino2600_DigiHltSeparateEventsParticle0'   : "signalMC",
 
     #stopped particles stage2 RECO
     #'mchamp100_RecoSeparateEventsParticle0'   :    "signalMC",
@@ -1396,6 +1553,21 @@ types = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :    "signalMC",
     #'mchamp2600_RecoSeparateEventsParticle0'  :    "signalMC",
 
+    #'gluino100_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino200_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino400_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino600_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino800_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino1000_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino1200_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino1400_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino1600_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino1800_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino2000_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino2200_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino2400_RecoSeparateEventsParticle0'   : "signalMC",
+    #'gluino2600_RecoSeparateEventsParticle0'   : "signalMC",
+
     #stopped particles stage2 Ntuples
     #'mchamp100_NtupleSeparateEventsParticle0'   :    "signalMC",
     #'mchamp200_NtupleSeparateEventsParticle0'   :    "signalMC",
@@ -1408,12 +1580,28 @@ types = {
     #'mchamp2200_NtupleSeparateEventsParticle0'  :    "signalMC",
     #'mchamp2600_NtupleSeparateEventsParticle0'  :    "signalMC",
 
+    #'gluino100_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino200_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino400_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino600_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino800_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino1000_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino1200_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino1400_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino1600_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino1800_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino2000_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino2200_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino2400_NtupleSeparateEventsParticle0'   : "signalMC",
+    #'gluino2600_NtupleSeparateEventsParticle0'   : "signalMC",
+
     ###########################################################################
     #RECO not stored on T3
     ###########################################################################
     #NoBPTX data
     'NoBPTX_2015D_v3' : 'data',
     'NoBPTX_2015D_v4' : 'data',
+    'NoBPTX_2016B_v2' : 'data',
 
     'NoBPTX_2015C_16Dec2015' : 'data',
     'NoBPTX_2015D_16Dec2015' : 'data',
@@ -1504,11 +1692,13 @@ colors = {
     'ZG'  :  398,
 
     #SingleTop
-    'SingleTop'            :  607,
-    'SingleTop_s_channel'  :  905,
-    'SingleTop_t_channel'  :  907,
-    'SingleTop_tW'         :  909,
-    'SingleTop_tbarW'      :  910,
+    'SingleTop'                    :  607,
+    'SingleTop_s_channel'          :  905,
+    'SingleTop_t_channel'          :  907,
+    'SingleTop_t_channel_top'      :  907,
+    'SingleTop_t_channel_antitop'  :  908,
+    'SingleTop_tW'                 :  909,
+    'SingleTop_tbarW'              :  910,
 
     #TTJets
     'TTJets_Lept'                :  872,
@@ -1772,6 +1962,21 @@ colors = {
     #'mchamp2200_Stage2SeparateEventsParticle0'  : 1,
     #'mchamp2600_Stage2SeparateEventsParticle0'  : 1,
 
+    #'gluino100_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino200_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino400_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino600_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino800_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino1000_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino1200_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino1400_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino1600_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino1800_Stage2SeparateEventsParticle0'   : 1,
+    'gluino2000_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino2200_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino2400_Stage2SeparateEventsParticle0'   : 1,
+    #'gluino2600_Stage2SeparateEventsParticle0'   : 1,
+
     #stopped particles stage2 DIGI-HLT
     #'mchamp100_DigiHltSeparateEventsParticle0'   :    1,
     #'mchamp200_DigiHltSeparateEventsParticle0'   :    1,
@@ -1783,6 +1988,21 @@ colors = {
     #'mchamp1800_DigiHltSeparateEventsParticle0'  :    1,
     #'mchamp2200_DigiHltSeparateEventsParticle0'  :    1,
     #'mchamp2600_DigiHltSeparateEventsParticle0'  :    1,
+
+    #'gluino100_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino200_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino400_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino600_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino800_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino1000_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino1200_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino1400_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino1600_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino1800_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino2000_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino2200_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino2400_DigiHltSeparateEventsParticle0'   : 1,
+    #'gluino2600_DigiHltSeparateEventsParticle0'   : 1,
 
     #stopped particles stage2 RECO
     #'mchamp100_RecoSeparateEventsParticle0'   :    1,
@@ -1796,6 +2016,21 @@ colors = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :    1,
     #'mchamp2600_RecoSeparateEventsParticle0'  :    1,
 
+    #'gluino100_RecoSeparateEventsParticle0'   : 1,
+    #'gluino200_RecoSeparateEventsParticle0'   : 1,
+    #'gluino400_RecoSeparateEventsParticle0'   : 1,
+    #'gluino600_RecoSeparateEventsParticle0'   : 1,
+    #'gluino800_RecoSeparateEventsParticle0'   : 1,
+    #'gluino1000_RecoSeparateEventsParticle0'   : 1,
+    #'gluino1200_RecoSeparateEventsParticle0'   : 1,
+    #'gluino1400_RecoSeparateEventsParticle0'   : 1,
+    #'gluino1600_RecoSeparateEventsParticle0'   : 1,
+    #'gluino1800_RecoSeparateEventsParticle0'   : 1,
+    #'gluino2000_RecoSeparateEventsParticle0'   : 1,
+    #'gluino2200_RecoSeparateEventsParticle0'   : 1,
+    #'gluino2400_RecoSeparateEventsParticle0'   : 1,
+    #'gluino2600_RecoSeparateEventsParticle0'   : 1,
+
     #stopped particles stage2 Ntuples
     #'mchamp100_NtupleSeparateEventsParticle0'   :    1,
     #'mchamp200_NtupleSeparateEventsParticle0'   :    1,
@@ -1808,11 +2043,27 @@ colors = {
     #'mchamp2200_NtupleSeparateEventsParticle0'  :    1,
     #'mchamp2600_NtupleSeparateEventsParticle0'  :    1,
 
+    #'gluino100_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino200_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino400_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino600_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino800_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino1000_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino1200_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino1400_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino1600_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino1800_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino2000_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino2200_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino2400_NtupleSeparateEventsParticle0'   : 1,
+    #'gluino2600_NtupleSeparateEventsParticle0'   : 1,
+
     ############################################################################
 
     #NoBPTX data
     'NoBPTX_2015D_v3' : 1,
     'NoBPTX_2015D_v4' : 1,
+    'NoBPTX_2016B_v2' : 1,
     'NoBPTX_2015D' : 1,
 
     'NoBPTX_2015C_16Dec2015' : 1,
@@ -1901,11 +2152,13 @@ labels = {
     'ZG'  :  "Z#gamma#rightarrowll#gamma",
 
     #SingleTop
-    'SingleTop'            :  "Single top",
-    'SingleTop_s_channel'  :  "Single top (s-channel)",
-    'SingleTop_t_channel'  :  "Single top (t-channel)",
-    'SingleTop_tW'         :  "Single top (tW)",
-    'SingleTop_tbarW'      :  "Single top (#bar{t}W)",
+    'SingleTop'                    :  "Single top",
+    'SingleTop_s_channel'          :  "Single top (s-channel)",
+    'SingleTop_t_channel'          :  "Single top (t-channel)",
+    'SingleTop_t_channel_top'      :  "Single top(top) (t-channel)",
+    'SingleTop_t_channel_antitop'  :  "Single top(antitop) (t-channel)",
+    'SingleTop_tW'                 :  "Single top (tW)",
+    'SingleTop_tbarW'              :  "Single top (#bar{t}W)",
 
     #TTJets
     'TTJets_Lept'                :  "t#bar{t}",
@@ -2139,20 +2392,20 @@ labels = {
     'mchamp2200' : "Mchamp (Q = 2e, M = 2200 GeV)",
     'mchamp2600' : "Mchamp (Q = 2e, M = 2600 GeV)",
 
-    'gluino100'   : "Gluino (M=100 GeV)",
-    'gluino200'   : "Gluino (M=200 GeV)",
-    'gluino400'   : "Gluino (M=400 GeV)",
-    'gluino600'   : "Gluino (M=600 GeV)",
-    'gluino800'   : "Gluino (M=800 GeV)",
-    'gluino1000'  : "Gluino (M=1000 GeV)",
-    'gluino1200'  : "Gluino (M=1200 GeV)",
-    'gluino1400'  : "Gluino (M=1400 GeV)",
-    'gluino1600'  : "Gluino (M=1600 GeV)",
-    'gluino1800'  : "Gluino (M=1800 GeV)",
-    'gluino2000'  : "Gluino (M=2000 GeV)",
-    'gluino2200'  : "Gluino (M=2200 GeV)",
-    'gluino2400'  : "Gluino (M=2400 GeV)",
-    'gluino2600'  : "Gluino (M=2600 GeV)",
+    'gluino100'   : "#tilde{g} (M=100 GeV)", 
+    'gluino200'   : "#tilde{g} (M=200 GeV)", 
+    'gluino400'   : "#tilde{g} (M=400 GeV)", 
+    'gluino600'   : "#tilde{g} (M=600 GeV)", 
+    'gluino800'   : "#tilde{g} (M=800 GeV)", 
+    'gluino1000'  : "#tilde{g} (M=1000 GeV)",
+    'gluino1200'  : "#tilde{g} (M=1200 GeV)",
+    'gluino1400'  : "#tilde{g} (M=1400 GeV)",
+    'gluino1600'  : "#tilde{g} (M=1600 GeV)",
+    'gluino1800'  : "#tilde{g} (M=1800 GeV)",
+    'gluino2000'  : "#tilde{g} (M=2000 GeV)",
+    'gluino2200'  : "#tilde{g} (M=2200 GeV)",
+    'gluino2400'  : "#tilde{g} (M=2400 GeV)",
+    'gluino2600'  : "#tilde{g} (M=2600 GeV)",
 
     #stopped particles stage2 GEN-SIM
     #'mchamp100_Stage2SeparateEventsParticle0'   : "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)",
@@ -2166,6 +2419,21 @@ labels = {
     #'mchamp2200_Stage2SeparateEventsParticle0'  : "Mchamp (Q = 2e, M = 2200 GeV, Separate Events, Particle 0)",
     #'mchamp2600_Stage2SeparateEventsParticle0'  : "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 0)",
 
+    #'gluino100_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
+    #'gluino200_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
+    #'gluino400_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
+    #'gluino600_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
+    #'gluino800_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino1000_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
+    #'gluino1200_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
+    #'gluino1400_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
+    #'gluino1600_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1600 GeV, M_{#tilde{#chi}^{0}_{2}}=1000 GeV, M_{#tilde{#chi}^{0}_{LSP}}=400 GeV)",
+    #'gluino1800_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1800 GeV, M_{#tilde{#chi}^{0}_{2}}=1125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=450 GeV)",
+    'gluino2000_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2000 GeV, M_{#tilde{#chi}^{0}_{2}}=1250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=500 GeV)",
+    #'gluino2200_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2200 GeV, M_{#tilde{#chi}^{0}_{2}}=1375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=550 GeV)",
+    #'gluino2400_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2400 GeV, M_{#tilde{#chi}^{0}_{2}}=1500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=600 GeV)",
+    #'gluino2600_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2600 GeV, M_{#tilde{#chi}^{0}_{2}}=1625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=650 GeV)",
+
     #stopped particles stage2 DIGI-HLT
     #'mchamp100_DigiHltSeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)",
     #'mchamp200_DigiHltSeparateEventsParticle0'   :  "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)",
@@ -2177,6 +2445,21 @@ labels = {
     #'mchamp1800_DigiHltSeparateEventsParticle0'  :  "Mchamp (Q = 2e, M = 1800 GeV, Separate Events, Particle 0)",
     #'mchamp2200_DigiHltSeparateEventsParticle0'  :  "Mchamp (Q = 2e, M = 2200 GeV, Separate Events, Particle 0)",
     #'mchamp2600_DigiHltSeparateEventsParticle0'  :  "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 0)",
+
+    #'gluino100_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
+    #'gluino200_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
+    #'gluino400_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
+    #'gluino600_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
+    #'gluino800_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino1000_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
+    #'gluino1200_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
+    #'gluino1400_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
+    #'gluino1600_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1600 GeV, M_{#tilde{#chi}^{0}_{2}}=1000 GeV, M_{#tilde{#chi}^{0}_{LSP}}=400 GeV)",
+    #'gluino1800_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1800 GeV, M_{#tilde{#chi}^{0}_{2}}=1125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=450 GeV)",
+    #'gluino2000_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2000 GeV, M_{#tilde{#chi}^{0}_{2}}=1250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=500 GeV)",
+    #'gluino2200_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2200 GeV, M_{#tilde{#chi}^{0}_{2}}=1375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=550 GeV)",
+    #'gluino2400_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2400 GeV, M_{#tilde{#chi}^{0}_{2}}=1500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=600 GeV)",
+    #'gluino2600_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2600 GeV, M_{#tilde{#chi}^{0}_{2}}=1625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=650 GeV)",
 
     #stopped particles stage2 RECO
     #'mchamp100_RecoSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)",
@@ -2190,6 +2473,21 @@ labels = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 2200 GeV, Separate Events, Particle 0)",
     #'mchamp2600_RecoSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 0)",
 
+    #'gluino100_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
+    #'gluino200_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
+    #'gluino400_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
+    #'gluino600_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
+    #'gluino800_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino1000_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
+    #'gluino1200_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
+    #'gluino1400_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
+    #'gluino1600_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1600 GeV, M_{#tilde{#chi}^{0}_{2}}=1000 GeV, M_{#tilde{#chi}^{0}_{LSP}}=400 GeV)",
+    #'gluino1800_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1800 GeV, M_{#tilde{#chi}^{0}_{2}}=1125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=450 GeV)",
+    #'gluino2000_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2000 GeV, M_{#tilde{#chi}^{0}_{2}}=1250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=500 GeV)",
+    #'gluino2200_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2200 GeV, M_{#tilde{#chi}^{0}_{2}}=1375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=550 GeV)",
+    #'gluino2400_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2400 GeV, M_{#tilde{#chi}^{0}_{2}}=1500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=600 GeV)",
+    #'gluino2600_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2600 GeV, M_{#tilde{#chi}^{0}_{2}}=1625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=650 GeV)",
+
     #stopped particles stage2 Ntuples
     #'mchamp100_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 100 GeV, Separate Events, Particle 0)",
     #'mchamp200_NtupleSeparateEventsParticle0'   :   "Mchamp (Q = 2e, M = 200 GeV, Separate Events, Particle 0)",
@@ -2202,11 +2500,27 @@ labels = {
     #'mchamp2200_NtupleSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 2200 GeV, Separate Events, Particle 0)",
     #'mchamp2600_NtupleSeparateEventsParticle0'  :   "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 0)",
 
+    #'gluino100_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
+    #'gluino200_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
+    #'gluino400_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
+    #'gluino600_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
+    #'gluino800_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino1000_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
+    #'gluino1200_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
+    #'gluino1400_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
+    #'gluino1600_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1600 GeV, M_{#tilde{#chi}^{0}_{2}}=1000 GeV, M_{#tilde{#chi}^{0}_{LSP}}=400 GeV)",
+    #'gluino1800_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1800 GeV, M_{#tilde{#chi}^{0}_{2}}=1125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=450 GeV)",
+    #'gluino2000_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2000 GeV, M_{#tilde{#chi}^{0}_{2}}=1250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=500 GeV)",
+    #'gluino2200_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2200 GeV, M_{#tilde{#chi}^{0}_{2}}=1375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=550 GeV)",
+    #'gluino2400_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2400 GeV, M_{#tilde{#chi}^{0}_{2}}=1500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=600 GeV)",
+    #'gluino2600_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2600 GeV, M_{#tilde{#chi}^{0}_{2}}=1625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=650 GeV)",
+
     ############################################################################
 
     #NoBPTX Data
     'NoBPTX_2015D_v3'     : "NoBPTX 2015D_v3 data",
     'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
+    'NoBPTX_2016B_v2'     : "NoBPTX 2016B_v2 data",
     'NoBPTX_2015D'     : "NoBPTX 2015D data",
 
     'NoBPTX_2015C_16Dec2015'     : "NoBPTX 2015C Rerecoed data",
@@ -2320,13 +2634,15 @@ crossSections = {
     'ZZToLLLL'    :  1.256,
     'WG'  :  489.0,
     'ZG'  :  117.864,
-    'SingleTop_s_channel'  :  3.3623,
-    'SingleTop_t_channel'  :  70.695,
-    'SingleTop_tW'         :  19.418,
-    'SingleTop_tbarW'      :  19.418,
-    'TTJets_DiLept'              :  87.31,
-    'TTJets_SingleLeptFromT'     :  182.7,
-    'TTJets_SingleLeptFromTbar'  :  182.7,
+    'SingleTop_s_channel'          :  3.3623,
+    'SingleTop_t_channel'          :  70.695,
+    'SingleTop_t_channel_top'      :  44.3151,
+    'SingleTop_t_channel_antitop'  :  26.3734,
+    'SingleTop_tW'                 :  19.418,
+    'SingleTop_tbarW'              :  19.418,
+    'TTJets_DiLept'                :  87.31,
+    'TTJets_SingleLeptFromT'       :  182.7,
+    'TTJets_SingleLeptFromTbar'    :  182.7,
 
     ###########################################################################
     #RECO stored on T3
@@ -2430,6 +2746,21 @@ crossSections = {
     #'mchamp2200_Stage2SeparateEventsParticle0'  : 5.5863300000E-07,
     #'mchamp2600_Stage2SeparateEventsParticle0'  : 7.3973180000E-08,
 
+    #'gluino100_Stage2SeparateEventsParticle0'    : 8.1700000000E+04,
+    #'gluino200_Stage2SeparateEventsParticle0'    : 3.4000000000E+03,
+    #'gluino400_Stage2SeparateEventsParticle0'    : 9.4800000000E+01,
+    #'gluino600_Stage2SeparateEventsParticle0'    : 9.0700000000E+00,
+    #'gluino800_Stage2SeparateEventsParticle0'    : 1.4700000000E+00,
+    #'gluino1000_Stage2SeparateEventsParticle0'   : 3.2000000000E-01,
+    #'gluino1200_Stage2SeparateEventsParticle0'   : 8.3600000000E-02,
+    #'gluino1400_Stage2SeparateEventsParticle0'   : 2.4700000000E-02,
+    #'gluino1600_Stage2SeparateEventsParticle0'   : 7.9600000000E-03,
+    #'gluino1800_Stage2SeparateEventsParticle0'   : 2.7300000000E-03,
+    'gluino2000_Stage2SeparateEventsParticle0'   : 9.7400000000E-04,
+    #'gluino2200_Stage2SeparateEventsParticle0'   : 3.5800000000E-04,
+    #'gluino2400_Stage2SeparateEventsParticle0'   : 1.3400000000E-04,
+    #'gluino2600_Stage2SeparateEventsParticle0'   : 5.0300000000E-05,
+
     #stopped particles stage2 DIGI-HLT
     #'mchamp100_DigiHltSeparateEventsParticle0'   :  3.7779440000E+00,
     #'mchamp200_DigiHltSeparateEventsParticle0'   :  2.9865270000E-01,
@@ -2441,6 +2772,21 @@ crossSections = {
     #'mchamp1800_DigiHltSeparateEventsParticle0'  :  3.9346950000E-06,
     #'mchamp2200_DigiHltSeparateEventsParticle0'  :  5.5863300000E-07,
     #'mchamp2600_DigiHltSeparateEventsParticle0'  :  7.3973180000E-08,
+
+    #'gluino100_DigiHltSeparateEventsParticle0'    : 8.1700000000E+04,
+    #'gluino200_DigiHltSeparateEventsParticle0'    : 3.4000000000E+03,
+    #'gluino400_DigiHltSeparateEventsParticle0'    : 9.4800000000E+01,
+    #'gluino600_DigiHltSeparateEventsParticle0'    : 9.0700000000E+00,
+    #'gluino800_DigiHltSeparateEventsParticle0'    : 1.4700000000E+00,
+    #'gluino1000_DigiHltSeparateEventsParticle0'   : 3.2000000000E-01,
+    #'gluino1200_DigiHltSeparateEventsParticle0'   : 8.3600000000E-02,
+    #'gluino1400_DigiHltSeparateEventsParticle0'   : 2.4700000000E-02,
+    #'gluino1600_DigiHltSeparateEventsParticle0'   : 7.9600000000E-03,
+    #'gluino1800_DigiHltSeparateEventsParticle0'   : 2.7300000000E-03,
+    #'gluino2000_DigiHltSeparateEventsParticle0'   : 9.7400000000E-04,
+    #'gluino2200_DigiHltSeparateEventsParticle0'   : 3.5800000000E-04,
+    #'gluino2400_DigiHltSeparateEventsParticle0'   : 1.3400000000E-04,
+    #'gluino2600_DigiHltSeparateEventsParticle0'   : 5.0300000000E-05,
 
     #stopped particles stage2 RECO
     #'mchamp100_RecoSeparateEventsParticle0'   :  3.7779440000E+00,
@@ -2454,6 +2800,21 @@ crossSections = {
     #'mchamp2200_RecoSeparateEventsParticle0'  :  5.5863300000E-07,
     #'mchamp2600_RecoSeparateEventsParticle0'  :  7.3973180000E-08,
 
+    #'gluino100_RecoSeparateEventsParticle0'    : 8.1700000000E+04,
+    #'gluino200_RecoSeparateEventsParticle0'    : 3.4000000000E+03,
+    #'gluino400_RecoSeparateEventsParticle0'    : 9.4800000000E+01,
+    #'gluino600_RecoSeparateEventsParticle0'    : 9.0700000000E+00,
+    #'gluino800_RecoSeparateEventsParticle0'    : 1.4700000000E+00,
+    #'gluino1000_RecoSeparateEventsParticle0'   : 3.2000000000E-01,
+    #'gluino1200_RecoSeparateEventsParticle0'   : 8.3600000000E-02,
+    #'gluino1400_RecoSeparateEventsParticle0'   : 2.4700000000E-02,
+    #'gluino1600_RecoSeparateEventsParticle0'   : 7.9600000000E-03,
+    #'gluino1800_RecoSeparateEventsParticle0'   : 2.7300000000E-03,
+    #'gluino2000_RecoSeparateEventsParticle0'   : 9.7400000000E-04,
+    #'gluino2200_RecoSeparateEventsParticle0'   : 3.5800000000E-04,
+    #'gluino2400_RecoSeparateEventsParticle0'   : 1.3400000000E-04,
+    #'gluino2600_RecoSeparateEventsParticle0'   : 5.0300000000E-05,
+
     #stopped particles stage2 Ntuples
     #'mchamp100_NtupleSeparateEventsParticle0'   :  3.7779440000E+00,
     #'mchamp200_NtupleSeparateEventsParticle0'   :  2.9865270000E-01,
@@ -2465,6 +2826,21 @@ crossSections = {
     #'mchamp1800_NtupleSeparateEventsParticle0'  :  3.9346950000E-06,
     #'mchamp2200_NtupleSeparateEventsParticle0'  :  5.5863300000E-07,
     #'mchamp2600_NtupleSeparateEventsParticle0'  :  7.3973180000E-08,
+
+    #'gluino100_NtupleSeparateEventsParticle0'    : 8.1700000000E+04,
+    #'gluino200_NtupleSeparateEventsParticle0'    : 3.4000000000E+03,
+    #'gluino400_NtupleSeparateEventsParticle0'    : 9.4800000000E+01,
+    #'gluino600_NtupleSeparateEventsParticle0'    : 9.0700000000E+00,
+    #'gluino800_NtupleSeparateEventsParticle0'    : 1.4700000000E+00,
+    #'gluino1000_NtupleSeparateEventsParticle0'   : 3.2000000000E-01,
+    #'gluino1200_NtupleSeparateEventsParticle0'   : 8.3600000000E-02,
+    #'gluino1400_NtupleSeparateEventsParticle0'   : 2.4700000000E-02,
+    #'gluino1600_NtupleSeparateEventsParticle0'   : 7.9600000000E-03,
+    #'gluino1800_NtupleSeparateEventsParticle0'   : 2.7300000000E-03,
+    #'gluino2000_NtupleSeparateEventsParticle0'   : 9.7400000000E-04,
+    #'gluino2200_NtupleSeparateEventsParticle0'   : 3.5800000000E-04,
+    #'gluino2400_NtupleSeparateEventsParticle0'   : 1.3400000000E-04,
+    #'gluino2600_NtupleSeparateEventsParticle0'   : 5.0300000000E-05,
 
 
     #rpc study
