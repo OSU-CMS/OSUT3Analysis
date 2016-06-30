@@ -164,7 +164,8 @@ composite_dataset_definitions = {
     ],
     'SingleTop' : [
         'SingleTop_s_channel',
-        'SingleTop_t_channel',
+        'SingleTop_t_channel_top',
+        'SingleTop_t_channel_antitop',
         'SingleTop_tW',
         'SingleTop_tbarW',
     ],
@@ -358,10 +359,12 @@ nJobs = {
     'ZG'  :  999,
 
     #SingleTop
-    'SingleTop_s_channel'  :  999,
-    'SingleTop_t_channel'  :  999,
-    'SingleTop_tW'         :  999,
-    'SingleTop_tbarW'      :  999,
+    'SingleTop_s_channel'          :  999,
+    'SingleTop_t_channel'          :  999,
+    'SingleTop_t_channel_top'      :  999,
+    'SingleTop_t_channel_antitop'  :  999,
+    'SingleTop_tW'                 :  999,
+    'SingleTop_tbarW'              :  999,
 
     #TTJets
     'TTJets_DiLept'              :  300,
@@ -722,10 +725,12 @@ maxEvents = {
     'ZG'  :  -1,
 
     #SingleTop
-    'SingleTop_s_channel'  :  -1,
-    'SingleTop_t_channel'  :  -1,
-    'SingleTop_tW'         :  -1,
-    'SingleTop_tbarW'      :  -1,
+    'SingleTop_s_channel'          :  -1,
+    'SingleTop_t_channel'          :  -1,
+    'SingleTop_t_channel_top'      :  -1,
+    'SingleTop_t_channel_antitop'  :  -1,
+    'SingleTop_tW'                 :  -1,
+    'SingleTop_tbarW'              :  -1,
 
     #TTJets
     'TTJets_DiLept'              :  -1,
@@ -1087,11 +1092,13 @@ types = {
     'ZG'  :  "bgMC",
 
     #SingleTop
-    'SingleTop'  :  "bgMC",
-    'SingleTop_s_channel'  :  "bgMC",
-    'SingleTop_t_channel'  :  "bgMC",
-    'SingleTop_tW'         :  "bgMC",
-    'SingleTop_tbarW'      :  "bgMC",
+    'SingleTop'                    :  "bgMC",
+    'SingleTop_s_channel'          :  "bgMC",
+    'SingleTop_t_channel'          :  "bgMC",
+    'SingleTop_t_channel_top'      :  "bgMC",
+    'SingleTop_t_channel_antitop'  :  "bgMC",
+    'SingleTop_tW'                 :  "bgMC",
+    'SingleTop_tbarW'              :  "bgMC",
 
     #TTJets
     'TTJets_Lept'                :  "bgMC",
@@ -1483,11 +1490,13 @@ colors = {
     'ZG'  :  398,
 
     #SingleTop
-    'SingleTop'            :  607,
-    'SingleTop_s_channel'  :  905,
-    'SingleTop_t_channel'  :  907,
-    'SingleTop_tW'         :  909,
-    'SingleTop_tbarW'      :  910,
+    'SingleTop'                    :  607,
+    'SingleTop_s_channel'          :  905,
+    'SingleTop_t_channel'          :  907,
+    'SingleTop_t_channel_top'      :  907,
+    'SingleTop_t_channel_antitop'  :  908,
+    'SingleTop_tW'                 :  909,
+    'SingleTop_tbarW'              :  910,
 
     #TTJets
     'TTJets_Lept'                :  872,
@@ -1875,11 +1884,13 @@ labels = {
     'ZG'  :  "Z#gamma#rightarrowll#gamma",
 
     #SingleTop
-    'SingleTop'            :  "Single top",
-    'SingleTop_s_channel'  :  "Single top (s-channel)",
-    'SingleTop_t_channel'  :  "Single top (t-channel)",
-    'SingleTop_tW'         :  "Single top (tW)",
-    'SingleTop_tbarW'      :  "Single top (#bar{t}W)",
+    'SingleTop'                    :  "Single top",
+    'SingleTop_s_channel'          :  "Single top (s-channel)",
+    'SingleTop_t_channel'          :  "Single top (t-channel)",
+    'SingleTop_t_channel_top'      :  "Single top(top) (t-channel)",
+    'SingleTop_t_channel_antitop'  :  "Single top(antitop) (t-channel)",
+    'SingleTop_tW'                 :  "Single top (tW)",
+    'SingleTop_tbarW'              :  "Single top (#bar{t}W)",
 
     #TTJets
     'TTJets_Lept'                :  "t#bar{t}",
@@ -2289,13 +2300,15 @@ crossSections = {
     'ZZToLLLL'    :  1.256,
     'WG'  :  489.0,
     'ZG'  :  117.864,
-    'SingleTop_s_channel'  :  3.3623,
-    'SingleTop_t_channel'  :  70.695,
-    'SingleTop_tW'         :  19.418,
-    'SingleTop_tbarW'      :  19.418,
-    'TTJets_DiLept'              :  87.31,
-    'TTJets_SingleLeptFromT'     :  182.7,
-    'TTJets_SingleLeptFromTbar'  :  182.7,
+    'SingleTop_s_channel'          :  3.3623,
+    'SingleTop_t_channel'          :  70.695,
+    'SingleTop_t_channel_top'      :  44.3151,
+    'SingleTop_t_channel_antitop'  :  26.3734,
+    'SingleTop_tW'                 :  19.418,
+    'SingleTop_tbarW'              :  19.418,
+    'TTJets_DiLept'                :  87.31,
+    'TTJets_SingleLeptFromT'       :  182.7,
+    'TTJets_SingleLeptFromTbar'    :  182.7,
 
     ###########################################################################
     #RECO stored on T3
