@@ -304,11 +304,11 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     except AttributeError:
         runOverSkim = False
     if crossSection > 0 and IntLumi > 0:
-        if runOverSkim:
+        if runOverSkim and float(datasetInfo.originalNumberOfEvents)*float(TotalNumber):
             Weight = IntLumi*crossSection*float(datasetInfo.skimNumberOfEvents)/(float(datasetInfo.originalNumberOfEvents)*float(TotalNumber))
             # The factor TotalNumber / skimNumberOfEvents corresponds to the fraction of skim events that were actually processed,
             # i.e., it accounts for the fact that perhaps not all of the jobs finished successfully.
-        else:
+        elif float(TotalNumber):
             Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
     if runOverSkim:
