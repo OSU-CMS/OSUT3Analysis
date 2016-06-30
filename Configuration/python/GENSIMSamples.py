@@ -38,4 +38,18 @@ dataset_names = {
     #'mchamp2200_Stage2SeparateEventsParticle0'  : "/HSCPmchamp6_M-2200_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
     #'mchamp2600_Stage2SeparateEventsParticle0'  : "/HSCPmchamp6_M-2600_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
 
+    #'gluino100_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-100_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino200_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino400_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino600_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino800_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-800_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino1000_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-1000_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino1200_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-1200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino1400_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-1400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino1600_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-1600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino1800_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-1800_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    'gluino2000_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-2000_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino2200_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-2200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino2400_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-2400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
+    #'gluino2600_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-2600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
 }
