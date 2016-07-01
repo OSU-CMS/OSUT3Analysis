@@ -386,7 +386,7 @@ ElectronHistograms = cms.PSet(
         ),
         cms.PSet (
             name = cms.string("electronVtxFitConversion"),
-            title = cms.string("Electron hasMatchedConversion; hasMatchedConversion"),
+            title = cms.string("Electron Pass Conversion Veto; Pass Conversion Veto"),
             binsX = cms.untracked.vdouble(2, 0, 2),
             inputVariables = cms.vstring("passConversionVeto"),
         ),
