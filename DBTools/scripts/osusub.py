@@ -583,6 +583,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py.
         os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
         NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
+        secondaryCollectionModifications = []
         InitializeAAA = ""
         if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists:
             #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')
