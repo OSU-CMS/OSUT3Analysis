@@ -665,6 +665,20 @@ nJobs = {
     'StopToTChi0_1000_656' : 4,
     'StopToTChi0_1000_728' : 4,
 
+#2015 SP stop signals for trigEff study
+    'StopToTopChi0_400_214' : 5,
+    'StopToTopChi0_600_417' : 5,
+    'StopToTopChi0_800_618' : 5,
+    'StopToTopChi0_1000_818' : 5,
+    'StopToTopChi0_1200_1018' : 5,
+    'StopToTopChi0_1400_1219' : 5,
+    'StopToTopChi0_1600_1419' : 5,
+    'StopToTopChi0_1800_1619' : 5,
+    'StopToTopChi0_2000_1819' : 5,
+    'StopToTopChi0_2200_2019' : 5,
+    'StopToTopChi0_2400_2219' : 5,
+    'StopToTopChi0_2600_2419' : 5,
+
 #2016 stopped particles analysis signals for energy scan and trigeff study
     'Gluino2GChi0_600_309_2016Run2_80x' : 5,
     'Gluino2GChi0_600_354_2016Run2_80x' : 5,
@@ -1294,6 +1308,19 @@ maxEvents = {
     'StopToTChi0_1000_574' : -1,
     'StopToTChi0_1000_656' : -1,
     'StopToTChi0_1000_728' : -1,
+#2015 SP stop trigEff study
+    'StopToTopChi0_400_214' : -1,
+    'StopToTopChi0_600_417' : -1,
+    'StopToTopChi0_800_618' : -1,
+    'StopToTopChi0_1000_818' : -1,
+    'StopToTopChi0_1200_1018' : -1,
+    'StopToTopChi0_1400_1219' : -1,
+    'StopToTopChi0_1600_1419' : -1,
+    'StopToTopChi0_1800_1619' : -1,
+    'StopToTopChi0_2000_1819' : -1,
+    'StopToTopChi0_2200_2019' : -1,
+    'StopToTopChi0_2400_2219' : -1,
+    'StopToTopChi0_2600_2419' : -1,
 #2016 SP analysis signals for energy scan and trigEff study
     'Gluino2GChi0_600_309_2016Run2_80x' : -1,
     'Gluino2GChi0_600_354_2016Run2_80x' : -1,
@@ -1952,6 +1979,19 @@ types = {
     'StopToTChi0_1000_574' : "signalMC",
     'StopToTChi0_1000_656' : "signalMC",
     'StopToTChi0_1000_728' : "signalMC",
+#2015 stop signal for trigEff study
+    'StopToTopChi0_400_214' : "signalMC",
+    'StopToTopChi0_600_417' : "signalMC",
+    'StopToTopChi0_800_618' : "signalMC",
+    'StopToTopChi0_1000_818' : "signalMC",
+    'StopToTopChi0_1200_1018' : "signalMC",
+    'StopToTopChi0_1400_1219' : "signalMC",
+    'StopToTopChi0_1600_1419' : "signalMC",
+    'StopToTopChi0_1800_1619' : "signalMC",
+    'StopToTopChi0_2000_1819' : "signalMC",
+    'StopToTopChi0_2200_2019' : "signalMC",
+    'StopToTopChi0_2400_2219' : "signalMC",
+    'StopToTopChi0_2600_2419' : "signalMC",
 #2016 SP analysis signal for energy scan and trigEff study
     'Gluino2GChi0_600_309_2016Run2_80x' : "signalMC",
     'Gluino2GChi0_600_354_2016Run2_80x' : "signalMC",
@@ -2613,6 +2653,20 @@ colors = {
     'StopToTChi0_1000_656' : 1,
     'StopToTChi0_1000_728' : 1,
 
+#2015 SP stop for trigEff study
+    'StopToTopChi0_400_214' : 1,
+    'StopToTopChi0_600_417' : 1,
+    'StopToTopChi0_800_618' : 1,
+    'StopToTopChi0_1000_818' : 1,
+    'StopToTopChi0_1200_1018' : 1,
+    'StopToTopChi0_1400_1219' : 1,
+    'StopToTopChi0_1600_1419' : 1,
+    'StopToTopChi0_1800_1619' : 1,
+    'StopToTopChi0_2000_1819' : 1,
+    'StopToTopChi0_2200_2019' : 1,
+    'StopToTopChi0_2400_2219' : 1,
+    'StopToTopChi0_2600_2419' : 1,
+
     #2016 SP analysis signals for energy scan and trigEff study
     'Gluino2GChi0_600_309_2016Run2_80x' : 1,
     'Gluino2GChi0_600_354_2016Run2_80x' : 1,
@@ -3270,6 +3324,20 @@ labels = {
     'StopToTChi0_1000_656' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 656GeV)",
     'StopToTChi0_1000_728' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 728GeV)",
 
+#2015 SP stop for trigEff study
+    'StopToTopChi0_400_214' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 400 GeV, M_{#tilde{#chi}^{0}} = 214 GeV)",
+    'StopToTopChi0_600_417' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 600 GeV, M_{#tilde{#chi}^{0}} = 417 GeV)",
+    'StopToTopChi0_800_618' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 800 GeV, M_{#tilde{#chi}^{0}} = 618 GeV)",
+    'StopToTopChi0_1000_818' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 818 GeV)",
+    'StopToTopChi0_1200_1018' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1018 GeV)",
+    'StopToTopChi0_1400_1219' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1400 GeV, M_{#tilde{#chi}^{0}} = 1219 GeV)",
+    'StopToTopChi0_1600_1419' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1600 GeV, M_{#tilde{#chi}^{0}} = 1419 GeV)",
+    'StopToTopChi0_1800_1619' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1800 GeV, M_{#tilde{#chi}^{0}} = 1619 GeV)",
+    'StopToTopChi0_2000_1819' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 2000 GeV, M_{#tilde{#chi}^{0}} = 1819 GeV)",
+    'StopToTopChi0_2200_2019' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 2200 GeV, M_{#tilde{#chi}^{0}} = 2019 GeV)",
+    'StopToTopChi0_2400_2219' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 2400 GeV, M_{#tilde{#chi}^{0}} = 2219 GeV)",
+    'StopToTopChi0_2600_2419' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 2600 GeV, M_{#tilde{#chi}^{0}} = 2419 GeV)",
+
 #2016 SP analysis signals for energy scan and trigEff study
     'Gluino2GChi0_600_309_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 600 GeV, M_{#tilde{#chi}^{0}} = 309 GeV)",
     'Gluino2GChi0_600_354_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 600 GeV, M_{#tilde{#chi}^{0}} = 354 GeV)",
@@ -3794,6 +3862,19 @@ crossSections = {
     'StopToTChi0_1000_574' : 8.3600000000E-02,
     'StopToTChi0_1000_656' : 8.3600000000E-02,
     'StopToTChi0_1000_728' : 8.3600000000E-02,
+#2015 SP stop for trigEff study
+    'StopToTopChi0_400_214' : 8.3600000000E-02,
+    'StopToTopChi0_600_417' : 8.3600000000E-02,
+    'StopToTopChi0_800_618' : 8.3600000000E-02,
+    'StopToTopChi0_1000_818' : 8.3600000000E-02,
+    'StopToTopChi0_1200_1018' : 8.3600000000E-02,
+    'StopToTopChi0_1400_1219' : 8.3600000000E-02,
+    'StopToTopChi0_1600_1419' : 8.3600000000E-02,
+    'StopToTopChi0_1800_1619' : 8.3600000000E-02,
+    'StopToTopChi0_2000_1819' : 8.3600000000E-02,
+    'StopToTopChi0_2200_2019' : 8.3600000000E-02,
+    'StopToTopChi0_2400_2219' : 8.3600000000E-02,
+    'StopToTopChi0_2600_2419' : 8.3600000000E-02,
 #2016 SP analysis signals energy scan and trigEff study
     'Gluino2GChi0_600_309_2016Run2_80x' : 8.3600000000E-02,
     'Gluino2GChi0_600_354_2016Run2_80x' : 8.3600000000E-02,
