@@ -54,7 +54,19 @@ dataset_names = {
     'StopToTChi0_1000_574' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_1000_chi0_574/USER",
     'StopToTChi0_1000_656' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_1000_chi0_656/USER",
     'StopToTChi0_1000_728' : "/HSCPstop_tChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_stop_1000_chi0_728/USER",
-
+    ####2015 stop signal for trigEff study #############################
+    'StopToTopChi0_400_214' : "/HSCPstop2tchi0_400_214_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_600_417' : "/HSCPstop2tchi0_600_417_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_800_618' : "/HSCPstop2tchi0_800_618_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_1000_818' : "/HSCPstop2tchi0_1000_818_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_1200_1018' : "/HSCPstop2tchi0_1200_1018_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_1400_1219' : "/HSCPstop2tchi0_1400_1219_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_1600_1419' : "/HSCPstop2tchi0_1600_1419_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_1800_1619' : "/HSCPstop2tchi0_1800_1619_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_2000_1819' : "/HSCPstop2tchi0_2000_1819_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_2200_2019' : "/HSCPstop2tchi0_2200_2019_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_2400_2219' : "/HSCPstop2tchi0_2400_2219_13TeV-pythia6/Spring15_74x/USER",
+    'StopToTopChi0_2600_2419' : "/HSCPstop2tchi0_2600_2419_13TeV-pythia6/Spring15_74x/USER",
     #2016 gluino2gchi0 signal for energy scan
     'Gluino2GChi0_600_309_2016Run2_80x' : "/HSCPgluino2gchi0_600_309_13TeV-pythia6/Run2016_80x/USER",
     'Gluino2GChi0_600_354_2016Run2_80x' : "/HSCPgluino2gchi0_600_354_13TeV-pythia6/Run2016_80x/USER",
