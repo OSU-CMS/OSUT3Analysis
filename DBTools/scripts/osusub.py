@@ -428,6 +428,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     if jsonFile != '':
         ConfigFile.write('pset.process.source.lumisToProcess = cms.untracked.VLuminosityBlockRange()\n')
         ConfigFile.write('pset.process.source.lumisToProcess.extend(myLumis)\n')
+    ConfigFile.write('pset.process.source.skipBadFiles = cms.untracked.bool (True)\n')
     if EventsPerJob > 0:
         ConfigFile.write('pset.process.maxEvents.input = cms.untracked.int32 (' + str(EventsPerJob) + ')\n')
     ConfigFile.write('process = pset.process\n')
