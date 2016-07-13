@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Usage:
+# $ clusterExec echo condor/MyCondorDir           # to list cluster numbers
+# $ clusterExec condor_release condor/MyCondorDir # to release all jobs belonging to MyCondorDir
+# $ clusterExec condor_q condor/MyCondorDir       # to list all jobs belonging to MyCondorDir
+
+CMD=$1
+DIR=$2
+
+find ${DIR} -type f -regex ".*\/condor_0.log$" -exec head -n 1 {} \; | sed "s/^000 (\([^.]*\)\..*$/\1/g" | xargs ${CMD}
