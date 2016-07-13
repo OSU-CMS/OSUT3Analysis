@@ -112,6 +112,12 @@ datasets = [
    'QCD_bcToE_170to250',
    'QCD_bcToE_250toInf',
 
+   'VBF_HTo4L_FPix8x52',
+   'VBF_HTo4L_FPix80x520',
+   'VBF_HTo4L_FPix80x52',
+   'VBF_HTo4L_FPix80x5',
+   'VBF_HTo4L_FPix800x52',
+
    #Sum of all backgrounds
    'Background',
 ]
@@ -1070,6 +1076,12 @@ nJobs = {
     'MuonEG_2015D'   :  1000,
 
     ############################################################################
+    'VBF_HTo4L_FPix8x52' : 999, 
+    'VBF_HTo4L_FPix80x520' : 999,
+    'VBF_HTo4L_FPix80x52' : 999,
+    'VBF_HTo4L_FPix80x5' : 999,
+    'VBF_HTo4L_FPix800x52' : 999,
+    
 }
 
 maxEvents = {
@@ -1708,6 +1720,12 @@ maxEvents = {
     'GluinoToGChi0_1200_1000_nonoise' : -1,
 
     'MuonEG_2015D'       : -1,
+
+    'VBF_HTo4L_FPix8x52' : -1, 
+    'VBF_HTo4L_FPix80x520' : -1,
+    'VBF_HTo4L_FPix80x52' : -1,
+    'VBF_HTo4L_FPix80x5' : -1,
+    'VBF_HTo4L_FPix800x52' : -1,
 
 }
 
@@ -2390,6 +2408,13 @@ types = {
     'GluinoToGChi0_1200_1000_noiseFrate0p8' : "signalMC",
     'GluinoToGChi0_1200_1000_noiseFrate1p0' : "signalMC",
     'GluinoToGChi0_1200_1000_nonoise' : "signalMC",
+
+    'VBF_HTo4L_FPix8x52' : "signalMC", 
+    'VBF_HTo4L_FPix80x520' : "signalMC",
+    'VBF_HTo4L_FPix80x52' : "signalMC",
+    'VBF_HTo4L_FPix80x5' : "signalMC",
+    'VBF_HTo4L_FPix800x52' : "signalMC",
+
 }
 
 colors = {
@@ -3063,6 +3088,13 @@ colors = {
     'GluinoToGChi0_1200_1000_noiseFrate0p8' : 5,
     'GluinoToGChi0_1200_1000_noiseFrate1p0' : 8,
     'GluinoToGChi0_1200_1000_nonoise' : 9,
+
+    'VBF_HTo4L_FPix8x52' : 1, 
+    'VBF_HTo4L_FPix80x520' : 1,
+    'VBF_HTo4L_FPix80x52' : 1,
+    'VBF_HTo4L_FPix80x5' : 1,
+    'VBF_HTo4L_FPix800x52' : 1,
+
 }
 
 labels = {
@@ -3738,6 +3770,12 @@ labels = {
     'GluinoToGChi0_1200_1000_noiseFrate1p0' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate1p0)",
     'GluinoToGChi0_1200_1000_nonoise' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, noNoise)",
 
+    'VBF_HTo4L_FPix8x52' : "H_{VBF}#rightarrow4l, FPix 8x52",
+    'VBF_HTo4L_FPix80x520' : "H_{VBF}#rightarrow4l, FPix 80x520",
+    'VBF_HTo4L_FPix80x52' : "H_{VBF}#rightarrow4l, FPix 80x52",
+    'VBF_HTo4L_FPix80x5' : "H_{VBF}#rightarrow4l, FPix 80x5",
+    'VBF_HTo4L_FPix800x52' : "H_{VBF}#rightarrow4l, FPix 800x52",
+
 
 }
 
@@ -4235,7 +4273,13 @@ crossSections = {
     'GluinoToGChi0_1200_1000_noiseFrate0p8' : 8.3600000000E-02,
     'GluinoToGChi0_1200_1000_noiseFrate1p0' : 8.3600000000E-02,
     'GluinoToGChi0_1200_1000_nonoise' : 8.3600000000E-02,
-
+    
+    'VBF_HTo4L_FPix8x52' : 1,
+    'VBF_HTo4L_FPix80x520' : 1,
+    'VBF_HTo4L_FPix80x52' : 1,
+    'VBF_HTo4L_FPix80x5' : 1,
+    'VBF_HTo4L_FPix800x52' : 1,
+    
 
 }
 
