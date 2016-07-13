@@ -16,6 +16,8 @@ datasets = [
    'DoubleMu_2015D',
    'Tau_2015',
    'Tau_2015D',
+   'Tau_2016',
+   'Tau_2016B',
    'SingleMu_2015',
    'SingleMu_2015D',
    'SingleMu_2016',
@@ -240,6 +242,9 @@ composite_dataset_definitions = {
         'Tau_2015B',
         'Tau_2015C',
         'Tau_2015D',
+    ],
+    'Tau_2016' : [
+        'Tau_2016B',
     ],
     'SingleMu_2015' : [
         'SingleMu_2015B',
@@ -580,9 +585,10 @@ nJobs = {
     'DoubleMu_2015C'   : 187,
     'DoubleMu_2015D': 1000,
 
-    'Tau_2015B'      :  57,
-    'Tau_2015C'      : 220,
-    'Tau_2015D'   : 1000,
+    'Tau_2015B'  :  57,
+    'Tau_2015C'  :  220,
+    'Tau_2015D'  :  1000,
+    'Tau_2016B'  :  1000,
 
     'SingleMu_2015B'      :  57,
     'SingleMu_2015C'      : 220,
@@ -1228,6 +1234,7 @@ maxEvents = {
     'Tau_2015B'       : -1,
     'Tau_2015C'       : -1,
     'Tau_2015D'       : -1,
+    'Tau_2016B'       : -1,
 
     'SingleMu_2015B'       : -1,
     'SingleMu_2015C'       : -1,
@@ -1887,8 +1894,10 @@ types = {
     'Tau_2015B'    : "data",
     'Tau_2015C'    : "data",
     'Tau_2015D'    : "data",
+    'Tau_2016B'    : "data",
 
     'Tau_2015'     : "data",
+    'Tau_2016'     : "data",
 
     'SingleMu_2015B'    : "data",
     'SingleMu_2015C'    : "data",
@@ -2560,10 +2569,12 @@ colors = {
     'DoubleMu_2015D'   : 1,
     'DoubleMu_2015'   : 1,
 
-    'Tau_2015B'   : 1,
-    'Tau_2015C'   : 1,
-    'Tau_2015D'   : 1,
-    'Tau_2015'   : 1,
+    'Tau_2015B'  :  1,
+    'Tau_2015C'  :  1,
+    'Tau_2015D'  :  1,
+    'Tau_2015'   :  1,
+    'Tau_2016B'  :  1,
+    'Tau_2016'   :  1,
 
     'SingleMu_2015B'   : 1,
     'SingleMu_2015C'   : 1,
@@ -3231,10 +3242,12 @@ labels = {
     'DoubleMu_2015C'     : "DoubleMu 2015C data",
     'DoubleMu_2015D'     : "DoubleMu 2015D data",
 
-    'Tau_2015'      : "Tau 2015 data",
-    'Tau_2015B'     : "Tau 2015B data",
-    'Tau_2015C'     : "Tau 2015C data",
-    'Tau_2015D'     : "Tau 2015D data",
+    'Tau_2015'   :  "Tau  2015   data",
+    'Tau_2015B'  :  "Tau  2015B  data",
+    'Tau_2015C'  :  "Tau  2015C  data",
+    'Tau_2015D'  :  "Tau  2015D  data",
+    'Tau_2016'   :  "Tau  2016   data",
+    'Tau_2016B'  :  "Tau  2016B  data",
 
     'SingleMu_2015'      : "Single Muon 2015 data",
     'SingleMu_2015B'     : "SingleMu 2015B data",
