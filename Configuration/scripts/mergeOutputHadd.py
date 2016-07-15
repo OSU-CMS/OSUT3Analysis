@@ -12,6 +12,8 @@ import sys
 import fcntl
 import datetime
 import re
+import string
+import math
 from optparse import OptionParser
 
 from OSUT3Analysis.Configuration.configurationOptions import *
@@ -41,9 +43,24 @@ if arguments.localConfig:
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 for dataset in datasets:
-    outputName = condor_dir + "/" + dataset + ".root"
-    inputFiles = condor_dir + "/" + dataset + "/*.root"
-    command = "hadd -f %s %s" % (outputName, inputFiles)
-    print "About to execute: " + command
-    os.system(command)
+    path = condor_dir + "/" + dataset 
+    files = [f for f in os.listdir(path) if f.endswith('.root') and os.path.isfile(os.path.join(path, f))]
+    inputFiles = []
+    numberOfInputFiles = len(files)
+    for i in range(0,numberOfInputFiles):
+        inputFiles.append(path + "/" + files[i])
+    print "Number of input files is: " + str(numberOfInputFiles)
+    mergeEvery = 500
+    numberOfPartialFiles = int(math.ceil(1.0*numberOfInputFiles/mergeEvery))
+    print "Number of Partial Files is: " + str(numberOfPartialFiles)
+    outputFiles = []
+    for i in range(0,numberOfPartialFiles):
+        partialListOfInputFiles = inputFiles[(i*mergeEvery):((i+1)*mergeEvery)]
+        command = "hadd -f partial" + str(i) + ".root " + string.join(partialListOfInputFiles)
+        subprocess.call(command,shell=True)
+        outputFiles.append("partial"+str(i)+".root")
+    command = "hadd -f "+ path + ".root " + string.join(outputFiles)
+    subprocess.call(command,shell=True)
+    rmCommand = "rm partial*.root"
+    subprocess.call(rmCommand,shell=True)
 
