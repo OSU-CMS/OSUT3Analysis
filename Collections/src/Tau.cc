@@ -83,31 +83,75 @@ osu::Tau::~Tau ()
 const bool
 osu::Tau::passesDecayModeReconstruction () const
 {
-  return (this->tauID ("decayModeFinding") > 0.5);
+  if (this->isTauIDAvailable ("decayModeFinding"))
+    return (this->tauID ("decayModeFinding") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu::Tau") << "Tau ID \"decayModeFinding\" unavailable.";
+      return false;
+    }
 }
 
 const bool
 osu::Tau::passesLightFlavorRejection () const
 {
-  return (this->tauID ("againstElectronLooseMVA5") > 0.5 && this->tauID ("againstMuonLoose3") > 0.5);
+  bool flag = true;
+
+  if (this->isTauIDAvailable ("againstElectronLooseMVA5"))
+    flag = flag && (this->tauID ("againstElectronLooseMVA5") > 0.5);
+  else if (this->isTauIDAvailable ("againstElectronLooseMVA6"))
+    flag = flag && (this->tauID ("againstElectronLooseMVA6") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu::Tau") << "Tau IDs \"againstElectronLooseMVA5\" and \"againstElectronLooseMVA6\" unavailable.";
+      flag = flag && false;
+    }
+
+  if (this->isTauIDAvailable ("againstMuonLoose3"))
+    flag = flag && (this->tauID ("againstMuonLoose3") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu::Tau") << "Tau ID \"againstMuonLoose3\" unavailable.";
+      flag = flag && false;
+    }
+
+  return flag;
 }
 
 const bool
 osu::Tau::passesLooseCombinedIsolation () const
 {
-  return (this->tauID ("byLooseCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+  if (this->isTauIDAvailable ("byLooseCombinedIsolationDeltaBetaCorr3Hits"))
+    return (this->tauID ("byLooseCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu::Tau") << "Tau ID \"byLooseCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
+      return false;
+    }
 }
 
 const bool
 osu::Tau::passesMediumCombinedIsolation () const
 {
-  return (this->tauID ("byMediumCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+  if (this->isTauIDAvailable ("byMediumCombinedIsolationDeltaBetaCorr3Hits"))
+    return (this->tauID ("byMediumCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu::Tau") << "Tau ID \"byMediumCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
+      return false;
+    }
 }
 
 const bool
 osu::Tau::passesTightCombinedIsolation () const
 {
-  return (this->tauID ("byTightCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+  if (this->isTauIDAvailable ("byTightCombinedIsolationDeltaBetaCorr3Hits"))
+    return (this->tauID ("byTightCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu::Tau") << "Tau ID \"byTightCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
+      return false;
+    }
 }
 
 const double
