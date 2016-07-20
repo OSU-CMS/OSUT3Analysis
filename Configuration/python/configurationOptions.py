@@ -38,7 +38,6 @@ datasets = [
    'MET_2015D',
    'MET_2016',
    'MET_2016B',
-
    'NoBPTX_2015D',
    'NoBPTX_2015D_v3',
    'NoBPTX_2015D_v4',
@@ -48,6 +47,10 @@ datasets = [
    'NoBPTX_2015C_controlSample',
    'NoBPTX_2015Dv3_controlSample',
    'NoBPTX_2015Dv4_controlSample',
+   'NoBPTX_2016B_PromptReco',
+   'NoBPTX_2016C_PromptReco',
+   'NoBPTX_2016D_PromptReco',
+   'NoBPTX_2016E_PromptReco',
    'NoBPTX_2015C_16Dec2015',
    'NoBPTX_2015D_16Dec2015',
    'NoBPTX_2015B_PromptReco',
@@ -400,6 +403,12 @@ composite_dataset_definitions = {
         'NoBPTX_2015Dv3_controlSample',
         'NoBPTX_2015Dv4_controlSample',
         #'NoBPTX_2015E_controlSample'
+        ],
+    'NoBPTX_2016BCDE_PromptReco' : [
+        'NoBPTX_2016B_PromptReco',
+        'NoBPTX_2016C_PromptReco',
+        'NoBPTX_2016D_PromptReco',
+        'NoBPTX_2016E_PromptReco',
         ],
     'NoBPTX_16Dec2015' : [
         'NoBPTX_2015C_16Dec2015',
@@ -1039,6 +1048,11 @@ nJobs = {
     'NoBPTX_2016B_v2' : 1,
     #'NoBPTX_2015D_v3' : 30,
     #'NoBPTX_2015D_v4' : 30,
+
+    'NoBPTX_2016B_PromptReco' : 999,
+    'NoBPTX_2016C_PromptReco' : 999,
+    'NoBPTX_2016D_PromptReco' : 999,
+    'NoBPTX_2016E_PromptReco' : 999,
 
     'NoBPTX_2015C_16Dec2015' : 999,
     'NoBPTX_2015D_16Dec2015' : 999,
@@ -1685,6 +1699,11 @@ maxEvents = {
     'NoBPTX_2015D_v3' : -1,
     'NoBPTX_2015D_v4' : -1,
     'NoBPTX_2016B_v2' : -1,
+
+    'NoBPTX_2016B_PromptReco' : -1,
+    'NoBPTX_2016C_PromptReco' : -1,
+    'NoBPTX_2016D_PromptReco' : -1,
+    'NoBPTX_2016E_PromptReco' : -1,
 
     'NoBPTX_2015C_16Dec2015' : -1,
     'NoBPTX_2015D_16Dec2015' : -1,
@@ -2363,6 +2382,12 @@ types = {
     'NoBPTX_2015D_v3' : 'data',
     'NoBPTX_2015D_v4' : 'data',
     'NoBPTX_2016B_v2' : 'data',
+
+    'NoBPTX_2016BCDE_PromptReco' : 'data',
+    'NoBPTX_2016B_PromptReco' : 'data',
+    'NoBPTX_2016C_PromptReco' : 'data',
+    'NoBPTX_2016D_PromptReco' : 'data',
+    'NoBPTX_2016E_PromptReco' : 'data',
 
     'NoBPTX_2015C_16Dec2015' : 'data',
     'NoBPTX_2015D_16Dec2015' : 'data',
@@ -3049,6 +3074,12 @@ colors = {
     'NoBPTX_2016B_v2' : 1,
     'NoBPTX_2015D' : 1,
 
+    'NoBPTX_2016BCDE_PromptReco' : 1,
+    'NoBPTX_2016B_PromptReco' : 1,
+    'NoBPTX_2016C_PromptReco' : 1,
+    'NoBPTX_2016D_PromptReco' : 1,
+    'NoBPTX_2016E_PromptReco' : 1,
+
     'NoBPTX_2015C_16Dec2015' : 1,
     'NoBPTX_2015D_16Dec2015' : 1,
     'NoBPTX_16Dec2015' : 1,
@@ -3728,6 +3759,12 @@ labels = {
     'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
     'NoBPTX_2016B_v2'     : "NoBPTX 2016B_v2 data",
     'NoBPTX_2015D'     : "NoBPTX 2015D data",
+
+    'NoBPTX_2016BCDE_PromptReco' : "NoBPTX 2016 PromptReco data",
+    'NoBPTX_2016B_PromptReco' : "NoBPTX 2016B PromptReco data",
+    'NoBPTX_2016C_PromptReco' : "NoBPTX 2016C PromptReco data",
+    'NoBPTX_2016D_PromptReco' : "NoBPTX 2016D PromptReco data",
+    'NoBPTX_2016E_PromptReco' : "NoBPTX 2016E PromptReco data",
 
     'NoBPTX_2015C_16Dec2015'     : "NoBPTX 2015C Rerecoed data",
     'NoBPTX_2015D_16Dec2015'     : "NoBPTX 2015D Rerecoed data",
