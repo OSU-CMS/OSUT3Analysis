@@ -18,14 +18,17 @@ datasets = [
    'Tau_2015D',
    'Tau_2016',
    'Tau_2016B',
+   'Tau_2016C',
    'SingleMu_2015',
    'SingleMu_2015D',
    'SingleMu_2016',
    'SingleMu_2016B',
+   'SingleMu_2016C',
    'SingleEle_2015',
    'SingleEle_2015D',
    'SingleEle_2016',
    'SingleEle_2016B',
+   'SingleEle_2016C',
    'SinglePhoton_2015',
    'SinglePhoton_2015D',
    'DoubleEG_2015',
@@ -38,6 +41,7 @@ datasets = [
    'MET_2015D',
    'MET_2016',
    'MET_2016B',
+   'MET_2016C',
    'NoBPTX_2015D',
    'NoBPTX_2015D_v3',
    'NoBPTX_2015D_v4',
@@ -254,6 +258,7 @@ composite_dataset_definitions = {
     ],
     'Tau_2016' : [
         'Tau_2016B',
+        'Tau_2016C',
     ],
     'SingleMu_2015' : [
         'SingleMu_2015B',
@@ -262,6 +267,7 @@ composite_dataset_definitions = {
     ],
     'SingleMu_2016' : [
         'SingleMu_2016B',
+        'SingleMu_2016C',
     ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
@@ -270,6 +276,7 @@ composite_dataset_definitions = {
     ],
     'SingleEle_2016' : [
         'SingleEle_2016B',
+        'SingleEle_2016C',
     ],
     'SinglePhoton_2015' : [
         'SinglePhoton_2015B',
@@ -432,6 +439,7 @@ composite_dataset_definitions = {
     ],
     'MET_2016' : [
 	'MET_2016B',
+	'MET_2016C',
     ],
 }
 
@@ -498,6 +506,7 @@ nJobs = {
     #MET data
     'MET_2015D' : 999,
     'MET_2016B' : 999,
+    'MET_2016C' : 999,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  99,
@@ -600,20 +609,17 @@ nJobs = {
     'DoubleMu_2015C'   : 187,
     'DoubleMu_2015D': 1000,
 
-    'Tau_2015B'  :  57,
-    'Tau_2015C'  :  220,
     'Tau_2015D'  :  1000,
     'Tau_2016B'  :  1000,
+    'Tau_2016C'  :  1000,
 
-    'SingleMu_2015B'      :  57,
-    'SingleMu_2015C'      : 220,
     'SingleMu_2015D'   : 1000,
     'SingleMu_2016B'   : 1000,
+    'SingleMu_2016C'   : 1000,
 
-    'SingleEle_2015B'    :  77,
-    'SingleEle_2015C'    : 137,
     'SingleEle_2015D' : 1000,
     'SingleEle_2016B' : 1000,
+    'SingleEle_2016C' : 1000,
 
     'SinglePhoton_2015B'   :  55,
     'SinglePhoton_2015C'   : 130,
@@ -1154,6 +1160,7 @@ maxEvents = {
     #MET data
     'MET_2015D' : -1,
     'MET_2016B' : -1,
+    'MET_2016C' : -1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  -1,
@@ -1257,20 +1264,17 @@ maxEvents = {
     'DoubleMu_2015C'       : -1,
     'DoubleMu_2015D'    : -1,
 
-    'Tau_2015B'       : -1,
-    'Tau_2015C'       : -1,
     'Tau_2015D'       : -1,
     'Tau_2016B'       : -1,
+    'Tau_2016C'       : -1,
 
-    'SingleMu_2015B'       : -1,
-    'SingleMu_2015C'       : -1,
     'SingleMu_2015D'       : -1,
     'SingleMu_2016B'       : -1,
+    'SingleMu_2016C'       : -1,
 
-    'SingleEle_2015B'       : -1,
-    'SingleEle_2015C'       : -1,
     'SingleEle_2015D'       : -1,
     'SingleEle_2016B'       : -1,
+    'SingleEle_2016C'       : -1,
 
     'SinglePhoton_2015B'       : -1,
     'SinglePhoton_2015C'       : -1,
@@ -1810,8 +1814,8 @@ types = {
 
     #MET data
     'MET_2015D' : "data",
-    'MET_2015'  : "data",
     'MET_2016B' : "data",
+    'MET_2016C' : "data",
     'MET_2016' : "data",
 
     #AMSB chargino
@@ -1928,29 +1932,20 @@ types = {
     'DoubleMu_2015D'   : "data",
     'DoubleMu_2015'    : "data",
 
-    'Tau_2015B'    : "data",
-    'Tau_2015C'    : "data",
     'Tau_2015D'    : "data",
     'Tau_2016B'    : "data",
+    'Tau_2016C'    : "data",
+    'Tau_2016'    : "data",
 
-    'Tau_2015'     : "data",
-    'Tau_2016'     : "data",
-
-    'SingleMu_2015B'    : "data",
-    'SingleMu_2015C'    : "data",
     'SingleMu_2015D'    : "data",
     'SingleMu_2016B'    : "data",
+    'SingleMu_2016C'    : "data",
+    'SingleMu_2016'    : "data",
 
-    'SingleMu_2015'     : "data",
-    'SingleMu_2016'     : "data",
-
-    'SingleEle_2015B'   : "data",
-    'SingleEle_2015C'   : "data",
     'SingleEle_2015D'   : "data",
     'SingleEle_2016B'   : "data",
-
-    'SingleEle_2015'    : "data",
-    'SingleEle_2016'    : "data",
+    'SingleEle_2016C'   : "data",
+    'SingleEle_2016'   : "data",
 
     'SinglePhoton_2015B'   : "data",
     'SinglePhoton_2015C'   : "data",
@@ -2501,8 +2496,8 @@ colors = {
 
     #MET data
     'MET_2015D' : 1,
-    'MET_2015' : 1,
     'MET_2016B' : 1,
+    'MET_2016C' : 1,
     'MET_2016' : 1,
 
     #AMSB chargino
@@ -2619,25 +2614,19 @@ colors = {
     'DoubleMu_2015D'   : 1,
     'DoubleMu_2015'   : 1,
 
-    'Tau_2015B'  :  1,
-    'Tau_2015C'  :  1,
     'Tau_2015D'  :  1,
-    'Tau_2015'   :  1,
     'Tau_2016B'  :  1,
+    'Tau_2016C'  :  1,
     'Tau_2016'   :  1,
 
-    'SingleMu_2015B'   : 1,
-    'SingleMu_2015C'   : 1,
     'SingleMu_2015D'   : 1,
-    'SingleMu_2015'   : 1,
     'SingleMu_2016B'   : 1,
+    'SingleMu_2016C'   : 1,
     'SingleMu_2016'  : 1,
 
-    'SingleEle_2015B'   : 1,
-    'SingleEle_2015C'   : 1,
     'SingleEle_2015D'   : 1,
-    'SingleEle_2015'   : 1,
     'SingleEle_2016B'   : 1,
+    'SingleEle_2016C'   : 1,
     'SingleEle_2016'    : 1,
 
     'SinglePhoton_2015B'   : 1,
@@ -3189,8 +3178,8 @@ labels = {
 
     #MET data
     'MET_2015D' : "MET 2015D data",
-    'MET_2015'  : "MET 2015 data",
     'MET_2016B' : "MET 2016B data",
+    'MET_2016C' : "MET 2016C data",
     'MET_2016'  : "MET 2016 data",
 
     #AMSB chargino
@@ -3305,26 +3294,20 @@ labels = {
     'DoubleMu_2015C'     : "DoubleMu 2015C data",
     'DoubleMu_2015D'     : "DoubleMu 2015D data",
 
-    'Tau_2015'   :  "Tau  2015   data",
-    'Tau_2015B'  :  "Tau  2015B  data",
-    'Tau_2015C'  :  "Tau  2015C  data",
     'Tau_2015D'  :  "Tau  2015D  data",
-    'Tau_2016'   :  "Tau  2016   data",
     'Tau_2016B'  :  "Tau  2016B  data",
+    'Tau_2016C'  :  "Tau  2016C  data",
+    'Tau_2016'   :  "Tau  2016   data",
 
-    'SingleMu_2015'      : "Single Muon 2015 data",
-    'SingleMu_2015B'     : "SingleMu 2015B data",
-    'SingleMu_2015C'     : "SingleMu 2015C data",
-    'SingleMu_2015D'     : "SingleMu 2015D data",
-    'SingleMu_2016'      : "Single Muon 2016 data",
-    'SingleMu_2016B'     : "SingleMu 2016B data",
+    'SingleMu_2015D'     : "SingleMuon 2015D data",
+    'SingleMu_2016B'     : "SingleMuon 2016B data",
+    'SingleMu_2016C'     : "SingleMuon 2016C data",
+    'SingleMu_2016'      : "SingleMuon 2016 data",
 
-    'SingleEle_2015'      : "Single Electron 2015 data",
-    'SingleEle_2015B'     : "SingleEle 2015B data",
-    'SingleEle_2015C'     : "SingleEle 2015C data",
-    'SingleEle_2015D'     : "SingleEle 2015D data",
-    'SingleEle_2016'      : "Single Electron 2016 data",
-    'SingleEle_2016B'     : "SingleEle 2016B data",
+    'SingleEle_2015D'     : "SingleElectron 2015D data",
+    'SingleEle_2016B'     : "SingleElectron 2016B data",
+    'SingleEle_2016C'     : "SingleElectron 2016C data",
+    'SingleEle_2016'      : "SingleElectron 2016 data",
 
     'SinglePhoton_2015'      : "SinglePhoton 2015 data",
     'SinglePhoton_2015B'     : "SinglePhoton 2015B data",
