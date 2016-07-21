@@ -255,7 +255,7 @@ def getLatestJsonFile():
             jsonFileFiltered = []
             for fileName in jsonFileList:
                 if jsonMatchingPhrase in fileName:
-                    if 'P_Golden' in arguments.JSONType:
+                    if 'R_Golden' in arguments.JSONType:
                         if re.search('JSON_?(v[0-9]+)?\.txt', fileName):
                             jsonFileFiltered.append(fileName)
                     else:
