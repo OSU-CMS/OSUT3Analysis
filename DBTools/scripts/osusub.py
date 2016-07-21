@@ -119,23 +119,29 @@ secondaryCollections ={}
 
 #To get the JSON file the user specifies. Use -J 'TypeOfJSON' like -J R_Silver
 def getLatestJsonFile():
-    if arguments.JSONType[-4:] == ".txt":
+
+    if re.search('.txt$', arguments.JSONType):
         startIndex = 0
         endIndex = 0
         ultimateJson = ''
+
         for i in range(0,len(arguments.JSONType)):
             if arguments.JSONType[-(i+1)] == '/':
                 startIndex = len(arguments.JSONType)-i
                 break
+
         for i in range(0,len(arguments.JSONType)):
             if arguments.JSONType[i:i+3] == 'txt':
                 endIndex = i+3
+
         if startIndex <= endIndex:
             ultimateJson = arguments.JSONType[startIndex: endIndex]
+
         if arguments.JSONType[:4] == 'http':
             os.system('wget ' + arguments.JSONType + ' -O ' + ultimateJson)
         else:
             os.system('cp ' + arguments.JSONType + ' ' + ultimateJson)
+
         return ultimateJson
 
     else:
@@ -144,24 +150,19 @@ def getLatestJsonFile():
             sys.exit()
 
         collisionType = 'Collisions15'
-        bunchSpacing = '25ns'
-        if arguments.JSONType[-2:] == '16':
+        jsonMatchingPhrase = 'Collisions15_25ns_JSON'
+
+        if re.search('16$', arguments.JSONType):
             collisionType = 'Collisions16'
-            bunchSpacing = ''
-            arguments.JSONType = arguments.JSONType[:-2]
+            jsonMatchingPhrase = 'Collisions16_JSON'
 
-        jsonMatchingPhrase = collisionType + '_'
-        if len(bunchSpacing) > 0:
-            jsonMatchingPhrase += bunchSpacing + '_JSON'
-        else:
-            jsonMatchingPhrase += 'JSON'
-
-        if arguments.JSONType.split('_')[0] == "P":
+        if arguments.JSONType[:2] == 'P_':
             tmpDir = tempfile.mkdtemp ()
             os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/ -O ' + tmpDir + '/jsonList.txt')
             os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
             Tmp = open(tmpDir + '/CertList.txt','r+w')
             jsonFileList = []
+
             for line in Tmp:
                 startIndex = 0
                 endIndex = 0
@@ -173,36 +174,46 @@ def getLatestJsonFile():
                 if startIndex <= endIndex:
                     jsonFileList.append(line[startIndex: endIndex])
             Tmp.close ()
+
             jsonFileFiltered = []
             for fileName in jsonFileList:
                 if jsonMatchingPhrase in fileName:
-                    if arguments.JSONType.split('_')[1] == "Golden":
-                        if fileName[-8:] == 'JSON.txt':
+                    if 'P_Golden' in arguments.JSONType:
+                        if re.search('JSON_?(v[0-9]+)?\.txt', fileName):
                             jsonFileFiltered.append(fileName)
-                        elif 'JSON_v' in fileName:
-                            jsonFileFiltered.append(fileName)
-                    elif arguments.JSONType.split('_')[1] in fileName:
-                        jsonFileFiltered.append(fileName)
+                    else:
+                        if arguments.JSONType[-2:] == '16':
+                            if re.search('JSON_' + arguments.JSONType[2:-2] + '(_v[0-9]+)?\.txt', fileName):
+                                jsonFileFiltered.append(fileName)
+                        else:
+                            if re.search('JSON_' + arguments.JSONType[2:] + '(_v[0-9]+)?\.txt', fileName):
+                                jsonFileFiltered.append(fileName)
+
             bestJsons = []
             bestJson = ''
             runRange = 0
+
             if len(jsonFileFiltered) == 0:
                 print "#######################################################"
                 print "Warning!!!!!!!!!!!Could not find wanted JSON file"
                 print "#######################################################"
+
             for json in jsonFileFiltered:
                 nameSplit = json.split('_')
                 if len(nameSplit[1].split('-')) > 1:
                     if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) > runRange:
                         runRange = float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0])
                         bestJson = json
+
             for json in jsonFileFiltered:
                 nameSplit = json.split('_')
                 if len(nameSplit[1].split('-')) > 1:
                     if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) == runRange:
                         bestJsons.append(json)
+
             versionNumber = 0
             ultimateJson = ''
+
             if len(bestJsons) == 1:
                 ultimateJson = bestJsons[0]
             else:
@@ -214,16 +225,20 @@ def getLatestJsonFile():
                         if currentVersionNumber > versionNumber:
                             versionNumber = currentVersionNumber
                             ultimateJson = bestJson
+
             os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
             shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
             shutil.rmtree (tmpDir)
+
             return ultimateJson
-        if arguments.JSONType.split('_')[0] == "R":
+
+        if arguments.JSONType[:2] == 'R_':
             tmpDir = tempfile.mkdtemp ()
             os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/Reprocessing/ -O ' + tmpDir + '/jsonList.txt')
             os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
             Tmp = open(tmpDir + '/CertList.txt','r+w')
             jsonFileList = []
+
             for line in Tmp:
                 startIndex = 0
                 endIndex = 0
@@ -234,25 +249,33 @@ def getLatestJsonFile():
                         endIndex = i + 3
                 if startIndex <= endIndex:
                     jsonFileList.append(line[startIndex: endIndex])
+
             Tmp.close ()
+
             jsonFileFiltered = []
             for fileName in jsonFileList:
                 if jsonMatchingPhrase in fileName:
-                    if arguments.JSONType.split('_')[1] == "Golden":
-                        if fileName[-8:] == 'JSON.txt':
+                    if 'P_Golden' in arguments.JSONType:
+                        if re.search('JSON_?(v[0-9]+)?\.txt', fileName):
                             jsonFileFiltered.append(fileName)
-                        elif 'JSON_v' in fileName:
-                            jsonFileFiltered.append(fileName)
-                    elif arguments.JSONType.split('_')[1] in fileName:
-                        jsonFileFiltered.append(fileName)
+                    else:
+                        if arguments.JSONType[-2:] == '16':
+                            if re.search('JSON_' + arguments.JSONType[2:-2] + '(_v[0-9]+)?\.txt', fileName):
+                                jsonFileFiltered.append(fileName)
+                        else:
+                            if re.search('JSON_' + arguments.JSONType[2:] + '(_v[0-9]+)?\.txt', fileName):
+                                jsonFileFiltered.append(fileName)
+
             if len(jsonFileFiltered) == 0:
                 print "#######################################################"
                 print "Warning!!!!!!!!!!!Could not find wanted JSON file"
                 print "#######################################################"
+
             ultimateJson = jsonFileFiltered[-1]
             os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType +'/13TeV/Reprocessing/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
             shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
             shutil.rmtree (tmpDir)
+
             return ultimateJson
 
 
@@ -273,7 +296,7 @@ def SpecialStringModifier(inputString, specialStringSplitList, specialStringRepl
     return inputString
 
 def SecondaryCollectionInstance(SkimDirectory, SkimChannel):
-    strings = []    
+    strings = []
     if len(secondaryCollections):
         for collection in secondaryCollections:
             skimFileList = os.popen("ls " + SkimDirectory + '/' + SkimChannel + "/skim_*.root").readlines()

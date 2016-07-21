@@ -22,10 +22,16 @@ datasets = [
    'SingleMu_2015D',
    'SingleMu_2016',
    'SingleMu_2016B',
+   'SingleMu_2016C',
+   'SingleMu_2016D',
+   'SingleMu_2016E',
    'SingleEle_2015',
    'SingleEle_2015D',
    'SingleEle_2016',
    'SingleEle_2016B',
+   'SingleEle_2016C',
+   'SingleEle_2016D',
+   'SingleEle_2016E',
    'SinglePhoton_2015',
    'SinglePhoton_2015D',
    'DoubleEG_2015',
@@ -38,6 +44,9 @@ datasets = [
    'MET_2015D',
    'MET_2016',
    'MET_2016B',
+   'MET_2016C',
+   'MET_2016D',
+   'MET_2016E',
    'NoBPTX_2015D',
    'NoBPTX_2015D_v3',
    'NoBPTX_2015D_v4',
@@ -61,13 +70,13 @@ datasets = [
 
    'NoBPTX_2015C_16Dec2015_Ntuple',
    'NoBPTX_2015D_16Dec2015_Ntuple',
-   
+
    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple',
    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple',
    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple',
    'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple',
    'NoBPTX_2015E_PromptReco_Cosmic_Ntuple',
-   
+
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
    'DYJetsToLL_10to50',
@@ -262,6 +271,9 @@ composite_dataset_definitions = {
     ],
     'SingleMu_2016' : [
         'SingleMu_2016B',
+        'SingleMu_2016C',
+        'SingleMu_2016D',
+        'SingleMu_2016E',
     ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
@@ -270,6 +282,9 @@ composite_dataset_definitions = {
     ],
     'SingleEle_2016' : [
         'SingleEle_2016B',
+        'SingleEle_2016C',
+        'SingleEle_2016D',
+        'SingleEle_2016E',
     ],
     'SinglePhoton_2015' : [
         'SinglePhoton_2015B',
@@ -289,43 +304,43 @@ composite_dataset_definitions = {
         'MuonEG_2015C',
         'MuonEG_2015D',
     ],
-    #'mchamp100_NtupleSeparateEvents': [        
+    #'mchamp100_NtupleSeparateEvents': [
         #'mchamp100_NtupleSeparateEventsParticle0',
         #'mchamp100_NtupleSeparateEventsParticle1',
         #],
-    #'mchamp200_NtupleSeparateEvents': [        
+    #'mchamp200_NtupleSeparateEvents': [
         #'mchamp200_NtupleSeparateEventsParticle0',
         #'mchamp200_NtupleSeparateEventsParticle1',
         #],
-    #'mchamp400_NtupleSeparateEvents': [        
+    #'mchamp400_NtupleSeparateEvents': [
         #'mchamp400_NtupleSeparateEventsParticle0',
         #'mchamp400_NtupleSeparateEventsParticle1',
         #],
-    'mchamp600_NtupleSeparateEvents': [        
+    'mchamp600_NtupleSeparateEvents': [
         'mchamp600_NtupleSeparateEventsParticle0',
         'mchamp600_NtupleSeparateEventsParticle1',
         ],
-    #'mchamp800_NtupleSeparateEvents': [        
+    #'mchamp800_NtupleSeparateEvents': [
         #'mchamp800_NtupleSeparateEventsParticle0',
         #'mchamp800_NtupleSeparateEventsParticle1',
         #],
-    #'mchamp1000_NtupleSeparateEvents': [        
+    #'mchamp1000_NtupleSeparateEvents': [
         #'mchamp1000_NtupleSeparateEventsParticle0',
         #'mchamp1000_NtupleSeparateEventsParticle1',
         #],
-    #'mchamp1400_NtupleSeparateEvents': [        
+    #'mchamp1400_NtupleSeparateEvents': [
         #'mchamp1400_NtupleSeparateEventsParticle0',
         #'mchamp1400_NtupleSeparateEventsParticle1',
         #],
-    #'mchamp1800_NtupleSeparateEvents': [        
+    #'mchamp1800_NtupleSeparateEvents': [
         #'mchamp1800_NtupleSeparateEventsParticle0',
         #'mchamp1800_NtupleSeparateEventsParticle1',
         #],
-    #'mchamp2200_NtupleSeparateEvents': [        
+    #'mchamp2200_NtupleSeparateEvents': [
         #'mchamp2200_NtupleSeparateEventsParticle0',
         #'mchamp2200_NtupleSeparateEventsParticle1',
         #],
-    #'mchamp2600_NtupleSeparateEvents': [        
+    #'mchamp2600_NtupleSeparateEvents': [
         #'mchamp2600_NtupleSeparateEventsParticle0',
         #'mchamp2600_NtupleSeparateEventsParticle1',
         #],
@@ -417,7 +432,7 @@ composite_dataset_definitions = {
     'NoBPTX_16Dec2015_Ntuple' : [
         'NoBPTX_2015C_16Dec2015_Ntuple',
         'NoBPTX_2015D_16Dec2015_Ntuple',
-        ],  
+        ],
     'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : [
         'NoBPTX_2015B_PromptReco_Cosmic_Ntuple',
         'NoBPTX_2015C_PromptReco_Cosmic_Ntuple',
@@ -431,7 +446,10 @@ composite_dataset_definitions = {
         'MET_2015D',
     ],
     'MET_2016' : [
-	'MET_2016B',
+	   'MET_2016B',
+       'MET_2016C',
+       'MET_2016D',
+       'MET_2016E',
     ],
 }
 
@@ -498,6 +516,9 @@ nJobs = {
     #MET data
     'MET_2015D' : 999,
     'MET_2016B' : 999,
+    'MET_2016C' : 999,
+    'MET_2016D' : 999,
+    'MET_2016E' : 999,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  99,
@@ -609,11 +630,17 @@ nJobs = {
     'SingleMu_2015C'      : 220,
     'SingleMu_2015D'   : 1000,
     'SingleMu_2016B'   : 1000,
+    'SingleMu_2016C'   : 1000,
+    'SingleMu_2016D'   : 1000,
+    'SingleMu_2016E'   : 1000,
 
     'SingleEle_2015B'    :  77,
     'SingleEle_2015C'    : 137,
     'SingleEle_2015D' : 1000,
     'SingleEle_2016B' : 1000,
+    'SingleEle_2016C' : 1000,
+    'SingleEle_2016D' : 1000,
+    'SingleEle_2016E' : 1000,
 
     'SinglePhoton_2015B'   :  55,
     'SinglePhoton_2015C'   : 130,
@@ -1090,12 +1117,12 @@ nJobs = {
     'MuonEG_2015D'   :  1000,
 
     ############################################################################
-    'VBF_HTo4L_FPix8x52' : 999, 
+    'VBF_HTo4L_FPix8x52' : 999,
     'VBF_HTo4L_FPix80x520' : 999,
     'VBF_HTo4L_FPix80x52' : 999,
     'VBF_HTo4L_FPix80x5' : 999,
     'VBF_HTo4L_FPix800x52' : 999,
-    
+
 }
 
 maxEvents = {
@@ -1154,6 +1181,9 @@ maxEvents = {
     #MET data
     'MET_2015D' : -1,
     'MET_2016B' : -1,
+    'MET_2016C' : -1,
+    'MET_2016D' : -1,
+    'MET_2016E' : -1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  -1,
@@ -1266,11 +1296,17 @@ maxEvents = {
     'SingleMu_2015C'       : -1,
     'SingleMu_2015D'       : -1,
     'SingleMu_2016B'       : -1,
+    'SingleMu_2016C'       : -1,
+    'SingleMu_2016D'       : -1,
+    'SingleMu_2016E'       : -1,
 
     'SingleEle_2015B'       : -1,
     'SingleEle_2015C'       : -1,
     'SingleEle_2015D'       : -1,
     'SingleEle_2016B'       : -1,
+    'SingleEle_2016C'       : -1,
+    'SingleEle_2016D'       : -1,
+    'SingleEle_2016'        : -1,
 
     'SinglePhoton_2015B'       : -1,
     'SinglePhoton_2015C'       : -1,
@@ -1740,7 +1776,7 @@ maxEvents = {
 
     'MuonEG_2015D'       : -1,
 
-    'VBF_HTo4L_FPix8x52' : -1, 
+    'VBF_HTo4L_FPix8x52' : -1,
     'VBF_HTo4L_FPix80x520' : -1,
     'VBF_HTo4L_FPix80x52' : -1,
     'VBF_HTo4L_FPix80x5' : -1,
@@ -1812,6 +1848,9 @@ types = {
     'MET_2015D' : "data",
     'MET_2015'  : "data",
     'MET_2016B' : "data",
+    'MET_2016C' : "data",
+    'MET_2016D' : "data",
+    'MET_2016E' : "data",
     'MET_2016' : "data",
 
     #AMSB chargino
@@ -1940,6 +1979,9 @@ types = {
     'SingleMu_2015C'    : "data",
     'SingleMu_2015D'    : "data",
     'SingleMu_2016B'    : "data",
+    'SingleMu_2016C'    : "data",
+    'SingleMu_2016D'    : "data",
+    'SingleMu_2016E'    : "data",
 
     'SingleMu_2015'     : "data",
     'SingleMu_2016'     : "data",
@@ -1948,6 +1990,9 @@ types = {
     'SingleEle_2015C'   : "data",
     'SingleEle_2015D'   : "data",
     'SingleEle_2016B'   : "data",
+    'SingleEle_2016C'   : "data",
+    'SingleEle_2016D'   : "data",
+    'SingleEle_2016E'   : "data",
 
     'SingleEle_2015'    : "data",
     'SingleEle_2016'    : "data",
@@ -2434,7 +2479,7 @@ types = {
     'GluinoToGChi0_1200_1000_noiseFrate1p0' : "signalMC",
     'GluinoToGChi0_1200_1000_nonoise' : "signalMC",
 
-    'VBF_HTo4L_FPix8x52' : "signalMC", 
+    'VBF_HTo4L_FPix8x52' : "signalMC",
     'VBF_HTo4L_FPix80x520' : "signalMC",
     'VBF_HTo4L_FPix80x52' : "signalMC",
     'VBF_HTo4L_FPix80x5' : "signalMC",
@@ -2503,6 +2548,9 @@ colors = {
     'MET_2015D' : 1,
     'MET_2015' : 1,
     'MET_2016B' : 1,
+    'MET_2016C' : 1,
+    'MET_2016D' : 1,
+    'MET_2016E' : 1,
     'MET_2016' : 1,
 
     #AMSB chargino
@@ -2631,6 +2679,9 @@ colors = {
     'SingleMu_2015D'   : 1,
     'SingleMu_2015'   : 1,
     'SingleMu_2016B'   : 1,
+    'SingleMu_2016C'   : 1,
+    'SingleMu_2016D'   : 1,
+    'SingleMu_2016E'   : 1,
     'SingleMu_2016'  : 1,
 
     'SingleEle_2015B'   : 1,
@@ -2638,6 +2689,9 @@ colors = {
     'SingleEle_2015D'   : 1,
     'SingleEle_2015'   : 1,
     'SingleEle_2016B'   : 1,
+    'SingleEle_2016C'   : 1,
+    'SingleEle_2016D'   : 1,
+    'SingleEle_2016E'   : 1,
     'SingleEle_2016'    : 1,
 
     'SinglePhoton_2015B'   : 1,
@@ -3120,7 +3174,7 @@ colors = {
     'GluinoToGChi0_1200_1000_noiseFrate1p0' : 8,
     'GluinoToGChi0_1200_1000_nonoise' : 9,
 
-    'VBF_HTo4L_FPix8x52' : 1, 
+    'VBF_HTo4L_FPix8x52' : 1,
     'VBF_HTo4L_FPix80x520' : 1,
     'VBF_HTo4L_FPix80x52' : 1,
     'VBF_HTo4L_FPix80x5' : 1,
@@ -3191,6 +3245,9 @@ labels = {
     'MET_2015D' : "MET 2015D data",
     'MET_2015'  : "MET 2015 data",
     'MET_2016B' : "MET 2016B data",
+    'MET_2016C' : "MET 2016C data",
+    'MET_2016D' : "MET_2016D data",
+    'MET_2016E' : "MET_2016E data",
     'MET_2016'  : "MET 2016 data",
 
     #AMSB chargino
@@ -3318,6 +3375,9 @@ labels = {
     'SingleMu_2015D'     : "SingleMu 2015D data",
     'SingleMu_2016'      : "Single Muon 2016 data",
     'SingleMu_2016B'     : "SingleMu 2016B data",
+    'SingleMu_2016C'     : "SingleMu 2016C data",
+    'SingleMu_2016D'     : "SingleMu 2016D data",
+    'SingleMu_2016E'     : "SingleMu 2016E data",
 
     'SingleEle_2015'      : "Single Electron 2015 data",
     'SingleEle_2015B'     : "SingleEle 2015B data",
@@ -3325,6 +3385,9 @@ labels = {
     'SingleEle_2015D'     : "SingleEle 2015D data",
     'SingleEle_2016'      : "Single Electron 2016 data",
     'SingleEle_2016B'     : "SingleEle 2016B data",
+    'SingleEle_2016C'     : "SingleEle 2016C data",
+    'SingleEle_2016D'     : "SingleEle 2016D data",
+    'SingleEle_2016E'     : "SingleEle 2016E daat",
 
     'SinglePhoton_2015'      : "SinglePhoton 2015 data",
     'SinglePhoton_2015B'     : "SinglePhoton 2015B data",
@@ -3499,11 +3562,11 @@ labels = {
     'mchamp2200' : "Mchamp (Q = 2e, M = 2200 GeV)",
     'mchamp2600' : "Mchamp (Q = 2e, M = 2600 GeV)",
 
-    'gluino100'   : "#tilde{g} (M=100 GeV)", 
-    'gluino200'   : "#tilde{g} (M=200 GeV)", 
-    'gluino400'   : "#tilde{g} (M=400 GeV)", 
-    'gluino600'   : "#tilde{g} (M=600 GeV)", 
-    'gluino800'   : "#tilde{g} (M=800 GeV)", 
+    'gluino100'   : "#tilde{g} (M=100 GeV)",
+    'gluino200'   : "#tilde{g} (M=200 GeV)",
+    'gluino400'   : "#tilde{g} (M=400 GeV)",
+    'gluino600'   : "#tilde{g} (M=600 GeV)",
+    'gluino800'   : "#tilde{g} (M=800 GeV)",
     'gluino1000'  : "#tilde{g} (M=1000 GeV)",
     'gluino1200'  : "#tilde{g} (M=1200 GeV)",
     'gluino1400'  : "#tilde{g} (M=1400 GeV)",
@@ -3537,11 +3600,11 @@ labels = {
     #'mchamp2200_Stage2SeparateEventsParticle1'  : "Mchamp (Q = 2e, M = 2200 GeV, Separate Events, Particle 1)",
     #'mchamp2600_Stage2SeparateEventsParticle1'  : "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 1)",
 
-    #'gluino100_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
-    #'gluino200_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
-    #'gluino400_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
-    #'gluino600_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
-    #'gluino800_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino100_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)",
+    #'gluino200_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)",
+    #'gluino400_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)",
+    #'gluino600_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)",
+    #'gluino800_Stage2SeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)",
     #'gluino1000_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     #'gluino1200_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
     #'gluino1400_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
@@ -3552,11 +3615,11 @@ labels = {
     #'gluino2400_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2400 GeV, M_{#tilde{#chi}^{0}_{2}}=1500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=600 GeV)",
     #'gluino2600_Stage2SeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2600 GeV, M_{#tilde{#chi}^{0}_{2}}=1625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=650 GeV)",
 
-    #'gluino100_Stage2SeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
-    #'gluino200_Stage2SeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
-    #'gluino400_Stage2SeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
-    #'gluino600_Stage2SeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
-    #'gluino800_Stage2SeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino100_Stage2SeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)",
+    #'gluino200_Stage2SeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)",
+    #'gluino400_Stage2SeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)",
+    #'gluino600_Stage2SeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)",
+    #'gluino800_Stage2SeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)",
     #'gluino1000_Stage2SeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     #'gluino1200_Stage2SeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
     #'gluino1400_Stage2SeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
@@ -3590,11 +3653,11 @@ labels = {
     #'mchamp2200_DigiHltSeparateEventsParticle1'  :  "Mchamp (Q = 2e, M = 2200 GeV, Separate Events, Particle 1)",
     #'mchamp2600_DigiHltSeparateEventsParticle1'  :  "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 1)",
 
-    #'gluino100_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
-    #'gluino200_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
-    #'gluino400_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
-    #'gluino600_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
-    #'gluino800_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino100_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)",
+    #'gluino200_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)",
+    #'gluino400_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)",
+    #'gluino600_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)",
+    #'gluino800_DigiHltSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)",
     #'gluino1000_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     #'gluino1200_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
     #'gluino1400_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
@@ -3605,11 +3668,11 @@ labels = {
     #'gluino2400_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2400 GeV, M_{#tilde{#chi}^{0}_{2}}=1500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=600 GeV)",
     #'gluino2600_DigiHltSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2600 GeV, M_{#tilde{#chi}^{0}_{2}}=1625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=650 GeV)",
 
-    #'gluino100_DigiHltSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
-    #'gluino200_DigiHltSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
-    #'gluino400_DigiHltSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
-    #'gluino600_DigiHltSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
-    #'gluino800_DigiHltSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino100_DigiHltSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)",
+    #'gluino200_DigiHltSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)",
+    #'gluino400_DigiHltSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)",
+    #'gluino600_DigiHltSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)",
+    #'gluino800_DigiHltSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)",
     #'gluino1000_DigiHltSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     #'gluino1200_DigiHltSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
     #'gluino1400_DigiHltSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
@@ -3643,11 +3706,11 @@ labels = {
     #'mchamp2200_RecoSeparateEventsParticle1'  :   "Mchamp (Q = 2e, M = 2200 GeV, Separate Events, Particle 1)",
     #'mchamp2600_RecoSeparateEventsParticle1'  :   "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 1)",
 
-    #'gluino100_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
-    #'gluino200_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
-    #'gluino400_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
-    #'gluino600_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
-    #'gluino800_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino100_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)",
+    #'gluino200_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)",
+    #'gluino400_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)",
+    #'gluino600_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)",
+    #'gluino800_RecoSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)",
     #'gluino1000_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     #'gluino1200_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
     #'gluino1400_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
@@ -3658,11 +3721,11 @@ labels = {
     #'gluino2400_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2400 GeV, M_{#tilde{#chi}^{0}_{2}}=1500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=600 GeV)",
     #'gluino2600_RecoSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2600 GeV, M_{#tilde{#chi}^{0}_{2}}=1625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=650 GeV)",
 
-    #'gluino100_RecoSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
-    #'gluino200_RecoSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
-    #'gluino400_RecoSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
-    #'gluino600_RecoSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
-    #'gluino800_RecoSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino100_RecoSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)",
+    #'gluino200_RecoSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)",
+    #'gluino400_RecoSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)",
+    #'gluino600_RecoSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)",
+    #'gluino800_RecoSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)",
     #'gluino1000_RecoSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     #'gluino1200_RecoSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
     #'gluino1400_RecoSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
@@ -3707,11 +3770,11 @@ labels = {
     #'mchamp2200_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 2200 GeV, Separate Events)",
     #'mchamp2600_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 2600 GeV, Separate Events)",
 
-    #'gluino100_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
-    #'gluino200_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
-    #'gluino400_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
-    #'gluino600_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
-    #'gluino800_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino100_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)",
+    #'gluino200_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)",
+    #'gluino400_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)",
+    #'gluino600_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)",
+    #'gluino800_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)",
     #'gluino1000_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     #'gluino1200_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
     #'gluino1400_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
@@ -3722,11 +3785,11 @@ labels = {
     #'gluino2400_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2400 GeV, M_{#tilde{#chi}^{0}_{2}}=1500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=600 GeV)",
     #'gluino2600_NtupleSeparateEventsParticle0'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2600 GeV, M_{#tilde{#chi}^{0}_{2}}=1625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=650 GeV)",
 
-    #'gluino100_NtupleSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
-    #'gluino200_NtupleSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
-    #'gluino400_NtupleSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
-    #'gluino600_NtupleSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
-    #'gluino800_NtupleSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino100_NtupleSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)",
+    #'gluino200_NtupleSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)",
+    #'gluino400_NtupleSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)",
+    #'gluino600_NtupleSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)",
+    #'gluino800_NtupleSeparateEventsParticle1'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)",
     #'gluino1000_NtupleSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     #'gluino1200_NtupleSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
     #'gluino1400_NtupleSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
@@ -3737,11 +3800,11 @@ labels = {
     #'gluino2400_NtupleSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2400 GeV, M_{#tilde{#chi}^{0}_{2}}=1500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=600 GeV)",
     #'gluino2600_NtupleSeparateEventsParticle1'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2600 GeV, M_{#tilde{#chi}^{0}_{2}}=1625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=650 GeV)",
 
-    #'gluino100_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)", 
-    #'gluino200_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)", 
-    #'gluino400_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)", 
-    #'gluino600_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)", 
-    #'gluino800_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)", 
+    #'gluino100_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)",
+    #'gluino200_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)",
+    #'gluino400_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV)",
+    #'gluino600_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV)",
+    #'gluino800_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV)",
     #'gluino1000_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     #'gluino1200_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV)",
     #'gluino1400_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV)",
@@ -4310,13 +4373,13 @@ crossSections = {
     'GluinoToGChi0_1200_1000_noiseFrate0p8' : 8.3600000000E-02,
     'GluinoToGChi0_1200_1000_noiseFrate1p0' : 8.3600000000E-02,
     'GluinoToGChi0_1200_1000_nonoise' : 8.3600000000E-02,
-    
+
     'VBF_HTo4L_FPix8x52' : 1,
     'VBF_HTo4L_FPix80x520' : 1,
     'VBF_HTo4L_FPix80x52' : 1,
     'VBF_HTo4L_FPix80x5' : 1,
     'VBF_HTo4L_FPix800x52' : 1,
-    
+
 
 }
 
