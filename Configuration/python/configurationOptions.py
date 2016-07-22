@@ -19,6 +19,8 @@ datasets = [
    'Tau_2016',
    'Tau_2016B',
    'Tau_2016C',
+   'Tau_2016D',
+   'Tau_2016E',
    'SingleMu_2015',
    'SingleMu_2015D',
    'SingleMu_2016',
@@ -265,6 +267,8 @@ composite_dataset_definitions = {
     'Tau_2016' : [
         'Tau_2016B',
         'Tau_2016C',
+        'Tau_2016D',
+        'Tau_2016E',
     ],
     'SingleMu_2015' : [
         'SingleMu_2015B',
@@ -626,6 +630,8 @@ nJobs = {
     'Tau_2015D'  :  1000,
     'Tau_2016B'  :  1000,
     'Tau_2016C'  :  1000,
+    'Tau_2016D'  :  1000,
+    'Tau_2016E'  :  1000,
 
     'SingleMu_2015D'   : 1000,
     'SingleMu_2016B'   : 1000,
@@ -1287,6 +1293,8 @@ maxEvents = {
     'Tau_2015D'       : -1,
     'Tau_2016B'       : -1,
     'Tau_2016C'       : -1,
+    'Tau_2016D'       : -1,
+    'Tau_2016E'       : -1,
 
     'SingleMu_2015D'       : -1,
     'SingleMu_2016B'       : -1,
@@ -1961,6 +1969,8 @@ types = {
     'Tau_2015D'    : "data",
     'Tau_2016B'    : "data",
     'Tau_2016C'    : "data",
+    'Tau_2016D'    : "data",
+    'Tau_2016E'    : "data",
     'Tau_2016'    : "data",
 
     'SingleMu_2015D'    : "data",
@@ -2650,6 +2660,8 @@ colors = {
     'Tau_2015D'  :  1,
     'Tau_2016B'  :  1,
     'Tau_2016C'  :  1,
+    'Tau_2016D'  :  1,
+    'Tau_2016E'  :  1,
     'Tau_2016'   :  1,
 
     'SingleMu_2015D'   : 1,
@@ -3336,6 +3348,8 @@ labels = {
     'Tau_2015D'  :  "Tau  2015D  data",
     'Tau_2016B'  :  "Tau  2016B  data",
     'Tau_2016C'  :  "Tau  2016C  data",
+    'Tau_2016D'  :  "Tau  2016D  data",
+    'Tau_2016E'  :  "Tau  2016E  data",
     'Tau_2016'   :  "Tau  2016   data",
 
     'SingleMu_2015D'     : "SingleMuon 2015D data",
