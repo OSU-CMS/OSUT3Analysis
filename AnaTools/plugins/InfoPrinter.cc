@@ -386,13 +386,7 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
     return false;
   }
 
-#if DATA_FORMAT == BEAN
-  for (const auto &trigger : *handles_.triggers)
-    {
-      string name = trigger.name;
-      bool pass = trigger.pass;
-      unsigned prescale = trigger.prescale;
-#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
   const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
   for (unsigned i = 0; i < triggerNames.size (); i++)
     {

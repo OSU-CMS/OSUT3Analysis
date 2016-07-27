@@ -5,7 +5,7 @@ import os
 from optparse import OptionParser
 
 
-supported_formats = ["BEAN","AOD","MINI_AOD"]
+supported_formats = ["AOD","MINI_AOD"]
 
 parser = OptionParser()
 parser.add_option("-f", "--format", dest="data_format",
