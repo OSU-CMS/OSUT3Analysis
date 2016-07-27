@@ -1,10 +1,9 @@
 #ifndef DATA_FORMAT
 
-#define  BEAN             0
-#define  MINI_AOD         1
-#define  AOD              2
-#define  MINI_AOD_CUSTOM  3
-#define  AOD_CUSTOM       4
+#define  MINI_AOD         0
+#define  AOD              1
+#define  MINI_AOD_CUSTOM  2
+#define  AOD_CUSTOM       3
 
 #define DATA_FORMAT MINI_AOD
 
@@ -12,11 +11,7 @@
 
 #define ORIGINAL_FORMAT "originalFormat"  // Must match definition used in processingUtilities.py
 
-#if DATA_FORMAT == BEAN
-
-  #include "OSUT3Analysis/AnaTools/interface/DataFormatBEAN.h"
-
-#elif DATA_FORMAT == MINI_AOD
+#if DATA_FORMAT == MINI_AOD
 
   #include "OSUT3Analysis/AnaTools/interface/DataFormatMiniAOD.h"
 
