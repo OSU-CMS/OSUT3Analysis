@@ -17,6 +17,8 @@ datasets = [
    'Tau_2015',
    'Tau_2015D',
    'Tau_2016',
+   'Tau_2016_v2',
+   'Tau_2016_v3',
    'Tau_2016B',
    'Tau_2016B_v2',
    'Tau_2016B_v3',
@@ -26,6 +28,8 @@ datasets = [
    'SingleMu_2015',
    'SingleMu_2015D',
    'SingleMu_2016',
+   'SingleMu_2016_v2',
+   'SingleMu_2016_v3',
    'SingleMu_2016B',
    'SingleMu_2016B_v2',
    'SingleMu_2016B_v3',
@@ -35,6 +39,8 @@ datasets = [
    'SingleEle_2015',
    'SingleEle_2015D',
    'SingleEle_2016',
+   'SingleEle_2016_v2',
+   'SingleEle_2016_v3',
    'SingleEle_2016B',
    'SingleEle_2016B_v2',
    'SingleEle_2016B_v3',
@@ -52,6 +58,8 @@ datasets = [
    'MET_2015',
    'MET_2015D',
    'MET_2016',
+   'MET_2016_v2',
+   'MET_2016_v3',
    'MET_2016B',
    'MET_2016B_v2',
    'MET_2016B_v3',
@@ -1399,6 +1407,8 @@ maxEvents = {
     'SingleEle_2016C'       : -1,
     'SingleEle_2016D'       : -1,
     'SingleEle_2016'        : -1,
+    'SingleEle_2016_v2'        : -1,
+    'SingleEle_2016_v3'        : -1,
 
     'SinglePhoton_2015B'       : -1,
     'SinglePhoton_2015C'       : -1,
@@ -1955,6 +1965,8 @@ types = {
     'MET_2016D' : "data",
     'MET_2016E' : "data",
     'MET_2016' : "data",
+    'MET_2016_v2' : "data",
+    'MET_2016_v3' : "data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  "signalMC",
@@ -2078,6 +2090,8 @@ types = {
     'Tau_2016D'    : "data",
     'Tau_2016E'    : "data",
     'Tau_2016'    : "data",
+    'Tau_2016_v2'    : "data",
+    'Tau_2016_v3'    : "data",
 
     'SingleMu_2015D'    : "data",
     'SingleMu_2016B'    : "data",
@@ -2097,6 +2111,8 @@ types = {
 
     'SingleEle_2015'    : "data",
     'SingleEle_2016'    : "data",
+    'SingleEle_2016_v2'    : "data",
+    'SingleEle_2016_v3'    : "data",
 
     'SinglePhoton_2015B'   : "data",
     'SinglePhoton_2015C'   : "data",
@@ -2666,6 +2682,8 @@ colors = {
     'MET_2016D' : 1,
     'MET_2016E' : 1,
     'MET_2016' : 1,
+    'MET_2016_v2' : 1,
+    'MET_2016_v3' : 1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  628,
@@ -2789,6 +2807,8 @@ colors = {
     'Tau_2016D'  :  1,
     'Tau_2016E'  :  1,
     'Tau_2016'   :  1,
+    'Tau_2016_v2'   :  1,
+    'Tau_2016_v3'   :  1,
 
     'SingleMu_2015D'   : 1,
     'SingleMu_2016B'   : 1,
@@ -2798,6 +2818,8 @@ colors = {
     'SingleMu_2016D'   : 1,
     'SingleMu_2016E'   : 1,
     'SingleMu_2016'  : 1,
+    'SingleMu_2016_v2'  : 1,
+    'SingleMu_2016_v3'  : 1,
 
     'SingleEle_2015D'   : 1,
     'SingleEle_2016B'   : 1,
@@ -2807,6 +2829,8 @@ colors = {
     'SingleEle_2016D'   : 1,
     'SingleEle_2016E'   : 1,
     'SingleEle_2016'    : 1,
+    'SingleEle_2016_v2'    : 1,
+    'SingleEle_2016_v3'    : 1,
 
     'SinglePhoton_2015B'   : 1,
     'SinglePhoton_2015C'   : 1,
@@ -3377,6 +3401,8 @@ labels = {
     'MET_2016D' : "MET_2016D data",
     'MET_2016E' : "MET_2016E data",
     'MET_2016'  : "MET 2016 data",
+    'MET_2016_v2'  : "MET 2016 data",
+    'MET_2016_v3'  : "MET 2016 data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm'    :  "AMSB #tilde{#chi}^{#pm} (100 GeV, 10 cm)",
@@ -3498,12 +3524,16 @@ labels = {
     'Tau_2016D'  :  "Tau 2016D data",
     'Tau_2016E'  :  "Tau 2016E data",
     'Tau_2016'   :  "Tau 2016 data",
+    'Tau_2016_v2'   :  "Tau 2016 data",
+    'Tau_2016_v3'   :  "Tau 2016 data",
 
     'SingleMu_2015'      : "SingleMuon 2015 data",
     'SingleMu_2015B'     : "SingleMuon 2015B data",
     'SingleMu_2015C'     : "SingleMuon 2015C data",
     'SingleMu_2015D'     : "SingleMuon 2015D data",
     'SingleMu_2016'      : "SingleMuon 2016 data",
+    'SingleMu_2016_v2'      : "SingleMuon 2016 data",
+    'SingleMu_2016_v3'      : "SingleMuon 2016 data",
     'SingleMu_2016B'     : "SingleMuon 2016B data",
     'SingleMu_2016B_v2'     : "SingleMuon 2016B data",
     'SingleMu_2016B_v3'     : "SingleMuon 2016B data",
@@ -3516,6 +3546,8 @@ labels = {
     'SingleEle_2015C'     : "SingleElectron 2015C data",
     'SingleEle_2015D'     : "SingleElectron 2015D data",
     'SingleEle_2016'      : "SingleElectron 2016 data",
+    'SingleEle_2016_v2'      : "SingleElectron 2016 data",
+    'SingleEle_2016_v3'      : "SingleElectron 2016 data",
     'SingleEle_2016B'     : "SingleElectron 2016B data",
     'SingleEle_2016B_v2'     : "SingleElectron 2016B data",
     'SingleEle_2016B_v3'     : "SingleElectron 2016B data",
