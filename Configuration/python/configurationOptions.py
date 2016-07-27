@@ -284,7 +284,14 @@ composite_dataset_definitions = {
     ],
     'Tau_2016' : [
         'Tau_2016B',
+        'Tau_2016C',
+        'Tau_2016D',
+        'Tau_2016E',
+    ],
+    'Tau_2016_v2' : [
         'Tau_2016B_v2',
+    ],
+    'Tau_2016_v3' : [
         'Tau_2016B_v3',
         'Tau_2016C',
         'Tau_2016D',
@@ -297,7 +304,14 @@ composite_dataset_definitions = {
     ],
     'SingleMu_2016' : [
         'SingleMu_2016B',
+        'SingleMu_2016C',
+        'SingleMu_2016D',
+        'SingleMu_2016E',
+    ],
+    'SingleMu_2016_v2' : [
         'SingleMu_2016B_v2',
+    ],
+    'SingleMu_2016_v3' : [
         'SingleMu_2016B_v3',
         'SingleMu_2016C',
         'SingleMu_2016D',
@@ -310,7 +324,14 @@ composite_dataset_definitions = {
     ],
     'SingleEle_2016' : [
         'SingleEle_2016B',
+        'SingleEle_2016C',
+        'SingleEle_2016D',
+        'SingleEle_2016E',
+    ],
+    'SingleEle_2016_v2' : [
         'SingleEle_2016B_v2',
+    ],
+    'SingleEle_2016_v3' : [
         'SingleEle_2016B_v3',
         'SingleEle_2016C',
         'SingleEle_2016D',
@@ -489,7 +510,14 @@ composite_dataset_definitions = {
     ],
     'MET_2016' : [
        'MET_2016B',
+       'MET_2016C',
+       'MET_2016D',
+       'MET_2016E',
+    ],
+    'MET_2016_v2' : [
        'MET_2016B_v2',
+    ],
+    'MET_2016_v3' : [
        'MET_2016B_v3',
        'MET_2016C',
        'MET_2016D',
