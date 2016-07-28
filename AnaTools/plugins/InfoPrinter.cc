@@ -22,6 +22,8 @@ InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
   printTriggerDecision_        (cfg.getParameter<bool>                   ("printTriggerDecision")),
   printTriggerFlags_           (cfg.getParameter<bool>                   ("printTriggerFlags")),
   printVetoTriggerFlags_       (cfg.getParameter<bool>                   ("printVetoTriggerFlags")),
+  printTriggerFilterFlags_     (cfg.getParameter<bool>                   ("printTriggerFilterFlags")),
+  printTriggerInMenuFlags_     (cfg.getParameter<bool>                   ("printTriggerInMenuFlags")),
   printAllTriggers_            (cfg.getParameter<bool>                   ("printAllTriggers")),
   valuesToPrint_               (cfg.getParameter<edm::VParameterSet>     ("valuesToPrint")),
   firstEvent_ (true),
@@ -104,6 +106,8 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       printCumulativeObjectFlags_  &&  printCumulativeObjectFlags  ();
       printTriggerFlags_           &&  printTriggerFlags           ();
       printVetoTriggerFlags_       &&  printVetoTriggerFlags       ();
+      printTriggerFilterFlags_     &&  printTriggerFilterFlags     ();
+      printTriggerInMenuFlags_     &&  printTriggerInMenuFlags     ();
       printCumulativeEventFlags_   &&  printCumulativeEventFlags   ();
       printIndividualEventFlags_   &&  printIndividualEventFlags   ();
       printTriggerDecision_        &&  printTriggerDecision        ();
@@ -311,6 +315,9 @@ InfoPrinter::printTriggerFlags ()
 
   ss_ << endl;
   !maxTriggerWidth_ && (maxTriggerWidth_ = getMaxWidth (cutDecisions->triggers));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << "\033[1;35mtrigger flags" << "\033[0m" << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
   for (auto flag = cutDecisions->triggerFlags.begin (); flag != cutDecisions->triggerFlags.end (); flag++)
     {
       ss_ << "\033[1;34m" << setw (maxTriggerWidth_) << left << cutDecisions->triggers.at (flag - cutDecisions->triggerFlags.begin ()) << "\033[0m";
@@ -319,6 +326,7 @@ InfoPrinter::printTriggerFlags ()
       else
         ss_ << "\033[1;31mfalse\033[0m" << endl;
     }
+  ss_ << "--------------------------------------------------------------------------------" << endl;
   return true;
 }
 
@@ -330,6 +338,9 @@ InfoPrinter::printVetoTriggerFlags ()
 
   ss_ << endl;
   !maxVetoTriggerWidth_ && (maxVetoTriggerWidth_ = getMaxWidth (cutDecisions->triggersToVeto));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << "\033[1;35mveto trigger flags" << "\033[0m" << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
   for (auto flag = cutDecisions->vetoTriggerFlags.begin (); flag != cutDecisions->vetoTriggerFlags.end (); flag++)
     {
       ss_ << "\033[1;34m" << setw (maxVetoTriggerWidth_) << left << cutDecisions->triggersToVeto.at (flag - cutDecisions->vetoTriggerFlags.begin ()) << "\033[0m";
@@ -338,6 +349,53 @@ InfoPrinter::printVetoTriggerFlags ()
       else
         ss_ << "\033[1;31mfalse\033[0m" << endl;
     }
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  return true;
+}
+
+bool
+InfoPrinter::printTriggerFilterFlags ()
+{
+  if (!cutDecisions.isValid ())
+    return false;
+
+  ss_ << endl;
+  !maxTriggerWidth_ && (maxTriggerWidth_ = getMaxWidth (cutDecisions->triggerFilters));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << "\033[1;35mtrigger filter flags" << "\033[0m" << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  for (auto flag = cutDecisions->triggerFilterFlags.begin (); flag != cutDecisions->triggerFilterFlags.end (); flag++)
+    {
+      ss_ << "\033[1;34m" << setw (maxTriggerWidth_) << left << cutDecisions->triggerFilters.at (flag - cutDecisions->triggerFilterFlags.begin ()) << "\033[0m";
+      if (*flag)
+        ss_ << "\033[1;32mtrue\033[0m" << endl;
+      else
+        ss_ << "\033[1;31mfalse\033[0m" << endl;
+    }
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  return true;
+}
+
+bool
+InfoPrinter::printTriggerInMenuFlags ()
+{
+  if (!cutDecisions.isValid ())
+    return false;
+
+  ss_ << endl;
+  !maxTriggerWidth_ && (maxTriggerWidth_ = getMaxWidth (cutDecisions->triggersInMenu));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << "\033[1;35mtrigger in menu flags" << "\033[0m" << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  for (auto flag = cutDecisions->triggerInMenuFlags.begin (); flag != cutDecisions->triggerInMenuFlags.end (); flag++)
+    {
+      ss_ << "\033[1;34m" << setw (maxTriggerWidth_) << left << cutDecisions->triggersInMenu.at (flag - cutDecisions->triggerInMenuFlags.begin ()) << "\033[0m";
+      if (*flag)
+        ss_ << "\033[1;32mtrue\033[0m" << endl;
+      else
+        ss_ << "\033[1;31mfalse\033[0m" << endl;
+    }
+  ss_ << "--------------------------------------------------------------------------------" << endl;
   return true;
 }
 

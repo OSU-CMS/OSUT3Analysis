@@ -60,6 +60,7 @@ class CutCalculator : public edm::EDProducer
     vector<string>         unpackedTriggersToVeto_;
     vector<string>         unpackedTriggers_;
     vector<string>         unpackedTriggerFilters_;
+    vector<string>         unpackedTriggersInMenu_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Object collections which can be gotten from the event.

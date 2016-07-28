@@ -69,6 +69,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_->triggers = unpackedTriggers_;
   pl_->triggersToVeto = unpackedTriggersToVeto_;
   pl_->triggerFilters = unpackedTriggerFilters_;
+  pl_->triggersInMenu = unpackedTriggersInMenu_;
   //////////////////////////////////////////////////////////////////////////////
 
   // getListOfObjects
@@ -556,6 +557,11 @@ CutCalculator::unpackCuts ()
       objectsToGet_.insert ("triggers");
       objectsToGet_.insert ("trigobjs");
     }
+  if (cuts_.exists ("triggersInMenu"))
+    {
+      unpackedTriggersInMenu_ = cuts_.getParameter<vector<string> > ("triggersInMenu");
+      objectsToGet_.insert ("triggers");
+    }
   //////////////////////////////////////////////////////////////////////////////
 
   // Retrieve the cuts and clear the vector in which they will be stored after
@@ -691,22 +697,20 @@ bool
 CutCalculator::evaluateTriggers (const edm::Event &event) const
 {
   //////////////////////////////////////////////////////////////////////////////
-  // Initialize the flags for each trigger which is required and each trigger
-  // which is to be vetoed, as well as the event-wide flags for each of these.
+  // Initialize the flags for each trigger which is required to pass, each
+  // trigger which is to be vetoed if it passed, and each trigger which is
+  // required to exist in the HLT menu, as well as the event-wide flags for
+  // each of these.
   //////////////////////////////////////////////////////////////////////////////
-  bool triggerDecision = !pl_->triggers.size (), vetoTriggerDecision = true;
+  bool triggerDecision = !pl_->triggers.size (), vetoTriggerDecision = true, triggerInMenuDecision = true;
   pl_->triggerFlags.resize (pl_->triggers.size (), false);
   pl_->vetoTriggerFlags.resize (pl_->triggersToVeto.size (), true);
+  pl_->triggerInMenuFlags.resize (pl_->triggersInMenu.size (), false);
   //////////////////////////////////////////////////////////////////////////////
 
   if (handles_.triggers.isValid ())
     {
-#if DATA_FORMAT == BEAN
-      for (const auto &trigger : *handles_.triggers)
-        {
-          string name = trigger.name;
-          bool pass = trigger.pass;
-#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
       for (unsigned i = 0; i < triggerNames.size (); i++)
         {
@@ -744,12 +748,32 @@ CutCalculator::evaluateTriggers (const edm::Event &event) const
                 }
             }
           //////////////////////////////////////////////////////////////////////////
+
+          //////////////////////////////////////////////////////////////////////////
+          // If the current trigger name exactly matches one of the triggers
+          // required to exist in the HLT menu, set the corresponding flag to
+          // true.
+          //////////////////////////////////////////////////////////////////////////
+          for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersInMenu.size (); triggerIndex++)
+            {
+              if (name == pl_->triggersInMenu.at (triggerIndex))
+                pl_->triggerInMenuFlags.at (triggerIndex) = true;
+            }
+          //////////////////////////////////////////////////////////////////////////
         }
     }
 
-  // Store the logical AND of the two event-wide flags as the event-wide
+  //////////////////////////////////////////////////////////////////////////
+  // All of the triggers required to exist in the HLT menu must exist for the
+  // event to pass.
+  //////////////////////////////////////////////////////////////////////////
+  for (const auto &flag : pl_->triggerInMenuFlags)
+    triggerInMenuDecision = triggerInMenuDecision && flag;
+  //////////////////////////////////////////////////////////////////////////
+
+  // Store the logical AND of the three event-wide flags as the event-wide
   // trigger decision in the payload and return it.
-  return (pl_->triggerDecision = (triggerDecision && vetoTriggerDecision));
+  return (pl_->triggerDecision = (triggerDecision && vetoTriggerDecision && triggerInMenuDecision));
 }
 
 bool

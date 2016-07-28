@@ -70,9 +70,11 @@ struct CutCalculatorPayload
   vector<bool>    triggerFlags;
   vector<bool>    vetoTriggerFlags;
   vector<bool>    triggerFilterFlags;
+  vector<bool>    triggerInMenuFlags;
   vector<string>  triggers;
   vector<string>  triggersToVeto;
   vector<string>  triggerFilters;
+  vector<string>  triggersInMenu;
 };
 
 struct HistoDef {

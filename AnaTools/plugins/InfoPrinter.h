@@ -40,6 +40,8 @@ class InfoPrinter : public edm::EDAnalyzer
     bool printIndividualObjectFlags ();
     bool printTriggerFlags ();
     bool printVetoTriggerFlags ();
+    bool printTriggerFilterFlags ();
+    bool printTriggerInMenuFlags ();
     bool printValuesToPrint ();
     bool printAllTriggers (const edm::Event &);
     ////////////////////////////////////////////////////////////////////////////
@@ -79,6 +81,8 @@ class InfoPrinter : public edm::EDAnalyzer
     bool                  printTriggerDecision_;
     bool                  printTriggerFlags_;
     bool                  printVetoTriggerFlags_;
+    bool                  printTriggerFilterFlags_;
+    bool                  printTriggerInMenuFlags_;
     bool                  printAllTriggers_;
     edm::VParameterSet    valuesToPrint_;
     bool                  firstEvent_;
