@@ -231,7 +231,7 @@ CutCalculator::arbitrateInputCollectionFlags (const Cut &currentCut, unsigned cu
 }
 
 bool
-CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned currentCutIndex, vector<string> listOfObjects) const
+CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned currentCutIndex, const vector<string> &listOfObjects) const
 {
   ////////////////////////////////////////////////////////////////////////////////
   // Propagates flags for single object input collections to all related composite collections.
@@ -247,7 +247,7 @@ CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned c
   }
 
   // loop over all the other collections containing these items
-  for (auto inputType : listOfObjects)
+  for (auto &inputType : listOfObjects)
     {
       // don't reset flags for the input collection for this cut
       if (inputType == currentCut.inputLabel){
@@ -260,7 +260,7 @@ CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned c
 
       // determine total size of collection, since it's composed of multiple single objects
       int totalSize = 1;
-      for (auto component : components){
+      for (const auto &component : components){
         totalSize *= currentCut.valueLookupTree->getCollectionSize (component);
       }
 
@@ -285,7 +285,7 @@ CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned c
 
         // get the list of global indices for the composite collection containing the object in question
         set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, currentCut.inputLabel, inputType);
-        for (auto globalIndex : globalIndices){
+        for (const auto &globalIndex : globalIndices){
           // set flags to false for any composite object containing the bad individual object
           pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = false;
         }
@@ -305,7 +305,7 @@ CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned c
 }
 
 bool
-CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigned currentCutIndex, vector<string> listOfObjects) const
+CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigned currentCutIndex, const vector<string> &listOfObjects) const
 {
   ////////////////////////////////////////////////////////////////////////////////
   // Propagates flags for input collections with multiple inputs to all other related collections.
@@ -326,13 +326,13 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
   }
   // filter out duplicate collections, e.g. muon-muons has 1 unique collection (i.e. muons)
   vector<string> uniqueSingleObjects;
-  for (auto singleObject : singleObjects){
+  for (const auto &singleObject : singleObjects){
     if (find(uniqueSingleObjects.begin(), uniqueSingleObjects.end(), singleObject) == uniqueSingleObjects.end())
       uniqueSingleObjects.push_back(singleObject);
   }
 
   // loop over all the individual collections in the input collection
-  for (auto singleObject : uniqueSingleObjects){
+  for (const auto &singleObject : uniqueSingleObjects){
 
     // generate list of bad object indices in the individual object collection
 
@@ -348,7 +348,7 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 
         // get the list of global indices for the composite collection containing the object in question
         set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, currentCut.inputLabel);
-        for (auto globalIndex : globalIndices){
+        for (const auto &globalIndex : globalIndices){
           // if we find a "true" flag for any composite object, set the individual object flag to true
           if (pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(globalIndex).first){
             individualFlags.at(index) = true;
@@ -375,7 +375,7 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 
         // get the list of global indices for the composite collection containing the object in question
         set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, currentCut.inputLabel);
-        for (auto globalIndex : globalIndices){
+        for (const auto &globalIndex : globalIndices){
           // if we find a "false" flag for any composite object, set the individual object flag to false
           if (!pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(globalIndex).first){
             individualFlags.at(index) = false;
@@ -397,7 +397,7 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
     }
 
     // loop over all the other collections containing these items
-    for (auto inputType : listOfObjects){
+    for (auto &inputType : listOfObjects){
       // don't reset flags for the input collection for this cut
       if (inputType == currentCut.inputLabel){
         continue;
@@ -410,7 +410,7 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 
       // determine total size of collection, since it's potentially composed of multiple single objects
       int totalSize = 1;
-      for (auto component : components){
+      for (const auto &component : components){
         totalSize *= currentCut.valueLookupTree->getCollectionSize (component);
       }
 
@@ -435,7 +435,7 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 
         // get the list of global indices containing the object in question
         set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, inputType);
-        for (auto globalIndex : globalIndices){
+        for (const auto &globalIndex : globalIndices){
           // set flags to true for any (potentially composite) object containing the good individual object
           pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = true;
         }
@@ -465,7 +465,7 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 
         // get the list of global indices containing the object in question
         set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, inputType);
-        for (auto globalIndex : globalIndices){
+        for (const auto &globalIndex : globalIndices){
           // set flags to true for any (potentially composite) object containing the good cumulative object
           pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = true;
         }
@@ -490,13 +490,13 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 }
 
 bool
-CutCalculator::setOtherCollectionsFlags (const Cut &currentCut, unsigned currentCutIndex, vector<string> listOfObjects) const
+CutCalculator::setOtherCollectionsFlags (const Cut &currentCut, unsigned currentCutIndex, const vector<string> &listOfObjects) const
 {
   ////////////////////////////////////////////////////////////////////////////////
   // Sets flags for all irrelevant collections to true
   ////////////////////////////////////////////////////////////////////////////////
 
-   for (auto inputType : listOfObjects)
+   for (auto &inputType : listOfObjects)
      {
        // skip if flags for this object already exist
        if (pl_->individualObjectFlags.at (currentCutIndex).find(inputType) != pl_->individualObjectFlags.at (currentCutIndex).end())
@@ -932,11 +932,11 @@ CutCalculator::getListOfObjects (const Cuts &cuts)
   // to the list and return the final, unique list.
   //////////////////////////////////////////////////////////////////////////////
   vector<string> objects;
-  for (auto &cut : cuts)
+  for (const auto &cut : cuts)
     {
       if (find(objects.begin(), objects.end(), cut.inputLabel) == objects.end())
         objects.push_back(cut.inputLabel);
-      for (auto &collection : cut.inputCollections){
+      for (const auto &collection : cut.inputCollections){
         if (find(objects.begin(), objects.end(), collection) == objects.end())
           objects.push_back(collection);
       }
@@ -987,7 +987,7 @@ bool
   }
 
   vector<string> uniqueSingleObjects;
-  for (auto singleObject : singleObjects){
+  for (const auto &singleObject : singleObjects){
     if (find(uniqueSingleObjects.begin(), uniqueSingleObjects.end(), singleObject) == uniqueSingleObjects.end())
       uniqueSingleObjects.push_back(singleObject);
   }
@@ -1014,9 +1014,9 @@ bool
   }
 
   bool pass = true;
-  for (auto singleObject : uniqueSingleObjects){
+  for (const auto &singleObject : uniqueSingleObjects){
     int prevIndex = -1;
-    for (auto objectIndex : objectIndexMap){
+    for (const auto &objectIndex : objectIndexMap){
 
       if (objectIndex.first != singleObject)
         continue;

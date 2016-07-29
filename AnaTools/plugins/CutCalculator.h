@@ -28,13 +28,11 @@ class CutCalculator : public edm::EDProducer
     bool setInputCollectionFlags (const Cut &, unsigned) const;
     bool arbitrateInputCollectionFlags (const Cut &, unsigned) const;
     bool propagateToCompositeCollections (const Cut &, unsigned) const;
-    bool setOtherCollectionsFlags (const Cut &, unsigned, vector<string>) const;
-    bool propagateFromSingleCollections (const Cut &, unsigned, vector<string>) const;
-    bool propagateFromCompositeCollections (const Cut &, unsigned, vector<string>) const;
+    bool setOtherCollectionsFlags (const Cut &, unsigned, const vector<string> &) const;
+    bool propagateFromSingleCollections (const Cut &, unsigned, const vector<string> &) const;
+    bool propagateFromCompositeCollections (const Cut &, unsigned, const vector<string> &) const;
     bool unpackCuts ();
-    void getTwoObjs (string, string &, string &);
     bool evaluateComparison (int, const string &, int) const;
-    string getObjToGet (string);
     vector<string> splitString (const string &) const;
     bool evaluateTriggers (const edm::Event &) const;
     bool evaluateTriggerFilters (const edm::Event &) const;

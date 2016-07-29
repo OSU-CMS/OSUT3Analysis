@@ -209,7 +209,7 @@ HistoDef Plotter::parseHistoDef(const edm::ParameterSet &definition, const vecto
 ////////////////////////////////////////////////////////////////////////
 
 // book TH1 or TH2 in appropriate directory with correct bin options
-void Plotter::bookHistogram(const HistoDef definition){
+void Plotter::bookHistogram(const HistoDef &definition){
 
   // check for valid bins
   bool hasValidBinsX = definition.binsX.size() >= 3;
@@ -404,7 +404,7 @@ void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double
 
 ////////////////////////////////////////////////////////////////////////
 
-double Plotter::getBinSize(TH1D *histogram,
+double Plotter::getBinSize(TH1D * const histogram,
                            const double value){
 
   int binIndex = histogram->FindBin(value);
@@ -414,7 +414,7 @@ double Plotter::getBinSize(TH1D *histogram,
 
 }
 
-pair<double,double>  Plotter::getBinSize(TH2D *histogram,
+pair<double,double>  Plotter::getBinSize(TH2D * const histogram,
                                          const double valueX,
                                          const double valueY){
 
@@ -428,7 +428,7 @@ pair<double,double>  Plotter::getBinSize(TH2D *histogram,
 
 ////////////////////////////////////////////////////////////////////////
 
-string Plotter::setYaxisLabel(const HistoDef definition){
+string Plotter::setYaxisLabel(const HistoDef &definition){
 
   string title = definition.title;
 
@@ -493,7 +493,7 @@ string Plotter::setYaxisLabel(const HistoDef definition){
 }
 
 bool
-Plotter::initializeValueLookupForest (vector<HistoDef> &histograms, Collections *handles)
+Plotter::initializeValueLookupForest (vector<HistoDef> &histograms, Collections * const handles)
 {
   //////////////////////////////////////////////////////////////////////////////
   // For each inputVariable of each histogram, parse it into a new
@@ -518,7 +518,7 @@ Plotter::initializeValueLookupForest (vector<HistoDef> &histograms, Collections 
 
 
 bool
-Plotter::initializeValueLookupForest (vector<Weight> &weights, Collections *handles)
+Plotter::initializeValueLookupForest (vector<Weight> &weights, Collections * const handles)
 {
   //////////////////////////////////////////////////////////////////////////////
   // For each inputVariable of each weight, parse it into a new
