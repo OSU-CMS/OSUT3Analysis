@@ -1060,7 +1060,7 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
     {
       size_t index = s.find (target, pos);
       if (!vetoMatch (s, target, index, vetoTargets))
-        indices.push_back (make_tuple (index, index, target));
+        indices.emplace_back (index, index, target);
     }
   sort (indices.begin (), indices.end (), anatools::firstOfTupleAscending);
   //////////////////////////////////////////////////////////////////////////////
@@ -1101,7 +1101,7 @@ ValueLookupTree::findLastOf (const string &s, const vector<string> &targets, con
     {
       size_t index = s.rfind (target, pos);
       if (!vetoMatch (s, target, index, vetoTargets))
-        indices.push_back (make_tuple (index + target.length () - 1, index, target));
+        indices.emplace_back (index + target.length () - 1, index, target);
     }
   sort (indices.begin (), indices.end (), anatools::firstOfTupleDescending);
   //////////////////////////////////////////////////////////////////////////////

@@ -307,13 +307,14 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   double
   anatools::getMember (const string &type, void *obj, const string &member, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * functionLookupTable)
   {
+    const pair<string, string> typeAndMember (type, member);
     double value = INVALID_VALUE;
     string memberType = "";
     anatools::ObjectWithDict * retObj = NULL;
     void *retObjAdd = NULL;
-    if (functionLookupTable && functionLookupTable->count (make_pair (type, member)))
+    if (functionLookupTable && functionLookupTable->count (typeAndMember))
       {
-        memberType = functionLookupTable->at (make_pair (type, member)).first;
+        memberType = functionLookupTable->at (typeAndMember).first;
         if (memberType == "float")
           retObjAdd = (void *) new float[1];
         else if (memberType == "double")
@@ -338,7 +339,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
           retObjAdd = (void *) new unsigned short int[1];
         else if (memberType == "unsigned long int")
           retObjAdd = (void *) new unsigned long int[1];
-        (*functionLookupTable->at (make_pair (type, member)).second) (obj, 0, NULL, retObjAdd);
+        (*functionLookupTable->at (typeAndMember).second) (obj, 0, NULL, retObjAdd);
       }
     else
       {

@@ -4,30 +4,9 @@
 #include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
 
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
+#include "OSUT3Analysis/Collections/interface/Track.h"
 
 #define MAX_DR (99.0)
-
-struct EtaPhi_
-{
-  double eta;
-  double phi;
-
-  EtaPhi_ (const double a, const double b) :
-    eta (a),
-    phi (b)
-  {
-  }
-};
-
-struct EtaPhiList_ : public vector<EtaPhi_>
-{
-  double minDeltaR;
-
-  EtaPhiList_ () :
-    minDeltaR (0.0)
-  {
-  }
-};
 
 #if IS_VALID(secondaryTracks)
 
@@ -40,7 +19,7 @@ namespace osu
         SecondaryTrack (const TYPE(secondaryTracks) &);
         SecondaryTrack (const TYPE(secondaryTracks) &, const edm::Handle<vector<osu::Mcparticle> > &);
         SecondaryTrack (const TYPE(secondaryTracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
-        SecondaryTrack (const TYPE(secondaryTracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const edm::Handle<vector<reco::GsfTrack> > &, const EtaPhiList_ &, const EtaPhiList_ &);
+        SecondaryTrack (const TYPE(secondaryTracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const edm::Handle<vector<reco::GsfTrack> > &, const EtaPhiList &, const EtaPhiList &);
         ~SecondaryTrack ();
 
         const double dRMinJet() const;
@@ -73,7 +52,7 @@ namespace osu
 
         double maxDeltaR_;
 
-        const bool isFiducialTrack (const EtaPhiList_ &, const double) const;
+        const bool isFiducialTrack (const EtaPhiList &, const double) const;
         const edm::Ref<vector<reco::GsfTrack> > &findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &, edm::Ref<vector<reco::GsfTrack> > &, double &) const;
     };
 }

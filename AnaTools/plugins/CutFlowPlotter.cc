@@ -178,12 +178,8 @@ CutFlowPlotter::initializeCutFlow ()
   // This is needed because the CutCalculatorPayload object is not available in the
   // destructor, when the terminal output is produced.  
   //////////////////////////////////////////////////////////////////////////////
-  for (vector<string>::const_iterator it = cutDecisions->triggers.begin(); it != cutDecisions->triggers.end(); ++it) {
-    triggers_.push_back(*it);
-  } 
-  for (vector<string>::const_iterator it = cutDecisions->triggersToVeto.begin(); it != cutDecisions->triggersToVeto.end(); ++it) {
-    triggersToVeto_.push_back(*it);
-  } 
+  triggers_ = cutDecisions->triggers;
+  triggersToVeto_ = cutDecisions->triggersToVeto;
   //////////////////////////////////////////////////////////////////////////////
  
   // Return true if the initialization was successful.

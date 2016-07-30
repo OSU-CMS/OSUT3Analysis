@@ -34,7 +34,7 @@
 #define XSTR(x) STR(x)
 #define STR(x) #x
 #define IS_VALID(x) !(defined (x##_INVALID))
-#define EQ_VALID(s,x) (string (XSTR(x##_TYPE)) != XSTR(INVALID_TYPE) && string (s) == XSTR(x))
+#define EQ_VALID(s,x) (strcmp (XSTR(x##_TYPE), XSTR(INVALID_TYPE)) && !strcmp (s.c_str (), XSTR(x)))
 
 #define TYPE(x) x##_TYPE
 #define TYPE_STR(x) XSTR(x##_TYPE)
@@ -71,6 +71,16 @@ struct UserVariable
 {
   double value;
   ObjectList objects;
+
+  UserVariable ()
+    {
+    }
+
+  UserVariable (double val, const ObjectList &objs) :
+    value (val),
+    objects (objs)
+    {
+    }
 };
 
 // VariableProducerPayload type:

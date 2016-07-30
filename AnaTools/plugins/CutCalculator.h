@@ -34,7 +34,7 @@ class CutCalculator : public edm::EDProducer
     bool unpackCuts ();
     bool evaluateComparison (int, const string &, int) const;
     vector<string> splitString (const string &) const;
-    bool evaluateTriggers (const edm::Event &) const;
+    bool evaluateTriggers (const edm::Event &);
     bool evaluateTriggerFilters (const edm::Event &) const;
     bool setEventFlags () const;
     vector<string> getListOfObjects (const Cuts &);
@@ -47,6 +47,7 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::ParameterSet  cuts_;
+    bool               triggersInMenu_;
     bool               firstEvent_;
     ////////////////////////////////////////////////////////////////////////////
 
@@ -60,6 +61,9 @@ class CutCalculator : public edm::EDProducer
     vector<string>         unpackedTriggerFilters_;
     vector<string>         unpackedTriggersInMenu_;
     ////////////////////////////////////////////////////////////////////////////
+
+    edm::ParameterSetID triggerNamesPSetID_;
+    unordered_map<string, unordered_set<unsigned> > triggerIndices_;
 
     // Object collections which can be gotten from the event.
     Collections handles_;

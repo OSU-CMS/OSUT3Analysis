@@ -129,10 +129,8 @@ OriginalFormatProducer::produceCollection (edm::Event& iEvent)
   edm::Handle<vector<Old> > oldObjs = oldObjVec.at(0);
 
   auto_ptr<vector< New > > newObjs (new vector< New > ());
-  for (const auto &oldObj : *oldObjs) {
-    New newObj(oldObj);
-    newObjs->push_back(newObj);
-  }
+  for (const auto &oldObj : *oldObjs)
+    newObjs->emplace_back(oldObj);
   iEvent.put (newObjs);
 
 }

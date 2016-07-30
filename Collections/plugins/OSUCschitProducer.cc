@@ -27,10 +27,7 @@ OSUCschitProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   pl_ = auto_ptr<vector<osu::Cschit> > (new vector<osu::Cschit> ());
   for (const auto &object : *collection)
-    {
-      const osu::Cschit cschit (object);
-      pl_->push_back (cschit);
-    }
+    pl_->emplace_back (object);
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();

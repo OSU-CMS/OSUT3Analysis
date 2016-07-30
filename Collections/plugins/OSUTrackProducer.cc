@@ -134,9 +134,10 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   for (const auto &object : *collection)
     {
 #ifdef DISAPP_TRKS
-      osu::Track track (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_);
+      pl_->emplace_back (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_);
+      osu::Track &track = pl_->back ();
 #else
-      osu::Track track (object);
+      pl_->emplace_back (object);
 #endif
 
 #ifdef DISAPP_TRKS
@@ -186,7 +187,6 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       track.set_caloNewEMDRp5(eEM);
       track.set_caloNewHadDRp5(eHad);
 #endif
-      pl_->push_back (track);
     }
 
   event.put (pl_, collection_.instance ());
@@ -283,7 +283,7 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
           content && ss << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << (content - mean) / hypot (error, meanErr) << " sigma above mean of " << setw (10) << mean;
           if ((content - mean) > thresholdForVeto * hypot (error, meanErr))
             {
-              vetoList.push_back (EtaPhi (eta, phi));
+              vetoList.emplace_back (eta, phi);
               ss << " * HOT SPOT *";
             }
           content && ss << endl;

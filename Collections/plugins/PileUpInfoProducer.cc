@@ -25,10 +25,7 @@ PileUpInfoProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   pl_ = auto_ptr<vector<osu::PileUpInfo> > (new vector<osu::PileUpInfo> ());
   for (const auto &object : *collection)
-    {
-      osu::PileUpInfo pileupinfo(object);
-      pl_->push_back (pileupinfo);
-    }
+    pl_->emplace_back (object);
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();

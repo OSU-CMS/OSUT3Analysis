@@ -27,10 +27,7 @@ OSUPrimaryvertexProducer::produce (edm::Event &event, const edm::EventSetup &set
 
   pl_ = auto_ptr<vector<osu::Primaryvertex> > (new vector<osu::Primaryvertex> ());
   for (const auto &object : *collection)
-    {
-      const osu::Primaryvertex primaryvertex (object);
-      pl_->push_back (primaryvertex);
-    }
+    pl_->emplace_back (object);
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();

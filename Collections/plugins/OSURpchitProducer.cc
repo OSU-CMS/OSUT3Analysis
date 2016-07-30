@@ -27,10 +27,7 @@ OSURpchitProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   pl_ = auto_ptr<vector<osu::Rpchit> > (new vector<osu::Rpchit> ());
   for (const auto &object : *collection)
-    {
-      const osu::Rpchit rpchit (object);
-      pl_->push_back (rpchit);
-    }
+    pl_->emplace_back (object);
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();

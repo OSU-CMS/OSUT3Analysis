@@ -50,7 +50,8 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     {
-      osu::Muon muon (object, particles, cfg_, met->at (0));
+      pl_->emplace_back (object, particles, cfg_, met->at (0));
+      osu::Muon &muon = pl_->back ();
       if (collPrimaryvertexs->size ())
         {
           const reco::Vertex &vtx = collPrimaryvertexs->at (0);
@@ -127,7 +128,6 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       muon.set_sumChargedHadronPtCorr(chargedHadronPt); 
       muon.set_sumPUPtCorr(puPt); 
       muon.set_muonPVIndex(muonPVIndex); 
-      pl_->push_back (muon);
     }
 
   event.put (pl_, collection_.instance ());
@@ -157,10 +157,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
     return;
   pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
-    {
-      const osu::Muon muon (object);
-      pl_->push_back (muon);
-    }
+    pl_->emplace_back (object);
   event.put (pl_, collection_.instance ());
   pl_.reset ();
 }

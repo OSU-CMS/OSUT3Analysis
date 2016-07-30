@@ -31,10 +31,7 @@ OSUBasicjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   pl_ = auto_ptr<vector<osu::Basicjet> > (new vector<osu::Basicjet> ());
   for (const auto &object : *collection)
-    {
-      const osu::Basicjet basicjet (object, particles, cfg_);
-      pl_->push_back (basicjet);
-    }
+    pl_->emplace_back (object, particles, cfg_);
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();

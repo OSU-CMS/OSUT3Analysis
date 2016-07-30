@@ -51,7 +51,7 @@ namespace anatools {
        return item->second;
     }
     TypeWithDict theType = TypeWithDict::byName(function_->GetReturnTypeNormalizedName());
-    returnTypeMap.insert(std::make_pair(function_, theType));
+    returnTypeMap.emplace(function_, theType);
     return theType;
   }
 

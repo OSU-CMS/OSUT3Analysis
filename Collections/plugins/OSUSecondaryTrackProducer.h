@@ -39,13 +39,13 @@ class OSUSecondaryTrackProducer : public edm::EDProducer
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 
-    EtaPhiList_ electronVetoList_;
-    EtaPhiList_ muonVetoList_;
+    EtaPhiList electronVetoList_;
+    EtaPhiList muonVetoList_;
 
     // Payload for this EDFilter.
     auto_ptr<vector<osu::SecondaryTrack> > pl_;
 
-    void extractFiducialMap (const edm::ParameterSet &, EtaPhiList_ &, stringstream &) const;
+    void extractFiducialMap (const edm::ParameterSet &, EtaPhiList &, stringstream &) const;
 
     edm::ESHandle<CaloGeometry> caloGeometry_;
     bool insideCone(TYPE(secondaryTracks)& secondaryTrack, const DetId& id, const double dR);

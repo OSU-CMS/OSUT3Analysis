@@ -34,10 +34,7 @@ OSUTauProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   pl_ = auto_ptr<vector<osu::Tau> > (new vector<osu::Tau> ());
   for (const auto &object : *collection)
-    {
-      const osu::Tau tau (object, particles, cfg_, met->at (0));
-      pl_->push_back (tau);
-    }
+    pl_->emplace_back (object, particles, cfg_, met->at (0));
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();

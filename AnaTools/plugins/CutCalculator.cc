@@ -12,9 +12,10 @@
 #define EXIT_CODE 1
 
 CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
-  collections_  (cfg.getParameter<edm::ParameterSet>  ("collections")),
-  cuts_         (cfg.getParameter<edm::ParameterSet>  ("cuts")),
-  firstEvent_   (true)
+  collections_    (cfg.getParameter<edm::ParameterSet>  ("collections")),
+  cuts_           (cfg.getParameter<edm::ParameterSet>  ("cuts")),
+  triggersInMenu_ (true),
+  firstEvent_     (true)
 {
 
   //////////////////////////////////////////////////////////////////////////////
@@ -26,6 +27,9 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
       exit (EXIT_CODE);
     }
   //////////////////////////////////////////////////////////////////////////////
+
+  triggerNamesPSetID_.reset ();
+  triggerIndices_.clear ();
 
   anatools::getAllTokens (collections_, consumesCollector (), tokens_);
 
@@ -203,9 +207,9 @@ CutCalculator::arbitrateInputCollectionFlags (const Cut &currentCut, unsigned cu
           if (pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (object).first
            && pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (object).second
            && flag.second)
-            indicesToArbitrate.push_back (make_pair (object, value));
+            indicesToArbitrate.emplace_back (object, value);
           else
-            otherIndices.push_back (make_pair (object, value));
+            otherIndices.emplace_back (object, value);
         }
       if (currentCut.arbitration != "random")
         sort (indicesToArbitrate.begin (), indicesToArbitrate.end (), [](pair<unsigned, double> a, pair<unsigned, double> b) -> bool { return a.second > b.second; });
@@ -694,7 +698,7 @@ CutCalculator::splitString (const string &inputString) const
 }
 
 bool
-CutCalculator::evaluateTriggers (const edm::Event &event) const
+CutCalculator::evaluateTriggers (const edm::Event &event)
 {
   //////////////////////////////////////////////////////////////////////////////
   // Initialize the flags for each trigger which is required to pass, each
@@ -702,7 +706,7 @@ CutCalculator::evaluateTriggers (const edm::Event &event) const
   // required to exist in the HLT menu, as well as the event-wide flags for
   // each of these.
   //////////////////////////////////////////////////////////////////////////////
-  bool triggerDecision = !pl_->triggers.size (), vetoTriggerDecision = true, triggerInMenuDecision = true;
+  bool triggerDecision = !pl_->triggers.size (), vetoTriggerDecision = true;
   pl_->triggerFlags.resize (pl_->triggers.size (), false);
   pl_->vetoTriggerFlags.resize (pl_->triggersToVeto.size (), true);
   pl_->triggerInMenuFlags.resize (pl_->triggersInMenu.size (), false);
@@ -712,54 +716,92 @@ CutCalculator::evaluateTriggers (const edm::Event &event) const
     {
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
-      for (unsigned i = 0; i < triggerNames.size (); i++)
+      if (triggerNamesPSetID_ != triggerNames.parameterSetID ())
         {
-          string name = triggerNames.triggerName (i);
-          bool pass = handles_.triggers->accept (i);
+          triggerIndices_.clear ();
+          triggerNamesPSetID_ = triggerNames.parameterSetID ();
+          triggersInMenu_ = true;
+        }
+      if (!triggerIndices_.size ())
+        {
+          for (unsigned i = 0; i < triggerNames.size (); i++)
+            {
+              string name = triggerNames.triggerName (i);
+              bool pass = handles_.triggers->accept (i);
 #else
-  #error "Data format is not valid."
+      #error "Data format is not valid."
 #endif
-          //////////////////////////////////////////////////////////////////////////
-          // If the current trigger matches one of the triggers to veto, record its
-          // decision. If any of these triggers is true, set the event-wide flag to
-          // false;
-          //////////////////////////////////////////////////////////////////////////
+              //////////////////////////////////////////////////////////////////////////
+              // If the current trigger matches one of the triggers to veto, record its
+              // decision. If any of these triggers is true, set the event-wide flag to
+              // false;
+              //////////////////////////////////////////////////////////////////////////
+              for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
+                {
+                  if (name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+                    {
+                      triggerIndices_[pl_->triggersToVeto.at (triggerIndex)];
+                      triggerIndices_.at (pl_->triggersToVeto.at (triggerIndex)).insert (i);
+                      vetoTriggerDecision = vetoTriggerDecision && !pass;
+                      pl_->vetoTriggerFlags.at (triggerIndex) = pass;
+                    }
+                }
+              //////////////////////////////////////////////////////////////////////////
+
+              //////////////////////////////////////////////////////////////////////////
+              // If the current trigger matches one of the required triggers, record its
+              // decision. If any of these triggers is true, set the event-wide flag to
+              // true.
+              //////////////////////////////////////////////////////////////////////////
+              for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
+                {
+                  if (name.find (pl_->triggers.at (triggerIndex)) == 0)
+                    {
+                      triggerIndices_[pl_->triggers.at (triggerIndex)];
+                      triggerIndices_.at (pl_->triggers.at (triggerIndex)).insert (i);
+                      triggerDecision = triggerDecision || pass;
+                      pl_->triggerFlags.at (triggerIndex) = pass;
+                    }
+                }
+              //////////////////////////////////////////////////////////////////////////
+
+              //////////////////////////////////////////////////////////////////////////
+              // If the current trigger name exactly matches one of the triggers
+              // required to exist in the HLT menu, set the corresponding flag to
+              // true.
+              //////////////////////////////////////////////////////////////////////////
+              for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersInMenu.size (); triggerIndex++)
+                {
+                  if (name == pl_->triggersInMenu.at (triggerIndex))
+                    pl_->triggerInMenuFlags.at (triggerIndex) = true;
+                }
+              //////////////////////////////////////////////////////////////////////////
+            }
+        }
+      else
+        {
           for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
             {
-              if (name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+              if (!triggerIndices_.count (pl_->triggersToVeto.at (triggerIndex)))
+                continue;
+              for (const auto &i : triggerIndices_.at (pl_->triggersToVeto.at (triggerIndex)))
                 {
+                  bool pass = handles_.triggers->accept (i);
                   vetoTriggerDecision = vetoTriggerDecision && !pass;
                   pl_->vetoTriggerFlags.at (triggerIndex) = pass;
                 }
             }
-          //////////////////////////////////////////////////////////////////////////
-
-          //////////////////////////////////////////////////////////////////////////
-          // If the current trigger matches one of the required triggers, record its
-          // decision. If any of these triggers is true, set the event-wide flag to
-          // true.
-          //////////////////////////////////////////////////////////////////////////
           for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
             {
-              if (name.find (pl_->triggers.at (triggerIndex)) == 0)
+              if (!triggerIndices_.count (pl_->triggers.at (triggerIndex)))
+                continue;
+              for (const auto &i : triggerIndices_.at (pl_->triggers.at (triggerIndex)))
                 {
+                  bool pass = handles_.triggers->accept (i);
                   triggerDecision = triggerDecision || pass;
                   pl_->triggerFlags.at (triggerIndex) = pass;
                 }
             }
-          //////////////////////////////////////////////////////////////////////////
-
-          //////////////////////////////////////////////////////////////////////////
-          // If the current trigger name exactly matches one of the triggers
-          // required to exist in the HLT menu, set the corresponding flag to
-          // true.
-          //////////////////////////////////////////////////////////////////////////
-          for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersInMenu.size (); triggerIndex++)
-            {
-              if (name == pl_->triggersInMenu.at (triggerIndex))
-                pl_->triggerInMenuFlags.at (triggerIndex) = true;
-            }
-          //////////////////////////////////////////////////////////////////////////
         }
     }
 
@@ -768,12 +810,12 @@ CutCalculator::evaluateTriggers (const edm::Event &event) const
   // event to pass.
   //////////////////////////////////////////////////////////////////////////
   for (const auto &flag : pl_->triggerInMenuFlags)
-    triggerInMenuDecision = triggerInMenuDecision && flag;
+    triggersInMenu_ = triggersInMenu_ && flag;
   //////////////////////////////////////////////////////////////////////////
 
   // Store the logical AND of the three event-wide flags as the event-wide
   // trigger decision in the payload and return it.
-  return (pl_->triggerDecision = (triggerDecision && vetoTriggerDecision && triggerInMenuDecision));
+  return (pl_->triggerDecision = (triggerDecision && vetoTriggerDecision && triggersInMenu_));
 }
 
 bool
@@ -1010,7 +1052,7 @@ bool
     else{
       localIndex = (globalIndex % collectionSize);
     }
-    objectIndexMap.push_back(make_pair(singleObjects.at(collectionIndex),localIndex));
+    objectIndexMap.emplace_back(singleObjects.at(collectionIndex),localIndex);
   }
 
   bool pass = true;

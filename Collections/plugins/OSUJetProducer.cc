@@ -48,7 +48,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
     return;
 
   // construct vectors of "good" leptons (ID)
-  goodElectrons_ = auto_ptr<vector<TYPE (electrons)> > (new vector<TYPE (electrons)> ());
+  vector<const TYPE(electrons) *> goodElectrons;
   for (const auto &electron : *electrons){
     bool passElectronID = false;
     if ((electron.isEB() &&                                             \
@@ -70,9 +70,9 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       passElectronID = true;
     }
     if (passElectronID == false) continue;
-    goodElectrons_->push_back(electron);
+    goodElectrons.push_back(&electron);
   }
-  goodMuons_ = auto_ptr<vector<TYPE (muons)> > (new vector<TYPE (muons)> ());
+  vector<const TYPE(muons) *> goodMuons;
   for (const auto &muon : *muons){
     bool passMuonID = false;
     if (muon.isGlobalMuon() == false ||  muon.isPFMuon() == false) continue;
@@ -84,7 +84,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       passMuonID = true;
     }
     if (passMuonID == false) continue;
-    goodMuons_->push_back(muon);
+    goodMuons.push_back(&muon);
   }
 #endif
 #endif
@@ -93,9 +93,10 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   for (const auto &object : *collection)
     {
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
-      osu::Jet jet (object, particles, cfg_);
+      pl_->emplace_back (object, particles, cfg_);
+      osu::Jet &jet = pl_->back ();
 #elif DATA_FORMAT == AOD_CUSTOM
-      const osu::Jet jet (object);
+      pl_->emplace_back (object);
 #endif
 
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
@@ -106,8 +107,8 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       double maxDeltaR_ = 0.3;
 
       int isMatchedToElectron = 0;
-      for (const auto &electron : *goodElectrons_){
-        double dR = deltaR (electron, jet);
+      for (const auto &electron : goodElectrons){
+        double dR = deltaR (*electron, jet);
         if (dR < maxDeltaR_){
           isMatchedToElectron = true;
           break;
@@ -115,8 +116,8 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       }
 
       bool isMatchedToMuon = false;
-      for (const auto &muon : *goodMuons_){
-        double dR = deltaR (muon, jet);
+      for (const auto &muon : goodMuons){
+        double dR = deltaR (*muon, jet);
         if (dR < maxDeltaR_){
           isMatchedToMuon = true;
           break;
@@ -129,8 +130,6 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         jet.set_matchedToLepton(0);
 
 #endif
-
-      pl_->push_back (jet);
     }
   event.put (pl_, collection_.instance ());
   pl_.reset ();

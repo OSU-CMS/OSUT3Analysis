@@ -54,7 +54,8 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
     {
-      osu::Electron electron (object, particles, cfg_, met->at (0));
+      pl_->emplace_back (object, particles, cfg_, met->at (0));
+      osu::Electron &electron = pl_->back ();
       if(event.getByToken (rhoToken_, rho))
         electron.set_rho((float)(*rho));
       if(event.getByToken (beamSpotToken_, beamSpot) && event.getByToken (conversionsToken_, conversions) && event.getByToken (verticesToken_, vertices) && vertices->size ())
@@ -137,7 +138,6 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       electron.set_sumChargedHadronPtCorr(chargedHadronPt); 
       electron.set_sumPUPtCorr(puPt); 
       electron.set_electronPVIndex(electronPVIndex); 
-      pl_->push_back (electron);
     }
   event.put (pl_, collection_.instance ());
   pl_.reset ();
@@ -150,10 +150,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
-    {
-      const osu::Electron electron (object, particles, cfg_);
-      pl_->push_back (electron);
-    }
+    pl_->emplace_back (object, particles, cfg_);
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();

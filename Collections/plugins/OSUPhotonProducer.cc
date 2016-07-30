@@ -36,7 +36,8 @@ OSUPhotonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_ = auto_ptr<vector<osu::Photon> > (new vector<osu::Photon> ());
   for (const auto &object : *collection)
     {
-      osu::Photon photon(object, particles, cfg_);
+      pl_->emplace_back (object, particles, cfg_);
+      osu::Photon &photon = pl_->back ();
 
       if(event.getByToken(rhoToken_, rho)) photon.set_rho((float)(*rho));
 
@@ -79,8 +80,6 @@ OSUPhotonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       photon.set_AEff_neutralHadron(Aeff_neutralHadron);
       photon.set_Aeff_chargedHadron(Aeff_chargedHadron);
       photon.set_Aeff_photon(Aeff_photon);
-
-      pl_->push_back (photon);
     }
 
   event.put (pl_, collection_.instance ());

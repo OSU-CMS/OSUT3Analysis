@@ -32,10 +32,7 @@ OSUMetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   pl_ = auto_ptr<vector<osu::Met> > (new vector<osu::Met> ());
   for (const auto &object : *collection)
-    {
-      const osu::Met met (object, pfCandidates);
-      pl_->push_back (met);
-    }
+    pl_->emplace_back (object, pfCandidates);
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();

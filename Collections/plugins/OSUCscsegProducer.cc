@@ -27,10 +27,7 @@ OSUCscsegProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   pl_ = auto_ptr<vector<osu::Cscseg> > (new vector<osu::Cscseg> ());
   for (const auto &object : *collection)
-    {
-      const osu::Cscseg cscseg (object);
-      pl_->push_back (cscseg);
-    }
+    pl_->emplace_back (object);
 
   event.put (pl_, collection_.instance ());
   pl_.reset ();

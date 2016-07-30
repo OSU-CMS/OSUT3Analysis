@@ -69,8 +69,8 @@ OSUSecondaryTrackProducer::OSUSecondaryTrackProducer (const edm::ParameterSet &c
       ss << "================================================================================" << endl;
     }
 
-  sort (electronVetoList_.begin (), electronVetoList_.end (), [] (EtaPhi_ a, EtaPhi_ b) -> bool { return (a.eta < b.eta && a.phi < b.phi); });
-  sort (muonVetoList_.begin (), muonVetoList_.end (), [] (EtaPhi_ a, EtaPhi_ b) -> bool { return (a.eta < b.eta && a.phi < b.phi); });
+  sort (electronVetoList_.begin (), electronVetoList_.end (), [] (EtaPhi a, EtaPhi b) -> bool { return (a.eta < b.eta && a.phi < b.phi); });
+  sort (muonVetoList_.begin (), muonVetoList_.end (), [] (EtaPhi a, EtaPhi b) -> bool { return (a.eta < b.eta && a.phi < b.phi); });
 
   ss << "================================================================================" << endl;
   ss << "electron veto regions in (eta, phi)" << endl;
@@ -134,9 +134,10 @@ OSUSecondaryTrackProducer::produce (edm::Event &event, const edm::EventSetup &se
   for (const auto &object : *collection)
     {
 #ifdef DISAPP_TRKS
-      osu::SecondaryTrack secondaryTrack (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_);
+      pl_->emplace_back (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_);
+      osu::SecondaryTrack &secondaryTrack = pl_->back ();
 #else
-      osu::SecondaryTrack secondaryTrack (object);
+      pl_->emplace_back (object);
 #endif
 
 #ifdef DISAPP_TRKS
@@ -186,7 +187,6 @@ OSUSecondaryTrackProducer::produce (edm::Event &event, const edm::EventSetup &se
       secondaryTrack.set_caloNewEMDRp5(eEM);
       secondaryTrack.set_caloNewHadDRp5(eHad);
 #endif
-      pl_->push_back (secondaryTrack);
     }
 
   event.put (pl_, collection_.instance ());
@@ -215,7 +215,7 @@ GlobalPoint OSUSecondaryTrackProducer::getPosition( const DetId& id)
 
 
 void
-OSUSecondaryTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList_ &vetoList, stringstream &ss) const
+OSUSecondaryTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &vetoList, stringstream &ss) const
 {
   const edm::FileInPath &histFile = cfg.getParameter<edm::FileInPath> ("histFile");
   const string &beforeVetoHistName = cfg.getParameter<string> ("beforeVetoHistName");
@@ -283,7 +283,7 @@ OSUSecondaryTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, Eta
           content && ss << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << (content - mean) / hypot (error, meanErr) << " sigma above mean of " << setw (10) << mean;
           if ((content - mean) > thresholdForVeto * hypot (error, meanErr))
             {
-              vetoList.push_back (EtaPhi_ (eta, phi));
+              vetoList.emplace_back (eta, phi);
               ss << " * HOT SPOT *";
             }
           content && ss << endl;

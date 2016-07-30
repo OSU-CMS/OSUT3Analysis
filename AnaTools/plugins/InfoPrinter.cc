@@ -620,7 +620,7 @@ InfoPrinter::unpackValuesToPrint ()
 {
   for (const auto &value : valuesToPrint_)
     {
-      valuesToPrint.push_back (ValueToPrint ());
+      valuesToPrint.emplace_back ();
       valuesToPrint.back ().inputCollections = value.getParameter<vector<string> > ("inputCollection");
       sort (valuesToPrint.back ().inputCollections.begin (), valuesToPrint.back ().inputCollections.end ());
       valuesToPrint.back ().inputLabel = anatools::concatenateInputCollection (valuesToPrint.back ().inputCollections);

@@ -64,7 +64,7 @@ namespace anatools {
        return item->second;
     }
     TypeWithDict theType = TypeWithDict::byName(name, 0L);
-    typeMap.insert(std::make_pair(name, theType));
+    typeMap.emplace(name, theType);
     return theType;
   }
 
@@ -675,7 +675,7 @@ namespace anatools {
       return FunctionWithDict();
     }
     FunctionWithDict theFunction = FunctionWithDict(meth);
-    functionMap.insert(std::make_pair(key, theFunction));
+    functionMap.emplace(key, theFunction);
     return theFunction;
   }
 
