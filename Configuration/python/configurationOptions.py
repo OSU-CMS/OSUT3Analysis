@@ -1337,17 +1337,20 @@ maxEvents = {
     'Tau_2016C'       : -1,
     'Tau_2016D'       : -1,
     'Tau_2016E'       : -1,
+    'Tau_2016'        : -1,
 
     'SingleMu_2015D'       : -1,
     'SingleMu_2016B'       : -1,
     'SingleMu_2016C'       : -1,
     'SingleMu_2016D'       : -1,
     'SingleMu_2016E'       : -1,
+    'SingleMu_2016'        : -1,
 
     'SingleEle_2015D'       : -1,
     'SingleEle_2016B'       : -1,
     'SingleEle_2016C'       : -1,
     'SingleEle_2016D'       : -1,
+    'SingleEle_2016E'       : -1,
     'SingleEle_2016'        : -1,
 
     'SinglePhoton_2015B'       : -1,
@@ -2037,6 +2040,7 @@ types = {
     'SingleMu_2016C'    : "data",
     'SingleMu_2016D'    : "data",
     'SingleMu_2016E'    : "data",
+    'SingleMu_2016'     : "data",
 
     'SingleEle_2015D'   : "data",
     'SingleEle_2016B'   : "data",
