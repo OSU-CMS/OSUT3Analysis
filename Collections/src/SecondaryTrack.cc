@@ -45,7 +45,7 @@ osu::SecondaryTrack::SecondaryTrack (const TYPE(secondaryTracks) &secondaryTrack
 {
 }
 
-osu::SecondaryTrack::SecondaryTrack (const TYPE(secondaryTracks) &secondaryTrack, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, const EtaPhiList_ &electronVetoList, const EtaPhiList_ &muonVetoList) :
+osu::SecondaryTrack::SecondaryTrack (const TYPE(secondaryTracks) &secondaryTrack, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, const EtaPhiList &electronVetoList, const EtaPhiList &muonVetoList) :
   GenMatchable (secondaryTrack, particles, cfg),
   dRMinJet_ (INVALID_VALUE),
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
@@ -102,7 +102,7 @@ osu::SecondaryTrack::set_dRMinJet(const double dRMinJet)
 }
 
 const bool
-osu::SecondaryTrack::isFiducialTrack (const EtaPhiList_ &vetoList, const double minDeltaR) const
+osu::SecondaryTrack::isFiducialTrack (const EtaPhiList &vetoList, const double minDeltaR) const
 {
   const double minDR = max (minDeltaR, vetoList.minDeltaR); // use the given parameter unless the bin size from which the veto list is calculated is larger
   for (const auto &etaPhi : vetoList)
