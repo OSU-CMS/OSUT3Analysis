@@ -265,10 +265,17 @@ dataset_names = {
 
 ################## Delayed Muon RECO not stored on T3 ############
 ########################## data ##########################
-    'NoBPTX_2016B_PromptReco' : "/NoBPTX/Run2016B-PromptReco-v2/AOD",
-    'NoBPTX_2016C_PromptReco' : "/NoBPTX/Run2016C-PromptReco-v2/AOD",
-    'NoBPTX_2016D_PromptReco' : "/NoBPTX/Run2016D-PromptReco-v2/AOD",
-    'NoBPTX_2016E_PromptReco' : "/NoBPTX/Run2016E-PromptReco-v2/AOD",
+    'NoBPTX_2016B_PromptReco_AOD' : "/NoBPTX/Run2016B-PromptReco-v2/AOD",
+    'NoBPTX_2016C_PromptReco_AOD' : "/NoBPTX/Run2016C-PromptReco-v2/AOD",
+    'NoBPTX_2016D_PromptReco_AOD' : "/NoBPTX/Run2016D-PromptReco-v2/AOD",
+    'NoBPTX_2016E_PromptReco_AOD' : "/NoBPTX/Run2016E-PromptReco-v2/AOD",
+    'NoBPTX_2016F_PromptReco_AOD' : "/NoBPTX/Run2016F-PromptReco-v1/AOD",
+
+    'NoBPTX_2016B_PromptReco' : "/NoBPTX/Run2016B-PromptReco-v2/RECO",
+    'NoBPTX_2016C_PromptReco' : "/NoBPTX/Run2016C-PromptReco-v2/RECO",
+    'NoBPTX_2016D_PromptReco' : "/NoBPTX/Run2016D-PromptReco-v2/RECO",
+    'NoBPTX_2016E_PromptReco' : "/NoBPTX/Run2016E-PromptReco-v2/RECO",
+    'NoBPTX_2016F_PromptReco' : "/NoBPTX/Run2016F-PromptReco-v1/RECO",
 
     'NoBPTX_2015C_16Dec2015' : "/NoBPTX/Run2015C_25ns-16Dec2015-v1/RECO",
     'NoBPTX_2015D_16Dec2015' : "/NoBPTX/Run2015D-16Dec2015-v1/RECO",
