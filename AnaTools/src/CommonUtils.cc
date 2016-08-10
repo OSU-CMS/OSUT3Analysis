@@ -195,32 +195,32 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   // Retrieve each object collection which we need and print a warning if it is
   // missing.
   //////////////////////////////////////////////////////////////////////////////
-  if  (VEC_CONTAINS  (objectsToGet,  "beamspots"))         event.getByToken  (tokens.beamspots,         handles.beamspots);
-  if  (VEC_CONTAINS  (objectsToGet,  "bxlumis"))           event.getByToken  (tokens.bxlumis,           handles.bxlumis);
-  if  (VEC_CONTAINS  (objectsToGet,  "cschits"))           event.getByToken  (tokens.cschits,           handles.cschits);
-  if  (VEC_CONTAINS  (objectsToGet,  "cscsegs"))           event.getByToken  (tokens.cscsegs,           handles.cscsegs);
-  if  (VEC_CONTAINS  (objectsToGet,  "dtsegs"))           event.getByToken  (tokens.dtsegs,           handles.dtsegs);
-  if  (VEC_CONTAINS  (objectsToGet,  "electrons"))         event.getByToken  (tokens.electrons,         handles.electrons);
-  if  (VEC_CONTAINS  (objectsToGet,  "events"))            event.getByToken  (tokens.events,            handles.events);
-  if  (VEC_CONTAINS  (objectsToGet,  "genjets"))           event.getByToken  (tokens.genjets,           handles.genjets);
-  if  (VEC_CONTAINS  (objectsToGet,  "jets"))              event.getByToken  (tokens.jets,              handles.jets);
-  if  (VEC_CONTAINS  (objectsToGet,  "bjets"))             event.getByToken  (tokens.bjets,             handles.bjets);
-  if  (VEC_CONTAINS  (objectsToGet,  "basicjets"))         event.getByToken  (tokens.basicjets,         handles.basicjets);
-  if  (VEC_CONTAINS  (objectsToGet,  "generatorweights"))  event.getByToken  (tokens.generatorweights,  handles.generatorweights);
-  if  (VEC_CONTAINS  (objectsToGet,  "mcparticles"))       event.getByToken  (tokens.mcparticles,       handles.mcparticles);
-  if  (VEC_CONTAINS  (objectsToGet,  "mets"))              event.getByToken  (tokens.mets,              handles.mets);
-  if  (VEC_CONTAINS  (objectsToGet,  "muons"))             event.getByToken  (tokens.muons,             handles.muons);
-  if  (VEC_CONTAINS  (objectsToGet,  "photons"))           event.getByToken  (tokens.photons,           handles.photons);
-  if  (VEC_CONTAINS  (objectsToGet,  "prescales"))         event.getByToken  (tokens.prescales,         handles.prescales);
-  if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs"))    event.getByToken  (tokens.primaryvertexs,    handles.primaryvertexs);
-  if  (VEC_CONTAINS  (objectsToGet,  "rpchits"))    event.getByToken  (tokens.rpchits,    handles.rpchits);
-  if  (VEC_CONTAINS  (objectsToGet,  "superclusters"))     event.getByToken  (tokens.superclusters,     handles.superclusters);
-  if  (VEC_CONTAINS  (objectsToGet,  "taus"))              event.getByToken  (tokens.taus,              handles.taus);
-  if  (VEC_CONTAINS  (objectsToGet,  "tracks"))            event.getByToken  (tokens.tracks,            handles.tracks);
-  if  (VEC_CONTAINS  (objectsToGet,  "secondaryTracks"))   event.getByToken  (tokens.secondaryTracks,   handles.secondaryTracks);
-  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos"))       event.getByToken  (tokens.pileupinfos,       handles.pileupinfos);
-  if  (VEC_CONTAINS  (objectsToGet,  "triggers"))          event.getByToken  (tokens.triggers,          handles.triggers);
-  if  (VEC_CONTAINS  (objectsToGet,  "trigobjs"))          event.getByToken  (tokens.trigobjs,          handles.trigobjs);
+  if  (VEC_CONTAINS  (objectsToGet,  "beamspots") && !tokens.beamspots.isUninitialized())         event.getByToken  (tokens.beamspots,         handles.beamspots);
+  if  (VEC_CONTAINS  (objectsToGet,  "bxlumis")   && !tokens.bxlumis.isUninitialized())           event.getByToken  (tokens.bxlumis,           handles.bxlumis);
+  if  (VEC_CONTAINS  (objectsToGet,  "cschits")   && !tokens.cschits.isUninitialized())           event.getByToken  (tokens.cschits,           handles.cschits);
+  if  (VEC_CONTAINS  (objectsToGet,  "cscsegs")   && !tokens.cscsegs.isUninitialized())           event.getByToken  (tokens.cscsegs,           handles.cscsegs);
+  if  (VEC_CONTAINS  (objectsToGet,  "dtsegs")    && !tokens.dtsegs.isUninitialized())            event.getByToken  (tokens.dtsegs,            handles.dtsegs);
+  if  (VEC_CONTAINS  (objectsToGet,  "electrons") && !tokens.electrons.isUninitialized())         event.getByToken  (tokens.electrons,         handles.electrons);
+  if  (VEC_CONTAINS  (objectsToGet,  "events")    && !tokens.events.isUninitialized())            event.getByToken  (tokens.events,            handles.events);
+  if  (VEC_CONTAINS  (objectsToGet,  "genjets")   && !tokens.genjets.isUninitialized())           event.getByToken  (tokens.genjets,           handles.genjets);
+  if  (VEC_CONTAINS  (objectsToGet,  "jets")      && !tokens.jets.isUninitialized())              event.getByToken  (tokens.jets,              handles.jets);
+  if  (VEC_CONTAINS  (objectsToGet,  "bjets")     && !tokens.bjets.isUninitialized())             event.getByToken  (tokens.bjets,             handles.bjets);
+  if  (VEC_CONTAINS  (objectsToGet,  "basicjets") && !tokens.basicjets.isUninitialized())         event.getByToken  (tokens.basicjets,         handles.basicjets);
+  if  (VEC_CONTAINS  (objectsToGet,  "generatorweights") && !tokens.generatorweights.isUninitialized())  event.getByToken  (tokens.generatorweights,  handles.generatorweights);
+  if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")      && !tokens.mcparticles.isUninitialized())       event.getByToken  (tokens.mcparticles,       handles.mcparticles);
+  if  (VEC_CONTAINS  (objectsToGet,  "mets")             && !tokens.mets.isUninitialized())              event.getByToken  (tokens.mets,              handles.mets);
+  if  (VEC_CONTAINS  (objectsToGet,  "muons")            && !tokens.muons.isUninitialized())             event.getByToken  (tokens.muons,             handles.muons);
+  if  (VEC_CONTAINS  (objectsToGet,  "photons")          && !tokens.photons.isUninitialized())           event.getByToken  (tokens.photons,           handles.photons);
+  if  (VEC_CONTAINS  (objectsToGet,  "prescales")        && !tokens.prescales.isUninitialized())         event.getByToken  (tokens.prescales,         handles.prescales);
+  if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs")   && !tokens.primaryvertexs.isUninitialized())    event.getByToken  (tokens.primaryvertexs,    handles.primaryvertexs);
+  if  (VEC_CONTAINS  (objectsToGet,  "rpchits")          && !tokens.rpchits.isUninitialized())    event.getByToken  (tokens.rpchits,    handles.rpchits);
+  if  (VEC_CONTAINS  (objectsToGet,  "superclusters")    && !tokens.superclusters.isUninitialized())     event.getByToken  (tokens.superclusters,     handles.superclusters);
+  if  (VEC_CONTAINS  (objectsToGet,  "taus")             && !tokens.taus.isUninitialized())              event.getByToken  (tokens.taus,              handles.taus);
+  if  (VEC_CONTAINS  (objectsToGet,  "tracks")           && !tokens.tracks.isUninitialized())            event.getByToken  (tokens.tracks,            handles.tracks);
+  if  (VEC_CONTAINS  (objectsToGet,  "secondaryTracks")  && !tokens.secondaryTracks.isUninitialized())   event.getByToken  (tokens.secondaryTracks,   handles.secondaryTracks);
+  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos")      && !tokens.pileupinfos.isUninitialized())       event.getByToken  (tokens.pileupinfos,       handles.pileupinfos);
+  if  (VEC_CONTAINS  (objectsToGet,  "triggers")         && !tokens.triggers.isUninitialized())          event.getByToken  (tokens.triggers,          handles.triggers);
+  if  (VEC_CONTAINS  (objectsToGet,  "trigobjs")         && !tokens.trigobjs.isUninitialized())          event.getByToken  (tokens.trigobjs,          handles.trigobjs);
   if  (VEC_CONTAINS  (objectsToGet,  "uservariables"))
     {
       handles.uservariables.clear ();
