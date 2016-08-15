@@ -315,6 +315,7 @@ dataset_names = {
     'NoBPTX_2016C_PromptReco_Ntuple' : "/NoBPTX/Run2016C-PromptReco-v2/USER",
     'NoBPTX_2016D_PromptReco_Ntuple' : "/NoBPTX/Run2016D-PromptReco-v2/USER",
     'NoBPTX_2016E_PromptReco_Ntuple' : "/NoBPTX/Run2016E-PromptReco-v2/USER",
+    'NoBPTX_2016F_PromptReco_Ntuple' : "/NoBPTX/Run2016F-PromptReco-v2/USER",
 
 ################## Delayed Muon Ntuples stored on T3 ############
 ########################## data ##########################
@@ -324,8 +325,6 @@ dataset_names = {
     'NoBPTX_2015Dv4_PromptReco_Cosmic_Ntuple'  : "/NoBPTX/Run2015D_Cosmic-PromptReco-v4/USER",
     'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : "/NoBPTX/Run2015E_Cosmic-PromptReco-v1/USER",
 
-    'NoBPTX_2016B_PromptReco_Cosmic_TopAndBottom_Ntuple' : "/NoBPTX/Run2016B_Cosmic_TopAndBottom-PromptReco-v2/USER",
-    'NoBPTX_2016C_PromptReco_Cosmic_TopAndBottom_Ntuple' : "/NoBPTX/Run2016C_Cosmic_TopAndBottom-PromptReco-v2/USER",
     'NoBPTX_2016D_PromptReco_Cosmic_TopAndBottom_Ntuple' : "/NoBPTX/Run2016D_Cosmic_TopAndBottom-PromptReco-v2/USER",
     'NoBPTX_2016E_PromptReco_Cosmic_TopAndBottom_Ntuple' : "/NoBPTX/Run2016E_Cosmic_TopAndBottom-PromptReco-v2/USER",
 
