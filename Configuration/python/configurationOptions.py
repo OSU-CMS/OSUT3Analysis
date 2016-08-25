@@ -97,7 +97,10 @@ datasets = [
    
    'NoBPTX_2016D_PromptReco_Cosmic_TopAndBottom_Ntuple',
    'NoBPTX_2016E_PromptReco_Cosmic_TopAndBottom_Ntuple',
-   
+
+   'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple',
+   'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple',
+
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
    'DYJetsToLL_10to50',
@@ -486,6 +489,10 @@ composite_dataset_definitions = {
     'NoBPTX_2016DE_PromptReco_Cosmic_TopAndBottom_Ntuple' : [
         'NoBPTX_2016D_PromptReco_Cosmic_TopAndBottom_Ntuple',
         'NoBPTX_2016E_PromptReco_Cosmic_TopAndBottom_Ntuple',
+        ],
+   'NoBPTX_2016BD_PromptReco_Jets_BxStudy_Ntuple' : [
+        'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple',
+        'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple',
         ],
     'MET_2015' : [
         'MET_2015B',
@@ -1173,6 +1180,10 @@ nJobs = {
     'NoBPTX_2016E_PromptReco_Cosmic_TopAndBottom_Ntuple' : 999,
     'NoBPTX_2016DE_PromptReco_Cosmic_TopAndBottom_Ntuple' : 999,
 
+    'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : 999,
+    'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : 999,
+    'NoBPTX_2016BD_PromptReco_Jets_BxStudy_Ntuple' : 999,
+
     #control sample data
     'Commissioning2015_controlSample' : 999,
     'NoBPTX_2015B_controlSample' : 999,
@@ -1858,6 +1869,9 @@ maxEvents = {
 
     'NoBPTX_2016D_PromptReco_Cosmic_TopAndBottom_Ntuple' : -1,
     'NoBPTX_2016E_PromptReco_Cosmic_TopAndBottom_Ntuple' : -1,
+
+    'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : -1,
+    'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : -1,
 
     #control sample data
     'Commissioning2015_controlSample' : -1,
@@ -2581,6 +2595,9 @@ types = {
     'NoBPTX_2016D_PromptReco_Cosmic_TopAndBottom_Ntuple' : 'data',
     'NoBPTX_2016E_PromptReco_Cosmic_TopAndBottom_Ntuple' : 'data',
 
+    'NoBPTX_2016BD_PromptReco_Jets_BxStudy_Ntuple' : 'data',
+    'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : 'data',
+    'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : 'data',
     ############################################################################
 
     #control sample data
@@ -3301,6 +3318,9 @@ colors = {
     'NoBPTX_2016D_PromptReco_Cosmic_TopAndBottom_Ntuple' : 1,
     'NoBPTX_2016E_PromptReco_Cosmic_TopAndBottom_Ntuple' : 1,
 
+    'NoBPTX_2016BD_PromptReco_Jets_BxStudy_Ntuple' : 1,
+    'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : 1,
+    'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : 2,
     ############################################################################
 
     #control sample data
@@ -4026,6 +4046,9 @@ labels = {
     'NoBPTX_2016D_PromptReco_Cosmic_TopAndBottom_Ntuple' : 'NoBPTX 2016D cosmic data',
     'NoBPTX_2016E_PromptReco_Cosmic_TopAndBottom_Ntuple' : 'NoBPTX 2016E cosmic data',
 
+    'NoBPTX_2016BD_PromptReco_Jets_BxStudy_Ntuple' : 'NoBPTX 2016 Prompt reco data',
+    'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : 'NoBPTX 2016B Prompt reco data',
+    'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : 'NoBPTX 2016D Prompt reco data',
     ############################################################################
 
     #control sample data
