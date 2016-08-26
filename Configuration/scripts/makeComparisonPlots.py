@@ -57,16 +57,9 @@ if arguments.localConfig:
 
 #### deal with conflicting arguments
 
-if arguments.makeRatioPlots or arguments.makeDiffPlots:
-    if len(input_sources) is not 2:
-        print "You need to have exactly two input sources to produce ratio or difference plots, turning them off"
-        arguments.makeRatioPlots = False
-        arguments.makeDiffPlots = False
-
 if arguments.makeRatioPlots and arguments.makeDiffPlots:
     print "You have requested both ratio and difference plots.  Will make just ratio plots instead"
     arguments.makeRatioPlots = False
-
 
 if arguments.makeSignificancePlots and arguments.makeRatioPlots:
     print "You have asked to make a ratio plot and significance plots. This is a very strange request.  Will skip making the ratio plot."
@@ -145,11 +138,12 @@ header_y_top     = 0.9947552
 
 colors = {
     'black'  : 1,
-    'red'    : 2,
-    'green'  : 3,
-    'purple' : 6,
-    'blue'   : 4,
-    'yellow' : 5,
+    'red'    : 633,
+    'green'  : 417,
+    'purple' : 881,
+    'blue'   : 601,
+    'orange' : 801,
+    'yellow' : 401,
 }
 
 colorList = [
@@ -158,6 +152,7 @@ colorList = [
     'green',
     'purple',
     'blue',
+    'orange',
     'yellow',
 ]
 
@@ -230,10 +225,11 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
             ratio.SetBinContent(i+1,groupR(g))
             ratio.SetBinError(i+1,groupErr(g))
 
-    ratio.GetYaxis().SetTitle("#frac{hist1-hist2}{hist2}")
+    ratio.GetYaxis().SetTitle("#frac{X-ref}{ref}")
     ratio.GetXaxis().SetLabelOffset(0.03)
     ratio.SetLineColor(1)
     ratio.SetMarkerColor(1)
+    ratio.SetMarkerSize(0.5)
     ratio.SetLineWidth(2)
     return ratio
 
@@ -319,6 +315,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
         canvasName += "_CumulativeRight"
     Canvas = TCanvas(canvasName)
     Histograms = []
+    RefIndex = -99
     LegendEntries = []
 
     colorIndex = 0
@@ -358,22 +355,26 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
         unitEndIndex = xAxisLabel.find("]")
         xAxisLabelVar = xAxisLabel
 
-        if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
-            yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
-            xAxisLabelVar = xAxisLabel[0:unitBeginIndex]
+        if "_pfx" in Histogram.GetName() or "_pfy" in Histogram.GetName() or "_sigma" in Histogram.GetName():
+            yAxisLabel = Histogram.GetYaxis().GetTitle()
         else:
-            yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
-        if arguments.normalizeToUnitArea:
-            yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
 
-        if arguments.normalizeToUnitArea and arguments.makeSignificancePlots:
-            unit = "Efficiency"
-        else:
-            unit = "Yield"
-        if integrateDir is "left":
-            yAxisLabel = unit + ", " + xAxisLabelVar + "< x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
-        if integrateDir is "right":
-            yAxisLabel = unit + ", " + xAxisLabelVar + "> x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
+            if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
+                yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
+                xAxisLabelVar = xAxisLabel[0:unitBeginIndex]
+            else:
+                yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
+            if arguments.normalizeToUnitArea:
+                yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
+
+            if arguments.normalizeToUnitArea and arguments.makeSignificancePlots:
+                unit = "Efficiency"
+            else:
+                unit = "Yield"
+            if integrateDir is "left":
+                yAxisLabel = unit + ", " + xAxisLabelVar + "< x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
+            if integrateDir is "right":
+                yAxisLabel = unit + ", " + xAxisLabelVar + "> x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
 
 
         if not arguments.makeFancy and not arguments.generic:
@@ -417,6 +418,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
             markerStyle = markerStyle + fills[fillList[fillIndex]]
 
         Histogram.SetMarkerStyle(markerStyle)
+        Histogram.SetMarkerSize(0.5)
 
         Histogram.SetLineWidth(line_width)
         Histogram.SetFillStyle(0)
@@ -428,12 +430,15 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
 
         LegendEntries.append(source['legend_entry'])
         Histograms.append(Histogram)
-
+        if 'reference' in source:
+            if source['reference']:
+                RefIndex = len(Histograms)-1
 
     ### formatting histograms and adding to legend
     legendIndex = 0
     for histogram in Histograms:
-        Legend.AddEntry(histogram,LegendEntries[legendIndex],"LEP")
+#        Legend.AddEntry(histogram,LegendEntries[legendIndex],"LEP")
+        Legend.AddEntry(histogram,LegendEntries[legendIndex],"P")
         legendIndex = legendIndex+1
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
@@ -493,7 +498,9 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
         histogram.GetXaxis().SetTitle(xAxisLabel)
         histogram.GetYaxis().SetTitle(yAxisLabel)
         histogram.SetMaximum(finalMax)
-        histogram.SetMinimum(yAxisMin)
+
+        if "_pfx" not in Histogram.GetName() and "_pfy" not in Histogram.GetName() and "_sigma" not in Histogram.GetName():
+            histogram.SetMinimum(yAxisMin)
         if makeRatioPlots or makeDiffPlots:
             histogram.GetXaxis().SetLabelSize(0)
         if histCounter is 0:
@@ -530,44 +537,69 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
     #drawing the ratio or difference plot if requested
 
     if makeRatioPlots or makeDiffPlots:
+        Comparisons = []
         Canvas.cd(2)
-        if makeRatioPlots:
-            if arguments.ratioRelErrMax:
-                Comparison = ratioHistogram(Histograms[0],Histograms[1],float(arguments.ratioRelErrMax))
-            else:
-                Comparison = ratioHistogram(Histograms[0],Histograms[1])
-        elif makeDiffPlots:
-            Comparison = Histograms[0].Clone("diff")
-            Comparison.Add(Histograms[1],-1)
-            Comparison.SetTitle("")
-            Comparison.GetYaxis().SetTitle("hist1-hist2")
-        Comparison.GetXaxis().SetTitle(xAxisLabel)
-        Comparison.GetYaxis().CenterTitle()
-        Comparison.GetYaxis().SetTitleSize(0.1)
-        Comparison.GetYaxis().SetTitleOffset(0.5)
-        Comparison.GetXaxis().SetTitleSize(0.15)
-        Comparison.GetYaxis().SetLabelSize(0.1)
-        Comparison.GetXaxis().SetLabelSize(0.15)
-        if makeRatioPlots:
-            RatioYRange = 1.15
-            if arguments.ratioYRange:
-                RatioYRange = float(arguments.ratioYRange)
-            Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
-        elif makeDiffPlots:
-            YMax = Comparison.GetMaximum()
-            YMin = Comparison.GetMinimum()
-            if YMax <= 0 and YMin <= 0:
-                Comparison.GetYaxis().SetRangeUser(-1.2*YMin,0)
-            elif YMax >= 0 and YMin >= 0:
-                Comparison.GetYaxis().SetRangeUser(0,1.2*YMax)
-            else: #axis crosses y=0
-                if abs(YMax) > abs(YMin):
-                    Comparison.GetYaxis().SetRangeUser(-1.2*YMax,1.2*YMax)
-                else:
-                    Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
+        if RefIndex == -99:
+            Reference = Histograms[0]
+        else:
+            Reference = Histograms[RefIndex]
 
-        Comparison.GetYaxis().SetNdivisions(205)
-        Comparison.Draw("E0")
+        for Histogram in Histograms:
+            if Histogram is Reference:
+                continue
+
+            if makeRatioPlots:
+                if arguments.ratioRelErrMax:
+                    Comparison = ratioHistogram(Reference, Histogram, float(arguments.ratioRelErrMax))
+                else:
+                    Comparison = ratioHistogram(Reference, Histogram)
+            elif makeDiffPlots:
+                Comparison = Reference.Clone("diff")
+                Comparison.Add(Histograms[1],-1)
+                Comparison.SetTitle("")
+                Comparison.GetYaxis().SetTitle("X-ref")
+
+            Comparison.SetLineColor(Histogram.GetLineColor())
+            Comparison.SetFillColor(Histogram.GetFillColor())
+            Comparison.SetFillStyle(Histogram.GetFillStyle())
+            Comparison.SetMarkerColor(Histogram.GetMarkerColor())
+            Comparison.SetMarkerStyle(Histogram.GetMarkerStyle())
+
+            Comparison.GetXaxis().SetTitle(xAxisLabel)
+            Comparison.GetYaxis().CenterTitle()
+            Comparison.GetYaxis().SetTitleSize(0.1)
+            Comparison.GetYaxis().SetTitleOffset(0.5)
+            Comparison.GetXaxis().SetTitleSize(0.15)
+            Comparison.GetYaxis().SetLabelSize(0.1)
+            Comparison.GetXaxis().SetLabelSize(0.15)
+
+            if makeRatioPlots:
+                RatioYRange = 1.15
+                if arguments.ratioYRange:
+                    RatioYRange = float(arguments.ratioYRange)
+                Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
+
+            elif makeDiffPlots:
+                YMax = Comparison.GetMaximum()
+                YMin = Comparison.GetMinimum()
+                if YMax <= 0 and YMin <= 0:
+                    Comparison.GetYaxis().SetRangeUser(-1.2*YMin,0)
+                elif YMax >= 0 and YMin >= 0:
+                    Comparison.GetYaxis().SetRangeUser(0,1.2*YMax)
+                else: #axis crosses y=0
+                    if abs(YMax) > abs(YMin):
+                        Comparison.GetYaxis().SetRangeUser(-1.2*YMax,1.2*YMax)
+                    else:
+                        Comparison.GetYaxis().SetRangeUser(-1.2*YMin,1.2*YMin)
+
+            Comparison.GetYaxis().SetNdivisions(205)
+            Comparisons.append(Comparison)
+
+        option = "E0"
+        for index,Comparison in enumerate(Comparisons):
+            if index == 0:
+                option += " SAME"
+            Comparison.Draw(option)
 
     outputFile.cd(histogramDirectory)
     Canvas.Write()
