@@ -474,7 +474,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
 #This is a generic function to get the dataset information via das_client.py.
 def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
     tmpDir = tempfile.mkdtemp ()
-    os.system('das_client.py --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + tmpDir + "/" + AAAFileList)
+    os.system('/cvmfs/cms.cern.ch/common/das_client --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + tmpDir + "/" + AAAFileList)
     inputFileList = open(tmpDir + "/" + AAAFileList, "r")
     inputFiles = inputFileList.read().split('\n')
     inputFileList.close ()
