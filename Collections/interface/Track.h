@@ -52,9 +52,15 @@ namespace osu
         const edm::Ref<vector<reco::GsfTrack> > matchedGsfTrack () const;
         const double dRToMatchedGsfTrack () const;
 
+        const int gsfTrackNumberOfValidHits () const;
         const int gsfTrackMissingInnerHits () const;
         const int gsfTrackMissingMiddleHits () const;
         const int gsfTrackMissingOuterHits () const;
+
+        const int bestTrackNumberOfValidHits () const;
+        const int bestTrackMissingInnerHits () const;
+        const int bestTrackMissingMiddleHits () const;
+        const int bestTrackMissingOuterHits () const;
 
         const double innerP () const;
         const double outerP () const;
@@ -75,6 +81,8 @@ namespace osu
 
         const bool isFiducialTrack (const EtaPhiList &, const double) const;
         const edm::Ref<vector<reco::GsfTrack> > &findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &, edm::Ref<vector<reco::GsfTrack> > &, double &) const;
+
+        const bool isBadGsfTrack (const reco::GsfTrack &) const;
     };
 }
 

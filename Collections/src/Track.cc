@@ -131,6 +131,15 @@ osu::Track::findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &gsf
 }
 
 const int
+osu::Track::gsfTrackNumberOfValidHits () const
+{
+  if (this->matchedGsfTrack_.isNonnull ())
+    return this->matchedGsfTrack_->numberOfValidHits ();
+
+  return INVALID_VALUE;
+}
+
+const int
 osu::Track::gsfTrackMissingInnerHits () const
 {
   if (this->matchedGsfTrack_.isNonnull ())
@@ -155,6 +164,46 @@ osu::Track::gsfTrackMissingOuterHits () const
     return this->matchedGsfTrack_->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS);
 
   return INVALID_VALUE;
+}
+
+const int
+osu::Track::bestTrackNumberOfValidHits () const
+{
+  int nHits = gsfTrackNumberOfValidHits ();
+  if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
+    nHits = numberOfValidHits ();
+
+  return nHits;
+}
+
+const int
+osu::Track::bestTrackMissingInnerHits () const
+{
+  int nHits = gsfTrackMissingInnerHits ();
+  if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
+    nHits = missingInnerHits ();
+
+  return nHits;
+}
+
+const int
+osu::Track::bestTrackMissingMiddleHits () const
+{
+  int nHits = gsfTrackMissingMiddleHits ();
+  if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
+    nHits = missingMiddleHits ();
+
+  return nHits;
+}
+
+const int
+osu::Track::bestTrackMissingOuterHits () const
+{
+  int nHits = gsfTrackMissingOuterHits ();
+  if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
+    nHits = missingOuterHits ();
+
+  return nHits;
 }
 
 const double
@@ -193,6 +242,19 @@ osu::Track::bremEnergy () const
          pOuter = this->outerP ();
 
   return max (0.0, pOuter - pInner);
+}
+
+const bool
+osu::Track::isBadGsfTrack (const reco::GsfTrack &track) const
+{
+  bool passes = true;
+
+  passes = passes && (track.pt () > 55.0);
+  passes = passes && (track.numberOfValidHits () > 6);
+  passes = passes && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS) == 0);
+  passes = passes && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) == 0);
+
+  return !passes;
 }
 
 #endif
