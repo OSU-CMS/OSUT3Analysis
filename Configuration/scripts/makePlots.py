@@ -819,7 +819,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             dataIntegral += Histogram.Integral()
 
             Histogram.SetMarkerStyle(20)
-            Histogram.SetMarkerSize(1.0)
+            Histogram.SetMarkerSize(1.5)
             Histogram.SetFillStyle(0)
             Histogram.SetLineColor(colors[sample])
             Histogram.SetLineStyle(1)
@@ -838,7 +838,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 newDataHist.SetBinErrorOption(TH1.kPoisson)
                 newDataHist.SetMarkerColor(colors[sample])
                 newDataHist.SetMarkerStyle(20)
-                newDataHist.SetMarkerSize(1.0)
+                newDataHist.SetMarkerSize(1.5)
                 newDataHist.SetLineColor(colors[sample])
                 newDataHist.SetLineWidth(2)
                 Histogram = newDataHist
@@ -1374,7 +1374,7 @@ def MakeTwoDHist(pathToDir,histogramName):
             numBgMCSamples += 1
             Histogram.SetMarkerColor(colors[sample])
             Histogram.SetMarkerStyle(24)
-            Histogram.SetMarkerSize(1.0)
+            Histogram.SetMarkerSize(1.5)
             Histogram.SetFillColor(colors[sample])
             BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             BgMCHistograms.append(Histogram)
@@ -1384,7 +1384,7 @@ def MakeTwoDHist(pathToDir,histogramName):
             numSignalSamples += 1
             Histogram.SetMarkerColor(colors[sample])
             Histogram.SetMarkerStyle(20)
-            Histogram.SetMarkerSize(1.0)
+            Histogram.SetMarkerSize(1.5)
             Histogram.SetFillColor(colors[sample])
             SignalMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             SignalMCHistograms.append(Histogram)
@@ -1394,7 +1394,7 @@ def MakeTwoDHist(pathToDir,histogramName):
             numDataSamples += 1
             Histogram.SetMarkerColor(colors[sample])
             Histogram.SetMarkerStyle(34)
-            Histogram.SetMarkerSize(1.0)
+            Histogram.SetMarkerSize(1.5)
             Histogram.SetFillColor(colors[sample])
             BgMCLegend.AddEntry(Histogram,labels[sample],"P").SetTextFont (42)
             DataHistograms.append(Histogram)
