@@ -268,12 +268,11 @@ osu::Track::bremEnergy () const
 const bool
 osu::Track::isBadGsfTrack (const reco::GsfTrack &track) const
 {
-  bool passes = true;
-
-  passes = passes && (track.pt () > 55.0);
-  passes = passes && (track.numberOfValidHits () > 6);
-  passes = passes && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS) == 0);
-  passes = passes && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) == 0);
+  bool passes = (track.normalizedChi2 () < this->normalizedChi2 ())
+             && (track.pt () > 55.0)
+             && (track.numberOfValidHits () >= 7)
+             && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS) == 0)
+             && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) <= 1);
 
   return !passes;
 }
@@ -304,6 +303,12 @@ osu::Track::isCloseToBadEcalChannel (const double &deltaRCut)
    if( min_dist > deltaRCut && deltaRCut >0 ) return 0;
 
    return 1;
+}
+
+const bool
+osu::Track::inTOBCrack () const
+{
+  return (fabs (this->dz ()) < 0.5 && fabs (this->lambda) < 1.0e-3);
 }
 
 #endif

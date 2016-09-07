@@ -68,6 +68,8 @@ namespace osu
         const double fbrem () const;
         const double bremEnergy () const;
 
+        const bool inTOBCrack () const;
+
     private:
         double dRMinJet_;
         double minDeltaRForFiducialTrack_;
