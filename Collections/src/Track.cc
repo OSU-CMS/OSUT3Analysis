@@ -308,7 +308,7 @@ osu::Track::isCloseToBadEcalChannel (const double &deltaRCut)
 const bool
 osu::Track::inTOBCrack () const
 {
-  return (fabs (this->dz ()) < 0.5 && fabs (this->lambda) < 1.0e-3);
+  return (fabs (this->dz ()) < 0.5 && fabs (this->lambda ()) < 1.0e-3);
 }
 
 #endif
