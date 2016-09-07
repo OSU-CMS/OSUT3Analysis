@@ -29,6 +29,9 @@ OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
   const vector<edm::ParameterSet> &electronFiducialMaps = fiducialMaps.getParameter<vector<edm::ParameterSet> > ("electrons");
   const vector<edm::ParameterSet> &muonFiducialMaps = fiducialMaps.getParameter<vector<edm::ParameterSet> > ("muons");
 
+  maskedEcalChannelStatusThreshold_ = cfg.getParameter<int> ("maskedEcalChannelStatusThreshold");
+  outputBadEcalChannels_ = cfg.getParameter<bool> ("outputBadEcalChannels");
+
   EBRecHitsTag_    =  cfg.getParameter<edm::InputTag>  ("EBRecHits");
   EERecHitsTag_    =  cfg.getParameter<edm::InputTag>  ("EERecHits");
   HBHERecHitsTag_  =  cfg.getParameter<edm::InputTag>  ("HBHERecHits");
@@ -94,6 +97,13 @@ OSUTrackProducer::~OSUTrackProducer ()
 }
 
 void
+OSUTrackProducer::beginRun (const edm::Run &run, const edm::EventSetup& setup)
+{
+  envSet (setup);
+  getChannelStatusMaps ();
+}
+
+void
 OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(tracks)> > collection;
@@ -121,10 +131,6 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.getByToken(HBHERecHitsToken_, HBHERecHits);
   if (!HBHERecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find HBHERecHitCollection in the event!\n";
 
-  setup.get<CaloGeometryRecord>().get(caloGeometry_);
-  if (!caloGeometry_.isValid())
-    throw cms::Exception("FatalError") << "Unable to find CaloGeometryRecord in event!\n";
-
   edm::Handle<vector<reco::GsfTrack> > gsfTracks;
   event.getByToken (gsfTracksToken_, gsfTracks);
 
@@ -134,7 +140,7 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   for (const auto &object : *collection)
     {
 #ifdef DISAPP_TRKS
-      pl_->emplace_back (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_);
+      pl_->emplace_back (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_, &EcalAllDeadChannelsValMap_, &EcalAllDeadChannelsBitMap_);
       osu::Track &track = pl_->back ();
 #else
       pl_->emplace_back (object);
@@ -290,6 +296,91 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
         }
     }
   //////////////////////////////////////////////////////////////////////////////
+}
+
+void
+OSUTrackProducer::envSet (const edm::EventSetup& iSetup)
+{
+  iSetup.get<EcalChannelStatusRcd> ().get(ecalStatus_);
+  iSetup.get<CaloGeometryRecord>   ().get(caloGeometry_);
+
+  if( !ecalStatus_.isValid() )  throw "Failed to get ECAL channel status!";
+  if( !caloGeometry_.isValid()   )  throw "Failed to get the caloGeometry_!";
+}
+
+int
+OSUTrackProducer::getChannelStatusMaps ()
+{
+  EcalAllDeadChannelsValMap_.clear(); EcalAllDeadChannelsBitMap_.clear();
+  TH2D *badChannels = (outputBadEcalChannels_ ? new TH2D ("badChannels", ";#eta;#phi", 360, -3.0, 3.0, 360, -3.2, 3.2) : NULL);
+
+// Loop over EB ...
+  for( int ieta=-85; ieta<=85; ieta++ ){
+     for( int iphi=0; iphi<=360; iphi++ ){
+        if(! EBDetId::validDetId( ieta, iphi ) )  continue;
+
+        const EBDetId detid = EBDetId( ieta, iphi, EBDetId::ETAPHIMODE );
+        EcalChannelStatus::const_iterator chit = ecalStatus_->find( detid );
+// refer https://twiki.cern.ch/twiki/bin/viewauth/CMS/EcalChannelStatus
+        int status = ( chit != ecalStatus_->end() ) ? chit->getStatusCode() & 0x1F : -1;
+
+        const CaloSubdetectorGeometry*  subGeom = caloGeometry_->getSubdetectorGeometry (detid);
+        const CaloCellGeometry*        cellGeom = subGeom->getGeometry (detid);
+        double eta = cellGeom->getPosition ().eta ();
+        double phi = cellGeom->getPosition ().phi ();
+        double theta = cellGeom->getPosition().theta();
+
+        if(status >= maskedEcalChannelStatusThreshold_){
+           std::vector<double> valVec; std::vector<int> bitVec;
+           valVec.push_back(eta); valVec.push_back(phi); valVec.push_back(theta);
+           bitVec.push_back(1); bitVec.push_back(ieta); bitVec.push_back(iphi); bitVec.push_back(status);
+           EcalAllDeadChannelsValMap_.insert( std::make_pair(detid, valVec) );
+           EcalAllDeadChannelsBitMap_.insert( std::make_pair(detid, bitVec) );
+           if (outputBadEcalChannels_)
+             badChannels->Fill (eta, phi);
+        }
+     } // end loop iphi
+  } // end loop ieta
+
+// Loop over EE detid
+  for( int ix=0; ix<=100; ix++ ){
+     for( int iy=0; iy<=100; iy++ ){
+        for( int iz=-1; iz<=1; iz++ ){
+           if(iz==0)  continue;
+           if(! EEDetId::validDetId( ix, iy, iz ) )  continue;
+
+           const EEDetId detid = EEDetId( ix, iy, iz, EEDetId::XYMODE );
+           EcalChannelStatus::const_iterator chit = ecalStatus_->find( detid );
+           int status = ( chit != ecalStatus_->end() ) ? chit->getStatusCode() & 0x1F : -1;
+
+           const CaloSubdetectorGeometry*  subGeom = caloGeometry_->getSubdetectorGeometry (detid);
+           const CaloCellGeometry*        cellGeom = subGeom->getGeometry (detid);
+           double eta = cellGeom->getPosition ().eta () ;
+           double phi = cellGeom->getPosition ().phi () ;
+           double theta = cellGeom->getPosition().theta();
+
+           if(status >= maskedEcalChannelStatusThreshold_){
+              std::vector<double> valVec; std::vector<int> bitVec;
+              valVec.push_back(eta); valVec.push_back(phi); valVec.push_back(theta);
+              bitVec.push_back(2); bitVec.push_back(ix); bitVec.push_back(iy); bitVec.push_back(iz); bitVec.push_back(status);
+              EcalAllDeadChannelsValMap_.insert( std::make_pair(detid, valVec) );
+              EcalAllDeadChannelsBitMap_.insert( std::make_pair(detid, bitVec) );
+               if (outputBadEcalChannels_)
+                 badChannels->Fill (eta, phi);
+           }
+        } // end loop iz
+     } // end loop iy
+  } // end loop ix
+
+  if (outputBadEcalChannels_)
+    {
+      TFile *fout = new TFile ("badEcalChannels.root", "recreate");
+      fout->cd ();
+      badChannels->Write ();
+      fout->Close ();
+    }
+
+  return 1;
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

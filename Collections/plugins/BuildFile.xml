@@ -1,7 +1,15 @@
 <use  name="root"/>
+<use  name="CondFormats/DataRecord"/>
+<use  name="CondFormats/EcalObjects"/>
+<use  name="DataFormats/EcalRecHit"/>
+<use  name="DataFormats/HcalRecHit"/>
 <use  name="FWCore/Framework"/>
 <use  name="FWCore/ParameterSet"/>
+<use  name="Geometry/CaloGeometry"/>
+<use  name="Geometry/Records"/>
+<use  name="OSUT3Analysis/AnaTools"/>
 <use  name="OSUT3Analysis/Collections"/>
+<use  name="RecoEgamma/EgammaTools"/>
 <flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
 <!--flags  CXXFLAGS="-gdwarf-2 -g3 -O0 -pipe"/-->
 <library  file="*.cc"  name="OSUAnalysisCollectionsPlugins">

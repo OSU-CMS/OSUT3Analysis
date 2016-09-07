@@ -171,6 +171,8 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
         )
     ),
     minDeltaRForFiducialTrack = cms.double (0.05),
+    maskedEcalChannelStatusThreshold = cms.int32 (3),
+    outputBadEcalChannels = cms.bool (False),
 
     EBRecHits          =  cms.InputTag  ("reducedEcalRecHitsEB"),
     EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),

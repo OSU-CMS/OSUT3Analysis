@@ -9,6 +9,8 @@
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
 #include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
+#include "CondFormats/EcalObjects/interface/EcalChannelStatus.h"
+#include "CondFormats/DataRecord/interface/EcalChannelStatusRcd.h"
 
 #include "OSUT3Analysis/Collections/interface/Track.h"
 
@@ -18,6 +20,7 @@ class OSUTrackProducer : public edm::EDProducer
     OSUTrackProducer (const edm::ParameterSet &);
     ~OSUTrackProducer ();
 
+    void beginRun (const edm::Run &, const edm::EventSetup &);
     void produce (edm::Event &, const edm::EventSetup &);
 
   private:
@@ -46,11 +49,19 @@ class OSUTrackProducer : public edm::EDProducer
     auto_ptr<vector<osu::Track> > pl_;
 
     void extractFiducialMap (const edm::ParameterSet &, EtaPhiList &, stringstream &) const;
+    void envSet (const edm::EventSetup &);
+    int getChannelStatusMaps ();
 
     edm::ESHandle<CaloGeometry> caloGeometry_;
+    edm::ESHandle<EcalChannelStatus> ecalStatus_;
     bool insideCone(TYPE(tracks)& track, const DetId& id, const double dR);
     GlobalPoint getPosition( const DetId& id);
 
+    int maskedEcalChannelStatusThreshold_;
+    bool outputBadEcalChannels_;
+
+    map<DetId, vector<double> > EcalAllDeadChannelsValMap_;
+    map<DetId, vector<int> >    EcalAllDeadChannelsBitMap_;
 };
 
 #endif

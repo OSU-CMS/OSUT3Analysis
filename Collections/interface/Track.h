@@ -40,7 +40,7 @@ namespace osu
         Track (const TYPE(tracks) &);
         Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &);
         Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
-        Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const edm::Handle<vector<reco::GsfTrack> > &, const EtaPhiList &, const EtaPhiList &);
+        Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const edm::Handle<vector<reco::GsfTrack> > &, const EtaPhiList &, const EtaPhiList &, const map<DetId, vector<double> > * const, const map<DetId, vector<int> > * const);
         ~Track ();
 
         const double dRMinJet() const;
@@ -48,6 +48,7 @@ namespace osu
 
         const bool isFiducialElectronTrack () const;
         const bool isFiducialMuonTrack () const;
+        const bool isFiducialECALTrack () const;
 
         const edm::Ref<vector<reco::GsfTrack> > matchedGsfTrack () const;
         const double dRToMatchedGsfTrack () const;
@@ -79,10 +80,15 @@ namespace osu
 
         double maxDeltaR_;
 
+        const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap_;
+        const map<DetId, vector<int> >    * const EcalAllDeadChannelsBitMap_;
+
+        bool isFiducialECALTrack_;
+
         const bool isFiducialTrack (const EtaPhiList &, const double) const;
         const edm::Ref<vector<reco::GsfTrack> > &findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &, edm::Ref<vector<reco::GsfTrack> > &, double &) const;
-
         const bool isBadGsfTrack (const reco::GsfTrack &) const;
+        int isCloseToBadEcalChannel (const double &);
     };
 }
 

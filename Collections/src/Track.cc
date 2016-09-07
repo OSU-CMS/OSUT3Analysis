@@ -8,7 +8,10 @@ osu::Track::Track () :
   isFiducialMuonTrack_ (true),
   matchedGsfTrack_ (),
   dRToMatchedGsfTrack_ (INVALID_VALUE),
-  maxDeltaR_ (-1.0)
+  maxDeltaR_ (-1.0),
+  EcalAllDeadChannelsValMap_ (NULL),
+  EcalAllDeadChannelsBitMap_ (NULL),
+  isFiducialECALTrack_ (true)
 {
 }
 
@@ -19,7 +22,10 @@ osu::Track::Track (const TYPE(tracks) &track) :
   isFiducialMuonTrack_ (true),
   matchedGsfTrack_ (),
   dRToMatchedGsfTrack_ (INVALID_VALUE),
-  maxDeltaR_ (-1.0)
+  maxDeltaR_ (-1.0),
+  EcalAllDeadChannelsValMap_ (NULL),
+  EcalAllDeadChannelsBitMap_ (NULL),
+  isFiducialECALTrack_ (true)
 {
 }
 
@@ -30,7 +36,10 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   isFiducialMuonTrack_ (true),
   matchedGsfTrack_ (),
   dRToMatchedGsfTrack_ (INVALID_VALUE),
-  maxDeltaR_ (-1.0)
+  maxDeltaR_ (-1.0),
+  EcalAllDeadChannelsValMap_ (NULL),
+  EcalAllDeadChannelsBitMap_ (NULL),
+  isFiducialECALTrack_ (true)
 {
 }
 
@@ -41,16 +50,22 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   isFiducialMuonTrack_ (true),
   matchedGsfTrack_ (),
   dRToMatchedGsfTrack_ (INVALID_VALUE),
-  maxDeltaR_ (-1.0)
+  maxDeltaR_ (-1.0),
+  EcalAllDeadChannelsValMap_ (NULL),
+  EcalAllDeadChannelsBitMap_ (NULL),
+  isFiducialECALTrack_ (true)
 {
 }
 
-osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, const EtaPhiList &electronVetoList, const EtaPhiList &muonVetoList) :
+osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, const EtaPhiList &electronVetoList, const EtaPhiList &muonVetoList, const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap) :
   GenMatchable (track, particles, cfg),
   dRMinJet_ (INVALID_VALUE),
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
   isFiducialElectronTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_)),
-  isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_))
+  isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_)),
+  EcalAllDeadChannelsValMap_ (EcalAllDeadChannelsValMap),
+  EcalAllDeadChannelsBitMap_ (EcalAllDeadChannelsBitMap),
+  isFiducialECALTrack_ (!isCloseToBadEcalChannel (minDeltaRForFiducialTrack_))
 {
   maxDeltaR_ = cfg.getParameter<double> ("maxDeltaRForGsfTrackMatching");
   if (gsfTracks.isValid ())
@@ -71,6 +86,12 @@ const bool
 osu::Track::isFiducialMuonTrack () const
 {
   return isFiducialMuonTrack_;
+}
+
+const bool
+osu::Track::isFiducialECALTrack () const
+{
+  return isFiducialECALTrack_;
 }
 
 const edm::Ref<vector<reco::GsfTrack> >
@@ -255,6 +276,34 @@ osu::Track::isBadGsfTrack (const reco::GsfTrack &track) const
   passes = passes && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) == 0);
 
   return !passes;
+}
+
+int
+osu::Track::isCloseToBadEcalChannel (const double &deltaRCut)
+{
+   double trackEta = this->eta(), trackPhi = this->phi();
+
+   double min_dist = 999;
+   DetId min_detId;
+
+   std::map<DetId, std::vector<int> >::const_iterator bitItor;
+   for(bitItor = EcalAllDeadChannelsBitMap_->begin(); bitItor != EcalAllDeadChannelsBitMap_->end(); bitItor++){
+
+      DetId maskedDetId = bitItor->first;
+
+      std::map<DetId, std::vector<double> >::const_iterator valItor = EcalAllDeadChannelsValMap_->find(maskedDetId);
+      if( valItor == EcalAllDeadChannelsValMap_->end() ){ std::cout<<"Error cannot find maskedDetId in EcalAllDeadChannelsValMap_ ?!"<<std::endl; continue; }
+
+      double eta = (valItor->second)[0], phi = (valItor->second)[1];
+
+      double dist = reco::deltaR(eta, phi, trackEta, trackPhi);
+
+      if( min_dist > dist ){ min_dist = dist; min_detId = maskedDetId; }
+   }
+
+   if( min_dist > deltaRCut && deltaRCut >0 ) return 0;
+
+   return 1;
 }
 
 #endif
