@@ -70,6 +70,8 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   maxDeltaR_ = cfg.getParameter<double> ("maxDeltaRForGsfTrackMatching");
   if (gsfTracks.isValid ())
     findMatchedGsfTrack (gsfTracks, matchedGsfTrack_, dRToMatchedGsfTrack_);
+  EcalAllDeadChannelsValMap_ = NULL;
+  EcalAllDeadChannelsBitMap_ = NULL;
 }
 
 osu::Track::~Track ()

@@ -82,8 +82,8 @@ namespace osu
 
         double maxDeltaR_;
 
-        const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap_;
-        const map<DetId, vector<int> >    * const EcalAllDeadChannelsBitMap_;
+        const map<DetId, vector<double> > * EcalAllDeadChannelsValMap_;
+        const map<DetId, vector<int> >    * EcalAllDeadChannelsBitMap_;
 
         bool isFiducialECALTrack_;
 

@@ -378,6 +378,9 @@ OSUTrackProducer::getChannelStatusMaps ()
       fout->cd ();
       badChannels->Write ();
       fout->Close ();
+
+      delete badChannels;
+      delete fout;
     }
 
   return 1;
