@@ -270,11 +270,11 @@ osu::Track::bremEnergy () const
 const bool
 osu::Track::isBadGsfTrack (const reco::GsfTrack &track) const
 {
-  bool passes = (track.normalizedChi2 () < this->normalizedChi2 ())
-             && (track.pt () > 20.0)
+  bool passes = (track.pt () > 20.0)
              && (track.numberOfValidHits () >= 7)
              && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS) == 0)
-             && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) <= 1);
+             && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) <= 1)
+             && (track.normalizedChi2 () < this->normalizedChi2 () + 1.0);
 
   return !passes;
 }
