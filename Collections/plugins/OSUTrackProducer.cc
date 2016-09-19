@@ -99,8 +99,10 @@ OSUTrackProducer::~OSUTrackProducer ()
 void
 OSUTrackProducer::beginRun (const edm::Run &run, const edm::EventSetup& setup)
 {
+#ifdef DISAPP_TRKS
   envSet (setup);
   getChannelStatusMaps ();
+#endif
 }
 
 void

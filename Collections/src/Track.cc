@@ -194,7 +194,7 @@ osu::Track::bestTrackNumberOfValidHits () const
 {
   int nHits = gsfTrackNumberOfValidHits ();
   if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
-    nHits = numberOfValidHits ();
+    nHits = this->numberOfValidHits ();
 
   return nHits;
 }
@@ -204,7 +204,7 @@ osu::Track::bestTrackMissingInnerHits () const
 {
   int nHits = gsfTrackMissingInnerHits ();
   if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
-    nHits = missingInnerHits ();
+    nHits = this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS);
 
   return nHits;
 }
@@ -214,7 +214,7 @@ osu::Track::bestTrackMissingMiddleHits () const
 {
   int nHits = gsfTrackMissingMiddleHits ();
   if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
-    nHits = missingMiddleHits ();
+    nHits = this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS);
 
   return nHits;
 }
@@ -224,7 +224,7 @@ osu::Track::bestTrackMissingOuterHits () const
 {
   int nHits = gsfTrackMissingOuterHits ();
   if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
-    nHits = missingOuterHits ();
+    nHits = this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS);
 
   return nHits;
 }
