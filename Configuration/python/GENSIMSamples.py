@@ -26,6 +26,20 @@ dataset_names = {
     'gluino2400'  : "/HSCPgluino_M-2400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
     'gluino2600'  : "/HSCPgluino_M-2600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
 
+    'stop100'   : "/HSCPstop_M-100_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop200'   : "/HSCPstop_M-200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop400'   : "/HSCPstop_M-400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop600'   : "/HSCPstop_M-600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop800'   : "/HSCPstop_M-800_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop1000'  : "/HSCPstop_M-1000_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop1200'  : "/HSCPstop_M-1200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop1400'  : "/HSCPstop_M-1400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop1800'  : "/HSCPstop_M-1800_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop2000'  : "/HSCPstop_M-2000_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop2200'  : "/HSCPstop_M-2200_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop2400'  : "/HSCPstop_M-2400_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+    'stop2600'  : "/HSCPstop_M-2600_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-HSCP_customise_MCRUN2_71_V1-v2/GEN-SIM",
+
 ################### Stopped Particles stage 2 GEN-SIM stored on T3 ###############
     #'mchamp100_Stage2SeparateEventsParticle0'   : "/HSCPmchamp6_M-100_TuneZ2star_13TeV-pythia6/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
     #'mchamp200_Stage2SeparateEventsParticle0'   : "/HSCPmchamp6_M-200_TuneZ2star_13TeV-pythia6/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
