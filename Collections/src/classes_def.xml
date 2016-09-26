@@ -143,6 +143,18 @@
   <class name="edm::Wrapper<std::vector<osu::Uservariable> >"/>
   <class name="edm::Ref<std::vector<osu::Uservariable> >"/>
 
+  <class name="std::map<DetId, std::vector<double> >"/>
+  <class name="std::vector<std::map<DetId, std::vector<double> > >"/>
+  <class name="edm::Wrapper<std::map<DetId, std::vector<double> > >"/>
+  <class name="edm::Wrapper<std::vector<std::map<DetId, std::vector<double> > > >"/>
+  <class name="edm::Ref<std::vector<std::map<DetId, std::vector<double> > > >"/>
+
+  <class name="std::map<DetId, std::vector<int> >"/>
+  <class name="std::vector<std::map<DetId, std::vector<int> > >"/>
+  <class name="edm::Wrapper<std::map<DetId, std::vector<int> > >"/>
+  <class name="edm::Wrapper<std::vector<std::map<DetId, std::vector<int> > > >"/>
+  <class name="edm::Ref<std::vector<std::map<DetId, std::vector<int> > > >"/>
+
   <class pattern="osu::GenMatchable<*>"/>
   <class pattern="osu::GenMatchable<*>::GenMatchedParticle"/>
   <class pattern="osu::GenMatchable<*>::DRToGenMatchedParticle"/>

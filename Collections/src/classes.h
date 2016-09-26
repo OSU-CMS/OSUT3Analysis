@@ -220,5 +220,17 @@ namespace {
     edm::Ref<vector<osu::Uservariable> >      uservariable4;
 //#endif
 
+    map<DetId, vector<double> >                          valMap0;
+    vector<map<DetId, vector<double> > >                 valMap1;
+    edm::Wrapper<map<DetId, vector<double> > >           valMap2;
+    edm::Wrapper<vector<map<DetId, vector<double> > > >  valMap3;
+    edm::Ref<vector<map<DetId, vector<double> > > >      valMap4;
+
+    map<DetId, vector<int> >                          bitMap0;
+    vector<map<DetId, vector<int> > >                 bitMap1;
+    edm::Wrapper<map<DetId, vector<int> > >           bitMap2;
+    edm::Wrapper<vector<map<DetId, vector<int> > > >  bitMap3;
+    edm::Ref<vector<map<DetId, vector<int> > > >      bitMap4;
+
   };
 }
