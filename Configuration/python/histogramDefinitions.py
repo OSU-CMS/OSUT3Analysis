@@ -1363,16 +1363,10 @@ TrackHistograms = cms.PSet(
             inputVariables = cms.vstring("charge"),
         ),
         cms.PSet (
-            name = cms.string("bestMatchIsMatched"),
-            title = cms.string(";track is matched to generator particle"),
-            binsX = cms.untracked.vdouble(2.0, -0.5, 1.5),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.isNonnull"),
-        ),
-        cms.PSet (
             name = cms.string("bestMatchPdgId"),
             title = cms.string(";PDG ID of matched generator particle"),
-            binsX = cms.untracked.vdouble(getPdgBins(["quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs (genMatchedParticle.bestMatch.pdgId)"),
+            binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
+            inputVariables = cms.vstring("abs (genMatchedParticle.bestMatchPdgId)"),
         ),
         cms.PSet (
             name = cms.string("genMatchedPromptFinalStateIsMatched"),
