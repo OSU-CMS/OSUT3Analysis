@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/Math/interface/normalizedPhi.h"
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
@@ -511,7 +512,7 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
                                                   "copysign", "nextafter",
                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
-        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass", "number", "transMass", "pT"}) ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "dPhi", "normalizedPhi", "compositePhi", "deltaR", "invMass", "number", "transMass", "pT"}) ||
         insertDots                 (cut,  tree) ||
         //insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
         insertParentheses          (cut,  tree)))
@@ -766,6 +767,25 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
       else if (op == "deltaPhi")
         return deltaPhi (valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "phi"),
                          valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi"));
+      else if (op == "dPhi")
+        return deltaPhi (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1)));
+      else if (op == "normalizedPhi")
+        return normalizedPhi (boost::get<double> (operands.at (0)));
+      else if (op == "compositePhi")
+        {
+          double px0, px1, py0, py1, phi;
+
+          px0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "px");
+          px1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "px");
+          py0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "py");
+          py1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "py");
+
+          phi = acos ((px0 + px1) / hypot (px0 + px1, py0 + py1));
+          if ((py0 + py1) < 0.0)
+            phi *= -1.0;
+
+          return normalizedPhi (phi);
+        }
       else if (op == "deltaR")
         {
           double eta0, phi0, eta1, phi1;
