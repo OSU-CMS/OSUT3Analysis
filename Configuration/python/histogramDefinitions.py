@@ -1348,7 +1348,7 @@ TrackHistograms = cms.PSet(
             name = cms.string("trackNumValidPixelHits"),
             title = cms.string("Track Number of Valid Pixel Hits;number of valid pixel hits"),
             binsX = cms.untracked.vdouble(6, -0.5, 5.5),
-            inputVariables = cms.vstring("hitPattern.numberOfValidPixelHits"),
+            inputVariables = cms.vstring("hitPattern_.numberOfValidPixelHits"),
         ),
         cms.PSet (
             name = cms.string("trackNumValidHits"),
