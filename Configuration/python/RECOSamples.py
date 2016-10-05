@@ -312,6 +312,13 @@ dataset_names = {
     'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : "/NoBPTX/Run2016B-PromptReco-v2_Jets_BxStudy/USER",
     'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : "/NoBPTX/Run2016D-PromptReco-v2_Jets_BxStudy/USER",
 
+    'NoBPTX_2016B_PromptReco_Jets_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016B-Jets-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016C_PromptReco_Jets_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016C-Jets-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016D_PromptReco_Jets_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016D-Jets-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016E_PromptReco_Jets_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016E-Jets-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016F_PromptReco_Jets_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016F-Jets-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016G_PromptReco_Jets_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016G-Jets-OnlyControlTriggers-PromptReco-v2/USER",
+
 ################## SP ntuples to study rpc hits##################
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p4/USER",
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p6/USER",
@@ -331,6 +338,11 @@ dataset_names = {
     'NoBPTX_2016E_PromptReco_Ntuple' : "/NoBPTX/Run2016E-PromptReco-v2/USER",
     'NoBPTX_2016F_PromptReco_Ntuple' : "/NoBPTX/Run2016F-PromptReco-v2/USER",
     'NoBPTX_2016G_PromptReco_Ntuple' : "/NoBPTX/Run2016G-PromptReco-v2/USER",
+
+    'NoBPTX_2016B_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016B-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016C_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016C-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016D_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016D-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016F_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016F-OnlyControlTriggers-PromptReco-v2/USER",
 
 ################## Delayed Muon Ntuples stored on T3 ############
 ########################## data ##########################

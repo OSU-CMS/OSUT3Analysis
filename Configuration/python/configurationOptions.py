@@ -112,6 +112,19 @@ datasets = [
 
    'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple',
    'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple',
+
+   'NoBPTX_2016B_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+   'NoBPTX_2016C_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+   'NoBPTX_2016D_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+   'NoBPTX_2016E_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+   'NoBPTX_2016F_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+   'NoBPTX_2016G_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+
+   'NoBPTX_2016B_PromptReco_OnlyControlTriggers_Ntuple',
+   'NoBPTX_2016C_PromptReco_OnlyControlTriggers_Ntuple',
+   'NoBPTX_2016D_PromptReco_OnlyControlTriggers_Ntuple',
+   'NoBPTX_2016F_PromptReco_OnlyControlTriggers_Ntuple',
+
    'NoBPTX_Jet_2016BCD_PromptReco',
    'NoBPTX_CosJet_2016BCDE_PromptReco',
 
@@ -519,6 +532,19 @@ composite_dataset_definitions = {
    'NoBPTX_2016BD_PromptReco_Jets_BxStudy_Ntuple' : [
         'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple',
         'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple',
+        ],
+   'NoBPTX_2016BCDEFG_PromptReco_Jets_OnlyControlTriggers_Ntuple' : [
+        'NoBPTX_2016B_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+        'NoBPTX_2016C_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+        'NoBPTX_2016D_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+        'NoBPTX_2016E_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+        'NoBPTX_2016F_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+        'NoBPTX_2016G_PromptReco_Jets_OnlyControlTriggers_Ntuple',
+        ],
+   'NoBPTX_2016BCD_PromptReco_OnlyControlTriggers_Ntuple' : [
+        'NoBPTX_2016B_PromptReco_OnlyControlTriggers_Ntuple',
+        'NoBPTX_2016C_PromptReco_OnlyControlTriggers_Ntuple',
+        'NoBPTX_2016D_PromptReco_OnlyControlTriggers_Ntuple',
         ],
     'MET_2015' : [
         'MET_2015B',
@@ -1259,6 +1285,20 @@ nJobs = {
     'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : 999,
     'NoBPTX_2016BD_PromptReco_Jets_BxStudy_Ntuple' : 999,
 
+    'NoBPTX_2016BCDEFG_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2016B_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2016C_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2016D_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2016E_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2016F_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2016G_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 999,
+
+    'NoBPTX_2016BCD_PromptReco_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2016B_PromptReco_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2016C_PromptReco_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2016D_PromptReco_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2016F_PromptReco_OnlyControlTriggers_Ntuple' : 999,
+
     #control sample data
     'Commissioning2015_controlSample' : 999,
     'NoBPTX_2015B_controlSample' : 999,
@@ -1981,6 +2021,20 @@ maxEvents = {
 
     'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : -1,
     'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : -1,
+
+    'NoBPTX_2016BCDEFG_PromptReco_Jets_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2016B_PromptReco_Jets_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2016C_PromptReco_Jets_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2016D_PromptReco_Jets_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2016E_PromptReco_Jets_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2016F_PromptReco_Jets_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2016G_PromptReco_Jets_OnlyControlTriggers_Ntuple' : -1,
+
+    'NoBPTX_2016BCD_PromptReco_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2016B_PromptReco_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2016C_PromptReco_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2016D_PromptReco_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2016F_PromptReco_OnlyControlTriggers_Ntuple' : -1,
 
     #control sample data
     'Commissioning2015_controlSample' : -1,
@@ -2741,6 +2795,21 @@ types = {
     'NoBPTX_2016BD_PromptReco_Jets_BxStudy_Ntuple' : 'data',
     'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : 'data',
     'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : 'data',
+
+    'NoBPTX_2016BCDEFG_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2016B_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2016C_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2016D_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2016E_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2016F_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2016G_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'data',
+
+    'NoBPTX_2016BCD_PromptReco_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2016B_PromptReco_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2016C_PromptReco_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2016D_PromptReco_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2016F_PromptReco_OnlyControlTriggers_Ntuple' : 'data',
+
     'NoBPTX_Jet_2016BCD_PromptReco' : 'data',
     'NoBPTX_CosJet_2016BCDE_PromptReco' : 'data',
     ############################################################################
@@ -3494,6 +3563,21 @@ colors = {
     'NoBPTX_2016BD_PromptReco_Jets_BxStudy_Ntuple' : 1,
     'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : 1,
     'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : 2,
+
+    'NoBPTX_2016BCDEFG_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 1,
+    'NoBPTX_2016B_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 2,
+    'NoBPTX_2016C_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 4,
+    'NoBPTX_2016D_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 5,
+    'NoBPTX_2016E_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 6,
+    'NoBPTX_2016F_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 7,
+    'NoBPTX_2016G_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 8,
+
+    'NoBPTX_2016BCD_PromptReco_OnlyControlTriggers_Ntuple' : 1,
+    'NoBPTX_2016B_PromptReco_OnlyControlTriggers_Ntuple' : 2,
+    'NoBPTX_2016C_PromptReco_OnlyControlTriggers_Ntuple' : 4,
+    'NoBPTX_2016D_PromptReco_OnlyControlTriggers_Ntuple' : 5,
+    'NoBPTX_2016F_PromptReco_OnlyControlTriggers_Ntuple' : 6,
+
     ############################################################################
 
     #control sample data
@@ -4251,6 +4335,21 @@ labels = {
     'NoBPTX_2016BD_PromptReco_Jets_BxStudy_Ntuple' : 'NoBPTX 2016 Prompt reco data',
     'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : 'NoBPTX 2016B Prompt reco data',
     'NoBPTX_2016D_PromptReco_Jets_BxStudy_Ntuple' : 'NoBPTX 2016D Prompt reco data',
+
+    'NoBPTX_2016BCDEFG_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016B-G Prompt reco data',
+    'NoBPTX_2016B_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016B Prompt reco data',
+    'NoBPTX_2016C_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016C Prompt reco data',
+    'NoBPTX_2016D_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016D Prompt reco data',
+    'NoBPTX_2016E_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016E Prompt reco data',
+    'NoBPTX_2016F_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016F Prompt reco data',
+    'NoBPTX_2016G_PromptReco_Jets_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016G Prompt reco data',
+
+    'NoBPTX_2016BCD_PromptReco_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016B-D Prompt reco data',
+    'NoBPTX_2016B_PromptReco_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016B Prompt reco data',
+    'NoBPTX_2016C_PromptReco_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016C Prompt reco data',
+    'NoBPTX_2016D_PromptReco_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016D Prompt reco data',
+    'NoBPTX_2016F_PromptReco_OnlyControlTriggers_Ntuple' : 'NoBPTX 2016F Prompt reco data',
+
     ############################################################################
 
     #control sample data
