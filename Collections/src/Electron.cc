@@ -27,7 +27,15 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   metNoMuMinusOnePt_          (INVALID_VALUE),
   metNoMuMinusOnePx_          (INVALID_VALUE),
   metNoMuMinusOnePy_          (INVALID_VALUE),
-  metNoMuMinusOnePhi_         (INVALID_VALUE)
+  metNoMuMinusOnePhi_         (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
 }
 
@@ -46,7 +54,15 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   metNoMuMinusOnePt_          (INVALID_VALUE),
   metNoMuMinusOnePx_          (INVALID_VALUE),
   metNoMuMinusOnePy_          (INVALID_VALUE),
-  metNoMuMinusOnePhi_         (INVALID_VALUE)
+  metNoMuMinusOnePhi_         (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
 }
 
@@ -65,7 +81,15 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   metNoMuMinusOnePt_          (INVALID_VALUE),
   metNoMuMinusOnePx_          (INVALID_VALUE),
   metNoMuMinusOnePy_          (INVALID_VALUE),
-  metNoMuMinusOnePhi_         (INVALID_VALUE)
+  metNoMuMinusOnePhi_         (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
 }
 
@@ -84,10 +108,21 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   metNoMuMinusOnePt_          (INVALID_VALUE),
   metNoMuMinusOnePx_          (INVALID_VALUE),
   metNoMuMinusOnePy_          (INVALID_VALUE),
-  metNoMuMinusOnePhi_         (INVALID_VALUE)
+  metNoMuMinusOnePhi_         (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
   TVector2 p (met.px () + this->px (), met.py () + this->py ()),
-           pNoMu (met.noMuPx () + this->px (), met.noMuPy () + this->py ());
+           pNoMu (met.noMuPx () + this->px (), met.noMuPy () + this->py ()),
+           p10;
+
+  p10.SetMagPhi (10.0, this->phi ());
 
   metMinusOnePt_ = p.Mod ();
   metMinusOnePx_ = p.Px ();
@@ -98,6 +133,16 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   metNoMuMinusOnePx_ = pNoMu.Px ();
   metNoMuMinusOnePy_ = pNoMu.Py ();
   metNoMuMinusOnePhi_ = pNoMu.Phi ();
+
+  metMinusOneUpPt_ = (p - p10).Mod ();
+  metMinusOneUpPx_ = (p - p10).Px ();
+  metMinusOneUpPy_ = (p - p10).Py ();
+  metMinusOneUpPhi_ = (p - p10).Phi ();
+
+  metNoMuMinusOneUpPt_ = (pNoMu - p10).Mod ();
+  metNoMuMinusOneUpPx_ = (pNoMu - p10).Px ();
+  metNoMuMinusOneUpPy_ = (pNoMu - p10).Py ();
+  metNoMuMinusOneUpPhi_ = (pNoMu - p10).Phi ();
 }
 
 const int
@@ -235,6 +280,54 @@ const double
 osu::Electron::metNoMuMinusOnePhi () const
 {
   return metNoMuMinusOnePhi_;
+}
+
+const double
+osu::Electron::metMinusOneUpPt () const
+{
+  return metMinusOneUpPt_;
+}
+
+const double
+osu::Electron::metMinusOneUpPx () const
+{
+  return metMinusOneUpPx_;
+}
+
+const double
+osu::Electron::metMinusOneUpPy () const
+{
+  return metMinusOneUpPy_;
+}
+
+const double
+osu::Electron::metMinusOneUpPhi () const
+{
+  return metMinusOneUpPhi_;
+}
+
+const double
+osu::Electron::metNoMuMinusOneUpPt () const
+{
+  return metNoMuMinusOneUpPt_;
+}
+
+const double
+osu::Electron::metNoMuMinusOneUpPx () const
+{
+  return metNoMuMinusOneUpPx_;
+}
+
+const double
+osu::Electron::metNoMuMinusOneUpPy () const
+{
+  return metNoMuMinusOneUpPy_;
+}
+
+const double
+osu::Electron::metNoMuMinusOneUpPhi () const
+{
+  return metNoMuMinusOneUpPhi_;
 }
 
 #else

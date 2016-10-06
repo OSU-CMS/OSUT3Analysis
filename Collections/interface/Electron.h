@@ -44,6 +44,16 @@ namespace osu
         const double metNoMuMinusOnePx () const;
         const double metNoMuMinusOnePy () const;
         const double metNoMuMinusOnePhi () const;
+
+        const double metMinusOneUpPt () const;
+        const double metMinusOneUpPx () const;
+        const double metMinusOneUpPy () const;
+        const double metMinusOneUpPhi () const;
+
+        const double metNoMuMinusOneUpPt () const;
+        const double metNoMuMinusOneUpPx () const;
+        const double metNoMuMinusOneUpPy () const;
+        const double metNoMuMinusOneUpPhi () const;
 #else
   class Electron : public GenMatchable<TYPE(electrons), 11>
     {
@@ -74,6 +84,16 @@ namespace osu
         double metNoMuMinusOnePx_;
         double metNoMuMinusOnePy_;
         double metNoMuMinusOnePhi_;
+
+        double metMinusOneUpPt_;
+        double metMinusOneUpPx_;
+        double metMinusOneUpPy_;
+        double metMinusOneUpPhi_;
+
+        double metNoMuMinusOneUpPt_;
+        double metNoMuMinusOneUpPx_;
+        double metNoMuMinusOneUpPy_;
+        double metNoMuMinusOneUpPhi_;
 #endif
 
     };

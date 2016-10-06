@@ -15,7 +15,15 @@ osu::Tau::Tau (const TYPE(taus) &tau) :
   metNoMuMinusOnePt_   (INVALID_VALUE),
   metNoMuMinusOnePx_   (INVALID_VALUE),
   metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  metNoMuMinusOnePhi_  (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
 }
 
@@ -28,7 +36,15 @@ osu::Tau::Tau (const TYPE(taus) &tau, const edm::Handle<vector<osu::Mcparticle> 
   metNoMuMinusOnePt_   (INVALID_VALUE),
   metNoMuMinusOnePx_   (INVALID_VALUE),
   metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  metNoMuMinusOnePhi_  (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
 }
 
@@ -41,7 +57,15 @@ osu::Tau::Tau (const TYPE(taus) &tau, const edm::Handle<vector<osu::Mcparticle> 
   metNoMuMinusOnePt_   (INVALID_VALUE),
   metNoMuMinusOnePx_   (INVALID_VALUE),
   metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  metNoMuMinusOnePhi_  (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
 }
 
@@ -54,10 +78,21 @@ osu::Tau::Tau (const TYPE(taus) &tau, const edm::Handle<vector<osu::Mcparticle> 
   metNoMuMinusOnePt_   (INVALID_VALUE),
   metNoMuMinusOnePx_   (INVALID_VALUE),
   metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  metNoMuMinusOnePhi_  (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
   TVector2 p (met.px () + this->px (), met.py () + this->py ()),
-           pNoMu (met.noMuPx () + this->px (), met.noMuPy () + this->py ());
+           pNoMu (met.noMuPx () + this->px (), met.noMuPy () + this->py ()),
+           p10;
+
+  p10.SetMagPhi (10.0, this->phi ());
 
   metMinusOnePt_ = p.Mod ();
   metMinusOnePx_ = p.Px ();
@@ -68,6 +103,16 @@ osu::Tau::Tau (const TYPE(taus) &tau, const edm::Handle<vector<osu::Mcparticle> 
   metNoMuMinusOnePx_ = pNoMu.Px ();
   metNoMuMinusOnePy_ = pNoMu.Py ();
   metNoMuMinusOnePhi_ = pNoMu.Phi ();
+
+  metMinusOneUpPt_ = (p - p10).Mod ();
+  metMinusOneUpPx_ = (p - p10).Px ();
+  metMinusOneUpPy_ = (p - p10).Py ();
+  metMinusOneUpPhi_ = (p - p10).Phi ();
+
+  metNoMuMinusOneUpPt_ = (pNoMu - p10).Mod ();
+  metNoMuMinusOneUpPx_ = (pNoMu - p10).Px ();
+  metNoMuMinusOneUpPy_ = (pNoMu - p10).Py ();
+  metNoMuMinusOneUpPhi_ = (pNoMu - p10).Phi ();
 }
 
 osu::Tau::~Tau ()
@@ -200,6 +245,54 @@ const double
 osu::Tau::metNoMuMinusOnePhi () const
 {
   return metNoMuMinusOnePhi_;
+}
+
+const double
+osu::Tau::metMinusOneUpPt () const
+{
+  return metMinusOneUpPt_;
+}
+
+const double
+osu::Tau::metMinusOneUpPx () const
+{
+  return metMinusOneUpPx_;
+}
+
+const double
+osu::Tau::metMinusOneUpPy () const
+{
+  return metMinusOneUpPy_;
+}
+
+const double
+osu::Tau::metMinusOneUpPhi () const
+{
+  return metMinusOneUpPhi_;
+}
+
+const double
+osu::Tau::metNoMuMinusOneUpPt () const
+{
+  return metNoMuMinusOneUpPt_;
+}
+
+const double
+osu::Tau::metNoMuMinusOneUpPx () const
+{
+  return metNoMuMinusOneUpPx_;
+}
+
+const double
+osu::Tau::metNoMuMinusOneUpPy () const
+{
+  return metNoMuMinusOneUpPy_;
+}
+
+const double
+osu::Tau::metNoMuMinusOneUpPhi () const
+{
+  return metNoMuMinusOneUpPhi_;
 }
 
 #endif
