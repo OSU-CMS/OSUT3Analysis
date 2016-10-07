@@ -978,6 +978,10 @@ else:
         SubmissionDir = os.getcwd()
         for dataset in split_datasets:
             WorkDir = CondorDir + '/' + str(dataset)
+            if os.path.exists(WorkDir + '/condor_resubmit.sh'):
+                os.chdir(WorkDir)
+                os.system ('./condor_resubmit.sh')
+                os.chdir(SubmissionDir)
             if os.path.exists(WorkDir + '/condor_resubmit.sub'):
                 os.chdir(WorkDir)
                 #If a redirector is defined, switch to the new redirector.
