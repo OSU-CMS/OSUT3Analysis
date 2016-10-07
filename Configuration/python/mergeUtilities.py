@@ -215,6 +215,15 @@ def MakeResubmissionScript(badIndices, originalSubmissionScript):
 
     resubScript.close()
     originalScript.close()
+
+    os.system('touch condor_resubmit.sh')
+    resubScript = open('condor_resubmit.sh','w')
+    resubScript.write ("#!/usr/bin/env bash\n")
+    resubScript.write ("\n")
+    for index in badIndices:
+        resubScript.write ("rm -f condor_" + str(index) + ".*\n")
+    resubScript.close ()
+    os.chmod ("condor_resubmit.sh", 0755)
 ###############################################################################
 #                       Determine whether a skim file is valid.               #
 ###############################################################################
@@ -279,6 +288,8 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
             BadIndices.append(BadIndex)
     if os.path.exists('condor_resubmit.sub'):
         os.remove('condor_resubmit.sub')
+    if os.path.exists('condor_resubmit.sh'):
+        os.remove('condor_resubmit.sh')
     if BadIndices:
         MakeResubmissionScript(BadIndices, 'condor.sub')
     for i in range(0,len(GoodIndices)):
