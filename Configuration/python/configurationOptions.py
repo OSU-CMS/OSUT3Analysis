@@ -94,6 +94,9 @@ datasets = [
    'NoBPTX_2015C_16Dec2015_Ntuple',
    'NoBPTX_2015D_16Dec2015_Ntuple',
 
+   'NoBPTX_2015C_16Dec2015_OnlyControlTriggers_Ntuple',
+   'NoBPTX_2015D_16Dec2015_OnlyControlTriggers_Ntuple',
+
    'NoBPTX_2015B_PromptReco_Cosmic_Ntuple',
    'NoBPTX_2015C_PromptReco_Cosmic_Ntuple',
    'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple',
@@ -509,6 +512,10 @@ composite_dataset_definitions = {
     'NoBPTX_16Dec2015_Ntuple' : [
         'NoBPTX_2015C_16Dec2015_Ntuple',
         'NoBPTX_2015D_16Dec2015_Ntuple',
+        ],
+    'NoBPTX_16Dec2015_OnlyControlTriggers_Ntuple' : [
+        'NoBPTX_2015C_16Dec2015_OnlyControlTriggers_Ntuple',
+        'NoBPTX_2015D_16Dec2015_OnlyControlTriggers_Ntuple',
         ],
     'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : [
         'NoBPTX_2015B_PromptReco_Cosmic_Ntuple',
@@ -1263,6 +1270,10 @@ nJobs = {
     'NoBPTX_2015C_16Dec2015_Ntuple' : 999,
     'NoBPTX_2015D_16Dec2015_Ntuple' : 999,
 
+    'NoBPTX_2015C_16Dec2015_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_2015D_16Dec2015_OnlyControlTriggers_Ntuple' : 999,
+    'NoBPTX_16Dec2015_OnlyControlTriggers_Ntuple' : 999,
+
     'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 999,
     'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 999,
     'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 999,
@@ -2002,6 +2013,10 @@ maxEvents = {
 
     'NoBPTX_2015C_16Dec2015_Ntuple' : -1,
     'NoBPTX_2015D_16Dec2015_Ntuple' : -1,
+
+    'NoBPTX_2015C_16Dec2015_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_2015D_16Dec2015_OnlyControlTriggers_Ntuple' : -1,
+    'NoBPTX_16Dec2015_OnlyControlTriggers_Ntuple' : -1,
 
     'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : -1,
     'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : -1,
@@ -2773,6 +2788,10 @@ types = {
     'NoBPTX_2015D_16Dec2015_Ntuple' : 'data',
     'NoBPTX_16Dec2015_Ntuple' : 'data',
 
+    'NoBPTX_2015C_16Dec2015_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_2015D_16Dec2015_OnlyControlTriggers_Ntuple' : 'data',
+    'NoBPTX_16Dec2015_OnlyControlTriggers_Ntuple' : 'data',
+
     'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 'data',
     'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 'data',
     'NoBPTX_2015Dv3_PromptReco_Cosmic_Ntuple' : 'data',
@@ -3437,20 +3456,20 @@ colors = {
     'mchamp100_NtupleSeparateEvents'   :    1,
     'mchamp200_NtupleSeparateEvents'   :    1,
     'mchamp400_NtupleSeparateEvents'   :    1,
-    'mchamp600_NtupleSeparateEvents'   :    6,
+    'mchamp600_NtupleSeparateEvents'   :    1,
     'mchamp800_NtupleSeparateEvents'   :    1,
-    'mchamp1000_NtupleSeparateEvents'  :    1,
+    'mchamp1000_NtupleSeparateEvents'  :    2,
     'mchamp1400_NtupleSeparateEvents'  :    1,
     'mchamp1800_NtupleSeparateEvents'  :    1,
     'mchamp2200_NtupleSeparateEvents'  :    1,
-    'mchamp2600_NtupleSeparateEvents'  :    1,
+    'mchamp2600_NtupleSeparateEvents'  :    4,
 
     'gluino100_NtupleSeparateEventsParticle0'   : 1,
     'gluino200_NtupleSeparateEventsParticle0'   : 1,
     'gluino400_NtupleSeparateEventsParticle0'   : 1,
     'gluino600_NtupleSeparateEventsParticle0'   : 1,
     'gluino800_NtupleSeparateEventsParticle0'   : 1,
-    'gluino1000_NtupleSeparateEventsParticle0'   : 1,
+    'gluino1000_NtupleSeparateEventsParticle0'   : 2,
     'gluino1200_NtupleSeparateEventsParticle0'   : 1,
     'gluino1400_NtupleSeparateEventsParticle0'   : 1,
     'gluino1600_NtupleSeparateEventsParticle0'   : 1,
@@ -3458,7 +3477,7 @@ colors = {
     'gluino2000_NtupleSeparateEventsParticle0'   : 1,
     'gluino2200_NtupleSeparateEventsParticle0'   : 1,
     'gluino2400_NtupleSeparateEventsParticle0'   : 1,
-    'gluino2600_NtupleSeparateEventsParticle0'   : 1,
+    'gluino2600_NtupleSeparateEventsParticle0'   : 4,
 
     'gluino100_NtupleSeparateEventsParticle1'   : 1,
     'gluino200_NtupleSeparateEventsParticle1'   : 1,
@@ -3480,15 +3499,15 @@ colors = {
     'gluino400_NtupleSeparateEvents'   : 1,
     'gluino600_NtupleSeparateEvents'   : 1,
     'gluino800_NtupleSeparateEvents'   : 1,
-    'gluino1000_NtupleSeparateEvents'   : 1,
+    'gluino1000_NtupleSeparateEvents'   : 2,
     'gluino1200_NtupleSeparateEvents'   : 1,
     'gluino1400_NtupleSeparateEvents'   : 1,
     'gluino1600_NtupleSeparateEvents'   : 1,
     'gluino1800_NtupleSeparateEvents'   : 1,
-    'gluino2000_NtupleSeparateEvents'   : 8,
+    'gluino2000_NtupleSeparateEvents'   : 1,
     'gluino2200_NtupleSeparateEvents'   : 1,
     'gluino2400_NtupleSeparateEvents'   : 1,
-    'gluino2600_NtupleSeparateEvents'   : 1,
+    'gluino2600_NtupleSeparateEvents'   : 4,
 
     ############################################################################
 
@@ -3540,6 +3559,10 @@ colors = {
     'NoBPTX_2015C_16Dec2015_Ntuple' : 1,
     'NoBPTX_2015D_16Dec2015_Ntuple' : 1,
     'NoBPTX_16Dec2015_Ntuple' : 1,
+
+    'NoBPTX_2015C_16Dec2015_OnlyControlTriggers_Ntuple' : 1,
+    'NoBPTX_2015D_16Dec2015_OnlyControlTriggers_Ntuple' : 1,
+    'NoBPTX_16Dec2015_OnlyControlTriggers_Ntuple' : 1,
 
     'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : 1,
     'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : 1,
@@ -4205,16 +4228,16 @@ labels = {
     'mchamp2200_NtupleSeparateEventsParticle1'  :   "Mchamp (Q = 2e, M = 2200 GeV, Separate Events, Particle 1)",
     'mchamp2600_NtupleSeparateEventsParticle1'  :   "Mchamp (Q = 2e, M = 2600 GeV, Separate Events, Particle 1)",
 
-    'mchamp100_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 100 GeV, Separate Events)",
-    'mchamp200_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 200 GeV, Separate Events)",
-    'mchamp400_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 400 GeV, Separate Events)",
-    'mchamp600_NtupleSeparateEvents'   :    "Mchamp (Q = 2e, M = 600 GeV, Separate Events)",
-    'mchamp800_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 800 GeV, Separate Events)",
-    'mchamp1000_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 1000 GeV, Separate Events)",
-    'mchamp1400_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 1400 GeV, Separate Events)",
-    'mchamp1800_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 1800 GeV, Separate Events)",
-    'mchamp2200_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 2200 GeV, Separate Events)",
-    'mchamp2600_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 2600 GeV, Separate Events)",
+    'mchamp100_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 100 GeV)",
+    'mchamp200_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 200 GeV)",
+    'mchamp400_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 400 GeV)",
+    'mchamp600_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 600 GeV)",
+    'mchamp800_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 800 GeV)",
+    'mchamp1000_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 1000 GeV)",
+    'mchamp1400_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 1400 GeV)",
+    'mchamp1800_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 1800 GeV)",
+    'mchamp2200_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 2200 GeV)",
+    'mchamp2600_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 2600 GeV)",
 
     'gluino100_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=100 GeV, M_{#tilde{#chi}^{0}_{2}}=62.5 GeV, M_{#tilde{#chi}^{0}_{LSP}}=25 GeV)",
     'gluino200_NtupleSeparateEventsParticle0'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=200 GeV, M_{#tilde{#chi}^{0}_{2}}=125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=50 GeV)",
@@ -4312,6 +4335,10 @@ labels = {
     'NoBPTX_2015C_16Dec2015_Ntuple' : "NoBPTX 2015C Rerecoed data",
     'NoBPTX_2015D_16Dec2015_Ntuple' : "NoBPTX 2015D Rerecoed data",
     'NoBPTX_16Dec2015_Ntuple' : "NoBPTX 2015C,D Rerecoed data",
+
+    'NoBPTX_2015C_16Dec2015_OnlyControlTriggers_Ntuple' : "NoBPTX 2015C Rerecoed data",
+    'NoBPTX_2015D_16Dec2015_OnlyControlTriggers_Ntuple' : "NoBPTX 2015D Rerecoed data",
+    'NoBPTX_16Dec2015_OnlyControlTriggers_Ntuple' : "NoBPTX 2015C,D Rerecoed data",
 
     'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015B cosmic data",
     'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015C cosmic data",

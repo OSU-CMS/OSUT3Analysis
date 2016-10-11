@@ -332,6 +332,9 @@ dataset_names = {
     'NoBPTX_2015C_16Dec2015_Ntuple' : "/NoBPTX/Run2015C_25ns-16Dec2015-v1/USER",
     'NoBPTX_2015D_16Dec2015_Ntuple' : "/NoBPTX/Run2015D_25ns-16Dec2015-v1/USER",
 
+    'NoBPTX_2015C_16Dec2015_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2015C_25ns-OnlyControlTriggers-16Dec2015-v1/USER",
+    'NoBPTX_2015D_16Dec2015_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2015D_25ns-OnlyControlTriggers-16Dec2015-v1/USER",
+
     'NoBPTX_2016B_PromptReco_Ntuple' : "/NoBPTX/Run2016B-PromptReco-v2/USER",
     'NoBPTX_2016C_PromptReco_Ntuple' : "/NoBPTX/Run2016C-PromptReco-v2/USER",
     'NoBPTX_2016D_PromptReco_Ntuple' : "/NoBPTX/Run2016D-PromptReco-v2/USER",
