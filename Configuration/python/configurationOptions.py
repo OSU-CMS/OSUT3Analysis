@@ -3456,7 +3456,7 @@ colors = {
     'mchamp100_NtupleSeparateEvents'   :    1,
     'mchamp200_NtupleSeparateEvents'   :    1,
     'mchamp400_NtupleSeparateEvents'   :    1,
-    'mchamp600_NtupleSeparateEvents'   :    1,
+    'mchamp600_NtupleSeparateEvents'   :    4,
     'mchamp800_NtupleSeparateEvents'   :    1,
     'mchamp1000_NtupleSeparateEvents'  :    2,
     'mchamp1400_NtupleSeparateEvents'  :    1,
