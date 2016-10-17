@@ -129,11 +129,8 @@ template<class T, class TO> bool
             {
               for (int iCut = cutDecisions->cumulativeObjectFlags.size () - 1; iCut >= 0; iCut--)
                 {
-                  if (cutDecisions->cumulativeObjectFlags.at (iCut).at (collectionToFilter_).at (iObject).second)
-                    {
-                      passes = cutDecisions->cumulativeObjectFlags.at (iCut).at (collectionToFilter_).at (iObject).first;
-                      break;
-                    }
+                  passes = (cutDecisions->cumulativeObjectFlags.at (iCut).at (collectionToFilter_).at (iObject).second ? cutDecisions->cumulativeObjectFlags.at (iCut).at (collectionToFilter_).at (iObject).first : false);
+                  break;
                 }
             }
           if (passes)
