@@ -178,7 +178,7 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
             {
               dRToGenMatchedParticle.bestMatch = dR;
               genMatchedParticle.bestMatch = edm::Ref<vector<osu::Mcparticle> > (particles, particle - particles->begin ());
-              genMatchedParticle.bestMatchPdgId = (particle->isDirectPromptTauDecayProductFinalState () ? 15 : particle->pdgId ());
+              genMatchedParticle.bestMatchPdgId = ((particle->isDirectPromptTauDecayProductFinalState () && abs (particle->pdgId ()) > 100) ? 15 : particle->pdgId ());
             }
         }
       if (particle->isPromptFinalState ())
