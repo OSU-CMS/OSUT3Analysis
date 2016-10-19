@@ -5,7 +5,7 @@ PUAnalyzer::PUAnalyzer (const edm::ParameterSet &cfg) :
 {
   TH1::SetDefaultSumw2 ();
 
-  oneDHists_["pileup"] = fs_->make<TH1D> ("pileup",";pileup", 65, 0, 65);
+  oneDHists_["pileup"] = fs_->make<TH1D> ("pileup",";pileup", 500, 0, 500);
 
   pileUpInfoToken_ = consumes<edm::View<TYPE(pileupinfos)> > (pileUpInfo_);
 }
