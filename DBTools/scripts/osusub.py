@@ -436,8 +436,15 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
             ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("bgMC")')
         elif types[Label] == "signalMC":
-            ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
-            ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
+            if re.match (r"AMSB.*_76X", Label):
+                ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("AMSB_chargino_76X")\n')
+                ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
+            elif re.match (r"AMSB.*_80X", Label):
+                ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("AMSB_chargino_80X")\n')
+                ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
+            else:
+                ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
+                ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
         else:
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n')
             ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("data")')
