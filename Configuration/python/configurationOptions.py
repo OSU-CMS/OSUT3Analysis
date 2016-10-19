@@ -138,6 +138,7 @@ datasets = [
 
    'NoBPTX_Jet_2016BCD_PromptReco',
    'NoBPTX_Jet_2016FG_PromptReco',
+   'NoBPTX_Jet_2016BCDEFG_PromptReco',
    'NoBPTX_CosJet_2016BCDE_PromptReco',
 
    #MiniAOD not stored on T3.
@@ -589,10 +590,19 @@ composite_dataset_definitions = {
        'NoBPTX_Jet_2016C_PromptReco_v2',
        'NoBPTX_Jet_2016D_PromptReco_v2',
     ],
-    'NoBPTX_Jet_2016FG_PromptReco' : [
+    'NoBPTX_Jet_2016EFG_PromptReco' : [
+       'NoBPTX_Jet_2016E_PromptReco_v2',
        'NoBPTX_Jet_2016F_PromptReco_v1',
        'NoBPTX_Jet_2016G_PromptReco_v1',
-       ],
+    ],
+    'NoBPTX_Jet_2016BCDEFG_PromptReco' : [
+       'NoBPTX_Jet_2016B_PromptReco_v2',
+       'NoBPTX_Jet_2016C_PromptReco_v2',
+       'NoBPTX_Jet_2016D_PromptReco_v2',
+       'NoBPTX_Jet_2016E_PromptReco_v2',
+       'NoBPTX_Jet_2016F_PromptReco_v1',
+       'NoBPTX_Jet_2016G_PromptReco_v1',
+    ],
     'NoBPTX_CosJet_2016BCDE_PromptReco' : [
        'NoBPTX_CosJet_2016B_PromptReco_v1',
        'NoBPTX_CosJet_2016B_PromptReco_v2',
@@ -1254,6 +1264,7 @@ nJobs = {
     'NoBPTX_Jet_2016B_PromptReco_v2' : 999,
     'NoBPTX_Jet_2016C_PromptReco_v2' : 999,
     'NoBPTX_Jet_2016D_PromptReco_v2' : 999,
+    'NoBPTX_Jet_2016E_PromptReco_v2' : 999,
     'NoBPTX_Jet_2016F_PromptReco_v1' : 999,
     'NoBPTX_Jet_2016G_PromptReco_v1' : 999,
     'NoBPTX_CosJet_2016B_PromptReco_v1' : 999,
@@ -2011,6 +2022,7 @@ maxEvents = {
     'NoBPTX_Jet_2016B_PromptReco_v2' : -1,
     'NoBPTX_Jet_2016C_PromptReco_v2' : -1,
     'NoBPTX_Jet_2016D_PromptReco_v2' : -1,
+    'NoBPTX_Jet_2016E_PromptReco_v2' : -1,
     'NoBPTX_Jet_2016F_PromptReco_v1' : -1,
     'NoBPTX_Jet_2016G_PromptReco_v1' : -1,
 
@@ -2785,6 +2797,7 @@ types = {
     'NoBPTX_Jet_2016B_PromptReco_v2' : 'data',
     'NoBPTX_Jet_2016C_PromptReco_v2' : 'data',
     'NoBPTX_Jet_2016D_PromptReco_v2' : 'data',
+    'NoBPTX_Jet_2016E_PromptReco_v2' : 'data',
     'NoBPTX_Jet_2016F_PromptReco_v1' : 'data',
     'NoBPTX_Jet_2016G_PromptReco_v1' : 'data',
 
@@ -2879,6 +2892,7 @@ types = {
 
     'NoBPTX_Jet_2016BCD_PromptReco' : 'data',
     'NoBPTX_Jet_2016FG_PromptReco' : 'data',
+    'NoBPTX_Jet_2016BCDEFG_PromptReco' : 'data',
     'NoBPTX_CosJet_2016BCDE_PromptReco' : 'data',
     ############################################################################
 
@@ -3566,10 +3580,12 @@ colors = {
     'NoBPTX_Jet_2016B_PromptReco_v2' : 1,
     'NoBPTX_Jet_2016C_PromptReco_v2' : 1,
     'NoBPTX_Jet_2016D_PromptReco_v2' : 1,
+    'NoBPTX_Jet_2016E_PromptReco_v2' : 1,
     'NoBPTX_Jet_2016F_PromptReco_v1' : 1,
     'NoBPTX_Jet_2016G_PromptReco_v1' : 1,
     'NoBPTX_Jet_2016BCD_PromptReco' : 1,
     'NoBPTX_Jet_2016FG_PromptReco' : 1,
+    'NoBPTX_Jet_2016BCDEFG_PromptReco' : 1,
 
     'NoBPTX_CosJet_2016B_PromptReco_v1' : 1,
     'NoBPTX_CosJet_2016B_PromptReco_v2' : 1,
@@ -4351,10 +4367,12 @@ labels = {
     'NoBPTX_Jet_2016B_PromptReco_v2'     : "NoBPTX 2016B_v2 data",
     'NoBPTX_Jet_2016C_PromptReco_v2'     : "NoBPTX 2016C_v2 data",
     'NoBPTX_Jet_2016D_PromptReco_v2'     : "NoBPTX 2016D_v2 data",
+    'NoBPTX_Jet_2016E_PromptReco_v2'     : "NoBPTX 2016E_v2 data",
     'NoBPTX_Jet_2016F_PromptReco_v1'     : "NoBPTX 2016F_v1 data",
     'NoBPTX_Jet_2016G_PromptReco_v1'     : "NoBPTX 2016G_v1 data",
     'NoBPTX_Jet_2016BCD_PromptReco' : "NoBPTX 2016 BCD Search data",
     'NoBPTX_Jet_2016FG_PromptReco' : "NoBPTX 2016 FG Search data",
+    'NoBPTX_Jet_2016BCDEFG_PromptReco' : "NoBPTX 2016 BCDEFG Search data",
 
     'NoBPTX_CosJet_2016B_PromptReco_v1' : "NoBPTX 2016B_v1 cosmic data",
     'NoBPTX_CosJet_2016B_PromptReco_v2' : "NoBPTX 2016B_v2 cosmic data",
