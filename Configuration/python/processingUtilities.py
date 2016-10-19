@@ -170,23 +170,6 @@ def add_stops (options, masses, ctaus, bottomBranchingRatios = [], rHadron = Tru
                     options['labels'][topDatasetName] += " (PYTHIA6)"
                     options['labels'][mixedDatasetName] += " (PYTHIA6)"
 
-
-def chargino_ctau (dataset):
-    if not re.match (r"AMSB_chargino_.*GeV_RewtCtau.*cm", dataset):
-        return -99.0
-    return float (re.sub (r"AMSB_chargino_[^_]*GeV_RewtCtau([^_]*)cm", r"\1", dataset))
-
-def source_chargino_ctau (ctau):
-    # Units of ctau are cm.
-    # Choose as the source the next sample with ctau larger than the target.
-    if ctau <= 10:
-        src_ctau = 10
-    elif ctau <= 100:
-        src_ctau = 100
-    else:
-        src_ctau = 1000
-    return float(src_ctau)
-
 def get_collections (cuts):
     ############################################################################
     # Return a list of collections on which cuts are applied with duplicates
