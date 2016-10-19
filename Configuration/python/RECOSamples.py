@@ -264,6 +264,7 @@ dataset_names = {
     'NoBPTX_Jet_2016B_PromptReco_v2' : "/NoBPTX/Run2016B-PromptReco-v2_SP/USER", #271036_275125
     'NoBPTX_Jet_2016C_PromptReco_v2' : "/NoBPTX/Run2016C-PromptReco-v2_SP/USER",
     'NoBPTX_Jet_2016D_PromptReco_v2' : "/NoBPTX/Run2016D-PromptReco-v2_SP/USER",
+    'NoBPTX_Jet_2016E_PromptReco_v2' : "/NoBPTX/Run2016E-PromptReco-v2_SP/USER",
     'NoBPTX_Jet_2016F_PromptReco_v1' : "/NoBPTX/Run2016F-PromptReco-v1_SP/USER",
     'NoBPTX_Jet_2016G_PromptReco_v1' : "/NoBPTX/Run2016G-PromptReco-v1_SP/USER",
 
@@ -281,6 +282,7 @@ dataset_names = {
     'NoBPTX_2016E_PromptReco_AOD' : "/NoBPTX/Run2016E-PromptReco-v2/AOD",
     'NoBPTX_2016F_PromptReco_AOD' : "/NoBPTX/Run2016F-PromptReco-v1/AOD",
     'NoBPTX_2016G_PromptReco_AOD' : "/NoBPTX/Run2016G-PromptReco-v1/AOD",
+    'NoBPTX_2016H_PromptReco_AOD' : "/NoBPTX/Run2016H-PromptReco-v2/AOD",
 
     'NoBPTX_2016B_PromptReco' : "/NoBPTX/Run2016B-PromptReco-v2/RECO",
     'NoBPTX_2016C_PromptReco' : "/NoBPTX/Run2016C-PromptReco-v2/RECO",
@@ -288,6 +290,7 @@ dataset_names = {
     'NoBPTX_2016E_PromptReco' : "/NoBPTX/Run2016E-PromptReco-v2/RECO",
     'NoBPTX_2016F_PromptReco' : "/NoBPTX/Run2016F-PromptReco-v1/RECO",
     'NoBPTX_2016G_PromptReco' : "/NoBPTX/Run2016G-PromptReco-v1/RECO",
+    'NoBPTX_2016H_PromptReco' : "/NoBPTX/Run2016H-PromptReco-v2/RECO",
 
     'NoBPTX_2015C_16Dec2015' : "/NoBPTX/Run2015C_25ns-16Dec2015-v1/RECO",
     'NoBPTX_2015D_16Dec2015' : "/NoBPTX/Run2015D-16Dec2015-v1/RECO",
@@ -320,6 +323,7 @@ dataset_names = {
     'NoBPTX_2016E_PromptReco_Jets_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016E-Jets-OnlyControlTriggers-PromptReco-v2/USER",
     'NoBPTX_2016F_PromptReco_Jets_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016F-Jets-OnlyControlTriggers-PromptReco-v2/USER",
     'NoBPTX_2016G_PromptReco_Jets_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016G-Jets-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016H_PromptReco_Jets_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016H-Jets-OnlyControlTriggers-PromptReco-v2/USER",
 
 ################## SP ntuples to study rpc hits##################
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "/HSCPgluino_gChi0_13TeV-pythia6/RunIISpring15-74x_mcRun2_StoppPtls_gluino_1200_chi0_1000_rpcstudyFrate0p4/USER",
@@ -343,11 +347,15 @@ dataset_names = {
     'NoBPTX_2016E_PromptReco_Ntuple' : "/NoBPTX/Run2016E-PromptReco-v2/USER",
     'NoBPTX_2016F_PromptReco_Ntuple' : "/NoBPTX/Run2016F-PromptReco-v2/USER",
     'NoBPTX_2016G_PromptReco_Ntuple' : "/NoBPTX/Run2016G-PromptReco-v2/USER",
+    'NoBPTX_2016H_PromptReco_Ntuple' : "/NoBPTX/Run2016H-PromptReco-v2/USER",
 
     'NoBPTX_2016B_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016B-OnlyControlTriggers-PromptReco-v2/USER",
     'NoBPTX_2016C_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016C-OnlyControlTriggers-PromptReco-v2/USER",
     'NoBPTX_2016D_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016D-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016E_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016E-OnlyControlTriggers-PromptReco-v2/USER",
     'NoBPTX_2016F_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016F-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016G_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016G-OnlyControlTriggers-PromptReco-v2/USER",
+    'NoBPTX_2016H_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016H-OnlyControlTriggers-PromptReco-v2/USER",
 
 ################## Delayed Muon Ntuples stored on T3 ############
 ########################## data ##########################
