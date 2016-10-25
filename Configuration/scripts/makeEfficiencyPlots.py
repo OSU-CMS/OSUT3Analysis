@@ -293,7 +293,6 @@ def MakeOneHist(dirName, histogramName):
                 Histogram.Rebin(RebinFactor)
                 DenHistogram.Rebin(RebinFactor)
 
-
         xAxisLabel = Histogram.GetXaxis().GetTitle()
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
@@ -572,4 +571,3 @@ for key in gDirectory.GetListOfKeys(): # Loop over directories in same way as in
 testFile.Close()
 outputFile.Close()
 print "Finished writing " + outputFile.GetName()
-

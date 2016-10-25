@@ -40,5 +40,3 @@ collectionMapAOD = cms.PSet (
     photons           =  cms.InputTag  ('photons'),
     primaryvertexs    =  cms.InputTag  ('offlinePrimaryVertices'),
 )
-
-

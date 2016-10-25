@@ -25,6 +25,7 @@ InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
   printTriggerFilterFlags_     (cfg.getParameter<bool>                   ("printTriggerFilterFlags")),
   printTriggerInMenuFlags_     (cfg.getParameter<bool>                   ("printTriggerInMenuFlags")),
   printAllTriggers_            (cfg.getParameter<bool>                   ("printAllTriggers")),
+  printAllTriggerFilters_      (cfg.getParameter<bool>                   ("printAllTriggerFilters")),
   valuesToPrint_               (cfg.getParameter<edm::VParameterSet>     ("valuesToPrint")),
   firstEvent_ (true),
   counter_ (0),
@@ -59,7 +60,6 @@ void
 InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
   counter_++;
-
 
   anatools::getRequiredCollections (objectsToGet_, handles_, event, tokens_);
 
@@ -114,6 +114,7 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       printCutDecision_            &&  printCutDecision            ();
       printEventDecision_          &&  printEventDecision          ();
       printAllTriggers_            &&  printAllTriggers            (event);
+      printAllTriggerFilters_      &&  printAllTriggerFilters      (event);
       ss_ << "================================================================================" << endl;
     }
   //////////////////////////////////////////////////////////////////////////////
@@ -473,6 +474,41 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
   return true;
 }
 
+bool
+InfoPrinter::printAllTriggerFilters (const edm::Event &event)
+{
+  ss_ << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << "\033[1;35mavailable trigger filters\033[0m" << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  vector<string> triggerFilters;
+  if (!handles_.triggers.isValid()) {
+    ss_ << "\033[1;31mERROR\033[0m" << " [InfoPrinter::printAllTriggerFilters]:  Invalid triggers handle." << endl;
+    return false;
+  }
+  if (!handles_.trigobjs.isValid()) {
+    ss_ << "\033[1;31mERROR\033[0m" << " [InfoPrinter::printAllTriggerFilters]:  Invalid trigobjs handle." << endl;
+    return false;
+  }
+
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
+  const edm::TriggerNames &triggerNames = event.triggerNames(*handles_.triggers);
+  for(auto triggerObj : *handles_.trigobjs) {
+    triggerObj.unpackPathNames(triggerNames);
+    for(const auto &filterLabel : triggerObj.filterLabels()) triggerFilters.push_back(filterLabel);
+  }
+
+#else
+  #error "Data format is not valid."
+#endif
+
+  for(const auto &filter : triggerFilters) {
+    ss_ << "\033[1;34m" << setw (maxAllTriggerWidth_) << left << filter << "\033[0m";
+  }
+
+  return true;
+}
+
 unsigned
 InfoPrinter::getMaxWidth (const vector<string> &list) const
 {
@@ -632,6 +668,11 @@ InfoPrinter::unpackValuesToPrint ()
     {
       objectsToGet_.insert ("triggers");
       objectsToGet_.insert ("prescales");
+    }
+  if (printAllTriggerFilters_)
+    {
+      objectsToGet_.insert ("triggers");
+      objectsToGet_.insert ("trigobjs");
     }
 }
 
