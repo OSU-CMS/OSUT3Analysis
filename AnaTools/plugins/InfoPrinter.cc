@@ -491,7 +491,7 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
     return false;
   }
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
   const edm::TriggerNames &triggerNames = event.triggerNames(*handles_.triggers);
   for(auto triggerObj : *handles_.trigobjs) {
     triggerObj.unpackPathNames(triggerNames);
