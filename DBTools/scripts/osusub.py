@@ -56,6 +56,7 @@ parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Deter
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")
 parser.add_option("-W", "--AllowDataWeights", dest="AllowDataWeights", action="store_true", default = False, help="Use event weights, even for a data dataset.")
 parser.add_option("-H", "--skimToHadoop", dest="skimToHadoop", default = "", help="If producing a skim, put in on Hadoop, in the given directory.")
+parser.add_option("--pileupTarget", dest="pileupTarget", default = "", help="Explicitly specify the target histogram for pileup reweighting.")
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")
 parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  # See https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/65
@@ -436,15 +437,15 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
             ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("bgMC")')
         elif types[Label] == "signalMC":
-            if re.match (r"AMSB.*_76X", Label):
+            if arguments.pileupTarget:
+                ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' + arguments.pileupTarget + '")\n')
+            elif re.match (r"AMSB.*_76X", Label):
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("AMSB_chargino_76X")\n')
-                ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
             elif re.match (r"AMSB.*_80X", Label):
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("AMSB_chargino_80X")\n')
-                ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
             else:
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
-                ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
         else:
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n')
             ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("data")')
