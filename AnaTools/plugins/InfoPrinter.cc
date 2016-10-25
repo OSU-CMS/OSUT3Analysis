@@ -498,8 +498,6 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
     for(const auto &filterLabel : triggerObj.filterLabels()) triggerFilters.push_back(filterLabel);
   }
 
-#else
-  #error "Data format is not valid."
 #endif
 
   for(const auto &filter : triggerFilters) {
