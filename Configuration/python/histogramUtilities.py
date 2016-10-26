@@ -4,7 +4,23 @@
 
 from array import * 
 import math 
-from ROOT import TFile, TH1F, TMath, Double  
+from ROOT import TFile, TH1F, TMath, Double, TH1D, TGraphAsymmErrors
+
+def getEfficiency(passes, passesError, total, totalError):
+    passesHist = TH1D ("passes", "", 1, 0.0, 1.0)
+    totalHist = TH1D ("total", "", 1, 0.0, 1.0)
+
+    passesHist.SetBinContent (1, passes)
+    passesHist.SetBinError (1, passesError)
+    totalHist.SetBinContent (1, total)
+    totalHist.SetBinError (1, totalError)
+
+    g = TGraphAsymmErrors (passesHist, totalHist)
+    x = Double (0.0)
+    y = Double (0.0)
+    g.GetPoint (0, x, y)
+
+    return (y, g.GetErrorYlow (0), g.GetErrorYhigh (0))
 
 def getYield(sample,condor_dir,channel):
     dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
