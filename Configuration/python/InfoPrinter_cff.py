@@ -24,4 +24,5 @@ infoPrinter = cms.EDAnalyzer ("InfoPrinter",
     printCutDecision            =  cms.bool  (False),  # print whether the event passes all cuts, not including the triggers
     printEventDecision          =  cms.bool  (False),  # print whether the event passes the triggers and all cuts
     printAllTriggers            =  cms.bool  (False),  # print all triggers in the event
+    printAllTriggerFilters      =  cms.bool  (False),  # print all trigger filters in the event
 )

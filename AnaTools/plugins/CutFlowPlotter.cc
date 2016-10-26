@@ -75,13 +75,22 @@ CutFlowPlotter::~CutFlowPlotter ()
          << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
       //         << setw (15) << setprecision(3) << 100.0 * (minusOne  / (double) totalEvents) << "%"
          << endl;
-    if (name.Contains("trigger")) {  
-      for (uint j=0; j<triggers_.size(); j++) { 
+
+    if(name.Contains("triggerFilter")) {
+      for(uint j = 0; j < triggerFilters_.size(); j++) {
+        clog << " " << triggerFilters_.at(j);
+        if(j < triggerFilters_.size() - 1) clog << " OR";
+        clog << endl;
+      }
+    }
+
+    else if(name.Contains("trigger")) {
+      for(uint j = 0; j < triggers_.size(); j++) {
       	clog << "  " << triggers_.at(j);
-      	if (j< triggers_.size() - 1) clog << " OR";  // all but the last one
+      	if(j < triggers_.size() - 1) clog << " OR";  // all but the last one
       	clog << endl;
       }
-      for (uint j=0; j<triggersToVeto_.size(); j++) {
+      for(uint j = 0; j < triggersToVeto_.size(); j++) {
       	clog << "  AND NOT " << triggersToVeto_.at(j) << endl;
       }
     }
@@ -176,12 +185,13 @@ CutFlowPlotter::initializeCutFlow ()
   //////////////////////////////////////////////////////////////////////////////
   // Save in triggers_ a private copy of the list of triggers (which is the same for every event).
   // This is needed because the CutCalculatorPayload object is not available in the
-  // destructor, when the terminal output is produced.  
+  // destructor, when the terminal output is produced.
   //////////////////////////////////////////////////////////////////////////////
   triggers_ = cutDecisions->triggers;
   triggersToVeto_ = cutDecisions->triggersToVeto;
+  triggerFilters_ = cutDecisions->triggerFilters;
   //////////////////////////////////////////////////////////////////////////////
- 
+
   // Return true if the initialization was successful.
   return true;
 }
