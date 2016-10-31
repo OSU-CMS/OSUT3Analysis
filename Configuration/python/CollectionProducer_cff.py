@@ -37,6 +37,7 @@ collectionProducer.beamspots = cms.EDProducer ("OSUBeamspotProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.bjets = cms.EDProducer ("OSUBjetProducer",
+    rho = cms.InputTag("fixedGridRhoFastjetAll", "", ""),
 )
 copyConfiguration (collectionProducer.bjets, collectionProducer.genMatchables)
 
@@ -95,6 +96,7 @@ copyConfiguration (collectionProducer.genjets, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------
 
 collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
+    rho = cms.InputTag("fixedGridRhoFastjetAll", "", ""),
 )
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
 

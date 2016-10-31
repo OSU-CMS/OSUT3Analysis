@@ -453,7 +453,7 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
       bool pass = handles_.triggers->accept (i);
       unsigned prescale = handles_.prescales->getPrescaleForIndex (i);
 #else
-  #error "Data format is not valid."
+  #warning "Object \"triggers\" is not valid in requested data format."
 #endif
       triggers[name] = make_pair (pass, prescale);
     }
@@ -498,6 +498,8 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
     for(const auto &filterLabel : triggerObj.filterLabels()) triggerFilters.push_back(filterLabel);
   }
 
+#else
+  #warning "Object \"triggers\" is not valid in requested data format."
 #endif
 
   for(const auto &filter : triggerFilters) {

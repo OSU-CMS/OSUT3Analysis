@@ -4,14 +4,21 @@
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#include "JetMETCorrections/Modules/interface/JetResolution.h"
+#include "TRandom3.h"
+#endif
+
 OSUBjetProducer::OSUBjetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
-  cfg_ (cfg)
+  rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
+  cfg_         (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("bjets");
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   electrons_ = collections_.getParameter<edm::InputTag> ("electrons");
   muons_ = collections_.getParameter<edm::InputTag> ("muons");
+  genjets_ = collections_.getParameter<edm::InputTag> ("genjets");
 #endif
   produces<vector<osu::Bjet> > (collection_.instance ());
 
@@ -20,6 +27,8 @@ OSUBjetProducer::OSUBjetProducer (const edm::ParameterSet &cfg) :
   electronToken_ = consumes<vector<TYPE(electrons)> > (electrons_);
   muonToken_ = consumes<vector<TYPE(muons)> > (muons_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
+  genjetsToken_ = consumes<vector<TYPE(genjets)> > (genjets_);
+  rhoToken_ = consumes<double> (rho_);
 #endif
 }
 
@@ -38,6 +47,28 @@ OSUBjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.getByToken (mcparticleToken_, particles);
 
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+  // get JetCorrector parameters to get the jec uncertainty
+  edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
+  setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
+  JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"];
+  JetCorrectionUncertainty * jecUnc = new JetCorrectionUncertainty(JetCorPar);
+
+  // get jet energy resolution
+  JME::JetResolution jetEnergyResolution = JME::JetResolution::get(setup, "AK4PFchs_pt");
+  JME::JetResolutionScaleFactor jetEnergyResolutionSFs = JME::JetResolutionScaleFactor::get(setup, "AK4PFchs");
+  JME::JetParameters jetResParams;
+
+  // get genjets for JER smearing matching
+  edm::Handle<vector<TYPE(genjets)> > genjets;
+  bool hasGenJets = event.getByToken (genjetsToken_, genjets);
+
+  // get rho for JER smearing
+  edm::Handle<double> rho;
+  event.getByToken (rhoToken_, rho);
+
+  // RNG for gaussian JER smearing (when there is no genjet match)
+  TRandom3 * rng = new TRandom3(0);
+
   // get lepton collections for cross-cleaning
   edm::Handle<vector<TYPE (electrons)> > electrons;
   if (!event.getByToken (electronToken_, electrons))
@@ -52,21 +83,21 @@ OSUBjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   for (const auto &electron : *electrons){
     bool passElectronID = false;
     if ((electron.isEB() &&                                             \
-	 electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 2 && \
-	 abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00926 &&     \
-	 abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0336 &&      \
-	 electron.full5x5_sigmaIetaIeta() < 0.0101 &&                    \
-	 electron.hadronicOverEm() < 0.0597 &&                           \
-	 abs(1.0/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.012 && \
-	 electron.passConversionVeto()) ||                               \
-	(electron.isEE() &&                                               \
-	 electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 && \
-	 abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00724 &&      \
-	 abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0918 &&       \
-	 electron.full5x5_sigmaIetaIeta() < 0.0279 &&                     \
-	 electron.hadronicOverEm() < 0.0615 &&                            \
-	 abs(1/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.00999 && \
-	 electron.passConversionVeto())){
+	      electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 2 && \
+	      abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00926 &&     \
+	      abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0336 &&      \
+	      electron.full5x5_sigmaIetaIeta() < 0.0101 &&                    \
+	      electron.hadronicOverEm() < 0.0597 &&                           \
+	      abs(1.0/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.012 && \
+	      electron.passConversionVeto()) ||                               \
+	      (electron.isEE() &&                                               \
+	         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 && \
+	         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00724 &&      \
+	         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0918 &&       \
+	         electron.full5x5_sigmaIetaIeta() < 0.0279 &&                     \
+	         electron.hadronicOverEm() < 0.0615 &&                            \
+	         abs(1/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.00999 && \
+	         electron.passConversionVeto())) {
       passElectronID = true;
     }
     if (passElectronID == false) continue;
@@ -101,34 +132,87 @@ OSUBjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
       bjet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(bjet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-      bjet.set_pfCombinedSecondaryVertexV2BJetTags(bjet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags")); 
+      bjet.set_pfCombinedSecondaryVertexV2BJetTags(bjet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
       bjet.set_pileupJetId(bjet.userFloat("pileupJetId:fullDiscriminant"));
-      
+
+      jecUnc->setJetEta(bjet.eta());
+      jecUnc->setJetPt(bjet.pt());
+      bjet.set_jecUncertainty(jecUnc->getUncertainty(true));
+
+      jetResParams.setJetPt(bjet.pt());
+      jetResParams.setJetEta(bjet.pt());
+      jetResParams.setRho((float)(*rho));
+      bjet.set_jetPtResolution(jetEnergyResolution.getResolution(jetResParams));
+      bjet.set_setJetPtResolutionSF(jetEnergyResolutionSFs.getScaleFactor(jetResParams),
+                                    jetEnergyResolutionSFs.getScaleFactor(jetResParams, Variation::UP),
+                                    jetEnergyResolutionSFs.getScaleFactor(jetResParams, Variation::DOWN));
+
+      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Smearing_procedures
+      if(hasGenJets) {
+        bool isMatchedToGenJet = false;
+        for (const auto &genjet : *genjets) {
+          double dR = deltaR (genjet, bjet);
+          double dPt = bjet.pt() - genjet.pt();
+
+          if(dR < 0.2 && fabs(dPt) < 3.0 * bjet.jer()) {
+            bjet.set_smearedPt(max(0.0, genjet.pt() + bjet.jerSF() * dPt));
+            bjet.set_smearedPtUp(max(0.0, genjet.pt() + bjet.jerSFUp() * dPt));
+            bjet.set_smearedPtDown(max(0.0, genjet.pt() + bjet.jerSFDown() * dPt));
+
+            isMatchedToGenJet = true;
+            break;
+          }
+        }
+        if(!isMatchedToGenJet) {
+
+          if(bjet.jerSF() > 1.0) {
+            double smearedPt = rng->Gaus(bjet.pt(),
+                                         sqrt(bjet.jerSF() * bjet.jerSF() - 1) * bjet.jer());
+
+            bjet.set_smearedPt(smearedPt);
+            bjet.set_smearedPtUp(smearedPt * bjet.jerSFUp() / bjet.jerSF());
+            bjet.set_smearedPtDown(smearedPt * bjet.jerSFDown() / bjet.jerSF());
+          }
+          else {
+            bjet.set_smearedPt(INVALID_VALUE);
+            bjet.set_smearedPtUp(INVALID_VALUE);
+            bjet.set_smearedPtDown(INVALID_VALUE);
+          }
+
+        }
+
+      } // if(hasGenjets)
+      else {
+        bjet.set_smearedPt(INVALID_VALUE);
+        bjet.set_smearedPtUp(INVALID_VALUE);
+        bjet.set_smearedPtDown(INVALID_VALUE);
+      }
+
       double maxDeltaR_ = 0.3;
 
       int isMatchedToElectron = 0;
       for (const auto &electron : goodElectrons){
-	double dR = deltaR (*electron, bjet);
-	if (dR < maxDeltaR_){
-          isMatchedToElectron = true;
-          break;
-	}
+	       double dR = deltaR (*electron, bjet);
+	        if (dR < maxDeltaR_) {
+            isMatchedToElectron = true;
+            break;
+          }
       }
 
       bool isMatchedToMuon = false;
       for (const auto &muon : goodMuons){
-	double dR = deltaR (*muon, bjet);
-        if (dR < maxDeltaR_){
+	       double dR = deltaR (*muon, bjet);
+         if (dR < maxDeltaR_) {
           isMatchedToMuon = true;
           break;
-        }
+         }
       }
 
       if (isMatchedToElectron == 1 || isMatchedToMuon == 1)
         bjet.set_matchedToLepton(1);
       else
         bjet.set_matchedToLepton(0);
-#endif     
+#endif
     }
 
   event.put (pl_, collection_.instance ());

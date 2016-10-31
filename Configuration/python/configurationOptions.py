@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 config_file = "standardConfig_cfg.py"
 
 ###### 2015A = 961 pb-1
@@ -15,6 +14,13 @@ datasets = [
    #data
    'DoubleMu_2015',
    'DoubleMu_2015D',
+   'DoubleMu_2016',
+   'DoubleMu_2016B',
+   'DoubleMu_2016C',
+   'DoubleMu_2016D',
+   'DoubleMu_2016E',
+   'DoubleMu_2016F',
+   'DoubleMu_2016G',
    'Tau_2015',
    'Tau_2015D',
    'Tau_2016',
@@ -319,6 +325,14 @@ composite_dataset_definitions = {
         'DoubleMu_2015B',
         'DoubleMu_2015C',
         'DoubleMu_2015D',
+    ],
+    'DoubleMu_2016' : [
+        'DoubleMu_2016B',
+        'DoubleMu_2016C',
+        'DoubleMu_2016D',
+        'DoubleMu_2016E',
+        'DoubleMu_2016F',
+        'DoubleMu_2016G',
     ],
     'Tau_2015' : [
         'Tau_2015B',
@@ -817,6 +831,12 @@ nJobs = {
     'DoubleMu_2015B'   :  40,
     'DoubleMu_2015C'   : 187,
     'DoubleMu_2015D': 1000,
+    'DoubleMu_2016B' : 1000,
+    'DoubleMu_2016C' : 1000,
+    'DoubleMu_2016D' : 1000,
+    'DoubleMu_2016E' : 1000,
+    'DoubleMu_2016F' : 1000,
+    'DoubleMu_2016G' : 1000,
 
     'Tau_2015D'  :  1000,
     'Tau_2016B'  :  1000,
@@ -1604,6 +1624,12 @@ maxEvents = {
     'DoubleMu_2015B'       : -1,
     'DoubleMu_2015C'       : -1,
     'DoubleMu_2015D'    : -1,
+    'DoubleMu_2016B' : -1,
+    'DoubleMu_2016C' : -1,
+    'DoubleMu_2016D' : -1,
+    'DoubleMu_2016E' : -1,
+    'DoubleMu_2016F' : -1,
+    'DoubleMu_2016G' : -1,
 
     'Tau_2015D'       : -1,
     'Tau_2016B'       : -1,
@@ -2402,6 +2428,13 @@ types = {
     'DoubleMu_2015C'   : "data",
     'DoubleMu_2015D'   : "data",
     'DoubleMu_2015'    : "data",
+    'DoubleMu_2016B'   : "data",
+    'DoubleMu_2016C'   : "data",
+    'DoubleMu_2016D'   : "data",
+    'DoubleMu_2016E'   : "data",
+    'DoubleMu_2016F'   : "data",
+    'DoubleMu_2016G'   : "data",
+    'DoubleMu_2016'    : "data",
 
     'Tau_2015D'    : "data",
     'Tau_2016B'    : "data",
@@ -3219,6 +3252,13 @@ colors = {
     'DoubleMu_2015C'   : 1,
     'DoubleMu_2015D'   : 1,
     'DoubleMu_2015'   : 1,
+    'DoubleMu_2016B'  : 1,
+    'DoubleMu_2016C'  : 1,
+    'DoubleMu_2016D'  : 1,
+    'DoubleMu_2016E'  : 1,
+    'DoubleMu_2016F'  : 1,
+    'DoubleMu_2016G'  : 1,
+    'DoubleMu_2016'   : 1,
 
     'Tau_2015D'  :  1,
     'Tau_2016B'  :  1,
@@ -4028,6 +4068,13 @@ labels = {
     'DoubleMu_2015B'     : "DoubleMu 2015B data",
     'DoubleMu_2015C'     : "DoubleMu 2015C data",
     'DoubleMu_2015D'     : "DoubleMu 2015D data",
+    'DoubleMu_2016'      : "Double Muon 2016 data",
+    'DoubleMu_2016B'     : "DoubleMu 2016B data",
+    'DoubleMu_2016C'     : "DoubleMu 2016C data",
+    'DoubleMu_2016D'     : "DoubleMu 2016D data",
+    'DoubleMu_2016E'     : "DoubleMu 2016E data",
+    'DoubleMu_2016F'     : "DoubleMu 2016F data",
+    'DoubleMu_2016G'     : "DoubleMu 2016G data",
 
     'Tau_2015D'  :  "Tau 2015D data",
     'Tau_2016B'  :  "Tau 2016B data",

@@ -12,7 +12,15 @@ osu::Jet::Jet (const TYPE(jets) &jet) :
   matchedToLepton_                               (INVALID_VALUE),
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE),
-  pileupJetId_                                   (INVALID_VALUE)
+  pileupJetId_                                   (INVALID_VALUE),
+  jecUncertainty_                                (INVALID_VALUE),
+  jetPtResolution_                               (INVALID_VALUE),
+  jetPtResolutionSF_                             (INVALID_VALUE),
+  jetPtResolutionSFUp_                           (INVALID_VALUE),
+  jetPtResolutionSFDown_                         (INVALID_VALUE),
+  smearedPt_                                     (INVALID_VALUE),
+  smearedPtUp_                                   (INVALID_VALUE),
+  smearedPtDown_                                 (INVALID_VALUE)
 {
 }
 
@@ -21,7 +29,15 @@ osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> 
   matchedToLepton_                               (INVALID_VALUE),
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE),
-  pileupJetId_                                   (INVALID_VALUE)
+  pileupJetId_                                   (INVALID_VALUE),
+  jecUncertainty_                                (INVALID_VALUE),
+  jetPtResolution_                               (INVALID_VALUE),
+  jetPtResolutionSF_                             (INVALID_VALUE),
+  jetPtResolutionSFUp_                           (INVALID_VALUE),
+  jetPtResolutionSFDown_                         (INVALID_VALUE),
+  smearedPt_                                     (INVALID_VALUE),
+  smearedPtUp_                                   (INVALID_VALUE),
+  smearedPtDown_                                 (INVALID_VALUE)
 {
 }
 
@@ -30,7 +46,15 @@ osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> 
   matchedToLepton_                               (INVALID_VALUE),
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE),
-  pileupJetId_                                   (INVALID_VALUE)
+  pileupJetId_                                   (INVALID_VALUE),
+  jecUncertainty_                                (INVALID_VALUE),
+  jetPtResolution_                               (INVALID_VALUE),
+  jetPtResolutionSF_                             (INVALID_VALUE),
+  jetPtResolutionSFUp_                           (INVALID_VALUE),
+  jetPtResolutionSFDown_                         (INVALID_VALUE),
+  smearedPt_                                     (INVALID_VALUE),
+  smearedPtUp_                                   (INVALID_VALUE),
+  smearedPtDown_                                 (INVALID_VALUE)
 {
 }
 
@@ -56,6 +80,54 @@ const float
 osu::Jet::pileupJetId () const
 {
   return pileupJetId_;
+}
+
+const float
+osu::Jet::jecUncertainty () const
+{
+  return jecUncertainty_;
+}
+
+const float
+osu::Jet::jer () const
+{
+  return jetPtResolution_;
+}
+
+const float
+osu::Jet::jerSF () const
+{
+  return jetPtResolutionSF_;
+}
+
+const float
+osu::Jet::jerSFUp () const
+{
+  return jetPtResolutionSFUp_;
+}
+
+const float
+osu::Jet::jerSFDown () const
+{
+  return jetPtResolutionSFDown_;
+}
+
+const float
+osu::Jet::smearedPt () const
+{
+  return smearedPt_;
+}
+
+const float
+osu::Jet::smearedPtUp () const
+{
+  return smearedPtUp_;
+}
+
+const float
+osu::Jet::smearedPtDown () const
+{
+  return smearedPtDown_;
 }
 
 #elif DATA_FORMAT == AOD_CUSTOM
