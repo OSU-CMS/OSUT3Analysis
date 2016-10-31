@@ -6,12 +6,17 @@
 
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
+#include "CondFormats/DataRecord/interface/JetResolutionRcd.h"
+#include "CondFormats/DataRecord/interface/JetResolutionScaleFactorRcd.h"
 #include "TRandom3.h"
 #endif
 
 OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
+  jetResolutionPayload_ (cfg.getParameter<string> ("jetResolutionPayload")),
+  jetResSFPayload_      (cfg.getParameter<string> ("jetResSFPayload")),
+  jetResFromGlobalTag_  (cfg.getParameter<bool> ("jetResFromGlobalTag")),
   cfg_         (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
@@ -53,9 +58,17 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"];
   JetCorrectionUncertainty * jecUnc = new JetCorrectionUncertainty(JetCorPar);
 
-  // get jet energy resolution
-  JME::JetResolution jetEnergyResolution = JME::JetResolution::get(setup, "AK4PFchs_pt");
-  JME::JetResolutionScaleFactor jetEnergyResolutionSFs = JME::JetResolutionScaleFactor::get(setup, "AK4PFchs");
+  // Get jet energy resolution and scale factors
+  // These are in the Global Tag for 80X but not for 76X,
+  // Configuration/python/collectionProducer_cff.py looks at $CMSSW_BASE to set this choice
+  JME::JetResolution jetEnergyResolution = (jetResFromGlobalTag_) ?
+                                              JME::JetResolution::get(setup, "AK4PFchs_pt") :
+                                              JME::JetResolution(jetResolutionPayload_);
+
+  JME::JetResolutionScaleFactor jetEnergyResolutionSFs = (jetResFromGlobalTag_) ?
+                                              JME::JetResolutionScaleFactor::get(setup, "AK4PFchs") :
+                                              JME::JetResolutionScaleFactor(jetResSFPayload_);
+
   JME::JetParameters jetResParams;
 
   // get genjets for JER smearing matching

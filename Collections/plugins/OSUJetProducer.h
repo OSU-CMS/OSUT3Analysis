@@ -33,13 +33,17 @@ class OSUJetProducer : public edm::EDProducer
     edm::InputTag      genjets_;
     edm::InputTag      rho_;
 
+    string jetResolutionPayload_;
+    string jetResSFPayload_;
+    bool jetResFromGlobalTag_;
+
     edm::EDGetTokenT<vector<TYPE(jets)> > token_;
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
     edm::EDGetTokenT<vector<TYPE(electrons)> > electronToken_;
     edm::EDGetTokenT<vector<TYPE(muons)> > muonToken_;
     edm::EDGetTokenT<vector<TYPE(genjets)> > genjetsToken_;
     edm::EDGetTokenT<double> rhoToken_;
-    
+
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 

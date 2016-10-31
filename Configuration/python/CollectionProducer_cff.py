@@ -2,6 +2,7 @@ import FWCore.ParameterSet.Config as cms
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 from OSUT3Analysis.Configuration.configurationOptions import *
 import copy
+import os
 
 def copyConfiguration (dst, src):
     for parameter in src:
@@ -38,7 +39,14 @@ collectionProducer.beamspots = cms.EDProducer ("OSUBeamspotProducer",
 
 collectionProducer.bjets = cms.EDProducer ("OSUBjetProducer",
     rho = cms.InputTag("fixedGridRhoFastjetAll", "", ""),
+    jetResolutionPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
+    jetResSFPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
+    jetResFromGlobalTag = cms.bool(False),
 )
+
+if 'CMSSW_8' in os.environ['CMSSW_VERSION']:
+    collectionProducer.bjets.jetResFromGlobalTag = cms.bool(True)
+
 copyConfiguration (collectionProducer.bjets, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
@@ -97,7 +105,14 @@ copyConfiguration (collectionProducer.genjets, collectionProducer.genMatchables)
 
 collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
     rho = cms.InputTag("fixedGridRhoFastjetAll", "", ""),
+    jetResolutionPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
+    jetResSFPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
+    jetResFromGlobalTag = cms.bool(False),
 )
+
+if 'CMSSW_8' in os.environ['CMSSW_VERSION']:
+    collectionProducer.bjets.jetResFromGlobalTag = cms.bool(True)
+
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
