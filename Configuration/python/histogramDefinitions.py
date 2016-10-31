@@ -1353,7 +1353,7 @@ TrackHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("trackNumValidHits"),
             title = cms.string("Track Number of Valid Hits;number of valid hits"),
-            binsX = cms.untracked.vdouble(31, -0.5, 30.5),
+            binsX = cms.untracked.vdouble(100, -0.5, 99.5),
             inputVariables = cms.vstring("numberOfValidHits"),
         ),
         cms.PSet (
