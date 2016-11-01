@@ -1,8 +1,11 @@
 <use  name="root"/>
 <use  name="CondFormats/DataRecord"/>
 <use  name="CondFormats/EcalObjects"/>
+<use  name="CondFormats/JetMETObjects"/>
 <use  name="DataFormats/EcalRecHit"/>
 <use  name="DataFormats/HcalRecHit"/>
+<use  name="JetMETCorrections/Objects"/>
+<use  name="JetMETCorrections/Modules"/>
 <use  name="FWCore/Framework"/>
 <use  name="FWCore/ParameterSet"/>
 <use  name="Geometry/CaloGeometry"/>

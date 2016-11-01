@@ -4,14 +4,26 @@
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#include "JetMETCorrections/Modules/interface/JetResolution.h"
+#include "CondFormats/DataRecord/interface/JetResolutionRcd.h"
+#include "CondFormats/DataRecord/interface/JetResolutionScaleFactorRcd.h"
+#include "TRandom3.h"
+#endif
+
 OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
-  cfg_ (cfg)
+  rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
+  jetResolutionPayload_ (cfg.getParameter<string> ("jetResolutionPayload")),
+  jetResSFPayload_      (cfg.getParameter<string> ("jetResSFPayload")),
+  jetResFromGlobalTag_  (cfg.getParameter<bool> ("jetResFromGlobalTag")),
+  cfg_         (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   electrons_ = collections_.getParameter<edm::InputTag> ("electrons");
   muons_ = collections_.getParameter<edm::InputTag> ("muons");
+  genjets_ = collections_.getParameter<edm::InputTag> ("genjets");
 #endif
   produces<vector<osu::Jet> > (collection_.instance ());
 
@@ -20,6 +32,8 @@ OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
   electronToken_ = consumes<vector<TYPE(electrons)> > (electrons_);
   muonToken_ = consumes<vector<TYPE(muons)> > (muons_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
+  genjetsToken_ = consumes<vector<TYPE(genjets)> > (genjets_);
+  rhoToken_ = consumes<double> (rho_);
 #endif
 }
 
@@ -38,6 +52,36 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.getByToken (mcparticleToken_, particles);
 
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+  // get JetCorrector parameters to get the jec uncertainty
+  edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
+  setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
+  JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"];
+  JetCorrectionUncertainty * jecUnc = new JetCorrectionUncertainty(JetCorPar);
+
+  // Get jet energy resolution and scale factors
+  // These are in the Global Tag for 80X but not for 76X,
+  // Configuration/python/collectionProducer_cff.py looks at $CMSSW_BASE to set this choice
+  JME::JetResolution jetEnergyResolution = (jetResFromGlobalTag_) ?
+                                              JME::JetResolution::get(setup, "AK4PFchs_pt") :
+                                              JME::JetResolution(jetResolutionPayload_);
+
+  JME::JetResolutionScaleFactor jetEnergyResolutionSFs = (jetResFromGlobalTag_) ?
+                                              JME::JetResolutionScaleFactor::get(setup, "AK4PFchs") :
+                                              JME::JetResolutionScaleFactor(jetResSFPayload_);
+
+  JME::JetParameters jetResParams;
+
+  // get genjets for JER smearing matching
+  edm::Handle<vector<TYPE(genjets)> > genjets;
+  bool hasGenJets = event.getByToken (genjetsToken_, genjets);
+
+  // get rho for JER smearing
+  edm::Handle<double> rho;
+  event.getByToken (rhoToken_, rho);
+
+  // RNG for gaussian JER smearing (when there is no genjet match)
+  TRandom3 * rng = new TRandom3(0);
+
   // get lepton collections for cross-cleaning
   edm::Handle<vector<TYPE (electrons)> > electrons;
   if (!event.getByToken (electronToken_, electrons))
@@ -104,6 +148,59 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
       jet.set_pileupJetId(jet.userFloat("pileupJetId:fullDiscriminant"));
 
+      jecUnc->setJetEta(jet.eta());
+      jecUnc->setJetPt(jet.pt());
+      jet.set_jecUncertainty(jecUnc->getUncertainty(true));
+
+      jetResParams.setJetPt(jet.pt());
+      jetResParams.setJetEta(jet.pt());
+      jetResParams.setRho((float)(*rho));
+      jet.set_jetPtResolution(jetEnergyResolution.getResolution(jetResParams));
+      jet.set_setJetPtResolutionSF(jetEnergyResolutionSFs.getScaleFactor(jetResParams),
+                                   jetEnergyResolutionSFs.getScaleFactor(jetResParams, Variation::UP),
+                                   jetEnergyResolutionSFs.getScaleFactor(jetResParams, Variation::DOWN));
+
+      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Smearing_procedures
+      if(hasGenJets) {
+        bool isMatchedToGenJet = false;
+        for (const auto &genjet : *genjets) {
+          double dR = deltaR (genjet, jet);
+          double dPt = jet.pt() - genjet.pt();
+
+          if(dR < 0.2 && fabs(dPt) < 3.0 * jet.jer()) {
+            jet.set_smearedPt(max(0.0, genjet.pt() + jet.jerSF() * dPt));
+            jet.set_smearedPtUp(max(0.0, genjet.pt() + jet.jerSFUp() * dPt));
+            jet.set_smearedPtDown(max(0.0, genjet.pt() + jet.jerSFDown() * dPt));
+
+            isMatchedToGenJet = true;
+            break;
+          }
+        }
+        if(!isMatchedToGenJet) {
+
+          if(jet.jerSF() > 1.0) {
+            double smearedPt = rng->Gaus(jet.pt(),
+                                         sqrt(jet.jerSF() * jet.jerSF() - 1) * jet.jer());
+
+            jet.set_smearedPt(smearedPt);
+            jet.set_smearedPtUp(smearedPt * jet.jerSFUp() / jet.jerSF());
+            jet.set_smearedPtDown(smearedPt * jet.jerSFDown() / jet.jerSF());
+          }
+          else {
+            jet.set_smearedPt(INVALID_VALUE);
+            jet.set_smearedPtUp(INVALID_VALUE);
+            jet.set_smearedPtDown(INVALID_VALUE);
+          }
+
+        }
+
+      } // if(hasGenjets)
+      else {
+        jet.set_smearedPt(INVALID_VALUE);
+        jet.set_smearedPtUp(INVALID_VALUE);
+        jet.set_smearedPtDown(INVALID_VALUE);
+      }
+
       double maxDeltaR_ = 0.3;
 
       int isMatchedToElectron = 0;
@@ -133,6 +230,10 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
     }
   event.put (pl_, collection_.instance ());
   pl_.reset ();
+
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+  delete rng;
+#endif
 }
 
 
