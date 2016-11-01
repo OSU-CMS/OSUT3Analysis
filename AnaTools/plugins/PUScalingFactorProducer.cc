@@ -17,36 +17,37 @@ PUScalingFactorProducer::~PUScalingFactorProducer() {}
 void
 PUScalingFactorProducer::AddVariables (const edm::Event &event) {
 #if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
-  TFile *fin = TFile::Open (PU_.c_str ());
-  if (!fin || fin->IsZombie()) {
-    clog << "ERROR [PUScalingFactorProducer]: Could not find file: " << PU_
-         << "; will cause a seg fault." << endl;
-    exit(1);
-  }
-  TH1D *mc;
-  TH1D *puWeight;
-  fin->GetObject(dataset_.c_str(), mc);
-  fin->GetObject(target_.c_str(), puWeight);
-  if (!mc) {
-    clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << dataset_ << "; will cause a seg fault." << endl;
-    exit(1);
-  }
-  if (!puWeight) {
-    clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << target_ <<", will cause a seg fault." << endl;
-    exit(1);
-  }
-  mc->SetDirectory (0);
-  puWeight->SetDirectory (0);
-  mc->Scale (puWeight->Integral () / mc->Integral ());
-  TH1D *trimmedMC = new TH1D ("bla", "bla", puWeight->GetNbinsX(), 0, puWeight->GetNbinsX());
-  for (int bin = 1; bin <= puWeight->GetNbinsX(); bin++)
-    trimmedMC->SetBinContent (bin, mc->GetBinContent (bin));
-  puWeight->Divide (trimmedMC);
-  delete fin;
-  delete mc;
-  delete trimmedMC;
   if(type_.find("MC") < type_.length())
     {
+      TFile *fin = TFile::Open (PU_.c_str ());
+      if (!fin || fin->IsZombie()) {
+        clog << "ERROR [PUScalingFactorProducer]: Could not find file: " << PU_
+             << "; will cause a seg fault." << endl;
+        exit(1);
+      }
+      TH1D *mc;
+      TH1D *puWeight;
+      fin->GetObject(dataset_.c_str(), mc);
+      fin->GetObject(target_.c_str(), puWeight);
+      if (!mc) {
+        clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << dataset_ << "; will cause a seg fault." << endl;
+        exit(1);
+      }
+      if (!puWeight) {
+        clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << target_ <<", will cause a seg fault." << endl;
+        exit(1);
+      }
+      mc->SetDirectory (0);
+      puWeight->SetDirectory (0);
+      mc->Scale (puWeight->Integral () / mc->Integral ());
+      TH1D *trimmedMC = new TH1D ("bla", "bla", puWeight->GetNbinsX(), 0, puWeight->GetNbinsX());
+      for (int bin = 1; bin <= puWeight->GetNbinsX(); bin++)
+        trimmedMC->SetBinContent (bin, mc->GetBinContent (bin));
+      puWeight->Divide (trimmedMC);
+      delete fin;
+      delete mc;
+      delete trimmedMC;
+
       objectsToGet_.insert ("pileupinfos");
       getOriginalCollections (event);
       double numTruePV = 0;
@@ -55,10 +56,10 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
         numTruePV = pv1.getTrueNumInteractions();
       }
       (*eventvariables)["puScalingFactor"] = puWeight->GetBinContent(puWeight->FindBin(numTruePV));
+      delete puWeight;
     }
   else
     (*eventvariables)["puScalingFactor"] = 1;
-  delete puWeight;
 #else
     (*eventvariables)["puScalingFactor"] = 1;
 # endif
