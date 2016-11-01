@@ -2,18 +2,45 @@
 #include "OSUT3Analysis/AnaTools/plugins/ObjectScalingFactorProducer.h"
 
 ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet &cfg) :
-   EventVariableProducer(cfg),
-   muonFile_         (cfg.getParameter<string>("muonFile")),
-   electronFile_     (cfg.getParameter<string>("electronFile")),
-   electronWp_       (cfg.getParameter<string>("electronWp")),
-   muonWp_           (cfg.getParameter<string>("muonWp")),
-   doEleSF_          (cfg.getParameter<bool>("doEleSF")),
-   doMuSF_           (cfg.getParameter<bool>("doMuSF"))
+  EventVariableProducer(cfg),
+  doEleSF_          (false),
+  doMuSF_           (false),
+  doTrackSF_        (false),
+  type_             ("data")
 {
+  if (cfg.exists ("doEleSF"))
+    doEleSF_ = cfg.getParameter<bool>("doEleSF");
+  if (cfg.exists ("doMuSF"))
+    doMuSF_ = cfg.getParameter<bool>("doMuSF");
+  if (cfg.exists ("doTrackSF"))
+    doTrackSF_ = cfg.getParameter<bool>("doTrackSF");
+
+  if (doEleSF_)
+    {
+      electronFile_ = cfg.getParameter<string>("electronFile");
+      electronWp_ = cfg.getParameter<string>("electronWp");
+    }
+  if (doEleSF_)
+    {
+      muonFile_ = cfg.getParameter<string>("muonFile");
+      muonWp_ = cfg.getParameter<string>("muonWp");
+      type_ = cfg.getParameter<string>("type");
+    }
+  if (doTrackSF_)
+    {
+      trackFile_ = cfg.getParameter<string>("trackFile");
+      type_ = cfg.getParameter<string>("type");
+    }
+
+  if(type_.find("MC") > type_.length())
+    doEleSF_ = doMuSF_ = doTrackSF_ = false;
+
   if (doEleSF_)
     objectsToGet_.insert ("electrons");
   if (doMuSF_)
     objectsToGet_.insert ("muons");
+  if (doTrackSF_)
+    objectsToGet_.insert ("tracks");
   anatools::getAllTokens (collections_, consumesCollector (), tokens_);
 }
 
@@ -44,19 +71,17 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
       }
 
       double eleSF = 1.0;
-      if(handles_.electrons->size()){
-        for (const auto &electron1 : *handles_.electrons) {
-          float eta = abs(electron1.eta()) > ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) ? ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) : abs(electron1.eta());
-          float pt = electron1.pt() > ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) ? ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) : electron1.pt();
-          if (ele->GetXaxis()->FindBin(electron1.eta()))
-              eta = electron1.eta() > 0 ? eta : -eta;
-          float sf = ele->GetBinContent(ele->FindBin(eta,pt));
-          if (shift == "up")
-            sf += ele->GetBinError(ele->FindBin(eta,pt));
-          else if (shift == "down")
-            sf -= ele->GetBinError(ele->FindBin(eta,pt));
-          eleSF = eleSF * sf;
-        }
+      for (const auto &electron1 : *handles_.electrons) {
+        float eta = abs(electron1.eta()) > ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) ? ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) : abs(electron1.eta());
+        float pt = electron1.pt() > ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) ? ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) : electron1.pt();
+        if (ele->GetXaxis()->FindBin(electron1.eta()))
+            eta = electron1.eta() > 0 ? eta : -eta;
+        float sf = ele->GetBinContent(ele->FindBin(eta,pt));
+        if (shift == "up")
+          sf += ele->GetBinError(ele->FindBin(eta,pt));
+        else if (shift == "down")
+          sf -= ele->GetBinError(ele->FindBin(eta,pt));
+        eleSF = eleSF * sf;
       }
       (*eventvariables)["electronScalingFactor"] = eleSF;
       delete ele;
@@ -82,25 +107,54 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
       }
 
       double muSF = 1.0;
-      if(handles_.muons->size()){
-        for (const auto &muon1 : *handles_.muons) {
-          float eta = abs(muon1.eta()) > mu->GetYaxis()->GetBinCenter(mu->GetNbinsY()) ? mu->GetYaxis()->GetBinCenter(mu->GetNbinsY()): abs(muon1.eta());
-          float pt = muon1.pt() > mu->GetXaxis()->GetBinCenter(mu->GetNbinsX()) ? mu->GetXaxis()->GetBinCenter(mu->GetNbinsX()) : muon1.pt();
-          float sf = mu->GetBinContent(mu->FindBin(pt,eta));
-          if (shift == "up")
-            sf += mu->GetBinError(mu->FindBin(pt,eta));
-          else if (shift == "down")
-            sf -= mu->GetBinError(mu->FindBin(pt,eta));
-          muSF = muSF * sf;
-        }
+      for (const auto &muon1 : *handles_.muons) {
+        float eta = abs(muon1.eta()) > mu->GetYaxis()->GetBinCenter(mu->GetNbinsY()) ? mu->GetYaxis()->GetBinCenter(mu->GetNbinsY()): abs(muon1.eta());
+        float pt = muon1.pt() > mu->GetXaxis()->GetBinCenter(mu->GetNbinsX()) ? mu->GetXaxis()->GetBinCenter(mu->GetNbinsX()) : muon1.pt();
+        float sf = mu->GetBinContent(mu->FindBin(pt,eta));
+        if (shift == "up")
+          sf += mu->GetBinError(mu->FindBin(pt,eta));
+        else if (shift == "down")
+          sf -= mu->GetBinError(mu->FindBin(pt,eta));
+        muSF = muSF * sf;
       }
       (*eventvariables)["muonScalingFactor"] = muSF;
       delete mu;
       musf->Close();
     }
+  if (doTrackSF_)
+    {
+      TFile *trackSF = TFile::Open (trackFile_.c_str ());
+      if (!trackSF || trackSF->IsZombie()) {
+        clog << "ERROR [ObjectScalingFactorProducer]: Could not find file: " << trackFile_
+         << "; will cause a seg fault." << endl;
+        exit(1);
+      }
+
+      TH1D *data = (TH1D *) trackSF->Get ("missingOuterHits_data");
+      data->SetDirectory (0);
+      TH1D *mc = (TH1D *) trackSF->Get ("missingOuterHits_mc");
+      mc->SetDirectory (0);
+      trackSF->Close ();
+      delete trackSF;
+
+      data->Scale (1.0 / data->Integral ());
+      mc->Scale (1.0 / mc->Integral ());
+      data->Divide (mc);
+
+      double sf = 1.0;
+      for (const auto &track : *handles_.tracks)
+        {
+          double missingOuterHits = track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS);
+          sf *= data->GetBinContent (data->FindBin (missingOuterHits));
+        }
+      delete data;
+      delete mc;
+      (*eventvariables)["trackScalingFactor"] = sf;
+    }
 #else
   (*eventvariables)["electronScalingFactor"] = 1;
   (*eventvariables)["muonScalingFactor"] = 1;
+  (*eventvariables)["trackScalingFactor"] = 1;
 # endif
 }
 

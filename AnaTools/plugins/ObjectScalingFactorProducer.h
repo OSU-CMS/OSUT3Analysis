@@ -20,10 +20,13 @@ class ObjectScalingFactorProducer : public EventVariableProducer
     private:
         string muonFile_;
         string electronFile_;
+        string trackFile_;
         string electronWp_;
         string muonWp_;
         bool doEleSF_;
         bool doMuSF_;
+        bool doTrackSF_;
+        string type_;
         void AddVariables(const edm::Event &);
 };
 #endif
