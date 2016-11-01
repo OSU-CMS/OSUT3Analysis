@@ -5,7 +5,7 @@ ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet
   EventVariableProducer(cfg),
   doEleSF_          (false),
   doMuSF_           (false),
-  doTrackSF_        (false),
+  doTrackSF_        (false)
 {
   if (cfg.exists ("doEleSF"))
     doEleSF_ = cfg.getParameter<bool>("doEleSF");
