@@ -438,7 +438,6 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' + arguments.pileupTarget + '")\n')
             else:
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
-            ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("bgMC")')
         elif types[Label] == "signalMC":
             if arguments.pileupTarget:
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' + arguments.pileupTarget + '")\n')
@@ -448,10 +447,8 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("AMSB_chargino_80X")\n')
             else:
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
-            ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("signalMC")')
         else:
             ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n')
-            ConfigFile.write('pset.process.PUScalingFactorProducer.type = cms.string("data")')
     ConfigFile.write('\n')
     if Dataset != '':
         ConfigFile.write('pset.process.source.fileNames = cms.untracked.vstring (osusub.runList)\n')
