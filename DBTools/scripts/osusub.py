@@ -483,7 +483,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     return SkimChannelNames
 
 #This is a generic function to get the dataset information via das_client.py.
-def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection):
+def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection, append):
     tmpDir = tempfile.mkdtemp ()
     os.system('/cvmfs/cms.cern.ch/common/das_client --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + tmpDir + "/" + AAAFileList)
     inputFileList = open(tmpDir + "/" + AAAFileList, "r")
@@ -492,9 +492,8 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
     for f in reversed(range(len(inputFiles))):
         if not ".root" in inputFiles[f]:
             del inputFiles[f]
-    datasetRead['numberOfFiles'] = len(inputFiles)
-    datasetRead['realDatasetName'] = Dataset
-    text = 'listOfFiles = [  \n'
+    datasetRead['numberOfFiles'] = (len(inputFiles) if not append else datasetRead['numberOfFiles'] + len(inputFiles))
+    text = ('listOfFiles = [  \n' if not append else 'listOfFiles += [  \n')
     for f in inputFiles:
         if arguments.Redirector != "":
             f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
@@ -504,11 +503,13 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
             f = "root://cms-xrd-global.cern.ch/" + f
         text += '"' + f + '",\n'
     text += ']  \n'
-    text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'
-    text += 'datasetName = \'' + str(Dataset) +'\'\n'
-    text += 'crossSection = ' + str(crossSection) + '\n'
+    text += ('numberOfFiles = ' + str(len(inputFiles)) + '\n' if not append else 'numberOfFiles += ' + str(len(inputFiles)) + '\n')
+    if not append:
+        datasetRead['realDatasetName'] = Dataset
+        text += 'datasetName = \'' + str(Dataset) +'\'\n'
+        text += 'crossSection = ' + str(crossSection) + '\n'
 
-    fnew = open(datasetInfoName, "w")
+    fnew = open(datasetInfoName, "w" if not append else "a")
     fnew.write(text)
     fnew.close()
 
@@ -522,9 +523,17 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     runList = []
     datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
     SkimExists = RunOverSkim and os.path.isdir (Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel)
+    InitializeAAA = ""
     if UseAAA:
         if FileType == 'OSUT3Ntuple' or FileType == 'Dataset':
-            AcquireAwesomeAAA(Dataset, datasetInfoName, 'AAAFileList.txt', datasetRead, crossSection)
+            if not hasattr (Dataset, "__iter__"):
+                AcquireAwesomeAAA(Dataset, datasetInfoName, 'AAAFileList.txt', datasetRead, crossSection, False)
+            else:
+                append = False
+                for x in Dataset:
+                    AcquireAwesomeAAA(x, datasetInfoName, 'AAAFileList.txt', datasetRead, crossSection, append)
+                    append = True
+        InitializeAAA = "y"
     if FileType == 'UserDir':
         isInCondorDir = False
         SubmissionDir = os.getcwd()
@@ -608,25 +617,35 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         fnew.write(text)
         fnew.close()
     if FileType == 'OSUT3Ntuple':
-        prefix = ''
-        if not remoteAccessT3 :
-            prefix = 'file:'
-        else:
-            prefix = 'root://cms-0.mps.ohio-state.edu:1094/'
-        if RunOverSkim:
-            print "You have specified a skim as input.  Will obtain cross sections for dataset", Label, "from the database."
-        #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py.
-        os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix)
-        NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
+        if not UseAAA:
+            prefix = ''
+            if not remoteAccessT3 :
+                prefix = 'file:'
+            else:
+                prefix = 'root://cms-0.mps.ohio-state.edu:1094/'
+            if RunOverSkim:
+                print "You have specified a skim as input.  Will obtain cross sections for dataset", Label, "from the database."
+            #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py.
+            if not hasattr (Dataset, "__iter__"):
+                os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix + " False")
+            else:
+                append = False
+                for x in Dataset:
+                    os.system('MySQLModule ' + x + ' ' + datasetInfoName + ' ' + prefix + ' ' + ("True" if append else "False"))
+                    append = True
+            NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
+            if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists:
+                #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')
+                InitializeAAA = "y"
+                if not hasattr (Dataset, "__iter__"):
+                    AcquireAwesomeAAA(Dataset, datasetInfoName, 'AAAFileList.txt', datasetRead, crossSection, False)
+                else:
+                    append = False
+                    for x in Dataset:
+                        AcquireAwesomeAAA(x, datasetInfoName, 'AAAFileList.txt', datasetRead, crossSection, append)
+                        append = True
+                datasetRead['useAAA'] = True
         secondaryCollectionModifications = []
-        InitializeAAA = ""
-        if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists:
-            #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')
-            InitializeAAA = "y"
-            AcquireAwesomeAAA(Dataset, datasetInfoName, 'AAAFileList.txt', datasetRead, crossSection)
-            datasetRead['useAAA'] = True
-            #else:
-            #    return
         if RunOverSkim:
             numInputFiles = len(glob.glob(Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel + "/*.root"))
             if not numInputFiles:
@@ -644,7 +663,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             InitializeAAA = ""
         sys.path.append(Directory)
         exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
-        if InitializeAAA == "" and not RunOverSkim:
+        if not UseAAA and InitializeAAA == "" and not RunOverSkim:
             status = datasetInfo.status
             continueForNonPresentDataset = True
             if not status == 'present':

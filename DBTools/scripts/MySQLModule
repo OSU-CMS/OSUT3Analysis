@@ -16,18 +16,22 @@ our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") o
 my $dataset;
 my $outfile;
 my $prefix;
+my $append;
 
 $dataset = $ARGV[0];
 $outfile = $ARGV[1];
 $prefix = $ARGV[2];
+$append = (uc ($ARGV[3]) == "TRUE");
 
-getLocation($dataset,$outfile,$prefix);
+getLocation($dataset,$outfile,$prefix,$append);
 
 sub
 getLocation
 {
   my $dataset = shift;
   my $outfile = shift;
+  my $prefix = shift;
+  my $append = shift;
   my $results;
   my $queryDataset = $dataset;
   $queryDataset =~ s/\*/%/g;
@@ -36,21 +40,29 @@ getLocation
   $db->selectdb ("ntuple");
   $results = $db->query ($query);
 
+  my $fileMode = '>';
+  if ($append)
+    {
+      $fileMode = '>>';
+    }
+
   if ($results->numrows () == 1)
     {
       my @row = $results->fetchrow ();
       my @files = split (/\n/, $row[8]);
       $row[7] += 0;
-      open(my $tmpfile, '>', $outfile);
-      print $tmpfile 'datasetName = "'.$row[0].'"'."\n";
-      print $tmpfile 'location = "'.$row[3].'"'."\n";
-      print $tmpfile "numberOfFiles = ".$row[4]."\n";
-      print $tmpfile 'status = "'.$row[5].'"'."\n";
+      open(my $tmpfile, $fileMode, $outfile);
+      print $tmpfile 'datasetName = "'.$row[0].'"'."\n" if not $append;
+      print $tmpfile 'location = "'.$row[3].'"'."\n" if not $append;
+      print $tmpfile "numberOfFiles = ".$row[4]."\n" if not $append;
+      print $tmpfile "numberOfFiles += ".$row[4]."\n" if $append;
+      print $tmpfile 'status = "'.$row[5].'"'."\n" if not $append;
       # Take the cross section from the database, if it is available.  If not, set to -1 so that analysis framework can assign the cross section.
-      print $tmpfile "crossSection = ".$row[7]."\n" if $row[7] > 0;
-      print $tmpfile "crossSection = ".$row[6]."\n" if $row[7] <= 0 and $row[6] > 0;
-      print $tmpfile "crossSection = "."-1"."\n" if $row[7] <= 0 and $row[6] <= 0;
-      print $tmpfile "listOfFiles = [\n";
+      print $tmpfile "crossSection = ".$row[7]."\n" if not $append and $row[7] > 0;
+      print $tmpfile "crossSection = ".$row[6]."\n" if not $append and $row[7] <= 0 and $row[6] > 0;
+      print $tmpfile "crossSection = "."-1"."\n" if not $append and $row[7] <= 0 and $row[6] <= 0;
+      print $tmpfile "listOfFiles = [\n" if not $append;
+      print $tmpfile "listOfFiles += [\n" if $append;
       my $length = @files;
       if ($length) {
       for (my $i = 0; $i < $length; $i++)
@@ -68,7 +80,7 @@ getLocation
    }
   if ($results->numrows () == 0)
     {
-      open(my $tmpfile, '>', $outfile);
+      open(my $tmpfile, $fileMode, $outfile);
       print $tmpfile "#Dataset does not exist on the Tier 3!";
       exit;
     }
@@ -99,14 +111,16 @@ getLocation
       print "Your selection \"$response\" was not a valid option! Quitting.\n";
       exit;
     }
-  open(my $tmpfile, '>', $outfile);
-  print $tmpfile 'datasetName = "'.$map{$response}[0].'"'."\n";
-  print $tmpfile 'location = "'.$map{$response}[1].'"'."\n";
-  print $tmpfile "numberOfFiles = ".$map{$response}[2]."\n";
-  print $tmpfile 'status = "'.$map{$response}[3].'"'."\n";
-  print $tmpfile "crossSection = ".$map{$response}[4]."\n" if $map{$response}[4];
-  print $tmpfile "crossSection = "."-1"."\n" if !$map{$response}[4];
-  print $tmpfile "listOfFiles = [\n";
+  open(my $tmpfile, $fileMode, $outfile);
+  print $tmpfile 'datasetName = "'.$map{$response}[0].'"'."\n" if not $append;
+  print $tmpfile 'location = "'.$map{$response}[1].'"'."\n" if not $append;
+  print $tmpfile "numberOfFiles = ".$map{$response}[2]."\n" if not $append;
+  print $tmpfile "numberOfFiles += ".$map{$response}[2]."\n" if $append;
+  print $tmpfile 'status = "'.$map{$response}[3].'"'."\n" if not $append;
+  print $tmpfile "crossSection = ".$map{$response}[4]."\n" if not $append and $map{$response}[4];
+  print $tmpfile "crossSection = "."-1"."\n" if not $append and not $map{$response}[4];
+  print $tmpfile "listOfFiles = [\n" if not $append;
+  print $tmpfile "listOfFiles += [\n" if $append;
   if ($map{$response}[5]) {
       for (my $i = 0; $i < @{$map{$response}[5]}; $i++)
           {
