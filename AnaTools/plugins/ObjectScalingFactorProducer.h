@@ -26,7 +26,6 @@ class ObjectScalingFactorProducer : public EventVariableProducer
         bool doEleSF_;
         bool doMuSF_;
         bool doTrackSF_;
-        string type_;
         void AddVariables(const edm::Event &);
 };
 #endif

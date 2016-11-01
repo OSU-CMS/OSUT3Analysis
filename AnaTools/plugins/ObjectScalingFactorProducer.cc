@@ -6,7 +6,6 @@ ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet
   doEleSF_          (false),
   doMuSF_           (false),
   doTrackSF_        (false),
-  type_             ("data")
 {
   if (cfg.exists ("doEleSF"))
     doEleSF_ = cfg.getParameter<bool>("doEleSF");
@@ -24,16 +23,9 @@ ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet
     {
       muonFile_ = cfg.getParameter<string>("muonFile");
       muonWp_ = cfg.getParameter<string>("muonWp");
-      type_ = cfg.getParameter<string>("type");
     }
   if (doTrackSF_)
-    {
-      trackFile_ = cfg.getParameter<string>("trackFile");
-      type_ = cfg.getParameter<string>("type");
-    }
-
-  if(type_.find("MC") > type_.length())
-    doEleSF_ = doMuSF_ = doTrackSF_ = false;
+    trackFile_ = cfg.getParameter<string>("trackFile");
 
   if (doEleSF_)
     objectsToGet_.insert ("electrons");
@@ -49,6 +41,12 @@ ObjectScalingFactorProducer::~ObjectScalingFactorProducer() {}
 void
 ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
 #if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
+
+  if (event.isRealData ())
+    {
+      doEleSF_ = doMuSF_ = doTrackSF_ = false;
+      objectsToGet_.clear ();
+    }
 
   anatools::getRequiredCollections (objectsToGet_, handles_, event, tokens_);
   if (doEleSF_)
@@ -123,6 +121,8 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
     }
   if (doTrackSF_)
     {
+      double sf = 1.0;
+#if IS_VALID(tracks)
       TFile *trackSF = TFile::Open (trackFile_.c_str ());
       if (!trackSF || trackSF->IsZombie()) {
         clog << "ERROR [ObjectScalingFactorProducer]: Could not find file: " << trackFile_
@@ -141,7 +141,6 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
       mc->Scale (1.0 / mc->Integral ());
       data->Divide (mc);
 
-      double sf = 1.0;
       for (const auto &track : *handles_.tracks)
         {
           double missingOuterHits = track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS);
@@ -149,6 +148,7 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
         }
       delete data;
       delete mc;
+#endif
       (*eventvariables)["trackScalingFactor"] = sf;
     }
 #else

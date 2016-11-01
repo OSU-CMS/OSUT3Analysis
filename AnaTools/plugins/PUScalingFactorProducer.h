@@ -25,7 +25,6 @@ class PUScalingFactorProducer : public EventVariableProducer
         string PU_;
         string dataset_;
         string target_;
-        string type_;
         void AddVariables(const edm::Event &);
 
         edm::EDGetTokenT<vector<TYPE(pileupinfos)> > pileUpInfosToken_;

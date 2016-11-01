@@ -5,10 +5,9 @@ PUScalingFactorProducer::PUScalingFactorProducer(const edm::ParameterSet &cfg) :
    EventVariableProducer(cfg),
    PU_               (cfg.getParameter<string>("PU")),
    dataset_          (cfg.getParameter<string>("dataset")),
-   target_           (cfg.getParameter<string>("target")),
-   type_             (cfg.getParameter<string>("type"))
+   target_           (cfg.getParameter<string>("target"))
 {
-  if(type_.find("MC") < type_.length() && collections_.exists ("pileupinfos"))
+  if(collections_.exists ("pileupinfos"))
     pileUpInfosToken_ = consumes<vector<TYPE(pileupinfos)> > (collections_.getParameter<edm::InputTag> ("pileupinfos"));
 }
 
@@ -17,7 +16,7 @@ PUScalingFactorProducer::~PUScalingFactorProducer() {}
 void
 PUScalingFactorProducer::AddVariables (const edm::Event &event) {
 #if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
-  if(type_.find("MC") < type_.length())
+  if (!event.isRealData ())
     {
       TFile *fin = TFile::Open (PU_.c_str ());
       if (!fin || fin->IsZombie()) {
