@@ -21,7 +21,7 @@ my $append;
 $dataset = $ARGV[0];
 $outfile = $ARGV[1];
 $prefix = $ARGV[2];
-$append = (uc ($ARGV[3]) == "TRUE");
+$append = (uc ($ARGV[3]) eq "TRUE");
 
 getLocation($dataset,$outfile,$prefix,$append);
 
