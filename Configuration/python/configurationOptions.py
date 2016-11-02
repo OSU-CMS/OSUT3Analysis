@@ -445,6 +445,7 @@ composite_dataset_definitions = {
         'MuonEG_2016G_23Sep',
         'MuonEG_2016H',
     ],
+    #2015
     'mchamp100_NtupleSeparateEvents': [
         'mchamp100_NtupleSeparateEventsParticle0',
         'mchamp100_NtupleSeparateEventsParticle1',
@@ -540,6 +541,103 @@ composite_dataset_definitions = {
     'gluino2600_NtupleSeparateEvents': [
         'gluino2600_NtupleSeparateEventsParticle0',
         'gluino2600_NtupleSeparateEventsParticle1',
+        ],
+    #2016
+    'mchamp100_NtupleSeparateEvents_2016': [
+        'mchamp100_NtupleSeparateEventsParticle0_2016',
+        'mchamp100_NtupleSeparateEventsParticle1_2016',
+        ],
+    'mchamp200_NtupleSeparateEvents_2016': [
+        'mchamp200_NtupleSeparateEventsParticle0_2016',
+        'mchamp200_NtupleSeparateEventsParticle1_2016',
+        ],
+    'mchamp400_NtupleSeparateEvents_2016': [
+        'mchamp400_NtupleSeparateEventsParticle0_2016',
+        'mchamp400_NtupleSeparateEventsParticle1_2016',
+        ],
+    'mchamp600_NtupleSeparateEvents_2016': [
+        'mchamp600_NtupleSeparateEventsParticle0_2016',
+        'mchamp600_NtupleSeparateEventsParticle1_2016',
+        ],
+    'mchamp800_NtupleSeparateEvents_2016': [
+        'mchamp800_NtupleSeparateEventsParticle0_2016',
+        'mchamp800_NtupleSeparateEventsParticle1_2016',
+        ],
+    'mchamp1000_NtupleSeparateEvents_2016': [
+        'mchamp1000_NtupleSeparateEventsParticle0_2016',
+        'mchamp1000_NtupleSeparateEventsParticle1_2016',
+        ],
+    'mchamp1400_NtupleSeparateEvents_2016': [
+        'mchamp1400_NtupleSeparateEventsParticle0_2016',
+        'mchamp1400_NtupleSeparateEventsParticle1_2016',
+        ],
+    'mchamp1800_NtupleSeparateEvents_2016': [
+        'mchamp1800_NtupleSeparateEventsParticle0_2016',
+        'mchamp1800_NtupleSeparateEventsParticle1_2016',
+        ],
+    'mchamp2200_NtupleSeparateEvents_2016': [
+        'mchamp2200_NtupleSeparateEventsParticle0_2016',
+        'mchamp2200_NtupleSeparateEventsParticle1_2016',
+        ],
+    'mchamp2600_NtupleSeparateEvents_2016': [
+        'mchamp2600_NtupleSeparateEventsParticle0_2016',
+        'mchamp2600_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino100_NtupleSeparateEvents_2016': [
+        'gluino100_NtupleSeparateEventsParticle0_2016',
+        'gluino100_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino200_NtupleSeparateEvents_2016': [
+        'gluino200_NtupleSeparateEventsParticle0_2016',
+        'gluino200_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino400_NtupleSeparateEvents_2016': [
+        'gluino400_NtupleSeparateEventsParticle0_2016',
+        'gluino400_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino600_NtupleSeparateEvents_2016': [
+        'gluino600_NtupleSeparateEventsParticle0_2016',
+        'gluino600_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino800_NtupleSeparateEvents_2016': [
+        'gluino800_NtupleSeparateEventsParticle0_2016',
+        'gluino800_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino1000_NtupleSeparateEvents_2016': [
+        'gluino1000_NtupleSeparateEventsParticle0_2016',
+        'gluino1000_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino1200_NtupleSeparateEvents_2016': [
+        'gluino1200_NtupleSeparateEventsParticle0_2016',
+        'gluino1200_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino1400_NtupleSeparateEvents_2016': [
+        'gluino1400_NtupleSeparateEventsParticle0_2016',
+        'gluino1400_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino1600_NtupleSeparateEvents_2016': [
+        'gluino1600_NtupleSeparateEventsParticle0_2016',
+        'gluino1600_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino1800_NtupleSeparateEvents_2016': [
+        'gluino1800_NtupleSeparateEventsParticle0_2016',
+        'gluino1800_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino2000_NtupleSeparateEvents_2016': [
+        'gluino2000_NtupleSeparateEventsParticle0_2016',
+        'gluino2000_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino2200_NtupleSeparateEvents_2016': [
+        'gluino2200_NtupleSeparateEventsParticle0_2016',
+        'gluino2200_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino2400_NtupleSeparateEvents_2016': [
+        'gluino2400_NtupleSeparateEventsParticle0_2016',
+        'gluino2400_NtupleSeparateEventsParticle1_2016',
+        ],
+    'gluino2600_NtupleSeparateEvents_2016': [
+        'gluino2600_NtupleSeparateEventsParticle0_2016',
+        'gluino2600_NtupleSeparateEventsParticle1_2016',
         ],
     'NoBPTX_2015D' : [
         'NoBPTX_2015D_v3',
