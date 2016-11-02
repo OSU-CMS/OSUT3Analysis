@@ -28,7 +28,7 @@ class OSUGenjetProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Genjet> > pl_;
+    unique_ptr<vector<osu::Genjet> > pl_;
 };
 
 #endif

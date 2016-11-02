@@ -33,7 +33,7 @@ class OSUMuonProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Muon> > pl_;
+    unique_ptr<vector<osu::Muon> > pl_;
 };
 
 #endif

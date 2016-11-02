@@ -130,7 +130,7 @@ OSUSecondaryTrackProducer::produce (edm::Event &event, const edm::EventSetup &se
 
 #endif
 
-  pl_ = auto_ptr<vector<osu::SecondaryTrack> > (new vector<osu::SecondaryTrack> ());
+  pl_ = unique_ptr<vector<osu::SecondaryTrack> > (new vector<osu::SecondaryTrack> ());
   for (const auto &object : *collection)
     {
 #ifdef DISAPP_TRKS
@@ -189,7 +189,7 @@ OSUSecondaryTrackProducer::produce (edm::Event &event, const edm::EventSetup &se
 #endif
     }
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 

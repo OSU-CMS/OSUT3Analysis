@@ -29,7 +29,7 @@ class OSUTauProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Tau> > pl_;
+    unique_ptr<vector<osu::Tau> > pl_;
 };
 
 #endif

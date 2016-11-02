@@ -43,7 +43,7 @@ class OSUSecondaryTrackProducer : public edm::EDProducer
     EtaPhiList muonVetoList_;
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::SecondaryTrack> > pl_;
+    unique_ptr<vector<osu::SecondaryTrack> > pl_;
 
     void extractFiducialMap (const edm::ParameterSet &, EtaPhiList &, stringstream &) const;
 

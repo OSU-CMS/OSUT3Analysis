@@ -39,7 +39,7 @@ class OSUElectronProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Electron> > pl_;
+    unique_ptr<vector<osu::Electron> > pl_;
 };
 
 #endif

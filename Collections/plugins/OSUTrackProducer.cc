@@ -138,7 +138,7 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #endif
 
-  pl_ = auto_ptr<vector<osu::Track> > (new vector<osu::Track> ());
+  pl_ = unique_ptr<vector<osu::Track> > (new vector<osu::Track> ());
   for (const auto &object : *collection)
     {
 #ifdef DISAPP_TRKS
@@ -197,7 +197,7 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 #endif
     }
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 

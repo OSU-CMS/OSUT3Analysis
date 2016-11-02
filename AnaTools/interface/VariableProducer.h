@@ -27,7 +27,7 @@ class VariableProducer : public edm::EDProducer
       edm::ParameterSet collections_;
       Collections handles_;
       unordered_set<string> objectsToGet_;
-      auto_ptr<VariableProducerPayload> uservariables;
+      unique_ptr<VariableProducerPayload> uservariables;
 
       // Methods
 

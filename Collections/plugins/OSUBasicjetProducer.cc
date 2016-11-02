@@ -29,11 +29,11 @@ OSUBasicjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
 
-  pl_ = auto_ptr<vector<osu::Basicjet> > (new vector<osu::Basicjet> ());
+  pl_ = unique_ptr<vector<osu::Basicjet> > (new vector<osu::Basicjet> ());
   for (const auto &object : *collection)
     pl_->emplace_back (object, particles, cfg_);
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 

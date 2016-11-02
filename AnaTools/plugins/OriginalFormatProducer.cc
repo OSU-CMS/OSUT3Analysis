@@ -128,10 +128,10 @@ OriginalFormatProducer::produceCollection (edm::Event& iEvent)
   // At this point we are sure that oldObjVec.size() == 1.
   edm::Handle<vector<Old> > oldObjs = oldObjVec.at(0);
 
-  auto_ptr<vector< New > > newObjs (new vector< New > ());
+  unique_ptr<vector< New > > newObjs (new vector< New > ());
   for (const auto &oldObj : *oldObjs)
     newObjs->emplace_back(oldObj);
-  iEvent.put (newObjs);
+  iEvent.put (std::move (newObjs));
 
 }
 

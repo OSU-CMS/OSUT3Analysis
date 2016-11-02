@@ -133,7 +133,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 #endif
 #endif
 
-  pl_ = auto_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
+  pl_ = unique_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
   for (const auto &object : *collection)
     {
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
@@ -228,7 +228,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 #endif
     }
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM

@@ -26,7 +26,7 @@ class OSUDtsegProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Dtseg> > pl_;
+    unique_ptr<vector<osu::Dtseg> > pl_;
 };
 
 #endif

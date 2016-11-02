@@ -26,7 +26,7 @@ class OSUBeamspotProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<osu::Beamspot> pl_;
+    unique_ptr<osu::Beamspot> pl_;
 };
 
 #endif

@@ -30,11 +30,11 @@ OSUMetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<pat::PackedCandidate> > pfCandidates;
   event.getByToken (pfCandidatesToken_, pfCandidates);
 
-  pl_ = auto_ptr<vector<osu::Met> > (new vector<osu::Met> ());
+  pl_ = unique_ptr<vector<osu::Met> > (new vector<osu::Met> ());
   for (const auto &object : *collection)
     pl_->emplace_back (object, pfCandidates);
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 

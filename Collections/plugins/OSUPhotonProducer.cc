@@ -33,7 +33,7 @@ OSUPhotonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   edm::Handle<double> rho;
 
-  pl_ = auto_ptr<vector<osu::Photon> > (new vector<osu::Photon> ());
+  pl_ = unique_ptr<vector<osu::Photon> > (new vector<osu::Photon> ());
   for (const auto &object : *collection)
     {
       pl_->emplace_back (object, particles, cfg_);
@@ -82,7 +82,7 @@ OSUPhotonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       photon.set_Aeff_photon(Aeff_photon);
     }
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 

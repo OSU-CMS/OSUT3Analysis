@@ -28,7 +28,7 @@ class OSUMetProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Met> > pl_;
+    unique_ptr<vector<osu::Met> > pl_;
 };
 
 #endif
