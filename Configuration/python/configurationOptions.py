@@ -1022,6 +1022,7 @@ nJobs = {
     'DoubleEG_2015C'          :  298,
     'DoubleEG_2015D'          : 1000,
     'DoubleEG_2016B'          : 1000,
+
     'DoubleEG_2016B_23Sep'    : 1000,
     'DoubleEG_2016C_23Sep'    : 1000,
     'DoubleEG_2016D_23Sep'    : 1000,
@@ -1029,6 +1030,22 @@ nJobs = {
     'DoubleEG_2016F_23Sep'    : 1000,
     'DoubleEG_2016G_23Sep'    : 1000,
     'DoubleEG_2016H'          : 1000,
+
+    'DoubleMuon_2016B_23Sep'    : 1000,
+    'DoubleMuon_2016C_23Sep'    : 1000,
+    'DoubleMuon_2016D_23Sep'    : 1000,
+    'DoubleMuon_2016E_23Sep'    : 1000,
+    'DoubleMuon_2016F_23Sep'    : 1000,
+    'DoubleMuon_2016G_23Sep'    : 1000,
+    'DoubleMuon_2016H'          : 1000,
+
+    'MuonEG_2016B_23Sep'    : 1000,
+    'MuonEG_2016C_23Sep'    : 1000,
+    'MuonEG_2016D_23Sep'    : 1000,
+    'MuonEG_2016E_23Sep'    : 1000,
+    'MuonEG_2016F_23Sep'    : 1000,
+    'MuonEG_2016G_23Sep'    : 1000,
+    'MuonEG_2016H'          : 1000,
 
     'MuonEG_2015B'   :  30,
     'MuonEG_2015C'   :  82,
@@ -2020,6 +2037,22 @@ maxEvents = {
     'DoubleEG_2016F_23Sep'     : -1,
     'DoubleEG_2016G_23Sep'     : -1,
     'DoubleEG_2016H'           : -1,
+
+    'DoubleMuon_2016B_23Sep'     : -1,
+    'DoubleMuon_2016C_23Sep'     : -1,
+    'DoubleMuon_2016D_23Sep'     : -1,
+    'DoubleMuon_2016E_23Sep'     : -1,
+    'DoubleMuon_2016F_23Sep'     : -1,
+    'DoubleMuon_2016G_23Sep'     : -1,
+    'DoubleMuon_2016H'           : -1,
+
+    'MuonEG_2016B_23Sep'     : -1,
+    'MuonEG_2016C_23Sep'     : -1,
+    'MuonEG_2016D_23Sep'     : -1,
+    'MuonEG_2016E_23Sep'     : -1,
+    'MuonEG_2016F_23Sep'     : -1,
+    'MuonEG_2016G_23Sep'     : -1,
+    'MuonEG_2016H'           : -1,
 
     'MuonEG_2015B'       : -1,
     'MuonEG_2015C'       : -1,
