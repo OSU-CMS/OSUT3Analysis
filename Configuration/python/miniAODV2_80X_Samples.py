@@ -101,7 +101,10 @@ dataset_names = {
     'MuonEG_2016E_23Sep'         : "/MuonEG/Run2016E-23Sep2016-v1/MINIAOD",
     'MuonEG_2016F_23Sep'         : "/MuonEG/Run2016F-23Sep2016-v1/MINIAOD",
     'MuonEG_2016G_23Sep'         : "/MuonEG/Run2016G-23Sep2016-v1/MINIAOD",
+    'MuonEG_2016H_23Sep'         : "/MuonEG/Run2016H-PromptReco-v3/MINIAOD",
     ############################################################################
+
+
 
     ############################################################################
     # DoubleEG 23Sep rereco
@@ -111,6 +114,7 @@ dataset_names = {
     'DoubleEG_2016E_23Sep'         : "/DoubleEG/Run2016E-23Sep2016-v1/MINIAOD",
     'DoubleEG_2016F_23Sep'         : "/DoubleEG/Run2016F-23Sep2016-v1/MINIAOD",
     'DoubleEG_2016G_23Sep'         : "/DoubleEG/Run2016G-23Sep2016-v1/MINIAOD",
+    'DoubleEG_2016H_23Sep'         : "/DoubleEG/Run2016H-PromptReco-v3/MINIAOD",
     ############################################################################
 
     ############################################################################
@@ -121,6 +125,7 @@ dataset_names = {
     'DoubleMu_2016E_23Sep'         : "/DoubleMuon/Run2016E-23Sep2016-v1/MINIAOD",
     'DoubleMu_2016F_23Sep'         : "/DoubleMuon/Run2016F-23Sep2016-v1/MINIAOD",
     'DoubleMu_2016G_23Sep'         : "/DoubleMuon/Run2016G-23Sep2016-v1/MINIAOD",
+    'DoubleMu_2016H_23Sep'         : "/DoubleMuon/Run2016H-PromptReco-v3/MINIAOD",
     ############################################################################
 
 }
