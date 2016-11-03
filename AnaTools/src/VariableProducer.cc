@@ -14,14 +14,14 @@ void
 VariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
 
-  uservariables = auto_ptr<VariableProducerPayload> (new VariableProducerPayload);
+  uservariables = unique_ptr<VariableProducerPayload> (new VariableProducerPayload);
 
   ////////////////////////////////////////////////////////////////////////
 
   AddVariables(event);
 
   // store all of our calculated quantities in the event
-  event.put (uservariables, "uservariables");
+  event.put (std::move (uservariables), "uservariables");
 }
 
 

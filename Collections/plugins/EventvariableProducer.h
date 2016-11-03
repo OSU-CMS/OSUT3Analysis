@@ -26,7 +26,7 @@ class EventvariableProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<osu::Eventvariable> pl_;
+    unique_ptr<osu::Eventvariable> pl_;
 };
 
 #endif

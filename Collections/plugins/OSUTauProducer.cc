@@ -32,11 +32,11 @@ OSUTauProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<osu::Met> > met;
   event.getByToken (metToken_, met);
 
-  pl_ = auto_ptr<vector<osu::Tau> > (new vector<osu::Tau> ());
+  pl_ = unique_ptr<vector<osu::Tau> > (new vector<osu::Tau> ());
   for (const auto &object : *collection)
     pl_->emplace_back (object, particles, cfg_, met->at (0));
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 

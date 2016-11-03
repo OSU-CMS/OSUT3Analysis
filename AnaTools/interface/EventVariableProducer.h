@@ -27,7 +27,7 @@ class EventVariableProducer : public edm::EDProducer
 
       edm::ParameterSet collections_;
       unordered_set<string> objectsToGet_;
-      auto_ptr<EventVariableProducerPayload> eventvariables;
+      unique_ptr<EventVariableProducerPayload> eventvariables;
 
     private:
 

@@ -46,8 +46,8 @@
     // If the collection could not be retrieved, the payload remains empty. If the
     // cut decisions could not be retrieved, no objects are cut.
     //////////////////////////////////////////////////////////////////////////////
-    auto_ptr<osu::Beamspot> pl_ = auto_ptr<osu::Beamspot> (new osu::Beamspot ());
-    auto_ptr<TYPE(beamspots)> plO_ = auto_ptr<TYPE(beamspots)> (new TYPE(beamspots) ());
+    unique_ptr<osu::Beamspot> pl_ = unique_ptr<osu::Beamspot> (new osu::Beamspot ());
+    unique_ptr<TYPE(beamspots)> plO_ = unique_ptr<TYPE(beamspots)> (new TYPE(beamspots) ());
     if (singleton.isValid () && singletonOrig.isValid())
       {
         const osu::Beamspot * const object = &(*singleton);
@@ -71,8 +71,8 @@
       }
     //////////////////////////////////////////////////////////////////////////////
 
-    event.put (pl_,  collection_.instance ());
-    event.put (plO_, ORIGINAL_FORMAT);
+    event.put (std::move (pl_),  collection_.instance ());
+    event.put (std::move (plO_), ORIGINAL_FORMAT);
     pl_.reset ();
     plO_.reset ();
     firstEvent_ = false;

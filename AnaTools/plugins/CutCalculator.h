@@ -70,7 +70,7 @@ class CutCalculator : public edm::EDProducer
     Tokens tokens_;
 
     // Payload for this EDProducer.
-    auto_ptr<CutCalculatorPayload>  pl_;
+    unique_ptr<CutCalculatorPayload>  pl_;
 
     // Function for initializing the ValueLookupTree objects, one for each cut.
     bool initializeValueLookupForest (Cuts &, Collections * const);

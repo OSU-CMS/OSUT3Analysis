@@ -46,7 +46,7 @@ class OSUTrackProducer : public edm::EDProducer
     EtaPhiList muonVetoList_;
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Track> > pl_;
+    unique_ptr<vector<osu::Track> > pl_;
 
     void extractFiducialMap (const edm::ParameterSet &, EtaPhiList &, stringstream &) const;
     void envSet (const edm::EventSetup &);

@@ -26,7 +26,7 @@ class OSUCscsegProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Cscseg> > pl_;
+    unique_ptr<vector<osu::Cscseg> > pl_;
 };
 
 #endif

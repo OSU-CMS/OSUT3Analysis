@@ -28,7 +28,7 @@ class OSUBasicjetProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Basicjet> > pl_;
+    unique_ptr<vector<osu::Basicjet> > pl_;
 };
 
 #endif

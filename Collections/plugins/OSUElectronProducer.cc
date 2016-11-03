@@ -51,7 +51,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.getByToken (metToken_, met);
   if (!event.getByToken (token_, collection))
     return;
-  pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
+  pl_ = unique_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
     {
       pl_->emplace_back (object, particles, cfg_, met->at (0));
@@ -139,7 +139,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       electron.set_sumPUPtCorr(puPt); 
       electron.set_electronPVIndex(electronPVIndex); 
     }
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 #else
   edm::Handle<vector<TYPE(electrons)> > collection;
@@ -148,11 +148,11 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
 
-  pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
+  pl_ = unique_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
     pl_->emplace_back (object, particles, cfg_);
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 #endif
 }

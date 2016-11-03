@@ -26,7 +26,7 @@ class OSUPrimaryvertexProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Primaryvertex> > pl_;
+    unique_ptr<vector<osu::Primaryvertex> > pl_;
 };
 
 #endif

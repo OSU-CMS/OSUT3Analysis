@@ -48,9 +48,9 @@ class OSUBjetProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<TYPE (electrons)> > goodElectrons_;
-    auto_ptr<vector<TYPE (muons)> > goodMuons_;
-    auto_ptr<vector<osu::Bjet> > pl_;
+    unique_ptr<vector<TYPE (electrons)> > goodElectrons_;
+    unique_ptr<vector<TYPE (muons)> > goodMuons_;
+    unique_ptr<vector<osu::Bjet> > pl_;
 };
 
 #endif

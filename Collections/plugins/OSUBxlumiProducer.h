@@ -26,7 +26,7 @@ class BxlumiProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Bxlumi> > pl_;
+    unique_ptr<vector<osu::Bxlumi> > pl_;
 };
 
 #endif

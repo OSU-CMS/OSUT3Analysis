@@ -26,7 +26,7 @@ class McparticleProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Mcparticle> > pl_;
+    unique_ptr<vector<osu::Mcparticle> > pl_;
 };
 
 #endif

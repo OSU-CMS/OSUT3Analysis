@@ -24,8 +24,8 @@ OSUBeamspotProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<TYPE(beamspots)> collection;
   if (!event.getByToken (token_, collection))
     return;
-  pl_ = auto_ptr<osu::Beamspot>  (new osu::Beamspot (*collection));
-  event.put (pl_, collection_.instance ());
+  pl_ = unique_ptr<osu::Beamspot>  (new osu::Beamspot (*collection));
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 

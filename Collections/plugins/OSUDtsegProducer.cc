@@ -25,11 +25,11 @@ OSUDtsegProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   if (!event.getByToken (token_, collection))
     return;
 
-  pl_ = auto_ptr<vector<osu::Dtseg> > (new vector<osu::Dtseg> ());
+  pl_ = unique_ptr<vector<osu::Dtseg> > (new vector<osu::Dtseg> ());
   for (const auto &object : *collection)
     pl_->emplace_back (object);
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 

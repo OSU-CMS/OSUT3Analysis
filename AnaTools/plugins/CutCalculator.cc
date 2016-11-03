@@ -67,7 +67,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   //////////////////////////////////////////////////////////////////////////////
   // Create the payload for this EDProducer and initialize some of its members.
   //////////////////////////////////////////////////////////////////////////////
-  pl_ = auto_ptr<CutCalculatorPayload> (new CutCalculatorPayload);
+  pl_ = unique_ptr<CutCalculatorPayload> (new CutCalculatorPayload);
   pl_->isValid = true;
   pl_->cuts = unpackedCuts_;
   pl_->triggers = unpackedTriggers_;
@@ -129,7 +129,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   // also AND together cut and trigger decision
   setEventFlags ();
 
-  event.put (pl_, "cutDecisions");
+  event.put (std::move (pl_), "cutDecisions");
   pl_.reset ();
   firstEvent_ = false;
 }

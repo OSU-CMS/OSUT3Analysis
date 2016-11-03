@@ -47,7 +47,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<osu::Met> > met;
   event.getByToken (metToken_, met);
 
-  pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
+  pl_ = unique_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     {
       pl_->emplace_back (object, particles, cfg_, met->at (0));
@@ -130,7 +130,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       muon.set_muonPVIndex(muonPVIndex); 
     }
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 #elif DATA_FORMAT == AOD_CUSTOM
@@ -155,10 +155,10 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<TYPE (muons)> > collection;
   if (!event.getByToken (token_, collection))
     return;
-  pl_ = auto_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
+  pl_ = unique_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     pl_->emplace_back (object);
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 #endif
