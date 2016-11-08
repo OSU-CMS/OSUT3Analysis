@@ -85,8 +85,10 @@ struct HistoDef {
   string title; // contains axis labels
   vector<double> binsX;
   vector<double> binsY;
+  vector<double> binsZ;
   bool hasVariableBinsX;
   bool hasVariableBinsY;
+  bool hasVariableBinsZ;
   vector<string> inputVariables;
   vector<ValueLookupTree *> valueLookupTrees;
   int dimensions;
