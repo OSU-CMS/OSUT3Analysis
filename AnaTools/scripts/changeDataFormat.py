@@ -50,7 +50,7 @@ if arguments.custom_config:
 os.system('sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT %s/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % (arguments.data_format))
 
 if arguments.custom_config:
-    os.system('sed -i "s:CustomDataFormat.h:%s:g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % (arguments.custom_config))
+    os.system('sed -i "s:.*CustomDataFormat.h.*:%s:" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % ('  #include \\\"' + arguments.custom_config + '\\\"'))
 
 os.system('touch $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h')
 print "Data format changed to " + arguments.data_format + "."
