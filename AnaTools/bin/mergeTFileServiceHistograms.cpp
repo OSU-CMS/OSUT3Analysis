@@ -3,6 +3,7 @@
 #include <TKey.h>
 #include <TH1.h>
 #include <TH2.h>
+#include <TH3.h>
 #include <TDirectory.h>
 #include <TList.h>
 #include <TMath.h>
@@ -182,6 +183,8 @@ void make(TDirectory & out, TObject * o) {
   TH1D * th1d;
   TH2F * th2f;
   TH2D * th2d;
+  TH3F * th3f;
+  TH3D * th3d;
   out.cd();
   if (!dir && exists)
     return;
@@ -223,6 +226,16 @@ void make(TDirectory & out, TObject * o) {
     h->Reset();
     h->Sumw2();
     h->SetDirectory(&out);
+  } else if((th3f = dynamic_cast<TH3F*>(o)) != 0) {
+    TH3F *h = (TH3F*) th3f->Clone();
+    h->Reset();
+    h->Sumw2();
+    h->SetDirectory(&out);
+  } else if((th3d = dynamic_cast<TH3D*>(o)) != 0) {
+    TH3D *h = (TH3D*) th3d->Clone();
+    h->Reset();
+    h->Sumw2();
+    h->SetDirectory(&out);
   }
 }
 
@@ -232,6 +245,8 @@ void fill(TDirectory & out, TObject * o, double w) {
   TH1D * th1d;
   TH2F * th2f;
   TH2D * th2d;
+  TH3F * th3f;
+  TH3D * th3d;
   if((dir  = dynamic_cast<TDirectory*>(o)) != 0) {
     const char * name = dir->GetName();
     TDirectory * outDir = dynamic_cast<TDirectory*>(out.Get(name));
@@ -299,6 +314,30 @@ void fill(TDirectory & out, TObject * o, double w) {
     TList *list = new TList();
     list->Add(th2d);
     outTh2d->Merge(list);
+  } else if((th3f = dynamic_cast<TH3F*>(o)) != 0) {
+    const char * name = th3f->GetName();
+    TH3F * outTh3f = dynamic_cast<TH3F*>(out.Get(name));
+    if(outTh3f == 0) {
+      cerr <<"error: histogram TH3F" << name << " not found in directory " << out.GetName() << endl;
+      exit(-1);
+    }
+    th3f->Scale(w);
+
+    TList *list = new TList();
+    list->Add(th3f);
+    outTh3f->Merge(list);
+  } else if((th3d = dynamic_cast<TH3D*>(o)) != 0) {
+    const char * name = th3d->GetName();
+    TH3D * outTh3d = dynamic_cast<TH3D*>(out.Get(name));
+    if(outTh3d == 0) {
+      cerr <<"error: histogram TH3D" << name << " not found in directory " << out.GetName() << endl;
+      exit(-1);
+    }
+    th3d->Scale(w);
+
+    TList *list = new TList();
+    list->Add(th3d);
+    outTh3d->Merge(list);
   }
 }
 
