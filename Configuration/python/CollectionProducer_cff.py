@@ -111,7 +111,7 @@ collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
 )
 
 if 'CMSSW_8' in os.environ['CMSSW_VERSION']:
-    collectionProducer.bjets.jetResFromGlobalTag = cms.bool(True)
+    collectionProducer.jets.jetResFromGlobalTag = cms.bool(True)
 
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
 
