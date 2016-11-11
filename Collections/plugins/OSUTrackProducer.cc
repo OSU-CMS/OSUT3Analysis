@@ -298,6 +298,8 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
         }
     }
   //////////////////////////////////////////////////////////////////////////////
+  delete beforeVetoHist;
+  delete afterVetoHist;
 }
 
 void

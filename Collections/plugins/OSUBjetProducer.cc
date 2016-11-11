@@ -230,6 +230,11 @@ OSUBjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
+
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+  delete jecUnc;
+  delete rng;
+#endif
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

@@ -232,6 +232,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_.reset ();
 
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+  delete jecUnc;
   delete rng;
 #endif
 }
