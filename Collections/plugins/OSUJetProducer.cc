@@ -153,7 +153,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       jet.set_jecUncertainty(jecUnc->getUncertainty(true));
 
       jetResParams.setJetPt(jet.pt());
-      jetResParams.setJetEta(jet.pt());
+      jetResParams.setJetEta(jet.eta());
       jetResParams.setRho((float)(*rho));
       jet.set_jetPtResolution(jetEnergyResolution.getResolution(jetResParams));
       jet.set_setJetPtResolutionSF(jetEnergyResolutionSFs.getScaleFactor(jetResParams),

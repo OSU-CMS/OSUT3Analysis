@@ -92,4 +92,7 @@ dataset_names = {
     'gluino2200_Stage2SeparateEventsParticle1'   : "/HSCPgluino_M-2200_TuneCUETP8M1_13TeV_pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle1/USER",
     'gluino2400_Stage2SeparateEventsParticle1'   : "/HSCPgluino_M-2400_TuneCUETP8M1_13TeV_pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle1/USER",
     'gluino2600_Stage2SeparateEventsParticle1'   : "/HSCPgluino_M-2600_TuneCUETP8M1_13TeV_pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle1/USER",
+
+################### Delayed Muons Cosmic MC with adjusted timing GEN-SIM stored on T3 ###############
+    'cosmicMC_adjustedTiming_GenSim' : "/Cosmic/Cosmic_fullDetector_adjustedTiming_MCRUN2_7122_V5_jalimena/GEN-SIM",
 }
