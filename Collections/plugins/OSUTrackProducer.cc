@@ -142,7 +142,7 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   for (const auto &object : *collection)
     {
 #ifdef DISAPP_TRKS
-      pl_->emplace_back (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_, &EcalAllDeadChannelsValMap_, &EcalAllDeadChannelsBitMap_);
+      pl_->emplace_back (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_, &EcalAllDeadChannelsValMap_, &EcalAllDeadChannelsBitMap_, !event.isRealData ());
       osu::Track &track = pl_->back ();
 #else
       pl_->emplace_back (object);

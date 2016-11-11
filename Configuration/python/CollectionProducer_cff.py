@@ -197,6 +197,12 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
 
     gsfTracks    =  cms.InputTag  ("electronGsfTracks",      ""),
     maxDeltaRForGsfTrackMatching = cms.double (0.2), # if cutting on dRToMatchedGsfTrack, must set this to be greater than the cut threshold
+
+    # The following three parameters are used to correct the missing outer hits
+    # distribution in MC for the disappearing tracks analysis.
+    dropTOBProbability      =  cms.double  (0.00830971251971), # probability of dropping all hits in the TOB
+    preTOBHitInefficiency   =  cms.double  (0.00515089150972), # probability of randomly dropping strip hits before the TOB
+    postTOBHitInefficiency  =  cms.double  (0.27336245212),    # probability of randomly dropping strip hits in the TOB
 )
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
     if "Run2016" in osusub.dataset:

@@ -1,6 +1,9 @@
 #ifndef OSU_TRACK
 #define OSU_TRACK
 
+#include <random>
+#include <chrono>
+
 #include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
 
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
@@ -40,7 +43,7 @@ namespace osu
         Track (const TYPE(tracks) &);
         Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &);
         Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
-        Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const edm::Handle<vector<reco::GsfTrack> > &, const EtaPhiList &, const EtaPhiList &, const map<DetId, vector<double> > * const, const map<DetId, vector<int> > * const);
+        Track (const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const edm::Handle<vector<reco::GsfTrack> > &, const EtaPhiList &, const EtaPhiList &, const map<DetId, vector<double> > * const, const map<DetId, vector<int> > * const, const bool);
         ~Track ();
 
         const double dRMinJet() const;
@@ -62,6 +65,10 @@ namespace osu
         const int bestTrackMissingInnerHits () const;
         const int bestTrackMissingMiddleHits () const;
         const int bestTrackMissingOuterHits () const;
+
+        const int hitAndTOBDrop_missingOuterHits () const;
+        const int hitAndTOBDrop_gsfTrackMissingOuterHits () const;
+        const int hitAndTOBDrop_bestTrackMissingOuterHits () const;
 
         const double innerP () const;
         const double outerP () const;
@@ -87,10 +94,18 @@ namespace osu
 
         bool isFiducialECALTrack_;
 
+        double dropTOBProbability_;
+        double preTOBDropHitProbability_;
+        double postTOBDropHitProbability_;
+
+        bool dropTOBDecision_;
+        vector<bool> dropHitDecisions_;
+
         const bool isFiducialTrack (const EtaPhiList &, const double) const;
         const edm::Ref<vector<reco::GsfTrack> > &findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &, edm::Ref<vector<reco::GsfTrack> > &, double &) const;
         const bool isBadGsfTrack (const reco::GsfTrack &) const;
         int isCloseToBadEcalChannel (const double &);
+        template<class T> const int extraMissingOuterHits (const T &) const;
     };
 }
 
