@@ -105,4 +105,7 @@ dataset_names = {
     'gluino2200_DigiHltSeparateEventsParticle1_2016'   : "/HSCPgluino_M-2200_TuneCUETP8M1_13TeV_pythia8/RunIIWinter15GS-MCRUN2_8022_Stage2DigiHltSeparateEventsParticle1/USER",
     'gluino2400_DigiHltSeparateEventsParticle1_2016'   : "/HSCPgluino_M-2400_TuneCUETP8M1_13TeV_pythia8/RunIIWinter15GS-MCRUN2_8022_Stage2DigiHltSeparateEventsParticle1/USER",
     'gluino2600_DigiHltSeparateEventsParticle1_2016'   : "/HSCPgluino_M-2600_TuneCUETP8M1_13TeV_pythia8/RunIIWinter15GS-MCRUN2_8022_Stage2DigiHltSeparateEventsParticle1/USER",
+
+################### Delayed Muons Cosmic MC with adjusted timing stored on T3 ###############
+    'cosmicMC_adjustedTiming_DigiHlt' : "/Cosmic/Cosmic_fullDetector_adjustedTiming_MCRUN2_766_DigiHlt/USER",
 }

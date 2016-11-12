@@ -11,7 +11,9 @@ osu::Track::Track () :
   maxDeltaR_ (-1.0),
   EcalAllDeadChannelsValMap_ (NULL),
   EcalAllDeadChannelsBitMap_ (NULL),
-  isFiducialECALTrack_ (true)
+  isFiducialECALTrack_ (true),
+  dropTOBDecision_ (-1.0),
+  dropHitDecisions_ ({})
 {
 }
 
@@ -25,7 +27,9 @@ osu::Track::Track (const TYPE(tracks) &track) :
   maxDeltaR_ (-1.0),
   EcalAllDeadChannelsValMap_ (NULL),
   EcalAllDeadChannelsBitMap_ (NULL),
-  isFiducialECALTrack_ (true)
+  isFiducialECALTrack_ (true),
+  dropTOBDecision_ (-1.0),
+  dropHitDecisions_ ({})
 {
 }
 
@@ -39,7 +43,9 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   maxDeltaR_ (-1.0),
   EcalAllDeadChannelsValMap_ (NULL),
   EcalAllDeadChannelsBitMap_ (NULL),
-  isFiducialECALTrack_ (true)
+  isFiducialECALTrack_ (true),
+  dropTOBDecision_ (-1.0),
+  dropHitDecisions_ ({})
 {
 }
 
@@ -53,11 +59,13 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   maxDeltaR_ (-1.0),
   EcalAllDeadChannelsValMap_ (NULL),
   EcalAllDeadChannelsBitMap_ (NULL),
-  isFiducialECALTrack_ (true)
+  isFiducialECALTrack_ (true),
+  dropTOBDecision_ (-1.0),
+  dropHitDecisions_ ({})
 {
 }
 
-osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, const EtaPhiList &electronVetoList, const EtaPhiList &muonVetoList, const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap) :
+osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, const EtaPhiList &electronVetoList, const EtaPhiList &muonVetoList, const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, const bool dropHits) :
   GenMatchable (track, particles, cfg),
   dRMinJet_ (INVALID_VALUE),
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
@@ -65,13 +73,26 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_)),
   EcalAllDeadChannelsValMap_ (EcalAllDeadChannelsValMap),
   EcalAllDeadChannelsBitMap_ (EcalAllDeadChannelsBitMap),
-  isFiducialECALTrack_ (!isCloseToBadEcalChannel (minDeltaRForFiducialTrack_))
+  isFiducialECALTrack_ (!isCloseToBadEcalChannel (minDeltaRForFiducialTrack_)),
+  dropTOBDecision_ (-1.0),
+  dropHitDecisions_ ({})
 {
   maxDeltaR_ = cfg.getParameter<double> ("maxDeltaRForGsfTrackMatching");
   if (gsfTracks.isValid ())
     findMatchedGsfTrack (gsfTracks, matchedGsfTrack_, dRToMatchedGsfTrack_);
   EcalAllDeadChannelsValMap_ = NULL;
   EcalAllDeadChannelsBitMap_ = NULL;
+
+  dropTOBProbability_ = cfg.getParameter<double> ("dropTOBProbability");
+  preTOBDropHitProbability_ = cfg.getParameter<double> ("preTOBHitInefficiency");
+  postTOBDropHitProbability_ = cfg.getParameter<double> ("postTOBHitInefficiency");
+
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  default_random_engine generator (seed);
+  uniform_real_distribution<double> distribution (0.0, 1.0);
+  dropTOBDecision_ = (dropHits ? distribution (generator) : 1.0e6) < dropTOBProbability_;
+  for (int i = 0; i < 50; i++)
+    dropHitDecisions_.push_back ((dropHits ? distribution (generator) : 1.0e6) < (dropTOBDecision_ ? postTOBDropHitProbability_ : preTOBDropHitProbability_));
 }
 
 osu::Track::~Track ()
@@ -228,6 +249,61 @@ osu::Track::bestTrackMissingOuterHits () const
 
   return nHits;
 }
+
+/*******************************************************************************
+ * Methods for testing effect of dropping random hits and all the TOB hits.
+*******************************************************************************/
+
+template<class T> const int
+osu::Track::extraMissingOuterHits (const T &track) const
+{
+  int nHits = 0;
+  for (int i = 0; i < track.hitPattern ().stripLayersWithMeasurement () - (dropTOBDecision_ ? track.hitPattern ().stripTOBLayersWithMeasurement () : 0); i++)
+    {
+      bool hit = !dropHitDecisions_.at (i);
+      if (!hit)
+        nHits++;
+      else
+        break;
+    }
+
+  return nHits;
+}
+
+/* Missing outer hits */
+
+const int
+osu::Track::hitAndTOBDrop_missingOuterHits () const
+{
+  int nDropTOBHits = (dropTOBDecision_ ? this->hitPattern ().stripTOBLayersWithMeasurement () : 0);
+  int nDropHits = extraMissingOuterHits (*this);
+  return this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS) + nDropTOBHits + nDropHits;
+}
+
+const int
+osu::Track::hitAndTOBDrop_gsfTrackMissingOuterHits () const
+{
+  if (this->matchedGsfTrack_.isNonnull ())
+    {
+      int nDropTOBHits = (dropTOBDecision_ ? this->matchedGsfTrack_->hitPattern ().stripTOBLayersWithMeasurement () : 0);
+      int nDropHits = extraMissingOuterHits (*this->matchedGsfTrack_);
+      return this->matchedGsfTrack_->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS) + nDropTOBHits + nDropHits;
+    }
+
+  return INVALID_VALUE;
+}
+
+const int
+osu::Track::hitAndTOBDrop_bestTrackMissingOuterHits () const
+{
+  int nHits = hitAndTOBDrop_gsfTrackMissingOuterHits ();
+  if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
+    nHits = hitAndTOBDrop_missingOuterHits ();
+
+  return nHits;
+}
+
+/******************************************************************************/
 
 const double
 osu::Track::innerP () const

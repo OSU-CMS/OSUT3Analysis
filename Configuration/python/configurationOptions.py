@@ -1197,6 +1197,12 @@ nJobs = {
     #'cosmic_preselection' : 300,
     'cosmic_preselection' : 999,
 
+    #delayed muons cosmic MC
+    'cosmicMC_adjustedTiming_GenSim' : 999,
+    'cosmicMC_adjustedTiming_DigiHlt' : 999,
+    'cosmicMC_adjustedTiming_Reco' : 999,
+    'cosmicMC_adjustedTiming_Ntuple' : 999,
+
     #stopped particles stage1 GEN-SIM
     'mchamp100' : 999,
     'mchamp200' : 999,
@@ -2199,6 +2205,12 @@ maxEvents = {
 
     #stopped particles cosmic events
     'cosmic_preselection' : -1,
+
+    #delayed muons cosmic MC
+    'cosmicMC_adjustedTiming_GenSim' : -1,
+    'cosmicMC_adjustedTiming_DigiHlt' : -1,
+    'cosmicMC_adjustedTiming_Reco' : -1,
+    'cosmicMC_adjustedTiming_Ntuple' : -1,
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : -1,
@@ -3221,6 +3233,12 @@ types = {
 
     #stopped particles cosmic events
     'cosmic_preselection' : "bgMC",
+
+    #delayed muons cosmic MC
+    'cosmicMC_adjustedTiming_GenSim' : "bgMC",
+    'cosmicMC_adjustedTiming_DigiHlt' : "bgMC",
+    'cosmicMC_adjustedTiming_Reco' : "bgMC",
+    'cosmicMC_adjustedTiming_Ntuple' : "bgMC",
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : "signalMC",
@@ -4252,6 +4270,12 @@ colors = {
 
     #stopped particles cosmic events
     'cosmic_preselection' : 2,
+
+    #delayed muons cosmic MC
+    'cosmicMC_adjustedTiming_GenSim' : 9,
+    'cosmicMC_adjustedTiming_DigiHlt' : 9,
+    'cosmicMC_adjustedTiming_Reco' : 9,
+    'cosmicMC_adjustedTiming_Ntuple' : 9,
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : 1,
@@ -5287,6 +5311,12 @@ labels = {
     #stopped particles cosmic MC events
     'cosmic_preselection' : "Cosmic MC preselection",
 
+    #delayed muons cosmic MC
+    'cosmicMC_adjustedTiming_GenSim' : "Cosmic Simulation",
+    'cosmicMC_adjustedTiming_DigiHlt' : "Cosmic Simulation",
+    'cosmicMC_adjustedTiming_Reco' : "Cosmic Simulation",
+    'cosmicMC_adjustedTiming_Ntuple' : "Cosmic Simulation",
+
     #stopped particles stage1 GEN-SIM
     'mchamp100' : "Mchamp (Q = 2e, M = 100 GeV)",
     'mchamp200' : "Mchamp (Q = 2e, M = 200 GeV)",
@@ -6106,6 +6136,12 @@ crossSections = {
 
     #stopped particles cosmic events
     'cosmic_preselection' : 8.3600000000E-02,
+
+    #delayed muons cosmic MC
+    'cosmicMC_adjustedTiming_GenSim' : 8.3600000000E-02,
+    'cosmicMC_adjustedTiming_DigiHlt' : 8.3600000000E-02,
+    'cosmicMC_adjustedTiming_Reco' : 8.3600000000E-02,
+    'cosmicMC_adjustedTiming_Ntuple' : 8.3600000000E-02,
 
     #stopped particles stage1 GEN-SIM
     #from https://github.com/quertenmont/cmssw/blob/HSCP2015_PAS-EXO-15-010/SUSYBSMAnalysis/HSCP/test/AnalysisCode/Analysis_Samples.txt
