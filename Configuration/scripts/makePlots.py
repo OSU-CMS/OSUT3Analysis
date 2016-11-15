@@ -682,6 +682,11 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
         inputFile.Close()
 
+        isProfile = False
+        if "_pfx" in Histogram.GetName() or "_pfy" in Histogram.GetName() or "_sigma" in Histogram.GetName():
+            isProfile = True
+
+
         if doRebin and "CutFlowPlotter" not in pathToDir:
 #            #don't rebin any gen-matching or cutflow histograms, or numObject type histograms
 #            if (Histogram.GetName().find("num") is -1 and
@@ -729,7 +734,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                  yAxisLabel = Histogram.GetYaxis().SetTitle(quickRenameStringY)
                  yAxisLabel = Histogram.GetYaxis().GetTitle()
 
-
         if normalizeToUnitArea and arguments.makeSignificancePlots:
             unit = "Efficiency"
         else:
@@ -738,6 +742,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             yAxisLabel = unit + ", " + xAxisLabelVar + "< x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
         if integrateDir is "right":
             yAxisLabel = unit + ", " + xAxisLabelVar + "> x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
+
+        if isProfile:
+            yAxisLabel = Histogram.GetYaxis().GetTitle()
 
         if not makeFancy:
             histoTitle = Histogram.GetTitle()
@@ -759,14 +766,14 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             Histogram.SetBinError(nbins, math.sqrt(math.pow(Histogram.GetBinError(nbins),2) + math.pow(Histogram.GetBinError(nbins+1),2)))
 
         if arguments.verbose:
-            print "Sample = ", sample, ", types[sample] = ", types[sample]
+            print "Sample = " + sample + ", types[sample] = " + types[sample]
         if( types[sample] == "bgMC"):
 
             numBgMCSamples += 1
             backgroundIntegral += Histogram.Integral()
 
             Histogram.SetLineStyle(1)
-            if(noStack):
+            if noStack or isProfile:
                 Histogram.SetFillStyle(0)
                 Histogram.SetLineColor(colors[sample])
                 Histogram.SetLineWidth(2)
@@ -870,7 +877,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
         bgMCHist = MakeIntegralHist(bgMCHist, integrateDir)
 
-        if not noStack:
+        if not noStack and not isProfile:
             Stack.Add(bgMCHist)
 
 
@@ -883,7 +890,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
 
     ### creating the histogram to represent the statistical errors on the stack
-    if numBgMCSamples is not 0 and not noStack:
+    if numBgMCSamples is not 0 and not noStack and not isProfile:
         if includeSystematics:
             addSystematicError(BgMCHistograms[0],BgMCUncertainties[0])
         ErrorHisto = BgMCHistograms[0].Clone("errors")
@@ -904,7 +911,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     ### formatting bgMC histograms and adding to legend
     legendIndex = numBgMCSamples-1
     for Histogram in reversed(BgMCHistograms):
-        if(noStack):
+        if isProfile:
+            BgMCLegend.AddEntry(Histogram,BgMCLegendEntries[legendIndex],"LEP")
+        elif noStack:
             BgMCLegend.AddEntry(Histogram,BgMCLegendEntries[legendIndex],"L")
         else:
             BgMCLegend.AddEntry(Histogram,BgMCLegendEntries[legendIndex],"F")
@@ -919,7 +928,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
     finalMax = 0
-    if numBgMCSamples is not 0 and not noStack:
+    if numBgMCSamples is not 0 and not noStack and not isProfile:
         finalMax = ErrorHisto.GetMaximum() + ErrorHisto.GetBinError(ErrorHisto.GetMaximumBin())
     else:
         for bgMCHist in BgMCHistograms:
@@ -991,7 +1000,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
     if numBgMCSamples is not 0: # the first thing to draw to the canvas is a bgMC sample
 
-        if not noStack: # draw stacked background samples
+        if not noStack and not isProfile: # draw stacked background samples
             Stack.SetTitle(histoTitle)
             Stack.Draw("HIST")
             Stack.SetMaximum(finalMax)
@@ -1013,14 +1022,21 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
         else: #draw the unstacked backgrounds
             BgMCHistograms[0].SetTitle(histoTitle)
-            BgMCHistograms[0].Draw("HIST")
+            if not isProfile:
+                BgMCHistograms[0].Draw("HIST")
+            else:
+                BgMCHistograms[0].Draw("E0")
             BgMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
             BgMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
             BgMCHistograms[0].SetMaximum(finalMax)
-            BgMCHistograms[0].SetMinimum(yAxisMin)
+            if not isProfile:
+                BgMCHistograms[0].SetMinimum(yAxisMin)
             setXAxisRangeUser(BgMCHistograms[0])
-            for bgMCHist in BgMCHistograms:
-                bgMCHist.Draw("A HIST SAME")
+            for bgMCHist in BgMCHistograms[1:]:
+                if not isProfile:
+                    bgMCHist.Draw("A HIST SAME")
+                else:
+                    bgMCHist.Draw("A E0 SAME")
 
         for signalMCHist in SignalMCHistograms:
             signalMCHist.Draw("A HIST SAME")
@@ -1048,8 +1064,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         DataHistograms[0].Draw("E")
         DataHistograms[0].GetXaxis().SetTitle(xAxisLabel)
         DataHistograms[0].GetYaxis().SetTitle(yAxisLabel)
-        DataHistograms[0].SetMaximum(finalMax)
-        DataHistograms[0].SetMinimum(yAxisMin)
+        if not isProfile:
+            DataHistograms[0].SetMaximum(finalMax)
+            DataHistograms[0].SetMinimum(yAxisMin)
         setXAxisRangeUser(DataHistograms[0])
         for dataHist in DataHistograms:
             if(dataHist is not DataHistograms[0]):
@@ -1658,5 +1675,5 @@ for key in inputFile.GetListOfKeys():
 
 
 outputFile.Close()
-print "Finished writing plots to ", str(outputDir + "/" + outputFileName)
+print "Finished writing plots to", str(outputDir + "/" + outputFileName)
 
