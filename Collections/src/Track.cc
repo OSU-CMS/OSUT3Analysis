@@ -254,11 +254,63 @@ osu::Track::bestTrackMissingOuterHits () const
  * Methods for testing effect of dropping random hits and all the TOB hits.
 *******************************************************************************/
 
+/* Missing middle hits */
+
+template<class T> const int
+osu::Track::extraMissingMiddleHits (const T &track) const
+{
+  int nHits = 0;
+  bool countMissingMiddleHits = false;
+  for (int i = 0; i < track.hitPattern ().stripLayersWithMeasurement () - (dropTOBDecision_ ? this->hitPattern ().stripTOBLayersWithMeasurement () : 0); i++)
+    {
+      bool hit = !dropHitDecisions_.at (i);
+      if (!hit && countMissingMiddleHits)
+        nHits++;
+      if (hit)
+        countMissingMiddleHits = true;
+    }
+
+  return nHits;
+}
+
+const int
+osu::Track::hitAndTOBDrop_missingMiddleHits () const
+{
+  int nDropTOBHits = (dropTOBDecision_ ? this->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) : 0);
+  int nDropHits = extraMissingMiddleHits (*this);
+  return this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS) - nDropTOBHits + nDropHits;
+}
+
+const int
+osu::Track::hitAndTOBDrop_gsfTrackMissingMiddleHits () const
+{
+  if (this->matchedGsfTrack_.isNonnull ())
+    {
+      int nDropTOBHits = (dropTOBDecision_ ? this->matchedGsfTrack_->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) : 0);
+      int nDropHits = extraMissingMiddleHits (*this->matchedGsfTrack_);
+      return this->matchedGsfTrack_->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS) - nDropTOBHits + nDropHits;
+    }
+
+  return INVALID_VALUE;
+}
+
+const int
+osu::Track::hitAndTOBDrop_bestTrackMissingMiddleHits () const
+{
+  int nHits = hitAndTOBDrop_gsfTrackMissingMiddleHits ();
+  if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
+    nHits = hitAndTOBDrop_missingMiddleHits ();
+
+  return nHits;
+}
+
+/* Missing outer hits */
+
 template<class T> const int
 osu::Track::extraMissingOuterHits (const T &track) const
 {
   int nHits = 0;
-  for (int i = 0; i < track.hitPattern ().stripLayersWithMeasurement () - (dropTOBDecision_ ? track.hitPattern ().stripTOBLayersWithMeasurement () : 0); i++)
+  for (int i = 0; i < track.hitPattern ().stripLayersWithMeasurement () - (dropTOBDecision_ ? this->hitPattern ().stripTOBLayersWithMeasurement () : 0); i++)
     {
       bool hit = !dropHitDecisions_.at (i);
       if (!hit)
@@ -269,8 +321,6 @@ osu::Track::extraMissingOuterHits (const T &track) const
 
   return nHits;
 }
-
-/* Missing outer hits */
 
 const int
 osu::Track::hitAndTOBDrop_missingOuterHits () const

@@ -66,6 +66,10 @@ namespace osu
         const int bestTrackMissingMiddleHits () const;
         const int bestTrackMissingOuterHits () const;
 
+        const int hitAndTOBDrop_missingMiddleHits () const;
+        const int hitAndTOBDrop_gsfTrackMissingMiddleHits () const;
+        const int hitAndTOBDrop_bestTrackMissingMiddleHits () const;
+
         const int hitAndTOBDrop_missingOuterHits () const;
         const int hitAndTOBDrop_gsfTrackMissingOuterHits () const;
         const int hitAndTOBDrop_bestTrackMissingOuterHits () const;
@@ -105,6 +109,7 @@ namespace osu
         const edm::Ref<vector<reco::GsfTrack> > &findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &, edm::Ref<vector<reco::GsfTrack> > &, double &) const;
         const bool isBadGsfTrack (const reco::GsfTrack &) const;
         int isCloseToBadEcalChannel (const double &);
+        template<class T> const int extraMissingMiddleHits (const T &) const;
         template<class T> const int extraMissingOuterHits (const T &) const;
     };
 }
