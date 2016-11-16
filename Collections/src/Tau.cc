@@ -132,7 +132,7 @@ osu::Tau::passesDecayModeReconstruction () const
     return (this->tauID ("decayModeFinding") > 0.5);
   else
     {
-      edm::LogWarning ("osu::Tau") << "Tau ID \"decayModeFinding\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau ID \"decayModeFinding\" unavailable.";
       return false;
     }
 }
@@ -148,7 +148,7 @@ osu::Tau::passesLightFlavorRejection () const
     flag = flag && (this->tauID ("againstElectronLooseMVA6") > 0.5);
   else
     {
-      edm::LogWarning ("osu::Tau") << "Tau IDs \"againstElectronLooseMVA5\" and \"againstElectronLooseMVA6\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau IDs \"againstElectronLooseMVA5\" and \"againstElectronLooseMVA6\" unavailable.";
       flag = flag && false;
     }
 
@@ -156,7 +156,7 @@ osu::Tau::passesLightFlavorRejection () const
     flag = flag && (this->tauID ("againstMuonLoose3") > 0.5);
   else
     {
-      edm::LogWarning ("osu::Tau") << "Tau ID \"againstMuonLoose3\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau ID \"againstMuonLoose3\" unavailable.";
       flag = flag && false;
     }
 
@@ -170,7 +170,7 @@ osu::Tau::passesLooseCombinedIsolation () const
     return (this->tauID ("byLooseCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
   else
     {
-      edm::LogWarning ("osu::Tau") << "Tau ID \"byLooseCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau ID \"byLooseCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
       return false;
     }
 }
@@ -182,7 +182,7 @@ osu::Tau::passesMediumCombinedIsolation () const
     return (this->tauID ("byMediumCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
   else
     {
-      edm::LogWarning ("osu::Tau") << "Tau ID \"byMediumCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau ID \"byMediumCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
       return false;
     }
 }
@@ -194,7 +194,7 @@ osu::Tau::passesTightCombinedIsolation () const
     return (this->tauID ("byTightCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
   else
     {
-      edm::LogWarning ("osu::Tau") << "Tau ID \"byTightCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau ID \"byTightCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
       return false;
     }
 }

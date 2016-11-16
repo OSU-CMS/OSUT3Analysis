@@ -125,8 +125,8 @@ osu::GenMatchable<T, PdgId>::GenMatchable (const T &object, const edm::Handle<ve
       findGenMatchedParticle (particles, genMatchedParticle_, dRToGenMatchedParticle_);
       findGenMatchedParticle (particles, genMatchedParticleOfSameType_, dRToGenMatchedParticleOfSameType_, true);
     }
-  //  else
-  //    edm::LogWarning ("osu::GenMatchable") << "No generator particles collection found. Skipping gen-matching...";
+  else
+    edm::LogWarning ("osu_GenMatchable") << "No generator particles collection found. Skipping gen-matching...";
 }
 
 template<class T, int PdgId>
@@ -140,8 +140,8 @@ osu::GenMatchable<T, PdgId>::GenMatchable (const T &object, const edm::Handle<ve
       findGenMatchedParticle (particles, genMatchedParticle_, dRToGenMatchedParticle_);
       findGenMatchedParticle (particles, genMatchedParticleOfSameType_, dRToGenMatchedParticleOfSameType_, true);
     }
-  //  else
-  //    edm::LogWarning ("osu::GenMatchable") << "No generator particles collection found. Skipping gen-matching...";
+  else
+    edm::LogWarning ("osu_GenMatchable") << "No generator particles collection found. Skipping gen-matching...";
 }
 
 template<class T, int PdgId>
