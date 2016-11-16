@@ -290,6 +290,8 @@ OSUSecondaryTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, Eta
         }
     }
   //////////////////////////////////////////////////////////////////////////////
+  delete beforeVetoHist;
+  delete afterVetoHist;
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

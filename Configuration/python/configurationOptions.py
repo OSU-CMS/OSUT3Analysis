@@ -6657,6 +6657,16 @@ dstCTauForLifetimeReweighting = {
     # 'stopAndGluino1200_50mm_30mm' : [5.0, 3.0],
 }
 
+pdgIdsForISRReweighting = {
+    # Defines the PDG IDs of the particles to be used for ISR reweighting.
+    # This will calculate the vector PT of all hard interaction particles with
+    # these IDs, and use it a proxy for the ISR recoil
+    # They keys are dataset labels and the values are either single PDG IDs or
+    # lists of PDG IDs, e.g:
+    # 'stop1200_50mm' : 1000006,
+    # 'stopAndGluino1200_50mm_30mm' : [1000006, 1000021],
+}
+
 ##########################################################################
 ### code to set relevant parameters for displaced SUSY signal samples, ###
 ### which are a scan in the plane of stop mass and lifetime            ###
@@ -6751,5 +6761,6 @@ for dataset0 in nJobs:
         pdgIdsForLifetimeReweighting[dataset] = 1000024
         srcCTauForLifetimeReweighting[dataset] = ctau0
         dstCTauForLifetimeReweighting[dataset] = float (ctau)
+        pdgIdsForISRReweighting[dataset] = [1000022, 1000024]
 
 nJobs.update (new_nJobs)

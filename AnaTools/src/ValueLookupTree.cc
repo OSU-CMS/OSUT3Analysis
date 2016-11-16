@@ -826,7 +826,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 
           for (const auto &operand : operands)
             {
-              px += valueLookup (boost::get<string> (operand) + "s", objs, "px", false);
+              px += valueLookup (boost::get<string> (operand) + "s", objs, "px");
               py += valueLookup (boost::get<string> (operand) + "s", objs, "py", false);
             }
           return hypot(px,py);
