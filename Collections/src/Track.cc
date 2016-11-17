@@ -278,7 +278,7 @@ osu::Track::hitAndTOBDrop_missingMiddleHits () const
 {
   int nDropTOBHits = (dropTOBDecision_ ? this->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) : 0);
   int nDropHits = extraMissingMiddleHits (*this);
-  return this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS) - nDropTOBHits + nDropHits;
+  return this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) - nDropTOBHits + nDropHits;
 }
 
 const int
@@ -288,7 +288,7 @@ osu::Track::hitAndTOBDrop_gsfTrackMissingMiddleHits () const
     {
       int nDropTOBHits = (dropTOBDecision_ ? this->matchedGsfTrack_->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) : 0);
       int nDropHits = extraMissingMiddleHits (*this->matchedGsfTrack_);
-      return this->matchedGsfTrack_->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS) - nDropTOBHits + nDropHits;
+      return this->matchedGsfTrack_->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) - nDropTOBHits + nDropHits;
     }
 
   return INVALID_VALUE;
