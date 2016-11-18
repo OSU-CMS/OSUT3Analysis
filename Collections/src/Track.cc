@@ -13,7 +13,8 @@ osu::Track::Track () :
   EcalAllDeadChannelsBitMap_ (NULL),
   isFiducialECALTrack_ (true),
   dropTOBDecision_ (-1.0),
-  dropHitDecisions_ ({})
+  dropHitDecisions_ ({}),
+  dropMiddleHitDecisions_ ({})
 {
 }
 
@@ -29,7 +30,8 @@ osu::Track::Track (const TYPE(tracks) &track) :
   EcalAllDeadChannelsBitMap_ (NULL),
   isFiducialECALTrack_ (true),
   dropTOBDecision_ (-1.0),
-  dropHitDecisions_ ({})
+  dropHitDecisions_ ({}),
+  dropMiddleHitDecisions_ ({})
 {
 }
 
@@ -45,7 +47,8 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   EcalAllDeadChannelsBitMap_ (NULL),
   isFiducialECALTrack_ (true),
   dropTOBDecision_ (-1.0),
-  dropHitDecisions_ ({})
+  dropHitDecisions_ ({}),
+  dropMiddleHitDecisions_ ({})
 {
 }
 
@@ -61,7 +64,8 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   EcalAllDeadChannelsBitMap_ (NULL),
   isFiducialECALTrack_ (true),
   dropTOBDecision_ (-1.0),
-  dropHitDecisions_ ({})
+  dropHitDecisions_ ({}),
+  dropMiddleHitDecisions_ ({})
 {
 }
 
@@ -75,7 +79,8 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   EcalAllDeadChannelsBitMap_ (EcalAllDeadChannelsBitMap),
   isFiducialECALTrack_ (!isCloseToBadEcalChannel (minDeltaRForFiducialTrack_)),
   dropTOBDecision_ (-1.0),
-  dropHitDecisions_ ({})
+  dropHitDecisions_ ({}),
+  dropMiddleHitDecisions_ ({})
 {
   maxDeltaR_ = cfg.getParameter<double> ("maxDeltaRForGsfTrackMatching");
   if (gsfTracks.isValid ())
@@ -84,8 +89,9 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   EcalAllDeadChannelsBitMap_ = NULL;
 
   dropTOBProbability_ = cfg.getParameter<double> ("dropTOBProbability");
-  preTOBDropHitProbability_ = cfg.getParameter<double> ("preTOBHitInefficiency");
-  postTOBDropHitProbability_ = cfg.getParameter<double> ("postTOBHitInefficiency");
+  preTOBDropHitProbability_ = cfg.getParameter<double> ("preTOBDropHitInefficiency");
+  postTOBDropHitProbability_ = cfg.getParameter<double> ("postTOBDropHitInefficiency");
+  hitProbability_ = cfg.getParameter<double> ("hitInefficiency");
 
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   default_random_engine generator (seed);
@@ -93,6 +99,8 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   dropTOBDecision_ = (dropHits ? distribution (generator) : 1.0e6) < dropTOBProbability_;
   for (int i = 0; i < 50; i++)
     dropHitDecisions_.push_back ((dropHits ? distribution (generator) : 1.0e6) < (dropTOBDecision_ ? postTOBDropHitProbability_ : preTOBDropHitProbability_));
+  for (int i = 0; i < 50; i++)
+    dropMiddleHitDecisions_.push_back ((dropHits ? distribution (generator) : 1.0e6) < hitProbability_);
 }
 
 osu::Track::~Track ()
@@ -263,7 +271,7 @@ osu::Track::extraMissingMiddleHits (const T &track) const
   bool countMissingMiddleHits = false;
   for (int i = 0; i < track.hitPattern ().stripLayersWithMeasurement () - (dropTOBDecision_ ? this->hitPattern ().stripTOBLayersWithMeasurement () : 0); i++)
     {
-      bool hit = !dropHitDecisions_.at (i);
+      bool hit = !dropMiddleHitDecisions_.at (i);
       if (!hit && countMissingMiddleHits)
         nHits++;
       if (hit)
@@ -274,32 +282,30 @@ osu::Track::extraMissingMiddleHits (const T &track) const
 }
 
 const int
-osu::Track::hitAndTOBDrop_missingMiddleHits () const
+osu::Track::hitDrop_missingMiddleHits () const
 {
-  int nDropTOBHits = (dropTOBDecision_ ? this->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) : 0);
   int nDropHits = extraMissingMiddleHits (*this);
-  return this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) - nDropTOBHits + nDropHits;
+  return this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) + nDropHits;
 }
 
 const int
-osu::Track::hitAndTOBDrop_gsfTrackMissingMiddleHits () const
+osu::Track::hitDrop_gsfTrackMissingMiddleHits () const
 {
   if (this->matchedGsfTrack_.isNonnull ())
     {
-      int nDropTOBHits = (dropTOBDecision_ ? this->matchedGsfTrack_->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) : 0);
       int nDropHits = extraMissingMiddleHits (*this->matchedGsfTrack_);
-      return this->matchedGsfTrack_->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) - nDropTOBHits + nDropHits;
+      return this->matchedGsfTrack_->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS) + nDropHits;
     }
 
   return INVALID_VALUE;
 }
 
 const int
-osu::Track::hitAndTOBDrop_bestTrackMissingMiddleHits () const
+osu::Track::hitDrop_bestTrackMissingMiddleHits () const
 {
-  int nHits = hitAndTOBDrop_gsfTrackMissingMiddleHits ();
+  int nHits = hitDrop_gsfTrackMissingMiddleHits ();
   if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
-    nHits = hitAndTOBDrop_missingMiddleHits ();
+    nHits = hitDrop_missingMiddleHits ();
 
   return nHits;
 }

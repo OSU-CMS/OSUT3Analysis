@@ -66,9 +66,9 @@ namespace osu
         const int bestTrackMissingMiddleHits () const;
         const int bestTrackMissingOuterHits () const;
 
-        const int hitAndTOBDrop_missingMiddleHits () const;
-        const int hitAndTOBDrop_gsfTrackMissingMiddleHits () const;
-        const int hitAndTOBDrop_bestTrackMissingMiddleHits () const;
+        const int hitDrop_missingMiddleHits () const;
+        const int hitDrop_gsfTrackMissingMiddleHits () const;
+        const int hitDrop_bestTrackMissingMiddleHits () const;
 
         const int hitAndTOBDrop_missingOuterHits () const;
         const int hitAndTOBDrop_gsfTrackMissingOuterHits () const;
@@ -101,9 +101,11 @@ namespace osu
         double dropTOBProbability_;
         double preTOBDropHitProbability_;
         double postTOBDropHitProbability_;
+        double hitProbability_;
 
         bool dropTOBDecision_;
         vector<bool> dropHitDecisions_;
+        vector<bool> dropMiddleHitDecisions_;
 
         const bool isFiducialTrack (const EtaPhiList &, const double) const;
         const edm::Ref<vector<reco::GsfTrack> > &findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &, edm::Ref<vector<reco::GsfTrack> > &, double &) const;
