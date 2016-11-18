@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 from OSUT3Analysis.Configuration.configurationOptions import *
 
-srcMomentumPdgId = cms.vdouble ()
+srcMomentumPdgId = cms.vint32 ()
 
 if osusub.batchMode:
     if osusub.datasetLabel in types and types[osusub.datasetLabel] == "signalMC":

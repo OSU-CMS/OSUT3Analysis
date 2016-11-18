@@ -35,8 +35,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
     exit(1);
   }
 
-  TH1D * weights;
-  fin->GetObject(weightHist_.c_str(), weights);
+  TH1D * weights = (TH1D*)fin->Get(weightHist_.c_str());
   if(!weights) {
     clog << "ERROR [ISRWeightProducer]: Could not find histogram: " << weightHist_
          << "; would cause a seg fault." << endl;
