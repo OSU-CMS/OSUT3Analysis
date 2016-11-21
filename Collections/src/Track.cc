@@ -93,6 +93,11 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   postTOBDropHitProbability_ = cfg.getParameter<double> ("postTOBDropHitInefficiency");
   hitProbability_ = cfg.getParameter<double> ("hitInefficiency");
 
+  edm::LogInfo ("osu_Track")  <<  "dropTOBProbability:         "  <<  (dropTOBProbability_         *  100.0)  <<  "%"   <<  endl
+                              <<  "preTOBDropHitProbability:   "  <<  (preTOBDropHitProbability_   *  100.0)  <<  "%"   <<  endl
+                              <<  "postTOBDropHitProbability:  "  <<  (postTOBDropHitProbability_  *  100.0)  <<  "%"   <<  endl
+                              <<  "hitProbability:             "  <<  (hitProbability_             *  100.0)  <<  "%";
+
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   default_random_engine generator (seed);
   uniform_real_distribution<double> distribution (0.0, 1.0);
