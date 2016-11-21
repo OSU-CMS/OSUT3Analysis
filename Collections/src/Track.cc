@@ -101,10 +101,12 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   postTOBDropHitProbability_ = cfg.getParameter<double> ("postTOBDropHitInefficiency");
   hitProbability_ = cfg.getParameter<double> ("hitInefficiency");
 
-  edm::LogInfo ("osu_Track")  <<  "dropTOBProbability:         "  <<  (dropTOBProbability_         *  100.0)  <<  "%"   <<  endl
-                              <<  "preTOBDropHitProbability:   "  <<  (preTOBDropHitProbability_   *  100.0)  <<  "%"   <<  endl
-                              <<  "postTOBDropHitProbability:  "  <<  (postTOBDropHitProbability_  *  100.0)  <<  "%"   <<  endl
-                              <<  "hitProbability:             "  <<  (hitProbability_             *  100.0)  <<  "%";
+  stringstream ss;
+  ss  <<  "dropTOBProbability:         "  <<  (dropTOBProbability_         *  100.0)  <<  "%"   <<  endl
+      <<  "preTOBDropHitProbability:   "  <<  (preTOBDropHitProbability_   *  100.0)  <<  "%"   <<  endl
+      <<  "postTOBDropHitProbability:  "  <<  (postTOBDropHitProbability_  *  100.0)  <<  "%"   <<  endl
+      <<  "hitProbability:             "  <<  (hitProbability_             *  100.0)  <<  "%";
+  edm::LogInfo ("osu_Track") << ss.str ();
 
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   default_random_engine generator (seed);
@@ -183,7 +185,7 @@ osu::Track::isFiducialTrack (const EtaPhiList &vetoList, const double minDeltaR,
 {
   const double minDR = max (minDeltaR, vetoList.minDeltaR); // use the given parameter unless the bin size from which the veto list is calculated is larger
   bool isFiducial = true;
-  maxSigma = -1.0;
+  maxSigma = 0.0;
   for (const auto &etaPhi : vetoList)
     {
       if (deltaR (this->eta (), this->phi (), etaPhi.eta, etaPhi.phi) < minDR)
