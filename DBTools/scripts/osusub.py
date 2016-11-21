@@ -396,6 +396,10 @@ def MakeCondorSubmitRelease(Directory):
         "*.cc",
         "*.h",
         "*.pyc",
+        ".git*",
+        "*.C",
+        "*.cpp",
+        "test",
     )
     cwd = os.getcwd ()
     os.chdir (Directory + "/..")
@@ -406,7 +410,7 @@ def MakeCondorSubmitRelease(Directory):
         for directory in directoriesToCopy:
             shutil.rmtree (directory, ignore_errors = True)
             if os.path.isdir (os.environ["CMSSW_BASE"] + "/" + directory):
-                shutil.copytree (os.environ["CMSSW_BASE"] + "/" + directory, directory, symlinks = True, ignore = shutil.ignore_patterns ())
+                shutil.copytree (os.environ["CMSSW_BASE"] + "/" + directory, directory, symlinks = True, ignore = shutil.ignore_patterns (*filesToIgnore))
     os.chdir (cwd)
 
 #It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.
