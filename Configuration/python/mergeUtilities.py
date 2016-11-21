@@ -250,8 +250,6 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         OutputDir = CondorDir
     directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory
     os.system("mkdir -p " + directoryOut)
-    flogName = directoryOut + '/mergeOut.log'
-    flog = open (flogName, "w")
     log = "....................Merging dataset " + dataSet + " ....................\n"
     os.chdir(directory)
     if verbose:
@@ -329,7 +327,10 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     cmd = 'mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString
     if verbose:
         print "Executing: ", cmd
-    os.system(cmd)
+    try:
+        log += subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        log += e.output
     log += "\nFinished merging dataset " + dataSet + ":\n"
     log += "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs.\n"
     log += "    "+ str(TotalNumber) + " events were successfully run over.\n"
@@ -341,6 +342,8 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         log += "    " + str(Weight*TotalNumber) + " weighted events and the effective luminosity is " + str(IntLumi/Weight) + " inverse pb.\n"
     log += "...............................................................\n"
     os.chdir(CondorDir)
+    flogName = directoryOut + '/mergeOut.log'
+    flog = open (flogName, "w")
     flog.write(log)
     flog.close()
     os.system("cat " + flogName)
