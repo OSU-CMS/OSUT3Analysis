@@ -11,7 +11,6 @@ import glob
 import tempfile
 import shutil
 import subprocess
-from multiprocessing import cpu_count
 from math import *
 from array import *
 from optparse import OptionParser
