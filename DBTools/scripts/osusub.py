@@ -402,14 +402,24 @@ def MakeCondorSubmitRelease(Directory):
     )
     cwd = os.getcwd ()
     os.chdir (Directory + "/..")
-    if not os.path.isdir (os.environ["CMSSW_VERSION"]):
+
+    recopy = not hasattr (MakeCondorSubmitRelease, "madeCondorSubmitRelease")
+    if recopy and os.path.isdir (os.environ["CMSSW_VERSION"]):
+        print "Release " + os.environ["CMSSW_VERSION"] + " already exists for remote execution."
+        recopy = raw_input ("Would you like to recopy the release? (y/N): ")
+        recopy = (len (recopy) > 0 and recopy[0].upper () == "Y")
+
+    if recopy:
         print "Setting up " + os.environ["CMSSW_VERSION"] + " for remote execution..."
+        shutil.rmtree (os.environ["CMSSW_VERSION"], ignore_errors = True)
         subprocess.call ("scram project CMSSW " + os.environ["CMSSW_VERSION"], shell = True, stdout = DEVNULL, stderr = DEVNULL)
         os.chdir (os.environ["CMSSW_VERSION"])
         for directory in directoriesToCopy:
             shutil.rmtree (directory, ignore_errors = True)
             if os.path.isdir (os.environ["CMSSW_BASE"] + "/" + directory):
                 shutil.copytree (os.environ["CMSSW_BASE"] + "/" + directory, directory, symlinks = True, ignore = shutil.ignore_patterns (*filesToIgnore))
+
+    setattr (MakeCondorSubmitRelease, "madeCondorSubmitRelease", True)
     os.chdir (cwd)
 
 #It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.
