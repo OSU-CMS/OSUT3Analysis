@@ -1198,10 +1198,10 @@ nJobs = {
     'cosmic_preselection' : 999,
 
     #delayed muons cosmic MC
-    'cosmicMC_adjustedTiming_GenSim' : 999,
-    'cosmicMC_adjustedTiming_DigiHlt' : 999,
-    'cosmicMC_adjustedTiming_Reco' : 999,
-    'cosmicMC_adjustedTiming_Ntuple' : 999,
+    'cosmicMC_0To25Timing_GenSim' : 999,
+    'cosmicMC_0To25Timing_DigiHlt' : 999,
+    'cosmicMC_0To25Timing_Reco' : 999,
+    'cosmicMC_0To25Timing_Ntuple' : 999,
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : 999,
@@ -2207,10 +2207,10 @@ maxEvents = {
     'cosmic_preselection' : -1,
 
     #delayed muons cosmic MC
-    'cosmicMC_adjustedTiming_GenSim' : -1,
-    'cosmicMC_adjustedTiming_DigiHlt' : -1,
-    'cosmicMC_adjustedTiming_Reco' : -1,
-    'cosmicMC_adjustedTiming_Ntuple' : -1,
+    'cosmicMC_0To25Timing_GenSim' : -1,
+    'cosmicMC_0To25Timing_DigiHlt' : -1,
+    'cosmicMC_0To25Timing_Reco' : -1,
+    'cosmicMC_0To25Timing_Ntuple' : -1,
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : -1,
@@ -3235,10 +3235,10 @@ types = {
     'cosmic_preselection' : "bgMC",
 
     #delayed muons cosmic MC
-    'cosmicMC_adjustedTiming_GenSim' : "bgMC",
-    'cosmicMC_adjustedTiming_DigiHlt' : "bgMC",
-    'cosmicMC_adjustedTiming_Reco' : "bgMC",
-    'cosmicMC_adjustedTiming_Ntuple' : "bgMC",
+    'cosmicMC_0To25Timing_GenSim' : "bgMC",
+    'cosmicMC_0To25Timing_DigiHlt' : "bgMC",
+    'cosmicMC_0To25Timing_Reco' : "bgMC",
+    'cosmicMC_0To25Timing_Ntuple' : "bgMC",
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : "signalMC",
@@ -4272,10 +4272,10 @@ colors = {
     'cosmic_preselection' : 2,
 
     #delayed muons cosmic MC
-    'cosmicMC_adjustedTiming_GenSim' : 9,
-    'cosmicMC_adjustedTiming_DigiHlt' : 9,
-    'cosmicMC_adjustedTiming_Reco' : 9,
-    'cosmicMC_adjustedTiming_Ntuple' : 9,
+    'cosmicMC_0To25Timing_GenSim' : 9,
+    'cosmicMC_0To25Timing_DigiHlt' : 9,
+    'cosmicMC_0To25Timing_Reco' : 9,
+    'cosmicMC_0To25Timing_Ntuple' : 9,
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : 1,
@@ -4612,7 +4612,7 @@ colors = {
     'mchamp100_NtupleSeparateEvents'   :    1,
     'mchamp200_NtupleSeparateEvents'   :    1,
     'mchamp400_NtupleSeparateEvents'   :    1,
-    'mchamp600_NtupleSeparateEvents'   :    4,
+    'mchamp600_NtupleSeparateEvents'   :    6,
     'mchamp800_NtupleSeparateEvents'   :    1,
     'mchamp1000_NtupleSeparateEvents'  :    2,
     'mchamp1400_NtupleSeparateEvents'  :    1,
@@ -4660,7 +4660,7 @@ colors = {
     'gluino1400_NtupleSeparateEvents'   : 1,
     'gluino1600_NtupleSeparateEvents'   : 1,
     'gluino1800_NtupleSeparateEvents'   : 1,
-    'gluino2000_NtupleSeparateEvents'   : 1,
+    'gluino2000_NtupleSeparateEvents'   : 8,
     'gluino2200_NtupleSeparateEvents'   : 1,
     'gluino2400_NtupleSeparateEvents'   : 1,
     'gluino2600_NtupleSeparateEvents'   : 4,
@@ -5312,10 +5312,10 @@ labels = {
     'cosmic_preselection' : "Cosmic MC preselection",
 
     #delayed muons cosmic MC
-    'cosmicMC_adjustedTiming_GenSim' : "Cosmic Simulation",
-    'cosmicMC_adjustedTiming_DigiHlt' : "Cosmic Simulation",
-    'cosmicMC_adjustedTiming_Reco' : "Cosmic Simulation",
-    'cosmicMC_adjustedTiming_Ntuple' : "Cosmic Simulation",
+    'cosmicMC_0To25Timing_GenSim' : "Cosmic Simulation, 2015",
+    'cosmicMC_0To25Timing_DigiHlt' : "Cosmic Simulation, 2015",
+    'cosmicMC_0To25Timing_Reco' : "Cosmic Simulation, 2015",
+    'cosmicMC_0To25Timing_Ntuple' : "Cosmic Simulation, 2015",
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : "Mchamp (Q = 2e, M = 100 GeV)",
@@ -6138,10 +6138,10 @@ crossSections = {
     'cosmic_preselection' : 8.3600000000E-02,
 
     #delayed muons cosmic MC
-    'cosmicMC_adjustedTiming_GenSim' : 8.3600000000E-02,
-    'cosmicMC_adjustedTiming_DigiHlt' : 8.3600000000E-02,
-    'cosmicMC_adjustedTiming_Reco' : 8.3600000000E-02,
-    'cosmicMC_adjustedTiming_Ntuple' : 8.3600000000E-02,
+    'cosmicMC_0To25Timing_GenSim' : 8.3600000000E-02,
+    'cosmicMC_0To25Timing_DigiHlt' : 8.3600000000E-02,
+    'cosmicMC_0To25Timing_Reco' : 8.3600000000E-02,
+    'cosmicMC_0To25Timing_Ntuple' : 8.3600000000E-02,
 
     #stopped particles stage1 GEN-SIM
     #from https://github.com/quertenmont/cmssw/blob/HSCP2015_PAS-EXO-15-010/SUSYBSMAnalysis/HSCP/test/AnalysisCode/Analysis_Samples.txt

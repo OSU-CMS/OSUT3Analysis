@@ -355,8 +355,8 @@ dataset_names = {
     'gluino2600_NtupleSeparateEventsParticle1_2016'   : "/HSCPgluino_M-2600_TuneCUETP8M1_13TeV_pythia8/RunIIWinter15GS-MCRUN2_8022_Stage2NtupleSeparateEventsParticle1/USER",
 
 ################### Delayed Muons Cosmic MC with adjusted timing stored on T3 ###############
-    'cosmicMC_adjustedTiming_Reco' : "/Cosmic/Cosmic_fullDetector_adjustedTiming_MCRUN2_766_Reco/USER",
-    'cosmicMC_adjustedTiming_Ntuple' : "/Cosmic/Cosmic_fullDetector_adjustedTiming_MCRUN2_766_Ntuple/USER",
+    'cosmicMC_0To25Timing_Reco' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_Reco/USER",
+    'cosmicMC_0To25Timing_Ntuple' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_Ntuple/USER",
 
 ################## SP ntuples stored on T3 ###############
 #################### cosmic sample #######################
