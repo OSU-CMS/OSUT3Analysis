@@ -291,7 +291,7 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
           content && ss << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << (content - mean) / hypot (error, meanErr) << " sigma above mean of " << setw (10) << mean;
           if ((content - mean) > thresholdForVeto * hypot (error, meanErr))
             {
-              vetoList.emplace_back (eta, phi);
+              vetoList.emplace_back (eta, phi, (content - mean) / hypot (error, meanErr));
               ss << " * HOT SPOT *";
             }
           content && ss << endl;

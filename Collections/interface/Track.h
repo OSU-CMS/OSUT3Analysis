@@ -14,10 +14,12 @@ struct EtaPhi
 {
   double eta;
   double phi;
+  double sigma;
 
-  EtaPhi (const double a, const double b) :
+  EtaPhi (const double a, const double b, const double sigma = -1.0) :
     eta (a),
-    phi (b)
+    phi (b),
+    sigma (sigma)
   {
   }
 };
@@ -52,6 +54,9 @@ namespace osu
         const bool isFiducialElectronTrack () const;
         const bool isFiducialMuonTrack () const;
         const bool isFiducialECALTrack () const;
+
+        const double maxSigmaForFiducialElectronTrack () const;
+        const double maxSigmaForFiducialMuonTrack () const;
 
         const edm::Ref<vector<reco::GsfTrack> > matchedGsfTrack () const;
         const double dRToMatchedGsfTrack () const;
@@ -88,6 +93,9 @@ namespace osu
         bool isFiducialElectronTrack_;
         bool isFiducialMuonTrack_;
 
+        double maxSigmaForFiducialElectronTrack_;
+        double maxSigmaForFiducialMuonTrack_;
+
         edm::Ref<vector<reco::GsfTrack> > matchedGsfTrack_;
         double dRToMatchedGsfTrack_;
 
@@ -107,7 +115,7 @@ namespace osu
         vector<bool> dropHitDecisions_;
         vector<bool> dropMiddleHitDecisions_;
 
-        const bool isFiducialTrack (const EtaPhiList &, const double) const;
+        const bool isFiducialTrack (const EtaPhiList &, const double, double &) const;
         const edm::Ref<vector<reco::GsfTrack> > &findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &, edm::Ref<vector<reco::GsfTrack> > &, double &) const;
         const bool isBadGsfTrack (const reco::GsfTrack &) const;
         int isCloseToBadEcalChannel (const double &);

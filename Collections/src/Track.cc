@@ -6,6 +6,8 @@ osu::Track::Track () :
   dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
+  maxSigmaForFiducialElectronTrack_ (-1.0),
+  maxSigmaForFiducialMuonTrack_ (-1.0),
   matchedGsfTrack_ (),
   dRToMatchedGsfTrack_ (INVALID_VALUE),
   maxDeltaR_ (-1.0),
@@ -23,6 +25,8 @@ osu::Track::Track (const TYPE(tracks) &track) :
   dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
+  maxSigmaForFiducialElectronTrack_ (-1.0),
+  maxSigmaForFiducialMuonTrack_ (-1.0),
   matchedGsfTrack_ (),
   dRToMatchedGsfTrack_ (INVALID_VALUE),
   maxDeltaR_ (-1.0),
@@ -40,6 +44,8 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
+  maxSigmaForFiducialElectronTrack_ (-1.0),
+  maxSigmaForFiducialMuonTrack_ (-1.0),
   matchedGsfTrack_ (),
   dRToMatchedGsfTrack_ (INVALID_VALUE),
   maxDeltaR_ (-1.0),
@@ -57,6 +63,8 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
+  maxSigmaForFiducialElectronTrack_ (-1.0),
+  maxSigmaForFiducialMuonTrack_ (-1.0),
   matchedGsfTrack_ (),
   dRToMatchedGsfTrack_ (INVALID_VALUE),
   maxDeltaR_ (-1.0),
@@ -73,8 +81,8 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   GenMatchable (track, particles, cfg),
   dRMinJet_ (INVALID_VALUE),
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
-  isFiducialElectronTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_)),
-  isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_)),
+  isFiducialElectronTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialElectronTrack_)),
+  isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialMuonTrack_)),
   EcalAllDeadChannelsValMap_ (EcalAllDeadChannelsValMap),
   EcalAllDeadChannelsBitMap_ (EcalAllDeadChannelsBitMap),
   isFiducialECALTrack_ (!isCloseToBadEcalChannel (minDeltaRForFiducialTrack_)),
@@ -130,6 +138,18 @@ osu::Track::isFiducialECALTrack () const
   return isFiducialECALTrack_;
 }
 
+const double
+osu::Track::maxSigmaForFiducialElectronTrack () const
+{
+  return maxSigmaForFiducialElectronTrack_;
+}
+
+const double
+osu::Track::maxSigmaForFiducialMuonTrack () const
+{
+  return maxSigmaForFiducialMuonTrack_;
+}
+
 const edm::Ref<vector<reco::GsfTrack> >
 osu::Track::matchedGsfTrack () const
 {
@@ -159,13 +179,21 @@ osu::Track::set_dRMinJet(const double dRMinJet)
 }
 
 const bool
-osu::Track::isFiducialTrack (const EtaPhiList &vetoList, const double minDeltaR) const
+osu::Track::isFiducialTrack (const EtaPhiList &vetoList, const double minDeltaR, double &maxSigma) const
 {
   const double minDR = max (minDeltaR, vetoList.minDeltaR); // use the given parameter unless the bin size from which the veto list is calculated is larger
+  bool isFiducial = true;
+  maxSigma = -1.0;
   for (const auto &etaPhi : vetoList)
-    if (deltaR (this->eta (), this->phi (), etaPhi.eta, etaPhi.phi) < minDR)
-      return false;
-  return true;
+    {
+      if (deltaR (this->eta (), this->phi (), etaPhi.eta, etaPhi.phi) < minDR)
+        {
+          isFiducial = false;
+          if (etaPhi.sigma > maxSigma)
+            maxSigma = etaPhi.sigma;
+        }
+    }
+  return isFiducial;
 }
 
 const edm::Ref<vector<reco::GsfTrack> > &
