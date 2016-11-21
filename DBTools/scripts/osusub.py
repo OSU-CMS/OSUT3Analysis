@@ -10,6 +10,8 @@ import copy
 import glob
 import tempfile
 import shutil
+import subprocess
+from multiprocessing import cpu_count
 from math import *
 from array import *
 from optparse import OptionParser
@@ -117,6 +119,7 @@ parser.add_option("--extend", dest="Extend", action="store_true", default = Fals
 RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Purdue':'xrootd.rcac.purdue.edu','Global':'cms-xrd-global.cern.ch'}
 secondaryCollections ={}
 
+DEVNULL = open (os.devnull, "w")
 
 #To get the JSON file the user specifies. Use -J 'TypeOfJSON' like -J R_Silver
 def getLatestJsonFile():
@@ -139,9 +142,9 @@ def getLatestJsonFile():
             ultimateJson = arguments.JSONType[startIndex: endIndex]
 
         if arguments.JSONType[:4] == 'http':
-            os.system('wget ' + arguments.JSONType + ' -O ' + ultimateJson)
+            subprocess.call('wget ' + arguments.JSONType + ' -O ' + ultimateJson, shell = True)
         else:
-            os.system('cp ' + arguments.JSONType + ' ' + ultimateJson)
+            subprocess.call('cp ' + arguments.JSONType + ' ' + ultimateJson, shell = True)
 
         return ultimateJson
 
@@ -159,8 +162,8 @@ def getLatestJsonFile():
 
         if arguments.JSONType[:2] == 'P_':
             tmpDir = tempfile.mkdtemp ()
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/ -O ' + tmpDir + '/jsonList.txt')
-            os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
+            subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/ -O ' + tmpDir + '/jsonList.txt', shell = True)
+            subprocess.call('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt', shell = True)
             Tmp = open(tmpDir + '/CertList.txt','r+w')
             jsonFileList = []
 
@@ -227,7 +230,7 @@ def getLatestJsonFile():
                             versionNumber = currentVersionNumber
                             ultimateJson = bestJson
 
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
+            subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson, shell = True)
             shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
             shutil.rmtree (tmpDir)
 
@@ -235,8 +238,8 @@ def getLatestJsonFile():
 
         if arguments.JSONType[:2] == 'R_':
             tmpDir = tempfile.mkdtemp ()
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/Reprocessing/ -O ' + tmpDir + '/jsonList.txt')
-            os.system('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt')
+            subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/Reprocessing/ -O ' + tmpDir + '/jsonList.txt', shell = True)
+            subprocess.call('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt', shell = True)
             Tmp = open(tmpDir + '/CertList.txt','r+w')
             jsonFileList = []
 
@@ -273,7 +276,7 @@ def getLatestJsonFile():
                 print "#######################################################"
 
             ultimateJson = jsonFileFiltered[-1]
-            os.system('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType +'/13TeV/Reprocessing/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson)
+            subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType +'/13TeV/Reprocessing/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson, shell = True)
             shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
             shutil.rmtree (tmpDir)
 
@@ -374,6 +377,37 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         else:
             SubmitFile.write(currentCondorSubArgumentsSet[argument].keys()[0] + ' = ' + currentCondorSubArgumentsSet[argument].values()[0] + '\n')
     SubmitFile.close()
+
+def MakeCondorSubmitRelease(Directory):
+    # list of directories copied from $CMSSW_BASE; note that src/ is a special
+    # case that is copied automatically
+    directoriesToCopy = (
+        "biglib",
+        "bin",
+        "cfipython",
+        "config",
+        "external",
+        "lib",
+        "python",
+        "src",
+    )
+    # file patterns to ignore in copying
+    filesToIgnore = (
+        "*.cc",
+        "*.h",
+        "*.pyc",
+    )
+    cwd = os.getcwd ()
+    os.chdir (Directory + "/..")
+    if not os.path.isdir (os.environ["CMSSW_VERSION"]):
+        print "Setting up " + os.environ["CMSSW_VERSION"] + " for remote execution..."
+        subprocess.call ("scram project CMSSW " + os.environ["CMSSW_VERSION"], shell = True, stdout = DEVNULL, stderr = DEVNULL)
+        os.chdir (os.environ["CMSSW_VERSION"])
+        for directory in directoriesToCopy:
+            shutil.rmtree (directory, ignore_errors = True)
+            if os.path.isdir (os.environ["CMSSW_BASE"] + "/" + directory):
+                shutil.copytree (os.environ["CMSSW_BASE"] + "/" + directory, directory, symlinks = True, ignore = shutil.ignore_patterns ())
+    os.chdir (cwd)
 
 #It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.
 def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelNames,jsonFile):
@@ -482,7 +516,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
 #This is a generic function to get the dataset information via das_client.py.
 def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection, append):
     tmpDir = tempfile.mkdtemp ()
-    os.system('/cvmfs/cms.cern.ch/common/das_client --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + tmpDir + "/" + AAAFileList)
+    subprocess.call('/cvmfs/cms.cern.ch/common/das_client --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + tmpDir + "/" + AAAFileList, shell = True)
     inputFileList = open(tmpDir + "/" + AAAFileList, "r")
     inputFiles = inputFileList.read().split('\n')
     inputFileList.close ()
@@ -624,11 +658,11 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 print "You have specified a skim as input.  Will obtain cross sections for dataset", Label, "from the database."
             #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py.
             if not hasattr (Dataset, "__iter__"):
-                os.system('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix + " False")
+                subprocess.call('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix + " False", shell = True)
             else:
                 append = False
                 for x in Dataset:
-                    os.system('MySQLModule ' + x + ' ' + datasetInfoName + ' ' + prefix + ' ' + ("True" if append else "False"))
+                    subprocess.call('MySQLModule ' + x + ' ' + datasetInfoName + ' ' + prefix + ' ' + ("True" if append else "False"), shell = True)
                     append = True
             NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
             if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists:
@@ -794,6 +828,8 @@ elif arguments.SkimDirectory == "" and arguments.SkimChannel == "":
 else:
     print "Both skim directory and skim channel should be provided."
 
+envPreamble = 'cd ../' + os.environ["CMSSW_VERSION"] + '/src/ && eval `scram runtime -sh` && cd ~- && '
+
 ###############################################################################
 # Find the list of dataset to run over, either from arguments or localConfig. #
 ###############################################################################
@@ -947,16 +983,20 @@ if not arguments.Resubmit:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
             else:
                 MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile)
+                MakeCondorSubmitRelease(WorkDir)
             if not arguments.NotToExecute:
                 os.chdir(WorkDir)
                 if RealMaxEvents > 0 :
-                    print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on ' + str(RealMaxEvents)  + ' events in ' + str(DatasetRead['numberOfFiles']) + ' files for ' + str(dataset) + ' dataset.\n'
+                    print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on ' + str(RealMaxEvents)  + ' events in ' + str(DatasetRead['numberOfFiles']) + ' files for ' + str(dataset) + ' dataset...\n'
                 else:
-                    print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on all events in ' + str(DatasetRead['numberOfFiles'])  +' files for ' + str(dataset) + ' dataset.\n'
+                    print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on all events in ' + str(DatasetRead['numberOfFiles'])  +' files for ' + str(dataset) + ' dataset...\n'
                 if lxbatch:
                     os.syetem('./lxbatchSub.sh')
                 else:
-                    os.system('condor_submit condor.sub')
+                    cmd = "condor_submit condor.sub"
+                    if os.path.isdir ("../" + os.environ["CMSSW_VERSION"]):
+                        cmd = envPreamble + cmd
+                    subprocess.call(cmd, shell = True)
                 os.chdir(SubmissionDir)
             else:
                 print 'Configuration files created for ' + str(dataset) + ' dataset but no jobs submitted.\n'
@@ -990,13 +1030,17 @@ if not arguments.Resubmit:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
         else:
             MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'')
+            MakeCondorSubmitRelease(WorkDir)
         if not arguments.NotToExecute:
             os.chdir(WorkDir)
-            print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '.\n'
+            print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '...\n'
             if lxbatch:
                 os.syetem('./lxbatchSub.sh')
             else:
-                os.system('condor_submit condor.sub')
+                cmd = "condor_submit condor.sub"
+                if os.path.isdir ("../" + os.environ["CMSSW_VERSION"]):
+                    cmd = envPreamble + cmd
+                subprocess.call(cmd, shell = True)
             os.chdir(SubmissionDir)
         else:
             print 'Configuration files created for ' + str(Config) + '  but no jobs submitted.\n'
@@ -1007,7 +1051,7 @@ else:
             WorkDir = CondorDir + '/' + str(dataset)
             if os.path.exists(WorkDir + '/condor_resubmit.sh'):
                 os.chdir(WorkDir)
-                os.system ('./condor_resubmit.sh')
+                subprocess.call ('./condor_resubmit.sh', shell = True)
                 os.chdir(SubmissionDir)
             if os.path.exists(WorkDir + '/condor_resubmit.sub'):
                 os.chdir(WorkDir)
@@ -1021,7 +1065,10 @@ else:
                            if 'root:' in line:
                                originalRedirector = line.split('/')[2]
                                break
-                        os.system('sed \'s/' + str(originalRedirector) + '/' + str(RedirectorDic[arguments.Redirector]) + '/g\' '  +  str(datasetInfoFileName))
+                        subprocess.call('sed \'s/' + str(originalRedirector) + '/' + str(RedirectorDic[arguments.Redirector]) + '/g\' '  +  str(datasetInfoFileName), shell = True)
                 print '################ Resubmit failed jobs for ' + str(dataset) + ' dataset #############'
-                os.system('condor_submit condor_resubmit.sub')
+                cmd = "condor_submit condor_resubmit.sub"
+                if os.path.isdir ("../" + os.environ["CMSSW_VERSION"]):
+                    cmd = envPreamble + cmd
+                subprocess.call(cmd, shell = True)
                 os.chdir(SubmissionDir)
