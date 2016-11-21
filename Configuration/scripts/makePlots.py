@@ -782,7 +782,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 Histogram.SetFillColor(colors[sample])
                 Histogram.SetLineColor(1)
                 Histogram.SetLineWidth(1)
-            if not sortOrderByYields:
+            if not sortOrderByYields or isProfile:
                 BgMCHistograms.append(Histogram)
                 BgMCLegendEntries.append(legLabel)
 
@@ -854,7 +854,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
             DataHistograms.append(Histogram)
 
-    if sortOrderByYields:
+    if sortOrderByYields and not isProfile:
         BgMCHistYieldsDic = sortedDictValues(BgMCHistYieldsDic)
         BgMCLegendLabelYieldsDic = sortedDictValues(BgMCLegendLabelYieldsDic)
         for hist in BgMCHistYieldsDic:
@@ -879,7 +879,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
         if not noStack and not isProfile:
             Stack.Add(bgMCHist)
-
 
 
     ### formatting data histograms and adding to legend
@@ -968,7 +967,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     if setLogY:
         gPad.SetLogy()
 
-    if numBgMCSamples is 0 or numDataSamples is not 1:
+    if numBgMCSamples is 0 or numDataSamples is not 1 or isProfile:
         makeRatioPlots = False
         makeDiffPlots = False
     if makeSignifPlots and (numBgMCSamples is 0 or numSignalSamples is 0):
