@@ -213,10 +213,10 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2015_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2015_data.root")
     if "Run2016B" in osusub.dataset or "Run2016C" in osusub.dataset:
-        dropTOBProbability          =  cms.double  (0.0492800902337), # probability of dropping all hits in the TOB
-        preTOBDropHitInefficiency   =  cms.double  (0.00780340007508), # probability of randomly dropping strip hits before the TOB
-        postTOBDropHitInefficiency  =  cms.double  (0.26368571911),    # probability of randomly dropping strip hits in the TOB
-        hitInefficiency             =  cms.double  (0.0420424005969),  # probability of randomly dropping strip hits in the TOB
+        collectionProducer.tracks.dropTOBProbability          =  cms.double  (0.0492800902337), # probability of dropping all hits in the TOB
+        collectionProducer.tracks.preTOBDropHitInefficiency   =  cms.double  (0.00780340007508), # probability of randomly dropping strip hits before the TOB
+        collectionProducer.tracks.postTOBDropHitInefficiency  =  cms.double  (0.26368571911),    # probability of randomly dropping strip hits in the TOB
+        collectionProducer.tracks.hitInefficiency             =  cms.double  (0.0420424005969),  # probability of randomly dropping strip hits in the TOB
 
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------
