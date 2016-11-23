@@ -423,10 +423,9 @@ def MakeCondorSubmitRelease(Directory):
     os.chdir (cwd)
 
 #It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.
-def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelNames,jsonFile):
+def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelNames,jsonFile, temPset):
     ConfigFile = open(Directory + '/config_cfg.py','w')
     sys.path.append(Directory)
-    exec('import userConfig_' + Label + '_cfg' + ' as temPset')
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')
     ConfigFile.write('import OSUT3Analysis.DBTools.osusub_cfg as osusub\n')
     randomNumberSuffix = int (time.time ())  # Use the seconds since the Unix epoch to get a
@@ -441,7 +440,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     ConfigFile.write('\n')
     if not Generic:
         if len(SkimChannelNames) == 0:
-            SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory)
+            SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory, temPset)
             for channelName in SkimChannelNames:
                 if not channelName == '':
                     if not SkimDirectory and not os.path.exists(Directory + '/' + channelName):
@@ -742,11 +741,10 @@ def MakeBatchJobFile(WorkDir, Queue, NumberOfJobs):
 ###############################################################################
 #        Function to find all the skim channels from the userConfig.          #
 ###############################################################################
-def SkimChannelFinder(userConfig, Directory):
+def SkimChannelFinder(userConfig, Directory, temPset):
     sys.path.append(Directory)
     skimChannelNames = []
     os.chdir(Directory)
-    exec('import ' + userConfig + ' as temPset')
     if not hasattr(temPset.process, "endPath"):
         return []
     outputModules = str(temPset.process.endPath).split('+')
@@ -903,6 +901,12 @@ if not arguments.Resubmit:
     if split_datasets:
         SubmissionDir = os.getcwd()
         SkimChannelNames = []
+
+        Config =  arguments.Config
+        if arguments.localConfig:
+            Config = config_file
+        exec('import ' + Config + ' as temPset')
+
         for dataset in split_datasets:
             currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
             EventsPerJob = -1
@@ -910,7 +914,6 @@ if not arguments.Resubmit:
             NumberOfJobs = int(arguments.NumberOfJobs)
             DatasetRead = {}
             MaxEvents = arguments.MaxEvents
-            Config =  arguments.Config
             if arguments.localConfig:
                 if NumberOfJobs < 0:
                     NumberOfJobs = nJobs[dataset]  # If user has specified NumberOfJobs, use that value.
@@ -919,7 +922,6 @@ if not arguments.Resubmit:
                 else:
                      DatasetName = dataset
                 MaxEvents = maxEvents[dataset]
-                Config = config_file
 
             GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
 
@@ -989,7 +991,7 @@ if not arguments.Resubmit:
                 if(types[dataset] == 'data'):
                     jsonFile = getLatestJsonFile()
                     shutil.move (jsonFile, WorkDir + "/" + jsonFile)
-            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,SkimDir,dataset, SkimChannelNames, jsonFile)
+            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,SkimDir,dataset, SkimChannelNames, jsonFile, temPset)
 
 
             if lxbatch:
@@ -1036,8 +1038,9 @@ if not arguments.Resubmit:
             GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
         userConfig = 'userConfig_' + Label + '_cfg.py'
         shutil.copy (Config, WorkDir + "/" + userConfig)
+        exec('import ' + Config + ' as temPset')
 
-        MakeSpecificConfig('',WorkDir,SkimDir,Label, SkimChannelNames,'')
+        MakeSpecificConfig('',WorkDir,SkimDir,Label, SkimChannelNames,'',temPset)
 
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
