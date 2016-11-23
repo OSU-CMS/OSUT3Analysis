@@ -1,4 +1,5 @@
 import FWCore.ParameterSet.Config as cms
+import os
 
 PUScalingFactorProducer = cms.EDProducer ("PUScalingFactorProducer",
     # this should be set in the user's config file if a different pileup file is being used
