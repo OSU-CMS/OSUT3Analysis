@@ -15,6 +15,7 @@ from OSUT3Analysis.Configuration.InfoPrinter_cff import *
 from OSUT3Analysis.Configuration.CollectionProducer_cff import *
 from OSUT3Analysis.Configuration.LifetimeWeightProducer_cff import *
 from OSUT3Analysis.Configuration.ISRWeightProducer_cff import *
+from OSUT3Analysis.Configuration.PUScalingFactorProducer_cff import *
 
 def GetCompleteOrderedArgumentsSet(InputArguments, currentCondorSubArgumentsSet):
     NewArguments = copy.deepcopy(InputArguments)
