@@ -905,7 +905,7 @@ if not arguments.Resubmit:
         Config =  arguments.Config
         if arguments.localConfig:
             Config = config_file
-        exec('import ' + Config + ' as temPset')
+        exec('import ' + re.sub (r"(.*)\.py$", r"\1", Config) + ' as temPset')
 
         for dataset in split_datasets:
             currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
@@ -1038,7 +1038,7 @@ if not arguments.Resubmit:
             GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
         userConfig = 'userConfig_' + Label + '_cfg.py'
         shutil.copy (Config, WorkDir + "/" + userConfig)
-        exec('import ' + Config + ' as temPset')
+        exec('import ' + re.sub (r"(.*)\.py$", r"\1", Config) + ' as temPset')
 
         MakeSpecificConfig('',WorkDir,SkimDir,Label, SkimChannelNames,'',temPset)
 
