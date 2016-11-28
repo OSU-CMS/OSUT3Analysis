@@ -635,6 +635,24 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
             )
             channelPath += plotter
             setattr (process, channelName + "Plotter", plotter)
+
+            # Add copies of the plotting module for any weights being fluctuated
+            for weight in weights:
+                # if "fluctuations" is defined in the PSet
+                for fluctuation in (weight.fluctuations if hasattr (weight, "fluctuations") else []):
+                    # copy all the weights into a new VPSet
+                    fluctuatedWeights = copy.deepcopy(weights)
+                    # now find the weight being fluctuated in the newly copied VPSet
+                    for fluctuatedWeight in fluctuatedWeights:
+                        if fluctuatedWeight.inputVariable == weight.inputVariable and fluctuatedWeight.inputCollections == weight.inputCollections:
+                            # now change the name of the inputVariable to the fluctuation and add a plotting module for this weights VPSet
+                            fluctuatedWeight.inputVariable = fluctuation
+                            fluctuatedPlotter = copy.deepcopy(plotter)
+                            fluctuatedPlotter.weights = fluctuatedWeights
+                            channelPath += fluctuatedPlotter
+                            setattr (process, channelName + "Plotter_" + fluctuation, fluctuatedPlotter)
+                            break
+
         ########################################################################
 
         ########################################################################
