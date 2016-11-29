@@ -108,4 +108,5 @@ dataset_names = {
 
 ################### Delayed Muons Cosmic MC with adjusted timing stored on T3 ###############
     'cosmicMC_0To25Timing_DigiHlt' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_DigiHlt/USER",
+    'cosmicMC_0To25Timing_DigiHlt_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8022_DigiHlt/USER",
 }
