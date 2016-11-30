@@ -357,6 +357,11 @@ dataset_names = {
 ################### Delayed Muons Cosmic MC with adjusted timing stored on T3 ###############
     'cosmicMC_0To25Timing_Reco' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_Reco/USER",
     'cosmicMC_0To25Timing_Ntuple' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_Ntuple/USER",
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple' : "/Cosmic/Cosmic_fullDetector_0To25Timing_onlyControlTriggers_MCRUN2_766_Ntuple/USER",
+
+    'cosmicMC_0To25Timing_Reco_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8022_Reco/USER",
+    'cosmicMC_0To25Timing_Ntuple_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8022_Ntuple/USER",
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_onlyControlTriggers_MCRUN2_8022_Ntuple/USER",
 
 ################## SP ntuples stored on T3 ###############
 #################### cosmic sample #######################
