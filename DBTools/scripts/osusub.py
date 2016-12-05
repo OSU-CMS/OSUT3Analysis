@@ -161,7 +161,7 @@ def getLatestJsonFile():
 
         rerecoDir = 'Reprocessing'
         if re.search('16$', arguments.JSONType):
-            rerecoDir = 'ReReco'
+            rerecoDir = 'ReReco/Final'
 
         if arguments.JSONType[:2] == 'P_':
             tmpDir = tempfile.mkdtemp ()
