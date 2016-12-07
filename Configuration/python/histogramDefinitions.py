@@ -150,19 +150,19 @@ MuonHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("muonPFdBetaIsolation"),
             title = cms.string("Muon PF-based #Delta#beta Isolation;muon PF-based #Delta#beta isolation"),
-            binsX = cms.untracked.vdouble(600, 0, 6.0),
+            binsX = cms.untracked.vdouble(100, 0, 6.0),
             inputVariables = cms.vstring("(pfIsolationR04_.sumChargedHadronPt + max(0.0,pfIsolationR04_.sumNeutralHadronEt + pfIsolationR04_.sumPhotonEt - 0.5*pfIsolationR04_.sumPUPt))/pt"),
         ),
         cms.PSet (
             name = cms.string("muonPFdBetaIsolationCorr"),
             title = cms.string("Muon PF-based #Delta#beta Isolation Corrected; muon PF-based #Delta#beta Isolation Corrected"),
-            binsX = cms.untracked.vdouble(600, 0, 6.0),
+            binsX = cms.untracked.vdouble(100, 0, 6.0),
             inputVariables = cms.vstring("pfdBetaIsoCorr"),
         ),
         cms.PSet (
             name = cms.string("muonPFdBetaIsolationDiff"),
             title = cms.string("Muon PF-based #Delta#beta Isolation Discrepancy; muon PF-based Iso_{default} - Iso_{customized}"),
-            binsX = cms.untracked.vdouble(2000, -1, 1),
+            binsX = cms.untracked.vdouble(100, -1, 1),
             inputVariables = cms.vstring("(pfIsolationR04_.sumChargedHadronPt + max(0.0,pfIsolationR04_.sumNeutralHadronEt + pfIsolationR04_.sumPhotonEt - 0.5*pfIsolationR04_.sumPUPt))/pt - pfdBetaIsoCorr"),
         ),
     )
@@ -360,12 +360,12 @@ ElectronHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(100, 0, 0.01),
             inputVariables = cms.vstring("abs(deltaEtaSuperClusterTrackAtVtx)"),
         ),
-        #cms.PSet (
-        #    name = cms.string("electronDeltaEtaSeedClusterTrackAtVtx"),
-        #    title = cms.string("Electron deltaEtaSeedClusterTrackAtVtx; #Delta#eta(seed, track) at vertex"),
-        #    binsX = cms.untracked.vdouble(100, 0, 0.01),
-        #    inputVariables = cms.vstring("abs(deltaEtaSuperClusterTrackAtVtx - superCluster.eta + superCluster.seed_.eta)"),
-        #),
+        cms.PSet (
+            name = cms.string("electronDeltaEtaSeedClusterTrackAtVtx"),
+            title = cms.string("Electron deltaEtaSeedClusterTrackAtVtx; #Delta#eta(seed, track) at vertex"),
+            binsX = cms.untracked.vdouble(100, 0, 0.01),
+            inputVariables = cms.vstring("abs(deltaEtaSuperClusterTrackAtVtx - superCluster.eta + superCluster.seed_.eta)"),
+        ),
         cms.PSet (
             name = cms.string("electronDeltaPhiSuperClusterTrackAtVtx"),
             title = cms.string("Electron deltaPhiSuperClusterTrackAtVtx; #Delta#phi(SC, track) at vertex"),
@@ -412,19 +412,19 @@ ElectronHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("electronPFrhoIsolation"),
             title = cms.string("Electron PF-based #rho-corrected Isolation; electron rel. iso."),
-            binsX = cms.untracked.vdouble(300, 0, 3),
+            binsX = cms.untracked.vdouble(100, 0, 6),
             inputVariables = cms.vstring("(pfIso_.sumChargedHadronPt + max(0.0,pfIso_.sumNeutralHadronEt + pfIso_.sumPhotonEt - rho*AEff))/pt"),
         ),
         cms.PSet (
             name = cms.string("electronPFrhoIsolationCorr"),
             title = cms.string("Electron PF-based #rho-corrected Isolation Corrected; electron #rho-corrected Isolation Corrected"),
-            binsX = cms.untracked.vdouble(300, 0, 3.0),
+            binsX = cms.untracked.vdouble(100, 0, 6.0),
             inputVariables = cms.vstring("pfdRhoIsoCorr"),
         ),
         cms.PSet (
             name = cms.string("electronPFrhoIsolationDiff"),
             title = cms.string("Electron PF-based #rho-corrected Isolation Discrepancy; electron PF-based Iso_{default} - Iso_{customized}"),
-            binsX = cms.untracked.vdouble(2000, -1, 1),
+            binsX = cms.untracked.vdouble(100, -1, 1),
             inputVariables = cms.vstring("(pfIso_.sumChargedHadronPt + max(0.0,pfIso_.sumNeutralHadronEt + pfIso_.sumPhotonEt - rho*AEff))/pt - pfdRhoIsoCorr"),
         ),
 #        cms.PSet (
