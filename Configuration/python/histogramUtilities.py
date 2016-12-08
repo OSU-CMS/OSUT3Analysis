@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-# Utilities for histogram manipulation. 
+# Utilities for histogram manipulation.
 
-from array import * 
-import math 
+from array import *
+import math
 from ROOT import TFile, TH1F, TMath, Double, TH1D, TGraphAsymmErrors
 
 def getEfficiency(passes, passesError, total, totalError):
@@ -61,7 +61,7 @@ def getFirstBinWithLabel(sample,condor_dir,channel,label):
     for i in range(1, cutFlowHistogram.GetNbinsX()+1):
         if label in cutFlowHistogram.GetXaxis().GetBinLabel(i):
             ibin = i
-            break 
+            break
     if ibin < 0:
         print "ERROR:  could not find bin with label containing", label, "for channel", channel
     inputFile.Close()
@@ -138,7 +138,7 @@ def ratioHistogram( dataHist, mcHist, dontRebinRatio=False, addOne=False, relErr
         ratio.SetTitle("")
     else:
         groups = regroup( [(i,) for i in range(1,1+dataHist.GetNbinsX())] )
-        ratio = TH1F("ratio","",len(groups), array('d', [dataHist.GetBinLowEdge(min(g)) for g in groups ] + [dataHist.GetXaxis().GetBinUpEdge(dataHist.GetNbinsX())]) )  
+        ratio = TH1F("ratio","",len(groups), array('d', [dataHist.GetBinLowEdge(min(g)) for g in groups ] + [dataHist.GetXaxis().GetBinUpEdge(dataHist.GetNbinsX())]) )
         for i,g in enumerate(groups) :
             ratio.SetBinContent(i+1,groupR(g))
             ratio.SetBinError(i+1,groupErr(g))
@@ -149,9 +149,9 @@ def ratioHistogram( dataHist, mcHist, dontRebinRatio=False, addOne=False, relErr
     ratio.SetMarkerColor(1)
     ratio.SetLineWidth(2)
     if addOne:
-        # Add 1.0 to all bins, so when histograms are equal, the bin content is 0.0, rather than 1.0.  
+        # Add 1.0 to all bins, so when histograms are equal, the bin content is 0.0, rather than 1.0.
         for i in range(1, ratio.GetNbinsX()+1):
-            ratio.SetBinContent(i, ratio.GetBinContent(i) + 1.0) 
+            ratio.SetBinContent(i, ratio.GetBinContent(i) + 1.0)
     return ratio
 
 
@@ -206,8 +206,8 @@ def getHist(sample,condor_dir,channel,hist):
     if not h0:
         print "ERROR [getHist]: didn't find histogram ", channel+str("/")+hist, "in file", dataset_file
         return 0
-    h = h0.Clone() 
-    h.SetDirectory(0)  
+    h = h0.Clone()
+    h.SetDirectory(0)
     inputFile.Close()
     return h
 

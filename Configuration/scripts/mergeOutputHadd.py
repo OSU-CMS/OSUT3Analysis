@@ -43,7 +43,7 @@ if arguments.localConfig:
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
 for dataset in datasets:
-    path = condor_dir + "/" + dataset 
+    path = condor_dir + "/" + dataset
     files = [f for f in os.listdir(path) if f.endswith('.root') and os.path.isfile(os.path.join(path, f))]
     inputFiles = []
     numberOfInputFiles = len(files)

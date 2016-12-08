@@ -42,7 +42,7 @@ condor_dir = set_condor_output_dir(arguments)
 
 for sample in datasets:
     fileName = condor_dir + "/" + sample + ".root"
-    
+
     if not os.path.exists(fileName):
         print "WARNING: didn't find ",fileName
         continue

@@ -134,10 +134,10 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
           pfdRhoIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationVariables().sumNeutralHadronEt + object.pfIsolationVariables().sumPhotonEt - double(effectiveArea *(float)(*rho))))/object.pt();
             }
        }
-      electron.set_pfdRhoIsoCorr(pfdRhoIsoCorr); 
-      electron.set_sumChargedHadronPtCorr(chargedHadronPt); 
-      electron.set_sumPUPtCorr(puPt); 
-      electron.set_electronPVIndex(electronPVIndex); 
+      electron.set_pfdRhoIsoCorr(pfdRhoIsoCorr);
+      electron.set_sumChargedHadronPtCorr(chargedHadronPt);
+      electron.set_sumPUPtCorr(puPt);
+      electron.set_electronPVIndex(electronPVIndex);
     }
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();

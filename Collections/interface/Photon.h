@@ -17,7 +17,7 @@ namespace osu
         ~Photon ();
 
         const float rho() const;
-	const float Aeff_neutralHadron () const;
+        const float Aeff_neutralHadron () const;
         const float Aeff_chargedHadron () const;
         const float Aeff_photon () const;
 
