@@ -437,8 +437,8 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
     ### formatting histograms and adding to legend
     legendIndex = 0
     for histogram in Histograms:
-#        Legend.AddEntry(histogram,LegendEntries[legendIndex],"LEP")
-        Legend.AddEntry(histogram,LegendEntries[legendIndex],"P")
+        Legend.AddEntry(histogram,LegendEntries[legendIndex],"LEP")
+#        Legend.AddEntry(histogram,LegendEntries[legendIndex],"P")
         legendIndex = legendIndex+1
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
