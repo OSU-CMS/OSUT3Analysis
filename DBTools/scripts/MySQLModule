@@ -12,7 +12,12 @@ select ((select (STDOUT), $| = 1)[0]);
 
 sub getLocation;
 
-our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
+our $db;
+do
+  {
+    $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or print "Failed to connect to the Tier 3, trying again...";
+  }
+while (!$db);
 my $dataset;
 my $outfile;
 my $prefix;
