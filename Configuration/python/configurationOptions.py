@@ -102,13 +102,21 @@ datasets = [
    'NoBPTX_2015C_controlSample',
    'NoBPTX_2015Dv3_controlSample',
    'NoBPTX_2015Dv4_controlSample',
+   'NoBPTX_2016B_23Sep2016_v2',
+   'NoBPTX_2016B_23Sep2016_v3',
+   'NoBPTX_2016C_23Sep2016',
+   'NoBPTX_2016D_23Sep2016',
+   'NoBPTX_2016E_23Sep2016',
+   'NoBPTX_2016F_23Sep2016',
+   'NoBPTX_2016G_23Sep2016',
    'NoBPTX_2016B_PromptReco',
    'NoBPTX_2016C_PromptReco',
    'NoBPTX_2016D_PromptReco',
    'NoBPTX_2016E_PromptReco',
    'NoBPTX_2016F_PromptReco',
    'NoBPTX_2016G_PromptReco',
-   'NoBPTX_2016H_PromptReco',
+   'NoBPTX_2016H_PromptReco_v2',
+   'NoBPTX_2016H_PromptReco_v3',
    'NoBPTX_2016B_PromptReco_AOD',
    'NoBPTX_2016C_PromptReco_AOD',
    'NoBPTX_2016D_PromptReco_AOD',
@@ -661,6 +669,19 @@ composite_dataset_definitions = {
     'NoBPTX_2016DE_PromptReco_Cosmic_TopAndBottom' : [
         'NoBPTX_2016D_PromptReco',
         'NoBPTX_2016E_PromptReco',
+        ],
+    'NoBPTX_2016BCDEFG_23Sep2016' : [
+        'NoBPTX_2016B_23Sep2016_v2',
+        'NoBPTX_2016B_23Sep2016_v3',
+        'NoBPTX_2016C_23Sep2016',
+        'NoBPTX_2016D_23Sep2016',
+        'NoBPTX_2016E_23Sep2016',
+        'NoBPTX_2016F_23Sep2016',
+        'NoBPTX_2016G_23Sep2016',
+        ],
+    'NoBPTX_2016H_PromptReco' : [
+        'NoBPTX_2016H_PromptReco_v2',
+        'NoBPTX_2016H_PromptReco_v3',
         ],
     'NoBPTX_2016BCDEFGH_PromptReco' : [
         'NoBPTX_2016B_PromptReco',
@@ -1695,6 +1716,15 @@ nJobs = {
     'NoBPTX_CosJet_2016E_PromptReco_v2' : 999,
     #'NoBPTX_2015D_v3' : 30,
     #'NoBPTX_2015D_v4' : 30,
+    
+    'NoBPTX_2016B_23Sep2016_v2' : 999,
+    'NoBPTX_2016B_23Sep2016_v3' : 999,
+    'NoBPTX_2016C_23Sep2016' : 999,
+    'NoBPTX_2016D_23Sep2016' : 999,
+    'NoBPTX_2016E_23Sep2016' : 999,
+    'NoBPTX_2016F_23Sep2016' : 999,
+    'NoBPTX_2016G_23Sep2016' : 999,
+    'NoBPTX_2016BCDEFG_23Sep2016' : 999,
 
     'NoBPTX_2016B_PromptReco' : 999,
     'NoBPTX_2016C_PromptReco' : 999,
@@ -1703,6 +1733,8 @@ nJobs = {
     'NoBPTX_2016F_PromptReco' : 999,
     'NoBPTX_2016G_PromptReco' : 999,
     'NoBPTX_2016H_PromptReco' : 999,
+    'NoBPTX_2016H_PromptReco_v2' : 999,
+    'NoBPTX_2016H_PromptReco_v3' : 999,
     'NoBPTX_2016BCDEFGH_PromptReco' : 999,
     'NoBPTX_2016DE_PromptReco_Cosmic_TopAndBottom' : 999,
 
@@ -2710,6 +2742,14 @@ maxEvents = {
     'NoBPTX_CosJet_2016D_PromptReco_v2' : -1,
     'NoBPTX_CosJet_2016E_PromptReco_v2' : -1,
 
+    'NoBPTX_2016B_23Sep2016_v2' : -1,
+    'NoBPTX_2016B_23Sep2016_v3' : -1,
+    'NoBPTX_2016C_23Sep2016' : -1,
+    'NoBPTX_2016D_23Sep2016' : -1,
+    'NoBPTX_2016E_23Sep2016' : -1,
+    'NoBPTX_2016F_23Sep2016' : -1,
+    'NoBPTX_2016G_23Sep2016' : -1,
+
     'NoBPTX_2016B_PromptReco' : -1,
     'NoBPTX_2016C_PromptReco' : -1,
     'NoBPTX_2016D_PromptReco' : -1,
@@ -2717,6 +2757,8 @@ maxEvents = {
     'NoBPTX_2016F_PromptReco' : -1,
     'NoBPTX_2016G_PromptReco' : -1,
     'NoBPTX_2016H_PromptReco' : -1,
+    'NoBPTX_2016H_PromptReco_v2' : -1,
+    'NoBPTX_2016H_PromptReco_v3' : -1,
 
     'NoBPTX_2016B_PromptReco_AOD' : -1,
     'NoBPTX_2016C_PromptReco_AOD' : -1,
@@ -3744,6 +3786,15 @@ types = {
     'NoBPTX_CosJet_2016D_PromptReco_v2' : 'data',
     'NoBPTX_CosJet_2016E_PromptReco_v2' : 'data',
 
+    'NoBPTX_2016B_23Sep2016_v2' : 'data',
+    'NoBPTX_2016B_23Sep2016_v3' : 'data',
+    'NoBPTX_2016C_23Sep2016' : 'data',
+    'NoBPTX_2016D_23Sep2016' : 'data',
+    'NoBPTX_2016E_23Sep2016' : 'data',
+    'NoBPTX_2016F_23Sep2016' : 'data',
+    'NoBPTX_2016G_23Sep2016' : 'data',
+    'NoBPTX_2016BCDEFG_23Sep2016' : 'data',
+
     'NoBPTX_2016DE_PromptReco_Cosmic_TopAndBottom' : 'data',
     'NoBPTX_2016BCDEFGH_PromptReco' : 'data',
     'NoBPTX_2016B_PromptReco' : 'data',
@@ -3753,6 +3804,8 @@ types = {
     'NoBPTX_2016F_PromptReco' : 'data',
     'NoBPTX_2016G_PromptReco' : 'data',
     'NoBPTX_2016H_PromptReco' : 'data',
+    'NoBPTX_2016H_PromptReco_v2' : 'data',
+    'NoBPTX_2016H_PromptReco_v3' : 'data',
 
     'NoBPTX_2016BCDEFGH_PromptReco_AOD' : 'data',
     'NoBPTX_2016B_PromptReco_AOD' : 'data',
@@ -4792,6 +4845,15 @@ colors = {
 
     'NoBPTX_2015D' : 1,
 
+    'NoBPTX_2016B_23Sep2016_v2' : 1,
+    'NoBPTX_2016B_23Sep2016_v3' : 1,
+    'NoBPTX_2016C_23Sep2016' : 1,
+    'NoBPTX_2016D_23Sep2016' : 1,
+    'NoBPTX_2016E_23Sep2016' : 1,
+    'NoBPTX_2016F_23Sep2016' : 1,
+    'NoBPTX_2016G_23Sep2016' : 1,
+    'NoBPTX_2016BCDEFG_23Sep2016' : 1,
+
     'NoBPTX_2016DE_PromptReco_Cosmic_TopAndBottom' : 1,
     'NoBPTX_2016BCDEFGH_PromptReco' : 1,
     'NoBPTX_2016B_PromptReco' : 1,
@@ -4801,6 +4863,8 @@ colors = {
     'NoBPTX_2016F_PromptReco' : 1,
     'NoBPTX_2016G_PromptReco' : 1,
     'NoBPTX_2016H_PromptReco' : 1,
+    'NoBPTX_2016H_PromptReco_v2' : 1,
+    'NoBPTX_2016H_PromptReco_v3' : 1,
 
     'NoBPTX_2016BCDEFGH_PromptReco_AOD' : 1,
     'NoBPTX_2016B_PromptReco_AOD' : 1,
@@ -5839,6 +5903,15 @@ labels = {
 
     'NoBPTX_2015D'     : "NoBPTX 2015D data",
 
+    'NoBPTX_2016B_23Sep2016_v2' : "NoBPTX 2016B-v2 Rerecoed data",
+    'NoBPTX_2016B_23Sep2016_v3' : "NoBPTX 2016B-v3 Rerecoed data",
+    'NoBPTX_2016C_23Sep2016' : "NoBPTX 2016C Rerecoed data",
+    'NoBPTX_2016D_23Sep2016' : "NoBPTX 2016D Rerecoed data",
+    'NoBPTX_2016E_23Sep2016' : "NoBPTX 2016E Rerecoed data",
+    'NoBPTX_2016F_23Sep2016' : "NoBPTX 2016F Rerecoed data",
+    'NoBPTX_2016G_23Sep2016' : "NoBPTX 2016G Rerecoed data",
+    'NoBPTX_2016BCDEFG_23Sep2016' : "NoBPTX 2016 Rerecoed data",
+
     'NoBPTX_2016DE_PromptReco_Cosmic_TopAndBottom' : 'NoBPTX 2016D,E PromptReco data',
     'NoBPTX_2016BCDEFGH_PromptReco' : "NoBPTX 2016 PromptReco data",
     'NoBPTX_2016B_PromptReco' : "NoBPTX 2016B PromptReco data",
@@ -5848,6 +5921,8 @@ labels = {
     'NoBPTX_2016F_PromptReco' : "NoBPTX 2016F PromptReco data",
     'NoBPTX_2016G_PromptReco' : "NoBPTX 2016G PromptReco data",
     'NoBPTX_2016H_PromptReco' : "NoBPTX 2016H PromptReco data",
+    'NoBPTX_2016H_PromptReco_v2' : "NoBPTX 2016H-v2 PromptReco data",
+    'NoBPTX_2016H_PromptReco_v3' : "NoBPTX 2016H-v3 PromptReco data",
 
     'NoBPTX_2016BCDEFGH_PromptReco_AOD' : "NoBPTX 2016 PromptReco data",
     'NoBPTX_2016B_PromptReco_AOD' : "NoBPTX 2016B PromptReco data",
@@ -5860,7 +5935,7 @@ labels = {
 
     'NoBPTX_2015C_16Dec2015'     : "NoBPTX 2015C Rerecoed data",
     'NoBPTX_2015D_16Dec2015'     : "NoBPTX 2015D Rerecoed data",
-    'NoBPTX_16Dec2015'     : "NoBPTX 2015C,D Rerecoed data",
+    'NoBPTX_16Dec2015'     : "NoBPTX 2015 Rerecoed data",
 
     'NoBPTX_2015BCDE_PromptReco' : "NoBPTX 2015B-E Prompt reco data",
     'NoBPTX_2015B_PromptReco' : "NoBPTX 2015B Prompt reco data",
@@ -5871,11 +5946,11 @@ labels = {
 
     'NoBPTX_2015C_16Dec2015_Ntuple' : "NoBPTX 2015C Rerecoed data",
     'NoBPTX_2015D_16Dec2015_Ntuple' : "NoBPTX 2015D Rerecoed data",
-    'NoBPTX_16Dec2015_Ntuple' : "NoBPTX 2015C,D Rerecoed data",
+    'NoBPTX_16Dec2015_Ntuple' : "NoBPTX 2015 Rerecoed data",
 
     'NoBPTX_2015C_16Dec2015_OnlyControlTriggers_Ntuple' : "NoBPTX 2015C Rerecoed data",
     'NoBPTX_2015D_16Dec2015_OnlyControlTriggers_Ntuple' : "NoBPTX 2015D Rerecoed data",
-    'NoBPTX_16Dec2015_OnlyControlTriggers_Ntuple' : "NoBPTX 2015C,D Rerecoed data",
+    'NoBPTX_16Dec2015_OnlyControlTriggers_Ntuple' : "NoBPTX 2015 Rerecoed data",
 
     'NoBPTX_2015B_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015B cosmic data",
     'NoBPTX_2015C_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015C cosmic data",
@@ -5884,7 +5959,7 @@ labels = {
     'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015E cosmic data",
     'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015B-E cosmic data",
 
-    'NoBPTX_2016BCDEFGH_PromptReco_Ntuple' : 'NoBPTX 2016B-H Prompt reco data',
+    'NoBPTX_2016BCDEFGH_PromptReco_Ntuple' : 'NoBPTX 2016 Prompt reco data',
     'NoBPTX_2016B_PromptReco_Ntuple' : 'NoBPTX 2016B Prompt reco data',
     'NoBPTX_2016C_PromptReco_Ntuple' : 'NoBPTX 2016C Prompt reco data',
     'NoBPTX_2016D_PromptReco_Ntuple' : 'NoBPTX 2016D Prompt reco data',
