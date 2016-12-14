@@ -20,8 +20,7 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
     {
       TFile *fin = TFile::Open (PU_.c_str ());
       if (!fin || fin->IsZombie()) {
-        clog << "ERROR [PUScalingFactorProducer]: Could not find file: " << PU_
-             << "; will cause a seg fault." << endl;
+        edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find file: " << PU_ << "; will cause a seg fault." << endl;
         exit(1);
       }
       TH1D *mc;
@@ -29,11 +28,11 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
       fin->GetObject(dataset_.c_str(), mc);
       fin->GetObject(target_.c_str(), puWeight);
       if (!mc) {
-        clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << dataset_ << "; will cause a seg fault." << endl;
+        edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << dataset_ << "; will cause a seg fault." << endl;
         exit(1);
       }
       if (!puWeight) {
-        clog << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << target_ <<", will cause a seg fault." << endl;
+        edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << target_ <<", will cause a seg fault." << endl;
         exit(1);
       }
       mc->SetDirectory (0);
