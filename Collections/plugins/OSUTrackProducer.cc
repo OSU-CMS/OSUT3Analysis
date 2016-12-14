@@ -230,8 +230,9 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
   const string &afterVetoHistName = cfg.getParameter<string> ("afterVetoHistName");
   const double &thresholdForVeto = cfg.getParameter<double> ("thresholdForVeto");
 
+  edm::LogInfo ("OSUTrackProducer") << "Attempting to extract \"" << beforeVetoHistName << "\" and \"" << afterVetoHistName << "\" from \"" << histFile.fullPath () << "\"...";
   TFile *fin = TFile::Open (histFile.fullPath ().c_str ());
-  if (!fin)
+  if (!fin || fin->IsZombie ())
     {
       edm::LogWarning ("OSUTrackProducer") << "No file named \"" << histFile.fullPath () << "\" found. Skipping...";
       return;
@@ -242,6 +243,7 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
   TH2D *afterVetoHist = (TH2D *) fin->Get (afterVetoHistName.c_str ());
   afterVetoHist->SetDirectory (0);
   fin->Close ();
+  delete fin;
 
   //////////////////////////////////////////////////////////////////////////////
   // First calculate the mean efficiency and error on the mean efficiency.
