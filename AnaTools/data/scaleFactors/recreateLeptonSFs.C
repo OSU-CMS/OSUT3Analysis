@@ -20,7 +20,7 @@ TH2D * ElectronProduct(TH2D * id, TH2D * reco, TString name) {
       Int_t idBin_y = id->GetYaxis()->FindBin(reco->GetYaxis()->GetBinCenter(j));
 
       Int_t idBin = id->FindBin(fabs(reco->GetXaxis()->GetBinCenter(i)),
-				                        reco->GetYaxis()->GetBinCenter(j));
+                                                        reco->GetYaxis()->GetBinCenter(j));
 
       double y = id->GetBinContent(idBin_x, idBin_y);
       double ey = id->GetBinError(idBin_x, idBin_y);
@@ -59,9 +59,9 @@ TH2D * ElectronProduct80X(TH2D * id, TH2D * reco, TString name) {
       double ey = 0;
 
       for(int k = recoBin_lo; k < recoBin_hi; k++) {
-	       ny++;
-	       y += reco->GetBinContent(k, 1);
-	       ey += reco->GetBinError(k, 1) * reco->GetBinError(k, 1);
+               ny++;
+               y += reco->GetBinContent(k, 1);
+               ey += reco->GetBinError(k, 1) * reco->GetBinError(k, 1);
       }
       y /= ny;
       ey = TMath::Sqrt(ey) / ny;

@@ -159,6 +159,10 @@ def getLatestJsonFile():
             collisionType = 'Collisions16'
             jsonMatchingPhrase = 'Collisions16_JSON'
 
+        rerecoDir = 'Reprocessing'
+        if re.search('16$', arguments.JSONType):
+            rerecoDir = 'ReReco/Final'
+
         if arguments.JSONType[:2] == 'P_':
             tmpDir = tempfile.mkdtemp ()
             subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/ -O ' + tmpDir + '/jsonList.txt', shell = True)
@@ -237,7 +241,7 @@ def getLatestJsonFile():
 
         if arguments.JSONType[:2] == 'R_':
             tmpDir = tempfile.mkdtemp ()
-            subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/Reprocessing/ -O ' + tmpDir + '/jsonList.txt', shell = True)
+            subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/' + rerecoDir + '/ -O ' + tmpDir + '/jsonList.txt', shell = True)
             subprocess.call('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt', shell = True)
             Tmp = open(tmpDir + '/CertList.txt','r+w')
             jsonFileList = []
@@ -275,7 +279,7 @@ def getLatestJsonFile():
                 print "#######################################################"
 
             ultimateJson = jsonFileFiltered[-1]
-            subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType +'/13TeV/Reprocessing/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson, shell = True)
+            subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/' + rerecoDir + '/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson, shell = True)
             shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
             shutil.rmtree (tmpDir)
 

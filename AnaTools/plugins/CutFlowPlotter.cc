@@ -86,12 +86,12 @@ CutFlowPlotter::~CutFlowPlotter ()
 
     else if(name.Contains("trigger")) {
       for(uint j = 0; j < triggers_.size(); j++) {
-      	clog << "  " << triggers_.at(j);
-      	if(j < triggers_.size() - 1) clog << " OR";  // all but the last one
-      	clog << endl;
+        clog << "  " << triggers_.at(j);
+        if(j < triggers_.size() - 1) clog << " OR";  // all but the last one
+        clog << endl;
       }
       for(uint j = 0; j < triggersToVeto_.size(); j++) {
-      	clog << "  AND NOT " << triggersToVeto_.at(j) << endl;
+        clog << "  AND NOT " << triggersToVeto_.at(j) << endl;
       }
     }
   }

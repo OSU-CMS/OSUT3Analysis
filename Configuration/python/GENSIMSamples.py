@@ -62,7 +62,7 @@ dataset_names = {
     'mchamp1800_Stage2SeparateEventsParticle1'  : "/HSCPmchamp6_M-1800_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle1/USER",
     'mchamp2200_Stage2SeparateEventsParticle1'  : "/HSCPmchamp6_M-2200_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle1/USER",
     'mchamp2600_Stage2SeparateEventsParticle1'  : "/HSCPmchamp6_M-2600_TuneZ2star_13TeV_pythia6/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle1/USER",
- 
+
     'gluino100_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-100_TuneCUETP8M1_13TeV_pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
     'gluino200_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-200_TuneCUETP8M1_13TeV_pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",
     'gluino400_Stage2SeparateEventsParticle0'   : "/HSCPgluino_M-400_TuneCUETP8M1_13TeV_pythia8/RunIIWinter15GS-MCRUN2_7122_Stage2GenSimSeparateEventsParticle0/USER",

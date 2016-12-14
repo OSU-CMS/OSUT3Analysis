@@ -27,12 +27,12 @@ namespace osu
         const int missingMiddleHits () const;
         const int missingOuterHits () const;
         const bool passesTightID_noIsolation () const;
-        void set_rho (float value) { rho_  = value; }  
-        void set_AEff (float value) { AEff_  = value; }  
-        void set_pfdRhoIsoCorr (double value) { pfdRhoIsoCorr_  = value; }  
-        void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };  
-        void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };  
-        void set_electronPVIndex (int value) { electronPVIndex_  = value; };  
+        void set_rho (float value) { rho_  = value; }
+        void set_AEff (float value) { AEff_  = value; }
+        void set_pfdRhoIsoCorr (double value) { pfdRhoIsoCorr_  = value; }
+        void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };
+        void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
+        void set_electronPVIndex (int value) { electronPVIndex_  = value; };
         void set_passesTightID_noIsolation (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
 
         const double metMinusOnePt () const;
