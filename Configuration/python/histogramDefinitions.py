@@ -26,24 +26,6 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
-            name = cms.string("muonPt_0"),
-            title = cms.string("Muon Transverse Momentum;muon p_{T} [GeV]"),
-            binsX = cms.untracked.vdouble(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,500),
-            inputVariables = cms.vstring("pt"),
-        ),
-        cms.PSet (
-            name = cms.string("muonPt_1"),
-            title = cms.string("Muon Transverse Momentum;muon p_{T} [GeV]"),
-            binsX = cms.untracked.vdouble(0,5,10,15,20,25,30,40,50,70,90,120,150,200,300,500),
-            inputVariables = cms.vstring("pt"),
-        ),
-        cms.PSet (
-            name = cms.string("muonPt_2"),
-            title = cms.string("Muon Transverse Momentum;muon p_{T} [GeV]"),
-            binsX = cms.untracked.vdouble(0,10,20,30,50,90,150,300,500),
-            inputVariables = cms.vstring("pt"),
-        ),
-        cms.PSet (
             name = cms.string("muonEta"),
             title = cms.string("Muon Eta;muon #eta"),
             binsX = cms.untracked.vdouble(80, -4, 4),
@@ -278,24 +260,6 @@ ElectronHistograms = cms.PSet(
             name = cms.string("electronPt"),
             title = cms.string("Electron Transverse Momentum; electron p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            inputVariables = cms.vstring("pt"),
-        ),
-        cms.PSet (
-            name = cms.string("electronPt_0"),
-            title = cms.string("Electron Transverse Momentum; electron p_{T} [GeV]"),
-            binsX = cms.untracked.vdouble(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,500),
-            inputVariables = cms.vstring("pt"),
-        ),
-        cms.PSet (
-            name = cms.string("electronPt_1"),
-            title = cms.string("Electron Transverse Momentum; electron p_{T} [GeV]"),
-            binsX = cms.untracked.vdouble(0,5,10,15,20,25,30,40,50,70,90,120,150,200,300,500),
-            inputVariables = cms.vstring("pt"),
-        ),
-        cms.PSet (
-            name = cms.string("electronPt_2"),
-            title = cms.string("Electron Transverse Momentum; electron p_{T} [GeV]"),
-            binsX = cms.untracked.vdouble(0,10,20,30,50,90,150,300,500),
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
