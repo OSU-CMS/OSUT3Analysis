@@ -15,7 +15,7 @@ sub getLocation;
 our $db;
 do
   {
-    $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or print "Failed to connect to the Tier 3, trying again...";
+    $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or print "Failed to connect to the Tier 3, trying again...\n";
   }
 while (!$db);
 my $dataset;

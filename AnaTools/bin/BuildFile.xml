@@ -9,4 +9,5 @@
   <bin   file="getEventsFromCutFlow.cpp"></bin>
   <bin   file="weightTrees.cpp"></bin>
   <bin   file="mergeTFileServiceHistograms.cpp"></bin>
+  <bin   file="recreateHistogramFile.cpp"></bin>
 </environment>

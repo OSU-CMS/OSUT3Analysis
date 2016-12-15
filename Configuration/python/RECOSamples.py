@@ -390,6 +390,14 @@ dataset_names = {
 
 ################## Delayed Muon RECO not stored on T3 ############
 ########################## data ##########################
+    'NoBPTX_2016B_23Sep2016_v2' : "/NoBPTX/Run2016B-23Sep2016-v2/RECO",
+    'NoBPTX_2016B_23Sep2016_v3' : "/NoBPTX/Run2016B-23Sep2016-v3/RECO",
+    'NoBPTX_2016C_23Sep2016' : "/NoBPTX/Run2016C-23Sep2016-v1/RECO",
+    'NoBPTX_2016D_23Sep2016' : "/NoBPTX/Run2016D-23Sep2016-v1/RECO",
+    'NoBPTX_2016E_23Sep2016' : "/NoBPTX/Run2016E-23Sep2016-v1/RECO",
+    'NoBPTX_2016F_23Sep2016' : "/NoBPTX/Run2016F-23Sep2016-v1/RECO",
+    'NoBPTX_2016G_23Sep2016' : "/NoBPTX/Run2016G-23Sep2016-v1/RECO",
+
     'NoBPTX_2016B_PromptReco_AOD' : "/NoBPTX/Run2016B-PromptReco-v2/AOD",
     'NoBPTX_2016C_PromptReco_AOD' : "/NoBPTX/Run2016C-PromptReco-v2/AOD",
     'NoBPTX_2016D_PromptReco_AOD' : "/NoBPTX/Run2016D-PromptReco-v2/AOD",
@@ -404,7 +412,8 @@ dataset_names = {
     'NoBPTX_2016E_PromptReco' : "/NoBPTX/Run2016E-PromptReco-v2/RECO",
     'NoBPTX_2016F_PromptReco' : "/NoBPTX/Run2016F-PromptReco-v1/RECO",
     'NoBPTX_2016G_PromptReco' : "/NoBPTX/Run2016G-PromptReco-v1/RECO",
-    'NoBPTX_2016H_PromptReco' : "/NoBPTX/Run2016H-PromptReco-v2/RECO",
+    'NoBPTX_2016H_PromptReco_v2' : "/NoBPTX/Run2016H-PromptReco-v2/RECO",
+    'NoBPTX_2016H_PromptReco_v3' : "/NoBPTX/Run2016H-PromptReco-v3/RECO",
 
     'NoBPTX_2015C_16Dec2015' : "/NoBPTX/Run2015C_25ns-16Dec2015-v1/RECO",
     'NoBPTX_2015D_16Dec2015' : "/NoBPTX/Run2015D-16Dec2015-v1/RECO",
@@ -455,6 +464,16 @@ dataset_names = {
     'NoBPTX_2015C_16Dec2015_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2015C_25ns-OnlyControlTriggers-16Dec2015-v1/USER",
     'NoBPTX_2015D_16Dec2015_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2015D_25ns-OnlyControlTriggers-16Dec2015-v1/USER",
 
+    'NoBPTX_2016B_23Sep2016_Ntuple_v2' : "NoBPTX/Run2016B-23Sep2016-v2/USER",
+    'NoBPTX_2016B_23Sep2016_Ntuple_v3' : "NoBPTX/Run2016B-23Sep2016-v3/USER",
+    'NoBPTX_2016C_23Sep2016_Ntuple' : "NoBPTX/Run2016C-23Sep2016-v1/USER",
+    'NoBPTX_2016D_23Sep2016_Ntuple' : "NoBPTX/Run2016D-23Sep2016-v1/USER",
+    'NoBPTX_2016E_23Sep2016_Ntuple' : "NoBPTX/Run2016E-23Sep2016-v1/USER",
+    'NoBPTX_2016F_23Sep2016_Ntuple' : "NoBPTX/Run2016F-23Sep2016-v1/USER",
+    'NoBPTX_2016G_23Sep2016_Ntuple' : "NoBPTX/Run2016G-23Sep2016-v1/USER",
+    'NoBPTX_2016H_23Sep2016_Ntuple_v2' : "NoBPTX/Run2016H-23Sep2016-v2/USER",
+    'NoBPTX_2016H_23Sep2016_Ntuple_v3' : "NoBPTX/Run2016H-23Sep2016-v3/USER",
+    
     'NoBPTX_2016B_PromptReco_Ntuple' : "/NoBPTX/Run2016B-PromptReco-v2/USER",
     'NoBPTX_2016C_PromptReco_Ntuple' : "/NoBPTX/Run2016C-PromptReco-v2/USER",
     'NoBPTX_2016D_PromptReco_Ntuple' : "/NoBPTX/Run2016D-PromptReco-v2/USER",
