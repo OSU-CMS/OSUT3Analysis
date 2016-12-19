@@ -5,46 +5,52 @@ PUScalingFactorProducer::PUScalingFactorProducer(const edm::ParameterSet &cfg) :
    EventVariableProducer(cfg),
    PU_               (cfg.getParameter<string>("PU")),
    dataset_          (cfg.getParameter<string>("dataset")),
-   target_           (cfg.getParameter<string>("target"))
+   target_           (cfg.getParameter<string>("target")),
+   puWeight_         (NULL)
 {
   if(collections_.exists ("pileupinfos"))
     pileUpInfosToken_ = consumes<vector<TYPE(pileupinfos)> > (collections_.getParameter<edm::InputTag> ("pileupinfos"));
 }
 
-PUScalingFactorProducer::~PUScalingFactorProducer() {}
+PUScalingFactorProducer::~PUScalingFactorProducer() {
+  if (puWeight_)
+    delete puWeight_;
+}
 
 void
 PUScalingFactorProducer::AddVariables (const edm::Event &event) {
 #if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
   if (!event.isRealData ())
     {
-      TFile *fin = TFile::Open (PU_.c_str ());
-      if (!fin || fin->IsZombie()) {
-        edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find file: " << PU_ << "; will cause a seg fault." << endl;
-        exit(1);
-      }
-      TH1D *mc;
-      TH1D *puWeight;
-      fin->GetObject(dataset_.c_str(), mc);
-      fin->GetObject(target_.c_str(), puWeight);
-      if (!mc) {
-        edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << dataset_ << "; will cause a seg fault." << endl;
-        exit(1);
-      }
-      if (!puWeight) {
-        edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << target_ <<", will cause a seg fault." << endl;
-        exit(1);
-      }
-      mc->SetDirectory (0);
-      puWeight->SetDirectory (0);
-      mc->Scale (puWeight->Integral () / mc->Integral ());
-      TH1D *trimmedMC = new TH1D ("bla", "bla", puWeight->GetNbinsX(), 0, puWeight->GetNbinsX());
-      for (int bin = 1; bin <= puWeight->GetNbinsX(); bin++)
-        trimmedMC->SetBinContent (bin, mc->GetBinContent (bin));
-      puWeight->Divide (trimmedMC);
-      delete fin;
-      delete mc;
-      delete trimmedMC;
+      if (!puWeight_)
+        {
+          TFile *fin = TFile::Open (PU_.c_str ());
+          if (!fin || fin->IsZombie()) {
+            edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find file: " << PU_ << "; will cause a seg fault." << endl;
+            exit(1);
+          }
+          TH1D *mc;
+          fin->GetObject(dataset_.c_str(), mc);
+          fin->GetObject(target_.c_str(), puWeight_);
+          if (!mc) {
+            edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << dataset_ << "; will cause a seg fault." << endl;
+            exit(1);
+          }
+          if (!puWeight_) {
+            edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << target_ <<", will cause a seg fault." << endl;
+            exit(1);
+          }
+          mc->SetDirectory (0);
+          puWeight_->SetDirectory (0);
+          mc->Scale (puWeight_->Integral () / mc->Integral ());
+          TH1D *trimmedMC = new TH1D ("bla", "bla", puWeight_->GetNbinsX(), 0, puWeight_->GetNbinsX());
+          for (int bin = 1; bin <= puWeight_->GetNbinsX(); bin++)
+            trimmedMC->SetBinContent (bin, mc->GetBinContent (bin));
+          puWeight_->Divide (trimmedMC);
+          delete fin;
+          delete mc;
+          delete trimmedMC;
+        }
 
       objectsToGet_.insert ("pileupinfos");
       getOriginalCollections (event);
@@ -53,8 +59,8 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
       if(pv1.getBunchCrossing() == 0)
         numTruePV = pv1.getTrueNumInteractions();
       }
-      (*eventvariables)["puScalingFactor"] = puWeight->GetBinContent(puWeight->FindBin(numTruePV));
-      delete puWeight;
+      (*eventvariables)["puScalingFactor"] = puWeight_->GetBinContent(puWeight_->FindBin(numTruePV));
+      delete puWeight_;
     }
   else
     (*eventvariables)["puScalingFactor"] = 1;
