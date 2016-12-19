@@ -47,6 +47,7 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
           for (int bin = 1; bin <= puWeight_->GetNbinsX(); bin++)
             trimmedMC->SetBinContent (bin, mc->GetBinContent (bin));
           puWeight_->Divide (trimmedMC);
+          fin->Close ();
           delete fin;
           delete mc;
           delete trimmedMC;
@@ -60,7 +61,6 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
         numTruePV = pv1.getTrueNumInteractions();
       }
       (*eventvariables)["puScalingFactor"] = puWeight_->GetBinContent(puWeight_->FindBin(numTruePV));
-      delete puWeight_;
     }
   else
     (*eventvariables)["puScalingFactor"] = 1;
