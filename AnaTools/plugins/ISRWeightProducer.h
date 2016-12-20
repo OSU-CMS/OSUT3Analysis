@@ -19,6 +19,8 @@ private:
   string weightFile_;
   string weightHist_;
 
+  TH1D *weights_;
+
   bool isOriginalParticle (const TYPE(hardInteractionMcparticles) &, const int) const;
   void AddVariables(const edm::Event &);
 };

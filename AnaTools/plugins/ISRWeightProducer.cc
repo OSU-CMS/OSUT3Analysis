@@ -6,12 +6,16 @@ ISRWeightProducer::ISRWeightProducer (const edm::ParameterSet &cfg) :
   EventVariableProducer(cfg),
   pdgIds_     (cfg.getParameter<vector<int> > ("pdgIds")),
   weightFile_ (cfg.getParameter<string> ("weightFile")),
-  weightHist_ (cfg.getParameter<string> ("weightHist"))
+  weightHist_ (cfg.getParameter<string> ("weightHist")),
+  weights_    (NULL)
 {
   mcparticlesToken_ = consumes<vector<TYPE(hardInteractionMcparticles)> > (collections_.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
 }
 
-ISRWeightProducer::~ISRWeightProducer() {}
+ISRWeightProducer::~ISRWeightProducer() {
+  if (weights_)
+    delete weights_;
+}
 
 void
 ISRWeightProducer::AddVariables (const edm::Event &event) {
@@ -28,21 +32,25 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
     return;
   }
 
-  TFile * fin = TFile::Open(weightFile_.c_str());
-  if(!fin || fin->IsZombie()) {
-    clog << "ERROR [ISRWeightProducer]: Could not find file: " << weightFile_
-         << "; would cause a seg fault." << endl;
-    exit(1);
-  }
+  if (!weights_)
+    {
+      TFile * fin = TFile::Open(weightFile_.c_str());
+      if(!fin || fin->IsZombie()) {
+        clog << "ERROR [ISRWeightProducer]: Could not find file: " << weightFile_
+             << "; would cause a seg fault." << endl;
+        exit(1);
+      }
 
-  TH1D * weights = (TH1D*)fin->Get(weightHist_.c_str());
-  if(!weights) {
-    clog << "ERROR [ISRWeightProducer]: Could not find histogram: " << weightHist_
-         << "; would cause a seg fault." << endl;
-    exit(1);
-  }
-  weights->SetDirectory(0);
-  delete fin;
+      weights_ = (TH1D*)fin->Get(weightHist_.c_str());
+      if(!weights_) {
+        clog << "ERROR [ISRWeightProducer]: Could not find histogram: " << weightHist_
+             << "; would cause a seg fault." << endl;
+        exit(1);
+      }
+      weights_->SetDirectory(0);
+      fin->Close ();
+      delete fin;
+    }
 
   double px = 0.0;
   double py = 0.0;
@@ -58,9 +66,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
 
   double pt = sqrt(px*px + py*py);
 
-  (*eventvariables)["isrWeight"] = weights->GetBinContent(weights->FindBin(pt));
-
-  delete weights;
+  (*eventvariables)["isrWeight"] = weights_->GetBinContent(weights_->FindBin(pt));
 
 #else
   (*eventvariables)["isrWeight"] = 1;
