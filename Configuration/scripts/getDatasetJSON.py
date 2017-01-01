@@ -19,5 +19,7 @@ if len (sys.argv) > 2:
 dataset0 = re.sub (r"^\/([^/]*)\/([^/]*)\/([^/]*)$", r"\1", dataset)
 dataset1 = re.sub (r"^\/([^/]*)\/([^/]*)\/([^/]*)$", r"\2", dataset)
 dataset2 = re.sub (r"^\/([^/]*)\/([^/]*)\/([^/]*)$", r"\3", dataset)
+print "Getting JSON from DBS instance " + instance + "..."
 taskALumis = getLumiListInValidFiles(dataset=dataset, dbsurl=instance)
 taskALumis.writeJSON(dataset0 + "_" + dataset1 + "_" + dataset2 + ".txt")
+print "Wrote JSON to \"" + dataset0 + "_" + dataset1 + "_" + dataset2 + ".txt\"."
