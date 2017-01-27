@@ -1240,16 +1240,18 @@ nJobs = {
     'cosmic_preselection' : 999,
 
     #delayed muons cosmic MC
-    'cosmicMC_0To25Timing_GenSim' : 999,
-    'cosmicMC_0To25Timing_DigiHlt' : 999,
-    'cosmicMC_0To25Timing_Reco' : 999,
-    'cosmicMC_0To25Timing_Ntuple' : 999,
-    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple' : 999,
+    'cosmicMC_0To25Timing_GenSim' : 5000,
+    'cosmicMC_0To25Timing_DigiHlt' : 5000,
+    'cosmicMC_0To25Timing_Reco' : 5000,
+    'cosmicMC_0To25Timing_Ntuple' : 5000,
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple' : 5000,
 
-    'cosmicMC_0To25Timing_DigiHlt_2016' : 999,
-    'cosmicMC_0To25Timing_Reco_2016' : 999,
-    'cosmicMC_0To25Timing_Ntuple_2016' : 999,
-    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016' : 999,
+    'cosmicMC_0To25Timing_DigiHlt_2016' : 5000,
+    'cosmicMC_0To25Timing_Reco_2016' : 5000,
+    'cosmicMC_0To25Timing_Ntuple_2016' : 5000,
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016' : 5000,
+
+    'cosmicMC_0To25Timing_DigiHlt_v2' : 5000,
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : 999,
@@ -2287,6 +2289,8 @@ maxEvents = {
     'cosmicMC_0To25Timing_Reco_2016' : -1,
     'cosmicMC_0To25Timing_Ntuple_2016' : -1,
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016' : -1,
+
+    'cosmicMC_0To25Timing_DigiHlt_v2' : -1,
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : -1,
@@ -3342,6 +3346,8 @@ types = {
     'cosmicMC_0To25Timing_Reco_2016' : "bgMC",
     'cosmicMC_0To25Timing_Ntuple_2016' : "bgMC",
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016' : "bgMC",
+
+    'cosmicMC_0To25Timing_DigiHlt_v2' : "bgMC",
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : "signalMC",
@@ -4408,6 +4414,8 @@ colors = {
     'cosmicMC_0To25Timing_Ntuple_2016' : 46,
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016' : 46,
 
+    'cosmicMC_0To25Timing_DigiHlt_v2' : 9,
+
     #stopped particles stage1 GEN-SIM
     'mchamp100' : 1,
     'mchamp200' : 1,
@@ -4423,31 +4431,31 @@ colors = {
     'gluino100'   : 1,
     'gluino200'   : 1,
     'gluino400'   : 1,
-    'gluino600'   : 1,
+    'gluino600'   : 2,
     'gluino800'   : 1,
-    'gluino1000'  : 2,
+    'gluino1000'  : 4,
     'gluino1200'  : 1,
-    'gluino1400'  : 1,
+    'gluino1400'  : 6,
     'gluino1600'  : 1,
     'gluino1800'  : 1,
-    'gluino2000'  : 4,
+    'gluino2000'  : 8,
     'gluino2200'  : 1,
     'gluino2400'  : 1,
-    'gluino2600'  : 1,
+    'gluino2600'  : 11,
 
     'stop100'   : 1,
     'stop200'   : 1,
     'stop400'   : 1,
-    'stop600'   : 1,
+    'stop600'   : 2,
     'stop800'   : 1,
-    'stop1000'  : 2,
+    'stop1000'  : 4,
     'stop1200'  : 1,
-    'stop1400'  : 1,
+    'stop1400'  : 6,
     'stop1800'  : 1,
-    'stop2000'  : 4,
+    'stop2000'  : 8,
     'stop2200'  : 1,
     'stop2400'  : 1,
-    'stop2600'  : 1,
+    'stop2600'  : 11,
 
     #stopped particles stage2 GEN-SIM
     'mchamp100_Stage2SeparateEventsParticle0'   : 1,
@@ -4741,15 +4749,15 @@ colors = {
     'mchamp2600_NtupleSeparateEventsParticle1'  :    1,
 
     'mchamp100_NtupleSeparateEvents'   :    1,
-    'mchamp200_NtupleSeparateEvents'   :    1,
-    'mchamp400_NtupleSeparateEvents'   :    1,
-    'mchamp600_NtupleSeparateEvents'   :    6,
-    'mchamp800_NtupleSeparateEvents'   :    1,
-    'mchamp1000_NtupleSeparateEvents'  :    2,
-    'mchamp1400_NtupleSeparateEvents'  :    1,
-    'mchamp1800_NtupleSeparateEvents'  :    1,
-    'mchamp2200_NtupleSeparateEvents'  :    1,
-    'mchamp2600_NtupleSeparateEvents'  :    4,
+    'mchamp200_NtupleSeparateEvents'   :    2,
+    'mchamp400_NtupleSeparateEvents'   :    3,
+    'mchamp600_NtupleSeparateEvents'   :    1,
+    'mchamp800_NtupleSeparateEvents'   :    5,
+    'mchamp1000_NtupleSeparateEvents'  :    4,
+    'mchamp1400_NtupleSeparateEvents'  :    7,
+    'mchamp1800_NtupleSeparateEvents'  :    8,
+    'mchamp2200_NtupleSeparateEvents'  :    9,
+    'mchamp2600_NtupleSeparateEvents'  :    2,
 
     'gluino100_NtupleSeparateEventsParticle0'   : 1,
     'gluino200_NtupleSeparateEventsParticle0'   : 1,
@@ -4782,19 +4790,19 @@ colors = {
     'gluino2600_NtupleSeparateEventsParticle1'   : 1,
 
     'gluino100_NtupleSeparateEvents'   : 1,
-    'gluino200_NtupleSeparateEvents'   : 1,
-    'gluino400_NtupleSeparateEvents'   : 1,
-    'gluino600_NtupleSeparateEvents'   : 1,
-    'gluino800_NtupleSeparateEvents'   : 1,
-    'gluino1000_NtupleSeparateEvents'   : 2,
-    'gluino1200_NtupleSeparateEvents'   : 1,
-    'gluino1400_NtupleSeparateEvents'   : 1,
-    'gluino1600_NtupleSeparateEvents'   : 1,
-    'gluino1800_NtupleSeparateEvents'   : 1,
+    'gluino200_NtupleSeparateEvents'   : 2,
+    'gluino400_NtupleSeparateEvents'   : 3,
+    'gluino600_NtupleSeparateEvents'   : 4,
+    'gluino800_NtupleSeparateEvents'   : 4,
+    'gluino1000_NtupleSeparateEvents'   : 4,
+    'gluino1200_NtupleSeparateEvents'   : 7,
+    'gluino1400_NtupleSeparateEvents'   : 8,
+    'gluino1600_NtupleSeparateEvents'   : 9,
+    'gluino1800_NtupleSeparateEvents'   : 6,
     'gluino2000_NtupleSeparateEvents'   : 8,
-    'gluino2200_NtupleSeparateEvents'   : 1,
-    'gluino2400_NtupleSeparateEvents'   : 1,
-    'gluino2600_NtupleSeparateEvents'   : 4,
+    'gluino2200_NtupleSeparateEvents'   : 2,
+    'gluino2400_NtupleSeparateEvents'   : 3,
+    'gluino2600_NtupleSeparateEvents'   : 6,
 
     #2016
     'mchamp100_NtupleSeparateEventsParticle0_2016'   :    1,
@@ -5475,6 +5483,8 @@ labels = {
     'cosmicMC_0To25Timing_Reco_2016' : "Cosmic Simulation, 2016",
     'cosmicMC_0To25Timing_Ntuple_2016' : "Cosmic Simulation, 2016",
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016' : "Cosmic Simulation, 2016",
+
+    'cosmicMC_0To25Timing_DigiHlt_v2' : "Cosmic Simulation, 2015",
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : "Mchamp (Q = 2e, M = 100 GeV)",
@@ -6329,6 +6339,8 @@ crossSections = {
     'cosmicMC_0To25Timing_Reco_2016' : 8.3600000000E-02,
     'cosmicMC_0To25Timing_Ntuple_2016' : 8.3600000000E-02,
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016' : 8.3600000000E-02,
+
+    'cosmicMC_0To25Timing_DigiHlt_v2' : 8.3600000000E-02,
 
     #stopped particles stage1 GEN-SIM
     #from https://github.com/quertenmont/cmssw/blob/HSCP2015_PAS-EXO-15-010/SUSYBSMAnalysis/HSCP/test/AnalysisCode/Analysis_Samples.txt
