@@ -359,6 +359,10 @@ dataset_names = {
     'cosmicMC_0To25Timing_Ntuple' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_Ntuple/USER",
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple' : "/Cosmic/Cosmic_fullDetector_0To25Timing_onlyControlTriggers_MCRUN2_766_Ntuple/USER",
 
+    'cosmicMC_0To25Timing_Reco_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_Reco_v2/USER",
+    'cosmicMC_0To25Timing_Ntuple_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_Ntuple_v2/USER",
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_onlyControlTriggers_MCRUN2_766_Ntuple_v2/USER",
+
     'cosmicMC_0To25Timing_Reco_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8022_Reco/USER",
     'cosmicMC_0To25Timing_Ntuple_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8022_Ntuple/USER",
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_onlyControlTriggers_MCRUN2_8022_Ntuple/USER",
