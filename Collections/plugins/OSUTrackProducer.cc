@@ -309,7 +309,7 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
                  eta = afterVetoHist->GetXaxis ()->GetBinCenter (i),
                  phi = afterVetoHist->GetYaxis ()->GetBinCenter (j);
 
-          content && ss << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << (content - meanInefficiency) / stdDevInefficiency << " sigma above mean of " << setw (10) << mean;
+          content && ss << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << (content - meanInefficiency) / stdDevInefficiency << " sigma above mean of " << setw (10) << meanInefficiency;
           if ((content - meanInefficiency) > thresholdForVeto * stdDevInefficiency)
             {
               vetoList.emplace_back (eta, phi, (content - meanInefficiency) / stdDevInefficiency);
