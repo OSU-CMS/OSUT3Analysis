@@ -207,8 +207,8 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
 )
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
     if "Run2016" in osusub.dataset:
-        collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2016_data.root")
-        collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2016_data.root")
+        collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2016ReReco_data.root")
+        collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2016ReReco_data.root")
     else:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2015_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2015_data.root")

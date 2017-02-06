@@ -213,7 +213,6 @@ GlobalPoint OSUSecondaryTrackProducer::getPosition( const DetId& id)
 }
 
 
-
 void
 OSUSecondaryTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &vetoList, stringstream &ss) const
 {
@@ -222,10 +221,11 @@ OSUSecondaryTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, Eta
   const string &afterVetoHistName = cfg.getParameter<string> ("afterVetoHistName");
   const double &thresholdForVeto = cfg.getParameter<double> ("thresholdForVeto");
 
+  edm::LogInfo ("OSUTrackProducer") << "Attempting to extract \"" << beforeVetoHistName << "\" and \"" << afterVetoHistName << "\" from \"" << histFile.fullPath () << "\"...";
   TFile *fin = TFile::Open (histFile.fullPath ().c_str ());
-  if (!fin)
+  if (!fin || fin->IsZombie ())
     {
-      edm::LogWarning ("OSUSecondaryTrackProducer") << "No file named \"" << histFile.fullPath () << "\" found. Skipping...";
+      edm::LogWarning ("OSUTrackProducer") << "No file named \"" << histFile.fullPath () << "\" found. Skipping...";
       return;
     }
 
@@ -234,11 +234,14 @@ OSUSecondaryTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, Eta
   TH2D *afterVetoHist = (TH2D *) fin->Get (afterVetoHistName.c_str ());
   afterVetoHist->SetDirectory (0);
   fin->Close ();
+  delete fin;
 
   //////////////////////////////////////////////////////////////////////////////
-  // First calculate the mean efficiency and error on the mean efficiency.
+  // First calculate the mean efficiency.
   //////////////////////////////////////////////////////////////////////////////
-  double a = 0, b = 0, aErr2 = 0, bErr2 = 0, mean, meanErr;
+
+  double totalEventsBeforeVeto = 0, totalEventsAfterVeto = 0;
+  int nBinsWithTags = 0;
   for (int i = 1; i <= beforeVetoHist->GetXaxis ()->GetNbins (); i++)
     {
       for (int j = 1; j <= beforeVetoHist->GetYaxis ()->GetNbins (); j++)
@@ -246,31 +249,48 @@ OSUSecondaryTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, Eta
           double binRadius = hypot (0.5 * beforeVetoHist->GetXaxis ()->GetBinWidth (i), 0.5 * beforeVetoHist->GetYaxis ()->GetBinWidth (j));
           (vetoList.minDeltaR < binRadius) && (vetoList.minDeltaR = binRadius);
 
-          double contentBeforeVeto = beforeVetoHist->GetBinContent (i, j),
-                 errorBeforeVeto = beforeVetoHist->GetBinError (i, j);
+          double contentBeforeVeto = beforeVetoHist->GetBinContent (i, j);
 
           if (!contentBeforeVeto) // skip bins that are empty in the before-veto histogram
             continue;
 
-          double contentAfterVeto = afterVetoHist->GetBinContent (i, j),
-                 errorAfterVeto = afterVetoHist->GetBinError (i, j);
+          nBinsWithTags++;
 
-          a += contentAfterVeto;
-          b += contentBeforeVeto;
-          aErr2 += errorAfterVeto * errorAfterVeto;
-          bErr2 += errorBeforeVeto * errorBeforeVeto;
+          totalEventsBeforeVeto += contentBeforeVeto;
+          totalEventsAfterVeto  += afterVetoHist->GetBinContent (i, j);
         }
     }
-  mean = a / b;
-  meanErr = mean * hypot (sqrt (aErr2) / a, sqrt (bErr2) / b);
+  double meanInefficiency = totalEventsAfterVeto / totalEventsBeforeVeto;
+
   //////////////////////////////////////////////////////////////////////////////
+  // Then calculate the standard deviation of the mean inefficiency.
+  //////////////////////////////////////////////////////////////////////////////
+  double stdDevInefficiency = 0;
+  afterVetoHist->Divide (beforeVetoHist);
+  for (int i = 1; i <= beforeVetoHist->GetXaxis ()->GetNbins (); i++)
+    {
+      for (int j = 1; j <= beforeVetoHist->GetYaxis ()->GetNbins (); j++)
+        {
+          if(beforeVetoHist->GetBinContent (i, j) == 0) // skip bins that are empty in the before-veto histogram
+            continue;
+
+          double thisInefficiency = afterVetoHist->GetBinContent (i, j);
+
+          stdDevInefficiency += (thisInefficiency - meanInefficiency) * (thisInefficiency - meanInefficiency);
+        }
+    }
+
+  if (nBinsWithTags < 2) stdDevInefficiency = 0.;
+  else {
+    stdDevInefficiency /= nBinsWithTags - 1;
+    stdDevInefficiency = sqrt(stdDevInefficiency);
+  }
 
   //////////////////////////////////////////////////////////////////////////////
   // Then find the bins which are greater than the mean by more than
   // thresholdForVeto sigma. Add the coordinates for these bins to the veto
   // list.
   //////////////////////////////////////////////////////////////////////////////
-  afterVetoHist->Divide (beforeVetoHist);
   for (int i = 1; i <= afterVetoHist->GetXaxis ()->GetNbins (); i++)
     {
       for (int j = 1; j <= afterVetoHist->GetYaxis ()->GetNbins (); j++)
@@ -280,10 +300,10 @@ OSUSecondaryTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, Eta
                  eta = afterVetoHist->GetXaxis ()->GetBinCenter (i),
                  phi = afterVetoHist->GetYaxis ()->GetBinCenter (j);
 
-          content && ss << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << (content - mean) / hypot (error, meanErr) << " sigma above mean of " << setw (10) << mean;
-          if ((content - mean) > thresholdForVeto * hypot (error, meanErr))
+          content && ss << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << (content - meanInefficiency) / stdDevInefficiency << " sigma above mean of " << setw (10) << mean;
+          if ((content - meanInefficiency) > thresholdForVeto * stdDevInefficiency)
             {
-              vetoList.emplace_back (eta, phi);
+              vetoList.emplace_back (eta, phi, (content - meanInefficiency) / stdDevInefficiency);
               ss << " * HOT SPOT *";
             }
           content && ss << endl;
