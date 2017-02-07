@@ -305,7 +305,7 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
       for (int j = 1; j <= afterVetoHist->GetYaxis ()->GetNbins (); j++)
         {
           double content = afterVetoHist->GetBinContent (i, j),
-                 error = afterVetoHist->GetBinError (i, j),
+	    //error = afterVetoHist->GetBinError (i, j),
                  eta = afterVetoHist->GetXaxis ()->GetBinCenter (i),
                  phi = afterVetoHist->GetYaxis ()->GetBinCenter (j);
 
