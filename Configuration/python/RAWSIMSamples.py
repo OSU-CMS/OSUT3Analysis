@@ -111,4 +111,5 @@ dataset_names = {
     'cosmicMC_0To25Timing_DigiHlt_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8022_DigiHlt/USER",
 
     'cosmicMC_0To25Timing_DigiHlt_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_DigiHlt_v2/USER",
+    'cosmicMC_0To25Timing_DigiHlt_2016_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8022_DigiHlt_v2/USER",
 }

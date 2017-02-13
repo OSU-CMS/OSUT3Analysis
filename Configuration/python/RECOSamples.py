@@ -367,6 +367,10 @@ dataset_names = {
     'cosmicMC_0To25Timing_Ntuple_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8022_Ntuple/USER",
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_onlyControlTriggers_MCRUN2_8022_Ntuple/USER",
 
+    'cosmicMC_0To25Timing_Reco_2016_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8025_Reco_v2/USER",
+    'cosmicMC_0To25Timing_Ntuple_2016_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8025_Ntuple_v2/USER",
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_onlyControlTriggers_MCRUN2_8025_Ntuple_v2/USER",
+
 ################## SP ntuples stored on T3 ###############
 #################### cosmic sample #######################
 
