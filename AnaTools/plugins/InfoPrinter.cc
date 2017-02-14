@@ -90,7 +90,8 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   //////////////////////////////////////////////////////////////////////////////
   maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = maxAllTriggerWidth_ = 0;
 
-  bool printEvent = printAllEvents_ || (printPassedEvents_ && getEventDecision());
+  bool eventDecision = getEventDecision(),
+       printEvent = printAllEvents_ || (printPassedEvents_ && eventDecision);
   for (auto eventToPrint = eventsToPrint_.begin (); eventToPrint != eventsToPrint_.end (); eventToPrint++)
     {
       if ((*eventToPrint) == event.id ())
@@ -117,6 +118,8 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       printAllTriggerFilters_      &&  printAllTriggerFilters      (event);
       ss_ << "================================================================================" << endl;
     }
+  if (eventDecision)
+    clog << "EVENT PASSED (" << event.id () << ")" << endl;
   //////////////////////////////////////////////////////////////////////////////
 
   firstEvent_ = false;
