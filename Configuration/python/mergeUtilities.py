@@ -255,6 +255,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     if verbose:
         print "Moved to directory: ", directory
     ReturnValues = []
+    StdErrErrors = []
     if os.path.islink(directory + '/hist.root'):
         os.system('rm ' + directory + '/hist.root')
     # check to see if any jobs ran
@@ -264,14 +265,23 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     LogFiles = os.popen('ls condor_*.log').readlines()
     for i in range(0,len(LogFiles)):
         ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
+
     GoodIndices = []
     GoodRootFiles = []
     BadIndices = []
+
+    # check for files that weren't found and were skipped
+    StdErrFiles = glob.glob('condor_*.err')
+    for index,file in enumerate(StdErrFiles):
+        if 'was not found or could not be opened, and will be skipped.' in open(file).read():
+            BadIndices.append(index)
+
     sys.path.append(directory)
     for i in range(0,len(ReturnValues)):
         if "return value 0" in ReturnValues[i]:
             (report, GoodIndex) = MessageDecoder(ReturnValues[i], True)
-            GoodIndices.append(GoodIndex)
+            if GoodIndex not in BadIndices:
+                GoodIndices.append(GoodIndex)
         elif "return value" in ReturnValues[i]:
             log += ReturnValues[i] + "\n"
             (report, BadIndex) = MessageDecoder(ReturnValues[i], False)
