@@ -1277,6 +1277,11 @@ nJobs = {
     'cosmicMC_0To25Timing_Ntuple_v2' : 5000,
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_v2' : 5000,
 
+    'cosmicMC_0To25Timing_DigiHlt_2016_v2' : 5000,
+    'cosmicMC_0To25Timing_Reco_2016_v2' : 5000,
+    'cosmicMC_0To25Timing_Ntuple_2016_v2' : 5000,
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016_v2' : 5000,
+
     #stopped particles stage1 GEN-SIM
     'mchamp100' : 999,
     'mchamp200' : 999,
@@ -2329,6 +2334,11 @@ maxEvents = {
     'cosmicMC_0To25Timing_Reco_v2' : -1,
     'cosmicMC_0To25Timing_Ntuple_v2' : -1,
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_v2' : -1,
+
+    'cosmicMC_0To25Timing_DigiHlt_2016_v2' : -1,
+    'cosmicMC_0To25Timing_Reco_2016_v2' : -1,
+    'cosmicMC_0To25Timing_Ntuple_2016_v2' : -1,
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016_v2' : -1,
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : -1,
@@ -3400,6 +3410,11 @@ types = {
     'cosmicMC_0To25Timing_Reco_v2' : "bgMC",
     'cosmicMC_0To25Timing_Ntuple_v2' : "bgMC",
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_v2' : "bgMC",
+
+    'cosmicMC_0To25Timing_DigiHlt_2016_v2' : "bgMC",
+    'cosmicMC_0To25Timing_Reco_2016_v2' : "bgMC",
+    'cosmicMC_0To25Timing_Ntuple_2016_v2' : "bgMC",
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016_v2' : "bgMC",
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : "signalMC",
@@ -4481,6 +4496,11 @@ colors = {
     'cosmicMC_0To25Timing_Reco_v2' : 9,
     'cosmicMC_0To25Timing_Ntuple_v2' : 9,
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_v2' : 9,
+
+    'cosmicMC_0To25Timing_DigiHlt_2016_v2' : 46,
+    'cosmicMC_0To25Timing_Reco_2016_v2' : 46,
+    'cosmicMC_0To25Timing_Ntuple_2016_v2' : 46,
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016_v2' : 46,
 
     #stopped particles stage1 GEN-SIM
     'mchamp100' : 1,
@@ -5566,6 +5586,11 @@ labels = {
     'cosmicMC_0To25Timing_Ntuple_v2' : "Cosmic Simulation, 2015",
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_v2' : "Cosmic Simulation, 2015",
 
+    'cosmicMC_0To25Timing_DigiHlt_2016_v2' : "Cosmic Simulation, 2016",
+    'cosmicMC_0To25Timing_Reco_2016_v2' : "Cosmic Simulation, 2016",
+    'cosmicMC_0To25Timing_Ntuple_2016_v2' : "Cosmic Simulation, 2016",
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016_v2' : "Cosmic Simulation, 2016",
+
     #stopped particles stage1 GEN-SIM
     'mchamp100' : "Mchamp (Q = 2e, M = 100 GeV)",
     'mchamp200' : "Mchamp (Q = 2e, M = 200 GeV)",
@@ -6435,6 +6460,11 @@ crossSections = {
     'cosmicMC_0To25Timing_Reco_v2' : 8.3600000000E-02,
     'cosmicMC_0To25Timing_Ntuple_v2' : 8.3600000000E-02,
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_v2' : 8.3600000000E-02,
+
+    'cosmicMC_0To25Timing_DigiHlt_2016_v2' : 8.3600000000E-02,
+    'cosmicMC_0To25Timing_Reco_2016_v2' : 8.3600000000E-02,
+    'cosmicMC_0To25Timing_Ntuple_2016_v2' : 8.3600000000E-02,
+    'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016_v2' : 8.3600000000E-02,
 
     #stopped particles stage1 GEN-SIM
     #from https://github.com/quertenmont/cmssw/blob/HSCP2015_PAS-EXO-15-010/SUSYBSMAnalysis/HSCP/test/AnalysisCode/Analysis_Samples.txt
