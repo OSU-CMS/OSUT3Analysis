@@ -1085,7 +1085,7 @@ else:
                            if 'root:' in line:
                                originalRedirector = line.split('/')[2]
                                break
-                        subprocess.call('sed \'s/' + str(originalRedirector) + '/' + str(RedirectorDic[arguments.Redirector]) + '/g\' '  +  str(datasetInfoFileName), shell = True)
+                        subprocess.call('sed -i \'s/' + str(originalRedirector) + '/' + str(RedirectorDic[arguments.Redirector]) + '/g\' '  +  str(datasetInfoFileName), shell = True)
                 print '################ Resubmit failed jobs for ' + str(dataset) + ' dataset #############'
                 cmd = "condor_submit condor_resubmit.sub"
                 if os.path.isdir ("../" + os.environ["CMSSW_VERSION"]):
