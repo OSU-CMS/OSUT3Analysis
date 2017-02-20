@@ -390,6 +390,13 @@ dataset_names = {
     'NoBPTX_Jet_2016F_PromptReco_v1' : "/NoBPTX/Run2016F-PromptReco-v1_SP/USER",
     'NoBPTX_Jet_2016G_PromptReco_v1' : "/NoBPTX/Run2016G-PromptReco-v1_SP/USER",
 
+    'NoBPTX_Jet_2016B_23Sep2016_v2_Ntuples' : "/NoBPTX/crab_Run2016B-23Sep2016-v2_StoppPtlsJets_Ntuples_Dec14_FinalReRECO_allCSC/USER",
+    'NoBPTX_Jet_2016C_23Sep2016_Ntuples' : "/NoBPTX/crab_Run2016C-23Sep2016-v1_StoppPtlsJets_Ntuples_Dec14_FinalReRECO_allCSC/USER",
+    'NoBPTX_Jet_2016D_23Sep2016_Ntuples' : "/NoBPTX/crab_Run2016D-23Sep2016-v1_StoppPtlsJets_Ntuples_Dec14_FinalReRECO_allCSC/USER",
+    'NoBPTX_Jet_2016E_23Sep2016_Ntuples' : "/NoBPTX/crab_Run2016E-23Sep2016-v1_StoppPtlsJets_Ntuples_Dec14_FinalReRECO_allCSC/USER",
+    'NoBPTX_Jet_2016F_23Sep2016_Ntuples' : "/NoBPTX/crab_Run2016F-23Sep2016-v1_StoppPtlsJets_Ntuples_Dec14_FinalReRECO_allCSC/USER",
+    'NoBPTX_Jet_2016G_23Sep2016_Ntuples' : "/NoBPTX/crab_Run2016G-23Sep2016-v1_StoppPtlsJets_Ntuples_Dec14_FinalReRECO_allCSC/USER",
+
     'NoBPTX_CosJet_2016B_PromptReco_v1' : "/NoBPTX/Run2016B-PromptReco-v1_SP_Cosmics/USER", #cosmic data
     'NoBPTX_CosJet_2016B_PromptReco_v2' : "/NoBPTX/Run2016B-PromptReco-v2_SP_Cosmics/USER", #cosmic data
     'NoBPTX_CosJet_2016C_PromptReco_v2' : "/NoBPTX/Run2016C-PromptReco-v2_SP_Cosmics/USER", #cosmic data
