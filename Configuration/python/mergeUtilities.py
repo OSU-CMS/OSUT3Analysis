@@ -272,7 +272,8 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
 
     # check for files that weren't found and were skipped
     StdErrFiles = glob.glob('condor_*.err')
-    for index,file in enumerate(StdErrFiles):
+    for file in StdErrFiles:
+        index = file.split("_")[-1].split(".")[0]
         if 'was not found or could not be opened, and will be skipped.' in open(file).read():
             BadIndices.append(index)
 
