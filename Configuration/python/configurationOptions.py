@@ -96,6 +96,7 @@ datasets = [
    'NoBPTX_2015D',
    'NoBPTX_2015D_v3',
    'NoBPTX_2015D_v4',
+   'NoBPTX_Jet_2015ReReco',
    'StpPtls_controlSample_2015',
    'Commissioning2015_controlSample',
    'NoBPTX_2015B_controlSample',
@@ -1771,6 +1772,7 @@ nJobs = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : 999,
     'NoBPTX_2015D_v4' : 999,
+    'NoBPTX_Jet_2015ReReco' : 999,
     'NoBPTX_Jet_2016B_PromptReco_v2' : 999,
     'NoBPTX_Jet_2016C_PromptReco_v2' : 999,
     'NoBPTX_Jet_2016D_PromptReco_v2' : 999,
@@ -2837,6 +2839,7 @@ maxEvents = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : -1,
     'NoBPTX_2015D_v4' : -1,
+    'NoBPTX_Jet_2015ReReco' : -1,
     'NoBPTX_Jet_2016B_PromptReco_v2' : -1,
     'NoBPTX_Jet_2016C_PromptReco_v2' : -1,
     'NoBPTX_Jet_2016D_PromptReco_v2' : -1,
@@ -3921,6 +3924,7 @@ types = {
     #NoBPTX data
     'NoBPTX_2015D_v3' : 'data',
     'NoBPTX_2015D_v4' : 'data',
+    'NoBPTX_Jet_2015ReReco' : 'data',
     'NoBPTX_Jet_2016B_PromptReco_v2' : 'data',
     'NoBPTX_Jet_2016C_PromptReco_v2' : 'data',
     'NoBPTX_Jet_2016D_PromptReco_v2' : 'data',
@@ -4402,7 +4406,7 @@ colors = {
     'GluinoToGChi0_1200_903'  : 1,
     'GluinoToGChi0_1200_954'  : 1,
     'GluinoToGChi0_1200_997'  : 1,
-    'GluinoToGChi0_1200_1044'  : 2,
+    'GluinoToGChi0_1200_1044'  : 9,
     'GluinoToGChi0_1200_1089'  : 1,
     'GluinoToGChi0_1200_1100'  : 1,
     'GluinoToGChi0_1200_1111'  : 1,
@@ -4436,7 +4440,7 @@ colors = {
 
 #2015 SP stop for trigEff study
     'StopToTopChi0_400_214' : 1,
-    'StopToTopChi0_600_417' : 1,
+    'StopToTopChi0_600_417' : 7,
     'StopToTopChi0_800_618' : 1,
     'StopToTopChi0_1000_818' : 1,
     'StopToTopChi0_1200_1018' : 1,
@@ -4461,7 +4465,7 @@ colors = {
     'Gluino2GChi0_1200_903_2016Run2_80x' : 1,
     'Gluino2GChi0_1200_954_2016Run2_80x' : 1,
     'Gluino2GChi0_1200_997_2016Run2_80x' : 1,
-    'Gluino2GChi0_1200_1044_2016Run2_80x' : 1,
+    'Gluino2GChi0_1200_1044_2016Run2_80x' : 6,
     'Gluino2GChi0_1200_1089_2016Run2_80x' : 1,
     'Gluino2GChi0_1200_1100_2016Run2_80x' : 1,
     'Gluino2GChi0_1200_1111_2016Run2_80x' : 1,
@@ -4505,7 +4509,7 @@ colors = {
     'Gluino2GChi0_2400_2297_2016Run2_80x' : 1,
     'Gluino2GChi0_2600_2497_2016Run2_80x' : 1,
     'Stop2TChi0_400_214_2016Run2_80x' : 1,
-    'Stop2TChi0_600_417_2016Run2_80x' : 1,
+    'Stop2TChi0_600_417_2016Run2_80x' : 3,
     'Stop2TChi0_800_618_2016Run2_80x' : 1,
     'Stop2TChi0_1000_818_2016Run2_80x' : 1,
     'Stop2TChi0_1200_1018_2016Run2_80x' : 1,
@@ -5013,8 +5017,9 @@ colors = {
     ############################################################################
 
     #NoBPTX data
-    'NoBPTX_2015D_v3' : 1,
+    'NoBPTX_2015D_v3' : 2,
     'NoBPTX_2015D_v4' : 1,
+    'NoBPTX_Jet_2015ReReco' : 2,
     'NoBPTX_Jet_2016B_PromptReco_v2' : 1,
     'NoBPTX_Jet_2016C_PromptReco_v2' : 1,
     'NoBPTX_Jet_2016D_PromptReco_v2' : 1,
@@ -5031,7 +5036,7 @@ colors = {
     'NoBPTX_Jet_2016E_23Sep2016_Ntuples' : 1,
     'NoBPTX_Jet_2016F_23Sep2016_Ntuples' : 1,
     'NoBPTX_Jet_2016G_23Sep2016_Ntuples' : 1,
-    'NoBPTX_Jet_2016BCD_ReReco' : 1,
+    'NoBPTX_Jet_2016BCD_ReReco' : 4,
     'NoBPTX_Jet_2016BCDEFGH_ReReco' : 1,
 
     'NoBPTX_CosJet_2016B_PromptReco_v1' : 1,
@@ -5500,7 +5505,7 @@ labels = {
     'GluinoToGChi0_1200_903'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 903 GeV)",
     'GluinoToGChi0_1200_954'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 954 GeV)",
     'GluinoToGChi0_1200_997'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 997 GeV)",
-    'GluinoToGChi0_1200_1044'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1044 GeV)",
+    'GluinoToGChi0_1200_1044'  : "2015 #tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1044 GeV)",
     'GluinoToGChi0_1200_1089'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1089 GeV)",
     'GluinoToGChi0_1200_1100'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1100 GeV)",
     'GluinoToGChi0_1200_1111'  : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1111 GeV)",
@@ -5534,7 +5539,7 @@ labels = {
 
 #2015 SP stop for trigEff study
     'StopToTopChi0_400_214' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 400 GeV, M_{#tilde{#chi}^{0}} = 214 GeV)",
-    'StopToTopChi0_600_417' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 600 GeV, M_{#tilde{#chi}^{0}} = 417 GeV)",
+    'StopToTopChi0_600_417' : "2015 #tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 600 GeV, M_{#tilde{#chi}^{0}} = 417 GeV)",
     'StopToTopChi0_800_618' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 800 GeV, M_{#tilde{#chi}^{0}} = 618 GeV)",
     'StopToTopChi0_1000_818' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 818 GeV)",
     'StopToTopChi0_1200_1018' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1018 GeV)",
@@ -5559,7 +5564,7 @@ labels = {
     'Gluino2GChi0_1200_903_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 903 GeV)",
     'Gluino2GChi0_1200_954_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 954 GeV)",
     'Gluino2GChi0_1200_997_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 997 GeV)",
-    'Gluino2GChi0_1200_1044_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1044 GeV)",
+    'Gluino2GChi0_1200_1044_2016Run2_80x' : "2016 #tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1044 GeV)",
     'Gluino2GChi0_1200_1089_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1089 GeV)",
     'Gluino2GChi0_1200_1100_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1100 GeV)",
     'Gluino2GChi0_1200_1111_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1111 GeV)",
@@ -5603,7 +5608,7 @@ labels = {
     'Gluino2GChi0_2400_2297_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 2400 GeV, M_{#tilde{#chi}^{0}} = 2297 GeV)",
     'Gluino2GChi0_2600_2497_2016Run2_80x' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 2600 GeV, M_{#tilde{#chi}^{0}} = 2497 GeV)",
     'Stop2TChi0_400_214_2016Run2_80x' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 400 GeV, M_{#tilde{#chi}^{0}} = 214 GeV)",
-    'Stop2TChi0_600_417_2016Run2_80x' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 600 GeV, M_{#tilde{#chi}^{0}} = 417 GeV)",
+    'Stop2TChi0_600_417_2016Run2_80x' : "2016 #tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 600 GeV, M_{#tilde{#chi}^{0}} = 417 GeV)",
     'Stop2TChi0_800_618_2016Run2_80x' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 800 GeV, M_{#tilde{#chi}^{0}} = 618 GeV)",
     'Stop2TChi0_1000_818_2016Run2_80x' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1000 GeV, M_{#tilde{#chi}^{0}} = 818 GeV)",
     'Stop2TChi0_1200_1018_2016Run2_80x' : "#tilde{t} #rightarrow t#tilde{#chi}^{0} (M_{#tilde{t}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1018 GeV)",
@@ -6113,6 +6118,7 @@ labels = {
     #NoBPTX Data
     'NoBPTX_2015D_v3'     : "NoBPTX 2015D_v3 data",
     'NoBPTX_2015D_v4'     : "NoBPTX 2015D_v4 data",
+    'NoBPTX_Jet_2015ReReco' : "NoBPTX 2015 ReReco collision run data",
     'NoBPTX_Jet_2016B_PromptReco_v2'     : "NoBPTX 2016B_v2 data",
     'NoBPTX_Jet_2016C_PromptReco_v2'     : "NoBPTX 2016C_v2 data",
     'NoBPTX_Jet_2016D_PromptReco_v2'     : "NoBPTX 2016D_v2 data",
@@ -6129,8 +6135,8 @@ labels = {
     'NoBPTX_Jet_2016E_23Sep2016_Ntuples' : 'NoBPTX 2016E ReReco data',
     'NoBPTX_Jet_2016F_23Sep2016_Ntuples' : 'NoBPTX 2016F ReReco data',
     'NoBPTX_Jet_2016G_23Sep2016_Ntuples' : 'NoBPTX 2016G ReReco data',
-    'NoBPTX_Jet_2016BCD_ReReco' : 'NoBPTX 2016 BCD ReReco search data',
-    'NoBPTX_Jet_2016BCDEFGH_ReReco' : 'NoBPTX 2016 BCDEFGH ReReco search data',
+    'NoBPTX_Jet_2016BCD_ReReco' : 'NoBPTX 2016 BCD ReReco collision run data',
+    'NoBPTX_Jet_2016BCDEFGH_ReReco' : 'NoBPTX 2016 BCDEFGH ReReco collision run data',
 
     'NoBPTX_CosJet_2016B_PromptReco_v1' : "NoBPTX 2016B_v1 cosmic data",
     'NoBPTX_CosJet_2016B_PromptReco_v2' : "NoBPTX 2016B_v2 cosmic data",
