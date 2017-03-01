@@ -870,12 +870,13 @@ composite_dataset_definitions = {
         'NoBPTX_Jet_2016F_23Sep2016_Ntuples',
         'NoBPTX_Jet_2016G_23Sep2016_Ntuples',
     ],
-    'NoBPTX_CosJet_2016BCDE_PromptReco' : [
+    'NoBPTX_CosJet_2016BCDEF_PromptReco' : [
        'NoBPTX_CosJet_2016B_PromptReco_v1',
        'NoBPTX_CosJet_2016B_PromptReco_v2',
        'NoBPTX_CosJet_2016C_PromptReco_v2',
        'NoBPTX_CosJet_2016D_PromptReco_v2',
        'NoBPTX_CosJet_2016E_PromptReco_v2',
+       'NoBPTX_CosJet_2016F_PromptReco_v1',
     ],
 }
 
@@ -1825,6 +1826,7 @@ nJobs = {
     'NoBPTX_CosJet_2016C_PromptReco_v2' : 999,
     'NoBPTX_CosJet_2016D_PromptReco_v2' : 999,
     'NoBPTX_CosJet_2016E_PromptReco_v2' : 999,
+    'NoBPTX_CosJet_2016F_PromptReco_v1' : 999,
     #'NoBPTX_2015D_v3' : 30,
     #'NoBPTX_2015D_v4' : 30,
     
@@ -2901,6 +2903,7 @@ maxEvents = {
     'NoBPTX_CosJet_2016C_PromptReco_v2' : -1,
     'NoBPTX_CosJet_2016D_PromptReco_v2' : -1,
     'NoBPTX_CosJet_2016E_PromptReco_v2' : -1,
+    'NoBPTX_CosJet_2016F_PromptReco_v1' : -1,
 
     'NoBPTX_2016B_23Sep2016_v2' : -1,
     'NoBPTX_2016B_23Sep2016_v3' : -1,
@@ -3998,6 +4001,7 @@ types = {
     'NoBPTX_CosJet_2016C_PromptReco_v2' : 'data',
     'NoBPTX_CosJet_2016D_PromptReco_v2' : 'data',
     'NoBPTX_CosJet_2016E_PromptReco_v2' : 'data',
+    'NoBPTX_CosJet_2016F_PromptReco_v1' : 'data',
 
     'NoBPTX_2016B_23Sep2016_v2' : 'data',
     'NoBPTX_2016B_23Sep2016_v3' : 'data',
@@ -5110,7 +5114,8 @@ colors = {
     'NoBPTX_CosJet_2016C_PromptReco_v2' : 1,
     'NoBPTX_CosJet_2016D_PromptReco_v2' : 1,
     'NoBPTX_CosJet_2016E_PromptReco_v2' : 1,
-    'NoBPTX_CosJet_2016BCDE_PromptReco' : 1,
+    'NoBPTX_CosJet_2016F_PromptReco_v1' : 1,
+    'NoBPTX_CosJet_2016BCDEF_PromptReco' : 1,
 
     'NoBPTX_2015D' : 1,
 
@@ -6221,7 +6226,8 @@ labels = {
     'NoBPTX_CosJet_2016C_PromptReco_v2' : "NoBPTX 2016C_v2 cosmic data",
     'NoBPTX_CosJet_2016D_PromptReco_v2' : "NoBPTX 2016D_v2 cosmic data",
     'NoBPTX_CosJet_2016E_PromptReco_v2' : "NoBPTX 2016E_v2 cosmic data",
-    'NoBPTX_CosJet_2016BCDE_PromptReco' : "NoBPTX 2016 BCDE Cosmic data",
+    'NoBPTX_CosJet_2016F_PromptReco_v1' : "NoBPTX 2016F_v1 cosmic data",
+    'NoBPTX_CosJet_2016BCDEF_PromptReco' : "NoBPTX 2016 BCDEF Cosmic data",
 
 
     'NoBPTX_2015D'     : "NoBPTX 2015D data",
