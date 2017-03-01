@@ -375,7 +375,8 @@ dataset_names = {
 #################### cosmic sample #######################
 
     #'cosmic_preselection' : "/Cosmics_Preselction/Spring-74x/USER",
-    'cosmic_preselection' : "/Cosmics_Preselction_Apr5_16000_final/Spring-74x/USER",
+    #'cosmic_preselection' : "/Cosmics_Preselction_Apr5_16000_final/Spring-74x/USER",
+    'cosmic_preselection' : "/CosmicPreselection_Jul4/Ntuples_74x/USER",
 
 ################## SP ntuples no stored on T3 ############
 ########################## data ##########################
@@ -398,11 +399,12 @@ dataset_names = {
     'NoBPTX_Jet_2016F_23Sep2016_Ntuples' : "/NoBPTX/crab_Run2016F-23Sep2016-v1_StoppPtlsJets_Ntuples_Dec14_FinalReRECO_allCSC/USER",
     'NoBPTX_Jet_2016G_23Sep2016_Ntuples' : "/NoBPTX/crab_Run2016G-23Sep2016-v1_StoppPtlsJets_Ntuples_Dec14_FinalReRECO_allCSC/USER",
 
-    'NoBPTX_CosJet_2016B_PromptReco_v1' : "/NoBPTX/Run2016B-PromptReco-v1_SP_Cosmics/USER", #cosmic data
-    'NoBPTX_CosJet_2016B_PromptReco_v2' : "/NoBPTX/Run2016B-PromptReco-v2_SP_Cosmics/USER", #cosmic data
-    'NoBPTX_CosJet_2016C_PromptReco_v2' : "/NoBPTX/Run2016C-PromptReco-v2_SP_Cosmics/USER", #cosmic data
-    'NoBPTX_CosJet_2016D_PromptReco_v2' : "/NoBPTX/Run2016D-PromptReco-v2_SP_Cosmics/USER", #cosmic data
-    'NoBPTX_CosJet_2016E_PromptReco_v2' : "/NoBPTX/Run2016E-PromptReco-v2_SP_Cosmics/USER", #cosmic data
+    'NoBPTX_CosJet_2016B_PromptReco_v1' : "/NoBPTX/2016Cosmic_PromptReco_Bv1/USER", #cosmic data
+    'NoBPTX_CosJet_2016B_PromptReco_v2' : "/NoBPTX/2016Cosmic_PromptReco_Bv2_part1/USER", #cosmic data
+    'NoBPTX_CosJet_2016C_PromptReco_v2' : "/NoBPTX/2016Cosmic_PromptReco_Cv2/USER", #cosmic data
+    'NoBPTX_CosJet_2016D_PromptReco_v2' : "/NoBPTX/2016Cosmic_PromptReco_Dv2/USER", #cosmic data
+    'NoBPTX_CosJet_2016E_PromptReco_v2' : "/NoBPTX/2016Cosmic_PromptReco_Ev2/USER", #cosmic data
+    'NoBPTX_CosJet_2016F_PromptReco_v1' : "/NoBPTX/2016Cosmic_PromptReco_Fv1/USER", #cosmic data
 
 ################## Delayed Muon RECO not stored on T3 ############
 ########################## data ##########################
@@ -445,12 +447,10 @@ dataset_names = {
 ################## SP ntuples no stored on T3 ############
 ########################## data control samples ##########################
     'Commissioning2015_controlSample' : "/NoBPTX/wji-Commissioning2015-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
-    'NoBPTX_2015B_controlSample' : "/NoBPTX/wji-Run2015B-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
-    'NoBPTX_2015C_controlSample' : "/NoBPTX/wji-Run2015C-PromptReco-v1_SP-controlSample_v2-0701c8de79205af8bf35872e3253801f/USER",
-    #'NoBPTX_2015Dv3_controlSample'  : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-controlSample_v2_Mar06-0701c8de79205af8bf35872e3253801f/USER",
-    'NoBPTX_2015Dv3_controlSample'  : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-controlSample_Apr11-0701c8de79205af8bf35872e3253801f/USER",
-    #'NoBPTX_2015Dv4_controlSample'  : "/NoBPTX/wji-Run2015D-PromptReco-v4_SP-controlSample_v2_Mar06-0701c8de79205af8bf35872e3253801f/USER",
-    'NoBPTX_2015Dv4_controlSample'  : "/NoBPTX/wji-Run2015D-PromptReco-v4_SP-controlSample_Apr11-0701c8de79205af8bf35872e3253801f/USER",
+    'NoBPTX_2015B_controlSample' : "/NoBPTX/Cosmic_Run2015B-PromptReco-v1_SP-controlSample_v2/USER",
+    'NoBPTX_2015C_controlSample' : "/NoBPTX/Cosmic_Run2015C-PromptReco-v1_SP-controlSample_v2/USER",
+    'NoBPTX_2015Dv3_controlSample'  : "/NoBPTX/Cosmic_Run2015D-PromptReco-v3_SP-controlSample_Apr11/USER",
+    'NoBPTX_2015Dv4_controlSample'  : "/NoBPTX/Cosmic_Run2015D-PromptReco-v4_SP-controlSample_Apr11/USER",
     'NoBPTX_2015E_controlSample' : "/NoBPTX/wji-Run2015E-PromptReco-v1_SP-controlSample_Apr12-85d9858dc105eadee9c3c06455e2c80a/USER",
 
     'NoBPTX_2016B_PromptReco_Jets_BxStudy_Ntuple' : "/NoBPTX/Run2016B-PromptReco-v2_Jets_BxStudy/USER",
