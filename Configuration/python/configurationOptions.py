@@ -4124,7 +4124,7 @@ types = {
     'NoBPTX_Jet_2016BCDEFG_PromptReco' : 'data',
     'NoBPTX_Jet_2016BCD_ReReco' : 'data',
     'NoBPTX_Jet_2016BCDEFGH_ReReco' : 'data',
-    'NoBPTX_CosJet_2016BCDE_PromptReco' : 'data',
+    'NoBPTX_CosJet_2016BCDEF_PromptReco' : 'data',
     ############################################################################
 
     #control sample data
