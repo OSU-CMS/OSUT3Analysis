@@ -422,7 +422,8 @@ dataset_names = {
     'NoBPTX_2016E_PromptReco_AOD' : "/NoBPTX/Run2016E-PromptReco-v2/AOD",
     'NoBPTX_2016F_PromptReco_AOD' : "/NoBPTX/Run2016F-PromptReco-v1/AOD",
     'NoBPTX_2016G_PromptReco_AOD' : "/NoBPTX/Run2016G-PromptReco-v1/AOD",
-    'NoBPTX_2016H_PromptReco_AOD' : "/NoBPTX/Run2016H-PromptReco-v2/AOD",
+    'NoBPTX_2016H_PromptReco_AOD_v2' : "/NoBPTX/Run2016H-PromptReco-v2/AOD",
+    'NoBPTX_2016H_PromptReco_AOD_v3' : "/NoBPTX/Run2016H-PromptReco-v3/AOD",
 
     'NoBPTX_2016B_PromptReco' : "/NoBPTX/Run2016B-PromptReco-v2/RECO",
     'NoBPTX_2016C_PromptReco' : "/NoBPTX/Run2016C-PromptReco-v2/RECO",
