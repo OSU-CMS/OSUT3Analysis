@@ -509,6 +509,16 @@ dataset_names = {
     'NoBPTX_2016H_23Sep2016_OnlyControlTriggers_Ntuple_v2' : "NoBPTX/Run2016H-OnlyControlTriggers-23Sep2016-v2/USER",
     'NoBPTX_2016H_23Sep2016_OnlyControlTriggers_Ntuple_v3' : "NoBPTX/Run2016H-OnlyControlTriggers-23Sep2016-v3/USER",
 
+    'NoBPTX_2016B_23Sep2016_OnlyJetTriggers_Ntuple_v2' : "NoBPTX/Run2016B-OnlyJetTriggers-23Sep2016-v2/USER",
+    'NoBPTX_2016B_23Sep2016_OnlyJetTriggers_Ntuple_v3' : "NoBPTX/Run2016B-OnlyJetTriggers-23Sep2016-v3/USER",
+    'NoBPTX_2016C_23Sep2016_OnlyJetTriggers_Ntuple' : "NoBPTX/Run2016C-OnlyJetTriggers-23Sep2016-v1/USER",
+    'NoBPTX_2016D_23Sep2016_OnlyJetTriggers_Ntuple' : "NoBPTX/Run2016D-OnlyJetTriggers-23Sep2016-v1/USER",
+    'NoBPTX_2016E_23Sep2016_OnlyJetTriggers_Ntuple' : "NoBPTX/Run2016E-OnlyJetTriggers-23Sep2016-v1/USER",
+    'NoBPTX_2016F_23Sep2016_OnlyJetTriggers_Ntuple' : "NoBPTX/Run2016F-OnlyJetTriggers-23Sep2016-v1/USER",
+    'NoBPTX_2016G_23Sep2016_OnlyJetTriggers_Ntuple' : "NoBPTX/Run2016G-OnlyJetTriggers-23Sep2016-v1/USER",
+    'NoBPTX_2016H_23Sep2016_OnlyJetTriggers_Ntuple_v2' : "NoBPTX/Run2016H-OnlyJetTriggers-23Sep2016-v2/USER",
+    'NoBPTX_2016H_23Sep2016_OnlyJetTriggers_Ntuple_v3' : "NoBPTX/Run2016H-OnlyJetTriggers-23Sep2016-v3/USER",
+
     'NoBPTX_2016B_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016B-OnlyControlTriggers-PromptReco-v2/USER",
     'NoBPTX_2016C_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016C-OnlyControlTriggers-PromptReco-v2/USER",
     'NoBPTX_2016D_PromptReco_OnlyControlTriggers_Ntuple' : "/NoBPTX/Run2016D-OnlyControlTriggers-PromptReco-v2/USER",
