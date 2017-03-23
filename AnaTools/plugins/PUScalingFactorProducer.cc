@@ -6,7 +6,8 @@ PUScalingFactorProducer::PUScalingFactorProducer(const edm::ParameterSet &cfg) :
    PU_               (cfg.getParameter<string>("PU")),
    dataset_          (cfg.getParameter<string>("dataset")),
    target_           (cfg.getParameter<string>("target")),
-   puWeight_         (NULL)
+   puWeight_         (NULL),
+   isFirstEvent_     (true)
 {
   if(collections_.exists ("pileupinfos"))
     pileUpInfosToken_ = consumes<vector<TYPE(pileupinfos)> > (collections_.getParameter<edm::InputTag> ("pileupinfos"));
@@ -20,7 +21,7 @@ PUScalingFactorProducer::~PUScalingFactorProducer() {
 void
 PUScalingFactorProducer::AddVariables (const edm::Event &event) {
 #if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
-  if (!event.isRealData ())
+  if (!event.isRealData () && PU_ != "" && dataset_ != "" && target_ != "")
     {
       if (!puWeight_)
         {
@@ -56,17 +57,23 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
       objectsToGet_.insert ("pileupinfos");
       getOriginalCollections (event);
       double numTruePV = 0;
-      for (const auto &pv1 : *handles_.pileupinfos) {
-      if(pv1.getBunchCrossing() == 0)
-        numTruePV = pv1.getTrueNumInteractions();
-      }
+      for (const auto &pv1 : *handles_.pileupinfos)
+        if(pv1.getBunchCrossing() == 0)
+          numTruePV = pv1.getTrueNumInteractions();
+      if (isFirstEvent_)
+        clog << "[PUScalingFactorProducer] Applying PU reweighting (isRealData: " << (event.isRealData () ? "true" : "false") << ", PU_: \"" << PU_ << "\", dataset_: \"" << dataset_ << "\", target_: \"" << target_ << "\")" << endl;
       (*eventvariables)["puScalingFactor"] = puWeight_->GetBinContent(puWeight_->FindBin(numTruePV));
     }
   else
-    (*eventvariables)["puScalingFactor"] = 1;
+    {
+      if (isFirstEvent_)
+        clog << "[PUScalingFactorProducer] NOT applying PU reweighting (isRealData: " << (event.isRealData () ? "true" : "false") << ", PU_: \"" << PU_ << "\", dataset_: \"" << dataset_ << "\", target_: \"" << target_ << "\")" << endl;
+      (*eventvariables)["puScalingFactor"] = 1;
+    }
 #else
     (*eventvariables)["puScalingFactor"] = 1;
 # endif
+    isFirstEvent_ = false;
 }
 
 void
