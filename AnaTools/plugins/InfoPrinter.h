@@ -45,6 +45,7 @@ class InfoPrinter : public edm::EDAnalyzer
     bool printValuesToPrint ();
     bool printAllTriggers (const edm::Event &);
     bool printAllTriggerFilters (const edm::Event &);
+    void flushPassingEvents (const unsigned = 0);
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
@@ -101,6 +102,10 @@ class InfoPrinter : public edm::EDAnalyzer
     // Stringstream which holds all the information to be printed until the
     // destructor is called, where it is printed to the screen.
     stringstream ss_;
+
+    // Stringstream which acts as a buffer to hold event numbers for passing
+    // events.
+    stringstream passingEvents_;
 
     // Cut decisions which are gotten from the event.
     edm::Handle<CutCalculatorPayload> cutDecisions;

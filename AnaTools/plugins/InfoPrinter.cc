@@ -46,6 +46,7 @@ InfoPrinter::~InfoPrinter ()
   // Stop the timer and output the time, as well as any additional information
   // requested by the user.
   //////////////////////////////////////////////////////////////////////////////
+  flushPassingEvents ();
   sw_->Stop ();
   outputTime ();
   clog << ss_.str ();
@@ -119,7 +120,10 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       ss_ << "================================================================================" << endl;
     }
   if (eventDecision)
-    clog << "EVENT PASSED (" << event.id () << ")" << endl;
+    {
+      passingEvents_ << "EVENT PASSED (" << event.id () << ")" << endl;
+      flushPassingEvents (1024 * 1024 * 10);
+    }
   //////////////////////////////////////////////////////////////////////////////
 
   firstEvent_ = false;
@@ -693,6 +697,16 @@ InfoPrinter::initializeValueLookupForest (ValuesToPrint &values, Collections * c
       value.valueLookupTree->setCollections (handles);
     }
   return true;
+}
+
+void
+InfoPrinter::flushPassingEvents (const unsigned maxLength)
+{
+  if (passingEvents_.str ().length () > maxLength)
+    {
+      edm::LogInfo ("InfoPrinter") << passingEvents_.str ();
+      passingEvents_.str ("");
+    }
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
