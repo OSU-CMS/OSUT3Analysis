@@ -222,7 +222,7 @@ class Table(object):
             for c in range(self.numCols()):
                 for r in range(self.numRows()):
                     if replacement in self.contents[c][r]:
-#                        print self.contents[c][r], "->", self.contents[c][r].replace(replacement,replacements[replacement])
+#                        print replacement, "->", replacements[replacement], ":", self.contents[c][r], "->", self.contents[c][r].replace(replacement,replacements[replacement])
                         self.contents[c][r] = self.contents[c][r].replace(replacement,replacements[replacement])
 
 
@@ -371,9 +371,9 @@ def getLumiWt(dataset_file):
         exit(0)
     return lumiWt
 
-def fillTableColumn(table, dataset_file, dataset):
+def fillTableColumn(table, dataset_file, dataset, hist_name="cutFlow"):
     inputFile = TFile(dataset_file)
-    cutFlow = inputFile.Get(table.channel + "/cutFlow")
+    cutFlow = inputFile.Get(table.channel + "/" + hist_name)
     if cutFlow.GetNbinsX() != len(table.cutNames):
         print "ERROR:  cutFlow.GetNbinsX() = ", cutFlow.GetNbinsX(), " does not equal len(table.cutNames) = ", len(table.cutNames)
         print "Will skip channel", table.channel, " from file ", dataset_file
@@ -407,7 +407,7 @@ def makeTableEff(table):
             col.yields[i] = col.yields[i] / total if total else float('nan')
     tableEff.printErrors(False)
     tableEff.printPercent(True)
-    tableEff.type = "Efficiency"
+    tableEff.type = "Cumulative Efficiency"
     return tableEff
 
 def makeTableMargEff(table):
@@ -426,6 +426,23 @@ def makeTableMargEff(table):
     tableMargEff.printPercent(True)
     tableMargEff.type = "Marginal efficiency"
     return tableMargEff
+
+def makeTableIndivEff(table):
+    tableIndivEff = copy.deepcopy(table)
+    for c in reversed(range(len(tableIndivEff.datasets))):  # Go backwards to allow removal of columns.
+        col = tableIndivEff.datasets[c]
+        if col.dataset is "diff" or col.dataset is "ratio":
+            # The difference and ratio do not make sense in the efficiency table.
+            del tableIndivEff.datasets[c]
+            continue
+        total = copy.deepcopy(col.yields[0])
+        for i in range(0, len(tableIndivEff.cutNames)):
+            col.yields[i] = col.yields[i] / total if total else float('nan')
+    tableIndivEff.printErrors(False)
+    tableIndivEff.printPercent(True)
+    tableIndivEff.type = "Individual Efficiency"
+    return tableIndivEff
+
 
 def addExtraColumn(table, option):
     # First get the values that will be needed
@@ -575,16 +592,20 @@ replacements = collections.OrderedDict([
     ("( ","("),
     (" )",")"),
 
-    ("fabs (eta)","|\\eta|"),
-    ("fabs(eta)","|\\eta|"),
-    ("abs (eta)","|\\eta|"),
-    ("abs(eta)","|\\eta|"),
-    (" eta ","  \\eta "),
-    ("eta","\\eta"),
+    ("eta","$\\eta$"),
+    (" eta ","  $\\eta$ "),
+    ("fabs ($\\eta$)","|$\\eta$|"),
+    ("fabs($\\eta$)","|$\\eta$|"),
+    ("abs ($\\eta$)","|$\\eta$|"),
+    ("abs($\\eta$)","|$\\eta$|"),
+    ("fabs ( $\\eta$ )","|$\\eta$|"),
+    ("fabs( $\\eta$ )","|$\\eta$|"),
+    ("abs ( $\\eta$ )","|$\\eta$|"),
+    ("abs( $\\eta$ )","|$\\eta$|"),
 
-    ("#Delta","\\Delta"),
+    ("#Delta","$\\Delta$"),
     ("DeltaR","$\\Delta$R"),
-    ("#Phi","\\phi"),
+    ("#Phi","$\\phi$"),
     (" # "," Num "),
 
     ("\\rightarrow","{\\rightarrow}"),
@@ -592,8 +613,8 @@ replacements = collections.OrderedDict([
     ("EM QCD","EM$ $QCD"),
     ("BCtoE QCD","BCtoE$ $QCD"),
 
-    (" pt","$ p_{T}$"),
-    (" ht","$H_{T}$"),
+    (" pt","$\\ p_{T}$"),
+    (" ht","$\\ H_{T}$"),
 
     ("d0","$d_{0}$"),
     ("dz","$d_{z}$"),
@@ -614,6 +635,9 @@ replacements = collections.OrderedDict([
     ("M_mumu","$M_{\\mu\\mu}$"),
     ("M_ee","$M_{ee}$"),
     ("M_ll","$M_{ll}$"),
+
+    (" mum"," $\\mu$m"),
+
 ])
 
 replacements_extra = {
@@ -676,11 +700,14 @@ labels["signif"] = "S/\\sqrt{S+B}"
 
 for channel in channels: # loop over final states, which each have their own directory
     table = CFTable(channel)
+    table_indiv = CFTable(channel)
     for dataset in processed_datasets:
         dataset_file = "%s/%s.root" % (condor_dir,dataset)
         if len(table.datasets) == 0:  # Fill the cuts only the first time
             fillTableCuts(table, dataset_file)
+            fillTableCuts(table_indiv, dataset_file)
         fillTableColumn(table, dataset_file, dataset)
+        fillTableColumn(table_indiv, dataset_file, dataset, "selection")
 
     # Add optional columns to end of table:
     if arguments.totalBkgd:
@@ -694,6 +721,7 @@ for channel in channels: # loop over final states, which each have their own dir
 
     tableEff     = makeTableEff    (table)
     tableMargEff = makeTableMargEff(table)
+    tableIndivEff = makeTableIndivEff(table_indiv)
 
     # Write to file
     fout = open (texfile, "a")
@@ -706,6 +734,7 @@ for channel in channels: # loop over final states, which each have their own dir
     table       .writeToFile(texfile)
     tableEff    .writeToFile(texfile)
     tableMargEff.writeToFile(texfile)
+    tableIndivEff.writeToFile(texfile)
     # END LOOP OVER CHANNELS
 
 closeTexFile(texfile)
