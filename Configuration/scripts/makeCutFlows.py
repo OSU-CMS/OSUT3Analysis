@@ -234,7 +234,7 @@ class CFCell(object):
         self.upperLimit = 0
         self.useUL = False
         self.precision = -1  # Specify the last digit to be printed, corresponding to 10^precision
-        self.roundValToInt = False
+        self.useInt = False
         self.printErr = True
         self.printPercent = False
     def __repr__(self):
@@ -262,10 +262,11 @@ class CFCell(object):
         precision = 3
         if arguments.precision:
             precision = int(arguments.precision)
-        val = round_sigfigs(self.val, precision)
+        if self.useInt:
+            val = int(self.val)
+        else:
+            val = round_sigfigs(self.val, precision)
         err = round_sigfigs(self.err, precision)
-        if self.roundValToInt:
-            val = int(val)
         if self.printPercent:
             val *= 100
             err *= 100
@@ -284,17 +285,19 @@ class CFColumn(object):
         self.dataset = dataset
         self.label = getLabel(dataset)
         self.type = "bgMC" # other options: "signalMC", "data", "extra"
+        self.useInt = False
         self.yields = []  # CFCells
     def __repr__(self):
         return 'label: ', label, ', number of yields: ', len(self.yields), '\n'
     def getStrColumn(self): # Return a list of strings
         strCol = ["", self.label]
         for y in self.yields:
+            if self.useInt:
+                y.useInt = True
             strCol.append(y.getStr())
         return strCol
-    def setRoundValToInt(self, toround=True):
-        for y in self.yields:
-            y.roundValToInt = toround
+    def setUseInt(self):
+        self.useInt = True
 
 
 class CFTable(object):
@@ -318,7 +321,7 @@ class CFTable(object):
         table.addColumn(firstCol)
         for d in self.datasets:
             if d.type == "data" and self.type == "Event yield":
-                d.setRoundValToInt()
+                d.setUseInt()
             table.addColumn(d.getStrColumn())
         table.contents[-1][0] = "\\multicolumn{" + str(len(self.datasets)) + "}{r}{" + self.type + "}"
         table.initializeJustification()
