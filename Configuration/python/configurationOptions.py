@@ -230,6 +230,7 @@ datasets = [
    'WJetsToLNu',
    'WJetsToLNu_HT',  # HT bins, starting with HT>100 GeV
    'TTJets',
+   'TTJets_Debug',
    'Diboson',
 
    'DYJetsToLL_50_50ns',
@@ -1043,6 +1044,7 @@ nJobs = {
     ############################################################################
     'DYJetsToLL_10to50'    : 999,
     'TTJets'        : 325,
+    'TTJets_Debug'        : 325,
     'WW'        : 44,
     'ZZ'        : 36,
     'WZ'        : 45,
@@ -2133,6 +2135,7 @@ maxEvents = {
     ############################################################################
     'DYJetsToLL_10to50'        : -1,
     'TTJets'            : -1,
+    'TTJets_Debug'            : -1,
     'WW'            : -1,
     'ZZ'            : -1,
     'WZ'            : -1,
@@ -3221,6 +3224,7 @@ types = {
     'DYJetsToLL'             : "bgMC",
     'DYJetsToLL_10to50'      : "bgMC",
     'TTJets'                 : "bgMC",
+    'TTJets_Debug'                 : "bgMC",
     'Diboson'                : "bgMC",
     'Diboson_Incl'           : "bgMC",
     'WW'                     : "bgMC",
@@ -4348,6 +4352,7 @@ colors = {
     'DYJetsToLL'          : 410,
     'DYJetsToLL_10to50'   : 410,
     'TTJets'              : 872,
+    'TTJets_Debug'              : 872,
     'Diboson'             : 393,
     'Diboson_Incl'        : 393,
     'WZ'                  : 393,
@@ -5466,7 +5471,8 @@ labels = {
     #MiniAOD not stored on T3.
     ############################################################################
     'DYJetsToLL_10to50'             : "Z#rightarrowll M(10to50)",
-    'TTJets'                        : "t#bar{t}",
+    'TTJets'                        : "t#bar{t} (Debug)",
+    'TTJets_Debug'                        : "t#bar{t}",
     'Diboson'                   : "diboson",
     'Diboson_Incl'              : "diboson",
     'WW'                        : "WW",
@@ -6462,6 +6468,7 @@ crossSections = {
     'DYJetsToLL_50'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)
     'WJetsToLNu'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3)
 'TTJets'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
+'TTJets_Debug'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
     'WW'                       :                63.21,
     'WZ'                       :                22.82,
     'ZZ'                       :                10.32,
