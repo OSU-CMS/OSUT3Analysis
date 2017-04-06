@@ -138,11 +138,11 @@ header_y_top     = 0.9947552
 
 colors = {
     'black'  : 1,
-    'red'    : 632,
-    'green'  : 418,
-    'purple' : 874,
-    'blue'   : 600,
-    'yellow' : 400,
+    'red'    : 633,
+    'green'  : 419,
+    'purple' : 875,
+    'blue'   : 601,
+    'yellow' : 401,
 }
 
 colorList = [
@@ -430,11 +430,13 @@ def MakeOneHist(dirName, histogramName):
             histogram.Draw(plotting_options)
             histogram.GetXaxis().SetTitle(xAxisLabel)
             histogram.GetYaxis().SetTitle(yAxisLabel)
+
             if histogram.InheritsFrom("TH1"):
                 histogram.SetMaximum(finalMax)
                 histogram.SetMinimum(yAxisMin)
             if makeRatioPlots or makeDiffPlots:
                 histogram.GetXaxis().SetLabelSize(0)
+
         if histCounter is 0:
             if histogram.InheritsFrom("TH1"):
                 plotting_options = plotting_options + " SAME"
