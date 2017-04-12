@@ -868,7 +868,7 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
   // required to exist in the HLT menu, as well as the event-wide flags for
   // each of these.
   //////////////////////////////////////////////////////////////////////////////
-  bool metFilterDecision = !pl_->metFilters.size ();
+  bool metFilterDecision = pl_->metFilters.size ();
   pl_->metFilterFlags.resize (pl_->metFilters.size (), false);
   //////////////////////////////////////////////////////////////////////////////
 
@@ -902,7 +902,7 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
                       metFilterIndices_[pl_->metFilters.at (metFilterIndex)];
                       metFilterIndices_.at (pl_->metFilters.at (metFilterIndex)).insert (i);
                       metFilterDecision = metFilterDecision && pass;
-                      pl_->triggerFlags.at (metFilterIndex) = pass;
+                      pl_->metFilterFlags.at (metFilterIndex) = pass;
                     }
                 }
               //////////////////////////////////////////////////////////////////////////
