@@ -76,7 +76,7 @@ CutFlowPlotter::~CutFlowPlotter ()
       //         << setw (15) << setprecision(3) << 100.0 * (minusOne  / (double) totalEvents) << "%"
          << endl;
 
-    if(name.Contains("triggerFilter")) {
+    if(name.Contains("trigger filter")) {
       for(uint j = 0; j < triggerFilters_.size(); j++) {
         clog << " " << triggerFilters_.at(j);
         if(j < triggerFilters_.size() - 1) clog << " OR";
@@ -95,7 +95,7 @@ CutFlowPlotter::~CutFlowPlotter ()
       }
     }
 
-    else if(name.Contains("metFilter")) {
+    else if(name.Contains("MET filter")) {
       for(uint j = 0; j < metFilters_.size(); j++) {
         clog << " " << metFilters_.at(j);
         if(j < metFilters_.size() - 1) clog << " AND";
@@ -184,8 +184,8 @@ CutFlowPlotter::initializeCutFlow ()
     }
   if (cutDecisions->metFilters.size ())
     {
-      oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "MET filters");
-      oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "MET filters");
+      oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "MET filter");
+      oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "MET filter");
       //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger filter");
       bin++;
     }
