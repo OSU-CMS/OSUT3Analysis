@@ -862,15 +862,13 @@ CutCalculator::evaluateTriggerFilters (const edm::Event &event) const
 bool
 CutCalculator::evaluateMETFilters (const edm::Event &event)
 {
-  //////////////////////////////////////////////////////////////////////////////
-  // Initialize the flags for each trigger which is required to pass, each
-  // trigger which is to be vetoed if it passed, and each trigger which is
-  // required to exist in the HLT menu, as well as the event-wide flags for
-  // each of these.
-  //////////////////////////////////////////////////////////////////////////////
+  // The MET filter decisions are stored in an edm::TriggerResults object (for
+  // some reason). As such, this code is just a copypasta of the code in
+  // CutCalculator::evaluateTriggers above. The only significant difference is
+  // that the MET filter decision is the AND of several booleans, instead of
+  // the OR as in the case of the trigger decision.
   bool metFilterDecision = pl_->metFilters.size ();
   pl_->metFilterFlags.resize (pl_->metFilters.size (), false);
-  //////////////////////////////////////////////////////////////////////////////
 
   if (handles_.metFilters.isValid ())
     {
@@ -890,11 +888,6 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
 #else
       #error "Data format is not valid."
 #endif
-              //////////////////////////////////////////////////////////////////////////
-              // If the current trigger matches one of the required triggers, record its
-              // decision. If any of these triggers is true, set the event-wide flag to
-              // true.
-              //////////////////////////////////////////////////////////////////////////
               for (unsigned metFilterIndex = 0; metFilterIndex != pl_->metFilters.size (); metFilterIndex++)
                 {
                   if (name.find (pl_->metFilters.at (metFilterIndex)) == 0)
@@ -905,7 +898,6 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
                       pl_->metFilterFlags.at (metFilterIndex) = pass;
                     }
                 }
-              //////////////////////////////////////////////////////////////////////////
             }
         }
       else
@@ -924,8 +916,6 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
         }
     }
 
-  // Store the logical AND of the three event-wide flags as the event-wide
-  // trigger decision in the payload and return it.
   return (pl_->metFilterDecision = metFilterDecision);
 }
 
