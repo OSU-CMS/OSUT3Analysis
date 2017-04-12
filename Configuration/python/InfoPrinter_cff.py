@@ -1,11 +1,16 @@
 import FWCore.ParameterSet.Config as cms
 
 infoPrinter = cms.EDAnalyzer ("InfoPrinter",
+################################################################################
+# N.B.: one of the following three options must be set in order to print out
+# extra information
     eventsToPrint               =  cms.VEventID (
 #        cms.EventID (1, 16, 2686),
     ),
     printAllEvents              =  cms.bool  (False),  # print information for all events, overriding eventsToPrint
     printPassedEvents           =  cms.bool  (False),  # print information for events that pass all cuts
+################################################################################
+
     valuesToPrint               =  cms.VPSet (
 #        cms.PSet (
 #            inputCollection = cms.vstring ("jets"),
