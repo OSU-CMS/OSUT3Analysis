@@ -901,7 +901,7 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
                     {
                       metFilterIndices_[pl_->metFilters.at (metFilterIndex)];
                       metFilterIndices_.at (pl_->metFilters.at (metFilterIndex)).insert (i);
-                      metFilterDecision = metFilterDecision || pass;
+                      metFilterDecision = metFilterDecision && pass;
                       pl_->triggerFlags.at (metFilterIndex) = pass;
                     }
                 }
@@ -917,7 +917,7 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
               for (const auto &i : metFilterIndices_.at (pl_->metFilters.at (metFilterIndex)))
                 {
                   bool pass = handles_.metFilters->accept (i);
-                  metFilterDecision = metFilterDecision || pass;
+                  metFilterDecision = metFilterDecision && pass;
                   pl_->metFilterFlags.at (metFilterIndex) = pass;
                 }
             }
