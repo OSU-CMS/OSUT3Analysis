@@ -36,6 +36,7 @@ class CutCalculator : public edm::EDProducer
     vector<string> splitString (const string &) const;
     bool evaluateTriggers (const edm::Event &);
     bool evaluateTriggerFilters (const edm::Event &) const;
+    bool evaluateMETFilters (const edm::Event &);
     bool setEventFlags () const;
     vector<string> getListOfObjects (const Cuts &);
     bool isUniqueCase (const Cut &, unsigned, string) const;
@@ -60,10 +61,14 @@ class CutCalculator : public edm::EDProducer
     vector<string>         unpackedTriggers_;
     vector<string>         unpackedTriggerFilters_;
     vector<string>         unpackedTriggersInMenu_;
+    vector<string>         unpackedMETFilters_;
     ////////////////////////////////////////////////////////////////////////////
 
     edm::ParameterSetID triggerNamesPSetID_;
     unordered_map<string, unordered_set<unsigned> > triggerIndices_;
+
+    edm::ParameterSetID metFilterNamesPSetID_;
+    unordered_map<string, unordered_set<unsigned> > metFilterIndices_;
 
     // Object collections which can be gotten from the event.
     Collections handles_;

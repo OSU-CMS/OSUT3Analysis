@@ -56,6 +56,7 @@ struct Tokens
   edm::EDGetTokenT<TYPE(generatorweights)> generatorweights;
   edm::EDGetTokenT<TYPE(prescales)> prescales;
   edm::EDGetTokenT<TYPE(triggers)> triggers;
+  edm::EDGetTokenT<TYPE(triggers)> metFilters;
 
   vector<edm::EDGetTokenT<osu::Uservariable> > uservariables;
   vector<edm::EDGetTokenT<osu::Eventvariable> > eventvariables;

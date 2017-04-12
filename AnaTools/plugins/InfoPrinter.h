@@ -34,6 +34,7 @@ class InfoPrinter : public edm::EDAnalyzer
     bool getEventDecision ();
     bool printCutDecision ();
     bool printTriggerDecision ();
+    bool printMETFilterDecision ();
     bool printCumulativeEventFlags ();
     bool printIndividualEventFlags ();
     bool printCumulativeObjectFlags ();
@@ -42,9 +43,11 @@ class InfoPrinter : public edm::EDAnalyzer
     bool printVetoTriggerFlags ();
     bool printTriggerFilterFlags ();
     bool printTriggerInMenuFlags ();
+    bool printMETFilterFlags ();
     bool printValuesToPrint ();
     bool printAllTriggers (const edm::Event &);
     bool printAllTriggerFilters (const edm::Event &);
+    bool printAllMETFilters (const edm::Event &);
     void flushPassingEvents (const unsigned = 0);
     ////////////////////////////////////////////////////////////////////////////
 
@@ -81,12 +84,15 @@ class InfoPrinter : public edm::EDAnalyzer
     bool                  printIndividualEventFlags_;
     bool                  printIndividualObjectFlags_;
     bool                  printTriggerDecision_;
+    bool                  printMETFilterDecision_;
     bool                  printTriggerFlags_;
     bool                  printVetoTriggerFlags_;
     bool                  printTriggerFilterFlags_;
     bool                  printTriggerInMenuFlags_;
+    bool                  printMETFilterFlags_;
     bool                  printAllTriggers_;
     bool                  printAllTriggerFilters_;
+    bool                  printAllMETFilters_;
     edm::VParameterSet    valuesToPrint_;
     bool                  firstEvent_;
     unsigned              counter_;
@@ -124,6 +130,8 @@ class InfoPrinter : public edm::EDAnalyzer
     unsigned maxVetoTriggerWidth_;
     unsigned maxValueWidth_;
     unsigned maxAllTriggerWidth_;
+    unsigned maxMETFilterWidth_;
+    unsigned maxAllMETFilterWidth_;
     ////////////////////////////////////////////////////////////////////////////
 };
 

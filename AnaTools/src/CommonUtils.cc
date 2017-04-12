@@ -220,6 +220,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   if  (VEC_CONTAINS  (objectsToGet,  "secondaryTracks")  && !tokens.secondaryTracks.isUninitialized())   event.getByToken  (tokens.secondaryTracks,   handles.secondaryTracks);
   if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos")      && !tokens.pileupinfos.isUninitialized())       event.getByToken  (tokens.pileupinfos,       handles.pileupinfos);
   if  (VEC_CONTAINS  (objectsToGet,  "triggers")         && !tokens.triggers.isUninitialized())          event.getByToken  (tokens.triggers,          handles.triggers);
+  if  (VEC_CONTAINS  (objectsToGet,  "metFilters")         && !tokens.metFilters.isUninitialized())          event.getByToken  (tokens.metFilters,          handles.metFilters);
   if  (VEC_CONTAINS  (objectsToGet,  "trigobjs")         && !tokens.trigobjs.isUninitialized())          event.getByToken  (tokens.trigobjs,          handles.trigobjs);
   if  (VEC_CONTAINS  (objectsToGet,  "uservariables"))
     {
@@ -294,6 +295,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         ss << endl << "Did not retrieve pileupinfos collection from the event.";
       if (!handles.triggers.isValid ())
         ss << endl << "Did not retrieve triggers collection from the event.";
+      if (!handles.metFilters.isValid ())
+        ss << endl << "Did not retrieve metFilters collection from the event.";
       if (!handles.trigobjs.isValid ())
         ss << endl << "Did not retrieve trigobjs collection from the event.";
       edm::LogInfo ("CommonUtils") << ss.str ();
@@ -915,6 +918,8 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     tokens.prescales = cc.consumes<TYPE(prescales)> (collections.getParameter<edm::InputTag> ("prescales"));
   if (collections.exists ("triggers"))
     tokens.triggers = cc.consumes<TYPE(triggers)> (collections.getParameter<edm::InputTag> ("triggers"));
+  if (collections.exists ("metFilters"))
+    tokens.metFilters = cc.consumes<TYPE(triggers)> (collections.getParameter<edm::InputTag> ("metFilters"));
 
   if (collections.exists ("uservariables"))
     {

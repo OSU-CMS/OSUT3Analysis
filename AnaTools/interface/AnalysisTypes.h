@@ -64,6 +64,7 @@ struct CutCalculatorPayload
   bool            isValid;
   bool            triggerDecision;
   bool            triggerFilterDecision;
+  bool            metFilterDecision;
   Cuts            cuts;
   vector<bool>    cumulativeEventFlags;
   vector<bool>    individualEventFlags;
@@ -71,10 +72,12 @@ struct CutCalculatorPayload
   vector<bool>    vetoTriggerFlags;
   vector<bool>    triggerFilterFlags;
   vector<bool>    triggerInMenuFlags;
+  vector<bool>    metFilterFlags;
   vector<string>  triggers;
   vector<string>  triggersToVeto;
   vector<string>  triggerFilters;
   vector<string>  triggersInMenu;
+  vector<string>  metFilters;
 };
 
 struct HistoDef {
@@ -141,6 +144,7 @@ struct Collections
   edm::Handle<TYPE(triggers)>                 triggers;
   edm::Handle<TYPE(prescales)>                prescales;
   edm::Handle<TYPE(generatorweights)>         generatorweights;
+  edm::Handle<TYPE(triggers)>                 metFilters;
 };
 
 struct ValueToPrint

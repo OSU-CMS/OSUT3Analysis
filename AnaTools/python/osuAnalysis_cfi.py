@@ -24,6 +24,7 @@ collectionMap = cms.PSet (
     superclusters               =  cms.InputTag  ('reducedEgamma',                  'reducedSuperClusters'),
     taus                        =  cms.InputTag  ('slimmedTaus',                    ''),
     triggers                    =  cms.InputTag  ('TriggerResults',                 '',                       'HLT'),
+    metFilters                  =  cms.InputTag  ('TriggerResults',                 '',                       'PAT'),
     trigobjs                    =  cms.InputTag  ('selectedPatTrigger',             ''),
 )
 

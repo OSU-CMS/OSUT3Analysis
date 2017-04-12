@@ -74,6 +74,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   pl_->triggersToVeto = unpackedTriggersToVeto_;
   pl_->triggerFilters = unpackedTriggerFilters_;
   pl_->triggersInMenu = unpackedTriggersInMenu_;
+  pl_->metFilters = unpackedMETFilters_;
   //////////////////////////////////////////////////////////////////////////////
 
   // getListOfObjects
@@ -123,6 +124,7 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   // store the decision in the payload.
   evaluateTriggers (event);
   evaluateTriggerFilters (event);
+  evaluateMETFilters (event);
 
   // Decide whether the event passes each cut
   // by counting the number of objects passing the cut
@@ -566,6 +568,11 @@ CutCalculator::unpackCuts ()
       unpackedTriggersInMenu_ = cuts_.getParameter<vector<string> > ("triggersInMenu");
       objectsToGet_.insert ("triggers");
     }
+  if (cuts_.exists ("metFilters"))
+    {
+      unpackedMETFilters_ = cuts_.getParameter<vector<string> > ("metFilters");
+      objectsToGet_.insert ("metFilters");
+    }
   //////////////////////////////////////////////////////////////////////////////
 
   // Retrieve the cuts and clear the vector in which they will be stored after
@@ -853,6 +860,76 @@ CutCalculator::evaluateTriggerFilters (const edm::Event &event) const
 }
 
 bool
+CutCalculator::evaluateMETFilters (const edm::Event &event)
+{
+  //////////////////////////////////////////////////////////////////////////////
+  // Initialize the flags for each trigger which is required to pass, each
+  // trigger which is to be vetoed if it passed, and each trigger which is
+  // required to exist in the HLT menu, as well as the event-wide flags for
+  // each of these.
+  //////////////////////////////////////////////////////////////////////////////
+  bool metFilterDecision = !pl_->metFilters.size ();
+  pl_->metFilterFlags.resize (pl_->triggers.size (), false);
+  //////////////////////////////////////////////////////////////////////////////
+
+  if (handles_.metFilters.isValid ())
+    {
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
+      const edm::TriggerNames &metFilterNames = event.triggerNames (*handles_.metFilters);
+      if (metFilterNamesPSetID_ != metFilterNames.parameterSetID ())
+        {
+          metFilterIndices_.clear ();
+          metFilterNamesPSetID_ = metFilterNames.parameterSetID ();
+        }
+      if (!metFilterIndices_.size ())
+        {
+          for (unsigned i = 0; i < metFilterNames.size (); i++)
+            {
+              string name = metFilterNames.triggerName (i);
+              bool pass = handles_.metFilters->accept (i);
+#else
+      #error "Data format is not valid."
+#endif
+              //////////////////////////////////////////////////////////////////////////
+              // If the current trigger matches one of the required triggers, record its
+              // decision. If any of these triggers is true, set the event-wide flag to
+              // true.
+              //////////////////////////////////////////////////////////////////////////
+              for (unsigned metFilterIndex = 0; metFilterIndex != pl_->metFilters.size (); metFilterIndex++)
+                {
+                  if (name.find (pl_->metFilters.at (metFilterIndex)) == 0)
+                    {
+                      metFilterIndices_[pl_->metFilters.at (metFilterIndex)];
+                      metFilterIndices_.at (pl_->metFilters.at (metFilterIndex)).insert (i);
+                      metFilterDecision = metFilterDecision || pass;
+                      pl_->triggerFlags.at (metFilterIndex) = pass;
+                    }
+                }
+              //////////////////////////////////////////////////////////////////////////
+            }
+        }
+      else
+        {
+          for (unsigned metFilterIndex = 0; metFilterIndex != pl_->metFilters.size (); metFilterIndex++)
+            {
+              if (!metFilterIndices_.count (pl_->metFilters.at (metFilterIndex)))
+                continue;
+              for (const auto &i : metFilterIndices_.at (pl_->metFilters.at (metFilterIndex)))
+                {
+                  bool pass = handles_.metFilters->accept (i);
+                  metFilterDecision = metFilterDecision || pass;
+                  pl_->metFilterFlags.at (metFilterIndex) = pass;
+                }
+            }
+        }
+    }
+
+  // Store the logical AND of the three event-wide flags as the event-wide
+  // trigger decision in the payload and return it.
+  return (pl_->metFilterDecision = metFilterDecision);
+}
+
+bool
 CutCalculator::setEventFlags () const
 {
   pl_->cutsDecision = true;
@@ -936,7 +1013,7 @@ CutCalculator::setEventFlags () const
 
   // Store the logical AND of the trigger decision and the global cut decision
   // as the global event decision in the payload and return it.
-  return (pl_->eventDecision = (pl_->triggerDecision && pl_->triggerFilterDecision && pl_->cutsDecision));
+  return (pl_->eventDecision = (pl_->triggerDecision && pl_->triggerFilterDecision && pl_->metFilterDecision && pl_->cutsDecision));
 }
 
 bool

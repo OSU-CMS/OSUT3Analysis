@@ -8,25 +8,28 @@
 #define EXIT_CODE 4
 
 InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
-  collections_                 (cfg.getParameter<edm::ParameterSet>      ("collections")),
-  cutDecisions_                (cfg.getParameter<edm::InputTag>          ("cutDecisions")),
-  eventsToPrint_               (cfg.getParameter<vector<edm::EventID> >  ("eventsToPrint")),
-  printAllEvents_              (cfg.getParameter<bool>                   ("printAllEvents")),
-  printPassedEvents_           (cfg.getParameter<bool>                   ("printPassedEvents")),
-  printCumulativeObjectFlags_  (cfg.getParameter<bool>                   ("printCumulativeObjectFlags")),
-  printCutDecision_            (cfg.getParameter<bool>                   ("printCutDecision")),
-  printEventDecision_          (cfg.getParameter<bool>                   ("printEventDecision")),
-  printCumulativeEventFlags_   (cfg.getParameter<bool>                   ("printCumulativeEventFlags")),
-  printIndividualEventFlags_   (cfg.getParameter<bool>                   ("printIndividualEventFlags")),
-  printIndividualObjectFlags_  (cfg.getParameter<bool>                   ("printIndividualObjectFlags")),
-  printTriggerDecision_        (cfg.getParameter<bool>                   ("printTriggerDecision")),
-  printTriggerFlags_           (cfg.getParameter<bool>                   ("printTriggerFlags")),
-  printVetoTriggerFlags_       (cfg.getParameter<bool>                   ("printVetoTriggerFlags")),
-  printTriggerFilterFlags_     (cfg.getParameter<bool>                   ("printTriggerFilterFlags")),
-  printTriggerInMenuFlags_     (cfg.getParameter<bool>                   ("printTriggerInMenuFlags")),
-  printAllTriggers_            (cfg.getParameter<bool>                   ("printAllTriggers")),
-  printAllTriggerFilters_      (cfg.getParameter<bool>                   ("printAllTriggerFilters")),
-  valuesToPrint_               (cfg.getParameter<edm::VParameterSet>     ("valuesToPrint")),
+  collections_                 (cfg.getParameter<edm::ParameterSet>    ("collections")),
+  cutDecisions_                (cfg.getParameter<edm::InputTag>        ("cutDecisions")),
+  eventsToPrint_               (cfg.getParameter<vector<edm::EventID>  >                                 ("eventsToPrint")),
+  printAllEvents_              (cfg.getParameter<bool>                 ("printAllEvents")),
+  printPassedEvents_           (cfg.getParameter<bool>                 ("printPassedEvents")),
+  printCumulativeObjectFlags_  (cfg.getParameter<bool>                 ("printCumulativeObjectFlags")),
+  printCutDecision_            (cfg.getParameter<bool>                 ("printCutDecision")),
+  printEventDecision_          (cfg.getParameter<bool>                 ("printEventDecision")),
+  printCumulativeEventFlags_   (cfg.getParameter<bool>                 ("printCumulativeEventFlags")),
+  printIndividualEventFlags_   (cfg.getParameter<bool>                 ("printIndividualEventFlags")),
+  printIndividualObjectFlags_  (cfg.getParameter<bool>                 ("printIndividualObjectFlags")),
+  printTriggerDecision_        (cfg.getParameter<bool>                 ("printTriggerDecision")),
+  printMETFilterDecision_      (cfg.getParameter<bool>                 ("printMETFilterDecision")),
+  printTriggerFlags_           (cfg.getParameter<bool>                 ("printTriggerFlags")),
+  printVetoTriggerFlags_       (cfg.getParameter<bool>                 ("printVetoTriggerFlags")),
+  printTriggerFilterFlags_     (cfg.getParameter<bool>                 ("printTriggerFilterFlags")),
+  printTriggerInMenuFlags_     (cfg.getParameter<bool>                 ("printTriggerInMenuFlags")),
+  printMETFilterFlags_         (cfg.getParameter<bool>                 ("printMETFilterFlags")),
+  printAllTriggers_            (cfg.getParameter<bool>                 ("printAllTriggers")),
+  printAllTriggerFilters_      (cfg.getParameter<bool>                 ("printAllTriggerFilters")),
+  printAllMETFilters_          (cfg.getParameter<bool>                 ("printAllMETFilters")),
+  valuesToPrint_               (cfg.getParameter<edm::VParameterSet>   ("valuesToPrint")),
   firstEvent_ (true),
   counter_ (0),
   sw_ (new TStopwatch)
@@ -89,7 +92,7 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   // requested, print that information to the stringstream which is printed in
   // the destructor.
   //////////////////////////////////////////////////////////////////////////////
-  maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = maxAllTriggerWidth_ = 0;
+  maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = maxAllTriggerWidth_ = maxMETFilterWidth_ = maxAllMETFilterWidth_ = 0;
 
   bool eventDecision = getEventDecision(),
        printEvent = printAllEvents_ || (printPassedEvents_ && eventDecision);
@@ -110,13 +113,16 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
       printVetoTriggerFlags_       &&  printVetoTriggerFlags       ();
       printTriggerFilterFlags_     &&  printTriggerFilterFlags     ();
       printTriggerInMenuFlags_     &&  printTriggerInMenuFlags     ();
+      printMETFilterFlags_         &&  printMETFilterFlags         ();
       printCumulativeEventFlags_   &&  printCumulativeEventFlags   ();
       printIndividualEventFlags_   &&  printIndividualEventFlags   ();
       printTriggerDecision_        &&  printTriggerDecision        ();
+      printMETFilterDecision_      &&  printMETFilterDecision      ();
       printCutDecision_            &&  printCutDecision            ();
       printEventDecision_          &&  printEventDecision          ();
       printAllTriggers_            &&  printAllTriggers            (event);
       printAllTriggerFilters_      &&  printAllTriggerFilters      (event);
+      printAllMETFilters_          &&  printAllMETFilters          (event);
       ss_ << "================================================================================" << endl;
     }
   if (eventDecision)
@@ -173,6 +179,20 @@ InfoPrinter::printTriggerDecision ()
 
   ss_ << endl << A_BRIGHT_BLUE << "trigger decision" << A_RESET << ": ";
   if (cutDecisions->triggerDecision)
+    ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
+  else
+    ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
+  return true;
+}
+
+bool
+InfoPrinter::printMETFilterDecision ()
+{
+  if (!cutDecisions.isValid ())
+    return false;
+
+  ss_ << endl << A_BRIGHT_BLUE << "MET filter decision" << A_RESET << ": ";
+  if (cutDecisions->metFilterDecision)
     ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
   else
     ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
@@ -408,6 +428,29 @@ InfoPrinter::printTriggerInMenuFlags ()
 }
 
 bool
+InfoPrinter::printMETFilterFlags ()
+{
+  if (!cutDecisions.isValid ())
+    return false;
+
+  ss_ << endl;
+  !maxMETFilterWidth_ && (maxMETFilterWidth_ = getMaxWidth (cutDecisions->metFilters));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "MET filter flags" << A_RESET << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  for (auto flag = cutDecisions->metFilterFlags.begin (); flag != cutDecisions->metFilterFlags.end (); flag++)
+    {
+      ss_ << A_BRIGHT_BLUE << setw (maxMETFilterWidth_) << left << cutDecisions->metFilters.at (flag - cutDecisions->metFilterFlags.begin ()) << A_RESET;
+      if (*flag)
+        ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
+      else
+        ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
+    }
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  return true;
+}
+
+bool
 InfoPrinter::printValuesToPrint ()
 {
   ss_ << endl;
@@ -476,6 +519,43 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
         ss_ << A_BRIGHT_YELLOW << trigger.second.second << A_RESET << endl;
       else
         ss_ << "\033[2;33m" << trigger.second.second << A_RESET << endl;
+    }
+
+  return true;
+}
+
+bool
+InfoPrinter::printAllMETFilters (const edm::Event &event)
+{
+  ss_ << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "available MET filters" << A_RESET << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  map<string, bool> metFilters;
+  if (!handles_.metFilters.isValid()) {
+    ss_ << A_BRIGHT_RED << "ERROR" << A_RESET << " [InfoPrinter::printAllMETFilters]:  Invalid metFilters handle." << endl;
+    return false;
+  }
+
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
+  const edm::TriggerNames &metFilterNames = event.triggerNames (*handles_.metFilters);
+  for (unsigned i = 0; i < metFilterNames.size (); i++)
+    {
+      string name = metFilterNames.triggerName (i);
+      bool pass = handles_.metFilters->accept (i);
+#else
+  #warning "Object \"metFilters\" is not valid in requested data format."
+#endif
+      metFilters[name] = pass;
+    }
+  !maxAllMETFilterWidth_ && (maxAllMETFilterWidth_ = getMaxWidth (metFilters));
+  for (const auto &metFilter : metFilters)
+    {
+      ss_ << A_BRIGHT_BLUE << setw (maxAllMETFilterWidth_) << left << metFilter.first << A_RESET;
+      if (metFilter.second)
+        ss_ << A_BRIGHT_GREEN << "accept" << A_RESET << endl;
+      else
+        ss_ << A_BRIGHT_RED << "reject" << A_RESET << endl;
     }
 
   return true;
@@ -681,6 +761,8 @@ InfoPrinter::unpackValuesToPrint ()
       objectsToGet_.insert ("triggers");
       objectsToGet_.insert ("trigobjs");
     }
+  if (printAllMETFilters_)
+    objectsToGet_.insert ("metFilters");
 }
 
 bool
