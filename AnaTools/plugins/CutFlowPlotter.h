@@ -36,6 +36,7 @@ class CutFlowPlotter : public edm::EDAnalyzer
     vector<string>     triggers_;
     vector<string>     triggersToVeto_;
     vector<string>     triggerFilters_;
+    vector<string>     metFilters_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Objects which can be gotten from the event.

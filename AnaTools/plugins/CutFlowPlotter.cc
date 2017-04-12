@@ -94,6 +94,14 @@ CutFlowPlotter::~CutFlowPlotter ()
         clog << "  AND NOT " << triggersToVeto_.at(j) << endl;
       }
     }
+
+    else if(name.Contains("metFilter")) {
+      for(uint j = 0; j < metFilters_.size(); j++) {
+        clog << " " << metFilters_.at(j);
+        if(j < metFilters_.size() - 1) clog << " AND";
+        clog << endl;
+      }
+    }
   }
   clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
 
@@ -150,6 +158,7 @@ CutFlowPlotter::initializeCutFlow ()
   unsigned nCuts = cutDecisions->cuts.size ();
   cutDecisions->triggers.size () && nCuts++;
   cutDecisions->triggerFilters.size () && nCuts++;
+  cutDecisions->metFilters.size () && nCuts++;
   oneDHists_.at ("cutFlow")->SetBins    (nCuts + 1,  0.0,  nCuts + 1);
   oneDHists_.at ("selection")->SetBins  (nCuts + 1,  0.0,  nCuts + 1);
   //  oneDHists_.at ("minusOne")->SetBins   (nCuts + 1,  0.0,  nCuts + 1);
@@ -173,6 +182,13 @@ CutFlowPlotter::initializeCutFlow ()
       //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger filter");
       bin++;
     }
+  if (cutDecisions->metFilters.size ())
+    {
+      oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "MET filters");
+      oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "MET filters");
+      //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger filter");
+      bin++;
+    }
   for (vector<Cut>::const_iterator cut = cutDecisions->cuts.begin (); cut != cutDecisions->cuts.end (); cut++, bin++)
     {
       oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  cut->name.c_str  ());
@@ -190,6 +206,7 @@ CutFlowPlotter::initializeCutFlow ()
   triggers_ = cutDecisions->triggers;
   triggersToVeto_ = cutDecisions->triggersToVeto;
   triggerFilters_ = cutDecisions->triggerFilters;
+  metFilters_ = cutDecisions->metFilters;
   //////////////////////////////////////////////////////////////////////////////
 
   // Return true if the initialization was successful.
@@ -231,6 +248,15 @@ CutFlowPlotter::fillCutFlow (double w)
     {
       passes = passes && cutDecisions->triggerFilterDecision;
       if (cutDecisions->triggerFilterDecision)
+        oneDHists_.at ("selection")->Fill  (bin,  w);
+      if (passes)
+        oneDHists_.at ("cutFlow")->Fill    (bin,  w);
+      bin++;
+    }
+  if (cutDecisions->metFilters.size ())
+    {
+      passes = passes && cutDecisions->metFilterDecision;
+      if (cutDecisions->metFilterDecision)
         oneDHists_.at ("selection")->Fill  (bin,  w);
       if (passes)
         oneDHists_.at ("cutFlow")->Fill    (bin,  w);
