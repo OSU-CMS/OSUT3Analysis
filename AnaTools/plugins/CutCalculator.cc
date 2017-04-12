@@ -869,7 +869,7 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
   // each of these.
   //////////////////////////////////////////////////////////////////////////////
   bool metFilterDecision = !pl_->metFilters.size ();
-  pl_->metFilterFlags.resize (pl_->triggers.size (), false);
+  pl_->metFilterFlags.resize (pl_->metFilters.size (), false);
   //////////////////////////////////////////////////////////////////////////////
 
   if (handles_.metFilters.isValid ())
