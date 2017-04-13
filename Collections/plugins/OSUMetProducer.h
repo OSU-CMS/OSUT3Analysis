@@ -23,8 +23,11 @@ class OSUMetProducer : public edm::EDProducer
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
     edm::InputTag      pfCandidates_;
+    bool firstEvent_;
     edm::EDGetTokenT<vector<TYPE(mets)> > token_;
     edm::EDGetTokenT<vector<pat::PackedCandidate> > pfCandidatesToken_;
+    edm::EDGetTokenT<bool> BadChCandFilterToken_;
+    edm::EDGetTokenT<bool> BadPFMuonFilterToken_;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.

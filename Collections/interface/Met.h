@@ -56,6 +56,12 @@ namespace osu
         const double noMuPt_UnclusteredEnDown () const { return noMuPt_UnclusteredEnDown_; }
         const double noMuPt_PhotonEnDown () const      { return noMuPt_PhotonEnDown_; }
 
+        void setBadChargedCandidateFilter (const bool);
+        void setBadPFMuonFilter (const bool);
+
+        const bool badChargedCandidateFilter () const { return badChargedCandidateFilter_; }
+        const bool badPFMuonFilter () const { return badPFMuonFilter_; }
+
       private:
         double noMuPt_;
         double noMuPx_;
@@ -82,6 +88,9 @@ namespace osu
         // https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_14/DataFormats/PatCandidates/src/MET.cc#L208-L209
         //double noMuPt_JetResUpSmear_;
         //double noMuPt_JetResDownSmear_;
+
+        bool badChargedCandidateFilter_;
+        bool badPFMuonFilter_;
     };
 }
 

@@ -25,7 +25,9 @@ osu::Met::Met (const TYPE(mets) &met) :
   noMuPt_ElectronEnDown_    (INVALID_VALUE),
   noMuPt_TauEnDown_         (INVALID_VALUE),
   noMuPt_UnclusteredEnDown_ (INVALID_VALUE),
-  noMuPt_PhotonEnDown_      (INVALID_VALUE)
+  noMuPt_PhotonEnDown_      (INVALID_VALUE),
+  badChargedCandidateFilter_ (true),
+  badPFMuonFilter_           (true)
 {
 }
 
@@ -46,7 +48,9 @@ osu::Met::Met (const TYPE(mets) &met, const edm::Handle<vector<pat::PackedCandid
   noMuPt_ElectronEnDown_    (INVALID_VALUE),
   noMuPt_TauEnDown_         (INVALID_VALUE),
   noMuPt_UnclusteredEnDown_ (INVALID_VALUE),
-  noMuPt_PhotonEnDown_      (INVALID_VALUE)
+  noMuPt_PhotonEnDown_      (INVALID_VALUE),
+  badChargedCandidateFilter_ (true),
+  badPFMuonFilter_           (true)
 {
   if (pfCandidates.isValid ()) {
       TVector2 metNoMu (met.px(), met.py());
@@ -133,6 +137,18 @@ const double
 osu::Met::noMuPhi () const
 {
   return noMuPhi_;
+}
+
+void
+osu::Met::setBadChargedCandidateFilter (const bool flag)
+{
+  badChargedCandidateFilter_ = flag;
+}
+
+void
+osu::Met::setBadPFMuonFilter (const bool flag)
+{
+  badPFMuonFilter_ = flag;
 }
 
 #endif
