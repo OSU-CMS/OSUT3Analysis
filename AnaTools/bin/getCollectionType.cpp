@@ -98,19 +98,6 @@ main (int argc, char *argv[])
       else if (cppType == "vector<" TYPE_STR(eventvariables) ">")
         cout << "eventvariables" << endl;
 #endif
-
-#if IS_VALID(triggers)
-      else if (cppType == TYPE_STR(triggers))
-        cout << "triggers" << endl;
-#endif
-#if IS_VALID(prescales)
-      else if (cppType == TYPE_STR(prescales))
-        cout << "prescales" << endl;
-#endif
-#if IS_VALID(generatorweights)
-      else if (cppType == TYPE_STR(generatorweights))
-        cout << "generatorweights" << endl;
-#endif
       else
         cout << "INVALID_TYPE" << endl;
     }
