@@ -867,7 +867,7 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
   // CutCalculator::evaluateTriggers above. The only significant difference is
   // that the MET filter decision is the AND of several booleans, instead of
   // the OR as in the case of the trigger decision.
-  bool metFilterDecision = pl_->metFilters.size ();
+  bool metFilterDecision = true;
   pl_->metFilterFlags.resize (pl_->metFilters.size (), false);
 
   if (handles_.metFilters.isValid ())
