@@ -124,6 +124,8 @@ collectionProducer.mcparticles = cms.EDProducer ("McparticleProducer",
 
 collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
     pfCandidates  =  cms.InputTag  ('packedPFCandidates',  '',  ''),
+    BadChargedCandidateFilter = cms.InputTag ("BadChargedCandidateFilter"),
+    BadPFMuonFilter = cms.InputTag ("BadChargedCandidateFilter"),
 )
 
 #-------------------------------------------------------------------------------
