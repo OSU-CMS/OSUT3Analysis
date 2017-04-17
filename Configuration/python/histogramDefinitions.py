@@ -207,6 +207,12 @@ DiMuonHistograms = cms.PSet(
     inputCollection = cms.vstring("muons", "muons"),
     histograms = cms.VPSet (
         cms.PSet (
+            name = cms.string("diMuonPt"),
+            title = cms.string("Di-muon Tranverse Momentum; p_{T} [GeV]"),
+            binsX = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("pT (muon, muon)"),
+        ),
+        cms.PSet (
             name = cms.string("diMuonInvMass"),
             title = cms.string("Di-muon Invariant Mass; M_{#mu#mu} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
@@ -463,6 +469,12 @@ DiElectronHistograms = cms.PSet(
     inputCollection = cms.vstring("electrons", "electrons"),
     histograms = cms.VPSet (
         cms.PSet (
+            name = cms.string("diElectronPt"),
+            title = cms.string("Di-electron Tranverse Momentum; p_{T} [GeV]"),
+            binsX = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("pT (electron, electron)"),
+        ),
+        cms.PSet (
             name = cms.string("diElectronInvMass"),
             title = cms.string("Di-electron Invariant Mass; M_{ee} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
@@ -651,6 +663,12 @@ JetHistograms = cms.PSet(
             title = cms.string("Jet Charge;jet charge"),
             binsX = cms.untracked.vdouble(41, -20.5, 20.5),
             inputVariables = cms.vstring("charge"),
+        ),
+        cms.PSet (
+            name = cms.string("jetMass"),
+            title = cms.string("Jet Mass;jet mass [GeV]"),
+            binsX = cms.untracked.vdouble(100, 0, 200),
+            inputVariables = cms.vstring("mass"),
         ),
         cms.PSet (
             name = cms.string("jetEtaPhi"),
