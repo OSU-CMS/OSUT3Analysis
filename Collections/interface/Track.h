@@ -62,11 +62,17 @@ namespace osu
         const double dRToMatchedGsfTrack () const;
 
         const int gsfTrackNumberOfValidHits () const;
+        const int gsfTrackNumberOfValidPixelHits () const;
+        const int gsfTrackNumberOfValidPixelBarrelHits () const;
+        const int gsfTrackNumberOfValidPixelEndcapHits () const;
         const int gsfTrackMissingInnerHits () const;
         const int gsfTrackMissingMiddleHits () const;
         const int gsfTrackMissingOuterHits () const;
 
         const int bestTrackNumberOfValidHits () const;
+        const int bestTrackNumberOfValidPixelHits () const;
+        const int bestTrackNumberOfValidPixelBarrelHits () const;
+        const int bestTrackNumberOfValidPixelEndcapHits () const;
         const int bestTrackMissingInnerHits () const;
         const int bestTrackMissingMiddleHits () const;
         const int bestTrackMissingOuterHits () const;
@@ -78,6 +84,25 @@ namespace osu
         const int hitAndTOBDrop_missingOuterHits () const;
         const int hitAndTOBDrop_gsfTrackMissingOuterHits () const;
         const int hitAndTOBDrop_bestTrackMissingOuterHits () const;
+
+        // Debug methods for HitPattern
+        const bool hasValidHitInPixelBarrelLayer (const uint16_t layer) const;
+        const bool hasValidHitInPixelBarrelLayer1 () const { return hasValidHitInPixelBarrelLayer(1); };
+        const bool hasValidHitInPixelBarrelLayer2 () const { return hasValidHitInPixelBarrelLayer(2); };
+        const bool hasValidHitInPixelBarrelLayer3 () const { return hasValidHitInPixelBarrelLayer(3); };
+
+        const bool hasValidHitInPixelEndcapLayer (const uint16_t layer) const;
+        const bool hasValidHitInPixelEndcapLayer1 () const { return hasValidHitInPixelEndcapLayer(1); };
+        const bool hasValidHitInPixelEndcapLayer2 () const { return hasValidHitInPixelEndcapLayer(2); };
+
+        const uint16_t packedPixelBarrelHitPattern () const;
+        const uint16_t packedPixelEndcapHitPattern () const;
+
+        const uint16_t firstLayerWithValidHit () const;
+        const uint16_t lastLayerWithValidHit () const;
+
+        void PrintTrackHitCategoryPatterns (const reco::HitPattern::HitCategory category) const;
+        void PrintTrackHitPatternInfo () const;
 
         const double innerP () const;
         const double outerP () const;
@@ -121,6 +146,7 @@ namespace osu
         int isCloseToBadEcalChannel (const double &);
         template<class T> const int extraMissingMiddleHits (const T &) const;
         template<class T> const int extraMissingOuterHits (const T &) const;
+
     };
 }
 
