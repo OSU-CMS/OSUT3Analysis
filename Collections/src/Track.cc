@@ -500,8 +500,7 @@ osu::Track::PrintTrackHitCategoryPatterns (const reco::HitPattern::HitCategory c
   else if(category == reco::HitPattern::MISSING_OUTER_HITS) std::cout << "MISSING_OUTER_HITS:";
   std::cout << A_RESET << std::endl;
 
-  const reco::HitPattern &p = (this->matchedGsfTrack_.isNonnull() && !isBadGsfTrack (*this->matchedGsfTrack_)) ?
-    this->matchedGsfTrack_->hitPattern() : this->hitPattern();
+  const reco::HitPattern &p = this->hitPattern();
 
   for (int i = 0; i < p.numberOfHits(category); i++) {
 
@@ -561,15 +560,15 @@ osu::Track::PrintTrackHitPatternInfo () const
 {
 
   std::cout << std::endl;
-  std::cout << "=========== (Best) Track HitPattern ===========" << std::endl;
+  std::cout << "=========== Track HitPattern ===========" << std::endl;
   PrintTrackHitCategoryPatterns(reco::HitPattern::TRACK_HITS);
   PrintTrackHitCategoryPatterns(reco::HitPattern::MISSING_INNER_HITS);
   PrintTrackHitCategoryPatterns(reco::HitPattern::MISSING_OUTER_HITS);
   std::cout << std::endl;
-  std::cout << "bestTrackNumberOfValidHits = " << this->bestTrackNumberOfValidHits() << std::endl;
-  std::cout << "bestTrackMissingInnerHits = " << this->bestTrackMissingInnerHits() << std::endl;
-  std::cout << "bestTrackMissingMiddleHits = " << this->bestTrackMissingMiddleHits() << std::endl;
-  std::cout << "bestTrackMissingOuterHits = " << this->bestTrackMissingOuterHits() << std::endl;
+  std::cout << "numberOfValidHits = " << this->bestTrackNumberOfValidHits() << std::endl;
+  std::cout << "missingInnerHits = "  << this->hitPattern().trackerLayersWithoutMeasurement(reco::HitPattern::MISSING_INNER_HITS) << std::endl;
+  std::cout << "missingMiddleHits = " << this->hitPattern().trackerLayersWithoutMeasurement(reco::HitPattern::TRACK_HITS) << std::endl;
+  std::cout << "missingOuterHits = "  << this->hitPattern().trackerLayersWithoutMeasurement(reco::HitPattern::MISSING_OUTER_HITS) << std::endl;
   std::cout << "========================================" << std::endl << std::endl;
 
 }
@@ -578,8 +577,7 @@ const bool
 osu::Track::hasValidHitInPixelBarrelLayer (const uint16_t layer) const
 {
 
-  const reco::HitPattern &p = (this->matchedGsfTrack_.isNonnull() && !isBadGsfTrack (*this->matchedGsfTrack_)) ?
-    this->matchedGsfTrack_->hitPattern() : this->hitPattern();
+  const reco::HitPattern &p = this->hitPattern();
 
   // Loop over TRACK_HITS
   for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
@@ -598,8 +596,7 @@ const bool
 osu::Track::hasValidHitInPixelEndcapLayer (const uint16_t layer) const
 {
 
-  const reco::HitPattern &p = (this->matchedGsfTrack_.isNonnull() && !isBadGsfTrack (*this->matchedGsfTrack_)) ?
-    this->matchedGsfTrack_->hitPattern() : this->hitPattern();
+  const reco::HitPattern &p = this->hitPattern();
 
   // Loop over TRACK_HITS
   for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
@@ -639,8 +636,7 @@ osu::Track::packedPixelBarrelHitPattern () const
   uint8_t statusPXB2 = 0x4;
   uint8_t statusPXB3 = 0x4;
 
-  const reco::HitPattern &p = (this->matchedGsfTrack_.isNonnull() && !isBadGsfTrack (*this->matchedGsfTrack_)) ?
-    this->matchedGsfTrack_->hitPattern() : this->hitPattern();
+  const reco::HitPattern &p = this->hitPattern();
 
   const std::array<reco::HitPattern::HitCategory, 3> categories = {{reco::HitPattern::TRACK_HITS, reco::HitPattern::MISSING_INNER_HITS, reco::HitPattern::MISSING_OUTER_HITS}};
 
@@ -720,8 +716,7 @@ osu::Track::packedPixelEndcapHitPattern () const
   uint8_t statusPXF1 = 0x4;
   uint8_t statusPXF2 = 0x4;
 
-  const reco::HitPattern &p = (this->matchedGsfTrack_.isNonnull() && !isBadGsfTrack (*this->matchedGsfTrack_)) ?
-    this->matchedGsfTrack_->hitPattern() : this->hitPattern();
+  const reco::HitPattern &p = this->hitPattern();
 
   const std::array<reco::HitPattern::HitCategory, 3> categories = {{reco::HitPattern::TRACK_HITS, reco::HitPattern::MISSING_INNER_HITS, reco::HitPattern::MISSING_OUTER_HITS}};
 
@@ -775,8 +770,7 @@ osu::Track::firstLayerWithValidHit () const
   bool foundAValidHit = false;
   uint16_t earliestValidHit = 0;
 
-  const reco::HitPattern &p = (this->matchedGsfTrack_.isNonnull() && !isBadGsfTrack (*this->matchedGsfTrack_)) ?
-    this->matchedGsfTrack_->hitPattern() : this->hitPattern();
+  const reco::HitPattern &p = this->hitPattern();
 
   // loop over the TRACK_HITS of the track
   for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
