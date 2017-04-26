@@ -823,7 +823,7 @@ else:
 if not os.path.exists(CondorDir):
     os.mkdir (CondorDir)
 else:
-    if arguments.FileType == "OSUT3Ntuple":
+    if arguments.FileType == "OSUT3Ntuple" or if arguments.Resubmit:
         # Ok to proceed, since the working directory will be "CondorDir/dataset"
         print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Will proceed with job submission.'
     else:
