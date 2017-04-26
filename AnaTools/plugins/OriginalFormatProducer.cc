@@ -180,9 +180,6 @@ OriginalFormatProducer::produce (edm::Event& iEvent, const edm::EventSetup& iSet
 #if IS_VALID(secondaryTracks)
   if (makeSecondaryTracks_)              produceCollection<osu::SecondaryTrack,         reco::Track>                  (iEvent);
 #endif
-#if IS_VALID(trigobjs)
-  if (makeTrigobjs_)        produceCollection<osu::Trigobj,       pat::TriggerObjectStandAlone> (iEvent);
-#endif
 #if IS_VALID(superclusters)
   if (makeSuperclusters_)   produceCollection<osu::Supercluster,  reco::SuperCluster>           (iEvent);
 #endif
