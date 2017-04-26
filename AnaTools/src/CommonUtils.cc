@@ -840,10 +840,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   string  anatools::getObjectType  (const  osu::PileUpInfo          &obj)  {  return  "pileupinfo";          }
   string  anatools::getObjectClass  (const  osu::PileUpInfo          &obj)  {  return  "osu::PileUpInfo";          }
 #endif
-#if IS_VALID(trigobjs)
-  string  anatools::getObjectType  (const  osu::Trigobj        &obj)  {  return  "trigobj";        }
-  string  anatools::getObjectClass  (const  osu::Trigobj        &obj)  {  return  "osu::Trigobj";        }
-#endif
 
 // user-defined cases
 string anatools::getObjectType (const VariableProducerPayload& obj){ return "uservariable"; }
@@ -907,8 +903,6 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     tokens.secondaryTracks = cc.consumes<vector<osu::SecondaryTrack> > (collections.getParameter<edm::InputTag> ("secondaryTracks"));
   if (collections.exists ("pileupinfos"))
     tokens.pileupinfos = cc.consumes<vector<osu::PileUpInfo> > (collections.getParameter<edm::InputTag> ("pileupinfos"));
-  if (collections.exists ("trigobjs"))
-    tokens.trigobjs = cc.consumes<vector<osu::Trigobj> > (collections.getParameter<edm::InputTag> ("trigobjs"));
 
   if (collections.exists ("beamspots"))
     tokens.beamspots = cc.consumes<osu::Beamspot> (collections.getParameter<edm::InputTag> ("beamspots"));
@@ -918,6 +912,8 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     tokens.prescales = cc.consumes<TYPE(prescales)> (collections.getParameter<edm::InputTag> ("prescales"));
   if (collections.exists ("triggers"))
     tokens.triggers = cc.consumes<TYPE(triggers)> (collections.getParameter<edm::InputTag> ("triggers"));
+  if (collections.exists ("trigobjs"))
+    tokens.trigobjs = cc.consumes<vector<TYPE(trigobjs)> > (collections.getParameter<edm::InputTag> ("trigobjs"));
   if (collections.exists ("metFilters"))
     tokens.metFilters = cc.consumes<TYPE(triggers)> (collections.getParameter<edm::InputTag> ("metFilters"));
 
