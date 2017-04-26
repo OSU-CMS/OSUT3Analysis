@@ -380,6 +380,9 @@ dataset_names = {
     #'cosmic_preselection' : "/Cosmics_Preselction_Apr5_16000_final/Spring-74x/USER",
     'cosmic_preselection' : "/CosmicPreselection_Jul4/Ntuples_74x/USER",
 
+    'cosmicMC_JetsChannelCosmicPreselection_reco_2015' : "/Cosmic_JetsChannelCosmicPreselection/MCRUN2_76X_RECO/USER",
+    'cosmicMC_JetsChannelCosmicPreselection_OnlyJetTriggers_Ntuple_2015' : "/Cosmic_JetsChannelCosmicPreselection/OnlyJetTriggers_MCRUN2_766_Ntuple/USER",
+
 ################## SP ntuples no stored on T3 ############
 ########################## data ##########################
     'NoBPTX_2015D_v3' : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-v2p0-f01519ca7e946644c73f465aa3632aa9/USER",
