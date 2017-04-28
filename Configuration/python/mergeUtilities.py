@@ -277,6 +277,16 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         if 'was not found or could not be opened, and will be skipped.' in open(file).read():
             BadIndices.append(index)
 
+
+    # check for any corrupted skim output files
+    skimDirs = [member for member in  os.listdir(os.getcwd()) if os.path.isdir(member)]
+    for channel in skimDirs:
+        for skimFile in glob.glob(channel+'/*.root'):
+            if not SkimFileValidator(skimFile.rstrip('\n')):
+                BadIndices.append(index)
+
+
+    # check for abnormal condor return values
     sys.path.append(directory)
     for i in range(0,len(ReturnValues)):
         if "return value 0" in ReturnValues[i]:
