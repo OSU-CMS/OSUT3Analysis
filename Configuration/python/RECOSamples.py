@@ -362,6 +362,7 @@ dataset_names = {
     'cosmicMC_0To25Timing_Reco_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_Reco_v2/USER",
     'cosmicMC_0To25Timing_Ntuple_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_766_Ntuple_v2/USER",
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_onlyControlTriggers_MCRUN2_766_Ntuple_v2/USER",
+    'cosmicMC_0To25Timing_OnlyJetTriggers_Ntuple' : "/Cosmic/Cosmic_fullDetector_0To25Timing_OnlyJetTriggers_MCRUN2_766_Ntuple/USER",
 
     'cosmicMC_0To25Timing_Reco_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8022_Reco/USER",
     'cosmicMC_0To25Timing_Ntuple_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8022_Ntuple/USER",
@@ -370,6 +371,7 @@ dataset_names = {
     'cosmicMC_0To25Timing_Reco_2016_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8025_Reco_v2/USER",
     'cosmicMC_0To25Timing_Ntuple_2016_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_MCRUN2_8025_Ntuple_v2/USER",
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_2016_v2' : "/Cosmic/Cosmic_fullDetector_0To25Timing_onlyControlTriggers_MCRUN2_8025_Ntuple_v2/USER",
+    'cosmicMC_0To25Timing_OnlyJetTriggers_Ntuple_2016' : "/Cosmic/Cosmic_fullDetector_0To25Timing_OnlyJetTriggers_MCRUN2_8026patch2_Ntuple/USER",
 
 ################## SP ntuples stored on T3 ###############
 #################### cosmic sample #######################
@@ -377,6 +379,9 @@ dataset_names = {
     #'cosmic_preselection' : "/Cosmics_Preselction/Spring-74x/USER",
     #'cosmic_preselection' : "/Cosmics_Preselction_Apr5_16000_final/Spring-74x/USER",
     'cosmic_preselection' : "/CosmicPreselection_Jul4/Ntuples_74x/USER",
+
+    'cosmicMC_JetsChannelCosmicPreselection_reco_2015' : "/Cosmic_JetsChannelCosmicPreselection/MCRUN2_76X_RECO/USER",
+    'cosmicMC_JetsChannelCosmicPreselection_OnlyJetTriggers_Ntuple_2015' : "/Cosmic_JetsChannelCosmicPreselection/OnlyJetTriggers_MCRUN2_766_Ntuple/USER",
 
 ################## SP ntuples no stored on T3 ############
 ########################## data ##########################
