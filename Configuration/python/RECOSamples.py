@@ -442,6 +442,9 @@ dataset_names = {
     'NoBPTX_2015C_16Dec2015' : "/NoBPTX/Run2015C_25ns-16Dec2015-v1/RECO",
     'NoBPTX_2015D_16Dec2015' : "/NoBPTX/Run2015D-16Dec2015-v1/RECO",
 
+    'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : "/SingleMuon/Run2016H-ZMu-PromptReco-v2/RAW-RECO",
+    'ZToMuMu_50To120_80X' : "/ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM",
+
 ################## Delayed Muon RECO not stored on T3 ############
 ########################## data ##########################
     'NoBPTX_2015B_PromptReco' : "/NoBPTX/Run2015B-PromptReco-v1/RECO",

@@ -224,6 +224,9 @@ datasets = [
    'NoBPTX_Jet_2016BCD_ReReco',
    'NoBPTX_Jet_2016BCDEFGH_ReReco',
 
+   'ZMuSkim_2016H_PromptReco_RAWRECO_v2',
+   'ZToMuMu_50To120_80X_AODSIM',
+   
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
    'DYJetsToLL_10to50',
@@ -1988,6 +1991,11 @@ nJobs = {
     'NoBPTX_2015Dv3_controlSample' : 256,
     'NoBPTX_2015Dv4_controlSample' : 662,
     'NoBPTX_2015E_controlSample' : 31,
+
+    #zmu skim
+    'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 3000,
+    'ZToMuMu_50To120_80X_AODSIM' : 300,
+
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 5,
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : 5,
@@ -3074,6 +3082,11 @@ maxEvents = {
     'NoBPTX_2015Dv3_controlSample' : -1,
     'NoBPTX_2015Dv4_controlSample' : -1,
     'NoBPTX_2015E_controlSample' : -1,
+
+    #zmu skim
+    'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : -1,
+    'ZToMuMu_50To120_80X_AODSIM' : -1,
+
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : -1,
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : -1,
@@ -4214,6 +4227,9 @@ types = {
     'NoBPTX_2015E_controlSample' : 'data',
     'StpPtls_controlSample_2015' : 'data',
 
+    #zmu skim
+    'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 'data',
+    'ZToMuMu_50To120_80X_AODSIM' : 'bgMC',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
@@ -5113,15 +5129,15 @@ colors = {
     'mchamp2600_NtupleSeparateEventsParticle1_2016'  :    1,
 
     'mchamp100_NtupleSeparateEvents_2016'   :    1,
-    'mchamp200_NtupleSeparateEvents_2016'   :    1,
-    'mchamp400_NtupleSeparateEvents_2016'   :    1,
-    'mchamp600_NtupleSeparateEvents_2016'   :    1,
-    'mchamp800_NtupleSeparateEvents_2016'   :    1,
-    'mchamp1000_NtupleSeparateEvents_2016'  :    1,
-    'mchamp1400_NtupleSeparateEvents_2016'  :    1,
-    'mchamp1800_NtupleSeparateEvents_2016'  :    1,
-    'mchamp2200_NtupleSeparateEvents_2016'  :    1,
-    'mchamp2600_NtupleSeparateEvents_2016'  :    1,
+    'mchamp200_NtupleSeparateEvents_2016'   :    2,
+    'mchamp400_NtupleSeparateEvents_2016'   :    4,
+    'mchamp600_NtupleSeparateEvents_2016'   :    5,
+    'mchamp800_NtupleSeparateEvents_2016'   :    6,
+    'mchamp1000_NtupleSeparateEvents_2016'  :    7,
+    'mchamp1400_NtupleSeparateEvents_2016'  :    8,
+    'mchamp1800_NtupleSeparateEvents_2016'  :    9,
+    'mchamp2200_NtupleSeparateEvents_2016'  :    10,
+    'mchamp2600_NtupleSeparateEvents_2016'  :    11,
 
     'gluino100_NtupleSeparateEventsParticle0_2016'   : 1,
     'gluino200_NtupleSeparateEventsParticle0_2016'   : 1,
@@ -5338,6 +5354,10 @@ colors = {
     'NoBPTX_2015Dv4_controlSample' : 1,
     'NoBPTX_2015E_controlSample' : 1,
     'StpPtls_controlSample_2015' : 1,
+
+    #zmu skim
+    'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 1,
+    'ZToMuMu_50To120_80X_AODSIM' : 1,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 7,
@@ -6470,6 +6490,10 @@ labels = {
     'NoBPTX_2015E_controlSample' : "NoBPTX 2015E control sample",
     'StpPtls_controlSample_2015' : "Data control sample",
 
+    #zmu skim
+    'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : "ZMu Skim 2016H Prompt reco data",
+    'ZToMuMu_50To120_80X_AODSIM' : "Zmumu MC, 80X",
+
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p4)",
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p6)",
@@ -6564,6 +6588,8 @@ crossSections = {
     'TTJets_DiLept'                :  87.31,
     'TTJets_SingleLeptFromT'       :  182.7,
     'TTJets_SingleLeptFromTbar'    :  182.7,
+
+    'ZToMuMu_50To120_80X_AODSIM' : 1928,
 
     ###########################################################################
     #RECO stored on T3
