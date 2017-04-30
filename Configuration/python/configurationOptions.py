@@ -225,7 +225,10 @@ datasets = [
    'NoBPTX_Jet_2016BCDEFGH_ReReco',
 
    'ZMuSkim_2016H_PromptReco_RAWRECO_v2',
+   'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2',
+
    'ZToMuMu_50To120_80X_AODSIM',
+   'ZToMuMu_80To100_80X_Ntuple',
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
@@ -1994,7 +1997,10 @@ nJobs = {
 
     #zmu skim
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 3000,
+    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 3000,
+
     'ZToMuMu_50To120_80X_AODSIM' : 300,
+    'ZToMuMu_80To100_80X_Ntuple' : 300,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 5,
@@ -3085,7 +3091,10 @@ maxEvents = {
 
     #zmu skim
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : -1,
+    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : -1,
+
     'ZToMuMu_50To120_80X_AODSIM' : -1,
+    'ZToMuMu_80To100_80X_Ntuple' : -1,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : -1,
@@ -4229,7 +4238,10 @@ types = {
 
     #zmu skim
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 'data',
+    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 'data',
+
     'ZToMuMu_50To120_80X_AODSIM' : 'bgMC',
+    'ZToMuMu_80To100_80X_Ntuple' : 'bgMC',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
@@ -5357,7 +5369,10 @@ colors = {
 
     #zmu skim
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 1,
+    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 1,
+
     'ZToMuMu_50To120_80X_AODSIM' : 1,
+    'ZToMuMu_80To100_80X_Ntuple' : 46,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 7,
@@ -6492,7 +6507,10 @@ labels = {
 
     #zmu skim
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : "ZMu Skim 2016H Prompt reco data",
-    'ZToMuMu_50To120_80X_AODSIM' : "Zmumu MC, 80X",
+    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : "ZMu Skim 2016H Prompt reco data",
+
+    'ZToMuMu_50To120_80X_AODSIM' : "Z #rightarrow #mu#mu, 80X",
+    'ZToMuMu_80To100_80X_Ntuple' : "Z #rightarrow #mu#mu, 80X",
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p4)",
@@ -6590,6 +6608,7 @@ crossSections = {
     'TTJets_SingleLeptFromTbar'    :  182.7,
 
     'ZToMuMu_50To120_80X_AODSIM' : 1928,
+    'ZToMuMu_80To100_80X_Ntuple' : 1928,
 
     ###########################################################################
     #RECO stored on T3
