@@ -1997,7 +1997,7 @@ nJobs = {
 
     #zmu skim
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 3000,
-    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 3000,
+    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 999,
 
     'ZToMuMu_50To120_80X_AODSIM' : 300,
     'ZToMuMu_80To100_80X_Ntuple' : 300,
