@@ -194,6 +194,7 @@ def GetSkimInputTags(File):
 #                 Make submission script for the failed jobs.                 #
 ###############################################################################
 def MakeResubmissionScript(badIndices, originalSubmissionScript):
+    badIndices = list (set (badIndices)) # remove duplicates
     os.system('touch condor_resubmit.sub')
     resubScript = open('condor_resubmit.sub','w')
     originalScript = open(originalSubmissionScript,'r')
