@@ -43,6 +43,8 @@ parser.add_option("-s", "--signif", action="store_true", dest="makeSignificanceP
                   help="Make significance plots")
 parser.add_option("-c", "--cumulative", action="store_true", dest="makeCumulativePlots", default=False,
                   help="Make cumulative plots")
+parser.add_option("--E0", action="store_true", dest="drawErrorsOnHists", default=False,
+                  help="Draw error bars on unstacked histograms")
 parser.add_option("--NO", "--noOverUnderFlow", action="store_true", dest="noOverUnderFlow", default=False,
                   help="Do not add the overflow and underflow entries to the last and first bins")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
@@ -359,7 +361,7 @@ def signifHistograms(BgSum,SignalMCHistograms):
 ##########################################################################################################################################
 ##########################################################################################################################################
 
-
+#!!!
 def MakeIntegralHist(hist, integrateDir):
     # return the integrated histogram, in the direction specified
     # integrateDir values: "left", "right", "none"
@@ -368,24 +370,32 @@ def MakeIntegralHist(hist, integrateDir):
     integral = 0
     error = 0
     nbins = hist.GetNbinsX()
+    lowLimit = 0 # underflow bin
+    uppLimit = nbins+1 # overflow bin
+    # exclude under/overflow if it's turned off
+    if arguments.noOverUnderFlow:
+        lowLimit += 1
+        uppLimit -= 1
     if integrateDir is "left":
-        for i in range(0,nbins+1):  # start with underflow bin
+        for i in range(lowLimit, nbins+1):
             integral += hist.GetBinContent(i)
             error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
             hist.SetBinContent(i, integral)
             hist.SetBinError  (i, error)
-        # Then include overflow bin in the last bin
-        hist.SetBinContent(nbins, hist.GetBinContent(nbins) + hist.GetBinContent(nbins+1))
-        hist.SetBinError  (nbins, math.sqrt(hist.GetBinError(nbins)*hist.GetBinError(nbins) + hist.GetBinError(nbins+1)*hist.GetBinError(nbins+1)))
+        if not arguments.noOverUnderFlow:
+            # Then include overflow bin in the last bin
+            hist.SetBinContent(nbins, hist.GetBinContent(nbins) + hist.GetBinContent(nbins+1))
+            hist.SetBinError  (nbins, math.sqrt(hist.GetBinError(nbins)*hist.GetBinError(nbins) + hist.GetBinError(nbins+1)*hist.GetBinError(nbins+1)))
     elif integrateDir is "right":
-        for i in xrange(nbins+1, 0, -1):  # start with overflow bin
+        for i in xrange(uppLimit, 0, -1):
             integral += hist.GetBinContent(i)
             error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
             hist.SetBinContent(i, integral)
             hist.SetBinError  (i, error)
-        # Then include underflow bin in the first bin
-        hist.SetBinContent(1, hist.GetBinContent(1) + hist.GetBinContent(0))
-        hist.SetBinError  (1, math.sqrt(hist.GetBinError(1)*hist.GetBinError(1) + hist.GetBinError(0)*hist.GetBinError(0)))
+        if not arguments.noOverUnderFlow:
+            # Then include underflow bin in the first bin
+            hist.SetBinContent(1, hist.GetBinContent(1) + hist.GetBinContent(0))
+            hist.SetBinError  (1, math.sqrt(hist.GetBinError(1)*hist.GetBinError(1) + hist.GetBinError(0)*hist.GetBinError(0)))
     return hist
 
 
@@ -1023,7 +1033,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
 
         else: #draw the unstacked backgrounds
             BgMCHistograms[0].SetTitle(histoTitle)
-            if not isProfile:
+            if not isProfile and not arguments.drawErrorsOnHists:
                 BgMCHistograms[0].Draw("HIST")
             else:
                 BgMCHistograms[0].Draw("E0")
@@ -1034,19 +1044,25 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                 BgMCHistograms[0].SetMinimum(yAxisMin)
             setXAxisRangeUser(BgMCHistograms[0])
             for bgMCHist in BgMCHistograms[1:]:
-                if not isProfile:
+                if not isProfile and not arguments.drawErrorsOnHists:
                     bgMCHist.Draw("A HIST SAME")
                 else:
                     bgMCHist.Draw("A E0 SAME")
 
         for signalMCHist in SignalMCHistograms:
-            signalMCHist.Draw("A HIST SAME")
+            if not isProfile and not arguments.drawErrorsOnHists:
+                signalMCHist.Draw("A HIST SAME")
+            else:
+                signalMCHist.Draw("A E0 SAME")
         for dataHist in DataHistograms:
             dataHist.Draw("A E X0 SAME")
 
     elif numSignalSamples is not 0: # the first thing to draw to the canvas is a signalMC sample
         SignalMCHistograms[0].SetTitle(histoTitle)
-        SignalMCHistograms[0].Draw("HIST")
+        if not isProfile and not arguments.drawErrorsOnHists:
+            SignalMCHistograms[0].Draw("HIST")
+        else:
+            SignalMCHistograms[0].Draw("E0")
         SignalMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
         SignalMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
         SignalMCHistograms[0].SetMaximum(finalMax)
@@ -1054,7 +1070,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         setXAxisRangeUser(SignalMCHistograms[0])
         for signalMCHist in SignalMCHistograms:
             if(signalMCHist is not SignalMCHistograms[0]):
-                signalMCHist.Draw("A HIST SAME")
+                if not isProfile and not arguments.drawErrorsOnHists:
+                    signalMCHist.Draw("A HIST SAME")
+                else:
+                    signalMCHist.Draw("A E0 SAME")
         for dataHist in DataHistograms:
             dataHist.Draw("A E X0 SAME")
 
