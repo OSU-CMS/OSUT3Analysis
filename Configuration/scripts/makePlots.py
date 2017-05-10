@@ -41,6 +41,8 @@ parser.add_option("-S", "--systematics", action="store_true", dest="includeSyste
                   help="also lists the systematic uncertainties")
 parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,
                   help="Make significance plots")
+parser.add_option("-c", "--cumulative", action="store_true", dest="makeCumulativePlots", default=False,
+                  help="Make cumulative plots")
 parser.add_option("--NO", "--noOverUnderFlow", action="store_true", dest="noOverUnderFlow", default=False,
                   help="Do not add the overflow and underflow entries to the last and first bins")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
@@ -734,7 +736,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
                  yAxisLabel = Histogram.GetYaxis().SetTitle(quickRenameStringY)
                  yAxisLabel = Histogram.GetYaxis().GetTitle()
 
-        if normalizeToUnitArea and arguments.makeSignificancePlots:
+        if normalizeToUnitArea and (arguments.makeSignificancePlots or arguments.makeCumulativePlots):
             unit = "Efficiency"
         else:
             unit = "Yield"
@@ -1585,6 +1587,8 @@ if arguments.makeRatioPlots:
     outputFileString += '_Ratio'
 if arguments.normalizeToData:
     outputFileString += '_Norm'
+if arguments.makeCumulativePlots:
+    outputFileString += "_Cumulative"
 outputFileName = "stacked_histograms" + outputFileString + ".root"
 if arguments.makeSignificancePlots:
     outputFileName = "stacked_histogramsSignif.root"
@@ -1613,7 +1617,7 @@ for key in inputFile.GetListOfKeys():
     for key2 in gDirectory.GetListOfKeys():
 
         if re.match ('TH1', key2.GetClassName()): # found a 1-D histogram
-            if arguments.makeSignificancePlots:
+            if arguments.makeSignificancePlots or arguments.makeCumulativePlots:
                 MakeOneDHist(rootDirectory,key2.GetName(),"left")
                 MakeOneDHist(rootDirectory,key2.GetName(),"right")
             else:
@@ -1640,7 +1644,7 @@ for key in inputFile.GetListOfKeys():
                 if arguments.quickHistName and not arguments.quickHistName == key3.GetName():
                     continue
                 if re.match ('TH1', key3.GetClassName()): # found a 1-D histogram
-                    if arguments.makeSignificancePlots:
+                    if arguments.makeSignificancePlots or arguments.makeCumulativePlots:
                         MakeOneDHist(level2Directory,key3.GetName(),"left")
                         MakeOneDHist(level2Directory,key3.GetName(),"right")
                     else:
@@ -1664,7 +1668,7 @@ for key in inputFile.GetListOfKeys():
                     inputFile.cd(level3Directory)
                     for key3 in gDirectory.GetListOfKeys():
                         if re.match ('TH1', key3.GetClassName()): # found a 1-D histogram
-                            if arguments.makeSignificancePlots:
+                            if arguments.makeSignificancePlots or arguments.makeCumulativePlots:
                                 MakeOneDHist(level3Directory,key3.GetName(),"left")
                                 MakeOneDHist(level3Directory,key3.GetName(),"right")
                             else:
