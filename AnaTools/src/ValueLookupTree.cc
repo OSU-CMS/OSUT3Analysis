@@ -287,8 +287,6 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->secondaryTracks->size ();
   else if (EQ_VALID(name,pileupinfos))
     return handles_->pileupinfos->size ();
-  else if (EQ_VALID(name,trigobjs))
-    return handles_->trigobjs->size ();
   else if (EQ_VALID(name,uservariables)){
     // !!!
     //    return handles_->uservariables[printValue(root_)].size ();
@@ -333,7 +331,6 @@ bool
   else  if  (EQ_VALID(name,tracks))            isFound  =  handles_->tracks.isValid();
   else  if  (EQ_VALID(name,secondaryTracks))   isFound  =  handles_->secondaryTracks.isValid();
   else  if  (EQ_VALID(name,pileupinfos))       isFound  =  handles_->pileupinfos.isValid();
-  else  if  (EQ_VALID(name,trigobjs))          isFound  =  handles_->trigobjs.isValid();
   else if (EQ_VALID(name,uservariables))       isFound = true; // This vector is always present, even if its size is 0.
   else if (EQ_VALID(name,eventvariables))      isFound = true; // This vector is always present, even if its size is 0.
   return isFound;
@@ -900,8 +897,6 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
     return ((void *) &handles_->secondaryTracks->at (i));
   else if (EQ_VALID(name,pileupinfos))
     return ((void *) &handles_->pileupinfos->at (i));
-  else if (EQ_VALID(name,trigobjs))
-    return ((void *) &handles_->trigobjs->at (i));
   else if (EQ_VALID(name,uservariables))
     {
       //!!!
@@ -972,8 +967,6 @@ ValueLookupTree::getCollectionType (const string &name) const
     return "osu::SecondaryTrack";
   else if (EQ_VALID(name,pileupinfos))
     return "osu::PileUpInfo";
-  else if (EQ_VALID(name,trigobjs))
-    return "osu::Trigobj";
   else if (EQ_VALID(name,uservariables))
     return "osu::Uservariable";
   else if (EQ_VALID(name,eventvariables))
@@ -1029,8 +1022,6 @@ ValueLookupTree::isCollection (const string &name) const
   else if (EQ_VALID(name,tracks))
     return true;
   else if (EQ_VALID(name,secondaryTracks))
-    return true;
-  else if (EQ_VALID(name,trigobjs))
     return true;
   else if (EQ_VALID(name,uservariables))
     return true;
