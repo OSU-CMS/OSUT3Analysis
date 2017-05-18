@@ -590,7 +590,7 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
 #endif
 
   for(const auto &filter : triggerFilters) {
-    ss_ << A_BRIGHT_BLUE << setw (maxAllTriggerWidth_) << left << filter << A_RESET;
+    ss_ << A_BRIGHT_BLUE << setw (maxAllTriggerWidth_) << left << filter << A_RESET << endl;
   }
 
   return true;
