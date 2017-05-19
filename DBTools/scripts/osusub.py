@@ -997,7 +997,8 @@ if not arguments.Resubmit:
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
             shutil.copy (Config, WorkDir + '/' + userConfig)
-            ModifyUserConfigForSecondaryCollections(WorkDir + '/' + userConfig, DatasetRead['secondaryCollections'])
+            if 'secondaryCollections' in DatasetRead:
+                ModifyUserConfigForSecondaryCollections(WorkDir + '/' + userConfig, DatasetRead['secondaryCollections'])
             jsonFile = ''
             if arguments.localConfig:
                 if(types[dataset] == 'data'):
