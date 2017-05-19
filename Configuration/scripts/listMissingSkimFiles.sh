@@ -2,7 +2,7 @@
 
 if [ $# -ne 2 ]
 then
-  echo "Usage: $0 CONDOR_DIR CHANNEL_NAME"
+  echo "Usage: $(basename $0) CONDOR_DIR CHANNEL_NAME"
   exit 1
 fi
 condorDir=$1
