@@ -380,6 +380,9 @@ dataset_names = {
     #'cosmic_preselection' : "/Cosmics_Preselction_Apr5_16000_final/Spring-74x/USER",
     'cosmic_preselection' : "/CosmicPreselection_Jul4/Ntuples_74x/USER",
 
+    'cosmicMC_JetsChannelCosmicPreselection_reco_2015' : "/Cosmic_JetsChannelCosmicPreselection/MCRUN2_76X_RECO/USER",
+    'cosmicMC_JetsChannelCosmicPreselection_OnlyJetTriggers_Ntuple_2015' : "/Cosmic_JetsChannelCosmicPreselection/OnlyJetTriggers_MCRUN2_766_Ntuple/USER",
+
 ################## SP ntuples no stored on T3 ############
 ########################## data ##########################
     'NoBPTX_2015D_v3' : "/NoBPTX/wji-Run2015D-PromptReco-v3_SP-v2p0-f01519ca7e946644c73f465aa3632aa9/USER",
@@ -438,6 +441,12 @@ dataset_names = {
 
     'NoBPTX_2015C_16Dec2015' : "/NoBPTX/Run2015C_25ns-16Dec2015-v1/RECO",
     'NoBPTX_2015D_16Dec2015' : "/NoBPTX/Run2015D-16Dec2015-v1/RECO",
+
+    'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : "/SingleMuon/Run2016H-ZMu-PromptReco-v2/RAW-RECO",
+    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : "/SingleMuon/Run2016H-ZMu-80To100-PromptReco-v2_8026patch2_Ntuple/USER",
+
+    'ZToMuMu_50To120_80X_AODSIM' : "/ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM",
+    'ZToMuMu_80To100_80X_Ntuple' : "/ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1_Ntuple/USER",
 
 ################## Delayed Muon RECO not stored on T3 ############
 ########################## data ##########################

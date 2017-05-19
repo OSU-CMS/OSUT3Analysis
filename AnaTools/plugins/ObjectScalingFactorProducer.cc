@@ -19,7 +19,7 @@ ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet
       electronFile_ = cfg.getParameter<string>("electronFile");
       electronWp_ = cfg.getParameter<string>("electronWp");
     }
-  if (doEleSF_)
+  if (doMuSF_)
     {
       muonFile_ = cfg.getParameter<string>("muonFile");
       muonWp_ = cfg.getParameter<string>("muonWp");
@@ -58,30 +58,29 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
         exit(1);
       }
 
-      string eWp = electronWp_.substr(0,electronWp_.find("_"));
-      string shift = electronWp_.substr(electronWp_.find("_")+1);
       TH2F *ele;
-      elesf->GetObject(eWp.c_str(),ele);
+      elesf->GetObject(electronWp_.c_str(),ele);
       if(!elesf){
-        clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << eWp.c_str()
+        clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << electronWp_.c_str()
          << "; will cause a seg fault." << endl;
         exit(1);
       }
 
-      double eleSF = 1.0;
+      double eleSF = 1.0, eleSFUp = 1.0, eleSFDown = 1.0;
       for (const auto &electron1 : *handles_.electrons) {
         float eta = abs(electron1.eta()) > ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) ? ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) : abs(electron1.eta());
         float pt = electron1.pt() > ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) ? ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) : electron1.pt();
         if (ele->GetXaxis()->FindBin(electron1.eta()))
             eta = electron1.eta() > 0 ? eta : -eta;
         float sf = ele->GetBinContent(ele->FindBin(eta,pt));
-        if (shift == "up")
-          sf += ele->GetBinError(ele->FindBin(eta,pt));
-        else if (shift == "down")
-          sf -= ele->GetBinError(ele->FindBin(eta,pt));
-        eleSF = eleSF * sf;
+        float sfError = ele->GetBinError(ele->FindBin(eta,pt));
+        eleSF *= sf;
+        eleSFUp *= sf + sfError;
+        eleSFDown *= sf - sfError;
       }
       (*eventvariables)["electronScalingFactor"] = eleSF;
+      (*eventvariables)["electronScalingFactorUp"] = eleSFUp;
+      (*eventvariables)["electronScalingFactorDown"] = eleSFDown;
       delete ele;
       elesf->Close();
     }
@@ -94,28 +93,27 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
         exit(1);
       }
 
-      string muWp = muonWp_.substr(0,muonWp_.find("_"));
-      string shift = muonWp_.substr(muonWp_.find("_")+1);
       TH2F *mu;
-      musf->GetObject(muWp.c_str(),mu);
+      musf->GetObject(muonWp_.c_str(),mu);
       if(!musf){
         clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << muonWp_.c_str()
          << "; will cause a seg fault." << endl;
         exit(1);
       }
 
-      double muSF = 1.0;
+      double muSF = 1.0, muSFUp = 1.0, muSFDown = 1.0;
       for (const auto &muon1 : *handles_.muons) {
         float eta = abs(muon1.eta()) > mu->GetYaxis()->GetBinCenter(mu->GetNbinsY()) ? mu->GetYaxis()->GetBinCenter(mu->GetNbinsY()): abs(muon1.eta());
         float pt = muon1.pt() > mu->GetXaxis()->GetBinCenter(mu->GetNbinsX()) ? mu->GetXaxis()->GetBinCenter(mu->GetNbinsX()) : muon1.pt();
         float sf = mu->GetBinContent(mu->FindBin(pt,eta));
-        if (shift == "up")
-          sf += mu->GetBinError(mu->FindBin(pt,eta));
-        else if (shift == "down")
-          sf -= mu->GetBinError(mu->FindBin(pt,eta));
-        muSF = muSF * sf;
+        float sfError = mu->GetBinError(mu->FindBin(pt,eta));
+        muSF *= sf;
+        muSFUp *= sf + sfError;
+        muSFDown *= sf - sfError;
       }
       (*eventvariables)["muonScalingFactor"] = muSF;
+      (*eventvariables)["muonScalingFactorUp"] = muSFUp;
+      (*eventvariables)["muonScalingFactorDown"] = muSFDown;
       delete mu;
       musf->Close();
     }
@@ -153,7 +151,11 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
     }
 #else
   (*eventvariables)["electronScalingFactor"] = 1;
+  (*eventvariables)["electronScalingFactorUp"] = 1;
+  (*eventvariables)["electronScalingFactorDown"] = 1;
   (*eventvariables)["muonScalingFactor"] = 1;
+  (*eventvariables)["muonScalingFactorUp"] = 1;
+  (*eventvariables)["muonScalingFactorDown"] = 1;
   (*eventvariables)["trackScalingFactor"] = 1;
 # endif
 }

@@ -61,6 +61,7 @@ parser.add_option("--pileupTarget", dest="pileupTarget", default = "", help="Exp
 parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = False, help="Resubmit failed condor jobs.")
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")
 parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  # See https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/65
+parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help="Specify the directory containing input files. Wildcards allowed.")
 
 (arguments, args) = parser.parse_args()
 
@@ -78,7 +79,7 @@ parser.add_option("--extend", dest="Extend", action="store_true", default = Fals
 #               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -g -d ListOfFiles -t UserList -A(if you are using files via xrootd)
 #           The rest of the special cases can be done automatically.
 #           2. Run over files in a given directory.
-#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -g -d inputDirectory -t UserDir
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -g --inputDirectory inputDirectory -d dataset(here just a title) -t UserDir
 #           3. Run over a dataset(s) on T3.
 #               For a single dataset:
 #               osusub.py -d dataset(name shown in configurationOptions.py) -c Config.py -m -1 -n 100 -w WorkingDirectory -g
@@ -101,7 +102,7 @@ parser.add_option("--extend", dest="Extend", action="store_true", default = Fals
 #               You will need the localConfig.py. Example:
 #               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900"
 #           2.2 Run over files in a given directory.
-#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -d inputDirectory -t UserDir
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label --inputDirectory inputDirectory -d dataset(here just a title) -t UserDir
 #           2.3 Run over a dataset which has not been registered in configurationOptions.py.
 #               osusub.py -d /A/B/C(exact name shown on DAS) -c Config.py -A -m -1 -n 100 -w WorkingDirectory
 #               In this case the lable will be A with all the '-' in 'A' changed to '_'.
@@ -335,13 +336,12 @@ def GetCommandLineString():
             commandLine = commandLine + " " + arg
     return commandLine
 
-def GetListOfRootFiles(Directory):
-    fileList = os.popen('ls ' + Directory + '/*.root').read().split('\n')  # remove '\n' from each word
+def GetListOfRootFiles(Path):
+    fileList = os.popen('ls ' + Path + '/*.root').read().split('\n')  # remove '\n' from each word
     for f in fileList:
         if len(f) is 0:
             fileList.remove(f)   # remove empty filename
     return fileList
-
 
 #It generates the condor.sub file for each dataset.
 def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile):
@@ -584,17 +584,24 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     if FileType == 'UserDir':
         isInCondorDir = False
         SubmissionDir = os.getcwd()
-        if not "/" in Dataset:
+        # if the dataset is neither a DAS dataset (/A/B/MINIAOD) nor an absolute path from --inputDirectory...
+        if not "/" in Dataset and not arguments.inputDirectory:
             # Then assume it is in condor/ directory.
             Dataset = "condor/" + Dataset
             isInCondorDir = True
-        if not os.path.exists(Dataset):
+        if arguments.inputDirectory and not os.path.exists( re.sub (r"\*\/", r"", arguments.inputDirectory) ):
+            print "The directory you provided does not exist: ", arguments.inputDirectory
+            sys.exit()
+        if not arguments.inputDirectory and not os.path.exists(Dataset):
             print "The directory you provided does not exist: ", Dataset
             sys.exit()
         #Get the list of the root files in the directory and modify it to have the standard format.
         secondaryCollectionModifications = []
         datasetRead['secondaryCollections'] = secondaryCollectionModifications
-        inputFiles = GetListOfRootFiles(Dataset)
+        if not arguments.inputDirectory:
+            inputFiles = GetListOfRootFiles(Dataset)
+        else:
+            inputFiles = GetListOfRootFiles(arguments.inputDirectory)
         datasetRead['numberOfFiles'] = len(inputFiles)
         datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset
         text = 'listOfFiles = [  \n'
@@ -800,6 +807,8 @@ def SkimModifier(Label, Directory, crossSection):
 ################################################################################
 #             First of all to set up the working directory                     #
 ################################################################################
+
+sys.path.append(os.getcwd())
 CondorDir = ''
 Condor = os.getcwd() + '/condor/'
 if not os.path.exists(Condor):
@@ -814,7 +823,7 @@ else:
 if not os.path.exists(CondorDir):
     os.mkdir (CondorDir)
 else:
-    if arguments.FileType == "OSUT3Ntuple":
+    if arguments.FileType == "OSUT3Ntuple" or arguments.Resubmit:
         # Ok to proceed, since the working directory will be "CondorDir/dataset"
         print 'Directory "' + str(CondorDir) + '" already exists in your condor directory. Will proceed with job submission.'
     else:
@@ -852,7 +861,6 @@ split_datasets = []
 
 
 if arguments.localConfig:
-    sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
     split_datasets = split_composite_datasets(datasets, composite_dataset_definitions)
 
@@ -989,14 +997,14 @@ if not arguments.Resubmit:
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
             shutil.copy (Config, WorkDir + '/' + userConfig)
-            ModifyUserConfigForSecondaryCollections(WorkDir + '/' + userConfig, DatasetRead['secondaryCollections'])
+            if 'secondaryCollections' in DatasetRead:
+                ModifyUserConfigForSecondaryCollections(WorkDir + '/' + userConfig, DatasetRead['secondaryCollections'])
             jsonFile = ''
             if arguments.localConfig:
                 if(types[dataset] == 'data'):
                     jsonFile = getLatestJsonFile()
                     shutil.move (jsonFile, WorkDir + "/" + jsonFile)
             SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,SkimDir,dataset, SkimChannelNames, jsonFile, temPset)
-
 
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
