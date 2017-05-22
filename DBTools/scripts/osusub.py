@@ -346,15 +346,17 @@ def GetListOfRootFiles(Path):
 #It generates the condor.sub file for each dataset.
 def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile):
     SubmitFile = open(Directory + '/condor.sub','w')
-    cmsRunExecutable = os.popen('which cmsRun').read()
+    cmsRunExecutable = os.popen('which cmsRun').read().rstrip()
+    filesToTransfer = []
+    directoriesToTransfer = []
     SubmitFile.write("# Command line arguments: \n# " + GetCommandLineString() + " \n\n\n")
     for argument in sorted(currentCondorSubArgumentsSet):
         if currentCondorSubArgumentsSet[argument].has_key('Executable') and currentCondorSubArgumentsSet[argument]['Executable'] == "":
-            SubmitFile.write('Executable = ' + cmsRunExecutable + '\n')
+            SubmitFile.write('Executable = condor.sh\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Arguments') and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
             SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
-            FilesToTransfer = 'config_cfg.py,userConfig_' + Label + '_cfg.py'
+            FilesToTransfer = 'condor.sh,config_cfg.py,userConfig_' + Label + '_cfg.py'
             if Dataset != '':
                 FilesToTransfer += ',datasetInfo_' + Label + '_cfg.py'
             if UseGridProxy:
@@ -369,10 +371,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             if UseGridProxy:
                 SubmitFile.write('x509userproxy = ' + userProxy + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Output_files') and currentCondorSubArgumentsSet[argument]['Transfer_Output_files'] == "":
-            SubmitFile.write ('Transfer_Output_files = hist_$(Process).root')
+            SubmitFile.write ('Transfer_Output_files = \n')
+            filesToTransfer.append ("hist_${Process}.root")
             for i in range (0, len (SkimChannelNames)):
-                SubmitFile.write (',' + SkimChannelNames[i])
-            SubmitFile.write ('\n')
+                directoriesToTransfer.append (SkimChannelNames[i])
         elif currentCondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
             SubmitFile.write('Requirements = ' + arguments.Requirements + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Queue'):
@@ -380,6 +382,29 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         else:
             SubmitFile.write(currentCondorSubArgumentsSet[argument].keys()[0] + ' = ' + currentCondorSubArgumentsSet[argument].values()[0] + '\n')
     SubmitFile.close()
+
+    SubmitScript = open (Directory + "/condor.sh", "w")
+    SubmitScript.write ("#!/usr/bin/env bash\n\n")
+    SubmitScript.write ("PYTHONPATH=$PYTHONPATH:.\n")
+    SubmitScript.write ("Process=$4\n")
+    SubmitScript.write ("RunStatus=1\n")
+    SubmitScript.write ("CopyStatus=1\n")
+    SubmitScript.write ("RemoveStatus=1\n\n")
+    SubmitScript.write (cmsRunExecutable + " $@\n")
+    SubmitScript.write ("RunStatus=$?\n\n")
+    if len (filesToTransfer) > 0:
+        SubmitScript.write ("while [ $CopyStatus -ne 0 ]\n")
+        SubmitScript.write ("do\n")
+        SubmitScript.write ("  cp -rf " + " ".join (filesToTransfer) + " " + os.path.realpath (Directory) + "/")
+        for directory in directoriesToTransfer:
+            SubmitScript.write (" &&\n  cp -rf " + directory + "/* " + os.path.realpath (Directory + "/" + directory) + "/")
+        SubmitScript.write ("\n  CopyStatus=$?\n")
+        SubmitScript.write ("done\n\n")
+        SubmitScript.write ("rm -rf " + " ".join (filesToTransfer) + " " + " ".join (directoriesToTransfer) + "\n")
+        SubmitScript.write ("RemoveStatus=$?\n\n")
+    SubmitScript.write ("exit $RunStatus")
+    SubmitScript.close ()
+    os.chmod (Directory + "/condor.sh", 0755)
 
 def MakeCondorSubmitRelease(Directory):
     # list of directories copied from $CMSSW_BASE; note that src/ is a special
