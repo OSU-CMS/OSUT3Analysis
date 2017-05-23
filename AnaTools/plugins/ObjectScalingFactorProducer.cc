@@ -1,38 +1,56 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/plugins/ObjectScalingFactorProducer.h"
+#include <typeinfo>
 
 ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet &cfg) :
-  EventVariableProducer(cfg),
-  doEleSF_          (false),
-  doMuSF_           (false),
-  doTrackSF_        (false)
+  EventVariableProducer(cfg)
 {
-  if (cfg.exists ("doEleSF"))
-    doEleSF_ = cfg.getParameter<bool>("doEleSF");
-  if (cfg.exists ("doMuSF"))
-    doMuSF_ = cfg.getParameter<bool>("doMuSF");
-  if (cfg.exists ("doTrackSF"))
-    doTrackSF_ = cfg.getParameter<bool>("doTrackSF");
 
-  if (doEleSF_)
-    {
-      electronFile_ = cfg.getParameter<string>("electronFile");
-      electronWp_ = cfg.getParameter<string>("electronWp");
-    }
-  if (doMuSF_)
-    {
-      muonFile_ = cfg.getParameter<string>("muonFile");
-      muonWp_ = cfg.getParameter<string>("muonWp");
-    }
-  if (doTrackSF_)
+  if (cfg.exists ("electronFile"))
+    electronFile_ = cfg.getParameter<string>("electronFile");
+
+  if (cfg.exists ("muonFile"))
+    muonFile_ = cfg.getParameter<string>("muonFile");
+
+  if (cfg.exists ("trackFile"))
     trackFile_ = cfg.getParameter<string>("trackFile");
 
-  if (doEleSF_)
-    objectsToGet_.insert ("electrons");
-  if (doMuSF_)
-    objectsToGet_.insert ("muons");
-  if (doTrackSF_)
-    objectsToGet_.insert ("tracks");
+  if (!cfg.exists ("scaleFactors")){
+    clog << "ERROR [ObjectScalingFactorProducer]: No scale factors included\n";
+    exit(1);
+  }
+
+
+  // parse definitions of scale factors
+  std::vector<edm::ParameterSet> scaleFactorDefs_ = cfg.getParameter<vector<edm::ParameterSet> >("scaleFactors");
+  for (auto &sfDef : scaleFactorDefs_){
+    ScaleFactor sf;
+    sf.inputCollection = sfDef.getParameter<string> ("inputCollection");
+    sf.sfType = sfDef.getParameter<string> ("sfType");
+    sf.version = sfDef.getParameter<string> ("version");
+    sf.wp = "";
+    if (sfDef.exists("wp"))
+      sf.wp = sfDef.getParameter<string> ("wp");
+
+    sf.outputVariable = string(anatools::singular(sf.inputCollection)) + string(sf.sfType) + string(sf.version) + string(sf.wp);
+
+    if (!sfDef.exists ("eras")){
+      sf.inputPlots.push_back(sf.outputVariable);
+      sf.inputLumis.push_back(1.0);
+    }
+    else{
+      for (auto &era : sfDef.getParameter<vector<string> > ("eras"))
+	  sf.inputPlots.push_back(sf.outputVariable+era);
+      for (auto &lumi : sfDef.getParameter<vector<double> >("lumis"))
+	  sf.inputLumis.push_back(lumi);
+    }
+
+    objectsToGet_.insert(sf.inputCollection);
+    scaleFactors_.push_back(sf);
+
+  }
+
+
   anatools::getAllTokens (collections_, consumesCollector (), tokens_);
 }
 
@@ -43,80 +61,164 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
 #if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
 
   if (event.isRealData ())
-    {
-      doEleSF_ = doMuSF_ = doTrackSF_ = false;
-      objectsToGet_.clear ();
-    }
+    return;
 
   anatools::getRequiredCollections (objectsToGet_, handles_, event, tokens_);
-  if (doEleSF_)
-    {
-      TFile *elesf = TFile::Open (electronFile_.c_str ());
-      if (!elesf || elesf->IsZombie()) {
-        clog << "ERROR [ObjectScalingFactorProducer]: Could not find file: " << electronFile_
-             << "; will cause a seg fault." << endl;
-        exit(1);
-      }
 
-      TH2F *ele;
-      elesf->GetObject(electronWp_.c_str(),ele);
-      if(!elesf){
-        clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << electronWp_.c_str()
-         << "; will cause a seg fault." << endl;
-        exit(1);
-      }
+  TFile *electronInputFile = 0;
+  bool doElectrons = false;
+  if(find(objectsToGet_.begin(), objectsToGet_.end(), "electrons") != objectsToGet_.end())
+    doElectrons = true;
 
-      double eleSF = 1.0, eleSFUp = 1.0, eleSFDown = 1.0;
+  if (doElectrons){
+    electronInputFile = TFile::Open (electronFile_.c_str ());
+    if (!electronInputFile || electronInputFile->IsZombie()) {
+      clog << "ERROR [ObjectScalingFactorProducer]: Could not find file: " << electronFile_
+	   << "; will cause a seg fault." << endl;
+      exit(1);
+    }
+  }
+
+
+
+
+  TFile *muonInputFile = 0;
+  bool doMuons = false;
+  if(find(objectsToGet_.begin(), objectsToGet_.end(), "muons") != objectsToGet_.end())
+    doMuons = true;
+
+  if (doMuons){
+    muonInputFile = TFile::Open (muonFile_.c_str ());
+    if (!muonInputFile || muonInputFile->IsZombie()) {
+      clog << "ERROR [ObjectScalingFactorProducer]: Could not find file: " << muonFile_
+	   << "; will cause a seg fault." << endl;
+      exit(1);
+    }
+  }
+
+
+
+  // loop over desired scale factors, treating each case independently
+  for (auto &sf : scaleFactors_){
+    double sfCentral = 1;
+    double sfDown = 1;
+    double sfUp = 1;
+
+    double totalLumi = 0;
+    for (auto lumi : sf.inputLumis)
+      totalLumi += lumi;
+
+    // loop over different types of electron SFs
+    if (sf.inputCollection == "electrons"){
+      TH2F *plot;
+      electronInputFile->GetObject(sf.inputPlots[0].c_str(),plot);
+      if(!plot){
+	clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << sf.inputPlots[0]
+	     << "; will cause a seg fault." << endl;
+	exit(1);
+      }
       for (const auto &electron1 : *handles_.electrons) {
-        float eta = abs(electron1.eta()) > ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) ? ele->GetXaxis()->GetBinCenter(ele->GetNbinsX()) : abs(electron1.eta());
-        float pt = electron1.pt() > ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) ? ele->GetYaxis()->GetBinCenter(ele->GetNbinsY()) : electron1.pt();
-        if (ele->GetXaxis()->FindBin(electron1.eta()))
-            eta = electron1.eta() > 0 ? eta : -eta;
-        float sf = ele->GetBinContent(ele->FindBin(eta,pt));
-        float sfError = ele->GetBinError(ele->FindBin(eta,pt));
-        eleSF *= sf;
-        eleSFUp *= sf + sfError;
-        eleSFDown *= sf - sfError;
-      }
-      (*eventvariables)["electronScalingFactor"] = eleSF;
-      (*eventvariables)["electronScalingFactorUp"] = eleSFUp;
-      (*eventvariables)["electronScalingFactorDown"] = eleSFDown;
-      delete ele;
-      elesf->Close();
+	float xMax = plot->GetXaxis()->GetBinCenter(plot->GetNbinsX());
+	float yMax = plot->GetYaxis()->GetBinCenter(plot->GetNbinsY());
+	float eta = abs(electron1.eta()) > xMax ? xMax : abs(electron1.eta());
+	float pt = electron1.pt() > yMax ? yMax : electron1.pt();
+	if (plot->GetXaxis()->FindBin(electron1.eta()))
+	  eta = electron1.eta() > 0 ? eta : -eta;
+	float sfValue = plot->GetBinContent(plot->FindBin(eta,pt));
+	float sfError = plot->GetBinError(plot->FindBin(eta,pt));
+	sfCentral *= sfValue;
+	sfUp *= sfValue + sfError;
+	sfDown *= sfValue - sfError;
+      } // end loop over electrons
+      delete plot;
     }
-  if(doMuSF_)
-    {
-      TFile *musf = TFile::Open (muonFile_.c_str ());
-      if (!musf || musf->IsZombie()) {
-        clog << "ERROR [ObjectScalingFactorProducer]: Could not find file: " << muonFile_
-         << "; will cause a seg fault." << endl;
-        exit(1);
+
+
+    else if (sf.inputCollection == "muons"){
+
+      if (sf.sfType == "Reco"){
+	// why in god's name would you use a TGraph for this, muon POG?
+	// i'm just gonna hardcode the solution for this particular case...
+	TGraphAsymmErrors *plot;
+	muonInputFile->GetObject(sf.inputPlots[0].c_str(), plot);
+	if(!plot){
+	  clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << sf.inputPlots[0]
+	       << "; will cause a seg fault." << endl;
+	  exit(1);
+	}
+	for (const auto &muon1 : *handles_.muons) {
+	  double eta = abs(muon1.eta());
+	  int bin = floor(eta / 0.2);
+	  float sfValue = plot->GetY()[bin];
+	  float sfError = plot->GetErrorYhigh(bin);
+	  sfCentral *= sfValue;
+	  sfUp *= sfValue + sfError;
+	  sfDown *= sfValue - sfError;
+	} // end loop over muons
+	delete plot;
       }
 
-      TH2F *mu;
-      musf->GetObject(muonWp_.c_str(),mu);
-      if(!musf){
-        clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << muonWp_.c_str()
-         << "; will cause a seg fault." << endl;
-        exit(1);
+
+      // these two came as era-dependent SFs
+      // we'll use a lumi-weighted sum of the two eras
+      else if (sf.sfType == "ID" || sf.sfType == "Iso"){
+	int numPlots = sf.inputPlots.size();
+	vector<TH2F*> plots;
+	//prepare input plots by applying lumi weighting, store in vector
+	for (int x = 0; x != numPlots; x++){
+	  TH2F *plot;
+	  muonInputFile->GetObject(sf.inputPlots[x].c_str(), plot);
+	  if(!plot){
+	    clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << sf.inputPlots[x]
+		 << "; will cause a seg fault." << endl;
+	    exit(1);
+	  }
+	  float lumiWeight = sf.inputLumis[x]/totalLumi;
+	  plot->Scale(lumiWeight);
+	  plot->SetDirectory(0);
+	  plots.push_back(plot);
+	}
+
+
+        for (const auto &muon1 : *handles_.muons) {
+	  float sfValue = 0;
+	  float sfVariance = 0;
+	  
+	  for (auto &plot : plots){
+	    float xMax = plot->GetXaxis()->GetBinCenter(plot->GetNbinsX());
+	    float yMax = plot->GetYaxis()->GetBinCenter(plot->GetNbinsY());
+	    float pt = muon1.pt() > xMax ? xMax : muon1.pt();
+	    float eta = abs(muon1.eta()) > yMax ? yMax : abs(muon1.eta());
+	    int bin = plot->FindBin(pt,eta);
+	    sfValue += plot->GetBinContent(bin);
+	    sfVariance += plot->GetBinError(bin) * plot->GetBinError(bin);
+	  } // end loop over input plots
+
+	  float sfError = sqrt(sfVariance);
+	  sfCentral *= sfValue;
+	  sfUp *= sfValue + sfError;
+	  sfDown *= sfValue - sfError;
+	} // end loop over muons
+
       }
 
-      double muSF = 1.0, muSFUp = 1.0, muSFDown = 1.0;
-      for (const auto &muon1 : *handles_.muons) {
-        float eta = abs(muon1.eta()) > mu->GetYaxis()->GetBinCenter(mu->GetNbinsY()) ? mu->GetYaxis()->GetBinCenter(mu->GetNbinsY()): abs(muon1.eta());
-        float pt = muon1.pt() > mu->GetXaxis()->GetBinCenter(mu->GetNbinsX()) ? mu->GetXaxis()->GetBinCenter(mu->GetNbinsX()) : muon1.pt();
-        float sf = mu->GetBinContent(mu->FindBin(pt,eta));
-        float sfError = mu->GetBinError(mu->FindBin(pt,eta));
-        muSF *= sf;
-        muSFUp *= sf + sfError;
-        muSFDown *= sf - sfError;
-      }
-      (*eventvariables)["muonScalingFactor"] = muSF;
-      (*eventvariables)["muonScalingFactorUp"] = muSFUp;
-      (*eventvariables)["muonScalingFactorDown"] = muSFDown;
-      delete mu;
-      musf->Close();
     }
+
+    (*eventvariables)[sf.outputVariable] = sfCentral;
+    (*eventvariables)[sf.outputVariable + "Up"] = sfUp;
+    (*eventvariables)[sf.outputVariable + "Down"] = sfDown;
+
+  }
+
+  if (doElectrons)
+    electronInputFile->Close();
+  if (doMuons)
+    muonInputFile->Close();
+
+
+  return;
+
+
   if (doTrackSF_)
     {
       double sf = 1.0;
@@ -150,12 +252,6 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
       (*eventvariables)["trackScalingFactor"] = sf;
     }
 #else
-  (*eventvariables)["electronScalingFactor"] = 1;
-  (*eventvariables)["electronScalingFactorUp"] = 1;
-  (*eventvariables)["electronScalingFactorDown"] = 1;
-  (*eventvariables)["muonScalingFactor"] = 1;
-  (*eventvariables)["muonScalingFactorUp"] = 1;
-  (*eventvariables)["muonScalingFactorDown"] = 1;
   (*eventvariables)["trackScalingFactor"] = 1;
 # endif
 }
