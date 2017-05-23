@@ -391,10 +391,20 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("CopyStatus=1\n")
     SubmitScript.write ("RemoveStatus=1\n\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
-    SubmitScript.write ("RunStatus=$?\n\n")
+    SubmitScript.write ("RunStatus=$?\n")
+    SubmitScript.write ("if [ $RunStatus -ne 0 ]\n")
+    SubmitScript.write ("then\n")
+    SubmitScript.write ("  exit $RunStatus\n")
+    SubmitScript.write ("fi\n\n")
     if len (filesToTransfer) > 0:
         SubmitScript.write ("while [ $CopyStatus -ne 0 ]\n")
         SubmitScript.write ("do\n")
+        DirectoryWithEscapes = re.sub (r"/", r"\/", Directory + "/")
+        SubmitScript.write ("  ls " + " ".join (filesToTransfer) + " | sed \"s/^/" + DirectoryWithEscapes + "/g\" | xargs rm -rf\n")
+        for directory in directoriesToTransfer:
+            directoryWithEscapes = re.sub (r"/", r"\/", os.path.realpath (Directory + "/" + directory) + "/")
+            SubmitScript.write ("  ls " + directory + "/* | sed \"s/^/" + directoryWithEscapes + "/g\" | xargs rm -rf\n")
+        SubmitScript.write ("  sleep 10\n")
         SubmitScript.write ("  cp -rf " + " ".join (filesToTransfer) + " " + os.path.realpath (Directory) + "/")
         for directory in directoriesToTransfer:
             SubmitScript.write (" &&\n  cp -rf " + directory + "/* " + os.path.realpath (Directory + "/" + directory) + "/")
@@ -402,7 +412,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("done\n\n")
         SubmitScript.write ("rm -rf " + " ".join (filesToTransfer) + " " + " ".join (directoriesToTransfer) + "\n")
         SubmitScript.write ("RemoveStatus=$?\n\n")
-    SubmitScript.write ("exit $RunStatus")
+    SubmitScript.write ("exit 0")
     SubmitScript.close ()
     os.chmod (Directory + "/condor.sh", 0755)
 
