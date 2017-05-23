@@ -106,6 +106,17 @@ struct Weight
   double product;
 };
 
+struct ScaleFactor
+{
+  string inputCollection;
+  string sfType;
+  string version;
+  string wp;
+  vector<string> inputPlots;
+  vector<double> inputLumis;
+  string outputVariable;
+};
+
 struct Node
 {
   Node            *parent;
