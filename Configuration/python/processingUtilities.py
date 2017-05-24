@@ -460,7 +460,10 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         for collection in usedCollections:
             if collection is "uservariables" or collection is "eventvariables":
                 newInputTags = cms.VInputTag()
-                inputTags = getattr (collections, collection)
+                if hasattr (collections, collection):
+                    inputTags = getattr (collections, collection)
+                else:
+                    inputTags = cms.VInputTag()
                 for inputTag in inputTags:
                     eventvariableCollections = copy.deepcopy (collections)
                     setattr (eventvariableCollections, collection, cms.InputTag ("",""))
@@ -578,6 +581,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
             setattr (filteredCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
             outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_originalFormat_" + process.name_ ())
             add_channels.filterIndex += 1
+
         ########################################################################
         # Add producers for the scaling factor producers which need the selected
         # objects. For example the lepton scaling factors.
@@ -594,6 +598,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                 for key in module:
                     if str(key) != 'name':
                         setattr (objectProducer, key, module[key])
+
                 # Add this producer in to the path of this channel.
                 channelPath += objectProducer
                 add_channels.producerIndex += 1
@@ -604,6 +609,8 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 # Use the eventvariables producered in the above specific producers.
                 setattr(objectProducer.collections, "eventvariables" ,cms.InputTag ("objectProducer" + str (add_channels.producerIndex - 1), "eventvariables"))
+                if not hasattr (filteredCollections, "eventvariables"):
+                    filteredCollections.eventvariables = cms.VInputTag ()
                 # Add the eventvariables produced in this module to the filteredCollections for the plotter after to use.
                 filteredCollections.eventvariables.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), "eventvariables"))
                 add_channels.producerIndex += 1
