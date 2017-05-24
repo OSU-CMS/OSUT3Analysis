@@ -148,11 +148,11 @@ struct Collections
   edm::Handle<vector<osu::Track> >          tracks;
   edm::Handle<vector<osu::SecondaryTrack> > secondaryTracks;
   edm::Handle<vector<osu::PileUpInfo> >     pileupinfos;
-  edm::Handle<vector<osu::Trigobj> >        trigobjs;
   vector<edm::Handle<osu::Uservariable> >   uservariables;
   vector<edm::Handle<osu::Eventvariable> >  eventvariables;
 
   edm::Handle<TYPE(triggers)>                 triggers;
+  edm::Handle<vector<TYPE(trigobjs)> >        trigobjs;
   edm::Handle<TYPE(prescales)>                prescales;
   edm::Handle<TYPE(generatorweights)>         generatorweights;
   edm::Handle<TYPE(triggers)>                 metFilters;

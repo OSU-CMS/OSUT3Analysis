@@ -50,12 +50,12 @@ struct Tokens
   edm::EDGetTokenT<vector<osu::Track> > tracks;
   edm::EDGetTokenT<vector<osu::SecondaryTrack> > secondaryTracks;
   edm::EDGetTokenT<vector<osu::PileUpInfo> > pileupinfos;
-  edm::EDGetTokenT<vector<osu::Trigobj> > trigobjs;
 
   edm::EDGetTokenT<osu::Beamspot> beamspots;
   edm::EDGetTokenT<TYPE(generatorweights)> generatorweights;
   edm::EDGetTokenT<TYPE(prescales)> prescales;
   edm::EDGetTokenT<TYPE(triggers)> triggers;
+  edm::EDGetTokenT<vector<TYPE(trigobjs)> > trigobjs;
   edm::EDGetTokenT<TYPE(triggers)> metFilters;
 
   vector<edm::EDGetTokenT<osu::Uservariable> > uservariables;
@@ -157,10 +157,6 @@ namespace anatools
 #if IS_VALID(pileupinfos)
   string getObjectType (const osu::PileUpInfo &);
   string getObjectClass (const osu::PileUpInfo &);
-#endif
-#if IS_VALID(trigobjs)
-  string getObjectType (const osu::Trigobj &);
-  string getObjectClass (const osu::Trigobj &);
 #endif
 #if IS_VALID(uservariables)
   // user-defined cases
