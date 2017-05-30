@@ -129,7 +129,8 @@ def GetNumberOfEvents(FilesSet):
 ###############################################################################
 #                 Produce important files for the skim directory.             #
 ###############################################################################
-def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber):
+def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, BadIndices):
+    print "in MakeFilesForSkimDirectory"
     for Member in os.listdir(Directory):
         if os.path.isfile(os.path.join(Directory, Member)):
             continue;
@@ -147,6 +148,9 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber):
         sys.path.append(Directory + '/' + Member)
         createdSkimInputTags = False
         for file in listOfSkimFiles:
+            index = file.split('.')[0].split('_')[1]
+            if index in BadIndices:
+                continue
             if not SkimFileValidator(file.rstrip('\n')):
                 os.system('rm ' + file.rstrip('\n'))
             else:
@@ -158,6 +162,7 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber):
 #           Produce a pickle file containing the skim input tags.             #
 ###############################################################################
 def GetSkimInputTags(File):
+    print "in GetSkimInputTags"
     eventContent = subprocess.check_output (["edmDumpEventContent", "--all", os.getcwd () + "/" + File])
     parsing = False
     cppTypes = []
@@ -229,6 +234,7 @@ def MakeResubmissionScript(badIndices, originalSubmissionScript):
 #                       Determine whether a skim file is valid.               #
 ###############################################################################
 def SkimFileValidator(File):
+    print "testing ", File
     FileToTest = TFile(File)
     Valid = True
     Valid = Valid and FileToTest.Get('MetaData') and FileToTest.Get('ParameterSets') and FileToTest.Get('Parentage') and FileToTest.Get('Events') and FileToTest.Get('LuminosityBlocks') and FileToTest.Get('Runs')
@@ -264,6 +270,9 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         print "no jobs were run for dataset '" + dataSet + "', will skip it and continue!"
         return
     LogFiles = os.popen('ls condor_*.log').readlines()
+    if verbose:
+        print "parsing log files to find good jobs"
+
     for i in range(0,len(LogFiles)):
         ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
 
@@ -272,19 +281,28 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     BadIndices = []
 
     # check for files that weren't found and were skipped
-    StdErrFiles = glob.glob('condor_*.err')
+    StdErrFiles = sorted(glob.glob('condor_*.err'))
+
     for file in StdErrFiles:
         index = file.split("_")[-1].split(".")[0]
         if 'was not found or could not be opened, and will be skipped.' in open(file).read():
             BadIndices.append(index)
+            if verbose:
+                print "  job" + ' ' * (4-len(str(index))) + index + " had bad/skipped input file"
 
 
     # check for any corrupted skim output files
     skimDirs = [member for member in  os.listdir(os.getcwd()) if os.path.isdir(member)]
     for channel in skimDirs:
         for skimFile in glob.glob(channel+'/*.root'):
+            # don't check for good skims of jobs we already know are bad
+            index = skimFile.split('.')[0].split('_')[1]
+            if index in BadIndices:
+                continue
             if not SkimFileValidator(skimFile.rstrip('\n')):
                 BadIndices.append(index)
+                if verbose:
+                    print "  job" + ' ' * (4-len(str(index))) + index + " had bad skim output file"
 
 
     # check for abnormal condor return values
@@ -325,7 +343,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     if verbose:
         print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber
     if not TotalNumber:
-        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
+        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices)
         return
     Weight = 1.0
     crossSection = float(datasetInfo.crossSection)
@@ -343,9 +361,9 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
             Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
     if runOverSkim:
-        MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber)
+        MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber, BadIndices)
     else:
-        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
+        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices)
     cmd = 'mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString
     if verbose:
         print "Executing: ", cmd
