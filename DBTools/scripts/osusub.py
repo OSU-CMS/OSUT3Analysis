@@ -791,7 +791,7 @@ def SkimChannelFinder(userConfig, Directory, temPset):
     sys.path.append(Directory)
     skimChannelNames = []
     os.chdir(Directory)
-    if not hasattr(temPset.process, "endPath"):
+    if not hasattr(temPset.process, "endPath") or len (temPset.process.endPath.moduleNames ()) == 0:
         return []
     outputModules = str(temPset.process.endPath).split('+')
     for outputModule in outputModules:
