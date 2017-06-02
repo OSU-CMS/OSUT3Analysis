@@ -397,7 +397,8 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("  exit $RunStatus\n")
     SubmitScript.write ("fi\n\n")
     if len (filesToTransfer) > 0:
-        SubmitScript.write ("while [ $CopyStatus -ne 0 ]\n")
+        SubmitScript.write ("i=0\n")
+        SubmitScript.write ("while [ $CopyStatus -ne 0 ] && [ $i -lt 10 ]\n")
         SubmitScript.write ("do\n")
         DirectoryWithEscapes = re.sub (r"/", r"\/", Directory + "/")
         SubmitScript.write ("  ls " + " ".join (filesToTransfer) + " | sed \"s/^/" + DirectoryWithEscapes + "/g\" | xargs rm -rf\n")
@@ -412,6 +413,8 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("done\n\n")
         SubmitScript.write ("rm -rf " + " ".join (filesToTransfer) + " " + " ".join (directoriesToTransfer) + "\n")
         SubmitScript.write ("RemoveStatus=$?\n\n")
+        SubmitScript.write ("i=`expr $i + 1`\n")
+    SubmitScript.write ("[ $i -eq 10 ] && exit 999")
     SubmitScript.write ("exit 0")
     SubmitScript.close ()
     os.chmod (Directory + "/condor.sh", 0755)
