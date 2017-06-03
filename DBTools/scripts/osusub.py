@@ -404,7 +404,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("  ls " + " ".join (filesToTransfer) + " | sed \"s/^/" + DirectoryWithEscapes + "/g\" | xargs rm -rf\n")
         for directory in directoriesToTransfer:
             directoryWithEscapes = re.sub (r"/", r"\/", os.path.realpath (Directory + "/" + directory) + "/")
-            SubmitScript.write ("  ls " + directory + "/* | sed \"s/^/" + directoryWithEscapes + "/g\" | xargs rm -rf\n")
+            SubmitScript.write ("  ls " + directory + "/* | sed \"s/^" + directory + "\//" + directoryWithEscapes + "/g\" | xargs rm -rf\n")
         SubmitScript.write ("  sleep 10\n")
         SubmitScript.write ("  cp -rf " + " ".join (filesToTransfer) + " " + os.path.realpath (Directory) + "/")
         for directory in directoriesToTransfer:
