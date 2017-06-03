@@ -410,10 +410,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         for directory in directoriesToTransfer:
             SubmitScript.write (" &&\n  cp -rf " + directory + "/* " + os.path.realpath (Directory + "/" + directory) + "/")
         SubmitScript.write ("\n  CopyStatus=$?\n")
+        SubmitScript.write ("  i=`expr $i + 1`\n")
         SubmitScript.write ("done\n\n")
         SubmitScript.write ("rm -rf " + " ".join (filesToTransfer) + " " + " ".join (directoriesToTransfer) + "\n")
         SubmitScript.write ("RemoveStatus=$?\n\n")
-        SubmitScript.write ("i=`expr $i + 1`\n")
     SubmitScript.write ("[ $i -eq 10 ] && exit 999")
     SubmitScript.write ("exit 0")
     SubmitScript.close ()
