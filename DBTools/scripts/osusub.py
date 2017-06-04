@@ -414,8 +414,8 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("done\n\n")
         SubmitScript.write ("rm -rf " + " ".join (filesToTransfer) + " " + " ".join (directoriesToTransfer) + "\n")
         SubmitScript.write ("RemoveStatus=$?\n\n")
-    SubmitScript.write ("[ $i -eq 10 ] && exit 999")
-    SubmitScript.write ("exit 0")
+    SubmitScript.write ("[ $i -eq 10 ] && exit 999\n")
+    SubmitScript.write ("exit 0\n")
     SubmitScript.close ()
     os.chmod (Directory + "/condor.sh", 0755)
 
