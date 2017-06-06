@@ -7,6 +7,7 @@ import re
 import glob
 import subprocess
 import pickle
+import shutil
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
@@ -57,7 +58,7 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLu
     MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd())  \n')
     MergeScript.write("print 'Finished merging dataset ' + dataset  \n")
     MergeScript.close()
-    os.system('chmod 777 ' + Directory + '/merge.py')
+    os.chmod (Directory + '/merge.py', 0755)
 
 ###############################################################################
 #                       Get the exit code of condor jobs.                     #
@@ -127,15 +128,15 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
     for Member in os.listdir(Directory):
         if os.path.isfile(os.path.join(Directory, Member)):
             continue;
-        os.system('mkdir -p ' + DirectoryOut + '/' + Member)
+        os.makedirs (DirectoryOut + '/' + Member)
         outfile = os.path.join(DirectoryOut, Member, 'OriginalNumberOfEvents.txt')
-        if os.path.exists(outfile):
-            os.remove(outfile)
-        os.system('echo ' + str(TotalNumber) + ' > ' + outfile)
+        fout = open (outfile, "w")
+        fout.write (str (TotalNumber) + "\n")
+        fout.close ()
         outfile = os.path.join(DirectoryOut, Member, 'SkimNumberOfEvents.txt')
-        if os.path.exists(outfile):
-            os.remove(outfile)
-        os.system('echo ' + str(SkimNumber[Member]) + ' > ' + outfile)
+        fout = open (outfile, "w")
+        fout.write (str (SkimNumber[Member]) + "\n")
+        fout.close ()
         os.chdir(Directory + '/' + Member)
         listOfSkimFiles = glob.glob('*.root')
         sys.path.append(Directory + '/' + Member)
@@ -145,7 +146,7 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
             if index in BadIndices:
                 continue
             if index in IndicesToRemove:
-                os.system('rm ' + file.rstrip('\n'))
+                os.unlink (file.rstrip('\n'))
             else:
                 if not createdSkimInputTags:
                   GetSkimInputTags(file.rstrip('\n'))
@@ -246,7 +247,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     if not OutputDir:
         OutputDir = CondorDir
     directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory
-    os.system("mkdir -p " + directoryOut)
+    os.makedirs (directoryOut)
     log = "....................Merging dataset " + dataSet + " ....................\n"
     os.chdir(directory)
     if verbose:
@@ -254,7 +255,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     ReturnValues = []
     StdErrErrors = []
     if os.path.islink(directory + '/hist.root'):
-        os.system('rm ' + directory + '/hist.root')
+        os.unlink (directory + '/hist.root')
     # check to see if any jobs ran
     if not len(glob.glob('condor_*.log')):
         print "no jobs were run for dataset '" + dataSet + "', will skip it and continue!"
@@ -379,4 +380,6 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     flog = open (flogName, "w")
     flog.write(log)
     flog.close()
-    os.system("cat " + flogName)
+    fin = open (flogName)
+    shutil.copyfileobj (fin, sys.stdout)
+    fin.close ()
