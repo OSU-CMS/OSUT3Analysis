@@ -128,7 +128,10 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
     for Member in os.listdir(Directory):
         if os.path.isfile(os.path.join(Directory, Member)):
             continue;
-        os.makedirs (DirectoryOut + '/' + Member)
+        try:
+            os.makedirs (DirectoryOut + '/' + Member)
+        except OSError:
+            pass
         outfile = os.path.join(DirectoryOut, Member, 'OriginalNumberOfEvents.txt')
         fout = open (outfile, "w")
         fout.write (str (TotalNumber) + "\n")
@@ -247,7 +250,10 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     if not OutputDir:
         OutputDir = CondorDir
     directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory
-    os.makedirs (directoryOut)
+    try:
+        os.makedirs (directoryOut)
+    except OSError:
+        pass
     log = "....................Merging dataset " + dataSet + " ....................\n"
     os.chdir(directory)
     if verbose:
