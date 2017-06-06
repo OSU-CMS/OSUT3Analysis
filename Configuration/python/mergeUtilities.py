@@ -228,13 +228,13 @@ def MakeResubmissionScript(badIndices, originalSubmissionScript):
 ###############################################################################
 #                       Determine whether a skim file is valid.               #
 ###############################################################################
-def SkimFileValidator(File, InvalidOrEmpty):
+def SkimFileValidator(File):
     print "testing ", File
     FileToTest = TFile(File)
     Valid = True
     Valid = Valid and FileToTest.Get('MetaData') and FileToTest.Get('ParameterSets') and FileToTest.Get('Parentage') and FileToTest.Get('Events') and FileToTest.Get('LuminosityBlocks') and FileToTest.Get('Runs')
-    InvalidOrEmpty = not Valid or FileToTest.Get ("Events").GetEntries ()
-    return Valid
+    InvalidOrEmpty = not Valid or not FileToTest.Get ("Events").GetEntries ()
+    return Valid, InvalidOrEmpty
 
 
 
@@ -290,7 +290,6 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
 
     # check for any corrupted skim output files
     skimDirs = [member for member in  os.listdir(os.getcwd()) if os.path.isdir(member)]
-    InvalidOrEmpty = False
     IndicesToRemove = []
     for channel in skimDirs:
         for skimFile in glob.glob(channel+'/*.root'):
@@ -298,7 +297,8 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
             index = skimFile.split('.')[0].split('_')[1]
             if index in BadIndices:
                 continue
-            if not SkimFileValidator(skimFile.rstrip('\n'), InvalidOrEmpty):
+            Valid, InvalidOrEmpty = SkimFileValidator(skimFile.rstrip('\n'))
+            if not Valid:
                 BadIndices.append(index)
                 if verbose:
                     print "  job" + ' ' * (4-len(str(index))) + index + " had bad skim output file"
