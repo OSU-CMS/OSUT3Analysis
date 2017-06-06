@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import time
+import shutil
 from math import *
 from array import *
 from decimal import *
@@ -777,8 +778,8 @@ outputFile = TFile(condor_dir + "/" + outputFileName, "RECREATE")
 
 
 if arguments.savePDFs:
-    os.system("rm -rf %s/fitting_histograms_pdfs" % (condor_dir))
-    os.system("mkdir %s/fitting_histograms_pdfs" % (condor_dir))
+    shutil.rmtree ("%s/fitting_histograms_pdfs" % (condor_dir))
+    os.mkdir ("%s/fitting_histograms_pdfs" % (condor_dir))
 
 
 #get root directory in the first layer, generally "OSUAnalysis"

@@ -2,6 +2,7 @@
 import sys
 import os
 import re
+import shutil
 from math import *
 from array import *
 from decimal import *
@@ -663,8 +664,8 @@ else:
 testFile.cd(channelDirectory)
 
 if arguments.savePDFs:
-    os.system("rm -rf comparison_histograms_pdfs")
-    os.system("mkdir comparison_histograms_pdfs")
+    shutil.rmtree ("comparison_histograms_pdfs")
+    os.mkdir ("comparison_histograms_pdfs")
 
 
 if arguments.generic:

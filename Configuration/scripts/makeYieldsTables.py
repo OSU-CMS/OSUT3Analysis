@@ -290,8 +290,8 @@ for channel in channels:
         os.system(command)
         os.system(command)
         #os.system("rm %s" % outputFile)
-        os.system("rm %saux" % (outputFile.rstrip("tex")))
-        os.system("rm %slog" % (outputFile.rstrip("tex")))
+        os.unlink ("%saux" % (outputFile.rstrip("tex")))
+        os.unlink ("%slog" % (outputFile.rstrip("tex")))
         print "Finished writing cutFlow to " + outputFile + " and compiling pdf"
 
 

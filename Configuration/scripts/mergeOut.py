@@ -41,7 +41,7 @@ if arguments.condorDir == "":
 else:
     CondorDir = os.getcwd() + '/condor/' + arguments.condorDir
 OutputDir = os.getcwd() + "/condor/" + arguments.outputDirectory if arguments.outputDirectory else CondorDir
-os.system('mkdir -p ' + OutputDir)
+os.makedirs (OutputDir)
 
 ###############################################################################
 #Check whether the necessary arguments or the local config are given correctly#
