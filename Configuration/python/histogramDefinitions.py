@@ -507,8 +507,8 @@ DiElectronHistograms = cms.PSet(
         cms.PSet (
             name = cms.string("diElectronDeltaZ"),
             title = cms.string("Di-electron #DeltaZ; #DeltaZ"),
-            binsX = cms.untracked.vdouble(100, 0, 20),
-            inputVariables = cms.vstring("abs(deltaZ(electron, electron))"),
+            binsX = cms.untracked.vdouble(200, 0, 20),
+            inputVariables = cms.vstring("abs(electron.vz - electron.vz)"),
         ),
    )
 )
