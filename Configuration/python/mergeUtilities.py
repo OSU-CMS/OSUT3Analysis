@@ -75,12 +75,7 @@ def MessageDecoder(Message, Good):
 #  Get the string of good root files and the corresponding string of weights  #
 ###############################################################################
 def GetGoodRootFiles(Index):
-    return os.popen('ls *_' + str(Index) + '.root').read().rstrip('\n')
-def MakeInputFileString(FilesSet):
-    Str = ''
-    for i in range(0,len(FilesSet)):
-        Str = Str + ' ' + str(FilesSet[i])
-    return Str
+    return " ".join (glob.glob ("*_" + str (Index) + ".root"))
 def MakeWeightsString(Weight,FilesSet):
     Str = ''
     for i in range(0,len(FilesSet)):
@@ -335,7 +330,6 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     if not len(GoodRootFiles):
         print "For dataset", dataSet, ": Unfortunately there are no good root files to merge!\n"
         return
-    InputFileString = MakeInputFileString(GoodRootFiles)
     exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
 
     TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
@@ -364,7 +358,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber, BadIndices)
     else:
         MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices)
-    cmd = 'mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString
+    cmd = 'mergeTFileServiceHistograms -i ' + " ".join (GoodRootFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString
     if verbose:
         print "Executing: ", cmd
     try:
