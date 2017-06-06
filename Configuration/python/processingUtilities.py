@@ -673,12 +673,13 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
             if cutCollections:
                 SelectEvents = cms.vstring (channelName)
             poolOutputModule = cms.OutputModule ("PoolOutputModule",
+                overrideInputFileSplitLevels = cms.untracked.bool (True),
                 splitLevel = cms.untracked.int32 (0),
                 eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
                 fileName = cms.untracked.string (channelName + "/skim" + suffix + ".root"),
                 SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
                 outputCommands = cms.untracked.vstring (outputCommands),
-                dropMetaData = cms.untracked.string ("ALL")
+                dropMetaData = cms.untracked.string ("ALL"),
             )
             add_channels.endPath += poolOutputModule
             setattr (process, channelName + "PoolOutputModule", poolOutputModule)
