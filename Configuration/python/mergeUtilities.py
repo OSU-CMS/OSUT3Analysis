@@ -124,7 +124,7 @@ def GetNumberOfEvents(FilesSet):
 ###############################################################################
 #                 Produce important files for the skim directory.             #
 ###############################################################################
-def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, BadIndices):
+def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, BadIndices, IndicesToRemove):
     print "in MakeFilesForSkimDirectory"
     for Member in os.listdir(Directory):
         if os.path.isfile(os.path.join(Directory, Member)):
@@ -146,7 +146,7 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
             index = file.split('.')[0].split('_')[1]
             if index in BadIndices:
                 continue
-            if not SkimFileValidator(file.rstrip('\n')):
+            if index in IndicesToRemove:
                 os.system('rm ' + file.rstrip('\n'))
             else:
                 if not createdSkimInputTags:
@@ -228,13 +228,12 @@ def MakeResubmissionScript(badIndices, originalSubmissionScript):
 ###############################################################################
 #                       Determine whether a skim file is valid.               #
 ###############################################################################
-def SkimFileValidator(File):
+def SkimFileValidator(File, InvalidOrEmpty):
     print "testing ", File
     FileToTest = TFile(File)
     Valid = True
     Valid = Valid and FileToTest.Get('MetaData') and FileToTest.Get('ParameterSets') and FileToTest.Get('Parentage') and FileToTest.Get('Events') and FileToTest.Get('LuminosityBlocks') and FileToTest.Get('Runs')
-    if Valid:
-        Valid = Valid and FileToTest.Get('Events').GetEntries()
+    InvalidOrEmpty = not Valid or FileToTest.Get ("Events").GetEntries ()
     return Valid
 
 
@@ -288,16 +287,20 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
 
     # check for any corrupted skim output files
     skimDirs = [member for member in  os.listdir(os.getcwd()) if os.path.isdir(member)]
+    InvalidOrEmpty = False
+    IndicesToRemove = []
     for channel in skimDirs:
         for skimFile in glob.glob(channel+'/*.root'):
             # don't check for good skims of jobs we already know are bad
             index = skimFile.split('.')[0].split('_')[1]
             if index in BadIndices:
                 continue
-            if not SkimFileValidator(skimFile.rstrip('\n')):
+            if not SkimFileValidator(skimFile.rstrip('\n'), InvalidOrEmpty):
                 BadIndices.append(index)
                 if verbose:
                     print "  job" + ' ' * (4-len(str(index))) + index + " had bad skim output file"
+            if InvalidOrEmpty:
+                IndicesToRemove.append (index)
 
 
     # check for abnormal condor return values
@@ -337,7 +340,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     if verbose:
         print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber
     if not TotalNumber:
-        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices)
+        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, IndicesToRemove)
         return
     Weight = 1.0
     crossSection = float(datasetInfo.crossSection)
@@ -355,9 +358,9 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
             Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
     if runOverSkim:
-        MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber, BadIndices)
+        MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber, BadIndices, IndicesToRemove)
     else:
-        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices)
+        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, IndicesToRemove)
     cmd = 'mergeTFileServiceHistograms -i ' + " ".join (GoodRootFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString
     if verbose:
         print "Executing: ", cmd
