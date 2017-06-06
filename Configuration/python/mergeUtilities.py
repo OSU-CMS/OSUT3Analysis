@@ -19,7 +19,6 @@ from ROOT import TFile
 #                     Make the submission script for condor.                  #
 ###############################################################################
 def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, split_datasets):
-    os.system('touch ' + Directory + '/condorMerging.sub')
     SubmitFile = open(Directory + '/condorMerging.sub','w')
     for argument in sorted(currentCondorSubArgumentsSet):
         if currentCondorSubArgumentsSet[argument].has_key('Executable') and currentCondorSubArgumentsSet[argument]['Executable'] == "":
@@ -45,7 +44,6 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
 #                 Make the configuration for condor to run over.              #
 ###############################################################################
 def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLumi):
-    os.system('touch ' + Directory + '/merge.py')
     MergeScript = open(Directory + '/merge.py','w')
     MergeScript.write('#!/usr/bin/env python\n')
     MergeScript.write('from OSUT3Analysis.Configuration.mergeUtilities import *\n')
@@ -195,7 +193,6 @@ def GetSkimInputTags(File):
 ###############################################################################
 def MakeResubmissionScript(badIndices, originalSubmissionScript):
     badIndices = list (set (badIndices)) # remove duplicates
-    os.system('touch condor_resubmit.sub')
     resubScript = open('condor_resubmit.sub','w')
     originalScript = open(originalSubmissionScript,'r')
     indexDependence = []
@@ -217,7 +214,6 @@ def MakeResubmissionScript(badIndices, originalSubmissionScript):
     resubScript.close()
     originalScript.close()
 
-    os.system('touch condor_resubmit.sh')
     resubScript = open('condor_resubmit.sh','w')
     resubScript.write ("#!/usr/bin/env bash\n")
     resubScript.write ("\n")
