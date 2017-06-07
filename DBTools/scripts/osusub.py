@@ -877,7 +877,7 @@ if arguments.skimToHadoop:
     else:
         HadoopDir = arguments.skimToHadoop + '/' + arguments.condorDir
     if not os.path.exists(HadoopDir):
-        os.mkdir (HadoopDir)
+        os.makedirs (HadoopDir)
     else:
         print 'Directory "' + str(HadoopDir) + '" already exists in your condor directory. Will proceed with job submission.'
     HadoopDir = os.path.abspath (HadoopDir)
