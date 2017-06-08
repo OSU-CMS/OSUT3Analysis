@@ -133,10 +133,18 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
         except OSError:
             pass
         outfile = os.path.join(DirectoryOut, Member, 'OriginalNumberOfEvents.txt')
+        try:
+            os.unlink (outfile)
+        except OSError:
+            pass
         fout = open (outfile, "w")
         fout.write (str (TotalNumber) + "\n")
         fout.close ()
         outfile = os.path.join(DirectoryOut, Member, 'SkimNumberOfEvents.txt')
+        try:
+            os.unlink (outfile)
+        except OSError:
+            pass
         fout = open (outfile, "w")
         fout.write (str (SkimNumber[Member]) + "\n")
         fout.close ()
