@@ -60,7 +60,6 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
 
   if (event.isRealData ()) {
     for (auto &sf : scaleFactors_) {
-      cout << "HAY -- inserting eventvariables: " << sf.outputVariable << endl;
       (*eventvariables)[sf.outputVariable] = 1.0;
       (*eventvariables)[sf.outputVariable + "Up"] = 1.0;
       (*eventvariables)[sf.outputVariable + "Down"] = 1.0;
@@ -106,7 +105,7 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
 
     // loop over different types of electron SFs
     // these aren't split into separate eras, so don't bother with looping over eras
-    if (sf.inputCollection == "electrons") {
+    if (doElectrons && sf.inputCollection == "electrons") {
       TH2F * plot = (TH2F*)electronInputFile->Get(sf.inputPlots[0].c_str());
       if(!plot){
 	       clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << sf.inputPlots[0]
@@ -147,7 +146,7 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
 
     // muons are split up into eras, so loop over any provided
     // also can be either TH2F's or TGraphAsymmErrors, so test for each case
-    else if (sf.inputCollection == "muons") {
+    else if (doMuons && sf.inputCollection == "muons") {
 
       TObject * tempObj = muonInputFile->Get(sf.inputPlots[0].c_str());
       if(!tempObj) {
