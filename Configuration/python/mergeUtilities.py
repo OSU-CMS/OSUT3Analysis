@@ -123,7 +123,7 @@ def GetNumberOfEvents(FilesSet):
 ###############################################################################
 #                 Produce important files for the skim directory.             #
 ###############################################################################
-def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, BadIndices, IndicesToRemove):
+def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove):
     print "in MakeFilesForSkimDirectory"
     for Member in os.listdir(Directory):
         if os.path.isfile(os.path.join(Directory, Member)):
@@ -156,13 +156,12 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
             index = file.split('.')[0].split('_')[1]
             if index in BadIndices:
                 continue
-            if index in IndicesToRemove:
-                os.unlink (file.rstrip('\n'))
-            else:
-                if not createdSkimInputTags:
-                  GetSkimInputTags(file.rstrip('\n'))
-                  createdSkimInputTags = True
+            if not createdSkimInputTags:
+              GetSkimInputTags(file.rstrip('\n'))
+              createdSkimInputTags = True
         os.chdir(Directory)
+        for file in FilesToRemove:
+            os.unlink (file)
 ###############################################################################
 #           Produce a pickle file containing the skim input tags.             #
 ###############################################################################
@@ -298,7 +297,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
 
     # check for any corrupted skim output files
     skimDirs = [member for member in  os.listdir(os.getcwd()) if os.path.isdir(member)]
-    IndicesToRemove = []
+    FilesToRemove = []
     for channel in skimDirs:
         for skimFile in glob.glob(channel+'/*.root'):
             # don't check for good skims of jobs we already know are bad
@@ -311,7 +310,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
                 if verbose:
                     print "  job" + ' ' * (4-len(str(index))) + index + " had bad skim output file"
             if InvalidOrEmpty:
-                IndicesToRemove.append (index)
+                FilesToRemove.append (skimFile)
 
 
     # check for abnormal condor return values
@@ -351,7 +350,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     if verbose:
         print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber
     if not TotalNumber:
-        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, IndicesToRemove)
+        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove)
         return
     Weight = 1.0
     crossSection = float(datasetInfo.crossSection)
@@ -369,9 +368,9 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
             Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
     if runOverSkim:
-        MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber, BadIndices, IndicesToRemove)
+        MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber, BadIndices, FilesToRemove)
     else:
-        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, IndicesToRemove)
+        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove)
     cmd = 'mergeTFileServiceHistograms -i ' + " ".join (GoodRootFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString
     if verbose:
         print "Executing: ", cmd
