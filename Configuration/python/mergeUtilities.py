@@ -160,8 +160,8 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
               GetSkimInputTags(file.rstrip('\n'))
               createdSkimInputTags = True
         os.chdir(Directory)
-        for file in FilesToRemove:
-            os.unlink (file)
+    for file in FilesToRemove:
+        os.unlink (file)
 ###############################################################################
 #           Produce a pickle file containing the skim input tags.             #
 ###############################################################################
