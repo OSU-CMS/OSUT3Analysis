@@ -1050,7 +1050,7 @@ if not arguments.Resubmit:
                 MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile)
                 MakeCondorSubmitRelease(WorkDir)
             if not arguments.NotToExecute:
-                os.chdir(WorkDir)
+                os.chdir(os.path.realpath(WorkDir))
                 if RealMaxEvents > 0 :
                     print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run on ' + str(RealMaxEvents)  + ' events in ' + str(DatasetRead['numberOfFiles']) + ' files for ' + str(dataset) + ' dataset...\n'
                 else:
@@ -1098,7 +1098,7 @@ if not arguments.Resubmit:
             MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'')
             MakeCondorSubmitRelease(WorkDir)
         if not arguments.NotToExecute:
-            os.chdir(WorkDir)
+            os.chdir(os.path.realpath(WorkDir))
             print 'Submitting ' + str(NumberOfJobs) +  ' jobs to run ' + str(RealMaxEvents)  + ' events for ' + str(Config) + '...\n'
             if lxbatch:
                 os.syetem('./lxbatchSub.sh')
@@ -1120,7 +1120,7 @@ else:
                 subprocess.call ('./condor_resubmit.sh', shell = True)
                 os.chdir(SubmissionDir)
             if os.path.exists(WorkDir + '/condor_resubmit.sub'):
-                os.chdir(WorkDir)
+                os.chdir(os.path.realpath(WorkDir))
                 #If a redirector is defined, switch to the new redirector.
                 if arguments.Redirector != "" :
                     if RedirectorDic.has_key(arguments.Redirector):
