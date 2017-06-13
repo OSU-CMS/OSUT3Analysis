@@ -5,6 +5,7 @@ import math
 import fileinput
 import re
 import collections
+import shutil
 
 from array import *
 from optparse import OptionParser
@@ -154,7 +155,7 @@ class Table(object):
     def printToFile(self, texfile=""):
         if texfile == "":
             texfile = "temp.txt" # write to temporary file, then print to screen and delete
-            os.system("/bin/rm -f temp.txt")
+            os.unlink ("temp.txt")
         fout = open (texfile, "a")
         hlinesToPrint = copy.deepcopy(self.hlines)
         vlinesToPrint = copy.deepcopy(self.vlines)
@@ -215,8 +216,10 @@ class Table(object):
 
         # If no output file specified originally, print to screen.
         if texfile == "temp.txt":
-            os.system("cat temp.txt")
-            os.system("/bin/rm -f temp.txt")
+            fin = open ("temp.txt")
+            shutil.copyfileobj (fin, sys.stdout)
+            fin.close ()
+            os.unlink ("temp.txt")
     def makeAllReplacements(self, replacements):
         for replacement in replacements.keys():
             for c in range(self.numCols()):
@@ -507,8 +510,8 @@ def makePdf(condor_dir,texfile):
     os.system(command)
     if (arguments.verbose):
         print "Finished running: " + command
-    os.system("rm %saux" % (texfile.rstrip("tex")))
-    os.system("rm %slog" % (texfile.rstrip("tex")))
+    os.unlink ("%saux" % (texfile.rstrip("tex")))
+    os.unlink ("%slog" % (texfile.rstrip("tex")))
 
 
 def writeTexFileHeader(texFile):

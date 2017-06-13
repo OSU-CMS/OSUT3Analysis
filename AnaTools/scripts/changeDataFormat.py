@@ -52,6 +52,6 @@ os.system('sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT %s/g" $CMSSW_BAS
 if arguments.custom_config:
     os.system('sed -i "s:.*CustomDataFormat.h.*:%s:" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % ('  #include \\\"' + arguments.custom_config + '\\\"'))
 
-os.system('touch $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h')
+os.utime (os.environ["CMSSW_BASE"] + "/src/OSUT3Analysis/AnaTools/interface/DataFormat.h'", None)
 print "Data format changed to " + arguments.data_format + "."
 print "Do not forget to recompile."

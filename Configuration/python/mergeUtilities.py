@@ -7,6 +7,7 @@ import re
 import glob
 import subprocess
 import pickle
+import shutil
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
@@ -19,7 +20,6 @@ from ROOT import TFile
 #                     Make the submission script for condor.                  #
 ###############################################################################
 def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, split_datasets):
-    os.system('touch ' + Directory + '/condorMerging.sub')
     SubmitFile = open(Directory + '/condorMerging.sub','w')
     for argument in sorted(currentCondorSubArgumentsSet):
         if currentCondorSubArgumentsSet[argument].has_key('Executable') and currentCondorSubArgumentsSet[argument]['Executable'] == "":
@@ -45,7 +45,6 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
 #                 Make the configuration for condor to run over.              #
 ###############################################################################
 def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLumi):
-    os.system('touch ' + Directory + '/merge.py')
     MergeScript = open(Directory + '/merge.py','w')
     MergeScript.write('#!/usr/bin/env python\n')
     MergeScript.write('from OSUT3Analysis.Configuration.mergeUtilities import *\n')
@@ -59,7 +58,7 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLu
     MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd())  \n')
     MergeScript.write("print 'Finished merging dataset ' + dataset  \n")
     MergeScript.close()
-    os.system('chmod 777 ' + Directory + '/merge.py')
+    os.chmod (Directory + '/merge.py', 0755)
 
 ###############################################################################
 #                       Get the exit code of condor jobs.                     #
@@ -75,12 +74,7 @@ def MessageDecoder(Message, Good):
 #  Get the string of good root files and the corresponding string of weights  #
 ###############################################################################
 def GetGoodRootFiles(Index):
-    return os.popen('ls *_' + str(Index) + '.root').read().rstrip('\n')
-def MakeInputFileString(FilesSet):
-    Str = ''
-    for i in range(0,len(FilesSet)):
-        Str = Str + ' ' + str(FilesSet[i])
-    return Str
+    return " ".join (glob.glob ("*_" + str (Index) + ".root"))
 def MakeWeightsString(Weight,FilesSet):
     Str = ''
     for i in range(0,len(FilesSet)):
@@ -129,35 +123,50 @@ def GetNumberOfEvents(FilesSet):
 ###############################################################################
 #                 Produce important files for the skim directory.             #
 ###############################################################################
-def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber):
+def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove):
+    print "in MakeFilesForSkimDirectory"
     for Member in os.listdir(Directory):
         if os.path.isfile(os.path.join(Directory, Member)):
             continue;
-        os.system('mkdir -p ' + DirectoryOut + '/' + Member)
+        try:
+            os.makedirs (DirectoryOut + '/' + Member)
+        except OSError:
+            pass
         outfile = os.path.join(DirectoryOut, Member, 'OriginalNumberOfEvents.txt')
-        if os.path.exists(outfile):
-            os.remove(outfile)
-        os.system('echo ' + str(TotalNumber) + ' > ' + outfile)
+        try:
+            os.unlink (outfile)
+        except OSError:
+            pass
+        fout = open (outfile, "w")
+        fout.write (str (TotalNumber) + "\n")
+        fout.close ()
         outfile = os.path.join(DirectoryOut, Member, 'SkimNumberOfEvents.txt')
-        if os.path.exists(outfile):
-            os.remove(outfile)
-        os.system('echo ' + str(SkimNumber[Member]) + ' > ' + outfile)
+        try:
+            os.unlink (outfile)
+        except OSError:
+            pass
+        fout = open (outfile, "w")
+        fout.write (str (SkimNumber[Member]) + "\n")
+        fout.close ()
         os.chdir(Directory + '/' + Member)
         listOfSkimFiles = glob.glob('*.root')
         sys.path.append(Directory + '/' + Member)
         createdSkimInputTags = False
         for file in listOfSkimFiles:
-            if not SkimFileValidator(file.rstrip('\n')):
-                os.system('rm ' + file.rstrip('\n'))
-            else:
-                if not createdSkimInputTags:
-                  GetSkimInputTags(file.rstrip('\n'))
-                  createdSkimInputTags = True
+            index = file.split('.')[0].split('_')[1]
+            if index in BadIndices:
+                continue
+            if not createdSkimInputTags:
+              GetSkimInputTags(file.rstrip('\n'))
+              createdSkimInputTags = True
         os.chdir(Directory)
+    for file in FilesToRemove:
+        os.unlink (file)
 ###############################################################################
 #           Produce a pickle file containing the skim input tags.             #
 ###############################################################################
 def GetSkimInputTags(File):
+    print "in GetSkimInputTags"
     eventContent = subprocess.check_output (["edmDumpEventContent", "--all", os.getcwd () + "/" + File])
     parsing = False
     cppTypes = []
@@ -195,7 +204,6 @@ def GetSkimInputTags(File):
 ###############################################################################
 def MakeResubmissionScript(badIndices, originalSubmissionScript):
     badIndices = list (set (badIndices)) # remove duplicates
-    os.system('touch condor_resubmit.sub')
     resubScript = open('condor_resubmit.sub','w')
     originalScript = open(originalSubmissionScript,'r')
     indexDependence = []
@@ -217,7 +225,6 @@ def MakeResubmissionScript(badIndices, originalSubmissionScript):
     resubScript.close()
     originalScript.close()
 
-    os.system('touch condor_resubmit.sh')
     resubScript = open('condor_resubmit.sh','w')
     resubScript.write ("#!/usr/bin/env bash\n")
     resubScript.write ("\n")
@@ -229,12 +236,12 @@ def MakeResubmissionScript(badIndices, originalSubmissionScript):
 #                       Determine whether a skim file is valid.               #
 ###############################################################################
 def SkimFileValidator(File):
+    print "testing ", File
     FileToTest = TFile(File)
     Valid = True
     Valid = Valid and FileToTest.Get('MetaData') and FileToTest.Get('ParameterSets') and FileToTest.Get('Parentage') and FileToTest.Get('Events') and FileToTest.Get('LuminosityBlocks') and FileToTest.Get('Runs')
-    if Valid:
-        Valid = Valid and FileToTest.Get('Events').GetEntries()
-    return Valid
+    InvalidOrEmpty = not Valid or not FileToTest.Get ("Events").GetEntries ()
+    return Valid, InvalidOrEmpty
 
 
 
@@ -250,7 +257,10 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     if not OutputDir:
         OutputDir = CondorDir
     directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory
-    os.system("mkdir -p " + directoryOut)
+    try:
+        os.makedirs (directoryOut)
+    except OSError:
+        pass
     log = "....................Merging dataset " + dataSet + " ....................\n"
     os.chdir(directory)
     if verbose:
@@ -258,12 +268,15 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     ReturnValues = []
     StdErrErrors = []
     if os.path.islink(directory + '/hist.root'):
-        os.system('rm ' + directory + '/hist.root')
+        os.unlink (directory + '/hist.root')
     # check to see if any jobs ran
     if not len(glob.glob('condor_*.log')):
         print "no jobs were run for dataset '" + dataSet + "', will skip it and continue!"
         return
     LogFiles = os.popen('ls condor_*.log').readlines()
+    if verbose:
+        print "parsing log files to find good jobs"
+
     for i in range(0,len(LogFiles)):
         ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
 
@@ -272,19 +285,32 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     BadIndices = []
 
     # check for files that weren't found and were skipped
-    StdErrFiles = glob.glob('condor_*.err')
+    StdErrFiles = sorted(glob.glob('condor_*.err'))
+
     for file in StdErrFiles:
         index = file.split("_")[-1].split(".")[0]
         if 'was not found or could not be opened, and will be skipped.' in open(file).read():
             BadIndices.append(index)
+            if verbose:
+                print "  job" + ' ' * (4-len(str(index))) + index + " had bad/skipped input file"
 
 
     # check for any corrupted skim output files
     skimDirs = [member for member in  os.listdir(os.getcwd()) if os.path.isdir(member)]
+    FilesToRemove = []
     for channel in skimDirs:
         for skimFile in glob.glob(channel+'/*.root'):
-            if not SkimFileValidator(skimFile.rstrip('\n')):
+            # don't check for good skims of jobs we already know are bad
+            index = skimFile.split('.')[0].split('_')[1]
+            if index in BadIndices:
+                continue
+            Valid, InvalidOrEmpty = SkimFileValidator(skimFile.rstrip('\n'))
+            if not Valid:
                 BadIndices.append(index)
+                if verbose:
+                    print "  job" + ' ' * (4-len(str(index))) + index + " had bad skim output file"
+            if InvalidOrEmpty:
+                FilesToRemove.append (skimFile)
 
 
     # check for abnormal condor return values
@@ -317,7 +343,6 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     if not len(GoodRootFiles):
         print "For dataset", dataSet, ": Unfortunately there are no good root files to merge!\n"
         return
-    InputFileString = MakeInputFileString(GoodRootFiles)
     exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
 
     TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
@@ -325,7 +350,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     if verbose:
         print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber
     if not TotalNumber:
-        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
+        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove)
         return
     Weight = 1.0
     crossSection = float(datasetInfo.crossSection)
@@ -343,10 +368,10 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
             Weight = IntLumi*crossSection/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
     if runOverSkim:
-        MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber)
+        MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber, BadIndices, FilesToRemove)
     else:
-        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber)
-    cmd = 'mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString
+        MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove)
+    cmd = 'mergeTFileServiceHistograms -i ' + " ".join (GoodRootFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString
     if verbose:
         print "Executing: ", cmd
     try:
@@ -368,4 +393,6 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
     flog = open (flogName, "w")
     flog.write(log)
     flog.close()
-    os.system("cat " + flogName)
+    fin = open (flogName)
+    shutil.copyfileobj (fin, sys.stdout)
+    fin.close ()

@@ -56,7 +56,7 @@ short_condor_dir[0] = short_condor_dir[0].upper ()
 short_condor_dir = "".join (short_condor_dir)
 
 if not os.path.exists (condor_dir):
-    os.system("mkdir %s" % (condor_dir))
+    os.mkdir ("%s" % (condor_dir))
 
 split_datasets = split_composite_datasets(datasets, composite_dataset_definitions)
 

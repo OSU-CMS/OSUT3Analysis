@@ -4,6 +4,7 @@ import os
 import re
 import time
 import datetime
+import shutil
 from math import *
 from array import *
 from decimal import *
@@ -1554,14 +1555,14 @@ processed_datasets = []
 #### if there's a list of specified histograms, we'll just make those ones and then quit
 if arguments.paperConfig:
 
-    os.system("rm -rf figures/")
-    os.system("mkdir figures")
+    shutil.rmtree ("figures")
+    os.mkdir ("figures")
 
     for paperHistogram in paper_histograms:
         # set up output directories for paper-ready plots
         pathToDir = "figures/"+paperHistogram['output_dir']
         if not os.path.exists(pathToDir):
-            os.system("mkdir %s" % (pathToDir))
+            os.mkdir ("%s" % (pathToDir))
 
         # make each canvas and save the pdf
         directory = "OSUAnalysis/" + paperHistogram['channel']
@@ -1595,8 +1596,8 @@ if len(processed_datasets) is 0:
     sys.exit("No datasets have been processed")
 
 if arguments.savePDFs:
-    os.system("rm -rf %s/stacked_histograms_pdfs" % (condor_dir))
-    os.system("mkdir %s/stacked_histograms_pdfs" % (condor_dir))
+    shutil.rmtree ("%s/stacked_histograms_pdfs" % (condor_dir))
+    os.mkdir ("%s/stacked_histograms_pdfs" % (condor_dir))
 
 #### make output file
 outputFileString = ''
@@ -1629,7 +1630,7 @@ for key in inputFile.GetListOfKeys():
     rootDirectory = key.GetName()
     outputFile.mkdir(rootDirectory)
     if arguments.savePDFs:
-        os.system("mkdir %s/stacked_histograms_pdfs/%s" % (condor_dir,plainTextString(rootDirectory)))
+        os.mkdir ("%s/stacked_histograms_pdfs/%s" % (condor_dir,plainTextString(rootDirectory)))
 
     #cd to root directory and look for histograms
     inputFile.cd(rootDirectory)
@@ -1651,7 +1652,7 @@ for key in inputFile.GetListOfKeys():
             outputFile.cd(rootDirectory)
             gDirectory.mkdir(key2.GetName())
             if arguments.savePDFs:
-                os.system("mkdir %s/stacked_histograms_pdfs/%s" % (condor_dir,plainTextString(level2Directory)))
+                os.mkdir ("%s/stacked_histograms_pdfs/%s" % (condor_dir,plainTextString(level2Directory)))
 
             #####################################################
             ###  This layer is typically the "channels" layer ###
@@ -1678,7 +1679,7 @@ for key in inputFile.GetListOfKeys():
                     outputFile.cd(level2Directory)
                     gDirectory.mkdir(key3.GetName())
                     if arguments.savePDFs:
-                        os.system("mkdir %s/stacked_histograms_pdfs/%s" % (condor_dir,plainTextString(level3Directory)))
+                        os.mkdir ("%s/stacked_histograms_pdfs/%s" % (condor_dir,plainTextString(level3Directory)))
 
                     #################################################
                     ###  This layer is typically the "cuts" layer ###

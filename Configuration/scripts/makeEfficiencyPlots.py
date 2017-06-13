@@ -2,6 +2,7 @@
 import sys
 import os
 import re
+import shutil
 from math import *
 from array import *
 from decimal import *
@@ -526,8 +527,8 @@ outputFile = TFile(outputFileName, "RECREATE")
 
 outputConfigFile = outputFileName.replace(".root", ".py")
 if os.path.exists(outputConfigFile):
-    os.system("mv " + outputConfigFile + " " + outputConfigFile.replace(".py", "-bkup.py"))  # make a backup copy of a previous config file
-os.system("cp " + arguments.localConfig + " " + outputConfigFile)  # make a copy of the config file
+    shutil.move (outputConfigFile, outputConfigFile.replace(".py", "-bkup.py"))  # make a backup copy of a previous config file
+shutil.copy (arguments.localConfig, outputConfigFile)  # make a copy of the config file
 
 first_input = input_sources[0]
 
@@ -542,8 +543,8 @@ if arguments.verbose:
     print "Going to rootDirectory: ", rootDirectory
 
 if arguments.savePDFs:
-    os.system("rm -rf efficiency_histograms_pdfs")
-    os.system("mkdir efficiency_histograms_pdfs")
+    shutil.rmtree ("efficiency_histograms_pdfs")
+    os.mkdir ("efficiency_histograms_pdfs")
 
 
 for key in gDirectory.GetListOfKeys(): # Loop over directories in same way as in makePlots.py
