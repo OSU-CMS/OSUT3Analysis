@@ -934,7 +934,14 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     ### formatting signalMC histograms and adding to legend
     legendIndex = 0
     for Histogram in SignalMCHistograms:
-        SignalMCLegend.AddEntry(Histogram,SignalMCLegendEntries[legendIndex],"L")
+        #if legend entry is really long, split it into 2 lines. Split location will need to be changed for each long entry. 
+        if(len(SignalMCLegendEntries[legendIndex])>100):
+            #print "first 119 char are: "+str(SignalMCLegendEntries[legendIndex][:119]) 
+            splitLineEntry = "#splitline{"+str(SignalMCLegendEntries[legendIndex][:119])+"}{"+str(SignalMCLegendEntries[legendIndex][119:])+"}"
+            #print "splitLineEntry is: "+splitLineEntry 
+            SignalMCLegend.AddEntry(Histogram,splitLineEntry,"L")
+        else:
+            SignalMCLegend.AddEntry(Histogram,SignalMCLegendEntries[legendIndex],"L")
         legendIndex = legendIndex+1
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
