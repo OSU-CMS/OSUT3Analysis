@@ -43,6 +43,7 @@ parser.add_option("-d", "--dataset", dest="Dataset", default = "", help="Specify
 parser.add_option("-c", "--configuration", dest="Config", default = "", help="Specify the configuration file to run.")
 parser.add_option("-n", "--numberOfJobs", dest="NumberOfJobs", default = -1, help="Specify how many jobs to submit.")
 parser.add_option("-j", "--numberOfFilesPerJob", dest="NumberOfFilesPerJob", default = -1, help="Specify how many input files per job to submit. Overrides --numberOfJobs argument.")
+parser.add_option("-e", "--numberOfEventsPerJob", dest="NumberOfEventsPerJob", default = -1, help="Specify how many events per job to submit. Overrides --numberOfJobs argument. N.B. Currently only implemented for skim inputs!")
 parser.add_option("-u", "--userCondorSubFile", dest="CondorSubFilr", default = "", help="Specify the condor.sub file you want to use if you have to add arguments.")
 parser.add_option("-U", "--uniqueEventId", action="store_true", dest="Unique", default=False, help="Assign unique and continuos event IDs")
 parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", default = False, help="Just generate necessary config files without executing them.")
@@ -763,6 +764,8 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 return
         datasetRead['realDatasetName'] = datasetInfo.datasetName if hasattr (datasetInfo, "datasetName") else DatasetName
         datasetRead['numberOfFiles'] = datasetInfo.numberOfFiles
+        if RunOverSkim:
+            datasetRead['numberOfEvents'] = datasetInfo.skimNumberOfEvents
         datasetRead['secondaryCollections'] = secondaryCollectionModifications
     return  datasetRead
 
@@ -812,7 +815,15 @@ def SkimModifier(Label, Directory, crossSection):
     fin.close()
     orig = orig.replace("listOfFiles",   "originalListOfFiles")
     orig = orig.replace("numberOfFiles", "originalNumberOfFiles")
-    #Use the up-to-date crossSection all the time and keep track of what value was used when making the skim. For a dataset not registered on T3, the corssSection entering this function will be -1, in this case we do not rewrite the crossSection. The value used when making the skim should be added by the -x option which is stored in the datasetInfo file. One rare case is that you want to change the crossSection to -1, but it can be done in the mergeing step where you merge the datasets with intLumi set to -1.
+    #Use the up-to-date crossSection all the time and keep track of
+    #what value was used when making the skim. For a dataset not
+    #registered on T3, the corssSection entering this function will be
+    #-1, in this case we do not rewrite the crossSection. The value
+    #used when making the skim should be added by the -x option which
+    #is stored in the datasetInfo file. One rare case is that you want
+    #to change the crossSection to -1, but it can be done in the
+    #mergeing step where you merge the datasets with intLumi set to
+    #-1.
     if crossSection != -1:
         orig = orig.replace("crossSection", "crossSection = " + str(crossSection) + "# Value used in making the skim is: ")
     skimFiles = GetListOfRootFiles(SkimDirectory)
@@ -1015,6 +1026,7 @@ if not arguments.Resubmit:
                 crossSection = arguments.crossSection
             DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, UseAAA, crossSection)
             NumberOfFiles = int(DatasetRead['numberOfFiles'])
+
             if not NumberOfFiles:
                 continue
             UseAAA = DatasetRead['useAAA']
@@ -1027,7 +1039,10 @@ if not arguments.Resubmit:
                 NumberOfJobs = int(math.ceil(NumberOfFiles/float(arguments.NumberOfFilesPerJob)))
             if MaxEvents > 0:
                 EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs))
-
+            if RunOverSkim:
+                NumberOfEvents = int(DatasetRead['numberOfEvents'])
+                if arguments.NumberOfEventsPerJob:
+                    NumberOfJobs = int(math.ceil(NumberOfEvents/int(arguments.NumberOfEventsPerJob)))
 
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
