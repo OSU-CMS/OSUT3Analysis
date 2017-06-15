@@ -1042,7 +1042,7 @@ if not arguments.Resubmit:
             if RunOverSkim:
                 NumberOfEvents = int(DatasetRead['numberOfEvents'])
                 if arguments.NumberOfEventsPerJob:
-                    NumberOfJobs = int(math.ceil(NumberOfEvents/int(arguments.NumberOfEventsPerJob)))
+                    NumberOfJobs = max(1,int(math.ceil(NumberOfEvents/int(arguments.NumberOfEventsPerJob))))
 
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
