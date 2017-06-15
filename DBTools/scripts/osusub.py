@@ -1031,8 +1031,6 @@ if not arguments.Resubmit:
                 continue
             UseAAA = DatasetRead['useAAA']
 
-            if NumberOfJobs > NumberOfFiles:
-                NumberOfJobs = NumberOfFiles
             if not arguments.localConfig:
                 NumberOfJobs = int(math.ceil(NumberOfFiles/math.ceil(NumberOfFiles/float(arguments.NumberOfJobs))))
             if float(arguments.NumberOfFilesPerJob) > 0:
@@ -1043,6 +1041,9 @@ if not arguments.Resubmit:
                 NumberOfEvents = int(DatasetRead['numberOfEvents'])
                 if arguments.NumberOfEventsPerJob:
                     NumberOfJobs = max(1,int(math.ceil(NumberOfEvents/int(arguments.NumberOfEventsPerJob))))
+            if NumberOfJobs > NumberOfFiles:
+                NumberOfJobs = NumberOfFiles
+
 
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
