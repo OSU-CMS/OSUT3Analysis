@@ -186,18 +186,18 @@ fillList = [
 ##########################################################################################################################################
 
 # some fancy-ass code from Andrzej Zuranski to merge bins in the ratio plot until the error goes below some threshold
-def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
+def ratioHistogram( numHist, denHist, relErrMax=0.10):
 
     # A group is a list of consecutive histogram bins
     def groupR(group):
-        Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
-        return (Data-MC)/MC if MC else 0
+        Numerator,Denominator = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [numHist,denHist]]
+        return (Numerator-Denominator)/Denominator if Denominator else 0
 
     def groupErr(group):
-        Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
-        dataErr2,mcErr2 = [sum(hist.GetBinError(i)**2 for i in group) for hist in [dataHist,mcHist]]
-        if MC > 0 and Data > 0 and Data != MC:
-            return abs(math.sqrt( (dataErr2+mcErr2)/(Data-MC)**2 + mcErr2/MC**2 ) * (Data-MC)/MC)
+        Numerator,Denominator = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [numHist,denHist]]
+        dataErr2,mcErr2 = [sum(hist.GetBinError(i)**2 for i in group) for hist in [numHist,denHist]]
+        if Denominator > 0 and Numerator > 0 and Numerator != Denominator:
+            return abs(math.sqrt( (dataErr2+mcErr2)/(Numerator-Denominator)**2 + mcErr2/Denominator**2 ) * (Numerator-Denominator)/Denominator)
         else:
             return 0
 
@@ -210,17 +210,17 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
         return regroup(groups[:iLo] + [groups[iLo]+groups[iHi]] + groups[iHi+1:])
 
     #don't rebin the histograms of the number of a given object (except for the pileup ones)
-    if ((dataHist.GetName().find("num") is not -1 and dataHist.GetName().find("Primaryvertexs") is -1) or
-        dataHist.GetName().find("CutFlow")  is not -1 or
-        dataHist.GetName().find("GenMatch") is not -1 or
+    if ((numHist.GetName().find("num") is not -1 and numHist.GetName().find("Primaryvertexs") is -1) or
+        numHist.GetName().find("CutFlow")  is not -1 or
+        numHist.GetName().find("GenMatch") is not -1 or
         arguments.dontRebinRatio):
-        ratio = dataHist.Clone()
-        ratio.Add(mcHist,-1)
-        ratio.Divide(mcHist)
+        ratio = numHist.Clone()
+        ratio.Add(denHist,-1)
+        ratio.Divide(denHist)
         ratio.SetTitle("")
     else:
-        groups = regroup( [(i,) for i in range(1,1+dataHist.GetNbinsX())] )
-        ratio = TH1F("ratio","",len(groups), array('d', [dataHist.GetBinLowEdge(min(g)) for g in groups ] + [dataHist.GetXaxis().GetBinUpEdge(dataHist.GetNbinsX())]) )
+        groups = regroup( [(i,) for i in range(1,1+numHist.GetNbinsX())] )
+        ratio = TH1F("ratio","",len(groups), array('d', [numHist.GetBinLowEdge(min(g)) for g in groups ] + [numHist.GetXaxis().GetBinUpEdge(numHist.GetNbinsX())]) )
         for i,g in enumerate(groups) :
             ratio.SetBinContent(i+1,groupR(g))
             ratio.SetBinError(i+1,groupErr(g))
@@ -550,9 +550,9 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
 
             if makeRatioPlots:
                 if arguments.ratioRelErrMax:
-                    Comparison = ratioHistogram(Reference, Histogram, float(arguments.ratioRelErrMax))
+                    Comparison = ratioHistogram(Histogram, Reference, float(arguments.ratioRelErrMax))
                 else:
-                    Comparison = ratioHistogram(Reference, Histogram)
+                    Comparison = ratioHistogram(Histogram, Reference)
             elif makeDiffPlots:
                 Comparison = Reference.Clone("diff")
                 Comparison.Add(Histograms[1],-1)
