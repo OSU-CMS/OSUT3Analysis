@@ -97,7 +97,6 @@ def runEdmPickEvents(dataset):
     cmd = 'edmPickEvents.py "' + datasetName + '" pickevents.txt --printInteractive > pickevents.src'
     if arguments.verbose:
         print "Running command: ", cmd
-    os.unlink ("pickevents.src")
     os.system(cmd)
     redirector = RedirectorDic[arguments.Redirector]
     # Replace "/store/" with, e.g., root://cmsxrootd.fnal.gov///store/
