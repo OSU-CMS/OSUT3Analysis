@@ -1562,7 +1562,10 @@ processed_datasets = []
 #### if there's a list of specified histograms, we'll just make those ones and then quit
 if arguments.paperConfig:
 
-    shutil.rmtree ("figures")
+    try:
+        shutil.rmtree ("figures")
+    except:
+        pass
     os.mkdir ("figures")
 
     for paperHistogram in paper_histograms:
@@ -1603,7 +1606,10 @@ if len(processed_datasets) is 0:
     sys.exit("No datasets have been processed")
 
 if arguments.savePDFs:
-    shutil.rmtree ("%s/stacked_histograms_pdfs" % (condor_dir))
+    try:
+        shutil.rmtree ("%s/stacked_histograms_pdfs" % (condor_dir))
+    except OSError:
+        pass
     os.mkdir ("%s/stacked_histograms_pdfs" % (condor_dir))
 
 #### make output file

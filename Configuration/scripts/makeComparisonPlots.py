@@ -664,7 +664,10 @@ else:
 testFile.cd(channelDirectory)
 
 if arguments.savePDFs:
-    shutil.rmtree ("comparison_histograms_pdfs")
+    try:
+        shutil.rmtree ("comparison_histograms_pdfs")
+    except OSError:
+        pass
     os.mkdir ("comparison_histograms_pdfs")
 
 
