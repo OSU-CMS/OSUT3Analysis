@@ -225,6 +225,8 @@ datasets = [
    'NoBPTX_Jet_2016EFG_ReReco',
    'NoBPTX_Jet_2016BCDEFGH_ReReco',
 
+   'ZMuSkim_2015D_16Dec2015_Ntuple',
+   
    'ZMuSkim_2016H_PromptReco_RAWRECO_v2',
    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2',
 
@@ -2087,6 +2089,8 @@ nJobs = {
     'NoBPTX_2015E_controlSample' : 31,
 
     #zmu skim
+    'ZMuSkim_2015D_16Dec2015_Ntuple' : 3000,
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 3000,
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 999,
 
@@ -3265,6 +3269,8 @@ maxEvents = {
     'NoBPTX_2015E_controlSample' : -1,
 
     #zmu skim
+    'ZMuSkim_2015D_16Dec2015_Ntuple' : -1,
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : -1,
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : -1,
 
@@ -4497,6 +4503,8 @@ types = {
     'StpPtls_controlSample_2015' : 'data',
 
     #zmu skim
+    'ZMuSkim_2015D_16Dec2015_Ntuple' : 'data',
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 'data',
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 'data',
 
@@ -5714,6 +5722,8 @@ colors = {
     'StpPtls_controlSample_2015' : 1,
 
     #zmu skim
+    'ZMuSkim_2015D_16Dec2015_Ntuple' : 1,
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 1,
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 1,
 
@@ -6944,6 +6954,8 @@ labels = {
     'StpPtls_controlSample_2015' : "Data control sample",
 
     #zmu skim
+    'ZMuSkim_2015D_16Dec2015_Ntuple' : "ZMu Skim 2015D Rereco data",
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : "ZMu Skim 2016H Prompt reco data",
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : "ZMu Skim 2016H Prompt reco data",
 
