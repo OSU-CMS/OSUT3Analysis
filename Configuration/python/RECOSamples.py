@@ -527,6 +527,9 @@ dataset_names = {
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : "/SingleMuon/Run2016H-ZMu-PromptReco-v2/RAW-RECO",
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : "/SingleMuon/Run2016H-ZMu-80To100-PromptReco-v2_8026patch2_Ntuple/USER",
 
+    'ZToMuMu_50To120_76X_AODSIM' : "/ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIIFall15DR76-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/AODSIM",
+    'ZToMuMu_80To100_76X_Ntuple' : "/ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIIFall15DR76-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1_80To100_Ntuple/USER",
+
     'ZToMuMu_50To120_80X_AODSIM' : "/ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM",
     'ZToMuMu_80To100_80X_Ntuple' : "/ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1_Ntuple/USER",
 
