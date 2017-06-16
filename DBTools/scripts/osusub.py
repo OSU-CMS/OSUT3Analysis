@@ -1042,7 +1042,7 @@ if not arguments.Resubmit:
                 EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs))
             if RunOverSkim:
                 NumberOfEvents = int(DatasetRead['numberOfEvents'])
-                if arguments.NumberOfEventsPerJob:
+                if arguments.NumberOfEventsPerJob > 0:
                     NumberOfJobs = max(1,int(math.ceil(NumberOfEvents/int(arguments.NumberOfEventsPerJob))))
             if NumberOfJobs > NumberOfFiles:
                 NumberOfJobs = NumberOfFiles
