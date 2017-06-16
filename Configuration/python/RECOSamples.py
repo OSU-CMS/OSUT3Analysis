@@ -524,6 +524,8 @@ dataset_names = {
     'NoBPTX_2015C_16Dec2015' : "/NoBPTX/Run2015C_25ns-16Dec2015-v1/RECO",
     'NoBPTX_2015D_16Dec2015' : "/NoBPTX/Run2015D-16Dec2015-v1/RECO",
 
+    'ZMuSkim_2015D_16Dec2015_Ntuple' : "/SingleMuon/Run2015D-ZMu-80To100-16Dec2015-76X_Ntuple/USER",
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : "/SingleMuon/Run2016H-ZMu-PromptReco-v2/RAW-RECO",
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : "/SingleMuon/Run2016H-ZMu-80To100-PromptReco-v2_8026patch2_Ntuple/USER",
 
