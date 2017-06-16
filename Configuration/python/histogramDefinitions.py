@@ -330,12 +330,13 @@ ElectronHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(100, 0, 0.01),
             inputVariables = cms.vstring("abs(deltaEtaSuperClusterTrackAtVtx)"),
         ),
-        cms.PSet (
-            name = cms.string("electronDeltaEtaSeedClusterTrackAtVtx"),
-            title = cms.string("Electron deltaEtaSeedClusterTrackAtVtx; #Delta#eta(seed, track) at vertex"),
-            binsX = cms.untracked.vdouble(100, 0, 0.01),
-            inputVariables = cms.vstring("abs(deltaEtaSuperClusterTrackAtVtx - superCluster.eta + superCluster.seed_.eta)"),
-        ),
+        # N.B.: below causes a ProductNotFound of 'reco::CaloCluster' when run over skims (ahart + bfrancis)
+        #cms.PSet (
+        #    name = cms.string("electronDeltaEtaSeedClusterTrackAtVtx"),
+        #    title = cms.string("Electron deltaEtaSeedClusterTrackAtVtx; #Delta#eta(seed, track) at vertex"),
+        #    binsX = cms.untracked.vdouble(100, 0, 0.01),
+        #    inputVariables = cms.vstring("abs(deltaEtaSuperClusterTrackAtVtx - superCluster.eta + superCluster.seed_.eta)"),
+        #),
         cms.PSet (
             name = cms.string("electronDeltaPhiSuperClusterTrackAtVtx"),
             title = cms.string("Electron deltaPhiSuperClusterTrackAtVtx; #Delta#phi(SC, track) at vertex"),
@@ -1559,5 +1560,3 @@ EventVariablePVHistograms = cms.PSet(
 )
 
 ##############################################################################################
-
-
