@@ -104,7 +104,7 @@ else:
                 print dataset + '.root does not exist, component dataset ' + dataSet_component + ' wont be complete!'
                 continue
             memberList.append(dataset + '.root')
-        InputFileString = MakeInputFileString(memberList)
+        InputFileString = " ".join (memberList)
         os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet_component + '.root')
         print 'Finish merging composite dataset ' + dataSet_component
         print "...............................................................\n"
