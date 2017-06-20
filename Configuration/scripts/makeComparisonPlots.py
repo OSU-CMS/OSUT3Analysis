@@ -351,6 +351,14 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
             if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") is -1:
                 Histogram.Rebin(RebinFactor)
 
+        # correct bin contents of object multiplcity plots
+        if Histogram.GetName().find("num") is not -1:
+            # include overflow bin
+            for bin in range(2,Histogram.GetNbinsX()+2):
+                content = Histogram.GetBinContent(bin)
+                Histogram.SetBinContent(bin, content/float(bin-1))
+
+
         xAxisLabel = Histogram.GetXaxis().GetTitle()
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")

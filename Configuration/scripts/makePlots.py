@@ -369,7 +369,6 @@ def signifHistograms(BgSum,SignalMCHistograms):
 ##########################################################################################################################################
 ##########################################################################################################################################
 
-#!!!
 def MakeIntegralHist(hist, integrateDir):
     # return the integrated histogram, in the direction specified
     # integrateDir values: "left", "right", "none"
@@ -701,6 +700,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Histogram.SetDirectory(0)
 
         inputFile.Close()
+
+        # correct bin contents of object multiplcity plots
+        if Histogram.GetName().find("num") is not -1:
+            # include overflow bin
+            for bin in range(2,Histogram.GetNbinsX()+2):
+                content = Histogram.GetBinContent(bin)
+                Histogram.SetBinContent(bin, content/float(bin-1))
 
         isProfile = False
         if "_pfx" in Histogram.GetName() or "_pfy" in Histogram.GetName() or "_sigma" in Histogram.GetName():
