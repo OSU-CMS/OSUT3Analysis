@@ -211,7 +211,7 @@ def ratioHistogram( numHist, denHist, relErrMax=0.10):
         return regroup(groups[:iLo] + [groups[iLo]+groups[iHi]] + groups[iHi+1:])
 
     #don't rebin the histograms of the number of a given object (except for the pileup ones)
-    if ((numHist.GetName().find("num") is not -1 and numHist.GetName().find("Primaryvertexs") is -1) or
+    if ((dataHist.GetName().startswith("num") and "PV" not in dataHist.GetName()) or
         numHist.GetName().find("CutFlow")  is not -1 or
         numHist.GetName().find("GenMatch") is not -1 or
         arguments.dontRebinRatio):
@@ -352,7 +352,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
                 Histogram.Rebin(RebinFactor)
 
         # correct bin contents of object multiplcity plots
-        if Histogram.GetName().find("num") is not -1:
+        if Histogram.GetName().startswith("num") and "PV" not in Histogram.GetName():
             # include overflow bin
             for bin in range(2,Histogram.GetNbinsX()+2):
                 content = Histogram.GetBinContent(bin)
