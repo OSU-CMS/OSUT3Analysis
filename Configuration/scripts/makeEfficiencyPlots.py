@@ -543,7 +543,10 @@ if arguments.verbose:
     print "Going to rootDirectory: ", rootDirectory
 
 if arguments.savePDFs:
-    shutil.rmtree ("efficiency_histograms_pdfs")
+    try:
+        shutil.rmtree ("efficiency_histograms_pdfs")
+    except OSError:
+        pass
     os.mkdir ("efficiency_histograms_pdfs")
 
 

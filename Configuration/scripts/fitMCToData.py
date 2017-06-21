@@ -778,7 +778,10 @@ outputFile = TFile(condor_dir + "/" + outputFileName, "RECREATE")
 
 
 if arguments.savePDFs:
-    shutil.rmtree ("%s/fitting_histograms_pdfs" % (condor_dir))
+    try:
+        shutil.rmtree ("%s/fitting_histograms_pdfs" % (condor_dir))
+    except OSError:
+        pass
     os.mkdir ("%s/fitting_histograms_pdfs" % (condor_dir))
 
 

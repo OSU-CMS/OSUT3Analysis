@@ -155,7 +155,10 @@ class Table(object):
     def printToFile(self, texfile=""):
         if texfile == "":
             texfile = "temp.txt" # write to temporary file, then print to screen and delete
-            os.unlink ("temp.txt")
+            try:
+                os.unlink ("temp.txt")
+            except OSError:
+                pass
         fout = open (texfile, "a")
         hlinesToPrint = copy.deepcopy(self.hlines)
         vlinesToPrint = copy.deepcopy(self.vlines)

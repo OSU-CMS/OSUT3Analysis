@@ -239,7 +239,8 @@ def SkimFileValidator(File):
     print "testing ", File
     FileToTest = TFile(File)
     Valid = True
-    Valid = Valid and FileToTest.Get('MetaData') and FileToTest.Get('ParameterSets') and FileToTest.Get('Parentage') and FileToTest.Get('Events') and FileToTest.Get('LuminosityBlocks') and FileToTest.Get('Runs')
+    for TreeToTest in ['MetaData', 'ParameterSets', 'Parentage', 'Events', 'LuminosityBlocks', 'Runs']:
+        Valid = Valid and (FileToTest.Get(TreeToTest) != None)
     InvalidOrEmpty = not Valid or not FileToTest.Get ("Events").GetEntries ()
     return Valid, InvalidOrEmpty
 

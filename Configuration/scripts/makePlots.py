@@ -935,7 +935,14 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     ### formatting signalMC histograms and adding to legend
     legendIndex = 0
     for Histogram in SignalMCHistograms:
-        SignalMCLegend.AddEntry(Histogram,SignalMCLegendEntries[legendIndex],"L")
+        #if legend entry is really long, split it into 2 lines. Split location will need to be changed for each long entry. 
+        if(len(SignalMCLegendEntries[legendIndex])>100):
+            #print "first 119 char are: "+str(SignalMCLegendEntries[legendIndex][:119]) 
+            splitLineEntry = "#splitline{"+str(SignalMCLegendEntries[legendIndex][:119])+"}{"+str(SignalMCLegendEntries[legendIndex][119:])+"}"
+            #print "splitLineEntry is: "+splitLineEntry 
+            SignalMCLegend.AddEntry(Histogram,splitLineEntry,"L")
+        else:
+            SignalMCLegend.AddEntry(Histogram,SignalMCLegendEntries[legendIndex],"L")
         legendIndex = legendIndex+1
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
@@ -1555,7 +1562,10 @@ processed_datasets = []
 #### if there's a list of specified histograms, we'll just make those ones and then quit
 if arguments.paperConfig:
 
-    shutil.rmtree ("figures")
+    try:
+        shutil.rmtree ("figures")
+    except:
+        pass
     os.mkdir ("figures")
 
     for paperHistogram in paper_histograms:
@@ -1596,7 +1606,10 @@ if len(processed_datasets) is 0:
     sys.exit("No datasets have been processed")
 
 if arguments.savePDFs:
-    shutil.rmtree ("%s/stacked_histograms_pdfs" % (condor_dir))
+    try:
+        shutil.rmtree ("%s/stacked_histograms_pdfs" % (condor_dir))
+    except OSError:
+        pass
     os.mkdir ("%s/stacked_histograms_pdfs" % (condor_dir))
 
 #### make output file

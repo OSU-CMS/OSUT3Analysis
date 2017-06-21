@@ -225,8 +225,13 @@ datasets = [
    'NoBPTX_Jet_2016EFG_ReReco',
    'NoBPTX_Jet_2016BCDEFGH_ReReco',
 
+   'ZMuSkim_80To100_2015D_16Dec2015_Ntuple',
+   
    'ZMuSkim_2016H_PromptReco_RAWRECO_v2',
    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2',
+
+   'ZToMuMu_50To120_76X_AODSIM',
+   'ZToMuMu_80To100_76X_Ntuple',
 
    'ZToMuMu_50To120_80X_AODSIM',
    'ZToMuMu_80To100_80X_Ntuple',
@@ -2084,8 +2089,13 @@ nJobs = {
     'NoBPTX_2015E_controlSample' : 31,
 
     #zmu skim
+    'ZMuSkim_80To100_2015D_16Dec2015_Ntuple' : 3000,
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 3000,
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 999,
+
+    'ZToMuMu_50To120_76X_AODSIM' : 200,
+    'ZToMuMu_80To100_76X_Ntuple' : 200,
 
     'ZToMuMu_50To120_80X_AODSIM' : 300,
     'ZToMuMu_80To100_80X_Ntuple' : 300,
@@ -3259,8 +3269,13 @@ maxEvents = {
     'NoBPTX_2015E_controlSample' : -1,
 
     #zmu skim
+    'ZMuSkim_80To100_2015D_16Dec2015_Ntuple' : -1,
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : -1,
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : -1,
+
+    'ZToMuMu_50To120_76X_AODSIM' : -1,
+    'ZToMuMu_80To100_76X_Ntuple' : -1,
 
     'ZToMuMu_50To120_80X_AODSIM' : -1,
     'ZToMuMu_80To100_80X_Ntuple' : -1,
@@ -4488,8 +4503,13 @@ types = {
     'StpPtls_controlSample_2015' : 'data',
 
     #zmu skim
+    'ZMuSkim_80To100_2015D_16Dec2015_Ntuple' : 'data',
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 'data',
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 'data',
+
+    'ZToMuMu_50To120_76X_AODSIM' : 'bgMC',
+    'ZToMuMu_80To100_76X_Ntuple' : 'bgMC',
 
     'ZToMuMu_50To120_80X_AODSIM' : 'bgMC',
     'ZToMuMu_80To100_80X_Ntuple' : 'bgMC',
@@ -5049,7 +5069,7 @@ colors = {
 
     'cosmicMC_0To25Timing_DigiHlt_v2' : 9,
     'cosmicMC_0To25Timing_Reco_v2' : 9,
-    'cosmicMC_0To25Timing_Ntuple_v2' : 9,
+    'cosmicMC_0To25Timing_Ntuple_v2' : 8,
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_v2' : 9,
     'cosmicMC_0To25Timing_OnlyJetTriggers_Ntuple' : 9,
 
@@ -5397,7 +5417,7 @@ colors = {
     'mchamp100_NtupleSeparateEvents'   :    1,
     'mchamp200_NtupleSeparateEvents'   :    2,
     'mchamp400_NtupleSeparateEvents'   :    3,
-    'mchamp600_NtupleSeparateEvents'   :    1,
+    'mchamp600_NtupleSeparateEvents'   :    2,
     'mchamp800_NtupleSeparateEvents'   :    5,
     'mchamp1000_NtupleSeparateEvents'  :    4,
     'mchamp1400_NtupleSeparateEvents'  :    7,
@@ -5445,7 +5465,7 @@ colors = {
     'gluino1400_NtupleSeparateEvents'   : 8,
     'gluino1600_NtupleSeparateEvents'   : 9,
     'gluino1800_NtupleSeparateEvents'   : 6,
-    'gluino2000_NtupleSeparateEvents'   : 8,
+    'gluino2000_NtupleSeparateEvents'   : 4,
     'gluino2200_NtupleSeparateEvents'   : 2,
     'gluino2400_NtupleSeparateEvents'   : 3,
     'gluino2600_NtupleSeparateEvents'   : 6,
@@ -5622,7 +5642,7 @@ colors = {
     'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : 1,
     'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : 1,
 
-    'NoBPTX_2016BCDEFGH_23Sep2016_Ntuple' : 2,
+    'NoBPTX_2016BCDEFGH_23Sep2016_Ntuple' : 1,
     'NoBPTX_2016B_23Sep2016_Ntuple_v2' : 1,
     'NoBPTX_2016B_23Sep2016_Ntuple_v3' : 1,
     'NoBPTX_2016C_23Sep2016_Ntuple' : 1,
@@ -5702,8 +5722,13 @@ colors = {
     'StpPtls_controlSample_2015' : 1,
 
     #zmu skim
+    'ZMuSkim_80To100_2015D_16Dec2015_Ntuple' : 1,
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : 1,
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : 1,
+
+    'ZToMuMu_50To120_76X_AODSIM' : 1,
+    'ZToMuMu_80To100_76X_Ntuple' : 38,
 
     'ZToMuMu_50To120_80X_AODSIM' : 1,
     'ZToMuMu_80To100_80X_Ntuple' : 46,
@@ -5722,6 +5747,11 @@ colors = {
     'VBF_HTo4L_FPix80x5' : 1,
     'VBF_HTo4L_FPix800x52' : 1,
 
+}
+
+style = {
+    'mchamp600_NtupleSeparateEvents' : 2,
+    'gluino2000_NtupleSeparateEvents' : 1,
 }
 
 labels = {
@@ -6269,7 +6299,7 @@ labels = {
 
     'cosmicMC_0To25Timing_DigiHlt_v2' : "Cosmic Simulation, 2015",
     'cosmicMC_0To25Timing_Reco_v2' : "Cosmic Simulation, 2015",
-    'cosmicMC_0To25Timing_Ntuple_v2' : "Cosmic Simulation, 2015",
+    'cosmicMC_0To25Timing_Ntuple_v2' : "Cosmic Simulation",
     'cosmicMC_0To25Timing_onlyControlTriggers_Ntuple_v2' : "Cosmic Simulation, 2015",
     'cosmicMC_0To25Timing_OnlyJetTriggers_Ntuple' : "Cosmic Simulation, 2015",
 
@@ -6617,7 +6647,7 @@ labels = {
     'mchamp100_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 100 GeV), 2015",
     'mchamp200_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 200 GeV), 2015",
     'mchamp400_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 400 GeV), 2015",
-    'mchamp600_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 600 GeV), 2015",
+    'mchamp600_NtupleSeparateEvents'   :   "mchamp #rightarrow #mu^{#pm}#mu^{#pm} (Q = 2e, M = 600 GeV)",
     'mchamp800_NtupleSeparateEvents'   :   "Mchamp (Q = 2e, M = 800 GeV), 2015",
     'mchamp1000_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 1000 GeV), 2015",
     'mchamp1400_NtupleSeparateEvents'  :   "Mchamp (Q = 2e, M = 1400 GeV), 2015",
@@ -6665,7 +6695,7 @@ labels = {
     'gluino1400_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV), 2015",
     'gluino1600_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1600 GeV, M_{#tilde{#chi}^{0}_{2}}=1000 GeV, M_{#tilde{#chi}^{0}_{LSP}}=400 GeV), 2015",
     'gluino1800_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1800 GeV, M_{#tilde{#chi}^{0}_{2}}=1125 GeV, M_{#tilde{#chi}^{0}_{LSP}}=450 GeV), 2015",
-    'gluino2000_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2000 GeV, M_{#tilde{#chi}^{0}_{2}}=1250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=500 GeV), 2015",
+    'gluino2000_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2000 GeV, M_{#tilde{#chi}^{0}_{2}}=1250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=500 GeV)",
     'gluino2200_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2200 GeV, M_{#tilde{#chi}^{0}_{2}}=1375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=550 GeV), 2015",
     'gluino2400_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2400 GeV, M_{#tilde{#chi}^{0}_{2}}=1500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=600 GeV), 2015",
     'gluino2600_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=2600 GeV, M_{#tilde{#chi}^{0}_{2}}=1625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=650 GeV), 2015",
@@ -6843,7 +6873,8 @@ labels = {
     'NoBPTX_2015E_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015E cosmic data",
     'NoBPTX_2015BCDE_PromptReco_Cosmic_Ntuple' : "NoBPTX 2015B-E cosmic data",
 
-    'NoBPTX_2016BCDEFGH_23Sep2016_Ntuple' : "NoBPTX 2016 Rerecoed data",
+    'NoBPTX_2016BCDEFGH_23Sep2016_Ntuple' : "Data",
+    #'NoBPTX_2016BCDEFGH_23Sep2016_Ntuple' : "NoBPTX 2016 Rerecoed data",
     'NoBPTX_2016B_23Sep2016_Ntuple_v2' : "NoBPTX 2016B-v2 Rerecoed data",
     'NoBPTX_2016B_23Sep2016_Ntuple_v3' : "NoBPTX 2016B-v3 Rerecoed data",
     'NoBPTX_2016C_23Sep2016_Ntuple' : "NoBPTX 2016C Rerecoed data",
@@ -6923,8 +6954,13 @@ labels = {
     'StpPtls_controlSample_2015' : "Data control sample",
 
     #zmu skim
+    'ZMuSkim_80To100_2015D_16Dec2015_Ntuple' : "ZMu Skim 2015D Rereco data",
+
     'ZMuSkim_2016H_PromptReco_RAWRECO_v2' : "ZMu Skim 2016H Prompt reco data",
     'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2' : "ZMu Skim 2016H Prompt reco data",
+
+    'ZToMuMu_50To120_76X_AODSIM' : "Z #rightarrow #mu#mu, 76X",
+    'ZToMuMu_80To100_76X_Ntuple' : "Z #rightarrow #mu#mu, 76X",
 
     'ZToMuMu_50To120_80X_AODSIM' : "Z #rightarrow #mu#mu, 80X",
     'ZToMuMu_80To100_80X_Ntuple' : "Z #rightarrow #mu#mu, 80X",
@@ -7023,6 +7059,9 @@ crossSections = {
     'TTJets_DiLept'                :  87.31,
     'TTJets_SingleLeptFromT'       :  182.7,
     'TTJets_SingleLeptFromTbar'    :  182.7,
+
+    'ZToMuMu_50To120_76X_AODSIM' : 1928,
+    'ZToMuMu_80To100_76X_Ntuple' : 1928,
 
     'ZToMuMu_50To120_80X_AODSIM' : 1928,
     'ZToMuMu_80To100_80X_Ntuple' : 1928,
