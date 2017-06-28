@@ -211,7 +211,7 @@ def ratioHistogram( numHist, denHist, relErrMax=0.10):
         return regroup(groups[:iLo] + [groups[iLo]+groups[iHi]] + groups[iHi+1:])
 
     #don't rebin the histograms of the number of a given object (except for the pileup ones)
-    if ((dataHist.GetName().startswith("num") and "PV" not in dataHist.GetName()) or
+    if ((numHist.GetName().startswith("num") and "PV" not in numHist.GetName()) or
         numHist.GetName().find("CutFlow")  is not -1 or
         numHist.GetName().find("GenMatch") is not -1 or
         arguments.dontRebinRatio):
