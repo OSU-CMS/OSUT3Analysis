@@ -117,7 +117,7 @@ parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help=
 #    Actually I vote for removing UserDir.....
 
 #Define the dictionary to look for the redirectors given the users input.
-RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Purdue':'xrootd.rcac.purdue.edu','Global':'cms-xrd-global.cern.ch','LPC':'cmseos.fnal.gov'}
+RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Purdue':'xrootd.rcac.purdue.edu','Global':'cms-xrd-global.cern.ch','LPC':'cmseos.fnal.gov','CERN':'eoscms.cern.ch'}
 secondaryCollections ={}
 
 DEVNULL = open (os.devnull, "w")

@@ -17,9 +17,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 # ---------------------------------------
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-        #'/store/mc/RunIISpring15DR74/DisplacedSUSY_StopToBL_M-500_CTau-10_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v1/50000/D68ED53F-BD09-E511-A265-008CFA064788.root'
-        '/store/user/ahart/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-DisappTrks-v1/160103_234642/0000/miniAODWithCandidateTracks_1.root'
-        #'root://cmsxrootd.fnal.gov//store/mc/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v3/10000/009D49A5-7314-E511-84EF-0025905A605E.root',
+        #'root://cmsxrootd.fnal.gov//store/mc/RunIISummer16MiniAODv2/DisplacedSUSY_StopToBL_M-500_CTau-10_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/8CCDDA83-8CC8-E611-96A9-0CC47AD98B94.root',
+        'root://cmsxrootd-site1.fnal.gov:1092//store/mc/RunIISpring16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/00000/428CC6A9-591B-E611-A8A7-0CC47A4F1D16.root',
         ),
 )
 
