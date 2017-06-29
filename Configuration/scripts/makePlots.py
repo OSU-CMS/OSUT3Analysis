@@ -948,12 +948,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     ### formatting signalMC histograms and adding to legend
     legendIndex = 0
     for Histogram in SignalMCHistograms:
-        #if legend entry is really long, split it into 2 lines. Split location will need to be changed for each long entry. 
+        #if legend entry is really long, split it into 2 lines (first line with the hist line/marker, second line just text)
+        #this is better than using #splitline{}{} because with that method, the hist line/marker gets misaligned
+        #Split location (here char 119) will need to be changed for each long entry. 
         if(len(SignalMCLegendEntries[legendIndex])>100):
             #print "first 119 char are: "+str(SignalMCLegendEntries[legendIndex][:119]) 
-            splitLineEntry = "#splitline{"+str(SignalMCLegendEntries[legendIndex][:119])+"}{"+str(SignalMCLegendEntries[legendIndex][119:])+"}"
-            #print "splitLineEntry is: "+splitLineEntry 
-            SignalMCLegend.AddEntry(Histogram,splitLineEntry,"L")
+            firstLineEntry = str(SignalMCLegendEntries[legendIndex][:119])
+            secondLineEntry = str(SignalMCLegendEntries[legendIndex][119:])
+            SignalMCLegend.AddEntry(Histogram,firstLineEntry,"L")
+            SignalMCLegend.AddEntry(0,secondLineEntry,"")
         else:
             SignalMCLegend.AddEntry(Histogram,SignalMCLegendEntries[legendIndex],"L")
         legendIndex = legendIndex+1
