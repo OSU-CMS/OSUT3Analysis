@@ -306,9 +306,9 @@ def ratioHistogram( dataHist, mcHist, relErrMax = 0.10):
         iLo,iHi = sorted([iG,iH])
         return regroup(groups[:iLo] + [groups[iLo]+groups[iHi]] + groups[iHi+1:])
 
-    #don't rebin the histograms of the number of a given object (except for the pileup ones)
-    if ((dataHist.GetName().find("num") is not -1 and dataHist.GetName().find("Primaryvertexs") is -1) or
-        dataHist.GetName().find("CutFlow")  is not -1 or
+    #don't rebin the ratio plot for histograms of the number of a given object (except for the pileup ones)
+    if ((dataHist.GetName().startswith("num") and "PV" not in dataHist.GetName()) or
+        dataHist.GetName().find("cutFlow")  is not -1 or
         dataHist.GetName().find("GenMatch") is not -1):
         ratio = dataHist.Clone()
         ratio.Add(mcHist,-1)
@@ -320,6 +320,13 @@ def ratioHistogram( dataHist, mcHist, relErrMax = 0.10):
         for i,g in enumerate(groups) :
             ratio.SetBinContent(i+1,groupR(g))
             ratio.SetBinError(i+1,groupErr(g))
+
+    # move cut labels down to ratio axis
+    if dataHist.GetName().find("cutFlow") is not -1:
+        for bin in range(1,dataHist.GetNbinsX()):
+            binLabel = dataHist.GetXaxis().GetBinLabel(bin)
+            ratio.GetXaxis().SetBinLabel(bin, binLabel)
+        ratio.GetXaxis().SetLabelOffset(0.05)
 
     ratio.GetYaxis().SetTitle("#frac{obs-exp}{exp}")
     ratio.GetYaxis().SetLabelSize(0.3)
@@ -362,7 +369,6 @@ def signifHistograms(BgSum,SignalMCHistograms):
 ##########################################################################################################################################
 ##########################################################################################################################################
 
-#!!!
 def MakeIntegralHist(hist, integrateDir):
     # return the integrated histogram, in the direction specified
     # integrateDir values: "left", "right", "none"
@@ -694,6 +700,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Histogram.SetDirectory(0)
 
         inputFile.Close()
+
+        # correct bin contents of object multiplcity plots
+        if Histogram.GetName().startswith("num") and "PV" not in Histogram.GetName():
+            # include overflow bin
+            for bin in range(2,Histogram.GetNbinsX()+2):
+                content = Histogram.GetBinContent(bin)
+                Histogram.SetBinContent(bin, content/float(bin-1))
 
         isProfile = False
         if "_pfx" in Histogram.GetName() or "_pfy" in Histogram.GetName() or "_sigma" in Histogram.GetName():

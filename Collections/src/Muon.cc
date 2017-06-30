@@ -26,7 +26,7 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles) :
-  GenMatchable             (muon),
+  GenMatchable             (muon, particles),
   isTightMuonWRTVtx_       (false),
   pfdBetaIsoCorr_          (INVALID_VALUE),
   sumChargedHadronPtCorr_  (INVALID_VALUE),
@@ -44,7 +44,7 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
-  GenMatchable             (muon),
+  GenMatchable             (muon, particles, cfg),
   isTightMuonWRTVtx_       (false),
   pfdBetaIsoCorr_          (INVALID_VALUE),
   sumChargedHadronPtCorr_  (INVALID_VALUE),
@@ -62,7 +62,7 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const osu::Met &met) :
-  GenMatchable             (muon),
+  GenMatchable             (muon, particles, cfg),
   isTightMuonWRTVtx_       (false),
   pfdBetaIsoCorr_          (INVALID_VALUE),
   sumChargedHadronPtCorr_  (INVALID_VALUE),
