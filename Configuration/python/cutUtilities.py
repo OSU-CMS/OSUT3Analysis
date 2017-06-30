@@ -47,10 +47,18 @@ def printCuts(cutVPset):  # For debugging
 # Calculation from https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_X/DataFormats/TrackReco/interface/TrackBase.h#L650
 trackD0WRTBeamspot = "((track.vx -                beamspot.x0) * track.py - (track.vy -                beamspot.y0) * track.px) / track.pt"
 trackD0WRTPV       = "((track.vx - eventvariable.leadingPV_x) * track.py - (track.vy - eventvariable.leadingPV_y) * track.px) / track.pt"
+electronD0WRTBeamspot = "((electron.vx -                beamspot.x0) * electron.py - (electron.vy -                beamspot.y0) * electron.px) / electron.pt"
+electronD0WRTPV       = "((electron.vx - eventvariable.leadingPV_x) * electron.py - (electron.vy - eventvariable.leadingPV_y) * electron.px) / electron.pt"
+muonD0WRTBeamspot = "((muon.vx -                beamspot.x0) * muon.py - (muon.vy -                beamspot.y0) * muon.px) / muon.pt"
+muonD0WRTPV       = "((muon.vx - eventvariable.leadingPV_x) * muon.py - (muon.vy - eventvariable.leadingPV_y) * muon.px) / muon.pt"
 
 # Calculation from https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_X/DataFormats/TrackReco/interface/TrackBase.h#L674
 trackDZWRTPV       = "(track.vz - eventvariable.leadingPV_z) \
 - ((track.vx - eventvariable.leadingPV_x) * track.px + (track.vy - eventvariable.leadingPV_y) * track.py) / track.pt * track.pz / track.pt"
+muonDZWRTPV       = "(muon.vz - eventvariable.leadingPV_z) \
+- ((muon.vx - eventvariable.leadingPV_x) * muon.px + (muon.vy - eventvariable.leadingPV_y) * muon.py) / muon.pt * muon.pz / muon.pt"
+electronDZWRTPV       = "(electron.vz - eventvariable.leadingPV_z) \
+- ((electron.vx - eventvariable.leadingPV_x) * electron.px + (electron.vy - eventvariable.leadingPV_y) * electron.py) / electron.pt * electron.pz / electron.pt"
 
 # Calculation from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#Muon_Isolation
 muonPFIsolation = "(pfIsolationR04_.sumChargedHadronPt \
