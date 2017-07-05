@@ -4,5 +4,6 @@
 hist.root
 mergeOutput.py.out*
 *~
-*condor
+*/test/condor
+*/test/limits
 .*
