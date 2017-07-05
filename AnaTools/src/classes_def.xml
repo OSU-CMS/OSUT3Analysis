@@ -36,4 +36,8 @@
 
   <class name="std::pair<const std::string, std::vector<UserVariable> >"/>
   <class name="std::pair<const std::string, double>"/>
+
+  <class name="std::map<std::string,std::vector<std::pair<bool,bool> > >"/>
+  <class name="std::vector<std::map<std::string,std::vector<std::pair<bool,bool> > > >"/>
+  <class name="std::vector<std::pair<bool,bool> >"/>
 </lcgdict>
