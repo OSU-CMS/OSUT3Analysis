@@ -49,6 +49,18 @@ if arguments.custom_config:
 
 os.system('sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT %s/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % (arguments.data_format))
 
+# CMSSW_X_Y_Z
+# Ignore patchN and preN
+# Interpret things like X_Y_ROOT6 or _CLANG or _THREADED as X_Y_0
+CMSSWVersionCode = 0
+versionWords = os.environ["CMSSW_VERSION"].split("_")[1:]
+if len(versionWords) >= 3:
+    CMSSWVersionCode = int(versionWords[0]) << 16 # X
+    CMSSWVersionCode += int(versionWords[1]) << 8 # Y
+    if versionWords[2].isdigit():
+        CMSSWVersionCode += int(versionWords[2])  # Z
+os.system('sed -i "s/#define CMSSW_VERSION_CODE .*/#define CMSSW_VERSION_CODE %d/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/CMSSWVersion.h' % (CMSSWVersionCode))
+
 if arguments.custom_config:
     os.system('sed -i "s:.*CustomDataFormat.h.*:%s:" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % ('  #include \\\"' + arguments.custom_config + '\\\"'))
 

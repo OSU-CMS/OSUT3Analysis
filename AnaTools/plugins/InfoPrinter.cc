@@ -581,7 +581,11 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
   const edm::TriggerNames &triggerNames = event.triggerNames(*handles_.triggers);
   for(auto triggerObj : *handles_.trigobjs) {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,0,0)
     triggerObj.unpackPathNames(triggerNames);
+#else
+    triggerObj.unpackPathNames(triggerNames);
+#endif
     for(const auto &filterLabel : triggerObj.filterLabels()) triggerFilters.push_back(filterLabel);
   }
 
