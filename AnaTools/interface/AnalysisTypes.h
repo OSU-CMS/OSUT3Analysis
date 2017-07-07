@@ -89,6 +89,9 @@ struct HistoDef {
   vector<double> binsX;
   vector<double> binsY;
   vector<double> binsZ;
+  int indexX;
+  int indexY;
+  int indexZ;
   bool hasVariableBinsX;
   bool hasVariableBinsY;
   bool hasVariableBinsZ;
