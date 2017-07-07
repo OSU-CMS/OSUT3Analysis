@@ -10,4 +10,8 @@
 #define CMSSW_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
 #define CMSSW_VERSION_CODE 0
 
+//#if CMSSW_VERSION_CODE < CMSSW_VERSION(7,0,0)
+  //#error "Only CMSSW_7_0_0 and higher are supported. If this is already the case, you must run changeDataFormats.py before compiling."
+//#endif
+
 #endif

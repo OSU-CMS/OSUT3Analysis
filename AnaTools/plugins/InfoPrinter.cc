@@ -579,12 +579,11 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
   }
 
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
-  const edm::TriggerNames &triggerNames = event.triggerNames(*handles_.triggers);
   for(auto triggerObj : *handles_.trigobjs) {
-#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,0,0)
-    triggerObj.unpackPathNames(triggerNames);
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+    triggerObj.unpackNamesAndLabels(event, *handles_.triggers);
 #else
-    triggerObj.unpackPathNames(triggerNames);
+    triggerObj.unpackPathNames(event.triggerNames(*handles_.triggers));
 #endif
     for(const auto &filterLabel : triggerObj.filterLabels()) triggerFilters.push_back(filterLabel);
   }
