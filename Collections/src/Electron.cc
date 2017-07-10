@@ -19,6 +19,10 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   sumChargedHadronPtCorr_     (INVALID_VALUE),
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
+  genD0_                      (INVALID_VALUE),
+  d0_                         (INVALID_VALUE),
+  d0Sig_                      (INVALID_VALUE),
+  dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
@@ -28,14 +32,14 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   metNoMuMinusOnePx_          (INVALID_VALUE),
   metNoMuMinusOnePy_          (INVALID_VALUE),
   metNoMuMinusOnePhi_         (INVALID_VALUE),
-  metMinusOneUpPt_              (INVALID_VALUE),
-  metMinusOneUpPx_              (INVALID_VALUE),
-  metMinusOneUpPy_              (INVALID_VALUE),
-  metMinusOneUpPhi_             (INVALID_VALUE),
-  metNoMuMinusOneUpPt_          (INVALID_VALUE),
-  metNoMuMinusOneUpPx_          (INVALID_VALUE),
-  metNoMuMinusOneUpPy_          (INVALID_VALUE),
-  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
+  metMinusOneUpPt_            (INVALID_VALUE),
+  metMinusOneUpPx_            (INVALID_VALUE),
+  metMinusOneUpPy_            (INVALID_VALUE),
+  metMinusOneUpPhi_           (INVALID_VALUE),
+  metNoMuMinusOneUpPt_        (INVALID_VALUE),
+  metNoMuMinusOneUpPx_        (INVALID_VALUE),
+  metNoMuMinusOneUpPy_        (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_       (INVALID_VALUE)
 {
 }
 
@@ -46,6 +50,10 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumChargedHadronPtCorr_     (INVALID_VALUE),
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
+  genD0_                      (INVALID_VALUE),
+  d0_                         (INVALID_VALUE),
+  d0Sig_                      (INVALID_VALUE),
+  dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
@@ -73,6 +81,10 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumChargedHadronPtCorr_     (INVALID_VALUE),
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
+  genD0_                      (INVALID_VALUE),
+  d0_                         (INVALID_VALUE),
+  d0Sig_                      (INVALID_VALUE),
+  dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
@@ -100,6 +112,10 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumChargedHadronPtCorr_     (INVALID_VALUE),
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
+  genD0_                      (INVALID_VALUE),
+  d0_                         (INVALID_VALUE),
+  d0Sig_                      (INVALID_VALUE),
+  dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
@@ -196,6 +212,30 @@ const double
 osu::Electron::sumPUPtCorr () const
 {
   return sumPUPtCorr_;
+}
+
+const double
+osu::Electron::genD0 () const
+{
+  return genD0_;
+}
+
+const double
+osu::Electron::d0 () const
+{
+  return d0_;
+}
+
+const double
+osu::Electron::d0Sig () const
+{
+  return d0Sig_;
+}
+
+const double
+osu::Electron::dz () const
+{
+  return dz_;
 }
 
 const bool

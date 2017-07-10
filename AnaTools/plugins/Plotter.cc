@@ -197,6 +197,9 @@ HistoDef Plotter::parseHistoDef(const edm::ParameterSet &definition, const vecto
   parsedDef.hasVariableBinsX = parsedDef.binsX.size() > 3;
   parsedDef.hasVariableBinsY = parsedDef.binsY.size() > 3;
   parsedDef.hasVariableBinsZ = parsedDef.binsZ.size() > 3;
+  parsedDef.indexX = definition.getUntrackedParameter<int>("indexX", INVALID_VALUE);
+  parsedDef.indexY = definition.getUntrackedParameter<int>("indexY", INVALID_VALUE);
+  parsedDef.indexZ = definition.getUntrackedParameter<int>("indexZ", INVALID_VALUE);
   parsedDef.inputVariables = definition.getParameter<vector<string> >("inputVariables");
   parsedDef.dimensions = parsedDef.inputVariables.size();
   parsedDef.weight = definition.getUntrackedParameter<bool>("weight", true);
@@ -360,6 +363,9 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
   for(vector<Leaf>::const_iterator leaf = definition.valueLookupTrees.at (0)->evaluate ().begin (); leaf != definition.valueLookupTrees.at (0)->evaluate ().end (); leaf++){
     double value = boost::get<double> (*leaf),
            weight = 1.0;
+    if (!IS_INVALID(definition.indexX) && leaf - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
+	  continue;
+
     if(IS_INVALID(value))
       continue;
     if(definition.hasVariableBinsX){
@@ -385,9 +391,16 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
   for (vector<Weight>::iterator sf = weights.begin (); sf != weights.end (); sf++)
     weight *= sf->product;
 
-  if (definition.inputCollections.size() == 1) {
-    // If there is only one input collection, then fill the 2D histogram once per object.
-    // To do that, increment each lookup tree in parallel.
+
+  // if there's a single input collection used on both axes
+  // and no specific object is chosen from that collection,
+  // then fill the 2D histogram once per object.
+  bool singleObject = definition.inputCollections.size() == 1 &&
+                      IS_INVALID(definition.indexX) &&
+                      IS_INVALID(definition.indexY);
+
+  if (singleObject) {
+    // To fill once per object, increment each lookup tree in parallel.
     for (vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (),
            leafY = definition.valueLookupTrees.at (1)->evaluate ().begin();
          leafX != definition.valueLookupTrees.at (0)->evaluate ().end () &&
@@ -395,6 +408,7 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
          leafX++, leafY++) {
       double valueX = boost::get<double> (*leafX),
         valueY = boost::get<double> (*leafY);
+
       fill2DHistogram(definition, valueX, valueY, weight);
     }
 
@@ -405,6 +419,12 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
       for(vector<Leaf>::const_iterator leafY = definition.valueLookupTrees.at (1)->evaluate ().begin (); leafY != definition.valueLookupTrees.at (1)->evaluate ().end (); leafY++){
         double valueX = boost::get<double> (*leafX),
           valueY = boost::get<double> (*leafY);
+
+	if (!IS_INVALID(definition.indexX) && leafX - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
+	  continue;
+	if (!IS_INVALID(definition.indexY) && leafY - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexY)
+	  continue;
+
         fill2DHistogram(definition, valueX, valueY, weight);
       }
     }
@@ -446,9 +466,16 @@ void Plotter::fill3DHistogram(const HistoDef &definition){
   for (vector<Weight>::iterator sf = weights.begin (); sf != weights.end (); sf++)
     weight *= sf->product;
 
-  if (definition.inputCollections.size() == 1) {
-    // If there is only one input collection, then fill the 3D histogram once per object.
-    // To do that, increment each lookup tree in parallel.
+  // if there's a single input collection used on all axes
+  // and no specific object is chosen from that collection,
+  // then fill the 3D histogram once per object.
+  bool singleObject = definition.inputCollections.size() == 1 &&
+                      IS_INVALID(definition.indexX) &&
+                      IS_INVALID(definition.indexY) &&
+                      IS_INVALID(definition.indexZ);
+
+  if (singleObject) {
+    // To fill once per object, increment each lookup tree in parallel.
     for (vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (),
            leafY = definition.valueLookupTrees.at (1)->evaluate ().begin(),
            leafZ = definition.valueLookupTrees.at (2)->evaluate ().begin();
@@ -471,6 +498,14 @@ void Plotter::fill3DHistogram(const HistoDef &definition){
           double valueX = boost::get<double> (*leafX),
             valueY = boost::get<double> (*leafY),
             valueZ = boost::get<double> (*leafZ);
+
+	  if (!IS_INVALID(definition.indexX) && leafX - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
+	    continue;
+	  if (!IS_INVALID(definition.indexY) && leafY - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexY)
+	    continue;
+	  if (!IS_INVALID(definition.indexZ) && leafZ - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexZ)
+	    continue;
+
           fill3DHistogram(definition, valueX, valueY, valueZ, weight);
         }
       }

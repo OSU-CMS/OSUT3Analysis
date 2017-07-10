@@ -59,6 +59,8 @@
   #error "Only ROOT 5 and 6 are supported."
 #endif
 
+#include "CMSSWVersion.h"
+
 using namespace std;
 
 // type to hold list of hashed indices corresponding to objects
