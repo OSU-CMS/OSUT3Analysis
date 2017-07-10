@@ -165,7 +165,7 @@ datasets = [
    'NoBPTX_2016G_23Sep2016_Ntuple',
    'NoBPTX_2016H_23Sep2016_Ntuple_v2',
    'NoBPTX_2016H_23Sep2016_Ntuple_v3',
-   
+
    'NoBPTX_2016B_PromptReco_Ntuple',
    'NoBPTX_2016C_PromptReco_Ntuple',
    'NoBPTX_2016D_PromptReco_Ntuple',
@@ -226,7 +226,7 @@ datasets = [
    'NoBPTX_Jet_2016BCDEFGH_ReReco',
 
    'ZMuSkim_80To100_2015D_16Dec2015_Ntuple',
-   
+
    'ZMuSkim_2016H_PromptReco_RAWRECO_v2',
    'ZMuSkim_80To100_2016H_PromptReco_Ntuple_v2',
 
@@ -1054,6 +1054,24 @@ nJobs = {
     'AMSB_chargino_700GeV_1000cm_80X'  :  99,
     'AMSB_chargino_700GeV_10000cm_76X'  :  99,
     'AMSB_chargino_700GeV_10000cm_80X'  :  99,
+
+    'AMSB_chargino_800GeV_10cm_76X'    :  99,
+    'AMSB_chargino_800GeV_10cm_80X'    :  99,
+    'AMSB_chargino_800GeV_100cm_76X'   :  99,
+    'AMSB_chargino_800GeV_100cm_80X'   :  99,
+    'AMSB_chargino_800GeV_1000cm_76X'  :  99,
+    'AMSB_chargino_800GeV_1000cm_80X'  :  99,
+    'AMSB_chargino_800GeV_10000cm_76X'  :  99,
+    'AMSB_chargino_800GeV_10000cm_80X'  :  99,
+
+    'AMSB_chargino_900GeV_10cm_76X'    :  99,
+    'AMSB_chargino_900GeV_10cm_80X'    :  99,
+    'AMSB_chargino_900GeV_100cm_76X'   :  99,
+    'AMSB_chargino_900GeV_100cm_80X'   :  99,
+    'AMSB_chargino_900GeV_1000cm_76X'  :  99,
+    'AMSB_chargino_900GeV_1000cm_80X'  :  99,
+    'AMSB_chargino_900GeV_10000cm_76X'  :  99,
+    'AMSB_chargino_900GeV_10000cm_80X'  :  99,
     ############################################################################
 
     ############################################################################
@@ -1292,7 +1310,7 @@ nJobs = {
     'GluinoToQQbarChi0_200_50_2016Simulation' : 5,
     'GluinoToQQbarChi0_200_100_2016Simulation' : 5,
     'GluinoToQQbarChi0_200_150_2016Simulation' : 5,
-    
+
     #stopped particles stage2 signals
     'GluinoToUUbarChi0_1200_200' : 1,
     'GluinoToUUbarChi0_1200_600' : 3,
@@ -1958,7 +1976,7 @@ nJobs = {
     'NoBPTX_CosJet_2016F_PromptReco_v1' : 999,
     #'NoBPTX_2015D_v3' : 30,
     #'NoBPTX_2015D_v4' : 30,
-    
+
     'NoBPTX_2016B_23Sep2016_v2' : 999,
     'NoBPTX_2016B_23Sep2016_v3' : 999,
     'NoBPTX_2016C_23Sep2016' : 999,
@@ -2245,6 +2263,24 @@ maxEvents = {
     'AMSB_chargino_700GeV_1000cm_80X'  :  -1,
     'AMSB_chargino_700GeV_10000cm_76X'  :  -1,
     'AMSB_chargino_700GeV_10000cm_80X'  :  -1,
+
+    'AMSB_chargino_800GeV_10cm_76X'    :  -1,
+    'AMSB_chargino_800GeV_10cm_80X'    :  -1,
+    'AMSB_chargino_800GeV_100cm_76X'   :  -1,
+    'AMSB_chargino_800GeV_100cm_80X'   :  -1,
+    'AMSB_chargino_800GeV_1000cm_76X'  :  -1,
+    'AMSB_chargino_800GeV_1000cm_80X'  :  -1,
+    'AMSB_chargino_800GeV_10000cm_76X'  :  -1,
+    'AMSB_chargino_800GeV_10000cm_80X'  :  -1,
+
+    'AMSB_chargino_900GeV_10cm_76X'    :  -1,
+    'AMSB_chargino_900GeV_10cm_80X'    :  -1,
+    'AMSB_chargino_900GeV_100cm_76X'   :  -1,
+    'AMSB_chargino_900GeV_100cm_80X'   :  -1,
+    'AMSB_chargino_900GeV_1000cm_76X'  :  -1,
+    'AMSB_chargino_900GeV_1000cm_80X'  :  -1,
+    'AMSB_chargino_900GeV_10000cm_76X'  :  -1,
+    'AMSB_chargino_900GeV_10000cm_80X'  :  -1,
     ############################################################################
 
     ############################################################################
@@ -3432,6 +3468,24 @@ types = {
     'AMSB_chargino_700GeV_1000cm_80X'  :  "signalMC",
     'AMSB_chargino_700GeV_10000cm_76X'  :  "signalMC",
     'AMSB_chargino_700GeV_10000cm_80X'  :  "signalMC",
+
+    'AMSB_chargino_800GeV_10cm_76X'    :  "signalMC",
+    'AMSB_chargino_800GeV_10cm_80X'    :  "signalMC",
+    'AMSB_chargino_800GeV_100cm_76X'   :  "signalMC",
+    'AMSB_chargino_800GeV_100cm_80X'   :  "signalMC",
+    'AMSB_chargino_800GeV_1000cm_76X'  :  "signalMC",
+    'AMSB_chargino_800GeV_1000cm_80X'  :  "signalMC",
+    'AMSB_chargino_800GeV_10000cm_76X'  :  "signalMC",
+    'AMSB_chargino_800GeV_10000cm_80X'  :  "signalMC",
+
+    'AMSB_chargino_900GeV_10cm_76X'    :  "signalMC",
+    'AMSB_chargino_900GeV_10cm_80X'    :  "signalMC",
+    'AMSB_chargino_900GeV_100cm_76X'   :  "signalMC",
+    'AMSB_chargino_900GeV_100cm_80X'   :  "signalMC",
+    'AMSB_chargino_900GeV_1000cm_76X'  :  "signalMC",
+    'AMSB_chargino_900GeV_1000cm_80X'  :  "signalMC",
+    'AMSB_chargino_900GeV_10000cm_76X'  :  "signalMC",
+    'AMSB_chargino_900GeV_10000cm_80X'  :  "signalMC",
     ############################################################################
 
     ############################################################################
@@ -4658,6 +4712,24 @@ colors = {
     'AMSB_chargino_700GeV_1000cm_80X'  :  923,
     'AMSB_chargino_700GeV_10000cm_76X'  :  923,
     'AMSB_chargino_700GeV_10000cm_80X'  :  923,
+
+    'AMSB_chargino_800GeV_10cm_76X'    :  628,
+    'AMSB_chargino_800GeV_10cm_80X'    :  628,
+    'AMSB_chargino_800GeV_100cm_76X'   :  596,
+    'AMSB_chargino_800GeV_100cm_80X'   :  596,
+    'AMSB_chargino_800GeV_1000cm_76X'  :  923,
+    'AMSB_chargino_800GeV_1000cm_80X'  :  923,
+    'AMSB_chargino_800GeV_10000cm_76X'  :  923,
+    'AMSB_chargino_800GeV_10000cm_80X'  :  923,
+
+    'AMSB_chargino_900GeV_10cm_76X'    :  628,
+    'AMSB_chargino_900GeV_10cm_80X'    :  628,
+    'AMSB_chargino_900GeV_100cm_76X'   :  596,
+    'AMSB_chargino_900GeV_100cm_80X'   :  596,
+    'AMSB_chargino_900GeV_1000cm_76X'  :  923,
+    'AMSB_chargino_900GeV_1000cm_80X'  :  923,
+    'AMSB_chargino_900GeV_10000cm_76X'  :  923,
+    'AMSB_chargino_900GeV_10000cm_80X'  :  923,
     ############################################################################
 
     ############################################################################
@@ -5888,6 +5960,24 @@ labels = {
     'AMSB_chargino_700GeV_1000cm_80X'  :  "700 GeV #tilde{#chi}^{#pm} (c#tau = 1000 cm)",
     'AMSB_chargino_700GeV_10000cm_76X'  :  "700 GeV #tilde{#chi}^{#pm} (c#tau = 10000 cm)",
     'AMSB_chargino_700GeV_10000cm_80X'  :  "700 GeV #tilde{#chi}^{#pm} (c#tau = 10000 cm)",
+
+    'AMSB_chargino_800GeV_10cm_76X'    :  "800 GeV #tilde{#chi}^{#pm} (c#tau = 10 cm)",
+    'AMSB_chargino_800GeV_10cm_80X'    :  "800 GeV #tilde{#chi}^{#pm} (c#tau = 10 cm)",
+    'AMSB_chargino_800GeV_100cm_76X'   :  "800 GeV #tilde{#chi}^{#pm} (c#tau = 100 cm)",
+    'AMSB_chargino_800GeV_100cm_80X'   :  "800 GeV #tilde{#chi}^{#pm} (c#tau = 100 cm)",
+    'AMSB_chargino_800GeV_1000cm_76X'  :  "800 GeV #tilde{#chi}^{#pm} (c#tau = 1000 cm)",
+    'AMSB_chargino_800GeV_1000cm_80X'  :  "800 GeV #tilde{#chi}^{#pm} (c#tau = 1000 cm)",
+    'AMSB_chargino_800GeV_10000cm_76X'  :  "800 GeV #tilde{#chi}^{#pm} (c#tau = 10000 cm)",
+    'AMSB_chargino_800GeV_10000cm_80X'  :  "800 GeV #tilde{#chi}^{#pm} (c#tau = 10000 cm)",
+
+    'AMSB_chargino_900GeV_10cm_76X'    :  "900 GeV #tilde{#chi}^{#pm} (c#tau = 10 cm)",
+    'AMSB_chargino_900GeV_10cm_80X'    :  "900 GeV #tilde{#chi}^{#pm} (c#tau = 10 cm)",
+    'AMSB_chargino_900GeV_100cm_76X'   :  "900 GeV #tilde{#chi}^{#pm} (c#tau = 100 cm)",
+    'AMSB_chargino_900GeV_100cm_80X'   :  "900 GeV #tilde{#chi}^{#pm} (c#tau = 100 cm)",
+    'AMSB_chargino_900GeV_1000cm_76X'  :  "900 GeV #tilde{#chi}^{#pm} (c#tau = 1000 cm)",
+    'AMSB_chargino_900GeV_1000cm_80X'  :  "900 GeV #tilde{#chi}^{#pm} (c#tau = 1000 cm)",
+    'AMSB_chargino_900GeV_10000cm_76X'  :  "900 GeV #tilde{#chi}^{#pm} (c#tau = 10000 cm)",
+    'AMSB_chargino_900GeV_10000cm_80X'  :  "900 GeV #tilde{#chi}^{#pm} (c#tau = 10000 cm)",
     ############################################################################
 
     ############################################################################
