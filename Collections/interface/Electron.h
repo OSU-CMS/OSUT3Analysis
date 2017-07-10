@@ -22,6 +22,10 @@ namespace osu
         const double pfdRhoIsoCorr () const;
         const double sumChargedHadronPtCorr () const;
         const double sumPUPtCorr () const;
+        const double genD0 () const;
+        const double d0 () const;
+        const double d0Sig () const;
+        const double dz () const;
         const int electronPVIndex () const;
         const int missingInnerHits () const;
         const int missingMiddleHits () const;
@@ -33,6 +37,10 @@ namespace osu
         void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };
         void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
         void set_electronPVIndex (int value) { electronPVIndex_  = value; };
+        void set_genD0 (double value) { genD0_  = value; };
+        void set_d0 (double value) { d0_  = value; };
+        void set_d0Sig (double value) { d0Sig_  = value; };
+        void set_dz (double value) { dz_  = value; };
         void set_passesTightID_noIsolation (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
 
         const double metMinusOnePt () const;
@@ -73,6 +81,10 @@ namespace osu
         double sumChargedHadronPtCorr_;
         int electronPVIndex_;
         double sumPUPtCorr_;
+        double genD0_;
+        double d0_;
+        double d0Sig_;
+        double dz_;
         bool passesTightID_noIsolation_;
 
         double metMinusOnePt_;

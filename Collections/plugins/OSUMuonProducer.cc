@@ -5,24 +5,27 @@
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
 
 #include "OSUT3Analysis/Collections/interface/Primaryvertex.h"
-
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
-  pfCandidate_ (cfg.getParameter<edm::InputTag> ("pfCandidate")),
-  cfg_ (cfg)
-{
-  collection_         = collections_.getParameter<edm::InputTag> ("muons");
-  collPrimaryvertexs_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
+  cfg_ (cfg),
+  pfCandidate_ (cfg.getParameter<edm::InputTag> ("pfCandidate"))
 
+
+{
+  collection_ = collections_.getParameter<edm::InputTag> ("muons");
   produces<vector<osu::Muon> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(muons)> > (collection_);
-  pfCandidateToken_ = consumes<vector<pat::PackedCandidate>>(pfCandidate_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
-  primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collPrimaryvertexs_);
+  prunedParticleToken_ = consumes<vector<reco::GenParticle> > (collections_.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
+  pfCandidateToken_ = consumes<vector<pat::PackedCandidate>>(pfCandidate_);
+  beamspotToken_ = consumes<TYPE(beamspots)> (collections_.getParameter<edm::InputTag> ("beamspots"));
+  primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
   metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
+
+
 }
 
 OSUMuonProducer::~OSUMuonProducer ()
@@ -32,33 +35,67 @@ OSUMuonProducer::~OSUMuonProducer ()
 void
 OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<pat::PackedCandidate>> cands;
+
+  using namespace edm;
+
+
+  Handle<vector<TYPE(muons)> > collection;
+  event.getByToken(token_, collection);
+
+  Handle<vector<pat::PackedCandidate> > cands;
   event.getByToken(pfCandidateToken_, cands);
-  edm::Handle<vector<TYPE(muons)> > collection;
-  edm::Handle<vector<TYPE(primaryvertexs)> > collPrimaryvertexs;
-  if (!event.getByToken (token_, collection))
-    return;
-  if (!event.getByToken (primaryvertexToken_, collPrimaryvertexs)) {
-    clog << "ERROR [OSUMuonProducer::produce]:  could not get collection: " << collPrimaryvertexs_ << endl;
-    return;
-  }
-  edm::Handle<vector<osu::Mcparticle> > particles;
+
+  Handle<vector<TYPE(primaryvertexs)> > vertices;
+  event.getByToken (primaryvertexToken_, vertices);
+
+  Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
-  edm::Handle<vector<osu::Met> > met;
+
+  Handle<vector<reco::GenParticle> > prunedParticles;
+  event.getByToken (prunedParticleToken_, prunedParticles);
+
+  Handle<TYPE(beamspots)> beamspot;
+  event.getByToken (beamspotToken_, beamspot);
+
+  Handle<vector<osu::Met> > met;
   event.getByToken (metToken_, met);
+
+
+
+
+
+
 
   pl_ = unique_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
     {
       pl_->emplace_back (object, particles, cfg_, met->at (0));
       osu::Muon &muon = pl_->back ();
-      if (collPrimaryvertexs->size ())
+
+      if (vertices->size ())
         {
-          const reco::Vertex &vtx = collPrimaryvertexs->at (0);
+          const reco::Vertex &vtx = vertices->at (0);
           muon.set_isTightMuonWRTVtx(muon.isTightMuon(vtx));
         }
       else
           muon.set_isTightMuonWRTVtx(false);
+
+      if(prunedParticles.isValid() && beamspot.isValid())
+        {
+          for (auto cand = prunedParticles->begin(); cand != prunedParticles->end(); cand++)
+            {
+              if (!(abs(cand->pdgId()) == 13 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.001))
+                continue;
+	      double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
+	      muon.set_genD0(gen_d0);
+	    }
+	}
+      double d0 = object.dB(pat::Muon::BS2D);
+      double err = object.edB(pat::Muon::BS2D);
+      muon.set_d0(d0);
+      muon.set_d0Sig(d0/err);
+
+
       double pfdBetaIsoCorr = 0;
       double chargedHadronPt = 0;
       double puPt = 0;
@@ -128,6 +165,13 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       muon.set_sumChargedHadronPtCorr(chargedHadronPt);
       muon.set_sumPUPtCorr(puPt);
       muon.set_muonPVIndex(muonPVIndex);
+
+      if (vertices->size ())
+        {
+          const reco::Vertex &vtx = vertices->at (muonPVIndex);
+	  muon.set_dz(object.muonBestTrack()->dz(vtx.position()));
+	}
+
     }
 
   event.put (std::move (pl_), collection_.instance ());

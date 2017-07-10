@@ -5,8 +5,8 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-
 #include "OSUT3Analysis/Collections/interface/Muon.h"
+
 
 class OSUMuonProducer : public edm::EDProducer
 {
@@ -24,12 +24,17 @@ class OSUMuonProducer : public edm::EDProducer
     edm::InputTag      collection_;
     edm::EDGetTokenT<vector<TYPE(muons)> > token_;
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
+    edm::EDGetTokenT<TYPE(beamspots)> beamspotToken_;
+    edm::EDGetTokenT<vector<reco::GenParticle> > prunedParticleToken_;
     edm::EDGetTokenT<vector<pat::PackedCandidate> > pfCandidateToken_;
     edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexToken_;
     edm::EDGetTokenT<vector<osu::Met> > metToken_;
-    edm::InputTag      pfCandidate_;
+
+
+
     edm::ParameterSet  cfg_;
-    edm::InputTag      collPrimaryvertexs_;
+    edm::InputTag      pfCandidate_;
+
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.

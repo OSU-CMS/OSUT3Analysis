@@ -72,11 +72,9 @@ collectionProducer.dtsegs = cms.EDProducer ("OSUDtsegProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
+    pfCandidate      =  cms.InputTag  ('packedPFCandidates','',''),
     conversions      =  cms.InputTag  ("reducedEgamma",                  "reducedConversions",          ""),
     rho              =  cms.InputTag  ("fixedGridRhoFastjetAll",         "",                            ""),
-    beamSpot         =  cms.InputTag  ("offlineBeamSpot",                "",                            ""),
-    vertices         =  cms.InputTag  ('offlineSlimmedPrimaryVertices',  ''),
-    pfCandidate      =  cms.InputTag  ('packedPFCandidates','',''),
 
     # the following tag is not used by the OSUElectronProducer, but is needed
     # so that the reco::GsfElectronCore collection is saved in skims, which is
