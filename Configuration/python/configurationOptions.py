@@ -236,6 +236,12 @@ datasets = [
    'ZToMuMu_50To120_80X_AODSIM',
    'ZToMuMu_80To100_80X_Ntuple',
 
+   'NoBPTX_2017B_v1_PromptReco_RECO',
+   'NoBPTX_2017B_v2_PromptReco_RECO',
+
+   'NoBPTX_2017B_v1_PromptReco_Ntuple',
+   'NoBPTX_2017B_v2_PromptReco_Ntuple',
+
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
    'DYJetsToLL_10to50',
@@ -919,6 +925,16 @@ composite_dataset_definitions = {
        'NoBPTX_CosJet_2016E_PromptReco_v2',
        'NoBPTX_CosJet_2016F_PromptReco_v1',
     ],
+
+   'NoBPTX_2017_PromptReco_RECO' : [
+        'NoBPTX_2017B_v1_PromptReco_RECO',
+        'NoBPTX_2017B_v2_PromptReco_RECO',
+        ],
+   'NoBPTX_2017_PromptReco_Ntuple' : [
+        'NoBPTX_2017B_v1_PromptReco_Ntuple',
+        'NoBPTX_2017B_v2_PromptReco_Ntuple',
+        ],
+
 }
 
 
@@ -2118,6 +2134,15 @@ nJobs = {
     'ZToMuMu_50To120_80X_AODSIM' : 300,
     'ZToMuMu_80To100_80X_Ntuple' : 300,
 
+    'NoBPTX_2017_PromptReco_RECO' : 999,
+    'NoBPTX_2017B_v1_PromptReco_RECO' : 999,
+    'NoBPTX_2017B_v2_PromptReco_RECO' : 999,
+
+    'NoBPTX_2017_PromptReco_Ntuple' : 999,
+    'NoBPTX_2017B_v1_PromptReco_Ntuple' : 999,
+    'NoBPTX_2017B_v2_PromptReco_Ntuple' : 999,
+
+
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 5,
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : 5,
@@ -3315,6 +3340,14 @@ maxEvents = {
 
     'ZToMuMu_50To120_80X_AODSIM' : -1,
     'ZToMuMu_80To100_80X_Ntuple' : -1,
+
+    'NoBPTX_2017_PromptReco_RECO' : -1,
+    'NoBPTX_2017B_v1_PromptReco_RECO' : -1,
+    'NoBPTX_2017B_v2_PromptReco_RECO' : -1,
+
+    'NoBPTX_2017_PromptReco_Ntuple' : -1,
+    'NoBPTX_2017B_v1_PromptReco_Ntuple' : -1,
+    'NoBPTX_2017B_v2_PromptReco_Ntuple' : -1,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : -1,
@@ -4568,6 +4601,14 @@ types = {
     'ZToMuMu_50To120_80X_AODSIM' : 'bgMC',
     'ZToMuMu_80To100_80X_Ntuple' : 'bgMC',
 
+    'NoBPTX_2017_PromptReco_RECO' : 'data',
+    'NoBPTX_2017B_v1_PromptReco_RECO' : 'data',
+    'NoBPTX_2017B_v2_PromptReco_RECO' : 'data',
+
+    'NoBPTX_2017_PromptReco_Ntuple' : 'data',
+    'NoBPTX_2017B_v1_PromptReco_Ntuple' : 'data',
+    'NoBPTX_2017B_v2_PromptReco_Ntuple' : 'data',
+
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
     'GluinoToGChi0_1200_1000_noiseFrate0p6' : "signalMC",
@@ -5804,6 +5845,14 @@ colors = {
 
     'ZToMuMu_50To120_80X_AODSIM' : 1,
     'ZToMuMu_80To100_80X_Ntuple' : 46,
+
+    'NoBPTX_2017_PromptReco_RECO' : 1,
+    'NoBPTX_2017B_v1_PromptReco_RECO' : 1,
+    'NoBPTX_2017B_v2_PromptReco_RECO' : 1,
+
+    'NoBPTX_2017_PromptReco_Ntuple' : 1,
+    'NoBPTX_2017B_v1_PromptReco_Ntuple' : 1,
+    'NoBPTX_2017B_v2_PromptReco_Ntuple' : 1,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 7,
@@ -7059,6 +7108,14 @@ labels = {
 
     'ZToMuMu_50To120_80X_AODSIM' : "Z #rightarrow #mu#mu, 80X",
     'ZToMuMu_80To100_80X_Ntuple' : "Z #rightarrow #mu#mu, 80X",
+
+    'NoBPTX_2017_PromptReco_RECO' : 'NoBPTX 2017 Prompt reco data',
+    'NoBPTX_2017B_v1_PromptReco_RECO' : 'NoBPTX 2017B v1 Prompt reco data',
+    'NoBPTX_2017B_v2_PromptReco_RECO' : 'NoBPTX 2017B v2 Prompt reco data',
+
+    'NoBPTX_2017_PromptReco_Ntuple' : 'NoBPTX 2017 Prompt reco data',
+    'NoBPTX_2017B_v1_PromptReco_Ntuple' : 'NoBPTX 2017B v1 Prompt reco data',
+    'NoBPTX_2017B_v2_PromptReco_Ntuple' : 'NoBPTX 2017B v2 Prompt reco data',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p4)",

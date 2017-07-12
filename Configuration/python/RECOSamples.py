@@ -535,6 +535,9 @@ dataset_names = {
     'ZToMuMu_50To120_80X_AODSIM' : "/ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM",
     'ZToMuMu_80To100_80X_Ntuple' : "/ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1_Ntuple/USER",
 
+'NoBPTX_2017B_v1_PromptReco_RECO' : "/NoBPTX/Run2017B-PromptReco-v1/RECO",
+'NoBPTX_2017B_v2_PromptReco_RECO' : "/NoBPTX/Run2017B-PromptReco-v2/RECO",
+
 ################## Delayed Muon RECO not stored on T3 ############
 ########################## data ##########################
     'NoBPTX_2015B_PromptReco' : "/NoBPTX/Run2015B-PromptReco-v1/RECO",
@@ -635,5 +638,9 @@ dataset_names = {
 
     'NoBPTX_2016D_PromptReco_Cosmic_TopAndBottom_Ntuple' : "/NoBPTX/Run2016D_Cosmic_TopAndBottom-PromptReco-v2/USER",
     'NoBPTX_2016E_PromptReco_Cosmic_TopAndBottom_Ntuple' : "/NoBPTX/Run2016E_Cosmic_TopAndBottom-PromptReco-v2/USER",
+
+
+'NoBPTX_2017B_v1_PromptReco_Ntuple' : "/NoBPTX/Run2017B-PromptReco-v1/USER",
+'NoBPTX_2017B_v2_PromptReco_Ntuple' : "/NoBPTX/Run2017B-PromptReco-v2/USER",
 
 }
