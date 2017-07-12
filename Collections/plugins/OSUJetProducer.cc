@@ -1,4 +1,5 @@
 #include "OSUT3Analysis/Collections/plugins/OSUJetProducer.h"
+#include "DataFormats/Math/interface/deltaR.h"
 
 #if IS_VALID(jets)
 
@@ -14,6 +15,7 @@
 OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
+  pfCandidates_ (cfg.getParameter<edm::InputTag> ("pfCandidates")),
   jetResolutionPayload_ (cfg.getParameter<string> ("jetResolutionPayload")),
   jetResSFPayload_      (cfg.getParameter<string> ("jetResSFPayload")),
   jetResFromGlobalTag_  (cfg.getParameter<bool> ("jetResFromGlobalTag")),
@@ -24,6 +26,8 @@ OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
   electrons_ = collections_.getParameter<edm::InputTag> ("electrons");
   muons_ = collections_.getParameter<edm::InputTag> ("muons");
   genjets_ = collections_.getParameter<edm::InputTag> ("genjets");
+  primaryvertexs_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
+  // pfCandidates_ = collections_.getParameter<edm::InputTag> ("pfCandidates");
 #endif
   produces<vector<osu::Jet> > (collection_.instance ());
 
@@ -34,6 +38,8 @@ OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   genjetsToken_ = consumes<vector<TYPE(genjets)> > (genjets_);
   rhoToken_ = consumes<double> (rho_);
+  primaryvertexsToken_ = consumes<vector<TYPE(primaryvertexs)> > (primaryvertexs_);
+  pfCandidatesToken_ = consumes<vector<pat::PackedCandidate> > (pfCandidates_);
 #endif
 }
 
@@ -91,6 +97,17 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   if (!event.getByToken (muonToken_, muons))
     return;
 
+  // get vertex collections
+  edm::Handle<vector<TYPE (primaryvertexs)> > primaryvertexs;
+  if (!event.getByToken (primaryvertexsToken_, primaryvertexs))
+    return;
+
+  // get pfCandidate collections
+  // edm::Handle<vector<pat::PackedCandidate> > pfCandidates;
+  // if (!event.getByToken (pfCandidatesToken_, pfCandidates))
+  //  return;
+
+
   // construct vectors of "good" leptons (ID)
   vector<const TYPE(electrons) *> goodElectrons;
   for (const auto &electron : *electrons){
@@ -134,6 +151,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 #endif
 
   pl_ = unique_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
+
   for (const auto &object : *collection)
     {
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
@@ -144,6 +162,70 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 #endif
 
 #if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+
+      // medianLog10(ipsig) CALC
+      std::vector<double> ipsigVector;
+
+      for(unsigned id =0; id < jet.getJetConstituents().size(); id++) {
+	
+	const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
+	const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
+
+	if (recoCand->charge() != 0){
+	  double dxy = fabs(packedCand.dxy());
+	  double dxyerr = packedCand.dxyError();
+	  if(dxyerr>0){
+	    double dxySig = dxy/dxyerr;
+	    ipsigVector.push_back(dxySig);
+	  }
+	}
+      } // end of loop over candidates
+      
+      double medianipsig = -4;
+
+      if(ipsigVector.size() != 0){
+	std::sort (ipsigVector.begin(), ipsigVector.end());
+	if(ipsigVector.size()%2 == 0) medianipsig = (ipsigVector[ ipsigVector.size()/2 - 1] + ipsigVector[ ipsigVector.size() / 2 ]) / 2;
+	if(ipsigVector.size()%2 == 1) medianipsig = ipsigVector[ ipsigVector.size()/2 ];
+      }
+
+      if(ipsigVector.size() != 0) jet.set_medianlog10ipsig( log10(medianipsig) );
+      else jet.set_medianlog10ipsig( -4 );
+
+      // ALPHA MAX CALC
+      double numerator = 0;
+      double denominator = 0;
+            
+      double alpha = 0;
+      double alphaMax = 0;
+
+      for(unsigned vertex = 0; vertex < primaryvertexs.product()->size(); vertex++) {
+
+	for(unsigned id = 0; id < jet.getJetConstituents().size(); id++) { 
+
+	  const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
+	  const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
+	  
+	  if(packedCand.charge() != 0) {
+	    
+	    double candPT = recoCand->pt();
+	    
+	    if(packedCand.fromPV(vertex) > 1){
+	      numerator += candPT;
+	    }
+	    denominator += candPT;
+	  }
+	} // end of loop over candidates
+
+	if ( denominator != 0 ) alpha = (numerator / denominator);
+	if ( alpha > alphaMax ) alphaMax = alpha;
+
+      } // end of loop over vertices
+
+
+      if( denominator != 0) jet.set_alphamax( alphaMax );     
+      else jet.set_alphamax(-1);
+      
       jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
       jet.set_pileupJetId(jet.userFloat("pileupJetId:fullDiscriminant"));
