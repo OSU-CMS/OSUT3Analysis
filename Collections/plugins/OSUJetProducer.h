@@ -32,6 +32,7 @@ class OSUJetProducer : public edm::EDProducer
     edm::InputTag      muons_;
     edm::InputTag      genjets_;
     edm::InputTag      rho_;
+    edm::InputTag      primaryvertexs_;
 
     string jetResolutionPayload_;
     string jetResSFPayload_;
@@ -43,6 +44,7 @@ class OSUJetProducer : public edm::EDProducer
     edm::EDGetTokenT<vector<TYPE(muons)> > muonToken_;
     edm::EDGetTokenT<vector<TYPE(genjets)> > genjetsToken_;
     edm::EDGetTokenT<double> rhoToken_;
+    edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexsToken_;
 
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////

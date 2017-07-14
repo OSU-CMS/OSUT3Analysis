@@ -8,24 +8,22 @@
 #include <string>
 #include "TH1D.h"
 #include "TFile.h"
-struct OriginalCollections
-{
-  edm::Handle<vector<PileupSummaryInfo>>    pileupinfos;
-};
 
 class PUScalingFactorProducer : public EventVariableProducer
   {
     public:
         PUScalingFactorProducer (const edm::ParameterSet &);
-        void getOriginalCollections (const edm::Event &event);
         ~PUScalingFactorProducer ();
-        OriginalCollections handles_;
 
     private:
         string PU_;
         string dataset_;
         string target_;
+        string targetUp_;
+        string targetDown_;
         TH1D *puWeight_;
+        TH1D *puWeightUp_;
+        TH1D *puWeightDown_;
         bool isFirstEvent_;
         void AddVariables(const edm::Event &);
 

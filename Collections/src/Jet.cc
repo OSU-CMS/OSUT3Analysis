@@ -20,7 +20,11 @@ osu::Jet::Jet (const TYPE(jets) &jet) :
   jetPtResolutionSFDown_                         (INVALID_VALUE),
   smearedPt_                                     (INVALID_VALUE),
   smearedPtUp_                                   (INVALID_VALUE),
-  smearedPtDown_                                 (INVALID_VALUE)
+  smearedPtDown_                                 (INVALID_VALUE),
+  alphamax_                                      (INVALID_VALUE),
+  ipsig_                                         (INVALID_VALUE),
+  log10ipsig_                                    (INVALID_VALUE),
+  medianlog10ipsig_                              (INVALID_VALUE)
 {
 }
 
@@ -37,7 +41,11 @@ osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> 
   jetPtResolutionSFDown_                         (INVALID_VALUE),
   smearedPt_                                     (INVALID_VALUE),
   smearedPtUp_                                   (INVALID_VALUE),
-  smearedPtDown_                                 (INVALID_VALUE)
+  smearedPtDown_                                 (INVALID_VALUE),
+  alphamax_                                      (INVALID_VALUE),
+  ipsig_                                         (INVALID_VALUE),
+  log10ipsig_                                    (INVALID_VALUE),
+  medianlog10ipsig_                              (INVALID_VALUE)
 {
 }
 
@@ -54,7 +62,11 @@ osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> 
   jetPtResolutionSFDown_                         (INVALID_VALUE),
   smearedPt_                                     (INVALID_VALUE),
   smearedPtUp_                                   (INVALID_VALUE),
-  smearedPtDown_                                 (INVALID_VALUE)
+  smearedPtDown_                                 (INVALID_VALUE),
+  alphamax_                                      (INVALID_VALUE),
+  ipsig_                                         (INVALID_VALUE),
+  log10ipsig_                                    (INVALID_VALUE),
+  medianlog10ipsig_                              (INVALID_VALUE)
 {
 }
 
@@ -128,6 +140,30 @@ const float
 osu::Jet::smearedPtDown () const
 {
   return smearedPtDown_;
+}
+
+const float
+osu::Jet::alphamax () const
+{
+  return alphamax_;
+}
+
+const float 
+osu::Jet::ipsig () const
+{
+  return ipsig_;
+}
+
+const float
+osu::Jet::log10ipsig () const
+{
+  return log10ipsig_;
+}
+
+const float
+osu::Jet::medianlog10ipsig () const
+{
+  return medianlog10ipsig_;
 }
 
 #elif DATA_FORMAT == AOD_CUSTOM
