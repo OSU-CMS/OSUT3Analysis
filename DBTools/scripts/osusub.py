@@ -651,7 +651,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 else:
                     if isInCondorDir:
                         f = SubmissionDir + "/" + f
-                    f = "file:" + f
+                    f = "file:" + os.path.realpath (f)
                 text += '"' + f + '",\n'
             text += ']  \n'
         else:
@@ -691,7 +691,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 if remoteAccessT3:
                     f = "root://cms-0.mps.ohio-state.edu:1094/" + f
                 else:
-                    f = "file:" + f
+                    f = "file:" + os.path.realpath (f)
                 text += '"' + f + '",\n'
             text += ']  \n'
         else:

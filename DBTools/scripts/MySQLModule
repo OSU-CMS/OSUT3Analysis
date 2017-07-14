@@ -75,7 +75,7 @@ getLocation
              next if @files->[$i] eq ".";
              next if @files->[$i] eq "..";
              next if !(@files->[$i] =~ m/\.root$/);
-             print $tmpfile "'" . $prefix . @files->[$i] . "'";
+             print $tmpfile "'" . $prefix . abs_path (@files->[$i]) . "'";
              print $tmpfile "," if $i + 1 != $length;
              print $tmpfile "\n";
           }
@@ -132,7 +132,7 @@ getLocation
              next if $map{$response}[5]->[$i] eq ".";
              next if $map{$response}[5]->[$i] eq "..";
              next if !($map{$response}[5]->[$i] =~ m/\.root$/);
-             print $tmpfile "'" . $prefix . $map{$response}[5]->[$i] . "'";
+             print $tmpfile "'" . $prefix . abs_path ($map{$response}[5]->[$i]) . "'";
              print $tmpfile "," if $i + 1 != @{$map{$response}[5]};
              print $tmpfile "\n";
           }
