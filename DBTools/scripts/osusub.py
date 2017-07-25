@@ -834,7 +834,7 @@ def SkimModifier(Label, Directory, crossSection):
     add += 'skimDirectory = "' + SkimDirectory + '"\n'
     add += 'listOfFiles = [  \n'
     for s in skimFiles:
-        add += '"file:' + s + '",\n'
+        add += '"file:' + os.path.realpath (s) + '",\n'
     add += ']  \n'
     add += 'numberOfFiles = ' + str(len(skimFiles)) + '\n'
     add += 'originalNumberOfEvents = ' + str(OriginalNumberOfEvents) + '\n'
