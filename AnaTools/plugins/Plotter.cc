@@ -170,7 +170,7 @@ string Plotter::getDirectoryName(string inputName){
 
   string parsedName = anatools::capitalize(anatools::singular(inputName));
 
-  parsedName += " Plots";
+  parsedName += "Plots";
 
   return parsedName;
 
