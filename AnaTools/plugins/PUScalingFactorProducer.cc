@@ -89,6 +89,7 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
 
         mc->SetDirectory(0);
         puWeight_->SetDirectory(0);
+	mc->Scale (puWeight_->Integral () / mc->Integral ());
         if(puWeightUp_) puWeightUp_->SetDirectory(0);
         if(puWeightDown_) puWeightDown_->SetDirectory(0);
 
