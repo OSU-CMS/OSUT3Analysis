@@ -156,20 +156,29 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       // medianLog10(ipsig) CALC
       std::vector<double> ipsigVector;
+      bool isException = false;
 
       for(unsigned id =0; id < jet.getJetConstituents().size(); id++) {
 
 	const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
 	const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
 
-	if (recoCand->charge() != 0){
-	  double dxy = fabs(packedCand.dxy());
-	  double dxyerr = packedCand.dxyError();
-	  if(dxyerr>0){
-	    double dxySig = dxy/dxyerr;
-	    ipsigVector.push_back(dxySig);
-	  }
-	}
+        try
+          {
+            if (recoCand->charge() != 0){
+              double dxy = fabs(packedCand.dxy());
+              double dxyerr = packedCand.dxyError();
+              if(dxyerr>0){
+                double dxySig = dxy/dxyerr;
+                ipsigVector.push_back(dxySig);
+              }
+            }
+          }
+        catch (cms::Exception &e)
+          {
+            isException = true;
+            edm::LogInfo ("OSUJetProducer") << e.what ();
+          }
       } // end of loop over candidates
 
       double medianipsig = -4;
@@ -183,12 +192,17 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       if(ipsigVector.size() != 0) jet.set_medianlog10ipsig( log10(medianipsig) );
       else jet.set_medianlog10ipsig( -4 );
 
+      if (isException)
+        edm::LogWarning ("OSUJetProducer") << "Exception caught while looping over jet constituents. medianlog10ipsig may be incorrect.";
+
       // ALPHA MAX CALC
       double numerator = 0;
       double denominator = 0;
 
       double alpha = 0;
       double alphaMax = 0;
+
+      isException = false;
 
       for(unsigned vertex = 0; vertex < primaryvertexs.product()->size(); vertex++) {
 
@@ -197,15 +211,23 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 	  const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
 	  const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
 
-	  if(packedCand.charge() != 0) {
+          try
+            {
+              if(packedCand.charge() != 0) {
 
-	    double candPT = recoCand->pt();
+                double candPT = recoCand->pt();
 
-	    if(packedCand.fromPV(vertex) > 1){
-	      numerator += candPT;
-	    }
-	    denominator += candPT;
-	  }
+                if(packedCand.fromPV(vertex) > 1){
+                  numerator += candPT;
+                }
+                denominator += candPT;
+              }
+            }
+          catch (cms::Exception &e)
+            {
+              isException = true;
+              edm::LogInfo ("OSUJetProducer") << e.what ();
+            }
 	} // end of loop over candidates
 
 	if ( denominator != 0 ) alpha = (numerator / denominator);
@@ -216,6 +238,9 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       if( denominator != 0) jet.set_alphamax( alphaMax );
       else jet.set_alphamax(-1);
+
+      if (isException)
+        edm::LogWarning ("OSUJetProducer") << "Exception caught while looping over jet constituents. alphamax may be incorrect.";
 
       jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
