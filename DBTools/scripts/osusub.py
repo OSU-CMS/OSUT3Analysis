@@ -156,10 +156,12 @@ def getLatestJsonFile():
 
         collisionType = 'Collisions15'
         jsonMatchingPhrase = 'Collisions15_25ns_JSON'
-
         if re.search('16$', arguments.JSONType):
             collisionType = 'Collisions16'
             jsonMatchingPhrase = 'Collisions16_JSON'
+        if re.search('17$', arguments.JSONType):
+            collisionType = 'Collisions17'
+            jsonMatchingPhrase = 'Collisions17_JSON'
 
         rerecoDir = 'Reprocessing'
         if re.search('16$', arguments.JSONType):
@@ -167,7 +169,10 @@ def getLatestJsonFile():
 
         if arguments.JSONType[:2] == 'P_':
             tmpDir = tempfile.mkdtemp ()
-            subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/ -O ' + tmpDir + '/jsonList.txt', shell = True)
+            if re.search('17$', arguments.JSONType):
+                subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/PromptReco/ -O ' + tmpDir + '/jsonList.txt', shell = True)
+            else:
+                subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/ -O ' + tmpDir + '/jsonList.txt', shell = True)
             subprocess.call('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt', shell = True)
             Tmp = open(tmpDir + '/CertList.txt','r+w')
             jsonFileList = []
@@ -191,7 +196,7 @@ def getLatestJsonFile():
                         if re.search('JSON_?(v[0-9]+)?\.txt', fileName):
                             jsonFileFiltered.append(fileName)
                     else:
-                        if arguments.JSONType[-2:] == '16':
+                        if arguments.JSONType[-2:] == '16' or arguments.JSONType[-2:] == '17':
                             if re.search('JSON_' + arguments.JSONType[2:-2] + '(_v[0-9]+)?\.txt', fileName):
                                 jsonFileFiltered.append(fileName)
                         else:
@@ -235,7 +240,10 @@ def getLatestJsonFile():
                             versionNumber = currentVersionNumber
                             ultimateJson = bestJson
 
-            subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson, shell = True)
+            if re.search('17$', arguments.JSONType):
+                subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/PromptReco/' + ultimateJson + ' -O ' + tmpDir + '/' + ultimateJson, shell = True)
+            else:
+                subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson, shell = True)
             shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
             shutil.rmtree (tmpDir)
 
@@ -268,7 +276,7 @@ def getLatestJsonFile():
                         if re.search('JSON_?(v[0-9]+)?\.txt', fileName):
                             jsonFileFiltered.append(fileName)
                     else:
-                        if arguments.JSONType[-2:] == '16':
+                        if arguments.JSONType[-2:] == '16' or arguments.JSONType[-2:] == '17':
                             if re.search('JSON_' + arguments.JSONType[2:-2] + '(_v[0-9]+)?\.txt', fileName):
                                 jsonFileFiltered.append(fileName)
                         else:
