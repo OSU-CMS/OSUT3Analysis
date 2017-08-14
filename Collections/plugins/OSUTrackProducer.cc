@@ -42,6 +42,10 @@ OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
 
   gsfTracksToken_ = consumes<vector<reco::GsfTrack> > (cfg.getParameter<edm::InputTag> ("gsfTracks"));
 
+  // Get the general tracks collection explicitly. This is to fix a bug in the
+  // disappearing track ntuples.
+  tracksToken_ = consumes<vector<reco::Track> > (edm::InputTag ("generalTracks", "", "RECO"));
+
 #ifdef DISAPP_TRKS
   stringstream ss;
   for (const auto &electronFiducialMap : electronFiducialMaps)
@@ -136,6 +140,8 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<reco::GsfTrack> > gsfTracks;
   event.getByToken (gsfTracksToken_, gsfTracks);
 
+  edm::Handle<vector<reco::Track> > tracks;
+  event.getByToken (tracksToken_, tracks);
 #endif
 
   pl_ = unique_ptr<vector<osu::Track> > (new vector<osu::Track> ());
@@ -194,6 +200,14 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       track.set_caloNewEMDRp5(eEM);
       track.set_caloNewHadDRp5(eHad);
+
+      if (tracks.isValid ())
+        {
+          track.set_trackIsoDRp3 (getTrackIsolation (track, *tracks, false, 0.3));
+          track.set_trackIsoDRp5 (getTrackIsolation (track, *tracks, false, 0.5));
+          track.set_trackIsoNoPUDRp3 (getTrackIsolation (track, *tracks, true, 0.3));
+          track.set_trackIsoNoPUDRp5 (getTrackIsolation (track, *tracks, true, 0.5));
+        }
 #endif
     }
 
@@ -409,6 +423,24 @@ OSUTrackProducer::getChannelStatusMaps ()
     }
 
   return 1;
+}
+
+const double
+OSUTrackProducer::getTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
+{
+  double sumPt = 0.0;
+
+  for (const auto &t : tracks)
+    {
+      if (noPU && track.dz (t.vertex ()) > 3.0 * hypot (track.dzError (), t.dzError ()))
+        continue;
+
+      double dR = deltaR (track, t);
+      if (dR < outerDeltaR && dR > innerDeltaR)
+        sumPt += t.pt ();
+    }
+
+  return sumPt;
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

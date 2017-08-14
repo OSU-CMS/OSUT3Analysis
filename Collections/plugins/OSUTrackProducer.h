@@ -11,6 +11,7 @@
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
 #include "CondFormats/EcalObjects/interface/EcalChannelStatus.h"
 #include "CondFormats/DataRecord/interface/EcalChannelStatusRcd.h"
+#include "DataFormats/TrackReco/interface/Track.h"
 
 #include "OSUT3Analysis/Collections/interface/Track.h"
 
@@ -39,6 +40,7 @@ class OSUTrackProducer : public edm::EDProducer
     edm::EDGetTokenT<EERecHitCollection>         EERecHitsToken_;
     edm::EDGetTokenT<HBHERecHitCollection>       HBHERecHitsToken_;
     edm::EDGetTokenT<vector<reco::GsfTrack> >    gsfTracksToken_;
+    edm::EDGetTokenT<vector<reco::Track> >       tracksToken_;
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 
@@ -62,6 +64,8 @@ class OSUTrackProducer : public edm::EDProducer
 
     map<DetId, vector<double> > EcalAllDeadChannelsValMap_;
     map<DetId, vector<int> >    EcalAllDeadChannelsBitMap_;
+
+    const double getTrackIsolation (const reco::Track &, const vector<reco::Track> &, const bool, const double, const double = 1.0e-12) const;
 };
 
 #endif
