@@ -11,40 +11,56 @@ class Measurement:
     _maxSigFigsInUncertainty = 2
 
     def __init__ (self, centralValue = None, uncertaintyDown = None, uncertaintyUp = None):
-        self._centralValue = centralValue
-        self._uncertaintyDown = uncertaintyDown
-        self._uncertaintyUp = uncertaintyUp
+        self._centralValue = float (centralValue)
+        if uncertaintyDown is not None:
+            self._uncertaintyDown = float (uncertaintyDown)
+        if uncertaintyUp is not None:
+            self._uncertaintyUp = float (uncertaintyUp)
         if uncertaintyDown is not None and uncertaintyUp is None:
-            self._uncertaintyUp = uncertaintyDown
+            self._uncertaintyUp = float (uncertaintyDown)
         if uncertaintyUp is not None and uncertaintyDown is None:
-            self._uncertaintyDown = uncertaintyUp
+            self._uncertaintyDown = float (uncertaintyUp)
+
+    ############################################################################
+    # Setters.
+    ############################################################################
 
     def setCentralValue (self, centralValue):
-        self._centralValue = centralValue
+        self._centralValue = float (centralValue)
 
     def setUncertainty (self, uncertainty):
-        self._uncertaintyDown = uncertainty
-        self._uncertaintyUp = uncertainty
+        self._uncertaintyDown = float (uncertainty)
+        self._uncertaintyUp = float (uncertainty)
 
     def setUncertainty (self, uncertaintyDown, uncertaintyUp):
-        self._uncertaintyDown = uncertaintyDown
-        self._uncertaintyUp = uncertaintyUp
+        self._uncertaintyDown = float (uncertaintyDown)
+        self._uncertaintyUp = float (uncertaintyUp)
 
     def setUncertaintyDown (self, uncertaintyDown):
-        self._uncertaintyDown = uncertaintyDown
+        self._uncertaintyDown = float (uncertaintyDown)
 
     def setUncertaintyUp (self, uncertaintyUp):
-        self._uncertaintyUp = uncertaintyUp
+        self._uncertaintyUp = float (uncertaintyUp)
 
     def setCentralValueAndUncertainty (self, centralValue, uncertainty):
-        self._centralValue = centralValue
-        self._uncertaintyDown = uncertainty
-        self._uncertaintyUp = uncertainty
+        self._centralValue = float (centralValue)
+        self._uncertaintyDown = float (uncertainty)
+        self._uncertaintyUp = float (uncertainty)
 
     def setCentralValueAndUncertainty (self, centralValue, uncertaintyDown, uncertaintyUp):
-        self._centralValue = centralValue
-        self._uncertaintyDown = uncertaintyDown
-        self._uncertaintyUp = uncertaintyUp
+        self._centralValue = float (centralValue)
+        self._uncertaintyDown = float (uncertaintyDown)
+        self._uncertaintyUp = float (uncertaintyUp)
+
+    def printTeX (self, printTeX = True):
+        self._printTeX = bool (printTeX)
+
+    def setMaxSigFigsInUncertainty (self, maxSigFigsInUncertainty):
+        self._maxSigFigsInUncertainty = int (maxSigFigsInUncertainty)
+
+    ############################################################################
+    # Getters.
+    ############################################################################
 
     def centralValue (self):
         return self._centralValue
@@ -67,14 +83,12 @@ class Measurement:
         else:
           return (self._centralValue, self._uncertaintyDown, self._uncertaintyUp)
 
-    def printTeX (self, printTeX = True):
-        self._printTeX = printTeX
-
     def maxSigFigsInUncertainty (self):
         return self._maxSigFigsInUncertainty
 
-    def setMaxSigFigsInUncertainty (self, maxSigFigsInUncertainty):
-        self._maxSigFigsInUncertainty = maxSigFigsInUncertainty
+    ############################################################################
+    # Miscellaneous.
+    ############################################################################
 
     def roundAccordingToUncertainty (self):
         uncertainty = self._uncertaintyDown if self._uncertaintyDown > self._uncertaintyUp else self._uncertaintyUp
@@ -107,13 +121,13 @@ class Measurement:
         if hasattr (other, "centralValue"):
             return (self._centralValue < other.centralValue ())
         else:
-            return (self._centralValue < other)
+            return (self._centralValue < float (other))
 
     def __eq__ (self, other):
         if hasattr (other, "centralValue"):
             return (self._centralValue == other.centralValue ())
         else:
-            return (self._centralValue == other)
+            return (self._centralValue == float (other))
 
     def __le__ (self, other):
         return (self.__lt__ (other) or self.__eq__ (other))
@@ -152,7 +166,7 @@ class Measurement:
         if hasattr (other, "centralValue"):
             return Measurement (self._centralValue + other.centralValue (), math.hypot (self._uncertaintyDown, other.uncertaintyDown ()), math.hypot (self._uncertaintyUp, other.uncertaintyUp ()))
         else:
-            return Measurement (self._centralValue + other, self._uncertaintyDown, self._uncertaintyUp)
+            return Measurement (self._centralValue + float (other), self._uncertaintyDown, self._uncertaintyUp)
 
     def __sub__ (self, other):
         return self.__add__ (-other)
@@ -161,13 +175,13 @@ class Measurement:
         if hasattr (other, "centralValue"):
             return Measurement (self._centralValue * other.centralValue (), math.hypot (self._uncertaintyDown * other.centralValue (), self._centralValue * other.uncertaintyDown ()), math.hypot (self._uncertaintyUp * other.centralValue (), self._centralValue * other.uncertaintyUp ()))
         else:
-            return Measurement (self._centralValue * other, self._uncertaintyDown * other, self._uncertaintyUp * other)
+            return Measurement (self._centralValue * float (other), self._uncertaintyDown * float (other), self._uncertaintyUp * float (other))
 
     def __truediv__ (self, other):
         if hasattr (other, "centralValue"):
             return Measurement (self._centralValue / other.centralValue (), math.hypot (self._uncertaintyDown * other.centralValue (), self._centralValue * other.uncertaintyDown ()) / (other.centralValue () * other.centralValue ()), math.hypot (self._uncertaintyUp * other.centralValue (), self._centralValue * other.uncertaintyUp ()) / (other.centralValue () * other.centralValue ()))
         else:
-            return Measurement (self._centralValue / other, self._uncertaintyDown / other, self._uncertaintyUp / other)
+            return Measurement (self._centralValue / float (other), self._uncertaintyDown / float (other), self._uncertaintyUp / float (other))
 
     def __div__ (self, other):
         return self.__truediv__ (other)
