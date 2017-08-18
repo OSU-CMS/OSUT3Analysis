@@ -440,15 +440,12 @@ def MakeCondorSubmitRelease(Directory):
         "lib",
         "python",
         "src",
-    )
+        ".SCRAM",
+   )
     # file patterns to ignore in copying
     filesToIgnore = (
-        "*.cc",
-        "*.h",
         "*.pyc",
         ".git*",
-        "*.C",
-        "*.cpp",
         "test",
     )
     cwd = os.getcwd ()
