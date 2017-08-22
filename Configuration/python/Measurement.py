@@ -9,6 +9,7 @@ class Measurement:
     _uncertaintyUp = None
     _printTeX = False
     _maxSigFigsInUncertainty = 2
+    _printLongFormat = False
 
     def __init__ (self, centralValue = None, uncertaintyDown = None, uncertaintyUp = None):
         self._centralValue = float (centralValue)
@@ -58,6 +59,13 @@ class Measurement:
     def setMaxSigFigsInUncertainty (self, maxSigFigsInUncertainty):
         self._maxSigFigsInUncertainty = int (maxSigFigsInUncertainty)
 
+    def isPositive (self, isPositive = True):
+        if self._centralValue - self._uncertaintyDown < 0.0:
+          self._uncertaintyDown = self._centralValue
+
+    def printLongFormat (self, printLongFormat = True):
+        self._printLongFormat = printLongFormat
+
     ############################################################################
     # Getters.
     ############################################################################
@@ -83,6 +91,9 @@ class Measurement:
         else:
           return (self._centralValue, self._uncertaintyDown, self._uncertaintyUp)
 
+    def centralValueAndUncertaintyUpAndDown (self):
+        return (self._centralValue, self._uncertaintyDown, self._uncertaintyUp)
+
     def maxSigFigsInUncertainty (self):
         return self._maxSigFigsInUncertainty
 
@@ -92,7 +103,7 @@ class Measurement:
 
     def roundAccordingToUncertainty (self):
         uncertainty = self._uncertaintyDown if self._uncertaintyDown > self._uncertaintyUp else self._uncertaintyUp
-        exponent = int (math.floor (math.log10 (uncertainty)))
+        exponent = (int (math.floor (math.log10 (uncertainty))) if uncertainty != 0.0 else -1)
 
         uncertaintyDown = round (self._uncertaintyDown, self._maxSigFigsInUncertainty - 1 - exponent)
         uncertaintyUp = round (self._uncertaintyUp, self._maxSigFigsInUncertainty - 1 - exponent)
@@ -105,7 +116,10 @@ class Measurement:
     ############################################################################
 
     def __str__ (self):
-        (centralValue, uncertaintyDown, uncertaintyUp) = self.roundAccordingToUncertainty ()
+        if self._printLongFormat:
+            (centralValue, uncertaintyDown, uncertaintyUp) = self.centralValueAndUncertaintyUpAndDown ()
+        else:
+            (centralValue, uncertaintyDown, uncertaintyUp) = self.roundAccordingToUncertainty ()
         if not self._printTeX:
             if uncertaintyDown == uncertaintyUp:
                 return str (centralValue) + " +- " + str (uncertaintyDown)
