@@ -104,20 +104,20 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   for (const auto &electron : *electrons){
     bool passElectronID = false;
     if ((electron.isEB() &&                                             \
-         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 2 && \
-         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00926 &&     \
-         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0336 &&      \
-         electron.full5x5_sigmaIetaIeta() < 0.0101 &&                    \
-         electron.hadronicOverEm() < 0.0597 &&                           \
-         abs(1.0/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.012 && \
+         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 && \
+         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00308 &&     \
+         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0816 &&      \
+         electron.full5x5_sigmaIetaIeta() < 0.00998 &&                    \
+         electron.hadronicOverEm() < 0.0414 &&                           \
+         abs(1.0/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.0129 && \
          electron.passConversionVeto()) ||                               \
         (electron.isEE() &&                                               \
          electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 && \
-         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00724 &&      \
-         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0918 &&       \
-         electron.full5x5_sigmaIetaIeta() < 0.0279 &&                     \
-         electron.hadronicOverEm() < 0.0615 &&                            \
-         abs(1/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.00999 && \
+         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00605 &&      \
+         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0394 &&       \
+         electron.full5x5_sigmaIetaIeta() < 0.0292 &&                     \
+         electron.hadronicOverEm() < 0.0641 &&                            \
+         abs(1/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.0129 && \
          electron.passConversionVeto())){
       passElectronID = true;
     }
@@ -299,7 +299,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         jet.set_smearedPtDown(INVALID_VALUE);
       }
 
-      double maxDeltaR_ = 0.3;
+      double maxDeltaR_ = 0.4;
 
       int isMatchedToElectron = 0;
       for (const auto &electron : goodElectrons){
