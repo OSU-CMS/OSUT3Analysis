@@ -8,7 +8,9 @@
 
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 
+#ifndef MAX_DR
 #define MAX_DR (99.0)
+#endif
 
 struct EtaPhi
 {
