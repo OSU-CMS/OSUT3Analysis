@@ -129,13 +129,10 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   edm::Handle<EBRecHitCollection> EBRecHits;
   event.getByToken(EBRecHitsToken_, EBRecHits);
-  if (!EBRecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find EBRecHitCollection in the event!\n";
   edm::Handle<EERecHitCollection> EERecHits;
   event.getByToken(EERecHitsToken_, EERecHits);
-  if (!EERecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find EERecHitCollection in the event!\n";
   edm::Handle<HBHERecHitCollection> HBHERecHits;
   event.getByToken(HBHERecHitsToken_, HBHERecHits);
-  if (!HBHERecHits.isValid()) throw cms::Exception("FatalError") << "Unable to find HBHERecHitCollection in the event!\n";
 
   edm::Handle<vector<reco::GsfTrack> > gsfTracks;
   event.getByToken (gsfTracksToken_, gsfTracks);
@@ -173,40 +170,50 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
           track.set_dRMinJet(dRMinJet);
         }
 
-      double eEM = 0;
-      double dR = 0.5;
-      for (EBRecHitCollection::const_iterator hit=EBRecHits->begin(); hit!=EBRecHits->end(); hit++) {
-        if (insideCone(track, (*hit).detid(), dR)) {
-          eEM += (*hit).energy();
-          // cout << "       Added EB rec hit with (eta, phi) = "
-          //      << getPosition((*hit).detid()).eta() << ", "
-          //      << getPosition((*hit).detid()).phi() << endl;
-        }
-      }
-      for (EERecHitCollection::const_iterator hit=EERecHits->begin(); hit!=EERecHits->end(); hit++) {
-        if (insideCone(track, (*hit).detid(), dR)) {
-          eEM += (*hit).energy();
-          // cout << "       Added EE rec hit with (eta, phi) = "
-          //      << getPosition((*hit).detid()).eta() << ", "
-          //      << getPosition((*hit).detid()).phi() << endl;
-        }
-      }
-      double eHad = 0;
-      for (HBHERecHitCollection::const_iterator hit = HBHERecHits->begin(); hit != HBHERecHits->end(); hit++) {
-        if (insideCone(track, (*hit).detid(), dR)) {
-          eHad += (*hit).energy();
-        }
-      }
+      if (EBRecHits.isValid () && EERecHits.isValid () && HBHERecHits.isValid ())
+        {
+          double eEM = 0;
+          double dR = 0.5;
+          for (EBRecHitCollection::const_iterator hit=EBRecHits->begin(); hit!=EBRecHits->end(); hit++) {
+            if (insideCone(track, (*hit).detid(), dR)) {
+              eEM += (*hit).energy();
+              // cout << "       Added EB rec hit with (eta, phi) = "
+              //      << getPosition((*hit).detid()).eta() << ", "
+              //      << getPosition((*hit).detid()).phi() << endl;
+            }
+          }
+          for (EERecHitCollection::const_iterator hit=EERecHits->begin(); hit!=EERecHits->end(); hit++) {
+            if (insideCone(track, (*hit).detid(), dR)) {
+              eEM += (*hit).energy();
+              // cout << "       Added EE rec hit with (eta, phi) = "
+              //      << getPosition((*hit).detid()).eta() << ", "
+              //      << getPosition((*hit).detid()).phi() << endl;
+            }
+          }
+          double eHad = 0;
+          for (HBHERecHitCollection::const_iterator hit = HBHERecHits->begin(); hit != HBHERecHits->end(); hit++) {
+            if (insideCone(track, (*hit).detid(), dR)) {
+              eHad += (*hit).energy();
+            }
+          }
 
-      track.set_caloNewEMDRp5(eEM);
-      track.set_caloNewHadDRp5(eHad);
+          track.set_caloNewEMDRp5(eEM);
+          track.set_caloNewHadDRp5(eHad);
+        }
 
       if (tracks.isValid ())
         {
-          track.set_trackIsoDRp3 (getTrackIsolation (track, *tracks, false, 0.3));
-          track.set_trackIsoDRp5 (getTrackIsolation (track, *tracks, false, 0.5));
-          track.set_trackIsoNoPUDRp3 (getTrackIsolation (track, *tracks, true, 0.3));
-          track.set_trackIsoNoPUDRp5 (getTrackIsolation (track, *tracks, true, 0.5));
+          track.set_trackIsoDRp3 (getTrackIsolation (track, *tracks, false, false, 0.3));
+          track.set_trackIsoDRp5 (getTrackIsolation (track, *tracks, false, false, 0.5));
+          track.set_trackIsoNoPUDRp3 (getTrackIsolation (track, *tracks, true, false, 0.3));
+          track.set_trackIsoNoPUDRp5 (getTrackIsolation (track, *tracks, true, false, 0.5));
+          track.set_trackIsoNoFakesDRp3 (getTrackIsolation (track, *tracks, false, true, 0.3));
+          track.set_trackIsoNoFakesDRp5 (getTrackIsolation (track, *tracks, false, true, 0.5));
+          track.set_trackIsoNoPUNoFakesDRp3 (getTrackIsolation (track, *tracks, true, true, 0.3));
+          track.set_trackIsoNoPUNoFakesDRp5 (getTrackIsolation (track, *tracks, true, true, 0.5));
+
+          track.set_trackIsoOldNoPUDRp3 (getOldTrackIsolation (track, *tracks, true, 0.3));
+          track.set_trackIsoOldNoPUDRp5 (getOldTrackIsolation (track, *tracks, true, 0.5));
         }
 #endif
     }
@@ -426,12 +433,47 @@ OSUTrackProducer::getChannelStatusMaps ()
 }
 
 const double
-OSUTrackProducer::getTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
+OSUTrackProducer::getTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const bool noFakes, const double outerDeltaR, const double innerDeltaR) const
 {
   double sumPt = 0.0;
 
   for (const auto &t : tracks)
     {
+      if (noFakes && t.normalizedChi2 () > 20.0)
+        continue;
+      if (noFakes && t.hitPattern ().pixelLayersWithMeasurement () < 2)
+        continue;
+      if (noFakes && t.hitPattern ().trackerLayersWithMeasurement () < 5)
+        continue;
+      if (noFakes && fabs (t.d0 () / t.d0Error ()) > 5.0)
+        continue;
+
+      if (noPU && track.dz (t.vertex ()) > 3.0 * hypot (track.dzError (), t.dzError ()))
+        continue;
+
+      double dR = deltaR (track, t);
+      if (dR < outerDeltaR && dR > innerDeltaR)
+        sumPt += t.pt ();
+    }
+
+  return sumPt;
+}
+
+const double
+OSUTrackProducer::getOldTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
+{
+  double sumPt = 0.0;
+
+  for (const auto &t : tracks)
+    {
+      if (noPU && track.normalizedChi2 () > 20.0)
+        continue;
+      if (noPU && track.hitPattern ().pixelLayersWithMeasurement () < 2)
+        continue;
+      if (noPU && track.hitPattern ().trackerLayersWithMeasurement () < 5)
+        continue;
+      if (noPU && fabs (track.d0 () / track.d0Error ()) > 5.0)
+        continue;
       if (noPU && track.dz (t.vertex ()) > 3.0 * hypot (track.dzError (), t.dzError ()))
         continue;
 
