@@ -342,6 +342,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
           retObjAdd = (void *) new unsigned short int[1];
         else if (memberType == "unsigned long int")
           retObjAdd = (void *) new unsigned long int[1];
+        else if (memberType == "signed char")
+          retObjAdd = (void *) new signed char[1];
+        else if (memberType == "unsigned char")
+          retObjAdd = (void *) new unsigned char[1];
         (*functionLookupTable->at (typeAndMember).second) (obj, 0, NULL, retObjAdd);
       }
     else
@@ -440,6 +444,18 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
             value = *((unsigned long int *) retObjAdd);
             if (!retObj)
               delete[] ((unsigned long int *) retObjAdd);
+          }
+        else if (memberType == "signed char")
+          {
+            value = *((signed char *) retObjAdd);
+            if (!retObj)
+              delete[] ((signed char *) retObjAdd);
+          }
+        else if (memberType == "unsigned char")
+          {
+            value = *((unsigned char *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned char *) retObjAdd);
           }
         else
           edm::LogWarning ("CommonUtils") << "\"" << member << "\" has unrecognized type \"" << memberType << "\".";
@@ -601,6 +617,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
           value = Reflex::Object_Cast<unsigned short int> (*retObj);
         else if (memberType == "unsigned long int")
           value = Reflex::Object_Cast<unsigned long int> (*retObj);
+        else if (memberType == "signed char")
+          value = Reflex::Object_Cast<signed char> (*retObj);
+        else if (memberType == "unsigned char")
+          value = Reflex::Object_Cast<unsigned char> (*retObj);
         else
           edm::LogWarning ("CommonUtils") << "\"" << member << "\" has unrecognized type \"" << memberType << "\".";
         delete retObj;
