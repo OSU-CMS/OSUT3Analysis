@@ -85,6 +85,12 @@ class Measurement:
     def uncertaintyUp (self):
         return self._uncertaintyUp
 
+    def minUncertainty (self):
+        return min (self._uncertaintyDown, self._uncertaintyUp)
+
+    def maxUncertainty (self):
+        return max (self._uncertaintyDown, self._uncertaintyUp)
+
     def centralValueAndUncertainty (self):
         if self._uncertaintyDown == self._uncertaintyUp:
           return (self._centralValue, self._uncertaintyDown)
