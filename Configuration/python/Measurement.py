@@ -4,9 +4,10 @@ import math
 
 # a SimpleMeasurement is a real number with an uncertainty (possibly asymmetric)
 class SimpleMeasurement:
-    _centralValue = None
-    _uncertaintyDown = None
-    _uncertaintyUp = None
+    _nan = float ("nan")
+    _centralValue = _nan
+    _uncertaintyDown = _nan
+    _uncertaintyUp = _nan
     _printTeX = False
     _maxSigFigsInUncertainty = 2
     _printLongFormat = False
@@ -61,7 +62,7 @@ class SimpleMeasurement:
 
     def isPositive (self, isPositive = True):
         if self._centralValue - self._uncertaintyDown < 0.0:
-          self._uncertaintyDown = self._centralValue
+            self._uncertaintyDown = self._centralValue
 
     def printLongFormat (self, printLongFormat = True):
         self._printLongFormat = printLongFormat
@@ -75,9 +76,9 @@ class SimpleMeasurement:
 
     def uncertainty (self):
         if self._uncertaintyDown == self._uncertaintyUp:
-          return self._uncertaintyDown
+            return self._uncertaintyDown
         else:
-          return (self._uncertaintyDown, self._uncertaintyUp)
+            return (self._uncertaintyDown, self._uncertaintyUp)
 
     def uncertaintyDown (self):
         return self._uncertaintyDown
@@ -93,9 +94,9 @@ class SimpleMeasurement:
 
     def centralValueAndUncertainty (self):
         if self._uncertaintyDown == self._uncertaintyUp:
-          return (self._centralValue, self._uncertaintyDown)
+            return (self._centralValue, self._uncertaintyDown)
         else:
-          return (self._centralValue, self._uncertaintyDown, self._uncertaintyUp)
+            return (self._centralValue, self._uncertaintyDown, self._uncertaintyUp)
 
     def centralValueAndUncertaintyDownAndUp (self):
         return (self._centralValue, self._uncertaintyDown, self._uncertaintyUp)
@@ -246,8 +247,8 @@ class SimpleMeasurement:
 
 # a Measurement is a SimpleMeasurement an additional systematic uncertainty (possibly asymmetric)
 class Measurement (SimpleMeasurement):
-    _systematicDown = None
-    _systematicUp = None
+    _systematicDown = SimpleMeasurement._nan
+    _systematicUp = SimpleMeasurement._nan
 
     def __init__ (self, centralValue = None, uncertaintyDown = None, uncertaintyUp = None, systematicDown = None, systematicUp = None):
         SimpleMeasurement.__init__ (self, centralValue, uncertaintyDown, uncertaintyUp)
@@ -289,9 +290,9 @@ class Measurement (SimpleMeasurement):
         self._systematicUp = float (systematicUp)
 
     def isPositive (self, isPositive = True):
-        SimpleMeasurement.__init__ (self, isPositive)
+        SimpleMeasurement.isPositive (self, isPositive)
         if self._centralValue - self._systematicDown < 0.0:
-          self._systematicDown = self._centralValue
+            self._systematicDown = self._centralValue
 
     ############################################################################
     # Getters.
@@ -299,9 +300,9 @@ class Measurement (SimpleMeasurement):
 
     def systematic (self):
         if self._systematicDown == self._systematicUp:
-          return self._systematicDown
+            return self._systematicDown
         else:
-          return (self._systematicDown, self._systematicUp)
+            return (self._systematicDown, self._systematicUp)
 
     def systematicDown (self):
         return self._systematicDown
@@ -317,9 +318,9 @@ class Measurement (SimpleMeasurement):
 
     def centralValueAndSystematic (self):
         if self._systematicDown == self._systematicUp:
-          return (self._centralValue, self._systematicDown)
+            return (self._centralValue, self._systematicDown)
         else:
-          return (self._centralValue, self._systematicDown, self._systematicUp)
+            return (self._centralValue, self._systematicDown, self._systematicUp)
 
     def centralValueAndSystematicDownAndUp (self):
         return (self._centralValue, self._systematicDown, self._systematicUp)
@@ -333,6 +334,9 @@ class Measurement (SimpleMeasurement):
 
     def roundAccordingToUncertainty (self, uncertainty):
         x = SimpleMeasurement.roundAccordingToUncertainty (self, uncertainty)
+        if math.isnan (self._systematicDown) and math.isnan (self._systematicUp):
+            return x
+
         exponent = (int (math.floor (math.log10 (uncertainty))) if uncertainty != 0.0 else -1)
 
         systematicDown = round (self._systematicDown, self._maxSigFigsInUncertainty - 1 - exponent)
@@ -345,7 +349,7 @@ class Measurement (SimpleMeasurement):
     ############################################################################
 
     def __str__ (self):
-        if self._systematicDown is None and self._systematicUp is None:
+        if math.isnan (self._systematicDown) and math.isnan (self._systematicUp):
             return SimpleMeasurement.__str__ (self)
 
         if self._printLongFormat:
