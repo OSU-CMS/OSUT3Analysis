@@ -649,4 +649,10 @@ dataset_names = {
 'NoBPTX_2017C_v2_PromptReco_Ntuple' : "/NoBPTX/Run2017C-PromptReco-v2/USER",
 'NoBPTX_2017C_v3_PromptReco_Ntuple' : "/NoBPTX/Run2017C-PromptReco-v3/USER",
 
+'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : "/NoBPTX/Run2017B-PromptReco-OnlyJetTriggers-v1/USER",
+'NoBPTX_2017B_v2_PromptReco_OnlyJetTriggers_Ntuple' : "/NoBPTX/Run2017B-PromptReco-OnlyJetTriggers-v2/USER",
+'NoBPTX_2017C_v1_PromptReco_OnlyJetTriggers_Ntuple' : "/NoBPTX/Run2017C-PromptReco-OnlyJetTriggers-v1/USER",
+'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : "/NoBPTX/Run2017C-PromptReco-OnlyJetTriggers-v2/USER",
+'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : "/NoBPTX/Run2017C-PromptReco-OnlyJetTriggers-v3/USER",
+
 }
