@@ -30,13 +30,12 @@ class SimpleMeasurement:
     def setCentralValue (self, centralValue):
         self._centralValue = float (centralValue)
 
-    def setUncertainty (self, uncertainty):
-        self._uncertaintyDown = float (uncertainty)
-        self._uncertaintyUp = float (uncertainty)
-
-    def setUncertainty (self, uncertaintyDown, uncertaintyUp):
+    def setUncertainty (self, uncertaintyDown, uncertaintyUp = None):
         self._uncertaintyDown = float (uncertaintyDown)
-        self._uncertaintyUp = float (uncertaintyUp)
+        if uncertaintyUp is not None:
+            self._uncertaintyUp = float (uncertaintyUp)
+        else:
+            self._uncertaintyUp = float (uncertaintyDown)
 
     def setUncertaintyDown (self, uncertaintyDown):
         self._uncertaintyDown = float (uncertaintyDown)
@@ -265,13 +264,12 @@ class Measurement (SimpleMeasurement):
     # Setters.
     ############################################################################
 
-    def setSystematic (self, systematic):
-        self._systematicDown = float (systematic)
-        self._systematicUp = float (systematic)
-
-    def setSystematic (self, systematicDown, systematicUp):
+    def setSystematic (self, systematicDown, systematicUp = None):
         self._systematicDown = float (systematicDown)
-        self._systematicUp = float (systematicUp)
+        if systematicUp is not None:
+            self._systematicUp = float (systematicUp)
+        else:
+            self._systematicUp = float (systematicDown)
 
     def setSystematicDown (self, systematicDown):
         self._systematicDown = float (systematicDown)
