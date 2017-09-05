@@ -6,7 +6,9 @@
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 #include "OSUT3Analysis/Collections/interface/Track.h"
 
+#ifndef MAX_DR
 #define MAX_DR (99.0)
+#endif
 
 #if IS_VALID(secondaryTracks)
 

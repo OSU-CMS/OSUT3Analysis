@@ -65,7 +65,8 @@ class OSUTrackProducer : public edm::EDProducer
     map<DetId, vector<double> > EcalAllDeadChannelsValMap_;
     map<DetId, vector<int> >    EcalAllDeadChannelsBitMap_;
 
-    const double getTrackIsolation (const reco::Track &, const vector<reco::Track> &, const bool, const double, const double = 1.0e-12) const;
+    const double getTrackIsolation (const reco::Track &, const vector<reco::Track> &, const bool, const bool, const double, const double = 1.0e-12) const;
+    const double getOldTrackIsolation (const reco::Track &, const vector<reco::Track> &, const bool, const double, const double = 1.0e-12) const;
 };
 
 #endif
