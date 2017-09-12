@@ -5967,8 +5967,10 @@ colors = {
 
 style = {
     'mchamp600_NtupleSeparateEvents' : 2, #1
+    'gluino1000_NtupleSeparateEvents' : 1,
     'gluino2000_NtupleSeparateEvents' : 1,
     'mchamp600_NtupleSeparateEvents_2016' : 1,#2
+    'gluino1000_NtupleSeparateEvents_2016' : 1,
     'gluino2000_NtupleSeparateEvents_2016' : 1,
     'cosmicMC_0To25Timing_Ntuple_v2' : 1,
     'cosmicMC_0To25Timing_Ntuple_2016_v2' : 1,
@@ -6934,7 +6936,7 @@ labels = {
     'gluino400_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV), 2015",
     'gluino600_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV), 2015",
     'gluino800_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV), 2015",
-    'gluino1000_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV), 2015",
+    'gluino1000_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     'gluino1200_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV), 2015",
     'gluino1400_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV), 2015",
     'gluino1600_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1600 GeV, M_{#tilde{#chi}^{0}_{2}}=1000 GeV, M_{#tilde{#chi}^{0}_{LSP}}=400 GeV), 2015",
