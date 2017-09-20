@@ -353,7 +353,7 @@ class Measurement (SimpleMeasurement):
         if self._printLongFormat:
             (centralValue, uncertaintyDown, uncertaintyUp, systematicDown, systematicUp) = self.centralValueAndUncertaintyDownAndUpAndSystematicDownAndUp ()
         else:
-            (centralValue, uncertaintyDown, uncertaintyUp, systematicDown, systematicUp) = self.roundAccordingToUncertainty (max (self.maxUncertainty (), self.maxSystematic ()))
+            (centralValue, uncertaintyDown, uncertaintyUp, systematicDown, systematicUp) = self.roundAccordingToUncertainty (self.maxUncertainty ())
 
         s = ""
         if not self._printTeX:
