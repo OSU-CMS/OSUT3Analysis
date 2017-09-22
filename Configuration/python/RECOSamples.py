@@ -540,6 +540,14 @@ dataset_names = {
 'NoBPTX_2017C_v1_PromptReco_RECO' : "/NoBPTX/Run2017C-PromptReco-v1/RECO",
 'NoBPTX_2017C_v2_PromptReco_RECO' : "/NoBPTX/Run2017C-PromptReco-v2/RECO",
 'NoBPTX_2017C_v3_PromptReco_RECO' : "/NoBPTX/Run2017C-PromptReco-v3/RECO",
+'NoBPTX_2017D_v1_PromptReco_RECO' : "/NoBPTX/Run2017D-PromptReco-v1/RECO",
+
+'NoBPTX_2017B_v1_PromptReco_AOD' : "/NoBPTX/Run2017B-PromptReco-v1/AOD",
+'NoBPTX_2017B_v2_PromptReco_AOD' : "/NoBPTX/Run2017B-PromptReco-v2/AOD",
+'NoBPTX_2017C_v1_PromptReco_AOD' : "/NoBPTX/Run2017C-PromptReco-v1/AOD",
+'NoBPTX_2017C_v2_PromptReco_AOD' : "/NoBPTX/Run2017C-PromptReco-v2/AOD",
+'NoBPTX_2017C_v3_PromptReco_AOD' : "/NoBPTX/Run2017C-PromptReco-v3/AOD",
+'NoBPTX_2017D_v1_PromptReco_AOD' : "/NoBPTX/Run2017D-PromptReco-v1/AOD",
 
 ################## Delayed Muon RECO not stored on T3 ############
 ########################## data ##########################
