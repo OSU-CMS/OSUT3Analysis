@@ -8,13 +8,15 @@ import glob
 import subprocess
 import pickle
 import shutil
+import math
+from threading import Thread, Lock, Semaphore
+from multiprocessing import cpu_count
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 from OSUT3Analysis.DBTools.condorSubArgumentsSet import *
 import FWCore.ParameterSet.Config as cms
 from ROOT import TFile
-
 
 ###############################################################################
 #                     Make the submission script for condor.                  #
@@ -244,7 +246,37 @@ def SkimFileValidator(File):
     InvalidOrEmpty = not Valid or not FileToTest.Get ("Events").GetEntries ()
     return Valid, InvalidOrEmpty
 
+###############################################################################
+#                   Merge an intermediate file with a thread.                 #
+###############################################################################
+threadLog = ""
+outputFiles = []
+lock = Lock () # to control appending to threadLog and outputFiles
+semaphore = Semaphore (cpu_count () + 1) # to control how many merging threads are active at a given time
+def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbose):
+    global threadLog
+    global outputFiles
+    global lock
+    global semaphore
+    localThreadLog = ""
 
+    weightString = MakeWeightsString(weight, files)
+    outputFile = dataset + '_' + str (threadIndex) + '.root'
+    cmd = 'mergeTFileServiceHistograms -i ' + " ".join (files) + ' -o ' + outputDir + "/" + outputFile + ' -w ' + weightString
+
+    semaphore.acquire ()
+    if verbose:
+        print "Executing: ", cmd
+    try:
+        localThreadLog += subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        localThreadLog += e.output
+    semaphore.release ()
+
+    lock.acquire ()
+    threadLog += localThreadLog
+    outputFiles.append (outputDir + '/' + outputFile)
+    lock.release ()
 
 ###############################################################################
 #                       Main function to do merging work.                     #
@@ -372,13 +404,35 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber, BadIndices, FilesToRemove)
     else:
         MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove)
-    cmd = 'mergeTFileServiceHistograms -i ' + " ".join (GoodRootFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root' + ' -w ' + InputWeightString
+
+    # start threads, each of which merges some fraction of the input files
+    filesPerThread = 100 # to be adjusted if need be
+    nThreadTarget = cpu_count () + 1
+    nThreads = int (math.ceil (float (len (GoodRootFiles)) / float (filesPerThread)))
+    if nThreads < nThreadTarget:
+        nThreads = nThreadTarget
+        filesPerThread = int (math.ceil (float (len (GoodRootFiles)) / float (nThreads)))
+    threads = []
+    for i in range (0, nThreads):
+        threads.append (Thread (target = MergeIntermediateFile, args = (GoodRootFiles[(i * filesPerThread):((i + 1) * filesPerThread)], OutputDir, dataSet, Weight, i, verbose)))
+        threads[-1].start ()
+    for i in range (0, nThreads):
+        threads[i].join ()
+    log += threadLog
+
+    # merge the intermediate files produced by the threads above
+    cmd = 'mergeTFileServiceHistograms -i ' + " ".join (outputFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root'
     if verbose:
         print "Executing: ", cmd
     try:
         log += subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         log += e.output
+
+    # remove the intermediate files produced by the threads above
+    for i in range (0, len (outputFiles)):
+        os.unlink (outputFiles[i])
+
     log += "\nFinished merging dataset " + dataSet + ":\n"
     log += "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs.\n"
     log += "    "+ str(TotalNumber) + " events were successfully run over.\n"
