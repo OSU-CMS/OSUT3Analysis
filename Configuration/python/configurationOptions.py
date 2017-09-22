@@ -243,18 +243,28 @@ datasets = [
    'NoBPTX_2017C_v1_PromptReco_RECO',
    'NoBPTX_2017C_v2_PromptReco_RECO',
    'NoBPTX_2017C_v3_PromptReco_RECO',
+   'NoBPTX_2017D_v1_PromptReco_RECO',
+
+   'NoBPTX_2017B_v1_PromptReco_AOD',
+   'NoBPTX_2017B_v2_PromptReco_AOD',
+   'NoBPTX_2017C_v1_PromptReco_AOD',
+   'NoBPTX_2017C_v2_PromptReco_AOD',
+   'NoBPTX_2017C_v3_PromptReco_AOD',
+   'NoBPTX_2017D_v1_PromptReco_AOD',
 
    'NoBPTX_2017B_v1_PromptReco_Ntuple',
    'NoBPTX_2017B_v2_PromptReco_Ntuple',
    'NoBPTX_2017C_v1_PromptReco_Ntuple',
    'NoBPTX_2017C_v2_PromptReco_Ntuple',
    'NoBPTX_2017C_v3_PromptReco_Ntuple',
+   'NoBPTX_2017D_v1_PromptReco_Ntuple',
 
    'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple',
    'NoBPTX_2017B_v2_PromptReco_OnlyJetTriggers_Ntuple',
    'NoBPTX_2017C_v1_PromptReco_OnlyJetTriggers_Ntuple',
    'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple',
    'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple',
+   'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple',
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
@@ -949,6 +959,15 @@ composite_dataset_definitions = {
         'NoBPTX_2017C_v1_PromptReco_RECO',
         'NoBPTX_2017C_v2_PromptReco_RECO',
         'NoBPTX_2017C_v3_PromptReco_RECO',
+        'NoBPTX_2017D_v1_PromptReco_RECO',
+        ],
+   'NoBPTX_2017_PromptReco_AOD' : [
+        'NoBPTX_2017B_v1_PromptReco_AOD',
+        'NoBPTX_2017B_v2_PromptReco_AOD',
+        'NoBPTX_2017C_v1_PromptReco_AOD',
+        'NoBPTX_2017C_v2_PromptReco_AOD',
+        'NoBPTX_2017C_v3_PromptReco_AOD',
+        'NoBPTX_2017D_v1_PromptReco_AOD',
         ],
    'NoBPTX_2017_PromptReco_Ntuple' : [
         'NoBPTX_2017B_v1_PromptReco_Ntuple',
@@ -956,6 +975,7 @@ composite_dataset_definitions = {
         'NoBPTX_2017C_v1_PromptReco_Ntuple',
         'NoBPTX_2017C_v2_PromptReco_Ntuple',
         'NoBPTX_2017C_v3_PromptReco_Ntuple',
+        'NoBPTX_2017D_v1_PromptReco_Ntuple',
         ],
    'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : [
         'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple',
@@ -963,6 +983,7 @@ composite_dataset_definitions = {
         'NoBPTX_2017C_v1_PromptReco_OnlyJetTriggers_Ntuple',
         'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple',
         'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple',
+        'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple',
         ],
 
 }
@@ -2171,6 +2192,15 @@ nJobs = {
     'NoBPTX_2017C_v1_PromptReco_RECO' : 999,
     'NoBPTX_2017C_v2_PromptReco_RECO' : 999,
     'NoBPTX_2017C_v3_PromptReco_RECO' : 999,
+    'NoBPTX_2017D_v1_PromptReco_RECO' : 999,
+
+    'NoBPTX_2017_PromptReco_AOD' : 999,
+    'NoBPTX_2017B_v1_PromptReco_AOD' : 999,
+    'NoBPTX_2017B_v2_PromptReco_AOD' : 999,
+    'NoBPTX_2017C_v1_PromptReco_AOD' : 999,
+    'NoBPTX_2017C_v2_PromptReco_AOD' : 999,
+    'NoBPTX_2017C_v3_PromptReco_AOD' : 999,
+    'NoBPTX_2017D_v1_PromptReco_AOD' : 999,
 
     'NoBPTX_2017_PromptReco_Ntuple' : 999,
     'NoBPTX_2017B_v1_PromptReco_Ntuple' : 999,
@@ -2178,6 +2208,7 @@ nJobs = {
     'NoBPTX_2017C_v1_PromptReco_Ntuple' : 999,
     'NoBPTX_2017C_v2_PromptReco_Ntuple' : 999,
     'NoBPTX_2017C_v3_PromptReco_Ntuple' : 999,
+    'NoBPTX_2017D_v1_PromptReco_Ntuple' : 999,
 
     'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : 999,
     'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : 999,
@@ -2185,6 +2216,7 @@ nJobs = {
     'NoBPTX_2017C_v1_PromptReco_OnlyJetTriggers_Ntuple' : 999,
     'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : 999,
     'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : 999,
+    'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : 999,
 
 
     #rpc study
@@ -3393,6 +3425,15 @@ maxEvents = {
     'NoBPTX_2017C_v1_PromptReco_RECO' : -1,
     'NoBPTX_2017C_v2_PromptReco_RECO' : -1,
     'NoBPTX_2017C_v3_PromptReco_RECO' : -1,
+    'NoBPTX_2017D_v1_PromptReco_RECO' : -1,
+
+    'NoBPTX_2017_PromptReco_AOD' : -1,
+    'NoBPTX_2017B_v1_PromptReco_AOD' : -1,
+    'NoBPTX_2017B_v2_PromptReco_AOD' : -1,
+    'NoBPTX_2017C_v1_PromptReco_AOD' : -1,
+    'NoBPTX_2017C_v2_PromptReco_AOD' : -1,
+    'NoBPTX_2017C_v3_PromptReco_AOD' : -1,
+    'NoBPTX_2017D_v1_PromptReco_AOD' : -1,
 
     'NoBPTX_2017_PromptReco_Ntuple' : -1,
     'NoBPTX_2017B_v1_PromptReco_Ntuple' : -1,
@@ -3400,6 +3441,7 @@ maxEvents = {
     'NoBPTX_2017C_v1_PromptReco_Ntuple' : -1,
     'NoBPTX_2017C_v2_PromptReco_Ntuple' : -1,
     'NoBPTX_2017C_v3_PromptReco_Ntuple' : -1,
+    'NoBPTX_2017D_v1_PromptReco_Ntuple' : -1,
 
     'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : -1,
     'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : -1,
@@ -3407,6 +3449,7 @@ maxEvents = {
     'NoBPTX_2017C_v1_PromptReco_OnlyJetTriggers_Ntuple' : -1,
     'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : -1,
     'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : -1,
+    'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : -1,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : -1,
@@ -4668,6 +4711,15 @@ types = {
     'NoBPTX_2017C_v1_PromptReco_RECO' : 'data',
     'NoBPTX_2017C_v2_PromptReco_RECO' : 'data',
     'NoBPTX_2017C_v3_PromptReco_RECO' : 'data',
+    'NoBPTX_2017D_v1_PromptReco_RECO' : 'data',
+
+    'NoBPTX_2017_PromptReco_AOD' : 'data',
+    'NoBPTX_2017B_v1_PromptReco_AOD' : 'data',
+    'NoBPTX_2017B_v2_PromptReco_AOD' : 'data',
+    'NoBPTX_2017C_v1_PromptReco_AOD' : 'data',
+    'NoBPTX_2017C_v2_PromptReco_AOD' : 'data',
+    'NoBPTX_2017C_v3_PromptReco_AOD' : 'data',
+    'NoBPTX_2017D_v1_PromptReco_AOD' : 'data',
 
     'NoBPTX_2017_PromptReco_Ntuple' : 'data',
     'NoBPTX_2017B_v1_PromptReco_Ntuple' : 'data',
@@ -4675,6 +4727,7 @@ types = {
     'NoBPTX_2017C_v1_PromptReco_Ntuple' : 'data',
     'NoBPTX_2017C_v2_PromptReco_Ntuple' : 'data',
     'NoBPTX_2017C_v3_PromptReco_Ntuple' : 'data',
+    'NoBPTX_2017D_v1_PromptReco_Ntuple' : 'data',
 
     'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
     'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
@@ -4682,6 +4735,7 @@ types = {
     'NoBPTX_2017C_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
     'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
     'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
+    'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
@@ -5934,6 +5988,15 @@ colors = {
     'NoBPTX_2017C_v1_PromptReco_RECO' : 1,
     'NoBPTX_2017C_v2_PromptReco_RECO' : 1,
     'NoBPTX_2017C_v3_PromptReco_RECO' : 1,
+    'NoBPTX_2017D_v1_PromptReco_RECO' : 1,
+
+    'NoBPTX_2017_PromptReco_AOD' : 1,
+    'NoBPTX_2017B_v1_PromptReco_AOD' : 1,
+    'NoBPTX_2017B_v2_PromptReco_AOD' : 1,
+    'NoBPTX_2017C_v1_PromptReco_AOD' : 1,
+    'NoBPTX_2017C_v2_PromptReco_AOD' : 1,
+    'NoBPTX_2017C_v3_PromptReco_AOD' : 1,
+    'NoBPTX_2017D_v1_PromptReco_AOD' : 1,
 
     'NoBPTX_2017_PromptReco_Ntuple' : 1,
     'NoBPTX_2017B_v1_PromptReco_Ntuple' : 1,
@@ -5941,6 +6004,7 @@ colors = {
     'NoBPTX_2017C_v1_PromptReco_Ntuple' : 1,
     'NoBPTX_2017C_v2_PromptReco_Ntuple' : 1,
     'NoBPTX_2017C_v3_PromptReco_Ntuple' : 1,
+    'NoBPTX_2017D_v1_PromptReco_Ntuple' : 1,
 
     'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : 1,
     'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : 1,
@@ -5948,6 +6012,7 @@ colors = {
     'NoBPTX_2017C_v1_PromptReco_OnlyJetTriggers_Ntuple' : 1,
     'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : 1,
     'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : 1,
+    'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : 1,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 7,
@@ -5967,8 +6032,10 @@ colors = {
 
 style = {
     'mchamp600_NtupleSeparateEvents' : 2, #1
+    'gluino1000_NtupleSeparateEvents' : 1,
     'gluino2000_NtupleSeparateEvents' : 1,
     'mchamp600_NtupleSeparateEvents_2016' : 1,#2
+    'gluino1000_NtupleSeparateEvents_2016' : 1,
     'gluino2000_NtupleSeparateEvents_2016' : 1,
     'cosmicMC_0To25Timing_Ntuple_v2' : 1,
     'cosmicMC_0To25Timing_Ntuple_2016_v2' : 1,
@@ -6934,7 +7001,7 @@ labels = {
     'gluino400_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=400 GeV, M_{#tilde{#chi}^{0}_{2}}=250 GeV, M_{#tilde{#chi}^{0}_{LSP}}=100 GeV), 2015",
     'gluino600_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=600 GeV, M_{#tilde{#chi}^{0}_{2}}=375 GeV, M_{#tilde{#chi}^{0}_{LSP}}=150 GeV), 2015",
     'gluino800_NtupleSeparateEvents'    : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=800 GeV, M_{#tilde{#chi}^{0}_{2}}=500 GeV, M_{#tilde{#chi}^{0}_{LSP}}=200 GeV), 2015",
-    'gluino1000_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV), 2015",
+    'gluino1000_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1000 GeV, M_{#tilde{#chi}^{0}_{2}}=625 GeV, M_{#tilde{#chi}^{0}_{LSP}}=250 GeV)",
     'gluino1200_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1200 GeV, M_{#tilde{#chi}^{0}_{2}}=750 GeV, M_{#tilde{#chi}^{0}_{LSP}}=300 GeV), 2015",
     'gluino1400_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1400 GeV, M_{#tilde{#chi}^{0}_{2}}=875 GeV, M_{#tilde{#chi}^{0}_{LSP}}=350 GeV), 2015",
     'gluino1600_NtupleSeparateEvents'   : "#tilde{g} #rightarrow qq#bar#tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow #mu^{+}#mu^{-}#tilde{#chi}^{0}_{LSP} (M_{#tilde{g}}=1600 GeV, M_{#tilde{#chi}^{0}_{2}}=1000 GeV, M_{#tilde{#chi}^{0}_{LSP}}=400 GeV), 2015",
@@ -7215,6 +7282,15 @@ labels = {
     'NoBPTX_2017C_v1_PromptReco_RECO' : 'NoBPTX 2017C v1 Prompt reco data',
     'NoBPTX_2017C_v2_PromptReco_RECO' : 'NoBPTX 2017C v2 Prompt reco data',
     'NoBPTX_2017C_v3_PromptReco_RECO' : 'NoBPTX 2017C v3 Prompt reco data',
+    'NoBPTX_2017D_v1_PromptReco_RECO' : 'NoBPTX 2017D v1 Prompt reco data',
+
+    'NoBPTX_2017_PromptReco_AOD' : 'NoBPTX 2017 Prompt reco data',
+    'NoBPTX_2017B_v1_PromptReco_AOD' : 'NoBPTX 2017B v1 Prompt reco data',
+    'NoBPTX_2017B_v2_PromptReco_AOD' : 'NoBPTX 2017B v2 Prompt reco data',
+    'NoBPTX_2017C_v1_PromptReco_AOD' : 'NoBPTX 2017C v1 Prompt reco data',
+    'NoBPTX_2017C_v2_PromptReco_AOD' : 'NoBPTX 2017C v2 Prompt reco data',
+    'NoBPTX_2017C_v3_PromptReco_AOD' : 'NoBPTX 2017C v3 Prompt reco data',
+    'NoBPTX_2017D_v1_PromptReco_AOD' : 'NoBPTX 2017D v1 Prompt reco data',
 
     'NoBPTX_2017_PromptReco_Ntuple' : 'NoBPTX 2017 Prompt reco data',
     'NoBPTX_2017B_v1_PromptReco_Ntuple' : 'NoBPTX 2017B v1 Prompt reco data',
@@ -7222,6 +7298,7 @@ labels = {
     'NoBPTX_2017C_v1_PromptReco_Ntuple' : 'NoBPTX 2017C v1 Prompt reco data',
     'NoBPTX_2017C_v2_PromptReco_Ntuple' : 'NoBPTX 2017C v2 Prompt reco data',
     'NoBPTX_2017C_v3_PromptReco_Ntuple' : 'NoBPTX 2017C v3 Prompt reco data',
+    'NoBPTX_2017D_v1_PromptReco_Ntuple' : 'NoBPTX 2017D v1 Prompt reco data',
 
     'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017 Prompt reco data',
     'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017B v1 Prompt reco data',
@@ -7229,6 +7306,7 @@ labels = {
     'NoBPTX_2017C_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017C v1 Prompt reco data',
     'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017C v2 Prompt reco data',
     'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017C v3 Prompt reco data',
+    'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017D v1 Prompt reco data',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p4)",
