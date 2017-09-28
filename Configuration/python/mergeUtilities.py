@@ -282,6 +282,9 @@ def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbo
 #                       Main function to do merging work.                     #
 ###############################################################################
 def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
+    global threadLog
+    global outputFiles
+
     os.chdir(CondorDir)
     directory = CondorDir + '/' + dataSet
     if not os.path.exists(directory):
@@ -404,6 +407,9 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
         MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber, BadIndices, FilesToRemove)
     else:
         MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove)
+
+    threadLog = ""
+    outputFiles = []
 
     # start threads, each of which merges some fraction of the input files
     filesPerThread = 100 # to be adjusted if need be

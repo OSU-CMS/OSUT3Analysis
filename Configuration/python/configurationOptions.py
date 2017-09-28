@@ -60,7 +60,9 @@ datasets = [
    'SingleMu_2016G',
    'SingleMu_2016H',
    'SingleMu_2017',
+   'SingleMu_2017B',
    'SingleMu_2017C',
+   'SingleMu_2017D',
    'SingleEle_2015',
    'SingleEle_2015D',
    'SingleEle_2016',
@@ -244,6 +246,7 @@ datasets = [
    'NoBPTX_2017C_v2_PromptReco_RECO',
    'NoBPTX_2017C_v3_PromptReco_RECO',
    'NoBPTX_2017D_v1_PromptReco_RECO',
+   'NoBPTX_2017E_v1_PromptReco_RECO',
 
    'NoBPTX_2017B_v1_PromptReco_AOD',
    'NoBPTX_2017B_v2_PromptReco_AOD',
@@ -251,6 +254,7 @@ datasets = [
    'NoBPTX_2017C_v2_PromptReco_AOD',
    'NoBPTX_2017C_v3_PromptReco_AOD',
    'NoBPTX_2017D_v1_PromptReco_AOD',
+   'NoBPTX_2017E_v1_PromptReco_AOD',
 
    'NoBPTX_2017B_v1_PromptReco_Ntuple',
    'NoBPTX_2017B_v2_PromptReco_Ntuple',
@@ -258,6 +262,7 @@ datasets = [
    'NoBPTX_2017C_v2_PromptReco_Ntuple',
    'NoBPTX_2017C_v3_PromptReco_Ntuple',
    'NoBPTX_2017D_v1_PromptReco_Ntuple',
+   'NoBPTX_2017E_v1_PromptReco_Ntuple',
 
    'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple',
    'NoBPTX_2017B_v2_PromptReco_OnlyJetTriggers_Ntuple',
@@ -265,6 +270,7 @@ datasets = [
    'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple',
    'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple',
    'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple',
+   'NoBPTX_2017E_v1_PromptReco_OnlyJetTriggers_Ntuple',
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
@@ -506,7 +512,9 @@ composite_dataset_definitions = {
         'SingleMu_2016H',
     ],
     'SingleMu_2017' : [
+        'SingleMu_2017B',
         'SingleMu_2017C',
+        'SingleMu_2017D',
     ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
@@ -960,6 +968,7 @@ composite_dataset_definitions = {
         'NoBPTX_2017C_v2_PromptReco_RECO',
         'NoBPTX_2017C_v3_PromptReco_RECO',
         'NoBPTX_2017D_v1_PromptReco_RECO',
+        'NoBPTX_2017E_v1_PromptReco_RECO',
         ],
    'NoBPTX_2017_PromptReco_AOD' : [
         'NoBPTX_2017B_v1_PromptReco_AOD',
@@ -968,6 +977,7 @@ composite_dataset_definitions = {
         'NoBPTX_2017C_v2_PromptReco_AOD',
         'NoBPTX_2017C_v3_PromptReco_AOD',
         'NoBPTX_2017D_v1_PromptReco_AOD',
+        'NoBPTX_2017E_v1_PromptReco_AOD',
         ],
    'NoBPTX_2017_PromptReco_Ntuple' : [
         'NoBPTX_2017B_v1_PromptReco_Ntuple',
@@ -976,6 +986,7 @@ composite_dataset_definitions = {
         'NoBPTX_2017C_v2_PromptReco_Ntuple',
         'NoBPTX_2017C_v3_PromptReco_Ntuple',
         'NoBPTX_2017D_v1_PromptReco_Ntuple',
+        'NoBPTX_2017E_v1_PromptReco_Ntuple',
         ],
    'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : [
         'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple',
@@ -984,6 +995,7 @@ composite_dataset_definitions = {
         'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple',
         'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple',
         'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple',
+        'NoBPTX_2017E_v1_PromptReco_OnlyJetTriggers_Ntuple',
         ],
 
 }
@@ -1245,7 +1257,9 @@ nJobs = {
     'SingleMu_2016F'   : 1000,
     'SingleMu_2016G'   : 1000,
     'SingleMu_2016H'   : 1000,
+    'SingleMu_2017B'   : 1000,
     'SingleMu_2017C'   : 1000,
+    'SingleMu_2017D'   : 1000,
 
     'SingleEle_2015D' : 1000,
     'SingleEle_2016B' : 1000,
@@ -2193,6 +2207,7 @@ nJobs = {
     'NoBPTX_2017C_v2_PromptReco_RECO' : 999,
     'NoBPTX_2017C_v3_PromptReco_RECO' : 999,
     'NoBPTX_2017D_v1_PromptReco_RECO' : 999,
+    'NoBPTX_2017E_v1_PromptReco_RECO' : 999,
 
     'NoBPTX_2017_PromptReco_AOD' : 999,
     'NoBPTX_2017B_v1_PromptReco_AOD' : 999,
@@ -2201,6 +2216,7 @@ nJobs = {
     'NoBPTX_2017C_v2_PromptReco_AOD' : 999,
     'NoBPTX_2017C_v3_PromptReco_AOD' : 999,
     'NoBPTX_2017D_v1_PromptReco_AOD' : 999,
+    'NoBPTX_2017E_v1_PromptReco_AOD' : 999,
 
     'NoBPTX_2017_PromptReco_Ntuple' : 999,
     'NoBPTX_2017B_v1_PromptReco_Ntuple' : 999,
@@ -2209,6 +2225,7 @@ nJobs = {
     'NoBPTX_2017C_v2_PromptReco_Ntuple' : 999,
     'NoBPTX_2017C_v3_PromptReco_Ntuple' : 999,
     'NoBPTX_2017D_v1_PromptReco_Ntuple' : 999,
+    'NoBPTX_2017E_v1_PromptReco_Ntuple' : 999,
 
     'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : 999,
     'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : 999,
@@ -2217,6 +2234,7 @@ nJobs = {
     'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : 999,
     'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : 999,
     'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : 999,
+    'NoBPTX_2017E_v1_PromptReco_OnlyJetTriggers_Ntuple' : 999,
 
 
     #rpc study
@@ -2490,7 +2508,9 @@ maxEvents = {
     'SingleMu_2016G'       : -1,
     'SingleMu_2016H'       : -1,
     'SingleMu_2016'        : -1,
+    'SingleMu_2017B'       : -1,
     'SingleMu_2017C'       : -1,
+    'SingleMu_2017D'       : -1,
     'SingleMu_2017'        : -1,
 
     'SingleEle_2015D'       : -1,
@@ -3426,6 +3446,7 @@ maxEvents = {
     'NoBPTX_2017C_v2_PromptReco_RECO' : -1,
     'NoBPTX_2017C_v3_PromptReco_RECO' : -1,
     'NoBPTX_2017D_v1_PromptReco_RECO' : -1,
+    'NoBPTX_2017E_v1_PromptReco_RECO' : -1,
 
     'NoBPTX_2017_PromptReco_AOD' : -1,
     'NoBPTX_2017B_v1_PromptReco_AOD' : -1,
@@ -3434,6 +3455,7 @@ maxEvents = {
     'NoBPTX_2017C_v2_PromptReco_AOD' : -1,
     'NoBPTX_2017C_v3_PromptReco_AOD' : -1,
     'NoBPTX_2017D_v1_PromptReco_AOD' : -1,
+    'NoBPTX_2017E_v1_PromptReco_AOD' : -1,
 
     'NoBPTX_2017_PromptReco_Ntuple' : -1,
     'NoBPTX_2017B_v1_PromptReco_Ntuple' : -1,
@@ -3442,6 +3464,7 @@ maxEvents = {
     'NoBPTX_2017C_v2_PromptReco_Ntuple' : -1,
     'NoBPTX_2017C_v3_PromptReco_Ntuple' : -1,
     'NoBPTX_2017D_v1_PromptReco_Ntuple' : -1,
+    'NoBPTX_2017E_v1_PromptReco_Ntuple' : -1,
 
     'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : -1,
     'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : -1,
@@ -3450,6 +3473,7 @@ maxEvents = {
     'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : -1,
     'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : -1,
     'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : -1,
+    'NoBPTX_2017E_v1_PromptReco_OnlyJetTriggers_Ntuple' : -1,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : -1,
@@ -3753,7 +3777,9 @@ types = {
     'SingleMu_2016F'    : "data",
     'SingleMu_2016G'    : "data",
     'SingleMu_2016H'    : "data",
+    'SingleMu_2017B'    : "data",
     'SingleMu_2017C'    : "data",
+    'SingleMu_2017D'    : "data",
     'SingleMu_2015'     : "data",
     'SingleMu_2016'     : "data",
     'SingleMu_2017'     : "data",
@@ -4712,6 +4738,7 @@ types = {
     'NoBPTX_2017C_v2_PromptReco_RECO' : 'data',
     'NoBPTX_2017C_v3_PromptReco_RECO' : 'data',
     'NoBPTX_2017D_v1_PromptReco_RECO' : 'data',
+    'NoBPTX_2017E_v1_PromptReco_RECO' : 'data',
 
     'NoBPTX_2017_PromptReco_AOD' : 'data',
     'NoBPTX_2017B_v1_PromptReco_AOD' : 'data',
@@ -4720,6 +4747,7 @@ types = {
     'NoBPTX_2017C_v2_PromptReco_AOD' : 'data',
     'NoBPTX_2017C_v3_PromptReco_AOD' : 'data',
     'NoBPTX_2017D_v1_PromptReco_AOD' : 'data',
+    'NoBPTX_2017E_v1_PromptReco_AOD' : 'data',
 
     'NoBPTX_2017_PromptReco_Ntuple' : 'data',
     'NoBPTX_2017B_v1_PromptReco_Ntuple' : 'data',
@@ -4728,6 +4756,7 @@ types = {
     'NoBPTX_2017C_v2_PromptReco_Ntuple' : 'data',
     'NoBPTX_2017C_v3_PromptReco_Ntuple' : 'data',
     'NoBPTX_2017D_v1_PromptReco_Ntuple' : 'data',
+    'NoBPTX_2017E_v1_PromptReco_Ntuple' : 'data',
 
     'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
     'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
@@ -4736,6 +4765,7 @@ types = {
     'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
     'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
     'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
+    'NoBPTX_2017E_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'data',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
@@ -5032,7 +5062,9 @@ colors = {
     'SingleMu_2016G'   : 1,
     'SingleMu_2016H'   : 1,
     'SingleMu_2016'    : 1,
+    'SingleMu_2017B'   : 1,
     'SingleMu_2017C'   : 1,
+    'SingleMu_2017D'   : 1,
     'SingleMu_2017'  : 1,
 
     'SingleEle_2015D'   : 1,
@@ -5989,6 +6021,7 @@ colors = {
     'NoBPTX_2017C_v2_PromptReco_RECO' : 1,
     'NoBPTX_2017C_v3_PromptReco_RECO' : 1,
     'NoBPTX_2017D_v1_PromptReco_RECO' : 1,
+    'NoBPTX_2017E_v1_PromptReco_RECO' : 1,
 
     'NoBPTX_2017_PromptReco_AOD' : 1,
     'NoBPTX_2017B_v1_PromptReco_AOD' : 1,
@@ -5997,6 +6030,7 @@ colors = {
     'NoBPTX_2017C_v2_PromptReco_AOD' : 1,
     'NoBPTX_2017C_v3_PromptReco_AOD' : 1,
     'NoBPTX_2017D_v1_PromptReco_AOD' : 1,
+    'NoBPTX_2017E_v1_PromptReco_AOD' : 1,
 
     'NoBPTX_2017_PromptReco_Ntuple' : 1,
     'NoBPTX_2017B_v1_PromptReco_Ntuple' : 1,
@@ -6005,6 +6039,7 @@ colors = {
     'NoBPTX_2017C_v2_PromptReco_Ntuple' : 1,
     'NoBPTX_2017C_v3_PromptReco_Ntuple' : 1,
     'NoBPTX_2017D_v1_PromptReco_Ntuple' : 1,
+    'NoBPTX_2017E_v1_PromptReco_Ntuple' : 1,
 
     'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : 1,
     'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : 1,
@@ -6013,6 +6048,7 @@ colors = {
     'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : 1,
     'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : 1,
     'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : 1,
+    'NoBPTX_2017E_v1_PromptReco_OnlyJetTriggers_Ntuple' : 1,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 7,
@@ -6324,7 +6360,9 @@ labels = {
     'SingleMu_2016G'     : "SingleMuon 2016G data",
     'SingleMu_2016H'     : "SingleMuon 2016H data",
     'SingleMu_2017'      : "SingleMuon 2017 data",
-    'SingleMu_2017C'     : "SingleMuon 2017C data",
+    'SingleMu_2017B'     : "SingleMuon 2017C data",
+    'SingleMu_2017C'     : "SingleMuon 2017D data",
+    'SingleMu_2017D'     : "SingleMuon 2017E data",
 
     'SingleEle_2015'      : "SingleElectron 2015 data",
     'SingleEle_2015B'     : "SingleElectron 2015B data",
@@ -7283,6 +7321,7 @@ labels = {
     'NoBPTX_2017C_v2_PromptReco_RECO' : 'NoBPTX 2017C v2 Prompt reco data',
     'NoBPTX_2017C_v3_PromptReco_RECO' : 'NoBPTX 2017C v3 Prompt reco data',
     'NoBPTX_2017D_v1_PromptReco_RECO' : 'NoBPTX 2017D v1 Prompt reco data',
+    'NoBPTX_2017E_v1_PromptReco_RECO' : 'NoBPTX 2017E v1 Prompt reco data',
 
     'NoBPTX_2017_PromptReco_AOD' : 'NoBPTX 2017 Prompt reco data',
     'NoBPTX_2017B_v1_PromptReco_AOD' : 'NoBPTX 2017B v1 Prompt reco data',
@@ -7291,6 +7330,7 @@ labels = {
     'NoBPTX_2017C_v2_PromptReco_AOD' : 'NoBPTX 2017C v2 Prompt reco data',
     'NoBPTX_2017C_v3_PromptReco_AOD' : 'NoBPTX 2017C v3 Prompt reco data',
     'NoBPTX_2017D_v1_PromptReco_AOD' : 'NoBPTX 2017D v1 Prompt reco data',
+    'NoBPTX_2017E_v1_PromptReco_AOD' : 'NoBPTX 2017E v1 Prompt reco data',
 
     'NoBPTX_2017_PromptReco_Ntuple' : 'NoBPTX 2017 Prompt reco data',
     'NoBPTX_2017B_v1_PromptReco_Ntuple' : 'NoBPTX 2017B v1 Prompt reco data',
@@ -7299,6 +7339,7 @@ labels = {
     'NoBPTX_2017C_v2_PromptReco_Ntuple' : 'NoBPTX 2017C v2 Prompt reco data',
     'NoBPTX_2017C_v3_PromptReco_Ntuple' : 'NoBPTX 2017C v3 Prompt reco data',
     'NoBPTX_2017D_v1_PromptReco_Ntuple' : 'NoBPTX 2017D v1 Prompt reco data',
+    'NoBPTX_2017E_v1_PromptReco_Ntuple' : 'NoBPTX 2017E v1 Prompt reco data',
 
     'NoBPTX_2017_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017 Prompt reco data',
     'NoBPTX_2017B_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017B v1 Prompt reco data',
@@ -7307,6 +7348,7 @@ labels = {
     'NoBPTX_2017C_v2_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017C v2 Prompt reco data',
     'NoBPTX_2017C_v3_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017C v3 Prompt reco data',
     'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017D v1 Prompt reco data',
+    'NoBPTX_2017E_v1_PromptReco_OnlyJetTriggers_Ntuple' : 'NoBPTX 2017E v1 Prompt reco data',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (M_{#tilde{g}} = 1200 GeV, M_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p4)",
