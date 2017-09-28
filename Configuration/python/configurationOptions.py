@@ -4846,6 +4846,9 @@ colors = {
     'MET_2016C' : 1,
     'MET_2016D' : 1,
     'MET_2016E' : 1,
+    'MET_2016F' : 1,
+    'MET_2016G' : 1,
+    'MET_2016H' : 1,
     'MET_2016' : 1,
 
     #AMSB chargino
@@ -6142,6 +6145,9 @@ labels = {
     'MET_2016C' : "MET 2016C data",
     'MET_2016D' : "MET_2016D data",
     'MET_2016E' : "MET_2016E data",
+    'MET_2016F' : "MET_2016F data",
+    'MET_2016G' : "MET_2016G data",
+    'MET_2016H' : "MET_2016H data",
     'MET_2016'  : "MET 2016 data",
 
     #AMSB chargino
