@@ -57,8 +57,8 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLu
     MergeScript.write('Index = int(sys.argv[1])\n\n')
     MergeScript.write('dataset = datasets[Index]\n\n')
     MergeScript.write('IntLumi = ' + str(IntLumi) + '\n')
-    MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd())  \n')
-    MergeScript.write("print 'Finished merging dataset ' + dataset  \n")
+    MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd())\n')
+    MergeScript.write("print 'Finished merging dataset ' + dataset\n")
     MergeScript.close()
     os.chmod (Directory + '/merge.py', 0755)
 
