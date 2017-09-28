@@ -54,7 +54,7 @@ CutFlowPlotter::~CutFlowPlotter ()
     if (cutName.size() > longestCutName) longestCutName = cutName.size();
   }
   longestCutName += 2;
-  clog << channel << " channel:  " << endl;
+  clog << channel << " channel:" << endl;
   clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
   clog << setw (longestCutName) << left << "Cut Name" << right
        << setw (10) << setprecision(1) << "Events"

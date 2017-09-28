@@ -669,4 +669,7 @@ dataset_names = {
 'NoBPTX_2017D_v1_PromptReco_OnlyJetTriggers_Ntuple' : "/NoBPTX/Run2017D-PromptReco-OnlyJetTriggers-v1/USER",
 'NoBPTX_2017E_v1_PromptReco_OnlyJetTriggers_Ntuple' : "/NoBPTX/Run2017E-PromptReco-OnlyJetTriggers-v1/USER",
 
+'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCsc_Ntuple' : "/NoBPTX/Run2017E-PromptReco-Cosmic-TopAndBottom-DtCsc-v1/USER",
+'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCscRpc_Ntuple' : "/NoBPTX/Run2017E-PromptReco-Cosmic-TopAndBottom-DtCscRpc-v1/USER",
+
 }
