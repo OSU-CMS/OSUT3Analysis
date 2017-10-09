@@ -11,6 +11,7 @@ class SimpleMeasurement:
     _printTeX = False
     _maxSigFigsInUncertainty = 2
     _printLongFormat = False
+    _printUncertainty = True
 
     def __init__ (self, centralValue = None, uncertaintyDown = None, uncertaintyUp = None):
         self._centralValue = float (centralValue)
@@ -65,6 +66,9 @@ class SimpleMeasurement:
 
     def printLongFormat (self, printLongFormat = True):
         self._printLongFormat = printLongFormat
+
+    def printUncertainty (self, printUncertainty = True):
+        self._printUncertainty = printUncertainty
 
     ############################################################################
     # Getters.
@@ -125,16 +129,20 @@ class SimpleMeasurement:
             (centralValue, uncertaintyDown, uncertaintyUp) = self.centralValueAndUncertaintyDownAndUp ()
         else:
             (centralValue, uncertaintyDown, uncertaintyUp) = self.roundAccordingToUncertainty (self.maxUncertainty ())
-        if not self._printTeX:
-            if uncertaintyDown == uncertaintyUp:
-                return str (centralValue) + " +- " + str (uncertaintyDown)
+
+        s = str (centralValue)
+        if self._printUncertainty:
+            if not self._printTeX:
+                if uncertaintyDown == uncertaintyUp:
+                    s+= " +- " + str (uncertaintyDown)
+                else:
+                    s += " - " + str (uncertaintyDown) + " + " + str (uncertaintyUp)
             else:
-                return str (centralValue) + " - " + str (uncertaintyDown) + " + " + str (uncertaintyUp)
-        else:
-            if uncertaintyDown == uncertaintyUp:
-                return str (centralValue) + " \pm " + str (uncertaintyDown)
-            else:
-                return str (centralValue) + " {}_{-" + str (uncertaintyDown) + "}^{+" + str (uncertaintyUp) + "}"
+                if uncertaintyDown == uncertaintyUp:
+                    s += " \pm " + str (uncertaintyDown)
+                else:
+                    s += " {}_{-" + str (uncertaintyDown) + "}^{+" + str (uncertaintyUp) + "}"
+        return s
 
     def __lt__ (self, other):
         if hasattr (other, "centralValue"):
@@ -355,25 +363,26 @@ class Measurement (SimpleMeasurement):
         else:
             (centralValue, uncertaintyDown, uncertaintyUp, systematicDown, systematicUp) = self.roundAccordingToUncertainty (self.maxUncertainty ())
 
-        s = ""
-        if not self._printTeX:
-            if uncertaintyDown == uncertaintyUp:
-                s += str (centralValue) + " +- " + str (uncertaintyDown)
+        s = str (centralValue)
+        if self._printUncertainty:
+            if not self._printTeX:
+                if uncertaintyDown == uncertaintyUp:
+                    s += " +- " + str (uncertaintyDown)
+                else:
+                    s += " (- " + str (uncertaintyDown) + " + " + str (uncertaintyUp) + ")"
+                if systematicDown == systematicUp:
+                    s += " +- " + str (systematicDown)
+                else:
+                    s += " (- " + str (systematicDown) + " + " + str (systematicUp) + ")"
             else:
-                s += str (centralValue) + " (- " + str (uncertaintyDown) + " + " + str (uncertaintyUp) + ")"
-            if systematicDown == systematicUp:
-                s += " +- " + str (systematicDown)
-            else:
-                s += " (- " + str (systematicDown) + " + " + str (systematicUp) + ")"
-        else:
-            if uncertaintyDown == uncertaintyUp:
-                s += str (centralValue) + " \pm " + str (uncertaintyDown)
-            else:
-                s += str (centralValue) + " {}_{-" + str (uncertaintyDown) + "}^{+" + str (uncertaintyUp) + "}"
-            if systematicDown == systematicUp:
-                s += " \pm " + str (systematicDown)
-            else:
-                s += " {}_{-" + str (systematicDown) + "}^{+" + str (systematicUp) + "}"
+                if uncertaintyDown == uncertaintyUp:
+                    s += " \pm " + str (uncertaintyDown)
+                else:
+                    s += " {}_{-" + str (uncertaintyDown) + "}^{+" + str (uncertaintyUp) + "}"
+                if systematicDown == systematicUp:
+                    s += " \pm " + str (systematicDown)
+                else:
+                    s += " {}_{-" + str (systematicDown) + "}^{+" + str (systematicUp) + "}"
         return s
 
     def __len__ (self):
