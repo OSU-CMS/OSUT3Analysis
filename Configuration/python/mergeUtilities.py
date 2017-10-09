@@ -18,11 +18,14 @@ from OSUT3Analysis.DBTools.condorSubArgumentsSet import *
 import FWCore.ParameterSet.Config as cms
 from ROOT import TFile
 
+NTHREADS_FOR_BATCH_MERGING = 1
+
 ###############################################################################
 #                     Make the submission script for condor.                  #
 ###############################################################################
 def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, split_datasets):
     SubmitFile = open(Directory + '/condorMerging.sub','w')
+    wroteCPUs = False
     for argument in sorted(currentCondorSubArgumentsSet):
         if currentCondorSubArgumentsSet[argument].has_key('Executable') and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = merge.py\n')
@@ -37,7 +40,12 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
                  else:
                      print "ERROR: ", os.path.join(Directory, oneDataset), "does not exist.  Will proceed to merge other datasets."
              SubmitFile.write('Transfer_Input_files = merge.py,' + datasetInfoString + '\n')
+        elif len (currentCondorSubArgumentsSet[argument].keys ()) > 0 and currentCondorSubArgumentsSet[argument].keys ()[0].lower () == "request_cpus":
+            SubmitFile.write ('request_cpus = ' + str (NTHREADS_FOR_BATCH_MERGING) + '\n') # explicitly request 8 CPU cores
+            wroteCPUs = True
         elif currentCondorSubArgumentsSet[argument].has_key('Queue'):
+            if not wroteCPUs:
+                SubmitFile.write ('request_cpus = ' + str (NTHREADS_FOR_BATCH_MERGING) + '\n') # explicitly request 8 CPU cores
             SubmitFile.write('Queue ' + str(len(split_datasets)) +'\n')
         else:
             SubmitFile.write(currentCondorSubArgumentsSet[argument].keys()[0] + ' = ' + currentCondorSubArgumentsSet[argument].values()[0] + '\n')
@@ -57,7 +65,7 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLu
     MergeScript.write('Index = int(sys.argv[1])\n\n')
     MergeScript.write('dataset = datasets[Index]\n\n')
     MergeScript.write('IntLumi = ' + str(IntLumi) + '\n')
-    MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd())\n')
+    MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd(), "", ' + str (NTHREADS_FOR_BATCH_MERGING) + ')\n') # use 8 CPU cores by default
     MergeScript.write("print 'Finished merging dataset ' + dataset\n")
     MergeScript.close()
     os.chmod (Directory + '/merge.py', 0755)
@@ -252,7 +260,7 @@ def SkimFileValidator(File):
 threadLog = ""
 outputFiles = []
 lock = Lock () # to control appending to threadLog and outputFiles
-semaphore = Semaphore (cpu_count () + 1) # to control how many merging threads are active at a given time
+semaphore = None # to control how many merging threads are active at a given time
 def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbose):
     global threadLog
     global outputFiles
@@ -281,9 +289,10 @@ def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbo
 ###############################################################################
 #                       Main function to do merging work.                     #
 ###############################################################################
-def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
+def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = cpu_count () + 1, verbose = False):
     global threadLog
     global outputFiles
+    global semaphore
 
     os.chdir(CondorDir)
     directory = CondorDir + '/' + dataSet
@@ -410,14 +419,16 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", verbose=False):
 
     threadLog = ""
     outputFiles = []
+    semaphore = Semaphore (nThreadsActive)
 
     # start threads, each of which merges some fraction of the input files
     filesPerThread = 100 # to be adjusted if need be
     nThreadTarget = cpu_count () + 1
-    nThreads = int (math.ceil (float (len (GoodRootFiles)) / float (filesPerThread)))
+    nFiles = len (GoodRootFiles)
+    nThreads = int (math.ceil (float (nFiles) / float (filesPerThread)))
     if nThreads < nThreadTarget:
-        nThreads = nThreadTarget
-        filesPerThread = int (math.ceil (float (len (GoodRootFiles)) / float (nThreads)))
+        nThreads = min (nThreadTarget, nFiles)
+        filesPerThread = int (math.ceil (float (nFiles) / float (nThreads)))
     threads = []
     for i in range (0, nThreads):
         threads.append (Thread (target = MergeIntermediateFile, args = (GoodRootFiles[(i * filesPerThread):((i + 1) * filesPerThread)], OutputDir, dataSet, Weight, i, verbose)))

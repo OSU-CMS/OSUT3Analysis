@@ -80,7 +80,7 @@ if arguments.verbose:
     print "List of datasets: ", split_datasets
 if not arguments.compositeOnly and not arguments.UseCondor:
     for dataSet in split_datasets:
-        mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir, arguments.verbose)
+        mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir, verbose = arguments.verbose)
 
 if arguments.UseCondor:
     # Make necessary files for condor and submit condor jobs.
