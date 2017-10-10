@@ -431,10 +431,12 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = 
         filesPerThread = int (math.ceil (float (nFiles) / float (nThreads)))
     threads = []
     for i in range (0, nThreads):
-        threads.append (Thread (target = MergeIntermediateFile, args = (GoodRootFiles[(i * filesPerThread):((i + 1) * filesPerThread)], OutputDir, dataSet, Weight, i, verbose)))
-        threads[-1].start ()
-    for i in range (0, nThreads):
-        threads[i].join ()
+        fileSubset = GoodRootFiles[(i * filesPerThread):((i + 1) * filesPerThread)]
+        if len (fileSubset):
+            threads.append (Thread (target = MergeIntermediateFile, args = (fileSubset, OutputDir, dataSet, Weight, i, verbose)))
+            threads[-1].start ()
+    for thread in threads:
+        thread.join ()
     log += threadLog
 
     # merge the intermediate files produced by the threads above
