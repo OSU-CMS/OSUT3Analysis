@@ -130,6 +130,8 @@ class InfoPrinter : public edm::EDAnalyzer
     unsigned maxVetoTriggerWidth_;
     unsigned maxValueWidth_;
     unsigned maxAllTriggerWidth_;
+    unsigned maxAllTriggerFilterWidth_;
+    unsigned maxAllTriggerCollectionWidth_;
     unsigned maxMETFilterWidth_;
     unsigned maxAllMETFilterWidth_;
     ////////////////////////////////////////////////////////////////////////////
