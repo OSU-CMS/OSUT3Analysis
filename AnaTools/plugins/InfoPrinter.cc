@@ -92,7 +92,7 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   // requested, print that information to the stringstream which is printed in
   // the destructor.
   //////////////////////////////////////////////////////////////////////////////
-  maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = maxAllTriggerWidth_ = maxAllTriggerFilterWidth_ = maxAllTriggerCollectionWidth_ = maxMETFilterWidth_ = maxAllMETFilterWidth_ = 0;
+  maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = maxAllTriggerWidth_ = maxAllTriggerCollectionWidth_ = maxAllTriggerFilterWidth_ = maxAllTriggerPathWidth_ = maxMETFilterWidth_ = maxAllMETFilterWidth_ = 0;
 
   bool eventDecision = getEventDecision(),
        printEvent = printAllEvents_ || (printPassedEvents_ && eventDecision);
@@ -568,8 +568,9 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
   ss_ << "--------------------------------------------------------------------------------" << endl;
   ss_ << A_BRIGHT_MAGENTA << "available trigger filters" << A_RESET << endl;
   ss_ << "--------------------------------------------------------------------------------" << endl;
-  vector<string> triggerFilters;
   vector<string> triggerCollections;
+  vector<string> triggerFilters;
+  vector<string> triggerPaths;
   if (!handles_.triggers.isValid()) {
     ss_ << A_BRIGHT_RED << "ERROR" << A_RESET << " [InfoPrinter::printAllTriggerFilters]:  Invalid triggers handle." << endl;
     return false;
@@ -586,22 +587,37 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
 #else
     triggerObj.unpackPathNames(event.triggerNames(*handles_.triggers));
 #endif
+    triggerCollections.push_back (triggerObj.collection ());
+
+    string filters = "", paths = "";
     for(const auto &filterLabel : triggerObj.filterLabels())
-      {
-        triggerCollections.push_back (triggerObj.collection ());
-        triggerFilters.push_back(filterLabel);
-      }
+      if (filters.length ())
+        filters += ", " + filterLabel;
+      else
+        filters += filterLabel;
+    clog << "NUMBER OF PATHS: " << triggerObj.pathNames ().size () << endl;
+    for(const auto &pathName : triggerObj.pathNames())
+      if (paths.length ())
+        paths += ", " + pathName;
+      else
+        paths += pathName;
+    triggerFilters.push_back (filters);
+    triggerPaths.push_back (paths);
   }
 
 #else
   #warning "Object \"triggers\" is not valid in requested data format."
 #endif
 
-  !maxAllTriggerFilterWidth_ && (maxAllTriggerFilterWidth_ = getMaxWidth (triggerFilters));
   !maxAllTriggerCollectionWidth_ && (maxAllTriggerCollectionWidth_ = getMaxWidth (triggerCollections));
-  for (unsigned i = 0; i < triggerFilters.size (); i++)
+  !maxAllTriggerFilterWidth_ && (maxAllTriggerFilterWidth_ = getMaxWidth (triggerFilters));
+  !maxAllTriggerPathWidth_ && (maxAllTriggerPathWidth_ = getMaxWidth (triggerPaths));
+  for (unsigned i = 0; i < triggerCollections.size (); i++)
     {
       ss_ << A_BRIGHT_BLUE << setw (maxAllTriggerCollectionWidth_) << left << triggerCollections.at (i) << setw (maxAllTriggerFilterWidth_) << left << triggerFilters.at (i) << A_RESET << endl;
+      if (triggerPaths.at (i).length ())
+        ss_ << A_BRIGHT_BLUE << setw (maxAllTriggerCollectionWidth_) << left << " " << setw (maxAllTriggerPathWidth_) << left << triggerPaths.at (i) << A_RESET << endl;
+      ss_ << endl;
     }
 
   return true;
