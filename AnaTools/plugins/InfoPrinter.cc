@@ -595,7 +595,6 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
         filters += ", " + filterLabel;
       else
         filters += filterLabel;
-    clog << "NUMBER OF PATHS: " << triggerObj.pathNames ().size () << endl;
     for(const auto &pathName : triggerObj.pathNames())
       if (paths.length ())
         paths += ", " + pathName;
