@@ -239,6 +239,13 @@ datasets = [
 
    'ZToMuMu_50To120_80X_AODSIM',
    'ZToMuMu_80To100_80X_Ntuple',
+   
+   'NoBPTX_Jet_2017B_v1_PromptReco_Ntuples',
+   'NoBPTX_Jet_2017B_v2_PromptReco_Ntuples',
+   'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples',
+   'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples',
+   'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples',
+   'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples',
 
    'NoBPTX_2017B_v1_PromptReco_RECO',
    'NoBPTX_2017B_v2_PromptReco_RECO',
@@ -962,6 +969,15 @@ composite_dataset_definitions = {
        'NoBPTX_CosJet_2016D_PromptReco_v2',
        'NoBPTX_CosJet_2016E_PromptReco_v2',
        'NoBPTX_CosJet_2016F_PromptReco_v1',
+    ],
+
+    'NoBPTX_Jet_2017_PromptReco_Ntuples' : [
+        'NoBPTX_Jet_2017B_v1_PromptReco_Ntuples',
+        'NoBPTX_Jet_2017B_v2_PromptReco_Ntuples',
+        'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples',
+        'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples',
+        'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples',
+        'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples',
     ],
 
    'NoBPTX_2017_PromptReco_RECO' : [
@@ -2203,6 +2219,14 @@ nJobs = {
     'ZToMuMu_50To120_80X_AODSIM' : 300,
     'ZToMuMu_80To100_80X_Ntuple' : 300,
 
+    'NoBPTX_Jet_2017_PromptReco_Ntuples' : 999,
+    'NoBPTX_Jet_2017B_v1_PromptReco_Ntuples' : 999,
+    'NoBPTX_Jet_2017B_v2_PromptReco_Ntuples' : 999,
+    'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples' : 999,
+    'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples' : 999,
+    'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples' : 999,
+    'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples' : 999,
+
     'NoBPTX_2017_PromptReco_RECO' : 999,
     'NoBPTX_2017B_v1_PromptReco_RECO' : 999,
     'NoBPTX_2017B_v2_PromptReco_RECO' : 999,
@@ -3443,6 +3467,14 @@ maxEvents = {
 
     'ZToMuMu_50To120_80X_AODSIM' : -1,
     'ZToMuMu_80To100_80X_Ntuple' : -1,
+
+    'NoBPTX_Jet_2017_PromptReco_Ntuples' : -1,
+    'NoBPTX_Jet_2017B_v1_PromptReco_Ntuples' : -1,
+    'NoBPTX_Jet_2017B_v2_PromptReco_Ntuples' : -1,
+    'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples' : -1,
+    'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples' : -1,
+    'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples' : -1,
+    'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples' : -1,
 
     'NoBPTX_2017_PromptReco_RECO' : -1,
     'NoBPTX_2017B_v1_PromptReco_RECO' : -1,
@@ -4739,6 +4771,14 @@ types = {
     'ZToMuMu_50To120_80X_AODSIM' : 'bgMC',
     'ZToMuMu_80To100_80X_Ntuple' : 'bgMC',
 
+    'NoBPTX_Jet_2017_PromptReco_Ntuples' : 'data',
+    'NoBPTX_Jet_2017B_v1_PromptReco_Ntuples' : 'data',
+    'NoBPTX_Jet_2017B_v2_PromptReco_Ntuples' : 'data',
+    'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples' : 'data',
+    'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples' : 'data',
+    'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples' : 'data',
+    'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples' : 'data',
+
     'NoBPTX_2017_PromptReco_RECO' : 'data',
     'NoBPTX_2017B_v1_PromptReco_RECO' : 'data',
     'NoBPTX_2017B_v2_PromptReco_RECO' : 'data',
@@ -6027,6 +6067,14 @@ colors = {
 
     'ZToMuMu_50To120_80X_AODSIM' : 1,
     'ZToMuMu_80To100_80X_Ntuple' : 46,
+
+    'NoBPTX_Jet_2017_PromptReco_Ntuples' : 1,
+    'NoBPTX_Jet_2017B_v1_PromptReco_Ntuples' : 1,
+    'NoBPTX_Jet_2017B_v2_PromptReco_Ntuples' : 1,
+    'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples' : 1,
+    'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples' : 1,
+    'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples' : 1,
+    'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples' : 1,
 
     'NoBPTX_2017_PromptReco_RECO' : 1,
     'NoBPTX_2017B_v1_PromptReco_RECO' : 1,
@@ -7333,6 +7381,14 @@ labels = {
 
     'ZToMuMu_50To120_80X_AODSIM' : "Z #rightarrow #mu#mu, 80X",
     'ZToMuMu_80To100_80X_Ntuple' : "Z #rightarrow #mu#mu, 80X",
+
+    'NoBPTX_Jet_2017_PromptReco_Ntuples' : 'NoBPTX Jet 2017 PromptReco ntuples data',
+    'NoBPTX_Jet_2017B_v1_PromptReco_Ntuples' : 'NoBPTX Jet 2017B v1 PromptReco ntuples data',
+    'NoBPTX_Jet_2017B_v2_PromptReco_Ntuples' : 'NoBPTX Jet 2017B v2 PromptReco ntuples data',
+    'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples' : 'NoBPTX Jet 2017C v1 PromptReco ntuples data',
+    'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples' : 'NoBPTX Jet 2017C v2 PromptReco ntuples data',
+    'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples' : 'NoBPTX Jet 2017C v3 PromptReco ntuples data',
+    'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples' : 'NoBPTX Jet 2017D v1 PromptReco ntuples data',
 
     'NoBPTX_2017_PromptReco_RECO' : 'NoBPTX 2017 Prompt reco data',
     'NoBPTX_2017B_v1_PromptReco_RECO' : 'NoBPTX 2017B v1 Prompt reco data',

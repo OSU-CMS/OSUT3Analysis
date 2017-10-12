@@ -493,6 +493,12 @@ dataset_names = {
     'NoBPTX_CosJet_2016E_PromptReco_v2' : "/NoBPTX/2016Cosmic_PromptReco_Ev2/USER", #cosmic data
     'NoBPTX_CosJet_2016F_PromptReco_v1' : "/NoBPTX/2016Cosmic_PromptReco_Fv1/USER", #cosmic data
 
+    'NoBPTX_Jet_2017B_v1_PromptReco_Ntuples':'/NoBPTX/Jet_2017B_v1_PromptReco_Ntuples/USER',#2017 collision
+    'NoBPTX_Jet_2017B_v2_PromptReco_Ntuples':'/NoBPTX/Jet_2017B_v2_PromptReco_Ntuples/USER', #2017 collision
+    'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples':'/NoBPTX/Jet_2017C_v1_PromptReco_Ntuples/USER', #2017 collision
+    'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples':'/NoBPTX/Jet_2017C_v2_PromptReco_Ntuples/USER', #2017 collision
+    'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples':'/NoBPTX/Jet_2017C_v3_PromptReco_Ntuples/USER', #2017 collision
+    'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples':'/NoBPTX/Jet_2017D_v1_PromptReco_Ntuples/USER', #2017 collision
 ################## Delayed Muon RECO not stored on T3 ############
 ########################## data ##########################
     'NoBPTX_2016B_23Sep2016_v2' : "/NoBPTX/Run2016B-23Sep2016-v2/RECO",
