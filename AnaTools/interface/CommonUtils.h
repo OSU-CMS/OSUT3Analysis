@@ -221,6 +221,8 @@ namespace anatools
   void getAllTokens (const edm::ParameterSet &, edm::ConsumesCollector &&, Tokens &);
 
   template<class T> bool jetPassesTightLepVeto (const T &);
+
+  template<class T> bool isMatchedToTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double dR = 0.1);
 }
 
 /**
@@ -263,6 +265,35 @@ anatools::jetPassesTightLepVeto (const T &jet)
   //
   return (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
     || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0));
+}
+
+template<class T> bool
+anatools::isMatchedToTriggerObject (const edm::Event &event, const edm::TriggerResults &triggers, const T &obj, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter, const double dR)
+{
+  for (auto trigObj : trigObjs)
+    {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      bool flag = false;
+      for (const auto &filterLabel : trigObj.filterLabels ())
+        if (filterLabel == filter)
+          {
+            flag = true;
+            break;
+          }
+      if (!flag)
+        continue;
+      if (deltaR (obj, trigObj) > dR)
+        continue;
+
+      return true;
+    }
+  return false;
 }
 
 #endif
