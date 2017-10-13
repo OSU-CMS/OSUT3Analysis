@@ -29,8 +29,8 @@ class OSUMuonProducer : public edm::EDProducer
     edm::EDGetTokenT<vector<pat::PackedCandidate> > pfCandidateToken_;
     edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexToken_;
     edm::EDGetTokenT<vector<osu::Met> > metToken_;
-
-
+    edm::EDGetTokenT<edm::TriggerResults> triggersToken_;
+    edm::EDGetTokenT<vector<pat::TriggerObjectStandAlone> > trigobjsToken_;
 
     edm::ParameterSet  cfg_;
     edm::InputTag      pfCandidate_;
