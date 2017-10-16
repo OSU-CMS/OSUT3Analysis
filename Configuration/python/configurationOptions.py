@@ -247,6 +247,15 @@ datasets = [
    'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples',
    'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples',
 
+   'NoBPTX_Cosmic_Jet_2017Commissionning_PromptReco_Ntuples',
+   'NoBPTX_Cosmic_Jet_2017A_v1_PromptReco_Ntuples',
+   'NoBPTX_Cosmic_Jet_2017A_v2_PromptReco_Ntuples',
+   'NoBPTX_Cosmic_Jet_2017A_v3_PromptReco_Ntuples',
+   'NoBPTX_Cosmic_Jet_2017B_v1_PromptReco_Ntuples',
+   'NoBPTX_Cosmic_Jet_2017B_v2_PromptReco_Ntuples',
+   'NoBPTX_Cosmic_Jet_2017C_v1_PromptReco_Ntuples',
+   'NoBPTX_Cosmic_Jet_2017C_v2_PromptReco_Ntuples',
+
    'NoBPTX_2017B_v1_PromptReco_RECO',
    'NoBPTX_2017B_v2_PromptReco_RECO',
    'NoBPTX_2017C_v1_PromptReco_RECO',
@@ -978,6 +987,18 @@ composite_dataset_definitions = {
         'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples',
         'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples',
         'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples',
+    ],
+
+    'NoBPTX_Cosmic_Jet_2017_PromptReco_Ntuples' : [
+       'NoBPTX_Cosmic_Jet_2017Commissionning_PromptReco_Ntuples',
+       'NoBPTX_Cosmic_Jet_2017A_v1_PromptReco_Ntuples',
+       'NoBPTX_Cosmic_Jet_2017A_v2_PromptReco_Ntuples',
+       'NoBPTX_Cosmic_Jet_2017A_v3_PromptReco_Ntuples',
+       'NoBPTX_Cosmic_Jet_2017B_v1_PromptReco_Ntuples',
+       'NoBPTX_Cosmic_Jet_2017B_v2_PromptReco_Ntuples',
+       'NoBPTX_Cosmic_Jet_2017C_v1_PromptReco_Ntuples',
+       'NoBPTX_Cosmic_Jet_2017C_v2_PromptReco_Ntuples',
+
     ],
 
    'NoBPTX_2017_PromptReco_RECO' : [
@@ -2227,6 +2248,16 @@ nJobs = {
     'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples' : 999,
     'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples' : 999,
 
+    'NoBPTX_Cosmic_Jet_2017_PromptReco_Ntuples': 999,
+    'NoBPTX_Cosmic_Jet_2017Commissionning_PromptReco_Ntuples' : 999,
+    'NoBPTX_Cosmic_Jet_2017A_v1_PromptReco_Ntuples' : 999,
+    'NoBPTX_Cosmic_Jet_2017A_v2_PromptReco_Ntuples' : 999,
+    'NoBPTX_Cosmic_Jet_2017A_v3_PromptReco_Ntuples' : 999,
+    'NoBPTX_Cosmic_Jet_2017B_v1_PromptReco_Ntuples' : 999,
+    'NoBPTX_Cosmic_Jet_2017B_v2_PromptReco_Ntuples' : 999,
+    'NoBPTX_Cosmic_Jet_2017C_v1_PromptReco_Ntuples' : 999,
+    'NoBPTX_Cosmic_Jet_2017C_v2_PromptReco_Ntuples' : 999,
+
     'NoBPTX_2017_PromptReco_RECO' : 999,
     'NoBPTX_2017B_v1_PromptReco_RECO' : 999,
     'NoBPTX_2017B_v2_PromptReco_RECO' : 999,
@@ -3475,6 +3506,16 @@ maxEvents = {
     'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples' : -1,
     'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples' : -1,
     'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples' : -1,
+
+    'NoBPTX_Cosmic_Jet_2017_PromptReco_Ntuples' : -1,
+    'NoBPTX_Cosmic_Jet_2017Commissionning_PromptReco_Ntuples' : -1,
+    'NoBPTX_Cosmic_Jet_2017A_v1_PromptReco_Ntuples' : -1,
+    'NoBPTX_Cosmic_Jet_2017A_v2_PromptReco_Ntuples' : -1,
+    'NoBPTX_Cosmic_Jet_2017A_v3_PromptReco_Ntuples' : -1,
+    'NoBPTX_Cosmic_Jet_2017B_v1_PromptReco_Ntuples' : -1,
+    'NoBPTX_Cosmic_Jet_2017B_v2_PromptReco_Ntuples' : -1,
+    'NoBPTX_Cosmic_Jet_2017C_v1_PromptReco_Ntuples' : -1,
+    'NoBPTX_Cosmic_Jet_2017C_v2_PromptReco_Ntuples' : -1,
 
     'NoBPTX_2017_PromptReco_RECO' : -1,
     'NoBPTX_2017B_v1_PromptReco_RECO' : -1,
@@ -4779,6 +4820,16 @@ types = {
     'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples' : 'data',
     'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples' : 'data',
 
+    'NoBPTX_Cosmic_Jet_2017_PromptReco_Ntuples' : 'data',
+    'NoBPTX_Cosmic_Jet_2017Commissionning_PromptReco_Ntuples': 'data',
+    'NoBPTX_Cosmic_Jet_2017A_v1_PromptReco_Ntuples': 'data',
+    'NoBPTX_Cosmic_Jet_2017A_v2_PromptReco_Ntuples': 'data',
+    'NoBPTX_Cosmic_Jet_2017A_v3_PromptReco_Ntuples': 'data',
+    'NoBPTX_Cosmic_Jet_2017B_v1_PromptReco_Ntuples': 'data',
+    'NoBPTX_Cosmic_Jet_2017B_v2_PromptReco_Ntuples': 'data',
+    'NoBPTX_Cosmic_Jet_2017C_v1_PromptReco_Ntuples': 'data',
+    'NoBPTX_Cosmic_Jet_2017C_v2_PromptReco_Ntuples': 'data',
+
     'NoBPTX_2017_PromptReco_RECO' : 'data',
     'NoBPTX_2017B_v1_PromptReco_RECO' : 'data',
     'NoBPTX_2017B_v2_PromptReco_RECO' : 'data',
@@ -6075,6 +6126,16 @@ colors = {
     'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples' : 1,
     'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples' : 1,
     'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples' : 1,
+
+    'NoBPTX_Cosmic_Jet_2017_PromptReco_Ntuples' : 1,
+    'NoBPTX_Cosmic_Jet_2017Commissionning_PromptReco_Ntuples' : 1,
+    'NoBPTX_Cosmic_Jet_2017A_v1_PromptReco_Ntuples' : 1,
+    'NoBPTX_Cosmic_Jet_2017A_v2_PromptReco_Ntuples' : 1,
+    'NoBPTX_Cosmic_Jet_2017A_v3_PromptReco_Ntuples' : 1,
+    'NoBPTX_Cosmic_Jet_2017B_v1_PromptReco_Ntuples' : 1,
+    'NoBPTX_Cosmic_Jet_2017B_v2_PromptReco_Ntuples' : 1,
+    'NoBPTX_Cosmic_Jet_2017C_v1_PromptReco_Ntuples' : 1,
+    'NoBPTX_Cosmic_Jet_2017C_v2_PromptReco_Ntuples' : 1,
 
     'NoBPTX_2017_PromptReco_RECO' : 1,
     'NoBPTX_2017B_v1_PromptReco_RECO' : 1,
@@ -7389,6 +7450,16 @@ labels = {
     'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples' : 'NoBPTX Jet 2017C v2 PromptReco ntuples data',
     'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples' : 'NoBPTX Jet 2017C v3 PromptReco ntuples data',
     'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples' : 'NoBPTX Jet 2017D v1 PromptReco ntuples data',
+
+    'NoBPTX_Cosmic_Jet_2017_PromptReco_Ntuples' : 'NoBPTX cosmic jet 2017 ntuples data',
+    'NoBPTX_Cosmic_Jet_2017Commissionning_PromptReco_Ntuples' : 'NoBPTX cosmic jet 2017 commissionning PromtReco ntuples data',
+    'NoBPTX_Cosmic_Jet_2017A_v1_PromptReco_Ntuples' : 'NoBPTX cosmic jet 2017A v1 PromtReco ntuples data',
+    'NoBPTX_Cosmic_Jet_2017A_v2_PromptReco_Ntuples' : 'NoBPTX cosmic jet 2017A v2 PromtReco ntuples data',
+    'NoBPTX_Cosmic_Jet_2017A_v3_PromptReco_Ntuples' : 'NoBPTX cosmic jet 2017A v3 PromtReco ntuples data',
+    'NoBPTX_Cosmic_Jet_2017B_v1_PromptReco_Ntuples' : 'NoBPTX cosmic jet 2017B v1 PromtReco ntuples data',
+    'NoBPTX_Cosmic_Jet_2017B_v2_PromptReco_Ntuples' : 'NoBPTX cosmic jet 2017B v2 PromtReco ntuples data',
+    'NoBPTX_Cosmic_Jet_2017C_v1_PromptReco_Ntuples' : 'NoBPTX cosmic jet 2017C v1 PromtReco ntuples data',
+    'NoBPTX_Cosmic_Jet_2017C_v2_PromptReco_Ntuples' : 'NoBPTX cosmic jet 2017C v2 PromtReco ntuples data',
 
     'NoBPTX_2017_PromptReco_RECO' : 'NoBPTX 2017 Prompt reco data',
     'NoBPTX_2017B_v1_PromptReco_RECO' : 'NoBPTX 2017B v1 Prompt reco data',

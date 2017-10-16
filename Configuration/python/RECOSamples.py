@@ -496,9 +496,21 @@ dataset_names = {
     'NoBPTX_Jet_2017B_v1_PromptReco_Ntuples':'/NoBPTX/Jet_2017B_v1_PromptReco_Ntuples/USER',#2017 collision
     'NoBPTX_Jet_2017B_v2_PromptReco_Ntuples':'/NoBPTX/Jet_2017B_v2_PromptReco_Ntuples/USER', #2017 collision
     'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples':'/NoBPTX/Jet_2017C_v1_PromptReco_Ntuples/USER', #2017 collision
+    #'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples':'/NoBPTX/JetMuonTrig_2017C_v1_PromptReco_Ntuples/USER', #2017 jet muon trig
     'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples':'/NoBPTX/Jet_2017C_v2_PromptReco_Ntuples/USER', #2017 collision
+    #'NoBPTX_Jet_2017C_v2_PromptReco_Ntuples':'/NoBPTX/JetMuonTrig_2017C_v2_PromptReco_Ntuples/USER', #2017 jet muon trig
     'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples':'/NoBPTX/Jet_2017C_v3_PromptReco_Ntuples/USER', #2017 collision
+    #'NoBPTX_Jet_2017C_v3_PromptReco_Ntuples':'/NoBPTX/JetMuonTrig_2017C_v3_PromptReco_Ntuples/USER', #2017 jet muon trig
     'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples':'/NoBPTX/Jet_2017D_v1_PromptReco_Ntuples/USER', #2017 collision
+    #'NoBPTX_Jet_2017D_v1_PromptReco_Ntuples':'/NoBPTX/JetMuonTrig_2017D_v1_PromptReco_Ntuples/USER', #2017 jet muon trig
+    'NoBPTX_Cosmic_Jet_2017Commissionning_PromptReco_Ntuples' : '/NoBPTX/Cosmic_Jet_2017Commissionning_PromptReco_Ntuples/USER',# 2017 cosmic sample
+    'NoBPTX_Cosmic_Jet_2017A_v1_PromptReco_Ntuples' : '/NoBPTX/Cosmic_Jet_2017Av1_PromptReco_Ntuples/USER',# 2017 cosmic sample
+    'NoBPTX_Cosmic_Jet_2017A_v2_PromptReco_Ntuples' : '/NoBPTX/Cosmic_Jet_2017Av2_PromptReco_Ntuples/USER',# 2017 cosmic sample
+    'NoBPTX_Cosmic_Jet_2017A_v3_PromptReco_Ntuples' : '/NoBPTX/Cosmic_Jet_2017Av3_PromptReco_Ntuples/USER',# 2017 cosmic sample
+    'NoBPTX_Cosmic_Jet_2017B_v1_PromptReco_Ntuples' : '/NoBPTX/Cosmic_Jet_2017Bv1_PromptReco_Ntuples/USER',# 2017 cosmic sample
+    'NoBPTX_Cosmic_Jet_2017B_v2_PromptReco_Ntuples' : '/NoBPTX/Cosmic_Jet_2017Bv2_PromptReco_Ntuples/USER',# 2017 cosmic sample
+    'NoBPTX_Cosmic_Jet_2017C_v1_PromptReco_Ntuples' : '/NoBPTX/Cosmic_Jet_2017Cv1_PromptReco_Ntuples/USER',# 2017 cosmic sample
+    'NoBPTX_Cosmic_Jet_2017C_v2_PromptReco_Ntuples' : '/NoBPTX/Cosmic_Jet_2017Cv2_PromptReco_Ntuples/USER',# 2017 cosmic sample
 ################## Delayed Muon RECO not stored on T3 ############
 ########################## data ##########################
     'NoBPTX_2016B_23Sep2016_v2' : "/NoBPTX/Run2016B-23Sep2016-v2/RECO",
