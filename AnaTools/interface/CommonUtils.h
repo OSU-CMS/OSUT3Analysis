@@ -223,6 +223,9 @@ namespace anatools
   template<class T> bool jetPassesTightLepVeto (const T &);
 
   template<class T> bool isMatchedToTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double dR = 0.1);
+
+  void logSpace (const unsigned, const double, const double, vector<double> &);
+  void linSpace (const unsigned, const double, const double, vector<double> &);
 }
 
 /**
