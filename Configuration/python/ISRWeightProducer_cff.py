@@ -12,7 +12,7 @@ if osusub.batchMode:
             except TypeError:
                 srcMomentumPdgId.extend (pdgIdsForISRReweighting[osusub.datasetLabel])
 
-ISRWeightProducer = cms.EDProducer ("ISRWeightProducer",
+ISRWeightProducer = cms.EDFilter ("ISRWeightProducer",
     pdgIds = srcMomentumPdgId,
     #weightFile = cms.string(os.environ['CMSSW_BASE'] + '/src/DisappTrks/StandardAnalysis/data/isrWeight_disappTrks_run2.root')
     #weightHist = cms.string('SingleMu_2015D')

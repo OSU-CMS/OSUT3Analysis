@@ -22,7 +22,7 @@ if osusub.batchMode:
             except TypeError:
                 pdgIds.append (pdgIdsForLifetimeReweighting[osusub.datasetLabel])
 
-LifetimeWeightProducer = cms.EDProducer ("LifetimeWeightProducer",
+LifetimeWeightProducer = cms.EDFilter ("LifetimeWeightProducer",
     srcCTau = srcCTau,
     dstCTau = dstCTau,
     pdgIds = pdgIds,
