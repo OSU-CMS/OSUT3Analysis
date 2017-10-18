@@ -6360,8 +6360,8 @@ labels = {
     #MiniAOD not stored on T3.
     ############################################################################
     'DYJetsToLL_10to50'             : "Z#rightarrowll M(10to50)",
-    'TTJets'                        : "t#bar{t} (Debug)",
-    'TTJets_Debug'                        : "t#bar{t}",
+    'TTJets'                        : "t#bar{t}",
+    'TTJets_Debug'                        : "t#bar{t} (Debug)",
     'Diboson'                   : "diboson",
     'Diboson_Incl'              : "diboson",
     'WW'                        : "WW",

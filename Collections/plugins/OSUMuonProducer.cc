@@ -2,7 +2,7 @@
 
 #if IS_VALID(muons)
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
 
 #include "OSUT3Analysis/Collections/interface/Primaryvertex.h"
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"

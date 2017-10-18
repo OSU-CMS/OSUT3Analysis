@@ -35,7 +35,7 @@ OSUElectronProducer::~OSUElectronProducer ()
 void
 OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
   using namespace edm;
   using namespace reco;
 

@@ -1,5 +1,4 @@
 #ifndef EVENT_VARIABLE_PRODUCER
-
 #define EVENT_VARIABLE_PRODUCER
 
 #include "FWCore/Framework/interface/EDProducer.h"

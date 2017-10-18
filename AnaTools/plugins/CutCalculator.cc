@@ -721,7 +721,7 @@ CutCalculator::evaluateTriggers (const edm::Event &event)
 
   if (handles_.triggers.isValid ())
     {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
       if (triggerNamesPSetID_ != triggerNames.parameterSetID ())
         {
@@ -833,12 +833,12 @@ CutCalculator::evaluateTriggerFilters (const edm::Event &event) const
 
   if (handles_.triggers.isValid () && handles_.trigobjs.isValid ())
     {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
 #endif
       for (unsigned i = 0; i < pl_->triggerFilters.size (); i++)
         {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
           for (auto trigobj : *handles_.trigobjs)
             {
               trigobj.unpackPathNames (triggerNames);
@@ -872,7 +872,7 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
 
   if (handles_.metFilters.isValid ())
     {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
       const edm::TriggerNames &metFilterNames = event.triggerNames (*handles_.metFilters);
       if (metFilterNamesPSetID_ != metFilterNames.parameterSetID ())
         {

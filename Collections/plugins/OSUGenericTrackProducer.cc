@@ -3,7 +3,7 @@
 
 #include "FWCore/ParameterSet/interface/FileInPath.h"
 
-#include "OSUT3Analysis/Collections/plugins/OSUTrackProducer.h"
+#include "OSUT3Analysis/Collections/plugins/OSUGenericTrackProducer.h"
 
 #include "Geometry/Records/interface/CaloGeometryRecord.h"
 #include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
@@ -13,17 +13,19 @@
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
-OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
+template<class T> 
+OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_ (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
-  produces<vector<osu::Track> > (collection_.instance ());
+  produces<vector<T> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(tracks)> > (collection_);
-  mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
-  jetsToken_ = consumes<vector<TYPE(jets)> > (collections_.getParameter<edm::InputTag> ("jets"));
+  mcparticleToken_   = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
+  jetsToken_         = consumes<vector<TYPE(jets)> > (collections_.getParameter<edm::InputTag> ("jets"));
+  pfCandidatesToken_ = consumes<vector<pat::PackedCandidate> > (cfg.getParameter<edm::InputTag> ("pfCandidates"));
 
   const edm::ParameterSet &fiducialMaps = cfg.getParameter<edm::ParameterSet> ("fiducialMaps");
   const vector<edm::ParameterSet> &electronFiducialMaps = fiducialMaps.getParameter<vector<edm::ParameterSet> > ("electrons");
@@ -92,16 +94,17 @@ OSUTrackProducer::OSUTrackProducer (const edm::ParameterSet &cfg) :
   for (const auto &etaPhi : muonVetoList_)
     ss << "(" << setw (10) << etaPhi.eta << "," << setw (10) << etaPhi.phi << ")" << endl;
   ss << "================================================================================";
-  edm::LogInfo ("OSUTrackProducer") << ss.str ();
+  edm::LogInfo ("OSUGenericTrackProducer") << ss.str ();
 #endif
 }
 
-OSUTrackProducer::~OSUTrackProducer ()
+template<class T> 
+OSUGenericTrackProducer<T>::~OSUGenericTrackProducer ()
 {
 }
 
-void
-OSUTrackProducer::beginRun (const edm::Run &run, const edm::EventSetup& setup)
+template<class T> void 
+OSUGenericTrackProducer<T>::beginRun (const edm::Run &run, const edm::EventSetup& setup)
 {
 #ifdef DISAPP_TRKS
   envSet (setup);
@@ -109,20 +112,20 @@ OSUTrackProducer::beginRun (const edm::Run &run, const edm::EventSetup& setup)
 #endif
 }
 
-void
-OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
+template<class T> void 
+OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(tracks)> > collection;
   if (!event.getByToken (token_, collection))
     {
-      edm::LogWarning ("OSUTrackProducer") << "Track collection not found. Skipping production of osu::Track collection...";
+      edm::LogWarning ("OSUGenericTrackProducer") << "Track collection not found. Skipping production of " << typeid(T).name() << " collection...";
       return;
     }
 
 #ifdef DISAPP_TRKS
   edm::Handle<vector<TYPE(jets)> > jets;
   if (!event.getByToken (jetsToken_, jets))
-    edm::LogWarning ("OSUTrackProducer") << "Jet collection not found.";
+    edm::LogWarning ("OSUGenericTrackProducer") << "Jet collection not found.";
 
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
@@ -139,36 +142,30 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   edm::Handle<vector<reco::Track> > tracks;
   event.getByToken (tracksToken_, tracks);
+
+  edm::Handle<vector<pat::PackedCandidate> > pfCandidates;
+  event.getByToken (pfCandidatesToken_, pfCandidates);
+
+#elif DATA_FORMAT == MINI_AOD_2017
+  edm::Handle<vector<osu::Mcparticle> > particles;
+  event.getByToken (mcparticleToken_, particles);
 #endif
 
-  pl_ = unique_ptr<vector<osu::Track> > (new vector<osu::Track> ());
+  pl_ = unique_ptr<vector<T> > (new vector<T> ());
   for (const auto &object : *collection)
     {
 #ifdef DISAPP_TRKS
-      pl_->emplace_back (object, particles, cfg_, gsfTracks, electronVetoList_, muonVetoList_, &EcalAllDeadChannelsValMap_, &EcalAllDeadChannelsBitMap_, !event.isRealData ());
-      osu::Track &track = pl_->back ();
+      pl_->emplace_back (object, particles, pfCandidates, jets, cfg_, gsfTracks, electronVetoList_, muonVetoList_, &EcalAllDeadChannelsValMap_, &EcalAllDeadChannelsBitMap_, !event.isRealData ());
+#elif DATA_FORMAT == MINI_AOD_2017
+      pl_->emplace_back (object, particles, cfg_);
 #else
       pl_->emplace_back (object);
 #endif
 
 #ifdef DISAPP_TRKS
+#if DATA_FORMAT != MINI_AOD_2017
       // Calculate the associated calorimeter energy for the disappearing tracks search.
-
-      if (jets.isValid ())
-        {
-          double dRMinJet = 999;
-          for (const auto &jet : *jets) {
-            if (!(jet.pt() > 30))         continue;
-            if (!(fabs(jet.eta()) < 4.5)) continue;
-            if (!anatools::jetPassesTightLepVeto(jet)) continue;
-            double dR = deltaR(track, jet);
-            if (dR < dRMinJet) {
-              dRMinJet = dR;
-            }
-          }
-
-          track.set_dRMinJet(dRMinJet);
-        }
+      T &track = pl_->back ();
 
       if (EBRecHits.isValid () && EERecHits.isValid () && HBHERecHits.isValid ())
         {
@@ -215,14 +212,16 @@ OSUTrackProducer::produce (edm::Event &event, const edm::EventSetup &setup)
           track.set_trackIsoOldNoPUDRp3 (getOldTrackIsolation (track, *tracks, true, 0.3));
           track.set_trackIsoOldNoPUDRp5 (getOldTrackIsolation (track, *tracks, true, 0.5));
         }
-#endif
+#endif // DATA_FORMAT != MINI_AOD_2017
+#endif // DISAPP_TRKS
     }
 
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 
-bool OSUTrackProducer::insideCone(TYPE(tracks)& candTrack, const DetId& id, const double dR)
+template<class T> bool 
+OSUGenericTrackProducer<T>::insideCone(TYPE(tracks)& candTrack, const DetId& id, const double dR)
 {
    GlobalPoint idPosition = getPosition(id);
    if (idPosition.mag()<0.01) return false;
@@ -230,7 +229,8 @@ bool OSUTrackProducer::insideCone(TYPE(tracks)& candTrack, const DetId& id, cons
    return deltaR(candTrack, idPositionRoot) < dR;
 }
 
-GlobalPoint OSUTrackProducer::getPosition( const DetId& id)
+template<class T> GlobalPoint 
+OSUGenericTrackProducer<T>::getPosition( const DetId& id)
 {
    if ( ! caloGeometry_.isValid() ||
         ! caloGeometry_->getSubdetectorGeometry(id) ||
@@ -243,19 +243,19 @@ GlobalPoint OSUTrackProducer::getPosition( const DetId& id)
 
 
 
-void
-OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &vetoList, stringstream &ss) const
+template<class T> void 
+OSUGenericTrackProducer<T>::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &vetoList, stringstream &ss) const
 {
   const edm::FileInPath &histFile = cfg.getParameter<edm::FileInPath> ("histFile");
   const string &beforeVetoHistName = cfg.getParameter<string> ("beforeVetoHistName");
   const string &afterVetoHistName = cfg.getParameter<string> ("afterVetoHistName");
   const double &thresholdForVeto = cfg.getParameter<double> ("thresholdForVeto");
 
-  edm::LogInfo ("OSUTrackProducer") << "Attempting to extract \"" << beforeVetoHistName << "\" and \"" << afterVetoHistName << "\" from \"" << histFile.fullPath () << "\"...";
+  edm::LogInfo ("OSUGenericTrackProducer") << "Attempting to extract \"" << beforeVetoHistName << "\" and \"" << afterVetoHistName << "\" from \"" << histFile.fullPath () << "\"...";
   TFile *fin = TFile::Open (histFile.fullPath ().c_str ());
   if (!fin || fin->IsZombie ())
     {
-      edm::LogWarning ("OSUTrackProducer") << "No file named \"" << histFile.fullPath () << "\" found. Skipping...";
+      edm::LogWarning ("OSUGenericTrackProducer") << "No file named \"" << histFile.fullPath () << "\" found. Skipping...";
       return;
     }
 
@@ -344,8 +344,8 @@ OSUTrackProducer::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &
   delete afterVetoHist;
 }
 
-void
-OSUTrackProducer::envSet (const edm::EventSetup& iSetup)
+template<class T> void 
+OSUGenericTrackProducer<T>::envSet (const edm::EventSetup& iSetup)
 {
   iSetup.get<EcalChannelStatusRcd> ().get(ecalStatus_);
   iSetup.get<CaloGeometryRecord>   ().get(caloGeometry_);
@@ -354,8 +354,8 @@ OSUTrackProducer::envSet (const edm::EventSetup& iSetup)
   if( !caloGeometry_.isValid()   )  throw "Failed to get the caloGeometry_!";
 }
 
-int
-OSUTrackProducer::getChannelStatusMaps ()
+template<class T> int 
+OSUGenericTrackProducer<T>::getChannelStatusMaps ()
 {
   EcalAllDeadChannelsValMap_.clear(); EcalAllDeadChannelsBitMap_.clear();
   TH2D *badChannels = (outputBadEcalChannels_ ? new TH2D ("badChannels", ";#eta;#phi", 360, -3.0, 3.0, 360, -3.2, 3.2) : NULL);
@@ -432,23 +432,20 @@ OSUTrackProducer::getChannelStatusMaps ()
   return 1;
 }
 
-const double
-OSUTrackProducer::getTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const bool noFakes, const double outerDeltaR, const double innerDeltaR) const
+template<class T> const double 
+OSUGenericTrackProducer<T>::getTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const bool noFakes, const double outerDeltaR, const double innerDeltaR) const
 {
   double sumPt = 0.0;
 
   for (const auto &t : tracks)
     {
-      if (noFakes && t.normalizedChi2 () > 20.0)
-        continue;
-      if (noFakes && t.hitPattern ().pixelLayersWithMeasurement () < 2)
-        continue;
-      if (noFakes && t.hitPattern ().trackerLayersWithMeasurement () < 5)
-        continue;
-      if (noFakes && fabs (t.d0 () / t.d0Error ()) > 5.0)
-        continue;
 
-      if (noPU && track.dz (t.vertex ()) > 3.0 * hypot (track.dzError (), t.dzError ()))
+      if (noFakes && (t.normalizedChi2() > 20.0 ||
+                      t.hitPattern().pixelLayersWithMeasurement() < 2 ||
+                      t.hitPattern().trackerLayersWithMeasurement() < 5 ||
+                      fabs(t.d0() / t.d0Error()) > 5.0))
+        continue;
+      if (noPU && track.dz(t.vertex()) > 3.0 * hypot(track.dzError(), t.dzError()))
         continue;
 
       double dR = deltaR (track, t);
@@ -459,22 +456,18 @@ OSUTrackProducer::getTrackIsolation (const reco::Track &track, const vector<reco
   return sumPt;
 }
 
-const double
-OSUTrackProducer::getOldTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
+template<class T> const double 
+OSUGenericTrackProducer<T>::getOldTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
 {
   double sumPt = 0.0;
 
   for (const auto &t : tracks)
     {
-      if (noPU && track.normalizedChi2 () > 20.0)
-        continue;
-      if (noPU && track.hitPattern ().pixelLayersWithMeasurement () < 2)
-        continue;
-      if (noPU && track.hitPattern ().trackerLayersWithMeasurement () < 5)
-        continue;
-      if (noPU && fabs (track.d0 () / track.d0Error ()) > 5.0)
-        continue;
-      if (noPU && track.dz (t.vertex ()) > 3.0 * hypot (track.dzError (), t.dzError ()))
+      if (noPU && (t.normalizedChi2() > 20.0 ||
+                   t.hitPattern().pixelLayersWithMeasurement() < 2 ||
+                   t.hitPattern().trackerLayersWithMeasurement() < 5 ||
+                   fabs(t.d0() / t.d0Error()) > 5.0 ||
+                   track.dz(t.vertex()) > 3.0 * hypot(track.dzError(), t.dzError())))
         continue;
 
       double dR = deltaR (track, t);
@@ -486,6 +479,12 @@ OSUTrackProducer::getOldTrackIsolation (const reco::Track &track, const vector<r
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
+typedef OSUGenericTrackProducer<osu::Track> OSUTrackProducer;
 DEFINE_FWK_MODULE(OSUTrackProducer);
 
+#if IS_VALID(secondaryTracks)
+typedef OSUGenericTrackProducer<osu::SecondaryTrack> OSUSecondaryTrackProducer;
+DEFINE_FWK_MODULE(OSUSecondaryTrackProducer);
 #endif
+
+#endif // IS_VALID(tracks)

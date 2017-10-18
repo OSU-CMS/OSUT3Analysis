@@ -16,7 +16,10 @@ osu::Track::Track () :
   isFiducialECALTrack_ (true),
   dropTOBDecision_ (-1.0),
   dropHitDecisions_ ({}),
-  dropMiddleHitDecisions_ ({})
+  dropMiddleHitDecisions_ ({}),
+  deltaRToClosestPFElectron_ (INVALID_VALUE),
+  deltaRToClosestPFMuon_     (INVALID_VALUE),
+  deltaRToClosestPFChHad_    (INVALID_VALUE)
 {
 }
 
@@ -35,7 +38,10 @@ osu::Track::Track (const TYPE(tracks) &track) :
   isFiducialECALTrack_ (true),
   dropTOBDecision_ (-1.0),
   dropHitDecisions_ ({}),
-  dropMiddleHitDecisions_ ({})
+  dropMiddleHitDecisions_ ({}),
+  deltaRToClosestPFElectron_ (INVALID_VALUE),
+  deltaRToClosestPFMuon_     (INVALID_VALUE),
+  deltaRToClosestPFChHad_    (INVALID_VALUE)
 {
 }
 
@@ -54,7 +60,10 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   isFiducialECALTrack_ (true),
   dropTOBDecision_ (-1.0),
   dropHitDecisions_ ({}),
-  dropMiddleHitDecisions_ ({})
+  dropMiddleHitDecisions_ ({}),
+  deltaRToClosestPFElectron_ (INVALID_VALUE),
+  deltaRToClosestPFMuon_     (INVALID_VALUE),
+  deltaRToClosestPFChHad_    (INVALID_VALUE)
 {
 }
 
@@ -73,11 +82,54 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   isFiducialECALTrack_ (true),
   dropTOBDecision_ (-1.0),
   dropHitDecisions_ ({}),
-  dropMiddleHitDecisions_ ({})
+  dropMiddleHitDecisions_ ({}),
+  deltaRToClosestPFElectron_ (INVALID_VALUE),
+  deltaRToClosestPFMuon_     (INVALID_VALUE),
+  deltaRToClosestPFChHad_    (INVALID_VALUE)
 {
 }
 
-osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, const EtaPhiList &electronVetoList, const EtaPhiList &muonVetoList, const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, const bool dropHits) :
+osu::Track::Track (const TYPE(tracks) &track, 
+                   const edm::Handle<vector<osu::Mcparticle> > &particles, 
+                   const edm::ParameterSet &cfg, 
+                   const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
+                   const EtaPhiList &electronVetoList, 
+                   const EtaPhiList &muonVetoList) :
+  GenMatchable (track, particles, cfg),
+  dRMinJet_ (INVALID_VALUE),
+  minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
+  isFiducialElectronTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialElectronTrack_)),
+  isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialMuonTrack_)),
+  EcalAllDeadChannelsValMap_ (NULL),
+  EcalAllDeadChannelsBitMap_ (NULL),
+  isFiducialECALTrack_ (!isCloseToBadEcalChannel (minDeltaRForFiducialTrack_)),
+  dropTOBDecision_ (-1.0),
+  dropHitDecisions_ ({}),
+  dropMiddleHitDecisions_ ({}),
+  deltaRToClosestPFElectron_ (INVALID_VALUE),
+  deltaRToClosestPFMuon_     (INVALID_VALUE),
+  deltaRToClosestPFChHad_    (INVALID_VALUE)
+{
+  maxDeltaR_ = cfg.getParameter<double> ("maxDeltaRForGsfTrackMatching");
+  if (gsfTracks.isValid ())
+    findMatchedGsfTrack (gsfTracks, matchedGsfTrack_, dRToMatchedGsfTrack_);
+
+  // PrintTrackHitPatternInfo();
+
+}
+
+// the DisappTrks constructor
+osu::Track::Track (const TYPE(tracks) &track, 
+                   const edm::Handle<vector<osu::Mcparticle> > &particles,
+                   const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates, 
+                   const edm::Handle<vector<TYPE(jets)> > &jets,
+                   const edm::ParameterSet &cfg, 
+                   const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
+                   const EtaPhiList &electronVetoList, 
+                   const EtaPhiList &muonVetoList, 
+                   const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, 
+                   const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
+                   const bool dropHits) :
   GenMatchable (track, particles, cfg),
   dRMinJet_ (INVALID_VALUE),
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
@@ -88,7 +140,10 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   isFiducialECALTrack_ (!isCloseToBadEcalChannel (minDeltaRForFiducialTrack_)),
   dropTOBDecision_ (-1.0),
   dropHitDecisions_ ({}),
-  dropMiddleHitDecisions_ ({})
+  dropMiddleHitDecisions_ ({}),
+  deltaRToClosestPFElectron_ (INVALID_VALUE),
+  deltaRToClosestPFMuon_     (INVALID_VALUE),
+  deltaRToClosestPFChHad_    (INVALID_VALUE)
 {
   maxDeltaR_ = cfg.getParameter<double> ("maxDeltaRForGsfTrackMatching");
   if (gsfTracks.isValid ())
@@ -117,70 +172,48 @@ osu::Track::Track (const TYPE(tracks) &track, const edm::Handle<vector<osu::Mcpa
   for (int i = 0; i < 50; i++)
     dropMiddleHitDecisions_.push_back ((dropHits ? distribution (generator) : 1.0e6) < hitProbability_);
 
+  if(jets.isValid()) {
+    for(const auto &jet : *jets) {
+
+      if(jet.pt() > 30 &&
+         fabs(jet.eta()) < 4.5 &&
+         (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
+            || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0)))
+      {
+        double dR = deltaR(*this, jet);
+        if(dR < dRMinJet_ || dRMinJet_ < 0.0) dRMinJet_ = dR;
+      }
+      
+    }
+  }
+
+  if(pfCandidates.isValid()) {
+    for(const auto &pfCandidate : *pfCandidates) {
+      int pdgid = abs(pfCandidate.pdgId());
+      if(pdgid != 11 && pdgid != 13 && pdgid != 211) continue;
+
+      double dR = deltaR(*this, pfCandidate);
+
+      if(pdgid == 11 &&
+         (dR < deltaRToClosestPFElectron_ || deltaRToClosestPFElectron_ < 0.0))
+        deltaRToClosestPFElectron_ = dR;
+
+      else if(pdgid == 13 &&
+              (dR < deltaRToClosestPFMuon_ || deltaRToClosestPFElectron_ < 0.0))
+        deltaRToClosestPFElectron_ = dR;
+
+      else if(pdgid == 211 &&
+              (dR < deltaRToClosestPFChHad_ || deltaRToClosestPFChHad_ < 0.0))
+        deltaRToClosestPFChHad_ = dR;
+    }
+  }
+
   // PrintTrackHitPatternInfo();
 
 }
 
 osu::Track::~Track ()
 {
-}
-
-const bool
-osu::Track::isFiducialElectronTrack () const
-{
-  return isFiducialElectronTrack_;
-}
-
-const bool
-osu::Track::isFiducialMuonTrack () const
-{
-  return isFiducialMuonTrack_;
-}
-
-const bool
-osu::Track::isFiducialECALTrack () const
-{
-  return isFiducialECALTrack_;
-}
-
-const double
-osu::Track::maxSigmaForFiducialElectronTrack () const
-{
-  return maxSigmaForFiducialElectronTrack_;
-}
-
-const double
-osu::Track::maxSigmaForFiducialMuonTrack () const
-{
-  return maxSigmaForFiducialMuonTrack_;
-}
-
-const edm::Ref<vector<reco::GsfTrack> >
-osu::Track::matchedGsfTrack () const
-{
-  return matchedGsfTrack_;
-}
-
-const double
-osu::Track::dRToMatchedGsfTrack () const
-{
-  if (IS_INVALID(dRToMatchedGsfTrack_))
-    return MAX_DR;
-  return dRToMatchedGsfTrack_;
-}
-
-const double
-osu::Track::dRMinJet () const
-{
-  if (IS_INVALID(dRMinJet_))
-    return MAX_DR;
-  return dRMinJet_;
-}
-
-void
-osu::Track::set_dRMinJet(const double dRMinJet)
-{
-  dRMinJet_ = dRMinJet;
 }
 
 const bool
@@ -288,7 +321,7 @@ osu::Track::bestTrackNumberOfValidHits () const
 {
   int nHits = gsfTrackNumberOfValidHits ();
   if (IS_INVALID(nHits) || isBadGsfTrack (*this->matchedGsfTrack_))
-    nHits = this->numberOfValidHits ();
+    nHits = this->hitPattern ().numberOfValidHits ();
 
   return nHits;
 }
@@ -826,7 +859,7 @@ osu::Track::lastLayerWithValidHit () const
 }
 
 /******************************************************************************/
-
+#if DATA_FORMAT != MINI_AOD_2017
 const double
 osu::Track::innerP () const
 {
@@ -864,10 +897,15 @@ osu::Track::bremEnergy () const
 
   return max (0.0, pOuter - pInner);
 }
+#endif
 
 const bool
 osu::Track::isBadGsfTrack (const reco::GsfTrack &track) const
 {
+#if DATA_FORMAT == MINI_AOD_2017
+  return true;
+#else
+
   bool passes = (track.pt () > 20.0)
              && (track.numberOfValidHits () >= 7)
              && (track.hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS) == 0)
@@ -875,6 +913,7 @@ osu::Track::isBadGsfTrack (const reco::GsfTrack &track) const
              && (track.normalizedChi2 () < this->normalizedChi2 () + 1.0);
 
   return !passes;
+#endif
 }
 
 int
@@ -905,10 +944,218 @@ osu::Track::isCloseToBadEcalChannel (const double &deltaRCut)
    return 1;
 }
 
+const double
+osu::Track::energyGivenMass (const double mass) const
+{
+  return sqrt (this->px () * this->px () + this->py () * this->py () + this->pz () * this->pz () + mass * mass);
+}
+
+const unsigned char
+osu::Track::missingTrackerHits () const
+{
+  return (this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::missingPixelHits () const
+{
+  return (this->hitPattern ().pixelLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().pixelLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().pixelLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::missingStripHits () const
+{
+  return (this->hitPattern ().stripLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().stripLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().stripLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::missingPixelBarrelHits () const
+{
+  return (this->hitPattern ().pixelBarrelLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().pixelBarrelLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().pixelBarrelLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::missingPixelEndcapHits () const
+{
+  return (this->hitPattern ().pixelEndcapLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().pixelEndcapLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().pixelEndcapLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::missingStripTIBHits () const
+{
+  return (this->hitPattern ().stripTIBLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().stripTIBLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().stripTIBLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::missingStripTIDHits () const
+{
+  return (this->hitPattern ().stripTIDLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().stripTIDLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().stripTIDLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::missingStripTOBHits () const
+{
+  return (this->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::missingStripTECHits () const
+{
+  return (this->hitPattern ().stripTECLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().stripTECLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().stripTECLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::expectedTrackerHits () const
+{
+  return (this->hitPattern ().trackerLayersWithMeasurement ()
+        + this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::expectedPixelHits () const
+{
+  return (this->hitPattern ().pixelLayersWithMeasurement ()
+        + this->hitPattern ().pixelLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().pixelLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().pixelLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::expectedStripHits () const
+{
+  return (this->hitPattern ().stripLayersWithMeasurement ()
+        + this->hitPattern ().stripLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().stripLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().stripLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::expectedPixelBarrelHits () const
+{
+  return (this->hitPattern ().pixelBarrelLayersWithMeasurement ()
+        + this->hitPattern ().pixelBarrelLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().pixelBarrelLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().pixelBarrelLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::expectedPixelEndcapHits () const
+{
+  return (this->hitPattern ().pixelEndcapLayersWithMeasurement ()
+        + this->hitPattern ().pixelEndcapLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().pixelEndcapLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().pixelEndcapLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::expectedStripTIBHits () const
+{
+  return (this->hitPattern ().stripTIBLayersWithMeasurement ()
+        + this->hitPattern ().stripTIBLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().stripTIBLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().stripTIBLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::expectedStripTIDHits () const
+{
+  return (this->hitPattern ().stripTIDLayersWithMeasurement ()
+        + this->hitPattern ().stripTIDLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().stripTIDLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().stripTIDLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::expectedStripTOBHits () const
+{
+  return (this->hitPattern ().stripTOBLayersWithMeasurement ()
+        + this->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().stripTOBLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::Track::expectedStripTECHits () const
+{
+  return (this->hitPattern ().stripTECLayersWithMeasurement ()
+        + this->hitPattern ().stripTECLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS)
+        + this->hitPattern ().stripTECLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
+        + this->hitPattern ().stripTECLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
 const bool
 osu::Track::inTOBCrack () const
 {
-  return (fabs (this->dz ()) < 0.5 && fabs (this->lambda ()) < 1.0e-3);
+#if DATA_FORMAT == MINI_AOD_2017
+  double fabsLambda = fabs(M_PI_2 - this->theta());
+#else
+  double fabsLambda = fabs(this->lambda());
+#endif
+
+  return (fabs(this->dz()) < 0.5 && fabsLambda < 1.0e-3); 
 }
 
-#endif
+#if IS_VALID(secondaryTracks)
+
+osu::SecondaryTrack::SecondaryTrack() : 
+  osu::Track() {}
+
+osu::SecondaryTrack::SecondaryTrack(const TYPE(tracks) &secondaryTrack) : 
+  osu::Track(secondaryTrack) {}
+
+osu::SecondaryTrack::SecondaryTrack(const TYPE(tracks) &secondaryTrack, 
+                                    const edm::Handle<vector<osu::Mcparticle> > &particles) : 
+  osu::Track(secondaryTrack, particles) {}
+
+osu::SecondaryTrack::SecondaryTrack(const TYPE(tracks) &secondaryTrack, 
+                                    const edm::Handle<vector<osu::Mcparticle> > &particles, 
+                                    const edm::ParameterSet &cfg) :
+  osu::Track(secondaryTrack, particles, cfg) {}
+
+osu::SecondaryTrack::SecondaryTrack(const TYPE(secondaryTracks) &secondaryTrack, 
+                                    const edm::Handle<vector<osu::Mcparticle> > &particles, 
+                                    const edm::ParameterSet &cfg, 
+                                    const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
+                                    const EtaPhiList &electronVetoList, 
+                                    const EtaPhiList &muonVetoList) :
+  osu::Track(secondaryTrack, particles, cfg, gsfTracks, electronVetoList, muonVetoList) {}
+
+// the DisappTrks constructor
+osu::SecondaryTrack::SecondaryTrack(const TYPE(tracks) &secondaryTrack, 
+                                    const edm::Handle<vector<osu::Mcparticle> > &particles, 
+                                    const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates,
+                                    const edm::Handle<vector<TYPE(jets)> > &jets,
+                                    const edm::ParameterSet &cfg, 
+                                    const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
+                                    const EtaPhiList &electronVetoList, 
+                                    const EtaPhiList &muonVetoList, 
+                                    const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, 
+                                    const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
+                                    const bool dropHits) :
+  osu::Track(secondaryTrack, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits) {}
+
+osu::SecondaryTrack::~SecondaryTrack() {}
+
+#endif // IS_VALID(secondaryTracks)
+
+#endif // IS_VALID(tracks)

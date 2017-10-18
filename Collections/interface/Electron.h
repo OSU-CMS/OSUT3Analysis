@@ -8,7 +8,7 @@
 
 namespace osu
 {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
   class Electron : public GenMatchable<TYPE(electrons), 11>
     {
       public:
@@ -73,7 +73,7 @@ namespace osu
 #endif
         ~Electron ();
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
       private:
         float rho_;
         float AEff_;

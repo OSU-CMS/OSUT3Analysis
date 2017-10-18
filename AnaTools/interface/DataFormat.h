@@ -4,6 +4,7 @@
 #define  AOD              1
 #define  MINI_AOD_CUSTOM  2
 #define  AOD_CUSTOM       3
+#define  MINI_AOD_2017    4
 
 #define DATA_FORMAT MINI_AOD
 
@@ -14,6 +15,10 @@
 #if DATA_FORMAT == MINI_AOD
 
   #include "OSUT3Analysis/AnaTools/interface/DataFormatMiniAOD.h"
+
+#elif DATA_FORMAT == MINI_AOD_2017
+
+  #include "OSUT3Analysis/AnaTools/interface/DataFormatMiniAOD2017.h" 
 
 #elif DATA_FORMAT == AOD
 

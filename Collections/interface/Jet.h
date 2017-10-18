@@ -4,7 +4,7 @@
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 #if IS_VALID(jets)
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
 namespace osu
 {
   class Jet : public GenMatchable<TYPE(jets), 0>
@@ -28,10 +28,11 @@ namespace osu
         const float smearedPt () const;
         const float smearedPtUp () const;
         const float smearedPtDown () const;
-	const float alphamax () const;
-	const float ipsig () const;
-	const float log10ipsig () const;
-	const float medianlog10ipsig () const;
+        
+    	const float alphamax () const;
+    	const float ipsig () const;
+    	const float log10ipsig () const;
+    	const float medianlog10ipsig () const;
 
         void set_matchedToLepton (float value) { matchedToLepton_  = value; }
         void set_pfCombinedSecondaryVertexV2BJetTags (float value) { pfCombinedSecondaryVertexV2BJetTags_ = value;}
@@ -49,10 +50,11 @@ namespace osu
         void set_smearedPt (float value) { smearedPt_ = value;}
         void set_smearedPtUp (float value) { smearedPtUp_ = value;}
         void set_smearedPtDown (float value) { smearedPtDown_ = value;}
-	void set_alphamax (float value) { alphamax_ = value;}
-	void set_ipsig (float value) { ipsig_ = value;}
-	void set_log10ipsig (float value) { log10ipsig_ = value;}
-	void set_medianlog10ipsig (float value) { medianlog10ipsig_ = value;}
+    	void set_alphamax (float value) { alphamax_ = value;}
+
+    	void set_ipsig (float value) { ipsig_ = value;}
+    	void set_log10ipsig (float value) { log10ipsig_ = value;}
+    	void set_medianlog10ipsig (float value) { medianlog10ipsig_ = value;}
 
       private:
         int matchedToLepton_;
@@ -67,11 +69,44 @@ namespace osu
         float smearedPt_;
         float smearedPtUp_;
         float smearedPtDown_;
-	float alphamax_;
-	float ipsig_;
-	float log10ipsig_;
-	float medianlog10ipsig_;
+	    float alphamax_;
+	    float ipsig_;
+	    float log10ipsig_;
+	    float medianlog10ipsig_;
     };
+
+    //////////////////////////////
+    // osu::Bjet
+    //////////////////////////////
+
+#if IS_VALID(bjets)
+    class Bjet : public Jet
+    {
+      public:
+        Bjet();
+        Bjet(const TYPE(jets) &);
+        Bjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Bjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
+        ~Bjet();
+    };
+#endif // IS_VALID(bjets)
+
+    //////////////////////////////
+    // osu::Basicjet
+    //////////////////////////////
+
+#if IS_VALID(basicjets)
+    class Basicjet : public Jet
+    {
+      public:
+        Basicjet();
+        Basicjet(const TYPE(jets) &);
+        Basicjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Basicjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
+        ~Basicjet();
+    };
+#endif // IS_VALID(basicjets)
+
 }
 #elif DATA_FORMAT == AOD_CUSTOM
 namespace osu
@@ -83,16 +118,42 @@ namespace osu
         Jet (const TYPE(jets) &);
         ~Jet ();
     };
+
+#if IS_VALID(bjets)
+    class Bjet : public Jet
+     {
+        Bjet();
+        BJet(const TYPE(jets) &);
+        ~Bjet();
+     };
+#endif // IS_VALID(bjets)
+
+#if IS_VALID(basicjets)
+    class Basicjet : public Jet
+     {
+        Basicjet();
+        Basicjet(const TYPE(jets) &);
+        ~Basicjet();
+     };
+#endif // IS_VALID(bjets)
 }
-#endif
+#endif // DATA_FORMAT
 
 #else
 
 namespace osu
 {
   typedef TYPE(jets) Jet;
+
+#if IS_VALID(bjets)
+  typedef TYPE(bjets) Bjet;
+#endif
+  
+#if IS_VALID(basicjets)
+  typedef TYPE(basicjets) BasicJet;
+#endif
 }
 
-#endif
+#endif // IS_VALID(jets)
 
-#endif
+#endif // ifndef

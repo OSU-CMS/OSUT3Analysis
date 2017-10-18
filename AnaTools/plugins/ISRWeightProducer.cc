@@ -20,7 +20,7 @@ ISRWeightProducer::~ISRWeightProducer() {
 void
 ISRWeightProducer::AddVariables (const edm::Event &event) {
 
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
+#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD
   if(event.isRealData()) {
     (*eventvariables)["isrWeight"] = 1;
     return;
@@ -76,7 +76,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
 bool
 ISRWeightProducer::isOriginalParticle (const TYPE(hardInteractionMcparticles) &mcparticle, const int pdgId) const
 {
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
+#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD
   if(!mcparticle.numberOfMothers () || mcparticle.motherRef ().isNull ()) return true;
   return(mcparticle.motherRef ()->pdgId () != pdgId) && isOriginalParticle ((TYPE(hardInteractionMcparticles)) *mcparticle.motherRef (), pdgId);
 #else

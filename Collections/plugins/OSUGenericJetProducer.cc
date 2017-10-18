@@ -1,18 +1,19 @@
-#include "OSUT3Analysis/Collections/plugins/OSUJetProducer.h"
+#include "OSUT3Analysis/Collections/plugins/OSUGenericJetProducer.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
 #if IS_VALID(jets)
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
 #include "CondFormats/DataRecord/interface/JetResolutionRcd.h"
 #include "CondFormats/DataRecord/interface/JetResolutionScaleFactorRcd.h"
 #include "TRandom3.h"
 #endif
 
-OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
+template<class T> 
+OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
   jetResolutionPayload_ (cfg.getParameter<string> ("jetResolutionPayload")),
@@ -21,16 +22,16 @@ OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
   cfg_         (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   electrons_ = collections_.getParameter<edm::InputTag> ("electrons");
   muons_ = collections_.getParameter<edm::InputTag> ("muons");
   genjets_ = collections_.getParameter<edm::InputTag> ("genjets");
   primaryvertexs_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
 #endif
-  produces<vector<osu::Jet> > (collection_.instance ());
+  produces<vector<T> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(jets)> > (collection_);
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   electronToken_ = consumes<vector<TYPE(electrons)> > (electrons_);
   muonToken_ = consumes<vector<TYPE(muons)> > (muons_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
@@ -40,21 +41,21 @@ OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
 #endif
 }
 
-OSUJetProducer::~OSUJetProducer ()
+template<class T> OSUGenericJetProducer<T>::~OSUGenericJetProducer ()
 {
 }
 
-void
-OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
+template<class T> void
+OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(jets)> > collection;
   if (!event.getByToken (token_, collection))
     return;
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
   // get JetCorrector parameters to get the jec uncertainty
   edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
   setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
@@ -65,12 +66,12 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   // These are in the Global Tag for 80X but not for 76X,
   // Configuration/python/collectionProducer_cff.py looks at $CMSSW_BASE to set this choice
   JME::JetResolution jetEnergyResolution = (jetResFromGlobalTag_) ?
-                                              JME::JetResolution::get(setup, "AK4PFchs_pt") :
-                                              JME::JetResolution(jetResolutionPayload_);
+    JME::JetResolution::get(setup, "AK4PFchs_pt") :
+    JME::JetResolution(jetResolutionPayload_);
 
   JME::JetResolutionScaleFactor jetEnergyResolutionSFs = (jetResFromGlobalTag_) ?
-                                              JME::JetResolutionScaleFactor::get(setup, "AK4PFchs") :
-                                              JME::JetResolutionScaleFactor(jetResSFPayload_);
+    JME::JetResolutionScaleFactor::get(setup, "AK4PFchs") :
+    JME::JetResolutionScaleFactor(jetResSFPayload_);
 
   JME::JetParameters jetResParams;
 
@@ -141,18 +142,18 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 #endif
 #endif
 
-  pl_ = unique_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
+  pl_ = unique_ptr<vector<T> > (new vector<T> ());
 
   for (const auto &object : *collection)
     {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
       pl_->emplace_back (object, particles, cfg_);
-      osu::Jet &jet = pl_->back ();
+      T &jet = pl_->back ();
 #elif DATA_FORMAT == AOD_CUSTOM
       pl_->emplace_back (object);
 #endif
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
 
       // medianLog10(ipsig) CALC
       std::vector<double> ipsigVector;
@@ -177,7 +178,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         catch (cms::Exception &e)
           {
             isException = true;
-            edm::LogInfo ("OSUJetProducer") << e.what ();
+            edm::LogInfo ("OSUGenericJetProducer") << e.what ();
           }
       } // end of loop over candidates
 
@@ -193,7 +194,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       else jet.set_medianlog10ipsig( -4 );
 
       if (isException)
-        edm::LogWarning ("OSUJetProducer") << "Exception caught while looping over jet constituents. medianlog10ipsig may be incorrect.";
+        edm::LogWarning ("OSUGenericJetProducer") << "Exception caught while looping over jet constituents. medianlog10ipsig may be incorrect.";
 
       // ALPHA MAX CALC
       double numerator = 0;
@@ -226,7 +227,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
           catch (cms::Exception &e)
             {
               isException = true;
-              edm::LogInfo ("OSUJetProducer") << e.what ();
+              edm::LogInfo ("OSUGenericJetProducer") << e.what ();
             }
 	} // end of loop over candidates
 
@@ -240,7 +241,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       else jet.set_alphamax(-1);
 
       if (isException)
-        edm::LogWarning ("OSUJetProducer") << "Exception caught while looping over jet constituents. alphamax may be incorrect.";
+        edm::LogWarning ("OSUGenericJetProducer") << "Exception caught while looping over jet constituents. alphamax may be incorrect.";
 
       jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
@@ -329,14 +330,19 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
   delete jecUnc;
   delete rng;
 #endif
 }
 
-
 #include "FWCore/Framework/interface/MakerMacros.h"
+typedef OSUGenericJetProducer<osu::Jet> OSUJetProducer;
 DEFINE_FWK_MODULE(OSUJetProducer);
 
-#endif
+#if IS_VALID(bjets)
+typedef OSUGenericJetProducer<osu::Bjet> OSUBjetProducer;
+DEFINE_FWK_MODULE(OSUBjetProducer);
+#endif // IS_VALID(bjets)
+
+#endif // IS_VALID(jets)

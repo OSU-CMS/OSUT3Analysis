@@ -9,7 +9,7 @@ osu::Electron::Electron ()
 {
 }
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
 
 
 osu::Electron::Electron (const TYPE(electrons) &electron) :

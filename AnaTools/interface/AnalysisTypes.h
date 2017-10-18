@@ -5,9 +5,7 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 
-#include "OSUT3Analysis/Collections/interface/Basicjet.h"
 #include "OSUT3Analysis/Collections/interface/Beamspot.h"
-#include "OSUT3Analysis/Collections/interface/Bjet.h"
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
 #include "OSUT3Analysis/Collections/interface/Cschit.h"
 #include "OSUT3Analysis/Collections/interface/Cscseg.h"
@@ -26,7 +24,6 @@
 #include "OSUT3Analysis/Collections/interface/Supercluster.h"
 #include "OSUT3Analysis/Collections/interface/Tau.h"
 #include "OSUT3Analysis/Collections/interface/Track.h"
-#include "OSUT3Analysis/Collections/interface/SecondaryTrack.h"
 #include "OSUT3Analysis/Collections/interface/Trigobj.h"
 #include "OSUT3Analysis/Collections/interface/Uservariable.h"
 #include "OSUT3Analysis/Collections/interface/PileUpInfo.h"
@@ -99,6 +96,15 @@ struct HistoDef {
   vector<ValueLookupTree *> valueLookupTrees;
   int dimensions;
   bool weight;
+};
+
+struct BranchDef {
+  vector<string> inputCollections;
+  string branchName;
+  int index;
+  vector<string> inputVariables;
+  vector<ValueLookupTree *> valueLookupTrees;
+  double value;
 };
 
 struct Weight

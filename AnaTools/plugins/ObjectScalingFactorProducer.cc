@@ -56,7 +56,7 @@ ObjectScalingFactorProducer::~ObjectScalingFactorProducer() {}
 
 void
 ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
+#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017
 
   if (event.isRealData ()) {
     for (auto &sf : scaleFactors_) {

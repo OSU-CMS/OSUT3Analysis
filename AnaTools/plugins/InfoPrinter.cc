@@ -495,7 +495,7 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
     return false;
   }
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
   const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
   for (unsigned i = 0; i < triggerNames.size (); i++)
     {
@@ -537,7 +537,7 @@ InfoPrinter::printAllMETFilters (const edm::Event &event)
     return false;
   }
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
   const edm::TriggerNames &metFilterNames = event.triggerNames (*handles_.metFilters);
   for (unsigned i = 0; i < metFilterNames.size (); i++)
     {
@@ -578,7 +578,7 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
     return false;
   }
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
   for(auto triggerObj : *handles_.trigobjs) {
 #if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
     triggerObj.unpackNamesAndLabels(event, *handles_.triggers);

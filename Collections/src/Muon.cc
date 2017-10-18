@@ -1,7 +1,7 @@
 #include "OSUT3Analysis/Collections/interface/Muon.h"
 
 #if IS_VALID(muons)
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
 osu::Muon::Muon ()
 {
   isTightMuonWRTVtx_ = false;

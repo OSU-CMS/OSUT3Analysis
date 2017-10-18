@@ -26,28 +26,10 @@ collectionProducer.genMatchables = {
 # Configuration for derived classes
 ################################################################################
 
-collectionProducer.basicjets = cms.EDProducer ("OSUBasicjetProducer",
-)
-copyConfiguration (collectionProducer.basicjets, collectionProducer.genMatchables)
-
 #-------------------------------------------------------------------------------
 
 collectionProducer.beamspots = cms.EDProducer ("OSUBeamspotProducer",
 )
-
-#-------------------------------------------------------------------------------
-
-collectionProducer.bjets = cms.EDProducer ("OSUBjetProducer",
-    rho = cms.InputTag("fixedGridRhoFastjetAll", "", ""),
-    jetResolutionPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
-    jetResSFPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
-    jetResFromGlobalTag = cms.bool(False),
-)
-
-if 'CMSSW_8' in os.environ['CMSSW_VERSION']:
-    collectionProducer.bjets.jetResFromGlobalTag = cms.bool(True)
-
-copyConfiguration (collectionProducer.bjets, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
 
@@ -112,6 +94,12 @@ if 'CMSSW_8' in os.environ['CMSSW_VERSION']:
     collectionProducer.jets.jetResFromGlobalTag = cms.bool(True)
 
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
+
+collectionProducer.bjets = copy.deepcopy (collectionProducer.jets)
+collectionProducer.bjets._TypedParameterizable__type = "OSUBjetProducer"
+
+collectionProducer.basicjets = copy.deepcopy (collectionProducer.jets)
+collectionProducer.basicjets._TypedParameterizable__type = "OSUBasicjetProducer"
 
 #-------------------------------------------------------------------------------
 
@@ -194,6 +182,8 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     EBRecHits          =  cms.InputTag  ("reducedEcalRecHitsEB"),
     EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),
     HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),
+
+    pfCandidates = cms.InputTag  ('packedPFCandidates',  '',  ''),
 
     gsfTracks    =  cms.InputTag  ("electronGsfTracks",      ""),
     maxDeltaRForGsfTrackMatching = cms.double (0.2), # if cutting on dRToMatchedGsfTrack, must set this to be greater than the cut threshold
