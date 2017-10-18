@@ -952,7 +952,7 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
 }
 
 void
-anatools::logSpace (const unsigned n, const double a, const double b, vector<double> &bins)
+anatools::logSpace (const double a, const double b, const unsigned n, vector<double> &bins)
 {
   double step = (b - a) / ((double) n);
 
@@ -962,7 +962,7 @@ anatools::logSpace (const unsigned n, const double a, const double b, vector<dou
 }
 
 void
-anatools::linSpace (const unsigned n, const double a, const double b, vector<double> &bins)
+anatools::linSpace (const double a, const double b, const unsigned n, vector<double> &bins)
 {
   double step = (b - a) / ((double) n);
 
