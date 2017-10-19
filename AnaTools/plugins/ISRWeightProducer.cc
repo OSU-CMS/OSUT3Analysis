@@ -66,7 +66,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
 
   double pt = sqrt(px*px + py*py);
 
-  (*eventvariables)["isrWeight"] = weights_->GetBinContent(weights_->FindBin(pt));
+  (*eventvariables)["isrWeight"] = weights_->GetBinContent(min (weights_->FindBin(pt), weights_->GetNbinsX ()));
 
 #else
   (*eventvariables)["isrWeight"] = 1;

@@ -1,10 +1,14 @@
 #ifndef ISR_WEIGHT_PRODUCER
 #define ISR_WEIGHT_PRODUCER
 
+#include "algorithm"
+
 #include "OSUT3Analysis/AnaTools/interface/EventVariableProducer.h"
 
 #include "TH1D.h"
 #include "TFile.h"
+
+using std::min;
 
 class ISRWeightProducer : public EventVariableProducer
 {
