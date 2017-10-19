@@ -175,7 +175,7 @@ osu::Track::Track (const TYPE(tracks) &track,
   if(jets.isValid()) {
     for(const auto &jet : *jets) {
 
-#if TYPE(jets) == CandidateJet // StoppPtls uses a custom jet class...
+#ifdef STOPPPED_PTLS // StoppPtls uses a custom jet class...
       if(jet.et() > 30 &&
          fabs(jet.eta()) < 4.5)
 #else
