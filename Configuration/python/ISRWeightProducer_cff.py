@@ -15,5 +15,5 @@ if osusub.batchMode:
 ISRWeightProducer = cms.EDFilter ("ISRWeightProducer",
     pdgIds = srcMomentumPdgId,
     #weightFile = cms.string(os.environ['CMSSW_BASE'] + '/src/DisappTrks/StandardAnalysis/data/isrWeight_disappTrks_run2.root')
-    #weightHist = cms.string('SingleMu_2015D')
+    #weightHist = cms.vstring('SingleMu_2015D')
 )
