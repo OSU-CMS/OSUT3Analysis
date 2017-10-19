@@ -175,10 +175,15 @@ osu::Track::Track (const TYPE(tracks) &track,
   if(jets.isValid()) {
     for(const auto &jet : *jets) {
 
+#if TYPE(jets) == CandidateJet // StoppPtls uses a custom jet class...
+      if(jet.et() > 30 &&
+         fabs(jet.eta()) < 4.5)
+#else
       if(jet.pt() > 30 &&
          fabs(jet.eta()) < 4.5 &&
          (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
             || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0)))
+#endif
       {
         double dR = deltaR(*this, jet);
         if(dR < dRMinJet_ || dRMinJet_ < 0.0) dRMinJet_ = dR;

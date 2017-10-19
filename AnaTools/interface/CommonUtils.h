@@ -100,18 +100,20 @@ namespace anatools
   string getObjectType (const osu::Genjet &);
   string getObjectClass (const osu::Genjet &);
 #endif
-#if IS_VALID(basicjets)
-  string getObjectType  (const osu::Basicjet &);
-  string getObjectClass (const osu::Basicjet &);
-#endif
+
 #if IS_VALID(jets)
   string getObjectType (const osu::Jet &);
   string getObjectClass (const osu::Jet &);
+#if IS_VALID(basicjets)
+  string getObjectType  (const osu::Basicjet &);
+  string getObjectClass (const osu::Basicjet &);
 #endif
 #if IS_VALID(bjets)
   string getObjectType (const osu::Bjet &);
   string getObjectClass (const osu::Bjet &);
 #endif
+#endif // IS_VALID(jets)
+
 #if IS_VALID(mcparticles)
   string getObjectType (const osu::Mcparticle &);
   string getObjectClass (const osu::Mcparticle &);
@@ -146,14 +148,16 @@ namespace anatools
   string getObjectType (const osu::Tau &);
   string getObjectClass (const osu::Tau &);
 #endif
+
 #if IS_VALID(tracks)
   string getObjectType (const osu::Track &);
   string getObjectClass (const osu::Track &);
-#endif
 #if IS_VALID(secondaryTracks)
   string getObjectType (const osu::SecondaryTrack &);
   string getObjectClass (const osu::SecondaryTrack &);
 #endif
+#endif // IS_VALID(tracks)
+
 #if IS_VALID(pileupinfos)
   string getObjectType (const osu::PileUpInfo &);
   string getObjectClass (const osu::PileUpInfo &);

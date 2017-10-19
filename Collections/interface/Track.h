@@ -258,16 +258,14 @@ namespace osu
 
 }
 
-#else
+#else // IS_VALID(tracks)
 
 namespace osu
 {
   typedef TYPE(tracks) Track;
-#if IS_VALID(secondaryTracks)
   typedef TYPE(secondaryTracks) SecondaryTrack;
-#endif
 }
 
-#endif
+#endif // IS_VALID(tracks)
 
-#endif
+#endif // ifndef OSU_TRACK

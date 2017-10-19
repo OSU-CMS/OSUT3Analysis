@@ -2,12 +2,13 @@
 #define OSU_JET
 
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
-#if IS_VALID(jets)
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
 namespace osu
 {
-  class Jet : public GenMatchable<TYPE(jets), 0>
+
+#if IS_VALID(jets)
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+    class Jet : public GenMatchable<TYPE(jets), 0>
     {
       public:
         Jet ();
@@ -29,10 +30,10 @@ namespace osu
         const float smearedPtUp () const;
         const float smearedPtDown () const;
         
-    	const float alphamax () const;
-    	const float ipsig () const;
-    	const float log10ipsig () const;
-    	const float medianlog10ipsig () const;
+        const float alphamax () const;
+        const float ipsig () const;
+        const float log10ipsig () const;
+        const float medianlog10ipsig () const;
 
         void set_matchedToLepton (float value) { matchedToLepton_  = value; }
         void set_pfCombinedSecondaryVertexV2BJetTags (float value) { pfCombinedSecondaryVertexV2BJetTags_ = value;}
@@ -50,11 +51,11 @@ namespace osu
         void set_smearedPt (float value) { smearedPt_ = value;}
         void set_smearedPtUp (float value) { smearedPtUp_ = value;}
         void set_smearedPtDown (float value) { smearedPtDown_ = value;}
-    	void set_alphamax (float value) { alphamax_ = value;}
+        void set_alphamax (float value) { alphamax_ = value;}
 
-    	void set_ipsig (float value) { ipsig_ = value;}
-    	void set_log10ipsig (float value) { log10ipsig_ = value;}
-    	void set_medianlog10ipsig (float value) { medianlog10ipsig_ = value;}
+        void set_ipsig (float value) { ipsig_ = value;}
+        void set_log10ipsig (float value) { log10ipsig_ = value;}
+        void set_medianlog10ipsig (float value) { medianlog10ipsig_ = value;}
 
       private:
         int matchedToLepton_;
@@ -69,17 +70,29 @@ namespace osu
         float smearedPt_;
         float smearedPtUp_;
         float smearedPtDown_;
-	    float alphamax_;
-	    float ipsig_;
-	    float log10ipsig_;
-	    float medianlog10ipsig_;
+        float alphamax_;
+        float ipsig_;
+        float log10ipsig_;
+        float medianlog10ipsig_;
     };
+#elif DATA_FORMAT == AOD_CUSTOM
+    class Jet : public TYPE(jets)
+    {
+      public:
+        Jet ();
+        Jet (const TYPE(jets) &);
+        ~Jet ();
+    };
+#endif // DATA_FORMAT
+#else // IS_VALID(jets)
+    typedef TYPE(jets) Jet;
+#endif // IS_VALID(jets)
 
     //////////////////////////////
     // osu::Bjet
     //////////////////////////////
-
-#if IS_VALID(bjets)
+#if IS_VALID(jets) && IS_VALID(bjets)
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
     class Bjet : public Jet
     {
       public:
@@ -89,13 +102,24 @@ namespace osu
         Bjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Bjet();
     };
-#endif // IS_VALID(bjets)
+#elif DATA_FORMAT == AOD_CUSTOM
+    class Bjet : public Jet
+    {
+        Bjet();
+        BJet(const TYPE(jets) &);
+        ~Bjet();
+    };
+#endif // DATA_FORMAT
+#else // IS_VALID(jets) && IS_VALID(bjets)
+    typedef TYPE(bjets) Bjet;
+#endif // IS_VALID(jets) && IS_VALID(bjets)
 
     //////////////////////////////
     // osu::Basicjet
     //////////////////////////////
 
-#if IS_VALID(basicjets)
+#if IS_VALID(jets) && IS_VALID(basicjets)
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
     class Basicjet : public Jet
     {
       public:
@@ -105,55 +129,18 @@ namespace osu
         Basicjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Basicjet();
     };
-#endif // IS_VALID(basicjets)
-
-}
 #elif DATA_FORMAT == AOD_CUSTOM
-namespace osu
-{
-  class Jet : public TYPE(jets)
-    {
-      public:
-        Jet ();
-        Jet (const TYPE(jets) &);
-        ~Jet ();
-    };
-
-#if IS_VALID(bjets)
-    class Bjet : public Jet
-     {
-        Bjet();
-        BJet(const TYPE(jets) &);
-        ~Bjet();
-     };
-#endif // IS_VALID(bjets)
-
-#if IS_VALID(basicjets)
     class Basicjet : public Jet
-     {
+    {
         Basicjet();
         Basicjet(const TYPE(jets) &);
         ~Basicjet();
-     };
-#endif // IS_VALID(bjets)
-}
+    };
 #endif // DATA_FORMAT
+#else // IS_VALID(jets) && IS_VALID(basicjets)
+    typedef TYPE(basicjets) Basicjet;
+#endif // IS_VALID(jets) && IS_VALID(basicjets)
 
-#else
+} // namespace osu
 
-namespace osu
-{
-  typedef TYPE(jets) Jet;
-
-#if IS_VALID(bjets)
-  typedef TYPE(bjets) Bjet;
-#endif
-  
-#if IS_VALID(basicjets)
-  typedef TYPE(basicjets) BasicJet;
-#endif
-}
-
-#endif // IS_VALID(jets)
-
-#endif // ifndef
+#endif // ifndef OSU_JET
