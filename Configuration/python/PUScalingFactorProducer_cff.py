@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 import os
 
-PUScalingFactorProducer = cms.EDProducer ("PUScalingFactorProducer",
+PUScalingFactorProducer = cms.EDFilter ("PUScalingFactorProducer",
     # this should be set in the user's config file if a different pileup file is being used
     PU       =  cms.string(os.environ['CMSSW_BASE'] + '/src/OSUT3Analysis/Configuration/data/pu.root'),
 

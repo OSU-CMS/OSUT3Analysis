@@ -10,8 +10,8 @@ VariableProducer::~VariableProducer()
 {
 }
 
-void
-VariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
+bool
+VariableProducer::filter (edm::Event &event, const edm::EventSetup &setup)
 {
 
   uservariables = unique_ptr<VariableProducerPayload> (new VariableProducerPayload);
@@ -20,8 +20,12 @@ VariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   AddVariables(event);
 
+  bool filterDecision = true;
+
   // store all of our calculated quantities in the event
   event.put (std::move (uservariables), "uservariables");
+
+  return filterDecision;
 }
 
 

@@ -162,6 +162,18 @@ osu::Muon::dz () const
   return dz_;
 }
 
+void
+osu::Muon::set_match_HLT_IsoMu24_v (const bool flag)
+{
+  match_HLT_IsoMu24_v_ = flag;
+}
+
+void
+osu::Muon::set_match_HLT_IsoTkMu24_v (const bool flag)
+{
+  match_HLT_IsoTkMu24_v_ = flag;
+}
+
 const int
 osu::Muon::missingInnerHits () const
 {
@@ -226,6 +238,18 @@ const double
 osu::Muon::metNoMuMinusOnePhi () const
 {
   return metNoMuMinusOnePhi_;
+}
+
+const bool
+osu::Muon::match_HLT_IsoMu24_v () const
+{
+  return match_HLT_IsoMu24_v_;
+}
+
+const bool
+osu::Muon::match_HLT_IsoTkMu24_v () const
+{
+  return match_HLT_IsoTkMu24_v_;
 }
 
 #elif DATA_FORMAT == AOD_CUSTOM

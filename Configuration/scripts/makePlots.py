@@ -5,6 +5,7 @@ import re
 import time
 import datetime
 import shutil
+import functools
 from math import *
 from array import *
 from decimal import *
@@ -30,6 +31,8 @@ parser.add_option("--ymax", dest="setYMax",
                   help="Maximum of y axis")
 parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
                   help="maximum error used in rebinning the ratio histogram")
+parser.add_option("-A", "--addOneToRatio", action='store_true', dest="addOneToRatio",
+                  help="add one to the ratio so that data/MC is plotted")
 parser.add_option("--SO", "--sortOrderByYields", action="store_true", dest="sortOrderByYields", default=False,
                   help="will sort the order in the stacked histogram by yields")
 parser.add_option("-N", "--normalizeFactor", dest="normalizeFactor",
@@ -107,6 +110,7 @@ if arguments.makeSignificancePlots and arguments.makeDiffPlots:
     print "You have asked to make a difference plot and significance plots. This is a very strange request.  Will skip making the difference plot."
     arguments.makeDiffPlots = False
 
+from OSUT3Analysis.Configuration.histogramUtilities import ratioHistogram
 from ROOT import Math, TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1, TH1F, TCanvas, TString, TLegend, TLegendEntry, THStack, TIter, TKey, TPaveLabel, gPad, TGraphAsymmErrors
 
 
@@ -275,69 +279,6 @@ def addSystematicError(histogram, fractionalSysError):
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
-
-# some fancy-ass code from Andrzej Zuranski to merge bins in the ratio plot until the error goes below some threshold
-def ratioHistogram( dataHist, mcHist, relErrMax = 0.10):
-
-    if not dataHist:
-        print "Error:  trying to run ratioHistogram but dataHist is invalid"
-        return
-
-    if not mcHist:
-        print "Error:  trying to run ratioHistogram but mcHist is invalid"
-        return
-
-    def groupR(group):
-        Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
-        return (Data-MC)/MC if MC else 0
-
-    def groupErr(group):
-        Data,MC = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [dataHist,mcHist]]
-        dataErr2,mcErr2 = [sum(hist.GetBinError(i)**2 for i in group) for hist in [dataHist,mcHist]]
-        if Data > 0 and MC > 0 and Data != MC:
-            return abs(math.sqrt( (dataErr2+mcErr2)/(Data-MC)**2 + mcErr2/MC**2 ) * (Data-MC)/MC)
-        else:
-            return 0
-
-    def regroup(groups):
-        err,iG = max( (groupErr(g),groups.index(g)) for g in groups )
-        if err < relErrMax or len(groups)<3 : return groups
-        iH = max( [iG-1,iG+1], key = lambda i: groupErr(groups[i]) if 0<=i<len(groups) else -1 )
-        iLo,iHi = sorted([iG,iH])
-        return regroup(groups[:iLo] + [groups[iLo]+groups[iHi]] + groups[iHi+1:])
-
-    #don't rebin the ratio plot for histograms of the number of a given object (except for the pileup ones)
-    if ((dataHist.GetName().startswith("num") and "PV" not in dataHist.GetName()) or
-        dataHist.GetName().find("cutFlow")  is not -1 or
-        dataHist.GetName().find("GenMatch") is not -1):
-        ratio = dataHist.Clone()
-        ratio.Add(mcHist,-1)
-        ratio.Divide(mcHist)
-        ratio.SetTitle("")
-    else:
-        groups = regroup( [(i,) for i in range(1,1+dataHist.GetNbinsX())] )
-        ratio = TH1F("ratio","",len(groups), array('d', [dataHist.GetBinLowEdge(min(g)) for g in groups ] + [dataHist.GetXaxis().GetBinUpEdge(dataHist.GetNbinsX())]) )
-        for i,g in enumerate(groups) :
-            ratio.SetBinContent(i+1,groupR(g))
-            ratio.SetBinError(i+1,groupErr(g))
-
-    # move cut labels down to ratio axis
-    if dataHist.GetName().find("cutFlow") is not -1:
-        for bin in range(1,dataHist.GetNbinsX()):
-            binLabel = dataHist.GetXaxis().GetBinLabel(bin)
-            ratio.GetXaxis().SetBinLabel(bin, binLabel)
-        ratio.GetXaxis().SetLabelOffset(0.05)
-
-    ratio.GetYaxis().SetTitle("#frac{obs-exp}{exp}")
-    ratio.GetYaxis().SetLabelSize(0.3)
-    ratio.SetLineColor(1)
-    ratio.SetLineWidth(2)
-    return ratio
-
-##########################################################################################################################################
-##########################################################################################################################################
-##########################################################################################################################################
-
 
 def signifHistograms(BgSum,SignalMCHistograms):
     # Return a list of histograms that are the significance
@@ -557,6 +498,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     if arguments.paperConfig:
         if 'ratioRelErrMax' in paperHistogram:
             ratioRelErrMax = paperHistogram['ratioRelErrMax']
+    ###############################################
+    addOneToRatio = -1
+    if arguments.addOneToRatio:
+        addOneToRatio = arguments.addOneToRatio
+    if arguments.paperConfig:
+        if 'addOneToRatio' in paperHistogram:
+            addOneToRatio = paperHistogram['addOneToRatio']
     ###############################################
     doRebin = False
     if arguments.rebinFactor:
@@ -1216,10 +1164,12 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         Canvas.cd(2)
         BgSum = Stack.GetStack().Last()
         if makeRatioPlots:
+            makeRatio = functools.partial (ratioHistogram, DataHistograms[0], BgSum)
             if ratioRelErrMax is not -1: # it gets initialized to this dummy value of -1
-                Comparison = ratioHistogram(DataHistograms[0],BgSum,float(ratioRelErrMax))
-            else:
-                Comparison = ratioHistogram(DataHistograms[0],BgSum)
+                makeRatio = functools.partial (makeRatio, relErrMax = float (ratioRelErrMax))
+            if addOneToRatio is not -1: # it gets initialized to this dummy value of -1
+                makeRatio = functools.partial (makeRatio, addOne = bool (addOneToRatio))
+            Comparison = makeRatio ()
         elif makeDiffPlots:
             Comparison = DataHistograms[0].Clone("diff")
             Comparison.Add(BgSum,-1)
@@ -1245,7 +1195,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             if 'ratioYRange' in paperHistogram:
                 RatioYRange = paperHistogram['ratioYRange']
 
-        Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
+        if not addOneToRatio:
+            Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
+        else:
+            Comparison.GetYaxis().SetRangeUser(-1*RatioYRange + 1.0, RatioYRange + 1.0)
         Comparison.GetYaxis().SetNdivisions(205)
         Comparison.Draw("E0")
         if makeSignifPlots:  # Draw the other significance hists

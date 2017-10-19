@@ -950,3 +950,23 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
         tokens.eventvariables.push_back (cc.consumes<osu::Eventvariable> (collection));
     }
 }
+
+void
+anatools::logSpace (const double a, const double b, const unsigned n, vector<double> &bins)
+{
+  double step = (b - a) / ((double) n);
+
+  bins.clear ();
+  for (double i = a; i < b + 0.5 * step; i += step)
+    bins.push_back (pow (10.0, i));
+}
+
+void
+anatools::linSpace (const double a, const double b, const unsigned n, vector<double> &bins)
+{
+  double step = (b - a) / ((double) n);
+
+  bins.clear ();
+  for (double i = a; i < b + 0.5 * step; i += step)
+    bins.push_back (i);
+}

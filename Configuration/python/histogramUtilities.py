@@ -143,7 +143,7 @@ def ratioHistogram( dataHist, mcHist, dontRebinRatio=False, addOne=False, relErr
             ratio.SetBinContent(i+1,groupR(g))
             ratio.SetBinError(i+1,groupErr(g))
 
-    ratio.GetYaxis().SetTitle("#frac{hist1-hist2}{hist2}")
+    ratio.GetYaxis().SetTitle(("#frac{obs-exp}{exp}") if not addOne else ("obs/exp"))
     ratio.GetXaxis().SetLabelOffset(0.03)
     ratio.SetLineColor(1)
     ratio.SetMarkerColor(1)

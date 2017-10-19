@@ -1,10 +1,14 @@
 #ifndef ISR_WEIGHT_PRODUCER
 #define ISR_WEIGHT_PRODUCER
 
+#include "algorithm"
+
 #include "OSUT3Analysis/AnaTools/interface/EventVariableProducer.h"
 
 #include "TH1D.h"
 #include "TFile.h"
+
+using std::min;
 
 class ISRWeightProducer : public EventVariableProducer
 {
@@ -17,9 +21,9 @@ private:
 
   vector<int> pdgIds_;
   string weightFile_;
-  string weightHist_;
+  vector<string> weightHist_;
 
-  TH1D *weights_;
+  vector<TH1D *> weights_;
 
   bool isOriginalParticle (const TYPE(hardInteractionMcparticles) &, const int) const;
   void AddVariables(const edm::Event &);

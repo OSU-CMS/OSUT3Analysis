@@ -295,4 +295,16 @@ osu::Tau::metNoMuMinusOneUpPhi () const
   return metNoMuMinusOneUpPhi_;
 }
 
+const bool
+osu::Tau::match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v () const
+{
+  return match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v_;
+}
+
+void
+osu::Tau::set_match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v (const bool flag)
+{
+  match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v_ = flag;
+}
+
 #endif
