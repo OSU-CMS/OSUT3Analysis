@@ -26,12 +26,6 @@
 namespace {
   struct OSUT3Analysis_Collections {
 
-    osu::Basicjet                             basicjet0;
-    vector<osu::Basicjet>                     basicjet1;
-    edm::Wrapper<osu::Basicjet>               basicjet2;
-    edm::Wrapper<vector<osu::Basicjet> >      basicjet3;
-    edm::Ref<vector<osu::Basicjet> >          basicjet4;
-
     osu::Beamspot                             beamspot0;
     vector<osu::Beamspot>                     beamspot1;
     edm::Wrapper<osu::Beamspot>               beamspot2;

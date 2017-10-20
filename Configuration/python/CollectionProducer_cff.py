@@ -98,9 +98,6 @@ copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
 collectionProducer.bjets = copy.deepcopy (collectionProducer.jets)
 collectionProducer.bjets._TypedParameterizable__type = "OSUBjetProducer"
 
-collectionProducer.basicjets = copy.deepcopy (collectionProducer.jets)
-collectionProducer.basicjets._TypedParameterizable__type = "OSUBasicjetProducer"
-
 #-------------------------------------------------------------------------------
 
 collectionProducer.mcparticles = cms.EDProducer ("McparticleProducer",

@@ -207,35 +207,6 @@ osu::Bjet::~Bjet() {}
 
 #endif // IS_VALID(bjets)
 
-//////////////////////////////
-// osu::Basicjet
-//////////////////////////////
-
-#if IS_VALID(basicjets)
-
-osu::Basicjet::Basicjet() : 
-  osu::Jet() {}
-
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
-osu::Basicjet::Basicjet(const TYPE(jets) &basicjet) : 
-  osu::Jet(basicjet) {}
-
-osu::Basicjet::Basicjet(const TYPE(jets) &basicjet,
-                        const edm::Handle<vector<osu::Mcparticle> > &particles) :
-  osu::Jet(basicjet, particles) {}
-
-osu::Basicjet::Basicjet(const TYPE(jets) &basicjet,
-                        const edm::Handle<vector<osu::Mcparticle> > &particles,
-                        const edm::ParameterSet &cfg) :
-  osu::Jet(basicjet, particles, cfg) {}
-#elif DATA_FORMAT == AOD_CUSTOM
-osu::Basicjet::Basicjet(const TYPE(jets) &basicjet) : 
-  osu::Jet(basicjet) {}
-#endif // DATA_FORMAT
-
-osu::Basicjet::~Basicjet() {}
-
-#endif // IS_VALID(basicjets)
 
 //////////////////////////////
 

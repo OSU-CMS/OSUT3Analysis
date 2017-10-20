@@ -10,9 +10,4 @@ typedef ObjectSelector<osu::Bjet, TYPE(bjets)> BjetObjectSelector;
   DEFINE_FWK_MODULE(BjetObjectSelector);
 #endif
 
-#if IS_VALID(basicjets)
-typedef ObjectSelector<osu::Basicjet, TYPE(basicjets)> BasicjetObjectSelector;
-  DEFINE_FWK_MODULE(BasicjetObjectSelector);
-#endif
-
 #endif

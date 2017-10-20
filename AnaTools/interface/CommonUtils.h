@@ -38,7 +38,6 @@ struct Tokens
   edm::EDGetTokenT<vector<osu::Genjet> > genjets;
   edm::EDGetTokenT<vector<osu::Jet> > jets;
   edm::EDGetTokenT<vector<osu::Bjet> > bjets;
-  edm::EDGetTokenT<vector<osu::Basicjet> > basicjets;
   edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticles;
   edm::EDGetTokenT<vector<osu::Met> > mets;
   edm::EDGetTokenT<vector<osu::Muon> > muons;
@@ -104,10 +103,6 @@ namespace anatools
 #if IS_VALID(jets)
   string getObjectType (const osu::Jet &);
   string getObjectClass (const osu::Jet &);
-#if IS_VALID(basicjets)
-  string getObjectType  (const osu::Basicjet &);
-  string getObjectClass (const osu::Basicjet &);
-#endif
 #if IS_VALID(bjets)
   string getObjectType (const osu::Bjet &);
   string getObjectClass (const osu::Bjet &);

@@ -114,33 +114,6 @@ namespace osu
     typedef TYPE(bjets) Bjet;
 #endif // IS_VALID(jets) && IS_VALID(bjets)
 
-    //////////////////////////////
-    // osu::Basicjet
-    //////////////////////////////
-
-#if IS_VALID(jets) && IS_VALID(basicjets)
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
-    class Basicjet : public Jet
-    {
-      public:
-        Basicjet();
-        Basicjet(const TYPE(jets) &);
-        Basicjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &);
-        Basicjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
-        ~Basicjet();
-    };
-#elif DATA_FORMAT == AOD_CUSTOM
-    class Basicjet : public Jet
-    {
-        Basicjet();
-        Basicjet(const TYPE(jets) &);
-        ~Basicjet();
-    };
-#endif // DATA_FORMAT
-#else // IS_VALID(jets) && IS_VALID(basicjets)
-    typedef TYPE(basicjets) Basicjet;
-#endif // IS_VALID(jets) && IS_VALID(basicjets)
-
 } // namespace osu
 
 #endif // ifndef OSU_JET
