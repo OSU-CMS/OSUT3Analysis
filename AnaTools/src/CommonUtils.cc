@@ -951,6 +951,80 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     }
 }
 
+bool
+anatools::getTriggerObjects (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs)
+{
+  if (collection == "")
+    {
+      selectedTrigObjs.push_back (NULL);
+      return false;
+    }
+  vector<const pat::TriggerObjectStandAlone *> trigObjsToAdd;
+  int i = -1;
+  for (auto trigObj : trigObjs)
+    {
+      i++;
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filter != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            if (filterLabel == filter)
+              {
+                flag = true;
+                break;
+              }
+          if (!flag)
+            continue;
+        }
+
+      trigObjsToAdd.push_back (&trigObjs.at (i));
+    }
+  if (!trigObjsToAdd.empty ())
+    selectedTrigObjs.insert (selectedTrigObjs.end (), trigObjsToAdd.begin (), trigObjsToAdd.end ());
+  else
+    selectedTrigObjs.push_back (NULL);
+  return (!trigObjsToAdd.empty ());
+}
+
+bool
+anatools::triggerObjectExists (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter)
+{
+  if (collection == "")
+    return false;
+  for (auto trigObj : trigObjs)
+    {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filter != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            if (filterLabel == filter)
+              {
+                flag = true;
+                break;
+              }
+          if (!flag)
+            continue;
+        }
+
+      return true;
+    }
+  return false;
+}
+
 void
 anatools::logSpace (const double a, const double b, const unsigned n, vector<double> &bins)
 {
