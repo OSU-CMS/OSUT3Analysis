@@ -898,11 +898,11 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     for Histogram in SignalMCHistograms:
         #if legend entry is really long, split it into 2 lines (first line with the hist line/marker, second line just text)
         #this is better than using #splitline{}{} because with that method, the hist line/marker gets misaligned
-        #Split location (here char 119) will need to be changed for each long entry. 
+        #Split location (here char 113) will need to be changed for each long entry. 
         if(len(SignalMCLegendEntries[legendIndex])>100):
-            #print "first 119 char are: "+str(SignalMCLegendEntries[legendIndex][:119]) 
-            firstLineEntry = str(SignalMCLegendEntries[legendIndex][:119])
-            secondLineEntry = str(SignalMCLegendEntries[legendIndex][119:])
+            #print "first 113 char are: "+str(SignalMCLegendEntries[legendIndex][:113]) 
+            firstLineEntry = str(SignalMCLegendEntries[legendIndex][:113])
+            secondLineEntry = str(SignalMCLegendEntries[legendIndex][113:])
             SignalMCLegend.AddEntry(Histogram,firstLineEntry,"L")
             SignalMCLegend.AddEntry(0,secondLineEntry,"")
         else:
