@@ -18,10 +18,6 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
   d0_                      (INVALID_VALUE),
   d0Sig_                   (INVALID_VALUE),
   dz_                      (INVALID_VALUE),
-  match_HLT_IsoMu24_v_     (false),
-  match_HLT_IsoTkMu24_v_   (false),
-  match_HLT_IsoMu20_v_     (false),
-  match_HLT_IsoTkMu20_v_   (false),
   metMinusOnePt_           (INVALID_VALUE),
   metMinusOnePx_           (INVALID_VALUE),
   metMinusOnePy_           (INVALID_VALUE),
@@ -29,7 +25,11 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
 }
 
@@ -44,10 +44,6 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   d0_                      (INVALID_VALUE),
   d0Sig_                   (INVALID_VALUE),
   dz_                      (INVALID_VALUE),
-  match_HLT_IsoMu24_v_     (false),
-  match_HLT_IsoTkMu24_v_   (false),
-  match_HLT_IsoMu20_v_     (false),
-  match_HLT_IsoTkMu20_v_   (false),
   metMinusOnePt_           (INVALID_VALUE),
   metMinusOnePx_           (INVALID_VALUE),
   metMinusOnePy_           (INVALID_VALUE),
@@ -55,7 +51,11 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
 }
 
@@ -70,10 +70,6 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   d0_                      (INVALID_VALUE),
   d0Sig_                   (INVALID_VALUE),
   dz_                      (INVALID_VALUE),
-  match_HLT_IsoMu24_v_     (false),
-  match_HLT_IsoTkMu24_v_   (false),
-  match_HLT_IsoMu20_v_     (false),
-  match_HLT_IsoTkMu20_v_   (false),
   metMinusOnePt_           (INVALID_VALUE),
   metMinusOnePx_           (INVALID_VALUE),
   metMinusOnePy_           (INVALID_VALUE),
@@ -81,7 +77,11 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
 }
 
@@ -96,10 +96,6 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   d0_                      (INVALID_VALUE),
   d0Sig_                   (INVALID_VALUE),
   dz_                      (INVALID_VALUE),
-  match_HLT_IsoMu24_v_     (false),
-  match_HLT_IsoTkMu24_v_   (false),
-  match_HLT_IsoMu20_v_     (false),
-  match_HLT_IsoTkMu20_v_   (false),
   metMinusOnePt_           (INVALID_VALUE),
   metMinusOnePx_           (INVALID_VALUE),
   metMinusOnePy_           (INVALID_VALUE),
@@ -107,7 +103,11 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
   TVector2 p (met.px () + this->px (), met.py () + this->py ()),
            pNoMu (met.noMuPx (), met.noMuPy ()); // we do not add the muon's pt
