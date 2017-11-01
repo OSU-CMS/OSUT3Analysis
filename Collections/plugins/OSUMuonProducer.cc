@@ -82,6 +82,8 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         {
           muon.set_match_HLT_IsoMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltL3MuonCandidates::HLT", "hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09"));
           muon.set_match_HLT_IsoTkMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltHighPtTkMuonCands::HLT", "hltL3fL1sMu22L1f0Tkf24QL3trkIsoFiltered0p09"));
+          muon.set_match_HLT_IsoMu20_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltL3MuonCandidates::HLT", "hltL3crIsoL1sMu16L1f0L2f10QL3f20QL3trkIsoFiltered0p09"));
+          muon.set_match_HLT_IsoTkMu20_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltHighPtTkMuonCands::HLT", "hltL3fL1sMu16L1f0Tkf20QL3trkIsoFiltered0p09"));
         }
 
       if(prunedParticles.isValid() && beamspot.isValid())
