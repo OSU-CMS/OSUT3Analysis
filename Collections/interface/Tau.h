@@ -44,6 +44,10 @@ namespace osu
         const double metNoMuMinusOneUpPy () const;
         const double metNoMuMinusOneUpPhi () const;
 
+        const bool match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v () const;
+
+        void set_match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v (const bool);
+
       private:
 
         double metMinusOnePt_;
@@ -65,6 +69,8 @@ namespace osu
         double metNoMuMinusOneUpPx_;
         double metNoMuMinusOneUpPy_;
         double metNoMuMinusOneUpPhi_;
+
+        bool match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v_;
     };
 }
 

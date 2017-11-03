@@ -6,15 +6,16 @@ ISRWeightProducer::ISRWeightProducer (const edm::ParameterSet &cfg) :
   EventVariableProducer(cfg),
   pdgIds_     (cfg.getParameter<vector<int> > ("pdgIds")),
   weightFile_ (cfg.getParameter<string> ("weightFile")),
-  weightHist_ (cfg.getParameter<string> ("weightHist")),
-  weights_    (NULL)
+  weightHist_ (cfg.getParameter<vector<string> > ("weightHist")),
+  weights_    ({})
 {
   mcparticlesToken_ = consumes<vector<TYPE(hardInteractionMcparticles)> > (collections_.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
 }
 
 ISRWeightProducer::~ISRWeightProducer() {
-  if (weights_)
-    delete weights_;
+  for (const auto &weight : weights_)
+    if (weight)
+      delete weight;
 }
 
 void
@@ -32,7 +33,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
     return;
   }
 
-  if (!weights_)
+  if (!weights_.size ())
     {
       TFile * fin = TFile::Open(weightFile_.c_str());
       if(!fin || fin->IsZombie()) {
@@ -41,13 +42,17 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
         exit(1);
       }
 
-      weights_ = (TH1D*)fin->Get(weightHist_.c_str());
-      if(!weights_) {
-        clog << "ERROR [ISRWeightProducer]: Could not find histogram: " << weightHist_
-             << "; would cause a seg fault." << endl;
-        exit(1);
-      }
-      weights_->SetDirectory(0);
+      for (const auto &weightHist : weightHist_)
+        {
+          TH1D *w = (TH1D*)fin->Get(weightHist.c_str());
+          if(!w) {
+            clog << "ERROR [ISRWeightProducer]: Could not find histogram: " << weightHist
+                 << "; would cause a seg fault." << endl;
+            exit(1);
+          }
+          w->SetDirectory(0);
+          weights_.push_back (w);
+        }
       fin->Close ();
       delete fin;
     }
@@ -64,9 +69,11 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
     }
   }
 
-  double pt = sqrt(px*px + py*py);
+  double pt = sqrt(px*px + py*py), isrWeight = 1.0;
+  for (const auto &weight : weights_)
+    isrWeight *= weight->GetBinContent (min (weight->FindBin (pt), weight->GetNbinsX ()));
 
-  (*eventvariables)["isrWeight"] = weights_->GetBinContent(weights_->FindBin(pt));
+  (*eventvariables)["isrWeight"] = isrWeight;
 
 #else
   (*eventvariables)["isrWeight"] = 1;

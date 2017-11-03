@@ -31,6 +31,7 @@ namespace osu
         const int missingMiddleHits () const;
         const int missingOuterHits () const;
         const bool passesTightID_noIsolation () const;
+        const bool match_HLT_Ele25_eta2p1_WPTight_Gsf_v () const;
         void set_rho (float value) { rho_  = value; }
         void set_AEff (float value) { AEff_  = value; }
         void set_pfdRhoIsoCorr (double value) { pfdRhoIsoCorr_  = value; }
@@ -42,6 +43,7 @@ namespace osu
         void set_d0Sig (double value) { d0Sig_  = value; };
         void set_dz (double value) { dz_  = value; };
         void set_passesTightID_noIsolation (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
+        void set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (const bool);
 
         const double metMinusOnePt () const;
         const double metMinusOnePx () const;
@@ -86,6 +88,7 @@ namespace osu
         double d0Sig_;
         double dz_;
         bool passesTightID_noIsolation_;
+        bool match_HLT_Ele25_eta2p1_WPTight_Gsf_v_;
 
         double metMinusOnePt_;
         double metMinusOnePx_;

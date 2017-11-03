@@ -336,7 +336,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         variableProducerPath = cms.Path ()
         for module in variableProducers:
             if module not in locals () and module not in globals ():
-                producer = cms.EDProducer (module,
+                producer = cms.EDFilter (module,
                     collections = collections
                 )
                 setattr (process, module, producer)
@@ -404,7 +404,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         #in the outputCommands
         ########################################################################
         for collection in dir(collectionProducer):
-            if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):
+            if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer) or isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDFilter):
                 dic = vars(getattr(collectionProducer,collection))
                 for p in dic:
                     if 'InputTag' in str(dic[p]):
@@ -589,7 +589,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         if len(scalingfactorproducers):
             for module in scalingfactorproducers:
                 # Here we try to add the original producer as specified in the config files.
-                objectProducer = cms.EDProducer (str(module['name']),
+                objectProducer = cms.EDFilter (str(module['name']),
                                         # Use filteredCollections, the ones selected by the objectSelectors
                                         collections = copy.deepcopy(filteredCollections)
                                            )

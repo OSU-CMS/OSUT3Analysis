@@ -1,7 +1,7 @@
 #ifndef EVENT_VARIABLE_PRODUCER
 #define EVENT_VARIABLE_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/EDFilter.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -10,7 +10,7 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 
-class EventVariableProducer : public edm::EDProducer
+class EventVariableProducer : public edm::EDFilter
   {
     public:
       EventVariableProducer (const edm::ParameterSet &);
@@ -18,7 +18,7 @@ class EventVariableProducer : public edm::EDProducer
 
       // Methods
 
-      void produce (edm::Event &, const edm::EventSetup &);
+      bool filter (edm::Event &, const edm::EventSetup &);
 
     protected:
 

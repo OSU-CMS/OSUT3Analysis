@@ -26,6 +26,8 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
   conversionsToken_ = consumes<vector<reco::Conversion> > (conversions_);
   rhoToken_ = consumes<double> (rho_);
+  triggersToken_ = consumes<edm::TriggerResults> (collections_.getParameter<edm::InputTag> ("triggers"));
+  trigobjsToken_ = consumes<vector<pat::TriggerObjectStandAlone> > (collections_.getParameter<edm::InputTag> ("trigobjs"));
 }
 
 OSUElectronProducer::~OSUElectronProducer ()
@@ -66,6 +68,12 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   Handle<double> rho;
   event.getByToken (rhoToken_, rho);
 
+  Handle<edm::TriggerResults> triggers;
+  event.getByToken (triggersToken_, triggers);
+
+  Handle<vector<pat::TriggerObjectStandAlone> > trigobjs;
+  event.getByToken (trigobjsToken_, trigobjs);
+
   pl_ = unique_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
     {
@@ -76,6 +84,8 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         electron.set_rho((float)(*rho));
       if(beamspot.isValid() && conversions.isValid() && vertices.isValid() && vertices->size ())
         electron.set_passesTightID_noIsolation (*beamspot, vertices->at (0), conversions);
+      if(trigobjs.isValid())
+        electron.set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle25erWPTightGsfTrackIsoFilter"));
 
       float effectiveArea = 0;
       // electron effective areas from https://indico.cern.ch/event/369239/contribution/4/attachments/1134761/1623262/talk_effective_areas_25ns.pdf

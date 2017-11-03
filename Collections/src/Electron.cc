@@ -24,6 +24,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
+  match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
   metMinusOnePy_              (INVALID_VALUE),
@@ -55,6 +56,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
+  match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
   metMinusOnePy_              (INVALID_VALUE),
@@ -86,6 +88,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
+  match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
   metMinusOnePy_              (INVALID_VALUE),
@@ -117,6 +120,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
+  match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
   metMinusOnePy_              (INVALID_VALUE),
@@ -241,7 +245,7 @@ osu::Electron::dz () const
 const bool
 osu::Electron::passesTightID_noIsolation () const
 {
-  return this->passesTightID_noIsolation_;
+  return passesTightID_noIsolation_;
 }
 
 void
@@ -272,6 +276,18 @@ osu::Electron::set_passesTightID_noIsolation (const reco::BeamSpot &beamspot, co
                                  && this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS)  <=  1
                                  && !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
     }
+}
+
+const bool
+osu::Electron::match_HLT_Ele25_eta2p1_WPTight_Gsf_v () const
+{
+  return match_HLT_Ele25_eta2p1_WPTight_Gsf_v_;
+}
+
+void
+osu::Electron::set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (const bool flag)
+{
+  match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ = flag;
 }
 
 const double

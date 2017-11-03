@@ -220,6 +220,14 @@ namespace anatools
   void getAllTokens (const edm::ParameterSet &, edm::ConsumesCollector &&, Tokens &);
 
   template<class T> bool jetPassesTightLepVeto (const T &);
+
+  template<class T> bool isMatchedToTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double = 0.1);
+  bool getTriggerObjects (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, vector<const pat::TriggerObjectStandAlone *> &);
+  template<class T> const pat::TriggerObjectStandAlone *getMatchedTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double = 0.1);
+  bool triggerObjectExists (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &);
+
+  void logSpace (const double, const double, const unsigned, vector<double> &);
+  void linSpace (const double, const double, const unsigned, vector<double> &);
 }
 
 /**
@@ -262,6 +270,84 @@ anatools::jetPassesTightLepVeto (const T &jet)
   //
   return (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
     || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0));
+}
+
+template<class T> bool
+anatools::isMatchedToTriggerObject (const edm::Event &event, const edm::TriggerResults &triggers, const T &obj, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter, const double dR)
+{
+  if (collection == "")
+    return false;
+  for (auto trigObj : trigObjs)
+    {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filter != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            if (filterLabel == filter)
+              {
+                flag = true;
+                break;
+              }
+          if (!flag)
+            continue;
+        }
+      if (deltaR (obj, trigObj) > dR)
+        continue;
+
+      return true;
+    }
+  return false;
+}
+
+template<class T> const pat::TriggerObjectStandAlone *
+anatools::getMatchedTriggerObject (const edm::Event &event, const edm::TriggerResults &triggers, const T &obj, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter, const double dR)
+{
+  if (collection == "")
+    return NULL;
+  double minDR = -1.0;
+  int i = -1, iMinDR = -1;
+  for (auto trigObj : trigObjs)
+    {
+      i++;
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filter != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            if (filterLabel == filter)
+              {
+                flag = true;
+                break;
+              }
+          if (!flag)
+            continue;
+        }
+      double currentDR = deltaR (obj, trigObj);
+      if (currentDR > dR)
+        continue;
+
+      if (minDR < 0 || currentDR < minDR)
+        {
+          minDR = currentDR;
+          iMinDR = i;
+        }
+    }
+  if (iMinDR >= 0)
+    return &trigObjs.at (iMinDR);
+  return NULL;
 }
 
 #endif

@@ -227,9 +227,9 @@ def MakeResubmissionScript(badIndices, originalSubmissionScript):
         else:
             resubScript.write('Queue 1\n\n')
 
-    for index in range(1,len(badIndices)):
+    for index in badIndices:
         for item in indexDependence:
-            resubScript.write(item.replace('$(Process)',str(badIndices[index])))
+            resubScript.write(item.replace('$(Process)',str(index)))
         resubScript.write('Queue 1\n\n')
 
     resubScript.close()
@@ -360,20 +360,20 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = 
 
     # check for abnormal condor return values
     sys.path.append(directory)
-    for i in range(0,len(ReturnValues)):
-        if "return value 0" in ReturnValues[i]:
-            (report, GoodIndex) = MessageDecoder(ReturnValues[i], True)
+    for returnValue in ReturnValues:
+        if "return value 0" in returnValue:
+            (report, GoodIndex) = MessageDecoder(returnValue, True)
             if GoodIndex not in BadIndices:
                 GoodIndices.append(GoodIndex)
-        elif "return value" in ReturnValues[i]:
-            log += ReturnValues[i] + "\n"
-            (report, BadIndex) = MessageDecoder(ReturnValues[i], False)
+        elif "return value" in returnValue:
+            log += returnValue + "\n"
+            (report, BadIndex) = MessageDecoder(returnValue, False)
             log += report
             BadIndices.append(BadIndex)
         else:
-            log += ReturnValues[i] + "\n"
+            log += returnValue + "\n"
             Pattern = r'condor_(.*).log'
-            Decoded = re.match(Pattern,ReturnValues[i])
+            Decoded = re.match(Pattern,returnValue)
             BadIndex = Decoded.group(1)
             log += "Warning!!! Job " + str(BadIndex) + " exited inproperly!\n"
             BadIndices.append(BadIndex)
@@ -383,8 +383,8 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = 
         os.remove('condor_resubmit.sh')
     if BadIndices:
         MakeResubmissionScript(BadIndices, 'condor.sub')
-    for i in range(0,len(GoodIndices)):
-        GoodRootFiles.append(GetGoodRootFiles(GoodIndices[i]))
+    for i in GoodIndices:
+        GoodRootFiles.append(GetGoodRootFiles(i))
     if not len(GoodRootFiles):
         print "For dataset", dataSet, ": Unfortunately there are no good root files to merge!\n"
         return
@@ -431,10 +431,12 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = 
         filesPerThread = int (math.ceil (float (nFiles) / float (nThreads)))
     threads = []
     for i in range (0, nThreads):
-        threads.append (Thread (target = MergeIntermediateFile, args = (GoodRootFiles[(i * filesPerThread):((i + 1) * filesPerThread)], OutputDir, dataSet, Weight, i, verbose)))
-        threads[-1].start ()
-    for i in range (0, nThreads):
-        threads[i].join ()
+        fileSubset = GoodRootFiles[(i * filesPerThread):((i + 1) * filesPerThread)]
+        if len (fileSubset):
+            threads.append (Thread (target = MergeIntermediateFile, args = (fileSubset, OutputDir, dataSet, Weight, i, verbose)))
+            threads[-1].start ()
+    for thread in threads:
+        thread.join ()
     log += threadLog
 
     # merge the intermediate files produced by the threads above
@@ -447,8 +449,8 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = 
         log += e.output
 
     # remove the intermediate files produced by the threads above
-    for i in range (0, len (outputFiles)):
-        os.unlink (outputFiles[i])
+    for outputFile in outputFiles:
+        os.unlink (outputFile)
 
     log += "\nFinished merging dataset " + dataSet + ":\n"
     log += "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs.\n"

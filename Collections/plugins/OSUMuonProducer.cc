@@ -24,8 +24,8 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   beamspotToken_ = consumes<TYPE(beamspots)> (collections_.getParameter<edm::InputTag> ("beamspots"));
   primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
   metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
-
-
+  triggersToken_ = consumes<edm::TriggerResults> (collections_.getParameter<edm::InputTag> ("triggers"));
+  trigobjsToken_ = consumes<vector<pat::TriggerObjectStandAlone> > (collections_.getParameter<edm::InputTag> ("trigobjs"));
 }
 
 OSUMuonProducer::~OSUMuonProducer ()
@@ -35,9 +35,7 @@ OSUMuonProducer::~OSUMuonProducer ()
 void
 OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-
   using namespace edm;
-
 
   Handle<vector<TYPE(muons)> > collection;
   event.getByToken(token_, collection);
@@ -60,11 +58,11 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   Handle<vector<osu::Met> > met;
   event.getByToken (metToken_, met);
 
+  Handle<edm::TriggerResults> triggers;
+  event.getByToken (triggersToken_, triggers);
 
-
-
-
-
+  Handle<vector<pat::TriggerObjectStandAlone> > trigobjs;
+  event.getByToken (trigobjsToken_, trigobjs);
 
   pl_ = unique_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
@@ -79,6 +77,12 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         }
       else
           muon.set_isTightMuonWRTVtx(false);
+
+      if(trigobjs.isValid())
+        {
+          muon.set_match_HLT_IsoMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltL3MuonCandidates::HLT", "hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09"));
+          muon.set_match_HLT_IsoTkMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltHighPtTkMuonCands::HLT", "hltL3fL1sMu22L1f0Tkf24QL3trkIsoFiltered0p09"));
+        }
 
       if(prunedParticles.isValid() && beamspot.isValid())
         {

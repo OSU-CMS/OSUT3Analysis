@@ -31,6 +31,8 @@ class OSUElectronProducer : public edm::EDProducer
     edm::EDGetTokenT<vector<osu::Met> > metToken_;
     edm::EDGetTokenT<vector<reco::Conversion> > conversionsToken_;
     edm::EDGetTokenT<double> rhoToken_;
+    edm::EDGetTokenT<edm::TriggerResults> triggersToken_;
+    edm::EDGetTokenT<vector<pat::TriggerObjectStandAlone> > trigobjsToken_;
 
     edm::ParameterSet  cfg_;
     edm::InputTag      pfCandidate_;
