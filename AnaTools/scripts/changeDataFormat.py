@@ -16,7 +16,7 @@ parser.add_option("-v", "--version", action="store_true", dest="version", defaul
 parser.add_option("-c","--config", dest="custom_config",
                   help="path to config file specifying the custom format (starting with package name)")
 parser.add_option("-d", "--define", dest="custom_define",
-                  help="custom preprocessor definition to provide (ie #define ARG)")
+                  help="comma-separated list of custom preprocessor definitions to provide with #define. Examples: \"-d DEF1\", \"-d DEF1,DEF2\"")
 
 (arguments, args) = parser.parse_args()
 
@@ -49,8 +49,9 @@ if arguments.custom_config:
     arguments.data_format += "_CUSTOM"
 
 if arguments.custom_define:
-    print "Defining custom variable: #define " + arguments.custom_define
-    os.system('sed -i "9i #define %s" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % (arguments.custom_define))
+    for definition in arguments.custom_define.split(','):
+        print "Defining custom variable: #define " + definition
+        os.system('sed -i "9i #define %s" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % definition)
 
 os.system('sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT %s/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % (arguments.data_format))
 

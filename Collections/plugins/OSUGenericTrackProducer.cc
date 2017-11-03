@@ -26,6 +26,9 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   mcparticleToken_   = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   jetsToken_         = consumes<vector<TYPE(jets)> > (collections_.getParameter<edm::InputTag> ("jets"));
   pfCandidatesToken_ = consumes<vector<pat::PackedCandidate> > (cfg.getParameter<edm::InputTag> ("pfCandidates"));
+#ifdef DISAPP_TRKS
+  candidateTracksToken_ = consumes<vector<CandidateTrack> > (cfg.getParameter<edm::InputTag> ("candidateTracks"));
+#endif
 
   const edm::ParameterSet &fiducialMaps = cfg.getParameter<edm::ParameterSet> ("fiducialMaps");
   const vector<edm::ParameterSet> &electronFiducialMaps = fiducialMaps.getParameter<vector<edm::ParameterSet> > ("electrons");
@@ -48,7 +51,7 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   // disappearing track ntuples.
   tracksToken_ = consumes<vector<reco::Track> > (edm::InputTag ("generalTracks", "", "RECO"));
 
-#ifdef DISAPP_TRKS
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017
   stringstream ss;
   for (const auto &electronFiducialMap : electronFiducialMaps)
     {
@@ -95,7 +98,7 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
     ss << "(" << setw (10) << etaPhi.eta << "," << setw (10) << etaPhi.phi << ")" << endl;
   ss << "================================================================================";
   edm::LogInfo ("OSUGenericTrackProducer") << ss.str ();
-#endif
+#endif // MINI_AOD or MINI_AOD_2017
 }
 
 template<class T> 
@@ -106,10 +109,10 @@ OSUGenericTrackProducer<T>::~OSUGenericTrackProducer ()
 template<class T> void 
 OSUGenericTrackProducer<T>::beginRun (const edm::Run &run, const edm::EventSetup& setup)
 {
-#ifdef DISAPP_TRKS
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017
   envSet (setup);
   getChannelStatusMaps ();
-#endif
+#endif // MINI_AOD or MINI_AOD_2017
 }
 
 template<class T> void 
@@ -122,7 +125,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       return;
     }
 
-#ifdef DISAPP_TRKS
+#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017
   edm::Handle<vector<TYPE(jets)> > jets;
   if (!event.getByToken (jetsToken_, jets))
     edm::LogWarning ("OSUGenericTrackProducer") << "Jet collection not found.";
@@ -146,18 +149,42 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   edm::Handle<vector<pat::PackedCandidate> > pfCandidates;
   event.getByToken (pfCandidatesToken_, pfCandidates);
 
-#elif DATA_FORMAT == MINI_AOD_2017
-  edm::Handle<vector<osu::Mcparticle> > particles;
-  event.getByToken (mcparticleToken_, particles);
+#ifdef DISAPP_TRKS
+  edm::Handle<vector<CandidateTrack> > candidateTracks;
+  event.getByToken (candidateTracksToken_, candidateTracks);
 #endif
+
+#endif // MINI_AOD or MINI_AOD_2017
 
   pl_ = unique_ptr<vector<T> > (new vector<T> ());
   for (const auto &object : *collection)
     {
+
 #ifdef DISAPP_TRKS
-      pl_->emplace_back (object, particles, pfCandidates, jets, cfg_, gsfTracks, electronVetoList_, muonVetoList_, &EcalAllDeadChannelsValMap_, &EcalAllDeadChannelsBitMap_, !event.isRealData ());
-#elif DATA_FORMAT == MINI_AOD_2017
-      pl_->emplace_back (object, particles, cfg_);
+      pl_->emplace_back (object, 
+                         particles, 
+                         pfCandidates, 
+                         jets, 
+                         cfg_, 
+                         gsfTracks, 
+                         electronVetoList_, 
+                         muonVetoList_, 
+                         &EcalAllDeadChannelsValMap_, 
+                         &EcalAllDeadChannelsBitMap_, 
+                         !event.isRealData (), 
+                         candidateTracks);
+#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017
+      pl_->emplace_back (object, 
+                         particles, 
+                         pfCandidates, 
+                         jets, 
+                         cfg_, 
+                         gsfTracks, 
+                         electronVetoList_, 
+                         muonVetoList_, 
+                         &EcalAllDeadChannelsValMap_, 
+                         &EcalAllDeadChannelsBitMap_, 
+                         !event.isRealData ());
 #else
       pl_->emplace_back (object);
 #endif

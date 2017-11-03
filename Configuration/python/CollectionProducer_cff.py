@@ -185,6 +185,10 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     gsfTracks    =  cms.InputTag  ("electronGsfTracks",      ""),
     maxDeltaRForGsfTrackMatching = cms.double (0.2), # if cutting on dRToMatchedGsfTrack, must set this to be greater than the cut threshold
 
+    # these are only relavent for the disappearing tracks analysis
+    candidateTracks = cms.InputTag ("candidateTrackProducer", ""),
+    maxDeltaRForCandidateTrackMatching = cms.double (0.2), # if cutting on dRToMatchedIsolatedTrack, must set this to be greater than the cut threshold
+
     # The following three parameters are used to correct the missing outer hits
     # distribution in MC for the disappearing tracks analysis.
     dropTOBProbability          =  cms.double  (0.00830971251971), # probability of dropping all hits in the TOB

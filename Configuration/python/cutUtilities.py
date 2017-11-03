@@ -19,6 +19,8 @@ def addSingleCut(cutVPset, cutToAdd, previousExistingCut):
     for i in xrange(0, len(cutVPset)):
         if cutsAreEqual(cutVPset[i], previousExistingCut):
             cutVPset.insert(i+1, cutToAdd) # Use i+1 to put cutToAdd afterward
+            return
+    print '[addSingleCut] Warning: previousExistingCut not found in VPSet with cutString:', previousExistingCut.cutString
 
 def replaceSingleCut(cutVPset, replacementCut, cutToBeReplaced):
     # Add replacementCut in the same position as cutToBeReplaced
@@ -26,6 +28,8 @@ def replaceSingleCut(cutVPset, replacementCut, cutToBeReplaced):
         if cutsAreEqual(cutVPset[i], cutToBeReplaced):
             del cutVPset[i]
             cutVPset.insert(i, replacementCut)
+            return
+    print '[replaceSingleCut] Warning: previousExistingCut not found in VPSet with cutString:', previousExistingCut.cutString
 
 def removeCuts(cutVPset, cutsToRemove):
     for cut in cutsToRemove:

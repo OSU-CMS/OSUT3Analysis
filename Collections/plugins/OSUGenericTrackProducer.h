@@ -48,6 +48,9 @@ template<class T>
     edm::EDGetTokenT<EERecHitCollection>         EERecHitsToken_;
     edm::EDGetTokenT<HBHERecHitCollection>       HBHERecHitsToken_;
     edm::EDGetTokenT<vector<reco::GsfTrack> >    gsfTracksToken_;
+#ifdef DISAPP_TRKS
+    edm::EDGetTokenT<vector<CandidateTrack> >    candidateTracksToken_;
+#endif
     edm::EDGetTokenT<vector<reco::Track> >       tracksToken_;
     edm::EDGetTokenT<vector<pat::PackedCandidate> > pfCandidatesToken_;
     edm::ParameterSet  cfg_;

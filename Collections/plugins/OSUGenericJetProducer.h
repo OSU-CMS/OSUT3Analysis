@@ -15,43 +15,43 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 
 template<class T>
-  class OSUGenericJetProducer : public edm::EDProducer
+class OSUGenericJetProducer : public edm::EDProducer
 {
-  public:
-    OSUGenericJetProducer (const edm::ParameterSet &);
-    ~OSUGenericJetProducer ();
+ public:
+  OSUGenericJetProducer (const edm::ParameterSet &);
+  ~OSUGenericJetProducer ();
 
-    void produce (edm::Event &, const edm::EventSetup &);
+  void produce (edm::Event &, const edm::EventSetup &);
 
-  private:
-    ////////////////////////////////////////////////////////////////////////////
-    // Private variables initialized by the constructor.
-    ////////////////////////////////////////////////////////////////////////////
-    edm::ParameterSet  collections_;
-    edm::InputTag      collection_;
-    edm::InputTag      electrons_;
-    edm::InputTag      muons_;
-    edm::InputTag      genjets_;
-    edm::InputTag      rho_;
-    edm::InputTag      primaryvertexs_;
+ private:
+  ////////////////////////////////////////////////////////////////////////////
+  // Private variables initialized by the constructor.
+  ////////////////////////////////////////////////////////////////////////////
+  edm::ParameterSet  collections_;
+  edm::InputTag      collection_;
+  edm::InputTag      electrons_;
+  edm::InputTag      muons_;
+  edm::InputTag      genjets_;
+  edm::InputTag      rho_;
+  edm::InputTag      primaryvertexs_;
 
-    string jetResolutionPayload_;
-    string jetResSFPayload_;
-    bool jetResFromGlobalTag_;
+  string jetResolutionPayload_;
+  string jetResSFPayload_;
+  bool jetResFromGlobalTag_;
 
-    edm::EDGetTokenT<vector<TYPE(jets)> > token_;
-    edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
-    edm::EDGetTokenT<vector<TYPE(electrons)> > electronToken_;
-    edm::EDGetTokenT<vector<TYPE(muons)> > muonToken_;
-    edm::EDGetTokenT<vector<TYPE(genjets)> > genjetsToken_;
-    edm::EDGetTokenT<double> rhoToken_;
-    edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexsToken_;
+  edm::EDGetTokenT<vector<TYPE(jets)> > token_;
+  edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
+  edm::EDGetTokenT<vector<TYPE(electrons)> > electronToken_;
+  edm::EDGetTokenT<vector<TYPE(muons)> > muonToken_;
+  edm::EDGetTokenT<vector<TYPE(genjets)> > genjetsToken_;
+  edm::EDGetTokenT<double> rhoToken_;
+  edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexsToken_;
 
-    edm::ParameterSet  cfg_;
-    ////////////////////////////////////////////////////////////////////////////
+  edm::ParameterSet  cfg_;
+  ////////////////////////////////////////////////////////////////////////////
 
-    // Payload for this EDFilter.
-    unique_ptr<vector<T> > pl_;
+  // Payload for this EDFilter.
+  unique_ptr<vector<T> > pl_;
 };
 
 #endif

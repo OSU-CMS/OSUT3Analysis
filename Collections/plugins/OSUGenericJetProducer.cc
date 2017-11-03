@@ -157,34 +157,31 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
       // medianLog10(ipsig) CALC
       std::vector<double> ipsigVector;
-      bool isException = false;
+
 
       for(unsigned id =0; id < jet.getJetConstituents().size(); id++) {
 
-	const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
-	const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
+	      const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
+	      const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
 
-        try
-          {
-            if (recoCand->charge() != 0){
-              double dxy = fabs(packedCand.dxy());
-              double dxyerr = packedCand.dxyError();
-              if(dxyerr>0){
-                double dxySig = dxy/dxyerr;
-                ipsigVector.push_back(dxySig);
-              }
+        try {
+          if(packedCand.hasTrackDetails() && recoCand->charge() != 0) {
+            double dxy = fabs(packedCand.dxy());
+            double dxyerr = packedCand.dxyError();
+            if(dxyerr>0) {
+              double dxySig = dxy/dxyerr;
+              ipsigVector.push_back(dxySig);
             }
           }
-        catch (cms::Exception &e)
-          {
-            isException = true;
-            edm::LogInfo ("OSUGenericJetProducer") << e.what ();
-          }
+        }
+        catch (cms::Exception &e) {
+          edm::LogWarning ("OSUGenericJetProducer (medianlog10ipsig)") << e.what ();
+        }
       } // end of loop over candidates
 
       double medianipsig = -4;
 
-      if(ipsigVector.size() != 0){
+      if(ipsigVector.size() != 0) {
 	std::sort (ipsigVector.begin(), ipsigVector.end());
 	if(ipsigVector.size()%2 == 0) medianipsig = (ipsigVector[ ipsigVector.size()/2 - 1] + ipsigVector[ ipsigVector.size() / 2 ]) / 2;
 	if(ipsigVector.size()%2 == 1) medianipsig = ipsigVector[ ipsigVector.size()/2 ];
@@ -193,17 +190,12 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
       if(ipsigVector.size() != 0) jet.set_medianlog10ipsig( log10(medianipsig) );
       else jet.set_medianlog10ipsig( -4 );
 
-      if (isException)
-        edm::LogWarning ("OSUGenericJetProducer") << "Exception caught while looping over jet constituents. medianlog10ipsig may be incorrect.";
-
       // ALPHA MAX CALC
       double numerator = 0;
       double denominator = 0;
 
       double alpha = 0;
       double alphaMax = 0;
-
-      isException = false;
 
       for(unsigned vertex = 0; vertex < primaryvertexs.product()->size(); vertex++) {
 
@@ -226,8 +218,7 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
             }
           catch (cms::Exception &e)
             {
-              isException = true;
-              edm::LogInfo ("OSUGenericJetProducer") << e.what ();
+              edm::LogWarning ("OSUGenericJetProducer (alphamax)") << e.what ();
             }
 	} // end of loop over candidates
 
@@ -239,9 +230,6 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
       if( denominator != 0) jet.set_alphamax( alphaMax );
       else jet.set_alphamax(-1);
-
-      if (isException)
-        edm::LogWarning ("OSUGenericJetProducer") << "Exception caught while looping over jet constituents. alphamax may be incorrect.";
 
       jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));

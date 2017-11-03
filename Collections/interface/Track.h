@@ -9,6 +9,10 @@
 
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 
+#ifdef DISAPP_TRKS
+#include "DisappTrks/CandidateTrackProducer/interface/CandidateTrack.h"
+#endif
+
 #ifndef MAX_DR
 #define MAX_DR (99.0)
 #endif
@@ -61,7 +65,6 @@ namespace osu
                const edm::Handle<vector<reco::GsfTrack> > &, 
                const EtaPhiList &, 
                const EtaPhiList &);
-        // the DisappTrks constructor
         Track (const TYPE(tracks) &, 
                const edm::Handle<vector<osu::Mcparticle> > &, 
                const edm::Handle<vector<pat::PackedCandidate> > &, 
@@ -73,6 +76,21 @@ namespace osu
                const map<DetId, vector<double> > * const, 
                const map<DetId, vector<int> > * const, 
                const bool);
+#ifdef DISAPP_TRKS
+        // the DisappTrks constructor
+        Track (const TYPE(tracks) &, 
+               const edm::Handle<vector<osu::Mcparticle> > &, 
+               const edm::Handle<vector<pat::PackedCandidate> > &, 
+               const edm::Handle<vector<TYPE(jets)> > &,
+               const edm::ParameterSet &, 
+               const edm::Handle<vector<reco::GsfTrack> > &, 
+               const EtaPhiList &, 
+               const EtaPhiList &, 
+               const map<DetId, vector<double> > * const, 
+               const map<DetId, vector<int> > * const, 
+               const bool,
+               const edm::Handle<vector<CandidateTrack> > &);
+#endif // DISAPP_TRKS
         ~Track ();
 
         const double dRMinJet() const              { return (IS_INVALID(dRMinJet_)) ? MAX_DR : dRMinJet_; };
@@ -84,6 +102,11 @@ namespace osu
 
         const double maxSigmaForFiducialElectronTrack () const { return maxSigmaForFiducialElectronTrack_; };
         const double maxSigmaForFiducialMuonTrack () const     { return maxSigmaForFiducialMuonTrack_; };
+
+#ifdef DISAPP_TRKS
+        const edm::Ref<vector<CandidateTrack> > matchedCandidateTrack () const { return matchedCandidateTrack_; };
+        const double dRToMatchedCandidateTrack () const                        { return (IS_INVALID(dRToMatchedCandidateTrack_)) ? MAX_DR : dRToMatchedCandidateTrack_; };
+#endif
 
         const edm::Ref<vector<reco::GsfTrack> > matchedGsfTrack () const { return matchedGsfTrack_; };
         const double dRToMatchedGsfTrack () const                        { return (IS_INVALID(dRToMatchedGsfTrack_)) ? MAX_DR : dRToMatchedGsfTrack_; };
@@ -198,6 +221,13 @@ namespace osu
         double maxSigmaForFiducialElectronTrack_;
         double maxSigmaForFiducialMuonTrack_;
 
+#ifdef DISAPP_TRKS
+        edm::Ref<vector<CandidateTrack> > matchedCandidateTrack_;
+        double dRToMatchedCandidateTrack_;
+
+        double maxDeltaR_candidateTrackMatching_;
+#endif
+
         edm::Ref<vector<reco::GsfTrack> > matchedGsfTrack_;
         double dRToMatchedGsfTrack_;
 
@@ -223,6 +253,9 @@ namespace osu
 
         const bool isFiducialTrack (const EtaPhiList &, const double, double &) const;
         const edm::Ref<vector<reco::GsfTrack> > &findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &, edm::Ref<vector<reco::GsfTrack> > &, double &) const;
+#ifdef DISAPP_TRKS
+        const edm::Ref<vector<CandidateTrack> > &findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &, edm::Ref<vector<CandidateTrack> > &, double &) const;
+#endif
         const bool isBadGsfTrack (const reco::GsfTrack &) const;
         int isCloseToBadEcalChannel (const double &);
         template<class T> const int extraMissingMiddleHits (const T &) const;
@@ -240,7 +273,6 @@ namespace osu
         SecondaryTrack(const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &);
         SecondaryTrack(const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         SecondaryTrack(const TYPE(tracks) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const edm::Handle<vector<reco::GsfTrack> > &, const EtaPhiList &, const EtaPhiList &);
-        // the DisappTrks constructor
         SecondaryTrack (const TYPE(tracks) &, 
                         const edm::Handle<vector<osu::Mcparticle> > &, 
                         const edm::Handle<vector<pat::PackedCandidate> > &, 
@@ -252,6 +284,21 @@ namespace osu
                         const map<DetId, vector<double> > * const, 
                         const map<DetId, vector<int> > * const, 
                         const bool);
+#ifdef DISAPP_TRKS
+        // the DisappTrks constructor
+        SecondaryTrack (const TYPE(tracks) &, 
+                        const edm::Handle<vector<osu::Mcparticle> > &, 
+                        const edm::Handle<vector<pat::PackedCandidate> > &, 
+                        const edm::Handle<vector<TYPE(jets)> > &,
+                        const edm::ParameterSet &, 
+                        const edm::Handle<vector<reco::GsfTrack> > &, 
+                        const EtaPhiList &, 
+                        const EtaPhiList &, 
+                        const map<DetId, vector<double> > * const, 
+                        const map<DetId, vector<int> > * const, 
+                        const bool,
+                        const edm::Handle<vector<CandidateTrack> > &);
+#endif
         ~SecondaryTrack ();
     };
 #endif // IS_VALID(secondaryTracks)

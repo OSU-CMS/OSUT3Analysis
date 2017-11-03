@@ -118,7 +118,6 @@ osu::Track::Track (const TYPE(tracks) &track,
 
 }
 
-// the DisappTrks constructor
 osu::Track::Track (const TYPE(tracks) &track, 
                    const edm::Handle<vector<osu::Mcparticle> > &particles,
                    const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates, 
@@ -217,6 +216,27 @@ osu::Track::Track (const TYPE(tracks) &track,
 
 }
 
+#ifdef DISAPP_TRKS
+// the DisappTrks constructor
+osu::Track::Track (const TYPE(tracks) &track, 
+                   const edm::Handle<vector<osu::Mcparticle> > &particles,
+                   const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates, 
+                   const edm::Handle<vector<TYPE(jets)> > &jets,
+                   const edm::ParameterSet &cfg, 
+                   const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
+                   const EtaPhiList &electronVetoList, 
+                   const EtaPhiList &muonVetoList, 
+                   const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, 
+                   const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
+                   const bool dropHits,
+                   const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
+  Track(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits)
+{
+  maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
+  if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
+}
+#endif // DISAPP_TRKS
+
 osu::Track::~Track ()
 {
 }
@@ -257,6 +277,24 @@ osu::Track::findMatchedGsfTrack (const edm::Handle<vector<reco::GsfTrack> > &gsf
 
   return matchedGsfTrack;
 }
+
+#ifdef DISAPP_TRKS
+const edm::Ref<vector<CandidateTrack> > &
+osu::Track::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &candidateTracks, edm::Ref<vector<CandidateTrack> > &matchedCandidateTrack, double &dRToMatchedCandidateTrack) const
+{
+  dRToMatchedCandidateTrack = INVALID_VALUE;
+  for(vector<CandidateTrack>::const_iterator candTrack = candidateTracks->begin(); candTrack != candidateTracks->end(); candTrack++) {
+    double dR = deltaR(*candTrack, *this);
+    if(maxDeltaR_candidateTrackMatching_ >= 0.0 && dR > maxDeltaR_candidateTrackMatching_) continue;
+    if(dR < dRToMatchedCandidateTrack || dRToMatchedCandidateTrack < 0.0) {
+      dRToMatchedCandidateTrack = dR;
+      matchedCandidateTrack = edm::Ref<vector<CandidateTrack> >(candidateTracks, candTrack - candidateTracks->begin());
+    }
+  }
+
+  return matchedCandidateTrack;
+}
+#endif
 
 const int
 osu::Track::gsfTrackNumberOfValidHits () const
@@ -1145,7 +1183,6 @@ osu::SecondaryTrack::SecondaryTrack(const TYPE(secondaryTracks) &secondaryTrack,
                                     const EtaPhiList &muonVetoList) :
   osu::Track(secondaryTrack, particles, cfg, gsfTracks, electronVetoList, muonVetoList) {}
 
-// the DisappTrks constructor
 osu::SecondaryTrack::SecondaryTrack(const TYPE(tracks) &secondaryTrack, 
                                     const edm::Handle<vector<osu::Mcparticle> > &particles, 
                                     const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates,
@@ -1158,6 +1195,23 @@ osu::SecondaryTrack::SecondaryTrack(const TYPE(tracks) &secondaryTrack,
                                     const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
                                     const bool dropHits) :
   osu::Track(secondaryTrack, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits) {}
+
+#ifdef DISAPP_TRKS
+// the DisappTrks constructor
+osu::SecondaryTrack::SecondaryTrack (const TYPE(tracks) &track, 
+                                     const edm::Handle<vector<osu::Mcparticle> > &particles,
+                                     const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates, 
+                                     const edm::Handle<vector<TYPE(jets)> > &jets,
+                                     const edm::ParameterSet &cfg, 
+                                     const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
+                                     const EtaPhiList &electronVetoList, 
+                                     const EtaPhiList &muonVetoList, 
+                                     const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, 
+                                     const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
+                                     const bool dropHits,
+                                     const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
+  osu::Track(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, candidateTracks) {}
+#endif // DISAPP_TRKS
 
 osu::SecondaryTrack::~SecondaryTrack() {}
 
