@@ -239,7 +239,7 @@ datasets = [
 
    'ZToMuMu_50To120_80X_AODSIM',
    'ZToMuMu_80To100_80X_Ntuple',
-   
+
    'NoBPTX_Jet_2017B_v1_PromptReco_Ntuples',
    'NoBPTX_Jet_2017B_v2_PromptReco_Ntuples',
    'NoBPTX_Jet_2017C_v1_PromptReco_Ntuples',

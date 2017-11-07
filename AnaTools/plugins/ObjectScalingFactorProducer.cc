@@ -41,7 +41,7 @@ ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet
       for (auto &era : sfDef.getParameter<vector<string> > ("eras"))
         sf.inputPlots.push_back(sf.outputVariable+era);
       for (auto &lumi : sfDef.getParameter<vector<double> >("lumis"))
-	      sf.inputLumis.push_back(lumi);
+              sf.inputLumis.push_back(lumi);
     }
 
     objectsToGet_.insert(sf.inputCollection);
@@ -78,7 +78,7 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
     electronInputFile = TFile::Open (electronFile_.c_str ());
     if (!electronInputFile || electronInputFile->IsZombie()) {
       clog << "ERROR [ObjectScalingFactorProducer]: Could not find file: " << electronFile_
-	         << "; will cause a seg fault." << endl;
+                 << "; will cause a seg fault." << endl;
       exit(1);
     }
   }
@@ -92,7 +92,7 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
     muonInputFile = TFile::Open (muonFile_.c_str ());
     if (!muonInputFile || muonInputFile->IsZombie()) {
       clog << "ERROR [ObjectScalingFactorProducer]: Could not find file: " << muonFile_
-	         << "; will cause a seg fault." << endl;
+                 << "; will cause a seg fault." << endl;
       exit(1);
     }
   }
@@ -108,8 +108,8 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
     if (doElectrons && sf.inputCollection == "electrons") {
       TH2F * plot = (TH2F*)electronInputFile->Get(sf.inputPlots[0].c_str());
       if(!plot){
-	       clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << sf.inputPlots[0]
-	            << "; will cause a seg fault." << endl;
+               clog << "ERROR [ObjectScalingFactorProducer]: Could not find histogram: " << sf.inputPlots[0]
+                    << "; will cause a seg fault." << endl;
          exit(1);
       }
 
@@ -129,16 +129,16 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
          if(pt < yMin) pt = yMin;
          if(pt > yMax) pt = yMax;
 
-	       float sfValue = plot->GetBinContent(plot->FindBin(eta, pt));
-	       float sfError = plot->GetBinError(plot->FindBin(eta, pt));
+               float sfValue = plot->GetBinContent(plot->FindBin(eta, pt));
+               float sfError = plot->GetBinError(plot->FindBin(eta, pt));
 
          // for 80X Moriond series (https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_efficiencies_and_scale)
          // special systematic recommendation for pt<20 and pt>80
          if(sf.additionalSystematicBelow20GeV > 0 && pt < 20.0) sfError += sf.additionalSystematicBelow20GeV * sfValue;
          if(sf.additionalSystematicAbove80GeV > 0 && pt > 80.0) sfError += sf.additionalSystematicAbove80GeV * sfValue;
 
-	       sfCentral *= sfValue;
-	       sfUp *= sfValue + sfError;
+               sfCentral *= sfValue;
+               sfUp *= sfValue + sfError;
          sfDown *= sfValue - sfError;
       } // end loop over electrons
       delete plot;

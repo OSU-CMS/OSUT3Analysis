@@ -160,8 +160,8 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       for(unsigned id =0; id < jet.getJetConstituents().size(); id++) {
 
-	const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
-	const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
+        const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
+        const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
 
         try
           {
@@ -184,9 +184,9 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       double medianipsig = -4;
 
       if(ipsigVector.size() != 0){
-	std::sort (ipsigVector.begin(), ipsigVector.end());
-	if(ipsigVector.size()%2 == 0) medianipsig = (ipsigVector[ ipsigVector.size()/2 - 1] + ipsigVector[ ipsigVector.size() / 2 ]) / 2;
-	if(ipsigVector.size()%2 == 1) medianipsig = ipsigVector[ ipsigVector.size()/2 ];
+        std::sort (ipsigVector.begin(), ipsigVector.end());
+        if(ipsigVector.size()%2 == 0) medianipsig = (ipsigVector[ ipsigVector.size()/2 - 1] + ipsigVector[ ipsigVector.size() / 2 ]) / 2;
+        if(ipsigVector.size()%2 == 1) medianipsig = ipsigVector[ ipsigVector.size()/2 ];
       }
 
       if(ipsigVector.size() != 0) jet.set_medianlog10ipsig( log10(medianipsig) );
@@ -206,10 +206,10 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       for(unsigned vertex = 0; vertex < primaryvertexs.product()->size(); vertex++) {
 
-	for(unsigned id = 0; id < jet.getJetConstituents().size(); id++) {
+        for(unsigned id = 0; id < jet.getJetConstituents().size(); id++) {
 
-	  const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
-	  const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
+          const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
+          const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
 
           try
             {
@@ -228,10 +228,10 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
               isException = true;
               edm::LogInfo ("OSUJetProducer") << e.what ();
             }
-	} // end of loop over candidates
+        } // end of loop over candidates
 
-	if ( denominator != 0 ) alpha = (numerator / denominator);
-	if ( alpha > alphaMax ) alphaMax = alpha;
+        if ( denominator != 0 ) alpha = (numerator / denominator);
+        if ( alpha > alphaMax ) alphaMax = alpha;
 
       } // end of loop over vertices
 

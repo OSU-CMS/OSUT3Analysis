@@ -148,7 +148,7 @@ osu::Jet::alphamax () const
   return alphamax_;
 }
 
-const float 
+const float
 osu::Jet::ipsig () const
 {
   return ipsig_;
