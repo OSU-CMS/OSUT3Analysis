@@ -69,14 +69,26 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
     }
   }
 
-  double pt = sqrt(px*px + py*py), isrWeight = 1.0;
-  for (const auto &weight : weights_)
-    isrWeight *= weight->GetBinContent (min (weight->FindBin (pt), weight->GetNbinsX ()));
+  double pt = sqrt(px*px + py*py);
+  double isrWeight = 1.0, isrWeightUp = 1.0, isrWeightDown = 1.0;
+
+  for (const auto &weight : weights_) {
+    double content = weight->GetBinContent (min (weight->FindBin (pt), weight->GetNbinsX ()));
+    double error = weight->GetBinError (min (weight->FindBin (pt), weight->GetNbinsX ()));
+
+    isrWeight *= content;
+    isrWeightUp *= content + error;
+    isrWeightDown *= max(content - error, 0.0); // max just in case error > content
+  }
 
   (*eventvariables)["isrWeight"] = isrWeight;
+  (*eventvariables)["isrWeightUp"] = isrWeightUp;
+  (*eventvariables)["isrWeightDown"] = isrWeightDown;
 
 #else
   (*eventvariables)["isrWeight"] = 1;
+  (*eventvariables)["isrWeightUp"] = 1;
+  (*eventvariables)["isrWeightDown"] = 1;
 #endif
 }
 
