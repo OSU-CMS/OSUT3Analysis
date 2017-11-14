@@ -1026,7 +1026,7 @@ anatools::triggerObjectExists (const edm::Event &event, const edm::TriggerResult
 }
 
 bool
-anatools::passesL1ETM (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs)
+anatools::passesL1ETM (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, double &l1ETM)
 {
   for (auto trigObj : trigObjs)
     {
@@ -1035,9 +1035,14 @@ anatools::passesL1ETM (const edm::Event &event, const edm::TriggerResults &trigg
 #else
       trigObj.unpackPathNames(event.triggerNames(triggers));
 #endif
+      if (trigObj.collection () != "hltCaloStage2Digis:EtSum:HLT")
+        continue;
       for (const auto &filterLabel : trigObj.filterLabels ())
         if (filterLabel.find ("hltL1sETM") == 0 && filterLabel.find ("Jet") == string::npos)
-          return true;
+          {
+            l1ETM = trigObj.pt ();
+            return true;
+          }
     }
   return false;
 }

@@ -226,7 +226,7 @@ namespace anatools
   bool getTriggerObjects (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, vector<const pat::TriggerObjectStandAlone *> &);
   template<class T> const pat::TriggerObjectStandAlone *getMatchedTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double = 0.1);
   bool triggerObjectExists (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &);
-  bool passesL1ETM (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &);
+  bool passesL1ETM (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, double &);
 
   void logSpace (const double, const double, const unsigned, vector<double> &);
   void linSpace (const double, const double, const unsigned, vector<double> &);
