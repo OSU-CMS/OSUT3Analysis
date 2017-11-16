@@ -1038,7 +1038,10 @@ anatools::passesL1ETM (const edm::Event &event, const edm::TriggerResults &trigg
       if (trigObj.collection () != "hltCaloStage2Digis:EtSum:HLT")
         continue;
       for (const auto &filterLabel : trigObj.filterLabels ())
-        if (filterLabel.find ("hltL1sETM") == 0 && filterLabel.find ("Jet") == string::npos)
+        if (filterLabel == "hltL1sL1ETM60ORETM70" // 2015
+         || filterLabel == "hltL1sETM60IorETM70" // 2016B-C
+         || filterLabel == "hltL1sETM50IorETM60IorETM70IorETM80IorETM90IorETM100" // 2016D-G
+         || filterLabel == "hltL1sETM50ToETM120") // 2016H
           {
             l1ETM = trigObj.pt ();
             return true;
