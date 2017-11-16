@@ -5,7 +5,7 @@
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
 #include "CondFormats/DataRecord/interface/JetResolutionRcd.h"
 #include "CondFormats/DataRecord/interface/JetResolutionScaleFactorRcd.h"
@@ -22,7 +22,7 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   cfg_         (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   electrons_ = collections_.getParameter<edm::InputTag> ("electrons");
   muons_ = collections_.getParameter<edm::InputTag> ("muons");
   genjets_ = collections_.getParameter<edm::InputTag> ("genjets");
@@ -31,7 +31,7 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   produces<vector<T> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(jets)> > (collection_);
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   electronToken_ = consumes<vector<TYPE(electrons)> > (electrons_);
   muonToken_ = consumes<vector<TYPE(muons)> > (muons_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
@@ -51,11 +51,11 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   edm::Handle<vector<TYPE(jets)> > collection;
   if (!event.getByToken (token_, collection))
     return;
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
   // get JetCorrector parameters to get the jec uncertainty
   edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
   setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
@@ -104,22 +104,31 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   vector<const TYPE(electrons) *> goodElectrons;
   for (const auto &electron : *electrons){
     bool passElectronID = false;
-    if ((electron.isEB() &&                                             \
-         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 && \
-         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00308 &&     \
-         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0816 &&      \
-         electron.full5x5_sigmaIetaIeta() < 0.00998 &&                    \
-         electron.hadronicOverEm() < 0.0414 &&                           \
-         abs(1.0/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.0129 && \
-         electron.passConversionVeto()) ||                               \
-        (electron.isEE() &&                                               \
-         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 && \
-         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00605 &&      \
-         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0394 &&       \
-         electron.full5x5_sigmaIetaIeta() < 0.0292 &&                     \
-         electron.hadronicOverEm() < 0.0641 &&                            \
-         abs(1/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.0129 && \
-         electron.passConversionVeto())){
+    if ((electron.isEB() &&
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+         electron.gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 &&
+#else
+         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS)    <= 1 &&
+#endif
+         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00308 &&
+         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0816 &&
+         electron.full5x5_sigmaIetaIeta() < 0.00998 &&
+         electron.hadronicOverEm() < 0.0414 &&
+         abs(1.0/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.0129 &&
+         electron.passConversionVeto()) ||
+        (electron.isEE() &&
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+         electron.gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 &&
+#else
+         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS)    <= 1 &&
+#endif
+         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00605 &&
+         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0394 &&
+         electron.full5x5_sigmaIetaIeta() < 0.0292 &&
+         electron.hadronicOverEm() < 0.0641 &&
+         abs(1/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.0129 &&
+         electron.passConversionVeto()))
+    {
       passElectronID = true;
     }
     if (passElectronID == false) continue;
@@ -129,31 +138,31 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   for (const auto &muon : *muons){
     bool passMuonID = false;
     if (muon.isGlobalMuon() == false ||  muon.isPFMuon() == false) continue;
-    if (muon.globalTrack()->hitPattern().numberOfValidMuonHits() > 0 && \
-        muon.numberOfMatchedStations() > 1 &&                           \
-        muon.globalTrack()->normalizedChi2() < 10 &&                    \
-        muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0 && \
+    if (muon.globalTrack()->hitPattern().numberOfValidMuonHits() > 0 &&
+        muon.numberOfMatchedStations() > 1 &&
+        muon.globalTrack()->normalizedChi2() < 10 &&
+        muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0 &&
         muon.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5){
       passMuonID = true;
     }
     if (passMuonID == false) continue;
     goodMuons.push_back(&muon);
   }
-#endif
-#endif
+#endif // DATA_FORMAT_FROM_MINIAOD
+#endif // not STOPPPED_PTLS
 
   pl_ = unique_ptr<vector<T> > (new vector<T> ());
 
   for (const auto &object : *collection)
     {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
       pl_->emplace_back (object, particles, cfg_);
       T &jet = pl_->back ();
-#elif DATA_FORMAT == AOD_CUSTOM
+#else // STOPPPED_PTLS
       pl_->emplace_back (object);
 #endif
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
 
       // medianLog10(ipsig) CALC
       std::vector<double> ipsigVector;
@@ -318,7 +327,7 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
   delete jecUnc;
   delete rng;
 #endif

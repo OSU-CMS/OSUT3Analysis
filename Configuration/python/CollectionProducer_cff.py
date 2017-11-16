@@ -197,7 +197,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     hitInefficiency             =  cms.double  (0.0175874821487),  # probability of randomly dropping strip hits in the TOB
 )
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
-    if "Run2016" in osusub.dataset:
+    if "Run2016" in osusub.dataset or "Run2017" in osusub.dataset:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2016_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2016_data.root")
     else:

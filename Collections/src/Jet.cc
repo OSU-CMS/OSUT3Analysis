@@ -5,7 +5,8 @@
 osu::Jet::Jet ()
 {
 }
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+
+#ifndef STOPPPED_PTLS
 
 osu::Jet::Jet (const TYPE(jets) &jet) :
   GenMatchable (jet),
@@ -166,12 +167,12 @@ osu::Jet::medianlog10ipsig () const
   return medianlog10ipsig_;
 }
 
-#elif DATA_FORMAT == AOD_CUSTOM
+#else // STOPPPED_PTLS
 osu::Jet::Jet (const TYPE(jets) &jet) :
   TYPE(jets) (jet)
 {
 }
-#endif // DATA_FORMAT
+#endif // STOPPPED_PTLS
 
 osu::Jet::~Jet ()
 {
@@ -186,7 +187,7 @@ osu::Jet::~Jet ()
 osu::Bjet::Bjet() : 
   osu::Jet() {}
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
 osu::Bjet::Bjet(const TYPE(jets) &bjet) : 
   osu::Jet(bjet) {}
 
@@ -198,10 +199,10 @@ osu::Bjet::Bjet(const TYPE(jets) &bjet,
                 const edm::Handle<vector<osu::Mcparticle> > &particles,
                 const edm::ParameterSet &cfg) :
   osu::Jet(bjet, particles, cfg) {}
-#elif DATA_FORMAT == AOD_CUSTOM
+#else // STOPPPED_PTLS
 osu::Bjet::Bjet(const TYPE(jets) &bjet) : 
   osu::Jet(bjet) {}
-#endif // DATA_FORMAT
+#endif // STOPPPED_PTLS
 
 osu::Bjet::~Bjet() {}
 

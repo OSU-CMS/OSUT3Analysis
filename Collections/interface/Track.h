@@ -105,7 +105,7 @@ namespace osu
 
 #ifdef DISAPP_TRKS
         const edm::Ref<vector<CandidateTrack> > matchedCandidateTrack () const { return matchedCandidateTrack_; };
-        const double dRToMatchedCandidateTrack () const                        { return (IS_INVALID(dRToMatchedCandidateTrack_)) ? MAX_DR : dRToMatchedCandidateTrack_; };
+        const double dRToMatchedCandidateTrack () const { return (IS_INVALID(dRToMatchedCandidateTrack_)) ? MAX_DR : dRToMatchedCandidateTrack_; };
 #endif
 
         const edm::Ref<vector<reco::GsfTrack> > matchedGsfTrack () const { return matchedGsfTrack_; };
@@ -264,7 +264,24 @@ namespace osu
         const double energyGivenMass (const double) const;
     };
 
-#if IS_VALID(secondaryTracks)
+} // namespace osu
+
+#else // IS_VALID(tracks)
+
+namespace osu
+{
+  typedef TYPE(tracks) Track;
+}
+
+#endif // IS_VALID(tracks)
+
+//////////////////////////////////////////////////
+// osu::SecondaryTracks
+//////////////////////////////////////////////////
+
+#if IS_VALID(tracks) && IS_VALID(secondaryTracks)
+namespace osu
+{
     class SecondaryTrack : public Track
     {
       public:
@@ -301,18 +318,15 @@ namespace osu
 #endif
         ~SecondaryTrack ();
     };
-#endif // IS_VALID(secondaryTracks)
+} // namespace osu
 
-}
-
-#else // IS_VALID(tracks)
+#else // IS_VALID(secondaryTracks)
 
 namespace osu
 {
-  typedef TYPE(tracks) Track;
   typedef TYPE(secondaryTracks) SecondaryTrack;
 }
 
-#endif // IS_VALID(tracks)
+#endif // IS_VALID(tracks) && IS_VALID(secondaryTracks)
 
 #endif // ifndef OSU_TRACK

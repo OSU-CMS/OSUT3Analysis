@@ -51,7 +51,7 @@ if arguments.custom_config:
 if arguments.custom_define:
     for definition in arguments.custom_define.split(','):
         print "Defining custom variable: #define " + definition
-        os.system('sed -i "9i #define %s" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % definition)
+        os.system('sed -i "16i #define %s" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % definition)
 
 os.system('sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT %s/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % (arguments.data_format))
 

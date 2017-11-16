@@ -7,7 +7,7 @@ namespace osu
 {
 
 #if IS_VALID(jets)
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
     class Jet : public GenMatchable<TYPE(jets), 0>
     {
       public:
@@ -75,7 +75,7 @@ namespace osu
         float log10ipsig_;
         float medianlog10ipsig_;
     };
-#elif DATA_FORMAT == AOD_CUSTOM
+#else // if STOPPPED_PTLS
     class Jet : public TYPE(jets)
     {
       public:
@@ -83,7 +83,7 @@ namespace osu
         Jet (const TYPE(jets) &);
         ~Jet ();
     };
-#endif // DATA_FORMAT
+#endif // if STOPPPED_PTLS
 #else // IS_VALID(jets)
     typedef TYPE(jets) Jet;
 #endif // IS_VALID(jets)
@@ -92,7 +92,7 @@ namespace osu
     // osu::Bjet
     //////////////////////////////
 #if IS_VALID(jets) && IS_VALID(bjets)
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
     class Bjet : public Jet
     {
       public:
@@ -102,14 +102,14 @@ namespace osu
         Bjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         ~Bjet();
     };
-#elif DATA_FORMAT == AOD_CUSTOM
+#else // STOPPPED_PTLS
     class Bjet : public Jet
     {
         Bjet();
         BJet(const TYPE(jets) &);
         ~Bjet();
     };
-#endif // DATA_FORMAT
+#endif // STOPPPED_PTLS
 #else // IS_VALID(jets) && IS_VALID(bjets)
     typedef TYPE(bjets) Bjet;
 #endif // IS_VALID(jets) && IS_VALID(bjets)

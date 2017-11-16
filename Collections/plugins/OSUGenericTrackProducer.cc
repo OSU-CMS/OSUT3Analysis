@@ -51,7 +51,7 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   // disappearing track ntuples.
   tracksToken_ = consumes<vector<reco::Track> > (edm::InputTag ("generalTracks", "", "RECO"));
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017
+#if DATA_FORMAT_FROM_MINIAOD
   stringstream ss;
   for (const auto &electronFiducialMap : electronFiducialMaps)
     {
@@ -98,7 +98,7 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
     ss << "(" << setw (10) << etaPhi.eta << "," << setw (10) << etaPhi.phi << ")" << endl;
   ss << "================================================================================";
   edm::LogInfo ("OSUGenericTrackProducer") << ss.str ();
-#endif // MINI_AOD or MINI_AOD_2017
+#endif // DATA_FORMAT_FROM_MINIAOD
 }
 
 template<class T> 
@@ -109,10 +109,10 @@ OSUGenericTrackProducer<T>::~OSUGenericTrackProducer ()
 template<class T> void 
 OSUGenericTrackProducer<T>::beginRun (const edm::Run &run, const edm::EventSetup& setup)
 {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017
+#if DATA_FORMAT_FROM_MINIAOD
   envSet (setup);
   getChannelStatusMaps ();
-#endif // MINI_AOD or MINI_AOD_2017
+#endif // DATA_FORMAT_FROM_MINIAOD
 }
 
 template<class T> void 
@@ -125,7 +125,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       return;
     }
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017
+#if DATA_FORMAT_FROM_MINIAOD
   edm::Handle<vector<TYPE(jets)> > jets;
   if (!event.getByToken (jetsToken_, jets))
     edm::LogWarning ("OSUGenericTrackProducer") << "Jet collection not found.";
@@ -154,7 +154,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   event.getByToken (candidateTracksToken_, candidateTracks);
 #endif
 
-#endif // MINI_AOD or MINI_AOD_2017
+#endif // DATA_FORMAT_FROM_MINIAOD
 
   pl_ = unique_ptr<vector<T> > (new vector<T> ());
   for (const auto &object : *collection)
@@ -173,7 +173,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
                          &EcalAllDeadChannelsBitMap_, 
                          !event.isRealData (), 
                          candidateTracks);
-#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017
+#elif DATA_FORMAT_FROM_MINIAOD
       pl_->emplace_back (object, 
                          particles, 
                          pfCandidates, 
@@ -189,11 +189,15 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       pl_->emplace_back (object);
 #endif
 
+// in the specific case of TYPE(tracks)==CandidateTracks (where DATA_FORMAT is xyz_CUSTOM)
+// and running over CandidateTracks ntuples, then generalTracks and RecHits may be available
 #ifdef DISAPP_TRKS
-#if DATA_FORMAT != MINI_AOD_2017
+#if DATA_FORMAT_IS_CUSTOM
       // Calculate the associated calorimeter energy for the disappearing tracks search.
       T &track = pl_->back ();
 
+      // this could be removed; if CandidateTrackProdcuer sets these,
+      // then these values need not be recalculated -- and RecHits can all be dropped
       if (EBRecHits.isValid () && EERecHits.isValid () && HBHERecHits.isValid ())
         {
           double eEM = 0;
@@ -225,6 +229,8 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
           track.set_caloNewHadDRp5(eHad);
         }
 
+      // this is called only for ntuples with generalTracks explicitly kept (really just signal),
+      // to re-calculate the track isolations calculated wrong when ntuples were produces (thus "old" vs not-old)
       if (tracks.isValid ())
         {
           track.set_trackIsoDRp3 (getTrackIsolation (track, *tracks, false, false, 0.3));
@@ -239,7 +245,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
           track.set_trackIsoOldNoPUDRp3 (getOldTrackIsolation (track, *tracks, true, 0.3));
           track.set_trackIsoOldNoPUDRp5 (getOldTrackIsolation (track, *tracks, true, 0.5));
         }
-#endif // DATA_FORMAT != MINI_AOD_2017
+#endif // DATA_FORMAT_IS_CUSTOM
 #endif // DISAPP_TRKS
     }
 

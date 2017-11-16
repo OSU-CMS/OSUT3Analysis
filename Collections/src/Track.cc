@@ -232,6 +232,11 @@ osu::Track::Track (const TYPE(tracks) &track,
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
   Track(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits)
 {
+
+  // if the tracks collection itself is CandidateTracks, don't bother with matching this to itself
+  if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() == "candidateTrackProducer")
+    return;
+
   maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
   if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
 }
@@ -578,7 +583,11 @@ osu::Track::PrintTrackHitCategoryPatterns (const reco::HitPattern::HitCategory c
 
   const reco::HitPattern &p = this->hitPattern();
 
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  for (int i = 0; i < p.numberOfAllHits(category); i++) {
+#else
   for (int i = 0; i < p.numberOfHits(category); i++) {
+#endif
 
     uint16_t hit = p.getHitPattern(category, i);
 
@@ -656,7 +665,11 @@ osu::Track::hasValidHitInPixelBarrelLayer (const uint16_t layer) const
   const reco::HitPattern &p = this->hitPattern();
 
   // Loop over TRACK_HITS
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  for (int i = 0; i < p.numberOfAllHits(reco::HitPattern::TRACK_HITS); i++) {
+#else
   for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
+#endif
     uint16_t hit = p.getHitPattern(reco::HitPattern::TRACK_HITS, i);
     if(reco::HitPattern::pixelBarrelHitFilter(hit) &&
        reco::HitPattern::getLayer(hit) == layer &&
@@ -675,7 +688,11 @@ osu::Track::hasValidHitInPixelEndcapLayer (const uint16_t layer) const
   const reco::HitPattern &p = this->hitPattern();
 
   // Loop over TRACK_HITS
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  for (int i = 0; i < p.numberOfAllHits(reco::HitPattern::TRACK_HITS); i++) {
+#else
   for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
+#endif
     uint16_t hit = p.getHitPattern(reco::HitPattern::TRACK_HITS, i);
     if(reco::HitPattern::pixelEndcapHitFilter(hit) &&
        reco::HitPattern::getLayer(hit) == layer &&
@@ -719,7 +736,11 @@ osu::Track::packedPixelBarrelHitPattern () const
   // Loop over TRACK_HITS, MISSING_INNER_HITS, and MISSING_OUTER_HITS
   for (auto category : categories) {
 
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+    for (int i = 0; i < p.numberOfAllHits(category); i++) {
+#else
     for (int i = 0; i < p.numberOfHits(category); i++) {
+#endif
       uint16_t hit = p.getHitPattern(category, i);
 
       if(reco::HitPattern::pixelBarrelHitFilter(hit)) {
@@ -799,7 +820,11 @@ osu::Track::packedPixelEndcapHitPattern () const
   // Loop over TRACK_HITS, MISSING_INNER_HITS, and MISSING_OUTER_HITS
   for (auto category : categories) {
 
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+    for (int i = 0; i < p.numberOfAllHits(category); i++) {
+#else
     for (int i = 0; i < p.numberOfHits(category); i++) {
+#endif
       uint16_t hit = p.getHitPattern(category, i);
 
       if(reco::HitPattern::pixelEndcapHitFilter(hit)) {
@@ -849,7 +874,11 @@ osu::Track::firstLayerWithValidHit () const
   const reco::HitPattern &p = this->hitPattern();
 
   // loop over the TRACK_HITS of the track
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  for (int i = 0; i < p.numberOfAllHits(reco::HitPattern::TRACK_HITS); i++) {
+#else
   for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
+#endif
 
     uint16_t pattern = p.getHitPattern(reco::HitPattern::TRACK_HITS, i);
     uint16_t hitType = (pattern >> 0) & 0x3; // results in just the hit type bits
@@ -880,8 +909,11 @@ osu::Track::lastLayerWithValidHit () const
   const reco::HitPattern &p = this->hitPattern();
 
   // loop over the TRACK_HITS of the track
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  for (int i = 0; i < p.numberOfAllHits(reco::HitPattern::TRACK_HITS); i++) {
+#else
   for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
-
+#endif
     uint16_t pattern = p.getHitPattern(reco::HitPattern::TRACK_HITS, i);
     uint16_t hitType = (pattern >> 0) & 0x3; // results in just the hit type bits
 

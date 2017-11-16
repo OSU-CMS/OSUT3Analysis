@@ -1,8 +1,7 @@
 #ifndef OSU_GEN_MATCHABLE
 #define OSU_GEN_MATCHABLE
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD || DATA_FORMAT == AOD_CUSTOM
-//#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
+//#if DATA_FORMAT_FROM_MINIAOD
 
 #include "DataFormats/Common/interface/Handle.h"
 
@@ -160,9 +159,8 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
   for (vector<osu::Mcparticle>::const_iterator particle = particles->begin (); particle != particles->end (); particle++)
     {
       int pdgId = 0;
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
       pdgId = particle->pdgId ();
-#endif
+
       if (minPt_ >= 0.0 && particle->pt () < minPt_)
         continue;
       if (usePdgId && abs (pdgId) != PdgId)
@@ -171,7 +169,7 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
       double dR = deltaR (*particle, *this);
       if (maxDeltaR_ >= 0.0 && dR > maxDeltaR_)
         continue;
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD || DATA_FORMAT == AOD_CUSTOM
+
       if (particle->isPromptFinalState () || particle->isDirectPromptTauDecayProductFinalState ())
         {
           if (dR < dRToGenMatchedParticle.bestMatch || dRToGenMatchedParticle.bestMatch < 0.0)
@@ -213,7 +211,7 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
               genMatchedParticle.directHardProcessTauDecayProductFinalState = edm::Ref<vector<osu::Mcparticle> > (particles, particle - particles->begin ());
             }
         }
-#endif
+
     }
 
   return genMatchedParticle;
@@ -242,6 +240,6 @@ osu::GenMatchable<T, PdgId>::dRToGenMatchedParticleOfSameType () const
 {
   return dRToGenMatchedParticleOfSameType_;
 }
-#endif
+//#endif // DATA_FORMAT_FROM_MINIAOD
 
 #endif

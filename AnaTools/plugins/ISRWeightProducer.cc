@@ -21,7 +21,7 @@ ISRWeightProducer::~ISRWeightProducer() {
 void
 ISRWeightProducer::AddVariables (const edm::Event &event) {
 
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   if(event.isRealData()) {
     (*eventvariables)["isrWeight"] = 1;
     return;
@@ -69,21 +69,33 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
     }
   }
 
-  double pt = sqrt(px*px + py*py), isrWeight = 1.0;
-  for (const auto &weight : weights_)
-    isrWeight *= weight->GetBinContent (min (weight->FindBin (pt), weight->GetNbinsX ()));
+  double pt = sqrt(px*px + py*py);
+  double isrWeight = 1.0, isrWeightUp = 1.0, isrWeightDown = 1.0;
+
+  for (const auto &weight : weights_) {
+    double content = weight->GetBinContent (min (weight->FindBin (pt), weight->GetNbinsX ()));
+    double error = weight->GetBinError (min (weight->FindBin (pt), weight->GetNbinsX ()));
+
+    isrWeight *= content;
+    isrWeightUp *= content + error;
+    isrWeightDown *= max(content - error, 0.0); // max just in case error > content
+  }
 
   (*eventvariables)["isrWeight"] = isrWeight;
+  (*eventvariables)["isrWeightUp"] = isrWeightUp;
+  (*eventvariables)["isrWeightDown"] = isrWeightDown;
 
-#else
+#else // if STOPPPED_PTLS
   (*eventvariables)["isrWeight"] = 1;
+  (*eventvariables)["isrWeightUp"] = 1;
+  (*eventvariables)["isrWeightDown"] = 1;
 #endif
 }
 
 bool
 ISRWeightProducer::isOriginalParticle (const TYPE(hardInteractionMcparticles) &mcparticle, const int pdgId) const
 {
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   if(!mcparticle.numberOfMothers () || mcparticle.motherRef ().isNull ()) return true;
   return(mcparticle.motherRef ()->pdgId () != pdgId) && isOriginalParticle ((TYPE(hardInteractionMcparticles)) *mcparticle.motherRef (), pdgId);
 #else

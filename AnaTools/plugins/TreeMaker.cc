@@ -48,7 +48,7 @@ TreeMaker::TreeMaker(const edm::ParameterSet &cfg) :
     }
 
     objectsToGet_.insert(inputCollection.begin(), inputCollection.end());
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
     objectsToGet_.insert("generatorweights");
 #endif
 
