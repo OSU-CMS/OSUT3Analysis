@@ -1035,7 +1035,8 @@ anatools::passesL1ETM (const edm::Event &event, const edm::TriggerResults &trigg
 #else
       trigObj.unpackPathNames(event.triggerNames(triggers));
 #endif
-      if (trigObj.collection () != "hltCaloStage2Digis:EtSum:HLT")
+      if (trigObj.collection () != "hltL1extraParticles:MET:HLT"
+       || trigObj.collection () != "hltCaloStage2Digis:EtSum:HLT")
         continue;
       for (const auto &filterLabel : trigObj.filterLabels ())
         if (filterLabel == "hltL1sL1ETM60ORETM70" // 2015
