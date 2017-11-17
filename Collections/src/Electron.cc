@@ -25,6 +25,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
+  match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
   metMinusOnePy_              (INVALID_VALUE),
@@ -57,6 +58,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
+  match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
   metMinusOnePy_              (INVALID_VALUE),
@@ -89,6 +91,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
+  match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
   metMinusOnePy_              (INVALID_VALUE),
@@ -121,6 +124,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   dz_                         (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
+  match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
   metMinusOnePt_              (INVALID_VALUE),
   metMinusOnePx_              (INVALID_VALUE),
   metMinusOnePy_              (INVALID_VALUE),
@@ -288,6 +292,18 @@ void
 osu::Electron::set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (const bool flag)
 {
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ = flag;
+}
+
+const bool
+osu::Electron::match_HLT_Ele22_eta2p1_WPLoose_Gsf_v () const
+{
+  return match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_;
+}
+
+void
+osu::Electron::set_match_HLT_Ele22_eta2p1_WPLoose_Gsf_v (const bool flag)
+{
+  match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ = flag;
 }
 
 const double

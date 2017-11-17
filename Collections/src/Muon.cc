@@ -25,7 +25,11 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
 }
 
@@ -47,7 +51,11 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
 }
 
@@ -69,7 +77,11 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
 }
 
@@ -91,7 +103,11 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
   TVector2 p (met.px () + this->px (), met.py () + this->py ()),
            pNoMu (met.noMuPx (), met.noMuPy ()); // we do not add the muon's pt
@@ -174,6 +190,18 @@ osu::Muon::set_match_HLT_IsoTkMu24_v (const bool flag)
   match_HLT_IsoTkMu24_v_ = flag;
 }
 
+void
+osu::Muon::set_match_HLT_IsoMu20_v (const bool flag)
+{
+  match_HLT_IsoMu20_v_ = flag;
+}
+
+void
+osu::Muon::set_match_HLT_IsoTkMu20_v (const bool flag)
+{
+  match_HLT_IsoTkMu20_v_ = flag;
+}
+
 const int
 osu::Muon::missingInnerHits () const
 {
@@ -250,6 +278,18 @@ const bool
 osu::Muon::match_HLT_IsoTkMu24_v () const
 {
   return match_HLT_IsoTkMu24_v_;
+}
+
+const bool
+osu::Muon::match_HLT_IsoMu20_v () const
+{
+  return match_HLT_IsoMu20_v_;
+}
+
+const bool
+osu::Muon::match_HLT_IsoTkMu20_v () const
+{
+  return match_HLT_IsoTkMu20_v_;
 }
 
 #elif DATA_FORMAT == AOD_CUSTOM

@@ -85,7 +85,10 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       if(beamspot.isValid() && conversions.isValid() && vertices.isValid() && vertices->size ())
         electron.set_passesTightID_noIsolation (*beamspot, vertices->at (0), conversions);
       if(trigobjs.isValid())
-        electron.set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle25erWPTightGsfTrackIsoFilter"));
+        {
+          electron.set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle25erWPTightGsfTrackIsoFilter"));
+          electron.set_match_HLT_Ele22_eta2p1_WPLoose_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltSingleEle22WPLooseGsfTrackIsoFilter"));
+        }
 
       float effectiveArea = 0;
       // electron effective areas from https://indico.cern.ch/event/369239/contribution/4/attachments/1134761/1623262/talk_effective_areas_25ns.pdf
@@ -115,9 +118,9 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
               double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
               electron.set_genD0(gen_d0);
             }
-	}
+        }
       ///////////////////////////////////////////////////////////
-      // THIS APPEARS TO BE BROKEN - 
+      // THIS APPEARS TO BE BROKEN -
       // IT LOOKS LIKE IT JUST RETURNS D0 WRT THE CMS ORIGIN
       // WILL USE MANUAL CALCULATION INSTEAD
       // double d0 = object.dB(pat::Electron::BS2D);
@@ -192,10 +195,10 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
 
       if (vertices->size ())
-	{
-	  const reco::Vertex &vtx = vertices->at (electronPVIndex);
-	  electron.set_dz(object.gsfTrack()->dz(vtx.position()));
-	}
+        {
+          const reco::Vertex &vtx = vertices->at (electronPVIndex);
+          electron.set_dz(object.gsfTrack()->dz(vtx.position()));
+        }
     }
 
 

@@ -82,6 +82,8 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         {
           muon.set_match_HLT_IsoMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltL3MuonCandidates::HLT", "hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09"));
           muon.set_match_HLT_IsoTkMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltHighPtTkMuonCands::HLT", "hltL3fL1sMu22L1f0Tkf24QL3trkIsoFiltered0p09"));
+          muon.set_match_HLT_IsoMu20_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltL3MuonCandidates::HLT", "hltL3crIsoL1sMu16L1f0L2f10QL3f20QL3trkIsoFiltered0p09"));
+          muon.set_match_HLT_IsoTkMu20_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltHighPtTkMuonCands::HLT", "hltL3fL1sMu16L1f0Tkf20QL3trkIsoFiltered0p09"));
         }
 
       if(prunedParticles.isValid() && beamspot.isValid())
@@ -90,10 +92,10 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
             {
               if (!(abs(cand->pdgId()) == 13 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.001))
                 continue;
-	      double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
-	      muon.set_genD0(gen_d0);
-	    }
-	}
+              double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
+              muon.set_genD0(gen_d0);
+            }
+        }
       double d0 = object.dB(pat::Muon::BS2D);
       double err = object.edB(pat::Muon::BS2D);
       muon.set_d0(d0);
@@ -173,8 +175,8 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       if (vertices->size ())
         {
           const reco::Vertex &vtx = vertices->at (muonPVIndex);
-	  muon.set_dz(object.muonBestTrack()->dz(vtx.position()));
-	}
+          muon.set_dz(object.muonBestTrack()->dz(vtx.position()));
+        }
 
     }
 

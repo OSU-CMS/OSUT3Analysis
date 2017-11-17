@@ -40,6 +40,8 @@ namespace osu
 
         void set_match_HLT_IsoMu24_v (const bool);
         void set_match_HLT_IsoTkMu24_v (const bool);
+        void set_match_HLT_IsoMu20_v (const bool);
+        void set_match_HLT_IsoTkMu20_v (const bool);
 
         const int missingInnerHits () const;
         const int missingMiddleHits () const;
@@ -57,6 +59,8 @@ namespace osu
 
         const bool match_HLT_IsoMu24_v () const;
         const bool match_HLT_IsoTkMu24_v () const;
+        const bool match_HLT_IsoMu20_v () const;
+        const bool match_HLT_IsoTkMu20_v () const;
 
       private:
         bool isTightMuonWRTVtx_;
@@ -81,6 +85,8 @@ namespace osu
 
         bool match_HLT_IsoMu24_v_;
         bool match_HLT_IsoTkMu24_v_;
+        bool match_HLT_IsoMu20_v_;
+        bool match_HLT_IsoTkMu20_v_;
     };
 }
 #elif DATA_FORMAT == AOD_CUSTOM

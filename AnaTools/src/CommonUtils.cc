@@ -1025,6 +1025,23 @@ anatools::triggerObjectExists (const edm::Event &event, const edm::TriggerResult
   return false;
 }
 
+bool
+anatools::passesL1ETM (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs)
+{
+  for (auto trigObj : trigObjs)
+    {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      for (const auto &filterLabel : trigObj.filterLabels ())
+        if (filterLabel.find ("hltL1sETM") == 0 && filterLabel.find ("Jet") == string::npos)
+          return true;
+    }
+  return false;
+}
+
 void
 anatools::logSpace (const double a, const double b, const unsigned n, vector<double> &bins)
 {

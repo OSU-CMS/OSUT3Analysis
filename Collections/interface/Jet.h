@@ -28,10 +28,10 @@ namespace osu
         const float smearedPt () const;
         const float smearedPtUp () const;
         const float smearedPtDown () const;
-	const float alphamax () const;
-	const float ipsig () const;
-	const float log10ipsig () const;
-	const float medianlog10ipsig () const;
+        const float alphamax () const;
+        const float ipsig () const;
+        const float log10ipsig () const;
+        const float medianlog10ipsig () const;
 
         void set_matchedToLepton (float value) { matchedToLepton_  = value; }
         void set_pfCombinedSecondaryVertexV2BJetTags (float value) { pfCombinedSecondaryVertexV2BJetTags_ = value;}
@@ -49,10 +49,10 @@ namespace osu
         void set_smearedPt (float value) { smearedPt_ = value;}
         void set_smearedPtUp (float value) { smearedPtUp_ = value;}
         void set_smearedPtDown (float value) { smearedPtDown_ = value;}
-	void set_alphamax (float value) { alphamax_ = value;}
-	void set_ipsig (float value) { ipsig_ = value;}
-	void set_log10ipsig (float value) { log10ipsig_ = value;}
-	void set_medianlog10ipsig (float value) { medianlog10ipsig_ = value;}
+        void set_alphamax (float value) { alphamax_ = value;}
+        void set_ipsig (float value) { ipsig_ = value;}
+        void set_log10ipsig (float value) { log10ipsig_ = value;}
+        void set_medianlog10ipsig (float value) { medianlog10ipsig_ = value;}
 
       private:
         int matchedToLepton_;
@@ -67,10 +67,10 @@ namespace osu
         float smearedPt_;
         float smearedPtUp_;
         float smearedPtDown_;
-	float alphamax_;
-	float ipsig_;
-	float log10ipsig_;
-	float medianlog10ipsig_;
+        float alphamax_;
+        float ipsig_;
+        float log10ipsig_;
+        float medianlog10ipsig_;
     };
 }
 #elif DATA_FORMAT == AOD_CUSTOM

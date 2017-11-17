@@ -364,7 +364,7 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
     double value = boost::get<double> (*leaf),
            weight = 1.0;
     if (!IS_INVALID(definition.indexX) && leaf - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
-	  continue;
+          continue;
 
     if(IS_INVALID(value))
       continue;
@@ -420,10 +420,10 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
         double valueX = boost::get<double> (*leafX),
           valueY = boost::get<double> (*leafY);
 
-	if (!IS_INVALID(definition.indexX) && leafX - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
-	  continue;
-	if (!IS_INVALID(definition.indexY) && leafY - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexY)
-	  continue;
+        if (!IS_INVALID(definition.indexX) && leafX - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
+          continue;
+        if (!IS_INVALID(definition.indexY) && leafY - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexY)
+          continue;
 
         fill2DHistogram(definition, valueX, valueY, weight);
       }
@@ -499,12 +499,12 @@ void Plotter::fill3DHistogram(const HistoDef &definition){
             valueY = boost::get<double> (*leafY),
             valueZ = boost::get<double> (*leafZ);
 
-	  if (!IS_INVALID(definition.indexX) && leafX - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
-	    continue;
-	  if (!IS_INVALID(definition.indexY) && leafY - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexY)
-	    continue;
-	  if (!IS_INVALID(definition.indexZ) && leafZ - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexZ)
-	    continue;
+          if (!IS_INVALID(definition.indexX) && leafX - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
+            continue;
+          if (!IS_INVALID(definition.indexY) && leafY - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexY)
+            continue;
+          if (!IS_INVALID(definition.indexZ) && leafZ - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexZ)
+            continue;
 
           fill3DHistogram(definition, valueX, valueY, valueZ, weight);
         }
