@@ -994,6 +994,48 @@ anatools::getTriggerObjects (const edm::Event &event, const edm::TriggerResults 
 }
 
 bool
+anatools::getTriggerObjectsByFilterPrefix (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filterPrefix, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs)
+{
+  if (collection == "")
+    {
+      selectedTrigObjs.push_back (NULL);
+      return false;
+    }
+  vector<const pat::TriggerObjectStandAlone *> trigObjsToAdd;
+  int i = -1;
+  for (auto trigObj : trigObjs)
+    {
+      i++;
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filterPrefix != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            if (filterLabel.find (filterPrefix) == 0)
+              {
+                flag = true;
+                break;
+              }
+          if (!flag)
+            continue;
+        }
+
+      trigObjsToAdd.push_back (&trigObjs.at (i));
+    }
+  if (!trigObjsToAdd.empty ())
+    selectedTrigObjs.insert (selectedTrigObjs.end (), trigObjsToAdd.begin (), trigObjsToAdd.end ());
+  else
+    selectedTrigObjs.push_back (NULL);
+  return (!trigObjsToAdd.empty ());
+}
+
+bool
 anatools::triggerObjectExists (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter)
 {
   if (collection == "")
