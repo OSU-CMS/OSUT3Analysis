@@ -224,7 +224,7 @@ namespace anatools
 
   template<class T> bool isMatchedToTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double = 0.1);
   bool getTriggerObjects (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, vector<const pat::TriggerObjectStandAlone *> &);
-  bool getTriggerObjectsByFilterPrefix (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, vector<const pat::TriggerObjectStandAlone *> &);
+  bool getTriggerObjectsByFilterSubstring (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, vector<const pat::TriggerObjectStandAlone *> &, const string & = "");
   template<class T> const pat::TriggerObjectStandAlone *getMatchedTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double = 0.1);
   bool triggerObjectExists (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &);
   bool passesL1ETM (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &);

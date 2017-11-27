@@ -994,7 +994,7 @@ anatools::getTriggerObjects (const edm::Event &event, const edm::TriggerResults 
 }
 
 bool
-anatools::getTriggerObjectsByFilterPrefix (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filterPrefix, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs)
+anatools::getTriggerObjectsByFilterSubstring (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filterSubstring, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs, const string &filterSubstringToReject)
 {
   if (collection == "")
     {
@@ -1013,11 +1013,13 @@ anatools::getTriggerObjectsByFilterPrefix (const edm::Event &event, const edm::T
 #endif
       if (trigObj.collection () != collection)
         continue;
-      if (filterPrefix != "")
+      if (filterSubstring != "")
         {
-          bool flag = false;
+          bool flag = false, flagSubstringToReject = true;
+          if (filterSubstringToReject != "")
+            flagSubstringToReject = (filterLabel.find (filterSubstringToReject) == string::npos);
           for (const auto &filterLabel : trigObj.filterLabels ())
-            if (filterLabel.find (filterPrefix) == 0)
+            if (filterLabel.find (filterSubstring) != string::npos && flagSubstringToReject)
               {
                 flag = true;
                 break;
