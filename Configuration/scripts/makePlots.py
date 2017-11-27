@@ -858,7 +858,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     ### formatting data histograms and adding to legend
     legendIndex = 0
     for Histogram in DataHistograms:
-        BgMCLegend.AddEntry(Histogram,DataLegendEntries[legendIndex],"LEP")
+        BgMCLegend.AddEntry(Histogram,DataLegendEntries[legendIndex],"PE")
         legendIndex = legendIndex+1
 
 

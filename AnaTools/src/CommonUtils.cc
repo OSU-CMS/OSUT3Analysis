@@ -994,6 +994,53 @@ anatools::getTriggerObjects (const edm::Event &event, const edm::TriggerResults 
 }
 
 bool
+anatools::getTriggerObjectsByFilterSubstring (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filterSubstring, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs, const string &filterSubstringToReject)
+{
+  if (collection == "")
+    {
+      selectedTrigObjs.push_back (NULL);
+      return false;
+    }
+  vector<const pat::TriggerObjectStandAlone *> trigObjsToAdd;
+  int i = -1;
+  for (auto trigObj : trigObjs)
+    {
+      i++;
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filterSubstring != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            {
+              bool flagSubstringToReject = true;
+              if (filterSubstringToReject != "")
+                flagSubstringToReject = (filterLabel.find (filterSubstringToReject) == string::npos);
+              if (filterLabel.find (filterSubstring) != string::npos && flagSubstringToReject)
+                {
+                  flag = true;
+                  break;
+                }
+            }
+          if (!flag)
+            continue;
+        }
+
+      trigObjsToAdd.push_back (&trigObjs.at (i));
+    }
+  if (!trigObjsToAdd.empty ())
+    selectedTrigObjs.insert (selectedTrigObjs.end (), trigObjsToAdd.begin (), trigObjsToAdd.end ());
+  else
+    selectedTrigObjs.push_back (NULL);
+  return (!trigObjsToAdd.empty ());
+}
+
+bool
 anatools::triggerObjectExists (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter)
 {
   if (collection == "")
