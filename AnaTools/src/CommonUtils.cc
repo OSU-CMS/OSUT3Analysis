@@ -1015,15 +1015,18 @@ anatools::getTriggerObjectsByFilterSubstring (const edm::Event &event, const edm
         continue;
       if (filterSubstring != "")
         {
-          bool flag = false, flagSubstringToReject = true;
-          if (filterSubstringToReject != "")
-            flagSubstringToReject = (filterLabel.find (filterSubstringToReject) == string::npos);
+          bool flag = false;
           for (const auto &filterLabel : trigObj.filterLabels ())
-            if (filterLabel.find (filterSubstring) != string::npos && flagSubstringToReject)
-              {
-                flag = true;
-                break;
-              }
+            {
+              bool flagSubstringToReject = true;
+              if (filterSubstringToReject != "")
+                flagSubstringToReject = (filterLabel.find (filterSubstringToReject) == string::npos);
+              if (filterLabel.find (filterSubstring) != string::npos && flagSubstringToReject)
+                {
+                  flag = true;
+                  break;
+                }
+            }
           if (!flag)
             continue;
         }
