@@ -156,9 +156,9 @@ CutFlowPlotter::initializeCutFlow ()
   // decision.
   //////////////////////////////////////////////////////////////////////////////
   unsigned nCuts = cutDecisions->cuts.size ();
-  cutDecisions->triggers.size () && nCuts++;
-  cutDecisions->triggerFilters.size () && nCuts++;
-  cutDecisions->metFilters.size () && nCuts++;
+  !cutDecisions->triggers.empty () && nCuts++;
+  !cutDecisions->triggerFilters.empty () && nCuts++;
+  !cutDecisions->metFilters.empty () && nCuts++;
   oneDHists_.at ("cutFlow")->SetBins    (nCuts + 1,  0.0,  nCuts + 1);
   oneDHists_.at ("selection")->SetBins  (nCuts + 1,  0.0,  nCuts + 1);
   //  oneDHists_.at ("minusOne")->SetBins   (nCuts + 1,  0.0,  nCuts + 1);
@@ -168,21 +168,21 @@ CutFlowPlotter::initializeCutFlow ()
   // Set the bin labels for the rest of the bins according to the name of the
   // cut. The special bin for the trigger decision is simply labeled "trigger".
   //////////////////////////////////////////////////////////////////////////////
-  if (cutDecisions->triggers.size ())
+  if (!cutDecisions->triggers.empty ())
     {
       oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "trigger");
       oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "trigger");
       //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger");
       bin++;
     }
-  if (cutDecisions->triggerFilters.size ())
+  if (!cutDecisions->triggerFilters.empty ())
     {
       oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "trigger filter");
       oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "trigger filter");
       //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger filter");
       bin++;
     }
-  if (cutDecisions->metFilters.size ())
+  if (!cutDecisions->metFilters.empty ())
     {
       oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "MET filter");
       oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "MET filter");
@@ -235,7 +235,7 @@ CutFlowPlotter::fillCutFlow (double w)
   // Fill the rest of the bins according to the flags in the cut decisions
   // object.
   //////////////////////////////////////////////////////////////////////////////
-  if (cutDecisions->triggers.size ())
+  if (!cutDecisions->triggers.empty ())
     {
       passes = passes && cutDecisions->triggerDecision;
       if (cutDecisions->triggerDecision)
@@ -244,7 +244,7 @@ CutFlowPlotter::fillCutFlow (double w)
         oneDHists_.at ("cutFlow")->Fill    (bin,  w);
       bin++;
     }
-  if (cutDecisions->triggerFilters.size ())
+  if (!cutDecisions->triggerFilters.empty ())
     {
       passes = passes && cutDecisions->triggerFilterDecision;
       if (cutDecisions->triggerFilterDecision)
@@ -253,7 +253,7 @@ CutFlowPlotter::fillCutFlow (double w)
         oneDHists_.at ("cutFlow")->Fill    (bin,  w);
       bin++;
     }
-  if (cutDecisions->metFilters.size ())
+  if (!cutDecisions->metFilters.empty ())
     {
       passes = passes && cutDecisions->metFilterDecision;
       if (cutDecisions->metFilterDecision)

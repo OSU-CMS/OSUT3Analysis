@@ -218,7 +218,7 @@ CutCalculator::arbitrateInputCollectionFlags (const Cut &currentCut, unsigned cu
       else
         random_shuffle (indicesToArbitrate.begin (), indicesToArbitrate.end ());
 
-      bool isChosen = (indicesToArbitrate.size () ? true : false);
+      bool isChosen = (indicesToArbitrate.empty () ? false : true);
       for (const auto &index : indicesToArbitrate)
         {
           pl_->individualObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (index.first).first = isChosen;
@@ -713,7 +713,7 @@ CutCalculator::evaluateTriggers (const edm::Event &event)
   // required to exist in the HLT menu, as well as the event-wide flags for
   // each of these.
   //////////////////////////////////////////////////////////////////////////////
-  bool triggerDecision = !pl_->triggers.size (), vetoTriggerDecision = true;
+  bool triggerDecision = pl_->triggers.empty (), vetoTriggerDecision = true;
   pl_->triggerFlags.resize (pl_->triggers.size (), false);
   pl_->vetoTriggerFlags.resize (pl_->triggersToVeto.size (), true);
   pl_->triggerInMenuFlags.resize (pl_->triggersInMenu.size (), false);
@@ -729,7 +729,7 @@ CutCalculator::evaluateTriggers (const edm::Event &event)
           triggerNamesPSetID_ = triggerNames.parameterSetID ();
           triggersInMenu_ = true;
         }
-      if (!triggerIndices_.size ())
+      if (triggerIndices_.empty ())
         {
           for (unsigned i = 0; i < triggerNames.size (); i++)
             {
@@ -828,7 +828,7 @@ CutCalculator::evaluateTriggers (const edm::Event &event)
 bool
 CutCalculator::evaluateTriggerFilters (const edm::Event &event) const
 {
-  bool triggerFilterDecision = !pl_->triggerFilters.size ();
+  bool triggerFilterDecision = pl_->triggerFilters.empty ();
   pl_->triggerFilterFlags.resize (pl_->triggerFilters.size (), false);
 
   if (handles_.triggers.isValid () && handles_.trigobjs.isValid ())
@@ -879,7 +879,7 @@ CutCalculator::evaluateMETFilters (const edm::Event &event)
           metFilterIndices_.clear ();
           metFilterNamesPSetID_ = metFilterNames.parameterSetID ();
         }
-      if (!metFilterIndices_.size ())
+      if (metFilterIndices_.empty ())
         {
           for (unsigned i = 0; i < metFilterNames.size (); i++)
             {

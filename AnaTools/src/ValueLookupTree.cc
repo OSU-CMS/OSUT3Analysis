@@ -114,7 +114,7 @@ ValueLookupTree::evaluate ()
   // for each object. If it is empty when this method is called, it is filled.
   // Then the method returns it as a reference.
   //////////////////////////////////////////////////////////////////////////////
-  if (!values_.size () && allCollectionsNonEmpty_)
+  if (values_.empty () && allCollectionsNonEmpty_)
     {
       evaluationError_ = false;
       uservariablesToDelete_.clear ();
@@ -527,7 +527,7 @@ ValueLookupTree::printNode (Node* tree) const
 {
   string expression = "";
   if (!tree) return expression;
-  if (tree->branches.size ()) {
+  if (!tree->branches.empty ()) {
     for (const auto &branch : tree->branches)
       expression += branch->value + " ";
   } else {
@@ -567,7 +567,7 @@ ValueLookupTree::evaluate_ (const Node * const tree, const ObjMap &objs)
   // The node is not a leaf and its value is an operator. First, evaluate its
   // daughters, then return the result of the operator acting on the daughters.
   //////////////////////////////////////////////////////////////////////////////
-  if (tree->branches.size ())
+  if (!tree->branches.empty ())
     {
       vector<Leaf> operands;
       for (const auto &branch : tree->branches)
@@ -1079,7 +1079,7 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
   //////////////////////////////////////////////////////////////////////////////
   // If there are no matches, just return string::npos.
   //////////////////////////////////////////////////////////////////////////////
-  if (!indices.size ())
+  if (indices.empty ())
     return make_pair (string::npos, "");
   //////////////////////////////////////////////////////////////////////////////
 
@@ -1120,7 +1120,7 @@ ValueLookupTree::findLastOf (const string &s, const vector<string> &targets, con
   //////////////////////////////////////////////////////////////////////////////
   // If there are no matches, just return string::npos.
   //////////////////////////////////////////////////////////////////////////////
-  if (!indices.size ())
+  if (indices.empty ())
     return make_pair (string::npos, "");
   //////////////////////////////////////////////////////////////////////////////
 

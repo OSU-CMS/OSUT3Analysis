@@ -70,7 +70,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       pl_->emplace_back (object, particles, cfg_, met->at (0));
       osu::Muon &muon = pl_->back ();
 
-      if (vertices->size ())
+      if (!vertices->empty ())
         {
           const reco::Vertex &vtx = vertices->at (0);
           muon.set_isTightMuonWRTVtx(muon.isTightMuon(vtx));
@@ -172,7 +172,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       muon.set_sumPUPtCorr(puPt);
       muon.set_muonPVIndex(muonPVIndex);
 
-      if (vertices->size ())
+      if (!vertices->empty ())
         {
           const reco::Vertex &vtx = vertices->at (muonPVIndex);
           muon.set_dz(object.muonBestTrack()->dz(vtx.position()));

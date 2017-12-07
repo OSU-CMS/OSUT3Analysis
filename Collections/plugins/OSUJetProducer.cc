@@ -183,13 +183,13 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       double medianipsig = -4;
 
-      if(ipsigVector.size() != 0){
+      if(!ipsigVector.empty()){
         std::sort (ipsigVector.begin(), ipsigVector.end());
         if(ipsigVector.size()%2 == 0) medianipsig = (ipsigVector[ ipsigVector.size()/2 - 1] + ipsigVector[ ipsigVector.size() / 2 ]) / 2;
         if(ipsigVector.size()%2 == 1) medianipsig = ipsigVector[ ipsigVector.size()/2 ];
       }
 
-      if(ipsigVector.size() != 0) jet.set_medianlog10ipsig( log10(medianipsig) );
+      if(!ipsigVector.empty()) jet.set_medianlog10ipsig( log10(medianipsig) );
       else jet.set_medianlog10ipsig( -4 );
 
       if (isException)

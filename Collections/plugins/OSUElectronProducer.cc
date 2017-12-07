@@ -82,7 +82,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       if(rho.isValid())
         electron.set_rho((float)(*rho));
-      if(beamspot.isValid() && conversions.isValid() && vertices.isValid() && vertices->size ())
+      if(beamspot.isValid() && conversions.isValid() && vertices.isValid() && !vertices->empty ())
         electron.set_passesTightID_noIsolation (*beamspot, vertices->at (0), conversions);
       if(trigobjs.isValid())
         {
@@ -194,7 +194,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       electron.set_electronPVIndex(electronPVIndex);
 
 
-      if (vertices->size ())
+      if (!vertices->empty ())
         {
           const reco::Vertex &vtx = vertices->at (electronPVIndex);
           electron.set_dz(object.gsfTrack()->dz(vtx.position()));

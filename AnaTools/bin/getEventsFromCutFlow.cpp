@@ -90,7 +90,7 @@ main (int argc, char *argv[])
             }
         }
     }
-  if (!cutFlows.size ())
+  if (cutFlows.empty ())
     {
       cout << "Did not find a histogram named " << histName << "!" << endl;
       return 0;
