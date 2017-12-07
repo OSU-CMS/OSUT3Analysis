@@ -33,7 +33,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
     return;
   }
 
-  if (!weights_.size ())
+  if (weights_.empty ())
     {
       TFile * fin = TFile::Open(weightFile_.c_str());
       if(!fin || fin->IsZombie()) {

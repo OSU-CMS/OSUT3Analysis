@@ -118,7 +118,7 @@ OriginalFormatProducer::produceCollection (edm::Event& iEvent)
 {
   vector<edm::Handle< vector < Old > > > oldObjVec;
   iEvent.getManyByType(oldObjVec);
-  if (oldObjVec.size() == 0) {
+  if (oldObjVec.empty()) {
     return;
   } else if (oldObjVec.size() > 1) {
     cout << "ERROR:  size of objVec = " << oldObjVec.size() << ", only valid size is 1." << endl;

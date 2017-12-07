@@ -106,7 +106,7 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
     {
       ss_ << endl << "================================================================================" << endl;
       ss_ << A_BRIGHT_CYAN << "info for " << event.id () << " (record " << counter_ << ")" << A_RESET << endl;
-      valuesToPrint.size ()        &&  printValuesToPrint          ();
+      !valuesToPrint.empty ()      &&  printValuesToPrint          ();
       printIndividualObjectFlags_  &&  printIndividualObjectFlags  ();
       printCumulativeObjectFlags_  &&  printCumulativeObjectFlags  ();
       printTriggerFlags_           &&  printTriggerFlags           ();
@@ -250,7 +250,7 @@ InfoPrinter::printCumulativeObjectFlags ()
     return false;
 
   ss_ << endl;
-  if (!cutDecisions->cumulativeObjectFlags.size ())
+  if (cutDecisions->cumulativeObjectFlags.empty ())
     return true;
   vector<string> collections;
   for (const auto &collection : cutDecisions->cumulativeObjectFlags.at (0))
@@ -296,7 +296,7 @@ InfoPrinter::printIndividualObjectFlags ()
     return false;
 
   ss_ << endl;
-  if (!cutDecisions->individualObjectFlags.size ())
+  if (cutDecisions->individualObjectFlags.empty ())
     return true;
   vector<string> collections;
   for (const auto &collection : cutDecisions->individualObjectFlags.at (0))
