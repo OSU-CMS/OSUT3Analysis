@@ -22,8 +22,10 @@ void
 ISRWeightProducer::AddVariables (const edm::Event &event) {
 
 #if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
-  if(event.isRealData()) {
+  if(event.isRealData() || weightFile_.empty () || weightHist_.empty ()) {
     (*eventvariables)["isrWeight"] = 1;
+    (*eventvariables)["isrWeightUp"] = 1;
+    (*eventvariables)["isrWeightDown"] = 1;
     return;
   }
 
