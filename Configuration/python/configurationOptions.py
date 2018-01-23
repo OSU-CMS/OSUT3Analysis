@@ -8472,4 +8472,9 @@ for dataset0 in nJobs:
         dstCTauForLifetimeReweighting[dataset] = float (ctau)
         pdgIdsForISRReweighting[dataset] = [1000022, 1000024]
 
+    pdgIdsForLifetimeReweighting[dataset0] = 1000024
+    srcCTauForLifetimeReweighting[dataset0] = ctau0
+    dstCTauForLifetimeReweighting[dataset0] = ctau0
+    pdgIdsForISRReweighting[dataset0] = [1000022, 1000024]
+
 nJobs.update (new_nJobs)
