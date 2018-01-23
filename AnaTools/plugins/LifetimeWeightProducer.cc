@@ -54,6 +54,17 @@ LifetimeWeightProducer::AddVariables (const edm::Event &event) {
                  dstPDF = exp (-cTau / dstCTau_.at (iPdgId)) / dstCTau_.at (iPdgId);
           weight *= (dstPDF / srcPDF);
         }
+
+      // Add dummy ctau values for index < 10 for signal with varying numbers
+      // of particles used for reweighting; e.g., a mix of chargino-chargino
+      // and chargino-neutralino events, where the chargino is used for
+      // reweighting.
+      while (index < 10)
+        {
+          suffix.str ("");
+          suffix << "_" << abs (pdgIds_.at (iPdgId)) << "_" << index++;
+          (*eventvariables)["cTau" + suffix.str ()] = INVALID_VALUE;
+        }
     }
 #endif
   (*eventvariables)["lifetimeWeight"] = weight;
