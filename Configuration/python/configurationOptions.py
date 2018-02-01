@@ -96,6 +96,7 @@ datasets = [
    'MuonEG_2016E_23Sep',
    'MuonEG_2016F_23Sep',
    'MuonEG_2016G_23Sep',
+   'MuonEG_2016G',
    'MuonEG_2016H',
    'MET_2015',
    'MET_2015D',
@@ -1341,6 +1342,7 @@ nJobs = {
     'MuonEG_2016E_23Sep'    : 1000,
     'MuonEG_2016F_23Sep'    : 1000,
     'MuonEG_2016G_23Sep'    : 1000,
+    'MuonEG_2016G'          : 1000,
     'MuonEG_2016H'          : 1000,
 
     'MuonEG_2015B'   :  30,
@@ -2613,6 +2615,7 @@ maxEvents = {
     'MuonEG_2016E_23Sep'     : -1,
     'MuonEG_2016F_23Sep'     : -1,
     'MuonEG_2016G_23Sep'     : -1,
+    'MuonEG_2016G'           : -1,
     'MuonEG_2016H'           : -1,
 
     'MuonEG_2015B'       : -1,
@@ -3907,6 +3910,7 @@ types = {
     'MuonEG_2016E_23Sep'   : "data",
     'MuonEG_2016F_23Sep'   : "data",
     'MuonEG_2016G_23Sep'   : "data",
+    'MuonEG_2016G'         : "data",
     'MuonEG_2016H'         : "data",
     'MuonEG_2016_23Sep'    : "data",
 
@@ -5212,6 +5216,7 @@ colors = {
     'MuonEG_2016E_23Sep'   : 1,
     'MuonEG_2016F_23Sep'   : 1,
     'MuonEG_2016G_23Sep'   : 1,
+    'MuonEG_2016G'         : 1,
     'MuonEG_2016H'         : 1,
     'MuonEG_2016_23Sep'    : 1,
 
@@ -6534,6 +6539,7 @@ labels = {
     'MuonEG_2016E_23Sep'     : "MuonEG 2016E 23Sep data",
     'MuonEG_2016F_23Sep'     : "MuonEG 2016F 23Sep data",
     'MuonEG_2016G_23Sep'     : "MuonEG 2016G 23Sep data",
+    'MuonEG_2016G'           : "MuonEG 2016G data",
     'MuonEG_2016H'           : "MuonEG 2016H data",
 
     ###########################################################################
