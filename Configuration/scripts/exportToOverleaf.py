@@ -73,8 +73,8 @@ overleafRepo = sys.argv[1]
 cwd = os.getcwd ()
 cadiNumber = None
 documentType = DocumentType.UNKNOWN
-if re.match (r".*\/(notes|paper)\/[^/]*\/trunk", cwd):
-    cadiNumber = re.sub (r".*\/(notes|paper)\/([^/]*)\/trunk", r"\2", cwd)
+if re.match (r".*\/(notes|papers)\/[^/]*\/trunk", cwd):
+    cadiNumber = re.sub (r".*\/(notes|papers)\/([^/]*)\/trunk", r"\2", cwd)
 else:
     print "Please change to the \"trunk\" directory of some note/paper before executing."
     sys.exit (3)
@@ -101,6 +101,9 @@ print "Document is of type " + documentType.name + " with number " + cadiNumber 
 #-------------------------------------------------------------------------------
 print "Exporting document with requisite files...",
 sys.stdout.flush ()
+tmpDir = re.sub (r"Removing all contents of temporary directory: (.*)", r"\1", subprocess.check_output (["tdr", "clean"])).strip ().rstrip ()
+for f in os.listdir (tmpDir):
+    shutil.rmtree (tmpDir + "/" + f)
 tdrOutput = subprocess.check_output (["tdr", "--style=" + documentType.name.lower (), "--export", "b", cadiNumber])
 exportDir = None
 for line in tdrOutput.splitlines ():
