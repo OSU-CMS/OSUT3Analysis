@@ -169,7 +169,11 @@ print " Done."
 # Create a .gitignore file so that we do not try to add the SVN metadata.
 #-------------------------------------------------------------------------------
 gitignore = open (".gitignore", "a")
-gitignore.write (".svn\n.svn/*\n*/.svn/*\n")
+gitignore.write (".svn\n")
+gitignore.write (".svn/*\n")
+gitignore.write ("*/.svn/*\n")
+gitignore.write ("*~\n")
+gitignore.write ("#*#\n")
 gitignore.close ()
 ################################################################################
 
