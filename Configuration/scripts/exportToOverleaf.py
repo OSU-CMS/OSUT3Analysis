@@ -1,14 +1,7 @@
 #!/usr/bin/env python
 
-from enum import Enum
 from distutils.spawn import find_executable
 import sys, os, re, subprocess, tempfile, shutil, tarfile
-
-class DocumentType (Enum):
-    UNKNOWN = 0
-    AN = 1
-    PAS = 2
-    PAPER = 3
 
 def createTempFile (suffix = "", prefix = os.path.basename (sys.argv[0]) + "_"):
     tempFileTuple = tempfile.mkstemp (suffix = suffix, prefix = prefix)
@@ -72,7 +65,7 @@ overleafRepo = sys.argv[1]
 #-------------------------------------------------------------------------------
 cwd = os.getcwd ()
 cadiNumber = None
-documentType = DocumentType.UNKNOWN
+documentType = "UNKNOWN"
 if re.match (r".*\/(notes|papers)\/[^/]*\/trunk", cwd):
     cadiNumber = re.sub (r".*\/(notes|papers)\/([^/]*)\/trunk", r"\2", cwd)
 else:
@@ -81,18 +74,18 @@ else:
 
 if re.match (r".*\/notes\/[^/]*\/trunk", cwd):
     if cadiNumber.startswith ("AN"):
-        documentType = DocumentType.AN
+        documentType = "AN"
     else:
-        documentType = DocumentType.PAS
+        documentType = "PAS"
 else:
-    documentType = DocumentType.PAPER
+    documentType = "PAPER"
 
 if os.path.exists (cadiNumber + "_temp.tex"):
     print "There already exists a \"" + cadiNumber + "_temp.tex\"."
     print "Has this project already been exported? Quitting."
     sys.exit (4)
 
-print "Document is of type " + documentType.name + " with number " + cadiNumber + ".\n"
+print "Document is of type " + documentType + " with number " + cadiNumber + ".\n"
 ################################################################################
 
 ################################################################################
@@ -105,7 +98,7 @@ tmpDir = re.sub (r"Removing all contents of temporary directory: (.*)", r"\1", s
 if os.path.exists (tmpDir):
     for f in os.listdir (tmpDir):
         shutil.rmtree (tmpDir + "/" + f)
-tdrOutput = subprocess.check_output (["tdr", "--style=" + documentType.name.lower (), "--export", "b", cadiNumber])
+tdrOutput = subprocess.check_output (["tdr", "--style=" + documentType.lower (), "--export", "b", cadiNumber])
 exportDir = None
 for line in tdrOutput.splitlines ():
     if not line.startswith ("Export tarball"):
@@ -170,6 +163,14 @@ newTempFile.close ()
 os.remove (cadiNumber + "_temp.tex")
 shutil.move (newTempFileName, cadiNumber + "_temp.tex")
 print " Done."
+################################################################################
+
+################################################################################
+# Create a .gitignore file so that we do not try to add the SVN metadata.
+#-------------------------------------------------------------------------------
+gitignore = open (".gitignore", "a")
+gitignore.write (".svn\n.svn/*\n*/.svn/*\n")
+gitignore.close ()
 ################################################################################
 
 ################################################################################
