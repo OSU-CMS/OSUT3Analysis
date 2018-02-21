@@ -193,10 +193,6 @@ executeCommand ("git merge origin/master", stdout = gitOut, stderr = gitErr)
 executeCommand ("git add *", stdout = gitOut, stderr = gitErr)
 if os.path.exists ("main.tex"):
     executeCommand ("git rm main.tex", stdout = gitOut, stderr = gitErr)
-if os.path.exists ("frog.jpg"):
-    executeCommand ("git rm frog.jpg", stdout = gitOut, stderr = gitErr)
-if os.path.exists ("sample.bib"):
-    executeCommand ("git rm sample.bib", stdout = gitOut, stderr = gitErr)
 executeCommand ("git commit -m \"Initial sync with SVN repository.\"", stdout = gitOut, stderr = gitErr)
 executeCommand ("git push origin master", stdout = gitOut, stderr = gitErr)
 gitOut.close ()
