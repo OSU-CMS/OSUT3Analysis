@@ -149,6 +149,8 @@ newTempFileName = createTempFile ()
 newTempFile = open (newTempFileName, "w")
 wroteInputLine = False
 i = 0
+while main[i].strip () == "":
+    i += 1
 for lineInTemp in temp:
     lineInMain = main[i] if i < len (main) else None
     if lineInMain is None or (lineInTemp != lineInMain and lineInTemp != "% " + lineInMain):
