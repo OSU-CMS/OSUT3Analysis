@@ -985,15 +985,16 @@ composite_dataset_definitions = {
        'MET_2016G',
        'MET_2016H',
     ],
+    'MET_2016_postHIP' : [
+        'MET_2016G',
+        'MET_2016H',
+    ],
     'MET_2017' : [
        'MET_2017B',
        'MET_2017C',
        'MET_2017D',
        'MET_2017E',
        'MET_2017F',
-    'MET_2016_postHIP' : [
-        'MET_2016G',
-        'MET_2016H',
     ],
     'NoBPTX_Jet_2016BCD_PromptReco' : [
        'NoBPTX_Jet_2016B_PromptReco_v2',
