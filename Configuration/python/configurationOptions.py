@@ -86,6 +86,12 @@ datasets = [
    'DoubleEG_2016H',
    'DoubleEG_2016',
    'DoubleEG_2016_postHIP',
+   'DoubleEG_2017B',
+   'DoubleEG_2017C',
+   'DoubleEG_2017D',
+   'DoubleEG_2017E',
+   'DoubleEG_2017F',
+   'DoubleEG_2017',
    'DoubleMu_2015',
    'DoubleMu_2015D',
    'DoubleMu_2016B',
@@ -97,6 +103,12 @@ datasets = [
    'DoubleMu_2016H',
    'DoubleMu_2016',
    'DoubleMu_2016_postHIP',
+   'DoubleMu_2017B',
+   'DoubleMu_2017C',
+   'DoubleMu_2017D',
+   'DoubleMu_2017E',
+   'DoubleMu_2017F',
+   'DoubleMu_2017',
    'MuonEG_2015D',
    'MuonEG_2015',
    'MuonEG_2016B',
@@ -108,6 +120,12 @@ datasets = [
    'MuonEG_2016H',
    'MuonEG_2016',
    'MuonEG_2016_postHIP',
+   'MuonEG_2017B',
+   'MuonEG_2017C',
+   'MuonEG_2017D',
+   'MuonEG_2017E',
+   'MuonEG_2017F',
+   'MuonEG_2017',
    'MET_2015',
    'MET_2015D',
    'MET_2016',
@@ -594,6 +612,13 @@ composite_dataset_definitions = {
         'DoubleEG_2016G',
         'DoubleEG_2016H',
     ],
+    'DoubleEG_2017' : [
+        'DoubleEG_2017B',
+        'DoubleEG_2017C',
+        'DoubleEG_2017D',
+        'DoubleEG_2017E',
+        'DoubleEG_2017F',
+    ],
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
         'DoubleMu_2015C',
@@ -611,6 +636,13 @@ composite_dataset_definitions = {
     'DoubleMu_2016_postHIP' : [
         'DoubleMu_2016G',
         'DoubleMu_2016H',
+    ],
+    'DoubleMu_2017' : [
+        'DoubleMu_2017B',
+        'DoubleMu_2017C',
+        'DoubleMu_2017D',
+        'DoubleMu_2017E',
+        'DoubleMu_2017F',
     ],
     'MuonEG_2015' : [
         'MuonEG_2015B',
@@ -634,6 +666,8 @@ composite_dataset_definitions = {
         'MuonEG_2017B',
         'MuonEG_2017C',
         'MuonEG_2017D',
+        'MuonEG_2017E',
+        'MuonEG_2017F',
     ],
     #2015
     'mchamp100_NtupleSeparateEvents': [
@@ -1397,6 +1431,11 @@ nJobs = {
     'DoubleEG_2016F'  : 350,
     'DoubleEG_2016G'  : 790,
     'DoubleEG_2016H'  : 860,
+    'DoubleEG_2017B'  : 580,
+    'DoubleEG_2017C'  : 651,
+    'DoubleEG_2017D'  : 259,
+    'DoubleEG_2017E'  : 562,
+    'DoubleEG_2017F'  : 743,
 
     # set number of jobs to correpond to roughly 100k events/job
     'DoubleMu_2015B'  : 40,
@@ -1409,6 +1448,11 @@ nJobs = {
     'DoubleMu_2016F'  : 200,
     'DoubleMu_2016G'  : 450,
     'DoubleMu_2016H'  : 490,
+    'DoubleMu_2017B'  : 145,
+    'DoubleMu_2017C'  : 496,
+    'DoubleMu_2017D'  : 231,
+    'DoubleMu_2017E'  : 516,
+    'DoubleMu_2017F'  : 798,
 
     # set number of jobs to correpond to roughly 100k events/job
     'MuonEG_2015B' : 30,
@@ -1423,6 +1467,8 @@ nJobs = {
     'MuonEG_2017B' : 45,
     'MuonEG_2017C' : 156,
     'MuonEG_2017D' : 92,
+    'MuonEG_2017E' : 190,
+    'MuonEG_2017F' : 258,
 
     ############################################################################
 
@@ -2686,6 +2732,12 @@ maxEvents = {
     'DoubleEG_2016H'        : -1,
     'DoubleEG_2016'         : -1,
     'DoubleEG_2016_postHIP' : -1,
+    'DoubleEG_2017B'        : -1,
+    'DoubleEG_2017C'        : -1,
+    'DoubleEG_2017D'        : -1,
+    'DoubleEG_2017E'        : -1,
+    'DoubleEG_2017F'        : -1,
+    'DoubleEG_2017'         : -1,
 
     'DoubleMu_2015B'        : -1,
     'DoubleMu_2015C'        : -1,
@@ -2699,6 +2751,12 @@ maxEvents = {
     'DoubleMu_2016H'        : -1,
     'DoubleMu_2016'         : -1,
     'DoubleMu_2016_postHIP' : -1,
+    'DoubleMu_2017B'        : -1,
+    'DoubleMu_2017C'        : -1,
+    'DoubleMu_2017D'        : -1,
+    'DoubleMu_2017E'        : -1,
+    'DoubleMu_2017F'        : -1,
+    'DoubleMu_2017'        : -1,
 
     'MuonEG_2015B'        : -1,
     'MuonEG_2015C'        : -1,
@@ -2714,6 +2772,8 @@ maxEvents = {
     'MuonEG_2017B'        : -1,
     'MuonEG_2017C'        : -1,
     'MuonEG_2017D'        : -1,
+    'MuonEG_2017E'        : -1,
+    'MuonEG_2017F'        : -1,
 
     ############################################################################
     ###########################################################################
@@ -3994,6 +4054,12 @@ types = {
     'DoubleEG_2016H'        : "data",
     'DoubleEG_2016'         : "data",
     'DoubleEG_2016_postHIP' : "data",
+    'DoubleEG_2017B'        : "data",
+    'DoubleEG_2017C'        : "data",
+    'DoubleEG_2017D'        : "data",
+    'DoubleEG_2017E'        : "data",
+    'DoubleEG_2017F'        : "data",
+    'DoubleEG_2017'         : "data",
 
     'DoubleMu_2015B'        : "data",
     'DoubleMu_2015C'        : "data",
@@ -4008,6 +4074,12 @@ types = {
     'DoubleMu_2016H'        : "data",
     'DoubleMu_2016'         : "data",
     'DoubleMu_2016_postHIP' : "data",
+    'DoubleMu_2017B'        : "data",
+    'DoubleMu_2017C'        : "data",
+    'DoubleMu_2017D'        : "data",
+    'DoubleMu_2017E'        : "data",
+    'DoubleMu_2017F'        : "data",
+    'DoubleMu_2017'        : "data",
 
     'MuonEG_2015B'        : "data",
     'MuonEG_2015C'        : "data",
@@ -4025,6 +4097,8 @@ types = {
     'MuonEG_2017B'        : "data",
     'MuonEG_2017C'        : "data",
     'MuonEG_2017D'        : "data",
+    'MuonEG_2017E'        : "data",
+    'MuonEG_2017F'        : "data",
     'MuonEG_2017'         : "data",
 
     ###########################################################################
@@ -5319,6 +5393,12 @@ colors = {
     'DoubleEG_2016H'        : 1,
     'DoubleEG_2016'         : 1,
     'DoubleEG_2016_postHIP' : 1,
+    'DoubleEG_2017B'        : 1,
+    'DoubleEG_2017C'        : 1,
+    'DoubleEG_2017D'        : 1,
+    'DoubleEG_2017E'        : 1,
+    'DoubleEG_2017F'        : 1,
+    'DoubleEG_2017'         : 1,
 
     'DoubleMu_2015B'        : 1,
     'DoubleMu_2015C'        : 1,
@@ -5333,6 +5413,12 @@ colors = {
     'DoubleMu_2016H'        : 1,
     'DoubleMu_2016'         : 1,
     'DoubleMu_2016_postHIP' : 1,
+    'DoubleMu_2017B'        : 1,
+    'DoubleMu_2017C'        : 1,
+    'DoubleMu_2017D'        : 1,
+    'DoubleMu_2017E'        : 1,
+    'DoubleMu_2017F'        : 1,
+    'DoubleMu_2017'         : 1,
 
     'MuonEG_2015B'        : 1,
     'MuonEG_2015C'        : 1,
@@ -5351,6 +5437,8 @@ colors = {
     'MuonEG_2017B'        : 1,
     'MuonEG_2017C'        : 1,
     'MuonEG_2017D'        : 1,
+    'MuonEG_2017E'        : 1,
+    'MuonEG_2017F'        : 1,
 
     ###########################################################################
     #RECO stored on T3
@@ -6664,6 +6752,12 @@ labels = {
     'DoubleEG_2016H'        : "DoubleEG 2016H data",
     'DoubleEG_2016'         : "Double Electron 2016 data",
     'DoubleEG_2016_postHIP' : "Double Electron 2016 G+H data",
+    'DoubleEG_2017B'        : "DoubleEG 2017B data",
+    'DoubleEG_2017C'        : "DoubleEG 2017C data",
+    'DoubleEG_2017D'        : "DoubleEG 2017D data",
+    'DoubleEG_2017E'        : "DoubleEG 2017E data",
+    'DoubleEG_2017F'        : "DoubleEG 2017F data",
+    'DoubleEG_2017'         : "Double Electron 2017 data",
 
     'DoubleMu_2015'         : "Double Muon 2015 data",
     'DoubleMu_2015B'        : "DoubleMu 2015B data",
@@ -6678,6 +6772,12 @@ labels = {
     'DoubleMu_2016H'        : "DoubleMu 2016H data",
     'DoubleMu_2016'         : "Double Muon 2016 data",
     'DoubleMu_2016_postHIP' : "Double Muon 2016 G+H data",
+    'DoubleMu_2017B'        : "DoubleMu 2017B data",
+    'DoubleMu_2017C'        : "DoubleMu 2017C data",
+    'DoubleMu_2017D'        : "DoubleMu 2017D data",
+    'DoubleMu_2017E'        : "DoubleMu 2017E data",
+    'DoubleMu_2017F'        : "DoubleMu 2017F data",
+    'DoubleMu_2017'         : "Double Muon 2017 data",
 
     'MuonEG_2015'         : "MuonEG 2015 data",
     'MuonEG_2015B'        : "MuonEG 2015B data",
@@ -6692,10 +6792,12 @@ labels = {
     'MuonEG_2016H'        : "MuonEG 2016H data",
     'MuonEG_2016'         : "Electron Muon 2016 data",
     'MuonEG_2016_postHIP' : "Electron Muon 2016 G+H data",
-    'MuonEG_2017'         : "Electron Muon data (2017 Prompt Reco)",
     'MuonEG_2017B'        : "MuonEG 2017B data",
     'MuonEG_2017C'        : "MuonEG 2017C data",
     'MuonEG_2017D'        : "MuonEG 2017D data",
+    'MuonEG_2017E'        : "MuonEG 2017E data",
+    'MuonEG_2017F'        : "MuonEG 2017F data",
+    'MuonEG_2017'         : "Electron Muon data (2017 Prompt Reco)",
 
     ###########################################################################
     #RECO stored on T3
