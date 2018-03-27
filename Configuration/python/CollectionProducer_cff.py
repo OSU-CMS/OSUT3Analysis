@@ -62,6 +62,7 @@ collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     # so that the reco::GsfElectronCore collection is saved in skims, which is
     # needed because the pat::Electron collection references it
     gsfElectronCore  =  cms.InputTag  ("reducedEgamma",                  "reducedGedGsfElectronCores",  ""),
+    gsfTrack         =  cms.InputTag  ("reducedEgamma",                  "reducedGsfTracks",            ""),
 )
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
