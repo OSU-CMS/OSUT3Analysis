@@ -324,7 +324,6 @@ datasets = [
    'QCD_MuEnriched_1000toInf',
 
    #QCD EMEnriched
-   'QCD_EMEnriched_15to20',
    'QCD_EMEnriched_20to30',
    'QCD_EMEnriched_30to50',
    'QCD_EMEnriched_50to80',
@@ -451,7 +450,6 @@ composite_dataset_definitions = {
     ],
 
     'QCD_EMEnriched' : [
-        #'QCD_EMEnriched_15to20',
         'QCD_EMEnriched_20to30',
         'QCD_EMEnriched_30to50',
         'QCD_EMEnriched_50to80',
@@ -1267,7 +1265,6 @@ nJobs = {
     'QCD_MuEnriched_1000toInf'      : 140,
 
     #QCD EMEnriched
-    'QCD_EMEnriched_15to20'         : 69,
     'QCD_EMEnriched_20to30'         : 261,
     'QCD_EMEnriched_30to50'         : 135,
     'QCD_EMEnriched_50to80'         : 145,
@@ -2536,7 +2533,6 @@ maxEvents = {
     'QCD_MuEnriched_1000toInf'      : -1,
 
     #QCD EMEnriched
-    'QCD_EMEnriched_15to20'         : -1,
     'QCD_EMEnriched_20to30'         : -1,
     'QCD_EMEnriched_30to50'         : -1,
     'QCD_EMEnriched_50to80'         : -1,
@@ -3813,7 +3809,6 @@ types = {
     'QCD_MuEnriched_1000toInf'      : "bgMC",
 
     #QCD EMEnriched
-    'QCD_EMEnriched_15to20'         : "bgMC",
     'QCD_EMEnriched'                : "bgMC",
     'QCD_EMEnriched_20to30'         : "bgMC",
     'QCD_EMEnriched_30to50'         : "bgMC",
@@ -5124,7 +5119,6 @@ colors = {
 
     #QCD EMEnriched
     'QCD_EMEnriched'                : 791,
-    'QCD_EMEnriched_15to20'         : 791,
     'QCD_EMEnriched_20to30'         : 791,
     'QCD_EMEnriched_30to50'         : 791,
     'QCD_EMEnriched_50to80'         : 791,
@@ -6443,7 +6437,6 @@ labels = {
 
     #QCD EMEnriched
     'QCD_EMEnriched'                : "QCD EMEnriched",
-    'QCD_EMEnriched_15to20'         : "QCD EMEnriched Pt 15-20",
     'QCD_EMEnriched_20to30'         : "QCD EMEnriched Pt 20-30",
     'QCD_EMEnriched_30to50'         : "QCD EMEnriched Pt 30-50",
     'QCD_EMEnriched_50to80'         : "QCD EMEnriched Pt 50-80",
@@ -7588,7 +7581,6 @@ crossSections = {
     # filter efficiencies in the sample, these efficiencies are
     # took from https://github.com/silviodonato/RateEstimate/blob/
     # master/datasetCrossSections/datasetCrossSectionsSpring15.py
-    'QCD_EMEnriched_15to20'    :1279000000.0*0.001309,
     'QCD_EMEnriched_20to30'    : 557600000.0*0.009914,
     'QCD_EMEnriched_30to50'    :  136000000.0*0.04988,
     'QCD_EMEnriched_50to80'    :    19800000.0*0.146,
