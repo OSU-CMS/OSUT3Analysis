@@ -381,10 +381,17 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             if UseGridProxy:
                 SubmitFile.write('x509userproxy = ' + userProxy + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Output_files') and currentCondorSubArgumentsSet[argument]['Transfer_Output_files'] == "":
-            SubmitFile.write ('Transfer_Output_files = \n')
-            filesToTransfer.append ("hist_${Process}.root")
+            SubmitFile.write ('Transfer_Output_files = ')
+            if os.path.realpath (Directory).startswith ("/eos/uscms/store/"):
+                filesToTransfer.append ("hist_${Process}.root")
+            else:
+                SubmitFile.write ("hist_$(Process).root,")
             for i in range (0, len (SkimChannelNames)):
-                directoriesToTransfer.append (SkimChannelNames[i])
+                if os.path.realpath (Directory + "/" + SkimChannelNames[i]).startswith ("/eos/uscms/store/"):
+                    directoriesToTransfer.append (SkimChannelNames[i])
+                else:
+                    SubmitFile.write (SkimChannelNames[i] + ",")
+            SubmitFile.write ("\n")
         elif currentCondorSubArgumentsSet[argument].has_key('Requirements') and arguments.Requirements:
             SubmitFile.write('Requirements = ' + arguments.Requirements + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Queue'):
@@ -410,9 +417,9 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("cd " + os.environ["CMSSW_VERSION"] + "/src/\n")
     SubmitScript.write ("scramv1 b ProjectRename\n")
     SubmitScript.write ("eval `scramv1 runtime -sh`\n")
-    SubmitScript.write ("cd -\n")
+    SubmitScript.write ("cd -\n\n")
 
-    SubmitScript.write ("PYTHONPATH=$PYTHONPATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n")
+    SubmitScript.write ("PYTHONPATH=$PYTHONPATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n\n")
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
@@ -421,23 +428,45 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("then\n")
     SubmitScript.write ("  exit $RunStatus\n")
     SubmitScript.write ("fi\n\n")
-    if len (filesToTransfer) > 0:
+    if len (filesToTransfer) + len (directoriesToTransfer) > 0:
         SubmitScript.write ("i=0\n")
         SubmitScript.write ("while [ $CopyStatus -ne 0 ] && [ $i -lt 10 ]\n")
         SubmitScript.write ("do\n")
         DirectoryWithEscapes = re.sub (r"/", r"\/", Directory + "/")
-        SubmitScript.write ("  ls " + " ".join (filesToTransfer) + " | sed \"s/^/" + DirectoryWithEscapes + "/g\" | xargs rm -rf\n")
+
+        if len (filesToTransfer) > 0:
+            SubmitScript.write ("  ls " + " ".join (filesToTransfer) + " | sed \"s/^/" + DirectoryWithEscapes + "/g\" | xargs rm -rf\n")
         for directory in directoriesToTransfer:
             directoryWithEscapes = re.sub (r"/", r"\/", os.path.realpath (Directory + "/" + directory) + "/")
             SubmitScript.write ("  ls " + directory + "/* | sed \"s/^" + directory + "\//" + directoryWithEscapes + "/g\" | xargs rm -rf\n")
         SubmitScript.write ("  sleep 10\n")
-        SubmitScript.write ("  cp -rf " + " ".join (filesToTransfer) + " " + os.path.realpath (Directory) + "/")
+
+        copiedSomething = False
+        if len (filesToTransfer) > 0:
+            if not os.path.realpath (Directory).startswith ("/eos/uscms/store/"):
+                SubmitScript.write ("  cp -rf " + " ".join (filesToTransfer) + " " + os.path.realpath (Directory) + "/")
+                copiedSomething = True
+            else:
+                eosDirectory = re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", os.path.realpath (Directory))
+                SubmitScript.write ("  xrdcp -rf " + " ".join (filesToTransfer) + " " + eosDirectory + "/")
+                copiedSomething = True
         for directory in directoriesToTransfer:
-            SubmitScript.write (" &&\n  cp -rf " + directory + "/* " + os.path.realpath (Directory + "/" + directory) + "/")
+            if not os.path.realpath (Directory + "/" + directory).startswith ("/eos/uscms/store/"):
+                if copiedSomething:
+                    SubmitScript.write (" &&\n")
+                SubmitScript.write ("  cp -rf " + directory + "/* " + os.path.realpath (Directory + "/" + directory) + "/")
+                copiedSomething = True
+            else:
+                eosSubdirectory = re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", os.path.realpath (Directory + "/" + directory))
+                if copiedSomething:
+                    SubmitScript.write (" &&\n")
+                SubmitScript.write ("  xrdcp -rf " + directory + "/* " + eosSubdirectory + "/")
+                copiedSomething = True
+
         SubmitScript.write ("\n  CopyStatus=$?\n")
         SubmitScript.write ("  i=`expr $i + 1`\n")
         SubmitScript.write ("done\n\n")
-        SubmitScript.write ("rm -rf " + " ".join (filesToTransfer) + " " + " ".join (directoriesToTransfer) + "\n")
+        SubmitScript.write ("rm -rf " + " ".join (filesToTransfer) + " " + " ".join (directoriesToTransfer) + " " + os.environ["CMSSW_VERSION"] + "\n")
         SubmitScript.write ("RemoveStatus=$?\n\n")
     SubmitScript.write ("[ $i -eq 10 ] && exit 999\n")
     SubmitScript.write ("exit 0\n")
@@ -483,7 +512,8 @@ def MakeCondorSubmitRelease(Directory):
         subprocess.call ("scram project CMSSW " + os.environ["CMSSW_VERSION"], shell = True, stdout = DEVNULL, stderr = DEVNULL)
         os.chdir (os.environ["CMSSW_VERSION"])
         for directory in directoriesToCopy:
-            shutil.rmtree (directory, ignore_errors = True)
+            while os.path.isdir (directory):
+                shutil.rmtree (directory, ignore_errors = True)
             if os.path.isdir (os.environ["CMSSW_BASE"] + "/" + directory):
                 shutil.copytree (os.environ["CMSSW_BASE"] + "/" + directory, directory, symlinks = True, ignore = shutil.ignore_patterns (*filesToIgnore))
 
@@ -757,7 +787,9 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 for x in Dataset:
                     subprocess.call('MySQLModule ' + x + ' ' + datasetInfoName + ' ' + prefix + ' ' + ("True" if append else "False"), shell = True)
                     append = True
-            NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
+            NTupleExistCheck = ""
+            if os.path.isfile (datasetInfoName):
+                NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
             if (NTupleExistCheck == '#Dataset does not exist on the Tier 3!' or NTupleExistCheck == '') and not SkimExists:
                 #InitializeAAA = raw_input('The dataset ' + Dataset + ' is not available on T3, do you want to access it via xrootd?("y" to continue or "n" to skip)')
                 InitializeAAA = "y"
@@ -966,13 +998,13 @@ if arguments.Generic:
 if arguments.UseAAA:
     UseAAA = True
 UseGridProxy = UseAAA or arguments.UseGridProxy
-remoteAccessT3 = True
-lxbatch  = False
+if os.path.realpath (CondorDir).startswith ("/eos/uscms/store/") or os.path.realpath (HadoopDir).startswith ("/eos/uscms/store/"):
+    UseGridProxy = True
 hostname = socket.gethostname()
-if 'cern.ch' in hostname:
-    lxbatch = True
-if 'interactive' in hostname:
-    remoteAccessT3 = False
+remoteAccessT3 = ('interactive' not in hostname)
+lxbatch = ('cern.ch' in hostname)
+lpcCAF = ('fnal.gov' in hostname)
+
 if arguments.Redirector != "":
     if not RedirectorDic.has_key(arguments.Redirector):
         print "Warning! Invalid redirector provided!! Quit!!"
