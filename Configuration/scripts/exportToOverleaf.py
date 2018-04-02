@@ -149,6 +149,8 @@ newTempFileName = createTempFile ()
 newTempFile = open (newTempFileName, "w")
 wroteInputLine = False
 i = 0
+while main[i].strip () == "":
+    i += 1
 for lineInTemp in temp:
     lineInMain = main[i] if i < len (main) else None
     if lineInMain is None or (lineInTemp != lineInMain and lineInTemp != "% " + lineInMain):
@@ -191,7 +193,8 @@ executeCommand ("git remote add origin " + overleafRepo, stdout = gitOut, stderr
 executeCommand ("git fetch origin", stdout = gitOut, stderr = gitErr)
 executeCommand ("git merge origin/master", stdout = gitOut, stderr = gitErr)
 executeCommand ("git add *", stdout = gitOut, stderr = gitErr)
-executeCommand ("git rm main.tex", stdout = gitOut, stderr = gitErr)
+if os.path.exists ("main.tex"):
+    executeCommand ("git rm main.tex", stdout = gitOut, stderr = gitErr)
 executeCommand ("git commit -m \"Initial sync with SVN repository.\"", stdout = gitOut, stderr = gitErr)
 executeCommand ("git push origin master", stdout = gitOut, stderr = gitErr)
 gitOut.close ()
