@@ -6237,7 +6237,7 @@ labels = {
     ############################################################################
     #DY
     'DYJetsToLL_50'     : "Z#rightarrowl^{+}l^{-} M(50)",
-    'DYJetsToLL'        : "Z#rightarrowl^{+}l^{-} M(10)",
+    'DYJetsToLL'        : "Z#rightarrowl^{+}l^{-}",
 
     #ZJetsToNuNu
     'DYJetsToNuNu'   :  "Z#rightarrow#nu#bar{#nu}",
