@@ -11,6 +11,7 @@ import glob
 import tempfile
 import shutil
 import subprocess
+import tarfile
 from math import *
 from array import *
 from optparse import OptionParser
@@ -365,7 +366,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         elif currentCondorSubArgumentsSet[argument].has_key('Arguments') and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
             SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
-            FilesToTransfer = 'condor.sh,config_cfg.py,userConfig_' + Label + '_cfg.py'
+            FilesToTransfer = os.environ["CMSSW_VERSION"] + '.tar.gz,condor.sh,config_cfg.py,userConfig_' + Label + '_cfg.py'
             if Dataset != '':
                 FilesToTransfer += ',datasetInfo_' + Label + '_cfg.py'
             if UseGridProxy:
@@ -394,11 +395,26 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
 
     SubmitScript = open (Directory + "/condor.sh", "w")
     SubmitScript.write ("#!/usr/bin/env bash\n\n")
-    SubmitScript.write ("PYTHONPATH=$PYTHONPATH:.\n")
+    SubmitScript.write ("(>&2 echo \"Starting job on \" `date`) # Date/time of start of job\n")
+    SubmitScript.write ("(>&2 echo \"Running on: `uname -a`\") # Condor job is running on this node\n")
+    SubmitScript.write ("(>&2 echo \"System software: `cat /etc/redhat-release`\") # Operating System on that node\n\n")
     SubmitScript.write ("Process=$4\n")
     SubmitScript.write ("RunStatus=1\n")
     SubmitScript.write ("CopyStatus=1\n")
     SubmitScript.write ("RemoveStatus=1\n\n")
+
+    SubmitScript.write ("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
+    SubmitScript.write ("tar -xzf " + os.environ["CMSSW_VERSION"] + ".tar.gz\n")
+    SubmitScript.write ("rm -f " + os.environ["CMSSW_VERSION"] + ".tar.gz\n")
+    SubmitScript.write ("SCRAM_ARCH=" + os.environ["SCRAM_ARCH"] + "\n")
+    SubmitScript.write ("cd " + os.environ["CMSSW_VERSION"] + "/src/\n")
+    SubmitScript.write ("scramv1 b ProjectRename\n")
+    SubmitScript.write ("eval `scramv1 runtime -sh`\n")
+    SubmitScript.write ("cd -\n")
+
+    SubmitScript.write ("PYTHONPATH=$PYTHONPATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n")
+
+    SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
     SubmitScript.write ("RunStatus=$?\n")
     SubmitScript.write ("if [ $RunStatus -ne 0 ]\n")
@@ -440,16 +456,16 @@ def MakeCondorSubmitRelease(Directory):
         "lib",
         "python",
         "src",
-        #".SCRAM",
+        ".SCRAM",
    )
     # file patterns to ignore in copying
     filesToIgnore = (
-        "*.cc",
-        "*.h",
+        #"*.cc",
+        #"*.h",
         "*.pyc",
         ".git*",
         "*.C",
-        "*.cpp",
+        #"*.cpp",
         "test",
     )
     cwd = os.getcwd ()
@@ -470,6 +486,12 @@ def MakeCondorSubmitRelease(Directory):
             shutil.rmtree (directory, ignore_errors = True)
             if os.path.isdir (os.environ["CMSSW_BASE"] + "/" + directory):
                 shutil.copytree (os.environ["CMSSW_BASE"] + "/" + directory, directory, symlinks = True, ignore = shutil.ignore_patterns (*filesToIgnore))
+
+        os.chdir ("..")
+        releaseTar = tarfile.open (os.environ["CMSSW_VERSION"] + ".tar.gz", "w:gz")
+        releaseTar.add (os.environ["CMSSW_VERSION"])
+        releaseTar.close ()
+        shutil.rmtree (os.environ["CMSSW_VERSION"])
 
     setattr (MakeCondorSubmitRelease, "madeCondorSubmitRelease", True)
     os.chdir (cwd)
@@ -910,8 +932,6 @@ elif arguments.SkimDirectory == "" and arguments.SkimChannel == "":
 else:
     print "Both skim directory and skim channel should be provided."
 
-envPreamble = 'cd ../' + os.environ["CMSSW_VERSION"] + '/src/ && eval `scram runtime -sh` && cd ~- && '
-
 ###############################################################################
 # Find the list of dataset to run over, either from arguments or localConfig. #
 ###############################################################################
@@ -1083,9 +1103,8 @@ if not arguments.Resubmit:
                 if lxbatch:
                     os.syetem('./lxbatchSub.sh')
                 else:
+                    os.symlink ("../" + os.environ["CMSSW_VERSION"] + ".tar.gz", os.environ["CMSSW_VERSION"] + ".tar.gz")
                     cmd = "condor_submit condor.sub"
-                    if os.path.isdir ("../" + os.environ["CMSSW_VERSION"]):
-                        cmd = envPreamble + cmd
                     subprocess.call(cmd, shell = True)
                 os.chdir(SubmissionDir)
             else:
@@ -1128,9 +1147,8 @@ if not arguments.Resubmit:
             if lxbatch:
                 os.syetem('./lxbatchSub.sh')
             else:
+                os.symlink ("../" + os.environ["CMSSW_VERSION"] + ".tar.gz", os.environ["CMSSW_VERSION"] + ".tar.gz")
                 cmd = "condor_submit condor.sub"
-                if os.path.isdir ("../" + os.environ["CMSSW_VERSION"]):
-                    cmd = envPreamble + cmd
                 subprocess.call(cmd, shell = True)
             os.chdir(SubmissionDir)
         else:
@@ -1159,7 +1177,5 @@ else:
                         subprocess.call('sed -i \'s/' + str(originalRedirector) + '/' + str(RedirectorDic[arguments.Redirector]) + '/g\' '  +  str(datasetInfoFileName), shell = True)
                 print '################ Resubmit failed jobs for ' + str(dataset) + ' dataset #############'
                 cmd = "condor_submit condor_resubmit.sub"
-                if os.path.isdir ("../" + os.environ["CMSSW_VERSION"]):
-                    cmd = envPreamble + cmd
                 subprocess.call(cmd, shell = True)
                 os.chdir(SubmissionDir)
