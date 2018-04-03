@@ -222,6 +222,41 @@ void createElectronFile_80X() {
 
 }
 
+void createElectronFile_94X() {
+
+  // Get/declare files
+
+  TFile * fID_tight = new TFile("ElectronCutBasedID_TightWP_94X_run2017BCDEF.root");
+  TFile * fID_medium = new TFile("ElectronCutBasedID_MediumWP_94X_run2017BCDEF.root");
+  TFile * fID_loose = new TFile("ElectronCutBasedID_LooseWP_94X_run2017BCDEF.root");
+  TFile * fID_veto = new TFile("ElectronCutBasedID_VetoWP_94X_run2017BCDEF.root");
+
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID_tight->Get("EGamma_SF2D");
+  TH2D * id_medium = (TH2D*)fID_medium->Get("EGamma_SF2D");
+  TH2D * id_loose = (TH2D*)fID_loose->Get("EGamma_SF2D");
+  TH2D * id_veto = (TH2D*)fID_veto->Get("EGamma_SF2D");
+
+
+  // Write output
+
+  id_tight->Write("TightID_94X");
+  id_medium->Write("MediumID_94X");
+  id_loose->Write("LooseID_94X");
+  id_veto->Write("VetoID_94X");
+
+  fOutput->Close();
+
+  fID_tight->Close();
+  fID_medium->Close();
+  fID_loose->Close();
+  fID_veto->Close();
+
+}
+
 // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffsRun2#Results_for_CMSSW_7_6_X_dataset
 void createMuonSFFile_76X() {
 
@@ -306,6 +341,7 @@ void createMuonSFFile_80X() {
 void recreateLeptonSFs() {
   createElectronFile_76X();
   createElectronFile_80X();
+  createElectronFile_94X();
 
   createMuonSFFile_76X();
   createMuonSFFile_80X();
