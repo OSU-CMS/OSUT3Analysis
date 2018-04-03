@@ -6231,7 +6231,7 @@ labels = {
     ############################################################################
     #DY
     'DYJetsToLL_50'     : "Z#rightarrowl^{+}l^{-} M(50)",
-    'DYJetsToLL'        : "Z#rightarrowl^{+}l^{-}",
+    'DYJetsToLL'        : "#gamma*/Z#rightarrowl^{+}l^{#font[122]{\55}}",
 
     #ZJetsToNuNu
     'DYJetsToNuNu'   :  "Z#rightarrow#nu#bar{#nu}",
@@ -6385,8 +6385,8 @@ labels = {
     'DYBBJetsToLL'      : "ZBB#rightarrowl^{+}l^{-}",
     'TTJets'            : "t#bar{t} (Debug)",
     'TTJets_Debug'      : "t#bar{t}",
-    'Diboson'           : "diboson",
-    'Diboson_Incl'      : "diboson",
+    'Diboson'           : "Diboson",
+    'Diboson_Incl'      : "Diboson",
     'WW'                : "WW",
     'WZ'                : "WZ",
     'ZZ'                : "ZZ",
@@ -6421,7 +6421,7 @@ labels = {
 
     #QCD MuEnriched
     'QCD_MuEnriched_20toInf'        : "QCD MuEnriched Pt 20-Inf",
-    'QCD_MuEnriched'                : "QCD MuEnriched",
+    'QCD_MuEnriched'                : "#mu-enriched QCD",
     'QCD_MuEnriched_15to20'         : "QCD MuEnriched Pt 15-20",
     'QCD_MuEnriched_20to30'         : "QCD MuEnriched Pt 20-30",
     'QCD_MuEnriched_30to50'         : "QCD MuEnriched Pt 30-50",
