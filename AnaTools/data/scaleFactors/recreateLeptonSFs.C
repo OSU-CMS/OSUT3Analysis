@@ -222,6 +222,8 @@ void createElectronFile_80X() {
 
 }
 
+//the electron isolation is included in the electron ID. 
+//so, there is only one electron SF, which is for the ID
 void createElectronFile_94X() {
 
   // Get/declare files
@@ -230,6 +232,8 @@ void createElectronFile_94X() {
   TFile * fID_medium = new TFile("ElectronCutBasedID_MediumWP_94X_run2017BCDEF.root");
   TFile * fID_loose = new TFile("ElectronCutBasedID_LooseWP_94X_run2017BCDEF.root");
   TFile * fID_veto = new TFile("ElectronCutBasedID_VetoWP_94X_run2017BCDEF.root");
+
+  TFile * fCurrent = new TFile("../electronSF.root");
 
   TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
 
@@ -330,6 +334,45 @@ void createMuonSFFile_80X() {
 
   muID->Write("TightID_80X");
   idIso->Write("TightIDIso_80X");
+
+  fOutput->Close();
+
+  fID->Close();
+  fIso->Close();
+
+}
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2017#Muon_reconstruction_identificati
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiEXO-MUODocumentationRun2
+void createMuonSFFile_94X() {
+
+  // Get/declare files
+
+  TFile * fID = new TFile("MuonID_94X_run2017BCDEF.json");
+  TFile * fIso = new TFile("MuonIso_94X_run2017BCDEF.json");
+  TFile * fTrig = new TFile("SingleMuonTrigger_94X_run2017BCDEF.root");
+
+  TFile * fCurrent = new TFile("../muonSF.root");
+
+  TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * muID = (TH2D*)fID->Get("MC_NUM_TightIDandIPCut_DEN_genTracks_PAR_pt_spliteta_bin1/pt_abseta_ratio");
+  TH2D * muIso = (TH2D*)fIso->Get("MC_NUM_TightRelIso_DEN_TightID_PAR_pt_spliteta_bin1/pt_abseta_ratio");
+  TH2D * muIsolatedTrigger = (TH2D*)fTrig->Get("IsoMu27_PtEtaBins/pt_abseta_ratio");
+  TH2D * muNonisolatedTrigger = (TH2D*)fTrig->Get("Mu50_PtEtaBins/pt_abseta_ratio");
+
+  // Products
+
+  TH2D * idIso = MuonProduct(muID, muIso, "TightIDIso_94X");
+
+  // Write output
+
+  muID->Write("TightID_94X");
+  idIso->Write("TightIDIso_94X");
+  muIsolatedTrigger->Write("muonTrigger2017IsoMu27");
+  muNonisolatedTrigger->Write("muonTrigger2017Mu50");
 
   fOutput->Close();
 
