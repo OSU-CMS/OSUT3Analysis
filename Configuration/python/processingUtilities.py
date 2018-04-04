@@ -108,6 +108,8 @@ def set_commandline_arguments(parser):
                       help="Include the yield of each source in the legend")
     parser.add_option("-p", "--pdfs",  action="store_true", dest="savePDFs", default=False,
                       help="Save pdfs files for all plots made")
+    parser.add_option("--pngs",  action="store_true", dest="savePNGs", default=False,
+                      help="Save pngs files for all plots made")
 
     return parser
 
