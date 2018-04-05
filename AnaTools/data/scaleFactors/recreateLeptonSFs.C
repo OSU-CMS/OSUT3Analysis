@@ -6,13 +6,13 @@ void createElectronFile_2015() {
 
   // Get/declare files
 
-  TFile * fID_tight = new TFile("CutBasedID_TightWP_76X_18Feb.txt_SF2D.root");
-  TFile * fID_medium = new TFile("CutBasedID_MediumWP_76X_18Feb.txt_SF2D.root");
-  TFile * fID_loose = new TFile("CutBasedID_LooseWP_76X_18Feb.txt_SF2D.root");
-  TFile * fID_veto = new TFile("CutBasedID_VetoWP_76X_18Feb.txt_SF2D.root");
-  TFile * fReco = new TFile("eleRECO.txt.egamma_SF2D.root");
+  TFile * fID_tight = new TFile("electron2015/CutBasedID_TightWP_76X_18Feb.txt_SF2D.root");
+  TFile * fID_medium = new TFile("electron2015/CutBasedID_MediumWP_76X_18Feb.txt_SF2D.root");
+  TFile * fID_loose = new TFile("electron2015/CutBasedID_LooseWP_76X_18Feb.txt_SF2D.root");
+  TFile * fID_veto = new TFile("electron2015/CutBasedID_VetoWP_76X_18Feb.txt_SF2D.root");
+  TFile * fReco = new TFile("electron2015/eleRECO.txt.egamma_SF2D.root");
 
-  TFile * fOutput = new TFile("electronSF_new.root", "RECREATE");
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
 
   // Get inputs
 
@@ -43,11 +43,11 @@ void createElectronFile_2016() {
 
   // Get/declare files
 
-  TFile * fID_veto = new TFile("electronIDVeto.root");
-  TFile * fID_loose = new TFile("electronIDLoose.root");
-  TFile * fID_medium = new TFile("electronIDMedium.root");
-  TFile * fID_tight = new TFile("electronIDTight.root");
-  TFile * fReco = new TFile("electronRECO.root");
+  TFile * fID_veto = new TFile("electron2016/electronIDVeto.root");
+  TFile * fID_loose = new TFile("electron2016/electronIDLoose.root");
+  TFile * fID_medium = new TFile("electron2016/electronIDMedium.root");
+  TFile * fID_tight = new TFile("electron2016/electronIDTight.root");
+  TFile * fReco = new TFile("electron2016/electronRECO.root");
 
   TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
 
@@ -81,10 +81,10 @@ void createElectronFile_2017() {
   // Get/declare files
   // No Reco SF for 94X 2017
 
-  TFile * fID_tight = new TFile("ElectronCutBasedID_TightWP_94X_run2017BCDEF.root");
-  TFile * fID_medium = new TFile("ElectronCutBasedID_MediumWP_94X_run2017BCDEF.root");
-  TFile * fID_loose = new TFile("ElectronCutBasedID_LooseWP_94X_run2017BCDEF.root");
-  TFile * fID_veto = new TFile("ElectronCutBasedID_VetoWP_94X_run2017BCDEF.root");
+  TFile * fID_tight = new TFile("electron2017/ElectronCutBasedID_TightWP_94X_run2017BCDEF.root");
+  TFile * fID_medium = new TFile("electron2017/ElectronCutBasedID_MediumWP_94X_run2017BCDEF.root");
+  TFile * fID_loose = new TFile("electron2017/ElectronCutBasedID_LooseWP_94X_run2017BCDEF.root");
+  TFile * fID_veto = new TFile("electron2017/ElectronCutBasedID_VetoWP_94X_run2017BCDEF.root");
 
   TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
 
@@ -116,11 +116,11 @@ void createMuonSFFile_2015() {
 
   // Get/declare files
 
-  TFile * fID = new TFile("MuonID_Z_RunCD_Reco76X_Feb15.root");
-  TFile * fIso = new TFile("MuonIso_Z_RunCD_Reco76X_Feb15.root");
-  TFile * fTrig = new TFile("SingleMuonTrigger_Z_RunCD_Reco76X_Feb15.root");
+  TFile * fID = new TFile("muon2015/MuonID_Z_RunCD_Reco76X_Feb15.root");
+  TFile * fIso = new TFile("muon2015/MuonIso_Z_RunCD_Reco76X_Feb15.root");
+  TFile * fTrig = new TFile("muon2015/SingleMuonTrigger_Z_RunCD_Reco76X_Feb15.root");
 
-  TFile * fOutput = new TFile("muonSF_new.root", "RECREATE");
+  TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
 
   // Get inputs
 
@@ -163,11 +163,11 @@ void createMuonSFFile_2016() {
 
   // Get/declare files
 
-  TFile * fIDBCDEF = new TFile("MuonID_BCDEF.root");
-  TFile * fIDGH = new TFile("MuonID_GH.root");
-  TFile * fIsoBCDEF = new TFile("MuonIso_BCDEF.root");
-  TFile * fIsoGH = new TFile("MuonIso_GH.root");
-  TFile * fTracking = new TFile("Tracking_2016.root");
+  TFile * fIDBCDEF = new TFile("muon2016/MuonID_BCDEF.root");
+  TFile * fIDGH = new TFile("muon2016/MuonID_GH.root");
+  TFile * fIsoBCDEF = new TFile("muon2016/MuonIso_BCDEF.root");
+  TFile * fIsoGH = new TFile("muon2016/MuonIso_GH.root");
+  TFile * fTracking = new TFile("muon2016/Tracking_2016.root");
 
   // Get inputs
 
@@ -201,7 +201,7 @@ void createMuonSFFile_2016() {
 
   // Write output
 
-  TFile * fOutput = new TFile("muonSF_new.root", "RECREATE");
+  TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
 
   muIDLooseBCDEF->Write("muonID2016LooseBCDEF");
   muIDMediumBCDEF->Write("muonID2016MediumBCDEF");
@@ -246,7 +246,7 @@ void createMuonSFFile_2017() {
 
   TFile * fID = new TFile("muon2017/RunBCDEF_SF_ID.json.root");
   TFile * fIso = new TFile("muon2017/RunBCDEF_SF_ISO.json.root");
-  TFile * fTrig = new TFile("SingleMuonTrigger_94X_run2017BCDEF.root");
+  TFile * fTrig = new TFile("muon2017/SingleMuonTrigger_94X_run2017BCDEF.root");
 
   TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
 
