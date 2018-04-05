@@ -39,7 +39,7 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
     string catInputCollection = anatools::concatenateInputCollection (inputCollection);
 
     objectsToGet_.insert (inputCollection.begin (), inputCollection.end ());
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
     objectsToGet_.insert ("generatorweights");
 #endif
 

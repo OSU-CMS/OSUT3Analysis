@@ -495,16 +495,13 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
     return false;
   }
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
   const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
   for (unsigned i = 0; i < triggerNames.size (); i++)
     {
       string name = triggerNames.triggerName (i);
       bool pass = handles_.triggers->accept (i);
       unsigned prescale = handles_.prescales->getPrescaleForIndex (i);
-#else
-  #warning "Object \"triggers\" is not valid in requested data format."
-#endif
+
       triggers[name] = make_pair (pass, prescale);
     }
   !maxAllTriggerWidth_ && (maxAllTriggerWidth_ = getMaxWidth (triggers));
@@ -537,15 +534,12 @@ InfoPrinter::printAllMETFilters (const edm::Event &event)
     return false;
   }
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
   const edm::TriggerNames &metFilterNames = event.triggerNames (*handles_.metFilters);
   for (unsigned i = 0; i < metFilterNames.size (); i++)
     {
       string name = metFilterNames.triggerName (i);
       bool pass = handles_.metFilters->accept (i);
-#else
-  #warning "Object \"metFilters\" is not valid in requested data format."
-#endif
+
       metFilters[name] = pass;
     }
   !maxAllMETFilterWidth_ && (maxAllMETFilterWidth_ = getMaxWidth (metFilters));
@@ -580,7 +574,7 @@ InfoPrinter::printAllTriggerFilters (const edm::Event &event)
     return false;
   }
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
   for(auto triggerObj : *handles_.trigobjs) {
 #if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
     triggerObj.unpackNamesAndLabels(event, *handles_.triggers);

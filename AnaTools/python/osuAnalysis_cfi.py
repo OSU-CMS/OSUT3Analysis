@@ -1,4 +1,5 @@
 import FWCore.ParameterSet.Config as cms
+import copy
 
 ###########################################################
 ##### Set up the standard input collections in miniAOD ####
@@ -27,6 +28,11 @@ collectionMap = cms.PSet (
     metFilters                  =  cms.InputTag  ('TriggerResults',                 '',                       'PAT'),
     trigobjs                    =  cms.InputTag  ('selectedPatTrigger',             ''),
 )
+
+collectionMapMiniAOD2017 = copy.deepcopy(collectionMap)
+collectionMapMiniAOD2017.tracks          = cms.InputTag ('isolatedTracks', '')
+collectionMapMiniAOD2017.secondaryTracks = cms.InputTag ('isolatedTracks', '')
+collectionMapMiniAOD2017.trigobjs        = cms.InputTag  ('slimmedPatTrigger') # Thanks MINIAOD for changing names!
 
 collectionMapAOD = cms.PSet (
     electrons         =  cms.InputTag  ('uncleanedOnlyGsfElectrons'),

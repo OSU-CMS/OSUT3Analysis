@@ -22,6 +22,12 @@ datasets = [
    'Tau_2016F',
    'Tau_2016G',
    'Tau_2016H',
+   'Tau_2017',
+   'Tau_2017B',
+   'Tau_2017C',
+   'Tau_2017D',
+   'Tau_2017E',
+   'Tau_2017F',
    'ZeroBias_2015',
    'ZeroBias_2015D',
    'ZeroBias_2016',
@@ -43,10 +49,12 @@ datasets = [
    'SingleMu_2016H',
    'SingleMu_2016',
    'SingleMu_2016_postHIP',
+   'SingleMu_2017',
    'SingleMu_2017B',
    'SingleMu_2017C',
    'SingleMu_2017D',
-   'SingleMu_2017',
+   'SingleMu_2017E',
+   'SingleMu_2017F',
    'SingleEle_2015',
    'SingleEle_2015D',
    'SingleEle_2016B',
@@ -58,6 +66,13 @@ datasets = [
    'SingleEle_2016H',
    'SingleEle_2016',
    'SingleEle_2016_postHIP',
+   'SingleEle_2017',
+   'SingleEle_2017B',
+   'SingleEle_2017C',
+   'SingleEle_2017D',
+   'SingleEle_2017E',
+   'SingleEle_2017F',
+   'SingleEle_2017',
    'SinglePhoton_2015',
    'SinglePhoton_2015D',
    'DoubleEG_2015',
@@ -71,6 +86,12 @@ datasets = [
    'DoubleEG_2016H',
    'DoubleEG_2016',
    'DoubleEG_2016_postHIP',
+   'DoubleEG_2017B',
+   'DoubleEG_2017C',
+   'DoubleEG_2017D',
+   'DoubleEG_2017E',
+   'DoubleEG_2017F',
+   'DoubleEG_2017',
    'DoubleMu_2015',
    'DoubleMu_2015D',
    'DoubleMu_2016B',
@@ -82,6 +103,12 @@ datasets = [
    'DoubleMu_2016H',
    'DoubleMu_2016',
    'DoubleMu_2016_postHIP',
+   'DoubleMu_2017B',
+   'DoubleMu_2017C',
+   'DoubleMu_2017D',
+   'DoubleMu_2017E',
+   'DoubleMu_2017F',
+   'DoubleMu_2017',
    'MuonEG_2015D',
    'MuonEG_2015',
    'MuonEG_2016B',
@@ -96,6 +123,8 @@ datasets = [
    'MuonEG_2017B',
    'MuonEG_2017C',
    'MuonEG_2017D',
+   'MuonEG_2017E',
+   'MuonEG_2017F',
    'MuonEG_2017',
    'MET_2015',
    'MET_2015D',
@@ -107,6 +136,12 @@ datasets = [
    'MET_2016F',
    'MET_2016G',
    'MET_2016H',
+   'MET_2017',
+   'MET_2017B',
+   'MET_2017C',
+   'MET_2017D',
+   'MET_2017E',
+   'MET_2017F',
    'NoBPTX_2015D',
    'NoBPTX_2015D_v3',
    'NoBPTX_2015D_v4',
@@ -324,6 +359,7 @@ datasets = [
    'QCD_MuEnriched_1000toInf',
 
    #QCD EMEnriched
+   'QCD_EMEnriched_15to20',
    'QCD_EMEnriched_20to30',
    'QCD_EMEnriched_30to50',
    'QCD_EMEnriched_50to80',
@@ -450,6 +486,7 @@ composite_dataset_definitions = {
     ],
 
     'QCD_EMEnriched' : [
+        'QCD_EMEnriched_15to20',
         'QCD_EMEnriched_20to30',
         'QCD_EMEnriched_30to50',
         'QCD_EMEnriched_50to80',
@@ -480,6 +517,13 @@ composite_dataset_definitions = {
         'Tau_2016F',
         'Tau_2016G',
         'Tau_2016H',
+    ],
+    'Tau_2017' : [
+        'Tau_2017B',
+        'Tau_2017C',
+        'Tau_2017D',
+        'Tau_2017E',
+        'Tau_2017F',
     ],
     'ZeroBias_2015' : [
         'ZeroBias_2015B',
@@ -517,6 +561,8 @@ composite_dataset_definitions = {
         'SingleMu_2017B',
         'SingleMu_2017C',
         'SingleMu_2017D',
+        'SingleMu_2017E',
+        'SingleMu_2017F',
     ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
@@ -535,6 +581,13 @@ composite_dataset_definitions = {
     'SingleEle_2016_postHIP' : [
         'SingleEle_2016G',
         'SingleEle_2016H',
+    ],
+    'SingleEle_2017' : [
+        'SingleEle_2017B',
+        'SingleEle_2017C',
+        'SingleEle_2017D',
+        'SingleEle_2017E',
+        'SingleEle_2017F',
     ],
     'SinglePhoton_2015' : [
         'SinglePhoton_2015B',
@@ -559,6 +612,13 @@ composite_dataset_definitions = {
         'DoubleEG_2016G',
         'DoubleEG_2016H',
     ],
+    'DoubleEG_2017' : [
+        'DoubleEG_2017B',
+        'DoubleEG_2017C',
+        'DoubleEG_2017D',
+        'DoubleEG_2017E',
+        'DoubleEG_2017F',
+    ],
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
         'DoubleMu_2015C',
@@ -576,6 +636,13 @@ composite_dataset_definitions = {
     'DoubleMu_2016_postHIP' : [
         'DoubleMu_2016G',
         'DoubleMu_2016H',
+    ],
+    'DoubleMu_2017' : [
+        'DoubleMu_2017B',
+        'DoubleMu_2017C',
+        'DoubleMu_2017D',
+        'DoubleMu_2017E',
+        'DoubleMu_2017F',
     ],
     'MuonEG_2015' : [
         'MuonEG_2015B',
@@ -599,6 +666,8 @@ composite_dataset_definitions = {
         'MuonEG_2017B',
         'MuonEG_2017C',
         'MuonEG_2017D',
+        'MuonEG_2017E',
+        'MuonEG_2017F',
     ],
     #2015
     'mchamp100_NtupleSeparateEvents': [
@@ -954,6 +1023,13 @@ composite_dataset_definitions = {
         'MET_2016G',
         'MET_2016H',
     ],
+    'MET_2017' : [
+       'MET_2017B',
+       'MET_2017C',
+       'MET_2017D',
+       'MET_2017E',
+       'MET_2017F',
+    ],
     'NoBPTX_Jet_2016BCD_PromptReco' : [
        'NoBPTX_Jet_2016B_PromptReco_v2',
        'NoBPTX_Jet_2016C_PromptReco_v2',
@@ -1129,6 +1205,11 @@ nJobs = {
     'MET_2016F' : 999,
     'MET_2016G' : 406,
     'MET_2016H' : 269,
+    'MET_2017B' : 999,
+    'MET_2017C' : 999,
+    'MET_2017D' : 999,
+    'MET_2017E' : 999,
+    'MET_2017F' : 999,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm_76X'    :  99,
@@ -1265,6 +1346,7 @@ nJobs = {
     'QCD_MuEnriched_1000toInf'      : 140,
 
     #QCD EMEnriched
+    'QCD_EMEnriched_15to20'         : 69,
     'QCD_EMEnriched_20to30'         : 261,
     'QCD_EMEnriched_30to50'         : 135,
     'QCD_EMEnriched_50to80'         : 145,
@@ -1289,6 +1371,11 @@ nJobs = {
     'Tau_2016F'  :  1000,
     'Tau_2016G'  :  1000,
     'Tau_2016H'  :  1000,
+    'Tau_2017B'  :  1000,
+    'Tau_2017C'  :  1000,
+    'Tau_2017D'  :  1000,
+    'Tau_2017E'  :  1000,
+    'Tau_2017F'  :  1000,
 
     'ZeroBias_2015D'  :  1000,
     'ZeroBias_2016B'  :  1000,
@@ -1311,6 +1398,8 @@ nJobs = {
     'SingleMu_2017B'   : 1000,
     'SingleMu_2017C'   : 1000,
     'SingleMu_2017D'   : 1000,
+    'SingleMu_2017E'   : 1000,
+    'SingleMu_2017F'   : 1000,
 
     # set number of jobs to correpond to roughly 100k events/job
     'SingleEle_2015D' : 1000,
@@ -1321,6 +1410,11 @@ nJobs = {
     'SingleEle_2016F' : 710,
     'SingleEle_2016G' : 1530,
     'SingleEle_2016H' : 1300,
+    'SingleEle_2017B' : 1000,
+    'SingleEle_2017C' : 1000,
+    'SingleEle_2017D' : 1000,
+    'SingleEle_2017E' : 1000,
+    'SingleEle_2017F' : 1000,
 
     'SinglePhoton_2015B'   :  55,
     'SinglePhoton_2015C'   : 130,
@@ -1337,6 +1431,11 @@ nJobs = {
     'DoubleEG_2016F'  : 350,
     'DoubleEG_2016G'  : 790,
     'DoubleEG_2016H'  : 860,
+    'DoubleEG_2017B'  : 580,
+    'DoubleEG_2017C'  : 651,
+    'DoubleEG_2017D'  : 259,
+    'DoubleEG_2017E'  : 562,
+    'DoubleEG_2017F'  : 743,
 
     # set number of jobs to correpond to roughly 100k events/job
     'DoubleMu_2015B'  : 40,
@@ -1349,6 +1448,11 @@ nJobs = {
     'DoubleMu_2016F'  : 200,
     'DoubleMu_2016G'  : 450,
     'DoubleMu_2016H'  : 490,
+    'DoubleMu_2017B'  : 145,
+    'DoubleMu_2017C'  : 496,
+    'DoubleMu_2017D'  : 231,
+    'DoubleMu_2017E'  : 516,
+    'DoubleMu_2017F'  : 798,
 
     # set number of jobs to correpond to roughly 100k events/job
     'MuonEG_2015B' : 30,
@@ -1363,6 +1467,8 @@ nJobs = {
     'MuonEG_2017B' : 45,
     'MuonEG_2017C' : 156,
     'MuonEG_2017D' : 92,
+    'MuonEG_2017E' : 190,
+    'MuonEG_2017F' : 258,
 
     ############################################################################
 
@@ -2396,6 +2502,11 @@ maxEvents = {
     'MET_2016F' : -1,
     'MET_2016G' : -1,
     'MET_2016H' : -1,
+    'MET_2017B' : -1,
+    'MET_2017C' : -1,
+    'MET_2017D' : -1,
+    'MET_2017E' : -1,
+    'MET_2017F' : -1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm_76X'    :  -1,
@@ -2533,6 +2644,7 @@ maxEvents = {
     'QCD_MuEnriched_1000toInf'      : -1,
 
     #QCD EMEnriched
+    'QCD_EMEnriched_15to20'         : -1,
     'QCD_EMEnriched_20to30'         : -1,
     'QCD_EMEnriched_30to50'         : -1,
     'QCD_EMEnriched_50to80'         : -1,
@@ -2557,6 +2669,11 @@ maxEvents = {
     'Tau_2016F'       : -1,
     'Tau_2016G'       : -1,
     'Tau_2016H'       : -1,
+    'Tau_2017B'       : -1,
+    'Tau_2017C'       : -1,
+    'Tau_2017D'       : -1,
+    'Tau_2017E'       : -1,
+    'Tau_2017F'       : -1,
 
     'ZeroBias_2015D'       : -1,
     'ZeroBias_2016B'       : -1,
@@ -2592,6 +2709,12 @@ maxEvents = {
     'SingleEle_2016H'        : -1,
     'SingleEle_2016'         : -1,
     'SingleEle_2016_postHIP' : -1,
+    'SingleEle_2017B'        : -1,
+    'SingleEle_2017C'        : -1,
+    'SingleEle_2017D'        : -1,
+    'SingleEle_2017E'        : -1,
+    'SingleEle_2017F'        : -1,
+    'SingleEle_2017'         : -1,
 
     'SinglePhoton_2015B'       : -1,
     'SinglePhoton_2015C'       : -1,
@@ -2609,6 +2732,12 @@ maxEvents = {
     'DoubleEG_2016H'        : -1,
     'DoubleEG_2016'         : -1,
     'DoubleEG_2016_postHIP' : -1,
+    'DoubleEG_2017B'        : -1,
+    'DoubleEG_2017C'        : -1,
+    'DoubleEG_2017D'        : -1,
+    'DoubleEG_2017E'        : -1,
+    'DoubleEG_2017F'        : -1,
+    'DoubleEG_2017'         : -1,
 
     'DoubleMu_2015B'        : -1,
     'DoubleMu_2015C'        : -1,
@@ -2622,6 +2751,12 @@ maxEvents = {
     'DoubleMu_2016H'        : -1,
     'DoubleMu_2016'         : -1,
     'DoubleMu_2016_postHIP' : -1,
+    'DoubleMu_2017B'        : -1,
+    'DoubleMu_2017C'        : -1,
+    'DoubleMu_2017D'        : -1,
+    'DoubleMu_2017E'        : -1,
+    'DoubleMu_2017F'        : -1,
+    'DoubleMu_2017'        : -1,
 
     'MuonEG_2015B'        : -1,
     'MuonEG_2015C'        : -1,
@@ -2637,6 +2772,8 @@ maxEvents = {
     'MuonEG_2017B'        : -1,
     'MuonEG_2017C'        : -1,
     'MuonEG_2017D'        : -1,
+    'MuonEG_2017E'        : -1,
+    'MuonEG_2017F'        : -1,
 
     ############################################################################
     ###########################################################################
@@ -3665,6 +3802,12 @@ types = {
     'MET_2016H'        : "data",
     'MET_2016'         : "data",
     'MET_2016_postHIP' : "data",
+    'MET_2017B'        : "data",
+    'MET_2017C'        : "data",
+    'MET_2017D'        : "data",
+    'MET_2017E'        : "data",
+    'MET_2017F'        : "data",
+    'MET_2017'         : "data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm_76X'    :  "signalMC",
@@ -3810,6 +3953,7 @@ types = {
 
     #QCD EMEnriched
     'QCD_EMEnriched'                : "bgMC",
+    'QCD_EMEnriched_15to20'         : "bgMC",
     'QCD_EMEnriched_20to30'         : "bgMC",
     'QCD_EMEnriched_30to50'         : "bgMC",
     'QCD_EMEnriched_50to80'         : "bgMC",
@@ -3837,8 +3981,14 @@ types = {
     'Tau_2016F'    : "data",
     'Tau_2016G'    : "data",
     'Tau_2016H'    : "data",
+    'Tau_2017B'    : "data",
+    'Tau_2017C'    : "data",
+    'Tau_2017D'    : "data",
+    'Tau_2017E'    : "data",
+    'Tau_2017F'    : "data",
     'Tau_2015'    : "data",
     'Tau_2016'    : "data",
+    'Tau_2017'    : "data",
 
     'ZeroBias_2015D'    : "data",
     'ZeroBias_2016B'    : "data",
@@ -3875,10 +4025,16 @@ types = {
     'SingleEle_2016F'   : "data",
     'SingleEle_2016G'   : "data",
     'SingleEle_2016H'   : "data",
+    'SingleEle_2017B'   : "data",
+    'SingleEle_2017C'   : "data",
+    'SingleEle_2017D'   : "data",
+    'SingleEle_2017E'   : "data",
+    'SingleEle_2017F'   : "data",
 
     'SingleEle_2015'         : "data",
     'SingleEle_2016'         : "data",
     'SingleEle_2016_postHIP' : "data",
+    'SingleEle_2017'         : "data",
 
     'SinglePhoton_2015B'   : "data",
     'SinglePhoton_2015C'   : "data",
@@ -3898,6 +4054,12 @@ types = {
     'DoubleEG_2016H'        : "data",
     'DoubleEG_2016'         : "data",
     'DoubleEG_2016_postHIP' : "data",
+    'DoubleEG_2017B'        : "data",
+    'DoubleEG_2017C'        : "data",
+    'DoubleEG_2017D'        : "data",
+    'DoubleEG_2017E'        : "data",
+    'DoubleEG_2017F'        : "data",
+    'DoubleEG_2017'         : "data",
 
     'DoubleMu_2015B'        : "data",
     'DoubleMu_2015C'        : "data",
@@ -3912,6 +4074,12 @@ types = {
     'DoubleMu_2016H'        : "data",
     'DoubleMu_2016'         : "data",
     'DoubleMu_2016_postHIP' : "data",
+    'DoubleMu_2017B'        : "data",
+    'DoubleMu_2017C'        : "data",
+    'DoubleMu_2017D'        : "data",
+    'DoubleMu_2017E'        : "data",
+    'DoubleMu_2017F'        : "data",
+    'DoubleMu_2017'         : "data",
 
     'MuonEG_2015B'        : "data",
     'MuonEG_2015C'        : "data",
@@ -3929,6 +4097,8 @@ types = {
     'MuonEG_2017B'        : "data",
     'MuonEG_2017C'        : "data",
     'MuonEG_2017D'        : "data",
+    'MuonEG_2017E'        : "data",
+    'MuonEG_2017F'        : "data",
     'MuonEG_2017'         : "data",
 
     ###########################################################################
@@ -4974,6 +5144,12 @@ colors = {
     'MET_2016H'        : 1,
     'MET_2016'         : 1,
     'MET_2016_postHIP' : 1,
+    'MET_2017B'        : 1,
+    'MET_2017C'        : 1,
+    'MET_2017D'        : 1,
+    'MET_2017E'        : 1,
+    'MET_2017F'        : 1,
+    'MET_2017'         : 1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm_76X'    :  632,
@@ -5119,6 +5295,7 @@ colors = {
 
     #QCD EMEnriched
     'QCD_EMEnriched'                : 791,
+    'QCD_EMEnriched_15to20'         : 791,
     'QCD_EMEnriched_20to30'         : 791,
     'QCD_EMEnriched_30to50'         : 791,
     'QCD_EMEnriched_50to80'         : 791,
@@ -5146,8 +5323,14 @@ colors = {
     'Tau_2016F'  :  1,
     'Tau_2016G'  :  1,
     'Tau_2016H'  :  1,
+    'Tau_2017B'  :  1,
+    'Tau_2017C'  :  1,
+    'Tau_2017D'  :  1,
+    'Tau_2017E'  :  1,
+    'Tau_2017F'  :  1,
     'Tau_2015'   :  1,
     'Tau_2016'   :  1,
+    'Tau_2017'   :  1,
 
     'ZeroBias_2015D'  :  1,
     'ZeroBias_2016B'  :  1,
@@ -5185,6 +5368,12 @@ colors = {
     'SingleEle_2016H'        : 1,
     'SingleEle_2016'         : 1,
     'SingleEle_2016_postHIP' : 1,
+    'SingleEle_2017B'        : 1,
+    'SingleEle_2017C'        : 1,
+    'SingleEle_2017D'        : 1,
+    'SingleEle_2017E'        : 1,
+    'SingleEle_2017F'        : 1,
+    'SingleEle_2017'         : 1,
 
     'SinglePhoton_2015B'   : 1,
     'SinglePhoton_2015C'   : 1,
@@ -5204,6 +5393,12 @@ colors = {
     'DoubleEG_2016H'        : 1,
     'DoubleEG_2016'         : 1,
     'DoubleEG_2016_postHIP' : 1,
+    'DoubleEG_2017B'        : 1,
+    'DoubleEG_2017C'        : 1,
+    'DoubleEG_2017D'        : 1,
+    'DoubleEG_2017E'        : 1,
+    'DoubleEG_2017F'        : 1,
+    'DoubleEG_2017'         : 1,
 
     'DoubleMu_2015B'        : 1,
     'DoubleMu_2015C'        : 1,
@@ -5218,6 +5413,12 @@ colors = {
     'DoubleMu_2016H'        : 1,
     'DoubleMu_2016'         : 1,
     'DoubleMu_2016_postHIP' : 1,
+    'DoubleMu_2017B'        : 1,
+    'DoubleMu_2017C'        : 1,
+    'DoubleMu_2017D'        : 1,
+    'DoubleMu_2017E'        : 1,
+    'DoubleMu_2017F'        : 1,
+    'DoubleMu_2017'         : 1,
 
     'MuonEG_2015B'        : 1,
     'MuonEG_2015C'        : 1,
@@ -5236,6 +5437,8 @@ colors = {
     'MuonEG_2017B'        : 1,
     'MuonEG_2017C'        : 1,
     'MuonEG_2017D'        : 1,
+    'MuonEG_2017E'        : 1,
+    'MuonEG_2017F'        : 1,
 
     ###########################################################################
     #RECO stored on T3
@@ -6294,6 +6497,12 @@ labels = {
     'MET_2016H'        : "MET_2016H data",
     'MET_2016'         : "MET 2016 data",
     'MET_2016_postHIP' : "MET 2016 G+H data",
+    'MET_2017B'        : "MET_2017B data",
+    'MET_2017C'        : "MET_2017C data",
+    'MET_2017D'        : "MET_2017D data",
+    'MET_2017E'        : "MET_2017E data",
+    'MET_2017F'        : "MET_2017F data",
+    'MET_2017'         : "MET_2017 data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_10cm_76X'    :  "100 GeV #tilde{#chi}^{#pm} (c#tau = 10 cm)",
@@ -6437,6 +6646,7 @@ labels = {
 
     #QCD EMEnriched
     'QCD_EMEnriched'                : "QCD EMEnriched",
+    'QCD_EMEnriched_15to20'         : "QCD EMEnriched Pt 15-20",
     'QCD_EMEnriched_20to30'         : "QCD EMEnriched Pt 20-30",
     'QCD_EMEnriched_30to50'         : "QCD EMEnriched Pt 30-50",
     'QCD_EMEnriched_50to80'         : "QCD EMEnriched Pt 50-80",
@@ -6464,8 +6674,14 @@ labels = {
     'Tau_2016F'  :  "Tau 2016F data",
     'Tau_2016G'  :  "Tau 2016G data",
     'Tau_2016H'  :  "Tau 2016H data",
+    'Tau_2017B'  :  "Tau 2017B data",
+    'Tau_2017C'  :  "Tau 2017C data",
+    'Tau_2017D'  :  "Tau 2017D data",
+    'Tau_2017E'  :  "Tau 2017E data",
+    'Tau_2017F'  :  "Tau 2017F data",
     'Tau_2015'   :  "Tau 2015 data",
     'Tau_2016'   :  "Tau 2016 data",
+    'Tau_2017'   :  "Tau 2016 data",
 
     'ZeroBias_2015D'  :  "ZeroBias 2015D data",
     'ZeroBias_2016B'  :  "ZeroBias 2016B data",
@@ -6491,15 +6707,17 @@ labels = {
     'SingleMu_2016H'        : "SingleMuon 2016H data",
     'SingleMu_2016'         : "SingleMuon 2016 data",
     'SingleMu_2016_postHIP' : "SingleMuon 2016 G+H data",
-    'SingleMu_2017B'        : "SingleMuon 2017C data",
-    'SingleMu_2017C'        : "SingleMuon 2017D data",
-    'SingleMu_2017D'        : "SingleMuon 2017E data",
+    'SingleMu_2017B'        : "SingleMuon 2017B data",
+    'SingleMu_2017C'        : "SingleMuon 2017C data",
+    'SingleMu_2017D'        : "SingleMuon 2017D data",
+    'SingleMu_2017E'        : "SingleMuon 2017E data",
+    'SingleMu_2017F'        : "SingleMuon 2017F data",
     'SingleMu_2017'         : "SingleMuon 2017 data",
 
-    'SingleEle_2015'         : "SingleElectron 2015 data",
     'SingleEle_2015B'        : "SingleElectron 2015B data",
     'SingleEle_2015C'        : "SingleElectron 2015C data",
     'SingleEle_2015D'        : "SingleElectron 2015D data",
+    'SingleEle_2015'         : "SingleElectron 2015 data",
     'SingleEle_2016B'        : "SingleElectron 2016B data",
     'SingleEle_2016C'        : "SingleElectron 2016C data",
     'SingleEle_2016D'        : "SingleElectron 2016D data",
@@ -6507,8 +6725,14 @@ labels = {
     'SingleEle_2016F'        : "SingleElectron 2016F data",
     'SingleEle_2016G'        : "SingleElectron 2016G data",
     'SingleEle_2016H'        : "SingleElectron 2016H data",
-    'SingleEle_2016'         : "Single Electron 2016 data",
-    'SingleEle_2016_postHIP' : "Single Electron 2016 G+H data",
+    'SingleEle_2016'         : "SingleElectron 2016 data",
+    'SingleEle_2016_postHIP' : "SingleElectron 2016 G+H data",
+    'SingleEle_2017B'        : "SingleElectron 2017B data",
+    'SingleEle_2017C'        : "SingleElectron 2017C data",
+    'SingleEle_2017D'        : "SingleElectron 2017D data",
+    'SingleEle_2017E'        : "SingleElectron 2017E data",
+    'SingleEle_2017F'        : "SingleElectron 2017F data",
+    'SingleEle_2017'         : "SingleElectron 2017 data",
 
     'SinglePhoton_2015'      : "SinglePhoton 2015 data",
     'SinglePhoton_2015B'     : "SinglePhoton 2015B data",
@@ -6528,6 +6752,12 @@ labels = {
     'DoubleEG_2016H'        : "DoubleEG 2016H data",
     'DoubleEG_2016'         : "Double Electron 2016 data",
     'DoubleEG_2016_postHIP' : "Double Electron 2016 G+H data",
+    'DoubleEG_2017B'        : "DoubleEG 2017B data",
+    'DoubleEG_2017C'        : "DoubleEG 2017C data",
+    'DoubleEG_2017D'        : "DoubleEG 2017D data",
+    'DoubleEG_2017E'        : "DoubleEG 2017E data",
+    'DoubleEG_2017F'        : "DoubleEG 2017F data",
+    'DoubleEG_2017'         : "Double Electron 2017 data",
 
     'DoubleMu_2015'         : "Double Muon 2015 data",
     'DoubleMu_2015B'        : "DoubleMu 2015B data",
@@ -6542,6 +6772,12 @@ labels = {
     'DoubleMu_2016H'        : "DoubleMu 2016H data",
     'DoubleMu_2016'         : "Double Muon 2016 data",
     'DoubleMu_2016_postHIP' : "Double Muon 2016 G+H data",
+    'DoubleMu_2017B'        : "DoubleMu 2017B data",
+    'DoubleMu_2017C'        : "DoubleMu 2017C data",
+    'DoubleMu_2017D'        : "DoubleMu 2017D data",
+    'DoubleMu_2017E'        : "DoubleMu 2017E data",
+    'DoubleMu_2017F'        : "DoubleMu 2017F data",
+    'DoubleMu_2017'         : "Double Muon 2017 data",
 
     'MuonEG_2015'         : "MuonEG 2015 data",
     'MuonEG_2015B'        : "MuonEG 2015B data",
@@ -6556,10 +6792,12 @@ labels = {
     'MuonEG_2016H'        : "MuonEG 2016H data",
     'MuonEG_2016'         : "Electron Muon 2016 data",
     'MuonEG_2016_postHIP' : "Electron Muon 2016 G+H data",
-    'MuonEG_2017'         : "Electron Muon data (2017 Prompt Reco)",
     'MuonEG_2017B'        : "MuonEG 2017B data",
     'MuonEG_2017C'        : "MuonEG 2017C data",
     'MuonEG_2017D'        : "MuonEG 2017D data",
+    'MuonEG_2017E'        : "MuonEG 2017E data",
+    'MuonEG_2017F'        : "MuonEG 2017F data",
+    'MuonEG_2017'         : "Electron Muon data (2017 Prompt Reco)",
 
     ###########################################################################
     #RECO stored on T3
@@ -7581,6 +7819,7 @@ crossSections = {
     # filter efficiencies in the sample, these efficiencies are
     # took from https://github.com/silviodonato/RateEstimate/blob/
     # master/datasetCrossSections/datasetCrossSectionsSpring15.py
+    'QCD_EMEnriched_15to20'    :1279000000.0*0.001309,
     'QCD_EMEnriched_20to30'    : 557600000.0*0.009914,
     'QCD_EMEnriched_30to50'    :  136000000.0*0.04988,
     'QCD_EMEnriched_50to80'    :    19800000.0*0.146,

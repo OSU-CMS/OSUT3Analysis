@@ -36,12 +36,6 @@ main (int argc, char *argv[])
       else if (cppType == "vector<" TYPE_STR(jets) ">")
         cout << "jets" << endl;
 #endif
-#if IS_VALID(basicjets)
-      // Warning:  if jets and basicjets have the same type, this function
-      // will always return "jets" for that type, and not "basicjets".
-      else if (cppType == "vector<" TYPE_STR(basicjets) ">")
-        cout << "basicjets" << endl;
-#endif
 #if IS_VALID(bjets)
       else if (cppType == "vector<" TYPE_STR(bjets) ">")
         cout << "bjets" << endl;

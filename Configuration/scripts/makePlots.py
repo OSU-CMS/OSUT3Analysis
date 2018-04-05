@@ -1229,6 +1229,10 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         pathToDirString = plainTextString(pathToDir)
         Canvas.SaveAs(condor_dir+"/stacked_histograms_pngs/"+pathToDirString+"/"+histogramName+".png")
 
+    if arguments.savePNGs:
+        pathToDirString = plainTextString(pathToDir)
+        Canvas.SaveAs(condor_dir+"/stacked_histograms_pngs/"+pathToDirString+"/"+histogramName+".png")
+
 
 ##########################################################################################################################################
 ##########################################################################################################################################
@@ -1525,6 +1529,9 @@ def MakeTwoDHist(pathToDir,histogramName):
         pathToDirString = plainTextString(pathToDir)
         Canvas.SaveAs(condor_dir+"/stacked_histograms_pngs/"+pathToDirString+"/"+histogramName+".png")
 
+    if arguments.savePNGs:
+        pathToDirString = plainTextString(pathToDir)
+        Canvas.SaveAs(condor_dir+"/stacked_histograms_pngs/"+pathToDirString+"/"+histogramName+".png")
 
 
 ##########################################################################################################################################

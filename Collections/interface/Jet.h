@@ -2,12 +2,13 @@
 #define OSU_JET
 
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
-#if IS_VALID(jets)
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
 namespace osu
 {
-  class Jet : public GenMatchable<TYPE(jets), 0>
+
+#if IS_VALID(jets)
+#ifndef STOPPPED_PTLS
+    class Jet : public GenMatchable<TYPE(jets), 0>
     {
       public:
         Jet ();
@@ -28,6 +29,7 @@ namespace osu
         const float smearedPt () const;
         const float smearedPtUp () const;
         const float smearedPtDown () const;
+        
         const float alphamax () const;
         const float ipsig () const;
         const float log10ipsig () const;
@@ -50,6 +52,7 @@ namespace osu
         void set_smearedPtUp (float value) { smearedPtUp_ = value;}
         void set_smearedPtDown (float value) { smearedPtDown_ = value;}
         void set_alphamax (float value) { alphamax_ = value;}
+
         void set_ipsig (float value) { ipsig_ = value;}
         void set_log10ipsig (float value) { log10ipsig_ = value;}
         void set_medianlog10ipsig (float value) { medianlog10ipsig_ = value;}
@@ -72,27 +75,45 @@ namespace osu
         float log10ipsig_;
         float medianlog10ipsig_;
     };
-}
-#elif DATA_FORMAT == AOD_CUSTOM
-namespace osu
-{
-  class Jet : public TYPE(jets)
+#else // if STOPPPED_PTLS
+    class Jet : public TYPE(jets)
     {
       public:
         Jet ();
         Jet (const TYPE(jets) &);
         ~Jet ();
     };
-}
-#endif
+#endif // if STOPPPED_PTLS
+#else // IS_VALID(jets)
+    typedef TYPE(jets) Jet;
+#endif // IS_VALID(jets)
 
-#else
+    //////////////////////////////
+    // osu::Bjet
+    //////////////////////////////
+#if IS_VALID(jets) && IS_VALID(bjets)
+#ifndef STOPPPED_PTLS
+    class Bjet : public Jet
+    {
+      public:
+        Bjet();
+        Bjet(const TYPE(jets) &);
+        Bjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &);
+        Bjet(const TYPE(jets) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
+        ~Bjet();
+    };
+#else // STOPPPED_PTLS
+    class Bjet : public Jet
+    {
+        Bjet();
+        BJet(const TYPE(jets) &);
+        ~Bjet();
+    };
+#endif // STOPPPED_PTLS
+#else // IS_VALID(jets) && IS_VALID(bjets)
+    typedef TYPE(bjets) Bjet;
+#endif // IS_VALID(jets) && IS_VALID(bjets)
 
-namespace osu
-{
-  typedef TYPE(jets) Jet;
-}
+} // namespace osu
 
-#endif
-
-#endif
+#endif // ifndef OSU_JET

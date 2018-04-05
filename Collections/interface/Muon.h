@@ -6,7 +6,7 @@
 
 #if IS_VALID(muons)
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
 namespace osu
 {
   class Muon : public GenMatchable<TYPE(muons), 13>
@@ -89,7 +89,7 @@ namespace osu
         bool match_HLT_IsoTkMu20_v_;
     };
 }
-#elif DATA_FORMAT == AOD_CUSTOM
+#else // STOPPPED_PTLS
 namespace osu
 {
   class Muon : public TYPE(muons)
@@ -100,7 +100,7 @@ namespace osu
         ~Muon ();
     };
 }
-#endif
+#endif // STOPPPED_PTLS
 
 #else
 

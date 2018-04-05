@@ -2,7 +2,7 @@
 
 #if IS_VALID(muons)
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
 
 #include "OSUT3Analysis/Collections/interface/Primaryvertex.h"
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
@@ -183,7 +183,9 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
-#elif DATA_FORMAT == AOD_CUSTOM
+
+#else // STOPPPED_PTLS
+
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
@@ -211,9 +213,10 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
-#endif
+
+#endif // STOPPPED_PTLS
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(OSUMuonProducer);
 
-#endif
+#endif // IS_VALID(muons)

@@ -26,28 +26,10 @@ collectionProducer.genMatchables = {
 # Configuration for derived classes
 ################################################################################
 
-collectionProducer.basicjets = cms.EDProducer ("OSUBasicjetProducer",
-)
-copyConfiguration (collectionProducer.basicjets, collectionProducer.genMatchables)
-
 #-------------------------------------------------------------------------------
 
 collectionProducer.beamspots = cms.EDProducer ("OSUBeamspotProducer",
 )
-
-#-------------------------------------------------------------------------------
-
-collectionProducer.bjets = cms.EDProducer ("OSUBjetProducer",
-    rho = cms.InputTag("fixedGridRhoFastjetAll", "", ""),
-    jetResolutionPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
-    jetResSFPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
-    jetResFromGlobalTag = cms.bool(False),
-)
-
-if 'CMSSW_8' in os.environ['CMSSW_VERSION']:
-    collectionProducer.bjets.jetResFromGlobalTag = cms.bool(True)
-
-copyConfiguration (collectionProducer.bjets, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
 
@@ -80,6 +62,7 @@ collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     # so that the reco::GsfElectronCore collection is saved in skims, which is
     # needed because the pat::Electron collection references it
     gsfElectronCore  =  cms.InputTag  ("reducedEgamma",                  "reducedGedGsfElectronCores",  ""),
+    gsfTrack         =  cms.InputTag  ("reducedEgamma",                  "reducedGsfTracks",            ""),
 )
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
@@ -112,6 +95,9 @@ if 'CMSSW_8' in os.environ['CMSSW_VERSION']:
     collectionProducer.jets.jetResFromGlobalTag = cms.bool(True)
 
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
+
+collectionProducer.bjets = copy.deepcopy (collectionProducer.jets)
+collectionProducer.bjets._TypedParameterizable__type = "OSUBjetProducer"
 
 #-------------------------------------------------------------------------------
 
@@ -195,8 +181,14 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),
     HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),
 
+    pfCandidates = cms.InputTag  ('packedPFCandidates',  '',  ''),
+
     gsfTracks    =  cms.InputTag  ("electronGsfTracks",      ""),
     maxDeltaRForGsfTrackMatching = cms.double (0.2), # if cutting on dRToMatchedGsfTrack, must set this to be greater than the cut threshold
+
+    # these are only relavent for the disappearing tracks analysis
+    candidateTracks = cms.InputTag ("candidateTrackProducer", ""),
+    maxDeltaRForCandidateTrackMatching = cms.double (0.2), # if cutting on dRToMatchedIsolatedTrack, must set this to be greater than the cut threshold
 
     # The following three parameters are used to correct the missing outer hits
     # distribution in MC for the disappearing tracks analysis.
@@ -206,7 +198,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     hitInefficiency             =  cms.double  (0.0175874821487),  # probability of randomly dropping strip hits in the TOB
 )
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
-    if "Run2016" in osusub.dataset:
+    if "Run2016" in osusub.dataset or "Run2017" in osusub.dataset:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2016_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2016_data.root")
     else:

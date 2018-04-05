@@ -80,7 +80,7 @@ getLocation
              print $tmpfile "\n";
           }
       }
-      print $tmpfile "]";
+      print $tmpfile "]\n";
       return
    }
   if ($results->numrows () == 0)

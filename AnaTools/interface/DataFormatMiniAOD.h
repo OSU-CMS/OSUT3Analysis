@@ -3,7 +3,6 @@
 #define  electrons_TYPE                   pat::Electron
 #define  events_TYPE                      INVALID_TYPE
 #define  genjets_TYPE                     reco::GenJet
-#define  basicjets_TYPE                   pat::Jet
 #define  jets_TYPE                        pat::Jet
 #define  bjets_TYPE                       pat::Jet
 #define  mcparticles_TYPE                 pat::PackedGenParticle
@@ -44,7 +43,6 @@
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/EgammaReco/interface/SuperCluster.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-#include "DataFormats/JetReco/interface/BasicJet.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"

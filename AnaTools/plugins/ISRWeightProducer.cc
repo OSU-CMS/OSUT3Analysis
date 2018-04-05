@@ -21,7 +21,7 @@ ISRWeightProducer::~ISRWeightProducer() {
 void
 ISRWeightProducer::AddVariables (const edm::Event &event) {
 
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   if(event.isRealData() || weightFile_.empty () || weightHist_.empty ()) {
     (*eventvariables)["isrWeight"] = 1;
     (*eventvariables)["isrWeightUp"] = 1;
@@ -87,7 +87,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
   (*eventvariables)["isrWeightUp"] = isrWeightUp;
   (*eventvariables)["isrWeightDown"] = isrWeightDown;
 
-#else
+#else // if STOPPPED_PTLS
   (*eventvariables)["isrWeight"] = 1;
   (*eventvariables)["isrWeightUp"] = 1;
   (*eventvariables)["isrWeightDown"] = 1;
@@ -97,7 +97,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
 bool
 ISRWeightProducer::isOriginalParticle (const TYPE(hardInteractionMcparticles) &mcparticle, const int pdgId) const
 {
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   if(!mcparticle.numberOfMothers () || mcparticle.motherRef ().isNull ()) return true;
   return(mcparticle.motherRef ()->pdgId () != pdgId) && isOriginalParticle ((TYPE(hardInteractionMcparticles)) *mcparticle.motherRef (), pdgId);
 #else
