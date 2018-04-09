@@ -170,11 +170,15 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
       for(unsigned id =0; id < jet.getJetConstituents().size(); id++) {
 
-	      const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
-	      const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
+	const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
+	const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
 
         try {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,1,1)
           if(packedCand.hasTrackDetails() && recoCand->charge() != 0) {
+#else
+          if(recoCand->charge() != 0) {
+#endif
             double dxy = fabs(packedCand.dxy());
             double dxyerr = packedCand.dxyError();
             if(dxyerr>0) {
