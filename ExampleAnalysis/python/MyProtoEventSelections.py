@@ -7,7 +7,7 @@ import copy
 
 eMuMinimal = cms.PSet(
     name = cms.string("EMuMinimal"),
-    triggers = cms.vstring("HLT_Mu23NoFiltersNoVtx_Photon23_CaloIdL_v1"), # TRIGGER
+    triggers = cms.vstring("HLT_Mu23NoFiltersNoVtx_Photon23_CaloIdL_v"), # TRIGGER
     cuts = cms.VPSet (
         # EVENT HAS GOOD PV
         cms.PSet (
