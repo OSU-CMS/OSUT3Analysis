@@ -207,19 +207,31 @@ osu::Muon::set_match_HLT_IsoTkMu20_v (const bool flag)
 const int
 osu::Muon::missingInnerHits () const
 {
-  return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS));
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  return (this->innerTrack ()->hitPattern ().numberOfAllHits (reco::HitPattern::MISSING_INNER_HITS));
+#else
+  return (this->innerTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS));
+#endif
 }
 
 const int
 osu::Muon::missingMiddleHits () const
 {
-  return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS));
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  return (this->innerTrack ()->hitPattern ().numberOfAllHits (reco::HitPattern::TRACK_HITS));
+#else
+  return (this->innerTrack ()->hitPattern ().numberOfHits (reco::HitPattern::TRACK_HITS));
+#endif
 }
 
 const int
 osu::Muon::missingOuterHits () const
 {
-  return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  return (this->innerTrack ()->hitPattern ().numberOfAllHits (reco::HitPattern::MISSING_OUTER_HITS));
+#else
+  return (this->innerTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_OUTER_HITS));
+#endif
 }
 
 const double
