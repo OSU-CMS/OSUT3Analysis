@@ -7,7 +7,7 @@ import copy
 
 eMuMinimal = cms.PSet(
     name = cms.string("EMuMinimal"),
-    triggers = cms.vstring("HLT_Mu23NoFiltersNoVtx_Photon23_CaloIdL_v1"), # TRIGGER
+    triggers = cms.vstring("HLT_Mu23NoFiltersNoVtx_Photon23_CaloIdL_v"), # TRIGGER
     cuts = cms.VPSet (
         # EVENT HAS GOOD PV
         cms.PSet (
@@ -48,7 +48,7 @@ eMuMinimal = cms.PSet(
 
 preselection = cms.PSet(
     name = cms.string("Preselection"),
-    triggers = cms.vstring("HLT_Mu23NoFiltersNoVtx_Photon23_CaloIdL_v1"), # TRIGGER
+    triggers = cms.vstring("HLT_Mu23NoFiltersNoVtx_Photon23_CaloIdL_v"), # TRIGGER
     cuts = cms.VPSet (
         # EVENT HAS GOOD PV
         cms.PSet (
@@ -80,7 +80,6 @@ preselection = cms.PSet(
             inputCollection = cms.vstring("electrons"),
             cutString = cms.string("                              \
           (isEB & \
-          missingInnerHits_ <= 2 & \
           abs(deltaEtaSuperClusterTrackAtVtx) < 0.00926 & \
           abs(deltaPhiSuperClusterTrackAtVtx) < 0.0336 & \
           full5x5_sigmaIetaIeta < 0.0101 & \
@@ -88,7 +87,6 @@ preselection = cms.PSet(
           abs(1/ecalEnergy - eSuperClusterOverP/ecalEnergy) < 0.012 & \
           passConversionVeto)|\
           (isEE & \
-          missingInnerHits_ <= 1 & \
           abs(deltaEtaSuperClusterTrackAtVtx) < 0.00724 & \
           abs(deltaPhiSuperClusterTrackAtVtx) < 0.0918 & \
           full5x5_sigmaIetaIeta < 0.0279 & \
