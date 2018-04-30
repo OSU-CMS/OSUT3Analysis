@@ -519,14 +519,21 @@ def MakeCondorSubmitRelease(Directory):
         os.chdir (os.environ["CMSSW_VERSION"])
         for directory in directoriesToCopy:
             while os.path.isdir (directory):
-                shutil.rmtree (directory, ignore_errors = True)
+                try:
+                    shutil.rmtree (directory, ignore_errors = True)
+                except OSError:
+                    pass
             if os.path.isdir (os.environ["CMSSW_BASE"] + "/" + directory):
                 shutil.copytree (os.environ["CMSSW_BASE"] + "/" + directory, directory, symlinks = True, ignore = shutil.ignore_patterns (*filesToIgnore))
+        # sleep for 5 seconds to allow slow filesystems to catch up
+        time.sleep (5)
 
         os.chdir ("..")
         releaseTar = tarfile.open (os.environ["CMSSW_VERSION"] + ".tar.gz", "w:gz")
         releaseTar.add (os.environ["CMSSW_VERSION"])
         releaseTar.close ()
+        # sleep for 5 seconds to allow slow filesystems to catch up
+        time.sleep (5)
         shutil.rmtree (os.environ["CMSSW_VERSION"])
 
     setattr (MakeCondorSubmitRelease, "madeCondorSubmitRelease", True)
