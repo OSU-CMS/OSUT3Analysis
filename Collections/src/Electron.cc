@@ -171,31 +171,19 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
 const int
 osu::Electron::missingInnerHits () const
 {
-#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
-  return (this->gsfTrack ()->hitPattern ().numberOfAllHits (reco::HitPattern::MISSING_INNER_HITS));
-#else
-  return (this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS));
-#endif
+  return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS));
 }
 
 const int
 osu::Electron::missingMiddleHits () const
 {
-#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
-  return (this->gsfTrack ()->hitPattern ().numberOfAllHits (reco::HitPattern::TRACK_HITS));
-#else
-  return (this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::TRACK_HITS));
-#endif
+  return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS));
 }
 
 const int
 osu::Electron::missingOuterHits () const
 {
-#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
-  return (this->gsfTrack ()->hitPattern ().numberOfAllHits (reco::HitPattern::MISSING_OUTER_HITS));
-#else
-  return (this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_OUTER_HITS));
-#endif
+  return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
 }
 
 const float
