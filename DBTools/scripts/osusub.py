@@ -501,14 +501,18 @@ def MakeCondorSubmitRelease(Directory):
     os.chdir (Directory + "/..")
 
     recopy = not hasattr (MakeCondorSubmitRelease, "madeCondorSubmitRelease")
-    if recopy and os.path.isdir (os.environ["CMSSW_VERSION"]):
+    if recopy and os.path.isfile (os.environ["CMSSW_VERSION"] + ".tar.gz"):
         print "Release " + os.environ["CMSSW_VERSION"] + " already exists for remote execution."
         recopy = raw_input ("Would you like to recopy the release? (y/N): ")
         recopy = (len (recopy) > 0 and recopy[0].upper () == "Y")
 
     if recopy:
         print "Setting up " + os.environ["CMSSW_VERSION"] + " for remote execution..."
-        shutil.rmtree (os.environ["CMSSW_VERSION"], ignore_errors = True)
+        while os.path.isfile (os.environ["CMSSW_VERSION"] + ".tar.gz"):
+            try:
+                os.unlink (os.environ["CMSSW_VERSION"] + ".tar.gz")
+            except OSError:
+                pass
         subprocess.call ("scram project CMSSW " + os.environ["CMSSW_VERSION"], shell = True, stdout = DEVNULL, stderr = DEVNULL)
         os.chdir (os.environ["CMSSW_VERSION"])
         for directory in directoriesToCopy:
