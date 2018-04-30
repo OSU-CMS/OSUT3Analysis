@@ -205,19 +205,19 @@ osu::Muon::set_match_HLT_IsoTkMu20_v (const bool flag)
 }
 
 const int
-osu::Muon::missingInnerHits () const
+osu::Muon::missingInnerHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS));
 }
 
 const int
-osu::Muon::missingMiddleHits () const
+osu::Muon::missingMiddleHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS));
 }
 
 const int
-osu::Muon::missingOuterHits () const
+osu::Muon::missingOuterHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
 }

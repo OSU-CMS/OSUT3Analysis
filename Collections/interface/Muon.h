@@ -43,9 +43,9 @@ namespace osu
         void set_match_HLT_IsoMu20_v (const bool);
         void set_match_HLT_IsoTkMu20_v (const bool);
 
-        const int missingInnerHits () const;
-        const int missingMiddleHits () const;
-        const int missingOuterHits () const;
+        const int missingInnerHitsFromTrackerLayersWithoutMeasurements () const;
+        const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
+        const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
 
         const double metMinusOnePt () const;
         const double metMinusOnePx () const;

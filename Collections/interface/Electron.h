@@ -27,9 +27,10 @@ namespace osu
         const double d0Sig () const;
         const double dz () const;
         const int electronPVIndex () const;
-        const int missingInnerHits () const;
-        const int missingMiddleHits () const;
-        const int missingOuterHits () const;
+        const int missingInnerHitsFromAllHits () const;
+        const int missingInnerHitsFromTrackerLayersWithoutMeasurements () const;
+        const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
+        const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
         const bool passesTightID_noIsolation () const;
         const bool match_HLT_Ele25_eta2p1_WPTight_Gsf_v () const;
         const bool match_HLT_Ele22_eta2p1_WPLoose_Gsf_v () const;
