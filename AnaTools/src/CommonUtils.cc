@@ -205,7 +205,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   if  (VEC_CONTAINS  (objectsToGet,  "genjets")   && !tokens.genjets.isUninitialized())           event.getByToken  (tokens.genjets,           handles.genjets);
   if  (VEC_CONTAINS  (objectsToGet,  "jets")      && !tokens.jets.isUninitialized())              event.getByToken  (tokens.jets,              handles.jets);
   if  (VEC_CONTAINS  (objectsToGet,  "bjets")     && !tokens.bjets.isUninitialized())             event.getByToken  (tokens.bjets,             handles.bjets);
-  if  (VEC_CONTAINS  (objectsToGet,  "basicjets") && !tokens.basicjets.isUninitialized())         event.getByToken  (tokens.basicjets,         handles.basicjets);
   if  (VEC_CONTAINS  (objectsToGet,  "generatorweights") && !tokens.generatorweights.isUninitialized())  event.getByToken  (tokens.generatorweights,  handles.generatorweights);
   if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")      && !tokens.mcparticles.isUninitialized())       event.getByToken  (tokens.mcparticles,       handles.mcparticles);
   if  (VEC_CONTAINS  (objectsToGet,  "mets")             && !tokens.mets.isUninitialized())              event.getByToken  (tokens.mets,              handles.mets);
@@ -265,8 +264,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         ss << endl << "Did not retrieve jets collection from the event.";
       if (!handles.bjets.isValid ())
         ss << endl << "Did not retrieve bjets collection from the event.";
-      if (!handles.basicjets.isValid ())
-        ss << endl << "Did not retrieve basicjets collection from the event.";
       if (!handles.generatorweights.isValid ())
         ss << endl << "Did not retrieve generatorweights collection from the event.";
       if (!handles.mcparticles.isValid ())
@@ -799,10 +796,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   string  anatools::getObjectType  (const  osu::Bjet            &obj)  {  return  "bjet";            }
   string  anatools::getObjectClass  (const  osu::Bjet            &obj)  {  return  "osu::Bjet";            }
 #endif
-#if IS_VALID(basicjets) && DATA_FORMAT == AOD
-  string  anatools::getObjectType   (const  osu::Basicjet            &obj)  {  return  "basicjet";            }
-  string  anatools::getObjectClass  (const  osu::Basicjet            &obj)  {  return  "osu::Basicjet";            }
-#endif
 #if IS_VALID(mcparticles)
   string  anatools::getObjectType  (const  osu::Mcparticle     &obj)  {  return  "mcparticle";     }
   string  anatools::getObjectClass  (const  osu::Mcparticle     &obj)  {  return  "osu::Mcparticle";     }
@@ -899,8 +892,6 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     tokens.jets = cc.consumes<vector<osu::Jet> > (collections.getParameter<edm::InputTag> ("jets"));
   if (collections.exists ("bjets"))
     tokens.bjets = cc.consumes<vector<osu::Bjet> > (collections.getParameter<edm::InputTag> ("bjets"));
-  if (collections.exists ("basicjets"))
-    tokens.basicjets = cc.consumes<vector<osu::Basicjet> > (collections.getParameter<edm::InputTag> ("basicjets"));
   if (collections.exists ("mcparticles"))
     tokens.mcparticles = cc.consumes<vector<osu::Mcparticle> > (collections.getParameter<edm::InputTag> ("mcparticles"));
   if (collections.exists ("mets"))

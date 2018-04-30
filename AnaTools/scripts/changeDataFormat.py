@@ -4,8 +4,7 @@ import sys
 import os
 from optparse import OptionParser
 
-
-supported_formats = ["AOD","MINI_AOD"]
+supported_formats = ["AOD", "MINI_AOD", "MINI_AOD_2017"]
 
 parser = OptionParser()
 parser.add_option("-f", "--format", dest="data_format",
@@ -16,6 +15,8 @@ parser.add_option("-v", "--version", action="store_true", dest="version", defaul
                   help="print data format version and exit")
 parser.add_option("-c","--config", dest="custom_config",
                   help="path to config file specifying the custom format (starting with package name)")
+parser.add_option("-d", "--define", dest="custom_define",
+                  help="comma-separated list of custom preprocessor definitions to provide with #define. Examples: \"-d DEF1\", \"-d DEF1,DEF2\"")
 
 (arguments, args) = parser.parse_args()
 
@@ -46,6 +47,11 @@ if arguments.data_format not in supported_formats:
 
 if arguments.custom_config:
     arguments.data_format += "_CUSTOM"
+
+if arguments.custom_define:
+    for definition in arguments.custom_define.split(','):
+        print "Defining custom variable: #define " + definition
+        os.system('sed -i "16i #define %s" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % definition)
 
 os.system('sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT %s/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % (arguments.data_format))
 

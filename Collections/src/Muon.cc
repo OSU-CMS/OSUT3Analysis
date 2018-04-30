@@ -1,7 +1,9 @@
 #include "OSUT3Analysis/Collections/interface/Muon.h"
 
 #if IS_VALID(muons)
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+
+#ifndef STOPPPED_PTLS
+
 osu::Muon::Muon ()
 {
   isTightMuonWRTVtx_ = false;
@@ -292,7 +294,7 @@ osu::Muon::match_HLT_IsoTkMu20_v () const
   return match_HLT_IsoTkMu20_v_;
 }
 
-#elif DATA_FORMAT == AOD_CUSTOM
+#else // STOPPPED_PTLS
 
 osu::Muon::Muon ()
 {
@@ -302,11 +304,11 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
     TYPE(muons) (muon)
 {
 }
-#endif
+
+#endif // STOPPPED_PTLS
 
 osu::Muon::~Muon ()
 {
 }
 
-
-#endif
+#endif // #if IS_VALID(muons)

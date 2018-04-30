@@ -1,18 +1,19 @@
-#include "OSUT3Analysis/Collections/plugins/OSUJetProducer.h"
+#include "OSUT3Analysis/Collections/plugins/OSUGenericJetProducer.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
 #if IS_VALID(jets)
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
 #include "CondFormats/DataRecord/interface/JetResolutionRcd.h"
 #include "CondFormats/DataRecord/interface/JetResolutionScaleFactorRcd.h"
 #include "TRandom3.h"
 #endif
 
-OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
+template<class T> 
+OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
   jetResolutionPayload_ (cfg.getParameter<string> ("jetResolutionPayload")),
@@ -21,16 +22,16 @@ OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
   cfg_         (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   electrons_ = collections_.getParameter<edm::InputTag> ("electrons");
   muons_ = collections_.getParameter<edm::InputTag> ("muons");
   genjets_ = collections_.getParameter<edm::InputTag> ("genjets");
   primaryvertexs_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
 #endif
-  produces<vector<osu::Jet> > (collection_.instance ());
+  produces<vector<T> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(jets)> > (collection_);
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   electronToken_ = consumes<vector<TYPE(electrons)> > (electrons_);
   muonToken_ = consumes<vector<TYPE(muons)> > (muons_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
@@ -40,21 +41,21 @@ OSUJetProducer::OSUJetProducer (const edm::ParameterSet &cfg) :
 #endif
 }
 
-OSUJetProducer::~OSUJetProducer ()
+template<class T> OSUGenericJetProducer<T>::~OSUGenericJetProducer ()
 {
 }
 
-void
-OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
+template<class T> void
+OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &setup)
 {
   edm::Handle<vector<TYPE(jets)> > collection;
   if (!event.getByToken (token_, collection))
     return;
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
   // get JetCorrector parameters to get the jec uncertainty
   edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
   setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
@@ -65,12 +66,12 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   // These are in the Global Tag for 80X but not for 76X,
   // Configuration/python/collectionProducer_cff.py looks at $CMSSW_BASE to set this choice
   JME::JetResolution jetEnergyResolution = (jetResFromGlobalTag_) ?
-                                              JME::JetResolution::get(setup, "AK4PFchs_pt") :
-                                              JME::JetResolution(jetResolutionPayload_);
+    JME::JetResolution::get(setup, "AK4PFchs_pt") :
+    JME::JetResolution(jetResolutionPayload_);
 
   JME::JetResolutionScaleFactor jetEnergyResolutionSFs = (jetResFromGlobalTag_) ?
-                                              JME::JetResolutionScaleFactor::get(setup, "AK4PFchs") :
-                                              JME::JetResolutionScaleFactor(jetResSFPayload_);
+    JME::JetResolutionScaleFactor::get(setup, "AK4PFchs") :
+    JME::JetResolutionScaleFactor(jetResSFPayload_);
 
   JME::JetParameters jetResParams;
 
@@ -103,22 +104,31 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   vector<const TYPE(electrons) *> goodElectrons;
   for (const auto &electron : *electrons){
     bool passElectronID = false;
-    if ((electron.isEB() &&                                             \
-         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 && \
-         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00308 &&     \
-         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0816 &&      \
-         electron.full5x5_sigmaIetaIeta() < 0.00998 &&                    \
-         electron.hadronicOverEm() < 0.0414 &&                           \
-         abs(1.0/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.0129 && \
-         electron.passConversionVeto()) ||                               \
-        (electron.isEE() &&                                               \
-         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 && \
-         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00605 &&      \
-         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0394 &&       \
-         electron.full5x5_sigmaIetaIeta() < 0.0292 &&                     \
-         electron.hadronicOverEm() < 0.0641 &&                            \
-         abs(1/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.0129 && \
-         electron.passConversionVeto())){
+    if ((electron.isEB() &&
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+         electron.gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 &&
+#else
+         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS)    <= 1 &&
+#endif
+         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00308 &&
+         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0816 &&
+         electron.full5x5_sigmaIetaIeta() < 0.00998 &&
+         electron.hadronicOverEm() < 0.0414 &&
+         abs(1.0/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.0129 &&
+         electron.passConversionVeto()) ||
+        (electron.isEE() &&
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+         electron.gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS) <= 1 &&
+#else
+         electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS)    <= 1 &&
+#endif
+         abs(electron.deltaEtaSuperClusterTrackAtVtx()) < 0.00605 &&
+         abs(electron.deltaPhiSuperClusterTrackAtVtx()) < 0.0394 &&
+         electron.full5x5_sigmaIetaIeta() < 0.0292 &&
+         electron.hadronicOverEm() < 0.0641 &&
+         abs(1/electron.ecalEnergy() - electron.eSuperClusterOverP()/electron.ecalEnergy()) < 0.0129 &&
+         electron.passConversionVeto()))
+    {
       passElectronID = true;
     }
     if (passElectronID == false) continue;
@@ -128,62 +138,63 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   for (const auto &muon : *muons){
     bool passMuonID = false;
     if (muon.isGlobalMuon() == false ||  muon.isPFMuon() == false) continue;
-    if (muon.globalTrack()->hitPattern().numberOfValidMuonHits() > 0 && \
-        muon.numberOfMatchedStations() > 1 &&                           \
-        muon.globalTrack()->normalizedChi2() < 10 &&                    \
-        muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0 && \
+    if (muon.globalTrack()->hitPattern().numberOfValidMuonHits() > 0 &&
+        muon.numberOfMatchedStations() > 1 &&
+        muon.globalTrack()->normalizedChi2() < 10 &&
+        muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0 &&
         muon.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5){
       passMuonID = true;
     }
     if (passMuonID == false) continue;
     goodMuons.push_back(&muon);
   }
-#endif
-#endif
+#endif // DATA_FORMAT_FROM_MINIAOD
+#endif // not STOPPPED_PTLS
 
-  pl_ = unique_ptr<vector<osu::Jet> > (new vector<osu::Jet> ());
+  pl_ = unique_ptr<vector<T> > (new vector<T> ());
 
   for (const auto &object : *collection)
     {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
       pl_->emplace_back (object, particles, cfg_);
-      osu::Jet &jet = pl_->back ();
-#elif DATA_FORMAT == AOD_CUSTOM
+      T &jet = pl_->back ();
+#else // STOPPPED_PTLS
       pl_->emplace_back (object);
 #endif
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
 
       // medianLog10(ipsig) CALC
       std::vector<double> ipsigVector;
-      bool isException = false;
+
 
       for(unsigned id =0; id < jet.getJetConstituents().size(); id++) {
 
-        const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
-        const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
+	const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
+	const edm::Ptr<reco::Candidate> recoCand = jet.getJetConstituents().at(id);
 
-        try
-          {
-            if (recoCand->charge() != 0){
-              double dxy = fabs(packedCand.dxy());
-              double dxyerr = packedCand.dxyError();
-              if(dxyerr>0){
-                double dxySig = dxy/dxyerr;
-                ipsigVector.push_back(dxySig);
-              }
+        try {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,1,1)
+          if(packedCand.hasTrackDetails() && recoCand->charge() != 0) {
+#else
+          if(recoCand->charge() != 0) {
+#endif
+            double dxy = fabs(packedCand.dxy());
+            double dxyerr = packedCand.dxyError();
+            if(dxyerr>0) {
+              double dxySig = dxy/dxyerr;
+              ipsigVector.push_back(dxySig);
             }
           }
-        catch (cms::Exception &e)
-          {
-            isException = true;
-            edm::LogInfo ("OSUJetProducer") << e.what ();
-          }
+        }
+        catch (cms::Exception &e) {
+          edm::LogWarning ("OSUGenericJetProducer (medianlog10ipsig)") << e.what ();
+        }
       } // end of loop over candidates
 
       double medianipsig = -4;
 
-      if(!ipsigVector.empty()){
+      if(!ipsigVector.empty()) {
         std::sort (ipsigVector.begin(), ipsigVector.end());
         if(ipsigVector.size()%2 == 0) medianipsig = (ipsigVector[ ipsigVector.size()/2 - 1] + ipsigVector[ ipsigVector.size() / 2 ]) / 2;
         if(ipsigVector.size()%2 == 1) medianipsig = ipsigVector[ ipsigVector.size()/2 ];
@@ -192,17 +203,12 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       if(!ipsigVector.empty()) jet.set_medianlog10ipsig( log10(medianipsig) );
       else jet.set_medianlog10ipsig( -4 );
 
-      if (isException)
-        edm::LogWarning ("OSUJetProducer") << "Exception caught while looping over jet constituents. medianlog10ipsig may be incorrect.";
-
       // ALPHA MAX CALC
       double numerator = 0;
       double denominator = 0;
 
       double alpha = 0;
       double alphaMax = 0;
-
-      isException = false;
 
       for(unsigned vertex = 0; vertex < primaryvertexs.product()->size(); vertex++) {
 
@@ -225,8 +231,7 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
             }
           catch (cms::Exception &e)
             {
-              isException = true;
-              edm::LogInfo ("OSUJetProducer") << e.what ();
+              edm::LogWarning ("OSUGenericJetProducer (alphamax)") << e.what ();
             }
         } // end of loop over candidates
 
@@ -238,9 +243,6 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       if( denominator != 0) jet.set_alphamax( alphaMax );
       else jet.set_alphamax(-1);
-
-      if (isException)
-        edm::LogWarning ("OSUJetProducer") << "Exception caught while looping over jet constituents. alphamax may be incorrect.";
 
       jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
@@ -329,14 +331,19 @@ OSUJetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
   delete jecUnc;
   delete rng;
 #endif
 }
 
-
 #include "FWCore/Framework/interface/MakerMacros.h"
+typedef OSUGenericJetProducer<osu::Jet> OSUJetProducer;
 DEFINE_FWK_MODULE(OSUJetProducer);
 
-#endif
+#if IS_VALID(bjets)
+typedef OSUGenericJetProducer<osu::Bjet> OSUBjetProducer;
+DEFINE_FWK_MODULE(OSUBjetProducer);
+#endif // IS_VALID(bjets)
+
+#endif // IS_VALID(jets)

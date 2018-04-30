@@ -1,8 +1,6 @@
 #include "DataFormats/Common/interface/Wrapper.h"
 
-#include "OSUT3Analysis/Collections/interface/Basicjet.h"
 #include "OSUT3Analysis/Collections/interface/Beamspot.h"
-#include "OSUT3Analysis/Collections/interface/Bjet.h"
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
 #include "OSUT3Analysis/Collections/interface/Electron.h"
 #include "OSUT3Analysis/Collections/interface/Event.h"
@@ -17,7 +15,6 @@
 #include "OSUT3Analysis/Collections/interface/Supercluster.h"
 #include "OSUT3Analysis/Collections/interface/Tau.h"
 #include "OSUT3Analysis/Collections/interface/Track.h"
-#include "OSUT3Analysis/Collections/interface/SecondaryTrack.h"
 #include "OSUT3Analysis/Collections/interface/Trigobj.h"
 #include "OSUT3Analysis/Collections/interface/Uservariable.h"
 #include "OSUT3Analysis/Collections/interface/Cschit.h"
@@ -28,12 +25,6 @@
 
 namespace {
   struct OSUT3Analysis_Collections {
-
-    osu::Basicjet                             basicjet0;
-    vector<osu::Basicjet>                     basicjet1;
-    edm::Wrapper<osu::Basicjet>               basicjet2;
-    edm::Wrapper<vector<osu::Basicjet> >      basicjet3;
-    edm::Ref<vector<osu::Basicjet> >          basicjet4;
 
     osu::Beamspot                             beamspot0;
     vector<osu::Beamspot>                     beamspot1;

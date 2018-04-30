@@ -5,7 +5,6 @@
 #define  genjets_TYPE           INVALID_TYPE
 #define  jets_TYPE              reco::PFJet
 #define  bjets_TYPE             INVALID_TYPE
-#define  basicjets_TYPE         reco::BasicJet
 #define  mcparticles_TYPE       INVALID_TYPE
 #define hardInteractionMcparticles_TYPE INVALID_TYPE
 #define  mets_TYPE              reco::PFMET
@@ -51,7 +50,6 @@
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
 #include "DataFormats/JetReco/interface/PFJet.h"
-#include "DataFormats/JetReco/interface/BasicJet.h"
 #include "DataFormats/METReco/interface/PFMET.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/EgammaCandidates/interface/Photon.h"

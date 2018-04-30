@@ -1225,6 +1225,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     if arguments.savePDFs:
         pathToDirString = plainTextString(pathToDir)
         Canvas.SaveAs(condor_dir+"/stacked_histograms_pdfs/"+pathToDirString+"/"+histogramName+".pdf")
+    if arguments.savePNGs:
+        pathToDirString = plainTextString(pathToDir)
+        Canvas.SaveAs(condor_dir+"/stacked_histograms_pngs/"+pathToDirString+"/"+histogramName+".png")
+
+    if arguments.savePNGs:
+        pathToDirString = plainTextString(pathToDir)
+        Canvas.SaveAs(condor_dir+"/stacked_histograms_pngs/"+pathToDirString+"/"+histogramName+".png")
 
 
 ##########################################################################################################################################
@@ -1518,7 +1525,13 @@ def MakeTwoDHist(pathToDir,histogramName):
     if arguments.savePDFs:
         pathToDirString = plainTextString(pathToDir)
         Canvas.SaveAs(condor_dir+"/stacked_histograms_pdfs/"+pathToDirString+"/"+histogramName+".pdf")
+    if arguments.savePNGs:
+        pathToDirString = plainTextString(pathToDir)
+        Canvas.SaveAs(condor_dir+"/stacked_histograms_pngs/"+pathToDirString+"/"+histogramName+".png")
 
+    if arguments.savePNGs:
+        pathToDirString = plainTextString(pathToDir)
+        Canvas.SaveAs(condor_dir+"/stacked_histograms_pngs/"+pathToDirString+"/"+histogramName+".png")
 
 
 ##########################################################################################################################################
@@ -1581,6 +1594,13 @@ if arguments.savePDFs:
         pass
     os.mkdir ("%s/stacked_histograms_pdfs" % (condor_dir))
 
+if arguments.savePNGs:
+    try:
+        shutil.rmtree ("%s/stacked_histograms_pngs" % (condor_dir))
+    except OSError:
+        pass
+    os.mkdir ("%s/stacked_histograms_pngs" % (condor_dir))
+
 #### make output file
 outputFileString = ''
 if arguments.rebinFactor:
@@ -1613,6 +1633,8 @@ for key in inputFile.GetListOfKeys():
     outputFile.mkdir(rootDirectory)
     if arguments.savePDFs:
         os.mkdir ("%s/stacked_histograms_pdfs/%s" % (condor_dir,plainTextString(rootDirectory)))
+    if arguments.savePNGs:
+        os.mkdir ("%s/stacked_histograms_pngs/%s" % (condor_dir,plainTextString(rootDirectory)))
 
     #cd to root directory and look for histograms
     inputFile.cd(rootDirectory)
@@ -1635,6 +1657,8 @@ for key in inputFile.GetListOfKeys():
             gDirectory.mkdir(key2.GetName())
             if arguments.savePDFs:
                 os.mkdir ("%s/stacked_histograms_pdfs/%s" % (condor_dir,plainTextString(level2Directory)))
+            if arguments.savePNGs:
+                os.mkdir ("%s/stacked_histograms_pngs/%s" % (condor_dir,plainTextString(level2Directory)))
 
             #####################################################
             ###  This layer is typically the "channels" layer ###
@@ -1662,6 +1686,8 @@ for key in inputFile.GetListOfKeys():
                     gDirectory.mkdir(key3.GetName())
                     if arguments.savePDFs:
                         os.mkdir ("%s/stacked_histograms_pdfs/%s" % (condor_dir,plainTextString(level3Directory)))
+                    if arguments.savePNGs:
+                        os.mkdir ("%s/stacked_histograms_pngs/%s" % (condor_dir,plainTextString(level3Directory)))
 
                     #################################################
                     ###  This layer is typically the "cuts" layer ###

@@ -26,7 +26,7 @@ PUScalingFactorProducer::~PUScalingFactorProducer() {
 
 void
 PUScalingFactorProducer::AddVariables (const edm::Event &event) {
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD
+#if DATA_FORMAT_FROM_MINIAOD
   if (!event.isRealData () && PU_ != "" && dataset_ != "" && target_ != "")
     {
       // if the weights histogram hasn't been defined yet, calculate it from target/mc

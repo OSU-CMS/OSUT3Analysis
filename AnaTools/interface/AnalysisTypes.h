@@ -5,9 +5,7 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 
-#include "OSUT3Analysis/Collections/interface/Basicjet.h"
 #include "OSUT3Analysis/Collections/interface/Beamspot.h"
-#include "OSUT3Analysis/Collections/interface/Bjet.h"
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
 #include "OSUT3Analysis/Collections/interface/Cschit.h"
 #include "OSUT3Analysis/Collections/interface/Cscseg.h"
@@ -26,7 +24,6 @@
 #include "OSUT3Analysis/Collections/interface/Supercluster.h"
 #include "OSUT3Analysis/Collections/interface/Tau.h"
 #include "OSUT3Analysis/Collections/interface/Track.h"
-#include "OSUT3Analysis/Collections/interface/SecondaryTrack.h"
 #include "OSUT3Analysis/Collections/interface/Trigobj.h"
 #include "OSUT3Analysis/Collections/interface/Uservariable.h"
 #include "OSUT3Analysis/Collections/interface/PileUpInfo.h"
@@ -101,6 +98,15 @@ struct HistoDef {
   bool weight;
 };
 
+struct BranchDef {
+  vector<string> inputCollections;
+  string branchName;
+  int index;
+  vector<string> inputVariables;
+  vector<ValueLookupTree *> valueLookupTrees;
+  double value;
+};
+
 struct Weight
 {
   vector<string> inputCollections;
@@ -142,7 +148,6 @@ struct Collections
   edm::Handle<vector<osu::Genjet> >         genjets;
   edm::Handle<vector<osu::Jet> >            jets;
   edm::Handle<vector<osu::Bjet> >           bjets;
-  edm::Handle<vector<osu::Basicjet> >       basicjets;
   edm::Handle<vector<osu::Mcparticle> >     mcparticles;
   edm::Handle<vector<osu::Met> >            mets;
   edm::Handle<vector<osu::Muon> >           muons;

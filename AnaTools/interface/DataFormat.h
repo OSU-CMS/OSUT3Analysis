@@ -1,11 +1,27 @@
 #ifndef DATA_FORMAT
 
-#define  MINI_AOD         0
-#define  AOD              1
-#define  MINI_AOD_CUSTOM  2
-#define  AOD_CUSTOM       3
+// DATA_FORMAT format
+// bit 0: datatier flag (0=AOD, 1=MINIAOD)
+// bit 1: 2017 flag (0=not 2017, 1=2017 -- only relevant for MINIAOD in 2017)
+// bit 2: custom flag (0=not custom, 1=custom)
 
-#define DATA_FORMAT MINI_AOD
+#define AOD                  0b000 // 0
+#define MINI_AOD             0b001 // 1
+#define AOD_2017             0b010 // 2 (unused)
+#define MINI_AOD_2017        0b011 // 3
+#define AOD_CUSTOM           0b100 // 4
+#define MINI_AOD_CUSTOM      0b101 // 5
+#define AOD_2017_CUSTOM      0b110 // 6 (unused)
+#define MINI_AOD_2017_CUSTOM 0b111 // 7
+
+#define DATA_FORMAT MINI_AOD_2017
+
+#define DATA_FORMAT_FROM_MINIAOD (DATA_FORMAT & 0b1) == 1
+#define DATA_FORMAT_FROM_AOD (DATA_FORMAT & 0b1) == 0
+#define DATA_FORMAT_IS_2017 ((DATA_FORMAT >> 1) & 0b1) == 1
+#define DATA_FORMAT_IS_CUSTOM ((DATA_FORMAT >> 2) & 0b1) == 1
+
+#define DATA_FORMAT_IS_VALID (DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD_2017 || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD_CUSTOM || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_2017_CUSTOM || DATA_FORMAT == MINI_AOD_2017_CUSTOM)
 
 #define INVALID_TYPE void *
 
@@ -15,17 +31,17 @@
 
   #include "OSUT3Analysis/AnaTools/interface/DataFormatMiniAOD.h"
 
+#elif DATA_FORMAT == MINI_AOD_2017
+
+  #include "OSUT3Analysis/AnaTools/interface/DataFormatMiniAOD2017.h" 
+
 #elif DATA_FORMAT == AOD
 
   #include "OSUT3Analysis/AnaTools/interface/DataFormatAOD.h"
 
-#elif DATA_FORMAT == MINI_AOD_CUSTOM
+#elif DATA_FORMAT_IS_CUSTOM
 
   #include "CustomDataFormat.h"  // Define collections in an external header file.
-
-#elif DATA_FORMAT == AOD_CUSTOM
-
-  #include "CustomDataFormat.h"
 
 #else
   #error "Data format is not valid."
@@ -117,5 +133,9 @@ typedef map<string, double > EventVariableProducerPayload;
 #define  A_BRIGHT_WHITE    ("\033[1;37m")
 
 #define  A_RESET    ("\033[0m")
+
+#if !DATA_FORMAT_IS_VALID
+  #error "Data format is not valid. Check AnaTools/interface/DataFormat.h for allowed formats."
+#endif
 
 #endif

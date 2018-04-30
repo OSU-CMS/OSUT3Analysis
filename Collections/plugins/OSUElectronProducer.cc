@@ -2,9 +2,6 @@
 
 #if IS_VALID(electrons)
 
-
-
-
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
@@ -37,7 +34,7 @@ OSUElectronProducer::~OSUElectronProducer ()
 void
 OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
   using namespace edm;
   using namespace reco;
 

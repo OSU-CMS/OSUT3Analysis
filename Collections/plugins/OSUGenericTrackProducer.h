@@ -15,11 +15,19 @@
 
 #include "OSUT3Analysis/Collections/interface/Track.h"
 
-class OSUTrackProducer : public edm::EDProducer
+// FIXME:  Once OSUT3Analysis works with ROOT6, i.e., releases > CMSSW_7_4_5_ROOT5,
+// then uncomment the following line:
+// #include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
+// and remove these two lines:
+#define INVALID_VALUE (numeric_limits<int>::min ())
+#define IS_INVALID(x) (x <= INVALID_VALUE + 1)
+
+template<class T>
+  class OSUGenericTrackProducer : public edm::EDProducer
 {
   public:
-    OSUTrackProducer (const edm::ParameterSet &);
-    ~OSUTrackProducer ();
+    OSUGenericTrackProducer (const edm::ParameterSet &);
+    ~OSUGenericTrackProducer ();
 
     void beginRun (const edm::Run &, const edm::EventSetup &);
     void produce (edm::Event &, const edm::EventSetup &);
@@ -40,7 +48,11 @@ class OSUTrackProducer : public edm::EDProducer
     edm::EDGetTokenT<EERecHitCollection>         EERecHitsToken_;
     edm::EDGetTokenT<HBHERecHitCollection>       HBHERecHitsToken_;
     edm::EDGetTokenT<vector<reco::GsfTrack> >    gsfTracksToken_;
+#ifdef DISAPP_TRKS
+    edm::EDGetTokenT<vector<CandidateTrack> >    candidateTracksToken_;
+#endif
     edm::EDGetTokenT<vector<reco::Track> >       tracksToken_;
+    edm::EDGetTokenT<vector<pat::PackedCandidate> > pfCandidatesToken_;
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 
@@ -48,7 +60,7 @@ class OSUTrackProducer : public edm::EDProducer
     EtaPhiList muonVetoList_;
 
     // Payload for this EDFilter.
-    unique_ptr<vector<osu::Track> > pl_;
+    unique_ptr<vector<T> > pl_;
 
     void extractFiducialMap (const edm::ParameterSet &, EtaPhiList &, stringstream &) const;
     void envSet (const edm::EventSetup &);

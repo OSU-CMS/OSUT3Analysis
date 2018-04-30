@@ -55,7 +55,7 @@ parser.add_option("-R", "--Requirements", dest="Requirements", default = "", hel
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")
 parser.add_option("-P", "--UseGridProxy", dest="UseGridProxy", action="store_true", default = False, help="Use X509 grid proxy.")
-parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc. Appending 16 to this type gives Collisions16 JSONs (e.g. R_Silver16, P_MuonPhys16, etc).")
+parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc. Appending 16(17) to this type gives Collisions16(17) JSONs (e.g. R_Silver16, P_MuonPhys17, etc).")
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")
 parser.add_option("-W", "--AllowDataWeights", dest="AllowDataWeights", action="store_true", default = False, help="Use event weights, even for a data dataset.")
 parser.add_option("-H", "--skimToHadoop", dest="skimToHadoop", default = "", help="If producing a skim, put in on Hadoop, in the given directory.")
@@ -167,6 +167,8 @@ def getLatestJsonFile():
         rerecoDir = 'Reprocessing'
         if re.search('16$', arguments.JSONType):
             rerecoDir = 'ReReco/Final'
+        if re.search('17$', arguments.JSONType):
+            rerecoDir = 'ReReco'
 
         if arguments.JSONType[:2] == 'P_':
             tmpDir = tempfile.mkdtemp ()
@@ -636,7 +638,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
 #This is a generic function to get the dataset information via das_client.py.
 def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossSection, append):
     tmpDir = tempfile.mkdtemp ()
-    subprocess.call('/cvmfs/cms.cern.ch/common/das_client --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + tmpDir + "/" + AAAFileList, shell = True)
+    subprocess.call('das_client --query="file dataset=' + Dataset + ' instance=' + ('prod/global' if not Dataset.endswith ('/USER') else 'prod/phys03') + '" --limit 0 > ' + tmpDir + "/" + AAAFileList, shell = True)
     inputFileList = open(tmpDir + "/" + AAAFileList, "r")
     inputFiles = inputFileList.read().split('\n')
     inputFileList.close ()

@@ -108,6 +108,8 @@ def set_commandline_arguments(parser):
                       help="Include the yield of each source in the legend")
     parser.add_option("-p", "--pdfs",  action="store_true", dest="savePDFs", default=False,
                       help="Save pdfs files for all plots made")
+    parser.add_option("--pngs",  action="store_true", dest="savePNGs", default=False,
+                      help="Save pngs files for all plots made")
 
     return parser
 
@@ -185,8 +187,8 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
-#def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True):
-def add_channels (process, channels, histogramSets = None, weights = None, scalingfactorproducers = None, collections = None, variableProducers = None, skim = None):
+#def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True, branchSets):
+def add_channels (process, channels, histogramSets = None, weights = None, scalingfactorproducers = None, collections = None, variableProducers = None, skim = None, branchSets = None):
     ############################################################################
     # If there are only two arguments, then channels is actually an
     # AddChannelArguments object that needs to be unpacked.
@@ -661,6 +663,19 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                             break
 
         ########################################################################
+        # Add a tree-making module for this channel to the path.
+        ########################################################################
+        if branchSets is not None and len(branchSets):
+            treeMaker = cms.EDAnalyzer ("TreeMaker",
+                collections = filteredCollections,
+                branchSets  = branchSets,
+                weights     = weights,
+                verbose     = cms.int32 (0)
+            )
+            channelPath += treeMaker
+            setattr (process, channelName + "TreeMaker", treeMaker)
+
+        ########################################################################
 
         ########################################################################
         # Add an output module for this channel to the path. We can use any of
@@ -740,7 +755,7 @@ def set_input(process, input_string):
     # check for validity
     fileType = "No such file or directory"
     try:
-#        fileType = subprocess.check_output(['/usr/bin/file', input_string]).split(":")[1]
+        #fileType = subprocess.check_output(['/usr/bin/file', input_string]).split(":")[1]
         fileType = subprocess.check_output(['file', input_string]).split(":")[1]
     except:
         pass
