@@ -434,7 +434,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("i=0\n")
         SubmitScript.write ("while [ $CopyStatus -ne 0 ] && [ $i -lt 10 ]\n")
         SubmitScript.write ("do\n")
-        DirectoryWithEscapes = re.sub (r"/", r"\/", Directory + "/")
+        DirectoryWithEscapes = re.sub (r"/", r"\/", os.path.realpath (Directory) + "/")
 
         if len (filesToTransfer) > 0:
             SubmitScript.write ("  ls " + " ".join (filesToTransfer) + " | sed \"s/^/" + DirectoryWithEscapes + "/g\" | xargs rm -rf\n")
