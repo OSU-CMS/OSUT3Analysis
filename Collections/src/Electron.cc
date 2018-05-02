@@ -19,6 +19,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
   genD0_                      (INVALID_VALUE),
+  genPt_                      (INVALID_VALUE),
+  genEta_                     (INVALID_VALUE),
+  genPhi_                     (INVALID_VALUE),
   d0_                         (INVALID_VALUE),
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
@@ -52,6 +55,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
   genD0_                      (INVALID_VALUE),
+  genPt_                      (INVALID_VALUE),
+  genEta_                     (INVALID_VALUE),
+  genPhi_                     (INVALID_VALUE),
   d0_                         (INVALID_VALUE),
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
@@ -85,6 +91,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
   genD0_                      (INVALID_VALUE),
+  genPt_                      (INVALID_VALUE),
+  genEta_                     (INVALID_VALUE),
+  genPhi_                     (INVALID_VALUE),
   d0_                         (INVALID_VALUE),
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
@@ -118,6 +127,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
   genD0_                      (INVALID_VALUE),
+  genPt_                      (INVALID_VALUE),
+  genEta_                     (INVALID_VALUE),
+  genPhi_                     (INVALID_VALUE),
   d0_                         (INVALID_VALUE),
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
@@ -235,6 +247,24 @@ const double
 osu::Electron::genD0 () const
 {
   return genD0_;
+}
+
+const double
+osu::Electron::genPt () const
+{
+  return genPt_;
+}
+
+const double
+osu::Electron::genEta () const
+{
+  return genEta_;
+}
+
+const double
+osu::Electron::genPhi () const
+{
+  return genPhi_;
 }
 
 const double

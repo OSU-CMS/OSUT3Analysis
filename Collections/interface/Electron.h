@@ -23,6 +23,9 @@ namespace osu
         const double sumChargedHadronPtCorr () const;
         const double sumPUPtCorr () const;
         const double genD0 () const;
+        const double genPt () const;
+        const double genEta () const;
+        const double genPhi () const;
         const double d0 () const;
         const double d0Sig () const;
         const double dz () const;
@@ -41,6 +44,9 @@ namespace osu
         void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
         void set_electronPVIndex (int value) { electronPVIndex_  = value; };
         void set_genD0 (double value) { genD0_  = value; };
+        void set_genPt (double value) { genPt_  = value; };
+        void set_genEta (double value) { genEta_  = value; };
+        void set_genPhi (double value) { genPhi_  = value; };
         void set_d0 (double value) { d0_  = value; };
         void set_d0Sig (double value) { d0Sig_  = value; };
         void set_dz (double value) { dz_  = value; };
@@ -87,6 +93,9 @@ namespace osu
         int electronPVIndex_;
         double sumPUPtCorr_;
         double genD0_;
+        double genPt_;
+        double genEta_;
+        double genPhi_;
         double d0_;
         double d0Sig_;
         double dz_;
