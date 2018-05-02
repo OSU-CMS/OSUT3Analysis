@@ -114,9 +114,6 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
                 continue;
               double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
               electron.set_genD0(gen_d0);
-              electron.set_genPt(cand->pt());
-              electron.set_genEta(cand->eta());
-              electron.set_genPhi(cand->phi());
             }
         }
       ///////////////////////////////////////////////////////////

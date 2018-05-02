@@ -94,9 +94,6 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
                 continue;
               double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
               muon.set_genD0(gen_d0);
-	      muon.set_genPt(cand->pt());
-	      muon.set_genEta(cand->eta());
-	      muon.set_genPhi(cand->phi());
             }
         }
       double d0 = object.dB(pat::Muon::BS2D);
