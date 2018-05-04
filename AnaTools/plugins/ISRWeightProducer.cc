@@ -23,6 +23,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
 
 #ifndef STOPPPED_PTLS
   if(event.isRealData() || weightFile_.empty () || weightHist_.empty ()) {
+    (*eventvariables)["isrPt"] = -1;
     (*eventvariables)["isrWeight"] = 1;
     (*eventvariables)["isrWeightUp"] = 1;
     (*eventvariables)["isrWeightDown"] = 1;
@@ -31,7 +32,10 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
 
   edm::Handle<vector<TYPE(hardInteractionMcparticles)> > mcparticles;
   if (!event.getByToken(mcparticlesToken_, mcparticles)) {
+    (*eventvariables)["isrPt"] = -1;
     (*eventvariables)["isrWeight"] = 1;
+    (*eventvariables)["isrWeightUp"] = 1;
+    (*eventvariables)["isrWeightDown"] = 1;
     return;
   }
 
@@ -83,11 +87,13 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
     isrWeightDown *= max(content - error, 0.0); // max just in case error > content
   }
 
+  (*eventvariables)["isrPt"] = pt;
   (*eventvariables)["isrWeight"] = isrWeight;
   (*eventvariables)["isrWeightUp"] = isrWeightUp;
   (*eventvariables)["isrWeightDown"] = isrWeightDown;
 
 #else // if STOPPPED_PTLS
+  (*eventvariables)["isrPt"] = -1;
   (*eventvariables)["isrWeight"] = 1;
   (*eventvariables)["isrWeightUp"] = 1;
   (*eventvariables)["isrWeightDown"] = 1;

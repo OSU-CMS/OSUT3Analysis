@@ -608,6 +608,8 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("AMSB_chargino_76X")\n')
             elif re.match (r"AMSB.*_80X", Label):
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("AMSB_chargino_80X")\n')
+            elif re.match (r"AMSB.*_94X", Label):
+                ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("AMSB_chargino_94X")\n')
             else:
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
         else:
