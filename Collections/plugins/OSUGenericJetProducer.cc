@@ -167,7 +167,6 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
       // medianLog10(ipsig) CALC
       std::vector<double> ipsigVector;
 
-
       for(unsigned id =0; id < jet.getJetConstituents().size(); id++) {
 
 	const pat::PackedCandidate &packedCand = dynamic_cast<const pat::PackedCandidate &>(*jet.getJetConstituents().at(id));
