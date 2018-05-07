@@ -17,6 +17,9 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
   genD0_                   (INVALID_VALUE),
+  genPt_                   (INVALID_VALUE),
+  genEta_                  (INVALID_VALUE),
+  genPhi_                  (INVALID_VALUE),
   d0_                      (INVALID_VALUE),
   d0Sig_                   (INVALID_VALUE),
   dz_                      (INVALID_VALUE),
@@ -43,6 +46,9 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
   genD0_                   (INVALID_VALUE),
+  genPt_                   (INVALID_VALUE),
+  genEta_                  (INVALID_VALUE),
+  genPhi_                  (INVALID_VALUE),
   d0_                      (INVALID_VALUE),
   d0Sig_                   (INVALID_VALUE),
   dz_                      (INVALID_VALUE),
@@ -69,6 +75,9 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
   genD0_                   (INVALID_VALUE),
+  genPt_                   (INVALID_VALUE),
+  genEta_                  (INVALID_VALUE),
+  genPhi_                  (INVALID_VALUE),
   d0_                      (INVALID_VALUE),
   d0Sig_                   (INVALID_VALUE),
   dz_                      (INVALID_VALUE),
@@ -95,6 +104,9 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
   genD0_                   (INVALID_VALUE),
+  genPt_                   (INVALID_VALUE),
+  genEta_                  (INVALID_VALUE),
+  genPhi_                  (INVALID_VALUE),
   d0_                      (INVALID_VALUE),
   d0Sig_                   (INVALID_VALUE),
   dz_                      (INVALID_VALUE),
@@ -163,6 +175,24 @@ osu::Muon::genD0 () const
 }
 
 const double
+osu::Muon::genPt () const
+{
+  return genPt_;
+}
+
+const double
+osu::Muon::genEta () const
+{
+  return genEta_;
+}
+
+const double
+osu::Muon::genPhi () const
+{
+  return genPhi_;
+}
+
+const double
 osu::Muon::d0 () const
 {
   return d0_;
@@ -205,19 +235,19 @@ osu::Muon::set_match_HLT_IsoTkMu20_v (const bool flag)
 }
 
 const int
-osu::Muon::missingInnerHits () const
+osu::Muon::missingInnerHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS));
 }
 
 const int
-osu::Muon::missingMiddleHits () const
+osu::Muon::missingMiddleHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS));
 }
 
 const int
-osu::Muon::missingOuterHits () const
+osu::Muon::missingOuterHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
 }

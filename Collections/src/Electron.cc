@@ -19,6 +19,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
   genD0_                      (INVALID_VALUE),
+  genPt_                      (INVALID_VALUE),
+  genEta_                     (INVALID_VALUE),
+  genPhi_                     (INVALID_VALUE),
   d0_                         (INVALID_VALUE),
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
@@ -52,6 +55,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
   genD0_                      (INVALID_VALUE),
+  genPt_                      (INVALID_VALUE),
+  genEta_                     (INVALID_VALUE),
+  genPhi_                     (INVALID_VALUE),
   d0_                         (INVALID_VALUE),
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
@@ -85,6 +91,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
   genD0_                      (INVALID_VALUE),
+  genPt_                      (INVALID_VALUE),
+  genEta_                     (INVALID_VALUE),
+  genPhi_                     (INVALID_VALUE),
   d0_                         (INVALID_VALUE),
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
@@ -118,6 +127,9 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
   genD0_                      (INVALID_VALUE),
+  genPt_                      (INVALID_VALUE),
+  genEta_                     (INVALID_VALUE),
+  genPhi_                     (INVALID_VALUE),
   d0_                         (INVALID_VALUE),
   d0Sig_                      (INVALID_VALUE),
   dz_                         (INVALID_VALUE),
@@ -169,19 +181,29 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
 }
 
 const int
-osu::Electron::missingInnerHits () const
+osu::Electron::missingInnerHitsFromAllHits () const
+{
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  return (this->gsfTrack ()->hitPattern ().numberOfAllHits (reco::HitPattern::MISSING_INNER_HITS));
+#else
+  return (this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS));
+#endif
+}
+
+const int
+osu::Electron::missingInnerHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS));
 }
 
 const int
-osu::Electron::missingMiddleHits () const
+osu::Electron::missingMiddleHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS));
 }
 
 const int
-osu::Electron::missingOuterHits () const
+osu::Electron::missingOuterHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
 }
@@ -225,6 +247,24 @@ const double
 osu::Electron::genD0 () const
 {
   return genD0_;
+}
+
+const double
+osu::Electron::genPt () const
+{
+  return genPt_;
+}
+
+const double
+osu::Electron::genEta () const
+{
+  return genEta_;
+}
+
+const double
+osu::Electron::genPhi () const
+{
+  return genPhi_;
 }
 
 const double
