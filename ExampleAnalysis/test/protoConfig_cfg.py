@@ -48,6 +48,28 @@ process.maxEvents = cms.untracked.PSet (
 )
 
 ################################################################################
+# Add the global tag
+################################################################################
+#process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+#from Configuration.AlCa.GlobalTag import GlobalTag
+#process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_v3', '')
+
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+
+data_global_tag = '80X_dataRun2_2016SeptRepro_v6'
+mc_global_tag = '80X_mcRun2_asymptotic_2016_v3'
+
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, mc_global_tag, '')
+if osusub.batchMode and (osusub.datasetLabel in types) and (types[osusub.datasetLabel] == "data"):
+    print "# Global tag: " + data_global_tag
+    process.GlobalTag = GlobalTag(process.GlobalTag, data_global_tag, '')
+else:
+    print "# Global tag: " + mc_global_tag
+
+################################################################################
 ##### Set up the 'collections' map #############################################
 ################################################################################
 

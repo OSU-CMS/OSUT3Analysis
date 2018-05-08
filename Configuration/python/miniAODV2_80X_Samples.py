@@ -91,12 +91,12 @@ dataset_names = {
 
     ############################################################################
     # MuonEG 23Sep rereco
-    'MuonEG_2016B_23Sep'         : '/MuonEG/Run2016B-23Sep2016-v3/MINIAOD',
-    'MuonEG_2016C_23Sep'         : '/MuonEG/Run2016C-23Sep2016-v1/MINIAOD',
-    'MuonEG_2016D_23Sep'         : '/MuonEG/Run2016D-23Sep2016-v1/MINIAOD',
-    'MuonEG_2016E_23Sep'         : '/MuonEG/Run2016E-23Sep2016-v1/MINIAOD',
-    'MuonEG_2016F_23Sep'         : '/MuonEG/Run2016F-23Sep2016-v1/MINIAOD',
-    'MuonEG_2016G_23Sep'         : '/MuonEG/Run2016G-23Sep2016-v1/MINIAOD',
+    'MuonEG_2016B'         : '/MuonEG/Run2016B-23Sep2016-v3/MINIAOD',
+    'MuonEG_2016C'         : '/MuonEG/Run2016C-23Sep2016-v1/MINIAOD',
+    'MuonEG_2016D'         : '/MuonEG/Run2016D-23Sep2016-v1/MINIAOD',
+    'MuonEG_2016E'         : '/MuonEG/Run2016E-23Sep2016-v1/MINIAOD',
+    'MuonEG_2016F'         : '/MuonEG/Run2016F-23Sep2016-v1/MINIAOD',
+    'MuonEG_2016G'         : '/MuonEG/Run2016G-23Sep2016-v1/MINIAOD',
     'MuonEG_2016H'               : ['/MuonEG/Run2016H-PromptReco-v2/MINIAOD',
                                     '/MuonEG/Run2016H-PromptReco-v3/MINIAOD'],
     ############################################################################
