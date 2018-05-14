@@ -55,6 +55,9 @@ electronD0WRTBeamspot = "((electron.vx -                beamspot.x0) * electron.
 electronD0WRTPV       = "((electron.vx - eventvariable.leadingPV_x) * electron.py - (electron.vy - eventvariable.leadingPV_y) * electron.px) / electron.pt"
 muonD0WRTBeamspot = "((muon.vx -                beamspot.x0) * muon.py - (muon.vy -                beamspot.y0) * muon.px) / muon.pt"
 muonD0WRTPV       = "((muon.vx - eventvariable.leadingPV_x) * muon.py - (muon.vy - eventvariable.leadingPV_y) * muon.px) / muon.pt"
+genElectronD0WRTBeamspot = "((electron.genMatchedParticle.bestMatch.vx - beamspot.x0) * electron.genMatchedParticle.bestMatch.py - (electron.genMatchedParticle.bestMatch.vy - beamspot.y0) * electron.genMatchedParticle.bestMatch.px) / electron.genMatchedParticle.bestMatch.pt"
+genMuonD0WRTBeamspot = "((muon.genMatchedParticle.bestMatch.vx - beamspot.x0) * muon.genMatchedParticle.bestMatch.py - (muon.genMatchedParticle.bestMatch.vy - beamspot.y0) * muon.genMatchedParticle.bestMatch.px) / muon.genMatchedParticle.bestMatch.pt"
+
 
 # Calculation from https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_X/DataFormats/TrackReco/interface/TrackBase.h#L674
 trackDZWRTPV       = "(track.vz - eventvariable.leadingPV_z) \
