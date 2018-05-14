@@ -173,19 +173,19 @@ MuonHistograms = cms.PSet(
             name = cms.string("muonGenPt"),
             title = cms.string("Gen Muon Transverse Momentum;Gen muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            inputVariables = cms.vstring("genMatchedParticle.pt"),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
         ),
         cms.PSet (
             name = cms.string("muonGenEta"),
             title = cms.string("Gen Muon Eta;Gen muon #eta"),
             binsX = cms.untracked.vdouble(80, -4, 4),
-            inputVariables = cms.vstring("genMatchedParticle.eta"),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.eta"),
         ),
         cms.PSet (
             name = cms.string("muonGenPhi"),
             title = cms.string("Gen Muon Phi;Gen muon #phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
-            inputVariables = cms.vstring("genMatchedParticle.phi"),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.phi"),
         ),
     )
 )
@@ -462,19 +462,19 @@ ElectronHistograms = cms.PSet(
             name = cms.string("electronGenPt"),
             title = cms.string("Gen Electron Transverse Momentum;Gen electron p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            inputVariables = cms.vstring("genMatchedParticle.pt"),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
         ),
         cms.PSet (
             name = cms.string("electronGenEta"),
             title = cms.string("Gen Electron Eta;Gen electron #eta"),
             binsX = cms.untracked.vdouble(80, -4, 4),
-            inputVariables = cms.vstring("genMatchedParticle.eta"),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.eta"),
         ),
         cms.PSet (
             name = cms.string("electronGenPhi"),
             title = cms.string("Gen Electron Phi;Gen electron #phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
-            inputVariables = cms.vstring("genMatchedParticle.phi"),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.phi"),
         ),
     )
 )
