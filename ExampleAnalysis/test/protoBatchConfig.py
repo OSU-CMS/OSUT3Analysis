@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# to be run with submitToCondor.py -l protoBatchConfig.py
+# to be run with osusub.py (see https://twiki.cern.ch/twiki/bin/view/CMS/OSUT3AnalysisTutorial)
 
 # import the definitions of all the datasets on the T3
 from OSUT3Analysis.Configuration.configurationOptions import *
