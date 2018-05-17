@@ -189,6 +189,10 @@ def get_collections (cuts):
 
 #def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True, branchSets):
 def add_channels (process, channels, histogramSets = None, weights = None, scalingfactorproducers = None, collections = None, variableProducers = None, skim = None, branchSets = None):
+    if skim is not None:
+        print "# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated."
+        print "# Please remove from your config files."
+
     ############################################################################
     # If there are only two arguments, then channels is actually an
     # AddChannelArguments object that needs to be unpacked.
@@ -201,16 +205,39 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         standAloneAnalyzers     =  channels.standAloneAnalyzers
         histogramSets           =  channels.histogramSets
         collections             =  channels.collections
-        skim                    =  channels.skim
         channels                =  channels.channels
 
     ############################################################################
     # Check the directory of the first input file for SkimInputTags.pkl. If it
     # exists, update the input tags with those stored in the pickle file.
     ############################################################################
-    fileName = process.source.fileNames[0]
+    makeEmptySkim = False
+    fileName = None
+    if hasattr (process.source, "fileNames") and len (process.source.fileNames) > 0:
+        fileName = process.source.fileNames[0]
     if osusub.batchMode:
-      fileName = osusub.runList[0]
+        fileName = osusub.runList[0]
+    rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
+    if fileName.startswith ("file:") and rootFile.startswith ("skim_"):
+        makeEmptySkim = True
+    elif fileName.startswith ("file:") and rootFile.startswith ("emptySkim_"):
+        # If we are running over an empty skim, get the file name from the
+        # secondary files. The secondary files should be a full skim with
+        # SkimInputTags.pkl in the same directory.
+        makeEmptySkim = True
+        primaryFileName = fileName
+        fileName = None
+        if hasattr (process.source, "secondaryFileNames") and len (process.source.secondaryFileNames) > 0:
+            fileName = process.source.secondaryFileNames[0]
+        if osusub.batchMode:
+            fileName = osusub.secondaryRunList[0]
+        if fileName is None:
+            print "ERROR:  The input file appears to be an empty skim file but no secondary files were found."
+            print "Input file is", primaryFileName
+            print "This should not be."
+            sys.exit(1)
+        rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
+
     if fileName.find ("file:") == 0:
         fileName = fileName[5:]
     skimDirectory = os.path.dirname (os.path.realpath (fileName))
@@ -221,12 +248,11 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         for tag in inputTags:
             setattr (collections, tag, inputTags[tag])
     else:
-        rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
         if rootFile.find("skim_") == 0:
             print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found."
             print "Input file is", fileName
             print "Be sure that you have run mergeOut.py."
-            exit(0)
+            sys.exit(1)
 
     ############################################################################
 
@@ -325,11 +351,10 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         # If the directory already exists, an OSError exception will be
         # raised, which we ignore.
         ########################################################################
-        if skim:
-            try:
-                os.mkdir (channelName)
-            except OSError:
-                pass
+        try:
+            os.mkdir (channelName)
+        except OSError:
+            pass
         ########################################################################
 
         ########################################################################
@@ -683,21 +708,27 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         # since they each return the global event decision. So we use the first
         # which was added.
         ########################################################################
-        if skim:
-            SelectEvents = cms.vstring ()
-            if cutCollections:
-                SelectEvents = cms.vstring (channelName)
-            poolOutputModule = cms.OutputModule ("PoolOutputModule",
-                overrideInputFileSplitLevels = cms.untracked.bool (True),
-                splitLevel = cms.untracked.int32 (0),
-                eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
-                fileName = cms.untracked.string (channelName + "/skim" + suffix + ".root"),
-                SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
-                outputCommands = cms.untracked.vstring (outputCommands),
-                dropMetaData = cms.untracked.string ("ALL"),
-            )
-            add_channels.endPath += poolOutputModule
-            setattr (process, channelName + "PoolOutputModule", poolOutputModule)
+        SelectEvents = cms.vstring ()
+        if cutCollections:
+            SelectEvents = cms.vstring (channelName)
+        skimFilePrefix = "skim"
+        # if running over a full skim, do not recreate a full skim for passing
+        # events, but rather create an empty skim (no event content, just
+        # metadata)
+        if makeEmptySkim:
+            skimFilePrefix = "emptySkim"
+            outputCommands.append ("drop *")
+        poolOutputModule = cms.OutputModule ("PoolOutputModule",
+            overrideInputFileSplitLevels = cms.untracked.bool (True),
+            splitLevel = cms.untracked.int32 (0),
+            eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
+            fileName = cms.untracked.string (channelName + "/" + skimFilePrefix + suffix + ".root"),
+            SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
+            outputCommands = cms.untracked.vstring (outputCommands),
+            dropMetaData = cms.untracked.string ("ALL"),
+        )
+        add_channels.endPath += poolOutputModule
+        setattr (process, channelName + "PoolOutputModule", poolOutputModule)
         ########################################################################
 
         setattr (process, channelName, channelPath)
