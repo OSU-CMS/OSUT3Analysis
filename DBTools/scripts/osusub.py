@@ -361,7 +361,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     cmsRunExecutable = os.popen('which cmsRun').read().rstrip()
     filesToTransfer = []
     directoriesToTransfer = []
-    SubmitFile.write("# Command line arguments: \n# " + GetCommandLineString() + " \n\n\n")
+    SubmitFile.write("# Command line arguments:\n# " + GetCommandLineString() + "\n\n\n")
     for argument in sorted(currentCondorSubArgumentsSet):
         if currentCondorSubArgumentsSet[argument].has_key('Executable') and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = condor.sh\n')
@@ -384,12 +384,12 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
                 SubmitFile.write('x509userproxy = ' + userProxy + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Output_files') and currentCondorSubArgumentsSet[argument]['Transfer_Output_files'] == "":
             SubmitFile.write ('Transfer_Output_files = ')
-            if os.path.realpath (Directory).startswith ("/eos/uscms/store/"):
+            if os.path.realpath (Directory).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/")):
                 filesToTransfer.append ("hist_${Process}.root")
             else:
                 SubmitFile.write ("hist_$(Process).root,")
             for i in range (0, len (SkimChannelNames)):
-                if os.path.realpath (Directory + "/" + SkimChannelNames[i]).startswith ("/eos/uscms/store/"):
+                if os.path.realpath (Directory + "/" + SkimChannelNames[i]).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/")):
                     directoriesToTransfer.append (SkimChannelNames[i])
                 else:
                     SubmitFile.write (SkimChannelNames[i] + ",")
@@ -567,8 +567,9 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                             os.mkdir (SkimDirectory + '/' + channelName)
                         if not os.path.exists(Directory + '/' + channelName):
                             os.symlink (SkimDirectory + '/' + channelName, Directory + '/' + channelName)
-                    StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
-                    ConfigFile.write(StringToAdd)
+                    f = open (Directory + "/" + channelName + "/SkimDirectory.txt", "w")
+                    f.write (Directory + "\n")
+                    f.close ()
         else:
             for channelName in SkimChannelNames:
                 if not channelName == '':
@@ -579,8 +580,9 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                             os.mkdir (SkimDirectory + '/' + channelName)
                         if not os.path.exists(Directory + '/' + channelName):
                             os.symlink (SkimDirectory + '/' + channelName, Directory + '/' + channelName)
-                    StringToAdd = 'pset.process.' + channelName + 'PoolOutputModule.fileName = cms.untracked.string(\'' + channelName +'/skim_\'' +'+ str (osusub.jobNumber)' + '+ \'.root\')\n'
-                    ConfigFile.write(StringToAdd)
+                    f = open (Directory + "/" + channelName + "/SkimDirectory.txt", "w")
+                    f.write (Directory + "\n")
+                    f.close ()
     ConfigFile.write('fileName = \'hist_\' + str (osusub.jobNumber) + \'.root\'\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
     if (not arguments.Generic) or (arguments.Generic and arguments.localConfig):
@@ -617,6 +619,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     ConfigFile.write('\n')
     if Dataset != '':
         ConfigFile.write('pset.process.source.fileNames = cms.untracked.vstring (osusub.runList)\n')
+        ConfigFile.write('pset.process.source.secondaryFileNames = cms.untracked.vstring (osusub.secondaryRunList)\n')
         #If there are input datasets, on could set the MaxEvents to be -1.
         if EventsPerJob < 0:
             ConfigFile.write('pset.process.maxEvents.input = cms.untracked.int32 (' + str(EventsPerJob) + ')\n')
@@ -640,7 +643,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     if arguments.Unique:
         # Specify a different lumi section for each job so that all events have unique run / lumi / event numbers.
         # Instead of changing lumi section, could also change run number.
-        ConfigFile.write('pset.process.source.firstLuminosityBlock = cms.untracked.uint32((osusub.jobNumber)+1) \n') # osusub.jobNumber starts with 0
+        ConfigFile.write('pset.process.source.firstLuminosityBlock = cms.untracked.uint32((osusub.jobNumber)+1)\n') # osusub.jobNumber starts with 0
     ConfigFile.close()
     return SkimChannelNames
 
@@ -655,7 +658,7 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
         if not ".root" in inputFiles[f]:
             del inputFiles[f]
     datasetRead['numberOfFiles'] = (len(inputFiles) if not append else datasetRead['numberOfFiles'] + len(inputFiles))
-    text = ('listOfFiles = [  \n' if not append else 'listOfFiles += [  \n')
+    text = ('listOfFiles = [\n' if not append else 'listOfFiles += [\n')
     for f in inputFiles:
         if arguments.Redirector != "":
             f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
@@ -664,8 +667,8 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
         else:
             f = "root://cms-xrd-global.cern.ch/" + f
         text += '"' + f + '",\n'
-    text += ']  \n'
-    text += ('numberOfFiles = ' + str(len(inputFiles)) + '\n' if not append else 'numberOfFiles += ' + str(len(inputFiles)) + '\n')
+    text += ']\n'
+    text = ('listOfSecondaryFiles = []\n' if not append else 'listOfSecondaryFiles += []\n')
     if not append:
         datasetRead['realDatasetName'] = Dataset
         text += 'datasetName = \'' + str(Dataset) +'\'\n'
@@ -679,7 +682,6 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
 
 #It is the function which generates the list of input files for a given dataset type.
 def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
-    numberOfFiles = -1
     datasetRead = {}
     datasetRead['useAAA'] = UseAAA
     runList = []
@@ -719,7 +721,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             inputFiles = GetListOfRootFiles(arguments.inputDirectory)
         datasetRead['numberOfFiles'] = len(inputFiles)
         datasetRead['realDatasetName'] = 'FilesInDirectory:' + Dataset
-        text = 'listOfFiles = [  \n'
+        text = 'listOfFiles = [\n'
         if not UseAAA:
             for f in inputFiles:
                 if remoteAccessT3:
@@ -729,7 +731,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                         f = SubmissionDir + "/" + f
                     f = "file:" + os.path.realpath (f)
                 text += '"' + f + '",\n'
-            text += ']  \n'
+            text += ']\n'
         else:
             for f in inputFiles:
                 if arguments.Redirector != "":
@@ -739,8 +741,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 else:
                     f = "root://cmsxrootd.fnal.gov/" + f
                 text += '"' + f + '",\n'
-            text += ']  \n'
-        text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'
+            text += ']\n'
         text += 'crossSection = ' + str(crossSection) + '\n'
         fnew = open(datasetInfoName, "w")
         fnew.write(text)
@@ -760,7 +761,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 del inputFiles[f]
         datasetRead['numberOfFiles'] = len(inputFiles)
         datasetRead['realDatasetName'] = 'FilesInList:' + Dataset
-        text = 'listOfFiles = [  \n'
+        text = 'listOfFiles = [\n'
         #Please give the absolute paths of the files like /data/user/***/condor/dir or /store/....
         if not UseAAA:
             for f in inputFiles:
@@ -769,7 +770,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 else:
                     f = "file:" + os.path.realpath (f)
                 text += '"' + f + '",\n'
-            text += ']  \n'
+            text += ']\n'
         else:
             for f in inputFiles:
                 if arguments.Redirector != "":
@@ -779,8 +780,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 else:
                     f = "root://cmsxrootd.fnal.gov/" + f
                 text += '"' + f + '",\n'
-            text += ']  \n'
-        text += 'numberOfFiles = ' + str(datasetRead['numberOfFiles']) + '\n'
+            text += ']\n'
         text += 'crossSection = ' + str(crossSection) + '\n'
         fnew = open(datasetInfoName, "w")
         fnew.write(text)
@@ -844,7 +844,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             if not continueForNonPresentDataset:
                 return
         datasetRead['realDatasetName'] = datasetInfo.datasetName if hasattr (datasetInfo, "datasetName") else DatasetName
-        datasetRead['numberOfFiles'] = datasetInfo.numberOfFiles
+        datasetRead['numberOfFiles'] = len(datasetInfo.listOfFiles)
         if RunOverSkim:
             datasetRead['numberOfEvents'] = datasetInfo.skimNumberOfEvents
         datasetRead['secondaryCollections'] = secondaryCollectionModifications
@@ -852,18 +852,18 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
 
 def MakeBatchJobFile(WorkDir, Queue, NumberOfJobs):
     LxBatchSubFile = open(currentDir + WorkDir + '/lxbatchSub.sh','w')
-    LxBatchSubFile.write('#!/bin/sh \n')
-    LxBatchSubFile.write('for i in {1..' + NumberOfJobs + '} \n')
-    LxBatchSubFile.write('do \n')
-    LxBatchSubFile.write(' bsub -q ' + Queue + ' -oo ' + currentDir + '/' + WorkDir + '/lxbatch_\$i.log ' + currentDir + '/' + WorkDir + '/lxbatchRun.sh \$i \n')
-    LxBatchSubFile.write('done \n')
-    LxBatchSubFile.write('echo \"Finished submitting ' + NumberOfJobs + ' jobs.\" \n')
+    LxBatchSubFile.write('#!/bin/sh\n')
+    LxBatchSubFile.write('for i in {1..' + NumberOfJobs + '}\n')
+    LxBatchSubFile.write('do\n')
+    LxBatchSubFile.write(' bsub -q ' + Queue + ' -oo ' + currentDir + '/' + WorkDir + '/lxbatch_\$i.log ' + currentDir + '/' + WorkDir + '/lxbatchRun.sh \$i\n')
+    LxBatchSubFile.write('done\n')
+    LxBatchSubFile.write('echo \"Finished submitting ' + NumberOfJobs + ' jobs.\"\n')
     LxBatchSubFile.close()
     LxBatchRunFile = open(currentDir + WorkDir + '/lxbatchRun.sh','w')
-    LxBatchRunFile.write('#!/bin/sh \n')
+    LxBatchRunFile.write('#!/bin/sh\n')
     LxBatchRunFile.write('cd ' + currentDir + '/' + WorkDir + '\n')
-    LxBatchRunFile.write('eval `scram runtime -sh` \n')
-    LxBatchRunFile.write('cmsRun config_cfg.py True ' + NumberOfJobs + ' \$1 NULL NULL \n')
+    LxBatchRunFile.write('eval `scram runtime -sh`\n')
+    LxBatchRunFile.write('cmsRun config_cfg.py True ' + NumberOfJobs + ' \$1 NULL NULL\n')
     LxBatchRunFile.close()
     os.chmod (currentDir + '/' + WorkDir + '/lxbatchRun.sh', 0755)
     os.chmod (currentDir + '/' + WorkDir + '/lxbatchSub.sh', 0755)
@@ -895,6 +895,7 @@ def SkimModifier(Label, Directory, crossSection):
     orig = fin.read()
     fin.close()
     orig = orig.replace("listOfFiles",   "originalListOfFiles")
+    orig = orig.replace("listOfSecondaryFiles",   "originalListOfSecondaryFiles")
     orig = orig.replace("numberOfFiles", "originalNumberOfFiles")
     #Use the up-to-date crossSection all the time and keep track of
     #what value was used when making the skim. For a dataset not
@@ -910,17 +911,79 @@ def SkimModifier(Label, Directory, crossSection):
     skimFiles = GetListOfRootFiles(SkimDirectory)
     add  = "\n"
     add += 'skimDirectory = "' + SkimDirectory + '"\n'
-    add += 'listOfFiles = [  \n'
+    add += 'listOfFiles = [\n'
     for s in skimFiles:
         add += '"file:' + os.path.realpath (s) + '",\n'
-    add += ']  \n'
-    add += 'numberOfFiles = ' + str(len(skimFiles)) + '\n'
+    add += ']\n'
+
+    add += 'listOfSecondaryFiles = [\n'
+    tempdir = tempfile.mkdtemp ()
+    sys.path.append (tempdir)
+    cwd = os.getcwd ()
+    os.chdir (tempdir)
+    for s in getOriginalFiles (skimFiles, tempdir):
+        add += '"file:' + os.path.realpath (s) + '",\n'
+    shutil.rmtree (tempdir)
+    os.chdir (cwd)
+    add += ']\n'
+
     add += 'originalNumberOfEvents = ' + str(OriginalNumberOfEvents) + '\n'
     add += 'skimNumberOfEvents = ' + str(SkimNumberOfEvents) + '\n'
     fnew = open(infoFile, "w")
     fnew.write(orig + add)
     fnew.close()
 
+def getOriginalFiles (files, tempdir, isFirstFile = True, skimDirs = []):
+    originalFiles = set ()
+    for f in files:
+        originalFile = getOriginalFile (f, tempdir, isFirstFile, skimDirs)
+        if len (originalFile) is not 0:
+            originalFiles.update (originalFile)
+
+    return originalFiles
+
+def getOriginalFile (f, tempdir, isFirstFile = True, skimDirs = []):
+    if tempdir is None:
+        tempdir = tempfile.mkdtemp ()
+    if f.startswith ("file:"):
+        f = f[5:]
+    rootFile = f.split ("/")[-1]
+    if not rootFile.startswith ("emptySkim_"):
+        if isFirstFile:
+            return []
+        else:
+            return [os.path.realpath (f)]
+
+    try:
+        skimDirFile = open (os.path.dirname (f) + "/SkimDirectory.txt", "r")
+    except IOError:
+        print "ERROR:  Could not open skim directory file."
+        print "Expected name is", (os.path.dirname (f) + "/SkimDirectory.txt")
+        print "This should not be."
+        sys.exit(1)
+    skimDir = skimDirFile.readline ().rstrip ("\n")
+    skimDirFile.close ()
+
+    if skimDir in skimDirs:
+        return []
+    skimDirs.append (skimDir)
+
+    datasetInfoFile = re.sub (r"(.*)\.py$", r"\1", copyDatasetInfoToTempFile (glob.glob (skimDir + "/datasetInfo_*_cfg.py")[0], tempdir))
+    exec("import " + datasetInfoFile + " as skimDatasetInfo")
+
+    return getOriginalFiles (skimDatasetInfo.listOfFiles, tempdir, False, skimDirs)
+
+def copyDatasetInfoToTempFile (f, tempdir):
+    temp = tempfile.mkstemp (suffix = "_cfg.py", dir = tempdir)
+    os.close (temp[0])
+    src = open (f, "r")
+    dst = open (temp[1], "w")
+    for line in src:
+        dst.write (line)
+    src.close ()
+    dst.close ()
+
+    return temp[1].split ("/")[-1]
 
 ################################################################################
 ################################################################################
