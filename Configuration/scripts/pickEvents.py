@@ -33,7 +33,8 @@ parser.add_option("--redirector", dest="Redirector", default = "FNAL", help="Set
 RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Global':'cms-xrd-global.cern.ch'}
 
 def createEventList():
-    files = os.popen('ls skim*root -1').read().split('\n')
+    files = os.popen('ls skim*root -1 2>/dev/null').read().split('\n')
+    files.extend (os.popen('ls emptySkim*root -1 2>/dev/null').read().split('\n'))
     print "Files = ", files
     eventList = ""
     nEventsTot = 0

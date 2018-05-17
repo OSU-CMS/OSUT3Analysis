@@ -21,10 +21,10 @@ then
   exit 1
 fi
 
-nFiles=`find -L $condorDir -type f -regex ".*\/$skimName\/skim_[^/]*\.root$" | wc -l`
+nFiles=`find -L $condorDir -type f -regex ".*\/$skimName\/\(skim\|emptySkim\)_[^/]*\.root$" | wc -l`
 if [ $nFiles -ne 0 ]
 then
-  find -L $condorDir -type f -regex ".*\/$skimName\/skim_[^/]*\.root$" | xargs edmFileUtil -e | cleanEdmFileEvents.sh > $outputFile 2>&1
+  find -L $condorDir -type f -regex ".*\/$skimName\/\(skim\|emptySkim\)_[^/]*\.root$" | xargs edmFileUtil -e | cleanEdmFileEvents.sh > $outputFile 2>&1
   nEvents=`wc -l $outputFile | awk '{print $1}'`
   echo "Event numbers written to \"$outputFile\". Now run:"
   echo "  edmPickEvents.py --maxEventsInteractive $nEvents /DATA/SET/NAME $outputFile"

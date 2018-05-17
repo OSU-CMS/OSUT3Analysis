@@ -12,5 +12,4 @@ addChannelArguments.standAloneAnalyzers = []
 addChannelArguments.channels = []
 addChannelArguments.histogramSets = cms.VPSet()
 addChannelArguments.collections = cms.PSet()
-addChannelArguments.skim = False
 
