@@ -22,10 +22,6 @@ namespace osu
         const double pfdBetaIsoCorr () const;
         const double sumChargedHadronPtCorr () const;
         const double sumPUPtCorr () const;
-        const double genD0 () const;
-        const double d0 () const;
-        const double d0Sig () const;
-        const double dz () const;
         const int muonPVIndex () const;
         const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }
         void set_isTightMuonWRTVtx(const bool isTightMuon);
@@ -33,10 +29,6 @@ namespace osu
         void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };
         void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
         void set_muonPVIndex (int value) { muonPVIndex_  = value; };
-        void set_genD0 (double value) { genD0_  = value; };
-        void set_d0 (double value) { d0_  = value; };
-        void set_d0Sig (double value) { d0Sig_  = value; };
-        void set_dz (double value) { dz_  = value; };
 
         void set_match_HLT_IsoMu24_v (const bool);
         void set_match_HLT_IsoTkMu24_v (const bool);
@@ -68,10 +60,6 @@ namespace osu
         double sumChargedHadronPtCorr_;
         int muonPVIndex_;
         double sumPUPtCorr_;
-        double genD0_;
-        double d0_;
-        double d0Sig_;
-        double dz_;
 
         double metMinusOnePt_;
         double metMinusOnePx_;

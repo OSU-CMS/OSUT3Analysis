@@ -86,22 +86,6 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
           muon.set_match_HLT_IsoTkMu20_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltHighPtTkMuonCands::HLT", "hltL3fL1sMu16L1f0Tkf20QL3trkIsoFiltered0p09"));
         }
 
-      if(prunedParticles.isValid() && beamspot.isValid())
-        {
-          for (auto cand = prunedParticles->begin(); cand != prunedParticles->end(); cand++)
-            {
-              if (!(abs(cand->pdgId()) == 13 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.001))
-                continue;
-              double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
-              muon.set_genD0(gen_d0);
-            }
-        }
-      double d0 = object.dB(pat::Muon::BS2D);
-      double err = object.edB(pat::Muon::BS2D);
-      muon.set_d0(d0);
-      muon.set_d0Sig(d0/err);
-
-
       double pfdBetaIsoCorr = 0;
       double chargedHadronPt = 0;
       double puPt = 0;
@@ -171,12 +155,6 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       muon.set_sumChargedHadronPtCorr(chargedHadronPt);
       muon.set_sumPUPtCorr(puPt);
       muon.set_muonPVIndex(muonPVIndex);
-
-      if (!vertices->empty ())
-        {
-          const reco::Vertex &vtx = vertices->at (muonPVIndex);
-          muon.set_dz(object.muonBestTrack()->dz(vtx.position()));
-        }
 
     }
 

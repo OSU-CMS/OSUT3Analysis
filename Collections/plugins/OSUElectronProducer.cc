@@ -106,29 +106,6 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         effectiveArea = 0.2687;
       electron.set_AEff(effectiveArea);
 
-      if(prunedParticles.isValid() && beamspot.isValid())
-        {
-          for (auto cand = prunedParticles->begin(); cand != prunedParticles->end(); cand++)
-            {
-              if (!(abs(cand->pdgId()) == 11 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.001))
-                continue;
-              double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
-              electron.set_genD0(gen_d0);
-            }
-        }
-      ///////////////////////////////////////////////////////////
-      // THIS APPEARS TO BE BROKEN -
-      // IT LOOKS LIKE IT JUST RETURNS D0 WRT THE CMS ORIGIN
-      // WILL USE MANUAL CALCULATION INSTEAD
-      // double d0 = object.dB(pat::Electron::BS2D);
-      // double err = object.edB(pat::Electron::BS2D);
-      ///////////////////////////////////////////////////////////
-
-      double d0 = ((-(object.vx() - beamspot->x0())*object.py() + (object.vy() - beamspot->y0())*object.px())/object.pt());
-      double err = hypot(object.gsfTrack()->d0Error(), hypot(beamspot->x0Error(), beamspot->y0Error()));
-      electron.set_d0(d0);
-      electron.set_d0Sig(d0/err);
-
 
       double pfdRhoIsoCorr = 0;
       double chargedHadronPt = 0;
@@ -190,12 +167,6 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       electron.set_sumPUPtCorr(puPt);
       electron.set_electronPVIndex(electronPVIndex);
 
-
-      if (!vertices->empty ())
-        {
-          const reco::Vertex &vtx = vertices->at (electronPVIndex);
-          electron.set_dz(object.gsfTrack()->dz(vtx.position()));
-        }
     }
 
 
