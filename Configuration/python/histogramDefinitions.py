@@ -196,7 +196,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
             name = cms.string("muonGenMotherPdgId"),
             title = cms.string(";PDG ID of mother of gen muon"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.mother_.pdgId"),
+            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.mother_.pdgId)"),
         ),
         )
 elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
@@ -205,7 +205,7 @@ elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
             name = cms.string("muonGenMotherPdgId"),
             title = cms.string(";PDG ID of mother of gen muon"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.motherRef.pdgId"),
+            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.motherRef.pdgId)"),
         ),
         )
 
@@ -504,7 +504,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
             name = cms.string("electronGenMotherPdgId"),
             title = cms.string(";PDG ID of mother of gen electron"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.mother_.pdgId"),
+            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.mother_.pdgId)"),
         ),
         )
 elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
@@ -513,7 +513,7 @@ elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
             name = cms.string("electronGenMotherPdgId"),
             title = cms.string(";PDG ID of mother of gen electron"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.motherRef.pdgId"),
+            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.motherRef.pdgId)"),
         ),
         )
 

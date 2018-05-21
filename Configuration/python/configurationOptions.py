@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import os
+
 config_file = "standardConfig_cfg.py"
 
 ###### 2015A = 961 pb-1
@@ -1135,7 +1137,6 @@ composite_dataset_definitions = {
 
 }
 
-
 ############################################################################################################
 #########  DATASET-SPECIFIC OPTIONS  ########################################################################
 ############################################################################################################
@@ -1150,15 +1151,19 @@ nJobs = {
     'DYJetsToLL_50' : 630,
 
     #ZJetsToNuNu
-    'DYJetsToNuNu'   :  999,
-    'ZJetsToNuNu'   :  999,
+    'DYJetsToNuNu'             :  999,
+    'ZJetsToNuNu'              :  999,
     'ZJetsToNuNu_HT100to200'   :  999,
     'ZJetsToNuNu_HT200to400'   :  999,
     'ZJetsToNuNu_HT400to600'   :  999,
+    'ZJetsToNuNu_HT600to800'   :  999,
+    'ZJetsToNuNu_HT800to1200'  :  999,
+    'ZJetsToNuNu_HT1200to2500' :  999,
     'ZJetsToNuNu_HT600toInf'   :  999,
+    'ZJetsToNuNu_HT2500toInf'  :  999,
 
     #WJets
-    'WJetsToLNu'  :  999,
+    'WJetsToLNu'             :  999,
     'WJetsToLNu_HT100to200'  :  999,
     'WJetsToLNu_HT200to400'  :  999,
     'WJetsToLNu_HT400to600'  :  999,
@@ -1195,6 +1200,11 @@ nJobs = {
     'TTJets_DiLept'                 : 300,
     'TTJets_SingleLeptFromT'        : 620,
     'TTJets_SingleLeptFromTbar'     : 620,
+
+    #Other TTJets samples
+    'TTJets_2L2Nu'        : 300,
+    'TTJets_SemiLeptonic' : 620,
+    'TTJets_Hadronic'     : 620,
 
     #MET data
     'MET_2015D' : 999,
@@ -2489,7 +2499,11 @@ maxEvents = {
     'ZJetsToNuNu_HT100to200'   :  -1,
     'ZJetsToNuNu_HT200to400'   :  -1,
     'ZJetsToNuNu_HT400to600'   :  -1,
+    'ZJetsToNuNu_HT600to800'   :  -1,
+    'ZJetsToNuNu_HT800to1200'  :  -1,
+    'ZJetsToNuNu_HT1200to2500' :  -1,
     'ZJetsToNuNu_HT600toInf'   :  -1,
+    'ZJetsToNuNu_HT2500toInf'  :  -1,
 
     #WJets
     'WJetsToLNu'  :  -1,
@@ -2528,6 +2542,11 @@ maxEvents = {
     'TTJets_DiLept'              :  -1,
     'TTJets_SingleLeptFromT'     :  -1,
     'TTJets_SingleLeptFromTbar'  :  -1,
+
+    #Other TTJets samples
+    'TTJets_2L2Nu'        : -1,
+    'TTJets_SemiLeptonic' : -1,
+    'TTJets_Hadronic'     : -1,
 
     #MET data
     'MET_2015D' : -1,
@@ -2769,6 +2788,8 @@ maxEvents = {
     'SingleMu_2017B'        : -1,
     'SingleMu_2017C'        : -1,
     'SingleMu_2017D'        : -1,
+    'SingleMu_2017E'        : -1,
+    'SingleMu_2017F'        : -1,
     'SingleMu_2017'         : -1,
 
     'SingleEle_2015D'        : -1,
@@ -3819,7 +3840,11 @@ types = {
     'ZJetsToNuNu_HT100to200'   :  "bgMC",
     'ZJetsToNuNu_HT200to400'   :  "bgMC",
     'ZJetsToNuNu_HT400to600'   :  "bgMC",
+    'ZJetsToNuNu_HT600to800'   :  "bgMC",
+    'ZJetsToNuNu_HT800to1200'  :  "bgMC",
+    'ZJetsToNuNu_HT1200to2500' :  "bgMC",
     'ZJetsToNuNu_HT600toInf'   :  "bgMC",
+    'ZJetsToNuNu_HT2500toInf'  :  "bgMC",
 
     #WJets
     'WJetsToLNu'  :  "bgMC",
@@ -3862,6 +3887,11 @@ types = {
     'TTJets_DiLept'              :  "bgMC",
     'TTJets_SingleLeptFromT'     :  "bgMC",
     'TTJets_SingleLeptFromTbar'  :  "bgMC",
+
+    #Other TTJets samples
+    'TTJets_2L2Nu'        : "bgMC",
+    'TTJets_SemiLeptonic' : "bgMC",
+    'TTJets_Hadronic'     : "bgMC",
 
     #MET data
     'MET_2015D'        : "data",
@@ -4123,6 +4153,8 @@ types = {
     'SingleMu_2017B'        : "data",
     'SingleMu_2017C'        : "data",
     'SingleMu_2017D'        : "data",
+    'SingleMu_2017E'        : "data",
+    'SingleMu_2017F'        : "data",
     'SingleMu_2017'         : "data",
 
     'SingleEle_2015D'   : "data",
@@ -5197,7 +5229,11 @@ colors = {
     'ZJetsToNuNu_HT100to200'   :  831,
     'ZJetsToNuNu_HT200to400'   :  831,
     'ZJetsToNuNu_HT400to600'   :  831,
+    'ZJetsToNuNu_HT600to800'   :  831,
+    'ZJetsToNuNu_HT800to1200'  :  831,
+    'ZJetsToNuNu_HT1200to2500' :  831,
     'ZJetsToNuNu_HT600toInf'   :  831,
+    'ZJetsToNuNu_HT2500toInf'  :  831,
 
     #WJets
     'WJetsToLNu'             :  852,
@@ -5240,6 +5276,11 @@ colors = {
     'TTJets_DiLept'              :  873,
     'TTJets_SingleLeptFromT'     :  872,
     'TTJets_SingleLeptFromTbar'  :  872,
+
+    #Other TTJets samples
+    'TTJets_2L2Nu'        : 873,
+    'TTJets_SemiLeptonic' : 872,
+    'TTJets_Hadronic'     : 871,
 
     #MET data
     'MET_2015D'        : 1,
@@ -5500,6 +5541,8 @@ colors = {
     'SingleMu_2017B'        : 1,
     'SingleMu_2017C'        : 1,
     'SingleMu_2017D'        : 1,
+    'SingleMu_2017E'        : 1,
+    'SingleMu_2017F'        : 1,
     'SingleMu_2017'         : 1,
 
     'SingleEle_2015D'        : 1,
@@ -6586,7 +6629,11 @@ labels = {
     'ZJetsToNuNu_HT100to200'   :  "Z#rightarrow#nu#bar{#nu} (100<H_{T}<200 GeV)",
     'ZJetsToNuNu_HT200to400'   :  "Z#rightarrow#nu#bar{#nu} (200<H_{T}<400 GeV)",
     'ZJetsToNuNu_HT400to600'   :  "Z#rightarrow#nu#bar{#nu} (400<H_{T}<600 GeV)",
+    'ZJetsToNuNu_HT600to800'   :  "Z#rightarrow#nu#bar{#nu} (600<H_{T}<800 GeV)",
+    'ZJetsToNuNu_HT800to1200'  :  "Z#rightarrow#nu#bar{#nu} (800<H_{T}<1200 GeV)",
+    'ZJetsToNuNu_HT1200to2500' :  "Z#rightarrow#nu#bar{#nu} (1200<H_{T}<2500 GeV)",
     'ZJetsToNuNu_HT600toInf'   :  "Z#rightarrow#nu#bar{#nu} (H_{T}>600 GeV)",
+    'ZJetsToNuNu_HT2500toInf'  :  "Z#rightarrow#nu#bar{#nu} (H_{T}>2500 GeV)",
 
     #WJets
     'WJetsToLNu'            :  "W#rightarrowl#nu",
@@ -6629,6 +6676,11 @@ labels = {
     'TTJets_DiLept'              :  "t#bar{t} (fully leptonic)",
     'TTJets_SingleLeptFromT'     :  "t#bar{t} (single lepton from t)",
     'TTJets_SingleLeptFromTbar'  :  "t#bar{t} (single lepton from #bar{t})",
+
+    #Other TTJets samples
+    'TTJets_2L2Nu'        : "t#bar{t} (fully leptonic)",
+    'TTJets_SemiLeptonic' : "t#bar{t} (semi-leptonic)",
+    'TTJets_Hadronic'     : "t#bar{t} (fully hadronic)",
 
     #MET data
     'MET_2015D'        : "MET 2015D data",
@@ -7965,18 +8017,18 @@ crossSections = {
     # Cross sections below are for MiniAOD not stored on T3.
     'DYJetsToLL_50'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)
     'WJetsToLNu'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3)
-'TTJets'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
-'TTJets_Debug'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
-    'WW'                       :                63.21,
-    'WZ'                       :                22.82,
-    'ZZ'                       :                10.32,
-#50ns
-    'DYJetsToLL_50_50ns'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)
-    'WJetsToLNu_50ns'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3)
-    'TTJets_50ns'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
-'WW_50ns'                       :                63.21,
-    'WZ_50ns'                       :                22.82,
-    'ZZ_50ns'                       :                10.32,
+    'TTJets'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
+    'TTJets_Debug'                  : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
+    'WW'                            : 63.21,
+    'WZ'                            : 22.82,
+    'ZZ'                            : 10.32,
+    #50ns
+    'DYJetsToLL_50_50ns'            : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)
+    'WJetsToLNu_50ns'               : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3)
+    'TTJets_50ns'                   : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
+    'WW_50ns'                       : 63.21,
+    'WZ_50ns'                       : 22.82,
+    'ZZ_50ns'                       : 10.32,
 #############################################################
     # Cross sections below obatined with crossSectionExtractor.py
     'DYJetsToLL_10to50'        :              18610.0,
@@ -8038,6 +8090,12 @@ crossSections = {
     'TTJets_DiLept'                :  87.31,
     'TTJets_SingleLeptFromT'       :  182.7,
     'TTJets_SingleLeptFromTbar'    :  182.7,
+
+    # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
+    # BRs: http://pdg.lbl.gov/2013/reviews/rpp2013-rev-top-quark.pdf
+    'TTJets_2L2Nu'        : 831.6 * 0.105,
+    'TTJets_SemiLeptonic' : 831.6 * 0.438,
+    'TTJets_Hadronic'     : 831.6 * 0.457,
 
     'ZToMuMu_50To120_76X_AODSIM' : 1928,
     'ZToMuMu_80To100_76X_Ntuple' : 1928,
