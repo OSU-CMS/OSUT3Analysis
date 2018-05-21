@@ -668,7 +668,7 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
             f = "root://cms-xrd-global.cern.ch/" + f
         text += '"' + f + '",\n'
     text += ']\n'
-    text = ('listOfSecondaryFiles = []\n' if not append else 'listOfSecondaryFiles += []\n')
+    text += ('listOfSecondaryFiles = []\n' if not append else 'listOfSecondaryFiles += []\n')
     if not append:
         datasetRead['realDatasetName'] = Dataset
         text += 'datasetName = \'' + str(Dataset) +'\'\n'
