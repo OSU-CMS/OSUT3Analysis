@@ -404,7 +404,7 @@ OSUGenericTrackProducer<T>::getChannelStatusMaps ()
         int status = ( chit != ecalStatus_->end() ) ? chit->getStatusCode() & 0x1F : -1;
 
         const CaloSubdetectorGeometry*  subGeom = caloGeometry_->getSubdetectorGeometry (detid);
-        const CaloCellGeometry*        cellGeom = subGeom->getGeometry (detid);
+        auto cellGeom = subGeom->getGeometry (detid);
         double eta = cellGeom->getPosition ().eta ();
         double phi = cellGeom->getPosition ().phi ();
         double theta = cellGeom->getPosition().theta();
@@ -433,7 +433,7 @@ OSUGenericTrackProducer<T>::getChannelStatusMaps ()
            int status = ( chit != ecalStatus_->end() ) ? chit->getStatusCode() & 0x1F : -1;
 
            const CaloSubdetectorGeometry*  subGeom = caloGeometry_->getSubdetectorGeometry (detid);
-           const CaloCellGeometry*        cellGeom = subGeom->getGeometry (detid);
+           auto cellGeom = subGeom->getGeometry (detid);
            double eta = cellGeom->getPosition ().eta () ;
            double phi = cellGeom->getPosition ().phi () ;
            double theta = cellGeom->getPosition().theta();

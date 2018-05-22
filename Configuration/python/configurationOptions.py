@@ -1441,11 +1441,11 @@ nJobs = {
     'SingleMu_2016F'   : 650,
     'SingleMu_2016G'   : 1500,
     'SingleMu_2016H'   : 1750,
-    'SingleMu_2017B'   : 1000,
-    'SingleMu_2017C'   : 1000,
-    'SingleMu_2017D'   : 1000,
-    'SingleMu_2017E'   : 1000,
-    'SingleMu_2017F'   : 1000,
+    'SingleMu_2017B'   : 1059,
+    'SingleMu_2017C'   : 1247,
+    'SingleMu_2017D'   : 607,
+    'SingleMu_2017E'   : 1523,
+    'SingleMu_2017F'   : 2435,
 
     # set number of jobs to correpond to roughly 100k events/job
     'SingleEle_2015D' : 1000,
