@@ -81,6 +81,8 @@ getLocation
           }
       }
       print $tmpfile "]\n";
+      print $tmpfile "listOfSecondaryFiles = []\n" if not $append;
+      print $tmpfile "listOfSecondaryFiles += []\n" if $append;
       return
    }
   if ($results->numrows () == 0)
@@ -126,6 +128,7 @@ getLocation
   print $tmpfile "crossSection = "."-1"."\n" if not $append and not $map{$response}[4];
   print $tmpfile "listOfFiles = [\n" if not $append;
   print $tmpfile "listOfFiles += [\n" if $append;
+
   if ($map{$response}[5]) {
       for (my $i = 0; $i < @{$map{$response}[5]}; $i++)
           {
@@ -138,6 +141,8 @@ getLocation
           }
    }
   print $tmpfile "]";
+  print $tmpfile "listOfSecondaryFiles = []\n" if not $append;
+  print $tmpfile "listOfSecondaryFiles += []\n" if $append;
   return
 }
 
