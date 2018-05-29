@@ -106,6 +106,17 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         effectiveArea = 0.2687;
       electron.set_AEff(effectiveArea);
 
+      //generator D0 must be done with prunedGenParticles because vertex is only right in this collection, not right in packedGenParticles
+      if(prunedParticles.isValid() && beamspot.isValid())
+	{
+	  for (auto cand = prunedParticles->begin(); cand != prunedParticles->end(); cand++)
+	    {
+	      if (!(abs(cand->pdgId()) == 11 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.1))
+		continue;
+	      double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
+	      electron.set_genD0(gen_d0);
+	    }
+	}
 
       double pfdRhoIsoCorr = 0;
       double chargedHadronPt = 0;

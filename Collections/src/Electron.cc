@@ -18,6 +18,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   sumChargedHadronPtCorr_     (INVALID_VALUE),
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
+  genD0_                      (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
@@ -47,6 +48,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumChargedHadronPtCorr_     (INVALID_VALUE),
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
+  genD0_                      (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
@@ -76,6 +78,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumChargedHadronPtCorr_     (INVALID_VALUE),
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
+  genD0_                      (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
@@ -105,6 +108,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumChargedHadronPtCorr_     (INVALID_VALUE),
   electronPVIndex_            (INVALID_VALUE),
   sumPUPtCorr_                (INVALID_VALUE),
+  genD0_                      (INVALID_VALUE),
   passesTightID_noIsolation_  (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
@@ -213,6 +217,12 @@ const double
 osu::Electron::sumPUPtCorr () const
 {
   return sumPUPtCorr_;
+}
+
+const double
+osu::Electron::genD0 () const
+{
+  return genD0_;
 }
 
 const bool
