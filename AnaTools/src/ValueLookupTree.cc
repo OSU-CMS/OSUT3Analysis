@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/Math/interface/normalizedPhi.h"
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
@@ -113,7 +114,7 @@ ValueLookupTree::evaluate ()
   // for each object. If it is empty when this method is called, it is filled.
   // Then the method returns it as a reference.
   //////////////////////////////////////////////////////////////////////////////
-  if (!values_.size () && allCollectionsNonEmpty_)
+  if (values_.empty () && allCollectionsNonEmpty_)
     {
       evaluationError_ = false;
       uservariablesToDelete_.clear ();
@@ -258,8 +259,6 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->genjets->size ();
   else if (EQ_VALID(name,generatorweights))
     return 1;
-  else if (EQ_VALID(name,basicjets))
-    return handles_->basicjets->size ();
   else if (EQ_VALID(name,jets))
     return handles_->jets->size ();
   else if (EQ_VALID(name,bjets))
@@ -282,10 +281,10 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->taus->size ();
   else if (EQ_VALID(name,tracks))
     return handles_->tracks->size ();
+  else if (EQ_VALID(name,secondaryTracks))
+    return handles_->secondaryTracks->size ();
   else if (EQ_VALID(name,pileupinfos))
     return handles_->pileupinfos->size ();
-  else if (EQ_VALID(name,trigobjs))
-    return handles_->trigobjs->size ();
   else if (EQ_VALID(name,uservariables)){
     // !!!
     //    return handles_->uservariables[printValue(root_)].size ();
@@ -316,7 +315,6 @@ bool
   else  if  (EQ_VALID(name,events))            isFound  =  handles_->events.isValid();
   else  if  (EQ_VALID(name,genjets))           isFound  =  handles_->genjets.isValid();
   else  if  (EQ_VALID(name,generatorweights))  isFound  =  handles_->generatorweights.isValid();
-  else  if  (EQ_VALID(name,basicjets))         isFound  =  handles_->basicjets.isValid();
   else  if  (EQ_VALID(name,jets))              isFound  =  handles_->jets.isValid();
   else  if  (EQ_VALID(name,bjets))             isFound  =  handles_->bjets.isValid();
   else  if  (EQ_VALID(name,mcparticles))       isFound  =  handles_->mcparticles.isValid();
@@ -328,8 +326,8 @@ bool
   else  if  (EQ_VALID(name,superclusters))     isFound  =  handles_->superclusters.isValid();
   else  if  (EQ_VALID(name,taus))              isFound  =  handles_->taus.isValid();
   else  if  (EQ_VALID(name,tracks))            isFound  =  handles_->tracks.isValid();
-  else  if  (EQ_VALID(name,pileupinfos))            isFound  =  handles_->pileupinfos.isValid();
-  else  if  (EQ_VALID(name,trigobjs))          isFound  =  handles_->trigobjs.isValid();
+  else  if  (EQ_VALID(name,secondaryTracks))   isFound  =  handles_->secondaryTracks.isValid();
+  else  if  (EQ_VALID(name,pileupinfos))       isFound  =  handles_->pileupinfos.isValid();
   else if (EQ_VALID(name,uservariables))       isFound = true; // This vector is always present, even if its size is 0.
   else if (EQ_VALID(name,eventvariables))      isFound = true; // This vector is always present, even if its size is 0.
   return isFound;
@@ -508,7 +506,7 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
                                                   "copysign", "nextafter",
                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
-        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "deltaR", "invMass", "number", "transMass", "pT"}) ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "dPhi", "normalizedPhi", "compositePhi", "deltaR", "invMass", "number", "transMass", "pT"}) ||
         insertDots                 (cut,  tree) ||
         //insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
         insertParentheses          (cut,  tree)))
@@ -526,7 +524,7 @@ ValueLookupTree::printNode (Node* tree) const
 {
   string expression = "";
   if (!tree) return expression;
-  if (tree->branches.size ()) {
+  if (!tree->branches.empty ()) {
     for (const auto &branch : tree->branches)
       expression += branch->value + " ";
   } else {
@@ -566,7 +564,7 @@ ValueLookupTree::evaluate_ (const Node * const tree, const ObjMap &objs)
   // The node is not a leaf and its value is an operator. First, evaluate its
   // daughters, then return the result of the operator acting on the daughters.
   //////////////////////////////////////////////////////////////////////////////
-  if (tree->branches.size ())
+  if (!tree->branches.empty ())
     {
       vector<Leaf> operands;
       for (const auto &branch : tree->branches)
@@ -763,6 +761,25 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
       else if (op == "deltaPhi")
         return deltaPhi (valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "phi"),
                          valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi"));
+      else if (op == "dPhi")
+        return deltaPhi (boost::get<double> (operands.at (0)), boost::get<double> (operands.at (1)));
+      else if (op == "normalizedPhi")
+        return normalizedPhi (boost::get<double> (operands.at (0)));
+      else if (op == "compositePhi")
+        {
+          double px0, px1, py0, py1, phi;
+
+          px0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "px");
+          px1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "px");
+          py0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "py");
+          py1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "py");
+
+          phi = acos ((px0 + px1) / hypot (px0 + px1, py0 + py1));
+          if ((py0 + py1) < 0.0)
+            phi *= -1.0;
+
+          return normalizedPhi (phi);
+        }
       else if (op == "deltaR")
         {
           double eta0, phi0, eta1, phi1;
@@ -803,7 +820,7 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 
           for (const auto &operand : operands)
             {
-              px += valueLookup (boost::get<string> (operand) + "s", objs, "px", false);
+              px += valueLookup (boost::get<string> (operand) + "s", objs, "px");
               py += valueLookup (boost::get<string> (operand) + "s", objs, "py", false);
             }
           return hypot(px,py);
@@ -853,8 +870,6 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
     return ((void *) &handles_->jets->at (i));
   else if (EQ_VALID(name,bjets))
     return ((void *) &handles_->bjets->at (i));
-  else if (EQ_VALID(name,basicjets))
-    return ((void *) &handles_->basicjets->at (i));
   else if (EQ_VALID(name,mcparticles))
     return ((void *) &handles_->mcparticles->at (i));
   else if (EQ_VALID(name,mets))
@@ -873,10 +888,10 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
     return ((void *) &handles_->taus->at (i));
   else if (EQ_VALID(name,tracks))
     return ((void *) &handles_->tracks->at (i));
+  else if (EQ_VALID(name,secondaryTracks))
+    return ((void *) &handles_->secondaryTracks->at (i));
   else if (EQ_VALID(name,pileupinfos))
     return ((void *) &handles_->pileupinfos->at (i));
-  else if (EQ_VALID(name,trigobjs))
-    return ((void *) &handles_->trigobjs->at (i));
   else if (EQ_VALID(name,uservariables))
     {
       //!!!
@@ -923,8 +938,6 @@ ValueLookupTree::getCollectionType (const string &name) const
     return "osu::Jet";
   else if (EQ_VALID(name,bjets))
     return "osu::Bjet";
-  else if (EQ_VALID(name,basicjets))
-    return "osu::Basicjet";
   else if (EQ_VALID(name,mcparticles))
     return "osu::Mcparticle";
   else if (EQ_VALID(name,mets))
@@ -943,10 +956,10 @@ ValueLookupTree::getCollectionType (const string &name) const
     return "osu::Tau";
   else if (EQ_VALID(name,tracks))
     return "osu::Track";
+  else if (EQ_VALID(name,secondaryTracks))
+    return "osu::SecondaryTrack";
   else if (EQ_VALID(name,pileupinfos))
     return "osu::PileUpInfo";
-  else if (EQ_VALID(name,trigobjs))
-    return "osu::Trigobj";
   else if (EQ_VALID(name,uservariables))
     return "osu::Uservariable";
   else if (EQ_VALID(name,eventvariables))
@@ -979,8 +992,6 @@ ValueLookupTree::isCollection (const string &name) const
     return true;
   else if (EQ_VALID(name,bjets))
     return true;
-  else if (EQ_VALID(name,basicjets))
-    return true;
   else if (EQ_VALID(name,mcparticles))
     return true;
   else if (EQ_VALID(name,mets))
@@ -1001,7 +1012,7 @@ ValueLookupTree::isCollection (const string &name) const
     return true;
   else if (EQ_VALID(name,tracks))
     return true;
-  else if (EQ_VALID(name,trigobjs))
+  else if (EQ_VALID(name,secondaryTracks))
     return true;
   else if (EQ_VALID(name,uservariables))
     return true;
@@ -1051,7 +1062,7 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
     {
       size_t index = s.find (target, pos);
       if (!vetoMatch (s, target, index, vetoTargets))
-        indices.push_back (make_tuple (index, index, target));
+        indices.emplace_back (index, index, target);
     }
   sort (indices.begin (), indices.end (), anatools::firstOfTupleAscending);
   //////////////////////////////////////////////////////////////////////////////
@@ -1059,7 +1070,7 @@ ValueLookupTree::findFirstOf (const string &s, const vector<string> &targets, co
   //////////////////////////////////////////////////////////////////////////////
   // If there are no matches, just return string::npos.
   //////////////////////////////////////////////////////////////////////////////
-  if (!indices.size ())
+  if (indices.empty ())
     return make_pair (string::npos, "");
   //////////////////////////////////////////////////////////////////////////////
 
@@ -1092,7 +1103,7 @@ ValueLookupTree::findLastOf (const string &s, const vector<string> &targets, con
     {
       size_t index = s.rfind (target, pos);
       if (!vetoMatch (s, target, index, vetoTargets))
-        indices.push_back (make_tuple (index + target.length () - 1, index, target));
+        indices.emplace_back (index + target.length () - 1, index, target);
     }
   sort (indices.begin (), indices.end (), anatools::firstOfTupleDescending);
   //////////////////////////////////////////////////////////////////////////////
@@ -1100,7 +1111,7 @@ ValueLookupTree::findLastOf (const string &s, const vector<string> &targets, con
   //////////////////////////////////////////////////////////////////////////////
   // If there are no matches, just return string::npos.
   //////////////////////////////////////////////////////////////////////////////
-  if (!indices.size ())
+  if (indices.empty ())
     return make_pair (string::npos, "");
   //////////////////////////////////////////////////////////////////////////////
 

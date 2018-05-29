@@ -1,7 +1,9 @@
 #include "OSUT3Analysis/Collections/interface/Muon.h"
 
 #if IS_VALID(muons)
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+
+#ifndef STOPPPED_PTLS
+
 osu::Muon::Muon ()
 {
   isTightMuonWRTVtx_ = false;
@@ -14,6 +16,7 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
   sumChargedHadronPtCorr_  (INVALID_VALUE),
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
+  genD0_                   (INVALID_VALUE),
   metMinusOnePt_           (INVALID_VALUE),
   metMinusOnePx_           (INVALID_VALUE),
   metMinusOnePy_           (INVALID_VALUE),
@@ -21,17 +24,22 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles) :
-  GenMatchable             (muon),
+  GenMatchable             (muon, particles),
   isTightMuonWRTVtx_       (false),
   pfdBetaIsoCorr_          (INVALID_VALUE),
   sumChargedHadronPtCorr_  (INVALID_VALUE),
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
+  genD0_                   (INVALID_VALUE),
   metMinusOnePt_           (INVALID_VALUE),
   metMinusOnePx_           (INVALID_VALUE),
   metMinusOnePy_           (INVALID_VALUE),
@@ -39,17 +47,22 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
-  GenMatchable             (muon),
+  GenMatchable             (muon, particles, cfg),
   isTightMuonWRTVtx_       (false),
   pfdBetaIsoCorr_          (INVALID_VALUE),
   sumChargedHadronPtCorr_  (INVALID_VALUE),
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
+  genD0_                   (INVALID_VALUE),
   metMinusOnePt_           (INVALID_VALUE),
   metMinusOnePx_           (INVALID_VALUE),
   metMinusOnePy_           (INVALID_VALUE),
@@ -57,17 +70,22 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
 }
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const osu::Met &met) :
-  GenMatchable             (muon),
+  GenMatchable             (muon, particles, cfg),
   isTightMuonWRTVtx_       (false),
   pfdBetaIsoCorr_          (INVALID_VALUE),
   sumChargedHadronPtCorr_  (INVALID_VALUE),
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
+  genD0_                   (INVALID_VALUE),
   metMinusOnePt_           (INVALID_VALUE),
   metMinusOnePx_           (INVALID_VALUE),
   metMinusOnePy_           (INVALID_VALUE),
@@ -75,7 +93,11 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu24_v_     (false),
+  match_HLT_IsoTkMu24_v_   (false),
+  match_HLT_IsoMu20_v_     (false),
+  match_HLT_IsoTkMu20_v_   (false)
 {
   TVector2 p (met.px () + this->px (), met.py () + this->py ()),
            pNoMu (met.noMuPx (), met.noMuPy ()); // we do not add the muon's pt
@@ -122,20 +144,50 @@ osu::Muon::sumPUPtCorr () const
   return sumPUPtCorr_;
 }
 
+const double
+osu::Muon::genD0 () const
+{
+  return genD0_;
+}
+
+void
+osu::Muon::set_match_HLT_IsoMu24_v (const bool flag)
+{
+  match_HLT_IsoMu24_v_ = flag;
+}
+
+void
+osu::Muon::set_match_HLT_IsoTkMu24_v (const bool flag)
+{
+  match_HLT_IsoTkMu24_v_ = flag;
+}
+
+void
+osu::Muon::set_match_HLT_IsoMu20_v (const bool flag)
+{
+  match_HLT_IsoMu20_v_ = flag;
+}
+
+void
+osu::Muon::set_match_HLT_IsoTkMu20_v (const bool flag)
+{
+  match_HLT_IsoTkMu20_v_ = flag;
+}
+
 const int
-osu::Muon::missingInnerHits () const
+osu::Muon::missingInnerHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS));
 }
 
 const int
-osu::Muon::missingMiddleHits () const
+osu::Muon::missingMiddleHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS));
 }
 
 const int
-osu::Muon::missingOuterHits () const
+osu::Muon::missingOuterHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
 }
@@ -188,7 +240,31 @@ osu::Muon::metNoMuMinusOnePhi () const
   return metNoMuMinusOnePhi_;
 }
 
-#elif DATA_FORMAT == AOD_CUSTOM
+const bool
+osu::Muon::match_HLT_IsoMu24_v () const
+{
+  return match_HLT_IsoMu24_v_;
+}
+
+const bool
+osu::Muon::match_HLT_IsoTkMu24_v () const
+{
+  return match_HLT_IsoTkMu24_v_;
+}
+
+const bool
+osu::Muon::match_HLT_IsoMu20_v () const
+{
+  return match_HLT_IsoMu20_v_;
+}
+
+const bool
+osu::Muon::match_HLT_IsoTkMu20_v () const
+{
+  return match_HLT_IsoTkMu20_v_;
+}
+
+#else // STOPPPED_PTLS
 
 osu::Muon::Muon ()
 {
@@ -198,11 +274,11 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
     TYPE(muons) (muon)
 {
 }
-#endif
+
+#endif // STOPPPED_PTLS
 
 osu::Muon::~Muon ()
 {
 }
 
-
-#endif
+#endif // #if IS_VALID(muons)

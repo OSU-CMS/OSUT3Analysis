@@ -13,6 +13,7 @@ if len (sys.argv) == 7 and sys.argv[2] == "True":
         runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + jobNumber):(jobNumber * filesPerJob + filesPerJob + jobNumber + 1)]
     else:
         runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + residualLength):(jobNumber * filesPerJob + residualLength + filesPerJob)]
+    secondaryRunList = datasetInfo.listOfSecondaryFiles
   dataset = sys.argv[5]
   datasetLabel = sys.argv[6]
   batchMode = True

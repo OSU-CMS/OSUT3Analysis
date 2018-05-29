@@ -8,7 +8,11 @@
 #include <string>
 #include "TH2D.h"
 #include "TH2F.h"
+#include "TGraphAsymmErrors.h"
 #include "TFile.h"
+
+#include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
+
 class ObjectScalingFactorProducer : public EventVariableProducer
   {
     public:
@@ -20,10 +24,14 @@ class ObjectScalingFactorProducer : public EventVariableProducer
     private:
         string muonFile_;
         string electronFile_;
+        string trackFile_;
         string electronWp_;
         string muonWp_;
         bool doEleSF_;
         bool doMuSF_;
+        bool doTrackSF_;
         void AddVariables(const edm::Event &);
+              vector<ScaleFactor> scaleFactors_;
+
 };
 #endif

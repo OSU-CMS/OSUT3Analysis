@@ -1,22 +1,10 @@
 #include "DataFormats/Common/interface/Wrapper.h"
 
 //Add includes for your classes here
-#include "OSUT3Analysis/AnaTools/interface/BNstop.h"
-#include "OSUT3Analysis/AnaTools/interface/BNPFChgHad.h"
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 namespace {
    struct OSUT3Analysis_AnaTools {
       //add 'dummy' Wrapper variable for each class type you put into the Event
-     BNstop stopdummy0;
-     edm::Wrapper<BNstop> stopdummy1;
-     vector<BNstop> stopdummy2;
-     edm::Wrapper<vector<BNstop> > stopdummy3;
-
-     BNPFChgHad PFChgHaddummy0;
-     edm::Wrapper<BNPFChgHad> PFChgHaddummy1;
-     vector<BNPFChgHad> PFChgHaddummy2;
-     edm::Wrapper<vector<BNPFChgHad> > PFChgHaddummy3;
-
      std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > newvarsdummy0;
      edm::Wrapper<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > newvarsdummy1;
      vector<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > > newvarsdummy2;

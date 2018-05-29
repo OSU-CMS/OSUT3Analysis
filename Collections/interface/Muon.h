@@ -6,7 +6,7 @@
 
 #if IS_VALID(muons)
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
 namespace osu
 {
   class Muon : public GenMatchable<TYPE(muons), 13>
@@ -23,16 +23,23 @@ namespace osu
         const double sumChargedHadronPtCorr () const;
         const double sumPUPtCorr () const;
         const int muonPVIndex () const;
+	const double genD0 () const;
         const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }
         void set_isTightMuonWRTVtx(const bool isTightMuon);
-        void set_pfdBetaIsoCorr (double value) { pfdBetaIsoCorr_  = value; };  
-        void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };  
-        void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };  
-        void set_muonPVIndex (int value) { muonPVIndex_  = value; };  
+        void set_pfdBetaIsoCorr (double value) { pfdBetaIsoCorr_  = value; };
+        void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };
+        void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
+        void set_muonPVIndex (int value) { muonPVIndex_  = value; };
+	void set_genD0 (double value) { genD0_  = value; };
 
-        const int missingInnerHits () const;
-        const int missingMiddleHits () const;
-        const int missingOuterHits () const;
+        void set_match_HLT_IsoMu24_v (const bool);
+        void set_match_HLT_IsoTkMu24_v (const bool);
+        void set_match_HLT_IsoMu20_v (const bool);
+        void set_match_HLT_IsoTkMu20_v (const bool);
+
+        const int missingInnerHitsFromTrackerLayersWithoutMeasurements () const;
+        const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
+        const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
 
         const double metMinusOnePt () const;
         const double metMinusOnePx () const;
@@ -44,12 +51,18 @@ namespace osu
         const double metNoMuMinusOnePy () const;
         const double metNoMuMinusOnePhi () const;
 
+        const bool match_HLT_IsoMu24_v () const;
+        const bool match_HLT_IsoTkMu24_v () const;
+        const bool match_HLT_IsoMu20_v () const;
+        const bool match_HLT_IsoTkMu20_v () const;
+
       private:
         bool isTightMuonWRTVtx_;
         double pfdBetaIsoCorr_;
         double sumChargedHadronPtCorr_;
         int muonPVIndex_;
         double sumPUPtCorr_;
+	double genD0_;
 
         double metMinusOnePt_;
         double metMinusOnePx_;
@@ -60,9 +73,14 @@ namespace osu
         double metNoMuMinusOnePx_;
         double metNoMuMinusOnePy_;
         double metNoMuMinusOnePhi_;
+
+        bool match_HLT_IsoMu24_v_;
+        bool match_HLT_IsoTkMu24_v_;
+        bool match_HLT_IsoMu20_v_;
+        bool match_HLT_IsoTkMu20_v_;
     };
 }
-#elif DATA_FORMAT == AOD_CUSTOM
+#else // STOPPPED_PTLS
 namespace osu
 {
   class Muon : public TYPE(muons)
@@ -73,7 +91,7 @@ namespace osu
         ~Muon ();
     };
 }
-#endif
+#endif // STOPPPED_PTLS
 
 #else
 

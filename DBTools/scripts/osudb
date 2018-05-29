@@ -836,24 +836,35 @@ locationExists
   my $location = shift;
 
   $location =~ s/^(.*)\/+$/$1/;
-  my $query = "select id from ntuple where location like '$location' and id!=$id";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
-  return 1 if $results->numrows ();
+
+  my $slash = "";
+  for (my $i = 0; $i < 3; $i++)
+    {
+      my $query = "select id from ntuple where location like '$location$slash' and id!=$id";
+      $db->selectdb ("ntuple");
+      my $results = $db->query ($query);
+      return 1 if $results->numrows ();
+      $slash .= "/";
+    }
 
   if ($location =~ m/^\/store\/.*$/)
     {
-      $location =~ s/^\/store\/(.*)$/\/data\/se\/store\/$1/;
+      $location =~ s/^\/store\/(.*)$/\/mnt\/hadoop\/se\/store\/$1/;
     }
-  elsif ($location =~ m/^\/data\/se\/store\/.*$/)
+  elsif ($location =~ m/^\/mnt\/hadoop\/se\/store\/.*$/)
     {
-      $location =~ s/^\/data\/se\/store\/(.*)$/\/store\/$1/;
+      $location =~ s/^\/mnt\/hadoop\/se\/store\/(.*)$/\/store\/$1/;
     }
 
-  my $query = "select id from ntuple where location like '$location%' and id!=$id";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
-  return 1 if $results->numrows ();
+  my $slash = "";
+  for (my $i = 0; $i < 3; $i++)
+    {
+      my $query = "select id from ntuple where location like '$location$slash' and id!=$id";
+      $db->selectdb ("ntuple");
+      my $results = $db->query ($query);
+      return 1 if $results->numrows ();
+      $slash .= "/";
+    }
 
   return 0;
 }

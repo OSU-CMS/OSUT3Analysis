@@ -20,6 +20,9 @@ namespace osu
 
         const bool passesDecayModeReconstruction () const;
         const bool passesLightFlavorRejection () const;
+        const bool passesLooseCombinedIsolation () const;
+        const bool passesMediumCombinedIsolation () const;
+        const bool passesTightCombinedIsolation () const;
 
         const double metMinusOnePt () const;
         const double metMinusOnePx () const;
@@ -30,6 +33,20 @@ namespace osu
         const double metNoMuMinusOnePx () const;
         const double metNoMuMinusOnePy () const;
         const double metNoMuMinusOnePhi () const;
+
+        const double metMinusOneUpPt () const;
+        const double metMinusOneUpPx () const;
+        const double metMinusOneUpPy () const;
+        const double metMinusOneUpPhi () const;
+
+        const double metNoMuMinusOneUpPt () const;
+        const double metNoMuMinusOneUpPx () const;
+        const double metNoMuMinusOneUpPy () const;
+        const double metNoMuMinusOneUpPhi () const;
+
+        const bool match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v () const;
+
+        void set_match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v (const bool);
 
       private:
 
@@ -42,6 +59,18 @@ namespace osu
         double metNoMuMinusOnePx_;
         double metNoMuMinusOnePy_;
         double metNoMuMinusOnePhi_;
+
+        double metMinusOneUpPt_;
+        double metMinusOneUpPx_;
+        double metMinusOneUpPy_;
+        double metMinusOneUpPhi_;
+
+        double metNoMuMinusOneUpPt_;
+        double metNoMuMinusOneUpPx_;
+        double metNoMuMinusOneUpPy_;
+        double metNoMuMinusOneUpPhi_;
+
+        bool match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v_;
     };
 }
 

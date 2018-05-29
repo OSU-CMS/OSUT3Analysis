@@ -10,8 +10,8 @@ EventVariableProducer::~EventVariableProducer()
 {
 }
 
-void
-EventVariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
+bool
+EventVariableProducer::filter (edm::Event &event, const edm::EventSetup &setup)
 {
   // define structure that will be put into the event
   // string is the variable name
@@ -19,12 +19,18 @@ EventVariableProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   // it is a vector because  other collections are also vectors
   // the vector will have size=1 for each event
 
-  eventvariables = auto_ptr<EventVariableProducerPayload> (new EventVariableProducerPayload);
+  eventvariables = unique_ptr<EventVariableProducerPayload> (new EventVariableProducerPayload);
 
   ////////////////////////////////////////////////////////////////////////
   AddVariables(event);
 
+  bool filterDecision = true;
+  if (eventvariables->count ("EventVariableProducerFilterDecision"))
+    filterDecision = eventvariables->at ("EventVariableProducerFilterDecision");
+
   // store all of our calculated quantities in the event
-  event.put (eventvariables, "eventvariables");
+  event.put (std::move (eventvariables), "eventvariables");
   eventvariables.reset ();
+
+  return filterDecision;
 }

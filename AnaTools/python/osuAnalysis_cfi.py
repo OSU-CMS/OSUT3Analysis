@@ -1,4 +1,5 @@
 import FWCore.ParameterSet.Config as cms
+import copy
 
 ###########################################################
 ##### Set up the standard input collections in miniAOD ####
@@ -13,41 +14,25 @@ collectionMap = cms.PSet (
     bjets                       =  cms.InputTag  ('slimmedJets',                    ''),
     mcparticles                 =  cms.InputTag  ('packedGenParticles',             ''),
     hardInteractionMcparticles  =  cms.InputTag  ('prunedGenParticles',             ''),
+    lostTracks                  =  cms.InputTag  ('lostTracks',                     ''),
     mets                        =  cms.InputTag  ('slimmedMETs',                    ''),
     muons                       =  cms.InputTag  ('slimmedMuons',                   ''),
     photons                     =  cms.InputTag  ('slimmedPhotons',                 ''),
-#    pileupinfos                 =  cms.InputTag  ('addPileupInfo',                  ''),
     pileupinfos                 =  cms.InputTag  ('slimmedAddPileupInfo',           ''),
+    pfCandidates                =  cms.InputTag  ('packedPFCandidates','',          ''),
     prescales                   =  cms.InputTag  ('patTrigger',                     ''),
     primaryvertexs              =  cms.InputTag  ('offlineSlimmedPrimaryVertices',  ''),
     superclusters               =  cms.InputTag  ('reducedEgamma',                  'reducedSuperClusters'),
     taus                        =  cms.InputTag  ('slimmedTaus',                    ''),
     triggers                    =  cms.InputTag  ('TriggerResults',                 '',                       'HLT'),
+    metFilters                  =  cms.InputTag  ('TriggerResults',                 '',                       'PAT'),
     trigobjs                    =  cms.InputTag  ('selectedPatTrigger',             ''),
 )
 
-
-collectionMapBEANs = cms.PSet (
-    # Copy from https://github.com/OSU-CMS/OSUT3Analysis/blob/master/AnaTools/python/osuAnalysis_cfi.py
-    jets            =  cms.InputTag  ('BNproducer',         'selectedPatJetsPFlow'),
-    muons           =  cms.InputTag  ('BNproducer',         'selectedPatMuonsLoosePFlow'),
-    secMuons        =  cms.InputTag  ('BNproducer',         'selectedPatMuonsLoosePFlow'),
-    electrons       =  cms.InputTag  ('BNproducer',         'selectedPatElectronsLoosePFlow'),
-    events          =  cms.InputTag  ('BNproducer',         ''),
-    taus            =  cms.InputTag  ('BNproducer',         'selectedPatTaus'),
-    mets            =  cms.InputTag  ('BNproducer',         'patMETsPFlow'),
-    tracks          =  cms.InputTag  ('BNproducer',         'generalTracks'),
-    genjets         =  cms.InputTag  ('BNproducer',         'ak5GenJets'),
-    mcparticles     =  cms.InputTag  ('BNproducer',         'MCstatus3'),
-    stops           =  cms.InputTag  ('BNproducer',         'MCstop'),
-    primaryvertexs  =  cms.InputTag  ('BNproducer',         'offlinePrimaryVertices'),
-    bxlumis         =  cms.InputTag  ('BNproducer',         'BXlumi'),
-    photons         =  cms.InputTag  ('BNproducer',         'none'),
-    superclusters   =  cms.InputTag  ('BNproducer',         'corHybridSCandMulti5x5WithPreshower'),
-    triggers        =  cms.InputTag  ('BNproducer','HLT'),
-    trigobjs        =  cms.InputTag  ('BNproducer','HLT'),
-)
-
+collectionMapMiniAOD2017 = copy.deepcopy(collectionMap)
+collectionMapMiniAOD2017.tracks          = cms.InputTag ('isolatedTracks', '')
+collectionMapMiniAOD2017.secondaryTracks = cms.InputTag ('isolatedTracks', '')
+collectionMapMiniAOD2017.trigobjs        = cms.InputTag  ('slimmedPatTrigger') # Thanks MINIAOD for changing names!
 
 collectionMapAOD = cms.PSet (
     electrons         =  cms.InputTag  ('uncleanedOnlyGsfElectrons'),
@@ -63,5 +48,3 @@ collectionMapAOD = cms.PSet (
     photons           =  cms.InputTag  ('photons'),
     primaryvertexs    =  cms.InputTag  ('offlinePrimaryVertices'),
 )
-
-

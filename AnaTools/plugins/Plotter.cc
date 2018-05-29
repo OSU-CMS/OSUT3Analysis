@@ -39,7 +39,7 @@ Plotter::Plotter (const edm::ParameterSet &cfg) :
     string catInputCollection = anatools::concatenateInputCollection (inputCollection);
 
     objectsToGet_.insert (inputCollection.begin (), inputCollection.end ());
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
     objectsToGet_.insert ("generatorweights");
 #endif
 
@@ -193,8 +193,13 @@ HistoDef Plotter::parseHistoDef(const edm::ParameterSet &definition, const vecto
   parsedDef.title = definition.getParameter<string>("title");
   parsedDef.binsX = definition.getUntrackedParameter<vector<double> >("binsX", defaults);
   parsedDef.binsY = definition.getUntrackedParameter<vector<double> >("binsY", defaults);
+  parsedDef.binsZ = definition.getUntrackedParameter<vector<double> >("binsZ", defaults);
   parsedDef.hasVariableBinsX = parsedDef.binsX.size() > 3;
   parsedDef.hasVariableBinsY = parsedDef.binsY.size() > 3;
+  parsedDef.hasVariableBinsZ = parsedDef.binsZ.size() > 3;
+  parsedDef.indexX = definition.getUntrackedParameter<int>("indexX", INVALID_VALUE);
+  parsedDef.indexY = definition.getUntrackedParameter<int>("indexY", INVALID_VALUE);
+  parsedDef.indexZ = definition.getUntrackedParameter<int>("indexZ", INVALID_VALUE);
   parsedDef.inputVariables = definition.getParameter<vector<string> >("inputVariables");
   parsedDef.dimensions = parsedDef.inputVariables.size();
   parsedDef.weight = definition.getUntrackedParameter<bool>("weight", true);
@@ -209,18 +214,21 @@ HistoDef Plotter::parseHistoDef(const edm::ParameterSet &definition, const vecto
 ////////////////////////////////////////////////////////////////////////
 
 // book TH1 or TH2 in appropriate directory with correct bin options
-void Plotter::bookHistogram(const HistoDef definition){
+void Plotter::bookHistogram(const HistoDef &definition){
 
   // check for valid bins
   bool hasValidBinsX = definition.binsX.size() >= 3;
   bool hasValidBinsY = definition.binsY.size() >= 3 || (definition.binsY.size() == 1 &&
                                                         definition.binsY.at(0) == -1);
+  bool hasValidBinsZ = definition.binsZ.size() >= 3 || (definition.binsZ.size() == 1 &&
+                                                        definition.binsZ.at(0) == -1);
 
   // Check that bins are sorted if variable binning has been specified.
   if (definition.hasVariableBinsX && !std::is_sorted(definition.binsX.begin(),definition.binsX.end())) hasValidBinsX = false;
   if (definition.hasVariableBinsY && !std::is_sorted(definition.binsY.begin(),definition.binsY.end())) hasValidBinsY = false;
+  if (definition.hasVariableBinsZ && !std::is_sorted(definition.binsZ.begin(),definition.binsZ.end())) hasValidBinsY = false;
 
-  if(!hasValidBinsX || !hasValidBinsY){
+  if(!hasValidBinsX || !hasValidBinsY || !hasValidBinsZ){
     cout << "ERROR - invalid histogram bins for histogram " << definition.name
          << " in directory " << definition.directory <<  endl;
     return;
@@ -289,6 +297,34 @@ void Plotter::bookHistogram(const HistoDef definition){
                         definition.binsY.data());
     }
   }
+  else if(definition.dimensions == 3){
+    // equal X bins, equal Y bins, and equal Z bins
+    if(!definition.hasVariableBinsX && !definition.hasVariableBinsY && !definition.hasVariableBinsZ){
+      subdir.make<TH3D>(TString(definition.name),
+                        TString(definition.title),
+                        definition.binsX.at(0),
+                        definition.binsX.at(1),
+                        definition.binsX.at(2),
+                        definition.binsY.at(0),
+                        definition.binsY.at(1),
+                        definition.binsY.at(2),
+                        definition.binsZ.at(0),
+                        definition.binsZ.at(1),
+                        definition.binsZ.at(2));
+    }
+    // variable X bins, variable Y bins, and variable Z bins
+    // TH3D objects only support variable bins along all three axes or along none
+    else{
+      subdir.make<TH3D>(TString(definition.name),
+                        TString(definition.title),
+                        definition.binsX.size() - 1,
+                        definition.binsX.data(),
+                        definition.binsY.size() - 1,
+                        definition.binsY.data(),
+                        definition.binsZ.size() - 1,
+                        definition.binsZ.data());
+    }
+  }
   else{
     cout << "WARNING - invalid histogram dimension" << endl;
     return;
@@ -307,6 +343,9 @@ void Plotter::fillHistogram(const HistoDef &definition){
   else if(definition.dimensions == 2){
     fill2DHistogram(definition);
   }
+  else if(definition.dimensions == 3){
+    fill3DHistogram(definition);
+  }
   else{
     cout << "WARNING - Histogram dimension error" << endl;
   }
@@ -324,6 +363,9 @@ void Plotter::fill1DHistogram(const HistoDef &definition){
   for(vector<Leaf>::const_iterator leaf = definition.valueLookupTrees.at (0)->evaluate ().begin (); leaf != definition.valueLookupTrees.at (0)->evaluate ().end (); leaf++){
     double value = boost::get<double> (*leaf),
            weight = 1.0;
+    if (!IS_INVALID(definition.indexX) && leaf - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
+          continue;
+
     if(IS_INVALID(value))
       continue;
     if(definition.hasVariableBinsX){
@@ -349,9 +391,16 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
   for (vector<Weight>::iterator sf = weights.begin (); sf != weights.end (); sf++)
     weight *= sf->product;
 
-  if (definition.inputCollections.size() == 1) {
-    // If there is only one input collection, then fill the 2D histogram once per object.
-    // To do that, increment each lookup tree in parallel.
+
+  // if there's a single input collection used on both axes
+  // and no specific object is chosen from that collection,
+  // then fill the 2D histogram once per object.
+  bool singleObject = definition.inputCollections.size() == 1 &&
+                      IS_INVALID(definition.indexX) &&
+                      IS_INVALID(definition.indexY);
+
+  if (singleObject) {
+    // To fill once per object, increment each lookup tree in parallel.
     for (vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (),
            leafY = definition.valueLookupTrees.at (1)->evaluate ().begin();
          leafX != definition.valueLookupTrees.at (0)->evaluate ().end () &&
@@ -359,6 +408,7 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
          leafX++, leafY++) {
       double valueX = boost::get<double> (*leafX),
         valueY = boost::get<double> (*leafY);
+
       fill2DHistogram(definition, valueX, valueY, weight);
     }
 
@@ -369,6 +419,12 @@ void Plotter::fill2DHistogram(const HistoDef &definition){
       for(vector<Leaf>::const_iterator leafY = definition.valueLookupTrees.at (1)->evaluate ().begin (); leafY != definition.valueLookupTrees.at (1)->evaluate ().end (); leafY++){
         double valueX = boost::get<double> (*leafX),
           valueY = boost::get<double> (*leafY);
+
+        if (!IS_INVALID(definition.indexX) && leafX - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
+          continue;
+        if (!IS_INVALID(definition.indexY) && leafY - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexY)
+          continue;
+
         fill2DHistogram(definition, valueX, valueY, weight);
       }
     }
@@ -401,10 +457,95 @@ void Plotter::fill2DHistogram(const HistoDef & definition, double valueX, double
 
 }
 
+////////////////////////////////////////////////////////////////////////
+
+// fill TH3 using one collection
+void Plotter::fill3DHistogram(const HistoDef &definition){
+
+  double weight = 1.0;
+  for (vector<Weight>::iterator sf = weights.begin (); sf != weights.end (); sf++)
+    weight *= sf->product;
+
+  // if there's a single input collection used on all axes
+  // and no specific object is chosen from that collection,
+  // then fill the 3D histogram once per object.
+  bool singleObject = definition.inputCollections.size() == 1 &&
+                      IS_INVALID(definition.indexX) &&
+                      IS_INVALID(definition.indexY) &&
+                      IS_INVALID(definition.indexZ);
+
+  if (singleObject) {
+    // To fill once per object, increment each lookup tree in parallel.
+    for (vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (),
+           leafY = definition.valueLookupTrees.at (1)->evaluate ().begin(),
+           leafZ = definition.valueLookupTrees.at (2)->evaluate ().begin();
+         leafX != definition.valueLookupTrees.at (0)->evaluate ().end () &&
+         leafY != definition.valueLookupTrees.at (1)->evaluate ().end () &&
+         leafZ != definition.valueLookupTrees.at (2)->evaluate ().end ();
+         leafX++, leafY++, leafZ++) {
+      double valueX = boost::get<double> (*leafX),
+        valueY = boost::get<double> (*leafY),
+        valueZ = boost::get<double> (*leafZ);
+      fill3DHistogram(definition, valueX, valueY, valueZ, weight);
+    }
+
+  } else {
+    // If there is more than one input collection, then fill the 3D histogram for each combination of objects.
+    // Warning:  This histogram may be difficult to interpret!
+    for(vector<Leaf>::const_iterator leafX = definition.valueLookupTrees.at (0)->evaluate ().begin (); leafX != definition.valueLookupTrees.at (0)->evaluate ().end (); leafX++){
+      for(vector<Leaf>::const_iterator leafY = definition.valueLookupTrees.at (1)->evaluate ().begin (); leafY != definition.valueLookupTrees.at (1)->evaluate ().end (); leafY++){
+        for(vector<Leaf>::const_iterator leafZ = definition.valueLookupTrees.at (2)->evaluate ().begin (); leafZ != definition.valueLookupTrees.at (2)->evaluate ().end (); leafZ++){
+          double valueX = boost::get<double> (*leafX),
+            valueY = boost::get<double> (*leafY),
+            valueZ = boost::get<double> (*leafZ);
+
+          if (!IS_INVALID(definition.indexX) && leafX - definition.valueLookupTrees.at(0)->evaluate().begin() != definition.indexX)
+            continue;
+          if (!IS_INVALID(definition.indexY) && leafY - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexY)
+            continue;
+          if (!IS_INVALID(definition.indexZ) && leafZ - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexZ)
+            continue;
+
+          fill3DHistogram(definition, valueX, valueY, valueZ, weight);
+        }
+      }
+    }
+  }
+
+}
 
 ////////////////////////////////////////////////////////////////////////
 
-double Plotter::getBinSize(TH1D *histogram,
+void Plotter::fill3DHistogram(const HistoDef & definition, double valueX, double valueY, double valueZ, double weight) {
+
+  TH3D *histogram = fs_->getObject<TH3D>(definition.name, definition.directory);
+  if (!histogram) {
+    clog << "ERROR [Plotter::fill2DHistogram]:  Could not find histogram with name " << definition.name
+         << " in directory " << definition.directory << endl;
+    return;
+  }
+  if(IS_INVALID(valueX) || IS_INVALID(valueY) || IS_INVALID(valueZ))
+    return;
+  if(definition.hasVariableBinsX){
+    weight /= get<0> (getBinSize(histogram,valueX,valueY,valueZ));
+  }
+  if(definition.hasVariableBinsY){
+    weight /= get<1> (getBinSize(histogram,valueX,valueY,valueZ));
+  }
+  if(definition.hasVariableBinsZ){
+    weight /= get<2> (getBinSize(histogram,valueX,valueY,valueZ));
+  }
+  if (handles_.generatorweights.isValid ())
+    weight *= anatools::getGeneratorWeight (*handles_.generatorweights);
+  histogram->Fill(valueX, valueY, valueZ, (definition.weight ? weight : 1.0));
+  if (verbose_) clog << "Filled histogram " << definition.name << " with valueX=" << valueX << ", valueY=" << valueY << ", valueZ=" << valueZ << ", weight=" << weight << endl;
+
+}
+
+
+////////////////////////////////////////////////////////////////////////
+
+double Plotter::getBinSize(TH1D * const histogram,
                            const double value){
 
   int binIndex = histogram->FindBin(value);
@@ -414,7 +555,7 @@ double Plotter::getBinSize(TH1D *histogram,
 
 }
 
-pair<double,double>  Plotter::getBinSize(TH2D *histogram,
+pair<double,double>  Plotter::getBinSize(TH2D * const histogram,
                                          const double valueX,
                                          const double valueY){
 
@@ -426,9 +567,23 @@ pair<double,double>  Plotter::getBinSize(TH2D *histogram,
 
 }
 
+tuple<double,double,double>  Plotter::getBinSize(TH3D * const histogram,
+                                                 const double valueX,
+                                                 const double valueY,
+                                                 const double valueZ){
+
+  int binIndex = histogram->FindBin(valueX, valueY, valueZ);
+  double binSizeX = histogram->GetXaxis()->GetBinWidth(binIndex);
+  double binSizeY = histogram->GetYaxis()->GetBinWidth(binIndex);
+  double binSizeZ = histogram->GetZaxis()->GetBinWidth(binIndex);
+
+  return make_tuple(binSizeX, binSizeY, binSizeZ);
+
+}
+
 ////////////////////////////////////////////////////////////////////////
 
-string Plotter::setYaxisLabel(const HistoDef definition){
+string Plotter::setYaxisLabel(const HistoDef &definition){
 
   string title = definition.title;
 
@@ -493,7 +648,7 @@ string Plotter::setYaxisLabel(const HistoDef definition){
 }
 
 bool
-Plotter::initializeValueLookupForest (vector<HistoDef> &histograms, Collections *handles)
+Plotter::initializeValueLookupForest (vector<HistoDef> &histograms, Collections * const handles)
 {
   //////////////////////////////////////////////////////////////////////////////
   // For each inputVariable of each histogram, parse it into a new
@@ -518,7 +673,7 @@ Plotter::initializeValueLookupForest (vector<HistoDef> &histograms, Collections 
 
 
 bool
-Plotter::initializeValueLookupForest (vector<Weight> &weights, Collections *handles)
+Plotter::initializeValueLookupForest (vector<Weight> &weights, Collections * const handles)
 {
   //////////////////////////////////////////////////////////////////////////////
   // For each inputVariable of each weight, parse it into a new

@@ -3,7 +3,6 @@
 #define  electrons_TYPE                   pat::Electron
 #define  events_TYPE                      INVALID_TYPE
 #define  genjets_TYPE                     reco::GenJet
-#define  basicjets_TYPE                   pat::Jet
 #define  jets_TYPE                        pat::Jet
 #define  bjets_TYPE                       pat::Jet
 #define  mcparticles_TYPE                 pat::PackedGenParticle
@@ -15,6 +14,7 @@
 #define  superclusters_TYPE               reco::SuperCluster
 #define  taus_TYPE                        pat::Tau
 #define  tracks_TYPE                      INVALID_TYPE
+#define  secondaryTracks_TYPE             INVALID_TYPE
 #define  pileupinfos_TYPE                 PileupSummaryInfo
 #define  trigobjs_TYPE                    pat::TriggerObjectStandAlone
 #define  uservariables_TYPE               VariableProducerPayload
@@ -32,6 +32,7 @@
 #define  bxlumis_INVALID
 #define  events_INVALID
 #define  tracks_INVALID
+#define  secondaryTracks_INVALID
 
 #define  cschits_INVALID
 #define  cscsegs_INVALID
@@ -42,7 +43,6 @@
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/EgammaReco/interface/SuperCluster.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-#include "DataFormats/JetReco/interface/BasicJet.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"

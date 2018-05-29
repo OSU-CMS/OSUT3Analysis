@@ -8,7 +8,7 @@
 
 namespace osu
 {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
   class Electron : public GenMatchable<TYPE(electrons), 11>
     {
       public:
@@ -23,17 +23,24 @@ namespace osu
         const double sumChargedHadronPtCorr () const;
         const double sumPUPtCorr () const;
         const int electronPVIndex () const;
-        const int missingInnerHits () const;
-        const int missingMiddleHits () const;
-        const int missingOuterHits () const;
+	const double genD0 () const;
+        const int missingInnerHitsFromAllHits () const;
+        const int missingInnerHitsFromTrackerLayersWithoutMeasurements () const;
+        const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
+        const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
         const bool passesTightID_noIsolation () const;
-        void set_rho (float value) { rho_  = value; }  
-        void set_AEff (float value) { AEff_  = value; }  
-        void set_pfdRhoIsoCorr (double value) { pfdRhoIsoCorr_  = value; }  
-        void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };  
-        void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };  
-        void set_electronPVIndex (int value) { electronPVIndex_  = value; };  
+        const bool match_HLT_Ele25_eta2p1_WPTight_Gsf_v () const;
+        const bool match_HLT_Ele22_eta2p1_WPLoose_Gsf_v () const;
+        void set_rho (float value) { rho_  = value; }
+        void set_AEff (float value) { AEff_  = value; }
+        void set_pfdRhoIsoCorr (double value) { pfdRhoIsoCorr_  = value; }
+        void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };
+        void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
+        void set_electronPVIndex (int value) { electronPVIndex_  = value; };
+	void set_genD0 (double value) { genD0_  = value; };
         void set_passesTightID_noIsolation (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
+        void set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (const bool);
+        void set_match_HLT_Ele22_eta2p1_WPLoose_Gsf_v (const bool);
 
         const double metMinusOnePt () const;
         const double metMinusOnePx () const;
@@ -44,6 +51,16 @@ namespace osu
         const double metNoMuMinusOnePx () const;
         const double metNoMuMinusOnePy () const;
         const double metNoMuMinusOnePhi () const;
+
+        const double metMinusOneUpPt () const;
+        const double metMinusOneUpPx () const;
+        const double metMinusOneUpPy () const;
+        const double metMinusOneUpPhi () const;
+
+        const double metNoMuMinusOneUpPt () const;
+        const double metNoMuMinusOneUpPx () const;
+        const double metNoMuMinusOneUpPy () const;
+        const double metNoMuMinusOneUpPhi () const;
 #else
   class Electron : public GenMatchable<TYPE(electrons), 11>
     {
@@ -55,7 +72,7 @@ namespace osu
 #endif
         ~Electron ();
 
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
       private:
         float rho_;
         float AEff_;
@@ -63,7 +80,10 @@ namespace osu
         double sumChargedHadronPtCorr_;
         int electronPVIndex_;
         double sumPUPtCorr_;
+	double genD0_;
         bool passesTightID_noIsolation_;
+        bool match_HLT_Ele25_eta2p1_WPTight_Gsf_v_;
+        bool match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_;
 
         double metMinusOnePt_;
         double metMinusOnePx_;
@@ -74,6 +94,16 @@ namespace osu
         double metNoMuMinusOnePx_;
         double metNoMuMinusOnePy_;
         double metNoMuMinusOnePhi_;
+
+        double metMinusOneUpPt_;
+        double metMinusOneUpPx_;
+        double metMinusOneUpPy_;
+        double metMinusOneUpPhi_;
+
+        double metNoMuMinusOneUpPt_;
+        double metNoMuMinusOneUpPx_;
+        double metNoMuMinusOneUpPy_;
+        double metNoMuMinusOneUpPhi_;
 #endif
 
     };

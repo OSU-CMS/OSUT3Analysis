@@ -195,31 +195,32 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   // Retrieve each object collection which we need and print a warning if it is
   // missing.
   //////////////////////////////////////////////////////////////////////////////
-  if  (VEC_CONTAINS  (objectsToGet,  "beamspots"))         event.getByToken  (tokens.beamspots,         handles.beamspots);
-  if  (VEC_CONTAINS  (objectsToGet,  "bxlumis"))           event.getByToken  (tokens.bxlumis,           handles.bxlumis);
-  if  (VEC_CONTAINS  (objectsToGet,  "cschits"))           event.getByToken  (tokens.cschits,           handles.cschits);
-  if  (VEC_CONTAINS  (objectsToGet,  "cscsegs"))           event.getByToken  (tokens.cscsegs,           handles.cscsegs);
-  if  (VEC_CONTAINS  (objectsToGet,  "dtsegs"))           event.getByToken  (tokens.dtsegs,           handles.dtsegs);
-  if  (VEC_CONTAINS  (objectsToGet,  "electrons"))         event.getByToken  (tokens.electrons,         handles.electrons);
-  if  (VEC_CONTAINS  (objectsToGet,  "events"))            event.getByToken  (tokens.events,            handles.events);
-  if  (VEC_CONTAINS  (objectsToGet,  "genjets"))           event.getByToken  (tokens.genjets,           handles.genjets);
-  if  (VEC_CONTAINS  (objectsToGet,  "jets"))              event.getByToken  (tokens.jets,              handles.jets);
-  if  (VEC_CONTAINS  (objectsToGet,  "bjets"))             event.getByToken  (tokens.bjets,             handles.bjets);
-  if  (VEC_CONTAINS  (objectsToGet,  "basicjets"))         event.getByToken  (tokens.basicjets,         handles.basicjets);
-  if  (VEC_CONTAINS  (objectsToGet,  "generatorweights"))  event.getByToken  (tokens.generatorweights,  handles.generatorweights);
-  if  (VEC_CONTAINS  (objectsToGet,  "mcparticles"))       event.getByToken  (tokens.mcparticles,       handles.mcparticles);
-  if  (VEC_CONTAINS  (objectsToGet,  "mets"))              event.getByToken  (tokens.mets,              handles.mets);
-  if  (VEC_CONTAINS  (objectsToGet,  "muons"))             event.getByToken  (tokens.muons,             handles.muons);
-  if  (VEC_CONTAINS  (objectsToGet,  "photons"))           event.getByToken  (tokens.photons,           handles.photons);
-  if  (VEC_CONTAINS  (objectsToGet,  "prescales"))         event.getByToken  (tokens.prescales,         handles.prescales);
-  if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs"))    event.getByToken  (tokens.primaryvertexs,    handles.primaryvertexs);
-  if  (VEC_CONTAINS  (objectsToGet,  "rpchits"))    event.getByToken  (tokens.rpchits,    handles.rpchits);
-  if  (VEC_CONTAINS  (objectsToGet,  "superclusters"))     event.getByToken  (tokens.superclusters,     handles.superclusters);
-  if  (VEC_CONTAINS  (objectsToGet,  "taus"))              event.getByToken  (tokens.taus,              handles.taus);
-  if  (VEC_CONTAINS  (objectsToGet,  "tracks"))            event.getByToken  (tokens.tracks,            handles.tracks);
-  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos"))       event.getByToken  (tokens.pileupinfos,       handles.pileupinfos);
-  if  (VEC_CONTAINS  (objectsToGet,  "triggers"))          event.getByToken  (tokens.triggers,          handles.triggers);
-  if  (VEC_CONTAINS  (objectsToGet,  "trigobjs"))          event.getByToken  (tokens.trigobjs,          handles.trigobjs);
+  if  (VEC_CONTAINS  (objectsToGet,  "beamspots") && !tokens.beamspots.isUninitialized())         event.getByToken  (tokens.beamspots,         handles.beamspots);
+  if  (VEC_CONTAINS  (objectsToGet,  "bxlumis")   && !tokens.bxlumis.isUninitialized())           event.getByToken  (tokens.bxlumis,           handles.bxlumis);
+  if  (VEC_CONTAINS  (objectsToGet,  "cschits")   && !tokens.cschits.isUninitialized())           event.getByToken  (tokens.cschits,           handles.cschits);
+  if  (VEC_CONTAINS  (objectsToGet,  "cscsegs")   && !tokens.cscsegs.isUninitialized())           event.getByToken  (tokens.cscsegs,           handles.cscsegs);
+  if  (VEC_CONTAINS  (objectsToGet,  "dtsegs")    && !tokens.dtsegs.isUninitialized())            event.getByToken  (tokens.dtsegs,            handles.dtsegs);
+  if  (VEC_CONTAINS  (objectsToGet,  "electrons") && !tokens.electrons.isUninitialized())         event.getByToken  (tokens.electrons,         handles.electrons);
+  if  (VEC_CONTAINS  (objectsToGet,  "events")    && !tokens.events.isUninitialized())            event.getByToken  (tokens.events,            handles.events);
+  if  (VEC_CONTAINS  (objectsToGet,  "genjets")   && !tokens.genjets.isUninitialized())           event.getByToken  (tokens.genjets,           handles.genjets);
+  if  (VEC_CONTAINS  (objectsToGet,  "jets")      && !tokens.jets.isUninitialized())              event.getByToken  (tokens.jets,              handles.jets);
+  if  (VEC_CONTAINS  (objectsToGet,  "bjets")     && !tokens.bjets.isUninitialized())             event.getByToken  (tokens.bjets,             handles.bjets);
+  if  (VEC_CONTAINS  (objectsToGet,  "generatorweights") && !tokens.generatorweights.isUninitialized())  event.getByToken  (tokens.generatorweights,  handles.generatorweights);
+  if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")      && !tokens.mcparticles.isUninitialized())       event.getByToken  (tokens.mcparticles,       handles.mcparticles);
+  if  (VEC_CONTAINS  (objectsToGet,  "mets")             && !tokens.mets.isUninitialized())              event.getByToken  (tokens.mets,              handles.mets);
+  if  (VEC_CONTAINS  (objectsToGet,  "muons")            && !tokens.muons.isUninitialized())             event.getByToken  (tokens.muons,             handles.muons);
+  if  (VEC_CONTAINS  (objectsToGet,  "photons")          && !tokens.photons.isUninitialized())           event.getByToken  (tokens.photons,           handles.photons);
+  if  (VEC_CONTAINS  (objectsToGet,  "prescales")        && !tokens.prescales.isUninitialized())         event.getByToken  (tokens.prescales,         handles.prescales);
+  if  (VEC_CONTAINS  (objectsToGet,  "primaryvertexs")   && !tokens.primaryvertexs.isUninitialized())    event.getByToken  (tokens.primaryvertexs,    handles.primaryvertexs);
+  if  (VEC_CONTAINS  (objectsToGet,  "rpchits")          && !tokens.rpchits.isUninitialized())    event.getByToken  (tokens.rpchits,    handles.rpchits);
+  if  (VEC_CONTAINS  (objectsToGet,  "superclusters")    && !tokens.superclusters.isUninitialized())     event.getByToken  (tokens.superclusters,     handles.superclusters);
+  if  (VEC_CONTAINS  (objectsToGet,  "taus")             && !tokens.taus.isUninitialized())              event.getByToken  (tokens.taus,              handles.taus);
+  if  (VEC_CONTAINS  (objectsToGet,  "tracks")           && !tokens.tracks.isUninitialized())            event.getByToken  (tokens.tracks,            handles.tracks);
+  if  (VEC_CONTAINS  (objectsToGet,  "secondaryTracks")  && !tokens.secondaryTracks.isUninitialized())   event.getByToken  (tokens.secondaryTracks,   handles.secondaryTracks);
+  if  (VEC_CONTAINS  (objectsToGet,  "pileupinfos")      && !tokens.pileupinfos.isUninitialized())       event.getByToken  (tokens.pileupinfos,       handles.pileupinfos);
+  if  (VEC_CONTAINS  (objectsToGet,  "triggers")         && !tokens.triggers.isUninitialized())          event.getByToken  (tokens.triggers,          handles.triggers);
+  if  (VEC_CONTAINS  (objectsToGet,  "metFilters")         && !tokens.metFilters.isUninitialized())          event.getByToken  (tokens.metFilters,          handles.metFilters);
+  if  (VEC_CONTAINS  (objectsToGet,  "trigobjs")         && !tokens.trigobjs.isUninitialized())          event.getByToken  (tokens.trigobjs,          handles.trigobjs);
   if  (VEC_CONTAINS  (objectsToGet,  "uservariables"))
     {
       handles.uservariables.clear ();
@@ -263,8 +264,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         ss << endl << "Did not retrieve jets collection from the event.";
       if (!handles.bjets.isValid ())
         ss << endl << "Did not retrieve bjets collection from the event.";
-      if (!handles.basicjets.isValid ())
-        ss << endl << "Did not retrieve basicjets collection from the event.";
       if (!handles.generatorweights.isValid ())
         ss << endl << "Did not retrieve generatorweights collection from the event.";
       if (!handles.mcparticles.isValid ())
@@ -287,10 +286,14 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         ss << endl << "Did not retrieve taus collection from the event.";
       if (!handles.tracks.isValid ())
         ss << endl << "Did not retrieve tracks collection from the event.";
+      if (!handles.secondaryTracks.isValid ())
+        ss << endl << "Did not retrieve secondaryTracks collection from the event.";
       if (!handles.pileupinfos.isValid ())
         ss << endl << "Did not retrieve pileupinfos collection from the event.";
       if (!handles.triggers.isValid ())
         ss << endl << "Did not retrieve triggers collection from the event.";
+      if (!handles.metFilters.isValid ())
+        ss << endl << "Did not retrieve metFilters collection from the event.";
       if (!handles.trigobjs.isValid ())
         ss << endl << "Did not retrieve trigobjs collection from the event.";
       edm::LogInfo ("CommonUtils") << ss.str ();
@@ -304,13 +307,14 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   double
   anatools::getMember (const string &type, void *obj, const string &member, map<pair<string, string>, pair<string, void (*) (void *, int, void **, void *)> > * functionLookupTable)
   {
+    const pair<string, string> typeAndMember (type, member);
     double value = INVALID_VALUE;
     string memberType = "";
     anatools::ObjectWithDict * retObj = NULL;
     void *retObjAdd = NULL;
-    if (functionLookupTable && functionLookupTable->count (make_pair (type, member)))
+    if (functionLookupTable && functionLookupTable->count (typeAndMember))
       {
-        memberType = functionLookupTable->at (make_pair (type, member)).first;
+        memberType = functionLookupTable->at (typeAndMember).first;
         if (memberType == "float")
           retObjAdd = (void *) new float[1];
         else if (memberType == "double")
@@ -335,7 +339,11 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
           retObjAdd = (void *) new unsigned short int[1];
         else if (memberType == "unsigned long int")
           retObjAdd = (void *) new unsigned long int[1];
-        (*functionLookupTable->at (make_pair (type, member)).second) (obj, 0, NULL, retObjAdd);
+        else if (memberType == "signed char")
+          retObjAdd = (void *) new signed char[1];
+        else if (memberType == "unsigned char")
+          retObjAdd = (void *) new unsigned char[1];
+        (*functionLookupTable->at (typeAndMember).second) (obj, 0, NULL, retObjAdd);
       }
     else
       {
@@ -433,6 +441,18 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
             value = *((unsigned long int *) retObjAdd);
             if (!retObj)
               delete[] ((unsigned long int *) retObjAdd);
+          }
+        else if (memberType == "signed char")
+          {
+            value = *((signed char *) retObjAdd);
+            if (!retObj)
+              delete[] ((signed char *) retObjAdd);
+          }
+        else if (memberType == "unsigned char")
+          {
+            value = *((unsigned char *) retObjAdd);
+            if (!retObj)
+              delete[] ((unsigned char *) retObjAdd);
           }
         else
           edm::LogWarning ("CommonUtils") << "\"" << member << "\" has unrecognized type \"" << memberType << "\".";
@@ -594,6 +614,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
           value = Reflex::Object_Cast<unsigned short int> (*retObj);
         else if (memberType == "unsigned long int")
           value = Reflex::Object_Cast<unsigned long int> (*retObj);
+        else if (memberType == "signed char")
+          value = Reflex::Object_Cast<signed char> (*retObj);
+        else if (memberType == "unsigned char")
+          value = Reflex::Object_Cast<unsigned char> (*retObj);
         else
           edm::LogWarning ("CommonUtils") << "\"" << member << "\" has unrecognized type \"" << memberType << "\".";
         delete retObj;
@@ -772,10 +796,6 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   string  anatools::getObjectType  (const  osu::Bjet            &obj)  {  return  "bjet";            }
   string  anatools::getObjectClass  (const  osu::Bjet            &obj)  {  return  "osu::Bjet";            }
 #endif
-#if IS_VALID(basicjets) && DATA_FORMAT == AOD
-  string  anatools::getObjectType   (const  osu::Basicjet            &obj)  {  return  "basicjet";            }
-  string  anatools::getObjectClass  (const  osu::Basicjet            &obj)  {  return  "osu::Basicjet";            }
-#endif
 #if IS_VALID(mcparticles)
   string  anatools::getObjectType  (const  osu::Mcparticle     &obj)  {  return  "mcparticle";     }
   string  anatools::getObjectClass  (const  osu::Mcparticle     &obj)  {  return  "osu::Mcparticle";     }
@@ -825,13 +845,13 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   string  anatools::getObjectType  (const  osu::Track          &obj)  {  return  "track";          }
   string  anatools::getObjectClass  (const  osu::Track          &obj)  {  return  "osu::Track";          }
 #endif
+#if IS_VALID(secondaryTracks)
+  string  anatools::getObjectType  (const  osu::SecondaryTrack          &obj)  {  return  "secondaryTrack";          }
+  string  anatools::getObjectClass  (const  osu::SecondaryTrack          &obj)  {  return  "osu::SecondaryTrack";          }
+#endif
 #if IS_VALID(pileupinfos)
   string  anatools::getObjectType  (const  osu::PileUpInfo          &obj)  {  return  "pileupinfo";          }
   string  anatools::getObjectClass  (const  osu::PileUpInfo          &obj)  {  return  "osu::PileUpInfo";          }
-#endif
-#if IS_VALID(trigobjs)
-  string  anatools::getObjectType  (const  osu::Trigobj        &obj)  {  return  "trigobj";        }
-  string  anatools::getObjectClass  (const  osu::Trigobj        &obj)  {  return  "osu::Trigobj";        }
 #endif
 
 // user-defined cases
@@ -872,8 +892,6 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     tokens.jets = cc.consumes<vector<osu::Jet> > (collections.getParameter<edm::InputTag> ("jets"));
   if (collections.exists ("bjets"))
     tokens.bjets = cc.consumes<vector<osu::Bjet> > (collections.getParameter<edm::InputTag> ("bjets"));
-  if (collections.exists ("basicjets"))
-    tokens.basicjets = cc.consumes<vector<osu::Basicjet> > (collections.getParameter<edm::InputTag> ("basicjets"));
   if (collections.exists ("mcparticles"))
     tokens.mcparticles = cc.consumes<vector<osu::Mcparticle> > (collections.getParameter<edm::InputTag> ("mcparticles"));
   if (collections.exists ("mets"))
@@ -892,10 +910,10 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     tokens.taus = cc.consumes<vector<osu::Tau> > (collections.getParameter<edm::InputTag> ("taus"));
   if (collections.exists ("tracks"))
     tokens.tracks = cc.consumes<vector<osu::Track> > (collections.getParameter<edm::InputTag> ("tracks"));
+  if (collections.exists ("secondaryTracks"))
+    tokens.secondaryTracks = cc.consumes<vector<osu::SecondaryTrack> > (collections.getParameter<edm::InputTag> ("secondaryTracks"));
   if (collections.exists ("pileupinfos"))
     tokens.pileupinfos = cc.consumes<vector<osu::PileUpInfo> > (collections.getParameter<edm::InputTag> ("pileupinfos"));
-  if (collections.exists ("trigobjs"))
-    tokens.trigobjs = cc.consumes<vector<osu::Trigobj> > (collections.getParameter<edm::InputTag> ("trigobjs"));
 
   if (collections.exists ("beamspots"))
     tokens.beamspots = cc.consumes<osu::Beamspot> (collections.getParameter<edm::InputTag> ("beamspots"));
@@ -905,6 +923,10 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     tokens.prescales = cc.consumes<TYPE(prescales)> (collections.getParameter<edm::InputTag> ("prescales"));
   if (collections.exists ("triggers"))
     tokens.triggers = cc.consumes<TYPE(triggers)> (collections.getParameter<edm::InputTag> ("triggers"));
+  if (collections.exists ("trigobjs"))
+    tokens.trigobjs = cc.consumes<vector<TYPE(trigobjs)> > (collections.getParameter<edm::InputTag> ("trigobjs"));
+  if (collections.exists ("metFilters"))
+    tokens.metFilters = cc.consumes<TYPE(triggers)> (collections.getParameter<edm::InputTag> ("metFilters"));
 
   if (collections.exists ("uservariables"))
     {
@@ -918,4 +940,171 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
       for (const auto &collection : collections.getParameter<vector<edm::InputTag> > ("eventvariables"))
         tokens.eventvariables.push_back (cc.consumes<osu::Eventvariable> (collection));
     }
+}
+
+bool
+anatools::getTriggerObjects (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs)
+{
+  if (collection == "")
+    {
+      selectedTrigObjs.push_back (NULL);
+      return false;
+    }
+  vector<const pat::TriggerObjectStandAlone *> trigObjsToAdd;
+  int i = -1;
+  for (auto trigObj : trigObjs)
+    {
+      i++;
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filter != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            if (filterLabel == filter)
+              {
+                flag = true;
+                break;
+              }
+          if (!flag)
+            continue;
+        }
+
+      trigObjsToAdd.push_back (&trigObjs.at (i));
+    }
+  if (!trigObjsToAdd.empty ())
+    selectedTrigObjs.insert (selectedTrigObjs.end (), trigObjsToAdd.begin (), trigObjsToAdd.end ());
+  else
+    selectedTrigObjs.push_back (NULL);
+  return (!trigObjsToAdd.empty ());
+}
+
+bool
+anatools::getTriggerObjectsByFilterSubstring (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filterSubstring, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs, const string &filterSubstringToReject)
+{
+  if (collection == "")
+    {
+      selectedTrigObjs.push_back (NULL);
+      return false;
+    }
+  vector<const pat::TriggerObjectStandAlone *> trigObjsToAdd;
+  int i = -1;
+  for (auto trigObj : trigObjs)
+    {
+      i++;
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filterSubstring != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            {
+              bool flagSubstringToReject = true;
+              if (filterSubstringToReject != "")
+                flagSubstringToReject = (filterLabel.find (filterSubstringToReject) == string::npos);
+              if (filterLabel.find (filterSubstring) != string::npos && flagSubstringToReject)
+                {
+                  flag = true;
+                  break;
+                }
+            }
+          if (!flag)
+            continue;
+        }
+
+      trigObjsToAdd.push_back (&trigObjs.at (i));
+    }
+  if (!trigObjsToAdd.empty ())
+    selectedTrigObjs.insert (selectedTrigObjs.end (), trigObjsToAdd.begin (), trigObjsToAdd.end ());
+  else
+    selectedTrigObjs.push_back (NULL);
+  return (!trigObjsToAdd.empty ());
+}
+
+bool
+anatools::triggerObjectExists (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter)
+{
+  if (collection == "")
+    return false;
+  for (auto trigObj : trigObjs)
+    {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filter != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            if (filterLabel == filter)
+              {
+                flag = true;
+                break;
+              }
+          if (!flag)
+            continue;
+        }
+
+      return true;
+    }
+  return false;
+}
+
+bool
+anatools::passesL1ETM (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, double &l1ETM)
+{
+  for (auto trigObj : trigObjs)
+    {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != "hltL1extraParticles:MET:HLT"
+       || trigObj.collection () != "hltCaloStage2Digis:EtSum:HLT")
+        continue;
+      for (const auto &filterLabel : trigObj.filterLabels ())
+        if (filterLabel == "hltL1sL1ETM60ORETM70" // 2015
+         || filterLabel == "hltL1sETM60IorETM70" // 2016B-C
+         || filterLabel == "hltL1sETM50IorETM60IorETM70IorETM80IorETM90IorETM100" // 2016D-G
+         || filterLabel == "hltL1sETM50ToETM120") // 2016H
+          {
+            l1ETM = trigObj.pt ();
+            return true;
+          }
+    }
+  return false;
+}
+
+void
+anatools::logSpace (const double a, const double b, const unsigned n, vector<double> &bins)
+{
+  double step = (b - a) / ((double) n);
+
+  bins.clear ();
+  for (double i = a; i < b + 0.5 * step; i += step)
+    bins.push_back (pow (10.0, i));
+}
+
+void
+anatools::linSpace (const double a, const double b, const unsigned n, vector<double> &bins)
+{
+  double step = (b - a) / ((double) n);
+
+  bins.clear ();
+  for (double i = a; i < b + 0.5 * step; i += step)
+    bins.push_back (i);
 }

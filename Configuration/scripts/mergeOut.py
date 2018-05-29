@@ -41,7 +41,10 @@ if arguments.condorDir == "":
 else:
     CondorDir = os.getcwd() + '/condor/' + arguments.condorDir
 OutputDir = os.getcwd() + "/condor/" + arguments.outputDirectory if arguments.outputDirectory else CondorDir
-os.system('mkdir -p ' + OutputDir)
+try:
+    os.makedirs (OutputDir)
+except OSError:
+    pass
 
 ###############################################################################
 #Check whether the necessary arguments or the local config are given correctly#
@@ -77,7 +80,7 @@ if arguments.verbose:
     print "List of datasets: ", split_datasets
 if not arguments.compositeOnly and not arguments.UseCondor:
     for dataSet in split_datasets:
-        mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir, arguments.verbose)
+        mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir, verbose = arguments.verbose)
 
 if arguments.UseCondor:
     # Make necessary files for condor and submit condor jobs.
@@ -101,7 +104,7 @@ else:
                 print dataset + '.root does not exist, component dataset ' + dataSet_component + ' wont be complete!'
                 continue
             memberList.append(dataset + '.root')
-        InputFileString = MakeInputFileString(memberList)
+        InputFileString = " ".join (memberList)
         os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet_component + '.root')
         print 'Finish merging composite dataset ' + dataSet_component
         print "...............................................................\n"

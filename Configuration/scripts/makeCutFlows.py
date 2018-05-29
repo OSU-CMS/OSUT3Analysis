@@ -5,6 +5,7 @@ import math
 import fileinput
 import re
 import collections
+import shutil
 
 from array import *
 from optparse import OptionParser
@@ -154,7 +155,10 @@ class Table(object):
     def printToFile(self, texfile=""):
         if texfile == "":
             texfile = "temp.txt" # write to temporary file, then print to screen and delete
-            os.system("/bin/rm -f temp.txt")
+            try:
+                os.unlink ("temp.txt")
+            except OSError:
+                pass
         fout = open (texfile, "a")
         hlinesToPrint = copy.deepcopy(self.hlines)
         vlinesToPrint = copy.deepcopy(self.vlines)
@@ -215,14 +219,16 @@ class Table(object):
 
         # If no output file specified originally, print to screen.
         if texfile == "temp.txt":
-            os.system("cat temp.txt")
-            os.system("/bin/rm -f temp.txt")
+            fin = open ("temp.txt")
+            shutil.copyfileobj (fin, sys.stdout)
+            fin.close ()
+            os.unlink ("temp.txt")
     def makeAllReplacements(self, replacements):
         for replacement in replacements.keys():
             for c in range(self.numCols()):
                 for r in range(self.numRows()):
                     if replacement in self.contents[c][r]:
-#                        print self.contents[c][r], "->", self.contents[c][r].replace(replacement,replacements[replacement])
+#                        print replacement, "->", replacements[replacement], ":", self.contents[c][r], "->", self.contents[c][r].replace(replacement,replacements[replacement])
                         self.contents[c][r] = self.contents[c][r].replace(replacement,replacements[replacement])
 
 
@@ -234,7 +240,7 @@ class CFCell(object):
         self.upperLimit = 0
         self.useUL = False
         self.precision = -1  # Specify the last digit to be printed, corresponding to 10^precision
-        self.roundValToInt = False
+        self.useInt = False
         self.printErr = True
         self.printPercent = False
     def __repr__(self):
@@ -262,10 +268,11 @@ class CFCell(object):
         precision = 3
         if arguments.precision:
             precision = int(arguments.precision)
-        val = round_sigfigs(self.val, precision)
+        if self.useInt:
+            val = int(self.val)
+        else:
+            val = round_sigfigs(self.val, precision)
         err = round_sigfigs(self.err, precision)
-        if self.roundValToInt:
-            val = int(val)
         if self.printPercent:
             val *= 100
             err *= 100
@@ -284,17 +291,19 @@ class CFColumn(object):
         self.dataset = dataset
         self.label = getLabel(dataset)
         self.type = "bgMC" # other options: "signalMC", "data", "extra"
+        self.useInt = False
         self.yields = []  # CFCells
     def __repr__(self):
         return 'label: ', label, ', number of yields: ', len(self.yields), '\n'
     def getStrColumn(self): # Return a list of strings
         strCol = ["", self.label]
         for y in self.yields:
+            if self.useInt:
+                y.useInt = True
             strCol.append(y.getStr())
         return strCol
-    def setRoundValToInt(self, toround=True):
-        for y in self.yields:
-            y.roundValToInt = toround
+    def setUseInt(self):
+        self.useInt = True
 
 
 class CFTable(object):
@@ -318,7 +327,7 @@ class CFTable(object):
         table.addColumn(firstCol)
         for d in self.datasets:
             if d.type == "data" and self.type == "Event yield":
-                d.setRoundValToInt()
+                d.setUseInt()
             table.addColumn(d.getStrColumn())
         table.contents[-1][0] = "\\multicolumn{" + str(len(self.datasets)) + "}{r}{" + self.type + "}"
         table.initializeJustification()
@@ -371,9 +380,9 @@ def getLumiWt(dataset_file):
         exit(0)
     return lumiWt
 
-def fillTableColumn(table, dataset_file, dataset):
+def fillTableColumn(table, dataset_file, dataset, hist_name="cutFlow"):
     inputFile = TFile(dataset_file)
-    cutFlow = inputFile.Get(table.channel + "/cutFlow")
+    cutFlow = inputFile.Get(table.channel + "/" + hist_name)
     if cutFlow.GetNbinsX() != len(table.cutNames):
         print "ERROR:  cutFlow.GetNbinsX() = ", cutFlow.GetNbinsX(), " does not equal len(table.cutNames) = ", len(table.cutNames)
         print "Will skip channel", table.channel, " from file ", dataset_file
@@ -407,7 +416,7 @@ def makeTableEff(table):
             col.yields[i] = col.yields[i] / total if total else float('nan')
     tableEff.printErrors(False)
     tableEff.printPercent(True)
-    tableEff.type = "Efficiency"
+    tableEff.type = "Cumulative Efficiency"
     return tableEff
 
 def makeTableMargEff(table):
@@ -426,6 +435,23 @@ def makeTableMargEff(table):
     tableMargEff.printPercent(True)
     tableMargEff.type = "Marginal efficiency"
     return tableMargEff
+
+def makeTableIndivEff(table):
+    tableIndivEff = copy.deepcopy(table)
+    for c in reversed(range(len(tableIndivEff.datasets))):  # Go backwards to allow removal of columns.
+        col = tableIndivEff.datasets[c]
+        if col.dataset is "diff" or col.dataset is "ratio":
+            # The difference and ratio do not make sense in the efficiency table.
+            del tableIndivEff.datasets[c]
+            continue
+        total = copy.deepcopy(col.yields[0])
+        for i in range(0, len(tableIndivEff.cutNames)):
+            col.yields[i] = col.yields[i] / total if total else float('nan')
+    tableIndivEff.printErrors(False)
+    tableIndivEff.printPercent(True)
+    tableIndivEff.type = "Individual Efficiency"
+    return tableIndivEff
+
 
 def addExtraColumn(table, option):
     # First get the values that will be needed
@@ -487,8 +513,8 @@ def makePdf(condor_dir,texfile):
     os.system(command)
     if (arguments.verbose):
         print "Finished running: " + command
-    os.system("rm %saux" % (texfile.rstrip("tex")))
-    os.system("rm %slog" % (texfile.rstrip("tex")))
+    os.unlink ("%saux" % (texfile.rstrip("tex")))
+    os.unlink ("%slog" % (texfile.rstrip("tex")))
 
 
 def writeTexFileHeader(texFile):
@@ -575,16 +601,20 @@ replacements = collections.OrderedDict([
     ("( ","("),
     (" )",")"),
 
-    ("fabs (eta)","|\\eta|"),
-    ("fabs(eta)","|\\eta|"),
-    ("abs (eta)","|\\eta|"),
-    ("abs(eta)","|\\eta|"),
-    (" eta ","  \\eta "),
-    ("eta","\\eta"),
+    ("eta","$\\eta$"),
+    (" eta ","  $\\eta$ "),
+    ("fabs ($\\eta$)","|$\\eta$|"),
+    ("fabs($\\eta$)","|$\\eta$|"),
+    ("abs ($\\eta$)","|$\\eta$|"),
+    ("abs($\\eta$)","|$\\eta$|"),
+    ("fabs ( $\\eta$ )","|$\\eta$|"),
+    ("fabs( $\\eta$ )","|$\\eta$|"),
+    ("abs ( $\\eta$ )","|$\\eta$|"),
+    ("abs( $\\eta$ )","|$\\eta$|"),
 
-    ("#Delta","\\Delta"),
+    ("#Delta","$\\Delta$"),
     ("DeltaR","$\\Delta$R"),
-    ("#Phi","\\phi"),
+    ("#Phi","$\\phi$"),
     (" # "," Num "),
 
     ("\\rightarrow","{\\rightarrow}"),
@@ -592,8 +622,8 @@ replacements = collections.OrderedDict([
     ("EM QCD","EM$ $QCD"),
     ("BCtoE QCD","BCtoE$ $QCD"),
 
-    (" pt","$ p_{T}$"),
-    (" ht","$H_{T}$"),
+    (" pt","$\\ p_{T}$"),
+    (" ht","$\\ H_{T}$"),
 
     ("d0","$d_{0}$"),
     ("dz","$d_{z}$"),
@@ -614,6 +644,9 @@ replacements = collections.OrderedDict([
     ("M_mumu","$M_{\\mu\\mu}$"),
     ("M_ee","$M_{ee}$"),
     ("M_ll","$M_{ll}$"),
+
+    (" mum"," $\\mu$m"),
+
 ])
 
 replacements_extra = {
@@ -676,11 +709,14 @@ labels["signif"] = "S/\\sqrt{S+B}"
 
 for channel in channels: # loop over final states, which each have their own directory
     table = CFTable(channel)
+    table_indiv = CFTable(channel)
     for dataset in processed_datasets:
         dataset_file = "%s/%s.root" % (condor_dir,dataset)
         if len(table.datasets) == 0:  # Fill the cuts only the first time
             fillTableCuts(table, dataset_file)
+            fillTableCuts(table_indiv, dataset_file)
         fillTableColumn(table, dataset_file, dataset)
+        fillTableColumn(table_indiv, dataset_file, dataset, "selection")
 
     # Add optional columns to end of table:
     if arguments.totalBkgd:
@@ -694,6 +730,7 @@ for channel in channels: # loop over final states, which each have their own dir
 
     tableEff     = makeTableEff    (table)
     tableMargEff = makeTableMargEff(table)
+    tableIndivEff = makeTableIndivEff(table_indiv)
 
     # Write to file
     fout = open (texfile, "a")
@@ -706,6 +743,7 @@ for channel in channels: # loop over final states, which each have their own dir
     table       .writeToFile(texfile)
     tableEff    .writeToFile(texfile)
     tableMargEff.writeToFile(texfile)
+    tableIndivEff.writeToFile(texfile)
     # END LOOP OVER CHANNELS
 
 closeTexFile(texfile)

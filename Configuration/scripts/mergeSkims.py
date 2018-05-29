@@ -69,7 +69,7 @@ for dataset in split_datasets:
         command += '" outputFile="' + channel + 'merged/skimMerged.root"'
         if arguments.verbose:
             print "command = ", command
-        os.system("mkdir -p " + directory + "/" + channel + "merged/")
+        os.makedirs (directory + "/" + channel + "merged")
         os.system(command)
         print "Created condor/" + arguments.condorDir + "/" + dataset + "/" + channel + "merged/skimMerged.root"
 

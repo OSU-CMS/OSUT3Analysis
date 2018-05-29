@@ -54,7 +54,7 @@ CutFlowPlotter::~CutFlowPlotter ()
     if (cutName.size() > longestCutName) longestCutName = cutName.size();
   }
   longestCutName += 2;
-  clog << channel << " channel:  " << endl;
+  clog << channel << " channel:" << endl;
   clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
   clog << setw (longestCutName) << left << "Cut Name" << right
        << setw (10) << setprecision(1) << "Events"
@@ -75,16 +75,33 @@ CutFlowPlotter::~CutFlowPlotter ()
          << setw (15) << setprecision(3) << 100.0 * (selection / (double) totalEvents) << "%"
       //         << setw (15) << setprecision(3) << 100.0 * (minusOne  / (double) totalEvents) << "%"
          << endl;
-    // if (name == "trigger") {  // This code does not yet work reliably.
-    //   for (uint j=0; j<cutDecisions->triggers.size(); j++) {
-    //         clog << "  " << cutDecisions->triggers.at(j);
-    //         if (j< cutDecisions->triggers.size() - 1) clog << " OR";  // all but the last one
-    //         clog << endl;
-    //   }
-    //   for (uint j=0; j<cutDecisions->triggersToVeto.size(); j++) {
-    //         clog << "  AND NOT " << cutDecisions->triggersToVeto.at(j) << endl;
-    //   }
-    // }
+
+    if(name.Contains("trigger filter")) {
+      for(uint j = 0; j < triggerFilters_.size(); j++) {
+        clog << " " << triggerFilters_.at(j);
+        if(j < triggerFilters_.size() - 1) clog << " OR";
+        clog << endl;
+      }
+    }
+
+    else if(name.Contains("trigger")) {
+      for(uint j = 0; j < triggers_.size(); j++) {
+        clog << "  " << triggers_.at(j);
+        if(j < triggers_.size() - 1) clog << " OR";  // all but the last one
+        clog << endl;
+      }
+      for(uint j = 0; j < triggersToVeto_.size(); j++) {
+        clog << "  AND NOT " << triggersToVeto_.at(j) << endl;
+      }
+    }
+
+    else if(name.Contains("MET filter")) {
+      for(uint j = 0; j < metFilters_.size(); j++) {
+        clog << " " << metFilters_.at(j);
+        if(j < metFilters_.size() - 1) clog << " AND";
+        clog << endl;
+      }
+    }
   }
   clog << setw (textWidth+longestCutName) << setfill ('-') << '-' << setfill (' ') << endl;
 
@@ -139,8 +156,9 @@ CutFlowPlotter::initializeCutFlow ()
   // decision.
   //////////////////////////////////////////////////////////////////////////////
   unsigned nCuts = cutDecisions->cuts.size ();
-  cutDecisions->triggers.size () && nCuts++;
-  cutDecisions->triggerFilters.size () && nCuts++;
+  !cutDecisions->triggers.empty () && nCuts++;
+  !cutDecisions->triggerFilters.empty () && nCuts++;
+  !cutDecisions->metFilters.empty () && nCuts++;
   oneDHists_.at ("cutFlow")->SetBins    (nCuts + 1,  0.0,  nCuts + 1);
   oneDHists_.at ("selection")->SetBins  (nCuts + 1,  0.0,  nCuts + 1);
   //  oneDHists_.at ("minusOne")->SetBins   (nCuts + 1,  0.0,  nCuts + 1);
@@ -150,17 +168,24 @@ CutFlowPlotter::initializeCutFlow ()
   // Set the bin labels for the rest of the bins according to the name of the
   // cut. The special bin for the trigger decision is simply labeled "trigger".
   //////////////////////////////////////////////////////////////////////////////
-  if (cutDecisions->triggers.size ())
+  if (!cutDecisions->triggers.empty ())
     {
       oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "trigger");
       oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "trigger");
       //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger");
       bin++;
     }
-  if (cutDecisions->triggerFilters.size ())
+  if (!cutDecisions->triggerFilters.empty ())
     {
       oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "trigger filter");
       oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "trigger filter");
+      //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger filter");
+      bin++;
+    }
+  if (!cutDecisions->metFilters.empty ())
+    {
+      oneDHists_.at ("cutFlow")->GetXaxis    ()->SetBinLabel  (bin,  "MET filter");
+      oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  "MET filter");
       //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  "trigger filter");
       bin++;
     }
@@ -170,6 +195,18 @@ CutFlowPlotter::initializeCutFlow ()
       oneDHists_.at ("selection")->GetXaxis  ()->SetBinLabel  (bin,  cut->name.c_str  ());
       //      oneDHists_.at ("minusOne")->GetXaxis   ()->SetBinLabel  (bin,  cut->name.c_str  ());
     }
+  //////////////////////////////////////////////////////////////////////////////
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Save in triggers_ a private copy of the list of triggers (which is the same for every event).
+  // This is needed because the CutCalculatorPayload object is not available in the
+  // destructor, when the terminal output is produced.
+  //////////////////////////////////////////////////////////////////////////////
+  triggers_ = cutDecisions->triggers;
+  triggersToVeto_ = cutDecisions->triggersToVeto;
+  triggerFilters_ = cutDecisions->triggerFilters;
+  metFilters_ = cutDecisions->metFilters;
   //////////////////////////////////////////////////////////////////////////////
 
   // Return true if the initialization was successful.
@@ -198,7 +235,7 @@ CutFlowPlotter::fillCutFlow (double w)
   // Fill the rest of the bins according to the flags in the cut decisions
   // object.
   //////////////////////////////////////////////////////////////////////////////
-  if (cutDecisions->triggers.size ())
+  if (!cutDecisions->triggers.empty ())
     {
       passes = passes && cutDecisions->triggerDecision;
       if (cutDecisions->triggerDecision)
@@ -207,10 +244,19 @@ CutFlowPlotter::fillCutFlow (double w)
         oneDHists_.at ("cutFlow")->Fill    (bin,  w);
       bin++;
     }
-  if (cutDecisions->triggerFilters.size ())
+  if (!cutDecisions->triggerFilters.empty ())
     {
       passes = passes && cutDecisions->triggerFilterDecision;
       if (cutDecisions->triggerFilterDecision)
+        oneDHists_.at ("selection")->Fill  (bin,  w);
+      if (passes)
+        oneDHists_.at ("cutFlow")->Fill    (bin,  w);
+      bin++;
+    }
+  if (!cutDecisions->metFilters.empty ())
+    {
+      passes = passes && cutDecisions->metFilterDecision;
+      if (cutDecisions->metFilterDecision)
         oneDHists_.at ("selection")->Fill  (bin,  w);
       if (passes)
         oneDHists_.at ("cutFlow")->Fill    (bin,  w);

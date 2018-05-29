@@ -5,25 +5,26 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
-  collections_  (cfg.getParameter<edm::ParameterSet> ("collections")),
+  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_ (cfg),
-  beamSpot_     (cfg.getParameter<edm::InputTag>  ("beamSpot")),
-  conversions_  (cfg.getParameter<edm::InputTag>  ("conversions")),
-  pfCandidate_  (cfg.getParameter<edm::InputTag>  ("pfCandidate")),
-  rho_          (cfg.getParameter<edm::InputTag>  ("rho")),
-  vertices_     (cfg.getParameter<edm::InputTag>  ("vertices"))
+  pfCandidate_ (cfg.getParameter<edm::InputTag> ("pfCandidate")),
+  conversions_ (cfg.getParameter<edm::InputTag> ("conversions")),
+  rho_         (cfg.getParameter<edm::InputTag> ("rho"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
 
   token_ = consumes<vector<TYPE(electrons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
-  beamSpotToken_ = consumes<TYPE(beamspots)> (beamSpot_);
-  conversionsToken_ = consumes<vector<reco::Conversion> > (conversions_);
+  prunedParticleToken_ = consumes<vector<reco::GenParticle> > (collections_.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
   pfCandidateToken_ = consumes<vector<pat::PackedCandidate>>(pfCandidate_);
-  rhoToken_ = consumes<double> (rho_);
-  verticesToken_ = consumes<vector<TYPE(primaryvertexs)> > (vertices_);
+  beamspotToken_ = consumes<TYPE(beamspots)> (collections_.getParameter<edm::InputTag> ("beamspots"));
+  primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
   metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
+  conversionsToken_ = consumes<vector<reco::Conversion> > (conversions_);
+  rhoToken_ = consumes<double> (rho_);
+  triggersToken_ = consumes<edm::TriggerResults> (collections_.getParameter<edm::InputTag> ("triggers"));
+  trigobjsToken_ = consumes<vector<pat::TriggerObjectStandAlone> > (collections_.getParameter<edm::InputTag> ("trigobjs"));
 }
 
 OSUElectronProducer::~OSUElectronProducer ()
@@ -33,32 +34,58 @@ OSUElectronProducer::~OSUElectronProducer ()
 void
 OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
   using namespace edm;
   using namespace reco;
 
-  Handle<vector<pat::PackedCandidate>> cands;
-  event.getByToken(pfCandidateToken_, cands);
-  edm::Handle<vector<TYPE (electrons)> > collection;
-  edm::Handle<TYPE(beamspots)> beamSpot;
-  edm::Handle<vector<reco::Conversion> > conversions;
-  edm::Handle<double> rho;
-  edm::Handle<vector<TYPE(primaryvertexs)> > vertices;
+  Handle<vector<TYPE(electrons)> > collection;
+  event.getByToken(token_, collection);
 
-  edm::Handle<vector<osu::Mcparticle> > particles;
+  Handle<vector<pat::PackedCandidate> > cands;
+  event.getByToken(pfCandidateToken_, cands);
+
+  Handle<vector<TYPE(primaryvertexs)> > vertices;
+  event.getByToken (primaryvertexToken_, vertices);
+
+  Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
-  edm::Handle<vector<osu::Met> > met;
+
+  Handle<vector<reco::GenParticle> > prunedParticles;
+  event.getByToken (prunedParticleToken_, prunedParticles);
+
+  Handle<TYPE(beamspots)> beamspot;
+  event.getByToken (beamspotToken_, beamspot);
+
+  Handle<vector<osu::Met> > met;
   event.getByToken (metToken_, met);
-  if (!event.getByToken (token_, collection))
-    return;
-  pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
+
+  Handle<vector<reco::Conversion> > conversions;
+  event.getByToken (conversionsToken_, conversions);
+
+  Handle<double> rho;
+  event.getByToken (rhoToken_, rho);
+
+  Handle<edm::TriggerResults> triggers;
+  event.getByToken (triggersToken_, triggers);
+
+  Handle<vector<pat::TriggerObjectStandAlone> > trigobjs;
+  event.getByToken (trigobjsToken_, trigobjs);
+
+  pl_ = unique_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
     {
-      osu::Electron electron (object, particles, cfg_, met->at (0));
-      if(event.getByToken (rhoToken_, rho))
+      pl_->emplace_back (object, particles, cfg_, met->at (0));
+      osu::Electron &electron = pl_->back ();
+
+      if(rho.isValid())
         electron.set_rho((float)(*rho));
-      if(event.getByToken (beamSpotToken_, beamSpot) && event.getByToken (conversionsToken_, conversions) && event.getByToken (verticesToken_, vertices) && vertices->size ())
-        electron.set_passesTightID_noIsolation (*beamSpot, vertices->at (0), conversions);
+      if(beamspot.isValid() && conversions.isValid() && vertices.isValid() && !vertices->empty ())
+        electron.set_passesTightID_noIsolation (*beamspot, vertices->at (0), conversions);
+      if(trigobjs.isValid())
+        {
+          electron.set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle25erWPTightGsfTrackIsoFilter"));
+          electron.set_match_HLT_Ele22_eta2p1_WPLoose_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltSingleEle22WPLooseGsfTrackIsoFilter"));
+        }
 
       float effectiveArea = 0;
       // electron effective areas from https://indico.cern.ch/event/369239/contribution/4/attachments/1134761/1623262/talk_effective_areas_25ns.pdf
@@ -78,6 +105,19 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       if(abs(object.superCluster()->eta()) >= 2.4000 && abs(object.superCluster()->eta()) < 5.0000)
         effectiveArea = 0.2687;
       electron.set_AEff(effectiveArea);
+
+      //generator D0 must be done with prunedGenParticles because vertex is only right in this collection, not right in packedGenParticles
+      if(prunedParticles.isValid() && beamspot.isValid())
+	{
+	  for (auto cand = prunedParticles->begin(); cand != prunedParticles->end(); cand++)
+	    {
+	      if (!(abs(cand->pdgId()) == 11 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.1))
+		continue;
+	      double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
+	      electron.set_genD0(gen_d0);
+	    }
+	}
+
       double pfdRhoIsoCorr = 0;
       double chargedHadronPt = 0;
       double puPt = 0;
@@ -133,13 +173,15 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
           pfdRhoIsoCorr = (chargedHadronPt + max(0.0,object.pfIsolationVariables().sumNeutralHadronEt + object.pfIsolationVariables().sumPhotonEt - double(effectiveArea *(float)(*rho))))/object.pt();
             }
        }
-      electron.set_pfdRhoIsoCorr(pfdRhoIsoCorr); 
-      electron.set_sumChargedHadronPtCorr(chargedHadronPt); 
-      electron.set_sumPUPtCorr(puPt); 
-      electron.set_electronPVIndex(electronPVIndex); 
-      pl_->push_back (electron);
+      electron.set_pfdRhoIsoCorr(pfdRhoIsoCorr);
+      electron.set_sumChargedHadronPtCorr(chargedHadronPt);
+      electron.set_sumPUPtCorr(puPt);
+      electron.set_electronPVIndex(electronPVIndex);
+
     }
-  event.put (pl_, collection_.instance ());
+
+
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 #else
   edm::Handle<vector<TYPE(electrons)> > collection;
@@ -148,14 +190,11 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
 
-  pl_ = auto_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
+  pl_ = unique_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
   for (const auto &object : *collection)
-    {
-      const osu::Electron electron (object, particles, cfg_);
-      pl_->push_back (electron);
-    }
+    pl_->emplace_back (object, particles, cfg_);
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 #endif
 }

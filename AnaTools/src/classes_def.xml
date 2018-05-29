@@ -1,14 +1,4 @@
 <lcgdict>
-  <class name="BNstop" />
-  <class name="std::vector<BNstop>" />
-  <class name="edm::Wrapper<BNstop>"/>
-  <class name="edm::Wrapper<std::vector<BNstop> >" />
-
-  <class name="BNPFChgHad" />
-  <class name="std::vector<BNPFChgHad>" />
-  <class name="edm::Wrapper<BNPFChgHad>"/>
-  <class name="edm::Wrapper<std::vector<BNPFChgHad> >" />
-
   <class name="std::map<std::string, std::vector<std::pair<std::vector<int>, double> > >" />
   <class name="std::vector<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > >" />
   <class name="edm::Wrapper<std::map<std::string, std::vector<std::pair<std::vector<int>, double> > > >"/>
@@ -46,4 +36,8 @@
 
   <class name="std::pair<const std::string, std::vector<UserVariable> >"/>
   <class name="std::pair<const std::string, double>"/>
+
+  <class name="std::map<std::string,std::vector<std::pair<bool,bool> > >"/>
+  <class name="std::vector<std::map<std::string,std::vector<std::pair<bool,bool> > > >"/>
+  <class name="std::vector<std::pair<bool,bool> >"/>
 </lcgdict>

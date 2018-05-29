@@ -18,7 +18,7 @@ LifetimeWeightProducer::~LifetimeWeightProducer() {}
 void
 LifetimeWeightProducer::AddVariables (const edm::Event &event) {
   double weight = 1.0;
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   edm::Handle<vector<TYPE(hardInteractionMcparticles)> > mcparticles;
   if (!event.getByToken (mcparticlesToken_, mcparticles))
     {
@@ -54,15 +54,26 @@ LifetimeWeightProducer::AddVariables (const edm::Event &event) {
                  dstPDF = exp (-cTau / dstCTau_.at (iPdgId)) / dstCTau_.at (iPdgId);
           weight *= (dstPDF / srcPDF);
         }
+
+      // Add dummy ctau values for index < 10 for signal with varying numbers
+      // of particles used for reweighting; e.g., a mix of chargino-chargino
+      // and chargino-neutralino events, where the chargino is used for
+      // reweighting.
+      while (index < 10)
+        {
+          suffix.str ("");
+          suffix << "_" << abs (pdgIds_.at (iPdgId)) << "_" << index++;
+          (*eventvariables)["cTau" + suffix.str ()] = INVALID_VALUE;
+        }
     }
-#endif
+#endif // ifndef STOPPPED_PTLS
   (*eventvariables)["lifetimeWeight"] = weight;
 }
 
 bool
 LifetimeWeightProducer::isOriginalParticle (const TYPE(hardInteractionMcparticles) &mcparticle, const int pdgId) const
 {
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   if (!mcparticle.numberOfMothers () || mcparticle.motherRef ().isNull ())
     return true;
   return (mcparticle.motherRef ()->pdgId () != pdgId) && isOriginalParticle ((TYPE(hardInteractionMcparticles)) *mcparticle.motherRef (), pdgId);
@@ -74,11 +85,11 @@ LifetimeWeightProducer::isOriginalParticle (const TYPE(hardInteractionMcparticle
 double
 LifetimeWeightProducer::getCTau (const TYPE(hardInteractionMcparticles) &mcparticle) const
 {
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
+#ifndef STOPPPED_PTLS
   math::XYZPoint v0 = mcparticle.vertex (), v1;
   double boost = 1.0 / (mcparticle.p4 ().Beta () * mcparticle.p4 ().Gamma ());
 
-  getFinalPosition (mcparticle, mcparticle.pdgId (), v1);
+  getFinalPosition (mcparticle, mcparticle.pdgId (), true, v1);
   return ((v1 - v0).r () * boost);
 #else
   return 0.0;
@@ -86,15 +97,21 @@ LifetimeWeightProducer::getCTau (const TYPE(hardInteractionMcparticles) &mcparti
 }
 
 void
-LifetimeWeightProducer::getFinalPosition (const reco::Candidate &mcparticle, const int pdgId, math::XYZPoint &v1) const
+LifetimeWeightProducer::getFinalPosition (const reco::Candidate &mcparticle, const int pdgId, bool firstDaughter, math::XYZPoint &v1) const
 {
-#if DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD
-  if (!mcparticle.numberOfDaughters ())
-    return;
+#ifndef STOPPPED_PTLS
   if (mcparticle.pdgId () == pdgId)
-    v1 = mcparticle.vertex ();
+    {
+      v1 = mcparticle.vertex ();
+      firstDaughter = true;
+    }
+  else if (firstDaughter)
+    {
+      v1 = mcparticle.vertex ();
+      firstDaughter = false;
+    }
   for (const auto &daughter : mcparticle)
-    getFinalPosition (daughter, pdgId, v1);
+    getFinalPosition (daughter, pdgId, firstDaughter, v1);
 #endif
 }
 

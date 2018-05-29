@@ -45,3 +45,4 @@ const float osu::Photon::rho () const {
 }
 
 #endif
+

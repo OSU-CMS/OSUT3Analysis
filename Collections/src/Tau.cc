@@ -15,7 +15,15 @@ osu::Tau::Tau (const TYPE(taus) &tau) :
   metNoMuMinusOnePt_   (INVALID_VALUE),
   metNoMuMinusOnePx_   (INVALID_VALUE),
   metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  metNoMuMinusOnePhi_  (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
 }
 
@@ -28,7 +36,15 @@ osu::Tau::Tau (const TYPE(taus) &tau, const edm::Handle<vector<osu::Mcparticle> 
   metNoMuMinusOnePt_   (INVALID_VALUE),
   metNoMuMinusOnePx_   (INVALID_VALUE),
   metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  metNoMuMinusOnePhi_  (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
 }
 
@@ -41,7 +57,15 @@ osu::Tau::Tau (const TYPE(taus) &tau, const edm::Handle<vector<osu::Mcparticle> 
   metNoMuMinusOnePt_   (INVALID_VALUE),
   metNoMuMinusOnePx_   (INVALID_VALUE),
   metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  metNoMuMinusOnePhi_  (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
 }
 
@@ -54,10 +78,21 @@ osu::Tau::Tau (const TYPE(taus) &tau, const edm::Handle<vector<osu::Mcparticle> 
   metNoMuMinusOnePt_   (INVALID_VALUE),
   metNoMuMinusOnePx_   (INVALID_VALUE),
   metNoMuMinusOnePy_   (INVALID_VALUE),
-  metNoMuMinusOnePhi_  (INVALID_VALUE)
+  metNoMuMinusOnePhi_  (INVALID_VALUE),
+  metMinusOneUpPt_              (INVALID_VALUE),
+  metMinusOneUpPx_              (INVALID_VALUE),
+  metMinusOneUpPy_              (INVALID_VALUE),
+  metMinusOneUpPhi_             (INVALID_VALUE),
+  metNoMuMinusOneUpPt_          (INVALID_VALUE),
+  metNoMuMinusOneUpPx_          (INVALID_VALUE),
+  metNoMuMinusOneUpPy_          (INVALID_VALUE),
+  metNoMuMinusOneUpPhi_         (INVALID_VALUE)
 {
   TVector2 p (met.px () + this->px (), met.py () + this->py ()),
-           pNoMu (met.noMuPx () + this->px (), met.noMuPy () + this->py ());
+           pNoMu (met.noMuPx () + this->px (), met.noMuPy () + this->py ()),
+           p10;
+
+  p10.SetMagPhi (10.0, this->phi ());
 
   metMinusOnePt_ = p.Mod ();
   metMinusOnePx_ = p.Px ();
@@ -68,22 +103,100 @@ osu::Tau::Tau (const TYPE(taus) &tau, const edm::Handle<vector<osu::Mcparticle> 
   metNoMuMinusOnePx_ = pNoMu.Px ();
   metNoMuMinusOnePy_ = pNoMu.Py ();
   metNoMuMinusOnePhi_ = pNoMu.Phi ();
+
+  metMinusOneUpPt_ = (p - p10).Mod ();
+  metMinusOneUpPx_ = (p - p10).Px ();
+  metMinusOneUpPy_ = (p - p10).Py ();
+  metMinusOneUpPhi_ = (p - p10).Phi ();
+
+  metNoMuMinusOneUpPt_ = (pNoMu - p10).Mod ();
+  metNoMuMinusOneUpPx_ = (pNoMu - p10).Px ();
+  metNoMuMinusOneUpPy_ = (pNoMu - p10).Py ();
+  metNoMuMinusOneUpPhi_ = (pNoMu - p10).Phi ();
 }
 
 osu::Tau::~Tau ()
 {
 }
 
+// Tau ID and isolation discriminators are documented here:
+// https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV
+// The names of the discriminators are out-of-date though, with the current
+// names for 76X samples found here:
+// https://github.com/cms-sw/cmssw/blob/CMSSW_7_6_X/PhysicsTools/PatAlgos/python/producersLayer1/tauProducer_cfi.py#L62-L106
+
 const bool
 osu::Tau::passesDecayModeReconstruction () const
 {
-  return (this->tauID ("decayModeFinding") > 0.5);
+  if (this->isTauIDAvailable ("decayModeFinding"))
+    return (this->tauID ("decayModeFinding") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu_Tau") << "Tau ID \"decayModeFinding\" unavailable.";
+      return false;
+    }
 }
 
 const bool
 osu::Tau::passesLightFlavorRejection () const
 {
-  return (this->tauID ("againstElectronLooseMVA5") > 0.5 && this->tauID ("againstMuonLoose3") > 0.5);
+  bool flag = true;
+
+  if (this->isTauIDAvailable ("againstElectronLooseMVA5"))
+    flag = flag && (this->tauID ("againstElectronLooseMVA5") > 0.5);
+  else if (this->isTauIDAvailable ("againstElectronLooseMVA6"))
+    flag = flag && (this->tauID ("againstElectronLooseMVA6") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu_Tau") << "Tau IDs \"againstElectronLooseMVA5\" and \"againstElectronLooseMVA6\" unavailable.";
+      flag = flag && false;
+    }
+
+  if (this->isTauIDAvailable ("againstMuonLoose3"))
+    flag = flag && (this->tauID ("againstMuonLoose3") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu_Tau") << "Tau ID \"againstMuonLoose3\" unavailable.";
+      flag = flag && false;
+    }
+
+  return flag;
+}
+
+const bool
+osu::Tau::passesLooseCombinedIsolation () const
+{
+  if (this->isTauIDAvailable ("byLooseCombinedIsolationDeltaBetaCorr3Hits"))
+    return (this->tauID ("byLooseCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu_Tau") << "Tau ID \"byLooseCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
+      return false;
+    }
+}
+
+const bool
+osu::Tau::passesMediumCombinedIsolation () const
+{
+  if (this->isTauIDAvailable ("byMediumCombinedIsolationDeltaBetaCorr3Hits"))
+    return (this->tauID ("byMediumCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu_Tau") << "Tau ID \"byMediumCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
+      return false;
+    }
+}
+
+const bool
+osu::Tau::passesTightCombinedIsolation () const
+{
+  if (this->isTauIDAvailable ("byTightCombinedIsolationDeltaBetaCorr3Hits"))
+    return (this->tauID ("byTightCombinedIsolationDeltaBetaCorr3Hits") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu_Tau") << "Tau ID \"byTightCombinedIsolationDeltaBetaCorr3Hits\" unavailable.";
+      return false;
+    }
 }
 
 const double
@@ -132,6 +245,66 @@ const double
 osu::Tau::metNoMuMinusOnePhi () const
 {
   return metNoMuMinusOnePhi_;
+}
+
+const double
+osu::Tau::metMinusOneUpPt () const
+{
+  return metMinusOneUpPt_;
+}
+
+const double
+osu::Tau::metMinusOneUpPx () const
+{
+  return metMinusOneUpPx_;
+}
+
+const double
+osu::Tau::metMinusOneUpPy () const
+{
+  return metMinusOneUpPy_;
+}
+
+const double
+osu::Tau::metMinusOneUpPhi () const
+{
+  return metMinusOneUpPhi_;
+}
+
+const double
+osu::Tau::metNoMuMinusOneUpPt () const
+{
+  return metNoMuMinusOneUpPt_;
+}
+
+const double
+osu::Tau::metNoMuMinusOneUpPx () const
+{
+  return metNoMuMinusOneUpPx_;
+}
+
+const double
+osu::Tau::metNoMuMinusOneUpPy () const
+{
+  return metNoMuMinusOneUpPy_;
+}
+
+const double
+osu::Tau::metNoMuMinusOneUpPhi () const
+{
+  return metNoMuMinusOneUpPhi_;
+}
+
+const bool
+osu::Tau::match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v () const
+{
+  return match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v_;
+}
+
+void
+osu::Tau::set_match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v (const bool flag)
+{
+  match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v_ = flag;
 }
 
 #endif

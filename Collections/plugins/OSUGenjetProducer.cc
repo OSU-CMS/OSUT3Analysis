@@ -29,14 +29,11 @@ OSUGenjetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<vector<osu::Mcparticle> > particles;
   event.getByToken (mcparticleToken_, particles);
 
-  pl_ = auto_ptr<vector<osu::Genjet> > (new vector<osu::Genjet> ());
+  pl_ = unique_ptr<vector<osu::Genjet> > (new vector<osu::Genjet> ());
   for (const auto &object : *collection)
-    {
-      const osu::Genjet genjet (object, particles, cfg_);
-      pl_->push_back (genjet);
-    }
+    pl_->emplace_back (object, particles, cfg_);
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 

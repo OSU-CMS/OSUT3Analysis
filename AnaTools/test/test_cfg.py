@@ -47,6 +47,7 @@ collections = cms.PSet (
   superclusters   =  cms.InputTag  ('BNproducer',  'corHybridSCandMulti5x5WithPreshower'),
   taus            =  cms.InputTag  ('BNproducer',  'selectedPatTaus'),
   tracks          =  cms.InputTag  ('BNproducer',  'generalTracks'),
+  secondaryTracks =  cms.InputTag  ('BNproducer',  'generalTracks'),
   triggers        =  cms.InputTag  ('BNproducer',  'HLT'),
   trigobjs        =  cms.InputTag  ('BNproducer',  'HLT'),
 )

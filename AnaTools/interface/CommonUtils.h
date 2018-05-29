@@ -38,7 +38,6 @@ struct Tokens
   edm::EDGetTokenT<vector<osu::Genjet> > genjets;
   edm::EDGetTokenT<vector<osu::Jet> > jets;
   edm::EDGetTokenT<vector<osu::Bjet> > bjets;
-  edm::EDGetTokenT<vector<osu::Basicjet> > basicjets;
   edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticles;
   edm::EDGetTokenT<vector<osu::Met> > mets;
   edm::EDGetTokenT<vector<osu::Muon> > muons;
@@ -48,13 +47,15 @@ struct Tokens
   edm::EDGetTokenT<vector<osu::Supercluster> > superclusters;
   edm::EDGetTokenT<vector<osu::Tau> > taus;
   edm::EDGetTokenT<vector<osu::Track> > tracks;
+  edm::EDGetTokenT<vector<osu::SecondaryTrack> > secondaryTracks;
   edm::EDGetTokenT<vector<osu::PileUpInfo> > pileupinfos;
-  edm::EDGetTokenT<vector<osu::Trigobj> > trigobjs;
 
   edm::EDGetTokenT<osu::Beamspot> beamspots;
   edm::EDGetTokenT<TYPE(generatorweights)> generatorweights;
   edm::EDGetTokenT<TYPE(prescales)> prescales;
   edm::EDGetTokenT<TYPE(triggers)> triggers;
+  edm::EDGetTokenT<vector<TYPE(trigobjs)> > trigobjs;
+  edm::EDGetTokenT<TYPE(triggers)> metFilters;
 
   vector<edm::EDGetTokenT<osu::Uservariable> > uservariables;
   vector<edm::EDGetTokenT<osu::Eventvariable> > eventvariables;
@@ -98,18 +99,16 @@ namespace anatools
   string getObjectType (const osu::Genjet &);
   string getObjectClass (const osu::Genjet &);
 #endif
-#if IS_VALID(basicjets)
-  string getObjectType  (const osu::Basicjet &);
-  string getObjectClass (const osu::Basicjet &);
-#endif
+
 #if IS_VALID(jets)
   string getObjectType (const osu::Jet &);
   string getObjectClass (const osu::Jet &);
-#endif
 #if IS_VALID(bjets)
   string getObjectType (const osu::Bjet &);
   string getObjectClass (const osu::Bjet &);
 #endif
+#endif // IS_VALID(jets)
+
 #if IS_VALID(mcparticles)
   string getObjectType (const osu::Mcparticle &);
   string getObjectClass (const osu::Mcparticle &);
@@ -144,17 +143,19 @@ namespace anatools
   string getObjectType (const osu::Tau &);
   string getObjectClass (const osu::Tau &);
 #endif
+
 #if IS_VALID(tracks)
   string getObjectType (const osu::Track &);
   string getObjectClass (const osu::Track &);
+#if IS_VALID(secondaryTracks)
+  string getObjectType (const osu::SecondaryTrack &);
+  string getObjectClass (const osu::SecondaryTrack &);
 #endif
+#endif // IS_VALID(tracks)
+
 #if IS_VALID(pileupinfos)
   string getObjectType (const osu::PileUpInfo &);
   string getObjectClass (const osu::PileUpInfo &);
-#endif
-#if IS_VALID(trigobjs)
-  string getObjectType (const osu::Trigobj &);
-  string getObjectClass (const osu::Trigobj &);
 #endif
 #if IS_VALID(uservariables)
   // user-defined cases
@@ -219,6 +220,16 @@ namespace anatools
   void getAllTokens (const edm::ParameterSet &, edm::ConsumesCollector &&, Tokens &);
 
   template<class T> bool jetPassesTightLepVeto (const T &);
+
+  template<class T> bool isMatchedToTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double = 0.1);
+  bool getTriggerObjects (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, vector<const pat::TriggerObjectStandAlone *> &);
+  bool getTriggerObjectsByFilterSubstring (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, vector<const pat::TriggerObjectStandAlone *> &, const string & = "");
+  template<class T> const pat::TriggerObjectStandAlone *getMatchedTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double = 0.1);
+  bool triggerObjectExists (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &);
+  bool passesL1ETM (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, double &);
+
+  void logSpace (const double, const double, const unsigned, vector<double> &);
+  void linSpace (const double, const double, const unsigned, vector<double> &);
 }
 
 /**
@@ -261,6 +272,84 @@ anatools::jetPassesTightLepVeto (const T &jet)
   //
   return (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
     || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0));
+}
+
+template<class T> bool
+anatools::isMatchedToTriggerObject (const edm::Event &event, const edm::TriggerResults &triggers, const T &obj, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter, const double dR)
+{
+  if (collection == "")
+    return false;
+  for (auto trigObj : trigObjs)
+    {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filter != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            if (filterLabel == filter)
+              {
+                flag = true;
+                break;
+              }
+          if (!flag)
+            continue;
+        }
+      if (deltaR (obj, trigObj) > dR)
+        continue;
+
+      return true;
+    }
+  return false;
+}
+
+template<class T> const pat::TriggerObjectStandAlone *
+anatools::getMatchedTriggerObject (const edm::Event &event, const edm::TriggerResults &triggers, const T &obj, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter, const double dR)
+{
+  if (collection == "")
+    return NULL;
+  double minDR = -1.0;
+  int i = -1, iMinDR = -1;
+  for (auto trigObj : trigObjs)
+    {
+      i++;
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+      trigObj.unpackNamesAndLabels(event, triggers);
+#else
+      trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+      if (trigObj.collection () != collection)
+        continue;
+      if (filter != "")
+        {
+          bool flag = false;
+          for (const auto &filterLabel : trigObj.filterLabels ())
+            if (filterLabel == filter)
+              {
+                flag = true;
+                break;
+              }
+          if (!flag)
+            continue;
+        }
+      double currentDR = deltaR (obj, trigObj);
+      if (currentDR > dR)
+        continue;
+
+      if (minDR < 0 || currentDR < minDR)
+        {
+          minDR = currentDR;
+          iMinDR = i;
+        }
+    }
+  if (iMinDR >= 0)
+    return &trigObjs.at (iMinDR);
+  return NULL;
 }
 
 #endif

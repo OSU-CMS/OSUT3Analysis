@@ -193,7 +193,10 @@ for sample in processed_datasets:
         else:
             sysError_ = 0.0
         roundedNumbersDictionary = roundingNumbers(yield_,statError_,sysError_)
-        yields[sample][channel] = str(roundedNumbersDictionary['central_value'])
+        if types[sample] is "data":
+            yields[sample][channel] = str(int(yield_))
+        else:
+            yields[sample][channel] = str(roundedNumbersDictionary['central_value'])
         stat_errors[sample][channel] = str(roundedNumbersDictionary['stat_error'])
         sys_errors[sample][channel] = str(roundedNumbersDictionary['syst_error'])
 
@@ -287,8 +290,8 @@ for channel in channels:
         os.system(command)
         os.system(command)
         #os.system("rm %s" % outputFile)
-        os.system("rm %saux" % (outputFile.rstrip("tex")))
-        os.system("rm %slog" % (outputFile.rstrip("tex")))
+        os.unlink ("%saux" % (outputFile.rstrip("tex")))
+        os.unlink ("%slog" % (outputFile.rstrip("tex")))
         print "Finished writing cutFlow to " + outputFile + " and compiling pdf"
 
 

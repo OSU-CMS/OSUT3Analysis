@@ -14,6 +14,8 @@ import FWCore.ParameterSet.Config as cms
 from OSUT3Analysis.Configuration.InfoPrinter_cff import *
 from OSUT3Analysis.Configuration.CollectionProducer_cff import *
 from OSUT3Analysis.Configuration.LifetimeWeightProducer_cff import *
+from OSUT3Analysis.Configuration.ISRWeightProducer_cff import *
+from OSUT3Analysis.Configuration.PUScalingFactorProducer_cff import *
 
 def GetCompleteOrderedArgumentsSet(InputArguments, currentCondorSubArgumentsSet):
     NewArguments = copy.deepcopy(InputArguments)
@@ -106,6 +108,8 @@ def set_commandline_arguments(parser):
                       help="Include the yield of each source in the legend")
     parser.add_option("-p", "--pdfs",  action="store_true", dest="savePDFs", default=False,
                       help="Save pdfs files for all plots made")
+    parser.add_option("--pngs",  action="store_true", dest="savePNGs", default=False,
+                      help="Save pngs files for all plots made")
 
     return parser
 
@@ -170,23 +174,6 @@ def add_stops (options, masses, ctaus, bottomBranchingRatios = [], rHadron = Tru
                     options['labels'][topDatasetName] += " (PYTHIA6)"
                     options['labels'][mixedDatasetName] += " (PYTHIA6)"
 
-
-def chargino_ctau (dataset):
-    if not re.match (r"AMSB_chargino_.*GeV_RewtCtau.*cm", dataset):
-        return -99.0
-    return float (re.sub (r"AMSB_chargino_[^_]*GeV_RewtCtau([^_]*)cm", r"\1", dataset))
-
-def source_chargino_ctau (ctau):
-    # Units of ctau are cm.
-    # Choose as the source the next sample with ctau larger than the target.
-    if ctau <= 10:
-        src_ctau = 10
-    elif ctau <= 100:
-        src_ctau = 100
-    else:
-        src_ctau = 1000
-    return float(src_ctau)
-
 def get_collections (cuts):
     ############################################################################
     # Return a list of collections on which cuts are applied with duplicates
@@ -200,8 +187,12 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
-#def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True):
-def add_channels (process, channels, histogramSets = None, weights = None, scalingfactorproducers = None, collections = None, variableProducers = None, skim = None):
+#def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True, branchSets):
+def add_channels (process, channels, histogramSets = None, weights = None, scalingfactorproducers = None, collections = None, variableProducers = None, skim = None, branchSets = None):
+    if skim is not None:
+        print "# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated."
+        print "# Please remove from your config files."
+
     ############################################################################
     # If there are only two arguments, then channels is actually an
     # AddChannelArguments object that needs to be unpacked.
@@ -214,16 +205,39 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         standAloneAnalyzers     =  channels.standAloneAnalyzers
         histogramSets           =  channels.histogramSets
         collections             =  channels.collections
-        skim                    =  channels.skim
         channels                =  channels.channels
 
     ############################################################################
     # Check the directory of the first input file for SkimInputTags.pkl. If it
     # exists, update the input tags with those stored in the pickle file.
     ############################################################################
-    fileName = process.source.fileNames[0]
+    makeEmptySkim = False
+    fileName = None
+    if hasattr (process.source, "fileNames") and len (process.source.fileNames) > 0:
+        fileName = process.source.fileNames[0]
     if osusub.batchMode:
-      fileName = osusub.runList[0]
+        fileName = osusub.runList[0]
+    rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
+    if fileName.startswith ("file:") and rootFile.startswith ("skim_"):
+        makeEmptySkim = True
+    elif fileName.startswith ("file:") and rootFile.startswith ("emptySkim_"):
+        # If we are running over an empty skim, get the file name from the
+        # secondary files. The secondary files should be a full skim with
+        # SkimInputTags.pkl in the same directory.
+        makeEmptySkim = True
+        primaryFileName = fileName
+        fileName = None
+        if hasattr (process.source, "secondaryFileNames") and len (process.source.secondaryFileNames) > 0:
+            fileName = process.source.secondaryFileNames[0]
+        if osusub.batchMode:
+            fileName = osusub.secondaryRunList[0]
+        if fileName is None:
+            print "ERROR:  The input file appears to be an empty skim file but no secondary files were found."
+            print "Input file is", primaryFileName
+            print "This should not be."
+            sys.exit(1)
+        rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
+
     if fileName.find ("file:") == 0:
         fileName = fileName[5:]
     skimDirectory = os.path.dirname (os.path.realpath (fileName))
@@ -234,12 +248,11 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         for tag in inputTags:
             setattr (collections, tag, inputTags[tag])
     else:
-        rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
         if rootFile.find("skim_") == 0:
             print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found."
             print "Input file is", fileName
             print "Be sure that you have run mergeOut.py."
-            exit(0)
+            sys.exit(1)
 
     ############################################################################
 
@@ -338,11 +351,10 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         # If the directory already exists, an OSError exception will be
         # raised, which we ignore.
         ########################################################################
-        if skim:
-            try:
-                os.mkdir (channelName)
-            except OSError:
-                pass
+        try:
+            os.mkdir (channelName)
+        except OSError:
+            pass
         ########################################################################
 
         ########################################################################
@@ -351,7 +363,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         variableProducerPath = cms.Path ()
         for module in variableProducers:
             if module not in locals () and module not in globals ():
-                producer = cms.EDProducer (module,
+                producer = cms.EDFilter (module,
                     collections = collections
                 )
                 setattr (process, module, producer)
@@ -419,7 +431,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         #in the outputCommands
         ########################################################################
         for collection in dir(collectionProducer):
-            if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer):
+            if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer) or isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDFilter):
                 dic = vars(getattr(collectionProducer,collection))
                 for p in dic:
                     if 'InputTag' in str(dic[p]):
@@ -475,7 +487,10 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         for collection in usedCollections:
             if collection is "uservariables" or collection is "eventvariables":
                 newInputTags = cms.VInputTag()
-                inputTags = getattr (collections, collection)
+                if hasattr (collections, collection):
+                    inputTags = getattr (collections, collection)
+                else:
+                    inputTags = cms.VInputTag()
                 for inputTag in inputTags:
                     eventvariableCollections = copy.deepcopy (collections)
                     setattr (eventvariableCollections, collection, cms.InputTag ("",""))
@@ -486,11 +501,13 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                     # first object producer. Needed for gen-matching to work. DO
                     # NOT ERASE!!!
                     if collection != "mcparticles":
-                        setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", ""))
+                        label = getattr (collections, "mcparticles").getProductInstanceLabel () if hasattr (collections, "mcparticles") else ""
+                        setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", label))
                     # Set the input tag for mets to that produced by the second
                     # object producer. Needed for metNoMu. DO NOT ERASE!!!
                     if collection != "mcparticles" and collection != "mets":
-                        setattr (objectProducer.collections, "mets", cms.InputTag ("objectProducer1", ""))
+                        label = getattr (collections, "mets").getProductInstanceLabel () if hasattr (collections, "mets") else ""
+                        setattr (objectProducer.collections, "mets", cms.InputTag ("objectProducer1", label))
                     channelPath += objectProducer
                     setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                     newInputTags.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), inputTag.getProductInstanceLabel ()))
@@ -512,11 +529,13 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                 # first object producer. Needed for gen-matching to work. DO
                 # NOT ERASE!!!
                 if collection != "mcparticles":
-                    setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", ""))
+                    label = getattr (collections, "mcparticles").getProductInstanceLabel () if hasattr (collections, "mcparticles") else ""
+                    setattr (objectProducer.collections, "mcparticles", cms.InputTag ("objectProducer0", label))
                 # Set the input tag for mets to that produced by the second
                 # object producer. Needed for metNoMu. DO NOT ERASE!!!
                 if collection != "mcparticles" and collection != "mets":
-                    setattr (objectProducer.collections, "mets", cms.InputTag ("objectProducer1", ""))
+                    label = getattr (collections, "mets").getProductInstanceLabel () if hasattr (collections, "mets") else ""
+                    setattr (objectProducer.collections, "mets", cms.InputTag ("objectProducer1", label))
                 channelPath += objectProducer
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 originalInputTag = getattr (collections, collection)
@@ -589,6 +608,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
             setattr (filteredCollections, collection, cms.InputTag ("objectSelector" + str (add_channels.filterIndex), originalInputTag.getProductInstanceLabel ()))
             outputCommands.append ("keep *_objectSelector" + str (add_channels.filterIndex) + "_originalFormat_" + process.name_ ())
             add_channels.filterIndex += 1
+
         ########################################################################
         # Add producers for the scaling factor producers which need the selected
         # objects. For example the lepton scaling factors.
@@ -596,7 +616,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         if len(scalingfactorproducers):
             for module in scalingfactorproducers:
                 # Here we try to add the original producer as specified in the config files.
-                objectProducer = cms.EDProducer (str(module['name']),
+                objectProducer = cms.EDFilter (str(module['name']),
                                         # Use filteredCollections, the ones selected by the objectSelectors
                                         collections = copy.deepcopy(filteredCollections)
                                            )
@@ -605,6 +625,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                 for key in module:
                     if str(key) != 'name':
                         setattr (objectProducer, key, module[key])
+
                 # Add this producer in to the path of this channel.
                 channelPath += objectProducer
                 add_channels.producerIndex += 1
@@ -615,6 +636,8 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 # Use the eventvariables producered in the above specific producers.
                 setattr(objectProducer.collections, "eventvariables" ,cms.InputTag ("objectProducer" + str (add_channels.producerIndex - 1), "eventvariables"))
+                if not hasattr (filteredCollections, "eventvariables"):
+                    filteredCollections.eventvariables = cms.VInputTag ()
                 # Add the eventvariables produced in this module to the filteredCollections for the plotter after to use.
                 filteredCollections.eventvariables.append(cms.InputTag ("objectProducer" + str (add_channels.producerIndex), "eventvariables"))
                 add_channels.producerIndex += 1
@@ -646,6 +669,37 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
             )
             channelPath += plotter
             setattr (process, channelName + "Plotter", plotter)
+
+            # Add copies of the plotting module for any weights being fluctuated
+            for weight in weights:
+                # if "fluctuations" is defined in the PSet
+                for fluctuation in (weight.fluctuations if hasattr (weight, "fluctuations") else []):
+                    # copy all the weights into a new VPSet
+                    fluctuatedWeights = copy.deepcopy(weights)
+                    # now find the weight being fluctuated in the newly copied VPSet
+                    for fluctuatedWeight in fluctuatedWeights:
+                        if fluctuatedWeight.inputVariable == weight.inputVariable and fluctuatedWeight.inputCollections == weight.inputCollections:
+                            # now change the name of the inputVariable to the fluctuation and add a plotting module for this weights VPSet
+                            fluctuatedWeight.inputVariable = fluctuation
+                            fluctuatedPlotter = copy.deepcopy(plotter)
+                            fluctuatedPlotter.weights = fluctuatedWeights
+                            channelPath += fluctuatedPlotter
+                            setattr (process, channelName + "Plotter_" + fluctuation, fluctuatedPlotter)
+                            break
+
+        ########################################################################
+        # Add a tree-making module for this channel to the path.
+        ########################################################################
+        if branchSets is not None and len(branchSets):
+            treeMaker = cms.EDAnalyzer ("TreeMaker",
+                collections = filteredCollections,
+                branchSets  = branchSets,
+                weights     = weights,
+                verbose     = cms.int32 (0)
+            )
+            channelPath += treeMaker
+            setattr (process, channelName + "TreeMaker", treeMaker)
+
         ########################################################################
 
         ########################################################################
@@ -654,20 +708,27 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         # since they each return the global event decision. So we use the first
         # which was added.
         ########################################################################
-        if skim:
-            SelectEvents = cms.vstring ()
-            if cutCollections:
-                SelectEvents = cms.vstring (channelName)
-            poolOutputModule = cms.OutputModule ("PoolOutputModule",
-                splitLevel = cms.untracked.int32 (0),
-                eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
-                fileName = cms.untracked.string (channelName + "/skim" + suffix + ".root"),
-                SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
-                outputCommands = cms.untracked.vstring (outputCommands),
-                dropMetaData = cms.untracked.string ("ALL")
-            )
-            add_channels.endPath += poolOutputModule
-            setattr (process, channelName + "PoolOutputModule", poolOutputModule)
+        SelectEvents = cms.vstring ()
+        if cutCollections:
+            SelectEvents = cms.vstring (channelName)
+        skimFilePrefix = "skim"
+        # if running over a full skim, do not recreate a full skim for passing
+        # events, but rather create an empty skim (no event content, just
+        # metadata)
+        if makeEmptySkim:
+            skimFilePrefix = "emptySkim"
+            outputCommands.append ("drop *")
+        poolOutputModule = cms.OutputModule ("PoolOutputModule",
+            overrideInputFileSplitLevels = cms.untracked.bool (True),
+            splitLevel = cms.untracked.int32 (0),
+            eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
+            fileName = cms.untracked.string (channelName + "/" + skimFilePrefix + suffix + ".root"),
+            SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
+            outputCommands = cms.untracked.vstring (outputCommands),
+            dropMetaData = cms.untracked.string ("ALL"),
+        )
+        add_channels.endPath += poolOutputModule
+        setattr (process, channelName + "PoolOutputModule", poolOutputModule)
         ########################################################################
 
         setattr (process, channelName, channelPath)
@@ -725,7 +786,7 @@ def set_input(process, input_string):
     # check for validity
     fileType = "No such file or directory"
     try:
-#        fileType = subprocess.check_output(['/usr/bin/file', input_string]).split(":")[1]
+        #fileType = subprocess.check_output(['/usr/bin/file', input_string]).split(":")[1]
         fileType = subprocess.check_output(['file', input_string]).split(":")[1]
     except:
         pass

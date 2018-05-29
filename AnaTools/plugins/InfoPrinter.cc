@@ -8,22 +8,28 @@
 #define EXIT_CODE 4
 
 InfoPrinter::InfoPrinter (const edm::ParameterSet &cfg) :
-  collections_                 (cfg.getParameter<edm::ParameterSet>      ("collections")),
-  cutDecisions_                (cfg.getParameter<edm::InputTag>          ("cutDecisions")),
-  eventsToPrint_               (cfg.getParameter<vector<edm::EventID> >  ("eventsToPrint")),
-  printAllEvents_              (cfg.getParameter<bool>                   ("printAllEvents")),
-  printPassedEvents_           (cfg.getParameter<bool>                   ("printPassedEvents")),
-  printCumulativeObjectFlags_  (cfg.getParameter<bool>                   ("printCumulativeObjectFlags")),
-  printCutDecision_            (cfg.getParameter<bool>                   ("printCutDecision")),
-  printEventDecision_          (cfg.getParameter<bool>                   ("printEventDecision")),
-  printCumulativeEventFlags_   (cfg.getParameter<bool>                   ("printCumulativeEventFlags")),
-  printIndividualEventFlags_   (cfg.getParameter<bool>                   ("printIndividualEventFlags")),
-  printIndividualObjectFlags_  (cfg.getParameter<bool>                   ("printIndividualObjectFlags")),
-  printTriggerDecision_        (cfg.getParameter<bool>                   ("printTriggerDecision")),
-  printTriggerFlags_           (cfg.getParameter<bool>                   ("printTriggerFlags")),
-  printVetoTriggerFlags_       (cfg.getParameter<bool>                   ("printVetoTriggerFlags")),
-  printAllTriggers_            (cfg.getParameter<bool>                   ("printAllTriggers")),
-  valuesToPrint_               (cfg.getParameter<edm::VParameterSet>     ("valuesToPrint")),
+  collections_                 (cfg.getParameter<edm::ParameterSet>    ("collections")),
+  cutDecisions_                (cfg.getParameter<edm::InputTag>        ("cutDecisions")),
+  eventsToPrint_               (cfg.getParameter<vector<edm::EventID>  >                                 ("eventsToPrint")),
+  printAllEvents_              (cfg.getParameter<bool>                 ("printAllEvents")),
+  printPassedEvents_           (cfg.getParameter<bool>                 ("printPassedEvents")),
+  printCumulativeObjectFlags_  (cfg.getParameter<bool>                 ("printCumulativeObjectFlags")),
+  printCutDecision_            (cfg.getParameter<bool>                 ("printCutDecision")),
+  printEventDecision_          (cfg.getParameter<bool>                 ("printEventDecision")),
+  printCumulativeEventFlags_   (cfg.getParameter<bool>                 ("printCumulativeEventFlags")),
+  printIndividualEventFlags_   (cfg.getParameter<bool>                 ("printIndividualEventFlags")),
+  printIndividualObjectFlags_  (cfg.getParameter<bool>                 ("printIndividualObjectFlags")),
+  printTriggerDecision_        (cfg.getParameter<bool>                 ("printTriggerDecision")),
+  printMETFilterDecision_      (cfg.getParameter<bool>                 ("printMETFilterDecision")),
+  printTriggerFlags_           (cfg.getParameter<bool>                 ("printTriggerFlags")),
+  printVetoTriggerFlags_       (cfg.getParameter<bool>                 ("printVetoTriggerFlags")),
+  printTriggerFilterFlags_     (cfg.getParameter<bool>                 ("printTriggerFilterFlags")),
+  printTriggerInMenuFlags_     (cfg.getParameter<bool>                 ("printTriggerInMenuFlags")),
+  printMETFilterFlags_         (cfg.getParameter<bool>                 ("printMETFilterFlags")),
+  printAllTriggers_            (cfg.getParameter<bool>                 ("printAllTriggers")),
+  printAllTriggerFilters_      (cfg.getParameter<bool>                 ("printAllTriggerFilters")),
+  printAllMETFilters_          (cfg.getParameter<bool>                 ("printAllMETFilters")),
+  valuesToPrint_               (cfg.getParameter<edm::VParameterSet>   ("valuesToPrint")),
   firstEvent_ (true),
   counter_ (0),
   sw_ (new TStopwatch)
@@ -43,6 +49,7 @@ InfoPrinter::~InfoPrinter ()
   // Stop the timer and output the time, as well as any additional information
   // requested by the user.
   //////////////////////////////////////////////////////////////////////////////
+  flushPassingEvents ();
   sw_->Stop ();
   outputTime ();
   clog << ss_.str ();
@@ -57,7 +64,6 @@ void
 InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
 {
   counter_++;
-
 
   anatools::getRequiredCollections (objectsToGet_, handles_, event, tokens_);
 
@@ -86,9 +92,10 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   // requested, print that information to the stringstream which is printed in
   // the destructor.
   //////////////////////////////////////////////////////////////////////////////
-  maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = maxAllTriggerWidth_ = 0;
+  maxCutWidth_ = maxTriggerWidth_ = maxVetoTriggerWidth_ = maxValueWidth_ = maxAllTriggerWidth_ = maxAllTriggerCollectionWidth_ = maxAllTriggerFilterWidth_ = maxAllTriggerPathWidth_ = maxMETFilterWidth_ = maxAllMETFilterWidth_ = 0;
 
-  bool printEvent = printAllEvents_ || (printPassedEvents_ && getEventDecision());
+  bool eventDecision = getEventDecision(),
+       printEvent = printAllEvents_ || (printPassedEvents_ && eventDecision);
   for (auto eventToPrint = eventsToPrint_.begin (); eventToPrint != eventsToPrint_.end (); eventToPrint++)
     {
       if ((*eventToPrint) == event.id ())
@@ -98,19 +105,30 @@ InfoPrinter::analyze (const edm::Event &event, const edm::EventSetup &setup)
   if (printEvent)
     {
       ss_ << endl << "================================================================================" << endl;
-      ss_ << "\033[1;36minfo for " << event.id () << " (record " << counter_ << ")\033[0m" << endl;
-      valuesToPrint.size ()        &&  printValuesToPrint          ();
+      ss_ << A_BRIGHT_CYAN << "info for " << event.id () << " (record " << counter_ << ")" << A_RESET << endl;
+      !valuesToPrint.empty ()      &&  printValuesToPrint          ();
       printIndividualObjectFlags_  &&  printIndividualObjectFlags  ();
       printCumulativeObjectFlags_  &&  printCumulativeObjectFlags  ();
       printTriggerFlags_           &&  printTriggerFlags           ();
       printVetoTriggerFlags_       &&  printVetoTriggerFlags       ();
+      printTriggerFilterFlags_     &&  printTriggerFilterFlags     ();
+      printTriggerInMenuFlags_     &&  printTriggerInMenuFlags     ();
+      printMETFilterFlags_         &&  printMETFilterFlags         ();
       printCumulativeEventFlags_   &&  printCumulativeEventFlags   ();
       printIndividualEventFlags_   &&  printIndividualEventFlags   ();
       printTriggerDecision_        &&  printTriggerDecision        ();
+      printMETFilterDecision_      &&  printMETFilterDecision      ();
       printCutDecision_            &&  printCutDecision            ();
       printEventDecision_          &&  printEventDecision          ();
       printAllTriggers_            &&  printAllTriggers            (event);
+      printAllTriggerFilters_      &&  printAllTriggerFilters      (event);
+      printAllMETFilters_          &&  printAllMETFilters          (event);
       ss_ << "================================================================================" << endl;
+    }
+  if (eventDecision)
+    {
+      passingEvents_ << "EVENT PASSED (" << event.id () << ")" << endl;
+      flushPassingEvents (1024 * 1024 * 10);
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -123,11 +141,11 @@ InfoPrinter::printEventDecision ()
   if (!cutDecisions.isValid ())
     return false;
 
-  ss_ << endl << "\033[1;34mevent decision\033[0m: ";
+  ss_ << endl << A_BRIGHT_BLUE << "event decision" << A_RESET << ": ";
   if (cutDecisions->eventDecision)
-    ss_ << "\033[1;32mtrue\033[0m" << endl;
+    ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
   else
-    ss_ << "\033[1;31mfalse\033[0m" << endl;
+    ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
   return true;
 }
 
@@ -145,11 +163,11 @@ InfoPrinter::printCutDecision ()
   if (!cutDecisions.isValid ())
     return false;
 
-  ss_ << endl << "\033[1;34mcut decision\033[0m: ";
+  ss_ << endl << A_BRIGHT_BLUE << "cut decision" << A_RESET << ": ";
   if (cutDecisions->cutDecision)
-    ss_ << "\033[1;32mtrue\033[0m" << endl;
+    ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
   else
-    ss_ << "\033[1;31mfalse\033[0m" << endl;
+    ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
   return true;
 }
 
@@ -159,11 +177,25 @@ InfoPrinter::printTriggerDecision ()
   if (!cutDecisions.isValid ())
     return false;
 
-  ss_ << endl << "\033[1;34mtrigger decision\033[0m: ";
+  ss_ << endl << A_BRIGHT_BLUE << "trigger decision" << A_RESET << ": ";
   if (cutDecisions->triggerDecision)
-    ss_ << "\033[1;32mtrue\033[0m" << endl;
+    ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
   else
-    ss_ << "\033[1;31mfalse\033[0m" << endl;
+    ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
+  return true;
+}
+
+bool
+InfoPrinter::printMETFilterDecision ()
+{
+  if (!cutDecisions.isValid ())
+    return false;
+
+  ss_ << endl << A_BRIGHT_BLUE << "MET filter decision" << A_RESET << ": ";
+  if (cutDecisions->metFilterDecision)
+    ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
+  else
+    ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
   return true;
 }
 
@@ -176,15 +208,15 @@ InfoPrinter::printCumulativeEventFlags ()
   ss_ << endl;
   !maxCutWidth_ && (maxCutWidth_ = getMaxWidth (cutDecisions->cuts));
   ss_ << "--------------------------------------------------------------------------------" << endl;
-  ss_ << "\033[1;35mcumulative event flags" << "\033[0m" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "cumulative event flags" << A_RESET << endl;
   ss_ << "--------------------------------------------------------------------------------" << endl;
   for (auto flag = cutDecisions->cumulativeEventFlags.begin (); flag != cutDecisions->cumulativeEventFlags.end (); flag++)
     {
-      ss_ << "\033[1;34m" << setw (maxCutWidth_) << left << cutDecisions->cuts.at (flag - cutDecisions->cumulativeEventFlags.begin ()).name << "\033[0m";
+      ss_ << A_BRIGHT_BLUE << setw (maxCutWidth_) << left << cutDecisions->cuts.at (flag - cutDecisions->cumulativeEventFlags.begin ()).name << A_RESET;
       if (*flag)
-        ss_ << "\033[1;32mtrue\033[0m" << endl;
+        ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
       else
-        ss_ << "\033[1;31mfalse\033[0m" << endl;
+        ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
     }
   return true;
 }
@@ -198,15 +230,15 @@ InfoPrinter::printIndividualEventFlags ()
   ss_ << endl;
   !maxCutWidth_ && (maxCutWidth_ = getMaxWidth (cutDecisions->cuts));
   ss_ << "--------------------------------------------------------------------------------" << endl;
-  ss_ << "\033[1;35mindividual event flags" << "\033[0m" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "individual event flags" << A_RESET << endl;
   ss_ << "--------------------------------------------------------------------------------" << endl;
   for (auto flag = cutDecisions->individualEventFlags.begin (); flag != cutDecisions->individualEventFlags.end (); flag++)
     {
-      ss_ << "\033[1;34m" << setw (maxCutWidth_) << left << cutDecisions->cuts.at (flag - cutDecisions->individualEventFlags.begin ()).name << "\033[0m";
+      ss_ << A_BRIGHT_BLUE << setw (maxCutWidth_) << left << cutDecisions->cuts.at (flag - cutDecisions->individualEventFlags.begin ()).name << A_RESET;
       if (*flag)
-        ss_ << "\033[1;32mtrue\033[0m" << endl;
+        ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
       else
-        ss_ << "\033[1;31mfalse\033[0m" << endl;
+        ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
     }
   return true;
 }
@@ -218,7 +250,7 @@ InfoPrinter::printCumulativeObjectFlags ()
     return false;
 
   ss_ << endl;
-  if (!cutDecisions->cumulativeObjectFlags.size ())
+  if (cutDecisions->cumulativeObjectFlags.empty ())
     return true;
   vector<string> collections;
   for (const auto &collection : cutDecisions->cumulativeObjectFlags.at (0))
@@ -230,11 +262,11 @@ InfoPrinter::printCumulativeObjectFlags ()
       if (collection != collections.begin ())
         ss_ << endl;
       ss_ << "--------------------------------------------------------------------------------" << endl;
-      ss_ << "\033[1;35mcumulative object flags for " << *collection << "\033[0m" << endl;
+      ss_ << A_BRIGHT_MAGENTA << "cumulative object flags for " << *collection << A_RESET << endl;
       ss_ << "--------------------------------------------------------------------------------" << endl;
       for (auto cut = cutDecisions->cumulativeObjectFlags.begin (); cut != cutDecisions->cumulativeObjectFlags.end (); cut++)
         {
-          ss_ << "\033[1;34m" << setw (maxCutWidth_) << left << cutDecisions->cuts.at (cut - cutDecisions->cumulativeObjectFlags.begin ()).name << "\033[0m";
+          ss_ << A_BRIGHT_BLUE << setw (maxCutWidth_) << left << cutDecisions->cuts.at (cut - cutDecisions->cumulativeObjectFlags.begin ()).name << A_RESET;
           for (auto flag = cut->at (*collection).begin (); flag != cut->at (*collection).end (); flag++)
             {
               if (flag != cut->at (*collection).begin ())
@@ -242,12 +274,12 @@ InfoPrinter::printCumulativeObjectFlags ()
               if (flag->second)
                 {
                   if (flag->first)
-                    ss_ << "\033[1;32m1\033[0m";
+                    ss_ << A_BRIGHT_GREEN << "1" << A_RESET;
                   else
-                    ss_ << "\033[1;31m0\033[0m";
+                    ss_ << A_BRIGHT_RED << "0" << A_RESET;
                 }
               else
-                ss_ << "\033[1;33m-\033[0m";
+                ss_ << A_BRIGHT_YELLOW << "-" << A_RESET;
             }
           ss_ << endl;
         }
@@ -264,7 +296,7 @@ InfoPrinter::printIndividualObjectFlags ()
     return false;
 
   ss_ << endl;
-  if (!cutDecisions->individualObjectFlags.size ())
+  if (cutDecisions->individualObjectFlags.empty ())
     return true;
   vector<string> collections;
   for (const auto &collection : cutDecisions->individualObjectFlags.at (0))
@@ -276,11 +308,11 @@ InfoPrinter::printIndividualObjectFlags ()
       if (collection != collections.begin ())
         ss_ << endl;
       ss_ << "--------------------------------------------------------------------------------" << endl;
-      ss_ << "\033[1;35mindividual object flags for " << *collection << "\033[0m" << endl;
+      ss_ << A_BRIGHT_MAGENTA << "individual object flags for " << *collection << A_RESET << endl;
       ss_ << "--------------------------------------------------------------------------------" << endl;
       for (auto cut = cutDecisions->individualObjectFlags.begin (); cut != cutDecisions->individualObjectFlags.end (); cut++)
         {
-          ss_ << "\033[1;34m" << setw (maxCutWidth_) << left << cutDecisions->cuts.at (cut - cutDecisions->individualObjectFlags.begin ()).name << "\033[0m";
+          ss_ << A_BRIGHT_BLUE << setw (maxCutWidth_) << left << cutDecisions->cuts.at (cut - cutDecisions->individualObjectFlags.begin ()).name << A_RESET;
           for (auto flag = cut->at (*collection).begin (); flag != cut->at (*collection).end (); flag++)
             {
               if (flag != cut->at (*collection).begin ())
@@ -288,12 +320,12 @@ InfoPrinter::printIndividualObjectFlags ()
               if (flag->second)
                 {
                   if (flag->first)
-                    ss_ << "\033[1;32m1\033[0m";
+                    ss_ << A_BRIGHT_GREEN << "1" << A_RESET;
                   else
-                    ss_ << "\033[1;31m0\033[0m";
+                    ss_ << A_BRIGHT_RED << "0" << A_RESET;
                 }
               else
-                ss_ << "\033[1;33m-\033[0m";
+                ss_ << A_BRIGHT_YELLOW << "-" << A_RESET;
             }
           ss_ << endl;
         }
@@ -311,14 +343,18 @@ InfoPrinter::printTriggerFlags ()
 
   ss_ << endl;
   !maxTriggerWidth_ && (maxTriggerWidth_ = getMaxWidth (cutDecisions->triggers));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "trigger flags" << A_RESET << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
   for (auto flag = cutDecisions->triggerFlags.begin (); flag != cutDecisions->triggerFlags.end (); flag++)
     {
-      ss_ << "\033[1;34m" << setw (maxTriggerWidth_) << left << cutDecisions->triggers.at (flag - cutDecisions->triggerFlags.begin ()) << "\033[0m";
+      ss_ << A_BRIGHT_BLUE << setw (maxTriggerWidth_) << left << cutDecisions->triggers.at (flag - cutDecisions->triggerFlags.begin ()) << A_RESET;
       if (*flag)
-        ss_ << "\033[1;32mtrue\033[0m" << endl;
+        ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
       else
-        ss_ << "\033[1;31mfalse\033[0m" << endl;
+        ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
     }
+  ss_ << "--------------------------------------------------------------------------------" << endl;
   return true;
 }
 
@@ -330,14 +366,87 @@ InfoPrinter::printVetoTriggerFlags ()
 
   ss_ << endl;
   !maxVetoTriggerWidth_ && (maxVetoTriggerWidth_ = getMaxWidth (cutDecisions->triggersToVeto));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "veto trigger flags" << A_RESET << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
   for (auto flag = cutDecisions->vetoTriggerFlags.begin (); flag != cutDecisions->vetoTriggerFlags.end (); flag++)
     {
-      ss_ << "\033[1;34m" << setw (maxVetoTriggerWidth_) << left << cutDecisions->triggersToVeto.at (flag - cutDecisions->vetoTriggerFlags.begin ()) << "\033[0m";
+      ss_ << A_BRIGHT_BLUE << setw (maxVetoTriggerWidth_) << left << cutDecisions->triggersToVeto.at (flag - cutDecisions->vetoTriggerFlags.begin ()) << A_RESET;
       if (*flag)
-        ss_ << "\033[1;32mtrue\033[0m" << endl;
+        ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
       else
-        ss_ << "\033[1;31mfalse\033[0m" << endl;
+        ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
     }
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  return true;
+}
+
+bool
+InfoPrinter::printTriggerFilterFlags ()
+{
+  if (!cutDecisions.isValid ())
+    return false;
+
+  ss_ << endl;
+  !maxTriggerWidth_ && (maxTriggerWidth_ = getMaxWidth (cutDecisions->triggerFilters));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "trigger filter flags" << A_RESET << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  for (auto flag = cutDecisions->triggerFilterFlags.begin (); flag != cutDecisions->triggerFilterFlags.end (); flag++)
+    {
+      ss_ << A_BRIGHT_BLUE << setw (maxTriggerWidth_) << left << cutDecisions->triggerFilters.at (flag - cutDecisions->triggerFilterFlags.begin ()) << A_RESET;
+      if (*flag)
+        ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
+      else
+        ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
+    }
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  return true;
+}
+
+bool
+InfoPrinter::printTriggerInMenuFlags ()
+{
+  if (!cutDecisions.isValid ())
+    return false;
+
+  ss_ << endl;
+  !maxTriggerWidth_ && (maxTriggerWidth_ = getMaxWidth (cutDecisions->triggersInMenu));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "trigger in menu flags" << A_RESET << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  for (auto flag = cutDecisions->triggerInMenuFlags.begin (); flag != cutDecisions->triggerInMenuFlags.end (); flag++)
+    {
+      ss_ << A_BRIGHT_BLUE << setw (maxTriggerWidth_) << left << cutDecisions->triggersInMenu.at (flag - cutDecisions->triggerInMenuFlags.begin ()) << A_RESET;
+      if (*flag)
+        ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
+      else
+        ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
+    }
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  return true;
+}
+
+bool
+InfoPrinter::printMETFilterFlags ()
+{
+  if (!cutDecisions.isValid ())
+    return false;
+
+  ss_ << endl;
+  !maxMETFilterWidth_ && (maxMETFilterWidth_ = getMaxWidth (cutDecisions->metFilters));
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "MET filter flags" << A_RESET << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  for (auto flag = cutDecisions->metFilterFlags.begin (); flag != cutDecisions->metFilterFlags.end (); flag++)
+    {
+      ss_ << A_BRIGHT_BLUE << setw (maxMETFilterWidth_) << left << cutDecisions->metFilters.at (flag - cutDecisions->metFilterFlags.begin ()) << A_RESET;
+      if (*flag)
+        ss_ << A_BRIGHT_GREEN << "true" << A_RESET << endl;
+      else
+        ss_ << A_BRIGHT_RED << "false" << A_RESET << endl;
+    }
+  ss_ << "--------------------------------------------------------------------------------" << endl;
   return true;
 }
 
@@ -346,12 +455,12 @@ InfoPrinter::printValuesToPrint ()
 {
   ss_ << endl;
   ss_ << "--------------------------------------------------------------------------------" << endl;
-  ss_ << "\033[1;35mvalues to print\033[0m" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "values to print" << A_RESET << endl;
   ss_ << "--------------------------------------------------------------------------------" << endl;
   !maxValueWidth_ && (maxValueWidth_ = getMaxWidth (valuesToPrint));
   for (const auto &valueToPrint : valuesToPrint)
     {
-      ss_ << "\033[1;34m" << setw (maxValueWidth_) << left << (valueToPrint.inputLabel + ": " + valueToPrint.valueToPrint) << "\033[0m";
+      ss_ << A_BRIGHT_BLUE << setw (maxValueWidth_) << left << (valueToPrint.inputLabel + ": " + valueToPrint.valueToPrint) << A_RESET;
       for (auto value = valueToPrint.valueLookupTree->evaluate ().begin (); value != valueToPrint.valueLookupTree->evaluate ().end (); value++)
         {
           if (value != valueToPrint.valueLookupTree->evaluate ().begin ())
@@ -374,48 +483,134 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
 {
   ss_ << endl;
   ss_ << "--------------------------------------------------------------------------------" << endl;
-  ss_ << "\033[1;35mavailable triggers\033[0m" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "available triggers" << A_RESET << endl;
   ss_ << "--------------------------------------------------------------------------------" << endl;
   map<string, pair<bool, unsigned> > triggers;
   if (!handles_.triggers.isValid()) {
-    ss_ << "\033[1;31mERROR\033[0m" << " [InfoPrinter::printAllTriggers]:  Invalid triggers handle." << endl;
+    ss_ << A_BRIGHT_RED << "ERROR" << A_RESET << " [InfoPrinter::printAllTriggers]:  Invalid triggers handle." << endl;
     return false;
   }
   if (!handles_.prescales.isValid()) {
-    ss_ << "\033[1;31mERROR\033[0m" << " [InfoPrinter::printAllTriggers]:  Invalid prescales handle." << endl;
+    ss_ << A_BRIGHT_RED << "ERROR" << A_RESET << " [InfoPrinter::printAllTriggers]:  Invalid prescales handle." << endl;
     return false;
   }
 
-#if DATA_FORMAT == BEAN
-  for (const auto &trigger : *handles_.triggers)
-    {
-      string name = trigger.name;
-      bool pass = trigger.pass;
-      unsigned prescale = trigger.prescale;
-#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM  || DATA_FORMAT == AOD_CUSTOM
   const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
   for (unsigned i = 0; i < triggerNames.size (); i++)
     {
       string name = triggerNames.triggerName (i);
       bool pass = handles_.triggers->accept (i);
       unsigned prescale = handles_.prescales->getPrescaleForIndex (i);
-#else
-  #error "Data format is not valid."
-#endif
+
       triggers[name] = make_pair (pass, prescale);
     }
   !maxAllTriggerWidth_ && (maxAllTriggerWidth_ = getMaxWidth (triggers));
   for (const auto &trigger : triggers)
     {
-      ss_ << "\033[1;34m" << setw (maxAllTriggerWidth_) << left << trigger.first << "\033[0m";
+      ss_ << A_BRIGHT_BLUE << setw (maxAllTriggerWidth_) << left << trigger.first << A_RESET;
       if (trigger.second.first)
-        ss_ << "\033[1;32maccept\033[0m  ";
+        ss_ << A_BRIGHT_GREEN << "accept" << A_RESET << "  ";
       else
-        ss_ << "\033[1;31mreject\033[0m  ";
+        ss_ << A_BRIGHT_RED << "reject" << A_RESET << "  ";
       if (trigger.second.second == 1)
-        ss_ << "\033[1;33m" << trigger.second.second << "\033[0m" << endl;
+        ss_ << A_BRIGHT_YELLOW << trigger.second.second << A_RESET << endl;
       else
-        ss_ << "\033[2;33m" << trigger.second.second << "\033[0m" << endl;
+        ss_ << "\033[2;33m" << trigger.second.second << A_RESET << endl;
+    }
+
+  return true;
+}
+
+bool
+InfoPrinter::printAllMETFilters (const edm::Event &event)
+{
+  ss_ << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "available MET filters" << A_RESET << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  map<string, bool> metFilters;
+  if (!handles_.metFilters.isValid()) {
+    ss_ << A_BRIGHT_RED << "ERROR" << A_RESET << " [InfoPrinter::printAllMETFilters]:  Invalid metFilters handle." << endl;
+    return false;
+  }
+
+  const edm::TriggerNames &metFilterNames = event.triggerNames (*handles_.metFilters);
+  for (unsigned i = 0; i < metFilterNames.size (); i++)
+    {
+      string name = metFilterNames.triggerName (i);
+      bool pass = handles_.metFilters->accept (i);
+
+      metFilters[name] = pass;
+    }
+  !maxAllMETFilterWidth_ && (maxAllMETFilterWidth_ = getMaxWidth (metFilters));
+  for (const auto &metFilter : metFilters)
+    {
+      ss_ << A_BRIGHT_BLUE << setw (maxAllMETFilterWidth_) << left << metFilter.first << A_RESET;
+      if (metFilter.second)
+        ss_ << A_BRIGHT_GREEN << "accept" << A_RESET << endl;
+      else
+        ss_ << A_BRIGHT_RED << "reject" << A_RESET << endl;
+    }
+
+  return true;
+}
+
+bool
+InfoPrinter::printAllTriggerFilters (const edm::Event &event)
+{
+  ss_ << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  ss_ << A_BRIGHT_MAGENTA << "available trigger filters" << A_RESET << endl;
+  ss_ << "--------------------------------------------------------------------------------" << endl;
+  vector<string> triggerCollections;
+  vector<string> triggerFilters;
+  vector<string> triggerPaths;
+  if (!handles_.triggers.isValid()) {
+    ss_ << A_BRIGHT_RED << "ERROR" << A_RESET << " [InfoPrinter::printAllTriggerFilters]:  Invalid triggers handle." << endl;
+    return false;
+  }
+  if (!handles_.trigobjs.isValid()) {
+    ss_ << A_BRIGHT_RED << "ERROR" << A_RESET << " [InfoPrinter::printAllTriggerFilters]:  Invalid trigobjs handle." << endl;
+    return false;
+  }
+
+#if DATA_FORMAT_FROM_MINIAOD
+  for(auto triggerObj : *handles_.trigobjs) {
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+    triggerObj.unpackNamesAndLabels(event, *handles_.triggers);
+#else
+    triggerObj.unpackPathNames(event.triggerNames(*handles_.triggers));
+#endif
+    triggerCollections.push_back (triggerObj.collection ());
+
+    string filters = "", paths = "";
+    for(const auto &filterLabel : triggerObj.filterLabels())
+      if (filters.length ())
+        filters += ", " + filterLabel;
+      else
+        filters += filterLabel;
+    for(const auto &pathName : triggerObj.pathNames())
+      if (paths.length ())
+        paths += ", " + pathName;
+      else
+        paths += pathName;
+    triggerFilters.push_back (filters);
+    triggerPaths.push_back (paths);
+  }
+
+#else
+  #warning "Object \"triggers\" is not valid in requested data format."
+#endif
+
+  !maxAllTriggerCollectionWidth_ && (maxAllTriggerCollectionWidth_ = getMaxWidth (triggerCollections));
+  !maxAllTriggerFilterWidth_ && (maxAllTriggerFilterWidth_ = getMaxWidth (triggerFilters));
+  !maxAllTriggerPathWidth_ && (maxAllTriggerPathWidth_ = getMaxWidth (triggerPaths));
+  for (unsigned i = 0; i < triggerCollections.size (); i++)
+    {
+      ss_ << A_BRIGHT_BLUE << setw (maxAllTriggerCollectionWidth_) << left << triggerCollections.at (i) << setw (maxAllTriggerFilterWidth_) << left << triggerFilters.at (i) << A_RESET << endl;
+      if (triggerPaths.at (i).length ())
+        ss_ << A_BRIGHT_BLUE << setw (maxAllTriggerCollectionWidth_) << left << " " << setw (maxAllTriggerPathWidth_) << left << triggerPaths.at (i) << A_RESET << endl;
+      ss_ << endl;
     }
 
   return true;
@@ -538,7 +733,7 @@ InfoPrinter::outputTime ()
   minutes = (int) (cpu / 60.0);
   cpu -= minutes * 60.0;
 
-  ss_ << "\033[1;34mCPU time\033[0m:  ";
+  ss_ << A_BRIGHT_BLUE << "CPU time" << A_RESET << ":  ";
   days && ss_ << days << " days, ";
   (days || hours) && ss_ << hours << " hours, ";
   (days || hours || minutes) && ss_ << minutes << " minutes, ";
@@ -553,7 +748,7 @@ InfoPrinter::outputTime ()
   minutes = (int) (real / 60.0);
   real -= minutes * 60.0;
 
-  ss_ << "\033[1;34mreal time\033[0m: ";
+  ss_ << A_BRIGHT_BLUE << "real time" << A_RESET << ": ";
   days && ss_ << days << " days, ";
   (days || hours) && ss_ << hours << " hours, ";
   (days || hours || minutes) && ss_ << minutes << " minutes, ";
@@ -568,7 +763,7 @@ InfoPrinter::unpackValuesToPrint ()
 {
   for (const auto &value : valuesToPrint_)
     {
-      valuesToPrint.push_back (ValueToPrint ());
+      valuesToPrint.emplace_back ();
       valuesToPrint.back ().inputCollections = value.getParameter<vector<string> > ("inputCollection");
       sort (valuesToPrint.back ().inputCollections.begin (), valuesToPrint.back ().inputCollections.end ());
       valuesToPrint.back ().inputLabel = anatools::concatenateInputCollection (valuesToPrint.back ().inputCollections);
@@ -581,6 +776,13 @@ InfoPrinter::unpackValuesToPrint ()
       objectsToGet_.insert ("triggers");
       objectsToGet_.insert ("prescales");
     }
+  if (printAllTriggerFilters_)
+    {
+      objectsToGet_.insert ("triggers");
+      objectsToGet_.insert ("trigobjs");
+    }
+  if (printAllMETFilters_)
+    objectsToGet_.insert ("metFilters");
 }
 
 bool
@@ -597,6 +799,16 @@ InfoPrinter::initializeValueLookupForest (ValuesToPrint &values, Collections * c
       value.valueLookupTree->setCollections (handles);
     }
   return true;
+}
+
+void
+InfoPrinter::flushPassingEvents (const unsigned maxLength)
+{
+  if (passingEvents_.str ().length () > maxLength)
+    {
+      edm::LogInfo ("InfoPrinter") << passingEvents_.str ();
+      passingEvents_.str ("");
+    }
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

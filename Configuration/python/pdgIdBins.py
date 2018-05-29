@@ -3,6 +3,8 @@ class PdgId:
 
 pdgId = PdgId ()
 
+pdgId.unmatched = [0] # unmatched
+
 pdgId.quarks = [
     1,  #  d
     2,  #  u

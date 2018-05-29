@@ -5,8 +5,8 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
 #include "OSUT3Analysis/Collections/interface/Electron.h"
+#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
 
 class OSUElectronProducer : public edm::EDProducer
 {
@@ -24,22 +24,25 @@ class OSUElectronProducer : public edm::EDProducer
     edm::InputTag      collection_;
     edm::EDGetTokenT<vector<TYPE(electrons)> > token_;
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
-    edm::EDGetTokenT<TYPE(beamspots)> beamSpotToken_;
-    edm::EDGetTokenT<vector<reco::Conversion> > conversionsToken_;
+    edm::EDGetTokenT<TYPE(beamspots)> beamspotToken_;
+    edm::EDGetTokenT<vector<reco::GenParticle> > prunedParticleToken_;
     edm::EDGetTokenT<vector<pat::PackedCandidate> > pfCandidateToken_;
-    edm::EDGetTokenT<double> rhoToken_;
-    edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > verticesToken_;
+    edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexToken_;
     edm::EDGetTokenT<vector<osu::Met> > metToken_;
+    edm::EDGetTokenT<vector<reco::Conversion> > conversionsToken_;
+    edm::EDGetTokenT<double> rhoToken_;
+    edm::EDGetTokenT<edm::TriggerResults> triggersToken_;
+    edm::EDGetTokenT<vector<pat::TriggerObjectStandAlone> > trigobjsToken_;
+
     edm::ParameterSet  cfg_;
-    edm::InputTag      beamSpot_;
-    edm::InputTag      conversions_;
     edm::InputTag      pfCandidate_;
+    edm::InputTag      conversions_;
     edm::InputTag      rho_;
-    edm::InputTag      vertices_;
+
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<osu::Electron> > pl_;
+    unique_ptr<vector<osu::Electron> > pl_;
 };
 
 #endif

@@ -12,9 +12,10 @@
 #define EXIT_CODE 1
 
 CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
-  collections_  (cfg.getParameter<edm::ParameterSet>  ("collections")),
-  cuts_         (cfg.getParameter<edm::ParameterSet>  ("cuts")),
-  firstEvent_   (true)
+  collections_    (cfg.getParameter<edm::ParameterSet>  ("collections")),
+  cuts_           (cfg.getParameter<edm::ParameterSet>  ("cuts")),
+  triggersInMenu_ (true),
+  firstEvent_     (true)
 {
 
   //////////////////////////////////////////////////////////////////////////////
@@ -26,6 +27,9 @@ CutCalculator::CutCalculator (const edm::ParameterSet &cfg) :
       exit (EXIT_CODE);
     }
   //////////////////////////////////////////////////////////////////////////////
+
+  triggerNamesPSetID_.reset ();
+  triggerIndices_.clear ();
 
   anatools::getAllTokens (collections_, consumesCollector (), tokens_);
 
@@ -63,12 +67,14 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   //////////////////////////////////////////////////////////////////////////////
   // Create the payload for this EDProducer and initialize some of its members.
   //////////////////////////////////////////////////////////////////////////////
-  pl_ = auto_ptr<CutCalculatorPayload> (new CutCalculatorPayload);
+  pl_ = unique_ptr<CutCalculatorPayload> (new CutCalculatorPayload);
   pl_->isValid = true;
   pl_->cuts = unpackedCuts_;
   pl_->triggers = unpackedTriggers_;
   pl_->triggersToVeto = unpackedTriggersToVeto_;
   pl_->triggerFilters = unpackedTriggerFilters_;
+  pl_->triggersInMenu = unpackedTriggersInMenu_;
+  pl_->metFilters = unpackedMETFilters_;
   //////////////////////////////////////////////////////////////////////////////
 
   // getListOfObjects
@@ -118,13 +124,14 @@ CutCalculator::produce (edm::Event &event, const edm::EventSetup &setup)
   // store the decision in the payload.
   evaluateTriggers (event);
   evaluateTriggerFilters (event);
+  evaluateMETFilters (event);
 
   // Decide whether the event passes each cut
   // by counting the number of objects passing the cut
   // also AND together cut and trigger decision
   setEventFlags ();
 
-  event.put (pl_, "cutDecisions");
+  event.put (std::move (pl_), "cutDecisions");
   pl_.reset ();
   firstEvent_ = false;
 }
@@ -202,16 +209,16 @@ CutCalculator::arbitrateInputCollectionFlags (const Cut &currentCut, unsigned cu
           if (pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (object).first
            && pl_->cumulativeObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (object).second
            && flag.second)
-            indicesToArbitrate.push_back (make_pair (object, value));
+            indicesToArbitrate.emplace_back (object, value);
           else
-            otherIndices.push_back (make_pair (object, value));
+            otherIndices.emplace_back (object, value);
         }
       if (currentCut.arbitration != "random")
         sort (indicesToArbitrate.begin (), indicesToArbitrate.end (), [](pair<unsigned, double> a, pair<unsigned, double> b) -> bool { return a.second > b.second; });
       else
         random_shuffle (indicesToArbitrate.begin (), indicesToArbitrate.end ());
 
-      bool isChosen = (indicesToArbitrate.size () ? true : false);
+      bool isChosen = (indicesToArbitrate.empty () ? false : true);
       for (const auto &index : indicesToArbitrate)
         {
           pl_->individualObjectFlags.at (currentCutIndex).at (currentCut.inputLabel).at (index.first).first = isChosen;
@@ -230,7 +237,7 @@ CutCalculator::arbitrateInputCollectionFlags (const Cut &currentCut, unsigned cu
 }
 
 bool
-CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned currentCutIndex, vector<string> listOfObjects) const
+CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned currentCutIndex, const vector<string> &listOfObjects) const
 {
   ////////////////////////////////////////////////////////////////////////////////
   // Propagates flags for single object input collections to all related composite collections.
@@ -246,7 +253,7 @@ CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned c
   }
 
   // loop over all the other collections containing these items
-  for (auto inputType : listOfObjects)
+  for (auto &inputType : listOfObjects)
     {
       // don't reset flags for the input collection for this cut
       if (inputType == currentCut.inputLabel){
@@ -259,7 +266,7 @@ CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned c
 
       // determine total size of collection, since it's composed of multiple single objects
       int totalSize = 1;
-      for (auto component : components){
+      for (const auto &component : components){
         totalSize *= currentCut.valueLookupTree->getCollectionSize (component);
       }
 
@@ -284,7 +291,7 @@ CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned c
 
         // get the list of global indices for the composite collection containing the object in question
         set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, currentCut.inputLabel, inputType);
-        for (auto globalIndex : globalIndices){
+        for (const auto &globalIndex : globalIndices){
           // set flags to false for any composite object containing the bad individual object
           pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = false;
         }
@@ -304,7 +311,7 @@ CutCalculator::propagateFromSingleCollections (const Cut &currentCut, unsigned c
 }
 
 bool
-CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigned currentCutIndex, vector<string> listOfObjects) const
+CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigned currentCutIndex, const vector<string> &listOfObjects) const
 {
   ////////////////////////////////////////////////////////////////////////////////
   // Propagates flags for input collections with multiple inputs to all other related collections.
@@ -325,13 +332,13 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
   }
   // filter out duplicate collections, e.g. muon-muons has 1 unique collection (i.e. muons)
   vector<string> uniqueSingleObjects;
-  for (auto singleObject : singleObjects){
+  for (const auto &singleObject : singleObjects){
     if (find(uniqueSingleObjects.begin(), uniqueSingleObjects.end(), singleObject) == uniqueSingleObjects.end())
       uniqueSingleObjects.push_back(singleObject);
   }
 
   // loop over all the individual collections in the input collection
-  for (auto singleObject : uniqueSingleObjects){
+  for (const auto &singleObject : uniqueSingleObjects){
 
     // generate list of bad object indices in the individual object collection
 
@@ -347,12 +354,20 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 
         // get the list of global indices for the composite collection containing the object in question
         set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, currentCut.inputLabel);
-        for (auto globalIndex : globalIndices){
+        for (const auto &globalIndex : globalIndices){
           // if we find a "true" flag for any composite object, set the individual object flag to true
           if (pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(globalIndex).first){
             individualFlags.at(index) = true;
-            cumulativeFlags.at(index) = true;
-            break;
+            if (currentCutIndex > 0){
+              if(pl_->cumulativeObjectFlags.at(currentCutIndex-1).at(currentCut.inputLabel).at(globalIndex).first){
+                cumulativeFlags.at(index) = true;
+                break;
+              }
+            }
+            else{
+              cumulativeFlags.at(index) = true;
+              break;
+            }
           }
         }
       }
@@ -366,7 +381,7 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 
         // get the list of global indices for the composite collection containing the object in question
         set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, currentCut.inputLabel);
-        for (auto globalIndex : globalIndices){
+        for (const auto &globalIndex : globalIndices){
           // if we find a "false" flag for any composite object, set the individual object flag to false
           if (!pl_->individualObjectFlags.at(currentCutIndex).at(currentCut.inputLabel).at(globalIndex).first){
             individualFlags.at(index) = false;
@@ -378,13 +393,17 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
                 break;
               }
             }
+            else{
+              cumulativeFlags.at(index) = false;
+              break;
+            }
           }
         }
       }
     }
 
     // loop over all the other collections containing these items
-    for (auto inputType : listOfObjects){
+    for (auto &inputType : listOfObjects){
       // don't reset flags for the input collection for this cut
       if (inputType == currentCut.inputLabel){
         continue;
@@ -397,7 +416,7 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 
       // determine total size of collection, since it's potentially composed of multiple single objects
       int totalSize = 1;
-      for (auto component : components){
+      for (const auto &component : components){
         totalSize *= currentCut.valueLookupTree->getCollectionSize (component);
       }
 
@@ -422,7 +441,7 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 
         // get the list of global indices containing the object in question
         set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, inputType);
-        for (auto globalIndex : globalIndices){
+        for (const auto &globalIndex : globalIndices){
           // set flags to true for any (potentially composite) object containing the good individual object
           pl_->individualObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = true;
         }
@@ -452,7 +471,7 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 
         // get the list of global indices containing the object in question
         set<unsigned> globalIndices = currentCut.valueLookupTree->getGlobalIndices (index, singleObject, inputType);
-        for (auto globalIndex : globalIndices){
+        for (const auto &globalIndex : globalIndices){
           // set flags to true for any (potentially composite) object containing the good cumulative object
           pl_->cumulativeObjectFlags.at(currentCutIndex).at(inputType).at(globalIndex).first = true;
         }
@@ -477,13 +496,13 @@ CutCalculator::propagateFromCompositeCollections (const Cut &currentCut, unsigne
 }
 
 bool
-CutCalculator::setOtherCollectionsFlags (const Cut &currentCut, unsigned currentCutIndex, vector<string> listOfObjects) const
+CutCalculator::setOtherCollectionsFlags (const Cut &currentCut, unsigned currentCutIndex, const vector<string> &listOfObjects) const
 {
   ////////////////////////////////////////////////////////////////////////////////
   // Sets flags for all irrelevant collections to true
   ////////////////////////////////////////////////////////////////////////////////
 
-   for (auto inputType : listOfObjects)
+   for (auto &inputType : listOfObjects)
      {
        // skip if flags for this object already exist
        if (pl_->individualObjectFlags.at (currentCutIndex).find(inputType) != pl_->individualObjectFlags.at (currentCutIndex).end())
@@ -543,6 +562,16 @@ CutCalculator::unpackCuts ()
       unpackedTriggerFilters_ = cuts_.getParameter<vector<string> > ("triggerFilters");
       objectsToGet_.insert ("triggers");
       objectsToGet_.insert ("trigobjs");
+    }
+  if (cuts_.exists ("triggersInMenu"))
+    {
+      unpackedTriggersInMenu_ = cuts_.getParameter<vector<string> > ("triggersInMenu");
+      objectsToGet_.insert ("triggers");
+    }
+  if (cuts_.exists ("metFilters"))
+    {
+      unpackedMETFilters_ = cuts_.getParameter<vector<string> > ("metFilters");
+      objectsToGet_.insert ("metFilters");
     }
   //////////////////////////////////////////////////////////////////////////////
 
@@ -676,84 +705,137 @@ CutCalculator::splitString (const string &inputString) const
 }
 
 bool
-CutCalculator::evaluateTriggers (const edm::Event &event) const
+CutCalculator::evaluateTriggers (const edm::Event &event)
 {
   //////////////////////////////////////////////////////////////////////////////
-  // Initialize the flags for each trigger which is required and each trigger
-  // which is to be vetoed, as well as the event-wide flags for each of these.
+  // Initialize the flags for each trigger which is required to pass, each
+  // trigger which is to be vetoed if it passed, and each trigger which is
+  // required to exist in the HLT menu, as well as the event-wide flags for
+  // each of these.
   //////////////////////////////////////////////////////////////////////////////
-  bool triggerDecision = !pl_->triggers.size (), vetoTriggerDecision = true;
+  bool triggerDecision = pl_->triggers.empty (), vetoTriggerDecision = true;
   pl_->triggerFlags.resize (pl_->triggers.size (), false);
   pl_->vetoTriggerFlags.resize (pl_->triggersToVeto.size (), true);
+  pl_->triggerInMenuFlags.resize (pl_->triggersInMenu.size (), false);
   //////////////////////////////////////////////////////////////////////////////
 
   if (handles_.triggers.isValid ())
     {
-#if DATA_FORMAT == BEAN
-      for (const auto &trigger : *handles_.triggers)
-        {
-          string name = trigger.name;
-          bool pass = trigger.pass;
-#elif DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_CUSTOM
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
-      for (unsigned i = 0; i < triggerNames.size (); i++)
+      if (triggerNamesPSetID_ != triggerNames.parameterSetID ())
         {
-          string name = triggerNames.triggerName (i);
-          bool pass = handles_.triggers->accept (i);
-#else
-  #error "Data format is not valid."
-#endif
-          //////////////////////////////////////////////////////////////////////////
-          // If the current trigger matches one of the triggers to veto, record its
-          // decision. If any of these triggers is true, set the event-wide flag to
-          // false;
-          //////////////////////////////////////////////////////////////////////////
+          triggerIndices_.clear ();
+          triggerNamesPSetID_ = triggerNames.parameterSetID ();
+          triggersInMenu_ = true;
+        }
+      if (triggerIndices_.empty ())
+        {
+          for (unsigned i = 0; i < triggerNames.size (); i++)
+            {
+              string name = triggerNames.triggerName (i);
+              bool pass = handles_.triggers->accept (i);
+
+              //////////////////////////////////////////////////////////////////////////
+              // If the current trigger matches one of the triggers to veto, record its
+              // decision. If any of these triggers is true, set the event-wide flag to
+              // false;
+              //////////////////////////////////////////////////////////////////////////
+              for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
+                {
+                  if (name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+                    {
+                      triggerIndices_[pl_->triggersToVeto.at (triggerIndex)];
+                      triggerIndices_.at (pl_->triggersToVeto.at (triggerIndex)).insert (i);
+                      vetoTriggerDecision = vetoTriggerDecision && !pass;
+                      pl_->vetoTriggerFlags.at (triggerIndex) = pass;
+                    }
+                }
+              //////////////////////////////////////////////////////////////////////////
+
+              //////////////////////////////////////////////////////////////////////////
+              // If the current trigger matches one of the required triggers, record its
+              // decision. If any of these triggers is true, set the event-wide flag to
+              // true.
+              //////////////////////////////////////////////////////////////////////////
+              for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
+                {
+                  if (name.find (pl_->triggers.at (triggerIndex)) == 0)
+                    {
+                      triggerIndices_[pl_->triggers.at (triggerIndex)];
+                      triggerIndices_.at (pl_->triggers.at (triggerIndex)).insert (i);
+                      triggerDecision = triggerDecision || pass;
+                      pl_->triggerFlags.at (triggerIndex) = pass;
+                    }
+                }
+              //////////////////////////////////////////////////////////////////////////
+
+              //////////////////////////////////////////////////////////////////////////
+              // If the current trigger name exactly matches one of the triggers
+              // required to exist in the HLT menu, set the corresponding flag to
+              // true.
+              //////////////////////////////////////////////////////////////////////////
+              for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersInMenu.size (); triggerIndex++)
+                {
+                  if (name == pl_->triggersInMenu.at (triggerIndex))
+                    pl_->triggerInMenuFlags.at (triggerIndex) = true;
+                }
+              //////////////////////////////////////////////////////////////////////////
+            }
+        }
+      else
+        {
           for (unsigned triggerIndex = 0; triggerIndex != pl_->triggersToVeto.size (); triggerIndex++)
             {
-              if (name.find (pl_->triggersToVeto.at (triggerIndex)) == 0)
+              if (!triggerIndices_.count (pl_->triggersToVeto.at (triggerIndex)))
+                continue;
+              for (const auto &i : triggerIndices_.at (pl_->triggersToVeto.at (triggerIndex)))
                 {
+                  bool pass = handles_.triggers->accept (i);
                   vetoTriggerDecision = vetoTriggerDecision && !pass;
                   pl_->vetoTriggerFlags.at (triggerIndex) = pass;
                 }
             }
-          //////////////////////////////////////////////////////////////////////////
-
-          //////////////////////////////////////////////////////////////////////////
-          // If the current trigger matches one of the required triggers, record its
-          // decision. If any of these triggers is true, set the event-wide flag to
-          // true.
-          //////////////////////////////////////////////////////////////////////////
           for (unsigned triggerIndex = 0; triggerIndex != pl_->triggers.size (); triggerIndex++)
             {
-              if (name.find (pl_->triggers.at (triggerIndex)) == 0)
+              if (!triggerIndices_.count (pl_->triggers.at (triggerIndex)))
+                continue;
+              for (const auto &i : triggerIndices_.at (pl_->triggers.at (triggerIndex)))
                 {
+                  bool pass = handles_.triggers->accept (i);
                   triggerDecision = triggerDecision || pass;
                   pl_->triggerFlags.at (triggerIndex) = pass;
                 }
             }
-          //////////////////////////////////////////////////////////////////////////
         }
     }
 
-  // Store the logical AND of the two event-wide flags as the event-wide
+  //////////////////////////////////////////////////////////////////////////
+  // All of the triggers required to exist in the HLT menu must exist for the
+  // event to pass.
+  //////////////////////////////////////////////////////////////////////////
+  for (const auto &flag : pl_->triggerInMenuFlags)
+    triggersInMenu_ = triggersInMenu_ && flag;
+  //////////////////////////////////////////////////////////////////////////
+
+  // Store the logical AND of the three event-wide flags as the event-wide
   // trigger decision in the payload and return it.
-  return (pl_->triggerDecision = (triggerDecision && vetoTriggerDecision));
+  return (pl_->triggerDecision = (triggerDecision && vetoTriggerDecision && triggersInMenu_));
 }
 
 bool
 CutCalculator::evaluateTriggerFilters (const edm::Event &event) const
 {
-  bool triggerFilterDecision = !pl_->triggerFilters.size ();
+  bool triggerFilterDecision = pl_->triggerFilters.empty ();
   pl_->triggerFilterFlags.resize (pl_->triggerFilters.size (), false);
 
   if (handles_.triggers.isValid () && handles_.trigobjs.isValid ())
     {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
       const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
 #endif
       for (unsigned i = 0; i < pl_->triggerFilters.size (); i++)
         {
-#if DATA_FORMAT == MINI_AOD || DATA_FORMAT == MINI_AOD_CUSTOM
+#if DATA_FORMAT_FROM_MINIAOD
           for (auto trigobj : *handles_.trigobjs)
             {
               trigobj.unpackPathNames (triggerNames);
@@ -772,6 +854,63 @@ CutCalculator::evaluateTriggerFilters (const edm::Event &event) const
     }
 
   return (pl_->triggerFilterDecision = triggerFilterDecision);
+}
+
+bool
+CutCalculator::evaluateMETFilters (const edm::Event &event)
+{
+  // The MET filter decisions are stored in an edm::TriggerResults object (for
+  // some reason). As such, this code is just a copypasta of the code in
+  // CutCalculator::evaluateTriggers above. The only significant difference is
+  // that the MET filter decision is the AND of several booleans, instead of
+  // the OR as in the case of the trigger decision.
+  bool metFilterDecision = true;
+  pl_->metFilterFlags.resize (pl_->metFilters.size (), false);
+
+  if (handles_.metFilters.isValid ())
+    {
+      const edm::TriggerNames &metFilterNames = event.triggerNames (*handles_.metFilters);
+      if (metFilterNamesPSetID_ != metFilterNames.parameterSetID ())
+        {
+          metFilterIndices_.clear ();
+          metFilterNamesPSetID_ = metFilterNames.parameterSetID ();
+        }
+      if (metFilterIndices_.empty ())
+        {
+          for (unsigned i = 0; i < metFilterNames.size (); i++)
+            {
+              string name = metFilterNames.triggerName (i);
+              bool pass = handles_.metFilters->accept (i);
+
+              for (unsigned metFilterIndex = 0; metFilterIndex != pl_->metFilters.size (); metFilterIndex++)
+                {
+                  if (name.find (pl_->metFilters.at (metFilterIndex)) == 0)
+                    {
+                      metFilterIndices_[pl_->metFilters.at (metFilterIndex)];
+                      metFilterIndices_.at (pl_->metFilters.at (metFilterIndex)).insert (i);
+                      metFilterDecision = metFilterDecision && pass;
+                      pl_->metFilterFlags.at (metFilterIndex) = pass;
+                    }
+                }
+            }
+        }
+      else
+        {
+          for (unsigned metFilterIndex = 0; metFilterIndex != pl_->metFilters.size (); metFilterIndex++)
+            {
+              if (!metFilterIndices_.count (pl_->metFilters.at (metFilterIndex)))
+                continue;
+              for (const auto &i : metFilterIndices_.at (pl_->metFilters.at (metFilterIndex)))
+                {
+                  bool pass = handles_.metFilters->accept (i);
+                  metFilterDecision = metFilterDecision && pass;
+                  pl_->metFilterFlags.at (metFilterIndex) = pass;
+                }
+            }
+        }
+    }
+
+  return (pl_->metFilterDecision = metFilterDecision);
 }
 
 bool
@@ -858,7 +997,7 @@ CutCalculator::setEventFlags () const
 
   // Store the logical AND of the trigger decision and the global cut decision
   // as the global event decision in the payload and return it.
-  return (pl_->eventDecision = (pl_->triggerDecision && pl_->triggerFilterDecision && pl_->cutsDecision));
+  return (pl_->eventDecision = (pl_->triggerDecision && pl_->triggerFilterDecision && pl_->metFilterDecision && pl_->cutsDecision));
 }
 
 bool
@@ -896,11 +1035,11 @@ CutCalculator::getListOfObjects (const Cuts &cuts)
   // to the list and return the final, unique list.
   //////////////////////////////////////////////////////////////////////////////
   vector<string> objects;
-  for (auto &cut : cuts)
+  for (const auto &cut : cuts)
     {
       if (find(objects.begin(), objects.end(), cut.inputLabel) == objects.end())
         objects.push_back(cut.inputLabel);
-      for (auto &collection : cut.inputCollections){
+      for (const auto &collection : cut.inputCollections){
         if (find(objects.begin(), objects.end(), collection) == objects.end())
           objects.push_back(collection);
       }
@@ -951,7 +1090,7 @@ bool
   }
 
   vector<string> uniqueSingleObjects;
-  for (auto singleObject : singleObjects){
+  for (const auto &singleObject : singleObjects){
     if (find(uniqueSingleObjects.begin(), uniqueSingleObjects.end(), singleObject) == uniqueSingleObjects.end())
       uniqueSingleObjects.push_back(singleObject);
   }
@@ -974,13 +1113,13 @@ bool
     else{
       localIndex = (globalIndex % collectionSize);
     }
-    objectIndexMap.push_back(make_pair(singleObjects.at(collectionIndex),localIndex));
+    objectIndexMap.emplace_back(singleObjects.at(collectionIndex),localIndex);
   }
 
   bool pass = true;
-  for (auto singleObject : uniqueSingleObjects){
+  for (const auto &singleObject : uniqueSingleObjects){
     int prevIndex = -1;
-    for (auto objectIndex : objectIndexMap){
+    for (const auto &objectIndex : objectIndexMap){
 
       if (objectIndex.first != singleObject)
         continue;

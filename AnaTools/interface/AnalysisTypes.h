@@ -5,9 +5,7 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 
-#include "OSUT3Analysis/Collections/interface/Basicjet.h"
 #include "OSUT3Analysis/Collections/interface/Beamspot.h"
-#include "OSUT3Analysis/Collections/interface/Bjet.h"
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
 #include "OSUT3Analysis/Collections/interface/Cschit.h"
 #include "OSUT3Analysis/Collections/interface/Cscseg.h"
@@ -63,15 +61,20 @@ struct CutCalculatorPayload
   bool            isValid;
   bool            triggerDecision;
   bool            triggerFilterDecision;
+  bool            metFilterDecision;
   Cuts            cuts;
   vector<bool>    cumulativeEventFlags;
   vector<bool>    individualEventFlags;
   vector<bool>    triggerFlags;
   vector<bool>    vetoTriggerFlags;
   vector<bool>    triggerFilterFlags;
+  vector<bool>    triggerInMenuFlags;
+  vector<bool>    metFilterFlags;
   vector<string>  triggers;
   vector<string>  triggersToVeto;
   vector<string>  triggerFilters;
+  vector<string>  triggersInMenu;
+  vector<string>  metFilters;
 };
 
 struct HistoDef {
@@ -82,12 +85,26 @@ struct HistoDef {
   string title; // contains axis labels
   vector<double> binsX;
   vector<double> binsY;
+  vector<double> binsZ;
+  int indexX;
+  int indexY;
+  int indexZ;
   bool hasVariableBinsX;
   bool hasVariableBinsY;
+  bool hasVariableBinsZ;
   vector<string> inputVariables;
   vector<ValueLookupTree *> valueLookupTrees;
   int dimensions;
   bool weight;
+};
+
+struct BranchDef {
+  vector<string> inputCollections;
+  string branchName;
+  int index;
+  vector<string> inputVariables;
+  vector<ValueLookupTree *> valueLookupTrees;
+  double value;
 };
 
 struct Weight
@@ -96,6 +113,20 @@ struct Weight
   string inputVariable;
   ValueLookupTree *valueLookupTree;
   double product;
+};
+
+struct ScaleFactor
+{
+  string inputCollection;
+  string sfType;
+  string version;
+  string wp;
+  double additionalSystematic;
+  double additionalSystematicBelow20GeV;
+  double additionalSystematicAbove80GeV;
+  vector<string> inputPlots;
+  vector<double> inputLumis;
+  string outputVariable;
 };
 
 struct Node
@@ -117,7 +148,6 @@ struct Collections
   edm::Handle<vector<osu::Genjet> >         genjets;
   edm::Handle<vector<osu::Jet> >            jets;
   edm::Handle<vector<osu::Bjet> >           bjets;
-  edm::Handle<vector<osu::Basicjet> >       basicjets;
   edm::Handle<vector<osu::Mcparticle> >     mcparticles;
   edm::Handle<vector<osu::Met> >            mets;
   edm::Handle<vector<osu::Muon> >           muons;
@@ -127,14 +157,16 @@ struct Collections
   edm::Handle<vector<osu::Supercluster> >   superclusters;
   edm::Handle<vector<osu::Tau> >            taus;
   edm::Handle<vector<osu::Track> >          tracks;
+  edm::Handle<vector<osu::SecondaryTrack> > secondaryTracks;
   edm::Handle<vector<osu::PileUpInfo> >     pileupinfos;
-  edm::Handle<vector<osu::Trigobj> >        trigobjs;
   vector<edm::Handle<osu::Uservariable> >   uservariables;
   vector<edm::Handle<osu::Eventvariable> >  eventvariables;
 
   edm::Handle<TYPE(triggers)>                 triggers;
+  edm::Handle<vector<TYPE(trigobjs)> >        trigobjs;
   edm::Handle<TYPE(prescales)>                prescales;
   edm::Handle<TYPE(generatorweights)>         generatorweights;
+  edm::Handle<TYPE(triggers)>                 metFilters;
 };
 
 struct ValueToPrint

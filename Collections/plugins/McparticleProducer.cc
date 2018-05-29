@@ -25,14 +25,11 @@ McparticleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   if (!event.getByToken (token_, collection))
     return;
 
-  pl_ = auto_ptr<vector<osu::Mcparticle> > (new vector<osu::Mcparticle> ());
+  pl_ = unique_ptr<vector<osu::Mcparticle> > (new vector<osu::Mcparticle> ());
   for (const auto &object : *collection)
-    {
-      const osu::Mcparticle mcparticle (object);
-      pl_->push_back (mcparticle);
-    }
+    pl_->emplace_back (object);
 
-  event.put (pl_, collection_.instance ());
+  event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 }
 

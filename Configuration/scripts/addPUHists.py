@@ -72,8 +72,15 @@ def copyOneFile(dataset):
     fout.Close()
 
 
-###############################################################################################################################The following function is for a special case when you creat a new dataset(with new name) by selecting events from a current dataset(like a skim). For example, one may want to creat w0jets sample from wjets sample. This function would copy the existing pu distribution of wjets and rename it as w0jets.root
-#If you want to use pu distribution of dataset A as the pu distribution for dataset B, just include A and B in the localconfig file, and do not INCLUDE -c in the command line.
+###############################################################################################################################
+# The following function is for a special case when you create a new
+# dataset(with new name) by selecting events from a current
+# dataset(like a skim). For example, one may want to create a w0jets
+# sample from a wjets sample. This function would copy the existing pu
+# distribution of wjets and rename it as w0jets.root If you want to use
+# pu distribution of dataset A as the pu distribution for dataset B,
+# just include A and B in the localconfig file, and do not INCLUDE -c
+# in the command line.
 ##############################################################################################################################
 
 def copyAndRenameOneFile(fout, datasets):
@@ -94,7 +101,7 @@ def addDataDistribution(fout, inputFile):
     fin = TFile(inputFile)
     h1 = fin.Get('pileup')
     if not (h1):
-        print fin + " doe not have pileup histograms"
+        print fin + " does not have pileup histograms"
         return
     else:
         h2 = fout.Get(str(inputFile.split('.')[0]))

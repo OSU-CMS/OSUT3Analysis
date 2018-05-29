@@ -1,6 +1,7 @@
 #ifndef PLOTTER
 #define PLOTTER
 
+#include <tuple>
 #include <unordered_set>
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -14,6 +15,7 @@
 
 #include "TH1.h"
 #include "TH2.h"
+#include "TH3.h"
 
 class Plotter : public edm::EDAnalyzer
 {
@@ -35,8 +37,8 @@ class Plotter : public edm::EDAnalyzer
       Collections handles_;
       Tokens tokens_;
 
-      bool initializeValueLookupForest (vector<HistoDef> &, Collections *);
-      bool initializeValueLookupForest (vector<Weight> &, Collections *);
+      bool initializeValueLookupForest (vector<HistoDef> &, Collections * const);
+      bool initializeValueLookupForest (vector<Weight> &, Collections * const);
 
       edm::Service<TFileService> fs_;
 
@@ -49,23 +51,20 @@ class Plotter : public edm::EDAnalyzer
       vector<Weight> weights;
 
       string getDirectoryName(const string);
-      vector<string> getInputTypes(const string);
-      string fixOrdering(const string);
       HistoDef parseHistoDef(const edm::ParameterSet &, const vector<string> &, const string &, const string &);
-      void bookHistogram(const HistoDef);
-      pair<string,string> getVariableAndFunction(const string);
-
-      template <class InputCollection> void fillHistogram(const HistoDef, const InputCollection);
-      template <class InputCollection1, class InputCollection2> void fillHistogram(const HistoDef, const InputCollection1, const InputCollection2);
+      void bookHistogram(const HistoDef &);
 
       void fillHistogram(const HistoDef &);
       void fill1DHistogram(const HistoDef &);
       void fill2DHistogram(const HistoDef &);
       void fill2DHistogram(const HistoDef & definition, double valueX, double valueY, double weight);
+      void fill3DHistogram(const HistoDef &);
+      void fill3DHistogram(const HistoDef & definition, double valueX, double valueY, double valueZ, double weight);
 
-      double getBinSize(TH1D *, const double);
-      pair<double,double> getBinSize(TH2D *, const double, const double);
-      string setYaxisLabel(const HistoDef);
+      double getBinSize(TH1D * const, const double);
+      pair<double,double> getBinSize(TH2D * const, const double, const double);
+      tuple<double,double,double>  getBinSize(TH3D * const, const double, const double, const double);
+      string setYaxisLabel(const HistoDef &);
 
 
 

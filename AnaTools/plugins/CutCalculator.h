@@ -28,16 +28,15 @@ class CutCalculator : public edm::EDProducer
     bool setInputCollectionFlags (const Cut &, unsigned) const;
     bool arbitrateInputCollectionFlags (const Cut &, unsigned) const;
     bool propagateToCompositeCollections (const Cut &, unsigned) const;
-    bool setOtherCollectionsFlags (const Cut &, unsigned, vector<string>) const;
-    bool propagateFromSingleCollections (const Cut &, unsigned, vector<string>) const;
-    bool propagateFromCompositeCollections (const Cut &, unsigned, vector<string>) const;
+    bool setOtherCollectionsFlags (const Cut &, unsigned, const vector<string> &) const;
+    bool propagateFromSingleCollections (const Cut &, unsigned, const vector<string> &) const;
+    bool propagateFromCompositeCollections (const Cut &, unsigned, const vector<string> &) const;
     bool unpackCuts ();
-    void getTwoObjs (string, string &, string &);
     bool evaluateComparison (int, const string &, int) const;
-    string getObjToGet (string);
     vector<string> splitString (const string &) const;
-    bool evaluateTriggers (const edm::Event &) const;
+    bool evaluateTriggers (const edm::Event &);
     bool evaluateTriggerFilters (const edm::Event &) const;
+    bool evaluateMETFilters (const edm::Event &);
     bool setEventFlags () const;
     vector<string> getListOfObjects (const Cuts &);
     bool isUniqueCase (const Cut &, unsigned, string) const;
@@ -49,6 +48,7 @@ class CutCalculator : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::ParameterSet  cuts_;
+    bool               triggersInMenu_;
     bool               firstEvent_;
     ////////////////////////////////////////////////////////////////////////////
 
@@ -60,14 +60,22 @@ class CutCalculator : public edm::EDProducer
     vector<string>         unpackedTriggersToVeto_;
     vector<string>         unpackedTriggers_;
     vector<string>         unpackedTriggerFilters_;
+    vector<string>         unpackedTriggersInMenu_;
+    vector<string>         unpackedMETFilters_;
     ////////////////////////////////////////////////////////////////////////////
+
+    edm::ParameterSetID triggerNamesPSetID_;
+    unordered_map<string, unordered_set<unsigned> > triggerIndices_;
+
+    edm::ParameterSetID metFilterNamesPSetID_;
+    unordered_map<string, unordered_set<unsigned> > metFilterIndices_;
 
     // Object collections which can be gotten from the event.
     Collections handles_;
     Tokens tokens_;
 
     // Payload for this EDProducer.
-    auto_ptr<CutCalculatorPayload>  pl_;
+    unique_ptr<CutCalculatorPayload>  pl_;
 
     // Function for initializing the ValueLookupTree objects, one for each cut.
     bool initializeValueLookupForest (Cuts &, Collections * const);

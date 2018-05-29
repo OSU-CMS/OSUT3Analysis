@@ -53,8 +53,8 @@ class ObjectSelector : public edm::EDFilter
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
-    auto_ptr<vector<T> >  pl_;
-    auto_ptr<vector<TO> > plO_; // original format
+    unique_ptr<vector<T> >  pl_;
+    unique_ptr<vector<TO> > plO_; // original format
 };
 
 template<class T, class TO>
@@ -115,8 +115,8 @@ template<class T, class TO> bool
   // If the collection could not be retrieved, the payload remains empty. If the
   // cut decisions could not be retrieved, no objects are cut.
   //////////////////////////////////////////////////////////////////////////////
-  pl_  = auto_ptr<vector<T> >  (new vector<T>  ());
-  plO_ = auto_ptr<vector<TO> > (new vector<TO> ());
+  pl_  = unique_ptr<vector<T> >  (new vector<T>  ());
+  plO_ = unique_ptr<vector<TO> > (new vector<TO> ());
   if (collection.isValid () && collectionOrig.isValid())
     {
       auto objOrig = collectionOrig->begin();
@@ -129,11 +129,8 @@ template<class T, class TO> bool
             {
               for (int iCut = cutDecisions->cumulativeObjectFlags.size () - 1; iCut >= 0; iCut--)
                 {
-                  if (cutDecisions->cumulativeObjectFlags.at (iCut).at (collectionToFilter_).at (iObject).second)
-                    {
-                      passes = cutDecisions->cumulativeObjectFlags.at (iCut).at (collectionToFilter_).at (iObject).first;
-                      break;
-                    }
+                  passes = (cutDecisions->cumulativeObjectFlags.at (iCut).at (collectionToFilter_).at (iObject).second ? cutDecisions->cumulativeObjectFlags.at (iCut).at (collectionToFilter_).at (iObject).first : false);
+                  break;
                 }
             }
           if (passes)
@@ -145,8 +142,8 @@ template<class T, class TO> bool
     }
   //////////////////////////////////////////////////////////////////////////////
 
-  event.put (pl_,  collection_.instance ());
-  event.put (plO_, ORIGINAL_FORMAT);
+  event.put (std::move (pl_),  collection_.instance ());
+  event.put (std::move (plO_), ORIGINAL_FORMAT);
   pl_.reset ();
   plO_.reset ();
   firstEvent_ = false;

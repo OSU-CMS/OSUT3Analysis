@@ -2,6 +2,7 @@
 import sys
 import os
 import re
+import shutil
 from math import *
 from array import *
 from decimal import *
@@ -138,11 +139,11 @@ header_y_top     = 0.9947552
 
 colors = {
     'black'  : 1,
-    'red'    : 623,
-    'green'  : 407,
-    'purple' : 871,
-    'blue'   : 591,
-    'yellow' : 393,
+    'red'    : 633,
+    'green'  : 419,
+    'purple' : 875,
+    'blue'   : 601,
+    'yellow' : 401,
 }
 
 colorList = [
@@ -293,7 +294,6 @@ def MakeOneHist(dirName, histogramName):
                 Histogram.Rebin(RebinFactor)
                 DenHistogram.Rebin(RebinFactor)
 
-
         xAxisLabel = Histogram.GetXaxis().GetTitle()
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
@@ -431,11 +431,13 @@ def MakeOneHist(dirName, histogramName):
             histogram.Draw(plotting_options)
             histogram.GetXaxis().SetTitle(xAxisLabel)
             histogram.GetYaxis().SetTitle(yAxisLabel)
+
             if histogram.InheritsFrom("TH1"):
                 histogram.SetMaximum(finalMax)
                 histogram.SetMinimum(yAxisMin)
             if makeRatioPlots or makeDiffPlots:
                 histogram.GetXaxis().SetLabelSize(0)
+
         if histCounter is 0:
             if histogram.InheritsFrom("TH1"):
                 plotting_options = plotting_options + " SAME"
@@ -525,8 +527,8 @@ outputFile = TFile(outputFileName, "RECREATE")
 
 outputConfigFile = outputFileName.replace(".root", ".py")
 if os.path.exists(outputConfigFile):
-    os.system("mv " + outputConfigFile + " " + outputConfigFile.replace(".py", "-bkup.py"))  # make a backup copy of a previous config file
-os.system("cp " + arguments.localConfig + " " + outputConfigFile)  # make a copy of the config file
+    shutil.move (outputConfigFile, outputConfigFile.replace(".py", "-bkup.py"))  # make a backup copy of a previous config file
+shutil.copy (arguments.localConfig, outputConfigFile)  # make a copy of the config file
 
 first_input = input_sources[0]
 
@@ -541,8 +543,11 @@ if arguments.verbose:
     print "Going to rootDirectory: ", rootDirectory
 
 if arguments.savePDFs:
-    os.system("rm -rf efficiency_histograms_pdfs")
-    os.system("mkdir efficiency_histograms_pdfs")
+    try:
+        shutil.rmtree ("efficiency_histograms_pdfs")
+    except OSError:
+        pass
+    os.mkdir ("efficiency_histograms_pdfs")
 
 
 for key in gDirectory.GetListOfKeys(): # Loop over directories in same way as in makePlots.py
@@ -572,4 +577,3 @@ for key in gDirectory.GetListOfKeys(): # Loop over directories in same way as in
 testFile.Close()
 outputFile.Close()
 print "Finished writing " + outputFile.GetName()
-

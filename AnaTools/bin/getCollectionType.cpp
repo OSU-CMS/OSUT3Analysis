@@ -36,12 +36,6 @@ main (int argc, char *argv[])
       else if (cppType == "vector<" TYPE_STR(jets) ">")
         cout << "jets" << endl;
 #endif
-#if IS_VALID(basicjets)
-      // Warning:  if jets and basicjets have the same type, this function
-      // will always return "jets" for that type, and not "basicjets".
-      else if (cppType == "vector<" TYPE_STR(basicjets) ">")
-        cout << "basicjets" << endl;
-#endif
 #if IS_VALID(bjets)
       else if (cppType == "vector<" TYPE_STR(bjets) ">")
         cout << "bjets" << endl;
@@ -78,6 +72,10 @@ main (int argc, char *argv[])
       else if (cppType == "vector<" TYPE_STR(tracks) ">")
         cout << "tracks" << endl;
 #endif
+#if IS_VALID(secondaryTracks)
+      else if (cppType == "vector<" TYPE_STR(secondaryTracks) ">")
+        cout << "secondaryTracks" << endl;
+#endif
 #if IS_VALID(pileupinfos)
       else if (cppType == "vector<" TYPE_STR(pileupinfos) ">")
         cout << "pileupinfos" << endl;
@@ -93,19 +91,6 @@ main (int argc, char *argv[])
 #if IS_VALID(eventvariables)
       else if (cppType == "vector<" TYPE_STR(eventvariables) ">")
         cout << "eventvariables" << endl;
-#endif
-
-#if IS_VALID(triggers)
-      else if (cppType == TYPE_STR(triggers))
-        cout << "triggers" << endl;
-#endif
-#if IS_VALID(prescales)
-      else if (cppType == TYPE_STR(prescales))
-        cout << "prescales" << endl;
-#endif
-#if IS_VALID(generatorweights)
-      else if (cppType == TYPE_STR(generatorweights))
-        cout << "generatorweights" << endl;
 #endif
       else
         cout << "INVALID_TYPE" << endl;
