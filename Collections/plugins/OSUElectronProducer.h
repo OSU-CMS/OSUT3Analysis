@@ -22,7 +22,7 @@ class OSUElectronProducer : public edm::EDProducer
     ////////////////////////////////////////////////////////////////////////////
     edm::ParameterSet  collections_;
     edm::InputTag      collection_;
-    edm::EDGetTokenT<vector<TYPE(electrons)> > token_;
+    edm::EDGetTokenT<edm::View<TYPE(electrons)> > token_;
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
     edm::EDGetTokenT<TYPE(beamspots)> beamspotToken_;
     edm::EDGetTokenT<vector<reco::GenParticle> > prunedParticleToken_;
@@ -34,10 +34,20 @@ class OSUElectronProducer : public edm::EDProducer
     edm::EDGetTokenT<edm::TriggerResults> triggersToken_;
     edm::EDGetTokenT<vector<pat::TriggerObjectStandAlone> > trigobjsToken_;
 
+    edm::EDGetTokenT<edm::ValueMap<bool> > vidVetoIdMapToken_;
+    edm::EDGetTokenT<edm::ValueMap<bool> > vidLooseIdMapToken_;
+    edm::EDGetTokenT<edm::ValueMap<bool> > vidMediumIdMapToken_;
+    edm::EDGetTokenT<edm::ValueMap<bool> > vidTightIdMapToken_;
+
     edm::ParameterSet  cfg_;
     edm::InputTag      pfCandidate_;
     edm::InputTag      conversions_;
     edm::InputTag      rho_;
+    edm::InputTag      vidVetoIdMap_;
+    edm::InputTag      vidLooseIdMap_;
+    edm::InputTag      vidMediumIdMap_;
+    edm::InputTag      vidTightIdMap_;
+    EffectiveAreas     effectiveAreas_;
 
     ////////////////////////////////////////////////////////////////////////////
 

@@ -54,9 +54,14 @@ collectionProducer.dtsegs = cms.EDProducer ("OSUDtsegProducer",
 #-------------------------------------------------------------------------------
 
 collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
-    pfCandidate      =  cms.InputTag  ('packedPFCandidates','',''),
-    conversions      =  cms.InputTag  ("reducedEgamma",                  "reducedConversions",          ""),
-    rho              =  cms.InputTag  ("fixedGridRhoFastjetAll",         "",                            ""),
+    pfCandidate      =  cms.InputTag   ('packedPFCandidates','',''),
+    conversions      =  cms.InputTag   ("reducedEgamma",                  "reducedConversions",          ""),
+    rho              =  cms.InputTag   ("fixedGridRhoFastjetAll",         "",                            ""),
+    vidVetoIdMap     =  cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-veto"),
+    vidLooseIdMap    =  cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-loose"),
+    vidMediumIdMap   =  cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-medium"),
+    vidTightIdMap    =  cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight"),
+    effAreasPayload  =  cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Spring15/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_25ns.txt"),
 
     # the following tag is not used by the OSUElectronProducer, but is needed
     # so that the reco::GsfElectronCore collection is saved in skims, which is
@@ -64,6 +69,21 @@ collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     gsfElectronCore  =  cms.InputTag  ("reducedEgamma",                  "reducedGedGsfElectronCores",  ""),
     gsfTrack         =  cms.InputTag  ("reducedEgamma",                  "reducedGsfTracks",            ""),
 )
+
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0"):
+    collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto")
+    collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose")
+    collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-medium")
+    collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight")
+    collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt")
+
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4"):
+    collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-veto")
+    collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-loose")
+    collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-medium")
+    collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-tight")
+    collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt")
+
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------

@@ -5,16 +5,21 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
-  cfg_ (cfg),
-  pfCandidate_ (cfg.getParameter<edm::InputTag> ("pfCandidate")),
-  conversions_ (cfg.getParameter<edm::InputTag> ("conversions")),
-  rho_         (cfg.getParameter<edm::InputTag> ("rho"))
+  collections_    (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_            (cfg),
+  pfCandidate_    (cfg.getParameter<edm::InputTag>     ("pfCandidate")),
+  conversions_    (cfg.getParameter<edm::InputTag>     ("conversions")),
+  rho_            (cfg.getParameter<edm::InputTag>     ("rho")),
+  vidVetoIdMap_   (cfg.getParameter<edm::InputTag>     ("vidVetoIdMap")),
+  vidLooseIdMap_  (cfg.getParameter<edm::InputTag>     ("vidLooseIdMap")),
+  vidMediumIdMap_ (cfg.getParameter<edm::InputTag>     ("vidMediumIdMap")),
+  vidTightIdMap_  (cfg.getParameter<edm::InputTag>     ("vidTightIdMap")),
+  effectiveAreas_ ((cfg.getParameter<edm::InputTag>    ("effAreasPayload")).fullPath())
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
 
-  token_ = consumes<vector<TYPE(electrons)> > (collection_);
+  token_ = consumes<View<TYPE(electrons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   prunedParticleToken_ = consumes<vector<reco::GenParticle> > (collections_.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
   pfCandidateToken_ = consumes<vector<pat::PackedCandidate>>(pfCandidate_);
@@ -25,6 +30,11 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   rhoToken_ = consumes<double> (rho_);
   triggersToken_ = consumes<edm::TriggerResults> (collections_.getParameter<edm::InputTag> ("triggers"));
   trigobjsToken_ = consumes<vector<pat::TriggerObjectStandAlone> > (collections_.getParameter<edm::InputTag> ("trigobjs"));
+
+  vidVetoIdMapToken_   = consumes<edm::ValueMap<bool> > (vidVetoIdMap_);
+  vidLooseIdMapToken_  = consumes<edm::ValueMap<bool> > (vidLooseIdMap_);
+  vidMediumIdMapToken_ = consumes<edm::ValueMap<bool> > (vidMediumIdMap_);
+  vidTightIdMapToken_  = consumes<edm::ValueMap<bool> > (vidTightIdMap_);
 }
 
 OSUElectronProducer::~OSUElectronProducer ()
@@ -38,7 +48,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   using namespace edm;
   using namespace reco;
 
-  Handle<vector<TYPE(electrons)> > collection;
+  Handle<View<TYPE(electrons)> > collection;
   event.getByToken(token_, collection);
 
   Handle<vector<pat::PackedCandidate> > cands;
@@ -71,39 +81,56 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   Handle<vector<pat::TriggerObjectStandAlone> > trigobjs;
   event.getByToken (trigobjsToken_, trigobjs);
 
+  edm::Handle<edm::ValueMap<bool> > vidVetoIdMap;
+  event.getByToken(vidVetoIdMapToken_, vidVetoIdMap);
+
+  edm::Handle<edm::ValueMap<bool> > vidLooseIdMap;
+  event.getByToken(vidLooseIdMapToken_, vidLooseIdMap);
+
+  edm::Handle<edm::ValueMap<bool> > vidMediumIdMap;
+  event.getByToken(vidMediumIdMapToken_, vidMediumIdMap);
+
+  edm::Handle<edm::ValueMap<bool> > vidTightIdMap;
+  event.getByToken(vidTightIdMapToken_, vidTightIdMap);
+
   pl_ = unique_ptr<vector<osu::Electron> > (new vector<osu::Electron> ());
+
+  unsigned iEle = -1;
+
   for (const auto &object : *collection)
     {
+      ++iEle;
+
       pl_->emplace_back (object, particles, cfg_, met->at (0));
       osu::Electron &electron = pl_->back ();
 
       if(rho.isValid())
         electron.set_rho((float)(*rho));
+
       if(beamspot.isValid() && conversions.isValid() && vertices.isValid() && !vertices->empty ())
         electron.set_passesTightID_noIsolation (*beamspot, vertices->at (0), conversions);
+
+      if(vidVetoIdMap.isValid())
+        electron.set_passesVID_vetoID ( (*vidVetoIdMap)[(*collection).refAt(iEle)] );
+
+      if(vidLooseIdMap.isValid())
+        electron.set_passesVID_looseID ( (*vidLooseIdMap)[(*collection).refAt(iEle)] );
+
+      if(vidMediumIdMap.isValid())
+        electron.set_passesVID_mediumID ( (*vidMediumIdMap)[(*collection).refAt(iEle)] );
+
+      if(vidTightIdMap.isValid())
+        electron.set_passesVID_tight ( (*vidTightIdMap)[(*collection).refAt(iEle)] );
+
       if(trigobjs.isValid())
         {
           electron.set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle25erWPTightGsfTrackIsoFilter"));
           electron.set_match_HLT_Ele22_eta2p1_WPLoose_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltSingleEle22WPLooseGsfTrackIsoFilter"));
+          electron.set_match_HLT_Ele35_WPTight_Gsf_v (AnaTools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle35noerWPTightGsfTrackIsoFilter"));
         }
 
       float effectiveArea = 0;
-      // electron effective areas from https://indico.cern.ch/event/369239/contribution/4/attachments/1134761/1623262/talk_effective_areas_25ns.pdf
-      // (see slide 12)
-      if(abs(object.superCluster()->eta()) >= 0.0000 && abs(object.superCluster()->eta()) < 1.0000)
-        effectiveArea = 0.1752;
-      if(abs(object.superCluster()->eta()) >= 1.0000 && abs(object.superCluster()->eta()) < 1.4790)
-        effectiveArea = 0.1862;
-      if(abs(object.superCluster()->eta()) >= 1.4790 && abs(object.superCluster()->eta()) < 2.0000)
-        effectiveArea = 0.1411;
-      if(abs(object.superCluster()->eta()) >= 2.0000 && abs(object.superCluster()->eta()) < 2.2000)
-        effectiveArea = 0.1534;
-      if(abs(object.superCluster()->eta()) >= 2.2000 && abs(object.superCluster()->eta()) < 2.3000)
-        effectiveArea = 0.1903;
-      if(abs(object.superCluster()->eta()) >= 2.3000 && abs(object.superCluster()->eta()) < 2.4000)
-        effectiveArea = 0.2243;
-      if(abs(object.superCluster()->eta()) >= 2.4000 && abs(object.superCluster()->eta()) < 5.0000)
-        effectiveArea = 0.2687;
+      effectiveArea = effectiveAreas_.getEffectiveArea(fabs(object.superCluster()->eta()));
       electron.set_AEff(effectiveArea);
 
       //generator D0 must be done with prunedGenParticles because vertex is only right in this collection, not right in packedGenParticles
@@ -184,7 +211,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
 #else
-  edm::Handle<vector<TYPE(electrons)> > collection;
+  edm::Handle<edm::View<TYPE(electrons)> > collection;
   if (!event.getByToken (token_, collection))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;

@@ -17,6 +17,7 @@ namespace osu
         Electron (const TYPE(electrons) &, const edm::Handle<vector<osu::Mcparticle> > &);
         Electron (const TYPE(electrons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         Electron (const TYPE(electrons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const osu::Met &);
+        
         const float rho() const;
         const float AEff () const;
         const double pfdRhoIsoCorr () const;
@@ -24,13 +25,25 @@ namespace osu
         const double sumPUPtCorr () const;
         const int electronPVIndex () const;
 	const double genD0 () const;
+        const float dEtaInSeed () const;
+        const bool pass_GsfEleHadronicOverEMEnergyScaledCut (const float c0, const float cE, const float cR) const;
+
         const int missingInnerHitsFromAllHits () const;
         const int missingInnerHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
+
         const bool passesTightID_noIsolation () const;
+
+        const bool passesVID_vetoID () const;
+        const bool passesVID_looseID () const;
+        const bool passesVID_mediumID () const;
+        const bool passesVID_tightID () const;
+
         const bool match_HLT_Ele25_eta2p1_WPTight_Gsf_v () const;
         const bool match_HLT_Ele22_eta2p1_WPLoose_Gsf_v () const;
+        const bool match_HLT_Ele35_WPTight_Gsf_v () const;
+
         void set_rho (float value) { rho_  = value; }
         void set_AEff (float value) { AEff_  = value; }
         void set_pfdRhoIsoCorr (double value) { pfdRhoIsoCorr_  = value; }
@@ -39,8 +52,13 @@ namespace osu
         void set_electronPVIndex (int value) { electronPVIndex_  = value; };
 	void set_genD0 (double value) { genD0_  = value; };
         void set_passesTightID_noIsolation (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
+        void set_passesVID_vetoID (const bool);
+        void set_passesVID_looseID (const bool);
+        void set_passesVID_mediumID (const bool);
+        void set_passesVID_tightID (const bool);
         void set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (const bool);
         void set_match_HLT_Ele22_eta2p1_WPLoose_Gsf_v (const bool);
+        void set_match_HLT_Ele35_WPTight_Gsf_v (const bool);
 
         const double metMinusOnePt () const;
         const double metMinusOnePx () const;
@@ -82,8 +100,15 @@ namespace osu
         double sumPUPtCorr_;
 	double genD0_;
         bool passesTightID_noIsolation_;
+
+        bool passesVID_vetoID_;
+        bool passesVID_looseID_;
+        bool passesVID_mediumID_;
+        bool passesVID_tightID_;
+
         bool match_HLT_Ele25_eta2p1_WPTight_Gsf_v_;
         bool match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_;
+        bool match_HLT_Ele35_WPTight_Gsf_v_;
 
         double metMinusOnePt_;
         double metMinusOnePx_;
