@@ -25,4 +25,6 @@ if [[ -d $hook_dir ]]; then
   done
 fi
 
+echo "post-checkout hooks finished"
+
 exit 0

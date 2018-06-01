@@ -25,4 +25,5 @@ if [[ -d $hook_dir ]]; then
   done
 fi
 
+echo "pre-commit hooks finished"
 exit 0
