@@ -75,4 +75,4 @@ print "Data format changed to " + arguments.data_format + "."
 print "Do not forget to recompile."
 
 #enable git hooks
-os.system("ln -s $CMSSW_BASE/src/OSUT3Analysis/githooks/* $CMSSW_BASE/src/.git/hooks/")
+os.system("ln -s $CMSSW_BASE/src/OSUT3Analysis/githooks/* $CMSSW_BASE/src/OSUT3Analysis/.git/hooks/")
