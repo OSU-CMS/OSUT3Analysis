@@ -14,12 +14,12 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   vidLooseIdMap_  (cfg.getParameter<edm::InputTag>     ("vidLooseIdMap")),
   vidMediumIdMap_ (cfg.getParameter<edm::InputTag>     ("vidMediumIdMap")),
   vidTightIdMap_  (cfg.getParameter<edm::InputTag>     ("vidTightIdMap")),
-  effectiveAreas_ ((cfg.getParameter<edm::InputTag>    ("effAreasPayload")).fullPath())
+  effectiveAreas_ ((cfg.getParameter<edm::FileInPath>  ("effAreasPayload")).fullPath())
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
 
-  token_ = consumes<View<TYPE(electrons)> > (collection_);
+  token_ = consumes<edm::View<TYPE(electrons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   prunedParticleToken_ = consumes<vector<reco::GenParticle> > (collections_.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
   pfCandidateToken_ = consumes<vector<pat::PackedCandidate>>(pfCandidate_);
@@ -48,7 +48,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   using namespace edm;
   using namespace reco;
 
-  Handle<View<TYPE(electrons)> > collection;
+  Handle<edm::View<TYPE(electrons)> > collection;
   event.getByToken(token_, collection);
 
   Handle<vector<pat::PackedCandidate> > cands;
@@ -120,13 +120,13 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         electron.set_passesVID_mediumID ( (*vidMediumIdMap)[(*collection).refAt(iEle)] );
 
       if(vidTightIdMap.isValid())
-        electron.set_passesVID_tight ( (*vidTightIdMap)[(*collection).refAt(iEle)] );
+        electron.set_passesVID_tightID ( (*vidTightIdMap)[(*collection).refAt(iEle)] );
 
       if(trigobjs.isValid())
         {
           electron.set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle25erWPTightGsfTrackIsoFilter"));
           electron.set_match_HLT_Ele22_eta2p1_WPLoose_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltSingleEle22WPLooseGsfTrackIsoFilter"));
-          electron.set_match_HLT_Ele35_WPTight_Gsf_v (AnaTools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle35noerWPTightGsfTrackIsoFilter"));
+          electron.set_match_HLT_Ele35_WPTight_Gsf_v        (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle35noerWPTightGsfTrackIsoFilter"));
         }
 
       float effectiveArea = 0;

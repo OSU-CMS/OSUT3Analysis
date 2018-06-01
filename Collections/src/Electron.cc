@@ -243,7 +243,7 @@ osu::Electron::dEtaInSeed () const
 const bool
 osu::Electron::pass_GsfEleHadronicOverEMEnergyScaledCut (const float c0, const float cE, const float cR) const
 {
-  if(!ele->superCluster().isNonnull()) return INVALID_VALUE;
+  if(!this->superCluster().isNonnull()) return INVALID_VALUE;
 
   const float energy = this->superCluster()->energy();
 
@@ -368,9 +368,9 @@ osu::Electron::set_passesVID_tightID (const bool flag)
 }
 
 const bool
-osu::Electron::passesVID_tight () const
+osu::Electron::passesVID_tightID () const
 {
-  return passesVID_tight_;
+  return passesVID_tightID_;
 }
 
 const bool
