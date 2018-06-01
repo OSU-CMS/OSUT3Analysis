@@ -444,6 +444,8 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                             outputCommand += dic[p].getProcessName ()
                         else:
                             outputCommand += "*"
+                        if dic[p].getModuleLabel () == 'egmGsfElectronIDs':
+                            outputCommand = "keep *_egmGsfElectronIDs_*_*"
                         outputCommands.append (outputCommand)
 
         ########################################################################
@@ -852,6 +854,8 @@ def customizeMINIAODElectronVID(process, era):
                          'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff']
         for idmod in my_id_modules:
             setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
+        process.egmGsfElectronIDSequence_step = cms.Path(process.egmGsfElectronIDSequence)
+        process.schedule.insert(0, process.egmGsfElectronIDSequence_step)
         return process
     elif era == "Summer16":
         if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0"):
@@ -864,6 +868,8 @@ def customizeMINIAODElectronVID(process, era):
                          'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff']
         for idmod in my_id_modules:
             setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
+        process.egmGsfElectronIDSequence_step = cms.Path(process.egmGsfElectronIDSequence)
+        process.schedule.insert(0, process.egmGsfElectronIDSequence_step)
         return process
     elif era == "Fall17":
         if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4"):
@@ -877,6 +883,8 @@ def customizeMINIAODElectronVID(process, era):
                          'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
         for idmod in my_id_modules:
             setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
+        process.egmGsfElectronIDSequence_step = cms.Path(process.egmGsfElectronIDSequence)
+        process.schedule.insert(0, process.egmGsfElectronIDSequence_step)
         return process
     else:
         print "\nWarning: customizeMINIAODElectronVID should be called for eras Spring15, Summer16, Fall17, or not at all. No VID producers have been added!\n"
