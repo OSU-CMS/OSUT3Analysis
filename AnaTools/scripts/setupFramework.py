@@ -74,5 +74,5 @@ os.utime (os.environ["CMSSW_BASE"] + "/src/OSUT3Analysis/AnaTools/interface/Data
 print "Data format changed to " + arguments.data_format + "."
 print "Do not forget to recompile."
 
-#enable git pre-commit hook
-os.system("cd " + os.environ["CMSSW_BASE"] + "/src/OSUT3Analysis/.git/hooks/; ln -s ../../githooks/pre-commit .")
+#enable git hooks
+os.system("cd " + os.environ["CMSSW_BASE"] + "/src/OSUT3Analysis/.git/hooks/; ln -s ../../githooks/pre-commit .; ln -s ../../githooks/pre-commit.d .; ln -s ../../githooks/post-checkout .; ln -s ../../githooks/post-checkout.d .")

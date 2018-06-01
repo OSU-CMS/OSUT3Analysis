@@ -3,7 +3,7 @@
 # This script should be saved in a git repo as a hook file, e.g. .git/hooks/pre-receive.
 # It looks for scripts in the .git/hooks/pre-receive.d directory and executes them in order,
 # passing along stdin. If any script exits with a non-zero status, this script exits.
-echo "starting pre-commit hooks"
+echo "starting post-checkout hooks"
 
 script_dir=$(dirname $0)
 hook_name=$(basename $0)
