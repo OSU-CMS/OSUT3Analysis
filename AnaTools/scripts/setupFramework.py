@@ -53,7 +53,11 @@ if arguments.custom_define:
         print "Defining custom variable: #define " + definition
         os.system('sed -i "16i #define %s" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % definition)
 
+# redefine the data format in C++
 os.system('sed -i "s/#define DATA_FORMAT .*/#define DATA_FORMAT %s/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/interface/DataFormat.h' % (arguments.data_format))
+
+# redefine the data format in python
+os.system('sed -i "s/dataFormat = .*/dataFormat = \\"%s\\"/g" $CMSSW_BASE/src/OSUT3Analysis/AnaTools/python/osuAnalysis_cfi.py' % (arguments.data_format))
 
 # CMSSW_X_Y_Z
 # Ignore patchN and preN
