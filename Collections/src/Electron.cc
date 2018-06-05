@@ -187,6 +187,12 @@ osu::Electron::missingInnerHitsFromAllHits () const
 }
 
 const int
+osu::Electron::missingInnerHitsFromLostHits () const
+{
+  return (this->gsfTrack ()->hitPattern ().numberOfLostHits (reco::HitPattern::MISSING_INNER_HITS));
+}
+
+const int
 osu::Electron::missingInnerHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS));

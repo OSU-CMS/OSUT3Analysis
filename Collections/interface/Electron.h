@@ -29,6 +29,7 @@ namespace osu
         const bool pass_GsfEleHadronicOverEMEnergyScaledCut (const float c0, const float cE, const float cR) const;
 
         const int missingInnerHitsFromAllHits () const;
+        const int missingInnerHitsFromLostHits () const;
         const int missingInnerHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
