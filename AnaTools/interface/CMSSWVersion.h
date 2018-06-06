@@ -11,7 +11,7 @@
 #define CMSSW_VERSION_CODE 0
 
 #if CMSSW_VERSION_CODE < CMSSW_VERSION(7,0,0)
-  #error "Only CMSSW_7_0_0 and higher are supported. If this is already the case, you must run changeDataFormats.py before compiling."
+  #error "Only CMSSW_7_0_0 and higher are supported. If this is already the case, you must run setupFramework.py before compiling."
 #endif
 
 #endif
