@@ -738,6 +738,14 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
     setattr (process, "endPath", add_channels.endPath)
     set_endPath(process, add_channels.endPath)
 
+    ########################################################################
+    # If MINIAOD is being used, and the egmGsfElectronIDSequence step hasn't
+    # yet been added, add it here.
+    ########################################################################
+    from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat
+    if dataFormat.startswith ("MINI_AOD") and not hasattr (process, "egmGsfElectronIDSequence_step"):
+        process = customizeMINIAODElectronVID(process, collections)
+
 def set_endPath(process, endPath):
 
     ############################################################################
@@ -842,50 +850,51 @@ def set_input(process, input_string):
                 process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string + "/" + fileName))
         return
 
-def customizeMINIAODElectronVID(process, era):
-    if era == "Spring15":
-        if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_7_6"):
-            print "\nWarning: customizeMINIAODElectronVID has been called for era Spring15, but the release is not 76X. No VID producers have been added!\n"
-            return process
-        from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
-        switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
-        my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
-                         'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff',
-                         'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff']
-        for idmod in my_id_modules:
-            setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
-        process.egmGsfElectronIDSequence_step = cms.Path(process.egmGsfElectronIDSequence)
-        process.schedule.insert(0, process.egmGsfElectronIDSequence_step)
+def customizeMINIAODElectronVID(process, collections):
+    if not hasattr (collections, "electrons"):
         return process
-    elif era == "Summer16":
-        if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0"):
-            print "\nWarning: customizeMINIAODElectronVID has been called for era Summer16, but the release is not 80X. No VID producers have been added!\n"
-            return process
-        from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
-        switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
-        my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
-                         'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff',
-                         'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff']
-        for idmod in my_id_modules:
-            setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
-        process.egmGsfElectronIDSequence_step = cms.Path(process.egmGsfElectronIDSequence)
-        process.schedule.insert(0, process.egmGsfElectronIDSequence_step)
-        return process
-    elif era == "Fall17":
-        if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4"):
-            print "\nWarning: customizeMINIAODElectronVID has been called for era Fall17, but the release is not 94X. No VID producers have been added!\n"
-            return process
-        from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
-        switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
-        my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff',
-                         'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff',
-                         'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff',
-                         'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
-        for idmod in my_id_modules:
-            setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
-        process.egmGsfElectronIDSequence_step = cms.Path(process.egmGsfElectronIDSequence)
-        process.schedule.insert(0, process.egmGsfElectronIDSequence_step)
-        return process
-    else:
-        print "\nWarning: customizeMINIAODElectronVID should be called for eras Spring15, Summer16, Fall17, or not at all. No VID producers have been added!\n"
-        return process
+
+    from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
+    switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
+
+    # in the case of a skim, the input tag needs to be changed to that stored in the skim
+    process.egmGsfElectronIDs.physicsObjectSrc = collections.electrons
+
+    my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
+                     'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff',
+                     'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff']
+
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
+        my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
+                              'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff'])
+
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
+        my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff',
+                              'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff',
+                              'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff'])
+
+        # N.B.: to add RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff, egmGsfElectronIDs.physicsObjectSrc
+        #       must be 'slimmedElectrons' or it thinks this is AOD. So if HEEPV70 is needed, egmGsfElectronIDs.physicsObjectSrc must
+        #       be changed in some other way.
+
+    for idmod in my_id_modules:
+        setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
+    process.egmGsfElectronIDSequence_step = cms.Path(process.egmGsfElectronIDSequence)
+    process.schedule.insert(0, process.egmGsfElectronIDSequence_step)
+
+    process.electronMVAValueMapProducer.srcMiniAOD = collections.electrons
+    process.electronRegressionValueMapProducer.srcMiniAOD = collections.electrons
+    #process.heepIDVarValueMaps.elesMiniAOD = collections.electrons
+
+    return process
+
+# e.g. removeVIDCut(process, 'cutBasedElectronID-Fall17-94X-V1-tight', 'GsfEleEffAreaPFIsoCut')
+def removeVIDCut(process, idName, cutToRemove):
+    if not hasattr (process, "egmGsfElectronIDs"):
+        return
+    for poid in process.egmGsfElectronIDs.physicsObjectIDs:
+        if not poid.idDefinition.idName == idName:
+            continue
+        for cut in poid.idDefinition.cutFlow:
+            if cut.cutName == cutToRemove:
+                cut.isIgnored = cms.bool(True)

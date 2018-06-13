@@ -29,6 +29,7 @@ namespace osu
         const bool pass_GsfEleHadronicOverEMEnergyScaledCut (const float c0, const float cE, const float cR) const;
 
         const int missingInnerHitsFromAllHits () const;
+        const int missingInnerHitsFromLostHits () const;
         const int missingInnerHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
@@ -50,7 +51,7 @@ namespace osu
         void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };
         void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
         void set_electronPVIndex (int value) { electronPVIndex_  = value; };
-	void set_genD0 (double value) { genD0_  = value; };
+        void set_genD0 (double value) { genD0_  = value; };
         void set_passesTightID_noIsolation (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
         void set_passesVID_vetoID (const bool);
         void set_passesVID_looseID (const bool);
