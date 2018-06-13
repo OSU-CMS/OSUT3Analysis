@@ -445,7 +445,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                         else:
                             outputCommand += "*"
                         if dic[p].getModuleLabel () == 'egmGsfElectronIDs':
-                            outputCommand = "keep *_egmGsfElectronIDs_*_*"
+                            outputCommand = "drop *_egmGsfElectronIDs_*_*"
                         outputCommands.append (outputCommand)
 
         ########################################################################
