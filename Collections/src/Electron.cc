@@ -187,6 +187,12 @@ osu::Electron::missingInnerHitsFromAllHits () const
 }
 
 const int
+osu::Electron::missingInnerHitsFromLostHits () const
+{
+  return (this->gsfTrack ()->hitPattern ().numberOfLostHits (reco::HitPattern::MISSING_INNER_HITS));
+}
+
+const int
 osu::Electron::missingInnerHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_INNER_HITS));
@@ -283,7 +289,7 @@ osu::Electron::set_passesTightID_noIsolation (const reco::BeamSpot &beamspot, co
                                     fabs (1.0 / this->ecalEnergy () - this->eSuperClusterOverP () / this->ecalEnergy ())     <   0.0278  &&
                                     fabs (this->gsfTrack ()->dxy (vertex.position ()))                                       <   0.05    &&
                                     fabs (this->gsfTrack ()->dz (vertex.position ()))                                        <   0.10    &&
-                                    this->gsfTrack ()->hitPattern ().numberOfLostHits (reco::HitPattern::MISSING_INNER_HITS)  <=  1       &&
+                                    this->gsfTrack ()->hitPattern ().numberOfLostHits (reco::HitPattern::MISSING_INNER_HITS) <=  1       &&
                                     !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
   }
   else if (fabs (this->superCluster ()->eta ()) < 2.5) {
@@ -294,7 +300,7 @@ osu::Electron::set_passesTightID_noIsolation (const reco::BeamSpot &beamspot, co
                                     fabs (1.0 / this->ecalEnergy () - this->eSuperClusterOverP () / this->ecalEnergy ())     <   0.0158  &&
                                     fabs (this->gsfTrack ()->dxy (vertex.position ()))                                       <   0.10    &&
                                     fabs (this->gsfTrack ()->dz (vertex.position ()))                                        <   0.20    &&
-                                    this->gsfTrack ()->hitPattern ().numberOfLostHits (reco::HitPattern::MISSING_INNER_HITS)  <=  1       &&
+                                    this->gsfTrack ()->hitPattern ().numberOfLostHits (reco::HitPattern::MISSING_INNER_HITS) <=  1       &&
                                     !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
     }
 
@@ -308,7 +314,7 @@ osu::Electron::set_passesTightID_noIsolation (const reco::BeamSpot &beamspot, co
                                     fabs (1.0 / this->ecalEnergy () - this->eSuperClusterOverP () / this->ecalEnergy ())  <   0.012   &&
                                     fabs (this->gsfTrack ()->dxy (vertex.position ()))                                    <   0.0111  &&
                                     fabs (this->gsfTrack ()->dz (vertex.position ()))                                     <   0.0466  &&
-                                    this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS)  <=  2
+                                    this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS)  <=  2       &&
                                     !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
   }
   else if (fabs (this->superCluster ()->eta ()) < 2.5) {
