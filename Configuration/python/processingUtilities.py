@@ -445,7 +445,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                         else:
                             outputCommand += "*"
                         if dic[p].getModuleLabel () == 'egmGsfElectronIDs':
-                            outputCommand = "keep *_egmGsfElectronIDs_*_*"
+                            outputCommand = "drop *_egmGsfElectronIDs_*_*"
                         outputCommands.append (outputCommand)
 
         ########################################################################
@@ -744,7 +744,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
     ########################################################################
     from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat
     if dataFormat.startswith ("MINI_AOD") and not hasattr (process, "egmGsfElectronIDSequence_step"):
-        process = customizeMINIAODElectronVID(process)
+        process = customizeMINIAODElectronVID(process, collections)
 
 def set_endPath(process, endPath):
 
@@ -850,9 +850,16 @@ def set_input(process, input_string):
                 process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string + "/" + fileName))
         return
 
-def customizeMINIAODElectronVID(process):
+def customizeMINIAODElectronVID(process, collections):
+    if not hasattr (collections, "electrons"):
+        return process
+
     from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
     switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
+
+    # in the case of a skim, the input tag needs to be changed to that stored in the skim
+    process.egmGsfElectronIDs.physicsObjectSrc = collections.electrons
+
     my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
                      'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff',
                      'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff']
@@ -864,13 +871,21 @@ def customizeMINIAODElectronVID(process):
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
         my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff',
                               'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff',
-                              'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff',
-                              'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff'])
-        
+                              'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff'])
+
+        # N.B.: to add RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff, egmGsfElectronIDs.physicsObjectSrc
+        #       must be 'slimmedElectrons' or it thinks this is AOD. So if HEEPV70 is needed, egmGsfElectronIDs.physicsObjectSrc must
+        #       be changed in some other way.
+
     for idmod in my_id_modules:
         setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
     process.egmGsfElectronIDSequence_step = cms.Path(process.egmGsfElectronIDSequence)
     process.schedule.insert(0, process.egmGsfElectronIDSequence_step)
+
+    process.electronMVAValueMapProducer.srcMiniAOD = collections.electrons
+    process.electronRegressionValueMapProducer.srcMiniAOD = collections.electrons
+    #process.heepIDVarValueMaps.elesMiniAOD = collections.electrons
+
     return process
 
 # e.g. removeVIDCut(process, 'cutBasedElectronID-Fall17-94X-V1-tight', 'GsfEleEffAreaPFIsoCut')

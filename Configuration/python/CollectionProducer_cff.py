@@ -66,8 +66,15 @@ collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     # the following tag is not used by the OSUElectronProducer, but is needed
     # so that the reco::GsfElectronCore collection is saved in skims, which is
     # needed because the pat::Electron collection references it
-    gsfElectronCore  =  cms.InputTag  ("reducedEgamma",                  "reducedGedGsfElectronCores",  ""),
-    gsfTrack         =  cms.InputTag  ("reducedEgamma",                  "reducedGsfTracks",            ""),
+    gsfElectronCore  =  cms.InputTag  ("reducedEgamma", "reducedGedGsfElectronCores",  ""),
+    gsfTrack         =  cms.InputTag  ("reducedEgamma", "reducedGsfTracks",            ""),
+
+    # similarly as above these tags are required in skims as they are referenced   
+    # in using the superCluster's seed for the dEtaInSeed cut
+    EBEEClusters    = cms.InputTag ("reducedEgamma", "reducedEBEEClusters",    ""),
+    ESClusters      = cms.InputTag ("reducedEgamma", "reducedESClusters",      ""),
+    ootEBEEClusters = cms.InputTag ("reducedEgamma", "reducedOOTEBEEClusters", ""),
+    ootESClusters   = cms.InputTag ("reducedEgamma", "reducedOOTESClusters",   ""),
 )
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0"):

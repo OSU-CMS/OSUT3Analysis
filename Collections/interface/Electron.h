@@ -51,7 +51,7 @@ namespace osu
         void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };
         void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
         void set_electronPVIndex (int value) { electronPVIndex_  = value; };
-	void set_genD0 (double value) { genD0_  = value; };
+        void set_genD0 (double value) { genD0_  = value; };
         void set_passesTightID_noIsolation (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
         void set_passesVID_vetoID (const bool);
         void set_passesVID_looseID (const bool);
