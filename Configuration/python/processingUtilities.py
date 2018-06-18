@@ -714,12 +714,28 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         if cutCollections:
             SelectEvents = cms.vstring (channelName)
         skimFilePrefix = "skim"
+
+        from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat
+        if dataFormat.startswith ("MINI_AOD"):
+            from Configuration.EventContent.EventContent_cff import MINIAODSIMEventContent
+            for outputCommand in MINIAODSIMEventContent.outputCommands:
+                # Don't add extra drop commands, we already have one at the beginning
+                if outputCommand != 'drop *':
+                    outputCommands.append(outputCommand)
+        elif dataFormat.startswith ("AOD"):
+            from Configuration.EventContent.EventContent_cff import AODSIMEventContent
+            for outputCommand in AODSIMEventContent.outputCommands:
+                # Don't add extra drop commands, we already have one at the beginning
+                if outputCommand != 'drop *':
+                    outputCommands.append(outputCommand)
+
         # if running over a full skim, do not recreate a full skim for passing
         # events, but rather create an empty skim (no event content, just
         # metadata)
         if makeEmptySkim:
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
+
         poolOutputModule = cms.OutputModule ("PoolOutputModule",
             overrideInputFileSplitLevels = cms.untracked.bool (True),
             splitLevel = cms.untracked.int32 (0),
@@ -742,7 +758,7 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
     # If MINIAOD is being used, and the egmGsfElectronIDSequence step hasn't
     # yet been added, add it here.
     ########################################################################
-    from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat
+#    from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat
     if dataFormat.startswith ("MINI_AOD") and not hasattr (process, "egmGsfElectronIDSequence_step"):
         process = customizeMINIAODElectronVID(process, collections)
 
