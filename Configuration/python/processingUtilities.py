@@ -764,7 +764,6 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
     # If MINIAOD is being used, and the egmGsfElectronIDSequence step hasn't
     # yet been added, add it here.
     ########################################################################
-#    from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat
     if dataFormat.startswith ("MINI_AOD") and not hasattr (process, "egmGsfElectronIDSequence_step"):
         process = customizeMINIAODElectronVID(process, collections)
 
