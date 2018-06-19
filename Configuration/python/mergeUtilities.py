@@ -218,14 +218,15 @@ def GetSkimInputTags(File):
             inputTags.pop (cppTypes[i])
         else:
             # There may be multiple instances of the same cpp type, for example we now store both the skimmed/selected framework objects
-	        # and the original (mini)AOD collections for a full skim. Another example is that slimmedJetsAK8PFPuppiSoftDropPacked and 
-	        # slimmedJets exist in miniAOD and are of type pat::Jet.
-	        # There is a clear hierarchy of what to use as in input: OSUAnalysis types > (mini)AOD types used in CollectionProducer_cff > (mini)AOD types > anything
-	        availableTags = inputTags.pop (cppTypes[i])
+            # and the original (mini)AOD collections for a full skim. Another example is that slimmedJetsAK8PFPuppiSoftDropPacked and 
+            # slimmedJets exist in miniAOD and are of type pat::Jet.
+            # There is a clear hierarchy of what to use as in input: OSUAnalysis types > (mini)AOD types used in CollectionProducer_cff > (mini)AOD types > anything
+            availableTags = inputTags.pop (cppTypes[i])
 
-	        # If there's nothing of this type available, we're in trouble
-	        if len(availableTags) == 0:
+            # If there's nothing of this type available, we're in trouble
+            if len(availableTags) == 0:
                 print "The collection \"" + collectionType + "\" has C++ class \"" + cppTypes[i]  + "\" and is expected in this skim file, yet no object of this C++ class is found. Something has broken, and no SkimInputTags.pkl can be created!"
+                return
 
             # If there's only one of this type available, take it
             if len(availableTags) == 1:
@@ -235,31 +236,31 @@ def GetSkimInputTags(File):
             # If there's something with process name OSUAnalysis, take that
             foundPreferredTag = False
             for tag in availableTags:
-            if "OSUAnalysis" in tag.getProcessName ():
-                inputTags[collectionType] = tag
-                foundPreferredTag = True
-                break
-	       if foundPreferredTag:
-               continue
+                if "OSUAnalysis" in tag.getProcessName ():
+                    inputTags[collectionType] = tag
+                    foundPreferredTag = True
+                    break
+            if foundPreferredTag:
+                continue
     
-	       # If there's no OSUAnalysis type available, take what's in osuAnalysis_cfi's collection map
-	       for tag in availableTags:
-               if hasattr (collectionMap, collectionType):
-                   if getattr (collectionMap, collectionType).getModuleLabel () == tag.getModuleLabel ():
-                       productInstanceLabel = getattr (collectionMap, collectionType).getProductInstanceLabel ()
-                       processName = getattr (collectionMap, collectionType).getProcessName ()
-                       if productInstanceLabel != '' and productInstanceLabel != tag.getProductInstanceLabel ():
-                           continue
-                       if processName != '' and processName != tag.getProcessName ():
-                           continue
-                       inputTags[collectionType] = tag
-                       foundPreferredTag = True
-                       break
-	       if foundPreferredTag:
-               continue
+            # If there's no OSUAnalysis type available, take what's in osuAnalysis_cfi's collection map
+            for tag in availableTags:
+                if hasattr (collectionMap, collectionType):
+                    if getattr (collectionMap, collectionType).getModuleLabel () == tag.getModuleLabel ():
+                        productInstanceLabel = getattr (collectionMap, collectionType).getProductInstanceLabel ()
+                        processName = getattr (collectionMap, collectionType).getProcessName ()
+                        if productInstanceLabel != '' and productInstanceLabel != tag.getProductInstanceLabel ():
+                            continue
+                        if processName != '' and processName != tag.getProcessName ():
+                            continue
+                        inputTags[collectionType] = tag
+                        foundPreferredTag = True
+                        break
+            if foundPreferredTag:
+                continue
     
-	       # If we still don't have anything, take whatever is available for this class
-	       inputTags[collectionType] = availableTags[0]
+            # If we still don't have anything, take whatever is available for this class
+            inputTags[collectionType] = availableTags[0]
 
     if os.path.exists("SkimInputTags.pkl"):
         os.remove("SkimInputTags.pkl")
