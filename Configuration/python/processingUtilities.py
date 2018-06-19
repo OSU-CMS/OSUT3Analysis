@@ -722,6 +722,12 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
                 # Don't add extra drop commands, we already have one at the beginning
                 if outputCommand != 'drop *':
                     outputCommands.append(outputCommand)
+            # Grody hack to keep extra collections in DisappTrks signal MC
+            try:
+                from DisappTrks.CandidateTrackProducer.customize import disappTrksOutputCommands
+                outputCommands.extend(disappTrksOutputCommands)
+            except ImportError:
+                pass
         elif dataFormat.startswith ("AOD"):
             from Configuration.EventContent.EventContent_cff import AODSIMEventContent
             for outputCommand in AODSIMEventContent.outputCommands:
