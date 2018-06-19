@@ -175,7 +175,7 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
 ###############################################################################
 #           Produce a pickle file containing the skim input tags.             #
 ###############################################################################
-def GetSkimInputTags(File):
+def GetSkimInputTags(File, ignoreSkimmedCollections=False):
     print "Getting skim input tags..."
     eventContent = subprocess.check_output (["edmDumpEventContent", "--all", os.getcwd () + "/" + File])
     parsing = False
@@ -232,16 +232,17 @@ def GetSkimInputTags(File):
             if len(availableTags) == 1:
                 inputTags[collectionType] = availableTags[0]
                 continue
-    
-            # If there's something with process name OSUAnalysis, take that
-            foundPreferredTag = False
-            for tag in availableTags:
-                if "OSUAnalysis" in tag.getProcessName ():
-                    inputTags[collectionType] = tag
-                    foundPreferredTag = True
-                    break
-            if foundPreferredTag:
-                continue
+
+            if not ignoreSkimmedCollections:    
+                # If there's something with process name OSUAnalysis, take that
+                foundPreferredTag = False
+                for tag in availableTags:
+                    if "OSUAnalysis" in tag.getProcessName ():
+                        inputTags[collectionType] = tag
+                        foundPreferredTag = True
+                        break
+                if foundPreferredTag:
+                    continue
     
             # If there's no OSUAnalysis type available, take what's in osuAnalysis_cfi's collection map
             for tag in availableTags:
