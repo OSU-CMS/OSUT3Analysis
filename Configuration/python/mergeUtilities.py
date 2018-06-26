@@ -175,7 +175,7 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
 ###############################################################################
 #           Produce a pickle file containing the skim input tags.             #
 ###############################################################################
-def GetSkimInputTags(File, ignoreSkimmedCollections=False):
+def GetSkimInputTags(File):
     print "Getting skim input tags..."
     eventContent = subprocess.check_output (["edmDumpEventContent", "--all", os.getcwd () + "/" + File])
     parsing = False
@@ -191,25 +191,11 @@ def GetSkimInputTags(File, ignoreSkimmedCollections=False):
             continue
         splitLine = line.split ()
         cppTypes.append (splitLine[0])
-        if splitLine[0] in inputTags:
-            inputTags[splitLine[0]].append ( cms.InputTag (splitLine[1][1:-1], splitLine[2][1:-1], splitLine[3][1:-1]) )
-        else:
-            inputTags[splitLine[0]] = [ cms.InputTag (splitLine[1][1:-1], splitLine[2][1:-1], splitLine[3][1:-1]) ]
-
-    # Figure out which collection map we're using to determine priority in input tag determination
-    from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat, collectionMap, collectionMapMiniAOD2017, collectionMapAOD
-    if dataFormat.startswith ("MINI_AOD") and "2017" not in dataFormat:
-        collectionMap = collectionMap
-    elif dataFormat.startswith ("MINI_AOD_2017"):
-        collectionMap = collectionMapMiniAOD2017
-    elif dataFormat.startswith ("AOD"):
-        collectionmap = collectionMapAOD
-    else:
-        print "Unknown data type, use either AOD or MINI_AOD! Cannot create SkimInputTags.pkl!"
-	return
+        inputTags[splitLine[0]] = cms.InputTag (splitLine[1][1:-1], splitLine[2][1:-1], splitLine[3][1:-1])
 
     collectionTypes = subprocess.check_output (["getCollectionType"] + cppTypes)
-    # Save only the collections for which there is a valid type.
+    # Save only the collections for which there is a valid type, and only framework collections
+    # Future jobs on this skim will use the user's collectionMap collections, overwritten only for framework collections
     for i in range (0, len (cppTypes)):
         if cppTypes[i] not in inputTags:
             continue
@@ -217,51 +203,9 @@ def GetSkimInputTags(File, ignoreSkimmedCollections=False):
         if collectionType == "INVALID_TYPE":
             inputTags.pop (cppTypes[i])
         else:
-            # There may be multiple instances of the same cpp type, for example we now store both the skimmed/selected framework objects
-            # and the original (mini)AOD collections for a full skim. Another example is that slimmedJetsAK8PFPuppiSoftDropPacked and 
-            # slimmedJets exist in miniAOD and are of type pat::Jet.
-            # There is a clear hierarchy of what to use as in input: OSUAnalysis types > (mini)AOD types used in CollectionProducer_cff > (mini)AOD types > anything
-            availableTags = inputTags.pop (cppTypes[i])
-
-            # If there's nothing of this type available, we're in trouble
-            if len(availableTags) == 0:
-                print "The collection \"" + collectionType + "\" has C++ class \"" + cppTypes[i]  + "\" and is expected in this skim file, yet no object of this C++ class is found. Something has broken, and no SkimInputTags.pkl can be created!"
-                return
-
-            # If there's only one of this type available, take it
-            if len(availableTags) == 1:
-                inputTags[collectionType] = availableTags[0]
-                continue
-
-            if not ignoreSkimmedCollections:    
-                # If there's something with process name OSUAnalysis, take that
-                foundPreferredTag = False
-                for tag in availableTags:
-                    if "OSUAnalysis" in tag.getProcessName ():
-                        inputTags[collectionType] = tag
-                        foundPreferredTag = True
-                        break
-                if foundPreferredTag:
-                    continue
-    
-            # If there's no OSUAnalysis type available, take what's in osuAnalysis_cfi's collection map
-            for tag in availableTags:
-                if hasattr (collectionMap, collectionType):
-                    if getattr (collectionMap, collectionType).getModuleLabel () == tag.getModuleLabel ():
-                        productInstanceLabel = getattr (collectionMap, collectionType).getProductInstanceLabel ()
-                        processName = getattr (collectionMap, collectionType).getProcessName ()
-                        if productInstanceLabel != '' and productInstanceLabel != tag.getProductInstanceLabel ():
-                            continue
-                        if processName != '' and processName != tag.getProcessName ():
-                            continue
-                        inputTags[collectionType] = tag
-                        foundPreferredTag = True
-                        break
-            if foundPreferredTag:
-                continue
-    
-            # If we still don't have anything, take whatever is available for this class
-            inputTags[collectionType] = availableTags[0]
+            thisTag = inputTags.pop (cppTypes[i])
+            if "OSUAnalysis" in thisTag.getProcessName ():
+                inputTags[collectionType] = thisTag
 
     if os.path.exists("SkimInputTags.pkl"):
         os.remove("SkimInputTags.pkl")
