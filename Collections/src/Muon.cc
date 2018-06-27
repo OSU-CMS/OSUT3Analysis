@@ -25,6 +25,8 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
   metNoMuMinusOnePhi_      (INVALID_VALUE),
+  
+  match_HLT_IsoMu27_v_     (false),
   match_HLT_IsoMu24_v_     (false),
   match_HLT_IsoTkMu24_v_   (false),
   match_HLT_IsoMu20_v_     (false),
@@ -48,6 +50,8 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
   metNoMuMinusOnePhi_      (INVALID_VALUE),
+ 
+  match_HLT_IsoMu27_v_     (false),
   match_HLT_IsoMu24_v_     (false),
   match_HLT_IsoTkMu24_v_   (false),
   match_HLT_IsoMu20_v_     (false),
@@ -71,6 +75,7 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
   metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu27_v_     (false),
   match_HLT_IsoMu24_v_     (false),
   match_HLT_IsoTkMu24_v_   (false),
   match_HLT_IsoMu20_v_     (false),
@@ -94,6 +99,7 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
   metNoMuMinusOnePhi_      (INVALID_VALUE),
+  match_HLT_IsoMu27_v_     (false),
   match_HLT_IsoMu24_v_     (false),
   match_HLT_IsoTkMu24_v_   (false),
   match_HLT_IsoMu20_v_     (false),
@@ -148,6 +154,12 @@ const double
 osu::Muon::genD0 () const
 {
   return genD0_;
+}
+
+void
+osu::Muon::set_match_HLT_IsoMu27_v (const bool flag)
+{
+  match_HLT_IsoMu27_v_ = flag;
 }
 
 void
@@ -238,6 +250,12 @@ const double
 osu::Muon::metNoMuMinusOnePhi () const
 {
   return metNoMuMinusOnePhi_;
+}
+
+const bool
+osu::Muon::match_HLT_IsoMu27_v () const
+{
+  return match_HLT_IsoMu27_v_;
 }
 
 const bool
