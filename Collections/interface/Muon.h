@@ -32,6 +32,7 @@ namespace osu
         void set_muonPVIndex (int value) { muonPVIndex_  = value; };
 	void set_genD0 (double value) { genD0_  = value; };
 
+	void set_match_HLT_IsoMu27_v (const bool);
         void set_match_HLT_IsoMu24_v (const bool);
         void set_match_HLT_IsoTkMu24_v (const bool);
         void set_match_HLT_IsoMu20_v (const bool);
@@ -51,6 +52,7 @@ namespace osu
         const double metNoMuMinusOnePy () const;
         const double metNoMuMinusOnePhi () const;
 
+        const bool match_HLT_IsoMu27_v () const;
         const bool match_HLT_IsoMu24_v () const;
         const bool match_HLT_IsoTkMu24_v () const;
         const bool match_HLT_IsoMu20_v () const;
@@ -74,6 +76,7 @@ namespace osu
         double metNoMuMinusOnePy_;
         double metNoMuMinusOnePhi_;
 
+        bool match_HLT_IsoMu27_v_;
         bool match_HLT_IsoMu24_v_;
         bool match_HLT_IsoTkMu24_v_;
         bool match_HLT_IsoMu20_v_;
