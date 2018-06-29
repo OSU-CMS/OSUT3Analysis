@@ -176,11 +176,12 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
 #           Produce a pickle file containing the skim input tags.             #
 ###############################################################################
 def GetSkimInputTags(File):
-    print "in GetSkimInputTags"
+    print "Getting skim input tags..."
     eventContent = subprocess.check_output (["edmDumpEventContent", "--all", os.getcwd () + "/" + File])
     parsing = False
     cppTypes = []
     inputTags = {}
+
     # First get all of the collections in the output skim file.
     for line in eventContent.splitlines ():
         if line.find ("----------") == 0:  # all of the collections will be after a line containing "---------"
@@ -193,7 +194,8 @@ def GetSkimInputTags(File):
         inputTags[splitLine[0]] = cms.InputTag (splitLine[1][1:-1], splitLine[2][1:-1], splitLine[3][1:-1])
 
     collectionTypes = subprocess.check_output (["getCollectionType"] + cppTypes)
-    # Save only the collections for which there is a valid type.
+    # Save only the collections for which there is a valid type, and only framework collections
+    # Future jobs on this skim will use the user's collectionMap collections, overwritten only for framework collections
     for i in range (0, len (cppTypes)):
         if cppTypes[i] not in inputTags:
             continue
@@ -201,7 +203,9 @@ def GetSkimInputTags(File):
         if collectionType == "INVALID_TYPE":
             inputTags.pop (cppTypes[i])
         else:
-            inputTags[collectionType] = inputTags.pop (cppTypes[i])
+            thisTag = inputTags.pop (cppTypes[i])
+            if "OSUAnalysis" in thisTag.getProcessName ():
+                inputTags[collectionType] = thisTag
 
     if os.path.exists("SkimInputTags.pkl"):
         os.remove("SkimInputTags.pkl")

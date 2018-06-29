@@ -188,7 +188,16 @@ def get_collections (cuts):
     ############################################################################
 
 #def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True, branchSets):
-def add_channels (process, channels, histogramSets = None, weights = None, scalingfactorproducers = None, collections = None, variableProducers = None, skim = None, branchSets = None):
+def add_channels (process, 
+                  channels, 
+                  histogramSets = None, 
+                  weights = None, 
+                  scalingfactorproducers = None, 
+                  collections = None, 
+                  variableProducers = None, 
+                  skim = None, 
+                  branchSets = None,
+                  ignoreSkimmedCollections = False):
     if skim is not None:
         print "# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated."
         print "# Please remove from your config files."
@@ -241,18 +250,21 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
     if fileName.find ("file:") == 0:
         fileName = fileName[5:]
     skimDirectory = os.path.dirname (os.path.realpath (fileName))
-    if os.path.isfile (skimDirectory + "/SkimInputTags.pkl"):
-        fin = open (skimDirectory + "/SkimInputTags.pkl")
-        inputTags = pickle.load (fin)
-        fin.close ()
-        for tag in inputTags:
-            setattr (collections, tag, inputTags[tag])
+    if not ignoreSkimmedCollections:
+        if os.path.isfile (skimDirectory + "/SkimInputTags.pkl"):
+            fin = open (skimDirectory + "/SkimInputTags.pkl")
+            inputTags = pickle.load (fin)
+            fin.close ()
+            for tag in inputTags:
+                setattr (collections, tag, inputTags[tag])
+        else:
+            if rootFile.find("skim_") == 0:
+                print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found."
+                print "Input file is", fileName
+                print "Be sure that you have run mergeOut.py."
+                sys.exit(1)
     else:
-        if rootFile.find("skim_") == 0:
-            print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found."
-            print "Input file is", fileName
-            print "Be sure that you have run mergeOut.py."
-            sys.exit(1)
+        print "INFO: user has set ignoreSkimmedCollections, meaning that the original data collections will be used instead of skimmed framework collections."
 
     ############################################################################
 
@@ -714,12 +726,32 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
         if cutCollections:
             SelectEvents = cms.vstring (channelName)
         skimFilePrefix = "skim"
+
+        from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat
+        if dataFormat.startswith ("MINI_AOD"):
+            from Configuration.EventContent.EventContent_cff import MINIAODSIMEventContent
+            for outputCommand in MINIAODSIMEventContent.outputCommands:
+                # Don't add extra drop commands, we already have one at the beginning
+                if outputCommand != 'drop *':
+                    outputCommands.append(outputCommand)
+        elif dataFormat.startswith ("AOD"):
+            from Configuration.EventContent.EventContent_cff import AODSIMEventContent
+            for outputCommand in AODSIMEventContent.outputCommands:
+                # Don't add extra drop commands, we already have one at the beginning
+                if outputCommand != 'drop *':
+                    outputCommands.append(outputCommand)
+
+        if not hasattr (add_channels, "customOutputCommands"):
+            add_channels.customOutputCommands = []
+        outputCommands.extend (add_channels.customOutputCommands)
+
         # if running over a full skim, do not recreate a full skim for passing
         # events, but rather create an empty skim (no event content, just
         # metadata)
         if makeEmptySkim:
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
+
         poolOutputModule = cms.OutputModule ("PoolOutputModule",
             overrideInputFileSplitLevels = cms.untracked.bool (True),
             splitLevel = cms.untracked.int32 (0),
@@ -742,7 +774,6 @@ def add_channels (process, channels, histogramSets = None, weights = None, scali
     # If MINIAOD is being used, and the egmGsfElectronIDSequence step hasn't
     # yet been added, add it here.
     ########################################################################
-    from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat
     if dataFormat.startswith ("MINI_AOD") and not hasattr (process, "egmGsfElectronIDSequence_step"):
         process = customizeMINIAODElectronVID(process, collections)
 
