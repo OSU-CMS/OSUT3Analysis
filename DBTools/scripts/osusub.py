@@ -742,6 +742,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                     f = "root://cmsxrootd.fnal.gov/" + f
                 text += '"' + f + '",\n'
             text += ']\n'
+        text += 'listOfSecondaryFiles = []\n'
         text += 'crossSection = ' + str(crossSection) + '\n'
         fnew = open(datasetInfoName, "w")
         fnew.write(text)
@@ -781,6 +782,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                     f = "root://cmsxrootd.fnal.gov/" + f
                 text += '"' + f + '",\n'
             text += ']\n'
+        text += 'listOfSecondaryFiles = []\n'
         text += 'crossSection = ' + str(crossSection) + '\n'
         fnew = open(datasetInfoName, "w")
         fnew.write(text)
