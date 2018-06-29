@@ -734,24 +734,16 @@ def add_channels (process,
                 # Don't add extra drop commands, we already have one at the beginning
                 if outputCommand != 'drop *':
                     outputCommands.append(outputCommand)
-            # Grody hack to keep extra collections for specific analyses
-            try:
-                from DisappTrks.CandidateTrackProducer.customize import disappTrksOutputCommands
-                outputCommands.extend(disappTrksOutputCommands)
-            except ImportError:
-                pass
-            try:
-                from StoppPtls.Collection.outputCommands import delayedMuonsOutputCommands, stoppedParticlesJetsOutputCommands
-                outputCommands.extend(delayedMuonsOutputCommands)
-                outputCommands.extend(stoppedParticlesJetsOutputCommands)
-            except ImportError:
-                pass
         elif dataFormat.startswith ("AOD"):
             from Configuration.EventContent.EventContent_cff import AODSIMEventContent
             for outputCommand in AODSIMEventContent.outputCommands:
                 # Don't add extra drop commands, we already have one at the beginning
                 if outputCommand != 'drop *':
                     outputCommands.append(outputCommand)
+
+        if not hasattr (add_channels, "customOutputCommands"):
+            add_channels.customOutputCommands = []
+        outputCommands.extend (add_channels.customOutputCommands)
 
         # if running over a full skim, do not recreate a full skim for passing
         # events, but rather create an empty skim (no event content, just
