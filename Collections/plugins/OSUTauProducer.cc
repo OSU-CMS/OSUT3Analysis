@@ -46,7 +46,7 @@ OSUTauProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       if(trigobjs.isValid()) {
         tau.set_match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltSelectedPFTausTrackPt30AbsOrRelIsolation::HLT", "hltPFTau50TrackPt30LooseAbsOrRelIso"));
-        tau.set_match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltSelectedPFTausTrackPt30MediumAbsOrRelIsolation1Prong::HLT", "hltSelectedPFTau50MediumChargedIsolationL1HLTMatchedQuadIsoTau"));
+        tau.set_match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltSelectedPFTausTrackPt30MediumAbsOrRelIsolation1Prong::HLT", "hltPFTau50TrackPt30MediumAbsOrRelIso1Prong"));
       }
     }
 
