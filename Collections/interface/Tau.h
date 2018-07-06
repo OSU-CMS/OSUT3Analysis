@@ -24,6 +24,8 @@ namespace osu
         const bool passesMediumCombinedIsolation () const;
         const bool passesTightCombinedIsolation () const;
 
+        const bool passesTightMVAIsolation () const;
+
         const double metMinusOnePt () const;
         const double metMinusOnePx () const;
         const double metMinusOnePy () const;
@@ -45,8 +47,10 @@ namespace osu
         const double metNoMuMinusOneUpPhi () const;
 
         const bool match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v () const;
+        const bool match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v () const;
 
         void set_match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v (const bool);
+        void set_match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v (const bool);
 
       private:
 
@@ -71,6 +75,7 @@ namespace osu
         double metNoMuMinusOneUpPhi_;
 
         bool match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v_;
+        bool match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v_;
     };
 }
 
