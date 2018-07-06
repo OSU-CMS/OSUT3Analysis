@@ -323,18 +323,18 @@ osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons
     if(dR < deltaRToClosestElectron_ || deltaRToClosestElectron_ < 0.0) deltaRToClosestElectron_ = dR;
     if((*vidVetoMap)  [(*electrons).refAt(iEle)] && (dR < deltaRToClosestVetoElectron_   || deltaRToClosestVetoElectron_   < 0.0)) deltaRToClosestVetoElectron_   = dR;
     if((*vidLooseMap) [(*electrons).refAt(iEle)] && (dR < deltaRToClosestLooseElectron_  || deltaRToClosestLooseElectron_  < 0.0)) deltaRToClosestLooseElectron_  = dR;
-    if((*vidMediumMap)[(*electrons).refAt(iEle)] && (dR < deltaRToClosestMediumElectron_ || deltaRToClosestMediumElectron_ < 0.0)) deltaRToClosestTightElectron_  = dR;
-    if((*vidTightMap) [(*electrons).refAt(iEle)] && (dR < deltaRToClosestTightElectron_  || deltaRToClosestTightElectron_  < 0.0)) deltaRToClosestMediumElectron_ = dR;
+    if((*vidMediumMap)[(*electrons).refAt(iEle)] && (dR < deltaRToClosestMediumElectron_ || deltaRToClosestMediumElectron_ < 0.0)) deltaRToClosestMediumElectron_ = dR;
+    if((*vidTightMap) [(*electrons).refAt(iEle)] && (dR < deltaRToClosestTightElectron_  || deltaRToClosestTightElectron_  < 0.0)) deltaRToClosestTightElectron_  = dR;
   }
 }
 
 void 
 osu::Track::set_minDeltaRToMuons(const edm::Handle<vector<TYPE(muons)> > &muons, const edm::Handle<vector<TYPE(primaryvertexs)> > &vertices) 
 {
-  deltaRToClosestMuon_           = INVALID_VALUE;
-  deltaRToClosestLooseMuon_      = INVALID_VALUE;
-  deltaRToClosestMediumElectron_ = INVALID_VALUE;
-  deltaRToClosestTightMuon_      = INVALID_VALUE;
+  deltaRToClosestMuon_       = INVALID_VALUE;
+  deltaRToClosestLooseMuon_  = INVALID_VALUE;
+  deltaRToClosestMediumMuon_ = INVALID_VALUE;
+  deltaRToClosestTightMuon_  = INVALID_VALUE;
 
   double dR;
   bool hasPV = (vertices.isValid() && !vertices->empty());
@@ -343,8 +343,8 @@ osu::Track::set_minDeltaRToMuons(const edm::Handle<vector<TYPE(muons)> > &muons,
     dR = deltaR(*this, muon);
 
     if(dR < deltaRToClosestMuon_ || deltaRToClosestMuon_ < 0.0) deltaRToClosestMuon_ = dR;
-    if(muon.isLooseMuon()  && (dR < deltaRToClosestLooseMuon_      || deltaRToClosestLooseMuon_      < 0.0)) deltaRToClosestLooseMuon_ = dR;
-    if(muon.isMediumMuon() && (dR < deltaRToClosestMediumElectron_ || deltaRToClosestMediumElectron_ < 0.0)) deltaRToClosestMediumElectron_ = dR;
+    if(muon.isLooseMuon()  && (dR < deltaRToClosestLooseMuon_  || deltaRToClosestLooseMuon_  < 0.0)) deltaRToClosestLooseMuon_ = dR;
+    if(muon.isMediumMuon() && (dR < deltaRToClosestMediumMuon_ || deltaRToClosestMediumMuon_ < 0.0)) deltaRToClosestMediumMuon_ = dR;
     if(hasPV && 
        muon.isTightMuon(vertices->at(0)) && 
        (dR < deltaRToClosestTightMuon_ || deltaRToClosestTightMuon_ < 0.0)) {
@@ -360,16 +360,21 @@ osu::Track::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)> > &taus)
   deltaRToClosestTauHad_ = INVALID_VALUE;
 
   double dR;
+  bool passesDecayModeReconstruction, passesLightFlavorRejection;
 
   for(const auto &tau : *taus) {
     dR = deltaR(*this, tau);
 
     if(dR < deltaRToClosestTau_ || deltaRToClosestTau_ < 0.0) deltaRToClosestTau_ = dR;
-    if(tau.tauID("decayModeFinding") >= 0.5 && 
-       tau.tauID("againstElectronLooseMVA6") >= 0.5 && 
-       tau.tauID("againstMuonLoose3") >= 0.5 && 
-       (dR < deltaRToClosestTauHad_  || deltaRToClosestTauHad_  < 0.0)) {
-      dR = deltaRToClosestTauHad_ ;
+
+    passesDecayModeReconstruction = (tau.isTauIDAvailable("decayModeFinding") && tau.tauID("decayModeFinding") > 0.5);
+
+    passesLightFlavorRejection  = (tau.isTauIDAvailable("againstElectronLooseMVA5") && tau.tauID("againstElectronLooseMVA5") > 0.5);
+    passesLightFlavorRejection |= (tau.isTauIDAvailable("againstElectronLooseMVA6") && tau.tauID("againstElectronLooseMVA6") > 0.5);
+    passesLightFlavorRejection &= (tau.isTauIDAvailable("againstMuonLoose3") && tau.tauID("againstMuonLoose3") > 0.5);
+
+    if(passesDecayModeReconstruction && passesLightFlavorRejection && (dR < deltaRToClosestTauHad_  || deltaRToClosestTauHad_  < 0.0)) {
+      deltaRToClosestTauHad_ = dR;
     }
   }
 }

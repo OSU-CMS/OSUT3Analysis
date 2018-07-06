@@ -224,6 +224,10 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     postTOBDropHitInefficiency  =  cms.double  (0.27336245212),    # probability of randomly dropping strip hits in the TOB
     hitInefficiency             =  cms.double  (0.0175874821487),  # probability of randomly dropping strip hits in the TOB
 
+    originalElectrons = cms.InputTag ("slimmedElectrons"),
+    originalMuons     = cms.InputTag ("slimmedMuons"),
+    originalTaus      = cms.InputTag ("slimmedTaus"),
+
     eleVIDVetoIdMap = collectionProducer.electrons.vidVetoIdMap,
     eleVIDLooseIdMap = collectionProducer.electrons.vidLooseIdMap,
     eleVIDMediumIdMap = collectionProducer.electrons.vidMediumIdMap,
