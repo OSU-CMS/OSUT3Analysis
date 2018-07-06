@@ -26,7 +26,19 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   mcparticleToken_   = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   jetsToken_         = consumes<vector<TYPE(jets)> > (collections_.getParameter<edm::InputTag> ("jets"));
   pfCandidatesToken_ = consumes<vector<pat::PackedCandidate> > (cfg.getParameter<edm::InputTag> ("pfCandidates"));
+
 #ifdef DISAPP_TRKS
+  electronsToken_ = consumes<edm::View<TYPE(electrons)> > (cfg.getParameter<edm::InputTag> ("originalElectrons"));
+  muonsToken_     = consumes<vector<TYPE(muons)> >     (cfg.getParameter<edm::InputTag> ("originalMuons"));
+  tausToken_      = consumes<vector<TYPE(taus)> >      (cfg.getParameter<edm::InputTag> ("originalTaus"));
+
+  eleVIDVetoIdMapToken_   = consumes<edm::ValueMap<bool> > (cfg.getParameter<edm::InputTag> ("eleVIDVetoIdMap"));
+  eleVIDLooseIdMapToken_  = consumes<edm::ValueMap<bool> > (cfg.getParameter<edm::InputTag> ("eleVIDLooseIdMap"));
+  eleVIDMediumIdMapToken_ = consumes<edm::ValueMap<bool> > (cfg.getParameter<edm::InputTag> ("eleVIDMediumIdMap"));
+  eleVIDTightIdMapToken_  = consumes<edm::ValueMap<bool> > (cfg.getParameter<edm::InputTag> ("eleVIDTightIdMap"));
+
+  primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
+
   candidateTracksToken_ = consumes<vector<CandidateTrack> > (cfg.getParameter<edm::InputTag> ("candidateTracks"));
 #endif
 
@@ -150,6 +162,22 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   event.getByToken (pfCandidatesToken_, pfCandidates);
 
 #ifdef DISAPP_TRKS
+  edm::Handle<edm::View<TYPE(electrons)> > electrons;
+  event.getByToken(electronsToken_, electrons);
+  edm::Handle<vector<TYPE(muons)> > muons;
+  event.getByToken(muonsToken_, muons);
+  edm::Handle<vector<TYPE(taus)> > taus;
+  event.getByToken(tausToken_, taus);
+
+  edm::Handle<edm::ValueMap<bool> > eleVIDVetoIdMap, eleVIDLooseIdMap, eleVIDMediumIdMap, eleVIDTightIdMap;
+  event.getByToken(eleVIDVetoIdMapToken_,   eleVIDVetoIdMap);
+  event.getByToken(eleVIDLooseIdMapToken_,  eleVIDLooseIdMap);
+  event.getByToken(eleVIDMediumIdMapToken_, eleVIDMediumIdMap);
+  event.getByToken(eleVIDTightIdMapToken_,  eleVIDTightIdMap);
+
+  edm::Handle<vector<TYPE(primaryvertexs)> > vertices;
+  event.getByToken (primaryvertexToken_, vertices);
+
   edm::Handle<vector<CandidateTrack> > candidateTracks;
   event.getByToken (candidateTracksToken_, candidateTracks);
 #endif
@@ -161,17 +189,17 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
     {
 
 #ifdef DISAPP_TRKS
-      pl_->emplace_back (object, 
-                         particles, 
-                         pfCandidates, 
-                         jets, 
-                         cfg_, 
-                         gsfTracks, 
-                         electronVetoList_, 
-                         muonVetoList_, 
-                         &EcalAllDeadChannelsValMap_, 
-                         &EcalAllDeadChannelsBitMap_, 
-                         !event.isRealData (), 
+      pl_->emplace_back (object,
+                         particles,
+                         pfCandidates,
+                         jets,
+                         cfg_,
+                         gsfTracks,
+                         electronVetoList_,
+                         muonVetoList_,
+                         &EcalAllDeadChannelsValMap_,
+                         &EcalAllDeadChannelsBitMap_,
+                         !event.isRealData (),
                          candidateTracks);
 #elif DATA_FORMAT_FROM_MINIAOD
       pl_->emplace_back (object, 
@@ -189,12 +217,13 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       pl_->emplace_back (object);
 #endif
 
+#ifdef DISAPP_TRKS
+      T &track = pl_->back ();
+
 // in the specific case of TYPE(tracks)==CandidateTracks (where DATA_FORMAT is xyz_CUSTOM)
 // and running over CandidateTracks ntuples, then generalTracks and RecHits may be available
-#ifdef DISAPP_TRKS
 #if DATA_FORMAT_IS_CUSTOM
       // Calculate the associated calorimeter energy for the disappearing tracks search.
-      T &track = pl_->back ();
 
       // this could be removed; if CandidateTrackProdcuer sets these,
       // then these values need not be recalculated -- and RecHits can all be dropped
@@ -246,6 +275,11 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
           track.set_trackIsoOldNoPUDRp5 (getOldTrackIsolation (track, *tracks, true, 0.5));
         }
 #endif // DATA_FORMAT_IS_CUSTOM
+
+        track.set_minDeltaRToElectrons(electrons, eleVIDVetoIdMap, eleVIDLooseIdMap, eleVIDMediumIdMap, eleVIDTightIdMap);
+        track.set_minDeltaRToMuons(muons, vertices);
+        track.set_minDeltaRToTaus(taus);
+
 #endif // DISAPP_TRKS
     }
 

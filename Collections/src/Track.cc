@@ -218,16 +218,16 @@ osu::Track::Track (const TYPE(tracks) &track,
 
 #ifdef DISAPP_TRKS
 // the DisappTrks constructor
-osu::Track::Track (const TYPE(tracks) &track, 
+osu::Track::Track (const TYPE(tracks) &track,
                    const edm::Handle<vector<osu::Mcparticle> > &particles,
-                   const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates, 
+                   const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates,
                    const edm::Handle<vector<TYPE(jets)> > &jets,
-                   const edm::ParameterSet &cfg, 
-                   const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
-                   const EtaPhiList &electronVetoList, 
-                   const EtaPhiList &muonVetoList, 
-                   const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, 
-                   const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
+                   const edm::ParameterSet &cfg,
+                   const edm::Handle<vector<reco::GsfTrack> > &gsfTracks,
+                   const EtaPhiList &electronVetoList,
+                   const EtaPhiList &muonVetoList,
+                   const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap,
+                   const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap,
                    const bool dropHits,
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
   Track(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits)
@@ -298,6 +298,80 @@ osu::Track::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> 
   }
 
   return matchedCandidateTrack;
+}
+
+void 
+osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons)> > &electrons, 
+                                      const edm::Handle<edm::ValueMap<bool> > &vidVetoMap, 
+                                      const edm::Handle<edm::ValueMap<bool> > &vidLooseMap, 
+                                      const edm::Handle<edm::ValueMap<bool> > &vidMediumMap, 
+                                      const edm::Handle<edm::ValueMap<bool> > &vidTightMap)
+{
+  deltaRToClosestElectron_       = INVALID_VALUE;
+  deltaRToClosestVetoElectron_   = INVALID_VALUE;
+  deltaRToClosestLooseElectron_  = INVALID_VALUE;
+  deltaRToClosestMediumElectron_ = INVALID_VALUE;
+  deltaRToClosestTightElectron_  = INVALID_VALUE;
+  
+  unsigned iEle = -1;
+  double dR;
+
+  for(const auto &ele : *electrons) {
+    ++iEle;
+    dR = deltaR(*this, ele);
+
+    if(dR < deltaRToClosestElectron_ || deltaRToClosestElectron_ < 0.0) deltaRToClosestElectron_ = dR;
+    if((*vidVetoMap)  [(*electrons).refAt(iEle)] && (dR < deltaRToClosestVetoElectron_   || deltaRToClosestVetoElectron_   < 0.0)) deltaRToClosestVetoElectron_   = dR;
+    if((*vidLooseMap) [(*electrons).refAt(iEle)] && (dR < deltaRToClosestLooseElectron_  || deltaRToClosestLooseElectron_  < 0.0)) deltaRToClosestLooseElectron_  = dR;
+    if((*vidMediumMap)[(*electrons).refAt(iEle)] && (dR < deltaRToClosestMediumElectron_ || deltaRToClosestMediumElectron_ < 0.0)) deltaRToClosestTightElectron_  = dR;
+    if((*vidTightMap) [(*electrons).refAt(iEle)] && (dR < deltaRToClosestTightElectron_  || deltaRToClosestTightElectron_  < 0.0)) deltaRToClosestMediumElectron_ = dR;
+  }
+}
+
+void 
+osu::Track::set_minDeltaRToMuons(const edm::Handle<vector<TYPE(muons)> > &muons, const edm::Handle<vector<TYPE(primaryvertexs)> > &vertices) 
+{
+  deltaRToClosestMuon_           = INVALID_VALUE;
+  deltaRToClosestLooseMuon_      = INVALID_VALUE;
+  deltaRToClosestMediumElectron_ = INVALID_VALUE;
+  deltaRToClosestTightMuon_      = INVALID_VALUE;
+
+  double dR;
+  bool hasPV = (vertices.isValid() && !vertices->empty());
+
+  for(const auto &muon : *muons) {
+    dR = deltaR(*this, muon);
+
+    if(dR < deltaRToClosestMuon_ || deltaRToClosestMuon_ < 0.0) deltaRToClosestMuon_ = dR;
+    if(muon.isLooseMuon()  && (dR < deltaRToClosestLooseMuon_      || deltaRToClosestLooseMuon_      < 0.0)) deltaRToClosestLooseMuon_ = dR;
+    if(muon.isMediumMuon() && (dR < deltaRToClosestMediumElectron_ || deltaRToClosestMediumElectron_ < 0.0)) deltaRToClosestMediumElectron_ = dR;
+    if(hasPV && 
+       muon.isTightMuon(vertices->at(0)) && 
+       (dR < deltaRToClosestTightMuon_ || deltaRToClosestTightMuon_ < 0.0)) {
+      deltaRToClosestTightMuon_ = dR;
+    }
+  }
+}
+
+void
+osu::Track::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)> > &taus) 
+{
+  deltaRToClosestTau_    = INVALID_VALUE;
+  deltaRToClosestTauHad_ = INVALID_VALUE;
+
+  double dR;
+
+  for(const auto &tau : *taus) {
+    dR = deltaR(*this, tau);
+
+    if(dR < deltaRToClosestTau_ || deltaRToClosestTau_ < 0.0) deltaRToClosestTau_ = dR;
+    if(tau.tauID("decayModeFinding") >= 0.5 && 
+       tau.tauID("againstElectronLooseMVA6") >= 0.5 && 
+       tau.tauID("againstMuonLoose3") >= 0.5 && 
+       (dR < deltaRToClosestTauHad_  || deltaRToClosestTauHad_  < 0.0)) {
+      dR = deltaRToClosestTauHad_ ;
+    }
+  }
 }
 #endif
 

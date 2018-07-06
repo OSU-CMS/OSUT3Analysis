@@ -223,6 +223,11 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     preTOBDropHitInefficiency   =  cms.double  (0.00515089150972), # probability of randomly dropping strip hits before the TOB
     postTOBDropHitInefficiency  =  cms.double  (0.27336245212),    # probability of randomly dropping strip hits in the TOB
     hitInefficiency             =  cms.double  (0.0175874821487),  # probability of randomly dropping strip hits in the TOB
+
+    eleVIDVetoIdMap = collectionProducer.electrons.vidVetoIdMap,
+    eleVIDLooseIdMap = collectionProducer.electrons.vidLooseIdMap,
+    eleVIDMediumIdMap = collectionProducer.electrons.vidMediumIdMap,
+    eleVIDTightIdMap = collectionProducer.electrons.vidTightIdMap,
 )
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
     if "Run2016" in osusub.dataset or "Run2017" in osusub.dataset:
