@@ -199,6 +199,24 @@ osu::Tau::passesTightCombinedIsolation () const
     }
 }
 
+const bool
+osu::Tau::passesTightMVAIsolation () const
+{
+#if CMSSW_VERSION_CODE < CMSSW_VERSION(8,0,0)
+  const string idName = "byTightIsolationMVA3oldDMwLT";
+#else
+  const string idName = "byTightIsolationMVArun2v1DBoldDMwLT";
+#endif
+
+  if(this->isTauIDAvailable (idName))
+    return (this->tauID (idName) > 0.5);
+  else
+    {
+      edm::LogWarning ("osu_Tau") << "Tau Id \"" << idName << "\" unavailable.";
+      return false;
+    }
+}
+
 const double
 osu::Tau::metMinusOnePt () const
 {
@@ -301,10 +319,22 @@ osu::Tau::match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v () const
   return match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v_;
 }
 
+const bool
+osu::Tau::match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v () const
+{
+  return match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v_;
+}
+
 void
 osu::Tau::set_match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v (const bool flag)
 {
   match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v_ = flag;
+}
+
+void
+osu::Tau::set_match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v (const bool flag)
+{
+  match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v_ = flag;
 }
 
 #endif
