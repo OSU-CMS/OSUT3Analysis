@@ -48,9 +48,22 @@ template<class T>
     edm::EDGetTokenT<EERecHitCollection>         EERecHitsToken_;
     edm::EDGetTokenT<HBHERecHitCollection>       HBHERecHitsToken_;
     edm::EDGetTokenT<vector<reco::GsfTrack> >    gsfTracksToken_;
+
 #ifdef DISAPP_TRKS
+    edm::EDGetTokenT<edm::View<TYPE(electrons)> > electronsToken_;
+    edm::EDGetTokenT<vector<TYPE(muons)> >        muonsToken_;
+    edm::EDGetTokenT<vector<TYPE(taus)> >         tausToken_;
+
+    edm::EDGetTokenT<edm::ValueMap<bool> > eleVIDVetoIdMapToken_;
+    edm::EDGetTokenT<edm::ValueMap<bool> > eleVIDLooseIdMapToken_;
+    edm::EDGetTokenT<edm::ValueMap<bool> > eleVIDMediumIdMapToken_;
+    edm::EDGetTokenT<edm::ValueMap<bool> > eleVIDTightIdMapToken_;
+
+    edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexToken_;
+
     edm::EDGetTokenT<vector<CandidateTrack> >    candidateTracksToken_;
 #endif
+
     edm::EDGetTokenT<vector<reco::Track> >       tracksToken_;
     edm::EDGetTokenT<vector<pat::PackedCandidate> > pfCandidatesToken_;
     edm::ParameterSet  cfg_;

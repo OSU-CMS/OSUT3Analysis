@@ -12,7 +12,7 @@ MuonBranches = cms.PSet (
     branches = cms.VPSet (
         cms.PSet (
             name = cms.string("numMuons"),
-            inputVariables = cms.vstring("number(muon"),
+            inputVariables = cms.vstring("number(muon)"),
         ),
         cms.PSet (
             name = cms.string("leadMuonPt"),
