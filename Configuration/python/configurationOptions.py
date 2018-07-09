@@ -337,6 +337,7 @@ datasets = [
    'WJetsToLNu_HT',  # HT bins, starting with HT>100 GeV
    'TTJets',
    'TTJets_Debug',
+   'TTJets_inclusive',
    'Diboson',
 
    'DYJetsToLL_50_50ns',
@@ -369,6 +370,10 @@ datasets = [
    'QCD_EMEnriched_120to170',
    'QCD_EMEnriched_170to300',
    'QCD_EMEnriched_300toInf',
+
+   'QCD_DoubleEMEnriched_HighMass_30to40',
+   'QCD_DoubleEMEnriched_LowMass_30toInf',
+   'QCD_DoubleEMEnriched_HighMass_40toInf',
 
    #QCD bcToE
    'QCD_bcToE_15to20',
@@ -497,6 +502,12 @@ composite_dataset_definitions = {
         'QCD_EMEnriched_170to300',
         'QCD_EMEnriched_300toInf',
     ],
+
+    'QCD_DoubleEMEnriched' : [
+        'QCD_DoubleEMEnriched_HighMass_30to40',
+        'QCD_DoubleEMEnriched_LowMass_30toInf',
+        'QCD_DoubleEMEnriched_HighMass_40toInf',
+        ],
 
     'QCD_bcToE' : [
         'QCD_bcToE_15to20',
@@ -1347,6 +1358,7 @@ nJobs = {
     'DYBBJetsToLL'      : 30,
     'TTJets'        : 325,
     'TTJets_Debug'        : 325,
+    'TTJets_inclusive' : 400,
     'WW'        : 44,
     'ZZ'        : 36,
     'WZ'        : 45,
@@ -1400,6 +1412,11 @@ nJobs = {
     'QCD_EMEnriched_120to170'       : 233,
     'QCD_EMEnriched_170to300'       : 130,
     'QCD_EMEnriched_300toInf'       : 114,
+
+    #QCD DoubleEMEnriched
+    'QCD_DoubleEMEnriched_HighMass_30to40' : 100,
+    'QCD_DoubleEMEnriched_LowMass_30toInf' : 100,
+    'QCD_DoubleEMEnriched_HighMass_40toInf': 100,
 
     #QCD bcToE
     'QCD_bcToE_15to20'              : 21,
@@ -2689,6 +2706,7 @@ maxEvents = {
     'DYBBJetsToLL'      : -1,
     'TTJets'            : -1,
     'TTJets_Debug'            : -1,
+    'TTJets_inclusive'  : -1,
     'WW'            : -1,
     'ZZ'            : -1,
     'WZ'            : -1,
@@ -2743,6 +2761,11 @@ maxEvents = {
     'QCD_EMEnriched_120to170'       : -1,
     'QCD_EMEnriched_170to300'       : -1,
     'QCD_EMEnriched_300toInf'       : -1,
+
+    #QCD DoubleEMEnriched
+    'QCD_DoubleEMEnriched_HighMass_30to40' : -1,
+    'QCD_DoubleEMEnriched_LowMass_30toInf' : -1,
+    'QCD_DoubleEMEnriched_HighMass_40toInf': -1,
 
     #QCD bcToE
     'QCD_bcToE_15to20'              : -1,
@@ -4038,6 +4061,7 @@ types = {
     'DYBBJetsToLL'           : "bgMC",
     'TTJets'                 : "bgMC",
     'TTJets_Debug'           : "bgMC",
+    'TTJets_inclusive'       : "bgMC",
     'Diboson'                : "bgMC",
     'Diboson_Incl'           : "bgMC",
     'WW'                     : "bgMC",
@@ -4099,6 +4123,11 @@ types = {
     'QCD_EMEnriched_120to170'       : "bgMC",
     'QCD_EMEnriched_170to300'       : "bgMC",
     'QCD_EMEnriched_300toInf'       : "bgMC",
+
+    #QCD DoubleEMEnriched
+    'QCD_DoubleEMEnriched_HighMass_30to40' : "bgMC",
+    'QCD_DoubleEMEnriched_LowMass_30toInf' : "bgMC",
+    'QCD_DoubleEMEnriched_HighMass_40toInf': "bgMC",
 
     #QCD bcToE
     'QCD_bcToE'                     : "bgMC",
@@ -5427,6 +5456,7 @@ colors = {
     'DYBBJetsToLL'        : 412,
     'TTJets'              : 872,
     'TTJets_Debug'        : 872,
+    'TTJets_inclusive'    : 872,
     'Diboson'             : 393,
     'Diboson_Incl'        : 393,
     'WZ'                  : 393,
@@ -5488,6 +5518,11 @@ colors = {
     'QCD_EMEnriched_120to170'       : 791,
     'QCD_EMEnriched_170to300'       : 791,
     'QCD_EMEnriched_300toInf'       : 791,
+
+    #QCD DoubleEMEnriched
+    'QCD_DoubleEMEnriched_HighMass_30to40' : 791,
+    'QCD_DoubleEMEnriched_LowMass_30toInf' : 791,
+    'QCD_DoubleEMEnriched_HighMass_40toInf': 791,
 
     #QCD bcToE
     'QCD_bcToE'                     : 794,
@@ -6826,6 +6861,7 @@ labels = {
     'DYBBJetsToLL'      : "ZBB#rightarrowl^{+}l^{-}",
     'TTJets'            : "t#bar{t} (Debug)",
     'TTJets_Debug'      : "t#bar{t}",
+    'TTJets_inclusive'  : "t#bar{t}",
     'Diboson'           : "Diboson",
     'Diboson_Incl'      : "Diboson",
     'WW'                : "WW",
@@ -6886,6 +6922,12 @@ labels = {
     'QCD_EMEnriched_120to170'       : "QCD EMEnriched Pt 120-170",
     'QCD_EMEnriched_170to300'       : "QCD EMEnriched Pt 170-300",
     'QCD_EMEnriched_300toInf'       : "QCD EMEnriched Pt 300-Inf",
+
+    #QCD DoubleEMEnriched
+    'QCD_DoubleEMEnriched' :                 "QCD Double EMEnriched",
+    'QCD_DoubleEMEnriched_HighMass_30to40' : "QCD Double EMEnriched, Mgg>80 GeV, Pt 30-40",
+    'QCD_DoubleEMEnriched_LowMass_30toInf' : "QCD Double EMEnriched, 40>Mgg>80 GeV, Pt 30-Inf",
+    'QCD_DoubleEMEnriched_HighMass_40toInf': "QCD Double EMEnriched, Mgg>80 GeV, Pt 40-Inf",
 
     #QCD bcToE
     'QCD_bcToE'                     : "QCD bcToE",
@@ -8019,6 +8061,7 @@ crossSections = {
     'WJetsToLNu'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3)
     'TTJets'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
     'TTJets_Debug'                  : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
+    'TTJets_inclusive'              : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
     'WW'                            : 63.21,
     'WZ'                            : 22.82,
     'ZZ'                            : 10.32,
@@ -8049,7 +8092,7 @@ crossSections = {
     'QCD_MuEnriched_1000toInf' :      10.4305*0.15544,
     # The MC contacts of the EMEnriched samples did not put the
     # filter efficiencies in the sample, these efficiencies are
-    # took from https://github.com/silviodonato/RateEstimate/blob/
+    # taken from https://github.com/silviodonato/RateEstimate/blob/
     # master/datasetCrossSections/datasetCrossSectionsSpring15.py
     'QCD_EMEnriched_15to20'    :1279000000.0*0.001309,
     'QCD_EMEnriched_20to30'    : 557600000.0*0.009914,
@@ -8061,6 +8104,10 @@ crossSections = {
     #member_of_campaign=RunIIWinter15GS&shown=163213220927
     'QCD_EMEnriched_170to300'  :      114000.0*0.1650,
     'QCD_EMEnriched_300toInf'  :        9000.0*0.1500,
+    #from McM
+    'QCD_DoubleEMEnriched_HighMass_30to40' : 108000000*0.0004,
+    'QCD_DoubleEMEnriched_LowMass_30toInf' : 162060000*0.0018,
+    'QCD_DoubleEMEnriched_HighMass_40toInf': 54120000*0.0026,
     #############################################################
     'QCD_bcToE_15to20'         :  1272980000.0*0.0002,
     'QCD_bcToE_20to30'         :  557627000.0*0.00059,
@@ -8899,7 +8946,7 @@ def lifetime(sample):
 ##########################################################################
 
 # generate list of masses
-masses = [str(i*100) for i in range(2,13)]
+masses = [str(i*100) for i in range(2,13)] #need to update to (2,18) when other samples available
 # generate list of lifetimes
 lifetimes = ["%g" % (0.1*i*(pow(10,j))) for j in range(4) for i in range(1,10)]
 lifetimes.append("1000")
@@ -8923,6 +8970,12 @@ signal_crossSections = {
     '1000' : 0.00615134,
     '1100' : 0.00307413,
     '1200' : 0.00159844,
+    '1300' : 0.000850345,
+    '1400' : 0.000461944,
+    '1500' : 0.000256248,
+    '1600' : 0.000141382,
+    '1700' : 0.0000807774,
+    '1800' : 0.0000467492,
 }
 
 ##########################################################################
