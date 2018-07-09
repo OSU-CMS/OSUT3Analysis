@@ -369,9 +369,9 @@ osu::Track::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)> > &taus)
 
     passesDecayModeReconstruction = (tau.isTauIDAvailable("decayModeFinding") && tau.tauID("decayModeFinding") > 0.5);
 
-    passesLightFlavorRejection  = (tau.isTauIDAvailable("againstElectronLooseMVA5") && tau.tauID("againstElectronLooseMVA5") > 0.5);
-    passesLightFlavorRejection |= (tau.isTauIDAvailable("againstElectronLooseMVA6") && tau.tauID("againstElectronLooseMVA6") > 0.5);
-    passesLightFlavorRejection &= (tau.isTauIDAvailable("againstMuonLoose3") && tau.tauID("againstMuonLoose3") > 0.5);
+    passesLightFlavorRejection = (tau.isTauIDAvailable("againstElectronLooseMVA5") && tau.tauID("againstElectronLooseMVA5") > 0.5);
+    passesLightFlavorRejection = passesLightFlavorRejection || (tau.isTauIDAvailable("againstElectronLooseMVA6") && tau.tauID("againstElectronLooseMVA6") > 0.5);
+    passesLightFlavorRejection = passesLightFlavorRejection && (tau.isTauIDAvailable("againstMuonLoose3") && tau.tauID("againstMuonLoose3") > 0.5);
 
     if(passesDecayModeReconstruction && passesLightFlavorRejection && (dR < deltaRToClosestTauHad_  || deltaRToClosestTauHad_  < 0.0)) {
       deltaRToClosestTauHad_ = dR;
