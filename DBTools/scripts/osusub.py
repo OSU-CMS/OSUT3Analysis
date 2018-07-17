@@ -94,6 +94,8 @@ parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help=
 #               In this case the lable will be A with all the '-' in 'A' changed to '_'.
 #           5. Run over a skim.
 #               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -g -s SkimDirectory -a SkimChannel
+#           6. Run over files in a given remote directory using xrootd
+#               osusub.py -t OSUT3Ntuple -l Config.py -w WorkingDirectory -P -J R_Golden17 -s "root://cmsxrootd-site.fnal.gov//store/user/lpclonglived/DisappTrks/skim/2017/tauTagSkim" -a TauTagSkim
 #   Notice: Maybe in some generic jobs you want to also produce skimmed ntuples and histograms in the same time. For this case, osusub.py can not handle yet. But is is fairly straight forward. Just make --fileName a list of output modules(--fileNames).
 #2 Submit OSUT3Analysis jobs. Well, just remove the -g option.
 #           2.1 Run over a dataset(s) on T3.
@@ -326,6 +328,16 @@ def SecondaryCollectionInstance(SkimDirectory, SkimChannel):
                 strings.append("collections." + str(collection) + " =  cms.InputTag (" + newString + ")")
     return strings
 
+def RemoteSecondaryCollectionInstance(skimFileList):
+    strings = []
+    if not len(skimFileList):
+        return strings
+    for collection in secondaryCollections:
+        newString = os.popen("edmDumpEventContent " + skimFileList[0].rstrip('\n') + " | grep " + secondaryCollections[str(collection)]).readlines()[0]
+        newString = "\"" + newString.split("\"")[1] + "\",\"" + newString.split("\"")[3] + "\",\"" +newString.split("\"")[5] + "\""
+        strings.append("collections." + str(collection) + " =  cms.InputTag (" + newString + ")")
+    return strings
+
 def ModifyUserConfigForSecondaryCollections(configPath, instances):
     Config = open(configPath,'r')
     StringToWrite = ""
@@ -353,6 +365,20 @@ def GetListOfRootFiles(Path):
     for f in fileList:
         if len(f) is 0:
             fileList.remove(f)   # remove empty filename
+    return fileList
+
+def GetListOfRemoteRootFiles(Path):
+    fileList = []
+    if not len(Path.split('//')) == 3 or not Path.startswith('root://'):
+        print 'Remote directories must be of the form \"root://<redirector>//store/...\"'
+        return fileList
+    thisRedirector = Path.split('//')[0] + '//' + Path.split('//')[1] + '/'
+    thisRemotePath = '/' + Path.split('//')[2]
+    tmpFileList = os.popen('xrdfs ' + thisRedirector + ' ls -l -u ' + thisRemotePath).read().split('\n')
+    for filePath in tmpFileList:
+        if len(filePath.split()) == 5:
+            if filePath.split()[4].endswith('.root'):
+                fileList.append(filePath.split()[4])
     return fileList
 
 #It generates the condor.sub file for each dataset.
@@ -788,7 +814,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         fnew.write(text)
         fnew.close()
     if FileType == 'OSUT3Ntuple':
-        if not UseAAA:
+        if not UseAAA and not RunOverRemoteSkim:
             prefix = ''
             if not remoteAccessT3 :
                 prefix = 'file:'
@@ -819,7 +845,23 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                         append = True
                 datasetRead['useAAA'] = True
         secondaryCollectionModifications = []
-        if RunOverSkim:
+        if RunOverRemoteSkim:
+            SkimDirectory = arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel
+            inputFiles = GetListOfRemoteRootFiles(SkimDirectory)
+            numInputFiles = len(inputFiles)
+            if not numInputFiles:
+                print "No input skim files found for remote dataset " + Label + ". Will skip it and continue"
+                datasetRead['numberOfFiles'] = numInputFiles
+                SkimModifier(Label, Directory, crossSection, True)
+                return datasetRead
+            secondaryCollections = RemoteSecondaryCollectionInstance(inputFiles)
+            # Copy the relevant files from the remote skim directory.
+            subprocess.call('xrdcp ' + SkimDirectory + '/' + os.path.basename(datasetInfoName) + ' ' + datasetInfoName, shell = True)
+            subprocess.call('xrdcp ' + SkimDirectory + '/OriginalNumberOfEvents.txt' + ' ' + Directory + '/OriginalNumberOfEvents.txt', shell = True)
+            subprocess.call('xrdcp ' + SkimDirectory + '/SkimNumberOfEvents.txt' + ' ' + Directory + '/SkimNumberOfEvents.txt', shell = True)
+            # Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
+            SkimModifier(Label, Directory, crossSection, True)
+        elif RunOverSkim:
             numInputFiles = len(glob.glob(Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel + "/*.root"))
             if not numInputFiles:
                 print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
@@ -887,10 +929,15 @@ def SkimChannelFinder(userConfig, Directory, temPset):
 ################################################################################
 #            Function to modify the dataset_*_Info_cfy file for skim.          #
 ################################################################################
-def SkimModifier(Label, Directory, crossSection):
-    SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
-    OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/OriginalNumberOfEvents.txt') else 0.0
-    SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/SkimNumberOfEvents.txt') else 0.0
+def SkimModifier(Label, Directory, crossSection, isRemote = False):
+    if isRemote:
+        SkimDirectory = str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
+        OriginalNumberOfEvents = os.popen('cat OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile ('OriginalNumberOfEvents.txt') else 0.0
+        SkimNumberOfEvents     = os.popen('cat SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile ('SkimNumberOfEvents.txt') else 0.0
+    else: 
+        SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
+        OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/OriginalNumberOfEvents.txt') else 0.0
+        SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/SkimNumberOfEvents.txt') else 0.0
 
     infoFile = Directory + '/datasetInfo_' + Label + '_cfg.py'
     fin = open(infoFile, "r")
@@ -910,12 +957,19 @@ def SkimModifier(Label, Directory, crossSection):
     #-1.
     if crossSection != -1:
         orig = orig.replace("crossSection", "crossSection = " + str(crossSection) + "# Value used in making the skim is: ")
-    skimFiles = GetListOfRootFiles(SkimDirectory)
+    if isRemote:
+        skimFiles = GetListOfRemoteRootFiles(SkimDirectory)
+    else:
+        skimFiles = GetListOfRootFiles(SkimDirectory)
     add  = "\n"
     add += 'skimDirectory = "' + SkimDirectory + '"\n'
     add += 'listOfFiles = [\n'
-    for s in skimFiles:
-        add += '"file:' + os.path.realpath (s) + '",\n'
+    if isRemote:
+        for s in skimFiles:
+            add += '"' + s + '",\n'
+    else:
+        for s in skimFiles:
+            add += '"file:' + os.path.realpath (s) + '",\n'
     add += ']\n'
 
     add += 'listOfSecondaryFiles = [\n'
@@ -1043,6 +1097,8 @@ elif arguments.SkimDirectory == "" and arguments.SkimChannel == "":
     RunOverSkim = False
 else:
     print "Both skim directory and skim channel should be provided."
+
+RunOverRemoteSkim = RunOverSkim and 'root://' in arguments.SkimDirectory
 
 ###############################################################################
 # Find the list of dataset to run over, either from arguments or localConfig. #
@@ -1187,7 +1243,6 @@ if not arguments.Resubmit:
                     NumberOfJobs = max(1,int(math.ceil(NumberOfEvents/int(arguments.NumberOfEventsPerJob))))
             if NumberOfJobs > NumberOfFiles:
                 NumberOfJobs = NumberOfFiles
-
 
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'

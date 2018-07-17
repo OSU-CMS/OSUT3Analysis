@@ -7,6 +7,7 @@ import datetime
 import time
 import copy
 import pickle
+import tempfile
 import FWCore.ParameterSet.Modules
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
@@ -247,24 +248,40 @@ def add_channels (process,
             sys.exit(1)
         rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
 
-    if fileName.find ("file:") == 0:
-        fileName = fileName[5:]
-    skimDirectory = os.path.dirname (os.path.realpath (fileName))
-    if not ignoreSkimmedCollections:
-        if os.path.isfile (skimDirectory + "/SkimInputTags.pkl"):
-            fin = open (skimDirectory + "/SkimInputTags.pkl")
+    if fileName.find ("root:") == 0 and rootFile.find("skim_") == 0:
+        inputTagPickleName = os.path.dirname(fileName) + '/SkimInputTags.pkl'
+        tmpDir = tempfile.mkdtemp ()
+        subprocess.call('xrdcp ' + inputTagPickleName + ' ' + tmpDir + '/SkimInputTags.pkl', shell = True)
+        if os.path.isfile (tmpDir + '/SkimInputTags.pkl'):
+            fin = open (tmpDir + '/SkimInputTags.pkl')
             inputTags = pickle.load (fin)
             fin.close ()
             for tag in inputTags:
                 setattr (collections, tag, inputTags[tag])
         else:
-            if rootFile.find("skim_") == 0:
-                print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found."
-                print "Input file is", fileName
-                print "Be sure that you have run mergeOut.py."
-                sys.exit(1)
+            print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the remote directory."
+            print "Input file is", fileName
+            print "Be sure that you have run mergeOut.py."
+            sys.exit(1)
     else:
-        print "INFO: user has set ignoreSkimmedCollections, meaning that the original data collections will be used instead of skimmed framework collections."
+        if fileName.find ("file:") == 0:
+            fileName = fileName[5:]
+        skimDirectory = os.path.dirname (os.path.realpath (fileName))
+        if not ignoreSkimmedCollections:
+            if os.path.isfile (skimDirectory + "/SkimInputTags.pkl"):
+                fin = open (skimDirectory + "/SkimInputTags.pkl")
+                inputTags = pickle.load (fin)
+                fin.close ()
+                for tag in inputTags:
+                    setattr (collections, tag, inputTags[tag])
+            else:
+                if rootFile.find("skim_") == 0:
+                    print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found."
+                    print "Input file is", fileName
+                    print "Be sure that you have run mergeOut.py."
+                    sys.exit(1)
+        else:
+            print "INFO: user has set ignoreSkimmedCollections, meaning that the original data collections will be used instead of skimmed framework collections."
 
     ############################################################################
 
