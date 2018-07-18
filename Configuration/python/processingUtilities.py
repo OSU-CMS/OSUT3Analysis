@@ -458,6 +458,8 @@ def add_channels (process,
                             outputCommand += "*"
                         if dic[p].getModuleLabel () == 'egmGsfElectronIDs':
                             outputCommand = "drop *_egmGsfElectronIDs_*_*"
+                        if dic[p].getModuleLabel () == 'egmGsfElectronIDsOriginalElectrons':
+                            outputCommand = "drop *_egmGsfElectronIDsOriginalElectrons_*_*"
                         outputCommands.append (outputCommand)
 
         ########################################################################
@@ -775,7 +777,7 @@ def add_channels (process,
     # yet been added, add it here.
     ########################################################################
     if dataFormat.startswith ("MINI_AOD") and not hasattr (process, "egmGsfElectronIDSequence_step"):
-        process = customizeMINIAODElectronVID(process, collections)
+        process = customizeMINIAODElectronVID(process, collections, usedCollections)
 
 def set_endPath(process, endPath):
 
@@ -881,41 +883,50 @@ def set_input(process, input_string):
                 process.source.fileNames.extend(cms.untracked.vstring('file:' + input_string + "/" + fileName))
         return
 
-def customizeMINIAODElectronVID(process, collections):
+def customizeMINIAODElectronVID(process, collections, usedCollections):
     if not hasattr (collections, "electrons"):
         return process
 
     from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
     switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
-    # in the case of a skim, the input tag needs to be changed to that stored in the skim
-    process.egmGsfElectronIDs.physicsObjectSrc = collections.electrons
-
-    my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
-                     'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff',
-                     'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff']
+    my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff']
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
-        my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
-                              'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff'])
+        my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff'])
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
-        my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff',
-                              'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff',
-                              'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff'])
+        my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff'])
 
-        # N.B.: to add RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff, egmGsfElectronIDs.physicsObjectSrc
-        #       must be 'slimmedElectrons' or it thinks this is AOD. So if HEEPV70 is needed, egmGsfElectronIDs.physicsObjectSrc must
-        #       be changed in some other way.
-
+    # Setup all the desired modules to be run
     for idmod in my_id_modules:
         setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
     process.egmGsfElectronIDSequence_step = cms.Path(process.egmGsfElectronIDSequence)
     process.schedule.insert(0, process.egmGsfElectronIDSequence_step)
 
-    process.electronMVAValueMapProducer.srcMiniAOD = collections.electrons
-    process.electronRegressionValueMapProducer.srcMiniAOD = collections.electrons
-    #process.heepIDVarValueMaps.elesMiniAOD = collections.electrons
+    # In the case where tracks are being used in a skim where electron cuts are applied, 
+    # there's now two different electron collections of interest. We need to duplicate
+    # the VID producer for the original collection
+    if 'tracks' in usedCollections and collections.electrons.getProcessName().startswith('OSUAnalsysis'):
+        setattr(process, 'egmGsfElectronIDsOriginalElectrons', copy.deepcopy(getattr(process, 'egmGsfElectronIDs')))
+        process.egmGsfElectronIDTaskOriginalElectrons = cms.Task(process.egmGsfElectronIDsOriginalElectrons)
+        process.egmGsfElectronIDSequenceOriginalElectrons = cms.Sequence(process.egmGsfElectronIDTaskOriginalElectrons)
+        process.egmGsfElectronIDSequenceOriginalElectrons_step = cms.Path(process.egmGsfElectronIDSequenceOriginalElectrons)
+        process.schedule.insert(0, process.egmGsfElectronIDSequenceOriginalElectrons_step)
+
+    # Change the InputTags for the track producers to use these duplicated VID results
+    for a in dir(process):
+            x = getattr(process, a)
+            if not hasattr(x, "type_"):
+                continue
+            if x.type_() == "OSUTrackProducer" or x.type_() == "OSUSecondaryTrackProducer":
+                x.eleVIDVetoIdMap.setModuleLabel(x.eleVIDVetoIdMap.getModuleLabel() + 'OriginalElectrons')
+                x.eleVIDLooseIdMap.setModuleLabel(x.eleVIDLooseIdMap.getModuleLabel() + 'OriginalElectrons')
+                x.eleVIDMediumIdMap.setModuleLabel(x.eleVIDMediumIdMap.getModuleLabel() + 'OriginalElectrons')
+                x.eleVIDTightIdMap.setModuleLabel(x.eleVIDTightIdMap.getModuleLabel() + 'OriginalElectrons')
+
+    # In the case of a skim, the input tag needs to be changed to that stored in the skim
+    process.egmGsfElectronIDs.physicsObjectSrc = collections.electrons
 
     return process
 
@@ -924,6 +935,15 @@ def removeVIDCut(process, idName, cutToRemove):
     if not hasattr (process, "egmGsfElectronIDs"):
         return
     for poid in process.egmGsfElectronIDs.physicsObjectIDs:
+        if not poid.idDefinition.idName == idName:
+            continue
+        for cut in poid.idDefinition.cutFlow:
+            if cut.cutName == cutToRemove:
+                cut.isIgnored = cms.bool(True)
+
+    if not hasattr (process, "egmGsfElectronIDsOriginalElectrons"):
+        return
+    for poid in process.egmGsfElectronIDsOriginalElectrons.physicsObjectIDs:
         if not poid.idDefinition.idName == idName:
             continue
         for cut in poid.idDefinition.cutFlow:

@@ -107,9 +107,10 @@ namespace osu
         const edm::Ref<vector<CandidateTrack> > matchedCandidateTrack () const { return matchedCandidateTrack_; };
         const double dRToMatchedCandidateTrack () const { return (IS_INVALID(dRToMatchedCandidateTrack_)) ? MAX_DR : dRToMatchedCandidateTrack_; };
 
-        void set_minDeltaRToElectrons(const edm::Handle<edm::View<TYPE(electrons)> > &, 
-                                      const edm::Handle<edm::ValueMap<bool> > &, 
-                                      const edm::Handle<edm::ValueMap<bool> > &, 
+        void set_minDeltaRToElectrons(const edm::Handle<edm::View<TYPE(electrons)> > &,
+                                      const edm::Handle<vector<TYPE(primaryvertexs)> > &,
+                                      const edm::Handle<edm::ValueMap<bool> > &,
+                                      const edm::Handle<edm::ValueMap<bool> > &,
                                       const edm::Handle<edm::ValueMap<bool> > &,
                                       const edm::Handle<edm::ValueMap<bool> > &);
         void set_minDeltaRToMuons(const edm::Handle<vector<TYPE(muons)> > &, const edm::Handle<vector<TYPE(primaryvertexs)> > &);

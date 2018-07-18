@@ -276,7 +276,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
         }
 #endif // DATA_FORMAT_IS_CUSTOM
 
-        track.set_minDeltaRToElectrons(electrons, eleVIDVetoIdMap, eleVIDLooseIdMap, eleVIDMediumIdMap, eleVIDTightIdMap);
+        track.set_minDeltaRToElectrons(electrons, vertices, eleVIDVetoIdMap, eleVIDLooseIdMap, eleVIDMediumIdMap, eleVIDTightIdMap);
         track.set_minDeltaRToMuons(muons, vertices);
         track.set_minDeltaRToTaus(taus);
 

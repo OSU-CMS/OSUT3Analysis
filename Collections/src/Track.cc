@@ -301,10 +301,11 @@ osu::Track::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> 
 }
 
 void 
-osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons)> > &electrons, 
-                                      const edm::Handle<edm::ValueMap<bool> > &vidVetoMap, 
-                                      const edm::Handle<edm::ValueMap<bool> > &vidLooseMap, 
-                                      const edm::Handle<edm::ValueMap<bool> > &vidMediumMap, 
+osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons)> > &electrons,
+                                      const edm::Handle<vector<TYPE(primaryvertexs)> > &vertices,
+                                      const edm::Handle<edm::ValueMap<bool> > &vidVetoMap,
+                                      const edm::Handle<edm::ValueMap<bool> > &vidLooseMap,
+                                      const edm::Handle<edm::ValueMap<bool> > &vidMediumMap,
                                       const edm::Handle<edm::ValueMap<bool> > &vidTightMap)
 {
   deltaRToClosestElectron_       = INVALID_VALUE;
@@ -321,11 +322,81 @@ osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons
     dR = deltaR(*this, ele);
 
     if(dR < deltaRToClosestElectron_ || deltaRToClosestElectron_ < 0.0) deltaRToClosestElectron_ = dR;
-    if((*vidVetoMap)  [(*electrons).refAt(iEle)] && (dR < deltaRToClosestVetoElectron_   || deltaRToClosestVetoElectron_   < 0.0)) deltaRToClosestVetoElectron_   = dR;
-    if((*vidLooseMap) [(*electrons).refAt(iEle)] && (dR < deltaRToClosestLooseElectron_  || deltaRToClosestLooseElectron_  < 0.0)) deltaRToClosestLooseElectron_  = dR;
-    if((*vidMediumMap)[(*electrons).refAt(iEle)] && (dR < deltaRToClosestMediumElectron_ || deltaRToClosestMediumElectron_ < 0.0)) deltaRToClosestMediumElectron_ = dR;
-    if((*vidTightMap) [(*electrons).refAt(iEle)] && (dR < deltaRToClosestTightElectron_  || deltaRToClosestTightElectron_  < 0.0)) deltaRToClosestTightElectron_  = dR;
-  }
+
+    bool passesVeto_dxy   = false, passesVeto_dz   = false;
+    bool passesLoose_dxy  = false, passesLoose_dz  = false;
+    bool passesMedium_dxy = false, passesMedium_dz = false;
+    bool passesTight_dxy  = false, passesTight_dz  = false;
+
+    // Note in below, these remain false if |eta| >= 2.5; thus an eta cut is also being applied here as intended
+#if CMSSW_VERSION_CODE < CMSSW_VERSION(9,4,0)
+    // https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2Archive#Spring15_selection_25ns
+    if(fabs(electron.superCluster ()->eta()) <= 1.479) {
+      passesVeto_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0564);
+      passesVeto_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.472);
+
+      passesLoose_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0261);
+      passesLoose_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.41);
+
+      passesMedium_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0118);
+      passesMedium_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.373);
+
+      passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0111);
+      passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.0466);
+    }
+    else if(fabs(electron.superCluster()->eta()) < 2.5) {
+      passesVeto_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.222);
+      passesVeto_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.921);
+
+      passesLoose_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.118);
+      passesLoose_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.822);
+
+      passesMedium_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0739);
+      passesMedium_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.602);
+
+      passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0351);
+      passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.417);
+    }
+#else
+    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later
+    if(fabs(electron.superCluster ()->eta()) <= 1.479) {
+      passesVeto_dxy = passesLoose_dxy = passesMedium_dxy = passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.05);
+      passesVeto_dz  = passesLoose_dz  = passesMedium_dz  = passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.10);
+    }
+    else if(fabs(electron.superCluster()->eta()) < 2.5) {
+      passesVeto_dxy = passesLoose_dxy = passesMedium_dxy = passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.10);
+      passesVeto_dz  = passesLoose_dz  = passesMedium_dz  = passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.20);
+      }
+#endif
+
+    if((*vidVetoMap)  [(*electrons).refAt(iEle)] &&
+       passesVeto_dxy &&
+       passesVeto_dz &&
+       (dR < deltaRToClosestVetoElectron_   || deltaRToClosestVetoElectron_   < 0.0)) {
+      deltaRToClosestVetoElectron_   = dR;
+    }
+
+    if((*vidLooseMap) [(*electrons).refAt(iEle)] &&
+       passesLoose_dxy &&
+       passesLoose_dz &&
+       (dR < deltaRToClosestLooseElectron_  || deltaRToClosestLooseElectron_  < 0.0)) {
+      deltaRToClosestLooseElectron_  = dR;
+    }
+
+    if((*vidMediumMap)[(*electrons).refAt(iEle)] &&
+       passesMedium_dxy &&
+       passesMedium_dz &&
+       (dR < deltaRToClosestMediumElectron_ || deltaRToClosestMediumElectron_ < 0.0)) {
+      deltaRToClosestMediumElectron_ = dR;
+    }
+    
+    if((*vidTightMap) [(*electrons).refAt(iEle)] &&
+       passesTight_dxy &&
+       passesTight_dz &&
+       (dR < deltaRToClosestTightElectron_  || deltaRToClosestTightElectron_  < 0.0)) {
+      deltaRToClosestTightElectron_  = dR;
+    }
+  } // for electrons
 }
 
 void 
