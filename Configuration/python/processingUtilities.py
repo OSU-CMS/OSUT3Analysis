@@ -907,15 +907,15 @@ def customizeMINIAODElectronVID(process, collections, usedCollections):
     # In the case where tracks are being used in a skim where electron cuts are applied, 
     # there's now two different electron collections of interest. We need to duplicate
     # the VID producer for the original collection
-    if 'tracks' in usedCollections and collections.electrons.getProcessName().startswith('OSUAnalsysis'):
+    if 'tracks' in usedCollections and collections.electrons.getProcessName().startswith('OSUAnalysis'):
         setattr(process, 'egmGsfElectronIDsOriginalElectrons', copy.deepcopy(getattr(process, 'egmGsfElectronIDs')))
         process.egmGsfElectronIDTaskOriginalElectrons = cms.Task(process.egmGsfElectronIDsOriginalElectrons)
         process.egmGsfElectronIDSequenceOriginalElectrons = cms.Sequence(process.egmGsfElectronIDTaskOriginalElectrons)
         process.egmGsfElectronIDSequenceOriginalElectrons_step = cms.Path(process.egmGsfElectronIDSequenceOriginalElectrons)
         process.schedule.insert(0, process.egmGsfElectronIDSequenceOriginalElectrons_step)
 
-    # Change the InputTags for the track producers to use these duplicated VID results
-    for a in dir(process):
+        # Change the InputTags for the track producers to use these duplicated VID results
+        for a in dir(process):
             x = getattr(process, a)
             if not hasattr(x, "type_"):
                 continue

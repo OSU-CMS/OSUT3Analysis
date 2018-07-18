@@ -331,7 +331,7 @@ osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons
     // Note in below, these remain false if |eta| >= 2.5; thus an eta cut is also being applied here as intended
 #if CMSSW_VERSION_CODE < CMSSW_VERSION(9,4,0)
     // https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2Archive#Spring15_selection_25ns
-    if(fabs(electron.superCluster ()->eta()) <= 1.479) {
+    if(fabs(ele.superCluster ()->eta()) <= 1.479) {
       passesVeto_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0564);
       passesVeto_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.472);
 
@@ -344,7 +344,7 @@ osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons
       passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0111);
       passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.0466);
     }
-    else if(fabs(electron.superCluster()->eta()) < 2.5) {
+    else if(fabs(ele.superCluster()->eta()) < 2.5) {
       passesVeto_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.222);
       passesVeto_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.921);
 
@@ -359,11 +359,11 @@ osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons
     }
 #else
     // https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later
-    if(fabs(electron.superCluster ()->eta()) <= 1.479) {
+    if(fabs(ele.superCluster ()->eta()) <= 1.479) {
       passesVeto_dxy = passesLoose_dxy = passesMedium_dxy = passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.05);
       passesVeto_dz  = passesLoose_dz  = passesMedium_dz  = passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.10);
     }
-    else if(fabs(electron.superCluster()->eta()) < 2.5) {
+    else if(fabs(ele.superCluster()->eta()) < 2.5) {
       passesVeto_dxy = passesLoose_dxy = passesMedium_dxy = passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.10);
       passesVeto_dz  = passesLoose_dz  = passesMedium_dz  = passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.20);
       }
