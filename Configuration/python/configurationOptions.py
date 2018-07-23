@@ -412,7 +412,11 @@ composite_dataset_definitions = {
         'WJetsToLNu_HT100to200',
         'WJetsToLNu_HT200to400',
         'WJetsToLNu_HT400to600',
+        'WJetsToLNu_HT600to800',
+        'WJetsToLNu_HT800to1200',
+        'WJetsToLNu_HT1200to2500',
         'WJetsToLNu_HT600toInf',
+        'WJetsToLNu_HT2500toInf',
     ],
     'Diboson' : [
         'WWToLNuLNu',
@@ -1186,11 +1190,15 @@ nJobs = {
     'ZJetsToNuNu_HT2500toInf'  :  999,
 
     #WJets
-    'WJetsToLNu'             :  999,
-    'WJetsToLNu_HT100to200'  :  999,
-    'WJetsToLNu_HT200to400'  :  999,
-    'WJetsToLNu_HT400to600'  :  999,
-    'WJetsToLNu_HT600toInf'  :  999,
+    'WJetsToLNu'              :  999,
+    'WJetsToLNu_HT100to200'   :  999,
+    'WJetsToLNu_HT200to400'   :  999,
+    'WJetsToLNu_HT400to600'   :  999,
+    'WJetsToLNu_HT600to800'   :  999,
+    'WJetsToLNu_HT800to1200'  :  999,
+    'WJetsToLNu_HT1200to2500' :  999,
+    'WJetsToLNu_HT600toInf'   :  999,
+    'WJetsToLNu_HT2500toInf'  :  999,
 
     #WW
     'WWToLNuQQ'   :  100,
@@ -2536,10 +2544,14 @@ maxEvents = {
 
     #WJets
     'WJetsToLNu'  :  -1,
-    'WJetsToLNu_HT100to200'  :  -1,
-    'WJetsToLNu_HT200to400'  :  -1,
-    'WJetsToLNu_HT400to600'  :  -1,
-    'WJetsToLNu_HT600toInf'  :  -1,
+    'WJetsToLNu_HT100to200'   :  -1,
+    'WJetsToLNu_HT200to400'   :  -1,
+    'WJetsToLNu_HT400to600'   :  -1,
+    'WJetsToLNu_HT600to800'   :  -1,
+    'WJetsToLNu_HT800to1200'  :  -1,
+    'WJetsToLNu_HT1200to2500' :  -1,
+    'WJetsToLNu_HT600toInf'   :  -1,
+    'WJetsToLNu_HT2500toInf'  :  -1,
 
     #WW
     'WWToLNuQQ'   :  -1,
@@ -3885,11 +3897,15 @@ types = {
 
     #WJets
     'WJetsToLNu'  :  "bgMC",
-    'WJetsToLNu_HT'          :  "bgMC",
-    'WJetsToLNu_HT100to200'  :  "bgMC",
-    'WJetsToLNu_HT200to400'  :  "bgMC",
-    'WJetsToLNu_HT400to600'  :  "bgMC",
-    'WJetsToLNu_HT600toInf'  :  "bgMC",
+    'WJetsToLNu_HT'           :  "bgMC",
+    'WJetsToLNu_HT100to200'   :  "bgMC",
+    'WJetsToLNu_HT200to400'   :  "bgMC",
+    'WJetsToLNu_HT400to600'   :  "bgMC",
+    'WJetsToLNu_HT600to800'   :  "bgMC",
+    'WJetsToLNu_HT800to1200'  :  "bgMC",
+    'WJetsToLNu_HT1200to2500' :  "bgMC",
+    'WJetsToLNu_HT600toInf'   :  "bgMC",
+    'WJetsToLNu_HT2500toInf'  :  "bgMC",
 
     #WW
     'WWToLNuQQ'   :  "bgMC",
@@ -5282,11 +5298,15 @@ colors = {
 
     #WJets
     'WJetsToLNu'             :  852,
-    'WJetsToLNu_HT'          :  852,
-    'WJetsToLNu_HT100to200'  :  852,
-    'WJetsToLNu_HT200to400'  :  852,
-    'WJetsToLNu_HT400to600'  :  852,
-    'WJetsToLNu_HT600toInf'  :  852,
+    'WJetsToLNu_HT'           :  852,
+    'WJetsToLNu_HT100to200'   :  852,
+    'WJetsToLNu_HT200to400'   :  852,
+    'WJetsToLNu_HT400to600'   :  852,
+    'WJetsToLNu_HT600to800'   :  852,
+    'WJetsToLNu_HT800to1200'  :  852,
+    'WJetsToLNu_HT1200to2500' :  852,
+    'WJetsToLNu_HT600toInf'   :  852,
+    'WJetsToLNu_HT2500toInf'  :  852,
 
     #WW
     'WWToLNuQQ'   :  390,
@@ -6689,12 +6709,16 @@ labels = {
     'ZJetsToNuNu_HT2500toInf'  :  "Z#rightarrow#nu#bar{#nu} (H_{T}>2500 GeV)",
 
     #WJets
-    'WJetsToLNu'            :  "W#rightarrowl#nu",
-    'WJetsToLNu_HT'         :  "W#rightarrowl#nu (H_{T}>100 GeV)",
-    'WJetsToLNu_HT100to200' :  "W#rightarrowl#nu (100<H_{T}<200 GeV)",
-    'WJetsToLNu_HT200to400' :  "W#rightarrowl#nu (200<H_{T}<400 GeV)",
-    'WJetsToLNu_HT400to600' :  "W#rightarrowl#nu (400<H_{T}<600 GeV)",
-    'WJetsToLNu_HT600toInf' :  "W#rightarrowl#nu (H_{T}>600 GeV)",
+    'WJetsToLNu'              :  "W#rightarrowl#nu",
+    'WJetsToLNu_HT'           :  "W#rightarrowl#nu (H_{T}>100 GeV)",
+    'WJetsToLNu_HT100to200'   :  "W#rightarrowl#nu (100<H_{T}<200 GeV)",
+    'WJetsToLNu_HT200to400'   :  "W#rightarrowl#nu (200<H_{T}<400 GeV)",
+    'WJetsToLNu_HT400to600'   :  "W#rightarrowl#nu (400<H_{T}<600 GeV)",
+    'WJetsToLNu_HT600to800'   :  "W#rightarrowl#nu (600<H_{T}<800 GeV)",
+    'WJetsToLNu_HT800to1200'  :  "W#rightarrowl#nu (800<H_{T}<1200 GeV)",
+    'WJetsToLNu_HT1200to2500' :  "W#rightarrowl#nu (1200<H_{T}<2500 GeV)",
+    'WJetsToLNu_HT600toInf'   :  "W#rightarrowl#nu (H_{T}>600 GeV)",
+    'WJetsToLNu_HT2500toInf'  :  "W#rightarrowl#nu (H_{T}>2500 GeV)",
 
     #WW
     'WWToLNuQQ'   :  "WW#rightarrowl#nuqq",
