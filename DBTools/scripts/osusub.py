@@ -94,6 +94,8 @@ parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help=
 #               In this case the lable will be A with all the '-' in 'A' changed to '_'.
 #           5. Run over a skim.
 #               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -g -s SkimDirectory -a SkimChannel
+#           6. Run over files in a given remote directory using xrootd
+#               osusub.py -t OSUT3Ntuple -l Config.py -w WorkingDirectory -P -J R_Golden17 -s "root://cmsxrootd-site.fnal.gov//store/user/lpclonglived/DisappTrks/skim/2017/tauTagSkim" -a TauTagSkim
 #   Notice: Maybe in some generic jobs you want to also produce skimmed ntuples and histograms in the same time. For this case, osusub.py can not handle yet. But is is fairly straight forward. Just make --fileName a list of output modules(--fileNames).
 #2 Submit OSUT3Analysis jobs. Well, just remove the -g option.
 #           2.1 Run over a dataset(s) on T3.
@@ -326,6 +328,16 @@ def SecondaryCollectionInstance(SkimDirectory, SkimChannel):
                 strings.append("collections." + str(collection) + " =  cms.InputTag (" + newString + ")")
     return strings
 
+def RemoteSecondaryCollectionInstance(skimFileList):
+    strings = []
+    if not len(skimFileList):
+        return strings
+    for collection in secondaryCollections:
+        newString = os.popen("edmDumpEventContent " + skimFileList[0].rstrip('\n') + " | grep " + secondaryCollections[str(collection)]).readlines()[0]
+        newString = "\"" + newString.split("\"")[1] + "\",\"" + newString.split("\"")[3] + "\",\"" +newString.split("\"")[5] + "\""
+        strings.append("collections." + str(collection) + " =  cms.InputTag (" + newString + ")")
+    return strings
+
 def ModifyUserConfigForSecondaryCollections(configPath, instances):
     Config = open(configPath,'r')
     StringToWrite = ""
@@ -353,6 +365,20 @@ def GetListOfRootFiles(Path):
     for f in fileList:
         if len(f) is 0:
             fileList.remove(f)   # remove empty filename
+    return fileList
+
+def GetListOfRemoteRootFiles(Path):
+    fileList = []
+    if not len(Path.split('//')) == 3 or not Path.startswith('root://'):
+        print 'Remote directories must be of the form \"root://<redirector>//store/...\"'
+        return fileList
+    thisRedirector = Path.split('//')[0] + '//' + Path.split('//')[1] + '/'
+    thisRemotePath = '/' + Path.split('//')[2]
+    tmpFileList = os.popen('xrdfs ' + thisRedirector + ' ls -l -u ' + thisRemotePath).read().split('\n')
+    for filePath in tmpFileList:
+        if len(filePath.split()) == 5:
+            if filePath.split()[4].endswith('.root'):
+                fileList.append(filePath.split()[4])
     return fileList
 
 #It generates the condor.sub file for each dataset.
@@ -583,6 +609,10 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                     f = open (Directory + "/" + channelName + "/SkimDirectory.txt", "w")
                     f.write (Directory + "\n")
                     f.close ()
+
+    # Create an extra copy in the skim directory, in case a user later wants to run over this skim remotely via xrootd
+    subprocess.call('cp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
+
     ConfigFile.write('fileName = \'hist_\' + str (osusub.jobNumber) + \'.root\'\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
     if (not arguments.Generic) or (arguments.Generic and arguments.localConfig):
@@ -724,7 +754,9 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         text = 'listOfFiles = [\n'
         if not UseAAA:
             for f in inputFiles:
-                if remoteAccessT3:
+                if lpcCAF:
+                    f = re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", f)
+                elif remoteAccessT3:
                     f = "root://cms-0.mps.ohio-state.edu:1094/" + f
                 else:
                     if isInCondorDir:
@@ -766,7 +798,9 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         #Please give the absolute paths of the files like /data/user/***/condor/dir or /store/....
         if not UseAAA:
             for f in inputFiles:
-                if remoteAccessT3:
+                if lpcCAF:
+                    f = re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", f)
+                elif remoteAccessT3:
                     f = "root://cms-0.mps.ohio-state.edu:1094/" + f
                 else:
                     f = "file:" + os.path.realpath (f)
@@ -788,7 +822,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         fnew.write(text)
         fnew.close()
     if FileType == 'OSUT3Ntuple':
-        if not UseAAA:
+        if not UseAAA and not RunOverRemoteSkim:
             prefix = ''
             if not remoteAccessT3 :
                 prefix = 'file:'
@@ -797,13 +831,15 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             if RunOverSkim:
                 print "You have specified a skim as input.  Will obtain cross sections for dataset", Label, "from the database."
             #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py.
-            if not hasattr (Dataset, "__iter__"):
-                subprocess.call('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix + " False", shell = True)
-            else:
-                append = False
-                for x in Dataset:
-                    subprocess.call('MySQLModule ' + x + ' ' + datasetInfoName + ' ' + prefix + ' ' + ("True" if append else "False"), shell = True)
-                    append = True
+            # Currently MySQLModule doesn't work at the LPC
+            if not lpcCAF:
+                if not hasattr (Dataset, "__iter__"):
+                    subprocess.call('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix + " False", shell = True)
+                else:
+                    append = False
+                    for x in Dataset:
+                        subprocess.call('MySQLModule ' + x + ' ' + datasetInfoName + ' ' + prefix + ' ' + ("True" if append else "False"), shell = True)
+                        append = True
             NTupleExistCheck = ""
             if os.path.isfile (datasetInfoName):
                 NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
@@ -819,7 +855,23 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                         append = True
                 datasetRead['useAAA'] = True
         secondaryCollectionModifications = []
-        if RunOverSkim:
+        if RunOverRemoteSkim:
+            SkimDirectory = arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel
+            inputFiles = GetListOfRemoteRootFiles(SkimDirectory)
+            numInputFiles = len(inputFiles)
+            if not numInputFiles:
+                print "No input skim files found for remote dataset " + Label + ". Will skip it and continue"
+                datasetRead['numberOfFiles'] = numInputFiles
+                SkimModifier(Label, Directory, crossSection, True)
+                return datasetRead
+            secondaryCollections = RemoteSecondaryCollectionInstance(inputFiles)
+            # Copy the relevant files from the remote skim directory.
+            subprocess.call('xrdcp ' + SkimDirectory + '/' + os.path.basename(datasetInfoName) + ' ' + datasetInfoName, shell = True)
+            subprocess.call('xrdcp ' + SkimDirectory + '/OriginalNumberOfEvents.txt' + ' ' + Directory + '/OriginalNumberOfEvents.txt', shell = True)
+            subprocess.call('xrdcp ' + SkimDirectory + '/SkimNumberOfEvents.txt' + ' ' + Directory + '/SkimNumberOfEvents.txt', shell = True)
+            # Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
+            SkimModifier(Label, Directory, crossSection, True)
+        elif RunOverSkim:
             numInputFiles = len(glob.glob(Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel + "/*.root"))
             if not numInputFiles:
                 print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
@@ -887,10 +939,15 @@ def SkimChannelFinder(userConfig, Directory, temPset):
 ################################################################################
 #            Function to modify the dataset_*_Info_cfy file for skim.          #
 ################################################################################
-def SkimModifier(Label, Directory, crossSection):
-    SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
-    OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/OriginalNumberOfEvents.txt') else 0.0
-    SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/SkimNumberOfEvents.txt') else 0.0
+def SkimModifier(Label, Directory, crossSection, isRemote = False):
+    if isRemote:
+        SkimDirectory = str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
+        OriginalNumberOfEvents = os.popen('cat OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile ('OriginalNumberOfEvents.txt') else 0.0
+        SkimNumberOfEvents     = os.popen('cat SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile ('SkimNumberOfEvents.txt') else 0.0
+    else: 
+        SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
+        OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/OriginalNumberOfEvents.txt') else 0.0
+        SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/SkimNumberOfEvents.txt') else 0.0
 
     infoFile = Directory + '/datasetInfo_' + Label + '_cfg.py'
     fin = open(infoFile, "r")
@@ -910,12 +967,22 @@ def SkimModifier(Label, Directory, crossSection):
     #-1.
     if crossSection != -1:
         orig = orig.replace("crossSection", "crossSection = " + str(crossSection) + "# Value used in making the skim is: ")
-    skimFiles = GetListOfRootFiles(SkimDirectory)
+    if isRemote:
+        skimFiles = GetListOfRemoteRootFiles(SkimDirectory)
+    else:
+        skimFiles = GetListOfRootFiles(SkimDirectory)
     add  = "\n"
     add += 'skimDirectory = "' + SkimDirectory + '"\n'
     add += 'listOfFiles = [\n'
-    for s in skimFiles:
-        add += '"file:' + os.path.realpath (s) + '",\n'
+    if isRemote:
+        for s in skimFiles:
+            add += '"' + s + '",\n'
+    elif lpcCAF:
+        for s in skimFiles:
+            add += '"' + re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", os.path.realpath (s)) + '",\n'
+    else:
+        for s in skimFiles:
+            add += '"file:' + os.path.realpath (s) + '",\n'
     add += ']\n'
 
     add += 'listOfSecondaryFiles = [\n'
@@ -923,8 +990,12 @@ def SkimModifier(Label, Directory, crossSection):
     sys.path.append (tempdir)
     cwd = os.getcwd ()
     os.chdir (tempdir)
-    for s in getOriginalFiles (skimFiles, tempdir):
-        add += '"file:' + os.path.realpath (s) + '",\n'
+    if lpcCAF:
+        for s in getOriginalFiles (skimFiles, tempdir):
+            add += '"' + re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", os.path.realpath (s)) + '",\n'
+    else:
+        for s in getOriginalFiles (skimFiles, tempdir):
+            add += '"file:' + os.path.realpath (s) + '",\n'
     shutil.rmtree (tempdir)
     os.chdir (cwd)
     add += ']\n'
@@ -1044,6 +1115,8 @@ elif arguments.SkimDirectory == "" and arguments.SkimChannel == "":
 else:
     print "Both skim directory and skim channel should be provided."
 
+RunOverRemoteSkim = RunOverSkim and 'root://' in arguments.SkimDirectory
+
 ###############################################################################
 # Find the list of dataset to run over, either from arguments or localConfig. #
 ###############################################################################
@@ -1089,6 +1162,14 @@ if arguments.Redirector != "":
     if not RedirectorDic.has_key(arguments.Redirector):
         print "Warning! Invalid redirector provided!! Quit!!"
         sys.exit()
+
+if lpcCAF and not arguments.skimToHadoop:
+    print
+    print "Warning! You are working on the LPC, but have not provided a \"Hadoop\" directory for your skim with \"-H\"."
+    print "         LPC's condor nodes have no access to regular directories, so you will never be able to run over"
+    print "         the resulting skim files using condor, nor will you be able to access them with xrootd remotely."
+    print "         Consider using -H with eos!"
+    print
 
 ###############################################################################
 #                End of Setup stage, will begin to submit jobs                #
@@ -1187,7 +1268,6 @@ if not arguments.Resubmit:
                     NumberOfJobs = max(1,int(math.ceil(NumberOfEvents/int(arguments.NumberOfEventsPerJob))))
             if NumberOfJobs > NumberOfFiles:
                 NumberOfJobs = NumberOfFiles
-
 
             RealMaxEvents = EventsPerJob*NumberOfJobs
             userConfig = 'userConfig_' + dataset + '_cfg.py'
