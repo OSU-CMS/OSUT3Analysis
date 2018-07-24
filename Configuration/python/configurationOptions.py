@@ -8101,7 +8101,7 @@ labels = {
 crossSections = {
     # Cross sections for samples stored on T3 should be registered in database.
     # Cross sections below are for MiniAOD not stored on T3.
-    'DYJetsToLL_50'                 : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)
+    'DYJetsToLL_50'                 : 5765.4,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (1921.8 * 3) -- updated from 6025.2 (2008.4 * 3) 17 Jul 2016
     'WJetsToLNu'                    : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3)
     'TTJets'                        : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
     'TTJets_Debug'                  : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
@@ -8110,12 +8110,31 @@ crossSections = {
     'WZ'                            : 22.82,
     'ZZ'                            : 10.32,
     #50ns
-    'DYJetsToLL_50_50ns'            : 6025.2,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (2008.4 * 3)
+    'DYJetsToLL_50_50ns'            : 5765.4,       # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (1921.8 * 3) -- updated from 6025.2 (2008.4 * 3) 17 Jul 2016
     'WJetsToLNu_50ns'               : 61526.7,      # https://twiki.cern.ch/twiki/bin/view/CMS/StandardModelCrossSectionsat13TeV (20508.9 * 3)
     'TTJets_50ns'                   : 831.76,       # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO (for top mass = 172.5 GeV)
     'WW_50ns'                       : 63.21,
     'WZ_50ns'                       : 22.82,
     'ZZ_50ns'                       : 10.32,
+#############################################################
+    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns
+    'WJetsToLNu_HT100to200'   : 1345,
+    'WJetsToLNu_HT200to400'   : 359.7,
+    'WJetsToLNu_HT400to600'   : 48.91,
+    'WJetsToLNu_HT600to800'   : 12.05,
+    'WJetsToLNu_HT800to1200'  : 5.501,
+    'WJetsToLNu_HT1200to2500' : 1.329,
+    'WJetsToLNu_HT600toInf'   : 18.77,
+    'WJetsToLNu_HT2500toInf'  : 0.03216,
+
+    'ZJetsToNuNu_HT100to200' : 280.35,
+    'ZJetsToNuNu_HT200to400' : 77.67,
+    'ZJetsToNuNu_HT400to600' : 10.73,
+    'ZJetsToNuNu_HT600to800' : 2.559,
+    'ZJetsToNuNu_HT800to1200' : 1.1796,
+    'ZJetsToNuNu_HT1200to2500' : 0.28833,
+    'ZJetsToNuNu_HT600toInf' : 4.116,
+    'ZJetsToNuNu_HT2500toInf' : 0.006945,
 #############################################################
     # Cross sections below obatined with crossSectionExtractor.py
     'DYJetsToLL_10to50'        :              18610.0,
