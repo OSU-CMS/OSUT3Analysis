@@ -1163,6 +1163,14 @@ if arguments.Redirector != "":
         print "Warning! Invalid redirector provided!! Quit!!"
         sys.exit()
 
+if lpcCAF and not arguments.skimToHadoop:
+    print
+    print "Warning! You are working on the LPC, but have not provided a \"Hadoop\" directory for your skim with \"-H\"."
+    print "         LPC's condor nodes have no access to regular directories, so you will never be able to run over"
+    print "         the resulting skim files using condor, nor will you be able to access them with xrootd remotely."
+    print "         Consider using -H with eos!"
+    print
+
 ###############################################################################
 #                End of Setup stage, will begin to submit jobs                #
 ###############################################################################
