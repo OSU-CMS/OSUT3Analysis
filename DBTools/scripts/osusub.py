@@ -609,6 +609,10 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                     f = open (Directory + "/" + channelName + "/SkimDirectory.txt", "w")
                     f.write (Directory + "\n")
                     f.close ()
+
+    # Create an extra copy in the skim directory, in case a user later wants to run over this skim remotely via xrootd
+    subprocess.call('cp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
+
     ConfigFile.write('fileName = \'hist_\' + str (osusub.jobNumber) + \'.root\'\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
     if (not arguments.Generic) or (arguments.Generic and arguments.localConfig):
@@ -750,7 +754,9 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         text = 'listOfFiles = [\n'
         if not UseAAA:
             for f in inputFiles:
-                if remoteAccessT3:
+                if lpcCAF:
+                    f = re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", f)
+                elif remoteAccessT3:
                     f = "root://cms-0.mps.ohio-state.edu:1094/" + f
                 else:
                     if isInCondorDir:
@@ -792,7 +798,9 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         #Please give the absolute paths of the files like /data/user/***/condor/dir or /store/....
         if not UseAAA:
             for f in inputFiles:
-                if remoteAccessT3:
+                if lpcCAF:
+                    f = re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", f)
+                elif remoteAccessT3:
                     f = "root://cms-0.mps.ohio-state.edu:1094/" + f
                 else:
                     f = "file:" + os.path.realpath (f)
@@ -823,13 +831,15 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             if RunOverSkim:
                 print "You have specified a skim as input.  Will obtain cross sections for dataset", Label, "from the database."
             #Use MySQLModule, a perl script to get the information of the given dataset from T3 DB and save it in datasetInfo_cfg.py.
-            if not hasattr (Dataset, "__iter__"):
-                subprocess.call('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix + " False", shell = True)
-            else:
-                append = False
-                for x in Dataset:
-                    subprocess.call('MySQLModule ' + x + ' ' + datasetInfoName + ' ' + prefix + ' ' + ("True" if append else "False"), shell = True)
-                    append = True
+            # Currently MySQLModule doesn't work at the LPC
+            if not lpcCAF:
+                if not hasattr (Dataset, "__iter__"):
+                    subprocess.call('MySQLModule ' + Dataset + ' ' + datasetInfoName + ' ' + prefix + " False", shell = True)
+                else:
+                    append = False
+                    for x in Dataset:
+                        subprocess.call('MySQLModule ' + x + ' ' + datasetInfoName + ' ' + prefix + ' ' + ("True" if append else "False"), shell = True)
+                        append = True
             NTupleExistCheck = ""
             if os.path.isfile (datasetInfoName):
                 NTupleExistCheck = os.popen('cat ' + datasetInfoName).read()
@@ -967,6 +977,9 @@ def SkimModifier(Label, Directory, crossSection, isRemote = False):
     if isRemote:
         for s in skimFiles:
             add += '"' + s + '",\n'
+    elif lpcCAF:
+        for s in skimFiles:
+            add += '"' + re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", os.path.realpath (s)) + '",\n'
     else:
         for s in skimFiles:
             add += '"file:' + os.path.realpath (s) + '",\n'
@@ -977,8 +990,12 @@ def SkimModifier(Label, Directory, crossSection, isRemote = False):
     sys.path.append (tempdir)
     cwd = os.getcwd ()
     os.chdir (tempdir)
-    for s in getOriginalFiles (skimFiles, tempdir):
-        add += '"file:' + os.path.realpath (s) + '",\n'
+    if lpcCAF:
+        for s in getOriginalFiles (skimFiles, tempdir):
+            add += '"' + re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", os.path.realpath (s)) + '",\n'
+    else:
+        for s in getOriginalFiles (skimFiles, tempdir):
+            add += '"file:' + os.path.realpath (s) + '",\n'
     shutil.rmtree (tempdir)
     os.chdir (cwd)
     add += ']\n'
