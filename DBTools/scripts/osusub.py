@@ -610,8 +610,8 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                     f.write (Directory + "\n")
                     f.close ()
 
-    # Create an extra copy in the skim directory, in case a user later wants to run over this skim remotely via xrootd
-    subprocess.call('cp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
+                    # Create an extra copy in the skim directory, in case a user later wants to run over this skim remotely via xrootd
+                    subprocess.call('cp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
 
     ConfigFile.write('fileName = \'hist_\' + str (osusub.jobNumber) + \'.root\'\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
