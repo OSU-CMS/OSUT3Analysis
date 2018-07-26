@@ -228,18 +228,34 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     originalMuons     = cms.InputTag ("slimmedMuons"),
     originalTaus      = cms.InputTag ("slimmedTaus"),
 
-    eleVIDVetoIdMap = collectionProducer.electrons.vidVetoIdMap,
-    eleVIDLooseIdMap = collectionProducer.electrons.vidLooseIdMap,
+    eleVIDVetoIdMap   = collectionProducer.electrons.vidVetoIdMap,
+    eleVIDLooseIdMap  = collectionProducer.electrons.vidLooseIdMap,
     eleVIDMediumIdMap = collectionProducer.electrons.vidMediumIdMap,
-    eleVIDTightIdMap = collectionProducer.electrons.vidTightIdMap,
+    eleVIDTightIdMap  = collectionProducer.electrons.vidTightIdMap,
+
+    # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2Archive#Spring15_selection_25ns
+    eleVtx_d0Cuts_barrel = cms.vdouble(0.0564, 0.0261, 0.0118, 0.0111),
+    eleVtx_dzCuts_barrel = cms.vdouble(0.472, 0.41, 0.373, 0.0466),
+    eleVtx_d0Cuts_endcap = cms.vdouble(0.222, 0.118, 0.0739, 0.0351),
+    eleVtx_dzCuts_endcap = cms.vdouble(0.921, 0.822, 0.602, 0.417),
 )
+
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
-    if "Run2016" in osusub.dataset or "Run2017" in osusub.dataset:
+    if "Run2016" in osusub.dataset:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2016_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2016_data.root")
+    elif "Run2017" in osusub.dataset:
+        collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2017_data.root")
+        collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2017_data.root")
     else:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2015_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2015_data.root")
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4"):
+    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later
+    eleVtx_d0Cuts_barrel = cms.vdouble(0.05, 0.05, 0.05, 0.05)
+    eleVtx_dzCuts_barrel = cms.vdouble(0.10, 0.10, 0.10, 0.10)
+    eleVtx_d0Cuts_endcap = cms.vdouble(0.10, 0.10, 0.10, 0.10)
+    eleVtx_dzCuts_endcap = cms.vdouble(0.20, 0.20, 0.20, 0.20)
 
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------

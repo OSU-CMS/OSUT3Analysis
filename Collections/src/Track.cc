@@ -230,8 +230,16 @@ osu::Track::Track (const TYPE(tracks) &track,
                    const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap,
                    const bool dropHits,
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
-  Track(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits)
+  Track(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits),
+  eleVtx_d0Cuts_barrel_(cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_barrel")),
+  eleVtx_dzCuts_barrel_(cfg.getParameter<vector<double> > ("eleVtx_dzCuts_barrel")),
+  eleVtx_d0Cuts_endcap_(cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_endcap")),
+  eleVtx_dzCuts_endcap_(cfg.getParameter<vector<double> > ("eleVtx_dzCuts_endcap"))
 {
+  assert(eleVtx_d0Cuts_barrel_.size() == 4);
+  assert(eleVtx_dzCuts_barrel_.size() == 4);
+  assert(eleVtx_d0Cuts_endcap_.size() == 4);
+  assert(eleVtx_dzCuts_endcap_.size() == 4);
 
   // if the tracks collection itself is CandidateTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() == "candidateTrackProducer")
@@ -244,6 +252,12 @@ osu::Track::Track (const TYPE(tracks) &track,
 
 osu::Track::~Track ()
 {
+#ifdef DISAPP_TRKS
+  eleVtx_dxy_barrel_.clear();
+  eleVtx_dxy_endcap_.clear();
+  eleVtx_dz_barrel_.clear();
+  eleVtx_dz_endcap_.clear();
+#endif
 }
 
 const bool
@@ -329,45 +343,35 @@ osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons
     bool passesTight_dxy  = false, passesTight_dz  = false;
 
     // Note in below, these remain false if |eta| >= 2.5; thus an eta cut is also being applied here as intended
-#if CMSSW_VERSION_CODE < CMSSW_VERSION(9,4,0)
-    // https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2Archive#Spring15_selection_25ns
+    double ele_d0 = fabs(ele.gsfTrack()->dxy(vertices->at(0).position()));
+    double ele_dz = fabs(ele.gsfTrack()->dz(vertices->at(0).position()));
+
     if(fabs(ele.superCluster ()->eta()) <= 1.479) {
-      passesVeto_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0564);
-      passesVeto_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.472);
+      passesVeto_dxy = (ele_d0 < eleVtx_d0Cuts_barrel_[0]);
+      passesVeto_dz  = (ele_dz < eleVtx_dzCuts_barrel_[0]);
 
-      passesLoose_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0261);
-      passesLoose_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.41);
+      passesLoose_dxy = (ele_d0 < eleVtx_d0Cuts_barrel_[1]);
+      passesLoose_dz  = (ele_dz < eleVtx_dzCuts_barrel_[1]);
 
-      passesMedium_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0118);
-      passesMedium_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.373);
+      passesMedium_dxy = (ele_d0 < eleVtx_d0Cuts_barrel_[2]);
+      passesMedium_dz  = (ele_dz < eleVtx_dzCuts_barrel_[2]);
 
-      passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0111);
-      passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.0466);
+      passesTight_dxy = (ele_d0 < eleVtx_d0Cuts_barrel_[3]);
+      passesTight_dz  = (ele_dz < eleVtx_dzCuts_barrel_[3]);
     }
     else if(fabs(ele.superCluster()->eta()) < 2.5) {
-      passesVeto_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.222);
-      passesVeto_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.921);
+      passesVeto_dxy = (ele_d0 < eleVtx_d0Cuts_endcap_[0]);
+      passesVeto_dz  = (ele_dz < eleVtx_dzCuts_endcap_[0]);
 
-      passesLoose_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.118);
-      passesLoose_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.822);
+      passesLoose_dxy = (ele_d0 < eleVtx_d0Cuts_endcap_[1]);
+      passesLoose_dz  = (ele_dz < eleVtx_dzCuts_endcap_[1]);
 
-      passesMedium_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0739);
-      passesMedium_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.602);
+      passesMedium_dxy = (ele_d0 < eleVtx_d0Cuts_endcap_[2]);
+      passesMedium_dz  = (ele_dz < eleVtx_dzCuts_endcap_[2]);
 
-      passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.0351);
-      passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.417);
+      passesTight_dxy = (ele_d0 < eleVtx_d0Cuts_endcap_[3]);
+      passesTight_dz  = (ele_dz < eleVtx_dzCuts_endcap_[3]);
     }
-#else
-    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later
-    if(fabs(ele.superCluster ()->eta()) <= 1.479) {
-      passesVeto_dxy = passesLoose_dxy = passesMedium_dxy = passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.05);
-      passesVeto_dz  = passesLoose_dz  = passesMedium_dz  = passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.10);
-    }
-    else if(fabs(ele.superCluster()->eta()) < 2.5) {
-      passesVeto_dxy = passesLoose_dxy = passesMedium_dxy = passesTight_dxy = (fabs(ele.gsfTrack()->dxy(vertices->at(0).position())) < 0.10);
-      passesVeto_dz  = passesLoose_dz  = passesMedium_dz  = passesTight_dz  = (fabs(ele.gsfTrack()->dz(vertices->at(0).position()))  < 0.20);
-      }
-#endif
 
     if((*vidVetoMap)  [(*electrons).refAt(iEle)] &&
        passesVeto_dxy &&

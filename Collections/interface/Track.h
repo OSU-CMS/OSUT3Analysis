@@ -3,6 +3,7 @@
 
 #include <random>
 #include <chrono>
+#include <assert.h>
 
 #include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
@@ -247,6 +248,9 @@ namespace osu
         double dRToMatchedCandidateTrack_;
 
         double maxDeltaR_candidateTrackMatching_;
+
+        vector<double> eleVtx_d0Cuts_barrel_, eleVtx_d0Cuts_endcap_;
+        vector<double> eleVtx_dzCuts_barrel_, eleVtx_dzCuts_endcap_;
 
         float deltaRToClosestElectron_;
         float deltaRToClosestVetoElectron_;
