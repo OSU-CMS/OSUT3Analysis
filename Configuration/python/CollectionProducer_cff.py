@@ -233,6 +233,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     eleVIDMediumIdMap = collectionProducer.electrons.vidMediumIdMap,
     eleVIDTightIdMap  = collectionProducer.electrons.vidTightIdMap,
 
+    # Cut values are ordered by ID, as: veto, loose, medium, tight
     # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2Archive#Spring15_selection_25ns
     eleVtx_d0Cuts_barrel = cms.vdouble(0.0564, 0.0261, 0.0118, 0.0111),
     eleVtx_dzCuts_barrel = cms.vdouble(0.472, 0.41, 0.373, 0.0466),
@@ -250,12 +251,13 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
     else:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2015_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2015_data.root")
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
+    # Cut values are ordered by ID, as: veto, loose, medium, tight
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later
-    eleVtx_d0Cuts_barrel = cms.vdouble(0.05, 0.05, 0.05, 0.05)
-    eleVtx_dzCuts_barrel = cms.vdouble(0.10, 0.10, 0.10, 0.10)
-    eleVtx_d0Cuts_endcap = cms.vdouble(0.10, 0.10, 0.10, 0.10)
-    eleVtx_dzCuts_endcap = cms.vdouble(0.20, 0.20, 0.20, 0.20)
+    collectionProducer.tracks.eleVtx_d0Cuts_barrel = cms.vdouble(0.05, 0.05, 0.05, 0.05)
+    collectionProducer.tracks.eleVtx_dzCuts_barrel = cms.vdouble(0.10, 0.10, 0.10, 0.10)
+    collectionProducer.tracks.eleVtx_d0Cuts_endcap = cms.vdouble(0.10, 0.10, 0.10, 0.10)
+    collectionProducer.tracks.eleVtx_dzCuts_endcap = cms.vdouble(0.20, 0.20, 0.20, 0.20)
 
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------

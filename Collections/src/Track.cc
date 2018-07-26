@@ -230,12 +230,13 @@ osu::Track::Track (const TYPE(tracks) &track,
                    const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap,
                    const bool dropHits,
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
-  Track(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits),
-  eleVtx_d0Cuts_barrel_(cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_barrel")),
-  eleVtx_dzCuts_barrel_(cfg.getParameter<vector<double> > ("eleVtx_dzCuts_barrel")),
-  eleVtx_d0Cuts_endcap_(cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_endcap")),
-  eleVtx_dzCuts_endcap_(cfg.getParameter<vector<double> > ("eleVtx_dzCuts_endcap"))
+  Track(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits)
 {
+  eleVtx_d0Cuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_barrel");
+  eleVtx_dzCuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_dzCuts_barrel");
+  eleVtx_d0Cuts_endcap_ = cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_endcap");
+  eleVtx_dzCuts_endcap_ = cfg.getParameter<vector<double> > ("eleVtx_dzCuts_endcap");
+
   assert(eleVtx_d0Cuts_barrel_.size() == 4);
   assert(eleVtx_dzCuts_barrel_.size() == 4);
   assert(eleVtx_d0Cuts_endcap_.size() == 4);
@@ -253,10 +254,10 @@ osu::Track::Track (const TYPE(tracks) &track,
 osu::Track::~Track ()
 {
 #ifdef DISAPP_TRKS
-  eleVtx_dxy_barrel_.clear();
-  eleVtx_dxy_endcap_.clear();
-  eleVtx_dz_barrel_.clear();
-  eleVtx_dz_endcap_.clear();
+  eleVtx_d0Cuts_barrel_.clear();
+  eleVtx_dzCuts_barrel_.clear();
+  eleVtx_d0Cuts_endcap_.clear();
+  eleVtx_dzCuts_endcap_.clear();
 #endif
 }
 
