@@ -42,8 +42,13 @@ if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
+missing_directories = []
+
 for dataset in datasets:
     path = condor_dir + "/" + dataset
+    if not os.path.isdir(path):
+        missing_directories.append(path)
+        continue
     files = [f for f in os.listdir(path) if f.endswith('.root') and os.path.isfile(os.path.join(path, f))]
     inputFiles = []
     numberOfInputFiles = len(files)
@@ -64,3 +69,8 @@ for dataset in datasets:
     rmCommand = "rm partial*.root"
     subprocess.call(rmCommand,shell=True)
 
+print "Merge complete"
+if missing_directories:
+    print "The following directories were not found and the corresponding datasets were skipped:"
+    for path in missing_directories:
+        print path
