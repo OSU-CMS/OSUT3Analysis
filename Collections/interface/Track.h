@@ -3,6 +3,7 @@
 
 #include <random>
 #include <chrono>
+#include <assert.h>
 
 #include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
@@ -107,9 +108,10 @@ namespace osu
         const edm::Ref<vector<CandidateTrack> > matchedCandidateTrack () const { return matchedCandidateTrack_; };
         const double dRToMatchedCandidateTrack () const { return (IS_INVALID(dRToMatchedCandidateTrack_)) ? MAX_DR : dRToMatchedCandidateTrack_; };
 
-        void set_minDeltaRToElectrons(const edm::Handle<edm::View<TYPE(electrons)> > &, 
-                                      const edm::Handle<edm::ValueMap<bool> > &, 
-                                      const edm::Handle<edm::ValueMap<bool> > &, 
+        void set_minDeltaRToElectrons(const edm::Handle<edm::View<TYPE(electrons)> > &,
+                                      const edm::Handle<vector<TYPE(primaryvertexs)> > &,
+                                      const edm::Handle<edm::ValueMap<bool> > &,
+                                      const edm::Handle<edm::ValueMap<bool> > &,
                                       const edm::Handle<edm::ValueMap<bool> > &,
                                       const edm::Handle<edm::ValueMap<bool> > &);
         void set_minDeltaRToMuons(const edm::Handle<vector<TYPE(muons)> > &, const edm::Handle<vector<TYPE(primaryvertexs)> > &);
@@ -246,6 +248,9 @@ namespace osu
         double dRToMatchedCandidateTrack_;
 
         double maxDeltaR_candidateTrackMatching_;
+
+        vector<double> eleVtx_d0Cuts_barrel_, eleVtx_d0Cuts_endcap_;
+        vector<double> eleVtx_dzCuts_barrel_, eleVtx_dzCuts_endcap_;
 
         float deltaRToClosestElectron_;
         float deltaRToClosestVetoElectron_;

@@ -232,6 +232,15 @@ osu::Track::Track (const TYPE(tracks) &track,
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
   Track(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits)
 {
+  eleVtx_d0Cuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_barrel");
+  eleVtx_dzCuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_dzCuts_barrel");
+  eleVtx_d0Cuts_endcap_ = cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_endcap");
+  eleVtx_dzCuts_endcap_ = cfg.getParameter<vector<double> > ("eleVtx_dzCuts_endcap");
+
+  assert(eleVtx_d0Cuts_barrel_.size() == 4);
+  assert(eleVtx_dzCuts_barrel_.size() == 4);
+  assert(eleVtx_d0Cuts_endcap_.size() == 4);
+  assert(eleVtx_dzCuts_endcap_.size() == 4);
 
   // if the tracks collection itself is CandidateTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() == "candidateTrackProducer")
@@ -244,6 +253,12 @@ osu::Track::Track (const TYPE(tracks) &track,
 
 osu::Track::~Track ()
 {
+#ifdef DISAPP_TRKS
+  eleVtx_d0Cuts_barrel_.clear();
+  eleVtx_dzCuts_barrel_.clear();
+  eleVtx_d0Cuts_endcap_.clear();
+  eleVtx_dzCuts_endcap_.clear();
+#endif
 }
 
 const bool
@@ -301,10 +316,11 @@ osu::Track::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> 
 }
 
 void 
-osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons)> > &electrons, 
-                                      const edm::Handle<edm::ValueMap<bool> > &vidVetoMap, 
-                                      const edm::Handle<edm::ValueMap<bool> > &vidLooseMap, 
-                                      const edm::Handle<edm::ValueMap<bool> > &vidMediumMap, 
+osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons)> > &electrons,
+                                      const edm::Handle<vector<TYPE(primaryvertexs)> > &vertices,
+                                      const edm::Handle<edm::ValueMap<bool> > &vidVetoMap,
+                                      const edm::Handle<edm::ValueMap<bool> > &vidLooseMap,
+                                      const edm::Handle<edm::ValueMap<bool> > &vidMediumMap,
                                       const edm::Handle<edm::ValueMap<bool> > &vidTightMap)
 {
   deltaRToClosestElectron_       = INVALID_VALUE;
@@ -321,11 +337,71 @@ osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons
     dR = deltaR(*this, ele);
 
     if(dR < deltaRToClosestElectron_ || deltaRToClosestElectron_ < 0.0) deltaRToClosestElectron_ = dR;
-    if((*vidVetoMap)  [(*electrons).refAt(iEle)] && (dR < deltaRToClosestVetoElectron_   || deltaRToClosestVetoElectron_   < 0.0)) deltaRToClosestVetoElectron_   = dR;
-    if((*vidLooseMap) [(*electrons).refAt(iEle)] && (dR < deltaRToClosestLooseElectron_  || deltaRToClosestLooseElectron_  < 0.0)) deltaRToClosestLooseElectron_  = dR;
-    if((*vidMediumMap)[(*electrons).refAt(iEle)] && (dR < deltaRToClosestMediumElectron_ || deltaRToClosestMediumElectron_ < 0.0)) deltaRToClosestMediumElectron_ = dR;
-    if((*vidTightMap) [(*electrons).refAt(iEle)] && (dR < deltaRToClosestTightElectron_  || deltaRToClosestTightElectron_  < 0.0)) deltaRToClosestTightElectron_  = dR;
-  }
+
+    bool passesVeto_dxy   = false, passesVeto_dz   = false;
+    bool passesLoose_dxy  = false, passesLoose_dz  = false;
+    bool passesMedium_dxy = false, passesMedium_dz = false;
+    bool passesTight_dxy  = false, passesTight_dz  = false;
+
+    // Note in below, these remain false if |eta| >= 2.5; thus an eta cut is also being applied here as intended
+    double ele_d0 = fabs(ele.gsfTrack()->dxy(vertices->at(0).position()));
+    double ele_dz = fabs(ele.gsfTrack()->dz(vertices->at(0).position()));
+
+    if(fabs(ele.superCluster ()->eta()) <= 1.479) {
+      passesVeto_dxy = (ele_d0 < eleVtx_d0Cuts_barrel_[0]);
+      passesVeto_dz  = (ele_dz < eleVtx_dzCuts_barrel_[0]);
+
+      passesLoose_dxy = (ele_d0 < eleVtx_d0Cuts_barrel_[1]);
+      passesLoose_dz  = (ele_dz < eleVtx_dzCuts_barrel_[1]);
+
+      passesMedium_dxy = (ele_d0 < eleVtx_d0Cuts_barrel_[2]);
+      passesMedium_dz  = (ele_dz < eleVtx_dzCuts_barrel_[2]);
+
+      passesTight_dxy = (ele_d0 < eleVtx_d0Cuts_barrel_[3]);
+      passesTight_dz  = (ele_dz < eleVtx_dzCuts_barrel_[3]);
+    }
+    else if(fabs(ele.superCluster()->eta()) < 2.5) {
+      passesVeto_dxy = (ele_d0 < eleVtx_d0Cuts_endcap_[0]);
+      passesVeto_dz  = (ele_dz < eleVtx_dzCuts_endcap_[0]);
+
+      passesLoose_dxy = (ele_d0 < eleVtx_d0Cuts_endcap_[1]);
+      passesLoose_dz  = (ele_dz < eleVtx_dzCuts_endcap_[1]);
+
+      passesMedium_dxy = (ele_d0 < eleVtx_d0Cuts_endcap_[2]);
+      passesMedium_dz  = (ele_dz < eleVtx_dzCuts_endcap_[2]);
+
+      passesTight_dxy = (ele_d0 < eleVtx_d0Cuts_endcap_[3]);
+      passesTight_dz  = (ele_dz < eleVtx_dzCuts_endcap_[3]);
+    }
+
+    if((*vidVetoMap)  [(*electrons).refAt(iEle)] &&
+       passesVeto_dxy &&
+       passesVeto_dz &&
+       (dR < deltaRToClosestVetoElectron_   || deltaRToClosestVetoElectron_   < 0.0)) {
+      deltaRToClosestVetoElectron_   = dR;
+    }
+
+    if((*vidLooseMap) [(*electrons).refAt(iEle)] &&
+       passesLoose_dxy &&
+       passesLoose_dz &&
+       (dR < deltaRToClosestLooseElectron_  || deltaRToClosestLooseElectron_  < 0.0)) {
+      deltaRToClosestLooseElectron_  = dR;
+    }
+
+    if((*vidMediumMap)[(*electrons).refAt(iEle)] &&
+       passesMedium_dxy &&
+       passesMedium_dz &&
+       (dR < deltaRToClosestMediumElectron_ || deltaRToClosestMediumElectron_ < 0.0)) {
+      deltaRToClosestMediumElectron_ = dR;
+    }
+    
+    if((*vidTightMap) [(*electrons).refAt(iEle)] &&
+       passesTight_dxy &&
+       passesTight_dz &&
+       (dR < deltaRToClosestTightElectron_  || deltaRToClosestTightElectron_  < 0.0)) {
+      deltaRToClosestTightElectron_  = dR;
+    }
+  } // for electrons
 }
 
 void 
