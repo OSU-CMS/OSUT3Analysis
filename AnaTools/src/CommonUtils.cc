@@ -987,7 +987,7 @@ anatools::getTriggerObjects (const edm::Event &event, const edm::TriggerResults 
 bool
 anatools::getTriggerObjectsByFilterSubstring (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collectionName, const string &filterSubstring, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs, const vector<string> &filterSubstringsToReject)
 {
-  if(collection == "") {
+  if(collectionName == "") {
     selectedTrigObjs.push_back(NULL);
     return false;
   }
