@@ -985,50 +985,58 @@ anatools::getTriggerObjects (const edm::Event &event, const edm::TriggerResults 
 }
 
 bool
-anatools::getTriggerObjectsByFilterSubstring (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filterSubstring, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs, const string &filterSubstringToReject)
+anatools::getTriggerObjectsByFilterSubstring (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collectionName, const string &filterSubstring, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs, const vector<string> &filterSubstringsToReject)
 {
-  if (collection == "")
-    {
-      selectedTrigObjs.push_back (NULL);
-      return false;
-    }
-  vector<const pat::TriggerObjectStandAlone *> trigObjsToAdd;
-  int i = -1;
-  for (auto trigObj : trigObjs)
-    {
-      i++;
-#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
-      trigObj.unpackNamesAndLabels(event, triggers);
-#else
-      trigObj.unpackPathNames(event.triggerNames(triggers));
-#endif
-      if (trigObj.collection () != collection)
-        continue;
-      if (filterSubstring != "")
-        {
-          bool flag = false;
-          for (const auto &filterLabel : trigObj.filterLabels ())
-            {
-              bool flagSubstringToReject = true;
-              if (filterSubstringToReject != "")
-                flagSubstringToReject = (filterLabel.find (filterSubstringToReject) == string::npos);
-              if (filterLabel.find (filterSubstring) != string::npos && flagSubstringToReject)
-                {
-                  flag = true;
-                  break;
-                }
-            }
-          if (!flag)
-            continue;
-        }
+  if(collectionName == "") {
+    selectedTrigObjs.push_back(NULL);
+    return false;
+  }
 
-      trigObjsToAdd.push_back (&trigObjs.at (i));
+  vector<const pat::TriggerObjectStandAlone*> trigObjsToAdd;
+  int i = -1;
+
+  for(auto trigObj : trigObjs) {
+    i++;
+
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,2,0)
+    trigObj.unpackNamesAndLabels(event, triggers);
+#else
+    trigObj.unpackPathNames(event.triggerNames(triggers));
+#endif
+
+    // Require the collection names to match
+    if(trigObj.collection() != collectionName) continue;
+
+    bool isSelected = false;
+
+    if(filterSubstringsToReject.empty()) isSelected = true; // no substring requirement
+    else {
+      for(const auto &filterLabel : trigObj.filterLabels()) {
+        // Require the filter substring is present
+        if(filterLabel.find(filterSubstring) == string::npos) continue;
+
+        // Require that no substrings to reject are present
+        bool flagReject = false;
+        for(const auto &rejectSubtring : filterSubstringsToReject) {
+          if(filterLabel.find(rejectSubtring) != string::npos) {
+            flagReject = true;
+            break;
+          }
+        }
+        if(flagReject) continue;
+
+        isSelected = true;
+        break;
+      }
     }
-  if (!trigObjsToAdd.empty ())
-    selectedTrigObjs.insert (selectedTrigObjs.end (), trigObjsToAdd.begin (), trigObjsToAdd.end ());
-  else
-    selectedTrigObjs.push_back (NULL);
-  return (!trigObjsToAdd.empty ());
+
+    if(isSelected) trigObjsToAdd.push_back(&trigObjs.at(i));
+  } // for trigObj : trigObjs
+
+  if(!trigObjsToAdd.empty()) selectedTrigObjs.insert(selectedTrigObjs.end(), trigObjsToAdd.begin(), trigObjsToAdd.end());
+  else selectedTrigObjs.push_back(NULL);
+
+  return (!trigObjsToAdd.empty());
 }
 
 bool
