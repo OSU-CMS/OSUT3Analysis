@@ -502,14 +502,6 @@ def add_channels (process,
             else:
                 outputCommand += "*"
             outputCommands.append (outputCommand)
-
-        ########################################################################
-        # When creating a non-empty skim from skim input files, ambigious extra
-        # copies of the "originalFormat" collections are created. The osu::*
-        # versions are used only as transients to create plots, and should never
-        # be kept.
-        ########################################################################
-        outputCommands.append("drop osu*_*_originalFormat_*")
         ########################################################################
 
         # The following collections are meant to be produced before any others.
@@ -778,6 +770,14 @@ def add_channels (process,
         if not hasattr (add_channels, "customOutputCommands"):
             add_channels.customOutputCommands = []
         outputCommands.extend (add_channels.customOutputCommands)
+
+        ########################################################################
+        # When creating a non-empty skim from skim input files, ambigious extra
+        # copies of the "originalFormat" collections are created. The osu::*
+        # versions are used only as transients to create plots, and should never
+        # be kept.
+        ########################################################################
+        outputCommands.append("drop osu*_*_originalFormat_*")
 
         # if running over a full skim, do not recreate a full skim for passing
         # events, but rather create an empty skim (no event content, just
