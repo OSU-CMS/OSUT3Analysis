@@ -8,6 +8,7 @@ import time
 import copy
 import pickle
 import tempfile
+import shutil
 import FWCore.ParameterSet.Modules
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
@@ -188,6 +189,32 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
+def set_skim_tags (inputFileName, collections):
+    # If we are running over a skim via XrootD, get SkimInputTags.pkl via XrootD
+    if inputFileName.startswith ('root:'):
+        tmpDir = tempfile.mkdtemp ()
+        subprocess.call('xrdcp ' + os.path.dirname(fileName) + '/SkimInputTags.pkl ' + tmpDir + '/SkimInputTags.pkl', shell = True)
+        inputTagPickleName = tmpDir + '/SkimInputTags.pkl'
+    # Otherwise get SkimInputTags.pkl via the regular file system
+    else:
+        if inputFileName.startswith ('file:'):
+            inputFileName = inputFileName[5:]
+        inputTagPickleName = os.path.dirname (os.path.realpath (inputFileName)) + '/SkimInputTags.pkl'
+    if not os.path.isfile (inputTagPickleName):
+        print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the skim directory."
+        print "Input file is", fileName
+        print "Be sure that you have run mergeOut.py."
+        if inputFileName.startswith ('root:'):
+            shutil.rmtree (tmpDir)
+        sys.exit(1)
+    fin = open (inputTagPickleName)
+    inputTags = pickle.load (fin)
+    fin.close ()
+    if inputFileName.startswith ('root:'):
+        shutil.rmtree (tmpDir)
+    for tag in inputTags:
+        setattr (collections, tag, inputTags[tag])
+
 #def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True, branchSets):
 def add_channels (process, 
                   channels, 
@@ -198,7 +225,8 @@ def add_channels (process,
                   variableProducers = None, 
                   skim = None, 
                   branchSets = None,
-                  ignoreSkimmedCollections = False):
+                  ignoreSkimmedCollections = False,
+                  forceNonEmptySkim = False):
     if skim is not None:
         print "# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated."
         print "# Please remove from your config files."
@@ -228,12 +256,11 @@ def add_channels (process,
     if osusub.batchMode:
         fileName = osusub.runList[0]
     rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
-    if fileName.startswith ("file:") and rootFile.startswith ("skim_"):
-        makeEmptySkim = True
-    elif fileName.startswith ("file:") and rootFile.startswith ("emptySkim_"):
-        # If we are running over an empty skim, get the file name from the
-        # secondary files. The secondary files should be a full skim with
-        # SkimInputTags.pkl in the same directory.
+    
+    # If we are running over an empty skim, get the file name from the
+    # secondary files. The secondary files should be a full skim with
+    # SkimInputTags.pkl in the same directory.
+    if rootFile.startswith ("emptySkim_"):
         makeEmptySkim = True
         primaryFileName = fileName
         fileName = None
@@ -247,41 +274,17 @@ def add_channels (process,
             print "This should not be."
             sys.exit(1)
         rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
+    elif rootFile.startswith ("skim_"):
+        makeEmptySkim = True
 
-    if fileName.find ("root:") == 0 and rootFile.find("skim_") == 0:
-        inputTagPickleName = os.path.dirname(fileName) + '/SkimInputTags.pkl'
-        tmpDir = tempfile.mkdtemp ()
-        subprocess.call('xrdcp ' + inputTagPickleName + ' ' + tmpDir + '/SkimInputTags.pkl', shell = True)
-        if os.path.isfile (tmpDir + '/SkimInputTags.pkl'):
-            fin = open (tmpDir + '/SkimInputTags.pkl')
-            inputTags = pickle.load (fin)
-            fin.close ()
-            for tag in inputTags:
-                setattr (collections, tag, inputTags[tag])
-        else:
-            print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the remote directory."
-            print "Input file is", fileName
-            print "Be sure that you have run mergeOut.py."
-            sys.exit(1)
-    else:
-        if fileName.find ("file:") == 0:
-            fileName = fileName[5:]
-        skimDirectory = os.path.dirname (os.path.realpath (fileName))
-        if not ignoreSkimmedCollections:
-            if os.path.isfile (skimDirectory + "/SkimInputTags.pkl"):
-                fin = open (skimDirectory + "/SkimInputTags.pkl")
-                inputTags = pickle.load (fin)
-                fin.close ()
-                for tag in inputTags:
-                    setattr (collections, tag, inputTags[tag])
-            else:
-                if rootFile.find("skim_") == 0:
-                    print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found."
-                    print "Input file is", fileName
-                    print "Be sure that you have run mergeOut.py."
-                    sys.exit(1)
-        else:
+    # If the input file is either skim_*.root or emptySkim_*.root, 
+    # we need now to read the input tags and replace as necessary
+    if makeEmptySkim:
+        # If we deliberately ignore this by user flag, just print a message
+        if ignoreSkimmedCollections:
             print "INFO: user has set ignoreSkimmedCollections, meaning that the original data collections will be used instead of skimmed framework collections."
+        else:
+            set_skim_tags (fileName, collections)
 
     ############################################################################
 
@@ -764,10 +767,18 @@ def add_channels (process,
             add_channels.customOutputCommands = []
         outputCommands.extend (add_channels.customOutputCommands)
 
+        ########################################################################
+        # When creating a non-empty skim from skim input files, ambigious extra
+        # copies of the "originalFormat" collections are created. The osu::*
+        # versions are used only as transients to create plots, and should never
+        # be kept.
+        ########################################################################
+        outputCommands.append("drop osu*_*_originalFormat_*")
+
         # if running over a full skim, do not recreate a full skim for passing
         # events, but rather create an empty skim (no event content, just
-        # metadata)
-        if makeEmptySkim:
+        # metadata); deliberate user flag can ignore this behavior
+        if makeEmptySkim and not forceNonEmptySkim:
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
 
