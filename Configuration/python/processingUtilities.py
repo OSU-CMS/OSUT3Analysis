@@ -8,6 +8,7 @@ import time
 import copy
 import pickle
 import tempfile
+import shutil
 import FWCore.ParameterSet.Modules
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
@@ -188,6 +189,32 @@ def get_collections (cuts):
     return sorted (list (collections))
     ############################################################################
 
+def set_skim_tags (inputFileName, collections):
+    # If we are running over a skim via XrootD, get SkimInputTags.pkl via XrootD
+    if inputFileName.startswith ('root:'):
+        tmpDir = tempfile.mkdtemp ()
+        subprocess.call('xrdcp ' + os.path.dirname(fileName) + '/SkimInputTags.pkl ' + tmpDir + '/SkimInputTags.pkl', shell = True)
+        inputTagPickleName = tmpDir + '/SkimInputTags.pkl'
+    # Otherwise get SkimInputTags.pkl via the regular file system
+    else:
+        if inputFileName.startswith ('file:'):
+            inputFileName = inputFileName[5:]
+        inputTagPickleName = os.path.dirname (os.path.realpath (inputFileName)) + '/SkimInputTags.pkl'
+    if not os.path.isfile (inputTagPickleName):
+        print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the skim directory."
+        print "Input file is", fileName
+        print "Be sure that you have run mergeOut.py."
+        if inputFileName.startswith ('root:'):
+            shutil.rmtree (tmpDir)
+        sys.exit(1)
+    fin = open (inputTagPickleName)
+    inputTags = pickle.load (fin)
+    fin.close ()
+    if inputFileName.startswith ('root:'):
+        shutil.rmtree (tmpDir)
+    for tag in inputTags:
+        setattr (collections, tag, inputTags[tag])
+
 #def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True, branchSets):
 def add_channels (process, 
                   channels, 
@@ -257,38 +284,7 @@ def add_channels (process,
         if ignoreSkimmedCollections:
             print "INFO: user has set ignoreSkimmedCollections, meaning that the original data collections will be used instead of skimmed framework collections."
         else:
-            # If we are running over a skim via XrootD, get SkimInputTags.pkl via XrootD
-            if fileName.find ("root:") == 0:
-                inputTagPickleName = os.path.dirname(fileName) + '/SkimInputTags.pkl'
-                tmpDir = tempfile.mkdtemp ()
-                subprocess.call('xrdcp ' + inputTagPickleName + ' ' + tmpDir + '/SkimInputTags.pkl', shell = True)
-                if os.path.isfile (tmpDir + '/SkimInputTags.pkl'):
-                    fin = open (tmpDir + '/SkimInputTags.pkl')
-                    inputTags = pickle.load (fin)
-                    fin.close ()
-                    for tag in inputTags:
-                        setattr (collections, tag, inputTags[tag])
-                else:
-                    print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the remote directory."
-                    print "Input file is", fileName
-                    print "Be sure that you have run mergeOut.py."
-                    sys.exit(1)
-            # Otherwise get SkimInputTags.pkl via the regular file system
-            else:
-                if fileName.find ("file:") == 0:
-                    fileName = fileName[5:]
-                skimDirectory = os.path.dirname (os.path.realpath (fileName))
-                if os.path.isfile (skimDirectory + "/SkimInputTags.pkl"):
-                    fin = open (skimDirectory + "/SkimInputTags.pkl")
-                    inputTags = pickle.load (fin)
-                    fin.close ()
-                    for tag in inputTags:
-                        setattr (collections, tag, inputTags[tag])
-                else:
-                    print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found."
-                    print "Input file is", fileName
-                    print "Be sure that you have run mergeOut.py."
-                    sys.exit(1)
+            set_skim_tags (fileName, collections)
 
     ############################################################################
 
