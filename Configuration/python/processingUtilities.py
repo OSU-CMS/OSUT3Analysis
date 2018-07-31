@@ -193,7 +193,7 @@ def set_skim_tags (inputFileName, collections):
     # If we are running over a skim via XrootD, get SkimInputTags.pkl via XrootD
     if inputFileName.startswith ('root:'):
         tmpDir = tempfile.mkdtemp ()
-        subprocess.call('xrdcp ' + os.path.dirname(fileName) + '/SkimInputTags.pkl ' + tmpDir + '/SkimInputTags.pkl', shell = True)
+        subprocess.call('xrdcp ' + os.path.dirname(inputFileName) + '/SkimInputTags.pkl ' + tmpDir + '/SkimInputTags.pkl', shell = True)
         inputTagPickleName = tmpDir + '/SkimInputTags.pkl'
     # Otherwise get SkimInputTags.pkl via the regular file system
     else:
@@ -202,7 +202,7 @@ def set_skim_tags (inputFileName, collections):
         inputTagPickleName = os.path.dirname (os.path.realpath (inputFileName)) + '/SkimInputTags.pkl'
     if not os.path.isfile (inputTagPickleName):
         print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the skim directory."
-        print "Input file is", fileName
+        print "Input file is", inputFileName
         print "Be sure that you have run mergeOut.py."
         if inputFileName.startswith ('root:'):
             shutil.rmtree (tmpDir)
@@ -216,14 +216,14 @@ def set_skim_tags (inputFileName, collections):
         setattr (collections, tag, inputTags[tag])
 
 #def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True, branchSets):
-def add_channels (process, 
-                  channels, 
-                  histogramSets = None, 
-                  weights = None, 
-                  scalingfactorproducers = None, 
-                  collections = None, 
-                  variableProducers = None, 
-                  skim = None, 
+def add_channels (process,
+                  channels,
+                  histogramSets = None,
+                  weights = None,
+                  scalingfactorproducers = None,
+                  collections = None,
+                  variableProducers = None,
+                  skim = None,
                   branchSets = None,
                   ignoreSkimmedCollections = False,
                   forceNonEmptySkim = False):
@@ -256,7 +256,7 @@ def add_channels (process,
     if osusub.batchMode:
         fileName = osusub.runList[0]
     rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
-    
+
     # If we are running over an empty skim, get the file name from the
     # secondary files. The secondary files should be a full skim with
     # SkimInputTags.pkl in the same directory.
