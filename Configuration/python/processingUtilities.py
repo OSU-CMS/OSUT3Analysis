@@ -193,7 +193,7 @@ def set_skim_tags (inputFileName, collections):
     # If we are running over a skim via XrootD, get SkimInputTags.pkl via XrootD
     if inputFileName.startswith ('root:'):
         tmpDir = tempfile.mkdtemp ()
-        subprocess.call('xrdcp ' + os.path.dirname(fileName) + '/SkimInputTags.pkl ' + tmpDir + '/SkimInputTags.pkl', shell = True)
+        subprocess.call('xrdcp ' + os.path.dirname(inputFileName) + '/SkimInputTags.pkl ' + tmpDir + '/SkimInputTags.pkl', shell = True)
         inputTagPickleName = tmpDir + '/SkimInputTags.pkl'
     # Otherwise get SkimInputTags.pkl via the regular file system
     else:
@@ -202,7 +202,7 @@ def set_skim_tags (inputFileName, collections):
         inputTagPickleName = os.path.dirname (os.path.realpath (inputFileName)) + '/SkimInputTags.pkl'
     if not os.path.isfile (inputTagPickleName):
         print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the skim directory."
-        print "Input file is", fileName
+        print "Input file is", inputFileName
         print "Be sure that you have run mergeOut.py."
         if inputFileName.startswith ('root:'):
             shutil.rmtree (tmpDir)
