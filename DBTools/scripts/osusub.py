@@ -873,19 +873,18 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             SkimModifier(Label, Directory, crossSection, True)
         elif RunOverSkim:
             numInputFiles = len(glob.glob(Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel + "/*.root"))
-            if not numInputFiles:
-                print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
-                datasetRead['numberOfFiles'] = numInputFiles
-                SkimModifier(Label, Directory, crossSection)
-                return datasetRead
             SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/'
             secondaryCollectionModifications = SecondaryCollectionInstance(SkimDirectory, arguments.SkimChannel)
             #Copy the datasetInfo file from the skim directory.
             shutil.copy (SkimDirectory + 'datasetInfo_' + Label + '_cfg.py', datasetInfoName)
             #Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
             SkimModifier(Label, Directory, crossSection)
-
+            if not numInputFiles:
+                print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
+                datasetRead['numberOfFiles'] = numInputFiles
+                return datasetRead
             InitializeAAA = ""
+
         sys.path.append(Directory)
         exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
         if not UseAAA and InitializeAAA == "" and not RunOverSkim:
