@@ -216,14 +216,14 @@ def set_skim_tags (inputFileName, collections):
         setattr (collections, tag, inputTags[tag])
 
 #def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True, branchSets):
-def add_channels (process, 
-                  channels, 
-                  histogramSets = None, 
-                  weights = None, 
-                  scalingfactorproducers = None, 
-                  collections = None, 
-                  variableProducers = None, 
-                  skim = None, 
+def add_channels (process,
+                  channels,
+                  histogramSets = None,
+                  weights = None,
+                  scalingfactorproducers = None,
+                  collections = None,
+                  variableProducers = None,
+                  skim = None,
                   branchSets = None,
                   ignoreSkimmedCollections = False,
                   forceNonEmptySkim = False):
@@ -256,7 +256,7 @@ def add_channels (process,
     if osusub.batchMode:
         fileName = osusub.runList[0]
     rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
-    
+
     # If we are running over an empty skim, get the file name from the
     # secondary files. The secondary files should be a full skim with
     # SkimInputTags.pkl in the same directory.
