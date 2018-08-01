@@ -248,6 +248,44 @@ osu::Track::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)> > &taus)
   }
 }
 
+#if IS_VALID(secondaryTracks)
+osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack() : 
+  osu::DisappearingTrack() {}
+
+osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack(const TYPE(tracks) &secondaryTrack) : 
+  osu::DisappearingTrack(secondaryTrack) {}
+
+osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack(const TYPE(tracks) &secondaryTrack, 
+                                            const edm::Handle<vector<osu::Mcparticle> > &particles) : 
+  osu::DisappearingTrack(secondaryTrack, particles) {}
+
+osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack(const TYPE(tracks) &secondaryTrack, 
+                                            const edm::Handle<vector<osu::Mcparticle> > &particles, 
+                                            const edm::ParameterSet &cfg) :
+  osu::DisappearingTrack(secondaryTrack, particles, cfg) {}
+
+osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack(const TYPE(secondaryTracks) &secondaryTrack, 
+                                            const edm::Handle<vector<osu::Mcparticle> > &particles, 
+                                            const edm::ParameterSet &cfg, 
+                                            const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
+                                            const EtaPhiList &electronVetoList, 
+                                            const EtaPhiList &muonVetoList) :
+  osu::DisappearingTrack(secondaryTrack, particles, cfg, gsfTracks, electronVetoList, muonVetoList) {}
+
+osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack(const TYPE(tracks) &secondaryTrack, 
+                                            const edm::Handle<vector<osu::Mcparticle> > &particles, 
+                                            const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates,
+                                            const edm::Handle<vector<TYPE(jets)> > &jets,
+                                            const edm::ParameterSet &cfg, 
+                                            const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
+                                            const EtaPhiList &electronVetoList, 
+                                            const EtaPhiList &muonVetoList, 
+                                            const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, 
+                                            const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
+                                            const bool dropHits) :
+  osu::DisappearingTrack(secondaryTrack, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits) {}
+#endif // IS_VALID(secondaryTracks)
+
 #endif // IS_VALID(tracks)
 
 #endif // ifdef DISAPP_TRKS

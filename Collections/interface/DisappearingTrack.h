@@ -100,19 +100,54 @@ namespace osu {
       float deltaRToClosestTauHad_;
   };
 
-  typedef DisappearingTrack Track;
 #if IS_VALID(secondaryTracks)
-  typedef DisappearingTrack SecondaryTrack;
-#endif
+  class SecondaryDisappearingTrack : public TrackBase {
+    public:
+      SecondaryDisappearingTrack();
+      SecondaryDisappearingTrack(const TYPE(tracks) &);
+      SecondaryDisappearingTrack(const TYPE(tracks) &, 
+                                 const edm::Handle<vector<osu::Mcparticle> > &);
+      SecondaryDisappearingTrack(const TYPE(tracks) &, 
+                                 const edm::Handle<vector<osu::Mcparticle> > &, 
+                                 const edm::ParameterSet &);
+      SecondaryDisappearingTrack(const TYPE(tracks) &, 
+                                 const edm::Handle<vector<osu::Mcparticle> > &, 
+                                 const edm::ParameterSet &, 
+                                 const edm::Handle<vector<reco::GsfTrack> > &, 
+                                 const EtaPhiList &, 
+                                 const EtaPhiList &);
+      SecondaryDisappearingTrack(const TYPE(tracks) &, 
+                                 const edm::Handle<vector<osu::Mcparticle> > &, 
+                                 const edm::Handle<vector<pat::PackedCandidate> > &, 
+                                 const edm::Handle<vector<TYPE(jets)> > &,
+                                 const edm::ParameterSet &, 
+                                 const edm::Handle<vector<reco::GsfTrack> > &, 
+                                 const EtaPhiList &, 
+                                 const EtaPhiList &, 
+                                 const map<DetId, vector<double> > * const, 
+                                 const map<DetId, vector<int> > * const, 
+                                 const bool);
+
+      ~SecondaryDisappearingTrack();
+  };
+#endif // IS_VALID(secondaryTracks)
 
 } // namespace osu
 
-#else // IS_VALID(tracks)
-namespace osu {
-  typedef TYPE(tracks) Track;
-  typedef TYPE(secondaryTracks) SecondaryTrack;
-}
 #endif // if IS_VALID(tracks)
+
+namespace osu {
+#if IS_VALID(tracks)
+  typedef osu::DisappearingTrack Track;
+#if IS_VALID(secondaryTracks)
+  typedef osu::SecondaryDisappearingTrack SecondaryTrack;
+#else
+  typedef TYPE(secondaryTracks) SecondaryTrack;
+#endif // IS_VALID(secondaryTracks)
+#else
+  typedef TYPE(tracks) Track;
+#endif // IS_VALID(tracks)
+}
 
 #endif // ifdef DISAPP_TRKS
 
