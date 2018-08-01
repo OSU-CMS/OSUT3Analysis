@@ -97,14 +97,14 @@ namespace osu {
       void set_isoTrackIsolation(const edm::Handle<vector<pat::IsolatedTrack> > &);
 #endif
 
-      const float pfElectronIsoDR03 ()     const { return this->pfElectronIsoDR03_; };
-      const float pfPUElectronIsoDR03 ()   const { return this->pfPUElectronIsoDR03_; };
-      const float pfMuonIsoDR03 ()         const { return this->pfMuonIsoDR03_; };
-      const float pfPUMuonIsoDR03 ()       const { return this->pfPUMuonIsoDR03_; };
-      const float pfHFIsoDR03 ()           const { return this->pfHFIsoDR03_; };
-      const float pfPUHFIsoDR03 ()         const { return this->pfPUHFIsoDR03_; };
-      const float pfLostTrackIsoDR03 ()    const { return this->pfLostTrackIsoDR03_; };
-      const float pfPULostTrackIsoDR03_ () const { return this->pfPULostTrackIsoDR03_; };
+      const float pfElectronIsoDR03 ()    const { return this->pfElectronIsoDR03_; };
+      const float pfPUElectronIsoDR03 ()  const { return this->pfPUElectronIsoDR03_; };
+      const float pfMuonIsoDR03 ()        const { return this->pfMuonIsoDR03_; };
+      const float pfPUMuonIsoDR03 ()      const { return this->pfPUMuonIsoDR03_; };
+      const float pfHFIsoDR03 ()          const { return this->pfHFIsoDR03_; };
+      const float pfPUHFIsoDR03 ()        const { return this->pfPUHFIsoDR03_; };
+      const float pfLostTrackIsoDR03 ()   const { return this->pfLostTrackIsoDR03_; };
+      const float pfPULostTrackIsoDR03 () const { return this->pfPULostTrackIsoDR03_; };
 
       const float isoTrackIsoDR03 () const { return this->isoTrackIsoDR03_; };
 

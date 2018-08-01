@@ -400,7 +400,7 @@ osu::DisappearingTrack::set_isoTrackIsolation (const edm::Handle<vector<pat::Iso
     for(const auto &isoTrk : *isolatedTracks) {
       // set_additionalPFIsolations has already calculated PF candidates (including lostTracks)
       // so we need only tracks solely from generalTracks which have a null packedCandRef
-      if(isoTrk.packedCandRef() != NULL) continue;
+      if(isoTrk.packedCandRef().isNonnull()) continue;
 
       // don't count this track itself
       double dR = deltaR(*this, isoTrk);
@@ -455,7 +455,7 @@ osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat
 
     for(const auto &lostTrack : *lostTracks) {
       // don't count this track itself
-      double dR = deltaR(*this, pfCandidate);
+      double dR = deltaR(*this, lostTrack);
       if(dR < 1.0e-12 || dR >= 0.3) continue;
 
       bool fromPV = (lostTrack.fromPV() > 1 || fabs(lostTrack.dz()) < 0.1);
@@ -518,7 +518,7 @@ osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack (const TYPE(tracks) 
                                                              const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
                                                              const bool dropHits,
                                                              const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
-  osu::DisappearingTrack(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, candidateTracks) {}
+  osu::DisappearingTrack(track, particles, pfCandidates, lostTracks, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, candidateTracks) {}
 
 osu::SecondaryDisappearingTrack::~SecondaryDisappearingTrack ()
 {

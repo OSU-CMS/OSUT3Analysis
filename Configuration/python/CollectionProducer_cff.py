@@ -209,8 +209,8 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),
 
     pfCandidates   = cms.InputTag ('packedPFCandidates',  '',  ''),
-    lostTracks     = cms.InputTag ('lostTracks', '', '')
-    isolatedTracks = cms.InputTag ('isolatedTracks', '', '')
+    lostTracks     = cms.InputTag ('lostTracks', '', ''),
+    isolatedTracks = cms.InputTag ('isolatedTracks', '', ''),
 
     gsfTracks    =  cms.InputTag  ("electronGsfTracks",      ""),
     maxDeltaRForGsfTrackMatching = cms.double (0.2), # if cutting on dRToMatchedGsfTrack, must set this to be greater than the cut threshold
