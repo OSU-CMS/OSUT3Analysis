@@ -1,13 +1,24 @@
 #ifndef DISAPPEARING_TRACK
 #define DISAPPEARING_TRACK
 
-#ifdef DISAPP_TRKS
-#if IS_VALID(tracks)
+/////////////////////////////////////////////////////////////////
+// osu::DisappearingTrack
+//   This class is defined as a wrapper for osu::TrackBase to
+//   separate out methods only the disappearing track analysis uses
+//   If one uses setupFramework.py with "-d DISAPP_TRKS", then
+//   this class will become osu::Track. Otherwise, osu::TrackBase
+//   is the entire osu::Track class and this class can be ignored.
+/////////////////////////////////////////////////////////////////
 
-#include <assert.h>
 
 #include "OSUT3Analysis/Collections/interface/TrackBase.h"
+
+#ifdef DISAPP_TRKS
+
+#include <assert.h>
 #include "DisappTrks/CandidateTrackProducer/interface/CandidateTrack.h"
+
+#if IS_VALID(tracks)
 
 namespace osu {
   class DisappearingTrack : public TrackBase {
@@ -77,15 +88,16 @@ namespace osu {
       const float deltaRToClosestTau ()              const { return (IS_INVALID(deltaRToClosestTau_))            ? MAX_DR : deltaRToClosestTau_; };
       const float deltaRToClosestTauHad ()           const { return (IS_INVALID(deltaRToClosestTauHad_))         ? MAX_DR : deltaRToClosestTauHad_; };
 
+    protected:
+      vector<double> eleVtx_d0Cuts_barrel_, eleVtx_d0Cuts_endcap_;
+      vector<double> eleVtx_dzCuts_barrel_, eleVtx_dzCuts_endcap_;
+
     private:
       const edm::Ref<vector<CandidateTrack> > &findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &, edm::Ref<vector<CandidateTrack> > &, double &) const;
 
       edm::Ref<vector<CandidateTrack> > matchedCandidateTrack_;
       double dRToMatchedCandidateTrack_;
       double maxDeltaR_candidateTrackMatching_;
-
-      vector<double> eleVtx_d0Cuts_barrel_, eleVtx_d0Cuts_endcap_;
-      vector<double> eleVtx_dzCuts_barrel_, eleVtx_dzCuts_endcap_;
 
       float deltaRToClosestElectron_;
       float deltaRToClosestVetoElectron_;
@@ -101,7 +113,7 @@ namespace osu {
   };
 
 #if IS_VALID(secondaryTracks)
-  class SecondaryDisappearingTrack : public TrackBase {
+  class SecondaryDisappearingTrack : public DisappearingTrack {
     public:
       SecondaryDisappearingTrack();
       SecondaryDisappearingTrack(const TYPE(tracks) &);
@@ -127,6 +139,19 @@ namespace osu {
                                  const map<DetId, vector<double> > * const, 
                                  const map<DetId, vector<int> > * const, 
                                  const bool);
+      // the DisappTrks constructor
+      SecondaryDisappearingTrack(const TYPE(tracks) &, 
+                                 const edm::Handle<vector<osu::Mcparticle> > &, 
+                                 const edm::Handle<vector<pat::PackedCandidate> > &, 
+                                 const edm::Handle<vector<TYPE(jets)> > &,
+                                 const edm::ParameterSet &, 
+                                 const edm::Handle<vector<reco::GsfTrack> > &, 
+                                 const EtaPhiList &, 
+                                 const EtaPhiList &, 
+                                 const map<DetId, vector<double> > * const, 
+                                 const map<DetId, vector<int> > * const, 
+                                 const bool,
+                                 const edm::Handle<vector<CandidateTrack> > &);
 
       ~SecondaryDisappearingTrack();
   };
