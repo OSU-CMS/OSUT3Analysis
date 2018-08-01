@@ -9,6 +9,7 @@
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
 #include "OSUT3Analysis/Collections/interface/Cschit.h"
 #include "OSUT3Analysis/Collections/interface/Cscseg.h"
+#include "OSUT3Analysis/Collections/interface/DisappearingTrack.h"
 #include "OSUT3Analysis/Collections/interface/Dtseg.h"
 #include "OSUT3Analysis/Collections/interface/Electron.h"
 #include "OSUT3Analysis/Collections/interface/Event.h"

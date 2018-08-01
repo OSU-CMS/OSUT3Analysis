@@ -13,6 +13,7 @@
 #include "CondFormats/DataRecord/interface/EcalChannelStatusRcd.h"
 #include "DataFormats/TrackReco/interface/Track.h"
 
+#include "OSUT3Analysis/Collections/interface/DisappearingTrack.h"
 #include "OSUT3Analysis/Collections/interface/Track.h"
 
 // FIXME:  Once OSUT3Analysis works with ROOT6, i.e., releases > CMSSW_7_4_5_ROOT5,

@@ -523,7 +523,7 @@ OSUGenericTrackProducer<T>::getTrackIsolation (const reco::Track &track, const v
   return sumPt;
 }
 
-// durp -- this is actually a fix of a bugged function, normally it would be track. instead of t.
+// this is actually a fix of a bugged function, normally it would be track. instead of t.
 template<class T> const double 
 OSUGenericTrackProducer<T>::getOldTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
 {

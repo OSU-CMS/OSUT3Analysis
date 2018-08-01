@@ -2,6 +2,7 @@
 
 #include "OSUT3Analysis/Collections/interface/Beamspot.h"
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
+#include "OSUT3Analysis/Collections/interface/DisappearingTrack.h"
 #include "OSUT3Analysis/Collections/interface/Electron.h"
 #include "OSUT3Analysis/Collections/interface/Event.h"
 #include "OSUT3Analysis/Collections/interface/Eventvariable.h"
