@@ -6955,7 +6955,7 @@ labels = {
     'QCD_MuEnriched_1000toInf'      : "QCD MuEnriched Pt 1000-Inf",
 
     #QCD EMEnriched
-    'QCD_EMEnriched'                : "QCD EMEnriched",
+    'QCD_EMEnriched'                : "EM-enriched QCD",
     'QCD_EMEnriched_15to20'         : "QCD EMEnriched Pt 15-20",
     'QCD_EMEnriched_20to30'         : "QCD EMEnriched Pt 20-30",
     'QCD_EMEnriched_30to50'         : "QCD EMEnriched Pt 30-50",
