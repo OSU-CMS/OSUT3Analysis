@@ -39,6 +39,11 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
 
   primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
 
+  lostTracksToken_ = consumes<vector<pat::PackedCandidate> > (cfg.getParameter<edm::InputTag> ("lostTracks"));
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+  isolatedTracksToken_ = consumes<vector<pat::IsolatedTrack> > (cfg.getParameter<edm::InputTag> ("isolatedTracks"));
+#endif
+
   candidateTracksToken_ = consumes<vector<CandidateTrack> > (cfg.getParameter<edm::InputTag> ("candidateTracks"));
 #endif
 
@@ -178,9 +183,17 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   edm::Handle<vector<TYPE(primaryvertexs)> > vertices;
   event.getByToken (primaryvertexToken_, vertices);
 
+  edm::Handle<vector<pat::PackedCandidate> > lostTracks;
+  event.getByToken (lostTracksToken_, lostTracks);
+
+#if DATA_FORMAT_IS_2017
+  edm::Handle<vector<pat::IsolatedTrack> > isolatedTracks;
+  event.getByToken (isolatedTracksToken_, isolatedTracks);
+#endif
+
   edm::Handle<vector<CandidateTrack> > candidateTracks;
   event.getByToken (candidateTracksToken_, candidateTracks);
-#endif
+#endif // DISAPP_TRKS
 
 #endif // DATA_FORMAT_FROM_MINIAOD
 
@@ -192,6 +205,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       pl_->emplace_back (object,
                          particles,
                          pfCandidates,
+                         lostTracks,
                          jets,
                          cfg_,
                          gsfTracks,
@@ -279,6 +293,10 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
         track.set_minDeltaRToElectrons(electrons, vertices, eleVIDVetoIdMap, eleVIDLooseIdMap, eleVIDMediumIdMap, eleVIDTightIdMap);
         track.set_minDeltaRToMuons(muons, vertices);
         track.set_minDeltaRToTaus(taus);
+
+#if DATA_FORMAT_IS_2017
+        track.set_isoTrackIsolation(isolatedTracks);
+#endif
 
 #endif // DISAPP_TRKS
     }

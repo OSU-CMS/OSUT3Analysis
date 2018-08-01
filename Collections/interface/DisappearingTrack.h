@@ -18,6 +18,10 @@
 #include <assert.h>
 #include "DisappTrks/CandidateTrackProducer/interface/CandidateTrack.h"
 
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#include "DataFormats/PatCandidates/interface/IsolatedTrack.h"
+#endif
+
 #if IS_VALID(tracks)
 
 namespace osu {
@@ -51,7 +55,8 @@ namespace osu {
       // the DisappTrks constructor
       DisappearingTrack(const TYPE(tracks) &, 
                         const edm::Handle<vector<osu::Mcparticle> > &, 
-                        const edm::Handle<vector<pat::PackedCandidate> > &, 
+                        const edm::Handle<vector<pat::PackedCandidate> > &,
+                        const edm::Handle<vector<pat::PackedCandidate> > &,
                         const edm::Handle<vector<TYPE(jets)> > &,
                         const edm::ParameterSet &, 
                         const edm::Handle<vector<reco::GsfTrack> > &, 
@@ -88,12 +93,29 @@ namespace osu {
       const float deltaRToClosestTau ()              const { return (IS_INVALID(deltaRToClosestTau_))            ? MAX_DR : deltaRToClosestTau_; };
       const float deltaRToClosestTauHad ()           const { return (IS_INVALID(deltaRToClosestTauHad_))         ? MAX_DR : deltaRToClosestTauHad_; };
 
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+      void set_isoTrackIsolation(const edm::Handle<vector<pat::IsolatedTrack> > &);
+#endif
+
+      const float pfElectronIsoDR03 ()     const { return this->pfElectronIsoDR03_; };
+      const float pfPUElectronIsoDR03 ()   const { return this->pfPUElectronIsoDR03_; };
+      const float pfMuonIsoDR03 ()         const { return this->pfMuonIsoDR03_; };
+      const float pfPUMuonIsoDR03 ()       const { return this->pfPUMuonIsoDR03_; };
+      const float pfHFIsoDR03 ()           const { return this->pfHFIsoDR03_; };
+      const float pfPUHFIsoDR03 ()         const { return this->pfPUHFIsoDR03_; };
+      const float pfLostTrackIsoDR03 ()    const { return this->pfLostTrackIsoDR03_; };
+      const float pfPULostTrackIsoDR03_ () const { return this->pfPULostTrackIsoDR03_; };
+
+      const float isoTrackIsoDR03 () const { return this->isoTrackIsoDR03_; };
+
     protected:
       vector<double> eleVtx_d0Cuts_barrel_, eleVtx_d0Cuts_endcap_;
       vector<double> eleVtx_dzCuts_barrel_, eleVtx_dzCuts_endcap_;
 
     private:
       const edm::Ref<vector<CandidateTrack> > &findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &, edm::Ref<vector<CandidateTrack> > &, double &) const;
+
+      void set_additionalPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &, const edm::Handle<vector<pat::PackedCandidate> > &);
 
       edm::Ref<vector<CandidateTrack> > matchedCandidateTrack_;
       double dRToMatchedCandidateTrack_;
@@ -110,6 +132,13 @@ namespace osu {
       float deltaRToClosestTightMuon_;
       float deltaRToClosestTau_;
       float deltaRToClosestTauHad_;
+
+      float pfElectronIsoDR03_, pfPUElectronIsoDR03_;
+      float pfMuonIsoDR03_, pfPUMuonIsoDR03_;
+      float pfHFIsoDR03_, pfPUHFIsoDR03_;
+      float pfLostTrackIsoDR03_, pfPULostTrackIsoDR03_;
+
+      float isoTrackIsoDR03_;
   };
 
 #if IS_VALID(secondaryTracks)
@@ -141,8 +170,9 @@ namespace osu {
                                  const bool);
       // the DisappTrks constructor
       SecondaryDisappearingTrack(const TYPE(tracks) &, 
-                                 const edm::Handle<vector<osu::Mcparticle> > &, 
-                                 const edm::Handle<vector<pat::PackedCandidate> > &, 
+                                 const edm::Handle<vector<osu::Mcparticle> > &,
+                                 const edm::Handle<vector<pat::PackedCandidate> > &,
+                                 const edm::Handle<vector<pat::PackedCandidate> > &,
                                  const edm::Handle<vector<TYPE(jets)> > &,
                                  const edm::ParameterSet &, 
                                  const edm::Handle<vector<reco::GsfTrack> > &, 

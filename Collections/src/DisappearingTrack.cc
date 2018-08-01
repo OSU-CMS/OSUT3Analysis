@@ -5,24 +5,104 @@
 #if IS_VALID(tracks)
 
 osu::DisappearingTrack::DisappearingTrack() : 
-  TrackBase()
+  TrackBase(),
+  deltaRToClosestElectron_       (INVALID_VALUE),
+  deltaRToClosestVetoElectron_   (INVALID_VALUE),
+  deltaRToClosestLooseElectron_  (INVALID_VALUE),
+  deltaRToClosestMediumElectron_ (INVALID_VALUE),
+  deltaRToClosestTightElectron_  (INVALID_VALUE),
+  deltaRToClosestMuon_           (INVALID_VALUE),
+  deltaRToClosestLooseMuon_      (INVALID_VALUE),
+  deltaRToClosestMediumMuon_     (INVALID_VALUE),
+  deltaRToClosestTightMuon_      (INVALID_VALUE),
+  deltaRToClosestTau_            (INVALID_VALUE),
+  deltaRToClosestTauHad_         (INVALID_VALUE),
+  pfElectronIsoDR03_             (INVALID_VALUE),
+  pfPUElectronIsoDR03_           (INVALID_VALUE),
+  pfMuonIsoDR03_                 (INVALID_VALUE),
+  pfPUMuonIsoDR03_               (INVALID_VALUE),
+  pfHFIsoDR03_                   (INVALID_VALUE),
+  pfPUHFIsoDR03_                 (INVALID_VALUE),
+  pfLostTrackIsoDR03_            (INVALID_VALUE),
+  pfPULostTrackIsoDR03_          (INVALID_VALUE),
+  isoTrackIsoDR03_               (INVALID_VALUE)
 {
 }
 
 osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track) : 
-  TrackBase(track)
+  TrackBase(track),
+  deltaRToClosestElectron_       (INVALID_VALUE),
+  deltaRToClosestVetoElectron_   (INVALID_VALUE),
+  deltaRToClosestLooseElectron_  (INVALID_VALUE),
+  deltaRToClosestMediumElectron_ (INVALID_VALUE),
+  deltaRToClosestTightElectron_  (INVALID_VALUE),
+  deltaRToClosestMuon_           (INVALID_VALUE),
+  deltaRToClosestLooseMuon_      (INVALID_VALUE),
+  deltaRToClosestMediumMuon_     (INVALID_VALUE),
+  deltaRToClosestTightMuon_      (INVALID_VALUE),
+  deltaRToClosestTau_            (INVALID_VALUE),
+  deltaRToClosestTauHad_         (INVALID_VALUE),
+  pfElectronIsoDR03_             (INVALID_VALUE),
+  pfPUElectronIsoDR03_           (INVALID_VALUE),
+  pfMuonIsoDR03_                 (INVALID_VALUE),
+  pfPUMuonIsoDR03_               (INVALID_VALUE),
+  pfHFIsoDR03_                   (INVALID_VALUE),
+  pfPUHFIsoDR03_                 (INVALID_VALUE),
+  pfLostTrackIsoDR03_            (INVALID_VALUE),
+  pfPULostTrackIsoDR03_          (INVALID_VALUE),
+  isoTrackIsoDR03_               (INVALID_VALUE)
 {
 }
 
 osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track, 
                                           const edm::Handle<vector<osu::Mcparticle> > &particles) :
-  TrackBase (track, particles)
+  TrackBase (track, particles),
+  deltaRToClosestElectron_       (INVALID_VALUE),
+  deltaRToClosestVetoElectron_   (INVALID_VALUE),
+  deltaRToClosestLooseElectron_  (INVALID_VALUE),
+  deltaRToClosestMediumElectron_ (INVALID_VALUE),
+  deltaRToClosestTightElectron_  (INVALID_VALUE),
+  deltaRToClosestMuon_           (INVALID_VALUE),
+  deltaRToClosestLooseMuon_      (INVALID_VALUE),
+  deltaRToClosestMediumMuon_     (INVALID_VALUE),
+  deltaRToClosestTightMuon_      (INVALID_VALUE),
+  deltaRToClosestTau_            (INVALID_VALUE),
+  deltaRToClosestTauHad_         (INVALID_VALUE),
+  pfElectronIsoDR03_             (INVALID_VALUE),
+  pfPUElectronIsoDR03_           (INVALID_VALUE),
+  pfMuonIsoDR03_                 (INVALID_VALUE),
+  pfPUMuonIsoDR03_               (INVALID_VALUE),
+  pfHFIsoDR03_                   (INVALID_VALUE),
+  pfPUHFIsoDR03_                 (INVALID_VALUE),
+  pfLostTrackIsoDR03_            (INVALID_VALUE),
+  pfPULostTrackIsoDR03_          (INVALID_VALUE),
+  isoTrackIsoDR03_               (INVALID_VALUE)
 {
 }
 
 osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track, 
                                           const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
-  TrackBase(track, particles, cfg)
+  TrackBase(track, particles, cfg),
+  deltaRToClosestElectron_       (INVALID_VALUE),
+  deltaRToClosestVetoElectron_   (INVALID_VALUE),
+  deltaRToClosestLooseElectron_  (INVALID_VALUE),
+  deltaRToClosestMediumElectron_ (INVALID_VALUE),
+  deltaRToClosestTightElectron_  (INVALID_VALUE),
+  deltaRToClosestMuon_           (INVALID_VALUE),
+  deltaRToClosestLooseMuon_      (INVALID_VALUE),
+  deltaRToClosestMediumMuon_     (INVALID_VALUE),
+  deltaRToClosestTightMuon_      (INVALID_VALUE),
+  deltaRToClosestTau_            (INVALID_VALUE),
+  deltaRToClosestTauHad_         (INVALID_VALUE),
+  pfElectronIsoDR03_             (INVALID_VALUE),
+  pfPUElectronIsoDR03_           (INVALID_VALUE),
+  pfMuonIsoDR03_                 (INVALID_VALUE),
+  pfPUMuonIsoDR03_               (INVALID_VALUE),
+  pfHFIsoDR03_                   (INVALID_VALUE),
+  pfPUHFIsoDR03_                 (INVALID_VALUE),
+  pfLostTrackIsoDR03_            (INVALID_VALUE),
+  pfPULostTrackIsoDR03_          (INVALID_VALUE),
+  isoTrackIsoDR03_               (INVALID_VALUE)
 {
 }
 
@@ -32,7 +112,27 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
                                           const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
                                           const EtaPhiList &electronVetoList, 
                                           const EtaPhiList &muonVetoList) :
-  TrackBase(track, particles, cfg, gsfTracks, electronVetoList, muonVetoList)
+  TrackBase(track, particles, cfg, gsfTracks, electronVetoList, muonVetoList),
+  deltaRToClosestElectron_       (INVALID_VALUE),
+  deltaRToClosestVetoElectron_   (INVALID_VALUE),
+  deltaRToClosestLooseElectron_  (INVALID_VALUE),
+  deltaRToClosestMediumElectron_ (INVALID_VALUE),
+  deltaRToClosestTightElectron_  (INVALID_VALUE),
+  deltaRToClosestMuon_           (INVALID_VALUE),
+  deltaRToClosestLooseMuon_      (INVALID_VALUE),
+  deltaRToClosestMediumMuon_     (INVALID_VALUE),
+  deltaRToClosestTightMuon_      (INVALID_VALUE),
+  deltaRToClosestTau_            (INVALID_VALUE),
+  deltaRToClosestTauHad_         (INVALID_VALUE),
+  pfElectronIsoDR03_             (INVALID_VALUE),
+  pfPUElectronIsoDR03_           (INVALID_VALUE),
+  pfMuonIsoDR03_                 (INVALID_VALUE),
+  pfPUMuonIsoDR03_               (INVALID_VALUE),
+  pfHFIsoDR03_                   (INVALID_VALUE),
+  pfPUHFIsoDR03_                 (INVALID_VALUE),
+  pfLostTrackIsoDR03_            (INVALID_VALUE),
+  pfPULostTrackIsoDR03_          (INVALID_VALUE),
+  isoTrackIsoDR03_               (INVALID_VALUE)
 {
 }
 
@@ -47,7 +147,27 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
                                           const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, 
                                           const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
                                           const bool dropHits) :
-  TrackBase(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits)
+  TrackBase(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits),
+  deltaRToClosestElectron_       (INVALID_VALUE),
+  deltaRToClosestVetoElectron_   (INVALID_VALUE),
+  deltaRToClosestLooseElectron_  (INVALID_VALUE),
+  deltaRToClosestMediumElectron_ (INVALID_VALUE),
+  deltaRToClosestTightElectron_  (INVALID_VALUE),
+  deltaRToClosestMuon_           (INVALID_VALUE),
+  deltaRToClosestLooseMuon_      (INVALID_VALUE),
+  deltaRToClosestMediumMuon_     (INVALID_VALUE),
+  deltaRToClosestTightMuon_      (INVALID_VALUE),
+  deltaRToClosestTau_            (INVALID_VALUE),
+  deltaRToClosestTauHad_         (INVALID_VALUE),
+  pfElectronIsoDR03_             (INVALID_VALUE),
+  pfPUElectronIsoDR03_           (INVALID_VALUE),
+  pfMuonIsoDR03_                 (INVALID_VALUE),
+  pfPUMuonIsoDR03_               (INVALID_VALUE),
+  pfHFIsoDR03_                   (INVALID_VALUE),
+  pfPUHFIsoDR03_                 (INVALID_VALUE),
+  pfLostTrackIsoDR03_            (INVALID_VALUE),
+  pfPULostTrackIsoDR03_          (INVALID_VALUE),
+  isoTrackIsoDR03_               (INVALID_VALUE)
 {
 }
 
@@ -55,6 +175,7 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
 osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
                    const edm::Handle<vector<osu::Mcparticle> > &particles,
                    const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates,
+                   const edm::Handle<vector<pat::PackedCandidate> > &lostTracks,
                    const edm::Handle<vector<TYPE(jets)> > &jets,
                    const edm::ParameterSet &cfg,
                    const edm::Handle<vector<reco::GsfTrack> > &gsfTracks,
@@ -64,7 +185,27 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
                    const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap,
                    const bool dropHits,
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
-  TrackBase(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits)
+  TrackBase(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits),
+  deltaRToClosestElectron_       (INVALID_VALUE),
+  deltaRToClosestVetoElectron_   (INVALID_VALUE),
+  deltaRToClosestLooseElectron_  (INVALID_VALUE),
+  deltaRToClosestMediumElectron_ (INVALID_VALUE),
+  deltaRToClosestTightElectron_  (INVALID_VALUE),
+  deltaRToClosestMuon_           (INVALID_VALUE),
+  deltaRToClosestLooseMuon_      (INVALID_VALUE),
+  deltaRToClosestMediumMuon_     (INVALID_VALUE),
+  deltaRToClosestTightMuon_      (INVALID_VALUE),
+  deltaRToClosestTau_            (INVALID_VALUE),
+  deltaRToClosestTauHad_         (INVALID_VALUE),
+  pfElectronIsoDR03_             (INVALID_VALUE),
+  pfPUElectronIsoDR03_           (INVALID_VALUE),
+  pfMuonIsoDR03_                 (INVALID_VALUE),
+  pfPUMuonIsoDR03_               (INVALID_VALUE),
+  pfHFIsoDR03_                   (INVALID_VALUE),
+  pfPUHFIsoDR03_                 (INVALID_VALUE),
+  pfLostTrackIsoDR03_            (INVALID_VALUE),
+  pfPULostTrackIsoDR03_          (INVALID_VALUE),
+  isoTrackIsoDR03_               (INVALID_VALUE)
 {
   eleVtx_d0Cuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_barrel");
   eleVtx_dzCuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_dzCuts_barrel");
@@ -82,6 +223,8 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
 
   maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
   if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
+
+  set_additionalPFIsolations(pfCandidates, lostTracks);
 }
 
 osu::DisappearingTrack::~DisappearingTrack ()
@@ -93,7 +236,7 @@ osu::DisappearingTrack::~DisappearingTrack ()
 }
 
 const edm::Ref<vector<CandidateTrack> > &
-osu::Track::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &candidateTracks, edm::Ref<vector<CandidateTrack> > &matchedCandidateTrack, double &dRToMatchedCandidateTrack) const
+osu::DisappearingTrack::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &candidateTracks, edm::Ref<vector<CandidateTrack> > &matchedCandidateTrack, double &dRToMatchedCandidateTrack) const
 {
   dRToMatchedCandidateTrack = INVALID_VALUE;
   for(vector<CandidateTrack>::const_iterator candTrack = candidateTracks->begin(); candTrack != candidateTracks->end(); candTrack++) {
@@ -109,12 +252,12 @@ osu::Track::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> 
 }
 
 void 
-osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons)> > &electrons,
-                                      const edm::Handle<vector<TYPE(primaryvertexs)> > &vertices,
-                                      const edm::Handle<edm::ValueMap<bool> > &vidVetoMap,
-                                      const edm::Handle<edm::ValueMap<bool> > &vidLooseMap,
-                                      const edm::Handle<edm::ValueMap<bool> > &vidMediumMap,
-                                      const edm::Handle<edm::ValueMap<bool> > &vidTightMap)
+osu::DisappearingTrack::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons)> > &electrons,
+                                                  const edm::Handle<vector<TYPE(primaryvertexs)> > &vertices,
+                                                  const edm::Handle<edm::ValueMap<bool> > &vidVetoMap,
+                                                  const edm::Handle<edm::ValueMap<bool> > &vidLooseMap,
+                                                  const edm::Handle<edm::ValueMap<bool> > &vidMediumMap,
+                                                  const edm::Handle<edm::ValueMap<bool> > &vidTightMap)
 {
   deltaRToClosestElectron_       = INVALID_VALUE;
   deltaRToClosestVetoElectron_   = INVALID_VALUE;
@@ -198,7 +341,7 @@ osu::Track::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons
 }
 
 void 
-osu::Track::set_minDeltaRToMuons(const edm::Handle<vector<TYPE(muons)> > &muons, const edm::Handle<vector<TYPE(primaryvertexs)> > &vertices) 
+osu::DisappearingTrack::set_minDeltaRToMuons(const edm::Handle<vector<TYPE(muons)> > &muons, const edm::Handle<vector<TYPE(primaryvertexs)> > &vertices) 
 {
   deltaRToClosestMuon_       = INVALID_VALUE;
   deltaRToClosestLooseMuon_  = INVALID_VALUE;
@@ -223,7 +366,7 @@ osu::Track::set_minDeltaRToMuons(const edm::Handle<vector<TYPE(muons)> > &muons,
 }
 
 void
-osu::Track::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)> > &taus) 
+osu::DisappearingTrack::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)> > &taus) 
 {
   deltaRToClosestTau_    = INVALID_VALUE;
   deltaRToClosestTauHad_ = INVALID_VALUE;
@@ -246,6 +389,82 @@ osu::Track::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)> > &taus)
       deltaRToClosestTauHad_ = dR;
     }
   }
+}
+
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+void
+osu::DisappearingTrack::set_isoTrackIsolation (const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) {
+  if(isolatedTracks.isValid()) {
+    isoTrackIsoDR03_ = 0.0;
+
+    for(const auto &isoTrk : *isolatedTracks) {
+      // set_additionalPFIsolations has already calculated PF candidates (including lostTracks)
+      // so we need only tracks solely from generalTracks which have a null packedCandRef
+      if(isoTrk.packedCandRef() != NULL) continue;
+
+      // don't count this track itself
+      double dR = deltaR(*this, isoTrk);
+      if(dR < 1.0e-12 || dR >= 0.3) continue;
+
+      isoTrackIsoDR03_ += isoTrk.pt();
+    }
+
+  }
+}
+#endif
+
+void
+osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates, const edm::Handle<vector<pat::PackedCandidate> > &lostTracks)
+{
+  // stored in pfCandidates:
+  // the particle charge and pdgId: 11, 13, 22 for ele/mu/gamma, 211 for charged hadrons, 130 for neutral hadrons, 1 and 2 for hadronic and em particles in HF.
+  // only 211, 130, and 22 are stored in PFIsolation object
+  // here we store them ourselves
+  if(pfCandidates.isValid()) {
+    pfElectronIsoDR03_ = pfPUElectronIsoDR03_ = 0.0;
+    pfMuonIsoDR03_     = pfPUMuonIsoDR03_     = 0.0;
+    pfHFIsoDR03_       = pfPUHFIsoDR03_       = 0.0;
+
+    for(const auto &pfCandidate : *pfCandidates) {
+      int pdgid = abs(pfCandidate.pdgId());
+      if(pdgid != 11 && pdgid != 13 && pdgid != 1 && pdgid != 2) continue;
+
+      // don't count this track itself
+      double dR = deltaR(*this, pfCandidate);
+      if(dR < 1.0e-12 || dR >= 0.3) continue;
+
+      bool fromPV = (pfCandidate.fromPV() > 1 || fabs(pfCandidate.dz()) < 0.1);
+
+      if(fromPV) {
+        if(pdgid == 11) pfElectronIsoDR03_ += pfCandidate.pt();
+        else if(pdgid == 13) pfMuonIsoDR03_ += pfCandidate.pt();
+        else if(pdgid == 1 || pdgid == 2) pfHFIsoDR03_ += pfCandidate.pt();
+      }
+      else {
+        if(pdgid == 11) pfPUElectronIsoDR03_ += pfCandidate.pt();
+        else if(pdgid == 13) pfPUMuonIsoDR03_ += pfCandidate.pt();
+        else if(pdgid == 1 || pdgid == 2) pfPUHFIsoDR03_ += pfCandidate.pt();
+      }
+
+    }
+  }
+
+  if(lostTracks.isValid()) {
+    pfLostTrackIsoDR03_   = 0.0;
+    pfPULostTrackIsoDR03_ = 0.0;
+
+    for(const auto &lostTrack : *lostTracks) {
+      // don't count this track itself
+      double dR = deltaR(*this, pfCandidate);
+      if(dR < 1.0e-12 || dR >= 0.3) continue;
+
+      bool fromPV = (lostTrack.fromPV() > 1 || fabs(lostTrack.dz()) < 0.1);
+
+      if(fromPV) pfLostTrackIsoDR03_ += lostTrack.pt();
+      else pfPULostTrackIsoDR03_ += lostTrack.pt();
+    }
+  }
+
 }
 
 #if IS_VALID(secondaryTracks)
@@ -289,6 +508,7 @@ osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack(const TYPE(tracks) &
 osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack (const TYPE(tracks) &track, 
                                                              const edm::Handle<vector<osu::Mcparticle> > &particles,
                                                              const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates, 
+                                                             const edm::Handle<vector<pat::PackedCandidate> > &lostTracks, 
                                                              const edm::Handle<vector<TYPE(jets)> > &jets,
                                                              const edm::ParameterSet &cfg, 
                                                              const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
