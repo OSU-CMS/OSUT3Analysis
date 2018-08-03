@@ -404,7 +404,7 @@ osu::DisappearingTrack::set_isoTrackIsolation (const edm::Handle<vector<pat::Iso
 
       // don't count this track itself
       double dR = deltaR(*this, isoTrk);
-      if(dR < 1.0e-12 || dR >= 0.3) continue;
+      if(dR < 1.0e-4 || dR >= 0.3) continue;
 
       isoTrackIsoDR03_ += isoTrk.pt();
     }
@@ -429,9 +429,18 @@ osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat
       int pdgid = abs(pfCandidate.pdgId());
       if(pdgid != 11 && pdgid != 13 && pdgid != 1 && pdgid != 2) continue;
 
-      // don't count this track itself
       double dR = deltaR(*this, pfCandidate);
-      if(dR < 1.0e-12 || dR >= 0.3) continue;
+      if(dR >= 0.3) continue;
+
+#if DATA_FORMAT_IS_CUSTOM
+      // don't count this track itself
+      if(dR < 1.0e-4) continue;
+#else
+      // don't count this track itself
+      if(this->packedCandRef().isNonnull()) {
+        if(pfCandidate == *(this->packedCandRef())) continue;
+      } 
+#endif
 
       bool fromPV = (pfCandidate.fromPV() > 1 || fabs(pfCandidate.dz()) < 0.1);
 
@@ -454,9 +463,19 @@ osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat
     pfPULostTrackIsoDR03_ = 0.0;
 
     for(const auto &lostTrack : *lostTracks) {
+
+      double dR = deltaR(*this, pfCandidate);
+      if(dR >= 0.3) continue;
+
+#if DATA_FORMAT_IS_CUSTOM
       // don't count this track itself
-      double dR = deltaR(*this, lostTrack);
-      if(dR < 1.0e-12 || dR >= 0.3) continue;
+      if(dR < 1.0e-4) continue;
+#else
+      // don't count this track itself
+      if(this->packedCandRef().isNonnull()) {
+        if(pfCandidate == *(this->packedCandRef())) continue;
+      }  
+#endif
 
       bool fromPV = (lostTrack.fromPV() > 1 || fabs(lostTrack.dz()) < 0.1);
 
