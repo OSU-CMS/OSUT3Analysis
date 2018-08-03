@@ -109,9 +109,9 @@ namespace osu {
       const float isoTrackIsoDR03 ()     const { return this->isoTrackIsoDR03_; };
 
       const float pfChHadIsoDR03 ()        const { return this->pfChHadIsoDR03_; };
-      const float pfPUChHadIsoDR03 ()      const { return this->pfPUChHadIsoDR03_ };
-      const float pfNeutralHadIsoDR03 ()   const { return this->pfNeutralHadIsoDR03_ };
-      const float pfPUNeutralHadIsoDR03 () const { return this->pfPUNeutralHadIsoDR03_ };
+      const float pfPUChHadIsoDR03 ()      const { return this->pfPUChHadIsoDR03_; };
+      const float pfNeutralHadIsoDR03 ()   const { return this->pfNeutralHadIsoDR03_; };
+      const float pfPUNeutralHadIsoDR03 () const { return this->pfPUNeutralHadIsoDR03_; };
       const float pfPhotonIsoDR03 ()       const { return this->pfPhotonIsoDR03_; };
       const float pfPUPhotonIsoDR03 ()     const { return this->pfPUPhotonIsoDR03_; };
 

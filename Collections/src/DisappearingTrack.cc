@@ -492,7 +492,6 @@ osu::DisappearingTrack::set_primaryPFIsolations (const edm::Handle<vector<pat::P
     }
   }
 }
-#endif
 
 void
 osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates, const edm::Handle<vector<pat::PackedCandidate> > &lostTracks)
