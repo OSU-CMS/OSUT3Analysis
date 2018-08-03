@@ -25,7 +25,13 @@ osu::DisappearingTrack::DisappearingTrack() :
   pfPUHFIsoDR03_                 (INVALID_VALUE),
   pfLostTrackIsoDR03_            (INVALID_VALUE),
   pfPULostTrackIsoDR03_          (INVALID_VALUE),
-  isoTrackIsoDR03_               (INVALID_VALUE)
+  isoTrackIsoDR03_               (INVALID_VALUE),
+  pfChHadIsoDR03_                (INVALID_VALUE),
+  pfPUChHadIsoDR03_              (INVALID_VALUE),
+  pfNeutralHadIsoDR03_           (INVALID_VALUE),
+  pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
+  pfPhotonIsoDR03_               (INVALID_VALUE),
+  pfPUPhotonIsoDR03_             (INVALID_VALUE)
 {
 }
 
@@ -50,7 +56,13 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track) :
   pfPUHFIsoDR03_                 (INVALID_VALUE),
   pfLostTrackIsoDR03_            (INVALID_VALUE),
   pfPULostTrackIsoDR03_          (INVALID_VALUE),
-  isoTrackIsoDR03_               (INVALID_VALUE)
+  isoTrackIsoDR03_               (INVALID_VALUE),
+  pfChHadIsoDR03_                (INVALID_VALUE),
+  pfPUChHadIsoDR03_              (INVALID_VALUE),
+  pfNeutralHadIsoDR03_           (INVALID_VALUE),
+  pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
+  pfPhotonIsoDR03_               (INVALID_VALUE),
+  pfPUPhotonIsoDR03_             (INVALID_VALUE)
 {
 }
 
@@ -76,7 +88,13 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfPUHFIsoDR03_                 (INVALID_VALUE),
   pfLostTrackIsoDR03_            (INVALID_VALUE),
   pfPULostTrackIsoDR03_          (INVALID_VALUE),
-  isoTrackIsoDR03_               (INVALID_VALUE)
+  isoTrackIsoDR03_               (INVALID_VALUE),
+  pfChHadIsoDR03_                (INVALID_VALUE),
+  pfPUChHadIsoDR03_              (INVALID_VALUE),
+  pfNeutralHadIsoDR03_           (INVALID_VALUE),
+  pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
+  pfPhotonIsoDR03_               (INVALID_VALUE),
+  pfPUPhotonIsoDR03_             (INVALID_VALUE)
 {
 }
 
@@ -102,7 +120,13 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfPUHFIsoDR03_                 (INVALID_VALUE),
   pfLostTrackIsoDR03_            (INVALID_VALUE),
   pfPULostTrackIsoDR03_          (INVALID_VALUE),
-  isoTrackIsoDR03_               (INVALID_VALUE)
+  isoTrackIsoDR03_               (INVALID_VALUE),
+  pfChHadIsoDR03_                (INVALID_VALUE),
+  pfPUChHadIsoDR03_              (INVALID_VALUE),
+  pfNeutralHadIsoDR03_           (INVALID_VALUE),
+  pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
+  pfPhotonIsoDR03_               (INVALID_VALUE),
+  pfPUPhotonIsoDR03_             (INVALID_VALUE)
 {
 }
 
@@ -132,7 +156,13 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfPUHFIsoDR03_                 (INVALID_VALUE),
   pfLostTrackIsoDR03_            (INVALID_VALUE),
   pfPULostTrackIsoDR03_          (INVALID_VALUE),
-  isoTrackIsoDR03_               (INVALID_VALUE)
+  isoTrackIsoDR03_               (INVALID_VALUE),
+  pfChHadIsoDR03_                (INVALID_VALUE),
+  pfPUChHadIsoDR03_              (INVALID_VALUE),
+  pfNeutralHadIsoDR03_           (INVALID_VALUE),
+  pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
+  pfPhotonIsoDR03_               (INVALID_VALUE),
+  pfPUPhotonIsoDR03_             (INVALID_VALUE)
 {
 }
 
@@ -167,7 +197,13 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfPUHFIsoDR03_                 (INVALID_VALUE),
   pfLostTrackIsoDR03_            (INVALID_VALUE),
   pfPULostTrackIsoDR03_          (INVALID_VALUE),
-  isoTrackIsoDR03_               (INVALID_VALUE)
+  isoTrackIsoDR03_               (INVALID_VALUE),
+  pfChHadIsoDR03_                (INVALID_VALUE),
+  pfPUChHadIsoDR03_              (INVALID_VALUE),
+  pfNeutralHadIsoDR03_           (INVALID_VALUE),
+  pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
+  pfPhotonIsoDR03_               (INVALID_VALUE),
+  pfPUPhotonIsoDR03_             (INVALID_VALUE)
 {
 }
 
@@ -205,7 +241,13 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   pfPUHFIsoDR03_                 (INVALID_VALUE),
   pfLostTrackIsoDR03_            (INVALID_VALUE),
   pfPULostTrackIsoDR03_          (INVALID_VALUE),
-  isoTrackIsoDR03_               (INVALID_VALUE)
+  isoTrackIsoDR03_               (INVALID_VALUE),
+  pfChHadIsoDR03_                (INVALID_VALUE),
+  pfPUChHadIsoDR03_              (INVALID_VALUE),
+  pfNeutralHadIsoDR03_           (INVALID_VALUE),
+  pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
+  pfPhotonIsoDR03_               (INVALID_VALUE),
+  pfPUPhotonIsoDR03_             (INVALID_VALUE)
 {
   eleVtx_d0Cuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_barrel");
   eleVtx_dzCuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_dzCuts_barrel");
@@ -224,6 +266,9 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
   if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
 
+#if DATA_FORMAT_IS_CUSTOM && DATA_FORMAT_IS_2017
+  set_primaryPFIsolations(pfCandidates);
+#endif
   set_additionalPFIsolations(pfCandidates, lostTracks);
 }
 
@@ -413,6 +458,42 @@ osu::DisappearingTrack::set_isoTrackIsolation (const edm::Handle<vector<pat::Iso
 }
 #endif
 
+#if DATA_FORMAT_IS_CUSTOM && DATA_FORMAT_IS_2017
+void
+osu::DisappearingTrack::set_primaryPFIsolations (const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates)
+{
+  if(pfCandidates.isValid()) {
+    pfChHadIsoDR03_      = pfPUChHadIsoDR03_    = 0.0;
+    pfNeutralHadIsoDR03_ = pfPhotonIsoDR03_     = 0.0;
+
+    for(const auto &pfCandidate : *pfCandidates) {
+      int pdgid = abs(pfCandidate.pdgId());
+      if(pdgid != 211 && pdgid != 130 && pdgid != 22) continue;
+      
+      double dR = deltaR(*this, pfCandidate);
+      if(dR >= 0.3) continue;
+
+      if(dR < 1.0e-4) continue;
+
+      bool fromPV = (pfCandidate.fromPV() > 1 || fabs(pfCandidate.dz()) < 0.1);
+
+      if (pdgid == 211 && fromPV)
+        pfChHadIsoDR03_+= pfCandidate.pt();
+      else if (pdgid == 211)
+        pfPUChHadIsoDR03_ += pfCandidate.pt();
+      if (pdgid == 130 && fromPV)
+        pfNeutralHadIsoDR03_ += pfCandidate.pt();
+      else if (pdgid == 130)
+        pfpuNeutralHadIsoDR03_ += pfCandidate.pt();        
+      if (pdgid == 22 && fromPV)
+        pfPhotonIsoDR03_ += pfCandidate.pt();
+      else if (pdgid == 22)
+        pfPUPhotonIsoDR03_ += pfCandidate.pt();
+    }
+  }
+}
+#endif
+
 void
 osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates, const edm::Handle<vector<pat::PackedCandidate> > &lostTracks)
 {
@@ -425,6 +506,7 @@ osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat
     pfMuonIsoDR03_     = pfPUMuonIsoDR03_     = 0.0;
     pfHFIsoDR03_       = pfPUHFIsoDR03_       = 0.0;
 
+
     for(const auto &pfCandidate : *pfCandidates) {
       int pdgid = abs(pfCandidate.pdgId());
       if(pdgid != 11 && pdgid != 13 && pdgid != 1 && pdgid != 2) continue;
@@ -432,7 +514,7 @@ osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat
       double dR = deltaR(*this, pfCandidate);
       if(dR >= 0.3) continue;
 
-#if DATA_FORMAT_IS_CUSTOM
+#if DATA_FORMAT_IS_CUSTOM && DATA_FORMAT_IS_2017
       // don't count this track itself
       if(dR < 1.0e-4) continue;
 #else

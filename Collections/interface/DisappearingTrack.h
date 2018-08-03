@@ -106,7 +106,15 @@ namespace osu {
       const float pfLostTrackIsoDR03 ()   const { return this->pfLostTrackIsoDR03_; };
       const float pfPULostTrackIsoDR03 () const { return this->pfPULostTrackIsoDR03_; };
 
-      const float isoTrackIsoDR03 () const { return this->isoTrackIsoDR03_; };
+      const float isoTrackIsoDR03 ()     const { return this->isoTrackIsoDR03_; };
+
+      const float pfChHadIsoDR03 ()        const { return this->pfChHadIsoDR03_; };
+      const float pfPUChHadIsoDR03 ()      const { return this->pfPUChHadIsoDR03_ };
+      const float pfNeutralHadIsoDR03 ()   const { return this->pfNeutralHadIsoDR03_ };
+      const float pfPUNeutralHadIsoDR03 () const { return this->pfPUNeutralHadIsoDR03_ };
+      const float pfPhotonIsoDR03 ()       const { return this->pfPhotonIsoDR03_; };
+      const float pfPUPhotonIsoDR03 ()     const { return this->pfPUPhotonIsoDR03_; };
+
 
     protected:
       vector<double> eleVtx_d0Cuts_barrel_, eleVtx_d0Cuts_endcap_;
@@ -115,6 +123,7 @@ namespace osu {
     private:
       const edm::Ref<vector<CandidateTrack> > &findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &, edm::Ref<vector<CandidateTrack> > &, double &) const;
 
+      void set_primaryPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &);
       void set_additionalPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &, const edm::Handle<vector<pat::PackedCandidate> > &);
 
       edm::Ref<vector<CandidateTrack> > matchedCandidateTrack_;
@@ -139,6 +148,9 @@ namespace osu {
       float pfLostTrackIsoDR03_, pfPULostTrackIsoDR03_;
 
       float isoTrackIsoDR03_;
+      float pfChHadIsoDR03_, pfPUChHadIsoDR03_;
+      float pfNeutralHadIsoDR03_, pfPUNeutralHadIsoDR03_;
+      float pfPhotonIsoDR03_, pfPUPhotonIsoDR03_;
   };
 
 #if IS_VALID(secondaryTracks)
