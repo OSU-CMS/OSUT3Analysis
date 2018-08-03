@@ -484,7 +484,7 @@ osu::DisappearingTrack::set_primaryPFIsolations (const edm::Handle<vector<pat::P
       if (pdgid == 130 && fromPV)
         pfNeutralHadIsoDR03_ += pfCandidate.pt();
       else if (pdgid == 130)
-        pfpuNeutralHadIsoDR03_ += pfCandidate.pt();        
+        pfPUNeutralHadIsoDR03_ += pfCandidate.pt();        
       if (pdgid == 22 && fromPV)
         pfPhotonIsoDR03_ += pfCandidate.pt();
       else if (pdgid == 22)
@@ -541,7 +541,7 @@ osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat
 
     for(const auto &lostTrack : *lostTracks) {
 
-      double dR = deltaR(*this, pfCandidate);
+      double dR = deltaR(*this, lostTrack);
       if(dR >= 0.3 || dR < 1.0e-4) continue;
       //don't count track itself
       //NOTE: This is different than the CandidateTrack track isolation, which uses 1.0e-12.
