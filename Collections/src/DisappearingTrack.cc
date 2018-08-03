@@ -266,9 +266,7 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
   if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
 
-#if DATA_FORMAT_IS_CUSTOM && DATA_FORMAT_IS_2017
   set_primaryPFIsolations(pfCandidates);
-#endif
   set_additionalPFIsolations(pfCandidates, lostTracks);
 }
 
@@ -458,7 +456,6 @@ osu::DisappearingTrack::set_isoTrackIsolation (const edm::Handle<vector<pat::Iso
 }
 #endif
 
-#if DATA_FORMAT_IS_CUSTOM && DATA_FORMAT_IS_2017
 void
 osu::DisappearingTrack::set_primaryPFIsolations (const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates)
 {
@@ -471,9 +468,12 @@ osu::DisappearingTrack::set_primaryPFIsolations (const edm::Handle<vector<pat::P
       if(pdgid != 211 && pdgid != 130 && pdgid != 22) continue;
       
       double dR = deltaR(*this, pfCandidate);
-      if(dR >= 0.3) continue;
-
-      if(dR < 1.0e-4) continue;
+      if(dR >= 0.3 || dR < 1.0e-4) continue;
+      //don't count track itself
+      //NOTE: This is different than the CandidateTrack track isolation, which uses 1.0e-12.
+      //      This is necessary because we are not comparing generalTrack to generalTrack.
+      //      Comparing a track to a PFcandidate introduces rounding / different-reconstruction
+      //        errors that make the same object only match to ~1.0e-5
 
       bool fromPV = (pfCandidate.fromPV() > 1 || fabs(pfCandidate.dz()) < 0.1);
 
@@ -512,17 +512,13 @@ osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat
       if(pdgid != 11 && pdgid != 13 && pdgid != 1 && pdgid != 2) continue;
 
       double dR = deltaR(*this, pfCandidate);
-      if(dR >= 0.3) continue;
+      if(dR >= 0.3 || dR < 1.0e-4) continue;
+      //don't count track itself
+      //NOTE: This is different than the CandidateTrack track isolation, which uses 1.0e-12.
+      //      This is necessary because we are not comparing generalTrack to generalTrack.
+      //      Comparing a track to a PFcandidate introduces rounding / different-reconstruction
+      //        errors that make the same object only match to ~1.0e-5
 
-#if DATA_FORMAT_IS_CUSTOM && DATA_FORMAT_IS_2017
-      // don't count this track itself
-      if(dR < 1.0e-4) continue;
-#else
-      // don't count this track itself
-      if(this->packedCandRef().isNonnull()) {
-        if(pfCandidate == *(this->packedCandRef())) continue;
-      } 
-#endif
 
       bool fromPV = (pfCandidate.fromPV() > 1 || fabs(pfCandidate.dz()) < 0.1);
 
@@ -547,17 +543,12 @@ osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat
     for(const auto &lostTrack : *lostTracks) {
 
       double dR = deltaR(*this, pfCandidate);
-      if(dR >= 0.3) continue;
-
-#if DATA_FORMAT_IS_CUSTOM
-      // don't count this track itself
-      if(dR < 1.0e-4) continue;
-#else
-      // don't count this track itself
-      if(this->packedCandRef().isNonnull()) {
-        if(pfCandidate == *(this->packedCandRef())) continue;
-      }  
-#endif
+      if(dR >= 0.3 || dR < 1.0e-4) continue;
+      //don't count track itself
+      //NOTE: This is different than the CandidateTrack track isolation, which uses 1.0e-12.
+      //      This is necessary because we are not comparing generalTrack to generalTrack.
+      //      Comparing a track to a PFcandidate introduces rounding / different-reconstruction
+      //        errors that make the same object only match to ~1.0e-5
 
       bool fromPV = (lostTrack.fromPV() > 1 || fabs(lostTrack.dz()) < 0.1);
 
