@@ -460,8 +460,10 @@ void
 osu::DisappearingTrack::set_primaryPFIsolations (const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates)
 {
   if(pfCandidates.isValid()) {
-    pfChHadIsoDR03_      = pfPUChHadIsoDR03_    = 0.0;
-    pfNeutralHadIsoDR03_ = pfPhotonIsoDR03_     = 0.0;
+    pfChHadIsoDR03_      = pfPUChHadIsoDR03_      = 0.0;
+    pfNeutralHadIsoDR03_ = pfPUNeutralHadIsoDR03_ = 0.0;
+    pfPhotonIsoDR03_     = pfPUPhotonIsoDR03_     = 0.0;
+
 
     for(const auto &pfCandidate : *pfCandidates) {
       int pdgid = abs(pfCandidate.pdgId());
