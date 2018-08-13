@@ -9009,7 +9009,7 @@ def lifetime(sample):
 ##########################################################################
 
 # generate list of masses
-masses = [str(i*100) for i in range(2,13)] #need to update to (2,18) when other samples available
+masses = [str(i*100) for i in range(2,19)]
 # generate list of lifetimes
 lifetimes = ["%g" % (0.1*i*(pow(10,j))) for j in range(4) for i in range(1,10)]
 lifetimes.append("1000")
