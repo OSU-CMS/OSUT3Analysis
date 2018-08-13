@@ -259,6 +259,9 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   assert(eleVtx_d0Cuts_endcap_.size() == 4);
   assert(eleVtx_dzCuts_endcap_.size() == 4);
 
+  set_primaryPFIsolations(pfCandidates);
+  set_additionalPFIsolations(pfCandidates, lostTracks);
+
   // if the tracks collection itself is CandidateTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() == "candidateTrackProducer")
     return;
@@ -266,8 +269,6 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
   if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
 
-  set_primaryPFIsolations(pfCandidates);
-  set_additionalPFIsolations(pfCandidates, lostTracks);
 }
 
 osu::DisappearingTrack::~DisappearingTrack ()
@@ -460,8 +461,9 @@ void
 osu::DisappearingTrack::set_primaryPFIsolations (const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates)
 {
   if(pfCandidates.isValid()) {
-    pfChHadIsoDR03_      = pfPUChHadIsoDR03_    = 0.0;
-    pfNeutralHadIsoDR03_ = pfPhotonIsoDR03_     = 0.0;
+    pfChHadIsoDR03_      = pfPUChHadIsoDR03_      = 0.0;
+    pfNeutralHadIsoDR03_ = pfPUNeutralHadIsoDR03_ = 0.0;
+    pfPhotonIsoDR03_     = pfPUPhotonIsoDR03_     = 0.0;
 
     for(const auto &pfCandidate : *pfCandidates) {
       int pdgid = abs(pfCandidate.pdgId());
