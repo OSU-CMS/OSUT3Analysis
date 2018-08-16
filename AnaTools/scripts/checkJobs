@@ -29,18 +29,24 @@ then
       PASS_ARR=($PASS_LOGS)
       PASS=${#PASS_ARR[@]}
     fi
+
+    REMOVED_LOGS=`grep -Hc "SYSTEM_PERIODIC_REMOVE" ${EXECUTED_LOGS} | grep -v ":0$" | sed "s/\(.*\):[^:]*$/\1/g"`
+    REMOVED_ARR=($REMOVED_LOGS)
+    REMOVED=${#REMOVED_ARR[@]}
   fi
 fi
 FAIL=`echo "${DONE} ${PASS} - p" | dc`
-RUNNING=`echo "${EXECUTED} ${PASS} - ${FAIL} - p" | dc`
+RUNNING=`echo "${EXECUTED} ${PASS} - ${FAIL} - ${REMOVED} - p" | dc`
 QUEUED=`echo "${TOTAL} ${EXECUTED} - p" | dc`
 
 PASSFRAC=`echo "2 k ${PASS} 100 * ${TOTAL} / p" | dc`
 FAILFRAC=`echo "2 k ${FAIL} 100 * ${TOTAL} / p" | dc`
+REMOVEDFRAC=`echo "2 k ${REMOVED} 100 * ${TOTAL} / p" | dc`
 RUNNINGFRAC=`echo "2 k ${RUNNING} 100 * ${TOTAL} / p" | dc`
 QUEUEDFRAC=`echo "2 k ${QUEUED} 100 * ${TOTAL} / p" | dc`
 
 echo "${PASS} / ${TOTAL} jobs have finished successfully (${PASSFRAC}%)."
 echo "${FAIL} / ${TOTAL} jobs have failed (${FAILFRAC}%)."
+echo "${REMOVED} / ${TOTAL} jobs have been removed due to resource usage (${REMOVEDFRAC}%)."
 echo "${RUNNING} / ${TOTAL} jobs are running (${RUNNINGFRAC}%)."
 echo "${QUEUED} / ${TOTAL} jobs are queued (${QUEUEDFRAC}%)."
