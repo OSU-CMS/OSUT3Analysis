@@ -4304,13 +4304,14 @@ types = {
     'SingleEle_2017E'   : "data",
     'SingleEle_2017F'   : "data",
     'SingleEle_2018A'   : "data",
-    'SingleEle_2018A'   : "data",
-    'SingleEle_2018A'   : "data",
+    'SingleEle_2018B'   : "data",
+    'SingleEle_2018C'   : "data",
 
     'SingleEle_2015'         : "data",
     'SingleEle_2016'         : "data",
     'SingleEle_2016_postHIP' : "data",
     'SingleEle_2017'         : "data",
+    'SingleEle_2018'         : "data",
 
     'SinglePhoton_2015B'   : "data",
     'SinglePhoton_2015C'   : "data",
