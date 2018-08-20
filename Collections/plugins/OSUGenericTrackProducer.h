@@ -13,7 +13,7 @@
 #include "CondFormats/DataRecord/interface/EcalChannelStatusRcd.h"
 #include "DataFormats/TrackReco/interface/Track.h"
 
-#include "OSUT3Analysis/Collections/interface/Track.h"
+#include "OSUT3Analysis/Collections/interface/DisappearingTrack.h" // includes TrackBase.h
 
 // FIXME:  Once OSUT3Analysis works with ROOT6, i.e., releases > CMSSW_7_4_5_ROOT5,
 // then uncomment the following line:
@@ -60,6 +60,11 @@ template<class T>
     edm::EDGetTokenT<edm::ValueMap<bool> > eleVIDTightIdMapToken_;
 
     edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexToken_;
+
+    edm::EDGetTokenT<vector<pat::PackedCandidate> > lostTracksToken_;
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+    edm::EDGetTokenT<vector<pat::IsolatedTrack> > isolatedTracksToken_;
+#endif
 
     edm::EDGetTokenT<vector<CandidateTrack> >    candidateTracksToken_;
 #endif

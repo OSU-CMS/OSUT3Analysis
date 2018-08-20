@@ -2,6 +2,7 @@
 
 #include "OSUT3Analysis/Collections/interface/Beamspot.h"
 #include "OSUT3Analysis/Collections/interface/Bxlumi.h"
+#include "OSUT3Analysis/Collections/interface/DisappearingTrack.h"
 #include "OSUT3Analysis/Collections/interface/Electron.h"
 #include "OSUT3Analysis/Collections/interface/Event.h"
 #include "OSUT3Analysis/Collections/interface/Eventvariable.h"
@@ -14,7 +15,7 @@
 #include "OSUT3Analysis/Collections/interface/Primaryvertex.h"
 #include "OSUT3Analysis/Collections/interface/Supercluster.h"
 #include "OSUT3Analysis/Collections/interface/Tau.h"
-#include "OSUT3Analysis/Collections/interface/Track.h"
+#include "OSUT3Analysis/Collections/interface/TrackBase.h"
 #include "OSUT3Analysis/Collections/interface/Trigobj.h"
 #include "OSUT3Analysis/Collections/interface/Uservariable.h"
 #include "OSUT3Analysis/Collections/interface/Cschit.h"
