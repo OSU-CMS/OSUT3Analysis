@@ -447,7 +447,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("eval `scramv1 runtime -sh`\n")
     SubmitScript.write ("cd -\n\n")
 
-    SubmitScript.write ("PYTHONPATH=$PYTHONPATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n\n")
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_"):
+        SubmitScript.write ("PYTHON27PATH=$PYTHON27PATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n\n")
+    else:
+        SubmitScript.write ("PYTHONPATH=$PYTHONPATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n\n")
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
