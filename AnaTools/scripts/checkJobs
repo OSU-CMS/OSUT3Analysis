@@ -33,16 +33,16 @@ def logsWithMatches(logs, matchingStrings, vetoStrings = None):
 
   return values
 
-def correctRunningAfterRemoved(removed, running):
-  for log in removed:
+def correctRunningAfterRemoved(logs, running, removalString):
+  for log in logs:
     f = open(log)
     s = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
 
-    lastRemoval = s.rfind('SYSTEM_PERIODIC_REMOVE')
+    lastRemoval = s.rfind(removalString)
     lastRunning = s.rfind('Job executing on host')
 
     if lastRunning != -1 and lastRunning > lastRemoval:
-      removed.remove(log)
+      logs.remove(log)
       running.append(log)
 
 def concatenateJobNumbers(jobNumbers):
@@ -93,6 +93,7 @@ parser.add_option("--printSuccess", dest="printSuccess", action="store_true", de
 parser.add_option("--printFail",    dest="printFail",    action="store_true", default=False, help="Print all failed jobs.")
 parser.add_option("--printRemoved", dest="printRemoved", action="store_true", default=False, help="Print all removed jobs.")
 parser.add_option("--printRunning", dest="printRunning", action="store_true", default=False, help="Print all running jobs.")
+parser.add_option("--printAborted", dest="printAborted", action="store_true", default=False, help="Print all aborted jobs.")
 parser.add_option("--printQueued",  dest="printQueued",  action="store_true", default=False, help="Print all queued jobs.")
 parser.add_option("--printAll",     dest="printAll",     action="store_true", default=False, help="Print all jobs and their statuses.")
 
@@ -114,6 +115,7 @@ executed = []
 done = []
 successful = []
 removed = []
+aborted = []
 failed = []
 queued = []
 
@@ -126,22 +128,26 @@ if len(logs) > 0:
       successful = logsWithMatches(done, ['return value 0'])
     removed = logsWithMatches(executed, ['SYSTEM_PERIODIC_REMOVE'], ['return value', 'signal'])
 
+  aborted = logsWithMatches(logs, ['Job was aborted by the user'], ['return value', 'signal'])
+
   # failed: done but not successful
   failed = list(set(done) - set(successful))
 
-  # running: executed but neither done nor removed
-  running = list(set(executed) - set(done) - set(removed))
-  
-  # any removed jobs that were resubmitted and still running need to be corrected
-  correctRunningAfterRemoved(removed, running)
+  # running: executed but neither done nor removed nor aborted
+  running = list(set(executed) - set(done) - set(removed) - set(aborted))
 
-  # queued: not executed
-  queued = list(set(logs) - set(executed))
+  # any removed or aborted jobs that were resubmitted and are now running need to be moved into 'running'
+  correctRunningAfterRemoved(aborted, running, 'Job was aborted by the user')
+  correctRunningAfterRemoved(removed, running, 'SYSTEM_PERIODIC_REMOVE')
+
+  # queued: not executed and not aborted
+  queued = list(set(logs) - set(executed) - set(aborted))
 
 nTotal = float(len(logs))
 successfulFraction = float(len(successful)) / nTotal * 100.0
 failedFraction     = float(len(failed))     / nTotal * 100.0
 removedFraction    = float(len(removed))    / nTotal * 100.0
+abortedFraction    = float(len(aborted))    / nTotal * 100.0
 runningFraction    = float(len(running))    / nTotal * 100.0
 queuedFraction     = float(len(queued))     / nTotal * 100.0
 
@@ -151,21 +157,25 @@ print
 print 'Jobs finished successfully:', len(successful), '/',  int(nTotal), '(' + "{0:.2f}".format(successfulFraction) + '%)'
 print 'Jobs failed:               ', len(failed),     '/',  int(nTotal), '(' + "{0:.2f}".format(failedFraction) + '%)'
 print 'Jobs removed by system:    ', len(removed),    '/',  int(nTotal), '(' + "{0:.2f}".format(removedFraction) + '%)'
+print 'Jobs aborted by user:      ', len(aborted),    '/',  int(nTotal), '(' + "{0:.2f}".format(abortedFraction) + '%)'
 print 'Jobs running:              ', len(running),    '/',  int(nTotal), '(' + "{0:.2f}".format(runningFraction) + '%)'
 print 'Jobs queued:               ', len(queued),     '/',  int(nTotal), '(' + "{0:.2f}".format(queuedFraction) + '%)'
 print
 
 if options.printSuccess or options.printAll:
-  printJobs(successful, "Successful jobs")
+  printJobs(successful, "Successful jobs:")
 
 if options.printFail or options.printAll:
-  printJobs(failed, "Failed jobs")
+  printJobs(failed, "Failed jobs:")
 
 if options.printRemoved or options.printAll:
-  printJobs(removed, "Removed jobs")
+  printJobs(removed, "Removed jobs:")
+
+if options.printAborted or options.printAll:
+  printJobs(aborted, "Aborted jobs:")
 
 if options.printRunning or options.printAll:
-  printJobs(running, "Running jobs")
+  printJobs(running, "Running jobs:")
   
 if options.printQueued or options.printAll:
-  printJobs(queued, "Queued jobs")
+  printJobs(queued, "Queued jobs:")
