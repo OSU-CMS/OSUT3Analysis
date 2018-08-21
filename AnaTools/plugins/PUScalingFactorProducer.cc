@@ -46,6 +46,10 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
           edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << dataset_ << "; will cause a seg fault." << endl;
           exit(1);
         }
+        if (mc->GetEntries() == 0.0) {
+          edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Histogram " << dataset_ << " is empty and will result in infinite scale factors." << endl;
+          exit(1);
+        }
         if (!puWeight_) {
           edm::LogError ("PUScalingFactorProducer") << "ERROR [PUScalingFactorProducer]: Could not find histogram: " << target_ <<", will cause a seg fault." << endl;
           exit(1);
