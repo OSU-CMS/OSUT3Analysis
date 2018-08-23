@@ -147,7 +147,10 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 	}
 
       // produce random d0 value to use in d0 smearing
-      double d0SmearingVal = random->Gaus(0, 0.00142); // todo: remove magic number
+      double d0SmearingVal = 0.0;
+      if (!event.isRealData()) {
+        d0SmearingVal = random->Gaus(0, 0.00142); // todo: remove magic number
+      }
       electron.set_d0SmearingVal(d0SmearingVal);
 
       double pfdRhoIsoCorr = 0;
