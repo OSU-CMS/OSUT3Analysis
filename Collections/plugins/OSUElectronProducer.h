@@ -7,6 +7,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "OSUT3Analysis/Collections/interface/Electron.h"
 #include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
+#include "TRandom3.h"
 
 class OSUElectronProducer : public edm::EDProducer
 {
@@ -48,6 +49,8 @@ class OSUElectronProducer : public edm::EDProducer
     edm::InputTag      vidMediumIdMap_;
     edm::InputTag      vidTightIdMap_;
     EffectiveAreas     effectiveAreas_;
+
+    TRandom3* random;
 
     ////////////////////////////////////////////////////////////////////////////
 
