@@ -9,6 +9,7 @@ import subprocess
 import pickle
 import shutil
 import math
+import socket
 from threading import Thread, Lock, Semaphore
 from multiprocessing import cpu_count
 from OSUT3Analysis.Configuration.configurationOptions import *
@@ -293,10 +294,14 @@ def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbo
 ###############################################################################
 #                       Main function to do merging work.                     #
 ###############################################################################
-def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = cpu_count () + 1, verbose = False):
+def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = cpu_count () + 1, verbose = False, skipMerging = False):
     global threadLog
     global outputFiles
     global semaphore
+
+    lpcCAF = ('fnal.gov' in socket.gethostname())
+    if lpcCAF:
+        nThreadsActive = min(4, cpu_count() + 1)
 
     os.chdir(CondorDir)
     directory = CondorDir + '/' + dataSet
@@ -421,40 +426,43 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = 
     else:
         MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove)
 
-    threadLog = ""
-    outputFiles = []
-    semaphore = Semaphore (nThreadsActive)
-
-    # start threads, each of which merges some fraction of the input files
-    filesPerThread = 100 # to be adjusted if need be
-    nThreadTarget = cpu_count () + 1
-    nFiles = len (GoodRootFiles)
-    nThreads = int (math.ceil (float (nFiles) / float (filesPerThread)))
-    if nThreads < nThreadTarget:
-        nThreads = min (nThreadTarget, nFiles)
-        filesPerThread = int (math.ceil (float (nFiles) / float (nThreads)))
-    threads = []
-    for i in range (0, nThreads):
-        fileSubset = GoodRootFiles[(i * filesPerThread):((i + 1) * filesPerThread)]
-        if len (fileSubset):
-            threads.append (Thread (target = MergeIntermediateFile, args = (fileSubset, OutputDir, dataSet, Weight, i, verbose)))
-            threads[-1].start ()
-    for thread in threads:
-        thread.join ()
-    log += threadLog
-
-    # merge the intermediate files produced by the threads above
-    cmd = 'mergeTFileServiceHistograms -i ' + " ".join (outputFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root'
-    if verbose:
-        print "Executing: ", cmd
-    try:
-        log += subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        log += e.output
-
-    # remove the intermediate files produced by the threads above
-    for outputFile in outputFiles:
-        os.unlink (outputFile)
+    if not skipMerging:
+        threadLog = ""
+        outputFiles = []
+        semaphore = Semaphore (nThreadsActive)
+    
+        # start threads, each of which merges some fraction of the input files
+        filesPerThread = 100 # to be adjusted if need be
+        nThreadTarget = nThreadsActive
+        nFiles = len (GoodRootFiles)
+        nThreads = int (math.ceil (float (nFiles) / float (filesPerThread)))
+        if nThreads < nThreadTarget:
+            nThreads = min (nThreadTarget, nFiles)
+            filesPerThread = int (math.ceil (float (nFiles) / float (nThreads)))
+        threads = []
+        for i in range (0, nThreads):
+            fileSubset = GoodRootFiles[(i * filesPerThread):((i + 1) * filesPerThread)]
+            if len (fileSubset):
+                threads.append (Thread (target = MergeIntermediateFile, args = (fileSubset, OutputDir, dataSet, Weight, i, verbose)))
+                threads[-1].start ()
+        for thread in threads:
+            thread.join ()
+        log += threadLog
+    
+        # merge the intermediate files produced by the threads above
+        cmd = 'mergeTFileServiceHistograms -i ' + " ".join (outputFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root'
+        if verbose:
+            print "Executing: ", cmd
+        try:
+            log += subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            log += e.output
+    
+        # remove the intermediate files produced by the threads above
+        for outputFile in outputFiles:
+            os.unlink (outputFile)
+    else:
+        print '\nNot merging dataset histograms due to --skipMerging flag...\n'
 
     log += "\nFinished merging dataset " + dataSet + ":\n"
     log += "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs.\n"
