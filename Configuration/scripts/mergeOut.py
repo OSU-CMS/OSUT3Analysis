@@ -24,8 +24,8 @@ parser.add_option("-L", "--targetLumi", dest="IntLumi", default = "", help="Spec
 parser.add_option("-c", "--condor", dest="UseCondor", default = False,action = "store_true", help="Run merging jobs on condor.")
 parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", default = False, help="Just generate necessary config files without executing them.")
 parser.add_option("-O", "--output-dir", dest="outputDirectory", help="specify an output directory for output file, default is to use the Condor directory")
-parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                  help="verbose output")
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="verbose output")
+parser.add_option("-s", "--skipMerging", action="store_true", dest="skipMerging", default=False, help="skip merging of histogram files (only check and create resub scripts).")
 
 (arguments, args) = parser.parse_args()
 
@@ -80,7 +80,7 @@ if arguments.verbose:
     print "List of datasets: ", split_datasets
 if not arguments.compositeOnly and not arguments.UseCondor:
     for dataSet in split_datasets:
-        mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir, verbose = arguments.verbose)
+        mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir, verbose = arguments.verbose, skipMerging = arguments.skipMerging)
 
 if arguments.UseCondor:
     # Make necessary files for condor and submit condor jobs.
