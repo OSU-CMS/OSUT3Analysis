@@ -374,24 +374,15 @@ def GetListOfRemoteRootFiles(Path):
         return fileList
     thisRedirector = Path.split('//')[0] + '//' + Path.split('//')[1] + '/'
     thisRemotePath = '/' + Path.split('//')[2]
-    tmpFileList = os.popen('xrdfs ' + thisRedirector + ' ls -l -u ' + thisRemotePath).read().split('\n')
+    try:
+        tmpFileList = subprocess.check_output('xrdfs ' + thisRedirector + ' ls -l -u ' + thisRemotePath, shell = True).split('\n')
+    except subprocess.CalledProcessError:
+        return None
     for filePath in tmpFileList:
         if len(filePath.split()) == 5:
             if filePath.split()[4].endswith('.root'):
                 fileList.append(filePath.split()[4])
     return fileList
-
-def CheckIfRemoteDirectoryExists(Path):
-    if not len(Path.split('//')) == 3 or not Path.startswith('root://'):
-        print 'Remote directories must be of the form \"root://<redirector>//store/...\"'
-        return False
-    thisRedirector = Path.split('//')[1] 
-    thisRemotePath = '/' + Path.split('//')[2]
-    try:
-        subprocess.check_call('xrd '+ thisRedirector + ' existdir ' + thisRemotePath, shell = True)
-        return True
-    except subprocess.CalledProcessError:
-        return False
 
 #It generates the condor.sub file for each dataset.
 def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile):
@@ -869,25 +860,32 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         secondaryCollectionModifications = []
         if RunOverRemoteSkim:
             SkimDirectory = arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel
-            print "Trying remote skim directory " + str(SkimDirectory)
-            if not len(SkimDirectory.split('//')) == 3 or not SkimDirectory.startswith('root://'):
-                print 'Remote directories must be of the form \"root://<redirector>//store/...\"'
-            thisRedirector = SkimDirectory.split('//')[1] 
-            thisRemotePath = '/' + SkimDirectory.split('//')[2]
-            try:
-                subprocess.check_call('xrd '+ thisRedirector + ' existdir ' + thisRemotePath, shell = True)
-            except subprocess.CalledProcessError:
-                return
             inputFiles = GetListOfRemoteRootFiles(SkimDirectory)
+            if inputFiles is None:
+                print "Reading from the remote directory failed for remote dataset " + Label + ". Does it exist? Will skip it and continue."
+                datasetRead['numberOfFiles'] = 0
+                return datasetRead
             numInputFiles = len(inputFiles)
             secondaryCollections = RemoteSecondaryCollectionInstance(inputFiles)
             # Copy the relevant files from the remote skim directory.
             try:
                 subprocess.call('xrdcp ' + SkimDirectory + '/' + os.path.basename(datasetInfoName) + ' ' + datasetInfoName, shell = True)
             except subprocess.CalledProcessError:
-                pass
-            subprocess.call('xrdcp ' + SkimDirectory + '/OriginalNumberOfEvents.txt' + ' ' + Directory + '/OriginalNumberOfEvents.txt', shell = True)
-            subprocess.call('xrdcp ' + SkimDirectory + '/SkimNumberOfEvents.txt' + ' ' + Directory + '/SkimNumberOfEvents.txt', shell = True)
+                print "Could not copy info file " + datasetInfoName + " from remote directory. Will skip this dataset and continue."
+                datasetRead['numberOfFiles'] = 0
+                return datasetRead
+            try:
+                subprocess.call('xrdcp ' + SkimDirectory + '/OriginalNumberOfEvents.txt' + ' ' + Directory + '/OriginalNumberOfEvents.txt', shell = True)
+            except subprocess.CalledProcessError:
+                print "Could not copy OriginalNumberOfEvents.txt from remote directory. Will skip this dataset and continue."
+                datasetRead['numberOfFiles'] = 0
+                return datasetRead
+            try:
+                subprocess.call('xrdcp ' + SkimDirectory + '/SkimNumberOfEvents.txt' + ' ' + Directory + '/SkimNumberOfEvents.txt', shell = True)
+            except subprocess.CalledProcessError:
+                print "Could not copy SkimNumberOfEvents.txt from remote directory. Will skip this dataset and continue."
+                datasetRead['numberOfFiles'] = 0
+                return datasetRead
             # Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
             SkimModifier(Label, Directory, crossSection, True)
             if not numInputFiles:
@@ -896,16 +894,16 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 return datasetRead
         elif RunOverSkim:
             numInputFiles = len(glob.glob(Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel + "/*.root"))
+            if not numInputFiles:
+                print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
+                datasetRead['numberOfFiles'] = numInputFiles
+                return datasetRead
             SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/'
             secondaryCollectionModifications = SecondaryCollectionInstance(SkimDirectory, arguments.SkimChannel)
             #Copy the datasetInfo file from the skim directory.
             shutil.copy (SkimDirectory + 'datasetInfo_' + Label + '_cfg.py', datasetInfoName)
             #Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
             SkimModifier(Label, Directory, crossSection)
-            if not numInputFiles:
-                print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
-                datasetRead['numberOfFiles'] = numInputFiles
-                return datasetRead
             InitializeAAA = ""
 
         sys.path.append(Directory)
@@ -964,8 +962,8 @@ def SkimChannelFinder(userConfig, Directory, temPset):
 def SkimModifier(Label, Directory, crossSection, isRemote = False):
     if isRemote:
         SkimDirectory = str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
-        OriginalNumberOfEvents = os.popen('cat OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile ('OriginalNumberOfEvents.txt') else 0.0
-        SkimNumberOfEvents     = os.popen('cat SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile ('SkimNumberOfEvents.txt') else 0.0
+        OriginalNumberOfEvents = os.popen('cat ' + Directory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (Directory + '/OriginalNumberOfEvents.txt') else 0.0
+        SkimNumberOfEvents     = os.popen('cat ' + Directory + '/SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile (Directory + '/SkimNumberOfEvents.txt') else 0.0
     else: 
         SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
         OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/OriginalNumberOfEvents.txt') else 0.0
@@ -1273,10 +1271,7 @@ if not arguments.Resubmit:
                 crossSection = arguments.crossSection
 
             DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, UseAAA, crossSection)
-            if(RunOverRemoteSkim and CheckIfRemoteDirectoryExists(arguments.SkimDirectory + '/' + dataset + '/' + arguments.SkimChannel)==0):
-                NumberOfFiles = 0
-            else:
-                NumberOfFiles = int(DatasetRead['numberOfFiles'])
+            NumberOfFiles = int(DatasetRead['numberOfFiles'])
 
             if not NumberOfFiles:
                 continue
