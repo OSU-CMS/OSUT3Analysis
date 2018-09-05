@@ -405,6 +405,9 @@ datasets = [
    'VBF_HTo4L_FPix80x5',
    'VBF_HTo4L_FPix800x52',
 
+   'stopToLD1000_1mm',
+   'stopToLD1000_100mm',
+
    #Sum of all backgrounds
    'Background',
 ]
@@ -2569,6 +2572,8 @@ nJobs = {
     'VBF_HTo4L_FPix80x5' : 999,
     'VBF_HTo4L_FPix800x52' : 999,
 
+    'stopToLD1000_1mm' : 99,
+    'stopToLD1000_100mm': 99,
 }
 
 maxEvents = {
@@ -3932,6 +3937,9 @@ maxEvents = {
     'VBF_HTo4L_FPix80x52' : -1,
     'VBF_HTo4L_FPix80x5' : -1,
     'VBF_HTo4L_FPix800x52' : -1,
+
+    'stopToLD1000_1mm' : -1,
+    'stopToLD1000_100mm': -1,
 
 }
 
@@ -5354,6 +5362,8 @@ types = {
     'VBF_HTo4L_FPix80x5' : "signalMC",
     'VBF_HTo4L_FPix800x52' : "signalMC",
 
+    'stopToLD1000_1mm' : "signalMC",
+    'stopToLD1000_100mm': "signalMC",
 }
 
 colors = {
@@ -6771,6 +6781,8 @@ colors = {
     'VBF_HTo4L_FPix80x5' : 1,
     'VBF_HTo4L_FPix800x52' : 1,
 
+    'stopToLD1000_1mm' : 1,
+    'stopToLD1000_100mm': 2,
 }
 
 style = {
@@ -8207,6 +8219,8 @@ labels = {
     'VBF_HTo4L_FPix80x5' : "H_{VBF}#rightarrow4l, FPix 80x5",
     'VBF_HTo4L_FPix800x52' : "H_{VBF}#rightarrow4l, FPix 800x52",
 
+    'stopToLD1000_1mm' : "#tilde{t}#tilde{t}#rightarrow ld ld, M=1000 GeV, c#tau=1 mm",
+    'stopToLD1000_100mm': "#tilde{t}#tilde{t}#rightarrow ld ld, M=1000 GeV, c#tau=100 mm",
 
 }
 
@@ -9059,7 +9073,8 @@ crossSections = {
     'VBF_HTo4L_FPix80x5' : 1,
     'VBF_HTo4L_FPix800x52' : 1,
 
-
+    'stopToLD1000_1mm' : 0.00615134,
+    'stopToLD1000_100mm': 0.00615134,
 }
 
 InputCondorArguments = {}
@@ -9159,7 +9174,7 @@ for index, sample in enumerate(signal_datasets):
     nJobs[sample] = 99
     maxEvents[sample] = -1
     types[sample] = 'signalMC'
-    labels[sample] = "#tilde{t}#tilde{t} M(%s) c#tau(%smm)" % (mass(sample), lifetime(sample))
+    labels[sample] = "#tilde{t}#tilde{t}#rightarrow lb lb, M=%s GeV, c#tau=%s mm" % (mass(sample), lifetime(sample))
     colors[sample] = 20 + index
     crossSections[sample] = signal_crossSections[mass(sample)]
     pdgIdsForLifetimeReweighting[sample] = 1000006
