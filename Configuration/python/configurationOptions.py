@@ -4221,6 +4221,7 @@ types = {
     'QCD_EMEnriched_300toInf'       : "bgMC",
 
     #QCD DoubleEMEnriched
+    'QCD_DoubleEMEnriched'                 : "bgMC",
     'QCD_DoubleEMEnriched_HighMass_30to40' : "bgMC",
     'QCD_DoubleEMEnriched_LowMass_30toInf' : "bgMC",
     'QCD_DoubleEMEnriched_HighMass_40toInf': "bgMC",
@@ -5638,6 +5639,7 @@ colors = {
     'QCD_EMEnriched_300toInf'       : 791,
 
     #QCD DoubleEMEnriched
+    'QCD_DoubleEMEnriched'                 : 791,
     'QCD_DoubleEMEnriched_HighMass_30to40' : 791,
     'QCD_DoubleEMEnriched_LowMass_30toInf' : 791,
     'QCD_DoubleEMEnriched_HighMass_40toInf': 791,
