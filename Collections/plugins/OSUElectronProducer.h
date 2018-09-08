@@ -49,6 +49,7 @@ class OSUElectronProducer : public edm::EDProducer
     edm::InputTag      vidMediumIdMap_;
     edm::InputTag      vidTightIdMap_;
     EffectiveAreas     effectiveAreas_;
+    double             d0SmearingWidth_;
 
     TRandom3* random;
 

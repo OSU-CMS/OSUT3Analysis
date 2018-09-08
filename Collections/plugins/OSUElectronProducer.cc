@@ -5,16 +5,17 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
-  collections_    (cfg.getParameter<edm::ParameterSet> ("collections")),
-  cfg_            (cfg),
-  pfCandidate_    (cfg.getParameter<edm::InputTag>     ("pfCandidate")),
-  conversions_    (cfg.getParameter<edm::InputTag>     ("conversions")),
-  rho_            (cfg.getParameter<edm::InputTag>     ("rho")),
-  vidVetoIdMap_   (cfg.getParameter<edm::InputTag>     ("vidVetoIdMap")),
-  vidLooseIdMap_  (cfg.getParameter<edm::InputTag>     ("vidLooseIdMap")),
-  vidMediumIdMap_ (cfg.getParameter<edm::InputTag>     ("vidMediumIdMap")),
-  vidTightIdMap_  (cfg.getParameter<edm::InputTag>     ("vidTightIdMap")),
-  effectiveAreas_ ((cfg.getParameter<edm::FileInPath>  ("effAreasPayload")).fullPath())
+  collections_     (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_             (cfg),
+  pfCandidate_     (cfg.getParameter<edm::InputTag>     ("pfCandidate")),
+  conversions_     (cfg.getParameter<edm::InputTag>     ("conversions")),
+  rho_             (cfg.getParameter<edm::InputTag>     ("rho")),
+  vidVetoIdMap_    (cfg.getParameter<edm::InputTag>     ("vidVetoIdMap")),
+  vidLooseIdMap_   (cfg.getParameter<edm::InputTag>     ("vidLooseIdMap")),
+  vidMediumIdMap_  (cfg.getParameter<edm::InputTag>     ("vidMediumIdMap")),
+  vidTightIdMap_   (cfg.getParameter<edm::InputTag>     ("vidTightIdMap")),
+  effectiveAreas_  ((cfg.getParameter<edm::FileInPath>  ("effAreasPayload")).fullPath()),
+  d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
@@ -149,7 +150,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       // produce random d0 value to use in d0 smearing
       double d0SmearingVal = 0.0;
       if (!event.isRealData()) {
-        d0SmearingVal = random->Gaus(0, 0.00142); // todo: remove magic number
+        d0SmearingVal = random->Gaus(0, d0SmearingWidth_);
       }
       electron.set_d0SmearingVal(d0SmearingVal);
 

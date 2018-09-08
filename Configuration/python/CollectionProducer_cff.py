@@ -75,6 +75,9 @@ collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     ESClusters      = cms.InputTag ("reducedEgamma", "reducedESClusters",      ""),
     ootEBEEClusters = cms.InputTag ("reducedEgamma", "reducedOOTEBEEClusters", ""),
     ootESClusters   = cms.InputTag ("reducedEgamma", "reducedOOTESClusters",   ""),
+
+    d0SmearingWidth = cms.double (0.0),
+
 )
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0"):
