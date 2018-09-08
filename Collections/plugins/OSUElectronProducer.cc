@@ -19,7 +19,9 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
-  random = new TRandom3();
+
+  // RNG for gaussian d0 smearing
+  rng = new TRandom3();
 
   token_ = consumes<edm::View<TYPE(electrons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
@@ -41,6 +43,7 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
 
 OSUElectronProducer::~OSUElectronProducer ()
 {
+  delete rng;
 }
 
 void
@@ -150,7 +153,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       // produce random d0 value to use in d0 smearing
       double d0SmearingVal = 0.0;
       if (!event.isRealData()) {
-        d0SmearingVal = random->Gaus(0, d0SmearingWidth_);
+        d0SmearingVal = rng->Gaus(0, d0SmearingWidth_);
       }
       electron.set_d0SmearingVal(d0SmearingVal);
 

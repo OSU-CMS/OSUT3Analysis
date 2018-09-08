@@ -51,7 +51,7 @@ class OSUElectronProducer : public edm::EDProducer
     EffectiveAreas     effectiveAreas_;
     double             d0SmearingWidth_;
 
-    TRandom3* random;
+    TRandom3* rng;
 
     ////////////////////////////////////////////////////////////////////////////
 
