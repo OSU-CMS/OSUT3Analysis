@@ -146,6 +146,8 @@ collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
 
 collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
     pfCandidate =  cms.InputTag  ('packedPFCandidates','',''),
+
+    d0SmearingWidth = cms.double (0.0),
 )
 copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 

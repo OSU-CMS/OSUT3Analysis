@@ -8,14 +8,18 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
-  cfg_ (cfg),
-  pfCandidate_ (cfg.getParameter<edm::InputTag> ("pfCandidate"))
+  collections_     (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_             (cfg),
+  pfCandidate_     (cfg.getParameter<edm::InputTag>     ("pfCandidate")),
+  d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth"))
 
 
 {
   collection_ = collections_.getParameter<edm::InputTag> ("muons");
   produces<vector<osu::Muon> > (collection_.instance ());
+
+  // RNG for gaussian d0 smearing
+  rng = new TRandom3();
 
   token_ = consumes<vector<TYPE(muons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
@@ -30,6 +34,7 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
 
 OSUMuonProducer::~OSUMuonProducer ()
 {
+  delete rng;
 }
 
 void
@@ -98,6 +103,13 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 	      muon.set_genD0(gen_d0);
 	    }
 	}
+
+      // produce random d0 value to use in d0 smearing
+      double d0SmearingVal = 0.0;
+      if (!event.isRealData()) {
+        d0SmearingVal = rng->Gaus(0, d0SmearingWidth_);
+      }
+      muon.set_d0SmearingVal(d0SmearingVal);
 
       double pfdBetaIsoCorr = 0;
       double chargedHadronPt = 0;
