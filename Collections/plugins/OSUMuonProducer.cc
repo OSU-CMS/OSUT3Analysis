@@ -19,7 +19,7 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   produces<vector<osu::Muon> > (collection_.instance ());
 
   // RNG for gaussian d0 smearing
-  rng = new TRandom3();
+  rng = new TRandom3(0);
 
   token_ = consumes<vector<TYPE(muons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
