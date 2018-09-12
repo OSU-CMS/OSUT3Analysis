@@ -106,7 +106,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       // produce random d0 value to use in d0 smearing
       double d0SmearingVal = 0.0;
-      if (!event.isRealData() && d0SmearingWidth_ != 0.0) {
+      if (!event.isRealData() && d0SmearingWidth_ >= 0) {
         d0SmearingVal = rng->Gaus(0, d0SmearingWidth_);
       }
       muon.set_d0SmearingVal(d0SmearingVal);
