@@ -21,7 +21,7 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   produces<vector<osu::Electron> > (collection_.instance ());
 
   // RNG for gaussian d0 smearing
-  rng = new TRandom3(0);
+  if (d0SmearingWidth_ >= 0) rng = new TRandom3(0);
 
   token_ = consumes<edm::View<TYPE(electrons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
@@ -43,7 +43,7 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
 
 OSUElectronProducer::~OSUElectronProducer ()
 {
-  delete rng;
+  if (rng) delete rng;
 }
 
 void
