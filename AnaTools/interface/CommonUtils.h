@@ -39,6 +39,7 @@ struct Tokens
   edm::EDGetTokenT<vector<osu::Jet> > jets;
   edm::EDGetTokenT<vector<osu::Bjet> > bjets;
   edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticles;
+  edm::EDGetTokenT<vector<osu::HardInteractionMcparticle> > hardInteractionMcparticles;
   edm::EDGetTokenT<vector<osu::Met> > mets;
   edm::EDGetTokenT<vector<osu::Muon> > muons;
   edm::EDGetTokenT<vector<osu::Photon> > photons;
@@ -112,6 +113,10 @@ namespace anatools
 #if IS_VALID(mcparticles)
   string getObjectType (const osu::Mcparticle &);
   string getObjectClass (const osu::Mcparticle &);
+#endif
+#if IS_VALID(hardInteractionMcparticles)
+  string getObjectType (const osu::HardInteractionMcparticle &);
+  string getObjectClass (const osu::HardInteractionMcparticle &);
 #endif
 #if IS_VALID(mets)
   string getObjectType (const osu::Met &);

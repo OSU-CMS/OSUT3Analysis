@@ -207,6 +207,7 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   if  (VEC_CONTAINS  (objectsToGet,  "bjets")     && !tokens.bjets.isUninitialized())             event.getByToken  (tokens.bjets,             handles.bjets);
   if  (VEC_CONTAINS  (objectsToGet,  "generatorweights") && !tokens.generatorweights.isUninitialized())  event.getByToken  (tokens.generatorweights,  handles.generatorweights);
   if  (VEC_CONTAINS  (objectsToGet,  "mcparticles")      && !tokens.mcparticles.isUninitialized())       event.getByToken  (tokens.mcparticles,       handles.mcparticles);
+  if  (VEC_CONTAINS  (objectsToGet,  "hardInteractionMcparticles")      && !tokens.hardInteractionMcparticles.isUninitialized())       event.getByToken  (tokens.hardInteractionMcparticles,       handles.hardInteractionMcparticles);
   if  (VEC_CONTAINS  (objectsToGet,  "mets")             && !tokens.mets.isUninitialized())              event.getByToken  (tokens.mets,              handles.mets);
   if  (VEC_CONTAINS  (objectsToGet,  "muons")            && !tokens.muons.isUninitialized())             event.getByToken  (tokens.muons,             handles.muons);
   if  (VEC_CONTAINS  (objectsToGet,  "photons")          && !tokens.photons.isUninitialized())           event.getByToken  (tokens.photons,           handles.photons);
@@ -268,6 +269,8 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
         ss << endl << "Did not retrieve generatorweights collection from the event.";
       if (!handles.mcparticles.isValid ())
         ss << endl << "Did not retrieve mcparticles collection from the event.";
+      if (!handles.hardInteractionMcparticles.isValid ())
+        ss << endl << "Did not retrieve hardInteractionMcparticles collection from the event.";
       if (!handles.mets.isValid ())
         ss << endl << "Did not retrieve mets collection from the event.";
       if (!handles.muons.isValid ())
@@ -800,6 +803,10 @@ anatools::getRequiredCollections (const unordered_set<string> &objectsToGet, Col
   string  anatools::getObjectType  (const  osu::Mcparticle     &obj)  {  return  "mcparticle";     }
   string  anatools::getObjectClass  (const  osu::Mcparticle     &obj)  {  return  "osu::Mcparticle";     }
 #endif
+#if IS_VALID(hardInteractionMcparticles)
+  string  anatools::getObjectType  (const  osu::HardInteractionMcparticle     &obj)  {  return  "hardInteractionMcparticle";     }
+  string  anatools::getObjectClass  (const  osu::HardInteractionMcparticle     &obj)  {  return  "osu::HardInteractionMcparticle";     }
+#endif
 #if IS_VALID(mets)
   string  anatools::getObjectType  (const  osu::Met            &obj)  {  return  "met";            }
   string  anatools::getObjectClass  (const  osu::Met            &obj)  {  return  "osu::Met";            }
@@ -894,6 +901,8 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     tokens.bjets = cc.consumes<vector<osu::Bjet> > (collections.getParameter<edm::InputTag> ("bjets"));
   if (collections.exists ("mcparticles"))
     tokens.mcparticles = cc.consumes<vector<osu::Mcparticle> > (collections.getParameter<edm::InputTag> ("mcparticles"));
+  if (collections.exists ("hardInteractionMcparticles"))
+    tokens.hardInteractionMcparticles = cc.consumes<vector<osu::HardInteractionMcparticle> > (collections.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
   if (collections.exists ("mets"))
     tokens.mets = cc.consumes<vector<osu::Met> > (collections.getParameter<edm::InputTag> ("mets"));
   if (collections.exists ("muons"))

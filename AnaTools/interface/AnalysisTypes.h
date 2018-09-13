@@ -17,6 +17,7 @@
 #include "OSUT3Analysis/Collections/interface/Genjet.h"
 #include "OSUT3Analysis/Collections/interface/Jet.h"
 #include "OSUT3Analysis/Collections/interface/Mcparticle.h"
+#include "OSUT3Analysis/Collections/interface/HardInteractionMcparticle.h"
 #include "OSUT3Analysis/Collections/interface/Met.h"
 #include "OSUT3Analysis/Collections/interface/Muon.h"
 #include "OSUT3Analysis/Collections/interface/Photon.h"
@@ -150,6 +151,7 @@ struct Collections
   edm::Handle<vector<osu::Jet> >            jets;
   edm::Handle<vector<osu::Bjet> >           bjets;
   edm::Handle<vector<osu::Mcparticle> >     mcparticles;
+  edm::Handle<vector<osu::HardInteractionMcparticle> >     hardInteractionMcparticles;
   edm::Handle<vector<osu::Met> >            mets;
   edm::Handle<vector<osu::Muon> >           muons;
   edm::Handle<vector<osu::Photon> >         photons;

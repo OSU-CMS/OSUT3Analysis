@@ -9,6 +9,7 @@
 #include "OSUT3Analysis/Collections/interface/Genjet.h"
 #include "OSUT3Analysis/Collections/interface/Jet.h"
 #include "OSUT3Analysis/Collections/interface/Mcparticle.h"
+#include "OSUT3Analysis/Collections/interface/HardInteractionMcparticle.h"
 #include "OSUT3Analysis/Collections/interface/Met.h"
 #include "OSUT3Analysis/Collections/interface/Muon.h"
 #include "OSUT3Analysis/Collections/interface/Photon.h"
@@ -98,6 +99,12 @@ namespace {
     edm::Wrapper<osu::Mcparticle>             mcparticle2;
     edm::Wrapper<vector<osu::Mcparticle> >    mcparticle3;
     edm::Ref<vector<osu::Mcparticle> >        mcparticle4;
+
+    osu::HardInteractionMcparticle                           hardInteractionMcparticle0;
+    vector<osu::HardInteractionMcparticle>                   hardInteractionMcparticle1;
+    edm::Wrapper<osu::HardInteractionMcparticle>             hardInteractionMcparticle2;
+    edm::Wrapper<vector<osu::HardInteractionMcparticle> >    hardInteractionMcparticle3;
+    edm::Ref<vector<osu::HardInteractionMcparticle> >        hardInteractionMcparticle4;
 
     osu::Met                                  met0;
     vector<osu::Met>                          met1;
