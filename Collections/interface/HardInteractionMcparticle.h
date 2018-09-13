@@ -3,7 +3,7 @@
 
 #include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 
-#if IS_VALID(hardinteractionmcparticles)
+#if IS_VALID(hardInteractionMcparticles)
 
 namespace osu
 {
