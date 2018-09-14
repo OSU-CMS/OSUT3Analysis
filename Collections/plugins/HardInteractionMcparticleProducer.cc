@@ -26,8 +26,14 @@ HardInteractionMcparticleProducer::produce (edm::Event &event, const edm::EventS
     return;
 
   pl_ = unique_ptr<vector<osu::HardInteractionMcparticle> > (new vector<osu::HardInteractionMcparticle> ());
-  for (const auto &object : *collection)
+  for (const auto &object : *collection){
     pl_->emplace_back (object);
+    osu::HardInteractionMcparticle &hiMcpart = pl_->back();
+
+    if(hiMcpart.numberOfMothers()<1) continue;
+    hiMcpart.set_motherPdgId(hiMcpart.mother()->pdgId());
+    hiMcpart.set_motherStatus(hiMcpart.mother()->status());
+  }
 
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
