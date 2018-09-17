@@ -57,10 +57,14 @@ electronD0WRTBeamspotErr = "hypot(electron.gsfTrack.d0Error, hypot(beamspot.x0Er
 electronD0WRTBeamspotSig = "(((electron.vx - beamspot.x0) * electron.py - (electron.vy - beamspot.y0) * electron.px) / electron.pt) / (hypot(electron.gsfTrack.d0Error, hypot(beamspot.x0Error, beamspot.y0Error)))"
 electronD0WRTPV       = "((electron.vx - eventvariable.leadingPV_x) * electron.py - (electron.vy - eventvariable.leadingPV_y) * electron.px) / electron.pt"
 
+electronSmearedD0WRTBeamspot = "(electron.d0SmearingVal + ((electron.vx - beamspot.x0) * electron.py - (electron.vy - beamspot.y0) * electron.px) / electron.pt)"
+
 muonD0WRTBeamspot = "((muon.vx - beamspot.x0) * muon.py - (muon.vy - beamspot.y0) * muon.px) / muon.pt"
 muonD0WRTBeamspotErr = "hypot(muon.innerTrack.d0Error, hypot(beamspot.x0Error, beamspot.y0Error))"
 muonD0WRTBeamspotSig = "(((muon.vx - beamspot.x0) * muon.py - (muon.vy - beamspot.y0) * muon.px) / muon.pt) / (hypot(muon.innerTrack.d0Error, hypot(beamspot.x0Error, beamspot.y0Error)))"
 muonD0WRTPV       = "((muon.vx - eventvariable.leadingPV_x) * muon.py - (muon.vy - eventvariable.leadingPV_y) * muon.px) / muon.pt"
+
+muonSmearedD0WRTBeamspot = "(muon.d0SmearingVal + ((muon.vx - beamspot.x0) * muon.py - (muon.vy - beamspot.y0) * muon.px) / muon.pt)"
 
 
 # Calculation from https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_X/DataFormats/TrackReco/interface/TrackBase.h#L674

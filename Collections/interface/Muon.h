@@ -23,14 +23,16 @@ namespace osu
         const double sumChargedHadronPtCorr () const;
         const double sumPUPtCorr () const;
         const int muonPVIndex () const;
-	const double genD0 () const;
+        const double genD0 () const;
+        const double d0SmearingVal () const;
         const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }
         void set_isTightMuonWRTVtx(const bool isTightMuon);
         void set_pfdBetaIsoCorr (double value) { pfdBetaIsoCorr_  = value; };
         void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };
         void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
         void set_muonPVIndex (int value) { muonPVIndex_  = value; };
-	void set_genD0 (double value) { genD0_  = value; };
+        void set_genD0 (double value) { genD0_  = value; };
+        void set_d0SmearingVal (double value) { d0SmearingVal_  = value; };
 
 	void set_match_HLT_IsoMu27_v (const bool);
         void set_match_HLT_IsoMu24_v (const bool);
@@ -64,7 +66,8 @@ namespace osu
         double sumChargedHadronPtCorr_;
         int muonPVIndex_;
         double sumPUPtCorr_;
-	double genD0_;
+        double genD0_;
+        double d0SmearingVal_;
 
         double metMinusOnePt_;
         double metMinusOnePx_;

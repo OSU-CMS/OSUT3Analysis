@@ -19,6 +19,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   electronPVIndex_                      (INVALID_VALUE),
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
+  d0SmearingVal_                        (INVALID_VALUE),
   passesTightID_noIsolation_            (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
@@ -54,6 +55,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   electronPVIndex_                      (INVALID_VALUE),
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
+  d0SmearingVal_                        (INVALID_VALUE),
   passesTightID_noIsolation_            (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
@@ -89,6 +91,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   electronPVIndex_                      (INVALID_VALUE),
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
+  d0SmearingVal_                        (INVALID_VALUE),
   passesTightID_noIsolation_            (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
@@ -124,6 +127,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   electronPVIndex_                      (INVALID_VALUE),
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
+  d0SmearingVal_                        (INVALID_VALUE),
   passesTightID_noIsolation_            (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
@@ -266,6 +270,12 @@ const double
 osu::Electron::genD0 () const
 {
   return genD0_;
+}
+
+const double
+osu::Electron::d0SmearingVal () const
+{
+  return d0SmearingVal_;
 }
 
 const bool

@@ -5,19 +5,23 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
-  collections_    (cfg.getParameter<edm::ParameterSet> ("collections")),
-  cfg_            (cfg),
-  pfCandidate_    (cfg.getParameter<edm::InputTag>     ("pfCandidate")),
-  conversions_    (cfg.getParameter<edm::InputTag>     ("conversions")),
-  rho_            (cfg.getParameter<edm::InputTag>     ("rho")),
-  vidVetoIdMap_   (cfg.getParameter<edm::InputTag>     ("vidVetoIdMap")),
-  vidLooseIdMap_  (cfg.getParameter<edm::InputTag>     ("vidLooseIdMap")),
-  vidMediumIdMap_ (cfg.getParameter<edm::InputTag>     ("vidMediumIdMap")),
-  vidTightIdMap_  (cfg.getParameter<edm::InputTag>     ("vidTightIdMap")),
-  effectiveAreas_ ((cfg.getParameter<edm::FileInPath>  ("effAreasPayload")).fullPath())
+  collections_     (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_             (cfg),
+  pfCandidate_     (cfg.getParameter<edm::InputTag>     ("pfCandidate")),
+  conversions_     (cfg.getParameter<edm::InputTag>     ("conversions")),
+  rho_             (cfg.getParameter<edm::InputTag>     ("rho")),
+  vidVetoIdMap_    (cfg.getParameter<edm::InputTag>     ("vidVetoIdMap")),
+  vidLooseIdMap_   (cfg.getParameter<edm::InputTag>     ("vidLooseIdMap")),
+  vidMediumIdMap_  (cfg.getParameter<edm::InputTag>     ("vidMediumIdMap")),
+  vidTightIdMap_   (cfg.getParameter<edm::InputTag>     ("vidTightIdMap")),
+  effectiveAreas_  ((cfg.getParameter<edm::FileInPath>  ("effAreasPayload")).fullPath()),
+  d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
+
+  // RNG for gaussian d0 smearing
+  if (d0SmearingWidth_ >= 0) rng = new TRandom3(0);
 
   token_ = consumes<edm::View<TYPE(electrons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
@@ -39,6 +43,7 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
 
 OSUElectronProducer::~OSUElectronProducer ()
 {
+  if (rng) delete rng;
 }
 
 void
@@ -144,6 +149,13 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 	      electron.set_genD0(gen_d0);
 	    }
 	}
+
+      // produce random d0 value to use in d0 smearing
+      double d0SmearingVal = 0.0;
+      if (!event.isRealData() && d0SmearingWidth_ >= 0) {
+        d0SmearingVal = rng->Gaus(0, d0SmearingWidth_);
+      }
+      electron.set_d0SmearingVal(d0SmearingVal);
 
       double pfdRhoIsoCorr = 0;
       double chargedHadronPt = 0;

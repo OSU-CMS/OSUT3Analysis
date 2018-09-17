@@ -75,6 +75,9 @@ collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     ESClusters      = cms.InputTag ("reducedEgamma", "reducedESClusters",      ""),
     ootEBEEClusters = cms.InputTag ("reducedEgamma", "reducedOOTEBEEClusters", ""),
     ootESClusters   = cms.InputTag ("reducedEgamma", "reducedOOTESClusters",   ""),
+
+    d0SmearingWidth = cms.double (-1.0),
+
 )
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0"):
@@ -143,6 +146,8 @@ collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
 
 collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
     pfCandidate =  cms.InputTag  ('packedPFCandidates','',''),
+
+    d0SmearingWidth = cms.double (-1.0),
 )
 copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 

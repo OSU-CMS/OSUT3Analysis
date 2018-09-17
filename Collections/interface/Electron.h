@@ -24,7 +24,8 @@ namespace osu
         const double sumChargedHadronPtCorr () const;
         const double sumPUPtCorr () const;
         const int electronPVIndex () const;
-	const double genD0 () const;
+        const double genD0 () const;
+        const double d0SmearingVal () const;
         const float dEtaInSeed () const;
         const bool pass_GsfEleHadronicOverEMEnergyScaledCut (const float c0, const float cE, const float cR) const;
 
@@ -52,6 +53,7 @@ namespace osu
         void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
         void set_electronPVIndex (int value) { electronPVIndex_  = value; };
         void set_genD0 (double value) { genD0_  = value; };
+        void set_d0SmearingVal (double value) { d0SmearingVal_  = value; };
         void set_passesTightID_noIsolation (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
         void set_passesVID_vetoID (const bool);
         void set_passesVID_looseID (const bool);
@@ -99,7 +101,8 @@ namespace osu
         double sumChargedHadronPtCorr_;
         int electronPVIndex_;
         double sumPUPtCorr_;
-	double genD0_;
+        double genD0_;
+        double d0SmearingVal_;
         bool passesTightID_noIsolation_;
 
         bool passesVID_vetoID_;

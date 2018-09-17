@@ -6,6 +6,7 @@
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "OSUT3Analysis/Collections/interface/Muon.h"
+#include "TRandom3.h"
 
 
 class OSUMuonProducer : public edm::EDProducer
@@ -34,6 +35,9 @@ class OSUMuonProducer : public edm::EDProducer
 
     edm::ParameterSet  cfg_;
     edm::InputTag      pfCandidate_;
+    double             d0SmearingWidth_;
+
+    TRandom3* rng;
 
     ////////////////////////////////////////////////////////////////////////////
 
