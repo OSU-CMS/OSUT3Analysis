@@ -265,6 +265,8 @@ ValueLookupTree::getCollectionSize (const string &name) const
     return handles_->bjets->size ();
   else if (EQ_VALID(name,mcparticles))
     return handles_->mcparticles->size ();
+  else if (EQ_VALID(name,hardInteractionMcparticles))
+    return handles_->hardInteractionMcparticles->size ();
   else if (EQ_VALID(name,mets))
     return handles_->mets->size ();
   else if (EQ_VALID(name,muons))
@@ -318,6 +320,7 @@ bool
   else  if  (EQ_VALID(name,jets))              isFound  =  handles_->jets.isValid();
   else  if  (EQ_VALID(name,bjets))             isFound  =  handles_->bjets.isValid();
   else  if  (EQ_VALID(name,mcparticles))       isFound  =  handles_->mcparticles.isValid();
+  else  if  (EQ_VALID(name,hardInteractionMcparticles))       isFound  =  handles_->hardInteractionMcparticles.isValid();
   else  if  (EQ_VALID(name,mets))              isFound  =  handles_->mets.isValid();
   else  if  (EQ_VALID(name,muons))             isFound  =  handles_->muons.isValid();
   else  if  (EQ_VALID(name,photons))           isFound  =  handles_->photons.isValid();
@@ -872,6 +875,8 @@ ValueLookupTree::getObject (const string &name, const unsigned i)
     return ((void *) &handles_->bjets->at (i));
   else if (EQ_VALID(name,mcparticles))
     return ((void *) &handles_->mcparticles->at (i));
+  else if (EQ_VALID(name,hardInteractionMcparticles))
+    return ((void *) &handles_->hardInteractionMcparticles->at (i));
   else if (EQ_VALID(name,mets))
     return ((void *) &handles_->mets->at (i));
   else if (EQ_VALID(name,muons))
@@ -940,6 +945,8 @@ ValueLookupTree::getCollectionType (const string &name) const
     return "osu::Bjet";
   else if (EQ_VALID(name,mcparticles))
     return "osu::Mcparticle";
+  else if (EQ_VALID(name,hardInteractionMcparticles))
+    return "osu::HardInteractionMcparticle";
   else if (EQ_VALID(name,mets))
     return "osu::Met";
   else if (EQ_VALID(name,muons))
@@ -993,6 +1000,8 @@ ValueLookupTree::isCollection (const string &name) const
   else if (EQ_VALID(name,bjets))
     return true;
   else if (EQ_VALID(name,mcparticles))
+    return true;
+  else if (EQ_VALID(name,hardInteractionMcparticles))
     return true;
   else if (EQ_VALID(name,mets))
     return true;

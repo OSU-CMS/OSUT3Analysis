@@ -69,7 +69,7 @@ collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     gsfElectronCore  =  cms.InputTag  ("reducedEgamma", "reducedGedGsfElectronCores",  ""),
     gsfTrack         =  cms.InputTag  ("reducedEgamma", "reducedGsfTracks",            ""),
 
-    # similarly as above these tags are required in skims as they are referenced   
+    # similarly as above these tags are required in skims as they are referenced
     # in using the superCluster's seed for the dEtaInSeed cut
     EBEEClusters    = cms.InputTag ("reducedEgamma", "reducedEBEEClusters",    ""),
     ESClusters      = cms.InputTag ("reducedEgamma", "reducedESClusters",      ""),
@@ -132,6 +132,11 @@ collectionProducer.bjets._TypedParameterizable__type = "OSUBjetProducer"
 #-------------------------------------------------------------------------------
 
 collectionProducer.mcparticles = cms.EDProducer ("McparticleProducer",
+)
+
+#-------------------------------------------------------------------------------
+
+collectionProducer.hardInteractionMcparticles = cms.EDProducer ("HardInteractionMcparticleProducer",
 )
 
 #-------------------------------------------------------------------------------

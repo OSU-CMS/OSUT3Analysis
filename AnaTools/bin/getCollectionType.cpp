@@ -44,6 +44,10 @@ main (int argc, char *argv[])
       else if (cppType == "vector<" TYPE_STR(mcparticles) ">")
         cout << "mcparticles" << endl;
 #endif
+#if IS_VALID(hardInteractionMcparticles)
+      else if (cppType == "vector<" TYPE_STR(hardInteractionMcparticles) ">")
+        cout << "hardInteractionMcparticles" << endl;
+#endif
 #if IS_VALID(mets)
       else if (cppType == "vector<" TYPE_STR(mets) ">")
         cout << "mets" << endl;
