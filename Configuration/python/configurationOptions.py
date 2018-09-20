@@ -346,6 +346,7 @@ datasets = [
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
+   'DYJetsToLL_5to50',
    'DYJetsToLL_10to50',
    'DYJetsToLL',
    'DYBBJetsToLL',
@@ -1416,6 +1417,7 @@ nJobs = {
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
+    'DYJetsToLL_5to50' : 350,
     'DYJetsToLL_10to50' : 350,
     'DYBBJetsToLL'      : 30,
     'TTJets'        : 325,
@@ -2782,6 +2784,7 @@ maxEvents = {
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
+    'DYJetsToLL_5to50' : -1,
     'DYJetsToLL_10to50' : -1,
     'DYBBJetsToLL'      : -1,
     'TTJets'            : -1,
@@ -4161,6 +4164,7 @@ types = {
     #MiniAOD not stored on T3.
     ############################################################################
     'DYJetsToLL'             : "bgMC",
+    'DYJetsToLL_5to50'      : "bgMC",
     'DYJetsToLL_10to50'      : "bgMC",
     'DYBBJetsToLL'           : "bgMC",
     'TTJets'                 : "bgMC",
@@ -5581,6 +5585,7 @@ colors = {
     #MiniAOD not stored on T3.
     ############################################################################
     'DYJetsToLL'          : 410,
+    'DYJetsToLL_5to50'   : 410,
     'DYJetsToLL_10to50'   : 410,
     'DYBBJetsToLL'        : 412,
     'TTJets'              : 872,
@@ -7011,6 +7016,7 @@ labels = {
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
+    'DYJetsToLL_5to50' : "Z#rightarrowll M(5to50)",
     'DYJetsToLL_10to50' : "Z#rightarrowll M(10to50)",
     'DYBBJetsToLL'      : "ZBB#rightarrowl^{+}l^{-}",
     'TTJets'            : "t#bar{t} (Debug)",
@@ -8263,6 +8269,7 @@ crossSections = {
     'ZJetsToNuNu_HT2500toInf' : 0.006945,
 #############################################################
     # Cross sections below obatined with crossSectionExtractor.py
+    'DYJetsToLL_5to50'         :              71310.0 # LO from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns#DY_Z
     'DYJetsToLL_10to50'        :              18610.0,
     'DYBBJetsToLL'             :                11.37,
     'DYJetsToLL_10to50_50ns'   :              18610.0,
