@@ -346,6 +346,7 @@ datasets = [
 
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
+   'DYJetsToLL_5to50',
    'DYJetsToLL_10to50',
    'DYJetsToLL',
    'DYBBJetsToLL',
@@ -415,7 +416,7 @@ datasets = [
 composite_dataset_definitions = {
     'DYJetsToLL' : [
         'DYJetsToLL_50',
-        'DYJetsToLL_10to50',
+        'DYJetsToLL_5to50',
     ],
     'ZJetsToNuNu' : [
         'ZJetsToNuNu_HT100to200',
@@ -1416,6 +1417,7 @@ nJobs = {
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
+    'DYJetsToLL_5to50' : 350,
     'DYJetsToLL_10to50' : 350,
     'DYBBJetsToLL'      : 30,
     'TTJets'        : 325,
@@ -2782,6 +2784,7 @@ maxEvents = {
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
+    'DYJetsToLL_5to50' : -1,
     'DYJetsToLL_10to50' : -1,
     'DYBBJetsToLL'      : -1,
     'TTJets'            : -1,
@@ -4161,6 +4164,7 @@ types = {
     #MiniAOD not stored on T3.
     ############################################################################
     'DYJetsToLL'             : "bgMC",
+    'DYJetsToLL_5to50'      : "bgMC",
     'DYJetsToLL_10to50'      : "bgMC",
     'DYBBJetsToLL'           : "bgMC",
     'TTJets'                 : "bgMC",
@@ -5581,6 +5585,7 @@ colors = {
     #MiniAOD not stored on T3.
     ############################################################################
     'DYJetsToLL'          : 410,
+    'DYJetsToLL_5to50'   : 410,
     'DYJetsToLL_10to50'   : 410,
     'DYBBJetsToLL'        : 412,
     'TTJets'              : 872,
@@ -7011,6 +7016,7 @@ labels = {
     ############################################################################
     #MiniAOD not stored on T3.
     ############################################################################
+    'DYJetsToLL_5to50' : "Z#rightarrowll M(5to50)",
     'DYJetsToLL_10to50' : "Z#rightarrowll M(10to50)",
     'DYBBJetsToLL'      : "ZBB#rightarrowl^{+}l^{-}",
     'TTJets'            : "t#bar{t} (Debug)",
