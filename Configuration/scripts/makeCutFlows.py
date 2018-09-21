@@ -500,7 +500,7 @@ def addExtraColumn(table, option):
     table.datasets.append(newcol)
 
 def getLumiLabel():
-    lumiStr = str(intLumi / 1000.) # convert /pb to /fb
+    lumiStr = str('%.3g'%(intLumi / 1000.)) # convert /pb to /fb, set precision to 3 and remove insignificant zeros
     label = "$\\mathrm{L} = " + lumiStr + "\\,\\mathrm{fb}^{-1}$"
     if arguments.rawYields:
         label = "Raw event counts"
