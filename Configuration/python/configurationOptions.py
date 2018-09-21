@@ -8269,7 +8269,7 @@ crossSections = {
     'ZJetsToNuNu_HT2500toInf' : 0.006945,
 #############################################################
     # Cross sections below obatined with crossSectionExtractor.py
-    'DYJetsToLL_5to50'         :              71310.0 # LO from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns#DY_Z
+    'DYJetsToLL_5to50'         :              71310.0, # LO from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns#DY_Z
     'DYJetsToLL_10to50'        :              18610.0,
     'DYBBJetsToLL'             :                11.37,
     'DYJetsToLL_10to50_50ns'   :              18610.0,
