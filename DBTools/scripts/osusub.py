@@ -120,7 +120,7 @@ parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help=
 #    Actually I vote for removing UserDir.....
 
 #Define the dictionary to look for the redirectors given the users input.
-RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Purdue':'xrootd.rcac.purdue.edu','Global':'cms-xrd-global.cern.ch','LPC':'cmseos.fnal.gov','CERN':'eoscms.cern.ch'}
+RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Purdue':'xrootd.rcac.purdue.edu','Global':'cms-xrd-global.cern.ch','LPC':'cmseos.fnal.gov','CERN':'eoscms.cern.ch','Rutgers':'ruhex-osgce.rutgers.edu'}
 secondaryCollections ={}
 
 DEVNULL = open (os.devnull, "w")
@@ -155,7 +155,7 @@ def getLatestJsonFile():
     else:
         if len(arguments.JSONType.split('_')) < 2:
             print "Argument for -J is wrong, it needs to be in a format similar to \"R_Silver\""
-            sys.exit()
+            sys.exit(1)
 
         collisionType = 'Collisions15'
         jsonMatchingPhrase = 'Collisions15_25ns_JSON'
@@ -401,24 +401,26 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             if Dataset != '':
                 FilesToTransfer += ',datasetInfo_' + Label + '_cfg.py'
             if UseGridProxy:
-                userName = getpass.getuser()
-                userId = os.popen('id -u ' + userName).read().rstrip('\n')
-                userProxy = '/tmp/x509up_u' + str(userId)
-                FilesToTransfer += ',' + userProxy
+                if rutgers:
+                    shutil.copy ("/tmp/" + proxy, Directory + "/" + proxy)
+                    os.chmod (Directory + "/" + proxy, 0644)
+                    FilesToTransfer += ',' + proxy
+                else:
+                    FilesToTransfer += ',/tmp/' + proxy
             if jsonFile != '':
                 FilesToTransfer += ',' + jsonFile
             SubmitFile.write('should_transfer_files   = YES\n')
             SubmitFile.write('Transfer_Input_files = ' + FilesToTransfer + '\n')
-            if UseGridProxy:
-                SubmitFile.write('x509userproxy = ' + userProxy + '\n')
+            if UseGridProxy and not rutgers:
+                SubmitFile.write('x509userproxy = /tmp/' + proxy + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Output_files') and currentCondorSubArgumentsSet[argument]['Transfer_Output_files'] == "":
             SubmitFile.write ('Transfer_Output_files = ')
-            if os.path.realpath (Directory).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/")):
+            if os.path.realpath (Directory).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/", "/cms/")):
                 filesToTransfer.append ("hist_${Process}.root")
             else:
                 SubmitFile.write ("hist_$(Process).root,")
             for i in range (0, len (SkimChannelNames)):
-                if os.path.realpath (Directory + "/" + SkimChannelNames[i]).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/")):
+                if os.path.realpath (Directory + "/" + SkimChannelNames[i]).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/", "/cms/")):
                     directoriesToTransfer.append (SkimChannelNames[i])
                 else:
                     SubmitFile.write (SkimChannelNames[i] + ",")
@@ -454,6 +456,11 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("PYTHON27PATH=$PYTHON27PATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n\n")
     else:
         SubmitScript.write ("PYTHONPATH=$PYTHONPATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n\n")
+
+    if rutgers:
+        SubmitScript.write ("rm -f /tmp/" + proxy + "\n")
+        SubmitScript.write ("mv -f " + proxy + " /tmp/\n")
+        SubmitScript.write ("chmod 600 /tmp/" + proxy + "\n\n")
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
@@ -744,10 +751,10 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             isInCondorDir = True
         if arguments.inputDirectory and not os.path.exists( re.sub (r"\*\/", r"", arguments.inputDirectory) ):
             print "The directory you provided does not exist: ", arguments.inputDirectory
-            sys.exit()
+            sys.exit(1)
         if not arguments.inputDirectory and not os.path.exists(Dataset):
             print "The directory you provided does not exist: ", Dataset
-            sys.exit()
+            sys.exit(1)
         #Get the list of the root files in the directory and modify it to have the standard format.
         secondaryCollectionModifications = []
         datasetRead['secondaryCollections'] = secondaryCollectionModifications
@@ -788,7 +795,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     if FileType == 'UserList':
         if not os.path.exists(Dataset):
             print "The list you provided does not exist."
-            sys.exit()
+            sys.exit(1)
         #Get the list of the files to datasetInfo_cfg.py and modify it to have the standard format.
         secondaryCollectionModifications = []
         datasetRead['secondaryCollections'] = secondaryCollectionModifications
@@ -1099,10 +1106,10 @@ CondorDir = ''
 Condor = os.getcwd() + '/condor/'
 if not os.path.exists(Condor):
     print "The directory ", Condor, " does not exist.  Aborting."
-    sys.exit()
+    sys.exit(1)
 if arguments.condorDir == "":
     print "No working directory is given, aborting."
-    sys.exit()
+    sys.exit(1)
 else:
     CondorDir = Condor + arguments.condorDir
 #Check whether the directory specified already exists and warn the user if so.
@@ -1115,13 +1122,13 @@ else:
     else:
         # Do not proceed because the working directory is CondorDir, and we do not want to overwrite existing files.
         print "Directory", CondorDir, " already exists.  Please remove it before proceeding."
-        sys.exit()
+        sys.exit(1)
 
 HadoopDir = ''
 if arguments.skimToHadoop:
     if not os.path.exists(arguments.skimToHadoop):
         print "The directory ", arguments.skimToHadoop, " does not exist.  Aborting."
-        sys.exit()
+        sys.exit(1)
     else:
         HadoopDir = arguments.skimToHadoop + '/' + arguments.condorDir
     if not os.path.exists(HadoopDir):
@@ -1154,10 +1161,10 @@ if arguments.localConfig:
 if not arguments.localConfig:
     if not arguments.NumberOfJobs > 0:
         print "Invalid number of jobs, aborting."
-        sys.exit()
+        sys.exit(1)
     if arguments.Config == "":
         print "No cmsRun executable is given, aborting."
-        sys.exit()
+        sys.exit(1)
     if arguments.Dataset == "":
         print "Warning, you are running batch jobs witout using input sources."
     else:
@@ -1176,15 +1183,18 @@ if arguments.UseAAA:
 UseGridProxy = UseAAA or arguments.UseGridProxy
 if os.path.realpath (CondorDir).startswith ("/eos/uscms/store/") or os.path.realpath (HadoopDir).startswith ("/eos/uscms/store/"):
     UseGridProxy = True
-hostname = socket.gethostname()
+userId = os.getuid()
+proxy = 'x509up_u' + str(userId)
+hostname = socket.getfqdn()
 remoteAccessT3 = ('interactive' not in hostname)
 lxbatch = ('cern.ch' in hostname)
 lpcCAF = ('fnal.gov' in hostname)
+rutgers = ('rutgers.edu' in hostname)
 
 if arguments.Redirector != "":
     if not RedirectorDic.has_key(arguments.Redirector):
         print "Warning! Invalid redirector provided!! Quit!!"
-        sys.exit()
+        sys.exit(1)
 
 if lpcCAF and not arguments.skimToHadoop:
     print
@@ -1321,7 +1331,11 @@ if not arguments.Resubmit:
                 else:
                     os.symlink ("../" + os.environ["CMSSW_VERSION"] + ".tar.gz", os.environ["CMSSW_VERSION"] + ".tar.gz")
                     cmd = "condor_submit condor.sub"
+                    if os.path.isfile (proxy):
+                        os.chmod (proxy, 0644)
                     subprocess.call(cmd, shell = True)
+                    if os.path.isfile (proxy):
+                        os.chmod (proxy, 0600)
                 os.chdir(SubmissionDir)
             else:
                 print 'Configuration files created for ' + str(dataset) + ' dataset but no jobs submitted.\n'
@@ -1334,7 +1348,7 @@ if not arguments.Resubmit:
         Label = arguments.Label
         if arguments.MaxEvents < 0:
             print "Maximum number of events is negative and no input dataset is specified, Aborting!"
-            sys.exit()
+            sys.exit(1)
         else:
             MaxEvents = int(arguments.MaxEvents)
         EventsPerJob = int(math.ceil(float(MaxEvents)/float(NumberOfJobs)) )
@@ -1365,7 +1379,11 @@ if not arguments.Resubmit:
             else:
                 os.symlink ("../" + os.environ["CMSSW_VERSION"] + ".tar.gz", os.environ["CMSSW_VERSION"] + ".tar.gz")
                 cmd = "condor_submit condor.sub"
+                if os.path.isfile (proxy):
+                    os.chmod (proxy, 0644)
                 subprocess.call(cmd, shell = True)
+                if os.path.isfile (proxy):
+                    os.chmod (proxy, 0600)
             os.chdir(SubmissionDir)
         else:
             print 'Configuration files created for ' + str(Config) + '  but no jobs submitted.\n'
@@ -1374,6 +1392,10 @@ else:
         SubmissionDir = os.getcwd()
         for dataset in split_datasets:
             WorkDir = CondorDir + '/' + str(dataset)
+            if os.path.isfile (WorkDir + "/" + proxy) and os.path.isfile ("/tmp/" + proxy):
+                os.unlink (WorkDir + "/" + proxy)
+                shutil.copy ("/tmp/" + proxy, WorkDir + "/" + proxy)
+                os.chmod (WorkDir + "/" + proxy, 0644)
             if os.path.exists(WorkDir + '/condor_resubmit.sh'):
                 os.chdir(WorkDir)
                 subprocess.call ('./condor_resubmit.sh', shell = True)
@@ -1393,5 +1415,9 @@ else:
                         subprocess.call('sed -i \'s/' + str(originalRedirector) + '/' + str(RedirectorDic[arguments.Redirector]) + '/g\' '  +  str(datasetInfoFileName), shell = True)
                 print '################ Resubmit failed jobs for ' + str(dataset) + ' dataset #############'
                 cmd = "condor_submit condor_resubmit.sub"
+                if os.path.isfile (proxy):
+                    os.chmod (proxy, 0644)
                 subprocess.call(cmd, shell = True)
+                if os.path.isfile (proxy):
+                    os.chmod (proxy, 0600)
                 os.chdir(SubmissionDir)
