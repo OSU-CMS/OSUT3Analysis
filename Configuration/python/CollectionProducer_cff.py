@@ -199,6 +199,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
                 thresholdForVeto = cms.double (0.0), # in sigma
+                era = cms.string (''),
             ),
         ),
         muons = cms.VPSet (
@@ -207,9 +208,11 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
                 thresholdForVeto = cms.double (0.0), # in sigma
+                era = cms.string (''),
             ),
         )
     ),
+    useEraByEraFiducialMaps = cms.bool (False)
     minDeltaRForFiducialTrack = cms.double (0.05),
     maskedEcalChannelStatusThreshold = cms.int32 (3),
     outputBadEcalChannels = cms.bool (False),
@@ -253,6 +256,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     eleVtx_dzCuts_endcap = cms.vdouble(0.921, 0.822, 0.602, 0.417),
 )
 
+# if running over data, switch to the data fiducial map files
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
     if "Run2016" in osusub.dataset:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2016_data.root")
@@ -263,6 +267,12 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
     else:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2015_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2015_data.root")
+    # determine which era this dataset is in
+    if "_201" in osusub.datasetLabel:
+        collectionProducer.tracks.fiducialMaps.electrons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
+        collectionProducer.tracks.fiducialMaps.muons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
+
+# For 94X which uses electron VIDs, define the vertexing requirements for veto electrons        
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
     # Cut values are ordered by ID, as: veto, loose, medium, tight
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later

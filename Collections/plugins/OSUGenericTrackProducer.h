@@ -74,6 +74,8 @@ template<class T>
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 
+    bool useEraByEraFiducialMaps_;
+
     EtaPhiList electronVetoList_;
     EtaPhiList muonVetoList_;
 
