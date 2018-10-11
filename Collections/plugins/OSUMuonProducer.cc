@@ -34,7 +34,7 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
 
 OSUMuonProducer::~OSUMuonProducer ()
 {
-  if (rng) delete rng;
+  if (d0SmearingWidth_ >= 0) delete rng;
 }
 
 void

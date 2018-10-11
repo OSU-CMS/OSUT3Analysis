@@ -16,7 +16,8 @@
 template<class T> 
 OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
-  cfg_ (cfg)
+  cfg_ (cfg),
+  useEraByEraFiducialMaps_ (cfg.getParameter<bool> ("useEraByEraFiducialMaps"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
@@ -326,14 +327,13 @@ OSUGenericTrackProducer<T>::getPosition( const DetId& id)
    return caloGeometry_->getSubdetectorGeometry(id)->getGeometry(id)->getPosition();
 }
 
-
-
 template<class T> void 
 OSUGenericTrackProducer<T>::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &vetoList, stringstream &ss) const
 {
   const edm::FileInPath &histFile = cfg.getParameter<edm::FileInPath> ("histFile");
-  const string &beforeVetoHistName = cfg.getParameter<string> ("beforeVetoHistName");
-  const string &afterVetoHistName = cfg.getParameter<string> ("afterVetoHistName");
+  const string &era = cfg.getParameter<string> ("era");
+  const string &beforeVetoHistName = useEraByEraFiducialMaps_ ? cfg.getParameter<string> ("beforeVetoHistName") + era : cfg.getParameter<string> ("beforeVetoHistName");
+  const string &afterVetoHistName  = useEraByEraFiducialMaps_ ? cfg.getParameter<string> ("afterVetoHistName")  + era : cfg.getParameter<string> ("afterVetoHistName");
   const double &thresholdForVeto = cfg.getParameter<double> ("thresholdForVeto");
 
   edm::LogInfo ("OSUGenericTrackProducer") << "Attempting to extract \"" << beforeVetoHistName << "\" and \"" << afterVetoHistName << "\" from \"" << histFile.fullPath () << "\"...";
@@ -344,11 +344,20 @@ OSUGenericTrackProducer<T>::extractFiducialMap (const edm::ParameterSet &cfg, Et
       return;
     }
 
-  TH2D *beforeVetoHist = (TH2D *) fin->Get (beforeVetoHistName.c_str ());
-  beforeVetoHist->SetDirectory (0);
-  TH2D *afterVetoHist = (TH2D *) fin->Get (afterVetoHistName.c_str ());
-  afterVetoHist->SetDirectory (0);
-  fin->Close ();
+  TH2D * beforeVetoHist = (TH2D*)fin->Get(beforeVetoHistName.c_str());
+  TH2D * afterVetoHist  = (TH2D*)fin->Get(afterVetoHistName.c_str());
+  if (!beforeVetoHist) {
+    edm::LogWarning("OSUGenericTrackProducer") << "No histogram named \"" << beforeVetoHistName.c_str() << "\" found. Skipping...";
+    return;
+  }
+  if (!afterVetoHist) {
+    edm::LogWarning("OSUGenericTrackProducer") << "No histogram named \"" << afterVetoHistName.c_str() << "\" found. Skipping...";
+    return;
+  }
+
+  beforeVetoHist->SetDirectory(0);
+  afterVetoHist->SetDirectory(0);
+  fin->Close();
   delete fin;
 
   //////////////////////////////////////////////////////////////////////////////
