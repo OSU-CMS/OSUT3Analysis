@@ -212,7 +212,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
             ),
         )
     ),
-    useEraByEraFiducialMaps = cms.bool (False)
+    useEraByEraFiducialMaps = cms.bool (False),
     minDeltaRForFiducialTrack = cms.double (0.05),
     maskedEcalChannelStatusThreshold = cms.int32 (3),
     outputBadEcalChannels = cms.bool (False),

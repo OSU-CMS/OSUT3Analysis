@@ -351,7 +351,7 @@ OSUGenericTrackProducer<T>::extractFiducialMap (const edm::ParameterSet &cfg, Et
     return;
   }
   if (!afterVetoHist) {
-    edm::LogWarning("OSUGenericTrackProducer") << "No histogram named \"" << afterVetoHist.c_str() << "\" found. Skipping...";
+    edm::LogWarning("OSUGenericTrackProducer") << "No histogram named \"" << afterVetoHistName.c_str() << "\" found. Skipping...";
     return;
   }
 
