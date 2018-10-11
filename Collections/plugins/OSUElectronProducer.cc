@@ -43,7 +43,7 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
 
 OSUElectronProducer::~OSUElectronProducer ()
 {
-  if (rng) delete rng;
+  if (d0SmearingWidth_ >= 0) delete rng;
 }
 
 void
