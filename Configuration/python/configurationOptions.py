@@ -65,6 +65,7 @@ datasets = [
    'SingleMu_2018A',
    'SingleMu_2018B',
    'SingleMu_2018C',
+   'SingleMu_2018D',
    'SingleEle_2015',
    'SingleEle_2015D',
    'SingleEle_2016B',
@@ -610,6 +611,7 @@ composite_dataset_definitions = {
       'SingleMu_2018A',
       'SingleMu_2018B',
       'SingleMu_2018C',
+      'SingleMu_2018D',
     ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
@@ -1533,6 +1535,7 @@ nJobs = {
     'SingleMu_2018A'   : 2433,
     'SingleMu_2018B'   : 1200,
     'SingleMu_2018C'   : 1101,
+    'SingleMu_2018D'   : 5028,
 
     # set number of jobs to correpond to roughly 100k events/job
     'SingleEle_2015D' : 1000,
@@ -2904,6 +2907,7 @@ maxEvents = {
     'SingleMu_2018A'        : -1,
     'SingleMu_2018B'        : -1,
     'SingleMu_2018C'        : -1,
+    'SingleMu_2018D'        : -1,
 
     'SingleEle_2015D'        : -1,
     'SingleEle_2016B'        : -1,
@@ -4302,6 +4306,7 @@ types = {
     'SingleMu_2018A'        : "data",
     'SingleMu_2018B'        : "data",
     'SingleMu_2018C'        : "data",
+    'SingleMu_2018D'        : "data",
 
     'SingleEle_2015D'   : "data",
     'SingleEle_2016B'   : "data",
@@ -5722,6 +5727,7 @@ colors = {
     'SingleMu_2018A'        : 1,
     'SingleMu_2018B'        : 1,
     'SingleMu_2018C'        : 1,
+    'SingleMu_2018D'        : 1,
 
     'SingleEle_2015D'        : 1,
     'SingleEle_2016B'        : 1,
@@ -7155,6 +7161,7 @@ labels = {
     'SingleMu_2018A'        : "SingleMuon 2018A data",
     'SingleMu_2018B'        : "SingleMuon 2018B data",
     'SingleMu_2018C'        : "SingleMuon 2018C data",
+    'SingleMu_2018D'        : "SingleMuon 2018D data",
 
     'SingleEle_2015B'        : "SingleElectron 2015B data",
     'SingleEle_2015C'        : "SingleElectron 2015C data",
