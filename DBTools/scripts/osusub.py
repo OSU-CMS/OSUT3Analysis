@@ -1015,20 +1015,23 @@ def SkimModifier(Label, Directory, crossSection, isRemote = False):
             add += '"file:' + os.path.realpath (s) + '",\n'
     add += ']\n'
 
-    add += 'listOfSecondaryFiles = [\n'
-    tempdir = tempfile.mkdtemp ()
-    sys.path.append (tempdir)
-    cwd = os.getcwd ()
-    os.chdir (tempdir)
-    if lpcCAF:
-        for s in getOriginalFiles (skimFiles, tempdir):
-            add += '"' + re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", os.path.realpath (s)) + '",\n'
+    if isRemote:
+        add += 'listOfSecondaryFiles = originalListOfSecondaryFiles if len(originalListOfSecondaryFiles) > 0 else originalListOfFiles\n'
     else:
-        for s in getOriginalFiles (skimFiles, tempdir):
-            add += '"file:' + os.path.realpath (s) + '",\n'
-    shutil.rmtree (tempdir)
-    os.chdir (cwd)
-    add += ']\n'
+        add += 'listOfSecondaryFiles = [\n'
+        tempdir = tempfile.mkdtemp ()
+        sys.path.append (tempdir)
+        cwd = os.getcwd ()
+        os.chdir (tempdir)
+        if lpcCAF:
+            for s in getOriginalFiles (skimFiles, tempdir):
+                add += '"' + re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", os.path.realpath (s)) + '",\n'
+        else:
+            for s in getOriginalFiles (skimFiles, tempdir):
+                add += '"file:' + os.path.realpath (s) + '",\n'
+        shutil.rmtree (tempdir)
+        os.chdir (cwd)
+        add += ']\n'
 
     add += 'originalNumberOfEvents = ' + str(OriginalNumberOfEvents) + '\n'
     add += 'skimNumberOfEvents = ' + str(SkimNumberOfEvents) + '\n'
