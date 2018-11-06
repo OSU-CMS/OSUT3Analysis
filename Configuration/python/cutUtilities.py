@@ -29,7 +29,7 @@ def replaceSingleCut(cutVPset, replacementCut, cutToBeReplaced):
             del cutVPset[i]
             cutVPset.insert(i, replacementCut)
             return
-    print '[replaceSingleCut] Warning: previousExistingCut not found in VPSet with cutString:', previousExistingCut.cutString
+    print '[replaceSingleCut] Warning: cutToBeReplaced not found in VPSet with cutString:', cutToBeReplaced.cutString
 
 def removeCuts(cutVPset, cutsToRemove):
     for cut in cutsToRemove:
