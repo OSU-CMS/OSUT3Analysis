@@ -1025,7 +1025,10 @@ def SkimModifier(Label, Directory, crossSection, isRemote = False):
         os.chdir (tempdir)
         if lpcCAF:
             for s in getOriginalFiles (skimFiles, tempdir):
-                add += '"' + re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", os.path.realpath (s)) + '",\n'
+                if s.startswith ("root://"):
+                    add += '"' + s + '",\n'
+                else:
+                    add += '"' + re.sub (r"/eos/uscms/store/", r"root://cmseos.fnal.gov//store/", os.path.realpath (s)) + '",\n'
         else:
             for s in getOriginalFiles (skimFiles, tempdir):
                 add += '"file:' + os.path.realpath (s) + '",\n'
@@ -1058,6 +1061,8 @@ def getOriginalFile (f, tempdir, isFirstFile = True, skimDirs = []):
         if isFirstFile:
             return []
         else:
+            if f.startswith ("root://"):
+                return [f]
             return [os.path.realpath (f)]
 
     try:
