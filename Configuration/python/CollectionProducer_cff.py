@@ -93,6 +93,19 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4"):
     collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-medium")
     collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-tight")
     collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt")
+    if int(os.environ["CMSSW_VERSION"].split("_")[3]) >=9:
+        collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-veto")
+        collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-loose")
+        collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-medium")
+        collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight")
+        collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt")
+
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2"):
+    collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-veto")
+    collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-loose")
+    collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-medium")
+    collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight")
+    collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt")
 
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
@@ -272,7 +285,7 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
         collectionProducer.tracks.fiducialMaps.electrons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
         collectionProducer.tracks.fiducialMaps.muons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
 
-# For 94X which uses electron VIDs, define the vertexing requirements for veto electrons        
+# For 94X which uses electron VIDs, define the vertexing requirements for veto electrons
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
     # Cut values are ordered by ID, as: veto, loose, medium, tight
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later
