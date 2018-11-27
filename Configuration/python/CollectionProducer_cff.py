@@ -93,7 +93,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4"):
     collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-medium")
     collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-tight")
     collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt")
-    if (False && int(os.environ["CMSSW_VERSION"].split("_")[3]) >=9):
+    if (False and int(os.environ["CMSSW_VERSION"].split("_")[3]) >=9):
         collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-veto")
         collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-loose")
         collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-medium")
