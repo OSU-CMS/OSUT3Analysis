@@ -1456,6 +1456,12 @@ TrackHistograms = cms.PSet(
             inputVariables = cms.vstring("hitPattern_.numberOfValidHits"),
         ),
         cms.PSet (
+            name = cms.string("trackNumLayersWithMeasurement"),
+            title = cms.string("Track Number of Layers with Measurement;number of layers with measurement"),
+            binsX = cms.untracked.vdouble(20, -0.5, 19.5),
+            inputVariables = cms.vstring("hitPattern_.trackerLayersWithMeasurement"),
+        ),
+        cms.PSet (
             name = cms.string("trackChi2"),
             title = cms.string("Track Reduced Chi2;track #chi^{2}/ndf"),
             binsX = cms.untracked.vdouble(50, 0, 10),
