@@ -4,6 +4,29 @@ import sys
 import os
 from optparse import OptionParser
 
+# define some constants with meaningful names for the ANSI color codes
+# https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+
+A_BLACK           =  "\033[30m"
+A_RED             =  "\033[31m"
+A_GREEN           =  "\033[32m"
+A_YELLOW          =  "\033[33m"
+A_BLUE            =  "\033[34m"
+A_MAGENTA         =  "\033[35m"
+A_CYAN            =  "\033[36m"
+A_WHITE           =  "\033[37m"
+
+A_BRIGHT_BLACK    =  "\033[1;30m"
+A_BRIGHT_RED      =  "\033[1;31m"
+A_BRIGHT_GREEN    =  "\033[1;32m"
+A_BRIGHT_YELLOW   =  "\033[1;33m"
+A_BRIGHT_BLUE     =  "\033[1;34m"
+A_BRIGHT_MAGENTA  =  "\033[1;35m"
+A_BRIGHT_CYAN     =  "\033[1;36m"
+A_BRIGHT_WHITE    =  "\033[1;37m"
+
+A_RESET           =  "\033[0m"
+
 supported_formats = ["AOD", "MINI_AOD", "MINI_AOD_2017"]
 
 parser = OptionParser()
@@ -80,3 +103,10 @@ print "Do not forget to recompile."
 
 #enable git hooks
 os.system("ln -s $CMSSW_BASE/src/OSUT3Analysis/githooks/* $CMSSW_BASE/src/OSUT3Analysis/.git/hooks/")
+
+# check that necessary merge-topics have been done
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_9_4_") and int(os.environ["CMSSW_VERSION"].split("_")[3]) >=9:
+    if not os.path.isfile(os.environ["CMSSW_BASE"] + "/src/RecoEgamma/ElectronIdentification/python/Identification/cutBasedElectronID_Fall17_94X_V2_cff.py"):
+        print ""
+        print "If using electrons, please run the following before recompiling:"
+        print A_BRIGHT_RED + "  git cms-merge-topic UAEDF-tomc:eleCutBasedId_94X_V2" + A_RESET
