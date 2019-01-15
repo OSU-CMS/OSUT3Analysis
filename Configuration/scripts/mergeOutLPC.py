@@ -51,7 +51,7 @@ scramv1 b ProjectRename
 eval `scramv1 runtime -sh`
 cd -
 
-python lpcMiniMerge.py $1 $2 $3 $4 $5 $6
+python lpcMiniMerge.py $1 $2 $3 $4 $5 $6 $7
 
 rm -rf ${4}
 rm -rf ${1}
@@ -73,6 +73,7 @@ index = int(sys.argv[3])
 cmsswVersion = sys.argv[4]
 scramArch = sys.argv[5]
 IntLumi = sys.argv[6]
+nFiles = int(sys.argv[7])
 
 exec('import datasetInfo_' + dataset + '_cfg as datasetInfo')
 Weight = 1.0
@@ -90,12 +91,10 @@ if crossSection > 0 and IntLumi > 0:
     elif float(TotalNumber):
         Weight = IntLumi*crossSection/float(TotalNumber)
 
-inputFiles = glob.glob(dataset + '/hist_*.root')
-nFiles = len(inputFiles)
 nFilesPerJob = int(math.ceil(float(nFiles)/nJobs))
 
 indexesToMerge = range(index * nFilesPerJob, (index+1) * nFilesPerJob) if index < nJobs-1 else range(index * nFilesPerJob, nFiles)
-filesToMerge = [dataset + '/hist_' + str(x) + '.root' for x in indexesToMerge]
+filesToMerge = [dataset + '/hist_' + str(x) + '.root' if os.path.exists(dataset + '/hist_' + str(x) + '.root') for x in indexesToMerge]
 
 InputWeightString = ','.join([str(Weight)] * len(filesToMerge))
 
@@ -116,22 +115,34 @@ os.system(cmd)"""
 def makeLPCMiniMerge(Directory, datasets, lumi):
     cwd = os.getcwd()
     for dataset in datasets:
-    	MakeMiniMergingConfigForLPCCondor(Directory)
-    	progress = ProgressIndicator("Compressing " + dataset)
+        MakeMiniMergingConfigForLPCCondor(Directory)
+        progress = ProgressIndicator("Compressing " + dataset)
         os.chdir(Directory)
-        nFiles = len(glob.glob(dataset + '/hist_*.root'))
-        nJobs = int(math.ceil(math.sqrt(len(glob.glob(dataset + '/hist_*.root')))))
+        inputFiles = glob.glob(dataset + '/condor_*.log')
+        nFiles = len(inputFiles)
+        nJobs = int(math.ceil(math.sqrt(float(nFiles))))
         print
         print 'Creating', nJobs, 'jobs merging', nFiles, 'files in', dataset
         if os.path.exists('histograms_' + dataset + '.tar.gz'):
-        	print Directory + '/histograms_' + dataset + '.tar.gz already exists! Skipping...'
+                print Directory + '/histograms_' + dataset + '.tar.gz already exists! Skipping...'
         else:
-        	histogramsTar = tarfile.open ('histograms_' + dataset + '.tar.gz', 'w:gz')
-        	for i, f in enumerate(glob.glob(dataset + '/hist_*.root')):
-        		progress.setPercentDone(float(i+1) / nFiles * 100.0)
-        		progress.printProgress(i+1 == nFiles)
-        		histogramsTar.add(f)
-        	histogramsTar.close ()
+     	    histogramsTar = tarfile.open ('histograms_' + dataset + '.tar.gz', 'w:gz')
+            missingFiles = []
+            for i in range(0, nFiles):
+                progress.setPercentDone(float(i+1) / nFiles * 100.0)
+                progress.printProgress(i+1 == nFiles)
+                f = dataset + '/hist_' + str(i) + '.root'
+                if not os.path.exists(f):
+                    missingFiles.append(f)
+                    continue
+                histogramsTar.add(f)
+            histogramsTar.close ()
+            if len(missingFiles) != 0:
+                print 'Found', len(missingFiles), 'missing histogram files:'
+                for x in missingFiles:
+                    print x
+                print 'The resulting merge will only be partially complete!'
+                print
         os.chdir(cwd)
 
         words = """
@@ -139,7 +150,7 @@ Executable = lpcMiniMerge.sh
 Universe = vanilla
 Getenv = True
 request_memory = 5000MB
-Arguments = {0} {1} $(Process) {2} {3} {4}
+Arguments = {0} {1} $(Process) {2} {3} {4} {5}
 
 Output = condor_{0}_$(Process).out
 Error = condor_{0}_$(Process).err
@@ -153,7 +164,7 @@ Rank = TARGET.IsLocalSlot
 
 request_cpus = 1
 Queue {1}
-                """.format(dataset, nJobs, os.environ["CMSSW_VERSION"], os.environ["SCRAM_ARCH"], lumi)
+                """.format(dataset, nJobs, os.environ["CMSSW_VERSION"], os.environ["SCRAM_ARCH"], lumi, nFiles)
 
         SubmitFile = open(Directory + '/lpcMiniMerge_{0}.sub'.format(dataset), 'w')
         SubmitFile.write(words)
