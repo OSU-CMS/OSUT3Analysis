@@ -94,7 +94,7 @@ if crossSection > 0 and IntLumi > 0:
 nFilesPerJob = int(math.ceil(float(nFiles)/nJobs))
 
 indexesToMerge = range(index * nFilesPerJob, (index+1) * nFilesPerJob) if index < nJobs-1 else range(index * nFilesPerJob, nFiles)
-filesToMerge = [dataset + '/hist_' + str(x) + '.root' if os.path.exists(dataset + '/hist_' + str(x) + '.root') for x in indexesToMerge]
+filesToMerge = [dataset + '/hist_' + str(x) + '.root' for x in indexesToMerge if os.path.exists(dataset + '/hist_' + str(x) + '.root')]
 
 InputWeightString = ','.join([str(Weight)] * len(filesToMerge))
 
