@@ -1016,7 +1016,7 @@ def SkimModifier(Label, Directory, crossSection, isRemote = False):
     add += ']\n'
 
     if isRemote:
-        add += 'listOfSecondaryFiles = originalListOfSecondaryFiles if len(originalListOfSecondaryFiles) > 0 else originalListOfFiles\n'
+        add += 'listOfSecondaryFiles = originalListOfSecondaryFiles if (len(originalListOfSecondaryFiles) > 0 or os.path.basename(listOfFiles[0]).startswith("skim_")) else originalListOfFiles\n'
     else:
         add += 'listOfSecondaryFiles = [\n'
         tempdir = tempfile.mkdtemp ()
