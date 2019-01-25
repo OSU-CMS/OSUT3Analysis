@@ -4,6 +4,7 @@ import getpass
 import os
 import re
 import socket
+import platform
 import time
 from time import gmtime, strftime
 import copy
@@ -15,6 +16,7 @@ import tarfile
 from math import *
 from array import *
 from optparse import OptionParser
+from OSUT3Analysis.Configuration.Color import *
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
@@ -214,7 +216,7 @@ def getLatestJsonFile():
 
             if len(jsonFileFiltered) == 0:
                 print "#######################################################"
-                print "Warning!!!!!!!!!!!Could not find wanted JSON file"
+                print A_BRIGHT_RED + "Warning!!!!!!!!!!!Could not find wanted JSON file" + A_RESET
                 print "#######################################################"
 
             for json in jsonFileFiltered:
@@ -290,7 +292,7 @@ def getLatestJsonFile():
 
             if len(jsonFileFiltered) == 0:
                 print "#######################################################"
-                print "Warning!!!!!!!!!!!Could not find wanted JSON file"
+                print A_BRIGHT_RED + "Warning!!!!!!!!!!!Could not find wanted JSON file" + A_RESET
                 print "#######################################################"
 
             ultimateJson = jsonFileFiltered[-1]
@@ -1174,7 +1176,7 @@ if not arguments.localConfig:
         print "No cmsRun executable is given, aborting."
         sys.exit(1)
     if arguments.Dataset == "":
-        print "Warning, you are running batch jobs witout using input sources."
+        print A_BRIGHT_RED + "Warning, you are running batch jobs witout using input sources." + A_RESET
     else:
         split_datasets.append(arguments.Dataset)
 
@@ -1186,6 +1188,12 @@ remoteAccessT3 = ('interactive' not in hostname)
 lxbatch = ('cern.ch' in hostname)
 lpcCAF = ('fnal.gov' in hostname)
 rutgers = ('rutgers.edu' in hostname)
+
+if lpcCAF and "el6" in platform.release ():
+  print
+  print A_BRIGHT_RED + "Warning! You are working in SL6 on the LPC. Job submission is currently"
+  print                "         problematic in SLF6, and you are encouraged to switch to SL7." + A_RESET
+  print
 
 UseAAA = False
 UseGridProxy = False
@@ -1202,14 +1210,16 @@ proxy = '/tmp/x509up_u' + str(userId) if "X509_USER_PROXY" not in os.environ els
 
 if arguments.Redirector != "":
     if not RedirectorDic.has_key(arguments.Redirector):
-        print "Warning! Invalid redirector provided!! Quit!!"
+        print A_BRIGHT_RED + "Warning! Invalid redirector provided!! Quit!!" + A_RESET
         sys.exit(1)
 
 if lpcCAF and not arguments.skimToHadoop:
     print
-    print "Warning! You are working on the LPC, but have not provided a \"Hadoop\" directory for your skim with \"-H\"."
-    print "         Your skim files will be written directly to your condor directory, which may threaten the quota"
-    print "         on your home directory. Consider using -H with eos!"
+    print A_BRIGHT_RED + "Warning! You are working on the LPC, but have not provided a \"Hadoop\" directory"
+    print                "         for your skim with \"-H\". Your skim files will be written directly to"
+    print                "         your condor directory, which may threaten the quota on your home"
+    print                "         directory. Consider using -H with eos!" + A_RESET
+    print
 
 ###############################################################################
 #                End of Setup stage, will begin to submit jobs                #
