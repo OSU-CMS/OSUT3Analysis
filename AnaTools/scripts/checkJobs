@@ -77,7 +77,7 @@ def printJobs(logs, desc):
   jobRanges = {}
   for log in logs:
     dataset = log.split('/')[-2]
-    jobNumber = int(log.split('/')[-1][7:-4]) # condor_N.log
+    jobNumber = int(os.path.basename(log).split('_')[-1][:-4]) # condor_N.log or condor_dataset_N.log
     if not dataset in jobRanges:
       jobRanges[dataset] = [jobNumber];
     else:
