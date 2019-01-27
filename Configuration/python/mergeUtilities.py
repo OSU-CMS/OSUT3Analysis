@@ -211,7 +211,7 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
     for skimFile in FilesToRemove:
         if lpcCAF and skimFile.startswith('root://cmseos.fnal.gov/'):
             try:
-                subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov', 'rm', skimFile])
+                subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov', 'rm', skimFile[len('root://cmseos.fnal.gov/'):]])
             except subprocess.CalledProcessError as e:
                 print 'Failed to remove file', skimFile, ':', e
         else:
