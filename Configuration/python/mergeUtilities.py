@@ -102,11 +102,11 @@ def MakeWeightsString(Weight,FilesSet):
 ###############################################################################
 def GetNumberOfEvents(FilesSet):
     NumberOfEvents = {'SkimNumber' : {}, 'TotalNumber' : 0}
-    for File in FilesSet:
-        ScoutFile = TFile(File)
+    for histFile in FilesSet:
+        ScoutFile = TFile(histFile)
         if ScoutFile.IsZombie():
-            print File + " is a bad root file."
-            FilesSet.remove(File)
+            print histFile + " is a bad root file."
+            FilesSet.remove(histFile)
             continue
         randomChannelDirectory = ""
         TotalNumberTmp = 0
@@ -121,10 +121,10 @@ def GetNumberOfEvents(FilesSet):
             SkimCounterObj = ScoutFile.Get(randomChannelDirectory + "/cutFlow")
             TotalNumberTmp = 0
             if not OriginalCounterObj:
-                print "Could not find eventCounter histogram in " + str(File) + " !"
+                print "Could not find eventCounter histogram in " + str(histFile) + " !"
                 continue
             elif not SkimCounterObj:
-                print "Could not find cutFlow histogram in " + str(File) + " !"
+                print "Could not find cutFlow histogram in " + str(histFile) + " !"
             else:
                 OriginalCounter = OriginalCounterObj.Clone()
                 OriginalCounter.SetDirectory(0)
@@ -161,11 +161,11 @@ def MakeFilesForSkimDirectoryEOS(Member, Directory, DirectoryOut, TotalNumber, S
 
     listOfSkimFiles = subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov', 'ls', os.path.realpath(DirectoryOut + '/' + Member)])
     listOfSkimFiles = [x for x in listOfSkimFiles.split('\n') if x.endswith('.root')]
-    for file in listOfSkimFiles:
-        index = os.path.basename(file).split('.')[0].split('_')[1]
+    for skimFile in listOfSkimFiles:
+        index = os.path.basename(skimFile).split('.')[0].split('_')[1]
         if index in BadIndices:
             continue
-        GetSkimInputTags(file, xrootdDestination)
+        GetSkimInputTags(skimFile, xrootdDestination)
         break
 
 def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove, lpcCAF = False):
@@ -200,22 +200,22 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
             os.chdir(Directory + '/' + Member)
             listOfSkimFiles = glob.glob('*.root')
             sys.path.append(Directory + '/' + Member)
-            for file in listOfSkimFiles:
-                index = file.split('.')[0].split('_')[1]
+            for skimFile in listOfSkimFiles:
+                index = skimFile.split('.')[0].split('_')[1]
                 if index in BadIndices:
                     continue
-                GetSkimInputTags(file.rstrip('\n'))
+                GetSkimInputTags(skimFile.rstrip('\n'))
                 break
             os.chdir(Directory)
 
-    for file in FilesToRemove:
-        if lpcCAF and file.startswith('root://cmseos.fnal.gov/'):
+    for skimFile in FilesToRemove:
+        if lpcCAF and skimFile.startswith('root://cmseos.fnal.gov/'):
             try:
                 subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov', 'rm', file])
             except subprocess.CalledProcessError as e:
-                print 'Failed to remove file', file, ':', e
+                print 'Failed to remove file', skimFile, ':', e
         else:
-            os.unlink(file)
+            os.unlink(skimFile)
 
 ###############################################################################
 #           Produce a pickle file containing the skim input tags.             #
@@ -309,11 +309,11 @@ def MakeResubmissionScript(badIndices, originalSubmissionScript):
 ###############################################################################
 #                       Determine whether a skim file is valid.               #
 ###############################################################################
-def SkimFileValidator(File):
-    if File.startswith('root://'):
-        FileToTest = TNetXNGFile(File)
+def SkimFileValidator(skimFile):
+    if skimFile.startswith('root://'):
+        FileToTest = TNetXNGFile(skimFile)
     else:
-        FileToTest = TFile(File)
+        FileToTest = TFile(skimFile)
     Valid = True
     for TreeToTest in ['MetaData', 'ParameterSets', 'Parentage', 'Events', 'LuminosityBlocks', 'Runs']:
         Valid = Valid and (FileToTest.Get(TreeToTest) != None)
@@ -402,9 +402,9 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = 
     # check for files that weren't found and were skipped
     StdErrFiles = sorted(glob.glob('condor_*.err'))
 
-    for file in StdErrFiles:
-        index = file.split("_")[-1].split(".")[0]
-        if 'was not found or could not be opened, and will be skipped.' in open(file).read():
+    for errFile in StdErrFiles:
+        index = errFile.split("_")[-1].split(".")[0]
+        if 'was not found or could not be opened, and will be skipped.' in open(errFile).read():
             BadIndices.append(index)
             if verbose:
                 print "  job" + ' ' * (4-len(str(index))) + index + " had bad/skipped input file"
