@@ -4,6 +4,7 @@ import getpass
 import os
 import re
 import socket
+import platform
 import time
 from time import gmtime, strftime
 import copy
@@ -15,6 +16,7 @@ import tarfile
 from math import *
 from array import *
 from optparse import OptionParser
+from OSUT3Analysis.Configuration.Color import *
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
@@ -214,7 +216,7 @@ def getLatestJsonFile():
 
             if len(jsonFileFiltered) == 0:
                 print "#######################################################"
-                print "Warning!!!!!!!!!!!Could not find wanted JSON file"
+                print A_BRIGHT_RED + "Warning!!!!!!!!!!!Could not find wanted JSON file" + A_RESET
                 print "#######################################################"
 
             for json in jsonFileFiltered:
@@ -290,7 +292,7 @@ def getLatestJsonFile():
 
             if len(jsonFileFiltered) == 0:
                 print "#######################################################"
-                print "Warning!!!!!!!!!!!Could not find wanted JSON file"
+                print A_BRIGHT_RED + "Warning!!!!!!!!!!!Could not find wanted JSON file" + A_RESET
                 print "#######################################################"
 
             ultimateJson = jsonFileFiltered[-1]
@@ -402,17 +404,17 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
                 FilesToTransfer += ',datasetInfo_' + Label + '_cfg.py'
             if UseGridProxy:
                 if rutgers:
-                    shutil.copy ("/tmp/" + proxy, Directory + "/" + proxy)
-                    os.chmod (Directory + "/" + proxy, 0644)
-                    FilesToTransfer += ',' + proxy
+                    shutil.copy (proxy, Directory + "/" + os.path.basename (proxy))
+                    os.chmod (Directory + "/" + os.path.basename (proxy), 0644)
+                    FilesToTransfer += ',' + os.path.basename (proxy)
                 else:
-                    FilesToTransfer += ',/tmp/' + proxy
+                    FilesToTransfer += ',' + proxy
             if jsonFile != '':
                 FilesToTransfer += ',' + jsonFile
             SubmitFile.write('should_transfer_files   = YES\n')
             SubmitFile.write('Transfer_Input_files = ' + FilesToTransfer + '\n')
             if UseGridProxy and not rutgers:
-                SubmitFile.write('x509userproxy = /tmp/' + proxy + '\n')
+                SubmitFile.write('x509userproxy = ' + proxy + '\n')
         elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Output_files') and currentCondorSubArgumentsSet[argument]['Transfer_Output_files'] == "":
             SubmitFile.write ('Transfer_Output_files = ')
             if os.path.realpath (Directory).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/", "/cms/")):
@@ -458,9 +460,9 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("PYTHONPATH=$PYTHONPATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n\n")
 
     if rutgers:
-        SubmitScript.write ("rm -f /tmp/" + proxy + "\n")
-        SubmitScript.write ("mv -f " + proxy + " /tmp/\n")
-        SubmitScript.write ("chmod 600 /tmp/" + proxy + "\n\n")
+        SubmitScript.write ("rm -f " + proxy + "\n")
+        SubmitScript.write ("mv -f " + os.path.basename (proxy) + " " + os.path.dirname (proxy) + "/\n")
+        SubmitScript.write ("chmod 600 " + proxy + "\n\n")
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
@@ -1174,13 +1176,25 @@ if not arguments.localConfig:
         print "No cmsRun executable is given, aborting."
         sys.exit(1)
     if arguments.Dataset == "":
-        print "Warning, you are running batch jobs witout using input sources."
+        print A_BRIGHT_RED + "Warning, you are running batch jobs witout using input sources." + A_RESET
     else:
         split_datasets.append(arguments.Dataset)
 
 ###############################################################################
 #    Get the host name to determine whether you are using lxplus or OSU T3.   #
 ###############################################################################
+hostname = socket.getfqdn()
+remoteAccessT3 = ('interactive' not in hostname)
+lxbatch = ('cern.ch' in hostname)
+lpcCAF = ('fnal.gov' in hostname)
+rutgers = ('rutgers.edu' in hostname)
+
+if lpcCAF and "el6" in platform.release ():
+  print
+  print A_BRIGHT_RED + "Warning! You are working in SL6 on the LPC. Job submission is currently"
+  print                "         problematic in SLF6, and you are encouraged to switch to SL7." + A_RESET
+  print
+
 UseAAA = False
 UseGridProxy = False
 Generic = False
@@ -1189,27 +1203,22 @@ if arguments.Generic:
 if arguments.UseAAA:
     UseAAA = True
 UseGridProxy = UseAAA or arguments.UseGridProxy
-if os.path.realpath (CondorDir).startswith ("/eos/uscms/store/") or os.path.realpath (HadoopDir).startswith ("/eos/uscms/store/"):
+if lpcCAF or os.path.realpath (CondorDir).startswith ("/eos/uscms/store/") or os.path.realpath (HadoopDir).startswith ("/eos/uscms/store/"):
     UseGridProxy = True
 userId = os.getuid()
-proxy = 'x509up_u' + str(userId)
-hostname = socket.getfqdn()
-remoteAccessT3 = ('interactive' not in hostname)
-lxbatch = ('cern.ch' in hostname)
-lpcCAF = ('fnal.gov' in hostname)
-rutgers = ('rutgers.edu' in hostname)
+proxy = '/tmp/x509up_u' + str(userId) if "X509_USER_PROXY" not in os.environ else os.environ["X509_USER_PROXY"]
 
 if arguments.Redirector != "":
     if not RedirectorDic.has_key(arguments.Redirector):
-        print "Warning! Invalid redirector provided!! Quit!!"
+        print A_BRIGHT_RED + "Warning! Invalid redirector provided!! Quit!!" + A_RESET
         sys.exit(1)
 
 if lpcCAF and not arguments.skimToHadoop:
     print
-    print "Warning! You are working on the LPC, but have not provided a \"Hadoop\" directory for your skim with \"-H\"."
-    print "         LPC's condor nodes have no access to regular directories, so you will never be able to run over"
-    print "         the resulting skim files using condor, nor will you be able to access them with xrootd remotely."
-    print "         Consider using -H with eos!"
+    print A_BRIGHT_RED + "Warning! You are working on the LPC, but have not provided a \"Hadoop\" directory"
+    print                "         for your skim with \"-H\". Your skim files will be written directly to"
+    print                "         your condor directory, which may threaten the quota on your home"
+    print                "         directory. Consider using -H with eos!" + A_RESET
     print
 
 ###############################################################################
@@ -1338,12 +1347,12 @@ if not arguments.Resubmit:
                     os.syetem('./lxbatchSub.sh')
                 else:
                     os.symlink ("../" + os.environ["CMSSW_VERSION"] + ".tar.gz", os.environ["CMSSW_VERSION"] + ".tar.gz")
-                    cmd = "condor_submit condor.sub"
-                    if os.path.isfile (proxy):
-                        os.chmod (proxy, 0644)
+                    cmd = "LD_LIBRARY_PATH= condor_submit condor.sub"
+                    if os.path.isfile (os.path.basename (proxy)):
+                        os.chmod (os.path.basename (proxy), 0644)
                     subprocess.call(cmd, shell = True)
-                    if os.path.isfile (proxy):
-                        os.chmod (proxy, 0600)
+                    if os.path.isfile (os.path.basename (proxy)):
+                        os.chmod (os.path.basename (proxy), 0600)
                 os.chdir(SubmissionDir)
             else:
                 print 'Configuration files created for ' + str(dataset) + ' dataset but no jobs submitted.\n'
@@ -1386,12 +1395,12 @@ if not arguments.Resubmit:
                 os.syetem('./lxbatchSub.sh')
             else:
                 os.symlink ("../" + os.environ["CMSSW_VERSION"] + ".tar.gz", os.environ["CMSSW_VERSION"] + ".tar.gz")
-                cmd = "condor_submit condor.sub"
-                if os.path.isfile (proxy):
-                    os.chmod (proxy, 0644)
+                cmd = "LD_LIBRARY_PATH= condor_submit condor.sub"
+                if os.path.isfile (os.path.basename (proxy)):
+                    os.chmod (os.path.basename (proxy), 0644)
                 subprocess.call(cmd, shell = True)
-                if os.path.isfile (proxy):
-                    os.chmod (proxy, 0600)
+                if os.path.isfile (os.path.basename (proxy)):
+                    os.chmod (os.path.basename (proxy), 0600)
             os.chdir(SubmissionDir)
         else:
             print 'Configuration files created for ' + str(Config) + '  but no jobs submitted.\n'
@@ -1400,10 +1409,10 @@ else:
         SubmissionDir = os.getcwd()
         for dataset in split_datasets:
             WorkDir = CondorDir + '/' + str(dataset)
-            if os.path.isfile (WorkDir + "/" + proxy) and os.path.isfile ("/tmp/" + proxy):
-                os.unlink (WorkDir + "/" + proxy)
-                shutil.copy ("/tmp/" + proxy, WorkDir + "/" + proxy)
-                os.chmod (WorkDir + "/" + proxy, 0644)
+            if os.path.isfile (WorkDir + "/" + os.path.basename (proxy)) and os.path.isfile (proxy):
+                os.unlink (WorkDir + "/" + os.path.basename (proxy))
+                shutil.copy (proxy, WorkDir + "/" + os.path.basename (proxy))
+                os.chmod (WorkDir + "/" + os.path.basename (proxy), 0644)
             if os.path.exists(WorkDir + '/condor_resubmit.sh'):
                 os.chdir(WorkDir)
                 subprocess.call ('./condor_resubmit.sh', shell = True)
@@ -1422,10 +1431,10 @@ else:
                                break
                         subprocess.call('sed -i \'s/' + str(originalRedirector) + '/' + str(RedirectorDic[arguments.Redirector]) + '/g\' '  +  str(datasetInfoFileName), shell = True)
                 print '################ Resubmit failed jobs for ' + str(dataset) + ' dataset #############'
-                cmd = "condor_submit condor_resubmit.sub"
-                if os.path.isfile (proxy):
-                    os.chmod (proxy, 0644)
+                cmd = "LD_LIBRARY_PATH= condor_submit condor_resubmit.sub"
+                if os.path.isfile (os.path.basename (proxy)):
+                    os.chmod (os.path.basename (proxy), 0644)
                 subprocess.call(cmd, shell = True)
-                if os.path.isfile (proxy):
-                    os.chmod (proxy, 0600)
+                if os.path.isfile (os.path.basename (proxy)):
+                    os.chmod (os.path.basename (proxy), 0600)
                 os.chdir(SubmissionDir)
