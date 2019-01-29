@@ -662,7 +662,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                     WriteTextToFile(Directory + '\n', Directory + '/' + channelName + '/SkimDirectory.txt', lpcCAF)
 
                     # Create an extra copy in the skim directory, in case a user later wants to run over this skim remotely via xrootd
-                    if lpcCAF and os.path.dirname(filePath).startswith('/eos/uscms'):
+                    if lpcCAF and os.path.realpath(Directory + '/' + channelName + '/').startswith('/eos/uscms'):
                         subprocess.call('xrdcp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py root://cmseos.fnal.gov/' + os.path.realpath(Directory + '/' + channelName + '/'), shell = True)
                     else:
                         subprocess.call('cp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
