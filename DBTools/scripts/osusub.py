@@ -302,6 +302,48 @@ def getLatestJsonFile():
 
             return ultimateJson
 
+# Wrapper for "mkdir" when LPC EOS is a possibility
+def MakeSkimDirectory(SkimDir, lpcCAF):
+    # return True only if a new directory is created, otherwise we will skip the dataset in the submission
+    if lpcCAF and os.path.realpath(SkimDir).startswith('/eos/uscms'):
+        try:
+            msg = subprocess.check_output(['xrd', 'cmseos.fnal.gov', 'existdir', os.path.realpath(SkimDir)])
+            return False
+        except:
+            try:
+                msg = subprocess.check_output(['xrd', 'cmseos.fnal.gov', 'mkdir', os.path.realpath(SkimDir)])
+                return True
+            except subprocess.CalledProcessError as e:
+                print 'Creating directory "' + str(SkimDir) + '" failed with error:'
+                print e
+                print 'Aborting.'
+                sys.exit(1)
+    else:
+        if os.path.exists(SkimDir):
+            return False
+        else:
+            os.mkdir(SkimDir)
+            return True
+    return False
+
+# Wrapper for "open()" when LPC EOS is a possibility
+def WriteTextToFile(textBody, filePath, lpcCAF):
+    if lpcCAF and os.path.realpath(filePath).startswith('/eos/uscms'):
+        tmpDir = tempfile.mkdtemp()
+        tmpFilePath = tmpDir + '/' + os.path.basename(filePath)
+        f = open(tmpFilePath, 'w')
+        f.write(textBody)
+        f.close()
+        try:
+            msg = subprocess.check_output(['xrdcp', tmpFilePath, 'root://cmseos.fnal.gov/' + os.path.realpath(filePath)])
+        except subprocess.CalledProcessError as e:
+            print 'Failed to copy', tmpFilePath, 'to root://cmseos.fnal.gov/' + os.path.realpath(filePath), 'with error:'
+            print e
+        shutil.rmtree(tmpDir)
+    else:
+        f = open(filePath, 'w')
+        f.write(textBody)
+        f.close()
 
 #A function to deal with special characters. One can choose to split or replace the special strings. For example, if you have '/' like this: /A/B/C, it will return A if you add '/' into specialStringSplitList. If you have[['-','_'] like A-B, it will return A_B if you add ['-','_'] into specialStringReplaceList. This function is added to deal with special characters that may confuse this script.
 def SpecialStringModifier(inputString, specialStringSplitList, specialStringReplaceList):
@@ -581,7 +623,7 @@ def MakeCondorSubmitRelease(Directory):
     os.chdir (cwd)
 
 #It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.
-def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelNames,jsonFile, temPset):
+def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelNames,jsonFile, temPset, lpcCAF):
     ConfigFile = open(Directory + '/config_cfg.py','w')
     sys.path.append(Directory)
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')
@@ -604,29 +646,26 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                     if not SkimDirectory and not os.path.exists(Directory + '/' + channelName):
                         os.mkdir (Directory + '/' + channelName)
                     elif SkimDirectory:
-                        if not os.path.exists(SkimDirectory + '/' + channelName):
-                            os.mkdir (SkimDirectory + '/' + channelName)
+                        MakeSkimDirectory(SkimDirectory + '/' + channelName, lpcCAF)
                         if not os.path.exists(Directory + '/' + channelName):
                             os.symlink (SkimDirectory + '/' + channelName, Directory + '/' + channelName)
-                    f = open (Directory + "/" + channelName + "/SkimDirectory.txt", "w")
-                    f.write (Directory + "\n")
-                    f.close ()
+                    WriteTextToFile(Directory + '\n', Directory + '/' + channelName + '/SkimDirectory.txt', lpcCAF)
         else:
             for channelName in SkimChannelNames:
                 if not channelName == '':
                     if not SkimDirectory and not os.path.exists(Directory + '/' + channelName):
                         os.mkdir (Directory + '/' + channelName)
                     elif SkimDirectory:
-                        if not os.path.exists(SkimDirectory + '/' + channelName):
-                            os.mkdir (SkimDirectory + '/' + channelName)
+                        MakeSkimDirectory(SkimDirectory + '/' + channelName, lpcCAF)
                         if not os.path.exists(Directory + '/' + channelName):
                             os.symlink (SkimDirectory + '/' + channelName, Directory + '/' + channelName)
-                    f = open (Directory + "/" + channelName + "/SkimDirectory.txt", "w")
-                    f.write (Directory + "\n")
-                    f.close ()
+                    WriteTextToFile(Directory + '\n', Directory + '/' + channelName + '/SkimDirectory.txt', lpcCAF)
 
                     # Create an extra copy in the skim directory, in case a user later wants to run over this skim remotely via xrootd
-                    subprocess.call('cp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
+                    if lpcCAF and os.path.dirname(filePath).startswith('/eos/uscms'):
+                        subprocess.call('xrdcp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py root://cmseos.fnal.gov/' + os.path.realpath(Directory + '/' + channelName + '/'), shell = True)
+                    else:
+                        subprocess.call('cp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
 
     ConfigFile.write('fileName = \'hist_\' + str (osusub.jobNumber) + \'.root\'\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
@@ -1107,10 +1146,18 @@ def copyDatasetInfoToTempFile (f, tempdir):
 ################################################################################
 
 
+###############################################################################
+#    Get the host name to determine whether you are using lxplus or OSU T3.   #
+###############################################################################
+hostname = socket.getfqdn()
+remoteAccessT3 = ('interactive' not in hostname)
+lxbatch = ('cern.ch' in hostname)
+lpcCAF = ('fnal.gov' in hostname)
+rutgers = ('rutgers.edu' in hostname)
+
 ################################################################################
 #             First of all to set up the working directory                     #
 ################################################################################
-
 sys.path.append(os.getcwd())
 CondorDir = ''
 Condor = os.getcwd() + '/condor/'
@@ -1136,16 +1183,39 @@ else:
 
 HadoopDir = ''
 if arguments.skimToHadoop:
-    if not os.path.exists(arguments.skimToHadoop):
-        print "The directory ", arguments.skimToHadoop, " does not exist.  Aborting."
-        sys.exit(1)
-    else:
+    HadoopDir = arguments.skimToHadoop if arguments.skimToHadoop else ''
+    if lpcCAF and os.path.realpath(arguments.skimToHadoop).startswith('/eos/uscms'):
+        # check if the xrootd path exists
+        try:
+            msg = subprocess.check_output(['xrd', 'cmseos.fnal.gov', 'existdir', os.path.realpath(arguments.skimToHadoop)])
+        except:
+            print 'The directory', arguments.skimToHadoop, 'does not exist. Aborting.'
+            sys.exit(1)
         HadoopDir = arguments.skimToHadoop + '/' + arguments.condorDir
-    if not os.path.exists(HadoopDir):
-        os.makedirs (HadoopDir)
+        # if needed, create the job directory
+        try:
+            msg = subprocess.check_output(['xrd', 'cmseos.fnal.gov', 'existdir', os.path.realpath(HadoopDir)])
+            print 'Directory "' + str(HadoopDir) + '" already exists. Will proceed with job submission.'
+        except:
+            try:
+                msg = subprocess.check_output(['xrd', 'cmseos.fnal.gov', 'mkdir', os.path.realpath(HadoopDir)])
+            except subprocess.CalledProcessError as e:
+                print 'Creating directory "' + str(HadoopDir) + '" failed with error:'
+                print e
+                print 'Aborting.'
+                sys.exit(1)
     else:
-        print 'Directory "' + str(HadoopDir) + '" already exists in your condor directory. Will proceed with job submission.'
-    HadoopDir = os.path.abspath (HadoopDir)
+        # check if the directory exists
+        if not os.path.exists(arguments.skimToHadoop):
+            print "The directory ", arguments.skimToHadoop, " does not exist.  Aborting."
+            sys.exit(1)
+        HadoopDir = arguments.skimToHadoop + '/' + arguments.condorDir
+        # if needed, create the job directory
+        if not os.path.exists(HadoopDir):
+            os.makedirs(HadoopDir)
+        else:
+            print 'Directory "' + str(HadoopDir) + '" already exists. Will proceed with job submission.'
+    HadoopDir = os.path.abspath(HadoopDir)
 
 RunOverSkim = False
 if arguments.SkimDirectory != "" and arguments.SkimChannel != "":
@@ -1179,15 +1249,6 @@ if not arguments.localConfig:
         print A_BRIGHT_RED + "Warning, you are running batch jobs witout using input sources." + A_RESET
     else:
         split_datasets.append(arguments.Dataset)
-
-###############################################################################
-#    Get the host name to determine whether you are using lxplus or OSU T3.   #
-###############################################################################
-hostname = socket.getfqdn()
-remoteAccessT3 = ('interactive' not in hostname)
-lxbatch = ('cern.ch' in hostname)
-lpcCAF = ('fnal.gov' in hostname)
-rutgers = ('rutgers.edu' in hostname)
 
 if lpcCAF and "el6" in platform.release ():
   print
@@ -1271,11 +1332,9 @@ if not arguments.Resubmit:
                 else:
                     os.mkdir (WorkDir)
                 if SkimDir:
-                    if os.path.exists(SkimDir):
-                        print 'Directory "' + str(SkimDir) + '" already exists.  Please remove it and resubmit.'
+                    if not MakeSkimDirectory(SkimDir, lpcCAF):
+                        print 'Directory "' + str(SkimDir) + '" already exists. Please remove it and resubmit. For now dataset "' + str(dataset) + '" will be skipped.'
                         continue
-                    else:
-                        os.mkdir (SkimDir)
             elif arguments.FileType == 'UserList':
                 WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
                 SkimDir = HadoopDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']]) if HadoopDir else ''
@@ -1285,11 +1344,9 @@ if not arguments.Resubmit:
                 else:
                     os.mkdir (WorkDir)
                 if SkimDir:
-                    if os.path.exists(SkimDir):
-                        print 'Directory "' + str(SkimDir) + '" already exists.  Please remove it and resubmit.'
+                    if not MakeSkimDirectory(SkimDir, lpcCAF):
+                        print 'Directory "' + str(SkimDir) + '" already exists. Please remove it and resubmit. For now dataset "' + str(dataset) + '" will be skipped.'
                         continue
-                    else:
-                        os.mkdir (SkimDir)
             else:
                 WorkDir = CondorDir
                 SkimDir = HadoopDir
@@ -1330,7 +1387,7 @@ if not arguments.Resubmit:
                 if(types[dataset] == 'data'):
                     jsonFile = getLatestJsonFile()
                     shutil.move (jsonFile, WorkDir + "/" + jsonFile)
-            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'],WorkDir,SkimDir,dataset, SkimChannelNames, jsonFile, temPset)
+            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'], WorkDir, SkimDir, dataset, SkimChannelNames, jsonFile, temPset, lpcCAF)
 
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
@@ -1381,7 +1438,7 @@ if not arguments.Resubmit:
         shutil.copy (Config, WorkDir + "/" + userConfig)
         exec('import ' + re.sub (r"(.*)\.py$", r"\1", Config) + ' as temPset')
 
-        MakeSpecificConfig('',WorkDir,SkimDir,Label, SkimChannelNames,'',temPset)
+        MakeSpecificConfig('', WorkDir, SkimDir, Label, SkimChannelNames, '', temPset, lpcCAF)
 
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
