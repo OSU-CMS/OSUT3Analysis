@@ -639,6 +639,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write('myLumis = LumiList.LumiList(filename = \'' + str(jsonFile) + '\').getCMSSWString().split(\',\')\n')
     ConfigFile.write('\n')
     if not Generic:
+        # fuck
         if len(SkimChannelNames) == 0:
             SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory, temPset)
             for channelName in SkimChannelNames:
@@ -650,6 +651,12 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                         if not os.path.exists(Directory + '/' + channelName):
                             os.symlink (SkimDirectory + '/' + channelName, Directory + '/' + channelName)
                     WriteTextToFile(Directory + '\n', Directory + '/' + channelName + '/SkimDirectory.txt', lpcCAF)
+
+                    # Create an extra copy in the skim directory, in case a user later wants to run over this skim remotely via xrootd
+                    if lpcCAF and os.path.realpath(Directory + '/' + channelName + '/').startswith('/eos/uscms'):
+                        subprocess.call('xrdcp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py root://cmseos.fnal.gov/' + os.path.realpath(Directory + '/' + channelName + '/'), shell = True)
+                    else:
+                        subprocess.call('cp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
         else:
             for channelName in SkimChannelNames:
                 if not channelName == '':
@@ -949,9 +956,11 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
                 print "No input skim files found for dataset " + Label + ".  Will skip it and continue"
                 datasetRead['numberOfFiles'] = numInputFiles
                 return datasetRead
+            # fuck
             SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/'
             secondaryCollectionModifications = SecondaryCollectionInstance(SkimDirectory, arguments.SkimChannel)
             #Copy the datasetInfo file from the skim directory.
+            # fuck
             shutil.copy (SkimDirectory + 'datasetInfo_' + Label + '_cfg.py', datasetInfoName)
             #Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
             SkimModifier(Label, Directory, crossSection)
@@ -1357,6 +1366,7 @@ if not arguments.Resubmit:
             elif arguments.crossSection != "":
                 crossSection = arguments.crossSection
 
+            # fuck
             DatasetRead = MakeFileList(DatasetName,arguments.FileType,WorkDir,dataset, UseAAA, crossSection)
             NumberOfFiles = int(DatasetRead['numberOfFiles'])
 
