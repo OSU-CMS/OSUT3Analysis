@@ -20,6 +20,7 @@ private:
   edm::EDGetTokenT<vector<TYPE(hardInteractionMcparticles)> > mcparticlesToken_;
 
   vector<int> pdgIds_;
+  vector<int> motherIdsToReject_;
   string weightFile_;
   vector<string> weightHist_;
 
