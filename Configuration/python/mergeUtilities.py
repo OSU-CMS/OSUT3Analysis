@@ -151,7 +151,7 @@ def MakeFilesForSkimDirectoryEOS(Member, Directory, DirectoryOut, TotalNumber, S
         print 'Failed to copy OriginalNumberOfEvents.txt:', e
     outfile = os.path.join(tmpDir, 'SkimNumberOfEvents.txt')
     fout = open(outfile, 'w')
-    fout.write(str(SkimNumber) + '\n')
+    fout.write(str(SkimNumber[Member]) + '\n')
     fout.close()
     try:
         subprocess.check_output(['xrdcp', '-f', outfile, xrootdDestination])
