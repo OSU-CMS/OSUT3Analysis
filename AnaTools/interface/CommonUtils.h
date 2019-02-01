@@ -272,11 +272,15 @@ anatools::getObjectHash(const T& object){
 template<class T> bool
 anatools::jetPassesTightLepVeto (const T &jet)
 {
-  // Taken from recommendations from the JetMET group for 13 TeV:
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  // https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2017
+  return (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.80) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
+    || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0));
+#else
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID#Recommendations_for_13_TeV_data
-  //
   return (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
     || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0));
+#endif
 }
 
 template<class T> bool
