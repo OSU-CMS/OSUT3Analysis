@@ -4,10 +4,11 @@
 
 ISRWeightProducer::ISRWeightProducer (const edm::ParameterSet &cfg) :
   EventVariableProducer(cfg),
-  pdgIds_     (cfg.getParameter<vector<int> > ("pdgIds")),
-  weightFile_ (cfg.getParameter<string> ("weightFile")),
-  weightHist_ (cfg.getParameter<vector<string> > ("weightHist")),
-  weights_    ({})
+  pdgIds_            (cfg.getParameter<vector<int> > ("pdgIds")),
+  motherIdsToReject_ (cfg.getParameter<vector<int> > ("motherIdsToReject")),
+  weightFile_        (cfg.getParameter<string> ("weightFile")),
+  weightHist_        (cfg.getParameter<vector<string> > ("weightHist")),
+  weights_           ({})
 {
   mcparticlesToken_ = consumes<vector<TYPE(hardInteractionMcparticles)> > (collections_.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
 }
@@ -68,6 +69,12 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
 
   for(const auto &mcparticle : *mcparticles) {
     for(const auto &pdgId : pdgIds_) {
+      if(mcparticle.numberOfMothers() && 
+         !mcparticle.motherRef().isNull() && 
+         find(motherIdsToReject_.begin(), motherIdsToReject_.end(), abs(mcparticle.motherRef()->pdgId())) != motherIdsToReject_.end()) {
+        continue;
+      }
+
       if(abs(mcparticle.pdgId()) == abs(pdgId) && isOriginalParticle(mcparticle, mcparticle.pdgId())) {
         px += mcparticle.px();
         py += mcparticle.py();
@@ -105,7 +112,7 @@ ISRWeightProducer::isOriginalParticle (const TYPE(hardInteractionMcparticles) &m
 {
 #ifndef STOPPPED_PTLS
   if(!mcparticle.numberOfMothers () || mcparticle.motherRef ().isNull ()) return true;
-  return(mcparticle.motherRef ()->pdgId () != pdgId) && isOriginalParticle ((TYPE(hardInteractionMcparticles)) *mcparticle.motherRef (), pdgId);
+  return (mcparticle.motherRef ()->pdgId () != pdgId);
 #else
   return false;
 #endif
