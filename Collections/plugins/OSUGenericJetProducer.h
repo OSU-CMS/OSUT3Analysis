@@ -38,6 +38,7 @@ class OSUGenericJetProducer : public edm::EDProducer
   string jetResolutionPayload_;
   string jetResSFPayload_;
   bool jetResFromGlobalTag_;
+  bool jetResNewPrescription_;
 
   edm::EDGetTokenT<vector<TYPE(jets)> > token_;
   edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
