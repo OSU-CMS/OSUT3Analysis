@@ -294,10 +294,8 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
           if(jet.jerSF() > 1.0) {
             if(jetResNewPrescription_) {
-              // https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_25/PhysicsTools/PatUtils/interface/SmearedJetProducerT.h#L244
-              double sigma = jet.jer() * sqrt(jet.jerSF() * jet.jerSF() - 1.);
-              // smearFactor = 1. + Gaus(0, sigma);
-              double smearedPt = jet.pt() * (1.0 + rng->Gaus(0.0, sigma));
+              double smearedPt = rng->Gaus(0.0, jet.jer()) * sqrt(max(jet.jerSF() * jet.jerSF() - 1.0, 0.0));
+              smearedPt = jet.pt() * (1.0 + smearedPt);
               jet.set_smearedPt(    smearedPt);
               jet.set_smearedPtUp(  smearedPt * jet.jerSFUp() / jet.jerSF());
               jet.set_smearedPtDown(smearedPt * jet.jerSFDown() / jet.jerSF());
@@ -312,9 +310,9 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
             }
           }
           else {
-            jet.set_smearedPt(INVALID_VALUE);
-            jet.set_smearedPtUp(INVALID_VALUE);
-            jet.set_smearedPtDown(INVALID_VALUE);
+            jet.set_smearedPt(    jet.pt());
+            jet.set_smearedPtUp(  jet.pt());
+            jet.set_smearedPtDown(jet.pt());
           }
 
         } // if no matched genJet
