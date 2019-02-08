@@ -9232,7 +9232,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
   crossSections['QCD_50to80']     = 19204300
   crossSections['QCD_80to120']    = 2762530
   crossSections['QCD_120to170']   = 471100
-  crossSections['QCD_170to300']   = 19204300
+  crossSections['QCD_170to300']   = 117276 # pdmv has the CP5 93X xsec wrong, using /QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/RunIISummer15GS-MCRUN2_71_V1_ext1-v1/GEN-SIM the other samples have the same xsecs
   crossSections['QCD_300to470']   = 7823
   crossSections['QCD_470to600']   = 648.2
   crossSections['QCD_600to800']   = 186.9
