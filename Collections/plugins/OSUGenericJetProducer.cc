@@ -19,6 +19,7 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   jetResolutionPayload_ (cfg.getParameter<string> ("jetResolutionPayload")),
   jetResSFPayload_      (cfg.getParameter<string> ("jetResSFPayload")),
   jetResFromGlobalTag_  (cfg.getParameter<bool> ("jetResFromGlobalTag")),
+  jetResNewPrescription_ (cfg.getParameter<bool> ("jetResNewPrescription")),
   cfg_         (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
@@ -266,31 +267,65 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
           double dR = deltaR (genjet, jet);
           double dPt = jet.pt() - genjet.pt();
 
-          if(dR < 0.2 && fabs(dPt) < 3.0 * jet.jer()) {
-            jet.set_smearedPt(max(0.0, genjet.pt() + jet.jerSF() * dPt));
-            jet.set_smearedPtUp(max(0.0, genjet.pt() + jet.jerSFUp() * dPt));
-            jet.set_smearedPtDown(max(0.0, genjet.pt() + jet.jerSFDown() * dPt));
-
-            isMatchedToGenJet = true;
-            break;
+          if(jetResNewPrescription_) {
+            // https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_25/PhysicsTools/PatUtils/interface/SmearedJetProducerT.h#L237
+            if(dR < 0.2 && fabs(dPt) < 3.0 * jet.pt() * jet.jer()) {
+              // smearFactor = 1 + (jet.jerSF() - 1.) * dPt / jet.pt();
+              jet.set_smearedPt(    max(0.0, jet.pt() + (jet.jerSF()     - 1.) * dPt));
+              jet.set_smearedPtUp(  max(0.0, jet.pt() + (jet.jerSFUp()   - 1.) * dPt));
+              jet.set_smearedPtDown(max(0.0, jet.pt() + (jet.jerSFDown() - 1.) * dPt));
+              isMatchedToGenJet = true;
+              break;
+            }
           }
-        }
+          else {
+            if(dR < 0.2 && fabs(dPt) < 3.0 * jet.jer()) {
+              jet.set_smearedPt(    max(0.0, genjet.pt() + jet.jerSF()     * dPt));
+              jet.set_smearedPtUp(  max(0.0, genjet.pt() + jet.jerSFUp()   * dPt));
+              jet.set_smearedPtDown(max(0.0, genjet.pt() + jet.jerSFDown() * dPt));
+              isMatchedToGenJet = true;
+              break;
+            }
+          }
+            
+        } // for genjets
+
         if(!isMatchedToGenJet) {
 
           if(jet.jerSF() > 1.0) {
-            double smearedPt = rng->Gaus(jet.pt(),
-                                         sqrt(jet.jerSF() * jet.jerSF() - 1) * jet.jer());
+            if(jetResNewPrescription_) {
+              double smearedPt = rng->Gaus(0.0, jet.jer()) * sqrt(max(jet.jerSF() * jet.jerSF() - 1.0, 0.0));
+              smearedPt = jet.pt() * (1.0 + smearedPt);
+              jet.set_smearedPt(    smearedPt);
+              jet.set_smearedPtUp(  smearedPt * jet.jerSFUp() / jet.jerSF());
+              jet.set_smearedPtDown(smearedPt * jet.jerSFDown() / jet.jerSF());
+            }
+            else {
+              double smearedPt = rng->Gaus(jet.pt(),
+                                           sqrt(jet.jerSF() * jet.jerSF() - 1) * jet.jer());
 
-            jet.set_smearedPt(smearedPt);
-            jet.set_smearedPtUp(smearedPt * jet.jerSFUp() / jet.jerSF());
-            jet.set_smearedPtDown(smearedPt * jet.jerSFDown() / jet.jerSF());
+              jet.set_smearedPt(smearedPt);
+              jet.set_smearedPtUp(smearedPt * jet.jerSFUp() / jet.jerSF());
+              jet.set_smearedPtDown(smearedPt * jet.jerSFDown() / jet.jerSF());
+            }
           }
           else {
-            jet.set_smearedPt(INVALID_VALUE);
-            jet.set_smearedPtUp(INVALID_VALUE);
-            jet.set_smearedPtDown(INVALID_VALUE);
+            jet.set_smearedPt(    jet.pt());
+            jet.set_smearedPtUp(  jet.pt());
+            jet.set_smearedPtDown(jet.pt());
           }
 
+        } // if no matched genJet
+
+        // https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_25/PhysicsTools/PatUtils/interface/SmearedJetProducerT.h#L255
+        if(jetResNewPrescription_ && jet.energy() * jet.smearedPt() / jet.pt() < 1.e-2) {
+          // Negative or too small smearFactor. We would change direction of the jet
+          // and this is not what we want.
+          // Recompute the smearing factor in order to have jet.energy() == MIN_JET_ENERGY (1.e-2)
+          double newSmearFactor = 1.e-2 / jet.energy();
+          jet.set_smearedPt(    newSmearFactor * jet.pt());
+          jet.set_smearedPtUp(  newSmearFactor * jet.pt() * jet.jerSFUp()   / jet.jerSF());
+          jet.set_smearedPtDown(newSmearFactor * jet.pt() * jet.jerSFDown() / jet.jerSF());
         }
 
       } // if(hasGenjets)

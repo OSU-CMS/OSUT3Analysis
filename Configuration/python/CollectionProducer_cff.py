@@ -132,10 +132,12 @@ collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
     jetResolutionPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
     jetResSFPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
     jetResFromGlobalTag = cms.bool(False),
+    jetResNewPrescription = cms.bool(False),
 )
 
-if 'CMSSW_8' in os.environ['CMSSW_VERSION']:
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
     collectionProducer.jets.jetResFromGlobalTag = cms.bool(True)
+    collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
 
