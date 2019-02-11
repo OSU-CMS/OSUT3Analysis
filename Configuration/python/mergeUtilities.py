@@ -56,7 +56,7 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
 ###############################################################################
 #                 Make the configuration for condor to run over.              #
 ###############################################################################
-def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLumi):
+def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLumi, optional_dict_ntupleEff):
     MergeScript = open(Directory + '/merge.py','w')
     MergeScript.write('#!/usr/bin/env python\n')
     MergeScript.write('from OSUT3Analysis.Configuration.mergeUtilities import *\n')
@@ -67,7 +67,7 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLu
     MergeScript.write('Index = int(sys.argv[1])\n\n')
     MergeScript.write('dataset = datasets[Index]\n\n')
     MergeScript.write('IntLumi = ' + str(IntLumi) + '\n')
-    MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd(), "", ' + str (NTHREADS_FOR_BATCH_MERGING) + ')\n') # use 8 CPU cores by default
+    MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd(), "", ' + str (optional_dict_ntupleEff) + ', ' + str (NTHREADS_FOR_BATCH_MERGING) + ')\n') # use 8 CPU cores by default
     MergeScript.write("print 'Finished merging dataset ' + dataset\n")
     MergeScript.close()
     os.chmod (Directory + '/merge.py', 0755)
@@ -355,7 +355,7 @@ def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbo
 ###############################################################################
 #                       Main function to do merging work.                     #
 ###############################################################################
-def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = cpu_count () + 1, verbose = False, skipMerging = False):
+def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntupleEff = {}, nThreadsActive = cpu_count () + 1, verbose = False, skipMerging = False):
     global threadLog
     global outputFiles
     global semaphore
@@ -465,8 +465,9 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = 
         return
     exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
 
-    TotalNumber = GetNumberOfEvents(GoodRootFiles)['TotalNumber']
-    SkimNumber = GetNumberOfEvents(GoodRootFiles)['SkimNumber']
+    NumberOfEvents = GetNumberOfEvents(GoodRootFiles)
+    TotalNumber = NumberOfEvents['TotalNumber']
+    SkimNumber = NumberOfEvents['SkimNumber']
     if verbose:
         print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber
     if not TotalNumber:
@@ -479,13 +480,18 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", nThreadsActive = 
         datasetInfo.originalNumberOfEvents
     except AttributeError:
         runOverSkim = False
+    nTupleEff = 1.0
+    try:
+        nTupleEff = optional_dict_ntupleEff[dataSet]
+    except:
+        pass
     if crossSection > 0 and IntLumi > 0:
         if runOverSkim and float(datasetInfo.originalNumberOfEvents)*float(TotalNumber):
-            Weight = IntLumi*crossSection*float(datasetInfo.skimNumberOfEvents)/(float(datasetInfo.originalNumberOfEvents)*float(TotalNumber))
+            Weight = IntLumi*crossSection*nTupleEff*float(datasetInfo.skimNumberOfEvents)/(float(datasetInfo.originalNumberOfEvents)*float(TotalNumber))
             # The factor TotalNumber / skimNumberOfEvents corresponds to the fraction of skim events that were actually processed,
             # i.e., it accounts for the fact that perhaps not all of the jobs finished successfully.
         elif float(TotalNumber):
-            Weight = IntLumi*crossSection/float(TotalNumber)
+            Weight = IntLumi*crossSection*nTupleEff/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
     if runOverSkim:
         MakeFilesForSkimDirectory(directory, directoryOut, datasetInfo.originalNumberOfEvents, SkimNumber, BadIndices, FilesToRemove, lpcCAF)
