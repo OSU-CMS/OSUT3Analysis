@@ -75,12 +75,15 @@ if arguments.IntLumi is not "":
 split_datasets     = list(set(split_datasets))
 composite_datasets = list(set(composite_datasets))
 
+if "optional_dict_ntupleEff" not in locals () and "optional_dict_ntupleEff" not in globals ():
+    optional_dict_ntupleEff = {}
+
 currentCondorSubArgumentsSet = {}
 if arguments.verbose:
     print "List of datasets: ", split_datasets
 if not arguments.compositeOnly and not arguments.UseCondor:
     for dataSet in split_datasets:
-        mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir, verbose = arguments.verbose, skipMerging = arguments.skipMerging)
+        mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir, optional_dict_ntupleEff, verbose = arguments.verbose, skipMerging = arguments.skipMerging)
 
 if arguments.UseCondor:
     # Make necessary files for condor and submit condor jobs.
@@ -88,7 +91,7 @@ if arguments.UseCondor:
     currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
     GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
     MakeSubmissionScriptForMerging(CondorDir, currentCondorSubArgumentsSet, split_datasets)
-    MakeMergingConfigForCondor(CondorDir, OutputDir, split_datasets, IntLumi)
+    MakeMergingConfigForCondor(CondorDir, OutputDir, split_datasets, IntLumi, optional_dict_ntupleEff)
     os.chdir(CondorDir)
     if arguments.NotToExecute:
         print 'Configuration files created in ' + str(CondorDir) + ' directory but no jobs submitted.\n'
