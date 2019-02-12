@@ -488,8 +488,9 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
     if crossSection > 0 and IntLumi > 0:
         if runOverSkim and float(datasetInfo.originalNumberOfEvents)*float(TotalNumber):
             Weight = IntLumi*crossSection*nTupleEff*float(datasetInfo.skimNumberOfEvents)/(float(datasetInfo.originalNumberOfEvents)*float(TotalNumber))
-            # The factor TotalNumber / skimNumberOfEvents corresponds to the fraction of skim events that were actually processed,
-            # i.e., it accounts for the fact that perhaps not all of the jobs finished successfully.
+            # TotalNumber: number of events actually processed
+            # skimNumberOfEvents / originalNumberOfEvents: efficiency for events to have made it into the skim that we are running over
+            # nTupleEff: efficiency for events to have made it into the ntuples that we originally made skims from
         elif float(TotalNumber):
             Weight = IntLumi*crossSection*nTupleEff/float(TotalNumber)
     InputWeightString = MakeWeightsString(Weight, GoodRootFiles)
