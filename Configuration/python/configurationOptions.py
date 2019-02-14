@@ -34,6 +34,7 @@ datasets = [
    'Tau_2018A',
    'Tau_2018B',
    'Tau_2018C',
+   'Tau_2018D',
    'ZeroBias_2015',
    'ZeroBias_2015D',
    'ZeroBias_2016',
@@ -107,6 +108,11 @@ datasets = [
    'DoubleEG_2017E',
    'DoubleEG_2017F',
    'DoubleEG_2017',
+   'EGamma_2018',
+   'EGamma_2018A',
+   'EGamma_2018B',
+   'EGamma_2018C',
+   'EGamma_2018D',
    'DoubleMu_2015',
    'DoubleMu_2015D',
    'DoubleMu_2016B',
@@ -124,6 +130,11 @@ datasets = [
    'DoubleMu_2017E',
    'DoubleMu_2017F',
    'DoubleMu_2017',
+   'DoubleMu_2018',
+   'DoubleMu_2018A',
+   'DoubleMu_2018B',
+   'DoubleMu_2018C',
+   'DoubleMu_2018D',
    'MuonEG_2015D',
    'MuonEG_2015',
    'MuonEG_2016B',
@@ -141,6 +152,11 @@ datasets = [
    'MuonEG_2017E',
    'MuonEG_2017F',
    'MuonEG_2017',
+   'MuonEG_2018',
+   'MuonEG_2018A',
+   'MuonEG_2018B',
+   'MuonEG_2018C',
+   'MuonEG_2018D',
    'MET_2015',
    'MET_2015D',
    'MET_2016',
@@ -161,6 +177,7 @@ datasets = [
    'MET_2018A',
    'MET_2018B',
    'MET_2018C',
+   'MET_2018D',
    'NoBPTX_2015D',
    'NoBPTX_2015D_v3',
    'NoBPTX_2015D_v4',
@@ -567,6 +584,7 @@ composite_dataset_definitions = {
       'Tau_2018A',
       'Tau_2018B',
       'Tau_2018C',
+      'Tau_2018D',
     ],
     'ZeroBias_2015' : [
         'ZeroBias_2015B',
@@ -673,6 +691,12 @@ composite_dataset_definitions = {
         'DoubleEG_2017E',
         'DoubleEG_2017F',
     ],
+    'EGamma_2018' : [
+        'EGamma_2018A',
+        'EGamma_2018B',
+        'EGamma_2018C',
+        'EGamma_2018D',
+    ],
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
         'DoubleMu_2015C',
@@ -704,6 +728,12 @@ composite_dataset_definitions = {
         'DoubleMu_2017E',
         'DoubleMu_2017F',
     ],
+    'DoubleMu_2018' : [
+        'DoubleMu_2018A',
+        'DoubleMu_2018B',
+        'DoubleMu_2018C',
+        'DoubleMu_2018D',
+        ],
     'MuonEG_2015' : [
         'MuonEG_2015B',
         'MuonEG_2015C',
@@ -735,6 +765,12 @@ composite_dataset_definitions = {
         'MuonEG_2017E',
         'MuonEG_2017F',
     ],
+    'MuonEG_2018' : [
+        'MuonEG_2018A',
+        'MuonEG_2018B',
+        'MuonEG_2018C',
+        'MuonEG_2018D',
+        ],
     #2015
     'mchamp100_NtupleSeparateEvents': [
         'mchamp100_NtupleSeparateEventsParticle0',
@@ -1100,6 +1136,7 @@ composite_dataset_definitions = {
       'MET_2018A',
       'MET_2018B',
       'MET_2018C',
+      'MET_2018D',
     ],
     'NoBPTX_Jet_2016BCD_PromptReco' : [
        'NoBPTX_Jet_2016B_PromptReco_v2',
@@ -1293,9 +1330,10 @@ nJobs = {
     'MET_2017D' : 999,
     'MET_2017E' : 999,
     'MET_2017F' : 999,
-    'MET_2018A' : 999,
-    'MET_2018B' : 999,
-    'MET_2018C' : 999,
+    'MET_2018A' : 530,
+    'MET_2018B' : 295,
+    'MET_2018C' : 315,
+    'MET_2018D' : 1625,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_1cm_76X'     :  99,
@@ -1535,6 +1573,7 @@ nJobs = {
     'Tau_2018A'  :  1000,
     'Tau_2018B'  :  1000,
     'Tau_2018C'  :  1000,
+    'Tau_2018D'  :  1000,
 
     'ZeroBias_2015D'  :  1000,
     'ZeroBias_2016B'  :  1000,
@@ -1603,6 +1642,11 @@ nJobs = {
     'DoubleEG_2017E'  : 562,
     'DoubleEG_2017F'  : 743,
 
+    'EGamma_2018A' : 3280,
+    'EGamma_2018B' : 1540,
+    'EGamma_2018C' : 1480,
+    'EGamma_2018D' : 7390,
+
     # set number of jobs to correpond to roughly 100k events/job
     'DoubleMu_2015B'  : 40,
     'DoubleMu_2015C'  : 187,
@@ -1619,6 +1663,10 @@ nJobs = {
     'DoubleMu_2017D'  : 231,
     'DoubleMu_2017E'  : 516,
     'DoubleMu_2017F'  : 798,
+    'DoubleMu_2018A' : 755,
+    'DoubleMu_2018B' : 355,
+    'DoubleMu_2018C' : 345,
+    'DoubleMu_2018D' : 1695,
 
     # set number of jobs to correpond to roughly 100k events/job
     'MuonEG_2015B' : 30,
@@ -1635,7 +1683,10 @@ nJobs = {
     'MuonEG_2017D' : 92,
     'MuonEG_2017E' : 190,
     'MuonEG_2017F' : 258,
-
+    'MuonEG_2018A' : 330,
+    'MuonEG_2018B' : 165,
+    'MuonEG_2018C' : 160,
+    'MuonEG_2018D' : 720,
     ############################################################################
 
     ###########################################################################
@@ -2691,6 +2742,7 @@ maxEvents = {
     'MET_2018A' : -1,
     'MET_2018B' : -1,
     'MET_2018C' : -1,
+    'MET_2018D' : -1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_1cm_76X'     :  -1,
@@ -2931,6 +2983,7 @@ maxEvents = {
     'Tau_2018A'       : -1,
     'Tau_2018B'       : -1,
     'Tau_2018C'       : -1,
+    'Tau_2018D'       : -1,
 
     'ZeroBias_2015D'       : -1,
     'ZeroBias_2016B'       : -1,
@@ -3007,6 +3060,12 @@ maxEvents = {
     'DoubleEG_2017F'        : -1,
     'DoubleEG_2017'         : -1,
 
+    'EGamma_2018'           : -1,
+    'EGamma_2018A'          : -1,
+    'EGamma_2018B'          : -1,
+    'EGamma_2018C'          : -1,
+    'EGamma_2018D'          : -1,
+
     'DoubleMu_2015B'        : -1,
     'DoubleMu_2015C'        : -1,
     'DoubleMu_2015D'        : -1,
@@ -3026,6 +3085,11 @@ maxEvents = {
     'DoubleMu_2017F'        : -1,
     'DoubleMu_2017'        : -1,
     'DoubleMu_2017_withoutB': -1,
+    'DoubleMu_2018'        : -1,
+    'DoubleMu_2018A'       : -1,
+    'DoubleMu_2018B'       : -1,
+    'DoubleMu_2018C'       : -1,
+    'DoubleMu_2018D'       : -1,
 
     'MuonEG_2015B'        : -1,
     'MuonEG_2015C'        : -1,
@@ -3044,6 +3108,11 @@ maxEvents = {
     'MuonEG_2017E'        : -1,
     'MuonEG_2017F'        : -1,
     'MuonEG_2017_withoutB': -1,
+    'MuonEG_2018'         : -1,
+    'MuonEG_2018A'        : -1,
+    'MuonEG_2018B'        : -1,
+    'MuonEG_2018C'        : -1,
+    'MuonEG_2018D'        : -1,
 
     ############################################################################
     ###########################################################################
@@ -4098,6 +4167,7 @@ types = {
     'MET_2018A'        : "data",
     'MET_2018B'        : "data",
     'MET_2018C'        : "data",
+    'MET_2018D'        : "data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_1cm_76X'     :  "signalMC",
@@ -4350,6 +4420,7 @@ types = {
     'Tau_2018A'    : "data",
     'Tau_2018B'    : "data",
     'Tau_2018C'    : "data",
+    'Tau_2018D'    : "data",
     'Tau_2015'     : "data",
     'Tau_2016'     : "data",
     'Tau_2017'     : "data",
@@ -4437,6 +4508,12 @@ types = {
     'DoubleEG_2017F'        : "data",
     'DoubleEG_2017'         : "data",
 
+    'EGamma_2018'           : "data",
+    'EGamma_2018A'          : "data",
+    'EGamma_2018B'          : "data",
+    'EGamma_2018C'          : "data",
+    'EGamma_2018D'          : "data",
+
     'DoubleMu_2015B'        : "data",
     'DoubleMu_2015C'        : "data",
     'DoubleMu_2015D'        : "data",
@@ -4457,6 +4534,11 @@ types = {
     'DoubleMu_2017F'        : "data",
     'DoubleMu_2017'         : "data",
     'DoubleMu_2017_withoutB': "data",
+    'DoubleMu_2018'         : "data",
+    'DoubleMu_2018A'        : "data",
+    'DoubleMu_2018B'        : "data",
+    'DoubleMu_2018C'        : "data",
+    'DoubleMu_2018D'        : "data",
 
     'MuonEG_2015B'        : "data",
     'MuonEG_2015C'        : "data",
@@ -4478,6 +4560,11 @@ types = {
     'MuonEG_2017F'        : "data",
     'MuonEG_2017'         : "data",
     'MuonEG_2017_withoutB': "data",
+    'MuonEG_2018'         : "data",
+    'MuonEG_2018A'        : "data",
+    'MuonEG_2018B'        : "data",
+    'MuonEG_2018C'        : "data",
+    'MuonEG_2018D'        : "data",
 
     ###########################################################################
     #RECO stored on T3
@@ -5547,6 +5634,7 @@ colors = {
     'MET_2018A'        : 1,
     'MET_2018B'        : 1,
     'MET_2018C'        : 1,
+    'MET_2018D'        : 1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_1cm_76X'     :  797,
@@ -5799,6 +5887,7 @@ colors = {
     'Tau_2018A'  :  1,
     'Tau_2018B'  :  1,
     'Tau_2018C'  :  1,
+    'Tau_2018D'  :  1,
     'Tau_2015'   :  1,
     'Tau_2016'   :  1,
     'Tau_2017'   :  1,
@@ -5883,6 +5972,12 @@ colors = {
     'DoubleEG_2017F'        : 1,
     'DoubleEG_2017'         : 1,
 
+    'EGamma_2018'           : 1,
+    'EGamma_2018A'          : 1,
+    'EGamma_2018B'          : 1,
+    'EGamma_2018C'          : 1,
+    'EGamma_2018D'          : 1,
+
     'DoubleMu_2015B'        : 1,
     'DoubleMu_2015C'        : 1,
     'DoubleMu_2015D'        : 1,
@@ -5903,6 +5998,11 @@ colors = {
     'DoubleMu_2017F'        : 1,
     'DoubleMu_2017'         : 1,
     'DoubleMu_2017_withoutB': 1,
+    'DoubleMu_2018'         : 1,
+    'DoubleMu_2018A'        : 1,
+    'DoubleMu_2018B'        : 1,
+    'DoubleMu_2018C'        : 1,
+    'DoubleMu_2018D'        : 1,
 
     'MuonEG_2015B'        : 1,
     'MuonEG_2015C'        : 1,
@@ -5924,6 +6024,11 @@ colors = {
     'MuonEG_2017D'        : 1,
     'MuonEG_2017E'        : 1,
     'MuonEG_2017F'        : 1,
+    'MuonEG_2018'         : 1,
+    'MuonEG_2018A'        : 1,
+    'MuonEG_2018B'        : 1,
+    'MuonEG_2018C'        : 1,
+    'MuonEG_2018D'        : 1,
 
     ###########################################################################
     #RECO stored on T3
@@ -7007,6 +7112,7 @@ labels = {
     'MET_2018A'        : "MET_2018A data",
     'MET_2018B'        : "MET_2018B data",
     'MET_2018C'        : "MET_2018C data",
+    'MET_2018D'        : "MET_2018D data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_1cm_76X'     :  "100 GeV #tilde{#chi}^{#pm} (c#tau = 1 cm)",
@@ -7257,6 +7363,7 @@ labels = {
     'Tau_2018A'  :  "Tau 2018A data",
     'Tau_2018B'  :  "Tau 2018B data",
     'Tau_2018C'  :  "Tau 2018C data",
+    'Tau_2018D'  :  "Tau 2018D data",
     'Tau_2015'   :  "Tau 2015 data",
     'Tau_2016'   :  "Tau 2016 data",
     'Tau_2017'   :  "Tau 2017 data",
@@ -7347,6 +7454,12 @@ labels = {
     'DoubleEG_2017F'        : "DoubleEG 2017F data",
     'DoubleEG_2017'         : "Double Electron 2017 data",
 
+    'EGamma_2018'         : "EGamma 2018 data",
+    'EGamma_2018A'        : "EGamma 2018A data",
+    'EGamma_2018B'        : "EGamma 2018B data",
+    'EGamma_2018C'        : "EGamma 2018C data",
+    'EGamma_2018D'        : "EGamma 2018D data",
+
     'DoubleMu_2015'         : "Double Muon 2015 data",
     'DoubleMu_2015B'        : "DoubleMu 2015B data",
     'DoubleMu_2015C'        : "DoubleMu 2015C data",
@@ -7367,6 +7480,11 @@ labels = {
     'DoubleMu_2017F'        : "DoubleMu 2017F data",
     'DoubleMu_2017'         : "Double Muon 2017 data",
     'DoubleMu_2017_withoutB': "Double Muon 2017 C-F data",
+    'DoubleMu_2018'         : "Double Muon 2018 data",
+    'DoubleMu_2018A'        : "Double Muon 2018A data",
+    'DoubleMu_2018B'        : "Double Muon 2018B data",
+    'DoubleMu_2018C'        : "Double Muon 2018C data",
+    'DoubleMu_2018D'        : "Double Muon 2018D data",
 
     'MuonEG_2015'         : "MuonEG 2015 data",
     'MuonEG_2015B'        : "MuonEG 2015B data",
@@ -7388,6 +7506,11 @@ labels = {
     'MuonEG_2017F'        : "MuonEG 2017F data",
     'MuonEG_2017'         : "Electron Muon 2017 data",
     'MuonEG_2017_withoutB': "Electron Muon 2017 C-F data",
+    'MuonEG_2018'         : "Electron Muon 2018 data",
+    'MuonEG_2018A'         : "Electron Muon 2018A data",
+    'MuonEG_2018B'         : "Electron Muon 2018B data",
+    'MuonEG_2018C'         : "Electron Muon 2018C data",
+    'MuonEG_2018D'         : "Electron Muon 2018D data",
 
     ###########################################################################
     #RECO stored on T3
