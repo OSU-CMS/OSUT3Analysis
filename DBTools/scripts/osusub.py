@@ -57,7 +57,7 @@ parser.add_option("-R", "--Requirements", dest="Requirements", default = "", hel
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")
 parser.add_option("-P", "--UseGridProxy", dest="UseGridProxy", action="store_true", default = False, help="Use X509 grid proxy.")
-parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc. Appending 16(17) to this type gives Collisions16(17) JSONs (e.g. R_Silver16, P_MuonPhys17, etc).")
+parser.add_option("-J", "--JSONType", dest="JSONType", default = "", help="Determine which kind of JSON file to use. R_MuonPhysics, R_CaloOnly, R_Silver,R_Golden or P_* etc. Appending 16 or 17 or 18 to this type gives Collisions16(17, 18) JSONs (e.g. R_Silver16, P_MuonPhys17, P_Golden18, etc).")
 parser.add_option("-g", "--Generic", dest="Generic", action="store_true", default = False, help="Use generic python config. Choose this option for non-OSUT3Analysis CMSSW jobs.")
 parser.add_option("-W", "--AllowDataWeights", dest="AllowDataWeights", action="store_true", default = False, help="Use event weights, even for a data dataset.")
 parser.add_option("-H", "--skimToHadoop", dest="skimToHadoop", default = "", help="If producing a skim, put in on Hadoop, in the given directory.")
@@ -167,16 +167,21 @@ def getLatestJsonFile():
         if re.search('17$', arguments.JSONType):
             collisionType = 'Collisions17'
             jsonMatchingPhrase = 'Collisions17_JSON'
+        if re.search('18$', arguments.JSONType):
+            collisionType = 'Collisions18'
+            jsonMatchingPhrase = 'Collisions18_JSON'
 
         rerecoDir = 'Reprocessing'
         if re.search('16$', arguments.JSONType):
             rerecoDir = 'ReReco/Final'
         if re.search('17$', arguments.JSONType):
             rerecoDir = 'ReReco'
+        if re.search('18$', arguments.JSONType):
+            rerecoDir = 'ReReco'
 
         if arguments.JSONType[:2] == 'P_':
             tmpDir = tempfile.mkdtemp ()
-            if re.search('17$', arguments.JSONType):
+            if re.search('17$', arguments.JSONType) or re.search('18$', arguments.JSONType):
                 subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/PromptReco/ -O ' + tmpDir + '/jsonList.txt', shell = True)
             else:
                 subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/ -O ' + tmpDir + '/jsonList.txt', shell = True)
@@ -203,7 +208,7 @@ def getLatestJsonFile():
                         if re.search('JSON_?(v[0-9]+)?\.txt', fileName):
                             jsonFileFiltered.append(fileName)
                     else:
-                        if arguments.JSONType[-2:] == '16' or arguments.JSONType[-2:] == '17':
+                        if arguments.JSONType[-2:] == '16' or arguments.JSONType[-2:] == '17' or arguments.JSONType[-2:] == '18':
                             if re.search('JSON_' + arguments.JSONType[2:-2] + '(_v[0-9]+)?\.txt', fileName):
                                 jsonFileFiltered.append(fileName)
                         else:
@@ -247,7 +252,7 @@ def getLatestJsonFile():
                             versionNumber = currentVersionNumber
                             ultimateJson = bestJson
 
-            if re.search('17$', arguments.JSONType):
+            if re.search('17$', arguments.JSONType) or re.search('18$', arguments.JSONType):
                 subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/PromptReco/' + ultimateJson + ' -O ' + tmpDir + '/' + ultimateJson, shell = True)
             else:
                 subprocess.call('wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson, shell = True)
@@ -283,7 +288,7 @@ def getLatestJsonFile():
                         if re.search('JSON_?(v[0-9]+)?\.txt', fileName):
                             jsonFileFiltered.append(fileName)
                     else:
-                        if arguments.JSONType[-2:] == '16' or arguments.JSONType[-2:] == '17':
+                        if arguments.JSONType[-2:] == '16' or arguments.JSONType[-2:] == '17' or arguments.JSONType[-2:] == '18':
                             if re.search('JSON_' + arguments.JSONType[2:-2] + '(_v[0-9]+)?\.txt', fileName):
                                 jsonFileFiltered.append(fileName)
                         else:
@@ -1021,7 +1026,7 @@ def SkimModifier(Label, Directory, crossSection, isRemote = False):
         SkimDirectory = str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
         OriginalNumberOfEvents = os.popen('cat ' + Directory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (Directory + '/OriginalNumberOfEvents.txt') else 0.0
         SkimNumberOfEvents     = os.popen('cat ' + Directory + '/SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile (Directory + '/SkimNumberOfEvents.txt') else 0.0
-    else: 
+    else:
         SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/' + str(arguments.SkimChannel)
         OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/OriginalNumberOfEvents.txt') else 0.0
         SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/SkimNumberOfEvents.txt') else 0.0
