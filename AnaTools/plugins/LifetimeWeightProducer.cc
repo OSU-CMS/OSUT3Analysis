@@ -6,9 +6,9 @@
 
 LifetimeWeightProducer::LifetimeWeightProducer (const edm::ParameterSet &cfg) :
   EventVariableProducer(cfg),
-  srcCTau_ (cfg.getParameter<vector<double> > ("srcCTau")),
-  dstCTau_ (cfg.getParameter<vector<double> > ("dstCTau")),
-  pdgIds_ (cfg.getParameter<vector<int> > ("pdgIds"))
+  srcCTau_         (cfg.getParameter<vector<double> > ("srcCTau")),
+  dstCTau_         (cfg.getParameter<vector<double> > ("dstCTau")),
+  pdgIds_          (cfg.getParameter<vector<int> >    ("pdgIds"))
 {
   mcparticlesToken_ = consumes<vector<TYPE(hardInteractionMcparticles)> > (collections_.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
 }
@@ -34,8 +34,11 @@ LifetimeWeightProducer::AddVariables (const edm::Event &event) {
       for (const auto &pdgId : pdgIds_)
         {
           double cTau;
-          if (abs (mcparticle.pdgId ()) == abs (pdgId) && isOriginalParticle (mcparticle, mcparticle.pdgId ()) && (cTau = getCTau (mcparticle)) > 0.0)
+          if (abs (mcparticle.pdgId ()) == abs (pdgId) && 
+              isOriginalParticle (mcparticle, mcparticle.pdgId ()) && 
+              (cTau = getCTau (mcparticle)) > 0.0)
             cTaus.at (iPdgId).push_back (cTau);
+
           iPdgId++;
         }
     }
@@ -74,9 +77,9 @@ bool
 LifetimeWeightProducer::isOriginalParticle (const TYPE(hardInteractionMcparticles) &mcparticle, const int pdgId) const
 {
 #ifndef STOPPPED_PTLS
-  if (!mcparticle.numberOfMothers () || mcparticle.motherRef ().isNull ())
+  if(!mcparticle.numberOfMothers () || mcparticle.motherRef ().isNull ()) 
     return true;
-  return (mcparticle.motherRef ()->pdgId () != pdgId) && isOriginalParticle ((TYPE(hardInteractionMcparticles)) *mcparticle.motherRef (), pdgId);
+  return (mcparticle.motherRef ()->pdgId () != pdgId);
 #else
   return false;
 #endif
@@ -96,6 +99,8 @@ LifetimeWeightProducer::getCTau (const TYPE(hardInteractionMcparticles) &mcparti
 #endif
 }
 
+// getFinalPosition: continue along the decay chain until you reach a particle with a different pdgId
+//                   then take that particle's vertex
 void
 LifetimeWeightProducer::getFinalPosition (const reco::Candidate &mcparticle, const int pdgId, bool firstDaughter, math::XYZPoint &v1) const
 {

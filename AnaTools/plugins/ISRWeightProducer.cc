@@ -4,11 +4,12 @@
 
 ISRWeightProducer::ISRWeightProducer (const edm::ParameterSet &cfg) :
   EventVariableProducer(cfg),
-  pdgIds_            (cfg.getParameter<vector<int> > ("pdgIds")),
-  motherIdsToReject_ (cfg.getParameter<vector<int> > ("motherIdsToReject")),
-  weightFile_        (cfg.getParameter<string> ("weightFile")),
-  weightHist_        (cfg.getParameter<vector<string> > ("weightHist")),
-  weights_           ({})
+  pdgIds_                  (cfg.getParameter<vector<int> >    ("pdgIds")),
+  motherIdsToReject_       (cfg.getParameter<vector<int> >    ("motherIdsToReject")),
+  requireLastNotFirstCopy_ (cfg.getParameter<bool>            ("requireLastNotFirstCopy")),
+  weightFile_              (cfg.getParameter<string>          ("weightFile")),
+  weightHist_              (cfg.getParameter<vector<string> > ("weightHist")),
+  weights_                 ({})
 {
   mcparticlesToken_ = consumes<vector<TYPE(hardInteractionMcparticles)> > (collections_.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
 }
@@ -68,6 +69,16 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
   double py = 0.0;
 
   for(const auto &mcparticle : *mcparticles) {
+
+    // Pythia8 first creates particles in the frame of the interaction, and only boosts them 
+    // for ISR recoil in later steps. So only the last copy is desired. A particle that's both 
+    // a last and first copy means it is a decay product created after the boost is applied,
+    // e.g. a neutralino from a chargino decay, and we've already added the mother chargino.
+    if(requireLastNotFirstCopy_) {
+      if(!mcparticle.isLastCopy()) continue;
+      if(mcparticle.statusFlags().isFirstCopy()) continue;
+    }
+
     for(const auto &pdgId : pdgIds_) {
       if(mcparticle.numberOfMothers() && 
          !mcparticle.motherRef().isNull() && 
@@ -75,11 +86,13 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
         continue;
       }
 
-      if(abs(mcparticle.pdgId()) == abs(pdgId) && isOriginalParticle(mcparticle, mcparticle.pdgId())) {
+      if(abs(mcparticle.pdgId()) == abs(pdgId) && 
+         (requireLastNotFirstCopy_ || isOriginalParticle(mcparticle, mcparticle.pdgId()))) {
         px += mcparticle.px();
         py += mcparticle.py();
       }
     }
+
   }
 
   double pt = sqrt(px*px + py*py);
@@ -107,6 +120,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
 #endif
 }
 
+// isOriginalParticle: particle is "original" if its mother has a different pdgId
 bool
 ISRWeightProducer::isOriginalParticle (const TYPE(hardInteractionMcparticles) &mcparticle, const int pdgId) const
 {

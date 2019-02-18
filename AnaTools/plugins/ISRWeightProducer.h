@@ -21,6 +21,8 @@ private:
 
   vector<int> pdgIds_;
   vector<int> motherIdsToReject_;
+  bool requireLastNotFirstCopy_;
+
   string weightFile_;
   vector<string> weightHist_;
 
