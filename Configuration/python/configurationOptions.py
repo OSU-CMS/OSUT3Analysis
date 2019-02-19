@@ -9368,41 +9368,55 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
 
 InputCondorArguments = {}
 
-pdgIdsForLifetimeReweighting = {
-    # Defines the PDG IDs of the particles to be used for lifetime reweighting.
-    # The keys are dataset labels and the values are either single PDG IDs or
-    # lists of PDG IDs, e.g.:
-    # 'stop1200_50mm'               : 1000006,
-    # 'stopAndGluino1200_50mm_30mm' : [1000006, 1000021],
-}
+class lifetimeReweightingRule:
+  pdgIds   = []
+  srcCTaus = []
+  dstCTaus = []
 
-srcCTauForLifetimeReweighting = {
-    # Defines the proper lifetimes (in units of cm/c) of the particles defined
-    # by pdgIdsForLifetimeReweighting in the original samples before lifetime
-    # reweighting. The keys are dataset labels and the values are either single
-    # lifetime values or lists of lifetimes, e.g.:
-    # 'stop1200_50mm'               : 10.0,
-    # 'stopAndGluino1200_50mm_30mm' : [10.0, 10.0],
-}
+  def __init__(self, ids = [], srcs = [], dsts = []):
+    if len(ids) != len(srcs) or len(ids) != len(dsts):
+      print 'ids, srcs, and dsts must be of the same length when creating a lifetimeReweightingRule!'
+      return
+    self.pdgIds = ids
+    self.srcCTaus = srcs
+    self.dstCTaus = dsts
 
-dstCTauForLifetimeReweighting = {
-    # Defines the target proper lifetimes (in units of cm/c) of the particles
-    # defined by pdgIdsForLifetimeReweighting to which the sample should be
-    # reweighted.  The keys are dataset labels and the values are either single
-    # lifetime values or lists of lifetimes, e.g.:
-    # 'stop1200_50mm'               : 10.0,
-    # 'stopAndGluino1200_50mm_30mm' : [5.0, 3.0],
-}
+# Defines the rules to apply for the lifetime reweighting. For each rule assigned
+# to a dataset, LifetimeWeightProducer will produce a unique weight to be applied
+# by the analyzer. An example rule for dataset XYZ:
+#
+# 'XYZ' : [lifetimeReweightingRule([1000005, 1000006], [100, 20], [90, 15]),
+#          lifetimeReweightingRule([1000024], [100], [20])]
+#
+# From two rules, two eventvariable weights would be created:
+#     lifetimeWeight_1000005_100cmTo90cm_1000006_20cmTo15cm,
+#     lifetimeWeight_1000024_100cmTo20cm
+# and you can choose which to apply as an event weight when addChannel is called.
+# This way one dataset, with many rules, can simultaneously give you many datasets.
+rulesForLifetimeReweighting = {}
 
-pdgIdsForISRReweighting = {
-    # Defines the PDG IDs of the particles to be used for ISR reweighting.
-    # This will calculate the vector PT of all hard interaction particles with
-    # these IDs, and use it a proxy for the ISR recoil
-    # They keys are dataset labels and the values are either single PDG IDs or
-    # lists of PDG IDs, e.g:
-    # 'stop1200_50mm' : 1000006,
-    # 'stopAndGluino1200_50mm_30mm' : [1000006, 1000021],
-}
+for amsbMass in range(100, 1000, 100):
+  for amsbCTau in [1, 10, 100, 1000, 10000]:
+    destinationCTaus = [amsbCTau * 0.1 * i for i in range(2, 10)]
+    newRules = [lifetimeReweightingRule([1000024], [amsbCTau], [d]) for d in destinationCTaus]
+    rulesForLifetimeReweighting.update({'AMSB_chargino_%sGeV_%scm_76X' % (amsbMass, amsbCTau) : newRules})
+    rulesForLifetimeReweighting.update({'AMSB_chargino_%sGeV_%scm_80X' % (amsbMass, amsbCTau) : newRules})
+    rulesForLifetimeReweighting.update({'AMSB_chargino_%sGeV_%scm_94X' % (amsbMass, amsbCTau) : newRules})
+
+# Defines the PDG IDs of the particles to be used for ISR reweighting.
+# This will calculate the vector PT of all hard interaction particles with
+# these IDs, and use it a proxy for the ISR recoil
+# They keys are dataset labels and the values are either single PDG IDs or
+# lists of PDG IDs, e.g:
+# 'stop1200_50mm' : 1000006,
+# 'stopAndGluino1200_50mm_30mm' : [1000006, 1000021],
+pdgIdsForISRReweighting = {}
+
+for amsbMass in range(100, 1000, 100):
+  for amsbCTau in [1, 10, 100, 1000, 10000]:
+    pdgIdsForISRReweighting['AMSB_chargino_%sGeV_%scm_76X' % (amsbMass, amsbCTau)] = [1000022, 1000024]
+    pdgIdsForISRReweighting['AMSB_chargino_%sGeV_%scm_80X' % (amsbMass, amsbCTau)] = [1000022, 1000024]
+    pdgIdsForISRReweighting['AMSB_chargino_%sGeV_%scm_94X' % (amsbMass, amsbCTau)] = [1000022, 1000024]
 
 ##########################################################################
 ### code to set relevant parameters for displaced SUSY signal samples, ###
@@ -9422,14 +9436,12 @@ def lifetime(sample):
     lt = sample[start:end]
     return lt.replace("p",".")
 
-##########################################################################
-
 # generate list of masses
-masses = [str(i*100) for i in range(2,19)]
+masses = [str(i*100) for i in range(2, 19)]
 # generate list of lifetimes
-lifetimes = ["%g" % (0.1*i*(pow(10,j))) for j in range(4) for i in range(1,10)]
+lifetimes = ["%g" % (0.1*i*(pow(10, j))) for j in range(4) for i in range(1, 10)]
 lifetimes.append("1000")
-lifetimes = [lt.replace(".","p") for lt in lifetimes]
+lifetimes = [lt.replace(".", "p") for lt in lifetimes]
 
 # generate list of sample names from masses, lifetimes
 signal_datasets = ["stop%s_%smm" % (m,ctau) for m in masses for ctau in lifetimes]
@@ -9457,8 +9469,6 @@ signal_crossSections = {
     '1800' : 0.0000467492,
 }
 
-##########################################################################
-
 for index, sample in enumerate(signal_datasets):
     nJobs[sample] = 99
     maxEvents[sample] = -1
@@ -9466,49 +9476,10 @@ for index, sample in enumerate(signal_datasets):
     labels[sample] = "#tilde{t}#tilde{t}#rightarrow lb lb, M=%s GeV, c#tau=%s mm" % (mass(sample), lifetime(sample))
     colors[sample] = 20 + index
     crossSections[sample] = signal_crossSections[mass(sample)]
-    pdgIdsForLifetimeReweighting[sample] = 1000006
-    dstCTauForLifetimeReweighting[sample] = 0.1*float(lifetime(sample))
-    srcCTauForLifetimeReweighting[sample] = 0.1*10**(math.ceil(math.log10(float(lifetime(sample)))))
+
+    sourceCTau = 0.1 * float(lifetime(sample))
     # special case
-    if lifetime(sample) == "0.1":
-        srcCTauForLifetimeReweighting[sample] = 0.1*1.0
+    if lifetime(sample) == "0.1": sourceCTau = 0.1 * 1.0
+    destinationCTau = 0.1 * 10**(math.ceil(math.log10(float(lifetime(sample)))))
 
-################################################################################
-### code to set relevant parameters for disappearing tracks signal samples,  ###
-### which are a scan in the plane of chargino mass and lifetime              ###
-################################################################################
-
-import re
-
-new_nJobs = {}
-for dataset0 in nJobs:
-    if not re.match (r'AMSB_chargino_[^_]*GeV_[^_]*cm_.*', dataset0):
-        continue
-    mass = re.sub (r'AMSB_chargino_([^_]*)GeV_[^_]*cm_.*', r'\1', dataset0)
-    ctau0 = float (re.sub (r'AMSB_chargino_[^_]*GeV_([^_]*)cm_.*', r'\1', dataset0))
-    suffix = re.sub (r'AMSB_chargino_[^_]*GeV_[^_]*cm_(.*)', r'\1', dataset0)
-    for i in range (2, 10):
-        ctau = ctauP = 0.1 * i * ctau0
-        if int (ctau) * 10 == int (ctau * 10):
-            ctau = ctauP = str (int (ctau))
-        else:
-            ctau = ctauP = str (ctau)
-            ctauP = re.sub (r'\.', r'p', ctau)
-        dataset = 'AMSB_chargino_' + mass + 'GeV_' + ctauP + 'cm_' + suffix
-
-        new_nJobs[dataset] = nJobs[dataset0]
-        maxEvents[dataset] = maxEvents[dataset0]
-        types[dataset] = types[dataset0]
-        colors[dataset] = colors[dataset0]
-        labels[dataset] = "AMSB #tilde{#chi}^{#pm} (" + mass + " GeV, " + ctau + " cm)"
-        pdgIdsForLifetimeReweighting[dataset] = 1000024
-        srcCTauForLifetimeReweighting[dataset] = ctau0
-        dstCTauForLifetimeReweighting[dataset] = float (ctau)
-        pdgIdsForISRReweighting[dataset] = [1000022, 1000024]
-
-    pdgIdsForLifetimeReweighting[dataset0] = 1000024
-    srcCTauForLifetimeReweighting[dataset0] = ctau0
-    dstCTauForLifetimeReweighting[dataset0] = ctau0
-    pdgIdsForISRReweighting[dataset0] = [1000022, 1000024]
-
-nJobs.update (new_nJobs)
+    rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [destinationCTau])]

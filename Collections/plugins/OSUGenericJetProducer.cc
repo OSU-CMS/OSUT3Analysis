@@ -310,6 +310,7 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
             }
           }
           else {
+            // if the SF < 1 the method doesn't work, so we just don't smear this jet
             jet.set_smearedPt(    jet.pt());
             jet.set_smearedPtUp(  jet.pt());
             jet.set_smearedPtDown(jet.pt());
@@ -330,9 +331,10 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
       } // if(hasGenjets)
       else {
-        jet.set_smearedPt(INVALID_VALUE);
-        jet.set_smearedPtUp(INVALID_VALUE);
-        jet.set_smearedPtDown(INVALID_VALUE);
+        // if genJets don't exist the method doesn't work, so we just don't smear this jet
+        jet.set_smearedPt(    jet.pt());
+        jet.set_smearedPtUp(  jet.pt());
+        jet.set_smearedPtDown(jet.pt());
       }
 
       double maxDeltaR_ = 0.4;
