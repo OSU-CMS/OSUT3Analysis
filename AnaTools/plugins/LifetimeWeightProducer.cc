@@ -24,11 +24,17 @@ LifetimeWeightProducer::LifetimeWeightProducer(const edm::ParameterSet &cfg) :
     isDefaultRule_.push_back(reweightingRules_[iRule].getParameter<bool>            ("isDefaultRule"));
     assert(srcCTau_.back().size() == dstCTau_.back().size() && 
            pdgIds_.back().size() == dstCTau_.back().size());
-    
+
     suffix.str("");
     for(unsigned int iPdgId = 0; iPdgId < pdgIds_.back().size(); iPdgId++) {
       suffix << "_" << pdgIds_.back()[iPdgId] << "_" 
-             << srcCTau_.back()[iPdgId] << "cmTo" << dstCTau_.back()[iPdgId] << "cm";
+             << srcCTau_.back()[iPdgId] << "cmTo";
+      if(dstCTau_.back()[iPdgId] < 1.0) {
+        suffix << "0p" << dstCTau_.back()[iPdgId] * 10 << "cm";
+      }
+      else {
+        suffix<< dstCTau_.back()[iPdgId] << "cm";
+      }
     }
     
     weights_.push_back(1.0);
