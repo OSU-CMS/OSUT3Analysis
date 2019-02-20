@@ -19,6 +19,7 @@ class LifetimeWeightProducer : public EventVariableProducer {
         vector<vector<double> > srcCTau_;
         vector<vector<double> > dstCTau_;
         vector<vector<int> >    pdgIds_;
+        vector<double>          isDefaultRule_;
 
         vector<double> weights_;
         vector<string> weightNames_;

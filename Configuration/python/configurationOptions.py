@@ -9368,22 +9368,11 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
 
 InputCondorArguments = {}
 
-class lifetimeReweightingRule:
-  pdgIds   = []
-  srcCTaus = []
-  dstCTaus = []
+###################################################################################
 
-  def __init__(self, ids = [], srcs = [], dsts = []):
-    if len(ids) != len(srcs) or len(ids) != len(dsts):
-      print 'ids, srcs, and dsts must be of the same length when creating a lifetimeReweightingRule!'
-      return
-    self.pdgIds = ids
-    self.srcCTaus = srcs
-    self.dstCTaus = dsts
-
-# Defines the rules to apply for the lifetime reweighting. For each rule assigned
+# Define the rules to apply for the lifetime reweighting. For each rule assigned
 # to a dataset, LifetimeWeightProducer will produce a unique weight to be applied
-# by the analyzer. An example rule for dataset XYZ:
+# by the analyzer. An example rule for dataset XYZ registered here:
 #
 # 'XYZ' : [lifetimeReweightingRule([1000005, 1000006], [100, 20], [90, 15]),
 #          lifetimeReweightingRule([1000024], [100], [20])]
@@ -9393,15 +9382,29 @@ class lifetimeReweightingRule:
 #     lifetimeWeight_1000024_100cmTo20cm
 # and you can choose which to apply as an event weight when addChannel is called.
 # This way one dataset, with many rules, can simultaneously give you many datasets.
-rulesForLifetimeReweighting = {}
+#
+# There is also the list of booleans isDefaultRule, where if isDefaultRule[iRule]
+# is True, then rule iRule will also be stored in eventvariables as "lifetimeWeight"
+# with no suffix. This is to maintain backwards-compatibility for previous analyses.
+# If you mistakenly label multiple rules as the default, "lifetimeWeight" will be
+# overwritten.
 
-for amsbMass in range(100, 1000, 100):
-  for amsbCTau in [1, 10, 100, 1000, 10000]:
-    destinationCTaus = [amsbCTau * 0.1 * i for i in range(2, 10)]
-    newRules = [lifetimeReweightingRule([1000024], [amsbCTau], [d]) for d in destinationCTaus]
-    rulesForLifetimeReweighting.update({'AMSB_chargino_%sGeV_%scm_76X' % (amsbMass, amsbCTau) : newRules})
-    rulesForLifetimeReweighting.update({'AMSB_chargino_%sGeV_%scm_80X' % (amsbMass, amsbCTau) : newRules})
-    rulesForLifetimeReweighting.update({'AMSB_chargino_%sGeV_%scm_94X' % (amsbMass, amsbCTau) : newRules})
+class lifetimeReweightingRule:
+  pdgIds        = []
+  srcCTaus      = []
+  dstCTaus      = []
+  isDefaultRule = False
+
+  def __init__(self, ids = [], srcs = [], dsts = [], isDefault = False):
+    if len(ids) != len(srcs) or len(ids) != len(dsts):
+      print 'ids, srcs, and dsts must be of the same length when creating a lifetimeReweightingRule!'
+      return
+    self.pdgIds = ids
+    self.srcCTaus = srcs
+    self.dstCTaus = dsts
+    self.isDefaultRule = isDefault
+
+rulesForLifetimeReweighting = {}
 
 # Defines the PDG IDs of the particles to be used for ISR reweighting.
 # This will calculate the vector PT of all hard interaction particles with
@@ -9411,12 +9414,6 @@ for amsbMass in range(100, 1000, 100):
 # 'stop1200_50mm' : 1000006,
 # 'stopAndGluino1200_50mm_30mm' : [1000006, 1000021],
 pdgIdsForISRReweighting = {}
-
-for amsbMass in range(100, 1000, 100):
-  for amsbCTau in [1, 10, 100, 1000, 10000]:
-    pdgIdsForISRReweighting['AMSB_chargino_%sGeV_%scm_76X' % (amsbMass, amsbCTau)] = [1000022, 1000024]
-    pdgIdsForISRReweighting['AMSB_chargino_%sGeV_%scm_80X' % (amsbMass, amsbCTau)] = [1000022, 1000024]
-    pdgIdsForISRReweighting['AMSB_chargino_%sGeV_%scm_94X' % (amsbMass, amsbCTau)] = [1000022, 1000024]
 
 ##########################################################################
 ### code to set relevant parameters for displaced SUSY signal samples, ###
@@ -9482,4 +9479,42 @@ for index, sample in enumerate(signal_datasets):
     if lifetime(sample) == "0.1": sourceCTau = 0.1 * 1.0
     destinationCTau = 0.1 * 10**(math.ceil(math.log10(float(lifetime(sample)))))
 
-    rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [destinationCTau])]
+    rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [destinationCTau], True)]
+
+################################################################################
+### code to set relevant parameters for disappearing tracks signal samples,  ###
+### which are a scan in the plane of chargino mass and lifetime              ###
+################################################################################
+
+import re
+
+new_nJobs = {}
+for dataset0 in nJobs:
+  if not re.match (r'AMSB_chargino_[^_]*GeV_[^_]*cm_.*', dataset0):
+      continue
+  mass = re.sub (r'AMSB_chargino_([^_]*)GeV_[^_]*cm_.*', r'\1', dataset0)
+  ctau0 = float (re.sub (r'AMSB_chargino_[^_]*GeV_([^_]*)cm_.*', r'\1', dataset0))
+  suffix = re.sub (r'AMSB_chargino_[^_]*GeV_[^_]*cm_(.*)', r'\1', dataset0)
+  for i in range (2, 10):
+    ctau = ctauP = 0.1 * i * ctau0
+    if int (ctau) * 10 == int (ctau * 10):
+      ctau = ctauP = str (int (ctau))
+    else:
+      ctau = ctauP = str (ctau)
+      ctauP = re.sub (r'\.', r'p', ctau)
+    dataset = 'AMSB_chargino_' + mass + 'GeV_' + ctauP + 'cm_' + suffix
+
+    new_nJobs[dataset] = nJobs[dataset0]
+    maxEvents[dataset] = maxEvents[dataset0]
+    types[dataset] = types[dataset0]
+    colors[dataset] = colors[dataset0]
+    labels[dataset] = "AMSB #tilde{#chi}^{#pm} (" + mass + " GeV, " + ctau + " cm)"
+    rulesForLifetimeReweighting[dataset] = [lifetimeReweightingRule([1000024], [ctau0], [float(ctau)], True)]
+    pdgIdsForISRReweighting[dataset] = [1000022, 1000024]
+
+  destinationCTaus = [ctau0 * 0.1 * i for i in range(2, 11)]
+  rulesForLifetimeReweighting[dataset0] = [lifetimeReweightingRule([1000024], [ctau0], [d], (d == ctau0)) for d in destinationCTaus]
+
+  pdgIdsForISRReweighting[dataset0] = [1000022, 1000024]
+
+nJobs.update (new_nJobs)

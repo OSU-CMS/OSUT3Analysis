@@ -14,12 +14,14 @@ LifetimeWeightProducer::LifetimeWeightProducer(const edm::ParameterSet &cfg) :
   dstCTau_.clear();
   srcCTau_.clear();
   pdgIds_.clear();
+  isDefaultRule_.clear();
 
   stringstream suffix;
   for(unsigned int iRule = 0; iRule < reweightingRules_.size(); iRule++) {
-    dstCTau_.push_back(reweightingRules_.at(iRule).getParameter<vector<double> > ("dstCTaus"));
-    srcCTau_.push_back(reweightingRules_.at(iRule).getParameter<vector<double> > ("srcCTaus"));
-    pdgIds_.push_back (reweightingRules_.at(iRule).getParameter<vector<int> >    ("pdgIds"));
+    dstCTau_.push_back      (reweightingRules_[iRule].getParameter<vector<double> > ("dstCTaus"));
+    srcCTau_.push_back      (reweightingRules_[iRule].getParameter<vector<double> > ("srcCTaus"));
+    pdgIds_.push_back       (reweightingRules_[iRule].getParameter<vector<int> >    ("pdgIds"));
+    isDefaultRule_.push_back(reweightingRules_[iRule].getParameter<bool>            ("isDefaultRule"));
     assert(srcCTau_.back().size() == dstCTau_.back().size() && 
            pdgIds_.back().size() == dstCTau_.back().size());
     
@@ -47,6 +49,9 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event) {
     // Save the weights
     for(unsigned int iRule = 0; iRule < weights_.size(); iRule++) {
       (*eventvariables)[weightNames_[iRule]] = weights_[iRule];
+      if(isDefaultRule_[iRule]) {
+        (*eventvariables)["lifetimeWeight"] = weights_[iRule];
+      }
     }
     return;
   }
@@ -117,6 +122,9 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event) {
   // Save the weights
   for(unsigned int iRule = 0; iRule < weights_.size(); iRule++) {
     (*eventvariables)[weightNames_[iRule]] = weights_[iRule];
+    if(isDefaultRule_[iRule]) {
+      (*eventvariables)["lifetimeWeight"] = weights_[iRule];
+    }
   }
 }
 

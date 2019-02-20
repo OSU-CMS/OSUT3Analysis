@@ -10,5 +10,11 @@ if osusub.batchMode:
             rules.extend(rulesForLifetimeReweighting[osusub.datasetLabel])
 
 LifetimeWeightProducer = cms.EDFilter ("LifetimeWeightProducer",
-    reweightingRules = cms.VPSet([cms.PSet(pdgIds = cms.vint32(r.pdgIds), srcCTaus = cms.vdouble(r.srcCTaus), dstCTaus = cms.vdouble(r.dstCTaus) for r in rules])
+    reweightingRules = cms.VPSet([
+        cms.PSet(
+            pdgIds = cms.vint32(r.pdgIds), 
+            srcCTaus = cms.vdouble(r.srcCTaus), 
+            dstCTaus = cms.vdouble(r.dstCTaus), 
+            isDefaultRule = cms.bool(r.isDefaultRule)
+        ) for r in rules])
 )
