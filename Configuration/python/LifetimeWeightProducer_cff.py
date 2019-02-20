@@ -16,5 +16,6 @@ LifetimeWeightProducer = cms.EDFilter ("LifetimeWeightProducer",
             srcCTaus = cms.vdouble(r.srcCTaus), 
             dstCTaus = cms.vdouble(r.dstCTaus), 
             isDefaultRule = cms.bool(r.isDefaultRule)
-        ) for r in rules])
+        ) for r in rules]),
+    requireLastNotFirstCopy = cms.bool(False)
 )
