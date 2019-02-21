@@ -115,6 +115,10 @@ namespace osu {
       const float pfPhotonIsoDR03 ()       const { return this->pfPhotonIsoDR03_; };
       const float pfPUPhotonIsoDR03 ()     const { return this->pfPUPhotonIsoDR03_; };
 
+#if DATA_FORMAT_IS_2017 // only makes sense with phase1 pixel upgrade
+      // This could be in TrackBase, but is fairly specialized to the disappearing tracks search
+      const bool isAllowedThreeLayerHitPattern() const;
+#endif
 
     protected:
       vector<double> eleVtx_d0Cuts_barrel_, eleVtx_d0Cuts_endcap_;

@@ -109,15 +109,28 @@ namespace osu
       const int hitAndTOBDrop_gsfTrackMissingOuterHits() const;
       const int hitAndTOBDrop_bestTrackMissingOuterHits() const;
 
-      // Debug methods for HitPattern
+      // Methods for HitPattern
       const bool hasValidHitInPixelBarrelLayer(const uint16_t layer) const;
       const bool hasValidHitInPixelBarrelLayer1() const { return hasValidHitInPixelBarrelLayer(1); };
       const bool hasValidHitInPixelBarrelLayer2() const { return hasValidHitInPixelBarrelLayer(2); };
       const bool hasValidHitInPixelBarrelLayer3() const { return hasValidHitInPixelBarrelLayer(3); };
+      const bool hasValidHitInPixelBarrelLayer4() const { return hasValidHitInPixelBarrelLayer(4); };
 
       const bool hasValidHitInPixelEndcapLayer(const uint16_t layer) const;
       const bool hasValidHitInPixelEndcapLayer1() const { return hasValidHitInPixelEndcapLayer(1); };
       const bool hasValidHitInPixelEndcapLayer2() const { return hasValidHitInPixelEndcapLayer(2); };
+      const bool hasValidHitInPixelEndcapLayer3() const { return hasValidHitInPixelEndcapLayer(3); };
+
+      const bool hasMissingHitInPixelBarrelLayer(const uint16_t layer) const;
+      const bool hasMissingHitInPixelBarrelLayer1() const { return hasMissingHitInPixelBarrelLayer(1); };
+      const bool hasMissingHitInPixelBarrelLayer2() const { return hasMissingHitInPixelBarrelLayer(2); };
+      const bool hasMissingHitInPixelBarrelLayer3() const { return hasMissingHitInPixelBarrelLayer(3); };
+      const bool hasMissingHitInPixelBarrelLayer4() const { return hasMissingHitInPixelBarrelLayer(4); };
+
+      const bool hasMissingHitInPixelEndcapLayer(const uint16_t layer) const;
+      const bool hasMissingHitInPixelEndcapLayer1() const { return hasMissingHitInPixelEndcapLayer(1); };
+      const bool hasMissingHitInPixelEndcapLayer2() const { return hasMissingHitInPixelEndcapLayer(2); };
+      const bool hasMissingHitInPixelEndcapLayer3() const { return hasMissingHitInPixelEndcapLayer(3); };
 
       const uint16_t packedPixelBarrelHitPattern() const;
       const uint16_t packedPixelEndcapHitPattern() const;
@@ -146,8 +159,9 @@ namespace osu
       const float energyOfTau()      const { return energyGivenMass(1.77686); };
       const float energyOfPion()     const { return energyGivenMass(0.13957018); };
       const float energyOfProton()   const { return energyGivenMass(0.938272046); };
+      const float energyOfMassless() const { return energyGivenMass(0.0); };
 
-      // number of hits differentiated by location in detector
+      // counts the number of _layers_ with a VALID hit, in each area of the detector
       const unsigned char numberOfTrackerHits()     const { return this->hitPattern().trackerLayersWithMeasurement(); };
       const unsigned char numberOfPixelHits()       const { return this->hitPattern().pixelLayersWithMeasurement(); };
       const unsigned char numberOfStripHits()       const { return this->hitPattern().stripLayersWithMeasurement(); };
@@ -157,6 +171,10 @@ namespace osu
       const unsigned char numberOfStripTIDHits()    const { return this->hitPattern().stripTIDLayersWithMeasurement(); };
       const unsigned char numberOfStripTOBHits()    const { return this->hitPattern().stripTOBLayersWithMeasurement(); };
       const unsigned char numberOfStripTECHits()    const { return this->hitPattern().stripTECLayersWithMeasurement(); };
+
+      // "missing hits" -- actually counts the number of _layers_ that contain a MISSING hit
+      // and do not also have a VALID hit (in cases of stereo modules where you could miss one side)
+      // It does not count INACTIVE, BAD, or NULL hits towards this; be careful!
 
       // missing hits differentiated by location on track
       const unsigned char missingInnerHits()  const { return this->hitPattern().trackerLayersWithoutMeasurement(reco::HitPattern::MISSING_INNER_HITS); };
@@ -174,6 +192,9 @@ namespace osu
       const unsigned char missingStripTOBHits() const;
       const unsigned char missingStripTECHits() const;
 
+      // "expected hits" -- number of layers with either a VALID or MISSING hit
+      // Does not count INACTIVE, BAD, or NULL hits; be careful!
+
       // expected hits differentiated by location in detector
       const unsigned char expectedTrackerHits() const;
       const unsigned char expectedPixelHits() const;
@@ -184,6 +205,40 @@ namespace osu
       const unsigned char expectedStripTIDHits() const;
       const unsigned char expectedStripTOBHits() const;
       const unsigned char expectedStripTECHits() const;
+
+      // "expected hits, include inactive" -- number of layers with _any_ hit
+      // Includes VALID, MISSING, BAD, or INACTIVE. This should be the total
+      // number of layers the trajectory passed through, except if there is
+      // this bug found in AN-15-213 we described. There is also NULL_RETURN
+      // which nominally is where the track is outside the acceptance or in
+      // a gap of the layer in question; NULL_RETURN hits are not included
+      // in this number.
+
+      // expected hits (including inactive modules) differentiated by location in detector
+      const unsigned char expectedIncludeInactiveTrackerHits() const;
+      const unsigned char expectedIncludeInactivePixelHits() const;
+      const unsigned char expectedIncludeInactiveStripHits() const;
+      const unsigned char expectedIncludeInactivePixelBarrelHits() const;
+      const unsigned char expectedIncludeInactivePixelEndcapHits() const;
+      const unsigned char expectedIncludeInactiveStripTIBHits() const;
+      const unsigned char expectedIncludeInactiveStripTIDHits() const;
+      const unsigned char expectedIncludeInactiveStripTOBHits() const;
+      const unsigned char expectedIncludeInactiveStripTECHits() const;
+
+      // "lost" hits -- the total number of MISSING hits; same as missingInnerHits (etc)
+      // except in the case of a stereo module, this will count a VALID+MISSING as one
+      // missing, and missingInnerHits would count that as zero.
+      const unsigned char numberOfLostInnerHits()  const { return this->hitPattern().numberOfLostHits(reco::HitPattern::MISSING_INNER_HITS); };
+      const unsigned char numberOfLostMiddleHits() const { return this->hitPattern().numberOfLostHits(reco::HitPattern::TRACK_HITS); };
+      const unsigned char numberOfLostOuterHits()  const { return this->hitPattern().numberOfLostHits(reco::HitPattern::MISSING_OUTER_HITS); };
+      const unsigned char numberOfLostHits() const { return this->numberOfLostInnerHits() + this->numberOfLostMiddleHits() + this->numberOfLostOuterHits(); };
+
+      const unsigned char numberOfTotallyOffOrBadInnerHits()  const { return this->hitPattern().trackerLayersTotallyOffOrBad(reco::HitPattern::MISSING_INNER_HITS); };
+      const unsigned char numberOfTotallyOffOrBadMiddleHits() const { return this->hitPattern().trackerLayersTotallyOffOrBad(reco::HitPattern::TRACK_HITS); };
+      const unsigned char numberOfTotallyOffOrBadOuterHits()  const { return this->hitPattern().trackerLayersTotallyOffOrBad(reco::HitPattern::MISSING_OUTER_HITS); };
+      const unsigned char numberOfTotallyOffOrBadHits()       const { return this->numberOfTotallyOffOrBadInnerHits() + 
+                                                                             this->numberOfTotallyOffOrBadMiddleHits() + 
+                                                                             this->numberOfTotallyOffOrBadHits(); };
 
     private:
       double dRMinJet_;
@@ -226,6 +281,8 @@ namespace osu
       template<class T> const int extraMissingOuterHits(const T &) const;
 
       const double energyGivenMass(const double) const;
+
+      const std::array<reco::HitPattern::HitCategory, 3> hitCategories = {{reco::HitPattern::TRACK_HITS, reco::HitPattern::MISSING_INNER_HITS, reco::HitPattern::MISSING_OUTER_HITS}};
   };
 
   //////////////////////////////////////////////////

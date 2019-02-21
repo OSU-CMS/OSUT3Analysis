@@ -457,6 +457,33 @@ osu::DisappearingTrack::set_isoTrackIsolation (const edm::Handle<vector<pat::Iso
 }
 #endif
 
+#if DATA_FORMAT_IS_2017 // only makes sense with phase1 pixel upgrade
+// This could be in TrackBase, but is fairly specialized to the disappearing tracks search
+const bool
+osu::DisappearingTrack::isAllowedThreeLayerHitPattern() const {
+  // Allowed patterns:
+  // 1) pxb 1, pxb 2, pxb 3 (missing pxb 4)
+  // 2) pxb 1, pxb 2, pxf 1 (missing pxf 2)
+  // 3) pxb 1, pxf 1, pxf 2 (missing pxf 3)
+  // 4) pxf 1, pxf 2, pxf 3 (another rule (==4 pixel layers) prevents this case)
+
+  if(this->hasValidHitInPixelBarrelLayer(1)) {
+    if(this->hasValidHitInPixelBarrelLayer(2)) {
+      return ((this->hasValidHitInPixelBarrelLayer(3)   && this->hasMissingHitInPixelBarrelLayer(4)) || // pattern 1
+              (this->hasMissingHitInPixelBarrelLayer(1) && this->hasMissingHitInPixelEndcapLayer(2))); // or pattern 2
+    }
+    else {
+      return (this->hasValidHitInPixelEndcapLayer(1) && this->hasValidHitInPixelEndcapLayer(2) && this->hasMissingHitInPixelEndcapLayer(3)); // pattern 3
+    }
+  }
+  else {
+    return (this->hasValidHitInPixelEndcapLayer(1) && this->hasValidHitInPixelEndcapLayer(2) && this->hasValidHitInPixelEndcapLayer(3)); // pattern 4
+  }
+
+  return false;
+}
+#endif
+
 void
 osu::DisappearingTrack::set_primaryPFIsolations (const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates)
 {
