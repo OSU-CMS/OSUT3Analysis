@@ -800,6 +800,8 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 
           for (const auto &operand : operands)
             {
+	      // As the track collection does not have measured energy associated to it,
+	      // we assume tracks are massless while calculating invariant mass.
 	      if( boost::get<string> (operand) == "track" ){
                 energy += valueLookup (boost::get<string> (operand) + "s", objs, "p");
               }
