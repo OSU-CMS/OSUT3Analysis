@@ -238,7 +238,7 @@ namespace osu
       const unsigned char numberOfTotallyOffOrBadOuterHits()  const { return this->hitPattern().trackerLayersTotallyOffOrBad(reco::HitPattern::MISSING_OUTER_HITS); };
       const unsigned char numberOfTotallyOffOrBadHits()       const { return this->numberOfTotallyOffOrBadInnerHits() + 
                                                                              this->numberOfTotallyOffOrBadMiddleHits() + 
-                                                                             this->numberOfTotallyOffOrBadHits(); };
+                                                                             this->numberOfTotallyOffOrBadOuterHits(); };
 
     private:
       double dRMinJet_;
