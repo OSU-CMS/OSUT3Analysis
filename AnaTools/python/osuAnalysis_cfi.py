@@ -35,9 +35,9 @@ collectionMap = cms.PSet (
     trigobjs                    =  cms.InputTag  ('selectedPatTrigger',             ''),
 )
 
-################################################################
-##### Set up the standard input collections in 2017 miniAOD ####
-################################################################
+#########################################################################
+##### Set up the standard input collections in 2017 and 2018 miniAOD ####
+#########################################################################
 
 collectionMapMiniAOD2017 = copy.deepcopy(collectionMap)
 collectionMapMiniAOD2017.tracks          = cms.InputTag ('isolatedTracks', '')
