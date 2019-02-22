@@ -800,7 +800,12 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
 
           for (const auto &operand : operands)
             {
-              energy += valueLookup (boost::get<string> (operand) + "s", objs, "energy");
+	      if( boost::get<string> (operand) == "track" ){
+                energy += valueLookup (boost::get<string> (operand) + "s", objs, "p");
+              }
+              else{
+                energy += valueLookup (boost::get<string> (operand) + "s", objs, "energy");
+              }
               px += valueLookup (boost::get<string> (operand) + "s", objs, "px", false);
               py += valueLookup (boost::get<string> (operand) + "s", objs, "py", false);
               pz += valueLookup (boost::get<string> (operand) + "s", objs, "pz", false);
