@@ -50,6 +50,8 @@ void
 LifetimeWeightProducer::AddVariables(const edm::Event &event) {
 
 #ifndef STOPPPED_PTLS
+  for(unsigned int iRule = 0; iRule < weights_.size(); iRule++) weights_[iRule] = 1.0;
+
   edm::Handle<vector<TYPE(hardInteractionMcparticles)> > mcparticles;
   if(!event.getByToken(mcparticlesToken_, mcparticles)) {
     // Save the weights
