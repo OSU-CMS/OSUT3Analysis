@@ -287,12 +287,55 @@ void createMuonSFFile_2017() {
   fTrig->Close();
 }
 
+// https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2018
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiEXO-MUODocumentationRun2
+// probably won't provide 2018 trigger scale factors
+void createMuonSFFile_2018() {
+
+  // Get/declare files
+
+  TFile * fID = new TFile("muon2018/RunABCD_SF_ID.root");
+  TFile * fIso = new TFile("muon2018/RunABCD_SF_ISO.root");
+
+  TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID->Get("NUM_TightID_DEN_genTracks");
+  TH2D * id_medium = (TH2D*)fID->Get("NUM_MediumID_DEN_genTracks");
+  TH2D * id_loose = (TH2D*)fID->Get("NUM_LooseID_DEN_genTracks");
+
+  TH2D * iso_looseRel_looseID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_LooseID");
+  TH2D * iso_looseRel_mediumID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_MediumID");
+  TH2D * iso_looseRel_tightID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_TightIDandIPCut");
+  TH2D * iso_tightRel_mediumID = (TH2D*)fIso->Get("NUM_TightRelIso_DEN_MediumID");
+  TH2D * iso_tightRel_tightID = (TH2D*)fIso->Get("NUM_TightRelIso_DEN_TightIDandIPCut");
+
+  // Write output
+
+  id_tight->Write("muonID2018Tight");
+  id_medium->Write("muonID2018Medium");
+  id_loose->Write("muonID2018Loose");
+
+  iso_looseRel_looseID->Write("muonIso2018LooseLooseID");
+  iso_looseRel_mediumID->Write("muonIso2018LooseMediumID");
+  iso_looseRel_tightID->Write("muonIso2018LooseTightID");
+  iso_tightRel_mediumID->Write("muonIso2018TightMediumID");
+  iso_tightRel_tightID->Write("muonIso2018TightTightID");
+
+  fOutput->Close();
+
+  fID->Close();
+  fIso->Close();
+}
+
 void recreateLeptonSFs() {
   createElectronFile_2015();
   createElectronFile_2016();
   createElectronFile_2017();
-    
+
   createMuonSFFile_2015();
   createMuonSFFile_2016();
   createMuonSFFile_2017();
+  createMuonSFFile_2018();
 }
