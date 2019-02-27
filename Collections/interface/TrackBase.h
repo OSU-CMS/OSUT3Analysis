@@ -214,6 +214,7 @@ namespace osu
       // a gap of the layer in question; NULL_RETURN hits are not included
       // in this number.
 
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
       // expected hits (including inactive modules) differentiated by location in detector
       const unsigned char expectedIncludeInactiveTrackerHits() const;
       const unsigned char expectedIncludeInactivePixelHits() const;
@@ -224,7 +225,8 @@ namespace osu
       const unsigned char expectedIncludeInactiveStripTIDHits() const;
       const unsigned char expectedIncludeInactiveStripTOBHits() const;
       const unsigned char expectedIncludeInactiveStripTECHits() const;
-
+#endif
+      
       // "lost" hits -- the total number of MISSING hits; same as missingInnerHits (etc)
       // except in the case of a stereo module, this will count a VALID+MISSING as one
       // missing, and missingInnerHits would count that as zero.
@@ -233,12 +235,14 @@ namespace osu
       const unsigned char numberOfLostOuterHits()  const { return this->hitPattern().numberOfLostHits(reco::HitPattern::MISSING_OUTER_HITS); };
       const unsigned char numberOfLostHits() const { return this->numberOfLostInnerHits() + this->numberOfLostMiddleHits() + this->numberOfLostOuterHits(); };
 
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
       const unsigned char numberOfTotallyOffOrBadInnerHits()  const { return this->hitPattern().trackerLayersTotallyOffOrBad(reco::HitPattern::MISSING_INNER_HITS); };
       const unsigned char numberOfTotallyOffOrBadMiddleHits() const { return this->hitPattern().trackerLayersTotallyOffOrBad(reco::HitPattern::TRACK_HITS); };
       const unsigned char numberOfTotallyOffOrBadOuterHits()  const { return this->hitPattern().trackerLayersTotallyOffOrBad(reco::HitPattern::MISSING_OUTER_HITS); };
       const unsigned char numberOfTotallyOffOrBadHits()       const { return this->numberOfTotallyOffOrBadInnerHits() + 
                                                                              this->numberOfTotallyOffOrBadMiddleHits() + 
                                                                              this->numberOfTotallyOffOrBadOuterHits(); };
+#endif
 
     private:
       double dRMinJet_;
