@@ -1201,6 +1201,7 @@ osu::TrackBase::expectedStripTECHits () const
         + this->hitPattern ().stripTECLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
 }
 
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
 const unsigned char
 osu::TrackBase::expectedIncludeInactiveTrackerHits () const
 {
@@ -1281,6 +1282,7 @@ osu::TrackBase::expectedIncludeInactiveStripTECHits () const
           this->hitPattern().stripTECLayersTotallyOffOrBad (reco::HitPattern::TRACK_HITS) +
           this->hitPattern().stripTECLayersTotallyOffOrBad (reco::HitPattern::MISSING_OUTER_HITS));
 }
+#endif
 
 const bool
 osu::TrackBase::inTOBCrack () const
