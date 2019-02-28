@@ -294,8 +294,8 @@ void createMuonSFFile_2018() {
 
   // Get/declare files
 
-  TFile * fID = new TFile("muon2018/RunABCD_SF_ID.root");
-  TFile * fIso = new TFile("muon2018/RunABCD_SF_ISO.root");
+  TFile * fID = new TFile("muon2018/RunABCD_SF_ID.json.root");
+  TFile * fIso = new TFile("muon2018/RunABCD_SF_ISO.json.root");
 
   TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
 
