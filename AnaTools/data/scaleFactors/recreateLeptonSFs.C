@@ -111,6 +111,78 @@ void createElectronFile_2017() {
 
 }
 
+// https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#102X_series_Fall17V2_IDs_Scale_f
+void createElectronFile_2017_v2() {
+
+  // Get/declare files
+  // No veto ID SF available for V2
+
+  TFile * fID_tight = new TFile("electron2017/v2/2017_ElectronTight.root");
+  TFile * fID_medium = new TFile("electron2017/v2/2017_ElectronMedium.root");
+  TFile * fID_loose = new TFile("electron2017/v2/2017_ElectronLoose.root");
+  TFile * fReco = new TFile("electron2017/v2/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root");
+
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID_tight->Get("EGamma_SF2D");
+  TH2D * id_medium = (TH2D*)fID_medium->Get("EGamma_SF2D");
+  TH2D * id_loose = (TH2D*)fID_loose->Get("EGamma_SF2D");
+  TH2D * reco = (TH2D*)fReco->Get("EGamma_SF2D");
+
+  // Write output
+
+  id_tight->Write("electronID2017TightV2");
+  id_medium->Write("electronID2017MediumV2");
+  id_loose->Write("electronID2017LooseV2");
+  reco->Write("electronReco2017V2");
+
+  fOutput->Close();
+
+  fID_tight->Close();
+  fID_medium->Close();
+  fID_loose->Close();
+  fReco->Close();
+
+}
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#102X_series_Dataset_2018_Autumn
+void createElectronFile_2018() {
+
+  // Get/declare files
+  // No veto ID SF available for 2018
+
+  TFile * fID_tight = new TFile("electron2018/2018_ElectronTight.root");
+  TFile * fID_medium = new TFile("electron2018/2018_ElectronMedium.root");
+  TFile * fID_loose = new TFile("electron2018/2018_ElectronLoose.root");
+  TFile * fReco = new TFile("electron2018/egammaEffi.txt_EGM2D_updatedAll.root");
+
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID_tight->Get("EGamma_SF2D");
+  TH2D * id_medium = (TH2D*)fID_medium->Get("EGamma_SF2D");
+  TH2D * id_loose = (TH2D*)fID_loose->Get("EGamma_SF2D");
+  TH2D * reco = (TH2D*)fReco->Get("EGamma_SF2D");
+
+  // Write output
+
+  id_tight->Write("electronID2018Tight");
+  id_medium->Write("electronID2018Medium");
+  id_loose->Write("electronID2018Loose");
+  reco->Write("electronReco2018");
+
+  fOutput->Close();
+
+  fID_tight->Close();
+  fID_medium->Close();
+  fID_loose->Close();
+  fReco->Close();
+
+}
+
 // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffsRun2#Results_for_CMSSW_7_6_X_dataset
 void createMuonSFFile_2015() {
 
@@ -291,6 +363,8 @@ void recreateLeptonSFs() {
   createElectronFile_2015();
   createElectronFile_2016();
   createElectronFile_2017();
+  createElectronFile_2017_v2();
+  createElectronFile_2018();
     
   createMuonSFFile_2015();
   createMuonSFFile_2016();
