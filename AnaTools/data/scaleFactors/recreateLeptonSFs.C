@@ -289,13 +289,14 @@ void createMuonSFFile_2017() {
 
 // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2018
 // https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiEXO-MUODocumentationRun2
-// probably won't provide 2018 trigger scale factors
 void createMuonSFFile_2018() {
 
   // Get/declare files
 
   TFile * fID = new TFile("muon2018/RunABCD_SF_ID.json.root");
   TFile * fIso = new TFile("muon2018/RunABCD_SF_ISO.json.root");
+  TFile * fTrigBefore = new TFile("muon2018/EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate.root");
+  TFile * fTrigAfter = new TFile("muon2018/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root");
 
   TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
 
@@ -311,6 +312,91 @@ void createMuonSFFile_2018() {
   TH2D * iso_tightRel_mediumID = (TH2D*)fIso->Get("NUM_TightRelIso_DEN_MediumID");
   TH2D * iso_tightRel_tightID = (TH2D*)fIso->Get("NUM_TightRelIso_DEN_TightIDandIPCut");
 
+  TH2D * muIsolatedTriggerBefore = (TH2D*)fTrigBefore->Get("IsoMu24_PtEtaBins/pt_abseta_ratio");
+  TH2D * muNonisolatedTriggerBefore = (TH2D*)fTrigBefore->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/pt_abseta_ratio");
+
+  TH2D * muIsolatedTriggerAfter = (TH2D*)fTrigAfter->Get("IsoMu24_PtEtaBins/pt_abseta_ratio");
+  TH2D * muNonisolatedTriggerAfter = (TH2D*)fTrigAfter->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/pt_abseta_ratio");
+
+  // Lumi-weighted average trigger SFs
+  double totalIntLumi = 59.613; //total 2018 golden json integrated lumi [/fb]
+  double beforeIntLumi = 8.936; //2018 golden json integrated lumi before muon HLT update [/fb]
+  double IntLumiA = 13.955; //2018A golden json integrated lumi [/fb]
+  double IntLumiB = 7.052; //2018B golden json integrated lumi [/fb]
+  double IntLumiC = 6.909; //2018C golden json integrated lumi [/fb]
+  double IntLumiD = 31.696; //2018D golden json integrated lumi [/fb]
+
+  const double fracBeforeIntLumiABCD = 1.0*beforeIntLumi/totalIntLumi;
+  const double fracAfterIntLumiABCD = 1.0*(totalIntLumi-beforeIntLumi)/totalIntLumi;
+  const double fracBeforeIntLumiA = 1.0*beforeIntLumi/IntLumiA;
+  const double fracAfterIntLumiA = 1.0*(IntLumiA-beforeIntLumi)/IntLumiA;
+  const double fracBeforeIntLumiB = 1.0*beforeIntLumi/IntLumiB;
+  const double fracAfterIntLumiB = 1.0*(IntLumiB-beforeIntLumi)/IntLumiB;
+  const double fracBeforeIntLumiC = 1.0*beforeIntLumi/IntLumiC;
+  const double fracAfterIntLumiC = 1.0*(IntLumiC-beforeIntLumi)/IntLumiC;
+  const double fracBeforeIntLumiD = 1.0*beforeIntLumi/IntLumiD;
+  const double fracAfterIntLumiD = 1.0*(IntLumiD-beforeIntLumi)/IntLumiD;
+
+  TH2D * muIsolatedTriggerBeforeScaledABCD = (TH2D*)muIsolatedTriggerBefore->Clone();
+  muIsolatedTriggerBeforeScaledABCD->Scale(fracBeforeIntLumiABCD);
+  TH2D * muIsolatedTriggerAfterScaledABCD = (TH2D*)muIsolatedTriggerAfter->Clone();
+  muIsolatedTriggerAfterScaledABCD->Scale(fracAfterIntLumiABCD);
+  TH2D muIsolatedTriggerLumiWeightedAveABCD = (*muIsolatedTriggerBeforeScaledABCD) + (*muIsolatedTriggerAfterScaledABCD);
+
+  TH2D * muNonisolatedTriggerBeforeScaledABCD = (TH2D*)muNonisolatedTriggerBefore->Clone();
+  muNonisolatedTriggerBeforeScaledABCD->Scale(fracBeforeIntLumiABCD);
+  TH2D * muNonisolatedTriggerAfterScaledABCD = (TH2D*)muNonisolatedTriggerAfter->Clone();
+  muNonisolatedTriggerAfterScaledABCD->Scale(fracAfterIntLumiABCD);
+  TH2D muNonisolatedTriggerLumiWeightedAveABCD = (*muNonisolatedTriggerBeforeScaledABCD) + (*muNonisolatedTriggerAfterScaledABCD);
+
+  TH2D * muIsolatedTriggerBeforeScaledA = (TH2D*)muIsolatedTriggerBefore->Clone();
+  muIsolatedTriggerBeforeScaledA->Scale(fracBeforeIntLumiA);
+  TH2D * muIsolatedTriggerAfterScaledA = (TH2D*)muIsolatedTriggerAfter->Clone();
+  muIsolatedTriggerAfterScaledA->Scale(fracAfterIntLumiA);
+  TH2D muIsolatedTriggerLumiWeightedAveA = (*muIsolatedTriggerBeforeScaledA) + (*muIsolatedTriggerAfterScaledA);
+
+  TH2D * muNonisolatedTriggerBeforeScaledA = (TH2D*)muNonisolatedTriggerBefore->Clone();
+  muNonisolatedTriggerBeforeScaledA->Scale(fracBeforeIntLumiA);
+  TH2D * muNonisolatedTriggerAfterScaledA = (TH2D*)muNonisolatedTriggerAfter->Clone();
+  muNonisolatedTriggerAfterScaledA->Scale(fracAfterIntLumiA);
+  TH2D muNonisolatedTriggerLumiWeightedAveA = (*muNonisolatedTriggerBeforeScaledA) + (*muNonisolatedTriggerAfterScaledA);
+
+  TH2D * muIsolatedTriggerBeforeScaledB = (TH2D*)muIsolatedTriggerBefore->Clone();
+  muIsolatedTriggerBeforeScaledB->Scale(fracBeforeIntLumiB);
+  TH2D * muIsolatedTriggerAfterScaledB = (TH2D*)muIsolatedTriggerAfter->Clone();
+  muIsolatedTriggerAfterScaledB->Scale(fracAfterIntLumiB);
+  TH2D muIsolatedTriggerLumiWeightedAveB = (*muIsolatedTriggerBeforeScaledB) + (*muIsolatedTriggerAfterScaledB);
+
+  TH2D * muNonisolatedTriggerBeforeScaledB = (TH2D*)muNonisolatedTriggerBefore->Clone();
+  muNonisolatedTriggerBeforeScaledB->Scale(fracBeforeIntLumiB);
+  TH2D * muNonisolatedTriggerAfterScaledB = (TH2D*)muNonisolatedTriggerAfter->Clone();
+  muNonisolatedTriggerAfterScaledB->Scale(fracAfterIntLumiB);
+  TH2D muNonisolatedTriggerLumiWeightedAveB = (*muNonisolatedTriggerBeforeScaledB) + (*muNonisolatedTriggerAfterScaledB);
+
+  TH2D * muIsolatedTriggerBeforeScaledC = (TH2D*)muIsolatedTriggerBefore->Clone();
+  muIsolatedTriggerBeforeScaledC->Scale(fracBeforeIntLumiC);
+  TH2D * muIsolatedTriggerAfterScaledC = (TH2D*)muIsolatedTriggerAfter->Clone();
+  muIsolatedTriggerAfterScaledC->Scale(fracAfterIntLumiC);
+  TH2D muIsolatedTriggerLumiWeightedAveC = (*muIsolatedTriggerBeforeScaledC) + (*muIsolatedTriggerAfterScaledC);
+
+  TH2D * muNonisolatedTriggerBeforeScaledC = (TH2D*)muNonisolatedTriggerBefore->Clone();
+  muNonisolatedTriggerBeforeScaledC->Scale(fracBeforeIntLumiC);
+  TH2D * muNonisolatedTriggerAfterScaledC = (TH2D*)muNonisolatedTriggerAfter->Clone();
+  muNonisolatedTriggerAfterScaledC->Scale(fracAfterIntLumiC);
+  TH2D muNonisolatedTriggerLumiWeightedAveC = (*muNonisolatedTriggerBeforeScaledC) + (*muNonisolatedTriggerAfterScaledC);
+
+  TH2D * muIsolatedTriggerBeforeScaledD = (TH2D*)muIsolatedTriggerBefore->Clone();
+  muIsolatedTriggerBeforeScaledD->Scale(fracBeforeIntLumiD);
+  TH2D * muIsolatedTriggerAfterScaledD = (TH2D*)muIsolatedTriggerAfter->Clone();
+  muIsolatedTriggerAfterScaledD->Scale(fracAfterIntLumiD);
+  TH2D muIsolatedTriggerLumiWeightedAveD = (*muIsolatedTriggerBeforeScaledD) + (*muIsolatedTriggerAfterScaledD);
+
+  TH2D * muNonisolatedTriggerBeforeScaledD = (TH2D*)muNonisolatedTriggerBefore->Clone();
+  muNonisolatedTriggerBeforeScaledD->Scale(fracBeforeIntLumiD);
+  TH2D * muNonisolatedTriggerAfterScaledD = (TH2D*)muNonisolatedTriggerAfter->Clone();
+  muNonisolatedTriggerAfterScaledD->Scale(fracAfterIntLumiD);
+  TH2D muNonisolatedTriggerLumiWeightedAveD = (*muNonisolatedTriggerBeforeScaledD) + (*muNonisolatedTriggerAfterScaledD);
+
   // Write output
 
   id_tight->Write("muonID2018Tight");
@@ -323,10 +409,28 @@ void createMuonSFFile_2018() {
   iso_tightRel_mediumID->Write("muonIso2018TightMediumID");
   iso_tightRel_tightID->Write("muonIso2018TightTightID");
 
+  muIsolatedTriggerBefore->Write("muonTrigger2018IsoMu24BeforeMuonHLTUpdate");
+  muNonisolatedTriggerBefore->Write("muonTrigger2018Mu50OROldMu100ORTkMu100BeforeMuonHLTUpdate");
+  muIsolatedTriggerAfter->Write("muonTrigger2018IsoMu24AfterMuonHLTUpdate");
+  muNonisolatedTriggerAfter->Write("muonTrigger2018Mu50OROldMu100ORTkMu100AfterMuonHLTUpdate");
+
+  muIsolatedTriggerLumiWeightedAveABCD.Write("muonTrigger2018IsoMu24LumiWeightedAveABCD");
+  muNonisolatedTriggerLumiWeightedAveABCD.Write("muonTrigger2018Mu50OROldMu100ORTkMu100LumiWeightedAveABCD");
+  muIsolatedTriggerLumiWeightedAveA.Write("muonTrigger2018IsoMu24LumiWeightedAveA");
+  muNonisolatedTriggerLumiWeightedAveA.Write("muonTrigger2018Mu50OROldMu100ORTkMu100LumiWeightedAveA");
+  muIsolatedTriggerLumiWeightedAveB.Write("muonTrigger2018IsoMu24LumiWeightedAveB");
+  muNonisolatedTriggerLumiWeightedAveB.Write("muonTrigger2018Mu50OROldMu100ORTkMu100LumiWeightedAveB");
+  muIsolatedTriggerLumiWeightedAveC.Write("muonTrigger2018IsoMu24LumiWeightedAveC");
+  muNonisolatedTriggerLumiWeightedAveC.Write("muonTrigger2018Mu50OROldMu100ORTkMu100LumiWeightedAveC");
+  muIsolatedTriggerLumiWeightedAveD.Write("muonTrigger2018IsoMu24LumiWeightedAveD");
+  muNonisolatedTriggerLumiWeightedAveD.Write("muonTrigger2018Mu50OROldMu100ORTkMu100LumiWeightedAveD");
+
   fOutput->Close();
 
   fID->Close();
   fIso->Close();
+  fTrigBefore->Close();
+  fTrigAfter->Close();
 }
 
 void recreateLeptonSFs() {
