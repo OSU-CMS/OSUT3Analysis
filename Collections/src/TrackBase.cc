@@ -206,8 +206,8 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track,
         deltaRToClosestPFElectron_ = dR;
 
       else if(pdgid == 13 &&
-              (dR < deltaRToClosestPFMuon_ || deltaRToClosestPFElectron_ < 0.0))
-        deltaRToClosestPFElectron_ = dR;
+              (dR < deltaRToClosestPFMuon_ || deltaRToClosestPFMuon_ < 0.0))
+        deltaRToClosestPFMuon_ = dR;
 
       else if(pdgid == 211 &&
               (dR < deltaRToClosestPFChHad_ || deltaRToClosestPFChHad_ < 0.0))

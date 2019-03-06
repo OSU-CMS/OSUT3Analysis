@@ -9349,7 +9349,7 @@ crossSections = {
     'stopToLD1000_100mm': 0.00615134,
 }
 
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
   crossSections['QCD_15to30']     = 1837410000
   crossSections['QCD_30to50']     = 140932000
   crossSections['QCD_50to80']     = 19204300
