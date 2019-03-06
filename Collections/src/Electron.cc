@@ -20,7 +20,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
-  passesTightID_noIsolation_            (false),
+  passesTightID_noIsolation_LegacySpring15_ (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
   passesVID_mediumID_                   (false),
@@ -57,7 +57,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
-  passesTightID_noIsolation_            (false),
+  passesTightID_noIsolation_LegacySpring15_ (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
   passesVID_mediumID_                   (false),
@@ -94,7 +94,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
-  passesTightID_noIsolation_            (false),
+  passesTightID_noIsolation_LegacySpring15_ (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
   passesVID_mediumID_                   (false),
@@ -131,7 +131,7 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
-  passesTightID_noIsolation_            (false),
+  passesTightID_noIsolation_LegacySpring15_ (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
   passesVID_mediumID_                   (false),
@@ -293,6 +293,7 @@ osu::Electron::set_passesTightID_noIsolation_LegacySpring15 (const reco::BeamSpo
 {
   passesTightID_noIsolation_LegacySpring15_ = false;
 
+#if CMSSW_VERSION_CODE < CMSSW_VERSION(9,0,0)
   // not 94X -- actually corresponds to https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2Archive#Spring15_selection_25ns
   if (fabs (this->superCluster ()->eta ()) <= 1.479) {
       passesTightID_noIsolation_LegacySpring15_ = (this->full5x5_sigmaIetaIeta ()                                                        <   0.0101  &&
@@ -316,6 +317,8 @@ osu::Electron::set_passesTightID_noIsolation_LegacySpring15 (const reco::BeamSpo
                                                    this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS)  <=  1       &&
                                                    !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
   }
+#endif
+
 }
 
 void 
