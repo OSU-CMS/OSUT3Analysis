@@ -113,7 +113,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         electron.set_rho((float)(*rho));
 
       if(beamspot.isValid() && conversions.isValid() && vertices.isValid() && !vertices->empty ())
-        electron.set_passesTightID_noIsolation (*beamspot, vertices->at (0), conversions);
+        electron.set_passesTightID_noIsolation_LegacySpring15 (*beamspot, vertices->at (0), conversions);
 
       if(vidVetoIdMap.isValid())
         electron.set_passesVID_vetoID ( (*vidVetoIdMap)[(*collection).refAt(iEle)] );
@@ -131,6 +131,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         {
           electron.set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle25erWPTightGsfTrackIsoFilter"));
           electron.set_match_HLT_Ele22_eta2p1_WPLoose_Gsf_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltSingleEle22WPLooseGsfTrackIsoFilter"));
+          electron.set_match_HLT_Ele32_WPTight_Gsf_v        (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle32WPTightGsfTrackIsoFilter"));
           electron.set_match_HLT_Ele35_WPTight_Gsf_v        (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltEgammaCandidates::HLT", "hltEle35noerWPTightGsfTrackIsoFilter"));
         }
 

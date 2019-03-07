@@ -35,7 +35,7 @@ namespace osu
         const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
 
-        const bool passesTightID_noIsolation () const;
+        const bool passesTightID_noIsolation_LegacySpring15 () const;
 
         const bool passesVID_vetoID () const;
         const bool passesVID_looseID () const;
@@ -44,6 +44,7 @@ namespace osu
 
         const bool match_HLT_Ele25_eta2p1_WPTight_Gsf_v () const;
         const bool match_HLT_Ele22_eta2p1_WPLoose_Gsf_v () const;
+        const bool match_HLT_Ele32_WPTight_Gsf_v () const;
         const bool match_HLT_Ele35_WPTight_Gsf_v () const;
 
         void set_rho (float value) { rho_  = value; }
@@ -54,13 +55,14 @@ namespace osu
         void set_electronPVIndex (int value) { electronPVIndex_  = value; };
         void set_genD0 (double value) { genD0_  = value; };
         void set_d0SmearingVal (double value) { d0SmearingVal_  = value; };
-        void set_passesTightID_noIsolation (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
+        void set_passesTightID_noIsolation_LegacySpring15 (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
         void set_passesVID_vetoID (const bool);
         void set_passesVID_looseID (const bool);
         void set_passesVID_mediumID (const bool);
         void set_passesVID_tightID (const bool);
         void set_match_HLT_Ele25_eta2p1_WPTight_Gsf_v (const bool);
         void set_match_HLT_Ele22_eta2p1_WPLoose_Gsf_v (const bool);
+        void set_match_HLT_Ele32_WPTight_Gsf_v (const bool);
         void set_match_HLT_Ele35_WPTight_Gsf_v (const bool);
 
         const double metMinusOnePt () const;
@@ -103,7 +105,7 @@ namespace osu
         double sumPUPtCorr_;
         double genD0_;
         double d0SmearingVal_;
-        bool passesTightID_noIsolation_;
+        bool passesTightID_noIsolation_LegacySpring15_;
 
         bool passesVID_vetoID_;
         bool passesVID_looseID_;
@@ -112,6 +114,7 @@ namespace osu
 
         bool match_HLT_Ele25_eta2p1_WPTight_Gsf_v_;
         bool match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_;
+        bool match_HLT_Ele32_WPTight_Gsf_v_;
         bool match_HLT_Ele35_WPTight_Gsf_v_;
 
         double metMinusOnePt_;

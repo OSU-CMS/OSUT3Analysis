@@ -920,16 +920,16 @@ def customizeMINIAODElectronVID(process, collections, usedCollections):
 
     my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff']
 
-    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
-        my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff'])
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
+        my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff']
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
-        my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff'])
+        my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff']
         if int(os.environ["CMSSW_VERSION"].split("_")[3]) >=9:
             my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff'])
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
-        my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff'])
+        my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff']
 
     # Setup all the desired modules to be run
     for idmod in my_id_modules:
