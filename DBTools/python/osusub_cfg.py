@@ -26,3 +26,51 @@ elif len (sys.argv) == 5 and sys.argv[2] == "True":
 else:
   batchMode = False
 
+# Function for getting siblings of a given file from a given dataset
+def getSiblings (fileName, dataset):
+  try:
+    from dbs.apis.dbsClient import DbsApi
+    from CRABClient.ClientUtilities import DBSURLS
+  except ImportError:
+    print "getSiblings() relies on CRAB. Please set up the environment for CRAB before using."
+    sys.exit (1)
+
+  dbsurl_global = DBSURLS["reader"].get ("global", "global")
+  dbsurl_phys03 = DBSURLS["reader"].get ("phys03", "phys03")
+  dbs3api_phys03 = DbsApi (url = dbsurl_phys03)
+  dbs3api_global = DbsApi (url = dbsurl_global)
+
+  # if there is an xrootd prefix, strip it
+  if "/store/" in fileName:
+    i = fileName.find ("/store/")
+    fileName = fileName[i:]
+
+  # first get the parents
+  parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
+
+  # for each of the parents, get the grandparents
+  grandparents = []
+  for parent in parents:
+    for parent_file_name in parent["parent_logical_file_name"]:
+      grandparents.extend (dbs3api_global.listFileParents (logical_file_name = parent_file_name))
+
+  # then for each of the grandparents, get their children
+  children = []
+  for grandparent in grandparents:
+    for grandparent_file_name in grandparent["parent_logical_file_name"]:
+      children.extend (dbs3api_global.listFileChildren (logical_file_name = grandparent_file_name))
+
+  # put the children in a set
+  miniaod = set ([])
+  for child in children:
+    for child_file_name in child["child_logical_file_name"]:
+      miniaod.add (child_file_name)
+
+  # put the files of the target dataset in another set
+  dataset = dbs3api_global.listFiles (dataset = dataset)
+  miniaodSuperset = set ([])
+  for f in dataset:
+    miniaodSuperset.add (f["logical_file_name"])
+
+  # return the intersection of the two sets
+  return list (miniaodSuperset.intersection (miniaod))

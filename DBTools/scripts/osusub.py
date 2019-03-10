@@ -493,6 +493,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("RemoveStatus=1\n\n")
 
     SubmitScript.write ("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
+    SubmitScript.write ("source /cvmfs/cms.cern.ch/crab3/crab.sh\n")
     SubmitScript.write ("tar -xzf " + os.environ["CMSSW_VERSION"] + ".tar.gz\n")
     SubmitScript.write ("rm -f " + os.environ["CMSSW_VERSION"] + ".tar.gz\n")
     SubmitScript.write ("SCRAM_ARCH=" + os.environ["SCRAM_ARCH"] + "\n")
@@ -725,6 +726,17 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     ConfigFile.write('pset.process.source.skipBadFiles = cms.untracked.bool (True)\n')
     if EventsPerJob > 0:
         ConfigFile.write('pset.process.maxEvents.input = cms.untracked.int32 (' + str(EventsPerJob) + ')\n')
+
+    # If the dataset has a sibling defined, add the corresponding files to the secondary file names
+    if ("sibling_datasets" in locals() or "sibling_datasets" in globals()) and Label in sibling_datasets:
+        ConfigFile.write("\nsiblings = []\n")
+        ConfigFile.write("try:\n")
+        ConfigFile.write("  for fileName in osusub.runList:\n")
+        ConfigFile.write("    siblings.extend (osusub.getSiblings (fileName, \"" + sibling_datasets[Label] + "\"))\n")
+        ConfigFile.write("except:\n")
+        ConfigFile.write("  print \"No valid grid proxy. Not adding sibling files.\"\n")
+        ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
+
     ConfigFile.write('process = pset.process\n')
     if arguments.Process:
         ConfigFile.write('process.setName_ (process.name_ () + \'' + arguments.Process + '\')\n')
