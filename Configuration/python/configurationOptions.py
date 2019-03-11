@@ -9474,10 +9474,10 @@ for index, sample in enumerate(signal_datasets):
     colors[sample] = 20 + index
     crossSections[sample] = signal_crossSections[mass(sample)]
 
-    sourceCTau = 0.1 * float(lifetime(sample))
+    sourceCTau = 0.1 * 10**(math.ceil(math.log10(float(lifetime(sample)))))
     # special case
     if lifetime(sample) == "0.1": sourceCTau = 0.1 * 1.0
-    destinationCTau = 0.1 * 10**(math.ceil(math.log10(float(lifetime(sample)))))
+    destinationCTau = 0.1 * float(lifetime(sample))
 
     rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [destinationCTau], True)]
 
