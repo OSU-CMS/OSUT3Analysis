@@ -177,7 +177,7 @@ def getLatestJsonFile():
         if re.search('17$', arguments.JSONType):
             rerecoDir = 'ReReco'
         if re.search('18$', arguments.JSONType):
-            rerecoDir = 'ReReco'
+            rerecoDir = 'Rereco'
 
         if arguments.JSONType[:2] == 'P_':
             tmpDir = tempfile.mkdtemp ()
