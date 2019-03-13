@@ -66,7 +66,7 @@ parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = 
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")
 parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  # See https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/65
 parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help="Specify the directory containing input files. Wildcards allowed.")
-parser.add_option("--forceRutgersMode", dest="forceRutgersMode", default = False, help="Force Rutgers mode for getSiblings to work properly.")
+parser.add_option("--forceRutgersMode", action="store_true", dest="forceRutgersMode", default = False, help="Force Rutgers mode for getSiblings to work properly.")
 
 (arguments, args) = parser.parse_args()
 
