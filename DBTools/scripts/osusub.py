@@ -66,6 +66,7 @@ parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = 
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")
 parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  # See https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/65
 parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help="Specify the directory containing input files. Wildcards allowed.")
+parser.add_option("--forceRutgersMode", dest="forceRutgersMode", default = False, help="Force Rutgers mode for getSiblings to work properly.")
 
 (arguments, args) = parser.parse_args()
 
@@ -177,7 +178,7 @@ def getLatestJsonFile():
         if re.search('17$', arguments.JSONType):
             rerecoDir = 'ReReco'
         if re.search('18$', arguments.JSONType):
-            rerecoDir = 'Rereco'
+            rerecoDir = 'ReReco'
 
         if arguments.JSONType[:2] == 'P_':
             tmpDir = tempfile.mkdtemp ()
@@ -1176,7 +1177,7 @@ hostname = socket.getfqdn()
 remoteAccessT3 = ('interactive' not in hostname)
 lxbatch = ('cern.ch' in hostname)
 lpcCAF = ('fnal.gov' in hostname)
-rutgers = ('rutgers.edu' in hostname)
+rutgers = ('rutgers.edu' in hostname or arguments.forceRutgersMode)
 
 ################################################################################
 #             First of all to set up the working directory                     #
