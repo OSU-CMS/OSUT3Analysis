@@ -66,6 +66,7 @@ parser.add_option("--resubmit", dest="Resubmit", action="store_true", default = 
 parser.add_option("--redirector", dest="Redirector", default = "", help="Setup the redirector for xrootd service to use")
 parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  # See https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/65
 parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help="Specify the directory containing input files. Wildcards allowed.")
+parser.add_option("--forceRutgersMode", action="store_true", dest="forceRutgersMode", default = False, help="Force Rutgers mode for getSiblings to work properly.")
 
 (arguments, args) = parser.parse_args()
 
@@ -493,6 +494,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("RemoveStatus=1\n\n")
 
     SubmitScript.write ("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
+    SubmitScript.write ("source /cvmfs/cms.cern.ch/crab3/crab.sh\n")
     SubmitScript.write ("tar -xzf " + os.environ["CMSSW_VERSION"] + ".tar.gz\n")
     SubmitScript.write ("rm -f " + os.environ["CMSSW_VERSION"] + ".tar.gz\n")
     SubmitScript.write ("SCRAM_ARCH=" + os.environ["SCRAM_ARCH"] + "\n")
@@ -725,6 +727,17 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     ConfigFile.write('pset.process.source.skipBadFiles = cms.untracked.bool (True)\n')
     if EventsPerJob > 0:
         ConfigFile.write('pset.process.maxEvents.input = cms.untracked.int32 (' + str(EventsPerJob) + ')\n')
+
+    # If the dataset has a sibling defined, add the corresponding files to the secondary file names
+    if ("sibling_datasets" in locals() or "sibling_datasets" in globals()) and Label in sibling_datasets:
+        ConfigFile.write("\nsiblings = []\n")
+        ConfigFile.write("try:\n")
+        ConfigFile.write("  for fileName in osusub.runList:\n")
+        ConfigFile.write("    siblings.extend (osusub.getSiblings (fileName, \"" + sibling_datasets[Label] + "\"))\n")
+        ConfigFile.write("except:\n")
+        ConfigFile.write("  print \"No valid grid proxy. Not adding sibling files.\"\n")
+        ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
+
     ConfigFile.write('process = pset.process\n')
     if arguments.Process:
         ConfigFile.write('process.setName_ (process.name_ () + \'' + arguments.Process + '\')\n')
@@ -1164,7 +1177,7 @@ hostname = socket.getfqdn()
 remoteAccessT3 = ('interactive' not in hostname)
 lxbatch = ('cern.ch' in hostname)
 lpcCAF = ('fnal.gov' in hostname)
-rutgers = ('rutgers.edu' in hostname)
+rutgers = ('rutgers.edu' in hostname or arguments.forceRutgersMode)
 
 ################################################################################
 #             First of all to set up the working directory                     #
