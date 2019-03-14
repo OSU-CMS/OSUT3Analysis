@@ -206,8 +206,8 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track,
         deltaRToClosestPFElectron_ = dR;
 
       else if(pdgid == 13 &&
-              (dR < deltaRToClosestPFMuon_ || deltaRToClosestPFElectron_ < 0.0))
-        deltaRToClosestPFElectron_ = dR;
+              (dR < deltaRToClosestPFMuon_ || deltaRToClosestPFMuon_ < 0.0))
+        deltaRToClosestPFMuon_ = dR;
 
       else if(pdgid == 211 &&
               (dR < deltaRToClosestPFChHad_ || deltaRToClosestPFChHad_ < 0.0))
@@ -613,6 +613,7 @@ osu::TrackBase::PrintTrackHitPatternInfo () const
   std::cout << "missingInnerHits = "  << this->hitPattern().trackerLayersWithoutMeasurement(reco::HitPattern::MISSING_INNER_HITS) << std::endl;
   std::cout << "missingMiddleHits = " << this->hitPattern().trackerLayersWithoutMeasurement(reco::HitPattern::TRACK_HITS) << std::endl;
   std::cout << "missingOuterHits = "  << this->hitPattern().trackerLayersWithoutMeasurement(reco::HitPattern::MISSING_OUTER_HITS) << std::endl;
+  std::cout << "trackerLayersWithMeasurement = " << this->hitPattern().trackerLayersWithMeasurement() << std::endl;
   std::cout << "========================================" << std::endl << std::endl;
 
 }
@@ -663,17 +664,64 @@ osu::TrackBase::hasValidHitInPixelEndcapLayer (const uint16_t layer) const
    return false;
 }
 
+const bool
+osu::TrackBase::hasMissingHitInPixelBarrelLayer (const uint16_t layer) const
+{
+  const reco::HitPattern &p = this->hitPattern();
+
+  for(auto category : hitCategories) {
+    // Loop over hits in category
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+    for (int i = 0; i < p.numberOfAllHits(category); i++) {
+#else
+    for (int i = 0; i < p.numberOfHits(category); i++) {
+#endif
+      uint16_t hit = p.getHitPattern(category, i);
+      if(reco::HitPattern::pixelBarrelHitFilter(hit) &&
+         reco::HitPattern::getLayer(hit) == layer &&
+         reco::HitPattern::missingHitFilter(hit)) {
+        return true;
+      }
+    }
+  } // loop over hits in category
+
+ return false;
+}
+
+const bool
+osu::TrackBase::hasMissingHitInPixelEndcapLayer (const uint16_t layer) const
+{
+  const reco::HitPattern &p = this->hitPattern();
+
+  for(auto category : hitCategories) {
+    // Loop over hits in category
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+    for (int i = 0; i < p.numberOfAllHits(category); i++) {
+#else
+    for (int i = 0; i < p.numberOfHits(category); i++) {
+#endif
+      uint16_t hit = p.getHitPattern(category, i);
+      if(reco::HitPattern::pixelEndcapHitFilter(hit) &&
+         reco::HitPattern::getLayer(hit) == layer &&
+         reco::HitPattern::missingHitFilter(hit)) {
+        return true;
+      }
+    }
+  } // loop over hits in category
+
+  return false;
+}
+
 const uint16_t
 osu::TrackBase::packedPixelBarrelHitPattern () const
 {
-
   // Output format:
-  // +--------+--------+--------+
-  // |  8 7 6 |  5 4 3 |  2 1 0 | bit
-  // +--------+--------+--------+
-  // | status | status | status |
-  // |  PXB3  |  PXB2  |  PXB1  |
-  // +--------+--------+--------+
+  // +---------+--------+--------+--------+
+  // | 11 10 9 |  8 7 6 |  5 4 3 |  2 1 0 | bit
+  // +---------+--------+--------+--------+
+  // | status  | status | status | status |
+  // |  PXB 4  |  PXB3  |  PXB2  |  PXB1  |
+  // +---------+--------+--------+--------+
   // where status:
   // 0 = valid
   // 1 = missing
@@ -687,13 +735,12 @@ osu::TrackBase::packedPixelBarrelHitPattern () const
   uint8_t statusPXB1 = 0x4;
   uint8_t statusPXB2 = 0x4;
   uint8_t statusPXB3 = 0x4;
+  uint8_t statusPXB4 = 0x4;
 
   const reco::HitPattern &p = this->hitPattern();
 
-  const std::array<reco::HitPattern::HitCategory, 3> categories = {{reco::HitPattern::TRACK_HITS, reco::HitPattern::MISSING_INNER_HITS, reco::HitPattern::MISSING_OUTER_HITS}};
-
   // Loop over TRACK_HITS, MISSING_INNER_HITS, and MISSING_OUTER_HITS
-  for (auto category : categories) {
+  for (auto category : hitCategories) {
 
 #if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
     for (int i = 0; i < p.numberOfAllHits(category); i++) {
@@ -730,11 +777,19 @@ osu::TrackBase::packedPixelBarrelHitPattern () const
           else statusPXB3 = reco::HitPattern::getHitType(hit);
         }
 
+        if(layer == 4) {
+          if(statusPXB4 != 0x4) { // if you already found a hit, mark this as having multiple hits
+            statusPXB4 = 0x5;
+            continue;
+          }
+          else statusPXB4 = reco::HitPattern::getHitType(hit);
+        }
+
       } // if pixel barrel hit
 
     } // loop over hits in category
 
-  } // loop over categories
+  } // loop over hitCategories
 
   // Now pack these into a single return value
 
@@ -743,6 +798,7 @@ osu::TrackBase::packedPixelBarrelHitPattern () const
   result |= (statusPXB1 << 0);
   result |= (statusPXB2 << 3);
   result |= (statusPXB3 << 6);
+  result |= (statusPXB4 << 9);
 
   return result;
 
@@ -753,12 +809,12 @@ osu::TrackBase::packedPixelEndcapHitPattern () const
 {
 
   // Output format:
-  // +--------+--------+
-  // | 5 4 3  |  2 1 0 | bit
-  // +--------+--------+
-  // | status | status |
-  // |  PXF2  |  PXF1  |
-  // +--------+--------+
+  // +--------+--------+--------+
+  // | 8 7 6  | 5 4 3  |  2 1 0 | bit
+  // +--------+--------+--------+
+  // | status | status | status |
+  // |  PXF3  |  PXF2  |  PXF1  |
+  // +--------+--------+--------+
   // where status:
   // 0 = valid
   // 1 = missing
@@ -771,13 +827,12 @@ osu::TrackBase::packedPixelEndcapHitPattern () const
 
   uint8_t statusPXF1 = 0x4;
   uint8_t statusPXF2 = 0x4;
+  uint8_t statusPXF3 = 0x4;
 
   const reco::HitPattern &p = this->hitPattern();
 
-  const std::array<reco::HitPattern::HitCategory, 3> categories = {{reco::HitPattern::TRACK_HITS, reco::HitPattern::MISSING_INNER_HITS, reco::HitPattern::MISSING_OUTER_HITS}};
-
   // Loop over TRACK_HITS, MISSING_INNER_HITS, and MISSING_OUTER_HITS
-  for (auto category : categories) {
+  for (auto category : hitCategories) {
 
 #if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
     for (int i = 0; i < p.numberOfAllHits(category); i++) {
@@ -806,6 +861,14 @@ osu::TrackBase::packedPixelEndcapHitPattern () const
           else statusPXF2 = reco::HitPattern::getHitType(hit);
         }
 
+        if(layer == 3) {
+          if(statusPXF3 != 0x4) { // if you already found a hit, mark this as having multiple hits
+            statusPXF3 = 0x5;
+            continue;
+          }
+          else statusPXF3 = reco::HitPattern::getHitType(hit);
+        }
+
       } // if pixel endcap hit
 
     } // loop over hits in category
@@ -818,6 +881,7 @@ osu::TrackBase::packedPixelEndcapHitPattern () const
 
   result |= (statusPXF1 << 0);
   result |= (statusPXF2 << 3);
+  result |= (statusPXF3 << 6);
 
   return result;
 
@@ -1136,6 +1200,89 @@ osu::TrackBase::expectedStripTECHits () const
         + this->hitPattern ().stripTECLayersWithoutMeasurement (reco::HitPattern::TRACK_HITS)
         + this->hitPattern ().stripTECLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
 }
+
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+const unsigned char
+osu::TrackBase::expectedIncludeInactiveTrackerHits () const
+{
+  return (this->expectedTrackerHits () +
+          this->hitPattern().trackerLayersTotallyOffOrBad (reco::HitPattern::MISSING_INNER_HITS) +
+          this->hitPattern().trackerLayersTotallyOffOrBad (reco::HitPattern::TRACK_HITS) +
+          this->hitPattern().trackerLayersTotallyOffOrBad (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::TrackBase::expectedIncludeInactivePixelHits () const
+{
+  return (this->expectedPixelHits () +
+          this->hitPattern().pixelLayersTotallyOffOrBad (reco::HitPattern::MISSING_INNER_HITS) +
+          this->hitPattern().pixelLayersTotallyOffOrBad (reco::HitPattern::TRACK_HITS) +
+          this->hitPattern().pixelLayersTotallyOffOrBad (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::TrackBase::expectedIncludeInactiveStripHits () const
+{
+  return (this->expectedStripHits () +
+          this->hitPattern().stripLayersTotallyOffOrBad (reco::HitPattern::MISSING_INNER_HITS) +
+          this->hitPattern().stripLayersTotallyOffOrBad (reco::HitPattern::TRACK_HITS) +
+          this->hitPattern().stripLayersTotallyOffOrBad (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::TrackBase::expectedIncludeInactivePixelBarrelHits () const
+{
+  return (this->expectedPixelBarrelHits () +
+          this->hitPattern().pixelBarrelLayersTotallyOffOrBad (reco::HitPattern::MISSING_INNER_HITS) +
+          this->hitPattern().pixelBarrelLayersTotallyOffOrBad (reco::HitPattern::TRACK_HITS) +
+          this->hitPattern().pixelBarrelLayersTotallyOffOrBad (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::TrackBase::expectedIncludeInactivePixelEndcapHits () const
+{
+  return (this->expectedPixelEndcapHits () +
+          this->hitPattern().pixelEndcapLayersTotallyOffOrBad (reco::HitPattern::MISSING_INNER_HITS) +
+          this->hitPattern().pixelEndcapLayersTotallyOffOrBad (reco::HitPattern::TRACK_HITS) +
+          this->hitPattern().pixelEndcapLayersTotallyOffOrBad (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::TrackBase::expectedIncludeInactiveStripTIBHits () const
+{
+  return (this->expectedStripTIBHits () +
+          this->hitPattern().stripTIBLayersTotallyOffOrBad (reco::HitPattern::MISSING_INNER_HITS) +
+          this->hitPattern().stripTIBLayersTotallyOffOrBad (reco::HitPattern::TRACK_HITS) +
+          this->hitPattern().stripTIBLayersTotallyOffOrBad (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::TrackBase::expectedIncludeInactiveStripTIDHits () const
+{
+  return (this->expectedStripTIDHits () +
+          this->hitPattern().stripTIDLayersTotallyOffOrBad (reco::HitPattern::MISSING_INNER_HITS) +
+          this->hitPattern().stripTIDLayersTotallyOffOrBad (reco::HitPattern::TRACK_HITS) +
+          this->hitPattern().stripTIDLayersTotallyOffOrBad (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::TrackBase::expectedIncludeInactiveStripTOBHits () const
+{
+  return (this->expectedStripTOBHits () +
+          this->hitPattern().stripTOBLayersTotallyOffOrBad (reco::HitPattern::MISSING_INNER_HITS) +
+          this->hitPattern().stripTOBLayersTotallyOffOrBad (reco::HitPattern::TRACK_HITS) +
+          this->hitPattern().stripTOBLayersTotallyOffOrBad (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const unsigned char
+osu::TrackBase::expectedIncludeInactiveStripTECHits () const
+{
+  return (this->expectedStripTECHits () +
+          this->hitPattern().stripTECLayersTotallyOffOrBad (reco::HitPattern::MISSING_INNER_HITS) +
+          this->hitPattern().stripTECLayersTotallyOffOrBad (reco::HitPattern::TRACK_HITS) +
+          this->hitPattern().stripTECLayersTotallyOffOrBad (reco::HitPattern::MISSING_OUTER_HITS));
+}
+#endif
 
 const bool
 osu::TrackBase::inTOBCrack () const

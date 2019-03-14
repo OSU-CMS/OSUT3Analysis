@@ -111,6 +111,78 @@ void createElectronFile_2017() {
 
 }
 
+// https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#102X_series_Fall17V2_IDs_Scale_f
+void createElectronFile_2017_v2() {
+
+  // Get/declare files
+  // No veto ID SF available for V2
+
+  TFile * fID_tight = new TFile("electron2017/v2/2017_ElectronTight.root");
+  TFile * fID_medium = new TFile("electron2017/v2/2017_ElectronMedium.root");
+  TFile * fID_loose = new TFile("electron2017/v2/2017_ElectronLoose.root");
+  TFile * fReco = new TFile("electron2017/v2/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root");
+
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID_tight->Get("EGamma_SF2D");
+  TH2D * id_medium = (TH2D*)fID_medium->Get("EGamma_SF2D");
+  TH2D * id_loose = (TH2D*)fID_loose->Get("EGamma_SF2D");
+  TH2D * reco = (TH2D*)fReco->Get("EGamma_SF2D");
+
+  // Write output
+
+  id_tight->Write("electronID2017TightV2");
+  id_medium->Write("electronID2017MediumV2");
+  id_loose->Write("electronID2017LooseV2");
+  reco->Write("electronReco2017V2");
+
+  fOutput->Close();
+
+  fID_tight->Close();
+  fID_medium->Close();
+  fID_loose->Close();
+  fReco->Close();
+
+}
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#102X_series_Dataset_2018_Autumn
+void createElectronFile_2018() {
+
+  // Get/declare files
+  // No veto ID SF available for 2018
+
+  TFile * fID_tight = new TFile("electron2018/2018_ElectronTight.root");
+  TFile * fID_medium = new TFile("electron2018/2018_ElectronMedium.root");
+  TFile * fID_loose = new TFile("electron2018/2018_ElectronLoose.root");
+  TFile * fReco = new TFile("electron2018/egammaEffi.txt_EGM2D_updatedAll.root");
+
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID_tight->Get("EGamma_SF2D");
+  TH2D * id_medium = (TH2D*)fID_medium->Get("EGamma_SF2D");
+  TH2D * id_loose = (TH2D*)fID_loose->Get("EGamma_SF2D");
+  TH2D * reco = (TH2D*)fReco->Get("EGamma_SF2D");
+
+  // Write output
+
+  id_tight->Write("electronID2018Tight");
+  id_medium->Write("electronID2018Medium");
+  id_loose->Write("electronID2018Loose");
+  reco->Write("electronReco2018");
+
+  fOutput->Close();
+
+  fID_tight->Close();
+  fID_medium->Close();
+  fID_loose->Close();
+  fReco->Close();
+
+}
+
 // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffsRun2#Results_for_CMSSW_7_6_X_dataset
 void createMuonSFFile_2015() {
 
@@ -287,12 +359,111 @@ void createMuonSFFile_2017() {
   fTrig->Close();
 }
 
+// https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2018
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiEXO-MUODocumentationRun2
+void createMuonSFFile_2018() {
+
+  // Get/declare files
+
+  TFile * fID = new TFile("muon2018/RunABCD_SF_ID.json.root");
+  TFile * fIso = new TFile("muon2018/RunABCD_SF_ISO.json.root");
+  TFile * fTrigBefore = new TFile("muon2018/EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate.root");
+  TFile * fTrigAfter = new TFile("muon2018/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root");
+
+  TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID->Get("NUM_TightID_DEN_genTracks");
+  TH2D * id_medium = (TH2D*)fID->Get("NUM_MediumID_DEN_genTracks");
+  TH2D * id_loose = (TH2D*)fID->Get("NUM_LooseID_DEN_genTracks");
+
+  TH2D * iso_looseRel_looseID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_LooseID");
+  TH2D * iso_looseRel_mediumID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_MediumID");
+  TH2D * iso_looseRel_tightID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_TightIDandIPCut");
+  TH2D * iso_tightRel_mediumID = (TH2D*)fIso->Get("NUM_TightRelIso_DEN_MediumID");
+  TH2D * iso_tightRel_tightID = (TH2D*)fIso->Get("NUM_TightRelIso_DEN_TightIDandIPCut");
+
+  TH2D * muIsolatedTriggerBefore = (TH2D*)fTrigBefore->Get("IsoMu24_PtEtaBins/pt_abseta_ratio");
+  TH2D * muNonisolatedTriggerBefore = (TH2D*)fTrigBefore->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/pt_abseta_ratio");
+
+  TH2D * muIsolatedTriggerAfter = (TH2D*)fTrigAfter->Get("IsoMu24_PtEtaBins/pt_abseta_ratio");
+  TH2D * muNonisolatedTriggerAfter = (TH2D*)fTrigAfter->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/pt_abseta_ratio");
+
+  // Lumi-weighted average trigger SFs
+  double totalIntLumi = 59.613; //total 2018 golden json integrated lumi [/fb]
+  double beforeIntLumi = 8.936; //2018 golden json integrated lumi before muon HLT update [/fb]
+  double IntLumiA = 13.955; //2018A golden json integrated lumi [/fb]
+
+  const double fracBeforeIntLumiABCD = 1.0*beforeIntLumi/totalIntLumi;
+  const double fracAfterIntLumiABCD = 1.0*(totalIntLumi-beforeIntLumi)/totalIntLumi;
+  const double fracBeforeIntLumiA = 1.0*beforeIntLumi/IntLumiA;
+  const double fracAfterIntLumiA = 1.0*(IntLumiA-beforeIntLumi)/IntLumiA;
+
+  TH2D * muIsolatedTriggerBeforeScaledABCD = (TH2D*)muIsolatedTriggerBefore->Clone();
+  muIsolatedTriggerBeforeScaledABCD->Scale(fracBeforeIntLumiABCD);
+  TH2D * muIsolatedTriggerAfterScaledABCD = (TH2D*)muIsolatedTriggerAfter->Clone();
+  muIsolatedTriggerAfterScaledABCD->Scale(fracAfterIntLumiABCD);
+  TH2D muIsolatedTriggerLumiWeightedAveABCD = (*muIsolatedTriggerBeforeScaledABCD) + (*muIsolatedTriggerAfterScaledABCD);
+
+  TH2D * muNonisolatedTriggerBeforeScaledABCD = (TH2D*)muNonisolatedTriggerBefore->Clone();
+  muNonisolatedTriggerBeforeScaledABCD->Scale(fracBeforeIntLumiABCD);
+  TH2D * muNonisolatedTriggerAfterScaledABCD = (TH2D*)muNonisolatedTriggerAfter->Clone();
+  muNonisolatedTriggerAfterScaledABCD->Scale(fracAfterIntLumiABCD);
+  TH2D muNonisolatedTriggerLumiWeightedAveABCD = (*muNonisolatedTriggerBeforeScaledABCD) + (*muNonisolatedTriggerAfterScaledABCD);
+
+  TH2D * muIsolatedTriggerBeforeScaledA = (TH2D*)muIsolatedTriggerBefore->Clone();
+  muIsolatedTriggerBeforeScaledA->Scale(fracBeforeIntLumiA);
+  TH2D * muIsolatedTriggerAfterScaledA = (TH2D*)muIsolatedTriggerAfter->Clone();
+  muIsolatedTriggerAfterScaledA->Scale(fracAfterIntLumiA);
+  TH2D muIsolatedTriggerLumiWeightedAveA = (*muIsolatedTriggerBeforeScaledA) + (*muIsolatedTriggerAfterScaledA);
+
+  TH2D * muNonisolatedTriggerBeforeScaledA = (TH2D*)muNonisolatedTriggerBefore->Clone();
+  muNonisolatedTriggerBeforeScaledA->Scale(fracBeforeIntLumiA);
+  TH2D * muNonisolatedTriggerAfterScaledA = (TH2D*)muNonisolatedTriggerAfter->Clone();
+  muNonisolatedTriggerAfterScaledA->Scale(fracAfterIntLumiA);
+  TH2D muNonisolatedTriggerLumiWeightedAveA = (*muNonisolatedTriggerBeforeScaledA) + (*muNonisolatedTriggerAfterScaledA);
+
+
+  // Write output
+
+  id_tight->Write("muonID2018Tight");
+  id_medium->Write("muonID2018Medium");
+  id_loose->Write("muonID2018Loose");
+
+  iso_looseRel_looseID->Write("muonIso2018LooseLooseID");
+  iso_looseRel_mediumID->Write("muonIso2018LooseMediumID");
+  iso_looseRel_tightID->Write("muonIso2018LooseTightID");
+  iso_tightRel_mediumID->Write("muonIso2018TightMediumID");
+  iso_tightRel_tightID->Write("muonIso2018TightTightID");
+
+  muIsolatedTriggerBefore->Write("muonTrigger2018IsoMu24BeforeMuonHLTUpdate");
+  muNonisolatedTriggerBefore->Write("muonTrigger2018Mu50OROldMu100ORTkMu100BeforeMuonHLTUpdate");
+  muIsolatedTriggerAfter->Write("muonTrigger2018IsoMu24AfterMuonHLTUpdate");
+  muNonisolatedTriggerAfter->Write("muonTrigger2018Mu50OROldMu100ORTkMu100AfterMuonHLTUpdate");
+
+  muIsolatedTriggerLumiWeightedAveABCD.Write("muonTrigger2018IsoMu24LumiWeightedAveABCD");
+  muNonisolatedTriggerLumiWeightedAveABCD.Write("muonTrigger2018Mu50OROldMu100ORTkMu100LumiWeightedAveABCD");
+  muIsolatedTriggerLumiWeightedAveA.Write("muonTrigger2018IsoMu24LumiWeightedAveA");
+  muNonisolatedTriggerLumiWeightedAveA.Write("muonTrigger2018Mu50OROldMu100ORTkMu100LumiWeightedAveA");
+
+  fOutput->Close();
+
+  fID->Close();
+  fIso->Close();
+  fTrigBefore->Close();
+  fTrigAfter->Close();
+}
+
 void recreateLeptonSFs() {
   createElectronFile_2015();
   createElectronFile_2016();
   createElectronFile_2017();
-    
+  createElectronFile_2017_v2();
+  createElectronFile_2018();
+
   createMuonSFFile_2015();
   createMuonSFFile_2016();
   createMuonSFFile_2017();
+  createMuonSFFile_2018();
 }

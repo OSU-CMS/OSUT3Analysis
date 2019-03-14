@@ -287,8 +287,8 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
         collectionProducer.tracks.fiducialMaps.electrons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
         collectionProducer.tracks.fiducialMaps.muons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
 
-# For 94X which uses electron VIDs, define the vertexing requirements for veto electrons
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
+# For 94X/102X which use electron VIDs, define the vertexing requirements for veto electrons
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
     # Cut values are ordered by ID, as: veto, loose, medium, tight
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later
     collectionProducer.tracks.eleVtx_d0Cuts_barrel = cms.vdouble(0.05, 0.05, 0.05, 0.05)

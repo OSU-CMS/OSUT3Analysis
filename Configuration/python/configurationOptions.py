@@ -34,6 +34,7 @@ datasets = [
    'Tau_2018A',
    'Tau_2018B',
    'Tau_2018C',
+   'Tau_2018D',
    'ZeroBias_2015',
    'ZeroBias_2015D',
    'ZeroBias_2016',
@@ -107,6 +108,11 @@ datasets = [
    'DoubleEG_2017E',
    'DoubleEG_2017F',
    'DoubleEG_2017',
+   'EGamma_2018',
+   'EGamma_2018A',
+   'EGamma_2018B',
+   'EGamma_2018C',
+   'EGamma_2018D',
    'DoubleMu_2015',
    'DoubleMu_2015D',
    'DoubleMu_2016B',
@@ -124,6 +130,11 @@ datasets = [
    'DoubleMu_2017E',
    'DoubleMu_2017F',
    'DoubleMu_2017',
+   'DoubleMu_2018',
+   'DoubleMu_2018A',
+   'DoubleMu_2018B',
+   'DoubleMu_2018C',
+   'DoubleMu_2018D',
    'MuonEG_2015D',
    'MuonEG_2015',
    'MuonEG_2016B',
@@ -141,6 +152,11 @@ datasets = [
    'MuonEG_2017E',
    'MuonEG_2017F',
    'MuonEG_2017',
+   'MuonEG_2018',
+   'MuonEG_2018A',
+   'MuonEG_2018B',
+   'MuonEG_2018C',
+   'MuonEG_2018D',
    'MET_2015',
    'MET_2015D',
    'MET_2016',
@@ -161,6 +177,7 @@ datasets = [
    'MET_2018A',
    'MET_2018B',
    'MET_2018C',
+   'MET_2018D',
    'NoBPTX_2015D',
    'NoBPTX_2015D_v3',
    'NoBPTX_2015D_v4',
@@ -567,6 +584,7 @@ composite_dataset_definitions = {
       'Tau_2018A',
       'Tau_2018B',
       'Tau_2018C',
+      'Tau_2018D',
     ],
     'ZeroBias_2015' : [
         'ZeroBias_2015B',
@@ -673,6 +691,12 @@ composite_dataset_definitions = {
         'DoubleEG_2017E',
         'DoubleEG_2017F',
     ],
+    'EGamma_2018' : [
+        'EGamma_2018A',
+        'EGamma_2018B',
+        'EGamma_2018C',
+        'EGamma_2018D',
+    ],
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
         'DoubleMu_2015C',
@@ -704,6 +728,12 @@ composite_dataset_definitions = {
         'DoubleMu_2017E',
         'DoubleMu_2017F',
     ],
+    'DoubleMu_2018' : [
+        'DoubleMu_2018A',
+        'DoubleMu_2018B',
+        'DoubleMu_2018C',
+        'DoubleMu_2018D',
+        ],
     'MuonEG_2015' : [
         'MuonEG_2015B',
         'MuonEG_2015C',
@@ -735,6 +765,12 @@ composite_dataset_definitions = {
         'MuonEG_2017E',
         'MuonEG_2017F',
     ],
+    'MuonEG_2018' : [
+        'MuonEG_2018A',
+        'MuonEG_2018B',
+        'MuonEG_2018C',
+        'MuonEG_2018D',
+        ],
     #2015
     'mchamp100_NtupleSeparateEvents': [
         'mchamp100_NtupleSeparateEventsParticle0',
@@ -1100,6 +1136,7 @@ composite_dataset_definitions = {
       'MET_2018A',
       'MET_2018B',
       'MET_2018C',
+      'MET_2018D',
     ],
     'NoBPTX_Jet_2016BCD_PromptReco' : [
        'NoBPTX_Jet_2016B_PromptReco_v2',
@@ -1293,9 +1330,10 @@ nJobs = {
     'MET_2017D' : 999,
     'MET_2017E' : 999,
     'MET_2017F' : 999,
-    'MET_2018A' : 999,
-    'MET_2018B' : 999,
-    'MET_2018C' : 999,
+    'MET_2018A' : 530,
+    'MET_2018B' : 295,
+    'MET_2018C' : 315,
+    'MET_2018D' : 1625,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_1cm_76X'     :  99,
@@ -1535,6 +1573,7 @@ nJobs = {
     'Tau_2018A'  :  1000,
     'Tau_2018B'  :  1000,
     'Tau_2018C'  :  1000,
+    'Tau_2018D'  :  1000,
 
     'ZeroBias_2015D'  :  1000,
     'ZeroBias_2016B'  :  1000,
@@ -1603,6 +1642,11 @@ nJobs = {
     'DoubleEG_2017E'  : 562,
     'DoubleEG_2017F'  : 743,
 
+    'EGamma_2018A' : 3280,
+    'EGamma_2018B' : 1540,
+    'EGamma_2018C' : 1480,
+    'EGamma_2018D' : 7390,
+
     # set number of jobs to correpond to roughly 100k events/job
     'DoubleMu_2015B'  : 40,
     'DoubleMu_2015C'  : 187,
@@ -1619,6 +1663,10 @@ nJobs = {
     'DoubleMu_2017D'  : 231,
     'DoubleMu_2017E'  : 516,
     'DoubleMu_2017F'  : 798,
+    'DoubleMu_2018A' : 755,
+    'DoubleMu_2018B' : 355,
+    'DoubleMu_2018C' : 345,
+    'DoubleMu_2018D' : 1695,
 
     # set number of jobs to correpond to roughly 100k events/job
     'MuonEG_2015B' : 30,
@@ -1635,7 +1683,10 @@ nJobs = {
     'MuonEG_2017D' : 92,
     'MuonEG_2017E' : 190,
     'MuonEG_2017F' : 258,
-
+    'MuonEG_2018A' : 330,
+    'MuonEG_2018B' : 165,
+    'MuonEG_2018C' : 160,
+    'MuonEG_2018D' : 720,
     ############################################################################
 
     ###########################################################################
@@ -2691,6 +2742,7 @@ maxEvents = {
     'MET_2018A' : -1,
     'MET_2018B' : -1,
     'MET_2018C' : -1,
+    'MET_2018D' : -1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_1cm_76X'     :  -1,
@@ -2931,6 +2983,7 @@ maxEvents = {
     'Tau_2018A'       : -1,
     'Tau_2018B'       : -1,
     'Tau_2018C'       : -1,
+    'Tau_2018D'       : -1,
 
     'ZeroBias_2015D'       : -1,
     'ZeroBias_2016B'       : -1,
@@ -3007,6 +3060,12 @@ maxEvents = {
     'DoubleEG_2017F'        : -1,
     'DoubleEG_2017'         : -1,
 
+    'EGamma_2018'           : -1,
+    'EGamma_2018A'          : -1,
+    'EGamma_2018B'          : -1,
+    'EGamma_2018C'          : -1,
+    'EGamma_2018D'          : -1,
+
     'DoubleMu_2015B'        : -1,
     'DoubleMu_2015C'        : -1,
     'DoubleMu_2015D'        : -1,
@@ -3026,6 +3085,11 @@ maxEvents = {
     'DoubleMu_2017F'        : -1,
     'DoubleMu_2017'        : -1,
     'DoubleMu_2017_withoutB': -1,
+    'DoubleMu_2018'        : -1,
+    'DoubleMu_2018A'       : -1,
+    'DoubleMu_2018B'       : -1,
+    'DoubleMu_2018C'       : -1,
+    'DoubleMu_2018D'       : -1,
 
     'MuonEG_2015B'        : -1,
     'MuonEG_2015C'        : -1,
@@ -3044,6 +3108,11 @@ maxEvents = {
     'MuonEG_2017E'        : -1,
     'MuonEG_2017F'        : -1,
     'MuonEG_2017_withoutB': -1,
+    'MuonEG_2018'         : -1,
+    'MuonEG_2018A'        : -1,
+    'MuonEG_2018B'        : -1,
+    'MuonEG_2018C'        : -1,
+    'MuonEG_2018D'        : -1,
 
     ############################################################################
     ###########################################################################
@@ -4098,6 +4167,7 @@ types = {
     'MET_2018A'        : "data",
     'MET_2018B'        : "data",
     'MET_2018C'        : "data",
+    'MET_2018D'        : "data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_1cm_76X'     :  "signalMC",
@@ -4350,6 +4420,7 @@ types = {
     'Tau_2018A'    : "data",
     'Tau_2018B'    : "data",
     'Tau_2018C'    : "data",
+    'Tau_2018D'    : "data",
     'Tau_2015'     : "data",
     'Tau_2016'     : "data",
     'Tau_2017'     : "data",
@@ -4437,6 +4508,12 @@ types = {
     'DoubleEG_2017F'        : "data",
     'DoubleEG_2017'         : "data",
 
+    'EGamma_2018'           : "data",
+    'EGamma_2018A'          : "data",
+    'EGamma_2018B'          : "data",
+    'EGamma_2018C'          : "data",
+    'EGamma_2018D'          : "data",
+
     'DoubleMu_2015B'        : "data",
     'DoubleMu_2015C'        : "data",
     'DoubleMu_2015D'        : "data",
@@ -4457,6 +4534,11 @@ types = {
     'DoubleMu_2017F'        : "data",
     'DoubleMu_2017'         : "data",
     'DoubleMu_2017_withoutB': "data",
+    'DoubleMu_2018'         : "data",
+    'DoubleMu_2018A'        : "data",
+    'DoubleMu_2018B'        : "data",
+    'DoubleMu_2018C'        : "data",
+    'DoubleMu_2018D'        : "data",
 
     'MuonEG_2015B'        : "data",
     'MuonEG_2015C'        : "data",
@@ -4478,6 +4560,11 @@ types = {
     'MuonEG_2017F'        : "data",
     'MuonEG_2017'         : "data",
     'MuonEG_2017_withoutB': "data",
+    'MuonEG_2018'         : "data",
+    'MuonEG_2018A'        : "data",
+    'MuonEG_2018B'        : "data",
+    'MuonEG_2018C'        : "data",
+    'MuonEG_2018D'        : "data",
 
     ###########################################################################
     #RECO stored on T3
@@ -5547,6 +5634,7 @@ colors = {
     'MET_2018A'        : 1,
     'MET_2018B'        : 1,
     'MET_2018C'        : 1,
+    'MET_2018D'        : 1,
 
     #AMSB chargino
     'AMSB_chargino_100GeV_1cm_76X'     :  797,
@@ -5799,6 +5887,7 @@ colors = {
     'Tau_2018A'  :  1,
     'Tau_2018B'  :  1,
     'Tau_2018C'  :  1,
+    'Tau_2018D'  :  1,
     'Tau_2015'   :  1,
     'Tau_2016'   :  1,
     'Tau_2017'   :  1,
@@ -5883,6 +5972,12 @@ colors = {
     'DoubleEG_2017F'        : 1,
     'DoubleEG_2017'         : 1,
 
+    'EGamma_2018'           : 1,
+    'EGamma_2018A'          : 1,
+    'EGamma_2018B'          : 1,
+    'EGamma_2018C'          : 1,
+    'EGamma_2018D'          : 1,
+
     'DoubleMu_2015B'        : 1,
     'DoubleMu_2015C'        : 1,
     'DoubleMu_2015D'        : 1,
@@ -5903,6 +5998,11 @@ colors = {
     'DoubleMu_2017F'        : 1,
     'DoubleMu_2017'         : 1,
     'DoubleMu_2017_withoutB': 1,
+    'DoubleMu_2018'         : 1,
+    'DoubleMu_2018A'        : 1,
+    'DoubleMu_2018B'        : 1,
+    'DoubleMu_2018C'        : 1,
+    'DoubleMu_2018D'        : 1,
 
     'MuonEG_2015B'        : 1,
     'MuonEG_2015C'        : 1,
@@ -5924,6 +6024,11 @@ colors = {
     'MuonEG_2017D'        : 1,
     'MuonEG_2017E'        : 1,
     'MuonEG_2017F'        : 1,
+    'MuonEG_2018'         : 1,
+    'MuonEG_2018A'        : 1,
+    'MuonEG_2018B'        : 1,
+    'MuonEG_2018C'        : 1,
+    'MuonEG_2018D'        : 1,
 
     ###########################################################################
     #RECO stored on T3
@@ -7007,6 +7112,7 @@ labels = {
     'MET_2018A'        : "MET_2018A data",
     'MET_2018B'        : "MET_2018B data",
     'MET_2018C'        : "MET_2018C data",
+    'MET_2018D'        : "MET_2018D data",
 
     #AMSB chargino
     'AMSB_chargino_100GeV_1cm_76X'     :  "100 GeV #tilde{#chi}^{#pm} (c#tau = 1 cm)",
@@ -7257,6 +7363,7 @@ labels = {
     'Tau_2018A'  :  "Tau 2018A data",
     'Tau_2018B'  :  "Tau 2018B data",
     'Tau_2018C'  :  "Tau 2018C data",
+    'Tau_2018D'  :  "Tau 2018D data",
     'Tau_2015'   :  "Tau 2015 data",
     'Tau_2016'   :  "Tau 2016 data",
     'Tau_2017'   :  "Tau 2017 data",
@@ -7347,6 +7454,12 @@ labels = {
     'DoubleEG_2017F'        : "DoubleEG 2017F data",
     'DoubleEG_2017'         : "Double Electron 2017 data",
 
+    'EGamma_2018'         : "EGamma 2018 data",
+    'EGamma_2018A'        : "EGamma 2018A data",
+    'EGamma_2018B'        : "EGamma 2018B data",
+    'EGamma_2018C'        : "EGamma 2018C data",
+    'EGamma_2018D'        : "EGamma 2018D data",
+
     'DoubleMu_2015'         : "Double Muon 2015 data",
     'DoubleMu_2015B'        : "DoubleMu 2015B data",
     'DoubleMu_2015C'        : "DoubleMu 2015C data",
@@ -7367,6 +7480,11 @@ labels = {
     'DoubleMu_2017F'        : "DoubleMu 2017F data",
     'DoubleMu_2017'         : "Double Muon 2017 data",
     'DoubleMu_2017_withoutB': "Double Muon 2017 C-F data",
+    'DoubleMu_2018'         : "Double Muon 2018 data",
+    'DoubleMu_2018A'        : "Double Muon 2018A data",
+    'DoubleMu_2018B'        : "Double Muon 2018B data",
+    'DoubleMu_2018C'        : "Double Muon 2018C data",
+    'DoubleMu_2018D'        : "Double Muon 2018D data",
 
     'MuonEG_2015'         : "MuonEG 2015 data",
     'MuonEG_2015B'        : "MuonEG 2015B data",
@@ -7388,6 +7506,11 @@ labels = {
     'MuonEG_2017F'        : "MuonEG 2017F data",
     'MuonEG_2017'         : "Electron Muon 2017 data",
     'MuonEG_2017_withoutB': "Electron Muon 2017 C-F data",
+    'MuonEG_2018'         : "Electron Muon 2018 data",
+    'MuonEG_2018A'         : "Electron Muon 2018A data",
+    'MuonEG_2018B'         : "Electron Muon 2018B data",
+    'MuonEG_2018C'         : "Electron Muon 2018C data",
+    'MuonEG_2018D'         : "Electron Muon 2018D data",
 
     ###########################################################################
     #RECO stored on T3
@@ -9226,7 +9349,7 @@ crossSections = {
     'stopToLD1000_100mm': 0.00615134,
 }
 
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
   crossSections['QCD_15to30']     = 1837410000
   crossSections['QCD_30to50']     = 140932000
   crossSections['QCD_50to80']     = 19204300
@@ -9245,41 +9368,52 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
 
 InputCondorArguments = {}
 
-pdgIdsForLifetimeReweighting = {
-    # Defines the PDG IDs of the particles to be used for lifetime reweighting.
-    # The keys are dataset labels and the values are either single PDG IDs or
-    # lists of PDG IDs, e.g.:
-    # 'stop1200_50mm'               : 1000006,
-    # 'stopAndGluino1200_50mm_30mm' : [1000006, 1000021],
-}
+###################################################################################
 
-srcCTauForLifetimeReweighting = {
-    # Defines the proper lifetimes (in units of cm/c) of the particles defined
-    # by pdgIdsForLifetimeReweighting in the original samples before lifetime
-    # reweighting. The keys are dataset labels and the values are either single
-    # lifetime values or lists of lifetimes, e.g.:
-    # 'stop1200_50mm'               : 10.0,
-    # 'stopAndGluino1200_50mm_30mm' : [10.0, 10.0],
-}
+# Define the rules to apply for the lifetime reweighting. For each rule assigned
+# to a dataset, LifetimeWeightProducer will produce a unique weight to be applied
+# by the analyzer. An example rule for dataset XYZ registered here:
+#
+# 'XYZ' : [lifetimeReweightingRule([1000005, 1000006], [100, 20], [90, 15]),
+#          lifetimeReweightingRule([1000024], [100], [20])]
+#
+# From two rules, two eventvariable weights would be created:
+#     lifetimeWeight_1000005_100cmTo90cm_1000006_20cmTo15cm,
+#     lifetimeWeight_1000024_100cmTo20cm
+# and you can choose which to apply as an event weight when addChannel is called.
+# This way one dataset, with many rules, can simultaneously give you many datasets.
+#
+# There is also the list of booleans isDefaultRule, where if isDefaultRule[iRule]
+# is True, then rule iRule will also be stored in eventvariables as "lifetimeWeight"
+# with no suffix. This is to maintain backwards-compatibility for previous analyses.
+# If you mistakenly label multiple rules as the default, "lifetimeWeight" will be
+# overwritten.
 
-dstCTauForLifetimeReweighting = {
-    # Defines the target proper lifetimes (in units of cm/c) of the particles
-    # defined by pdgIdsForLifetimeReweighting to which the sample should be
-    # reweighted.  The keys are dataset labels and the values are either single
-    # lifetime values or lists of lifetimes, e.g.:
-    # 'stop1200_50mm'               : 10.0,
-    # 'stopAndGluino1200_50mm_30mm' : [5.0, 3.0],
-}
+class lifetimeReweightingRule:
+  pdgIds        = []
+  srcCTaus      = []
+  dstCTaus      = []
+  isDefaultRule = False
 
-pdgIdsForISRReweighting = {
-    # Defines the PDG IDs of the particles to be used for ISR reweighting.
-    # This will calculate the vector PT of all hard interaction particles with
-    # these IDs, and use it a proxy for the ISR recoil
-    # They keys are dataset labels and the values are either single PDG IDs or
-    # lists of PDG IDs, e.g:
-    # 'stop1200_50mm' : 1000006,
-    # 'stopAndGluino1200_50mm_30mm' : [1000006, 1000021],
-}
+  def __init__(self, ids = [], srcs = [], dsts = [], isDefault = False):
+    if len(ids) != len(srcs) or len(ids) != len(dsts):
+      print 'ids, srcs, and dsts must be of the same length when creating a lifetimeReweightingRule!'
+      return
+    self.pdgIds = ids
+    self.srcCTaus = srcs
+    self.dstCTaus = dsts
+    self.isDefaultRule = isDefault
+
+rulesForLifetimeReweighting = {}
+
+# Defines the PDG IDs of the particles to be used for ISR reweighting.
+# This will calculate the vector PT of all hard interaction particles with
+# these IDs, and use it a proxy for the ISR recoil
+# They keys are dataset labels and the values are either single PDG IDs or
+# lists of PDG IDs, e.g:
+# 'stop1200_50mm' : 1000006,
+# 'stopAndGluino1200_50mm_30mm' : [1000006, 1000021],
+pdgIdsForISRReweighting = {}
 
 ##########################################################################
 ### code to set relevant parameters for displaced SUSY signal samples, ###
@@ -9299,14 +9433,12 @@ def lifetime(sample):
     lt = sample[start:end]
     return lt.replace("p",".")
 
-##########################################################################
-
 # generate list of masses
-masses = [str(i*100) for i in range(2,19)]
+masses = [str(i*100) for i in range(2, 19)]
 # generate list of lifetimes
-lifetimes = ["%g" % (0.1*i*(pow(10,j))) for j in range(4) for i in range(1,10)]
+lifetimes = ["%g" % (0.1*i*(pow(10, j))) for j in range(4) for i in range(1, 10)]
 lifetimes.append("1000")
-lifetimes = [lt.replace(".","p") for lt in lifetimes]
+lifetimes = [lt.replace(".", "p") for lt in lifetimes]
 
 # generate list of sample names from masses, lifetimes
 signal_datasets = ["stop%s_%smm" % (m,ctau) for m in masses for ctau in lifetimes]
@@ -9334,8 +9466,6 @@ signal_crossSections = {
     '1800' : 0.0000467492,
 }
 
-##########################################################################
-
 for index, sample in enumerate(signal_datasets):
     nJobs[sample] = 99
     maxEvents[sample] = -1
@@ -9343,12 +9473,13 @@ for index, sample in enumerate(signal_datasets):
     labels[sample] = "#tilde{t}#tilde{t}#rightarrow lb lb, M=%s GeV, c#tau=%s mm" % (mass(sample), lifetime(sample))
     colors[sample] = 20 + index
     crossSections[sample] = signal_crossSections[mass(sample)]
-    pdgIdsForLifetimeReweighting[sample] = 1000006
-    dstCTauForLifetimeReweighting[sample] = 0.1*float(lifetime(sample))
-    srcCTauForLifetimeReweighting[sample] = 0.1*10**(math.ceil(math.log10(float(lifetime(sample)))))
+
+    sourceCTau = 0.1 * 10**(math.ceil(math.log10(float(lifetime(sample)))))
     # special case
-    if lifetime(sample) == "0.1":
-        srcCTauForLifetimeReweighting[sample] = 0.1*1.0
+    if lifetime(sample) == "0.1": sourceCTau = 0.1 * 1.0
+    destinationCTau = 0.1 * float(lifetime(sample))
+
+    rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [destinationCTau], True)]
 
 ################################################################################
 ### code to set relevant parameters for disappearing tracks signal samples,  ###
@@ -9359,33 +9490,31 @@ import re
 
 new_nJobs = {}
 for dataset0 in nJobs:
-    if not re.match (r'AMSB_chargino_[^_]*GeV_[^_]*cm_.*', dataset0):
-        continue
-    mass = re.sub (r'AMSB_chargino_([^_]*)GeV_[^_]*cm_.*', r'\1', dataset0)
-    ctau0 = float (re.sub (r'AMSB_chargino_[^_]*GeV_([^_]*)cm_.*', r'\1', dataset0))
-    suffix = re.sub (r'AMSB_chargino_[^_]*GeV_[^_]*cm_(.*)', r'\1', dataset0)
-    for i in range (2, 10):
-        ctau = ctauP = 0.1 * i * ctau0
-        if int (ctau) * 10 == int (ctau * 10):
-            ctau = ctauP = str (int (ctau))
-        else:
-            ctau = ctauP = str (ctau)
-            ctauP = re.sub (r'\.', r'p', ctau)
-        dataset = 'AMSB_chargino_' + mass + 'GeV_' + ctauP + 'cm_' + suffix
+  if not re.match (r'AMSB_chargino_[^_]*GeV_[^_]*cm_.*', dataset0):
+      continue
+  mass = re.sub (r'AMSB_chargino_([^_]*)GeV_[^_]*cm_.*', r'\1', dataset0)
+  ctau0 = float (re.sub (r'AMSB_chargino_[^_]*GeV_([^_]*)cm_.*', r'\1', dataset0))
+  suffix = re.sub (r'AMSB_chargino_[^_]*GeV_[^_]*cm_(.*)', r'\1', dataset0)
+  for i in range (2, 10):
+    ctau = ctauP = 0.1 * i * ctau0
+    if int (ctau) * 10 == int (ctau * 10):
+      ctau = ctauP = str (int (ctau))
+    else:
+      ctau = ctauP = str (ctau)
+      ctauP = re.sub (r'\.', r'p', ctau)
+    dataset = 'AMSB_chargino_' + mass + 'GeV_' + ctauP + 'cm_' + suffix
 
-        new_nJobs[dataset] = nJobs[dataset0]
-        maxEvents[dataset] = maxEvents[dataset0]
-        types[dataset] = types[dataset0]
-        colors[dataset] = colors[dataset0]
-        labels[dataset] = "AMSB #tilde{#chi}^{#pm} (" + mass + " GeV, " + ctau + " cm)"
-        pdgIdsForLifetimeReweighting[dataset] = 1000024
-        srcCTauForLifetimeReweighting[dataset] = ctau0
-        dstCTauForLifetimeReweighting[dataset] = float (ctau)
-        pdgIdsForISRReweighting[dataset] = [1000022, 1000024]
+    new_nJobs[dataset] = nJobs[dataset0]
+    maxEvents[dataset] = maxEvents[dataset0]
+    types[dataset] = types[dataset0]
+    colors[dataset] = colors[dataset0]
+    labels[dataset] = "AMSB #tilde{#chi}^{#pm} (" + mass + " GeV, " + ctau + " cm)"
+    rulesForLifetimeReweighting[dataset] = [lifetimeReweightingRule([1000024], [ctau0], [float(ctau)], True)]
+    pdgIdsForISRReweighting[dataset] = [1000022, 1000024]
 
-    pdgIdsForLifetimeReweighting[dataset0] = 1000024
-    srcCTauForLifetimeReweighting[dataset0] = ctau0
-    dstCTauForLifetimeReweighting[dataset0] = ctau0
-    pdgIdsForISRReweighting[dataset0] = [1000022, 1000024]
+  destinationCTaus = [ctau0 * 0.1 * i for i in range(2, 11)]
+  rulesForLifetimeReweighting[dataset0] = [lifetimeReweightingRule([1000024], [ctau0], [d], (d == ctau0)) for d in destinationCTaus]
+
+  pdgIdsForISRReweighting[dataset0] = [1000022, 1000024]
 
 nJobs.update (new_nJobs)

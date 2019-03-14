@@ -190,7 +190,8 @@ MuonHistograms = cms.PSet(
         ),
     )
 )
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
+
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_7_6_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
     MuonHistograms.histograms.append(
         cms.PSet (
             name = cms.string("muonGenMotherPdgId"),
@@ -199,7 +200,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
             inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.mother_.pdgId)"),
         ),
         )
-elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
+elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
     MuonHistograms.histograms.append(
         cms.PSet (
             name = cms.string("muonGenMotherPdgId"),
@@ -498,7 +499,7 @@ ElectronHistograms = cms.PSet(
     )
 )
 
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_7_6_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
     ElectronHistograms.histograms.append(
         cms.PSet (
             name = cms.string("electronGenMotherPdgId"),
@@ -507,7 +508,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
             inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.mother_.pdgId)"),
         ),
         )
-elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
+elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
     ElectronHistograms.histograms.append(
         cms.PSet (
             name = cms.string("electronGenMotherPdgId"),

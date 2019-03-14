@@ -20,13 +20,14 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
-  passesTightID_noIsolation_            (false),
+  passesTightID_noIsolation_LegacySpring15_ (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
   passesVID_mediumID_                   (false),
   passesVID_tightID_                    (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
+  match_HLT_Ele32_WPTight_Gsf_v_        (false),
   match_HLT_Ele35_WPTight_Gsf_v_        (false),
   metMinusOnePt_                        (INVALID_VALUE),
   metMinusOnePx_                        (INVALID_VALUE),
@@ -56,13 +57,14 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
-  passesTightID_noIsolation_            (false),
+  passesTightID_noIsolation_LegacySpring15_ (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
   passesVID_mediumID_                   (false),
   passesVID_tightID_                    (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
+  match_HLT_Ele32_WPTight_Gsf_v_        (false),
   match_HLT_Ele35_WPTight_Gsf_v_        (false),
   metMinusOnePt_                        (INVALID_VALUE),
   metMinusOnePx_                        (INVALID_VALUE),
@@ -92,13 +94,14 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
-  passesTightID_noIsolation_            (false),
+  passesTightID_noIsolation_LegacySpring15_ (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
   passesVID_mediumID_                   (false),
   passesVID_tightID_                    (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
+  match_HLT_Ele32_WPTight_Gsf_v_        (false),
   match_HLT_Ele35_WPTight_Gsf_v_        (false),
   metMinusOnePt_                        (INVALID_VALUE),
   metMinusOnePx_                        (INVALID_VALUE),
@@ -128,13 +131,14 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumPUPtCorr_                          (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
-  passesTightID_noIsolation_            (false),
+  passesTightID_noIsolation_LegacySpring15_ (false),
   passesVID_vetoID_                     (false),
   passesVID_looseID_                    (false),
   passesVID_mediumID_                   (false),
   passesVID_tightID_                    (false),
   match_HLT_Ele25_eta2p1_WPTight_Gsf_v_ (false),
   match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ (false),
+  match_HLT_Ele32_WPTight_Gsf_v_        (false),
   match_HLT_Ele35_WPTight_Gsf_v_        (false),
   metMinusOnePt_                        (INVALID_VALUE),
   metMinusOnePx_                        (INVALID_VALUE),
@@ -279,66 +283,42 @@ osu::Electron::d0SmearingVal () const
 }
 
 const bool
-osu::Electron::passesTightID_noIsolation () const
+osu::Electron::passesTightID_noIsolation_LegacySpring15 () const
 {
-  return passesTightID_noIsolation_;
+  return passesTightID_noIsolation_LegacySpring15_;
 }
 
 void
-osu::Electron::set_passesTightID_noIsolation (const reco::BeamSpot &beamspot, const TYPE(primaryvertexs) &vertex, const edm::Handle<vector<reco::Conversion> > &conversions)
+osu::Electron::set_passesTightID_noIsolation_LegacySpring15 (const reco::BeamSpot &beamspot, const TYPE(primaryvertexs) &vertex, const edm::Handle<vector<reco::Conversion> > &conversions)
 {
-  passesTightID_noIsolation_ = false;
+  passesTightID_noIsolation_LegacySpring15_ = false;
 
-#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
-  // https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2#Offline_selection_criteria
-  if (fabs (this->superCluster ()->eta ()) <= 1.479) {
-      passesTightID_noIsolation_ = (this->full5x5_sigmaIetaIeta ()                                                           <   0.0104  &&
-                                    fabs (this->dEtaInSeed ())                                                               <   0.00353 &&
-                                    fabs (this->deltaPhiSuperClusterTrackAtVtx ())                                           <   0.0499  &&
-                                    pass_GsfEleHadronicOverEMEnergyScaledCut (0.026, 1.12, 0.0368)                                       &&
-                                    fabs (1.0 / this->ecalEnergy () - this->eSuperClusterOverP () / this->ecalEnergy ())     <   0.0278  &&
-                                    fabs (this->gsfTrack ()->dxy (vertex.position ()))                                       <   0.05    &&
-                                    fabs (this->gsfTrack ()->dz (vertex.position ()))                                        <   0.10    &&
-                                    this->gsfTrack ()->hitPattern ().numberOfLostHits (reco::HitPattern::MISSING_INNER_HITS) <=  1       &&
-                                    !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
-  }
-  else if (fabs (this->superCluster ()->eta ()) < 2.5) {
-      passesTightID_noIsolation_ = (this->full5x5_sigmaIetaIeta ()                                                           <   0.0305  &&
-                                    fabs (this->dEtaInSeed ())                                                               <   0.00567 &&
-                                    fabs (this->deltaPhiSuperClusterTrackAtVtx ())                                           <   0.0165  &&
-                                    pass_GsfEleHadronicOverEMEnergyScaledCut (0.026, 0.5, 0.201)                                         &&
-                                    fabs (1.0 / this->ecalEnergy () - this->eSuperClusterOverP () / this->ecalEnergy ())     <   0.0158  &&
-                                    fabs (this->gsfTrack ()->dxy (vertex.position ()))                                       <   0.10    &&
-                                    fabs (this->gsfTrack ()->dz (vertex.position ()))                                        <   0.20    &&
-                                    this->gsfTrack ()->hitPattern ().numberOfLostHits (reco::HitPattern::MISSING_INNER_HITS) <=  1       &&
-                                    !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
-    }
-
-#else 
+#if CMSSW_VERSION_CODE < CMSSW_VERSION(9,0,0)
   // not 94X -- actually corresponds to https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2Archive#Spring15_selection_25ns
   if (fabs (this->superCluster ()->eta ()) <= 1.479) {
-      passesTightID_noIsolation_ = (this->full5x5_sigmaIetaIeta ()                                                        <   0.0101  &&
-                                    fabs (this->deltaEtaSuperClusterTrackAtVtx ())                                        <   0.00926 &&
-                                    fabs (this->deltaPhiSuperClusterTrackAtVtx ())                                        <   0.0336  &&
-                                    this->hadronicOverEm ()                                                               <   0.0597  &&
-                                    fabs (1.0 / this->ecalEnergy () - this->eSuperClusterOverP () / this->ecalEnergy ())  <   0.012   &&
-                                    fabs (this->gsfTrack ()->dxy (vertex.position ()))                                    <   0.0111  &&
-                                    fabs (this->gsfTrack ()->dz (vertex.position ()))                                     <   0.0466  &&
-                                    this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS)  <=  2       &&
-                                    !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
+      passesTightID_noIsolation_LegacySpring15_ = (this->full5x5_sigmaIetaIeta ()                                                        <   0.0101  &&
+                                                   fabs (this->deltaEtaSuperClusterTrackAtVtx ())                                        <   0.00926 &&
+                                                   fabs (this->deltaPhiSuperClusterTrackAtVtx ())                                        <   0.0336  &&
+                                                   this->hadronicOverEm ()                                                               <   0.0597  &&
+                                                   fabs (1.0 / this->ecalEnergy () - this->eSuperClusterOverP () / this->ecalEnergy ())  <   0.012   &&
+                                                   fabs (this->gsfTrack ()->dxy (vertex.position ()))                                    <   0.0111  &&
+                                                   fabs (this->gsfTrack ()->dz (vertex.position ()))                                     <   0.0466  &&
+                                                   this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS)  <=  2       &&
+                                                   !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
   }
   else if (fabs (this->superCluster ()->eta ()) < 2.5) {
-      passesTightID_noIsolation_ = (this->full5x5_sigmaIetaIeta ()                                                        <   0.0279  &&
-                                    fabs (this->deltaEtaSuperClusterTrackAtVtx ())                                        <   0.00724 &&
-                                    fabs (this->deltaPhiSuperClusterTrackAtVtx ())                                        <   0.0918  &&
-                                    this->hadronicOverEm ()                                                               <   0.0615  &&
-                                    fabs (1.0 / this->ecalEnergy () - this->eSuperClusterOverP () / this->ecalEnergy ())  <   0.00999 &&
-                                    fabs (this->gsfTrack ()->dxy (vertex.position ()))                                    <   0.0351  &&
-                                    fabs (this->gsfTrack ()->dz (vertex.position ()))                                     <   0.417   &&
-                                    this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS)  <=  1       &&
-                                    !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
+      passesTightID_noIsolation_LegacySpring15_ = (this->full5x5_sigmaIetaIeta ()                                                        <   0.0279  &&
+                                                   fabs (this->deltaEtaSuperClusterTrackAtVtx ())                                        <   0.00724 &&
+                                                   fabs (this->deltaPhiSuperClusterTrackAtVtx ())                                        <   0.0918  &&
+                                                   this->hadronicOverEm ()                                                               <   0.0615  &&
+                                                   fabs (1.0 / this->ecalEnergy () - this->eSuperClusterOverP () / this->ecalEnergy ())  <   0.00999 &&
+                                                   fabs (this->gsfTrack ()->dxy (vertex.position ()))                                    <   0.0351  &&
+                                                   fabs (this->gsfTrack ()->dz (vertex.position ()))                                     <   0.417   &&
+                                                   this->gsfTrack ()->hitPattern ().numberOfHits (reco::HitPattern::MISSING_INNER_HITS)  <=  1       &&
+                                                   !ConversionTools::hasMatchedConversion (*this, conversions, beamspot.position ()));
   }
-#endif // if/else 94X
+#endif
+
 }
 
 void 
@@ -411,6 +391,19 @@ void
 osu::Electron::set_match_HLT_Ele22_eta2p1_WPLoose_Gsf_v (const bool flag)
 {
   match_HLT_Ele22_eta2p1_WPLoose_Gsf_v_ = flag;
+}
+
+
+const bool
+osu::Electron::match_HLT_Ele32_WPTight_Gsf_v () const
+{
+  return match_HLT_Ele32_WPTight_Gsf_v_;
+}
+
+void
+osu::Electron::set_match_HLT_Ele32_WPTight_Gsf_v (const bool flag)
+{
+  match_HLT_Ele32_WPTight_Gsf_v_ = flag;
 }
 
 const bool
