@@ -732,11 +732,12 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     # If the dataset has a sibling defined, add the corresponding files to the secondary file names
     if ("sibling_datasets" in locals() or "sibling_datasets" in globals()) and Label in sibling_datasets:
         ConfigFile.write("\nsiblings = []\n")
-        ConfigFile.write("try:\n")
-        ConfigFile.write("  for fileName in osusub.runList:\n")
-        ConfigFile.write("    siblings.extend (osusub.getSiblings (fileName, \"" + sibling_datasets[Label] + "\"))\n")
-        ConfigFile.write("except:\n")
-        ConfigFile.write("  print \"No valid grid proxy. Not adding sibling files.\"\n")
+        ConfigFile.write("if osusub.batchMode:\n")
+        ConfigFile.write("  try:\n")
+        ConfigFile.write("    for fileName in osusub.runList:\n")
+        ConfigFile.write("      siblings.extend (osusub.getSiblings (fileName, \"" + sibling_datasets[Label] + "\"))\n")
+        ConfigFile.write("  except:\n")
+        ConfigFile.write("    print \"No valid grid proxy. Not adding sibling files.\"\n")
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     ConfigFile.write('process = pset.process\n')
