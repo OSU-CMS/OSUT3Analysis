@@ -509,9 +509,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("PYTHONPATH=$PYTHONPATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n\n")
 
     if rutgers:
-        SubmitScript.write ("rm -f " + proxy + "\n")
-        SubmitScript.write ("mv -f " + os.path.basename (proxy) + " " + os.path.dirname (proxy) + "/\n")
-        SubmitScript.write ("chmod 600 " + proxy + "\n\n")
+        SubmitScript.write ("rm -f /tmp/" + os.path.basename (proxy) + "\n")
+        SubmitScript.write ("mv -f " + os.path.basename (proxy) + " /tmp/\n")
+        SubmitScript.write ("chmod 600 /tmp/" + os.path.basename (proxy) + "\n")
+        SubmitScript.write ("X509_USER_PROXY=/tmp/" + os.path.basename (proxy) + "\n\n")
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
