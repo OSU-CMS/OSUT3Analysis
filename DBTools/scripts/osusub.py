@@ -772,10 +772,6 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
     for f in inputFiles:
         if arguments.Redirector != "":
             f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
-        elif lxbatch:
-            f = "root://xrootd.ba.infn.it/" + f
-        else:
-            f = "root://cms-xrd-global.cern.ch/" + f
         text += '"' + f + '",\n'
     text += ']\n'
     text += ('listOfSecondaryFiles = []\n' if not append else 'listOfSecondaryFiles += []\n')
@@ -848,10 +844,6 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             for f in inputFiles:
                 if arguments.Redirector != "":
                     f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
-                elif lxbatch:
-                    f = "root://xrootd.ba.infn.it/" + f
-                else:
-                    f = "root://cmsxrootd.fnal.gov/" + f
                 text += '"' + f + '",\n'
             text += ']\n'
         text += 'listOfSecondaryFiles = []\n'
@@ -890,10 +882,6 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             for f in inputFiles:
                 if arguments.Redirector != "":
                     f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
-                elif lxbatch:
-                    f = "root://xrootd.ba.infn.it/" + f
-                else:
-                    f = "root://cmsxrootd.fnal.gov/" + f
                 text += '"' + f + '",\n'
             text += ']\n'
         text += 'listOfSecondaryFiles = []\n'
