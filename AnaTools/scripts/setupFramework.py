@@ -105,8 +105,18 @@ print "Do not forget to recompile."
 os.system("ln -s $CMSSW_BASE/src/OSUT3Analysis/githooks/* $CMSSW_BASE/src/OSUT3Analysis/.git/hooks/")
 
 # check that necessary merge-topics have been done
-if os.environ["CMSSW_VERSION"].startswith("CMSSW_9_4_") and int(os.environ["CMSSW_VERSION"].split("_")[3]) >=9:
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_9_4_") and int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 9:
     if not os.path.isfile(os.environ["CMSSW_BASE"] + "/src/RecoEgamma/ElectronIdentification/python/Identification/cutBasedElectronID_Fall17_94X_V2_cff.py"):
         print ""
         print "If using electrons, please run the following before recompiling:"
         print A_BRIGHT_RED + "  git cms-merge-topic UAEDF-tomc:eleCutBasedId_94X_V2" + A_RESET
+    if not os.path.isfile(os.environ["CMSSW_BASE"] + "/src/L1Prefiring/EventWeightProducer/python/L1ECALPrefiringWeightProducer_cfi.py"):
+        print ""
+        print "If your analysis needs to correct for L1 ECAL prefiring issue, please run the following before recompling:"
+        print A_BRIGHT_RED + "  git cms-merge-topic lathomas:L1Prefiring_9_4_9" + A_RESET
+
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_8_0_") and int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 32:
+    if not os.path.isfile(os.environ["CMSSW_BASE"] + "/src/L1Prefiring/EventWeightProducer/python/L1ECALPrefiringWeightProducer_cfi.py"):
+        print ""
+        print "If your analysis needs to correct for L1 ECAL prefiring issue, please run the following before recompling:"
+        print A_BRIGHT_RED + "  git cms-merge-topic lathomas:L1Prefiring_8_0_32" + A_RESET

@@ -18,6 +18,7 @@ from OSUT3Analysis.Configuration.CollectionProducer_cff import *
 from OSUT3Analysis.Configuration.LifetimeWeightProducer_cff import *
 from OSUT3Analysis.Configuration.ISRWeightProducer_cff import *
 from OSUT3Analysis.Configuration.PUScalingFactorProducer_cff import *
+from OSUT3Analysis.Configuration.L1PrefiringWeightProducer_cff import *
 
 def GetCompleteOrderedArgumentsSet(InputArguments, currentCondorSubArgumentsSet):
     NewArguments = copy.deepcopy(InputArguments)
@@ -394,24 +395,34 @@ def add_channels (process,
         ########################################################################
         variableProducerPath = cms.Path ()
         for module in variableProducers:
-            if module not in locals () and module not in globals ():
-                producer = cms.EDFilter (module,
-                    collections = collections
-                )
-                setattr (process, module, producer)
-            elif module in locals ():
-                setattr (process, module, locals ()[module])
-                setattr (getattr (process, module), "collections", collections)
-            elif module in globals ():
-                setattr (process, module, globals ()[module])
-                setattr (getattr (process, module), "collections", collections)
-            variableProducerPath += getattr (process, module)
-        ########################################################################
+            if module == 'prefiringweight':
+                if module in locals ():
+                    setattr (process, module, locals ()[module])
+                elif module in globals ():
+                    setattr (process, module, globals ()[module])
+                else:
+                    sys.exit("ERROR [add_channels]: cannot find '" + module + "'")
+                variableProducerPath += getattr (process, module)
+                continue
+            else:
+                if module not in locals () and module not in globals ():
+                    producer = cms.EDFilter (module,
+                        collections = collections
+                    )
+                    setattr (process, module, producer)
+                elif module in locals ():
+                    setattr (process, module, locals ()[module])
+                    setattr (getattr (process, module), "collections", collections)
+                elif module in globals ():
+                    setattr (process, module, globals ()[module])
+                    setattr (getattr (process, module), "collections", collections)
+                variableProducerPath += getattr (process, module)
+            ########################################################################
 
-        ########################################################################
-        # Each variable producer module is added to the list of user variable
-        # collections in the collections PSet.
-        ########################################################################
+            ########################################################################
+            # Each variable producer module is added to the list of user variable
+            # collections in the collections PSet.
+            ########################################################################
             if not hasattr (collections, "uservariables"):
                 collections.uservariables = cms.VInputTag ()
             # verify this collection hasn't already been added
@@ -422,12 +433,12 @@ def add_channels (process,
                     break
             if not isDuplicate:
                 collections.uservariables.append (cms.InputTag (module, "uservariables"))
-        ########################################################################
+            ########################################################################
 
-        ########################################################################
-        # Each event variable producer module is added to the list of user variable
-        # collections in the collections PSet.
-        ########################################################################
+            ########################################################################
+            # Each event variable producer module is added to the list of user variable
+            # collections in the collections PSet.
+            ########################################################################
             if not hasattr (collections, "eventvariables"):
                 collections.eventvariables = cms.VInputTag ()
             # verify this collection hasn't already been added
