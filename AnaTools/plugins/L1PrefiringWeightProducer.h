@@ -1,5 +1,5 @@
-#ifndef PUSCALING_FACTOR_PRODUCER
-#define PUSCALING_FACTOR_PRODUCER
+#ifndef L1_PREFIRING_WEIGHT_PRODUCER
+#define L1_PREFIRING_WEIGHT_PRODUCER
 
 #include "OSUT3Analysis/AnaTools/interface/EventVariableProducer.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
