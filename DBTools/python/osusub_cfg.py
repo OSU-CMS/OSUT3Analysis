@@ -101,7 +101,7 @@ def getSiblings (fileName, dataset):
     # put the files of the target dataset in another set
     dataset = dbs3api_phys03.listFiles (dataset = dataset)
     for f in dataset:
-      miniaodSuperset.add (f["logical_file_name"])
+      miniaodSubset.add (f["logical_file_name"])
 
   # return the intersection of the two sets
   return list (miniaodSubset.intersection (miniaod))
