@@ -401,7 +401,7 @@ def add_channels (process,
                 elif module in globals ():
                     setattr (process, module, globals ()[module])
                 else:
-                    sys.exit("ERROR [add_channels]: cannot find '" + module + "'")
+                    sys.exit("ERROR [add_channels]: cannot find '" + module + "'") # should not be possible since this module itself imports this object
                 variableProducerPath += getattr (process, module)
                 continue
             else:
@@ -416,6 +416,9 @@ def add_channels (process,
                 elif module in globals ():
                     setattr (process, module, globals ()[module])
                     setattr (getattr (process, module), "collections", collections)
+                if module == 'L1PrefiringWeightProducer' and hasattr (process, 'prefiringweight'):
+                    # copy the DataEra from the CMSSW producer to the framework producer, to check that it is valid
+                    setattr (process.L1PrefiringWeightProducer, 'DataEra', process.prefiringweight.DataEra)
                 variableProducerPath += getattr (process, module)
             ########################################################################
 

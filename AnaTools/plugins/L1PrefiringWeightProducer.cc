@@ -2,8 +2,14 @@
 #include "OSUT3Analysis/AnaTools/plugins/L1PrefiringWeightProducer.h"
 
 L1PrefiringWeightProducer::L1PrefiringWeightProducer(const edm::ParameterSet &cfg) :
-   EventVariableProducer(cfg)
+   EventVariableProducer(cfg),
+   dataera_(cfg.getParameter<string>("DataEra"))
 {
+  if(dataera_ != "2016BtoH" && dataera_ != "2017BtoF") {
+    edm::LogError ("L1PrefiringWeightProducer") << "ERROR [L1PrefiringWeightProducer]: Invalid setting for DataEra: \"" << dataera_ << "\"; only \"2016BtoH\" and \"2017BtoF\" are supported." << endl;
+    exit(1);
+  }
+
   tokenPrefWeight_     = consumes< double >(edm::InputTag("prefiringweight:NonPrefiringProb"));
   tokenPrefWeightUp_   = consumes< double >(edm::InputTag("prefiringweight:NonPrefiringProbUp"));
   tokenPrefWeightDown_ = consumes< double >(edm::InputTag("prefiringweight:NonPrefiringProbDown"));

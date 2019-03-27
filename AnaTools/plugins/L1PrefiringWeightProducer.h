@@ -11,6 +11,8 @@ class L1PrefiringWeightProducer : public EventVariableProducer
         ~L1PrefiringWeightProducer ();
 
     private:
+        const std::string dataera_;
+
         edm::EDGetTokenT<double> tokenPrefWeight_;
         edm::EDGetTokenT<double> tokenPrefWeightUp_;
         edm::EDGetTokenT<double> tokenPrefWeightDown_;
