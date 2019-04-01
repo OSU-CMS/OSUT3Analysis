@@ -45,32 +45,63 @@ def getSiblings (fileName, dataset):
     i = fileName.find ("/store/")
     fileName = fileName[i:]
 
-  # first get the parents
-  parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
-
-  # for each of the parents, get the grandparents
-  grandparents = []
-  for parent in parents:
-    for parent_file_name in parent["parent_logical_file_name"]:
-      grandparents.extend (dbs3api_global.listFileParents (logical_file_name = parent_file_name))
-
-  # then for each of the grandparents, get their children
-  children = []
-  for grandparent in grandparents:
-    for grandparent_file_name in grandparent["parent_logical_file_name"]:
-      children.extend (dbs3api_global.listFileChildren (logical_file_name = grandparent_file_name))
-
-  # put the children in a set
   miniaod = set ([])
-  for child in children:
-    for child_file_name in child["child_logical_file_name"]:
-      miniaod.add (child_file_name)
+  miniaodSubset = set ([])
+  # if dataset is not a USER dataset, then assume the file comes from a USER dataset
+  if "/USER" not in dataset:
+    # first get the parents
+    parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
 
-  # put the files of the target dataset in another set
-  dataset = dbs3api_global.listFiles (dataset = dataset)
-  miniaodSuperset = set ([])
-  for f in dataset:
-    miniaodSuperset.add (f["logical_file_name"])
+    # for each of the parents, get the grandparents
+    grandparents = []
+    for parent in parents:
+      for parent_file_name in parent["parent_logical_file_name"]:
+        grandparents.extend (dbs3api_global.listFileParents (logical_file_name = parent_file_name))
+
+    # then for each of the grandparents, get their children
+    children = []
+    for grandparent in grandparents:
+      for grandparent_file_name in grandparent["parent_logical_file_name"]:
+        children.extend (dbs3api_global.listFileChildren (logical_file_name = grandparent_file_name))
+
+    # put the children in a set
+    for child in children:
+      for child_file_name in child["child_logical_file_name"]:
+        miniaod.add (child_file_name)
+
+    # put the files of the target dataset in another set
+    dataset = dbs3api_global.listFiles (dataset = dataset)
+    for f in dataset:
+      miniaodSubset.add (f["logical_file_name"])
+
+  # if dataset is a USER dataset, then assume the file comes from a MINIAOD dataset
+  else:
+    # first get the parents
+    parents = dbs3api_global.listFileParents (logical_file_name = fileName)
+
+    # then for each of the grandparents, get their children
+    children = []
+    for parent in parents:
+      for parent_file_name in parent["parent_logical_file_name"]:
+        children.extend (dbs3api_global.listFileChildren (logical_file_name = parent_file_name))
+
+    # then for each of the grandparents, get their children
+    grandchildren = []
+    for child in children:
+      for child_file_name in child["child_logical_file_name"]:
+        if "/AOD/" not in child_file_name:
+          continue
+        grandchildren.extend (dbs3api_phys03.listFileChildren (logical_file_name = child_file_name))
+
+    # put the children in a set
+    for grandchild in grandchildren:
+      for grandchild_file_name in grandchild["child_logical_file_name"]:
+        miniaod.add (grandchild_file_name)
+
+    # put the files of the target dataset in another set
+    dataset = dbs3api_phys03.listFiles (dataset = dataset)
+    for f in dataset:
+      miniaodSubset.add (f["logical_file_name"])
 
   # return the intersection of the two sets
-  return list (miniaodSuperset.intersection (miniaod))
+  return list (miniaodSubset.intersection (miniaod))

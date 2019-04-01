@@ -509,9 +509,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("PYTHONPATH=$PYTHONPATH:./" + os.environ["CMSSW_VERSION"] + "/python:.\n\n")
 
     if rutgers:
-        SubmitScript.write ("rm -f " + proxy + "\n")
-        SubmitScript.write ("mv -f " + os.path.basename (proxy) + " " + os.path.dirname (proxy) + "/\n")
-        SubmitScript.write ("chmod 600 " + proxy + "\n\n")
+        SubmitScript.write ("rm -f /tmp/" + os.path.basename (proxy) + "\n")
+        SubmitScript.write ("mv -f " + os.path.basename (proxy) + " /tmp/\n")
+        SubmitScript.write ("chmod 600 /tmp/" + os.path.basename (proxy) + "\n")
+        SubmitScript.write ("X509_USER_PROXY=/tmp/" + os.path.basename (proxy) + "\n\n")
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
@@ -731,11 +732,12 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     # If the dataset has a sibling defined, add the corresponding files to the secondary file names
     if ("sibling_datasets" in locals() or "sibling_datasets" in globals()) and Label in sibling_datasets:
         ConfigFile.write("\nsiblings = []\n")
-        ConfigFile.write("try:\n")
-        ConfigFile.write("  for fileName in osusub.runList:\n")
-        ConfigFile.write("    siblings.extend (osusub.getSiblings (fileName, \"" + sibling_datasets[Label] + "\"))\n")
-        ConfigFile.write("except:\n")
-        ConfigFile.write("  print \"No valid grid proxy. Not adding sibling files.\"\n")
+        ConfigFile.write("if osusub.batchMode:\n")
+        ConfigFile.write("  try:\n")
+        ConfigFile.write("    for fileName in osusub.runList:\n")
+        ConfigFile.write("      siblings.extend (osusub.getSiblings (fileName, \"" + sibling_datasets[Label] + "\"))\n")
+        ConfigFile.write("  except:\n")
+        ConfigFile.write("    print \"No valid grid proxy. Not adding sibling files.\"\n")
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     ConfigFile.write('process = pset.process\n')
@@ -770,10 +772,6 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
     for f in inputFiles:
         if arguments.Redirector != "":
             f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
-        elif lxbatch:
-            f = "root://xrootd.ba.infn.it/" + f
-        else:
-            f = "root://cms-xrd-global.cern.ch/" + f
         text += '"' + f + '",\n'
     text += ']\n'
     text += ('listOfSecondaryFiles = []\n' if not append else 'listOfSecondaryFiles += []\n')
@@ -846,10 +844,6 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             for f in inputFiles:
                 if arguments.Redirector != "":
                     f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
-                elif lxbatch:
-                    f = "root://xrootd.ba.infn.it/" + f
-                else:
-                    f = "root://cmsxrootd.fnal.gov/" + f
                 text += '"' + f + '",\n'
             text += ']\n'
         text += 'listOfSecondaryFiles = []\n'
@@ -888,10 +882,6 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             for f in inputFiles:
                 if arguments.Redirector != "":
                     f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
-                elif lxbatch:
-                    f = "root://xrootd.ba.infn.it/" + f
-                else:
-                    f = "root://cmsxrootd.fnal.gov/" + f
                 text += '"' + f + '",\n'
             text += ']\n'
         text += 'listOfSecondaryFiles = []\n'
