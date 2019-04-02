@@ -9573,6 +9573,8 @@ for dataset0 in nJobs:
     pdgIdsForISRReweighting[dataset] = [1000022, 1000024]
 
   destinationCTaus = [ctau0 * 0.1 * i for i in range(2, 11)]
+  if ctau0 == 10:
+    destinationCTaus.extend([round(ctau0 * 0.01 * i, 2) for i in range(1, 11)])
   rulesForLifetimeReweighting[dataset0] = [lifetimeReweightingRule([1000024], [ctau0], [d], (d == ctau0)) for d in destinationCTaus]
 
   pdgIdsForISRReweighting[dataset0] = [1000022, 1000024]
