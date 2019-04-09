@@ -18,6 +18,7 @@ OSUMetProducer::OSUMetProducer (const edm::ParameterSet &cfg) :
 
   BadChCandFilterToken_ = consumes<bool>(cfg.getParameter<edm::InputTag>("BadChargedCandidateFilter"));
   BadPFMuonFilterToken_ = consumes<bool>(cfg.getParameter<edm::InputTag>("BadPFMuonFilter"));
+  ecalBadCalibFilterUpdateToken_ = consumes<bool>(cfg.getParameter<edm::InputTag>("ecalBadCalibReducedMINIAODFilter"));
 }
 
 OSUMetProducer::~OSUMetProducer ()
@@ -37,6 +38,9 @@ OSUMetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   edm::Handle<bool> ifilterbadPFMuon;
   event.getByToken(BadPFMuonFilterToken_, ifilterbadPFMuon);
 
+  edm::Handle<bool> passecalBadCalibFilterUpdate ;
+  event.getByToken(ecalBadCalibFilterUpdateToken_, passecalBadCalibFilterUpdate);
+
   edm::Handle<vector<pat::PackedCandidate> > pfCandidates;
   event.getByToken (pfCandidatesToken_, pfCandidates);
 
@@ -52,6 +56,10 @@ OSUMetProducer::produce (edm::Event &event, const edm::EventSetup &setup)
         pl_->back ().setBadPFMuonFilter (*ifilterbadPFMuon);
       else if (firstEvent_)
         edm::LogWarning ("OSUMetProducer") << "Not applying \"Bad PF Muon Filter\"!";
+      if (passecalBadCalibFilterUpdate.isValid ())
+        pl_->back ().setPassecalBadCalibFilterUpdate (*passecalBadCalibFilterUpdate);
+      else if (firstEvent_)
+        edm::LogWarning ("OSUMetProducer") << "Not applying \"pass ecal Bad Calib Filter Update\"!";
     }
 
   event.put (std::move (pl_), collection_.instance ());

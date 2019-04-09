@@ -58,9 +58,11 @@ namespace osu
 
         void setBadChargedCandidateFilter (const bool);
         void setBadPFMuonFilter (const bool);
+        void setPassecalBadCalibFilterUpdate (const bool);
 
         const bool badChargedCandidateFilter () const { return badChargedCandidateFilter_; }
         const bool badPFMuonFilter () const { return badPFMuonFilter_; }
+        const bool passecalBadCalibFilterUpdate () const { return passecalBadCalibFilterUpdate_; }
 
       private:
         double noMuPt_;
@@ -91,6 +93,7 @@ namespace osu
 
         bool badChargedCandidateFilter_;
         bool badPFMuonFilter_;
+        bool passecalBadCalibFilterUpdate_;
     };
 }
 
