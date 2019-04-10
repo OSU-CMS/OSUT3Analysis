@@ -329,6 +329,20 @@ ElectronHistograms = cms.PSet(
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
+            name = cms.string("electronLeadingPt"),
+            title = cms.string("Electron Transverse Momentum;Electron p_{T} [GeV]"),
+            binsX = cms.untracked.vdouble(500, 0, 500),
+            indexX = cms.untracked.int32(0),
+            inputVariables = cms.vstring("pt"),
+        ),
+        cms.PSet (
+            name = cms.string("electronSubleadingPt"),
+            title = cms.string("Electron Transverse Momentum;Electron p_{T} [GeV]"),
+            binsX = cms.untracked.vdouble(500, 0, 500),
+            indexX = cms.untracked.int32(1),
+            inputVariables = cms.vstring("pt"),
+        ),
+        cms.PSet (
             name = cms.string("electronEta"),
             title = cms.string("Electron Eta;Electron #eta"),
             binsX = cms.untracked.vdouble(60, -3, 3),
