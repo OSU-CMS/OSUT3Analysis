@@ -28,6 +28,7 @@ class OSUMetProducer : public edm::EDProducer
     edm::EDGetTokenT<vector<pat::PackedCandidate> > pfCandidatesToken_;
     edm::EDGetTokenT<bool> BadChCandFilterToken_;
     edm::EDGetTokenT<bool> BadPFMuonFilterToken_;
+    edm::EDGetTokenT<bool> ecalBadCalibFilterUpdateToken_ ;
     ////////////////////////////////////////////////////////////////////////////
 
     // Payload for this EDFilter.
