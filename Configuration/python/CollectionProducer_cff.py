@@ -160,14 +160,29 @@ collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
     pfCandidates  =  cms.InputTag  ('packedPFCandidates',  '',  ''),
     BadChargedCandidateFilter = cms.InputTag ("BadChargedCandidateFilter"),
     BadPFMuonFilter = cms.InputTag ("BadChargedCandidateFilter"),
+    ecalBadCalibReducedMINIAODFilter = cms.InputTag ("ecalBadCalibReducedMINIAODFilter"),
 )
 
 #-------------------------------------------------------------------------------
-
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"): 
+    IsoMu24_Tag    = "hltL3MuonCandidates::HLT"
+    IsoMu24_Filter = "hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09"
+    IsoMu27_Tag    = "hltIterL3MuonCandidates::HLT"
+    IsoMu27_Filter = "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07"
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"): 
+    IsoMu24_Tag    = "hltIterL3MuonCandidates::HLT"
+    IsoMu24_Filter = "hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07"
+    IsoMu27_Tag    = "hltIterL3MuonCandidates::HLT"
+    IsoMu27_Filter = "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07"
 collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
     pfCandidate =  cms.InputTag  ('packedPFCandidates','',''),
 
     d0SmearingWidth = cms.double (-1.0),
+    IsoMu24Tag      = cms.string(IsoMu24_Tag),
+    IsoMu24Filter   = cms.string(IsoMu24_Filter),
+    IsoMu27Tag      = cms.string(IsoMu27_Tag),
+    IsoMu27Filter   = cms.string(IsoMu27_Filter),
+    
 )
 copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 

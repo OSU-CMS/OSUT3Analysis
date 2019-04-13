@@ -11,7 +11,11 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   collections_     (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_             (cfg),
   pfCandidate_     (cfg.getParameter<edm::InputTag>     ("pfCandidate")),
-  d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth"))
+  d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth")),
+  IsoMu24Tag_      (cfg.getParameter<string>            ("IsoMu24Tag")),
+  IsoMu24Filter_   (cfg.getParameter<string>            ("IsoMu24Filter")),
+  IsoMu27Tag_      (cfg.getParameter<string>            ("IsoMu27Tag")),
+  IsoMu27Filter_   (cfg.getParameter<string>            ("IsoMu27Filter")),
 
 
 {
@@ -85,8 +89,8 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       if(trigobjs.isValid())
         {
-          muon.set_match_HLT_IsoMu27_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltIterL3MuonCandidates::HLT", "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07"));
-          muon.set_match_HLT_IsoMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltL3MuonCandidates::HLT", "hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09"));
+          muon.set_match_HLT_IsoMu27_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, IsoMu27Tag_, IsoMu27Filter_));
+          muon.set_match_HLT_IsoMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, IsoMu24Tag_, IsoMu24Filter_));
           muon.set_match_HLT_IsoTkMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltHighPtTkMuonCands::HLT", "hltL3fL1sMu22L1f0Tkf24QL3trkIsoFiltered0p09"));
           muon.set_match_HLT_IsoMu20_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltL3MuonCandidates::HLT", "hltL3crIsoL1sMu16L1f0L2f10QL3f20QL3trkIsoFiltered0p09"));
           muon.set_match_HLT_IsoTkMu20_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltHighPtTkMuonCands::HLT", "hltL3fL1sMu16L1f0Tkf20QL3trkIsoFiltered0p09"));
