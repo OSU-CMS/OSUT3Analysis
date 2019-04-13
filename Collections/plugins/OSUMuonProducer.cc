@@ -15,9 +15,7 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   IsoMu24Tag_      (cfg.getParameter<string>            ("IsoMu24Tag")),
   IsoMu24Filter_   (cfg.getParameter<string>            ("IsoMu24Filter")),
   IsoMu27Tag_      (cfg.getParameter<string>            ("IsoMu27Tag")),
-  IsoMu27Filter_   (cfg.getParameter<string>            ("IsoMu27Filter")),
-
-
+  IsoMu27Filter_   (cfg.getParameter<string>            ("IsoMu27Filter"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("muons");
   produces<vector<osu::Muon> > (collection_.instance ());
