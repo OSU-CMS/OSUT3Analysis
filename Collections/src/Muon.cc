@@ -25,13 +25,7 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE),
-  
-  match_HLT_IsoMu27_v_     (false),
-  match_HLT_IsoMu24_v_     (false),
-  match_HLT_IsoTkMu24_v_   (false),
-  match_HLT_IsoMu20_v_     (false),
-  match_HLT_IsoTkMu20_v_   (false)
+  metNoMuMinusOnePhi_      (INVALID_VALUE)
 {
 }
 
@@ -51,13 +45,7 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE),
- 
-  match_HLT_IsoMu27_v_     (false),
-  match_HLT_IsoMu24_v_     (false),
-  match_HLT_IsoTkMu24_v_   (false),
-  match_HLT_IsoMu20_v_     (false),
-  match_HLT_IsoTkMu20_v_   (false)
+  metNoMuMinusOnePhi_      (INVALID_VALUE) 
 {
 }
 
@@ -77,12 +65,7 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE),
-  match_HLT_IsoMu27_v_     (false),
-  match_HLT_IsoMu24_v_     (false),
-  match_HLT_IsoTkMu24_v_   (false),
-  match_HLT_IsoMu20_v_     (false),
-  match_HLT_IsoTkMu20_v_   (false)
+  metNoMuMinusOnePhi_      (INVALID_VALUE)
 {
 }
 
@@ -102,12 +85,7 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE),
-  match_HLT_IsoMu27_v_     (false),
-  match_HLT_IsoMu24_v_     (false),
-  match_HLT_IsoTkMu24_v_   (false),
-  match_HLT_IsoMu20_v_     (false),
-  match_HLT_IsoTkMu20_v_   (false)
+  metNoMuMinusOnePhi_      (INVALID_VALUE)
 {
   TVector2 p (met.px () + this->px (), met.py () + this->py ()),
            pNoMu (met.noMuPx (), met.noMuPy ()); // we do not add the muon's pt
@@ -167,33 +145,9 @@ osu::Muon::d0SmearingVal () const
 }
 
 void
-osu::Muon::set_match_HLT_IsoMu27_v (const bool flag)
+osu::Muon::set_hltMatch (const string name, const bool flag)
 {
-  match_HLT_IsoMu27_v_ = flag;
-}
-
-void
-osu::Muon::set_match_HLT_IsoMu24_v (const bool flag)
-{
-  match_HLT_IsoMu24_v_ = flag;
-}
-
-void
-osu::Muon::set_match_HLT_IsoTkMu24_v (const bool flag)
-{
-  match_HLT_IsoTkMu24_v_ = flag;
-}
-
-void
-osu::Muon::set_match_HLT_IsoMu20_v (const bool flag)
-{
-  match_HLT_IsoMu20_v_ = flag;
-}
-
-void
-osu::Muon::set_match_HLT_IsoTkMu20_v (const bool flag)
-{
-  match_HLT_IsoTkMu20_v_ = flag;
+  hltMatches_[name] = flag;
 }
 
 const int
@@ -262,34 +216,10 @@ osu::Muon::metNoMuMinusOnePhi () const
   return metNoMuMinusOnePhi_;
 }
 
-const bool
-osu::Muon::match_HLT_IsoMu27_v () const
+const bool 
+osu::Muon::get_hltMatch (const string name) const
 {
-  return match_HLT_IsoMu27_v_;
-}
-
-const bool
-osu::Muon::match_HLT_IsoMu24_v () const
-{
-  return match_HLT_IsoMu24_v_;
-}
-
-const bool
-osu::Muon::match_HLT_IsoTkMu24_v () const
-{
-  return match_HLT_IsoTkMu24_v_;
-}
-
-const bool
-osu::Muon::match_HLT_IsoMu20_v () const
-{
-  return match_HLT_IsoMu20_v_;
-}
-
-const bool
-osu::Muon::match_HLT_IsoTkMu20_v () const
-{
-  return match_HLT_IsoTkMu20_v_;
+  return hltMatches_.find(name)->second;
 }
 
 #else // STOPPPED_PTLS

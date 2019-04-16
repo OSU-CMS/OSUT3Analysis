@@ -34,6 +34,8 @@ namespace osu
         void set_genD0 (double value) { genD0_  = value; };
         void set_d0SmearingVal (double value) { d0SmearingVal_  = value; };
 
+        void set_hltMatch (const string, const bool);
+
 	void set_match_HLT_IsoMu27_v (const bool);
         void set_match_HLT_IsoMu24_v (const bool);
         void set_match_HLT_IsoTkMu24_v (const bool);
@@ -54,11 +56,13 @@ namespace osu
         const double metNoMuMinusOnePy () const;
         const double metNoMuMinusOnePhi () const;
 
-        const bool match_HLT_IsoMu27_v () const;
-        const bool match_HLT_IsoMu24_v () const;
-        const bool match_HLT_IsoTkMu24_v () const;
-        const bool match_HLT_IsoMu20_v () const;
-        const bool match_HLT_IsoTkMu20_v () const;
+        const bool get_hltMatch (const string) const;
+
+        const bool match_HLT_IsoMu20_v   () const { return get_hltMatch("HLT_IsoMu20_v"); };
+        const bool match_HLT_IsoTkMu20_v () const { return get_hltMatch("HLT_IsoTkMu20_v"); };
+        const bool match_HLT_IsoMu24_v   () const { return get_hltMatch("HLT_IsoMu24_v"); };
+        const bool match_HLT_IsoTkMu24_v () const { return get_hltMatch("HLT_IsoTkMu24_v"); };
+        const bool match_HLT_IsoMu27_v   () const { return get_hltMatch("HLT_IsoMu27_v"); };
 
       private:
         bool isTightMuonWRTVtx_;
@@ -79,11 +83,7 @@ namespace osu
         double metNoMuMinusOnePy_;
         double metNoMuMinusOnePhi_;
 
-        bool match_HLT_IsoMu27_v_;
-        bool match_HLT_IsoMu24_v_;
-        bool match_HLT_IsoTkMu24_v_;
-        bool match_HLT_IsoMu20_v_;
-        bool match_HLT_IsoTkMu20_v_;
+        map<string, bool> hltMatches_;
     };
 }
 #else // STOPPPED_PTLS

@@ -164,26 +164,24 @@ collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
 )
 
 #-------------------------------------------------------------------------------
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"): 
-    IsoMu24_Tag    = "hltL3MuonCandidates::HLT"
-    IsoMu24_Filter = "hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09"
-    IsoMu27_Tag    = "hltIterL3MuonCandidates::HLT"
-    IsoMu27_Filter = "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07"
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"): 
-    IsoMu24_Tag    = "hltIterL3MuonCandidates::HLT"
-    IsoMu24_Filter = "hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07"
-    IsoMu27_Tag    = "hltIterL3MuonCandidates::HLT"
-    IsoMu27_Filter = "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07"
+
 collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
     pfCandidate =  cms.InputTag  ('packedPFCandidates','',''),
-
     d0SmearingWidth = cms.double (-1.0),
-    IsoMu24Tag      = cms.string(IsoMu24_Tag),
-    IsoMu24Filter   = cms.string(IsoMu24_Filter),
-    IsoMu27Tag      = cms.string(IsoMu27_Tag),
-    IsoMu27Filter   = cms.string(IsoMu27_Filter),
-    
+    hltMatchingInfo = cms.VPSet (
+        cms.PSet(name = cms.string("HLT_IsoMu20_v"),   collection = cms.string("hltL3MuonCandidates::HLT"),     filter = cms.string("hltL3crIsoL1sMu16L1f0L2f10QL3f20QL3trkIsoFiltered0p09")),
+        cms.PSet(name = cms.string("HLT_IsoTkMu20_v"), collection = cms.string("hltHighPtTkMuonCands::HLT"),    filter = cms.string("hltL3fL1sMu16L1f0Tkf20QL3trkIsoFiltered0p09")),
+        cms.PSet(name = cms.string("HLT_IsoMu24_v"),   collection = cms.string("hltL3MuonCandidates::HLT"),     filter = cms.string("hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09")),
+        cms.PSet(name = cms.string("HLT_IsoTkMu24_v"), collection = cms.string("hltHighPtTkMuonCands::HLT"),    filter = cms.string("hltL3fL1sMu22L1f0Tkf24QL3trkIsoFiltered0p09")),
+        cms.PSet(name = cms.string("HLT_IsoMu27_v"),   collection = cms.string("hltIterL3MuonCandidates::HLT"), filter = cms.string("hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07")),
+
+    ),
 )
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
+    for x in collectionProducer.muons.hltMatchingInfo:
+        if x.name.value() == "HLT_IsoMu24_v":
+            x.collection = cms.string("hltIterL3MuonCandidates::HLT")
+            x.filter = cms.string("hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07")
 copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------

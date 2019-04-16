@@ -36,10 +36,7 @@ class OSUMuonProducer : public edm::EDProducer
     edm::ParameterSet  cfg_;
     edm::InputTag      pfCandidate_;
     double             d0SmearingWidth_;
-    string             IsoMu24Tag;
-    string             IsoMu24Filter;
-    string             IsoMu27Tag;
-    string             IsoMu27Filter;
+    vector<edm::ParameterSet> hltMatchingInfo_;
 
     TRandom3* rng;
 
