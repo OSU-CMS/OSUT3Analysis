@@ -178,6 +178,9 @@ collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
 )
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
     for x in collectionProducer.muons.hltMatchingInfo:
+        if x.name.value() == "HLT_IsoMu20_v":
+            x.collection = cms.string("hltIterL3MuonCandidates::HLT")
+            x.filter = cms.string("hltL3crIsoL1sMu18L1f0L2f10QL3f20QL3trkIsoFiltered0p07")
         if x.name.value() == "HLT_IsoMu24_v":
             x.collection = cms.string("hltIterL3MuonCandidates::HLT")
             x.filter = cms.string("hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07")
