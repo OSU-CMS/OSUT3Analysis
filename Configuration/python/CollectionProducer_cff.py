@@ -160,15 +160,30 @@ collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
     pfCandidates  =  cms.InputTag  ('packedPFCandidates',  '',  ''),
     BadChargedCandidateFilter = cms.InputTag ("BadChargedCandidateFilter"),
     BadPFMuonFilter = cms.InputTag ("BadChargedCandidateFilter"),
+    ecalBadCalibReducedMINIAODFilter = cms.InputTag ("ecalBadCalibReducedMINIAODFilter"),
 )
 
 #-------------------------------------------------------------------------------
 
 collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
     pfCandidate =  cms.InputTag  ('packedPFCandidates','',''),
-
     d0SmearingWidth = cms.double (-1.0),
+    hltMatchingInfo = cms.VPSet (
+        cms.PSet(name = cms.string("HLT_IsoMu20_v"),   collection = cms.string("hltL3MuonCandidates::HLT"),     filter = cms.string("hltL3crIsoL1sMu16L1f0L2f10QL3f20QL3trkIsoFiltered0p09")),
+        cms.PSet(name = cms.string("HLT_IsoTkMu20_v"), collection = cms.string("hltHighPtTkMuonCands::HLT"),    filter = cms.string("hltL3fL1sMu16L1f0Tkf20QL3trkIsoFiltered0p09")),
+        cms.PSet(name = cms.string("HLT_IsoMu24_v"),   collection = cms.string("hltL3MuonCandidates::HLT"),     filter = cms.string("hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09")),
+        cms.PSet(name = cms.string("HLT_IsoTkMu24_v"), collection = cms.string("hltHighPtTkMuonCands::HLT"),    filter = cms.string("hltL3fL1sMu22L1f0Tkf24QL3trkIsoFiltered0p09")),
+        cms.PSet(name = cms.string("HLT_IsoMu27_v"),   collection = cms.string("hltIterL3MuonCandidates::HLT"), filter = cms.string("hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07")),
+    ),
 )
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
+    for x in collectionProducer.muons.hltMatchingInfo:
+        if x.name.value() == "HLT_IsoMu20_v":
+            x.collection = cms.string("hltIterL3MuonCandidates::HLT")
+            x.filter = cms.string("hltL3crIsoL1sMu18L1f0L2f10QL3f20QL3trkIsoFiltered0p07")
+        if x.name.value() == "HLT_IsoMu24_v":
+            x.collection = cms.string("hltIterL3MuonCandidates::HLT")
+            x.filter = cms.string("hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07")
 copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
