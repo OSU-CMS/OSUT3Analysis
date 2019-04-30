@@ -9583,7 +9583,7 @@ pdgIdsForISRReweighting = {}
 import math
 
 def mass(sample):
-    start = sample.find("stop")+4
+    start = sample.find("stop")+8
     end = sample.find("_")
     return sample[start:end]
 
@@ -9601,7 +9601,8 @@ lifetimes.append("1000")
 lifetimes = [lt.replace(".", "p") for lt in lifetimes]
 
 # generate list of sample names from masses, lifetimes
-signal_datasets = ["stop%s_%smm" % (m,ctau) for m in masses for ctau in lifetimes]
+signal_datasets = ["stopToLB%s_%smm" % (m,ctau) for m in masses for ctau in lifetimes]
+signal_datasets.extend(["stopToLD%s_%smm" % (m,ctau) for m in masses for ctau in lifetimes])
 
 datasets.extend(signal_datasets)
 composite_dataset_definitions['DisplacedSUSYSignal'] = signal_datasets
@@ -9630,7 +9631,10 @@ for index, sample in enumerate(signal_datasets):
     nJobs[sample] = 99
     maxEvents[sample] = -1
     types[sample] = 'signalMC'
-    labels[sample] = "#tilde{t}#tilde{t}#rightarrow lb lb, M=%s GeV, c#tau=%s mm" % (mass(sample), lifetime(sample))
+    if index < 0.5*len(signal_datasets):
+      labels[sample] = "#tilde{t}#tilde{t}#rightarrow lb lb, M=%s GeV, c#tau=%s mm" % (mass(sample), lifetime(sample))
+    else:
+      labels[sample] = "#tilde{t}#tilde{t}#rightarrow ld ld, M=%s GeV, c#tau=%s mm" % (mass(sample), lifetime(sample))
     colors[sample] = 20 + index
     crossSections[sample] = signal_crossSections[mass(sample)]
 
@@ -9680,4 +9684,3 @@ for dataset0 in nJobs:
   pdgIdsForISRReweighting[dataset0] = [1000022, 1000024]
 
 nJobs.update (new_nJobs)
-
