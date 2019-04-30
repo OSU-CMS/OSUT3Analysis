@@ -424,8 +424,10 @@ datasets = [
    'VBF_HTo4L_FPix80x5',
    'VBF_HTo4L_FPix800x52',
 
-   'stopToLD1000_1mm',
-   'stopToLD1000_100mm',
+  'stopToLD1000_1mm',
+  'stopToLD1000_100mm',
+  'stopToLB1800_1000mm_private',
+  'stopToLB400_1mm_private',
 
    #Sum of all backgrounds
    'Background',
@@ -2689,6 +2691,9 @@ nJobs = {
 
     'stopToLD1000_1mm' : 99,
     'stopToLD1000_100mm': 99,
+  'stopToLB1800_1000mm_private': 99,
+  'stopToLB400_1mm_private': 99,
+
 }
 
 maxEvents = {
@@ -4134,6 +4139,8 @@ maxEvents = {
 
     'stopToLD1000_1mm' : -1,
     'stopToLD1000_100mm': -1,
+  'stopToLB1800_1000mm_private': -1,
+  'stopToLB400_1mm_private': -1,
 
 }
 
@@ -5637,6 +5644,9 @@ types = {
 
     'stopToLD1000_1mm' : "signalMC",
     'stopToLD1000_100mm': "signalMC",
+  'stopToLB1800_1000mm_private': "signalMC",
+  'stopToLB400_1mm_private': "signalMC",
+
 }
 
 colors = {
@@ -7135,6 +7145,9 @@ colors = {
 
     'stopToLD1000_1mm' : 1,
     'stopToLD1000_100mm': 2,
+  'stopToLB1800_1000mm_private': 1,
+  'stopToLB400_1mm_private': 2,
+
 }
 
 style = {
@@ -8652,6 +8665,9 @@ labels = {
 
     'stopToLD1000_1mm' : "#tilde{t}#tilde{t}#rightarrow ld ld, M=1000 GeV, c#tau=1 mm",
     'stopToLD1000_100mm': "#tilde{t}#tilde{t}#rightarrow ld ld, M=1000 GeV, c#tau=100 mm",
+  'stopToLB1800_1000mm_private': "#tilde{t}#tilde{t}#rightarrow lb lb, M=1800 GeV, c#tau=1000 mm",
+  'stopToLB400_1mm_private': "#tilde{t}#tilde{t}#rightarrow lb lb, M=400 GeV, c#tau=1 mm",
+
 
 }
 
@@ -9507,6 +9523,9 @@ crossSections = {
 
     'stopToLD1000_1mm' : 0.00615134,
     'stopToLD1000_100mm': 0.00615134,
+  'stopToLB1800_1000mm_private': 0.0000467492,
+  'stopToLB400_1mm_private': 1.83537,
+
 }
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
@@ -9583,7 +9602,7 @@ pdgIdsForISRReweighting = {}
 import math
 
 def mass(sample):
-    start = sample.find("stop")+4
+    start = sample.find("stop")+8
     end = sample.find("_")
     return sample[start:end]
 
@@ -9601,7 +9620,8 @@ lifetimes.append("1000")
 lifetimes = [lt.replace(".", "p") for lt in lifetimes]
 
 # generate list of sample names from masses, lifetimes
-signal_datasets = ["stop%s_%smm" % (m,ctau) for m in masses for ctau in lifetimes]
+signal_datasets = ["stopToLB%s_%smm" % (m,ctau) for m in masses for ctau in lifetimes]
+signal_datasets.extend(["stopToLD%s_%smm" % (m,ctau) for m in masses for ctau in lifetimes])
 
 datasets.extend(signal_datasets)
 composite_dataset_definitions['DisplacedSUSYSignal'] = signal_datasets
@@ -9630,7 +9650,10 @@ for index, sample in enumerate(signal_datasets):
     nJobs[sample] = 99
     maxEvents[sample] = -1
     types[sample] = 'signalMC'
-    labels[sample] = "#tilde{t}#tilde{t}#rightarrow lb lb, M=%s GeV, c#tau=%s mm" % (mass(sample), lifetime(sample))
+    if index < 0.5*len(signal_datasets):
+      labels[sample] = "#tilde{t}#tilde{t}#rightarrow lb lb, M=%s GeV, c#tau=%s mm" % (mass(sample), lifetime(sample))
+    else:
+      labels[sample] = "#tilde{t}#tilde{t}#rightarrow ld ld, M=%s GeV, c#tau=%s mm" % (mass(sample), lifetime(sample))
     colors[sample] = 20 + index
     crossSections[sample] = signal_crossSections[mass(sample)]
 
@@ -9680,4 +9703,3 @@ for dataset0 in nJobs:
   pdgIdsForISRReweighting[dataset0] = [1000022, 1000024]
 
 nJobs.update (new_nJobs)
-
