@@ -11,9 +11,8 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   collections_     (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_             (cfg),
   pfCandidate_     (cfg.getParameter<edm::InputTag>     ("pfCandidate")),
-  d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth"))
-
-
+  d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth")),
+  hltMatchingInfo_ (cfg.getParameter<vector<edm::ParameterSet> > ("hltMatchingInfo"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("muons");
   produces<vector<osu::Muon> > (collection_.instance ());
@@ -85,11 +84,12 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
       if(trigobjs.isValid())
         {
-          muon.set_match_HLT_IsoMu27_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltIterL3MuonCandidates::HLT", "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07"));
-          muon.set_match_HLT_IsoMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltL3MuonCandidates::HLT", "hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09"));
-          muon.set_match_HLT_IsoTkMu24_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltHighPtTkMuonCands::HLT", "hltL3fL1sMu22L1f0Tkf24QL3trkIsoFiltered0p09"));
-          muon.set_match_HLT_IsoMu20_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltL3MuonCandidates::HLT", "hltL3crIsoL1sMu16L1f0L2f10QL3f20QL3trkIsoFiltered0p09"));
-          muon.set_match_HLT_IsoTkMu20_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltHighPtTkMuonCands::HLT", "hltL3fL1sMu16L1f0Tkf20QL3trkIsoFiltered0p09"));
+          for(unsigned iHLT = 0; iHLT != hltMatchingInfo_.size(); iHLT++) {
+            string hltName       = hltMatchingInfo_.at(iHLT).getParameter<string>("name");
+            string hltCollection = hltMatchingInfo_.at(iHLT).getParameter<string>("collection");
+            string hltFilter     = hltMatchingInfo_.at(iHLT).getParameter<string>("filter");
+            muon.set_hltMatch(hltName, anatools::isMatchedToTriggerObject(event, *triggers, object, *trigobjs, hltCollection, hltFilter));
+          }
         }
 
       //generator D0 must be done with prunedGenParticles because vertex is only right in this collection, not right in packedGenParticles

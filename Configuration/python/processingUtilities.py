@@ -480,6 +480,8 @@ def add_channels (process,
             if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer) or isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDFilter):
                 dic = vars(getattr(collectionProducer,collection))
                 for p in dic:
+                    if isinstance(dic[p], cms.VPSet):
+                        continue
                     if 'InputTag' in str(dic[p]):
                         outputCommand = "keep *_"
                         outputCommand += dic[p].getModuleLabel ()
