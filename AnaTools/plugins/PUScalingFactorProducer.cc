@@ -134,7 +134,7 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
       (*eventvariables)["puScalingFactor"]     = puWeight_->GetBinContent(puWeight_->FindBin(numTruePV));
       (*eventvariables)["puScalingFactorUp"]   = puWeightUp_ ? puWeightUp_->GetBinContent(puWeightUp_->FindBin(numTruePV)) : 1;
       (*eventvariables)["puScalingFactorDown"] = puWeightDown_ ? puWeightDown_->GetBinContent(puWeightDown_->FindBin(numTruePV)) : 1;
-      (*eventvariables)["numTruePV"] = numTruePV;
+      (*eventvariables)["numTrueInteractions"] = numTruePV;
     }
   else
     {
@@ -150,13 +150,13 @@ PUScalingFactorProducer::AddVariables (const edm::Event &event) {
              (*eventvariables)["puScalingFactor"]     = 1;
              (*eventvariables)["puScalingFactorUp"]   = 1;
              (*eventvariables)["puScalingFactorDown"] = 1;
-             (*eventvariables)["numTruePV"] = INVALID_VALUE;
+             (*eventvariables)["numTrueInteractions"] = INVALID_VALUE;
     }
 #else
     (*eventvariables)["puScalingFactor"]     = 1;
     (*eventvariables)["puScalingFactorUp"]   = 1;
     (*eventvariables)["puScalingFactorDown"] = 1;
-   (*eventvariables)["numTruePV"] = INVALID_VALUE;
+   (*eventvariables)["numTrueInteractions"] = INVALID_VALUE;
 # endif
     isFirstEvent_ = false;
 }
