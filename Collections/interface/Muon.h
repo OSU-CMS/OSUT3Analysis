@@ -26,7 +26,9 @@ namespace osu
         const double genD0 () const;
         const double d0SmearingVal () const;
         const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }
+        const bool isSoftMuonWRTVtx() const { return isSoftMuonWRTVtx_; }
         void set_isTightMuonWRTVtx(const bool isTightMuon);
+        void set_isSoftMuonWRTVtx(const bool isSoftMuon);
         void set_pfdBetaIsoCorr (double value) { pfdBetaIsoCorr_  = value; };
         void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };
         void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
@@ -66,6 +68,7 @@ namespace osu
 
       private:
         bool isTightMuonWRTVtx_;
+        bool isSoftMuonWRTVtx_;
         double pfdBetaIsoCorr_;
         double sumChargedHadronPtCorr_;
         int muonPVIndex_;
