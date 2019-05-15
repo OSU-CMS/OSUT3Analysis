@@ -145,6 +145,12 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("isTightMuonWRTVtx"),
         ),
         cms.PSet (
+            name = cms.string("muonIsSoftMuonWRTVtx"),
+            title = cms.string("Muon isSoftMuon;Muon passes soft ID"),
+            binsX = cms.untracked.vdouble(2, 0, 2),
+            inputVariables = cms.vstring("isSoftMuonWRTVtx"),
+        ),
+        cms.PSet (
             name = cms.string("muonPFdBetaIsolation"),
             title = cms.string("Muon PF-based #Delta#beta Isolation;Muon PF-based #Delta#beta isolation"),
             binsX = cms.untracked.vdouble(100, 0, 6.0),
