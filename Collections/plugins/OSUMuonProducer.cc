@@ -81,8 +81,10 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
           muon.set_isSoftMuonWRTVtx(muon.isSoftMuon(vtx));
         }
       else
+        {
           muon.set_isTightMuonWRTVtx(false);
           muon.set_isSoftMuonWRTVtx(false);
+        }
 
       if(trigobjs.isValid())
         {
