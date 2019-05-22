@@ -503,7 +503,7 @@ void Plotter::fill3DHistogram(const HistoDef &definition){
             continue;
           if (!IS_INVALID(definition.indexY) && leafY - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexY)
             continue;
-          if (!IS_INVALID(definition.indexZ) && leafZ - definition.valueLookupTrees.at(1)->evaluate().begin() != definition.indexZ)
+          if (!IS_INVALID(definition.indexZ) && leafZ - definition.valueLookupTrees.at(2)->evaluate().begin() != definition.indexZ)
             continue;
 
           fill3DHistogram(definition, valueX, valueY, valueZ, weight);
