@@ -75,7 +75,10 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event) {
 
   for(unsigned int iRule = 0; iRule < dstCTau_.size(); iRule++) {
 
-    vector<vector<double> > cTaus(pdgIds_[iRule].size());
+    vector<vector<double> > cTaus       (pdgIds_[iRule].size());
+    vector<vector<double> > decayLengths(pdgIds_[iRule].size());
+    vector<vector<double> > betaFactors (pdgIds_[iRule].size());
+    vector<vector<double> > gammaFactors(pdgIds_[iRule].size());
 
     for(const auto &mcparticle: *mcparticles) {
       // Pythia8 first creates particles in the frame of the interaction, and only boosts them 
@@ -93,6 +96,11 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event) {
            (requireLastNotFirstCopy_ || isOriginalParticle(mcparticle, mcparticle.pdgId())) &&
            (cTau = getCTau(mcparticle)) > 0.0) {
           cTaus[iPdgId].push_back(cTau);
+          TVector3 x(mcparticle.vx(), mcparticle.vy(), mcparticle.vz());
+          TVector3 y = getEndVertex(mcparticle);
+          decayLengths[iPdgId].push_back((x - y).Mag());
+          betaFactors[iPdgId].push_back(mcparticle.p4().Beta());
+          gammaFactors[iPdgId].push_back(mcparticle.p4().Gamma());
         }
       }
 
@@ -101,13 +109,19 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event) {
     stringstream suffix;
     for(unsigned int iPdgId = 0; iPdgId < pdgIds_[iRule].size(); iPdgId++) {
       unsigned index = 0;
-      for(const auto &cTau : cTaus[iPdgId]) {
-        // Save the cTau for every mcparticle used for reweighting
+      for(unsigned int i_cTau = 0; i_cTau < cTaus[iPdgId].size(); i_cTau++) {
+        double cTau = cTaus[iPdgId][i_cTau];
+
+        // Save the cTau for every mcparticle used for reweighting, along with other information
         // If the same pdgId is used in multiple rules, this value will be
         // overwritten for every rule but the ordering/index is always the same, so it will be fine
         suffix.str("");
         suffix << "_" << abs(pdgIds_[iRule][iPdgId]) << "_" << index++;
+        
         (*eventvariables)["cTau" + suffix.str()] = cTau;
+        (*eventvariables)["decayLength" + suffix.str()] = decayLengths[iPdgId][i_cTau];
+        (*eventvariables)["beta" + suffix.str()] = betaFactors[iPdgId][i_cTau];
+        (*eventvariables)["gamma" + suffix.str()] = gammaFactors[iPdgId][i_cTau];
 
         double srcPDF = exp(-cTau / srcCTau_[iRule][iPdgId]) / srcCTau_[iRule][iPdgId];
         double dstPDF = exp(-cTau / dstCTau_[iRule][iPdgId]) / dstCTau_[iRule][iPdgId];
@@ -120,7 +134,11 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event) {
       while(index < 10) {
         suffix.str("");
         suffix << "_" << abs(pdgIds_[iRule][iPdgId]) << "_" << index++;
+
         (*eventvariables)["cTau" + suffix.str()] = INVALID_VALUE;
+        (*eventvariables)["decayLength" + suffix.str()] = INVALID_VALUE;
+        (*eventvariables)["beta" + suffix.str()] = INVALID_VALUE;
+        (*eventvariables)["gamma" + suffix.str()] = INVALID_VALUE;
       }
     } // for pdgIds in this rule
 
@@ -160,6 +178,19 @@ LifetimeWeightProducer::getCTau(const TYPE(hardInteractionMcparticles) &mcpartic
 #else
   return 0.0;
 #endif
+}
+
+TVector3
+LifetimeWeightProducer::getEndVertex(const TYPE(hardInteractionMcparticles) &mcparticle) const
+{
+  TVector3 y(99999.0, 99999.0, 99999.0);
+
+  for(const auto &daughter : mcparticle) {
+    // Re-sets for every daughter, they should all have the same start vertex
+    y.SetXYZ(daughter.vx(), daughter.vy(), daughter.vz());
+  }
+
+  return y;
 }
 
 // getFinalPosition: continue along the decay chain until you reach a particle with a different pdgId
