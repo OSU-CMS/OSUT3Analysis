@@ -442,13 +442,18 @@ composite_dataset_definitions = {
         'ZJetsToNuNu_HT100to200',
         'ZJetsToNuNu_HT200to400',
         'ZJetsToNuNu_HT400to600',
+        'ZJetsToNuNu_HT600to800',
+        'ZJetsToNuNu_HT800to1200',
+        'ZJetsToNuNu_HT1200to2500',
         'ZJetsToNuNu_HT600toInf',
+        'ZJetsToNuNu_HT2500toInf',
     ],
     'DYJetsToLL_50ns' : [
         'DYJetsToLL_50_50ns',
         'DYJetsToLL_10to50_50ns',
     ],
     'WJetsToLNu_HT' : [
+        'WJetsToLNu_HT70to100',
         'WJetsToLNu_HT100to200',
         'WJetsToLNu_HT200to400',
         'WJetsToLNu_HT400to600',
@@ -1272,6 +1277,7 @@ nJobs = {
 
     #WJets
     'WJetsToLNu'              :  999,
+    'WJetsToLNu_HT70to100'    :  999,
     'WJetsToLNu_HT100to200'   :  999,
     'WJetsToLNu_HT200to400'   :  999,
     'WJetsToLNu_HT400to600'   :  999,
@@ -2717,6 +2723,7 @@ maxEvents = {
 
     #WJets
     'WJetsToLNu'  :  -1,
+    'WJetsToLNu_HT70to100'   :  -1,
     'WJetsToLNu_HT100to200'   :  -1,
     'WJetsToLNu_HT200to400'   :  -1,
     'WJetsToLNu_HT400to600'   :  -1,
@@ -4169,6 +4176,7 @@ types = {
     #WJets
     'WJetsToLNu'  :  "bgMC",
     'WJetsToLNu_HT'           :  "bgMC",
+    'WJetsToLNu_HT70to100'   :  "bgMC",
     'WJetsToLNu_HT100to200'   :  "bgMC",
     'WJetsToLNu_HT200to400'   :  "bgMC",
     'WJetsToLNu_HT400to600'   :  "bgMC",
@@ -5671,6 +5679,7 @@ colors = {
     #WJets
     'WJetsToLNu'             :  852,
     'WJetsToLNu_HT'           :  852,
+    'WJetsToLNu_HT70to100'   :  852,
     'WJetsToLNu_HT100to200'   :  852,
     'WJetsToLNu_HT200to400'   :  852,
     'WJetsToLNu_HT400to600'   :  852,
@@ -7184,6 +7193,7 @@ labels = {
     #WJets
     'WJetsToLNu'              :  "W#rightarrowl#nu",
     'WJetsToLNu_HT'           :  "W#rightarrowl#nu (H_{T}>100 GeV)",
+    'WJetsToLNu_HT70to100'    :  "W#rightarrowl#nu (70<H_{T}<100 GeV)",
     'WJetsToLNu_HT100to200'   :  "W#rightarrowl#nu (100<H_{T}<200 GeV)",
     'WJetsToLNu_HT200to400'   :  "W#rightarrowl#nu (200<H_{T}<400 GeV)",
     'WJetsToLNu_HT400to600'   :  "W#rightarrowl#nu (400<H_{T}<600 GeV)",
@@ -8691,6 +8701,7 @@ crossSections = {
     'ZZ_50ns'                       : 10.32,
 #############################################################
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns
+    'WJetsToLNu_HT70to100'    : 1353.0,
     'WJetsToLNu_HT100to200'   : 1345,
     'WJetsToLNu_HT200to400'   : 359.7,
     'WJetsToLNu_HT400to600'   : 48.91,
