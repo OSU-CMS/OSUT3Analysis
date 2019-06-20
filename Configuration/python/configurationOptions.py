@@ -362,6 +362,9 @@ datasets = [
    'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCsc_Ntuple',
    'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCscRpc_Ntuple',
 
+   #parked data 2018
+   'ParkingBPH4_Run2018A',
+
    #MiniAOD not stored on T3.
    'DYJetsToLL_50',
    'DYJetsToLL_5to50',
@@ -1596,6 +1599,9 @@ nJobs = {
     'QCD_bcToE_80to170'             : 153,
     'QCD_bcToE_170to250'            : 98,
     'QCD_bcToE_250toInf'            : 99,
+
+    #parked data 2018
+    'ParkingBPH4_Run2018A'  : 999,
 
     'Tau_2015D'  :  1000,
     'Tau_2016B'  :  1000,
@@ -3042,6 +3048,9 @@ maxEvents = {
     'QCD_bcToE_80to170'             : -1,
     'QCD_bcToE_170to250'            : -1,
     'QCD_bcToE_250toInf'            : -1,
+
+    #Parked data 2018
+    'ParkingBPH4_Run2018A'  : -1,
 
     'Tau_2015D'       : -1,
     'Tau_2016B'       : -1,
@@ -4514,6 +4523,9 @@ types = {
     'QCD_bcToE_250toInf'            : "bgMC",
 
     'QCDFromData' : "bgMC",
+
+    #parking data 2018
+    'ParkingBPH4_Run2018A'    : "data",
 
     'Tau_2015D'    : "data",
     'Tau_2016B'    : "data",
@@ -6017,6 +6029,9 @@ colors = {
     'QCD_bcToE_250toInf'            : 794,
 
     'QCDFromData' : 791,
+
+    #parked data 2018
+    'ParkingBPH4_Run2018A'  : 1,
 
     'Tau_2015D'  :  1,
     'Tau_2016B'  :  1,
@@ -7529,6 +7544,9 @@ labels = {
     'QCD_bcToE_250toInf'            : "QCD bcToE Pt 250-Inf",
 
     'QCDFromData'     : "data-driven QCD",
+
+    #parked data 2018
+    'ParkingBPH4_Run2018A'  : "ParkingBPH4  Run2018A",
 
     'Tau_2015D'  :  "Tau 2015D data",
     'Tau_2016B'  :  "Tau 2016B data",
