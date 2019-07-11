@@ -272,13 +272,15 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
     maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
     if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
   }
+  else dRToMatchedCandidateTrack_ = INVALID_VALUE;
 
 #if DATA_FORMAT_IS_2017
   // if the tracks collection itself is IsolatedTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() != "isolatedTracks") {
     maxDeltaR_isolatedTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForIsolatedTrackMatching");
-    if(isolatedTracks.isValid()) findMatchedIsolatedTrack(isolatedTracks, matchedIsolatedTrack_, dRToMatchedCandidateTrack_);
+    if(isolatedTracks.isValid()) findMatchedIsolatedTrack(isolatedTracks, matchedIsolatedTrack_, dRToMatchedIsolatedTrack_);
   }
+  else dRToMatchedIsolatedTrack_ = INVALID_VALUE;
 #endif
 
 }
@@ -313,7 +315,8 @@ osu::DisappearingTrack::findMatchedIsolatedTrack (const edm::Handle<vector<pat::
   dRToMatchedIsolatedTrack = INVALID_VALUE;
   for(vector<pat::IsolatedTrack>::const_iterator isoTrack = isolatedTracks->begin(); isoTrack != isolatedTracks->end(); isoTrack++) {
     double dR = deltaR(*isoTrack, *this);
-    if(maxDeltaR_isolatedTrackMatching_ >= 0.0 && dR > maxDeltaR_isolatedTrackMatching_) {
+    if(maxDeltaR_isolatedTrackMatching_ >= 0.0 && dR > maxDeltaR_isolatedTrackMatching_) continue;
+    if(dR < dRToMatchedIsolatedTrack || dRToMatchedIsolatedTrack < 0.0) {
       dRToMatchedIsolatedTrack = dR;
       matchedIsolatedTrack = edm::Ref<vector<pat::IsolatedTrack> >(isolatedTracks, isoTrack - isolatedTracks->begin());
     }
