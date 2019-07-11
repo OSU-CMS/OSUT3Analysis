@@ -215,7 +215,12 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
                          &EcalAllDeadChannelsValMap_,
                          &EcalAllDeadChannelsBitMap_,
                          !event.isRealData (),
+#if DATA_FORMAT_IS_2017
+                         candidateTracks,
+                         isolatedTracks);
+#else
                          candidateTracks);
+#endif
 #elif DATA_FORMAT_FROM_MINIAOD
       pl_->emplace_back (object, 
                          particles, 

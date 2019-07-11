@@ -260,7 +260,8 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
 
     # these are only relavent for the disappearing tracks analysis
     candidateTracks = cms.InputTag ("candidateTrackProducer", ""),
-    maxDeltaRForCandidateTrackMatching = cms.double (0.2), # if cutting on dRToMatchedIsolatedTrack, must set this to be greater than the cut threshold
+    maxDeltaRForCandidateTrackMatching = cms.double (0.2), # if cutting on dRToMatchedCandidateTrack, must set this to be greater than the cut threshold
+    maxDeltaRForIsolatedTrackMatching = cms.double (0.2), # if cutting on dRToMatchedIsolatedTrack, must set this to be greater than the cut threshold
 
     # The following three parameters are used to correct the missing outer hits
     # distribution in MC for the disappearing tracks analysis.

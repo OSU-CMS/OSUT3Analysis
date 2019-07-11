@@ -220,7 +220,12 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
                    const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap,
                    const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap,
                    const bool dropHits,
+#if DATA_FORMAT_IS_2017
+                   const edm::Handle<vector<CandidateTrack> > &candidateTracks,
+                   const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
+#else
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
+#endif
   TrackBase(track, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits),
   deltaRToClosestElectron_       (INVALID_VALUE),
   deltaRToClosestVetoElectron_   (INVALID_VALUE),
@@ -263,11 +268,18 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   set_additionalPFIsolations(pfCandidates, lostTracks);
 
   // if the tracks collection itself is CandidateTracks, don't bother with matching this to itself
-  if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() == "candidateTrackProducer")
-    return;
+  if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() != "candidateTrackProducer") {
+    maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
+    if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
+  }
 
-  maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
-  if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
+#if DATA_FORMAT_IS_2017
+  // if the tracks collection itself is IsolatedTracks, don't bother with matching this to itself
+  if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() != "isolatedTracks") {
+    maxDeltaR_isolatedTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForIsolatedTrackMatching");
+    if(isolatedTracks.isValid()) findMatchedIsolatedTrack(isolatedTracks, matchedIsolatedTrack_, dRToMatchedCandidateTrack_);
+  }
+#endif
 
 }
 
@@ -291,9 +303,24 @@ osu::DisappearingTrack::findMatchedCandidateTrack (const edm::Handle<vector<Cand
       matchedCandidateTrack = edm::Ref<vector<CandidateTrack> >(candidateTracks, candTrack - candidateTracks->begin());
     }
   }
-
   return matchedCandidateTrack;
 }
+
+#if DATA_FORMAT_IS_2017
+const edm::Ref<vector<pat::IsolatedTrack> > &
+osu::DisappearingTrack::findMatchedIsolatedTrack (const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks, edm::Ref<vector<pat::IsolatedTrack> > &matchedIsolatedTrack, double &dRToMatchedIsolatedTrack) const
+{
+  dRToMatchedIsolatedTrack = INVALID_VALUE;
+  for(vector<pat::IsolatedTrack>::const_iterator isoTrack = isolatedTracks->begin(); isoTrack != isolatedTracks->end(); isoTrack++) {
+    double dR = deltaR(*isoTrack, *this);
+    if(maxDeltaR_isolatedTrackMatching_ >= 0.0 && dR > maxDeltaR_isolatedTrackMatching_) {
+      dRToMatchedIsolatedTrack = dR;
+      matchedIsolatedTrack = edm::Ref<vector<pat::IsolatedTrack> >(isolatedTracks, isoTrack - isolatedTracks->begin());
+    }
+  }
+  return matchedIsolatedTrack;
+}
+#endif
 
 void 
 osu::DisappearingTrack::set_minDeltaRToElectrons (const edm::Handle<edm::View<TYPE(electrons)> > &electrons,
@@ -639,8 +666,14 @@ osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack (const TYPE(tracks) 
                                                              const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, 
                                                              const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
                                                              const bool dropHits,
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+                                                             const edm::Handle<vector<CandidateTrack> > &candidateTracks,
+                                                             const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
+  osu::DisappearingTrack(track, particles, pfCandidates, lostTracks, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, candidateTracks, isolatedTracks) {}
+#else
                                                              const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
   osu::DisappearingTrack(track, particles, pfCandidates, lostTracks, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, candidateTracks) {}
+#endif
 
 osu::SecondaryDisappearingTrack::~SecondaryDisappearingTrack ()
 {

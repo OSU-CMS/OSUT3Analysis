@@ -65,12 +65,21 @@ namespace osu {
                         const map<DetId, vector<double> > * const, 
                         const map<DetId, vector<int> > * const, 
                         const bool,
+#if DATA_FORMAT_IS_2017
+                        const edm::Handle<vector<CandidateTrack> > &,
+                        const edm::Handle<vector<pat::IsolatedTrack> > &);
+#else
                         const edm::Handle<vector<CandidateTrack> > &);
+#endif
 
       ~DisappearingTrack ();
 
       const edm::Ref<vector<CandidateTrack> > matchedCandidateTrack () const { return matchedCandidateTrack_; };
       const double dRToMatchedCandidateTrack () const { return (IS_INVALID(dRToMatchedCandidateTrack_)) ? MAX_DR : dRToMatchedCandidateTrack_; };
+#if DATA_FORMAT_IS_2017
+      const edm::Ref<vector<pat::IsolatedTrack> > matchedIsolatedTrack () const { return matchedIsolatedTrack_; };
+      const double dRToMatchedIsolatedTrack () const { return (IS_INVALID(dRToMatchedIsolatedTrack_)) ? MAX_DR : dRToMatchedIsolatedTrack_; };
+#endif
 
       void set_minDeltaRToElectrons(const edm::Handle<edm::View<TYPE(electrons)> > &,
                                     const edm::Handle<vector<TYPE(primaryvertexs)> > &,
@@ -126,6 +135,9 @@ namespace osu {
 
     private:
       const edm::Ref<vector<CandidateTrack> > &findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &, edm::Ref<vector<CandidateTrack> > &, double &) const;
+#if DATA_FORMAT_IS_2017
+      const edm::Ref<vector<pat::IsolatedTrack> > &findMatchedIsolatedTrack (const edm::Handle<vector<pat::IsolatedTrack> > &, edm::Ref<vector<pat::IsolatedTrack> > &, double &) const;
+#endif
 
       void set_primaryPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &);
       void set_additionalPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &, const edm::Handle<vector<pat::PackedCandidate> > &);
@@ -133,6 +145,12 @@ namespace osu {
       edm::Ref<vector<CandidateTrack> > matchedCandidateTrack_;
       double dRToMatchedCandidateTrack_;
       double maxDeltaR_candidateTrackMatching_;
+
+#if DATA_FORMAT_IS_2017
+      edm::Ref<vector<pat::IsolatedTrack> > matchedIsolatedTrack_;      
+      double dRToMatchedIsolatedTrack_;
+      double maxDeltaR_isolatedTrackMatching_;
+#endif
 
       float deltaRToClosestElectron_;
       float deltaRToClosestVetoElectron_;
@@ -197,7 +215,12 @@ namespace osu {
                                  const map<DetId, vector<double> > * const, 
                                  const map<DetId, vector<int> > * const, 
                                  const bool,
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+                                 const edm::Handle<vector<CandidateTrack> > &,
+                                 const edm::Handle<vector<pat::IsolatedTrack> > &);
+#else
                                  const edm::Handle<vector<CandidateTrack> > &);
+#endif
 
       ~SecondaryDisappearingTrack();
   };
