@@ -65,7 +65,7 @@ namespace osu {
                         const map<DetId, vector<double> > * const, 
                         const map<DetId, vector<int> > * const, 
                         const bool,
-#if DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
                         const edm::Handle<vector<CandidateTrack> > &,
                         const edm::Handle<vector<pat::IsolatedTrack> > &);
 #else
@@ -76,7 +76,7 @@ namespace osu {
 
       const edm::Ref<vector<CandidateTrack> > matchedCandidateTrack () const { return matchedCandidateTrack_; };
       const double dRToMatchedCandidateTrack () const { return (IS_INVALID(dRToMatchedCandidateTrack_)) ? MAX_DR : dRToMatchedCandidateTrack_; };
-#if DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
       const edm::Ref<vector<pat::IsolatedTrack> > matchedIsolatedTrack () const { return matchedIsolatedTrack_; };
       const double dRToMatchedIsolatedTrack () const { return (IS_INVALID(dRToMatchedIsolatedTrack_)) ? MAX_DR : dRToMatchedIsolatedTrack_; };
 #endif
@@ -135,7 +135,7 @@ namespace osu {
 
     private:
       const edm::Ref<vector<CandidateTrack> > &findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &, edm::Ref<vector<CandidateTrack> > &, double &) const;
-#if DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
       const edm::Ref<vector<pat::IsolatedTrack> > &findMatchedIsolatedTrack (const edm::Handle<vector<pat::IsolatedTrack> > &, edm::Ref<vector<pat::IsolatedTrack> > &, double &) const;
 #endif
 
@@ -146,7 +146,7 @@ namespace osu {
       double dRToMatchedCandidateTrack_;
       double maxDeltaR_candidateTrackMatching_;
 
-#if DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
       edm::Ref<vector<pat::IsolatedTrack> > matchedIsolatedTrack_;      
       double dRToMatchedIsolatedTrack_;
       double maxDeltaR_isolatedTrackMatching_;

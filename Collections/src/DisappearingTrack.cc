@@ -220,7 +220,7 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
                    const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap,
                    const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap,
                    const bool dropHits,
-#if DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks,
                    const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
 #else
@@ -274,7 +274,7 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   }
   else dRToMatchedCandidateTrack_ = INVALID_VALUE;
 
-#if DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
   // if the tracks collection itself is IsolatedTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() != "isolatedTracks") {
     maxDeltaR_isolatedTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForIsolatedTrackMatching");
@@ -308,7 +308,7 @@ osu::DisappearingTrack::findMatchedCandidateTrack (const edm::Handle<vector<Cand
   return matchedCandidateTrack;
 }
 
-#if DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
 const edm::Ref<vector<pat::IsolatedTrack> > &
 osu::DisappearingTrack::findMatchedIsolatedTrack (const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks, edm::Ref<vector<pat::IsolatedTrack> > &matchedIsolatedTrack, double &dRToMatchedIsolatedTrack) const
 {
