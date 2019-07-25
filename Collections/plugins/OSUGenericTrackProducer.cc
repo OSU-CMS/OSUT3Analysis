@@ -187,7 +187,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   edm::Handle<vector<pat::PackedCandidate> > lostTracks;
   event.getByToken (lostTracksToken_, lostTracks);
 
-#if DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
   edm::Handle<vector<pat::IsolatedTrack> > isolatedTracks;
   event.getByToken (isolatedTracksToken_, isolatedTracks);
 #endif
@@ -215,7 +215,12 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
                          &EcalAllDeadChannelsValMap_,
                          &EcalAllDeadChannelsBitMap_,
                          !event.isRealData (),
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+                         candidateTracks,
+                         isolatedTracks);
+#else
                          candidateTracks);
+#endif
 #elif DATA_FORMAT_FROM_MINIAOD
       pl_->emplace_back (object, 
                          particles, 
@@ -295,7 +300,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
         track.set_minDeltaRToMuons(muons, vertices);
         track.set_minDeltaRToTaus(taus);
 
-#if DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
         track.set_isoTrackIsolation(isolatedTracks);
 #endif
 
