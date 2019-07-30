@@ -8831,8 +8831,19 @@ for charginoMass in range(100, 1200, 100):
       types.update     ({ charginoDataset : "signalMC" })
       colors.update    ({ charginoDataset : charginoColors[charginoCTau] })
       labels.update    ({ charginoDataset : "AMSB %d GeV #tilde{#chi}^{#pm} (c#tau = %d cm)" % (charginoMass, charginoCTau) })
+# Higgsino
+for charginoMass in range(100, 1000, 100):
+  for charginoCTau in [1, 10, 100, 1000, 10000]:
+    for charginoRelease in ['94X', '102X']:
+      charginoDataset = 'Higgsino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
+      nJobs.update     ({ charginoDataset : 99 })
+      maxEvents.update ({ charginoDataset : -1 })
+      types.update     ({ charginoDataset : "signalMC" })
+      colors.update    ({ charginoDataset : charginoColors[charginoCTau] })
+      labels.update    ({ charginoDataset : "Higgsino %d GeV #tilde{#chi}^{#pm} (c#tau = %d cm)" % (charginoMass, charginoCTau) })
 
 new_nJobs = {}
+
 for dataset0 in nJobs:
   if not re.match (r'AMSB_chargino_[^_]*GeV_[^_]*cm_.*', dataset0):
       continue
@@ -8862,5 +8873,36 @@ for dataset0 in nJobs:
   rulesForLifetimeReweighting[dataset0] = [lifetimeReweightingRule([1000024], [ctau0], [d], (d == ctau0)) for d in destinationCTaus]
 
   pdgIdsForISRReweighting[dataset0] = [1000022, 1000024]
+
+# higgsino
+for dataset0 in nJobs:
+  if not re.match (r'Higgsino_[^_]*GeV_[^_]*cm_.*', dataset0):
+      continue
+  mass = re.sub (r'Higgsino_([^_]*)GeV_[^_]*cm_.*', r'\1', dataset0)
+  ctau0 = float (re.sub (r'Higgsino_[^_]*GeV_([^_]*)cm_.*', r'\1', dataset0))
+  suffix = re.sub (r'Higgsino_[^_]*GeV_[^_]*cm_(.*)', r'\1', dataset0)
+  for i in range (2, 10):
+    ctau = ctauP = 0.1 * i * ctau0
+    if int (ctau) * 10 == int (ctau * 10):
+      ctau = ctauP = str (int (ctau))
+    else:
+      ctau = ctauP = str (ctau)
+      ctauP = re.sub (r'\.', r'p', ctau)
+    dataset = 'Higgsino_' + mass + 'GeV_' + ctauP + 'cm_' + suffix
+
+    new_nJobs[dataset] = nJobs[dataset0]
+    maxEvents[dataset] = maxEvents[dataset0]
+    types[dataset] = types[dataset0]
+    colors[dataset] = colors[dataset0]
+    labels[dataset] = "Higgsino #tilde{#chi}^{#pm} (" + mass + " GeV, " + ctau + " cm)"
+    rulesForLifetimeReweighting[dataset] = [lifetimeReweightingRule([1000024], [ctau0], [float(ctau)], True)]
+    pdgIdsForISRReweighting[dataset] = [1000022, 1000023, 1000024]
+
+  destinationCTaus = [ctau0 * 0.1 * i for i in range(2, 11)]
+  if ctau0 == 10:
+    destinationCTaus.extend([round(ctau0 * 0.01 * i, 2) for i in range(1, 11)])
+  rulesForLifetimeReweighting[dataset0] = [lifetimeReweightingRule([1000024], [ctau0], [d], (d == ctau0)) for d in destinationCTaus]
+
+  pdgIdsForISRReweighting[dataset0] = [1000022, 1000023, 1000024]
 
 nJobs.update (new_nJobs)
