@@ -425,13 +425,13 @@ def GetListOfRemoteRootFiles(Path):
     thisRedirector = Path.split('//')[0] + '//' + Path.split('//')[1] + '/'
     thisRemotePath = '/' + Path.split('//')[2]
     try:
-        tmpFileList = subprocess.check_output('xrdfs ' + thisRedirector + ' ls -l -u ' + thisRemotePath, shell = True).split('\n')
+        tmpFileList = subprocess.check_output('xrdfs ' + thisRedirector + ' ls -u ' + thisRemotePath, shell = True).split('\n')
     except subprocess.CalledProcessError:
         return None
     for filePath in tmpFileList:
-        if len(filePath.split()) == 5:
-            if filePath.split()[4].endswith('.root'):
-                fileList.append(filePath.split()[4])
+        if len(filePath.split()) == 1:
+            if filePath.endswith('.root'):
+                fileList.append(filePath)
     return fileList
 
 #It generates the condor.sub file for each dataset.
