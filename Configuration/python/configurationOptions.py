@@ -432,6 +432,10 @@ datasets = [
    'stopToLB1800_1000mm_private',
    'stopToLB400_1mm_private',
 
+  'stopToLB800_500mm_2021',
+  'stopToLB800_500mm_2023',
+  'stopToLB800_500mm_2024',
+
    #Sum of all backgrounds
    'Background',
 ]
@@ -2529,6 +2533,10 @@ nJobs = {
     'stopToLB1800_1000mm_private': 99,
     'stopToLB400_1mm_private': 99,
 
+  'stopToLB800_500mm_2021': 5,
+  'stopToLB800_500mm_2023' : 5,
+  'stopToLB800_500mm_2024' : 5,
+
 }
 
 maxEvents = {
@@ -3803,6 +3811,10 @@ maxEvents = {
     'stopToLD1000_100mm': -1,
     'stopToLB1800_1000mm_private': -1,
     'stopToLB400_1mm_private': -1,
+
+  'stopToLB800_500mm_2021': -1,
+  'stopToLB800_500mm_2023' : -1,
+  'stopToLB800_500mm_2024' : -1,
 
 }
 
@@ -5136,6 +5148,10 @@ types = {
     'stopToLB1800_1000mm_private': "signalMC",
     'stopToLB400_1mm_private': "signalMC",
 
+  'stopToLB800_500mm_2021': "signalMC",
+  'stopToLB800_500mm_2023' : "signalMC",
+  'stopToLB800_500mm_2024' : "signalMC",
+
 }
 
 colors = {
@@ -6463,6 +6479,11 @@ colors = {
     'stopToLD1000_100mm': 2,
     'stopToLB1800_1000mm_private': 1,
     'stopToLB400_1mm_private': 2,
+
+  'stopToLB800_500mm_2021': 1,
+  'stopToLB800_500mm_2023' : 2,
+  'stopToLB800_500mm_2024' : 4,
+
 
 }
 
@@ -7811,6 +7832,10 @@ labels = {
     'stopToLB1800_1000mm_private': "#tilde{t}#tilde{t}#rightarrow lb lb, M=1800 GeV, c#tau=1000 mm",
     'stopToLB400_1mm_private': "#tilde{t}#tilde{t}#rightarrow lb lb, M=400 GeV, c#tau=1 mm",
 
+  'stopToLB800_500mm_2021': "#tilde{t}#tilde{t}#rightarrow lb lb, M=800 GeV, c#tau=500 mm, 2021",
+  'stopToLB800_500mm_2023' : "#tilde{t}#tilde{t}#rightarrow lb lb, M=800 GeV, c#tau=500 mm, 2023",
+  'stopToLB800_500mm_2024' : "#tilde{t}#tilde{t}#rightarrow lb lb, M=800 GeV, c#tau=500 mm, 2024",
+
 
 }
 
@@ -8669,6 +8694,11 @@ crossSections = {
     'stopToLD1000_100mm': 0.00615134,
     'stopToLB1800_1000mm_private': 0.0000467492,
     'stopToLB400_1mm_private': 1.83537,
+
+  'stopToLB800_500mm_2021': 0.0283338,
+  'stopToLB800_500mm_2023' : 0.0283338,
+  'stopToLB800_500mm_2024' : 0.0283338,
+
 
 }
 
