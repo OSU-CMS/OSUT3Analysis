@@ -41,6 +41,12 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
+            name = cms.string("muonPt_ext"),
+            title = cms.string("Muon Transverse Momentum;Muon p_{T} [GeV]"),
+            binsX = cms.untracked.vdouble(300, 0, 3000),
+            inputVariables = cms.vstring("pt"),
+        ),
+        cms.PSet (
             name = cms.string("muonEta"),
             title = cms.string("Muon Eta;Muon #eta"),
             binsX = cms.untracked.vdouble(80, -4, 4),
@@ -180,6 +186,12 @@ MuonHistograms = cms.PSet(
             name = cms.string("muonGenPt"),
             title = cms.string("Gen Muon Transverse Momentum;Gen muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
+        ),
+        cms.PSet (
+            name = cms.string("muonGenPt_ext"),
+            title = cms.string("Gen Muon Transverse Momentum;Gen muon p_{T} [GeV]"),
+            binsX = cms.untracked.vdouble(300, 0, 3000),
             inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
         ),
         cms.PSet (
@@ -349,6 +361,12 @@ ElectronHistograms = cms.PSet(
             inputVariables = cms.vstring("pt"),
         ),
         cms.PSet (
+            name = cms.string("electronPt_ext"),
+            title = cms.string("Electron Transverse Momentum;Electron p_{T} [GeV]"),
+            binsX = cms.untracked.vdouble(300, 0, 3000),
+            inputVariables = cms.vstring("pt"),
+        ),
+        cms.PSet (
             name = cms.string("electronEta"),
             title = cms.string("Electron Eta;Electron #eta"),
             binsX = cms.untracked.vdouble(60, -3, 3),
@@ -502,6 +520,12 @@ ElectronHistograms = cms.PSet(
             name = cms.string("electronGenPt"),
             title = cms.string("Gen Electron Transverse Momentum;Gen electron p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
+        ),
+        cms.PSet (
+            name = cms.string("electronGenPt_ext"),
+            title = cms.string("Gen Electron Transverse Momentum;Gen electron p_{T} [GeV]"),
+            binsX = cms.untracked.vdouble(300, 0, 3000),
             inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
         ),
         cms.PSet (
