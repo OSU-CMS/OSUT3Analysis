@@ -14,14 +14,11 @@ namespace osu
         HardInteractionMcparticle (const TYPE(hardInteractionMcparticles) &);
         ~HardInteractionMcparticle ();
 
-	const int motherPdgId () const;
-	const int motherStatus () const;
+	const int uniqueMotherPdgId () const;
 
-	void set_motherPdgId (double value) { motherPdgId_  = value; };
-	void set_motherStatus (double value) { motherStatus_  = value; };
+	void set_uniqueMotherPdgId (double value) { uniqueMotherPdgId_  = value; };
 
-	int motherPdgId_;
-	int motherStatus_;
+	int uniqueMotherPdgId_;
 
     };
 }
