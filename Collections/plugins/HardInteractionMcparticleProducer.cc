@@ -30,13 +30,25 @@ HardInteractionMcparticleProducer::produce (edm::Event &event, const edm::EventS
     pl_->emplace_back (object);
     osu::HardInteractionMcparticle &hiMcpart = pl_->back();
 
-    if(hiMcpart.numberOfMothers()<1) continue;
-    hiMcpart.set_motherPdgId(hiMcpart.mother()->pdgId());
-    hiMcpart.set_motherStatus(hiMcpart.mother()->status());
+    if(!uniqueMother(hiMcpart)) continue;
+    hiMcpart.set_uniqueMotherPdgId(uniqueMother(hiMcpart)->pdgId());
   }
 
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
+}
+
+const reco::Candidate *
+HardInteractionMcparticleProducer::uniqueMother(const TYPE(hardInteractionMcparticles) &p) const {
+  const reco::Candidate *mo = &p;
+  std::unordered_set<const reco::Candidate *> dupCheck;
+  while (mo && mo->pdgId() == p.pdgId()) {
+    dupCheck.insert(mo);
+    mo = mo->mother();
+    if (dupCheck.count(mo))
+      return nullptr;
+  }
+  return mo;
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

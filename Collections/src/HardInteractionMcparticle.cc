@@ -8,21 +8,14 @@ osu::HardInteractionMcparticle::HardInteractionMcparticle ()
 
 osu::HardInteractionMcparticle::HardInteractionMcparticle (const TYPE(hardInteractionMcparticles) &hardInteractionMcparticle) :
   TYPE(hardInteractionMcparticles) (hardInteractionMcparticle),
-  motherPdgId_                     (INVALID_VALUE),
-  motherStatus_                    (INVALID_VALUE)
+  uniqueMotherPdgId_                     (INVALID_VALUE)
 {
 }
 
 const int
-osu::HardInteractionMcparticle::motherPdgId () const
+osu::HardInteractionMcparticle::uniqueMotherPdgId () const
 {
-  return motherPdgId_;
-}
-
-const int
-osu::HardInteractionMcparticle::motherStatus () const
-{
-  return motherStatus_;
+  return uniqueMotherPdgId_;
 }
 
 osu::HardInteractionMcparticle::~HardInteractionMcparticle ()

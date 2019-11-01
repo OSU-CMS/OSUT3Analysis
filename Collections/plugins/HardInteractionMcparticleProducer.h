@@ -8,6 +8,8 @@
 
 #include "OSUT3Analysis/Collections/interface/HardInteractionMcparticle.h"
 
+#include <unordered_set>
+
 class HardInteractionMcparticleProducer : public edm::EDProducer
 {
   public:
@@ -27,6 +29,8 @@ class HardInteractionMcparticleProducer : public edm::EDProducer
 
     // Payload for this EDFilter.
     unique_ptr<vector<osu::HardInteractionMcparticle> > pl_;
+
+    const reco::Candidate * uniqueMother (const TYPE(hardInteractionMcparticles) &) const;
 };
 
 #endif
