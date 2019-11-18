@@ -178,6 +178,10 @@ datasets = [
    'MET_2018B',
    'MET_2018C',
    'MET_2018D',
+  'JetHT_2018A',
+  'JetHT_2018B',
+  'JetHT_2018C',
+  'JetHT_2018D',
    'NoBPTX_2015D',
    'NoBPTX_2015D_v3',
    'NoBPTX_2015D_v4',
@@ -436,7 +440,14 @@ datasets = [
   'stopToLB800_500mm_2023',
   'stopToLB800_500mm_2024',
 
-   #Sum of all backgrounds
+  'HTo4Mu125_50_50mm',
+  'HTo4Mu125_50_500mm',
+  'HTo4Mu125_50_5000mm',
+  'HTo4Mu125_20_13mm',
+  'HTo4Mu125_20_130mm',
+  'HTo4Mu125_20_1300mm',
+
+  #Sum of all backgrounds
    'Background',
 ]
 
@@ -1152,6 +1163,12 @@ composite_dataset_definitions = {
       'MET_2018C',
       'MET_2018D',
     ],
+    'JetHT_2018' : [
+      'JetHT_2018A',
+      'JetHT_2018B',
+      'JetHT_2018C',
+      'JetHT_2018D',
+    ],
     'NoBPTX_Jet_2016BCD_PromptReco' : [
        'NoBPTX_Jet_2016B_PromptReco_v2',
        'NoBPTX_Jet_2016C_PromptReco_v2',
@@ -1349,6 +1366,11 @@ nJobs = {
     'MET_2018B' : 295,
     'MET_2018C' : 315,
     'MET_2018D' : 1625,
+
+  'JetHT_2018A' : 2852,
+  'JetHT_2018B' : 1448,
+  'JetHT_2018C' : 1067,
+  'JetHT_2018D' : 5160,
     ############################################################################
 
     ############################################################################
@@ -2537,6 +2559,12 @@ nJobs = {
   'stopToLB800_500mm_2023' : 5,
   'stopToLB800_500mm_2024' : 5,
 
+  'HTo4Mu125_50_50mm' : 15,
+  'HTo4Mu125_50_500mm' : 15,
+  'HTo4Mu125_50_5000mm' : 15,
+  'HTo4Mu125_20_13mm' : 15,
+  'HTo4Mu125_20_130mm' : 15,
+  'HTo4Mu125_20_1300mm' : 15,
 }
 
 maxEvents = {
@@ -2624,6 +2652,11 @@ maxEvents = {
     'MET_2018B' : -1,
     'MET_2018C' : -1,
     'MET_2018D' : -1,
+
+    'JetHT_2018A' : -1,
+    'JetHT_2018B' : -1,
+    'JetHT_2018C' : -1,
+    'JetHT_2018D' : -1,
     ############################################################################
 
     ############################################################################
@@ -3816,6 +3849,13 @@ maxEvents = {
   'stopToLB800_500mm_2023' : -1,
   'stopToLB800_500mm_2024' : -1,
 
+  'HTo4Mu125_50_50mm' : -1,
+  'HTo4Mu125_50_500mm' : -1,
+  'HTo4Mu125_50_5000mm' : -1,
+  'HTo4Mu125_20_13mm' : -1,
+  'HTo4Mu125_20_130mm' : -1,
+  'HTo4Mu125_20_1300mm' : -1,
+
 }
 
 # bgMC => background MC process
@@ -3914,6 +3954,12 @@ types = {
     'MET_2018B'        : "data",
     'MET_2018C'        : "data",
     'MET_2018D'        : "data",
+
+    'JetHT_2018'         : "data",
+    'JetHT_2018A'        : "data",
+    'JetHT_2018B'        : "data",
+    'JetHT_2018C'        : "data",
+    'JetHT_2018D'        : "data",
     ############################################################################
 
     ############################################################################
@@ -5152,6 +5198,13 @@ types = {
   'stopToLB800_500mm_2023' : "signalMC",
   'stopToLB800_500mm_2024' : "signalMC",
 
+  'HTo4Mu125_50_50mm' : "signalMC",
+  'HTo4Mu125_50_500mm' : "signalMC",
+  'HTo4Mu125_50_5000mm' : "signalMC",
+  'HTo4Mu125_20_13mm' : "signalMC",
+  'HTo4Mu125_20_130mm' : "signalMC",
+  'HTo4Mu125_20_1300mm' : "signalMC",
+
 }
 
 colors = {
@@ -5247,6 +5300,12 @@ colors = {
     'MET_2018B'        : 1,
     'MET_2018C'        : 1,
     'MET_2018D'        : 1,
+
+    'JetHT_2018'         : 1,
+    'JetHT_2018A'        : 1,
+    'JetHT_2018B'        : 1,
+    'JetHT_2018C'        : 1,
+    'JetHT_2018D'        : 1,
     ############################################################################
 
     ############################################################################
@@ -6484,6 +6543,12 @@ colors = {
   'stopToLB800_500mm_2023' : 2,
   'stopToLB800_500mm_2024' : 4,
 
+  'HTo4Mu125_50_50mm' : 1,
+  'HTo4Mu125_50_500mm' : 2,
+  'HTo4Mu125_50_5000mm' : 4,
+  'HTo4Mu125_20_13mm' : 1,
+  'HTo4Mu125_20_130mm' : 2,
+  'HTo4Mu125_20_1300mm' : 4,
 
 }
 
@@ -6592,6 +6657,12 @@ labels = {
     'MET_2018B'        : "MET_2018B data",
     'MET_2018C'        : "MET_2018C data",
     'MET_2018D'        : "MET_2018D data",
+
+    'JetHT_2018'         : "JetHT 2018 data",
+    'JetHT_2018A'        : "JetHT 2018A data",
+    'JetHT_2018B'        : "JetHT 2018B data",
+    'JetHT_2018C'        : "JetHT 2018C data",
+    'JetHT_2018D'        : "JetHT 2018D data",
     ############################################################################
 
     ############################################################################
@@ -7836,6 +7907,13 @@ labels = {
   'stopToLB800_500mm_2023' : "#tilde{t}#tilde{t}#rightarrow lb lb, M=800 GeV, c#tau=500 mm, 2023",
   'stopToLB800_500mm_2024' : "#tilde{t}#tilde{t}#rightarrow lb lb, M=800 GeV, c#tau=500 mm, 2024",
 
+  'HTo4Mu125_50_50mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=50 GeV, c#tau=50mm",
+  'HTo4Mu125_50_500mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=50 GeV, c#tau=500mm",
+  'HTo4Mu125_50_5000mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=50 GeV, c#tau=5000mm",
+  'HTo4Mu125_20_13mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=13mm",
+  'HTo4Mu125_20_130mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=130mm",
+  'HTo4Mu125_20_1300mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=1300mm",
+
 
 }
 
@@ -8699,6 +8777,21 @@ crossSections = {
   'stopToLB800_500mm_2023' : 0.0283338,
   'stopToLB800_500mm_2024' : 0.0283338,
 
+  # ggF H cross section from here: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageAt1314TeV2014 (43.93 pb)
+  # BR for ZD-->ll from table 2 here: https://arxiv.org/pdf/1412.0018.pdf
+  #'HTo4Mu125_50_50mm' : 0.743158, #43.93pb * (0.244/2)^2 br for 2 ZD(50)->mumu
+  #'HTo4Mu125_50_500mm' : 0.743158,
+  #'HTo4Mu125_50_5000mm' : 0.743158,
+  #'HTo4Mu125_20_13mm' : 1.02102, #43.93pb * (0.286/2)^2 br for 2 ZD(20)->mumu
+  #'HTo4Mu125_20_130mm' : 1.02102,
+  #'HTo4Mu125_20_1300mm' : 1.02102,
+
+  'HTo4Mu125_50_50mm' : 43.93,
+  'HTo4Mu125_50_500mm' : 43.93,
+  'HTo4Mu125_50_5000mm' : 43.93,
+  'HTo4Mu125_20_13mm' : 43.93,
+  'HTo4Mu125_20_130mm' : 43.93,
+  'HTo4Mu125_20_1300mm' : 43.93,
 
 }
 
