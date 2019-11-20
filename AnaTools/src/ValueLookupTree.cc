@@ -509,7 +509,7 @@ ValueLookupTree::insert_ (const string &cut, Node * const parent) const
                                                   "ceil", "floor", "fmod", "trunc", "round", "rint", "nearbyint", "remainder", "abs", "fabs",
                                                   "copysign", "nextafter",
                                                   "fdim", "fmax", "fmin", "max", "min"}) ||
-        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "dPhi", "normalizedPhi", "compositePhi", "deltaR", "invMass", "number", "transMass", "pT"}) ||
+        insertUnaryPrefixOperator  (cut,  tree,  {"deltaPhi", "dPhi", "normalizedPhi", "compositePhi", "deltaR", "invMass", "number", "transMass", "pT", "cosAlpha"}) ||
         insertDots                 (cut,  tree) ||
         //insertBinaryInfixOperator  (cut,  tree,  {"."})                           ||
         insertParentheses          (cut,  tree)))
@@ -818,23 +818,33 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
       else if (op == "transMass")
         {
           double pt0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "pt", false),
-                 pt1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "pt", false),
-                 dPhi = deltaPhi (valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "phi"),
-                                  valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi"));
-
-          return sqrt (2.0 * pt0 * pt1 * (1 - cos (dPhi)));
+	    pt1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "pt", false),
+	    dPhi = deltaPhi (valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "phi"),
+			     valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi"));
+	  return sqrt (2.0 * pt0 * pt1 * (1 - cos (dPhi)));
         }
       else if (op == "pT")
         {
           double px = 0.0, py = 0.0;
-
-          for (const auto &operand : operands)
+	  for (const auto &operand : operands)
             {
               px += valueLookup (boost::get<string> (operand) + "s", objs, "px");
               py += valueLookup (boost::get<string> (operand) + "s", objs, "py", false);
             }
           return hypot(px,py);
         }
+      else if (op == "cosAlpha")
+	{
+	  double px0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "px"),
+	    py0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "py", false),
+	    pz0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "pz", false),
+	    px1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "px"),
+	    py1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "py", false),
+	    pz1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "pz", false);
+	  double cosAlpha = (px0*px1 + py0*py1 + pz0*pz1)/(sqrt(px0*px0 + py0*py0 + pz0*pz0)*sqrt(px1*px1 + py1*py1 + pz1*pz1));
+
+	  return cosAlpha;
+	}
       else if (op == "number")
         return getCollectionSize (boost::get<string> (operands.at (0)) + "s");
       else if (op == ".")
