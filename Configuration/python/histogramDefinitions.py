@@ -326,6 +326,12 @@ DiMuonHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(60, 0, 6),
             inputVariables = cms.vstring("deltaR (muon, muon)"),
         ),
+        cms.PSet (
+            name = cms.string("diMuonCosAlpha"),
+            title = cms.string("Di-muon cos(#alpha);cos(#alpha)"),
+            binsX = cms.untracked.vdouble(100, -1, 1),
+            inputVariables = cms.vstring("cosAlpha (muon, muon)"),
+        ),
     )
 )
 
