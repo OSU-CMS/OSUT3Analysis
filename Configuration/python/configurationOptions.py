@@ -8880,10 +8880,10 @@ def lifetime(sample):
     return lt.replace("p",".")
 
 # generate list of masses
-masses = [str(i*100) for i in range(2, 19)]
+masses = [str(i*100) for i in range(1, 19)]
 # generate list of lifetimes
-lifetimes = ["%g" % (0.1*i*(pow(10, j))) for j in range(4) for i in range(1, 10)]
-lifetimes.append("1000")
+lifetimes = ["%g" % (0.01*i*(pow(10, j))) for j in range(6) for i in range(1, 10)]
+lifetimes.append("10000")
 lifetimes = [lt.replace(".", "p") for lt in lifetimes]
 
 # generate list of sample names from masses, lifetimes
@@ -8894,6 +8894,7 @@ datasets.extend(signal_datasets)
 composite_dataset_definitions['DisplacedSUSYSignal'] = signal_datasets
 
 signal_crossSections = {
+    '100'  : 1521.11,
     '200'  : 64.5085,
     '300'  : 8.51615,
     '400'  : 1.83537,
@@ -8926,7 +8927,8 @@ for index, sample in enumerate(signal_datasets):
 
     sourceCTau = 0.1 * 10**(math.ceil(math.log10(float(lifetime(sample)))))
     # special case
-    if lifetime(sample) == "0.1": sourceCTau = 0.1 * 1.0
+    if float(lifetime(sample)) <= 0.1: sourceCTau = 0.1 * 1.0
+    if float(lifetime(sample)) > 1000.: sourceCTau = 100.0
     destinationCTau = 0.1 * float(lifetime(sample))
 
     rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [destinationCTau], True)]
