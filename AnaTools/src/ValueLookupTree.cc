@@ -773,9 +773,9 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
           double px0, px1, py0, py1, phi;
 
           px0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "px");
+          py0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "py", false);
           px1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "px");
-          py0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "py");
-          py1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "py");
+          py1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "py", false);
 
           phi = acos ((px0 + px1) / hypot (px0 + px1, py0 + py1));
           if ((py0 + py1) < 0.0)
@@ -817,10 +817,12 @@ ValueLookupTree::evaluateOperator (const string &op, const vector<Leaf> &operand
         }
       else if (op == "transMass")
         {
-          double pt0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "pt", false),
-	    pt1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "pt", false),
-	    dPhi = deltaPhi (valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "phi"),
-			     valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi"));
+	  double pt0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "pt"),
+	    phi0 = valueLookup (boost::get<string> (operands.at (0)) + "s", objs, "phi", false),
+	    pt1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "pt"),
+	    phi1 = valueLookup (boost::get<string> (operands.at (1)) + "s", objs, "phi", false);
+
+	  double dPhi = deltaPhi (phi0, phi1);
 	  return sqrt (2.0 * pt0 * pt1 * (1 - cos (dPhi)));
         }
       else if (op == "pT")
