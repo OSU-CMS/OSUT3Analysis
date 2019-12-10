@@ -433,6 +433,11 @@ datasets = [
    'VBF_HTo4L_FPix80x5',
    'VBF_HTo4L_FPix800x52',
 
+   'stopToLB150_1mm',
+   'stopToLB150_1000mm',
+   'stopToLB175_1mm',
+   'stopToLB175_1000mm',
+
    'stopToLD1000_1mm',
    'stopToLD1000_100mm',
    'stopToLB1800_1000mm_private',
@@ -2554,6 +2559,11 @@ nJobs = {
     'VBF_HTo4L_FPix80x5' : 999,
     'VBF_HTo4L_FPix800x52' : 999,
 
+    'stopToLB150_1mm'    : 99,
+    'stopToLB150_1000mm' : 99,
+    'stopToLB175_1mm'    : 99,
+    'stopToLB175_1000mm' : 99,
+
     'stopToLD1000_1mm' : 99,
     'stopToLD1000_100mm': 99,
     'stopToLB1800_1000mm_private': 99,
@@ -3845,6 +3855,12 @@ maxEvents = {
     'VBF_HTo4L_FPix80x52' : -1,
     'VBF_HTo4L_FPix80x5' : -1,
     'VBF_HTo4L_FPix800x52' : -1,
+
+    'stopToLB150_1mm'    : -1,
+    'stopToLB150_1000mm' : -1,
+    'stopToLB175_1mm'    : -1,
+    'stopToLB175_1000mm' : -1,
+
 
     'stopToLD1000_1mm' : -1,
     'stopToLD1000_100mm': -1,
@@ -5197,6 +5213,11 @@ types = {
     'VBF_HTo4L_FPix80x5' : "signalMC",
     'VBF_HTo4L_FPix800x52' : "signalMC",
 
+    'stopToLB150_1mm'    : "signalMC",
+    'stopToLB150_1000mm' : "signalMC",
+    'stopToLB175_1mm'    : "signalMC",
+    'stopToLB175_1000mm' : "signalMC",
+
     'stopToLD1000_1mm' : "signalMC",
     'stopToLD1000_100mm': "signalMC",
     'stopToLB1800_1000mm_private': "signalMC",
@@ -6543,6 +6564,11 @@ colors = {
     'VBF_HTo4L_FPix80x52' : 1,
     'VBF_HTo4L_FPix80x5' : 1,
     'VBF_HTo4L_FPix800x52' : 1,
+
+    'stopToLB150_1mm'    : 1,
+    'stopToLB150_1000mm' : 2,
+    'stopToLB175_1mm'    : 1,
+    'stopToLB175_1000mm' : 2,
 
     'stopToLD1000_1mm' : 1,
     'stopToLD1000_100mm': 2,
@@ -7910,6 +7936,11 @@ labels = {
     'VBF_HTo4L_FPix80x5' : "H_{VBF}#rightarrow4l, FPix 80x5",
     'VBF_HTo4L_FPix800x52' : "H_{VBF}#rightarrow4l, FPix 800x52",
 
+    'stopToLB150_1mm'    : "#tilde{t}#tilde{t}#rightarrow lb lb, M=150 GeVm, c#tau=1 mm",
+    'stopToLB150_1000mm' : "#tilde{t}#tilde{t}#rightarrow lb lb, M=150 GeVm, c#tau=1000 mm",
+    'stopToLB175_1mm'    : "#tilde{t}#tilde{t}#rightarrow lb lb, M=175 GeVm, c#tau=1 mm",
+    'stopToLB175_1000mm' : "#tilde{t}#tilde{t}#rightarrow lb lb, M=175 GeVm, c#tau=1000 mm",
+
     'stopToLD1000_1mm' : "#tilde{t}#tilde{t}#rightarrow ld ld, M=1000 GeV, c#tau=1 mm",
     'stopToLD1000_100mm': "#tilde{t}#tilde{t}#rightarrow ld ld, M=1000 GeV, c#tau=100 mm",
     'stopToLB1800_1000mm_private': "#tilde{t}#tilde{t}#rightarrow lb lb, M=1800 GeV, c#tau=1000 mm",
@@ -8780,6 +8811,11 @@ crossSections = {
     'VBF_HTo4L_FPix80x5' : 1,
     'VBF_HTo4L_FPix800x52' : 1,
 
+    'stopToLB150_1mm'      : 2.49409E+02,
+    'stopToLB150_1000mm'   : 2.49409E+02,
+    'stopToLB175_1mm'      : 1.21416E+02,
+    'stopToLB175_1000mm'   : 1.21416E+02,
+
     'stopToLD1000_1mm' : 0.00615134,
     'stopToLD1000_100mm': 0.00615134,
     'stopToLB1800_1000mm_private': 0.0000467492,
@@ -8907,6 +8943,8 @@ composite_dataset_definitions['DisplacedSUSYSignal'] = signal_datasets
 
 signal_crossSections = {
     '100'  : 1521.11,
+    '150'  : 249.409,
+    '175'  : 121.416,
     '200'  : 64.5085,
     '300'  : 8.51615,
     '400'  : 1.83537,
