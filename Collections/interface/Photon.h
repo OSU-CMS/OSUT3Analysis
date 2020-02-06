@@ -21,13 +21,23 @@ namespace osu
         const float Aeff_chargedHadron () const;
         const float Aeff_photon () const;
 
+        const bool passesVID_looseID () const;
+        const bool passesVID_mediumID () const;
+        const bool passesVID_tightID () const;
+
         void set_rho(float v) { rho_  = v; }
+        void set_passesVID_looseID (const bool);
+        void set_passesVID_mediumID (const bool);
+        void set_passesVID_tightID (const bool);
         void set_AEff_neutralHadron(float v) { AEff_neutralHadron_ = v; }
         void set_Aeff_chargedHadron(float v) { Aeff_chargedHadron_ = v; }
         void set_Aeff_photon(float v) { Aeff_photon_ = v; }
 
       private:
         float rho_;
+        bool passesVID_looseID_;
+        bool passesVID_mediumID_;
+        bool passesVID_tightID_;
         float AEff_neutralHadron_;
         float Aeff_chargedHadron_;
         float Aeff_photon_;

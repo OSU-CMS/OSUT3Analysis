@@ -1477,12 +1477,6 @@ PhotonHistograms = cms.PSet(
             inputVariables = cms.vstring("eta"),
         ),
         cms.PSet (
-            name = cms.string("photonGenEta"),
-            title = cms.string("Photon Gen. Eta;#eta"),
-            binsX = cms.untracked.vdouble(60, -3, 3),
-            inputVariables = cms.vstring("genEta"),
-        ),
-        cms.PSet (
             name = cms.string("photonPhi"),
             title = cms.string("Photon Phi;#phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
@@ -1495,8 +1489,50 @@ PhotonHistograms = cms.PSet(
             binsY = cms.untracked.vdouble(60, -3, 3),
             inputVariables = cms.vstring("phi","eta"),
         ),
+        cms.PSet (
+            name = cms.string("photonBestMatchPdgId"),
+            title = cms.string(";|PDG ID| of generator particle matched to photon"),
+            binsX = cms.untracked.vdouble(600, 0, 600),
+            inputVariables = cms.vstring("abs (genMatchedParticle.bestMatchPdgId)"),
+            ),
+        cms.PSet (
+            name = cms.string("photonGenPt"),
+            title = cms.string("Gen Photon Transverse Momentum;Gen photon p_{T} [GeV]"),
+            binsX = cms.untracked.vdouble(100, 0, 500),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
+        ),
+        cms.PSet (
+            name = cms.string("photonGenEta"),
+            title = cms.string("Gen Photon Eta;Gen photon #eta"),
+            binsX = cms.untracked.vdouble(80, -4, 4),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.eta"),
+        ),
+        cms.PSet (
+            name = cms.string("photonGenPhi"),
+            title = cms.string("Gen Photon Phi;Gen photon #phi"),
+            binsX = cms.untracked.vdouble(64, -3.2, 3.2),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatch.phi"),
+        ),
     )
 )
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_7_6_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
+    PhotonHistograms.histograms.append(
+        cms.PSet (
+            name = cms.string("photonGenMotherPdgId"),
+            title = cms.string(";|PDG ID| of mother of gen photon"),
+            binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
+            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.mother_.pdgId)"),
+        ),
+        )
+elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
+    PhotonHistograms.histograms.append(
+        cms.PSet (
+            name = cms.string("photonGenMotherPdgId"),
+            title = cms.string(";|PDG ID| of mother of gen photon"),
+            binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
+            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.motherRef.pdgId)"),
+        ),
+        )
 
 
 
