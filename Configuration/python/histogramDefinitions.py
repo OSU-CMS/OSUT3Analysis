@@ -183,12 +183,6 @@ MuonHistograms = cms.PSet(
             inputVariables = cms.vstring("abs (genMatchedParticle.bestMatchPdgId)"),
             ),
         cms.PSet (
-            name = cms.string("muonBestMatchDeltaR"),
-            title = cms.string(";#DeltaR between muon and generator particle matched to muon"),
-            binsX = cms.untracked.vdouble(300,0,6),
-            inputVariables = cms.vstring("genMatchedParticle.dR"),
-            ),
-        cms.PSet (
             name = cms.string("muonGenPt"),
             title = cms.string("Gen Muon Transverse Momentum;Gen muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
@@ -528,12 +522,6 @@ ElectronHistograms = cms.PSet(
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
             inputVariables = cms.vstring("abs (genMatchedParticle.bestMatchPdgId)"),
             ),
-        cms.PSet (
-            name = cms.string("electronBestMatchDeltaR"),
-            title = cms.string(";#DeltaR between electron and generator particle matched to electron"),
-            binsX = cms.untracked.vdouble(300,0,6),
-            inputVariables = cms.vstring("genMatchedParticle.dR"),
-        )
         cms.PSet (
             name = cms.string("electronGenPt"),
             title = cms.string("Gen Electron Transverse Momentum;Gen electron p_{T} [GeV]"),
