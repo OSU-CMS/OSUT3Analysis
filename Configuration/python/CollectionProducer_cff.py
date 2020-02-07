@@ -198,7 +198,22 @@ collectionProducer.photons = cms.EDProducer ("OSUPhotonProducer",
     effAreasPhotonPayload        = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Spring16/effAreaPhotons_cone03_pfPhotons_90percentBased.txt"),
 )
 
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4") or os.environ["CMSSW_VERSION"].startswith("CMSSW_10_2"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4"):
+    collectionProducer.photons.vidLooseIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V1-loose")
+    collectionProducer.photons.vidMediumIdMap = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V1-medium")
+    collectionProducer.photons.vidTightIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V1-tight")
+    collectionProducer.photons.effAreasChargedHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfChargedHadrons_90percentBased.txt")
+    collectionProducer.photons.effAreasNeutralHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfNeutralHadrons_90percentBased.txt")
+    collectionProducer.photons.effAreasPhotonPayload        = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfPhotons_90percentBased.txt")
+    if (False and int(os.environ["CMSSW_VERSION"].split("_")[3]) >=9):
+        collectionProducer.photons.vidLooseIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V2-loose")
+        collectionProducer.photons.vidMediumIdMap = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V2-medium")
+        collectionProducer.photons.vidTightIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V2-tight")
+        collectionProducer.photons.effAreasChargedHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfChargedHadrons_90percentBased_V2.txt")
+        collectionProducer.photons.effAreasNeutralHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfNeutralHadrons_90percentBased_V2.txt")
+        collectionProducer.photons.effAreasPhotonPayload        = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfPhotons_90percentBased_V2.txt")
+
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_10_2"):
     collectionProducer.photons.vidLooseIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V2-loose")
     collectionProducer.photons.vidMediumIdMap = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V2-medium")
     collectionProducer.photons.vidTightIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V2-tight")
