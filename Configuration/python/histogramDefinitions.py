@@ -533,7 +533,7 @@ ElectronHistograms = cms.PSet(
             title = cms.string(";#DeltaR between electron and generator particle matched to electron"),
             binsX = cms.untracked.vdouble(300,0,6),
             inputVariables = cms.vstring("genMatchedParticle.dR"),
-        )
+        ),
         cms.PSet (
             name = cms.string("electronGenPt"),
             title = cms.string("Gen Electron Transverse Momentum;Gen electron p_{T} [GeV]"),
