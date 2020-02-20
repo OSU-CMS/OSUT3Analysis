@@ -40,7 +40,7 @@ namespace osu
             edm::Ref<vector<osu::Mcparticle> > bestMatch;
 
             int bestMatchPdgId;
-	    double dR;
+	    double bestMatchDR;
 
             GenMatchedParticle () :
 	    bestMatchPdgId (0), bestMatchDR (INVALID_VALUE)
