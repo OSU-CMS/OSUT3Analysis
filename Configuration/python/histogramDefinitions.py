@@ -186,7 +186,7 @@ MuonHistograms = cms.PSet(
             name = cms.string("muonBestMatchDeltaR"),
             title = cms.string(";#DeltaR between muon and generator particle matched to muon"),
             binsX = cms.untracked.vdouble(300,0,6),
-            inputVariables = cms.vstring("genMatchedParticle.dR"),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatchDR"),
             ),
         cms.PSet (
             name = cms.string("muonGenPt"),
@@ -223,7 +223,7 @@ MuonHistograms = cms.PSet(
             name = cms.string("muonBestMatchOfSameTypeDeltaR"),
             title = cms.string(";#DeltaR between muon and generator particle matched to muon"),
             binsX = cms.untracked.vdouble(300,0,6),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.dR"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatchDR"),
             ),
         cms.PSet (
             name = cms.string("muonGenOfSameTypePt"),
@@ -569,7 +569,7 @@ ElectronHistograms = cms.PSet(
             name = cms.string("electronBestMatchDeltaR"),
             title = cms.string(";#DeltaR between electron and generator particle matched to electron"),
             binsX = cms.untracked.vdouble(300,0,6),
-            inputVariables = cms.vstring("genMatchedParticle.dR"),
+            inputVariables = cms.vstring("genMatchedParticle.bestMatchDR"),
         ),
         cms.PSet (
             name = cms.string("electronGenPt"),
@@ -606,7 +606,7 @@ ElectronHistograms = cms.PSet(
             name = cms.string("electronBestMatchOfSameTypeDeltaR"),
             title = cms.string(";#DeltaR between electron and generator particle matched to electron"),
             binsX = cms.untracked.vdouble(300,0,6),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.dR"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatchDR"),
         ),
         cms.PSet (
             name = cms.string("electronGenOfSameTypePt"),
