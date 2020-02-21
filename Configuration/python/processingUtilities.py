@@ -496,6 +496,10 @@ def add_channels (process,
                             outputCommand = "drop *_egmGsfElectronIDs_*_*"
                         if dic[p].getModuleLabel () == 'egmGsfElectronIDsOriginalElectrons':
                             outputCommand = "drop *_egmGsfElectronIDsOriginalElectrons_*_*"
+                        if dic[p].getModuleLabel () == 'egmPhotonIDs':
+                            outputCommand = "drop *_egmPhotonIDs_*_*"
+                        if dic[p].getModuleLabel () == 'egmPhotonIDsOriginalPhotons':
+                            outputCommand = "drop *_egmPhotonIDsOriginalPhotons_*_*"
                         outputCommands.append (outputCommand)
 
         ########################################################################
@@ -823,6 +827,13 @@ def add_channels (process,
     if dataFormat.startswith ("MINI_AOD") and not hasattr (process, "egmGsfElectronIDSequence_step"):
         process = customizeMINIAODElectronVID(process, collections, usedCollections)
 
+    ########################################################################
+    # If MINIAOD is being used, and the egmPhotonIDSequence step hasn't
+    # yet been added, add it here.
+    ########################################################################
+    if dataFormat.startswith ("MINI_AOD") and not hasattr (process, "egmPhotonIDSequence_step"):
+        process = customizeMINIAODPhotonVID(process, collections, usedCollections)
+
 def set_endPath(process, endPath):
 
     ############################################################################
@@ -928,7 +939,7 @@ def set_input(process, input_string):
         return
 
 def customizeMINIAODElectronVID(process, collections, usedCollections):
-    if not hasattr (collections, "electrons"):
+    if not hasattr (collections, "electrons") or "electrons" not in usedCollections:
         return process
 
     from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
@@ -941,7 +952,7 @@ def customizeMINIAODElectronVID(process, collections, usedCollections):
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
         my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff']
-        if int(os.environ["CMSSW_VERSION"].split("_")[3]) >=9:
+        if int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 9:
             my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff'])
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
@@ -976,6 +987,34 @@ def customizeMINIAODElectronVID(process, collections, usedCollections):
 
     # In the case of a skim, the input tag needs to be changed to that stored in the skim
     process.egmGsfElectronIDs.physicsObjectSrc = collections.electrons
+
+    return process
+
+def customizeMINIAODPhotonVID(process, collections, usedCollections):
+    if not hasattr (collections, "photons") or "photons" not in usedCollections:
+        return process
+
+    from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDPhotonIdProducer,setupAllVIDIdsInModule,setupVIDPhotonSelection
+    switchOnVIDPhotonIdProducer(process, DataFormat.MiniAOD)
+
+    my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Spring16_V2p2_cff']
+
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
+        my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V1_cff']
+        if int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 13:
+            my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V2_cff']
+
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
+        my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V2_cff']
+
+    # Setup all the desired modules to be run
+    for idmod in my_id_modules:
+        setupAllVIDIdsInModule(process, idmod, setupVIDPhotonSelection)
+    process.egmPhotonIDSequence_step = cms.Path(process.egmPhotonIDSequence)
+    process.schedule.insert(0, process.egmPhotonIDSequence_step)
+
+    # In the case of a skim, the input tag needs to be changed to that stored in the skim
+    process.egmPhotonIDs.physicsObjectSrc = collections.photons
 
     return process
 

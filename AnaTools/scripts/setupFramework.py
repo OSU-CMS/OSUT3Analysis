@@ -104,6 +104,12 @@ print "Do not forget to recompile."
 #enable git hooks
 os.system("ln -s $CMSSW_BASE/src/OSUT3Analysis/githooks/* $CMSSW_BASE/src/OSUT3Analysis/.git/hooks/")
 
+# warn user about v2 photon ID availability in 9_4_X
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_9_4_") and int(os.environ["CMSSW_VERSION"].split("_")[3]) < 13:
+    print ""
+    print "If using photons, note that v2 IDs are only available in >= 9_4_13"
+    print "Your current release uses v1 photon IDs; consider changing to a newer release"
+
 # check that necessary merge-topics have been done
 if os.environ["CMSSW_VERSION"].startswith("CMSSW_9_4_") and int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 9:
     if not os.path.isfile(os.environ["CMSSW_BASE"] + "/src/RecoEgamma/ElectronIdentification/python/Identification/cutBasedElectronID_Fall17_94X_V2_cff.py"):
@@ -115,8 +121,12 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_9_4_") and int(os.environ["CMSS
         print "If your analysis needs to correct for L1 ECAL prefiring issue, please run the following before recompling:"
         print A_BRIGHT_RED + "  git cms-merge-topic lathomas:L1Prefiring_9_4_9" + A_RESET
 
-if os.environ["CMSSW_VERSION"].startswith("CMSSW_8_0_") and int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 32:
-    if not os.path.isfile(os.environ["CMSSW_BASE"] + "/src/L1Prefiring/EventWeightProducer/python/L1ECALPrefiringWeightProducer_cfi.py"):
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_8_0_"):
+    if not os.path.isfile(os.environ["CMSSW_BASE"] + "/src/RecoEgamma/PhotonIdentification/python/Identification/cutBasedPhotonID_PHYS14_PU20bx25_V1_cff.py"):
+        print ""
+        print "If using photons, please run the following before recompiling:"
+        print A_BRIGHT_RED + "  git cms-merge-topic ikrav:egm_id_80X_v3_photons" + A_RESET
+    if int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 32 and not os.path.isfile(os.environ["CMSSW_BASE"] + "/src/L1Prefiring/EventWeightProducer/python/L1ECALPrefiringWeightProducer_cfi.py"):
         print ""
         print "If your analysis needs to correct for L1 ECAL prefiring issue, please run the following before recompling:"
         print A_BRIGHT_RED + "  git cms-merge-topic lathomas:L1Prefiring_8_0_32" + A_RESET

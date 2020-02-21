@@ -5,17 +5,27 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 OSUPhotonProducer::OSUPhotonProducer (const edm::ParameterSet &cfg) :
-  collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
-  cfg_         (cfg),
-  rho_         (cfg.getParameter<edm::InputTag>  ("rho"))
+  collections_                 (cfg.getParameter<edm::ParameterSet> ("collections")),
+  cfg_                         (cfg),
+  rho_                         (cfg.getParameter<edm::InputTag>     ("rho")),
+  vidLooseIdMap_               (cfg.getParameter<edm::InputTag>     ("vidLooseIdMap")),
+  vidMediumIdMap_              (cfg.getParameter<edm::InputTag>     ("vidMediumIdMap")),
+  vidTightIdMap_               (cfg.getParameter<edm::InputTag>     ("vidTightIdMap")),
+  effectiveAreasChargedHadron_ ((cfg.getParameter<edm::FileInPath>  ("effAreasChargedHadronPayload")).fullPath()),
+  effectiveAreasNeutralHadron_ ((cfg.getParameter<edm::FileInPath>  ("effAreasNeutralHadronPayload")).fullPath()),
+  effectiveAreasPhoton_        ((cfg.getParameter<edm::FileInPath>  ("effAreasPhotonPayload")).fullPath())
 {
   collection_ = collections_.getParameter<edm::InputTag> ("photons");
 
   produces<vector<osu::Photon> > (collection_.instance ());
 
-  token_ = consumes<vector<TYPE(photons)> > (collection_);
+  token_ = consumes<edm::View<TYPE(photons)> > (collection_);
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   rhoToken_ = consumes<double>(rho_);
+
+  vidLooseIdMapToken_  = consumes<edm::ValueMap<bool> > (vidLooseIdMap_);
+  vidMediumIdMapToken_ = consumes<edm::ValueMap<bool> > (vidMediumIdMap_);
+  vidTightIdMapToken_  = consumes<edm::ValueMap<bool> > (vidTightIdMap_);
 }
 
 OSUPhotonProducer::~OSUPhotonProducer ()
@@ -25,7 +35,7 @@ OSUPhotonProducer::~OSUPhotonProducer ()
 void
 OSUPhotonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(photons)> > collection;
+  edm::Handle<edm::View<TYPE(photons)> > collection;
   if (!event.getByToken (token_, collection))
     return;
   edm::Handle<vector<osu::Mcparticle> > particles;
@@ -33,50 +43,44 @@ OSUPhotonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   edm::Handle<double> rho;
 
+  edm::Handle<edm::ValueMap<bool> > vidLooseIdMap;
+  event.getByToken(vidLooseIdMapToken_, vidLooseIdMap);
+
+  edm::Handle<edm::ValueMap<bool> > vidMediumIdMap;
+  event.getByToken(vidMediumIdMapToken_, vidMediumIdMap);
+
+  edm::Handle<edm::ValueMap<bool> > vidTightIdMap;
+  event.getByToken(vidTightIdMapToken_, vidTightIdMap);
+
   pl_ = unique_ptr<vector<osu::Photon> > (new vector<osu::Photon> ());
+
+  unsigned iPho = -1;
+
   for (const auto &object : *collection)
     {
+      ++iPho;
+
       pl_->emplace_back (object, particles, cfg_);
       osu::Photon &photon = pl_->back ();
 
       if(event.getByToken(rhoToken_, rho)) photon.set_rho((float)(*rho));
 
-      float Aeff_neutralHadron = 0.;
+      if(vidLooseIdMap.isValid())
+        photon.set_passesVID_looseID ( (*vidLooseIdMap)[(*collection).refAt(iPho)] );
+
+      if(vidMediumIdMap.isValid())
+        photon.set_passesVID_mediumID ( (*vidMediumIdMap)[(*collection).refAt(iPho)] );
+
+      if(vidTightIdMap.isValid())
+        photon.set_passesVID_tightID ( (*vidTightIdMap)[(*collection).refAt(iPho)] );
+
       float Aeff_chargedHadron = 0.;
+      float Aeff_neutralHadron = 0.;
       float Aeff_photon = 0.;
       float Aeff_eta = abs(object.superCluster()->eta());
-
-      // https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2#Selection_implementation_details
-
-      if(Aeff_eta < 1.0) {
-        Aeff_neutralHadron = 0.0599; // pm 0.001
-        Aeff_photon = 0.1271; // pm 0.001
-      }
-      else if(Aeff_eta < 1.479) {
-        Aeff_neutralHadron = 0.0819; // pm 0.001
-        Aeff_photon = 0.1101; // pm 0.003
-      }
-      else if(Aeff_eta < 2.0) {
-        Aeff_neutralHadron = 0.0696; // pm 0.001
-        Aeff_photon = 0.0756; // pm 0.002
-      }
-      else if(Aeff_eta < 2.2) {
-        Aeff_neutralHadron = 0.0360; // pm 0.001
-        Aeff_photon = 0.1175; // pm 0.002
-      }
-      else if(Aeff_eta < 2.3) {
-        Aeff_neutralHadron = 0.0360; // pm 0.002
-        Aeff_photon = 0.1498; // pm 0.00001
-      }
-      else if(Aeff_eta < 2.4) {
-        Aeff_neutralHadron = 0.0462; // pm 0.001
-        Aeff_photon = 0.1857; // pm 0.005
-      }
-      else {
-        Aeff_neutralHadron = 0.0656; // pm 0.005
-        Aeff_photon = 0.2183; // pm 0.003
-      }
-
+      Aeff_chargedHadron = effectiveAreasChargedHadron_.getEffectiveArea(Aeff_eta);
+      Aeff_neutralHadron = effectiveAreasNeutralHadron_.getEffectiveArea(Aeff_eta);
+      Aeff_photon = effectiveAreasPhoton_.getEffectiveArea(Aeff_eta);
       photon.set_AEff_neutralHadron(Aeff_neutralHadron);
       photon.set_Aeff_chargedHadron(Aeff_chargedHadron);
       photon.set_Aeff_photon(Aeff_photon);
