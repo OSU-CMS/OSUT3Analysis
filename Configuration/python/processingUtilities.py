@@ -939,7 +939,7 @@ def set_input(process, input_string):
         return
 
 def customizeMINIAODElectronVID(process, collections, usedCollections):
-    if not hasattr (collections, "electrons"):
+    if not hasattr (collections, "electrons") or "electrons" not in usedCollections:
         return process
 
     from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
@@ -952,7 +952,7 @@ def customizeMINIAODElectronVID(process, collections, usedCollections):
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
         my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff']
-        if int(os.environ["CMSSW_VERSION"].split("_")[3]) >=9:
+        if int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 9:
             my_id_modules.extend(['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff'])
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
@@ -991,7 +991,7 @@ def customizeMINIAODElectronVID(process, collections, usedCollections):
     return process
 
 def customizeMINIAODPhotonVID(process, collections, usedCollections):
-    if not hasattr (collections, "photons"):
+    if not hasattr (collections, "photons") or "photons" not in usedCollections:
         return process
 
     from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDPhotonIdProducer,setupAllVIDIdsInModule,setupVIDPhotonSelection
@@ -1001,7 +1001,7 @@ def customizeMINIAODPhotonVID(process, collections, usedCollections):
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
         my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V1_cff']
-        if int(os.environ["CMSSW_VERSION"].split("_")[3]) >=9:
+        if int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 13:
             my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V2_cff']
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
