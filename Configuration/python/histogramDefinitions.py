@@ -180,74 +180,74 @@ MuonHistograms = cms.PSet(
             name = cms.string("muonBestMatchPdgId"),
             title = cms.string(";|PDG ID| of generator particle matched to muon"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs (genMatchedParticle.bestMatchPdgId)"),
+            inputVariables = cms.vstring("abs (genMatchedParticle.noFlagsPdgId)"),
             ),
         cms.PSet (
             name = cms.string("muonBestMatchDeltaR"),
             title = cms.string(";#DeltaR between muon and generator particle matched to muon"),
             binsX = cms.untracked.vdouble(300,0,6),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatchDR"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlagsDR"),
             ),
         cms.PSet (
             name = cms.string("muonGenPt"),
             title = cms.string("Gen Muon Transverse Momentum;Gen muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.pt"),
         ),
         cms.PSet (
             name = cms.string("muonGenPt_ext"),
             title = cms.string("Gen Muon Transverse Momentum;Gen muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(300, 0, 3000),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.pt"),
         ),
         cms.PSet (
             name = cms.string("muonGenEta"),
             title = cms.string("Gen Muon Eta;Gen muon #eta"),
             binsX = cms.untracked.vdouble(80, -4, 4),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.eta"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.eta"),
         ),
         cms.PSet (
             name = cms.string("muonGenPhi"),
             title = cms.string("Gen Muon Phi;Gen muon #phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.phi"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.phi"),
         ),
 
         cms.PSet (
             name = cms.string("muonBestMatchOfSameTypePdgId"),
             title = cms.string(";|PDG ID| of generator particle matched to muon"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs (genMatchedParticleOfSameType.bestMatchPdgId)"),
+            inputVariables = cms.vstring("abs (genMatchedParticleOfSameType.noFlagsPdgId)"),
             ),
         cms.PSet (
             name = cms.string("muonBestMatchOfSameTypeDeltaR"),
             title = cms.string(";#DeltaR between muon and generator particle matched to muon"),
             binsX = cms.untracked.vdouble(300,0,6),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatchDR"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.noFlagsDR"),
             ),
         cms.PSet (
             name = cms.string("muonGenOfSameTypePt"),
             title = cms.string("Gen Muon Transverse Momentum;Gen muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatch.pt"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.noFlags.pt"),
         ),
         cms.PSet (
             name = cms.string("muonGenOfSameTypePt_ext"),
             title = cms.string("Gen Muon Transverse Momentum;Gen muon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(300, 0, 3000),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatch.pt"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.noFlags.pt"),
         ),
         cms.PSet (
             name = cms.string("muonGenOfSameTypeEta"),
             title = cms.string("Gen Muon Eta;Gen muon #eta"),
             binsX = cms.untracked.vdouble(80, -4, 4),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatch.eta"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.noFlags.eta"),
         ),
         cms.PSet (
             name = cms.string("muonGenOfSameTypePhi"),
             title = cms.string("Gen Muon Phi;Gen muon #phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatch.phi"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.noFlags.phi"),
         ),
     )
 )
@@ -258,7 +258,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_7_6_") or os.environ["CMSSW_VE
             name = cms.string("muonGenMotherPdgId"),
             title = cms.string(";|PDG ID| of mother of gen muon"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.mother_.pdgId)"),
+            inputVariables = cms.vstring("abs(genMatchedParticle.noFlags.mother_.pdgId)"),
         ),
         )
 elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
@@ -267,7 +267,7 @@ elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_
             name = cms.string("muonGenMotherPdgId"),
             title = cms.string(";|PDG ID| of mother of gen muon"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.motherRef.pdgId)"),
+            inputVariables = cms.vstring("abs(genMatchedParticle.noFlags.motherRef.pdgId)"),
         ),
         )
 
@@ -563,74 +563,74 @@ ElectronHistograms = cms.PSet(
             name = cms.string("electronBestMatchPdgId"),
             title = cms.string(";|PDG ID| of generator particle matched to electron"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs (genMatchedParticle.bestMatchPdgId)"),
+            inputVariables = cms.vstring("abs (genMatchedParticle.noFlagsPdgId)"),
             ),
         cms.PSet (
             name = cms.string("electronBestMatchDeltaR"),
             title = cms.string(";#DeltaR between electron and generator particle matched to electron"),
             binsX = cms.untracked.vdouble(300,0,6),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatchDR"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlagsDR"),
         ),
         cms.PSet (
             name = cms.string("electronGenPt"),
             title = cms.string("Gen Electron Transverse Momentum;Gen electron p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.pt"),
         ),
         cms.PSet (
             name = cms.string("electronGenPt_ext"),
             title = cms.string("Gen Electron Transverse Momentum;Gen electron p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(300, 0, 3000),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.pt"),
         ),
         cms.PSet (
             name = cms.string("electronGenEta"),
             title = cms.string("Gen Electron Eta;Gen electron #eta"),
             binsX = cms.untracked.vdouble(80, -4, 4),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.eta"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.eta"),
         ),
         cms.PSet (
             name = cms.string("electronGenPhi"),
             title = cms.string("Gen Electron Phi;Gen electron #phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.phi"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.phi"),
         ),
 
         cms.PSet (
             name = cms.string("electronBestMatchOfSameTypePdgId"),
             title = cms.string(";|PDG ID| of generator particle matched to electron"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs (genMatchedParticleOfSameType.bestMatchPdgId)"),
+            inputVariables = cms.vstring("abs (genMatchedParticleOfSameType.noFlagsPdgId)"),
             ),
         cms.PSet (
             name = cms.string("electronBestMatchOfSameTypeDeltaR"),
             title = cms.string(";#DeltaR between electron and generator particle matched to electron"),
             binsX = cms.untracked.vdouble(300,0,6),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatchDR"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.noFlagsDR"),
         ),
         cms.PSet (
             name = cms.string("electronGenOfSameTypePt"),
             title = cms.string("Gen Electron Transverse Momentum;Gen electron p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatch.pt"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.noFlags.pt"),
         ),
         cms.PSet (
             name = cms.string("electronGenOfSameTypePt_ext"),
             title = cms.string("Gen Electron Transverse Momentum;Gen electron p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(300, 0, 3000),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatch.pt"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.noFlags.pt"),
         ),
         cms.PSet (
             name = cms.string("electronGenOfSameTypeEta"),
             title = cms.string("Gen Electron Eta;Gen electron #eta"),
             binsX = cms.untracked.vdouble(80, -4, 4),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatch.eta"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.noFlags.eta"),
         ),
         cms.PSet (
             name = cms.string("electronGenOfSameTypePhi"),
             title = cms.string("Gen Electron Phi;Gen electron #phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
-            inputVariables = cms.vstring("genMatchedParticleOfSameType.bestMatch.phi"),
+            inputVariables = cms.vstring("genMatchedParticleOfSameType.noFlags.phi"),
         ),
     )
 )
@@ -641,7 +641,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_7_6_") or os.environ["CMSSW_VE
             name = cms.string("electronGenMotherPdgId"),
             title = cms.string(";|PDG ID| of mother of gen electron"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.mother_.pdgId)"),
+            inputVariables = cms.vstring("abs(genMatchedParticle.noFlags.mother_.pdgId)"),
         ),
         )
 elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
@@ -650,7 +650,7 @@ elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_
             name = cms.string("electronGenMotherPdgId"),
             title = cms.string(";|PDG ID| of mother of gen electron"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.motherRef.pdgId)"),
+            inputVariables = cms.vstring("abs(genMatchedParticle.noFlags.motherRef.pdgId)"),
         ),
         )
 
@@ -1493,25 +1493,25 @@ PhotonHistograms = cms.PSet(
             name = cms.string("photonBestMatchPdgId"),
             title = cms.string(";|PDG ID| of generator particle matched to photon"),
             binsX = cms.untracked.vdouble(600, 0, 600),
-            inputVariables = cms.vstring("abs (genMatchedParticle.bestMatchPdgId)"),
+            inputVariables = cms.vstring("abs (genMatchedParticle.noFlagsPdgId)"),
             ),
         cms.PSet (
             name = cms.string("photonGenPt"),
             title = cms.string("Gen Photon Transverse Momentum;Gen photon p_{T} [GeV]"),
             binsX = cms.untracked.vdouble(100, 0, 500),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.pt"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.pt"),
         ),
         cms.PSet (
             name = cms.string("photonGenEta"),
             title = cms.string("Gen Photon Eta;Gen photon #eta"),
             binsX = cms.untracked.vdouble(80, -4, 4),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.eta"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.eta"),
         ),
         cms.PSet (
             name = cms.string("photonGenPhi"),
             title = cms.string("Gen Photon Phi;Gen photon #phi"),
             binsX = cms.untracked.vdouble(64, -3.2, 3.2),
-            inputVariables = cms.vstring("genMatchedParticle.bestMatch.phi"),
+            inputVariables = cms.vstring("genMatchedParticle.noFlags.phi"),
         ),
     )
 )
@@ -1521,7 +1521,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_7_6_") or os.environ["CMSSW_VE
             name = cms.string("photonGenMotherPdgId"),
             title = cms.string(";|PDG ID| of mother of gen photon"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.mother_.pdgId)"),
+            inputVariables = cms.vstring("abs(genMatchedParticle.noFlags.mother_.pdgId)"),
         ),
         )
 elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
@@ -1530,7 +1530,7 @@ elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_
             name = cms.string("photonGenMotherPdgId"),
             title = cms.string(";|PDG ID| of mother of gen photon"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs(genMatchedParticle.bestMatch.motherRef.pdgId)"),
+            inputVariables = cms.vstring("abs(genMatchedParticle.noFlags.motherRef.pdgId)"),
         ),
         )
 
@@ -1647,10 +1647,10 @@ TrackHistograms = cms.PSet(
             inputVariables = cms.vstring("charge"),
         ),
         cms.PSet (
-            name = cms.string("bestMatchPdgId"),
+            name = cms.string("noFlagsPdgId"),
             title = cms.string(";|PDG ID| of generator particle matched to track"),
             binsX = cms.untracked.vdouble(getPdgBins(["unmatched", "quarks", "leptons", "bosons"])),
-            inputVariables = cms.vstring("abs (genMatchedParticle.bestMatchPdgId)"),
+            inputVariables = cms.vstring("abs (genMatchedParticle.noFlagsPdgId)"),
             ),
         cms.PSet (
             name = cms.string("genMatchedPromptFinalStateIsMatched"),
