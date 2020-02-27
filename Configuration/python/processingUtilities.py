@@ -939,7 +939,7 @@ def set_input(process, input_string):
         return
 
 def customizeMINIAODElectronVID(process, collections, usedCollections):
-    if not hasattr (collections, "electrons") or "electrons" not in usedCollections:
+    if not hasattr (collections, "electrons") or ("electrons" not in usedCollections and "tracks" not in usedCollections):
         return process
 
     from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
