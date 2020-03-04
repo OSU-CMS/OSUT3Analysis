@@ -37,13 +37,20 @@ namespace osu
             edm::Ref<vector<osu::Mcparticle> > directHardProcessTauDecayProductFinalState;
 
             //is particle final state and (prompt or direct decay product of prompt tau)
-            edm::Ref<vector<osu::Mcparticle> > bestMatch;
+            edm::Ref<vector<osu::Mcparticle> > promptOrTauDecay;
 
-            int bestMatchPdgId;
-	    double bestMatchDR;
+            //no flags (mcparticles=packedGenParticles (all status 1) by default)
+            edm::Ref<vector<osu::Mcparticle> > noFlags;
+
+            int noFlagsPdgId;
+	    double noFlagsDR;
+
+	    int promptOrTauDecayPdgId;
+	    double promptOrTauDecayDR;
 
             GenMatchedParticle () :
-	    bestMatchPdgId (0), bestMatchDR (INVALID_VALUE)
+	    noFlagsPdgId (0), noFlagsDR (INVALID_VALUE),
+	    promptOrTauDecayPdgId (0), promptOrTauDecayDR (INVALID_VALUE)
             {
             }
 
@@ -55,14 +62,16 @@ namespace osu
             double directPromptTauDecayProductFinalState;
             double hardProcessFinalState;
             double directHardProcessTauDecayProductFinalState;
-            double bestMatch;
+            double promptOrTauDecay;
+            double noFlags;
 
             DRToGenMatchedParticle () :
 	    promptFinalState (INVALID_VALUE),
 	      directPromptTauDecayProductFinalState (INVALID_VALUE),
               hardProcessFinalState (INVALID_VALUE),
               directHardProcessTauDecayProductFinalState (INVALID_VALUE),
-	      bestMatch (INVALID_VALUE)
+	      promptOrTauDecay (INVALID_VALUE),
+	      noFlags (INVALID_VALUE)
             {
             }
           };
@@ -156,7 +165,8 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
   dRToGenMatchedParticle.directPromptTauDecayProductFinalState = INVALID_VALUE;
   dRToGenMatchedParticle.hardProcessFinalState = INVALID_VALUE;
   dRToGenMatchedParticle.directHardProcessTauDecayProductFinalState = INVALID_VALUE;
-  dRToGenMatchedParticle.bestMatch = INVALID_VALUE;
+  dRToGenMatchedParticle.promptOrTauDecay = INVALID_VALUE;
+  dRToGenMatchedParticle.noFlags = INVALID_VALUE;
   for (vector<osu::Mcparticle>::const_iterator particle = particles->begin (); particle != particles->end (); particle++)
     {
       int pdgId = 0;
@@ -171,13 +181,20 @@ osu::GenMatchable<T, PdgId>::findGenMatchedParticle (const edm::Handle<vector<os
       if (maxDeltaR_ >= 0.0 && dR > maxDeltaR_)
         continue;
 
+      if (dR < dRToGenMatchedParticle.noFlags || dRToGenMatchedParticle.noFlags < 0.0)
+	{
+	  dRToGenMatchedParticle.noFlags = genMatchedParticle.noFlagsDR = dR;
+	  genMatchedParticle.noFlags = edm::Ref<vector<osu::Mcparticle> > (particles, particle - particles->begin ());
+	  genMatchedParticle.noFlagsPdgId = particle->pdgId ();
+	}
+
       if (particle->isPromptFinalState () || particle->isDirectPromptTauDecayProductFinalState ())
         {
-          if (dR < dRToGenMatchedParticle.bestMatch || dRToGenMatchedParticle.bestMatch < 0.0)
+          if (dR < dRToGenMatchedParticle.promptOrTauDecay || dRToGenMatchedParticle.promptOrTauDecay < 0.0)
             {
-              dRToGenMatchedParticle.bestMatch = genMatchedParticle.bestMatchDR = dR;
-              genMatchedParticle.bestMatch = edm::Ref<vector<osu::Mcparticle> > (particles, particle - particles->begin ());
-              genMatchedParticle.bestMatchPdgId = ((particle->isDirectPromptTauDecayProductFinalState () && abs (particle->pdgId ()) > 100) ? 15 : particle->pdgId ());
+              dRToGenMatchedParticle.promptOrTauDecay = genMatchedParticle.promptOrTauDecayDR = dR;
+              genMatchedParticle.promptOrTauDecay = edm::Ref<vector<osu::Mcparticle> > (particles, particle - particles->begin ());
+              genMatchedParticle.promptOrTauDecayPdgId = ((particle->isDirectPromptTauDecayProductFinalState () && abs (particle->pdgId ()) > 100) ? 15 : particle->pdgId ());
             }
         }
       if (particle->isPromptFinalState ())
