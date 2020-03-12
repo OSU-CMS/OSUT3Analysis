@@ -11,6 +11,7 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   collections_     (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_             (cfg),
   pfCandidate_     (cfg.getParameter<edm::InputTag>     ("pfCandidate")),
+  rho_             (cfg.getParameter<edm::InputTag>     ("rho")),
   d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth")),
   hltMatchingInfo_ (cfg.getParameter<vector<edm::ParameterSet> > ("hltMatchingInfo"))
 {
@@ -24,6 +25,7 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   prunedParticleToken_ = consumes<vector<reco::GenParticle> > (collections_.getParameter<edm::InputTag> ("hardInteractionMcparticles"));
   pfCandidateToken_ = consumes<vector<pat::PackedCandidate>>(pfCandidate_);
+  rhoToken_ = consumes<double> (rho_);
   beamspotToken_ = consumes<TYPE(beamspots)> (collections_.getParameter<edm::InputTag> ("beamspots"));
   primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
   metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
@@ -46,6 +48,9 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 
   Handle<vector<pat::PackedCandidate> > cands;
   event.getByToken(pfCandidateToken_, cands);
+
+  Handle<double> rho;
+  event.getByToken (rhoToken_, rho);
 
   Handle<vector<TYPE(primaryvertexs)> > vertices;
   event.getByToken (primaryvertexToken_, vertices);
@@ -73,6 +78,9 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
     {
       pl_->emplace_back (object, particles, cfg_, met->at (0));
       osu::Muon &muon = pl_->back ();
+
+      if(rho.isValid())
+        muon.set_rho((float)(*rho));
 
       if (!vertices->empty ())
         {

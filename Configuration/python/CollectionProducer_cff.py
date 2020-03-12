@@ -167,6 +167,7 @@ collectionProducer.mets = cms.EDProducer ("OSUMetProducer",
 
 collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
     pfCandidate =  cms.InputTag  ('packedPFCandidates','',''),
+    rho         =  cms.InputTag  ('fixedGridRhoFastjetAll','',''),
     d0SmearingWidth = cms.double (-1.0),
     hltMatchingInfo = cms.VPSet (
         cms.PSet(name = cms.string("HLT_IsoMu20_v"),   collection = cms.string("hltL3MuonCandidates::HLT"),     filter = cms.string("hltL3crIsoL1sMu16L1f0L2f10QL3f20QL3trkIsoFiltered0p09")),

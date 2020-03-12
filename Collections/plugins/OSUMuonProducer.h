@@ -30,11 +30,13 @@ class OSUMuonProducer : public edm::EDProducer
     edm::EDGetTokenT<vector<pat::PackedCandidate> > pfCandidateToken_;
     edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexToken_;
     edm::EDGetTokenT<vector<osu::Met> > metToken_;
+    edm::EDGetTokenT<double> rhoToken_;
     edm::EDGetTokenT<edm::TriggerResults> triggersToken_;
     edm::EDGetTokenT<vector<pat::TriggerObjectStandAlone> > trigobjsToken_;
 
     edm::ParameterSet  cfg_;
     edm::InputTag      pfCandidate_;
+    edm::InputTag      rho_;
     double             d0SmearingWidth_;
     vector<edm::ParameterSet> hltMatchingInfo_;
 

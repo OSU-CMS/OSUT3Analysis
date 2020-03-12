@@ -11,6 +11,7 @@ osu::Muon::Muon ()
 
 osu::Muon::Muon (const TYPE(muons) &muon) :
   GenMatchable             (muon),
+  rho_                     (INVALID_VALUE),
   isTightMuonWRTVtx_       (false),
   isSoftMuonWRTVtx_        (false),
   pfdBetaIsoCorr_          (INVALID_VALUE),
@@ -32,6 +33,7 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles) :
   GenMatchable             (muon, particles),
+  rho_                     (INVALID_VALUE),
   isTightMuonWRTVtx_       (false),
   isSoftMuonWRTVtx_        (false),
   pfdBetaIsoCorr_          (INVALID_VALUE),
@@ -53,6 +55,7 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg) :
   GenMatchable             (muon, particles, cfg),
+  rho_                     (INVALID_VALUE),
   isTightMuonWRTVtx_       (false),
   isSoftMuonWRTVtx_        (false),
   pfdBetaIsoCorr_          (INVALID_VALUE),
@@ -74,6 +77,7 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
 
 osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcparticle> > &particles, const edm::ParameterSet &cfg, const osu::Met &met) :
   GenMatchable             (muon, particles, cfg),
+  rho_                     (INVALID_VALUE),
   isTightMuonWRTVtx_       (false),
   isSoftMuonWRTVtx_        (false),
   pfdBetaIsoCorr_          (INVALID_VALUE),
@@ -116,6 +120,12 @@ void osu::Muon::set_isTightMuonWRTVtx (const bool isTightMuon)
 void osu::Muon::set_isSoftMuonWRTVtx (const bool isSoftMuon)
 {
   isSoftMuonWRTVtx_ = isSoftMuon;
+}
+
+const float
+osu::Muon::rho () const
+{
+  return this->rho_;
 }
 
 const double
