@@ -74,9 +74,9 @@ for file in os.listdir(dir):
 
 #import the desired sets of histograms from the standard python file which defines them
 from OSUT3Analysis.Configuration.histogramDefinitions import *
-process.Plotting.histogramSets.append(MuonHistograms)
-process.Plotting.histogramSets.append(DiMuonHistograms)
-process.Plotting.histogramSets.append(ElectronMuonHistograms)
+process.Plotting.histogramSets.append(ExampleMuonHistograms)
+process.Plotting.histogramSets.append(ExampleDiMuonHistograms)
+process.Plotting.histogramSets.append(ExampleElectronMuonHistograms)
 
 
 

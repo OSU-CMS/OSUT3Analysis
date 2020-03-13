@@ -99,8 +99,8 @@ from OSUT3Analysis.Configuration.StandardSequenes import EventFiltering
 
 # import the desired sets of standard histograms and their definitions
 from OSUT3Analysis.Configuration.histogramDefinitions import *
-process.Plotting.histogramSets.append(MuonHistograms)
-process.Plotting.histogramSets.append(DiMuonHistograms)
+process.Plotting.histogramSets.append(ExampleMuonHistograms)
+process.Plotting.histogramSets.append(ExampleDiMuonHistograms)
 
 # import histogram for any special user-defined variables
 # this one has the dimuon-met delta phi histogram
