@@ -19,6 +19,7 @@ namespace osu
         Muon (const TYPE(muons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const osu::Met &);
         ~Muon ();
 
+        const float rho() const;
         const double pfdBetaIsoCorr () const;
         const double sumChargedHadronPtCorr () const;
         const double sumPUPtCorr () const;
@@ -27,6 +28,7 @@ namespace osu
         const double d0SmearingVal () const;
         const bool isTightMuonWRTVtx() const { return isTightMuonWRTVtx_; }
         const bool isSoftMuonWRTVtx() const { return isSoftMuonWRTVtx_; }
+        void set_rho (float value) { rho_  = value; }
         void set_isTightMuonWRTVtx(const bool isTightMuon);
         void set_isSoftMuonWRTVtx(const bool isSoftMuon);
         void set_pfdBetaIsoCorr (double value) { pfdBetaIsoCorr_  = value; };
@@ -67,6 +69,7 @@ namespace osu
         const bool match_HLT_IsoMu27_v   () const { return get_hltMatch("HLT_IsoMu27_v"); };
 
       private:
+        float rho_;
         bool isTightMuonWRTVtx_;
         bool isSoftMuonWRTVtx_;
         double pfdBetaIsoCorr_;
