@@ -27,6 +27,8 @@ class McparticleProducer : public edm::EDProducer
 
     // Payload for this EDFilter.
     unique_ptr<vector<osu::Mcparticle> > pl_;
+
+    const reco::Candidate * uniqueMother (const TYPE(mcparticles) &) const;
 };
 
 #endif

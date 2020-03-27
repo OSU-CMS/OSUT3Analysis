@@ -13,7 +13,15 @@ namespace osu
         Mcparticle ();
         Mcparticle (const TYPE(mcparticles) &);
         ~Mcparticle ();
+
+	const int uniqueMotherPdgId () const;
+
+	void set_uniqueMotherPdgId (double value) { uniqueMotherPdgId_  = value; };
+
+	int uniqueMotherPdgId_;
+
     };
+
 }
 
 #else

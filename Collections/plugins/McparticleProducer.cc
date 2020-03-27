@@ -26,11 +26,29 @@ McparticleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
     return;
 
   pl_ = unique_ptr<vector<osu::Mcparticle> > (new vector<osu::Mcparticle> ());
-  for (const auto &object : *collection)
+  for (const auto &object : *collection) {
     pl_->emplace_back (object);
+    osu::Mcparticle &mcpart = pl_->back();
+
+    const reco::Candidate *uniqueMo = uniqueMother(mcpart);
+    if (uniqueMo) mcpart.set_uniqueMotherPdgId(uniqueMo->pdgId());
+  }
 
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
+}
+
+const reco::Candidate *
+McparticleProducer::uniqueMother(const TYPE(mcparticles) &p) const {
+  const reco::Candidate *mo = &p;
+  std::unordered_set<const reco::Candidate *> dupCheck;
+  while (mo && mo->pdgId() == p.pdgId()) {
+    dupCheck.insert(mo);
+    mo = mo->mother();
+    if (dupCheck.count(mo))
+      return nullptr;
+  }
+  return mo;
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
