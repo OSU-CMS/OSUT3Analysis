@@ -30,8 +30,8 @@ HardInteractionMcparticleProducer::produce (edm::Event &event, const edm::EventS
     pl_->emplace_back (object);
     osu::HardInteractionMcparticle &hiMcpart = pl_->back();
 
-    if(!uniqueMother(hiMcpart)) continue;
-    hiMcpart.set_uniqueMotherPdgId(uniqueMother(hiMcpart)->pdgId());
+    const reco::Candidate *uniqueMo = uniqueMother(hiMcpart);
+    if (uniqueMo) hiMcpart.set_uniqueMotherPdgId(uniqueMo->pdgId());
   }
 
   event.put (std::move (pl_), collection_.instance ());

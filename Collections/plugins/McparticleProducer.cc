@@ -30,8 +30,8 @@ McparticleProducer::produce (edm::Event &event, const edm::EventSetup &setup)
     pl_->emplace_back (object);
     osu::Mcparticle &mcpart = pl_->back();
 
-    if(!uniqueMother(mcpart)) continue;
-    mcpart.set_uniqueMotherPdgId(uniqueMother(mcpart)->pdgId());
+    const reco::Candidate *uniqueMo = uniqueMother(mcpart);
+    if (uniqueMo) mcpart.set_uniqueMotherPdgId(uniqueMo->pdgId());
   }
 
   event.put (std::move (pl_), collection_.instance ());
