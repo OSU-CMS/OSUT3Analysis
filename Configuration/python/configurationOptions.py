@@ -8009,7 +8009,7 @@ crossSections = {
     'DYJetsToLL_5to50'         :              71310.0, # LO from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns#DY_Z
     'DYJetsToLL_10to50'        :              18610.0,
     'DYBBJetsToLL'             :                11.37,
-    'DYJetsToTauTauLeptonic'   :                 2211,
+    'DYJetsToTauTauLeptonic'   :               114.58, # https://milliqanelog.asc.ohio-state.edu:8080/DisplacedSUSY/1537
     'DYJetsToLL_10to50_50ns'   :              18610.0,
     'QCD_MuEnriched_20toInf'   :  720648000.0*0.00042,
     'QCD_MuEnriched_15to20'    :   1273190000.0*0.003,
