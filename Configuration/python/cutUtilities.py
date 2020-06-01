@@ -66,6 +66,7 @@ muonD0WRTPV       = "((muon.vx - eventvariable.leadingPV_x) * muon.py - (muon.vy
 
 muonSmearedD0WRTBeamspot = "(muon.d0SmearingVal + ((muon.vx - beamspot.x0) * muon.py - (muon.vy - beamspot.y0) * muon.px) / muon.pt)"
 
+hardInteractionMcparticleD0WRTBeamspot = "((hardInteractionMcparticle.vx - beamspot.x0) * hardInteractionMcparticle.py - (hardInteractionMcparticle.vy - beamspot.y0) * hardInteractionMcparticle.px) / hardInteractionMcparticle.pt"
 
 # Calculation from https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_X/DataFormats/TrackReco/interface/TrackBase.h#L674
 electronDZWRTBeamspot = "(electron.vz - beamspot.z0) \
