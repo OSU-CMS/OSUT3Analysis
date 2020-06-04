@@ -22,12 +22,12 @@ LifetimeWeightProducer::LifetimeWeightProducer(const edm::ParameterSet &cfg) :
     srcCTau_.push_back      (reweightingRules_[iRule].getParameter<vector<double> > ("srcCTaus"));
     pdgIds_.push_back       (reweightingRules_[iRule].getParameter<vector<int> >    ("pdgIds"));
     isDefaultRule_.push_back(reweightingRules_[iRule].getParameter<bool>            ("isDefaultRule"));
-    assert(srcCTau_.back().size() == dstCTau_.back().size() && 
+    assert(srcCTau_.back().size() == dstCTau_.back().size() &&
            pdgIds_.back().size() == dstCTau_.back().size());
 
     suffix.str("");
     for(unsigned int iPdgId = 0; iPdgId < pdgIds_.back().size(); iPdgId++) {
-      suffix << "_" << pdgIds_.back()[iPdgId] << "_" 
+      suffix << "_" << pdgIds_.back()[iPdgId] << "_"
              << srcCTau_.back()[iPdgId] << "cmTo";
       if(dstCTau_.back()[iPdgId] < 1.0) {
         suffix << "0p" << dstCTau_.back()[iPdgId] * 10 << "cm";
@@ -36,7 +36,7 @@ LifetimeWeightProducer::LifetimeWeightProducer(const edm::ParameterSet &cfg) :
         suffix<< dstCTau_.back()[iPdgId] << "cm";
       }
     }
-    
+
     weights_.push_back(1.0);
     weightNames_.push_back("lifetimeWeight" + suffix.str());
   }
@@ -47,7 +47,7 @@ LifetimeWeightProducer::~LifetimeWeightProducer() {
 }
 
 void
-LifetimeWeightProducer::AddVariables(const edm::Event &event) {
+LifetimeWeightProducer::AddVariables(const edm::Event &event, const edm::EventSetup &setup) {
 
 #ifndef STOPPPED_PTLS
   for(unsigned int iRule = 0; iRule < weights_.size(); iRule++) weights_[iRule] = 1.0;
@@ -81,8 +81,8 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event) {
     vector<vector<double> > gammaFactors(pdgIds_[iRule].size());
 
     for(const auto &mcparticle: *mcparticles) {
-      // Pythia8 first creates particles in the frame of the interaction, and only boosts them 
-      // for ISR recoil in later steps. So only the last copy is desired. A particle that's both 
+      // Pythia8 first creates particles in the frame of the interaction, and only boosts them
+      // for ISR recoil in later steps. So only the last copy is desired. A particle that's both
       // a last and first copy means it is a decay product created after the boost is applied,
       // e.g. a neutralino from a chargino decay, and we've already added the mother chargino.
       if(requireLastNotFirstCopy_) {
@@ -117,7 +117,7 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event) {
         // overwritten for every rule but the ordering/index is always the same, so it will be fine
         suffix.str("");
         suffix << "_" << abs(pdgIds_[iRule][iPdgId]) << "_" << index++;
-        
+
         (*eventvariables)["cTau" + suffix.str()] = cTau;
         (*eventvariables)["decayLength" + suffix.str()] = decayLengths[iPdgId][i_cTau];
         (*eventvariables)["beta" + suffix.str()] = betaFactors[iPdgId][i_cTau];

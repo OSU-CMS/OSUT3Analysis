@@ -29,7 +29,7 @@ private:
   vector<TH1D *> weights_;
 
   bool isOriginalParticle (const TYPE(hardInteractionMcparticles) &, const int) const;
-  void AddVariables(const edm::Event &);
+  void AddVariables(const edm::Event &, const edm::EventSetup &);
 };
 
 #endif

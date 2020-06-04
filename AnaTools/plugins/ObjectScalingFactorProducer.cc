@@ -55,7 +55,7 @@ ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet
 ObjectScalingFactorProducer::~ObjectScalingFactorProducer() {}
 
 void
-ObjectScalingFactorProducer::AddVariables (const edm::Event &event) {
+ObjectScalingFactorProducer::AddVariables (const edm::Event &event, const edm::EventSetup &setup) {
 #if DATA_FORMAT_FROM_MINIAOD
   if (event.isRealData ()) {
     for (auto &sf : scaleFactors_) {

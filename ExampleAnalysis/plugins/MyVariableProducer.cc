@@ -21,7 +21,7 @@ MyVariableProducer::MyVariableProducer(const edm::ParameterSet &cfg) :
 MyVariableProducer::~MyVariableProducer() {}
 
 void
-MyVariableProducer::AddVariables (const edm::Event &event) {
+MyVariableProducer::AddVariables (const edm::Event &event, const edm::EventSetup &setup) {
 
   // Add all of the needed collections to objectsToGet_
   objectsToGet_.insert ("muon");

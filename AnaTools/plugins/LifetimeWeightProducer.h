@@ -30,6 +30,6 @@ class LifetimeWeightProducer : public EventVariableProducer {
         TVector3 getEndVertex(const TYPE(hardInteractionMcparticles) &) const;
         void getFinalPosition(const reco::Candidate &, const int, bool, math::XYZPoint &) const;
 
-        void AddVariables(const edm::Event &);
+        void AddVariables(const edm::Event &, const edm::EventSetup &);
 };
 #endif

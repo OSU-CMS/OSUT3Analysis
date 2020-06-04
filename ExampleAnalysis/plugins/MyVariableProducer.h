@@ -39,7 +39,7 @@ class MyVariableProducer : public EventVariableProducer
     private:
 
         // Functions
-        void AddVariables(const edm::Event &);
+        void AddVariables(const edm::Event &, const edm::EventSetup &);
   };
 
 #endif

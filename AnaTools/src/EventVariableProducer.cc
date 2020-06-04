@@ -22,7 +22,7 @@ EventVariableProducer::filter (edm::Event &event, const edm::EventSetup &setup)
   eventvariables = unique_ptr<EventVariableProducerPayload> (new EventVariableProducerPayload);
 
   ////////////////////////////////////////////////////////////////////////
-  AddVariables(event);
+  AddVariables(event, setup);
 
   bool filterDecision = true;
   if (eventvariables->count ("EventVariableProducerFilterDecision"))

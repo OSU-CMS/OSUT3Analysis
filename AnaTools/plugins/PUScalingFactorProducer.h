@@ -25,7 +25,7 @@ class PUScalingFactorProducer : public EventVariableProducer
         TH1D *puWeightUp_;
         TH1D *puWeightDown_;
         bool isFirstEvent_;
-        void AddVariables(const edm::Event &);
+        void AddVariables(const edm::Event &, const edm::EventSetup &);
 
         edm::EDGetTokenT<vector<TYPE(pileupinfos)> > pileUpInfosToken_;
 };
