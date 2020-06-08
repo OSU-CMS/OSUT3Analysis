@@ -30,7 +30,7 @@ class ObjectScalingFactorProducer : public EventVariableProducer
         bool doEleSF_;
         bool doMuSF_;
         bool doTrackSF_;
-        void AddVariables(const edm::Event &);
+        void AddVariables(const edm::Event &, const edm::EventSetup &);
               vector<ScaleFactor> scaleFactors_;
 
 };

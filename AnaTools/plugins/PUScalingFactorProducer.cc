@@ -25,7 +25,7 @@ PUScalingFactorProducer::~PUScalingFactorProducer() {
 }
 
 void
-PUScalingFactorProducer::AddVariables (const edm::Event &event) {
+PUScalingFactorProducer::AddVariables (const edm::Event &event, const edm::EventSetup &setup) {
 #if DATA_FORMAT_FROM_MINIAOD
   if (!event.isRealData () && PU_ != "" && dataset_ != "" && target_ != "")
     {

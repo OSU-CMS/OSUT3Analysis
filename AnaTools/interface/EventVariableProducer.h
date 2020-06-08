@@ -32,7 +32,7 @@ class EventVariableProducer : public edm::EDFilter
 
       // Methods
 
-      virtual void AddVariables(const edm::Event &) = 0;
+      virtual void AddVariables(const edm::Event &, const edm::EventSetup &) = 0;
 
   };
 

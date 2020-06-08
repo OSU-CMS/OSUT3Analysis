@@ -11,7 +11,7 @@ PrimaryVtxVarProducer::PrimaryVtxVarProducer(const edm::ParameterSet &cfg) :
 PrimaryVtxVarProducer::~PrimaryVtxVarProducer() {}
 
 void
-PrimaryVtxVarProducer::AddVariables (const edm::Event &event) {
+PrimaryVtxVarProducer::AddVariables (const edm::Event &event, const edm::EventSetup &setup) {
 
   edm::Handle<vector<TYPE(primaryvertexs)> > primaryvertexs;
   if (!event.getByToken (token_, primaryvertexs)) {

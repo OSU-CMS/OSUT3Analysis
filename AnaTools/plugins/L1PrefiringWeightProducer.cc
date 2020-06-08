@@ -21,7 +21,7 @@ L1PrefiringWeightProducer::~L1PrefiringWeightProducer() {
 }
 
 void
-L1PrefiringWeightProducer::AddVariables(const edm::Event &event) {
+L1PrefiringWeightProducer::AddVariables(const edm::Event &event, const edm::EventSetup &setup) {
   double w = 1.0, wUp = 1.0, wDown = 1.0;
   bool hasPrefiredJets = false;
 

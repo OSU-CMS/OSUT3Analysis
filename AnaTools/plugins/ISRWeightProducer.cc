@@ -21,7 +21,7 @@ ISRWeightProducer::~ISRWeightProducer() {
 }
 
 void
-ISRWeightProducer::AddVariables (const edm::Event &event) {
+ISRWeightProducer::AddVariables (const edm::Event &event, const edm::EventSetup &setup) {
 
 #ifndef STOPPPED_PTLS
   if(event.isRealData() || weightFile_.empty () || weightHist_.empty ()) {
@@ -70,8 +70,8 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
 
   for(const auto &mcparticle : *mcparticles) {
 
-    // Pythia8 first creates particles in the frame of the interaction, and only boosts them 
-    // for ISR recoil in later steps. So only the last copy is desired. A particle that's both 
+    // Pythia8 first creates particles in the frame of the interaction, and only boosts them
+    // for ISR recoil in later steps. So only the last copy is desired. A particle that's both
     // a last and first copy means it is a decay product created after the boost is applied,
     // e.g. a neutralino from a chargino decay, and we've already added the mother chargino.
     if(requireLastNotFirstCopy_) {
@@ -80,13 +80,13 @@ ISRWeightProducer::AddVariables (const edm::Event &event) {
     }
 
     for(const auto &pdgId : pdgIds_) {
-      if(mcparticle.numberOfMothers() && 
-         !mcparticle.motherRef().isNull() && 
+      if(mcparticle.numberOfMothers() &&
+         !mcparticle.motherRef().isNull() &&
          find(motherIdsToReject_.begin(), motherIdsToReject_.end(), abs(mcparticle.motherRef()->pdgId())) != motherIdsToReject_.end()) {
         continue;
       }
 
-      if(abs(mcparticle.pdgId()) == abs(pdgId) && 
+      if(abs(mcparticle.pdgId()) == abs(pdgId) &&
          (requireLastNotFirstCopy_ || isOriginalParticle(mcparticle, mcparticle.pdgId()))) {
         px += mcparticle.px();
         py += mcparticle.py();

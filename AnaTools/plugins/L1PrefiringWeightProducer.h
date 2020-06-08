@@ -19,6 +19,6 @@ class L1PrefiringWeightProducer : public EventVariableProducer
 
         edm::EDGetTokenT<vector<TYPE(jets)> > tokenJets_;
 
-        void AddVariables(const edm::Event &);
+        void AddVariables(const edm::Event &, const edm::EventSetup &);
 };
 #endif

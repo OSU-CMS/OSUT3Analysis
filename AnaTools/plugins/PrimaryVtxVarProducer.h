@@ -14,7 +14,7 @@ class PrimaryVtxVarProducer : public EventVariableProducer
         ~PrimaryVtxVarProducer ();
 
     private:
-        void AddVariables(const edm::Event &);
+        void AddVariables(const edm::Event &, const edm::EventSetup &);
         edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > token_;
   };
 
