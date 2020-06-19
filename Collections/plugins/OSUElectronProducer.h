@@ -50,6 +50,7 @@ class OSUElectronProducer : public edm::EDProducer
     edm::InputTag      vidTightIdMap_;
     EffectiveAreas     effectiveAreas_;
     double             d0SmearingWidth_;
+    double             genD0DR_;
 
     TRandom3* rng;
 

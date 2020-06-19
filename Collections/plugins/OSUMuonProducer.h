@@ -38,6 +38,7 @@ class OSUMuonProducer : public edm::EDProducer
     edm::InputTag      pfCandidate_;
     edm::InputTag      rho_;
     double             d0SmearingWidth_;
+    double             genD0DR_;
     vector<edm::ParameterSet> hltMatchingInfo_;
 
     TRandom3* rng;

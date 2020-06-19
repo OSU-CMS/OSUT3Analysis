@@ -13,6 +13,7 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   pfCandidate_     (cfg.getParameter<edm::InputTag>     ("pfCandidate")),
   rho_             (cfg.getParameter<edm::InputTag>     ("rho")),
   d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth")),
+  genD0DR_         (cfg.getParameter<double>            ("genD0DR")),
   hltMatchingInfo_ (cfg.getParameter<vector<edm::ParameterSet> > ("hltMatchingInfo"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("muons");
@@ -104,12 +105,13 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
           }
         }
 
-      //generator D0 must be done with prunedGenParticles because vertex is only right in this collection, not right in packedGenParticles
+      // generator D0 must be done with prunedGenParticles because vertex is only right in this collection, not right in packedGenParticles
+      // this is a temporary solution; extending GenMatchable to use prunedGenParticles would be better
       if(prunedParticles.isValid() && beamspot.isValid())
 	{
 	  for (auto cand = prunedParticles->begin(); cand != prunedParticles->end(); cand++)
 	    {
-	      if (!(cand->status() == 1 && abs(cand->pdgId()) == 13 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.1))
+	      if (!(cand->status() == 1 && abs(cand->pdgId()) == 13 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < genD0DR_))
             continue;
 	      double gen_vx = cand->vx();
 	      double gen_vy = cand->vy();

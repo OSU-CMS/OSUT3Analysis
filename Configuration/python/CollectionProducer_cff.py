@@ -77,6 +77,7 @@ collectionProducer.electrons = cms.EDProducer ("OSUElectronProducer",
     ootESClusters   = cms.InputTag ("reducedEgamma", "reducedOOTESClusters",   ""),
 
     d0SmearingWidth = cms.double (-1.0),
+    genD0DR         = cms.double (0.1),
 
 )
 
@@ -169,6 +170,7 @@ collectionProducer.muons = cms.EDProducer ("OSUMuonProducer",
     pfCandidate =  cms.InputTag  ('packedPFCandidates','',''),
     rho         =  cms.InputTag  ('fixedGridRhoFastjetAll','',''),
     d0SmearingWidth = cms.double (-1.0),
+    genD0DR         = cms.double (0.1),
     hltMatchingInfo = cms.VPSet (
         cms.PSet(name = cms.string("HLT_IsoMu20_v"),   collection = cms.string("hltL3MuonCandidates::HLT"),     filter = cms.string("hltL3crIsoL1sMu16L1f0L2f10QL3f20QL3trkIsoFiltered0p09")),
         cms.PSet(name = cms.string("HLT_IsoTkMu20_v"), collection = cms.string("hltHighPtTkMuonCands::HLT"),    filter = cms.string("hltL3fL1sMu16L1f0Tkf20QL3trkIsoFiltered0p09")),
