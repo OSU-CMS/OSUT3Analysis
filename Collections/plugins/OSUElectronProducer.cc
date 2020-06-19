@@ -145,7 +145,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 	  for (auto cand = prunedParticles->begin(); cand != prunedParticles->end(); cand++)
 	    {
 	      if (!(cand->status() == 1 && abs(cand->pdgId()) == 11 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.1))
-               continue;
+            continue;
 	      double gen_vx = cand->vx();
 	      double gen_vy = cand->vy();
 	      double gen_px = cand->px();
@@ -156,7 +156,7 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 	      electron.set_genPx(gen_px);
 	      electron.set_genPy(gen_py);
 	      electron.set_genD0(gen_d0);
-             break;
+          break;
 	    }
 	}
 
