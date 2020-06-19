@@ -18,6 +18,10 @@ osu::Muon::Muon (const TYPE(muons) &muon) :
   sumChargedHadronPtCorr_  (INVALID_VALUE),
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
+  genVx_                   (INVALID_VALUE),
+  genVy_                   (INVALID_VALUE),
+  genPx_                   (INVALID_VALUE),
+  genPy_                   (INVALID_VALUE),
   genD0_                   (INVALID_VALUE),
   d0SmearingVal_           (INVALID_VALUE),
   metMinusOnePt_           (INVALID_VALUE),
@@ -40,6 +44,10 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   sumChargedHadronPtCorr_  (INVALID_VALUE),
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
+  genVx_                   (INVALID_VALUE),
+  genVy_                   (INVALID_VALUE),
+  genPx_                   (INVALID_VALUE),
+  genPy_                   (INVALID_VALUE),
   genD0_                   (INVALID_VALUE),
   d0SmearingVal_           (INVALID_VALUE),
   metMinusOnePt_           (INVALID_VALUE),
@@ -62,6 +70,10 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   sumChargedHadronPtCorr_  (INVALID_VALUE),
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
+  genVx_                   (INVALID_VALUE),
+  genVy_                   (INVALID_VALUE),
+  genPx_                   (INVALID_VALUE),
+  genPy_                   (INVALID_VALUE),
   genD0_                   (INVALID_VALUE),
   d0SmearingVal_           (INVALID_VALUE),
   metMinusOnePt_           (INVALID_VALUE),
@@ -84,6 +96,10 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   sumChargedHadronPtCorr_  (INVALID_VALUE),
   muonPVIndex_             (INVALID_VALUE),
   sumPUPtCorr_             (INVALID_VALUE),
+  genVx_                   (INVALID_VALUE),
+  genVy_                   (INVALID_VALUE),
+  genPx_                   (INVALID_VALUE),
+  genPy_                   (INVALID_VALUE),
   genD0_                   (INVALID_VALUE),
   d0SmearingVal_           (INVALID_VALUE),
   metMinusOnePt_           (INVALID_VALUE),
@@ -149,6 +165,30 @@ const double
 osu::Muon::sumPUPtCorr () const
 {
   return sumPUPtCorr_;
+}
+
+const double
+osu::Muon::genVx () const
+{
+  return genVx_;
+}
+
+const double
+osu::Muon::genVy () const
+{
+  return genVy_;
+}
+
+const double
+osu::Muon::genPx () const
+{
+  return genPx_;
+}
+
+const double
+osu::Muon::genPy () const
+{
+  return genPy_;
 }
 
 const double

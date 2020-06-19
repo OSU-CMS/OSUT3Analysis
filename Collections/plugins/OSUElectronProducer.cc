@@ -15,7 +15,8 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   vidMediumIdMap_  (cfg.getParameter<edm::InputTag>     ("vidMediumIdMap")),
   vidTightIdMap_   (cfg.getParameter<edm::InputTag>     ("vidTightIdMap")),
   effectiveAreas_  ((cfg.getParameter<edm::FileInPath>  ("effAreasPayload")).fullPath()),
-  d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth"))
+  d0SmearingWidth_ (cfg.getParameter<double>            ("d0SmearingWidth")),
+  genD0DR_         (cfg.getParameter<double>            ("genD0DR"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("electrons");
   produces<vector<osu::Electron> > (collection_.instance ());
@@ -139,15 +140,25 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       effectiveArea = effectiveAreas_.getEffectiveArea(fabs(object.superCluster()->eta()));
       electron.set_AEff(effectiveArea);
 
-      //generator D0 must be done with prunedGenParticles because vertex is only right in this collection, not right in packedGenParticles
+      // generator D0 must be done with prunedGenParticles because vertex is only right in this collection, not right in packedGenParticles
+      // this is a temporary solution; extending GenMatchable to use prunedGenParticles would be better
       if(prunedParticles.isValid() && beamspot.isValid())
 	{
 	  for (auto cand = prunedParticles->begin(); cand != prunedParticles->end(); cand++)
 	    {
-	      if (!(abs(cand->pdgId()) == 11 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.1))
-		continue;
+	      if (!(cand->status() == 1 && abs(cand->pdgId()) == 11 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < genD0DR_))
+            continue;
+	      double gen_vx = cand->vx();
+	      double gen_vy = cand->vy();
+	      double gen_px = cand->px();
+	      double gen_py = cand->py();
 	      double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
+	      electron.set_genVx(gen_vx);
+	      electron.set_genVy(gen_vy);
+	      electron.set_genPx(gen_px);
+	      electron.set_genPy(gen_py);
 	      electron.set_genD0(gen_d0);
+          break;
 	    }
 	}
 
