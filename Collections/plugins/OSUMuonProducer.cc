@@ -111,7 +111,15 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
 	    {
 	      if (!(abs(cand->pdgId()) == 13 && deltaR(object.eta(),object.phi(),cand->eta(),cand->phi()) < 0.1))
 		continue;
+	      double gen_vx = cand->vx();
+	      double gen_vy = cand->vy();
+	      double gen_px = cand->px();
+	      double gen_py = cand->py();
 	      double gen_d0 = ((-(cand->vx() - beamspot->x0())*cand->py() + (cand->vy() - beamspot->y0())*cand->px())/cand->pt());
+	      muon.set_genVx(gen_vx);
+	      muon.set_genVy(gen_vy);
+	      muon.set_genPx(gen_px);
+	      muon.set_genPy(gen_py);
 	      muon.set_genD0(gen_d0);
 	    }
 	}

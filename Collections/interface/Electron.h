@@ -24,6 +24,10 @@ namespace osu
         const double sumChargedHadronPtCorr () const;
         const double sumPUPtCorr () const;
         const int electronPVIndex () const;
+        const double genVx () const;
+        const double genVy () const;
+        const double genPx () const;
+        const double genPy () const;
         const double genD0 () const;
         const double d0SmearingVal () const;
         const float dEtaInSeed () const;
@@ -53,6 +57,10 @@ namespace osu
         void set_sumChargedHadronPtCorr (double value) { sumChargedHadronPtCorr_  = value; };
         void set_sumPUPtCorr (double value) { sumPUPtCorr_  = value; };
         void set_electronPVIndex (int value) { electronPVIndex_  = value; };
+        void set_genVx (double value) { genVx_  = value; };
+        void set_genVy (double value) { genVy_  = value; };
+        void set_genPx (double value) { genPx_  = value; };
+        void set_genPy (double value) { genPy_  = value; };
         void set_genD0 (double value) { genD0_  = value; };
         void set_d0SmearingVal (double value) { d0SmearingVal_  = value; };
         void set_passesTightID_noIsolation_LegacySpring15 (const reco::BeamSpot &, const TYPE(primaryvertexs) &, const edm::Handle<vector<reco::Conversion> > &);
@@ -103,6 +111,10 @@ namespace osu
         double sumChargedHadronPtCorr_;
         int electronPVIndex_;
         double sumPUPtCorr_;
+        double genVx_;
+        double genVy_;
+        double genPx_;
+        double genPy_;
         double genD0_;
         double d0SmearingVal_;
         bool passesTightID_noIsolation_LegacySpring15_;

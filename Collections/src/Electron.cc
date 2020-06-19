@@ -18,6 +18,10 @@ osu::Electron::Electron (const TYPE(electrons) &electron) :
   sumChargedHadronPtCorr_               (INVALID_VALUE),
   electronPVIndex_                      (INVALID_VALUE),
   sumPUPtCorr_                          (INVALID_VALUE),
+  genVx_                                (INVALID_VALUE),
+  genVy_                                (INVALID_VALUE),
+  genPx_                                (INVALID_VALUE),
+  genPy_                                (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
   passesTightID_noIsolation_LegacySpring15_ (false),
@@ -55,6 +59,10 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumChargedHadronPtCorr_               (INVALID_VALUE),
   electronPVIndex_                      (INVALID_VALUE),
   sumPUPtCorr_                          (INVALID_VALUE),
+  genVx_                                (INVALID_VALUE),
+  genVy_                                (INVALID_VALUE),
+  genPx_                                (INVALID_VALUE),
+  genPy_                                (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
   passesTightID_noIsolation_LegacySpring15_ (false),
@@ -92,6 +100,10 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumChargedHadronPtCorr_               (INVALID_VALUE),
   electronPVIndex_                      (INVALID_VALUE),
   sumPUPtCorr_                          (INVALID_VALUE),
+  genVx_                                (INVALID_VALUE),
+  genVy_                                (INVALID_VALUE),
+  genPx_                                (INVALID_VALUE),
+  genPy_                                (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
   passesTightID_noIsolation_LegacySpring15_ (false),
@@ -129,6 +141,10 @@ osu::Electron::Electron (const TYPE(electrons) &electron, const edm::Handle<vect
   sumChargedHadronPtCorr_               (INVALID_VALUE),
   electronPVIndex_                      (INVALID_VALUE),
   sumPUPtCorr_                          (INVALID_VALUE),
+  genVx_                                (INVALID_VALUE),
+  genVy_                                (INVALID_VALUE),
+  genPx_                                (INVALID_VALUE),
+  genPy_                                (INVALID_VALUE),
   genD0_                                (INVALID_VALUE),
   d0SmearingVal_                        (INVALID_VALUE),
   passesTightID_noIsolation_LegacySpring15_ (false),
@@ -268,6 +284,30 @@ const double
 osu::Electron::sumPUPtCorr () const
 {
   return sumPUPtCorr_;
+}
+
+const double
+osu::Electron::genVx () const
+{
+  return genVx_;
+}
+
+const double
+osu::Electron::genVy () const
+{
+  return genVy_;
+}
+
+const double
+osu::Electron::genPx () const
+{
+  return genPx_;
+}
+
+const double
+osu::Electron::genPy () const
+{
+  return genPy_;
 }
 
 const double
