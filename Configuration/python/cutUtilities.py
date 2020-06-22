@@ -59,12 +59,16 @@ electronD0WRTPV       = "((electron.vx - eventvariable.leadingPV_x) * electron.p
 
 electronSmearedD0WRTBeamspot = "(electron.d0SmearingVal + ((electron.vx - beamspot.x0) * electron.py - (electron.vy - beamspot.y0) * electron.px) / electron.pt)"
 
+electronGenVertexIsOriginD0WRTBeamspot = "((electron.genMatchedParticleOfSameType.noFlags.vx - beamspot.x0) * electron.genMatchedParticleOfSameType.noFlags.py - (electron.genMatchedParticleOfSameType.noFlags.vy - beamspot.y0) * electron.genMatchedParticleOfSameType.noFlags.px) / electron.genMatchedParticleOfSameType.noFlags.pt"
+
 muonD0WRTBeamspot = "((muon.vx - beamspot.x0) * muon.py - (muon.vy - beamspot.y0) * muon.px) / muon.pt"
 muonD0WRTBeamspotErr = "hypot(muon.innerTrack.d0Error, hypot(beamspot.x0Error, beamspot.y0Error))"
 muonD0WRTBeamspotSig = "(((muon.vx - beamspot.x0) * muon.py - (muon.vy - beamspot.y0) * muon.px) / muon.pt) / (hypot(muon.innerTrack.d0Error, hypot(beamspot.x0Error, beamspot.y0Error)))"
 muonD0WRTPV       = "((muon.vx - eventvariable.leadingPV_x) * muon.py - (muon.vy - eventvariable.leadingPV_y) * muon.px) / muon.pt"
 
 muonSmearedD0WRTBeamspot = "(muon.d0SmearingVal + ((muon.vx - beamspot.x0) * muon.py - (muon.vy - beamspot.y0) * muon.px) / muon.pt)"
+
+muonGenVertexIsOriginD0WRTBeamspot = "((muon.genMatchedParticleOfSameType.noFlags.vx - beamspot.x0) * muon.genMatchedParticleOfSameType.noFlags.py - (muon.genMatchedParticleOfSameType.noFlags.vy - beamspot.y0) * muon.genMatchedParticleOfSameType.noFlags.px) / muon.genMatchedParticleOfSameType.noFlags.pt"
 
 hardInteractionMcparticleD0WRTBeamspot = "((hardInteractionMcparticle.vx - beamspot.x0) * hardInteractionMcparticle.py - (hardInteractionMcparticle.vy - beamspot.y0) * hardInteractionMcparticle.px) / hardInteractionMcparticle.pt"
 
