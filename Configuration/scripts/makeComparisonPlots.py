@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import shutil
+import functools
 from math import *
 from array import *
 from decimal import *
@@ -27,6 +28,8 @@ parser.add_option("-f", "--fancy", action="store_true", dest="makeFancy", defaul
                   help="removes the title and replaces it with the official CMS plot heading")
 parser.add_option("--dontRebinRatio", action="store_true", dest="dontRebinRatio", default=False,
                   help="don't do the rebinning of ratio plots")
+parser.add_option("-A", "--addOneToRatio", action='store_true', dest="addOneToRatio",
+                  help="add one to the ratio so that data/MC is plotted")
 parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
                   help="maximum error used in rebinning the ratio histogram")
 parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,
@@ -69,6 +72,7 @@ if arguments.makeSignificancePlots and arguments.makeDiffPlots:
     print "You have asked to make a difference plot and significance plots. This is a very strange request.  Will skip making the difference plot."
     arguments.makeDiffPlots = False
 
+from OSUT3Analysis.Configuration.histogramUtilities import ratioHistogram
 from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TLegendEntry, THStack, TIter, TKey, TPaveLabel, gPad
 
 
@@ -114,28 +118,29 @@ if arguments.line_width:
 #set the text for the luminosity label
 if(intLumi < 1000.):
     LumiInPb = intLumi
-    LumiText = "L_{int} = " + str(intLumi) + " pb^{-1}"
-    LumiText = "L_{int} = " + str.format('{0:.1f}', LumiInPb) + " pb^{-1}"
+    LumiText = str(intLumi) + " pb^{-1}"
+    LumiText = str.format('{0:.1f}', LumiInPb) + " pb^{-1}"
 else:
     LumiInFb = intLumi/1000.
-    LumiText = "L_{int} = " + str.format('{0:.1f}', LumiInFb) + " fb^{-1}"
+    LumiText = str.format('{0:.1f}', LumiInFb) + " fb^{-1}"
 
 #bestest place for lumi. label, in top left corner
-topLeft_x_left    = 0.1375839
-topLeft_x_right   = 0.4580537
-topLeft_y_bottom  = 0.8479021
-topLeft_y_top     = 0.9475524
-topLeft_y_offset  = 0.035
+topLeft_x_left    = 0.16129
+topLeft_y_bottom  = 0.8
+topLeft_x_right   = 0.512673
+topLeft_y_top     = 0.892944
+topLeft_y_offset  = 0.04
 
 #set the text for the fancy heading
-HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 13 TeV"
+HeaderText = LumiText + " (13 TeV)"
 
 #position for header
-header_x_left    = 0.2181208
-header_x_right   = 0.9562937
-header_y_bottom  = 0.9479866
-header_y_top     = 0.9947552
+header_x_left    = 0.602535
+header_y_bottom  = 0.928224
+header_x_right   = 0.963134
+header_y_top     = 0.980535
 
+makeFancy = arguments.makeFancy
 
 colors = {
     'black'  : 1,
@@ -186,58 +191,6 @@ fillList = [
 ##########################################################################################################################################
 ##########################################################################################################################################
 
-# some fancy-ass code from Andrzej Zuranski to merge bins in the ratio plot until the error goes below some threshold
-def ratioHistogram( numHist, denHist, relErrMax=0.10):
-
-    # A group is a list of consecutive histogram bins
-    def groupR(group):
-        Numerator,Denominator = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [numHist,denHist]]
-        return (Numerator-Denominator)/Denominator if Denominator else 0
-
-    def groupErr(group):
-        Numerator,Denominator = [float(sum(hist.GetBinContent(i) for i in group)) for hist in [numHist,denHist]]
-        dataErr2,mcErr2 = [sum(hist.GetBinError(i)**2 for i in group) for hist in [numHist,denHist]]
-        if Denominator > 0 and Numerator > 0 and Numerator != Denominator:
-            return abs(math.sqrt( (dataErr2+mcErr2)/(Numerator-Denominator)**2 + mcErr2/Denominator**2 ) * (Numerator-Denominator)/Denominator)
-        else:
-            return 0
-
-
-    def regroup(groups):
-        err,iG = max( (groupErr(g),groups.index(g)) for g in groups )
-        if err < relErrMax or len(groups)<3 : return groups
-        iH = max( [iG-1,iG+1], key = lambda i: groupErr(groups[i]) if 0<=i<len(groups) else -1 )
-        iLo,iHi = sorted([iG,iH])
-        return regroup(groups[:iLo] + [groups[iLo]+groups[iHi]] + groups[iHi+1:])
-
-    #don't rebin the histograms of the number of a given object (except for the pileup ones)
-    if ((numHist.GetName().startswith("num") and "PV" not in numHist.GetName()) or
-        numHist.GetName().find("CutFlow")  is not -1 or
-        numHist.GetName().find("GenMatch") is not -1 or
-        arguments.dontRebinRatio):
-        ratio = numHist.Clone()
-        ratio.Add(denHist,-1)
-        ratio.Divide(denHist)
-        ratio.SetTitle("")
-    else:
-        groups = regroup( [(i,) for i in range(1,1+numHist.GetNbinsX())] )
-        ratio = TH1F("ratio","",len(groups), array('d', [numHist.GetBinLowEdge(min(g)) for g in groups ] + [numHist.GetXaxis().GetBinUpEdge(numHist.GetNbinsX())]) )
-        for i,g in enumerate(groups) :
-            ratio.SetBinContent(i+1,groupR(g))
-            ratio.SetBinError(i+1,groupErr(g))
-
-    ratio.GetYaxis().SetTitle("#frac{X-ref}{ref}")
-    ratio.GetXaxis().SetLabelOffset(0.03)
-    ratio.SetLineColor(1)
-    ratio.SetMarkerColor(1)
-    ratio.SetMarkerSize(0.5)
-    ratio.SetLineWidth(2)
-    return ratio
-
-##########################################################################################################################################
-##########################################################################################################################################
-##########################################################################################################################################
-
 
 def MakeIntegralHist(hist, integrateDir):
     # return the integrated histogram, in the direction specified
@@ -282,27 +235,32 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
+    HeaderLabel.SetTextFont(42)
+    HeaderLabel.SetTextSize(0.697674)
     HeaderLabel.SetBorderSize(0)
     HeaderLabel.SetFillColor(0)
     HeaderLabel.SetFillStyle(0)
 
-    LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
+    CMSLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
+    CMSLabel.SetTextAlign(32)
+    CMSLabel.SetTextFont(42)
+    CMSLabel.SetTextSize(0.697674)
+    CMSLabel.SetBorderSize(0)
+    CMSLabel.SetFillColor(0)
+    CMSLabel.SetFillStyle(0)
+
+    if makeFancy:
+        LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,"CMS Preliminary","NDC")
+        LumiLabel.SetTextFont(62)
+        LumiLabel.SetTextSize(0.7)
+        LumiLabel.SetTextAlign(12)
+    else:
+        LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,LumiText,"NDC")
+        LumiLabel.SetTextAlign(32)
+        LumiLabel.SetTextFont(42)
     LumiLabel.SetBorderSize(0)
     LumiLabel.SetFillColor(0)
     LumiLabel.SetFillStyle(0)
-
-    NormLabel = TPaveLabel()
-    NormLabel.SetDrawOption("NDC")
-    NormLabel.SetX1NDC(topLeft_x_left)
-    NormLabel.SetX2NDC(topLeft_x_right)
-
-    NormLabel.SetBorderSize(0)
-    NormLabel.SetFillColor(0)
-    NormLabel.SetFillStyle(0)
-
-    NormText = ""
-    if arguments.normalizeToUnitArea:
-        NormText = "Scaled to unit area"
 
     Legend = TLegend()
     Legend.SetBorderSize(0)
@@ -464,7 +422,9 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
 
     makeRatioPlots = arguments.makeRatioPlots
     makeDiffPlots = arguments.makeDiffPlots
-    #makeSignifPlots = arguments.makeSignificancePlots
+    addOneToRatio = -1
+    if arguments.addOneToRatio:
+        addOneToRatio = arguments.addOneToRatio
 
     yAxisMin = 0.0001
     if arguments.setYMin:
@@ -530,15 +490,9 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
 
 
     # Deciding which text labels to draw and drawing them
-    drawHeaderLabel = False
-
     if arguments.makeFancy:
-        drawHeaderLabel = True
-
-    #now that flags are set, draw the appropriate labels
-
-    if drawHeaderLabel:
         HeaderLabel.Draw()
+        LumiLabel.Draw()
 
 
 
@@ -558,10 +512,12 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
                 continue
 
             if makeRatioPlots:
-                if arguments.ratioRelErrMax:
-                    Comparison = ratioHistogram(Histogram, Reference, float(arguments.ratioRelErrMax))
-                else:
-                    Comparison = ratioHistogram(Histogram, Reference)
+                makeRatio = functools.partial (ratioHistogram,Histogram, Reference)
+                if arguments.ratioRelErrMax is not -1: # it gets initialized to this dummy value of -1
+                    makeRatio =  functools.partial (makeRatio, relErrMax = float(arguments.ratioRelErrMax))
+                if addOneToRatio is not -1: # it gets initialized to this dummy value of -1
+                    makeRatio = functools.partial (makeRatio, addOne = bool (addOneToRatio))
+                Comparison = makeRatio()
             elif makeDiffPlots:
                 Comparison = Reference.Clone("diff")
                 Comparison.Add(Histograms[1],-1)
@@ -586,7 +542,10 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
                 RatioYRange = 1.15
                 if arguments.ratioYRange:
                     RatioYRange = float(arguments.ratioYRange)
-                Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
+                if not addOneToRatio:
+                    Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
+                else:
+                    Comparison.GetYaxis().SetRangeUser(-1*RatioYRange + 1.0, RatioYRange + 1.0)
 
             elif makeDiffPlots:
                 YMax = Comparison.GetMaximum()
