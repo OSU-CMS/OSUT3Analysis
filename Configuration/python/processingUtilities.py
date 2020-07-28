@@ -255,10 +255,6 @@ def add_channels (process,
         'alias',
         'numberRequired',
         'isVeto',
-        '_isFrozen',
-        '_ParameterTypeBase__isTracked',
-        '_isModified',
-        '_Parameterizable__parameterNames',
     ]
     validHistAttributes = [
         'name',
@@ -266,17 +262,13 @@ def add_channels (process,
         'binsX', 'binsY', 'binsZ',
         'indexX', 'indexY', 'indexZ',
         'inputVariables',
-        '_isFrozen',
-        '_ParameterTypeBase__isTracked',
-        '_isModified',
-        '_Parameterizable__parameterNames',
     ]
 
     # find all cuts with invalid attributes
     exceptionString = ""
     for selection in channels:
         for cut in selection.cuts:
-            attributes = cut.__dict__.keys()
+            attributes = [a for a in cut.__dict__.keys() if not a.startswith('_')]
             invalidAttributes = list(set(attributes) - set(validCutAttributes))
             if invalidAttributes:
                 name = cut.alias if hasattr(cut, 'alias') else cut.cutString
@@ -286,7 +278,7 @@ def add_channels (process,
     # find all hists with invalid attributes
     for histogramSet in histogramSets:
         for hist in histogramSet.histograms:
-            attributes = hist.__dict__.keys()
+            attributes = [a for a in hist.__dict__.keys() if not a.startswith('_')]
             invalidAttributes = list(set(attributes) - set(validHistAttributes))
             if invalidAttributes:
                 name = str(hist.name)[12:-2]
