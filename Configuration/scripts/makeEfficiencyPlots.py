@@ -28,6 +28,8 @@ parser.add_option("-f", "--fancy", action="store_true", dest="makeFancy", defaul
                   help="removes the title and replaces it with the official CMS plot heading")
 parser.add_option("--dontRebinRatio", action="store_true", dest="dontRebinRatio", default=False,
                   help="don't do the rebinning of ratio plots")
+parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
+                  help="maximum error used in rebinning the ratio histogram")
 parser.add_option("-A", "--addOneToRatio", action='store_true', dest="addOneToRatio",
                   help="add one to the ratio so that data/MC is plotted")
 parser.add_option("--noTGraph", action="store_true", dest="noTGraph", default=False,
@@ -334,6 +336,14 @@ def MakeOneHist(dirName, histogramName):
     if arguments.addOneToRatio:
         addOneToRatio = arguments.addOneToRatio
 
+    dontRebinRatio = -1
+    if arguments.dontRebinRatio:
+        dontRebinRatio = arguments.dontRebinRatio
+
+    ratioRelErrMax = -1
+    if arguments.ratioRelErrMax:
+        ratioRelErrMax = arguments.ratioRelErrMax
+
     yAxisMin = 0.0001
     if arguments.setYMin:
         yAxisMin = float(arguments.setYMin)
@@ -431,6 +441,10 @@ def MakeOneHist(dirName, histogramName):
             makeRatio = functools.partial (ratioHistogram,Histograms[0],Histograms[1])
             if addOneToRatio is not -1: # it gets initialized to this dummy value of -1
                 makeRatio = functools.partial (makeRatio, addOne = bool (addOneToRatio))
+            if ratioRelErrMax is not -1: # it gets initialized to this dummy value of -1
+                makeRatio = functools.partial (makeRatio, relErrMax = float (ratioRelErrMax))
+            if dontRebinRatio is True:
+                makeRatio = functools.partial (makeRatio, dontRebinRatio)
             Comparison = makeRatio ()
         elif makeDiffPlots:
             Comparison = Histograms[0].Clone("diff")
