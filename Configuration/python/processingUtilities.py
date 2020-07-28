@@ -247,6 +247,48 @@ def add_channels (process,
         channels                =  channels.channels
 
     ############################################################################
+    # Check that cut and histogram definitions contain no invalid attributes
+    ############################################################################
+    validCutAttributes = [
+        'inputCollection',
+        'cutString',
+        'alias',
+        'numberRequired',
+        'isVeto',
+    ]
+    validHistAttributes = [
+        'name',
+        'title',
+        'binsX', 'binsY', 'binsZ',
+        'indexX', 'indexY', 'indexZ',
+        'inputVariables',
+    ]
+
+    # find all cuts with invalid attributes
+    exceptionString = ""
+    for selection in channels:
+        for cut in selection.cuts:
+            attributes = [a for a in cut.__dict__.keys() if not a.startswith('_')]
+            invalidAttributes = list(set(attributes) - set(validCutAttributes))
+            if invalidAttributes:
+                name = cut.alias if hasattr(cut, 'alias') else cut.cutString
+                name = str(name)[12:-2]
+                exceptionString += "\ncut '{}' has invalid attributes: {}".format(name, invalidAttributes)
+
+    # find all hists with invalid attributes
+    for histogramSet in histogramSets:
+        for hist in histogramSet.histograms:
+            attributes = [a for a in hist.__dict__.keys() if not a.startswith('_')]
+            invalidAttributes = list(set(attributes) - set(validHistAttributes))
+            if invalidAttributes:
+                name = str(hist.name)[12:-2]
+                exceptionString += "\nhist '{}' has invalid attributes: {}".format(name, invalidAttributes)
+
+    # if necessary, raise exception listing all cuts or hists with invalid attributes
+    if exceptionString:
+        raise AttributeError(exceptionString)
+
+    ############################################################################
     # Check the directory of the first input file for SkimInputTags.pkl. If it
     # exists, update the input tags with those stored in the pickle file.
     ############################################################################
