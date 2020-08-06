@@ -160,16 +160,7 @@ def getLatestJsonFile():
             print "Argument for -J is wrong, it needs to be in a format similar to \"R_Silver\""
             sys.exit(1)
 
-        collisionType = 'Collisions'
-        jsonMatchingPhrase = 'Collisions_JSON'
-        if re.search('15$', arguments.JSONType):
-            collisionType = 'Collisions15'
-            jsonMatchingPhrase = 'Collisions15_25ns_JSON'
-            if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_7_6_"):
-                userDecision = raw_input('You are using a 2015 JSON file while not in CMSSW_7_6_X. Are you sure you want to continue? (Type "y" for yes and "n" for no.)')
-                if userDecision == "n":
-                    sys.exit(1)
-        elif re.search('16$', arguments.JSONType):
+        if re.search('16$', arguments.JSONType):
             collisionType = 'Collisions16'
             jsonMatchingPhrase = 'Collisions16_JSON'
             if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
@@ -190,6 +181,14 @@ def getLatestJsonFile():
                 userDecision = raw_input('You are using a 2018 JSON file while not in CMSSW_10_2_X. Are you sure you want to continue? (Type "y" for yes and "n" for no.)')
                 if userDecision == "n":
                     sys.exit(1)
+        else:
+            collisionType = 'Collisions15'
+            jsonMatchingPhrase = 'Collisions15_25ns_JSON'
+            if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_7_6_"):
+                userDecision = raw_input('You are using a 2015 JSON file while not in CMSSW_7_6_X. Are you sure you want to continue? (Type "y" for yes and "n" for no.)')
+                if userDecision == "n":
+                    sys.exit(1)
+
 
         rerecoDir = 'Reprocessing'
         if re.search('16$', arguments.JSONType):
