@@ -165,12 +165,24 @@ def getLatestJsonFile():
         if re.search('16$', arguments.JSONType):
             collisionType = 'Collisions16'
             jsonMatchingPhrase = 'Collisions16_JSON'
+            if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_"):
+                userDecision = raw_input('You are using a 2016 JSON file while not in CMSSW_8_0_X. Are you sure you want to continue? (Type "y" for yes and "n" for no.)')
+                if userDecision == "n":
+                    sys.exit(1)
         if re.search('17$', arguments.JSONType):
             collisionType = 'Collisions17'
             jsonMatchingPhrase = 'Collisions17_JSON'
+            if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_"):
+                userDecision = raw_input('You are using a 2017 JSON file while not in CMSSW_9_4_X. Are you sure you want to continue? (Type "y" for yes and "n" for no.)')
+                if userDecision == "n":
+                    sys.exit(1)
         if re.search('18$', arguments.JSONType):
             collisionType = 'Collisions18'
             jsonMatchingPhrase = 'Collisions18_JSON'
+            if not os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
+                userDecision = raw_input('You are using a 2018 JSON file while not in CMSSW_10_2_X. Are you sure you want to continue? (Type "y" for yes and "n" for no.)')
+                if userDecision == "n":
+                    sys.exit(1)
 
         rerecoDir = 'Reprocessing'
         if re.search('16$', arguments.JSONType):
