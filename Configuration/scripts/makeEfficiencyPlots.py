@@ -32,8 +32,6 @@ parser.add_option("-E", "--ratioRelErrMax", dest="ratioRelErrMax",
                   help="maximum error used in rebinning the ratio histogram")
 parser.add_option("-A", "--addOneToRatio", action='store_true', dest="addOneToRatio",
                   help="add one to the ratio so that data/MC is plotted")
-parser.add_option("--noTGraph", action="store_true", dest="noTGraph", default=False,
-                  help="don't make a TGraph; just make a TH1")
 parser.add_option("--ylog", action="store_true", dest="setLogY", default=False,
                   help="Set logarithmic scale on vertical axis on all plots")
 parser.add_option("--ymin", dest="setYMin",
@@ -68,13 +66,9 @@ if arguments.makeRatioPlots and arguments.makeDiffPlots:
     print "You have requested both ratio and difference plots.  Will make just ratio plots instead"
     arguments.makeRatioPlots = False
 
-if arguments.makeRatioPlots and not arguments.noTGraph:
-    print "You have requested ratio plots, but this is not supported with TGraph's.  Try again with -r --noTGraph."
-    arguments.makeRatioPlots = False
-
 
 from OSUT3Analysis.Configuration.histogramUtilities import ratioHistogram
-from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, TH1F, TCanvas, TString, TLegend, TLegendEntry, TIter, TKey, TPaveLabel, gPad, TGraphAsymmErrors
+from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, TH1F, TH2F, TCanvas, TString, TLegend, TLegendEntry, TIter, TKey, TPaveLabel, gPad, TGraphAsymmErrors, TEfficiency
 
 
 ### setting ROOT options so our plots will look awesome and everyone will love us
@@ -98,7 +92,7 @@ gStyle.SetTitleColor(1, "XYZ")
 gStyle.SetTitleFont(42, "XYZ")
 gStyle.SetTitleSize(0.04, "XYZ")
 gStyle.SetTitleXOffset(1.1)
-gStyle.SetTitleYOffset(2)
+gStyle.SetTitleYOffset(1.5)
 gStyle.SetTextAlign(12)
 gStyle.SetLabelColor(1, "XYZ")
 gStyle.SetLabelFont(42, "XYZ")
@@ -126,10 +120,10 @@ else:
     LumiText = str.format('{0:.1f}', LumiInFb) + " fb^{-1}"
 
 #bestest place for lumi. label, in top left corner
-topLeft_x_left    = 0.16129
-topLeft_y_bottom  = 0.8
+topLeft_x_left    = 0.19
+topLeft_y_bottom  = 0.83
 topLeft_x_right   = 0.512673
-topLeft_y_top     = 0.892944
+topLeft_y_top     = 0.91
 topLeft_y_offset  = 0.04
 
 #set the text for the fancy heading
@@ -208,13 +202,23 @@ def MakeOneHist(dirName, histogramName):
     LumiLabel.SetFillColor(0)
     LumiLabel.SetFillStyle(0)
 
-    Legend = TLegend()
+    #legend coordinates, empirically determined :-)
+    x_left = 0.4
+    x_right = 0.7
+    y_min = 0.15
+    y_max = 0.3
+
+    Legend = TLegend(x_left,y_min,x_right,y_max)
     Legend.SetBorderSize(0)
     Legend.SetFillColor(0)
     Legend.SetFillStyle(0)
 
     Canvas = TCanvas(histogramName)
     Histograms = []
+    HistogramClones = []
+    NBins = []
+    MaxXValues = []
+    MinXValues = []
     LegendEntries = []
 
     colorIndex = 0
@@ -262,11 +266,27 @@ def MakeOneHist(dirName, histogramName):
         if arguments.normalizeToUnitArea:
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
 
-        #Histogram = ROOT.TGraphAsymmErrors(NumHistogramObj,DenHistogramObj)
-        if arguments.noTGraph or Histogram.Class().InheritsFrom("TH2"):
+        #check if bin content is consistent
+        TEfficiency.CheckConsistency(Histogram,DenHistogram)
+        for i in range(1,Histogram.GetNbinsX()+1):
+            if Histogram.GetBinContent(i) > DenHistogram.GetBinContent(i):
+                DenHistogram.SetBinContent(i,Histogram.GetBinContent(i))
+
+        #HistogramClone and HistogramClones only used for ratio plot
+        HistogramClone = Histogram.Clone()
+        HistogramClone.SetDirectory(0)
+        HistogramClone.Divide(DenHistogram)
+        Nbins = HistogramClone.GetNbinsX()
+        MaxXValue = HistogramClone.GetXaxis().GetBinLowEdge(Nbins+1)
+        MinXValue = HistogramClone.GetXaxis().GetBinLowEdge(1)
+
+        #this Histogram becomes the main TEfficiency
+        if Histogram.Class().InheritsFrom("TH2"):
             Histogram.Divide(DenHistogram)
         else:
-            Histogram = TGraphAsymmErrors(Histogram,DenHistogram)
+            #using default methods (which give correct uncertainties)
+            #see https://root.cern.ch/doc/master/classTEfficiency.html (c.f. section IV)
+            Histogram = TEfficiency(Histogram,DenHistogram)
 
         if not arguments.makeFancy:
             fullTitle = Histogram.GetTitle()
@@ -302,6 +322,10 @@ def MakeOneHist(dirName, histogramName):
 
         LegendEntries.append(source['legend_entry'])
         Histograms.append(Histogram)
+        HistogramClones.append(HistogramClone)
+        NBins.append(Nbins)
+        MaxXValues.append(MaxXValue)
+        MinXValues.append(MinXValue)
 
     ### scaling histograms as per user's specifications
     for histogram in Histograms:
@@ -316,15 +340,7 @@ def MakeOneHist(dirName, histogramName):
         legendIndex = legendIndex+1
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
-    finalMax = 0
-    if arguments.noTGraph:
-        for histogram in Histograms:
-            currentMax = histogram.GetMaximum() + histogram.GetBinError(histogram.GetMaximumBin())
-            if(currentMax > finalMax):
-                finalMax = currentMax
-    finalMax = 1.5*finalMax
-    if finalMax is 0:
-        finalMax = 1
+    finalMax = 1.1
     if arguments.setYMax:
         finalMax = float(arguments.setYMax)
 
@@ -375,6 +391,10 @@ def MakeOneHist(dirName, histogramName):
     if arguments.plot_hist:
         plotting_options = "HIST"
 
+    h = TH2F("h1","",NBins[0],MinXValues[0],MaxXValues[0],110,0.,finalMax)
+    h.SetTitle(";"+xAxisLabel+";"+yAxisLabel)
+    h.Draw()
+
     for histogram in Histograms:
         if histogram.Class().InheritsFrom("TH2"):
             histogram.SetTitle(histoTitle)
@@ -391,39 +411,26 @@ def MakeOneHist(dirName, histogramName):
             Canvas.Write()
 
         else:
-            if histogram.InheritsFrom("TGraph") and histCounter==0:
-                plotting_options = "AP"
+            if histogram.InheritsFrom("TEfficiency") and histCounter==0:
+                plotting_options = "P SAME"
             histogram.SetTitle(histoTitle)
             histogram.Draw(plotting_options)
-            histogram.GetXaxis().SetTitle(xAxisLabel)
-            histogram.GetYaxis().SetTitle(yAxisLabel)
 
             if histogram.InheritsFrom("TH1"):
                 histogram.SetMaximum(finalMax)
                 histogram.SetMinimum(yAxisMin)
-            if makeRatioPlots or makeDiffPlots:
-                histogram.GetXaxis().SetLabelSize(0)
 
         if histCounter is 0:
             if histogram.InheritsFrom("TH1"):
                 plotting_options = plotting_options + " SAME"
-            elif histogram.InheritsFrom("TGraph"):
-                plotting_options = "P"
+            elif histogram.InheritsFrom("TEfficiency"):
+                plotting_options = "P" + " SAME"
+
         histCounter = histCounter + 1
 
     if histogram.Class().InheritsFrom("TH2"):
         return
 
-    #legend coordinates, empirically determined :-)
-    x_left = 0.1677852
-    x_right = 0.9647651
-    y_min = 0.6765734
-    y_max = 0.9
-
-    Legend.SetX1NDC(x_left)
-    Legend.SetY1NDC(y_min)
-    Legend.SetX2NDC(x_right)
-    Legend.SetY2NDC(y_max)
     Legend.Draw()
 
 
@@ -438,7 +445,7 @@ def MakeOneHist(dirName, histogramName):
     if makeRatioPlots or makeDiffPlots:
         Canvas.cd(2)
         if makeRatioPlots:
-            makeRatio = functools.partial (ratioHistogram,Histograms[0],Histograms[1])
+            makeRatio = functools.partial (ratioHistogram,HistogramClones[0],HistogramClones[1])
             if addOneToRatio is not -1: # it gets initialized to this dummy value of -1
                 makeRatio = functools.partial (makeRatio, addOne = bool (addOneToRatio))
             if ratioRelErrMax is not -1: # it gets initialized to this dummy value of -1
