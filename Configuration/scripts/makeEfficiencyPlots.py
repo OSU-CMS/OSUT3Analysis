@@ -267,6 +267,7 @@ def MakeOneHist(dirName, histogramName):
             yAxisLabel = yAxisLabel + " (Unit Area Norm.)"
 
         #check if bin content is consistent
+        TEfficiency.CheckConsistency(Histogram,DenHistogram)
         for i in range(1,Histogram.GetNbinsX()+1):
             if Histogram.GetBinContent(i) > DenHistogram.GetBinContent(i):
                 DenHistogram.SetBinContent(i,Histogram.GetBinContent(i))
@@ -283,6 +284,8 @@ def MakeOneHist(dirName, histogramName):
         if Histogram.Class().InheritsFrom("TH2"):
             Histogram.Divide(DenHistogram)
         else:
+            #using default methods (which give correct uncertainties)
+            #see https://root.cern.ch/doc/master/classTEfficiency.html (c.f. section IV)
             Histogram = TEfficiency(Histogram,DenHistogram)
 
         if not arguments.makeFancy:
@@ -337,7 +340,7 @@ def MakeOneHist(dirName, histogramName):
         legendIndex = legendIndex+1
 
     ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
-    finalMax = 1
+    finalMax = 1.1
     if arguments.setYMax:
         finalMax = float(arguments.setYMax)
 
@@ -388,7 +391,7 @@ def MakeOneHist(dirName, histogramName):
     if arguments.plot_hist:
         plotting_options = "HIST"
 
-    h = TH2F("h1","",NBins[0],MinXValues[0],MaxXValues[0],110,0.,1.1)
+    h = TH2F("h1","",NBins[0],MinXValues[0],MaxXValues[0],110,0.,finalMax)
     h.SetTitle(";"+xAxisLabel+";"+yAxisLabel)
     h.Draw()
 
