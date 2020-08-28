@@ -3,6 +3,7 @@
 
 //#if DATA_FORMAT_FROM_MINIAOD
 
+#include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/Common/interface/Handle.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"

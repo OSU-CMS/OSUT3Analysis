@@ -226,12 +226,14 @@ namespace anatools
 
   template<class T> bool jetPassesTightLepVeto (const T &);
 
+#if IS_VALID(trigobjs)
   template<class T> bool isMatchedToTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double = 0.1);
   bool getTriggerObjects (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, vector<const pat::TriggerObjectStandAlone *> &);
   bool getTriggerObjectsByFilterSubstring (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, vector<const pat::TriggerObjectStandAlone *> &, const vector<string> & = vector<string> ());
   template<class T> const pat::TriggerObjectStandAlone *getMatchedTriggerObject (const edm::Event &, const edm::TriggerResults &, const T &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &, const double = 0.1);
   bool triggerObjectExists (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, const string &, const string &);
   bool passesL1ETM (const edm::Event &, const edm::TriggerResults &, const vector<pat::TriggerObjectStandAlone> &, double &);
+#endif
 
   void logSpace (const double, const double, const unsigned, vector<double> &);
   void linSpace (const double, const double, const unsigned, vector<double> &);
@@ -283,6 +285,7 @@ anatools::jetPassesTightLepVeto (const T &jet)
 #endif
 }
 
+#if IS_VALID(trigobjs)
 template<class T> bool
 anatools::isMatchedToTriggerObject (const edm::Event &event, const edm::TriggerResults &triggers, const T &obj, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter, const double dR)
 {
@@ -361,4 +364,5 @@ anatools::getMatchedTriggerObject (const edm::Event &event, const edm::TriggerRe
   return NULL;
 }
 
+#endif
 #endif

@@ -26,7 +26,9 @@ class OSUTauProducer : public edm::EDProducer
     edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
     edm::EDGetTokenT<vector<osu::Met> > metToken_;
     edm::EDGetTokenT<edm::TriggerResults> triggersToken_;
+#if IS_VALID(trigobjs)
     edm::EDGetTokenT<vector<pat::TriggerObjectStandAlone> > trigobjsToken_;
+#endif
     edm::ParameterSet  cfg_;
     ////////////////////////////////////////////////////////////////////////////
 

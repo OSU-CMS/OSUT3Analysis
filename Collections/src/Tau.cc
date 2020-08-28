@@ -125,6 +125,7 @@ osu::Tau::~Tau ()
 // names for 76X samples found here:
 // https://github.com/cms-sw/cmssw/blob/CMSSW_7_6_X/PhysicsTools/PatAlgos/python/producersLayer1/tauProducer_cfi.py#L62-L106
 
+#if DATA_FORMAT != AOD
 const bool
 osu::Tau::passesDecayModeReconstruction () const
 {
@@ -216,6 +217,7 @@ osu::Tau::passesTightMVAIsolation () const
       return false;
     }
 }
+#endif
 
 const double
 osu::Tau::metMinusOnePt () const

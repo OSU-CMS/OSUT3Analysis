@@ -951,6 +951,7 @@ anatools::getAllTokens (const edm::ParameterSet &collections, edm::ConsumesColle
     }
 }
 
+#if IS_VALID(trigobjs)
 bool
 anatools::getTriggerObjects (const edm::Event &event, const edm::TriggerResults &triggers, const vector<pat::TriggerObjectStandAlone> &trigObjs, const string &collection, const string &filter, vector<const pat::TriggerObjectStandAlone *> &selectedTrigObjs)
 {
@@ -1105,6 +1106,7 @@ anatools::passesL1ETM (const edm::Event &event, const edm::TriggerResults &trigg
     }
   return false;
 }
+#endif
 
 void
 anatools::logSpace (const double a, const double b, const unsigned n, vector<double> &bins)

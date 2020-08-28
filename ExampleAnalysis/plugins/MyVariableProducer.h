@@ -9,22 +9,40 @@
 
 struct OriginalCollections
 {
-  edm::Handle<vector<pat::Electron> >       electrons;
-  edm::Handle<vector<pat::Jet> >            jets;
-  edm::Handle<vector<pat::Muon> >           muons;
+
   edm::Handle<vector<reco::Vertex> >        primaryvertexs;
   edm::Handle<vector<PileupSummaryInfo>>    pileupinfos;
   edm::Handle<edm::TriggerResults>          triggers;
+
+#if DATA_FORMAT == AOD
+  edm::Handle<vector<reco::GsfElectron> >    electrons;
+  edm::Handle<vector<reco::PFJet> >          jets;
+  edm::Handle<vector<reco::Muon> >           muons;
+#else
+  edm::Handle<vector<pat::Electron> >       electrons;
+  edm::Handle<vector<pat::Jet> >            jets;
+  edm::Handle<vector<pat::Muon> >           muons;
+#endif
+
 };
 
 struct OriginalTokens
 {
-  edm::EDGetTokenT<vector<pat::Electron> >       electrons;
-  edm::EDGetTokenT<vector<pat::Jet> >            jets;
-  edm::EDGetTokenT<vector<pat::Muon> >           muons;
+
   edm::EDGetTokenT<vector<reco::Vertex> >        primaryvertexs;
   edm::EDGetTokenT<vector<PileupSummaryInfo>>    pileupinfos;
   edm::EDGetTokenT<edm::TriggerResults>          triggers;
+
+#if DATA_FORMAT == AOD
+  edm::EDGetTokenT<vector<reco::GsfElectron> >    electrons;
+  edm::EDGetTokenT<vector<reco::PFJet> >          jets;
+  edm::EDGetTokenT<vector<reco::Muon> >           muons;
+#else
+  edm::EDGetTokenT<vector<pat::Electron> >       electrons;
+  edm::EDGetTokenT<vector<pat::Jet> >            jets;
+  edm::EDGetTokenT<vector<pat::Muon> >           muons;
+#endif
+
 };
 
 class MyVariableProducer : public EventVariableProducer

@@ -31,7 +31,9 @@ OSUMuonProducer::OSUMuonProducer (const edm::ParameterSet &cfg) :
   primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
   metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
   triggersToken_ = consumes<edm::TriggerResults> (collections_.getParameter<edm::InputTag> ("triggers"));
+#if IS_VALID(trigobjs)
   trigobjsToken_ = consumes<vector<pat::TriggerObjectStandAlone> > (collections_.getParameter<edm::InputTag> ("trigobjs"));
+#endif
 }
 
 OSUMuonProducer::~OSUMuonProducer ()
@@ -71,8 +73,10 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   Handle<edm::TriggerResults> triggers;
   event.getByToken (triggersToken_, triggers);
 
+#if IS_VALID(trigobjs)
   Handle<vector<pat::TriggerObjectStandAlone> > trigobjs;
   event.getByToken (trigobjsToken_, trigobjs);
+#endif
 
   pl_ = unique_ptr<vector<osu::Muon> > (new vector<osu::Muon> ());
   for (const auto &object : *collection)
@@ -83,6 +87,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       if(rho.isValid())
         muon.set_rho((float)(*rho));
 
+#if DATA_FORMAT != AOD
       if (!vertices->empty ())
         {
           const reco::Vertex &vtx = vertices->at (0);
@@ -94,7 +99,9 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
           muon.set_isTightMuonWRTVtx(false);
           muon.set_isSoftMuonWRTVtx(false);
         }
+#endif
 
+#if IS_VALID(trigobjs)
       if(trigobjs.isValid())
         {
           for(unsigned iHLT = 0; iHLT != hltMatchingInfo_.size(); iHLT++) {
@@ -104,6 +111,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
             muon.set_hltMatch(hltName, anatools::isMatchedToTriggerObject(event, *triggers, object, *trigobjs, hltCollection, hltFilter));
           }
         }
+#endif
 
       // generator D0 must be done with prunedGenParticles because vertex is only right in this collection, not right in packedGenParticles
       // this is a temporary solution; extending GenMatchable to use prunedGenParticles would be better

@@ -495,6 +495,7 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
     return false;
   }
 
+#if DATA_FORMAT != AOD
   const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
   for (unsigned i = 0; i < triggerNames.size (); i++)
     {
@@ -517,6 +518,7 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
       else
         ss_ << "\033[2;33m" << trigger.second.second << A_RESET << endl;
     }
+#endif
 
   return true;
 }

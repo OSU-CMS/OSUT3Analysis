@@ -16,7 +16,9 @@ OSUTauProducer::OSUTauProducer (const edm::ParameterSet &cfg) :
   mcparticleToken_ = consumes<vector<osu::Mcparticle> > (collections_.getParameter<edm::InputTag> ("mcparticles"));
   metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
   triggersToken_ = consumes<edm::TriggerResults> (collections_.getParameter<edm::InputTag> ("triggers"));
+#if IS_VALID(trigobjs)
   trigobjsToken_ = consumes<vector<pat::TriggerObjectStandAlone> > (collections_.getParameter<edm::InputTag> ("trigobjs"));
+#endif
 }
 
 OSUTauProducer::~OSUTauProducer ()
@@ -35,8 +37,10 @@ OSUTauProducer::produce (edm::Event &event, const edm::EventSetup &setup)
   event.getByToken (metToken_, met);
   edm::Handle<edm::TriggerResults> triggers;
   event.getByToken (triggersToken_, triggers);
+#if IS_VALID(trigobjs)
   edm::Handle<vector<pat::TriggerObjectStandAlone> > trigobjs;
   event.getByToken (trigobjsToken_, trigobjs);
+#endif
 
   pl_ = unique_ptr<vector<osu::Tau> > (new vector<osu::Tau> ());
   for (const auto &object : *collection)
@@ -44,10 +48,12 @@ OSUTauProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       pl_->emplace_back (object, particles, cfg_, met->at (0));
       osu::Tau &tau = pl_->back ();
 
+#if IS_VALID(trigobjs)
       if(trigobjs.isValid()) {
         tau.set_match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltSelectedPFTausTrackPt30AbsOrRelIsolation::HLT", "hltPFTau50TrackPt30LooseAbsOrRelIso"));
         tau.set_match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v (anatools::isMatchedToTriggerObject (event, *triggers, object, *trigobjs, "hltSelectedPFTausTrackPt30MediumAbsOrRelIsolation1Prong::HLT", "hltPFTau50TrackPt30MediumAbsOrRelIso1Prong"));
       }
+#endif
     }
 
   event.put (std::move (pl_), collection_.instance ());
