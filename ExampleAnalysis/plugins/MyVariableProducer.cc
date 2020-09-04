@@ -12,14 +12,14 @@ MyVariableProducer::MyVariableProducer(const edm::ParameterSet &cfg) :
   if (collections_.exists ("triggers"))
     tokens_.triggers = consumes<edm::TriggerResults> (collections_.getParameter<edm::InputTag> ("triggers"));
 
-#if DATA_FORMAT == AOD
+#if DATA_FORMAT_FROM_AOD
   if (collections_.exists ("electrons"))
     tokens_.electrons = consumes<vector<reco::GsfElectron> > (collections_.getParameter<edm::InputTag> ("electrons"));
   if (collections_.exists ("jets"))
     tokens_.jets = consumes<vector<reco::PFJet> > (collections_.getParameter<edm::InputTag> ("jets"));
   if (collections_.exists ("muons"))
     tokens_.muons = consumes<vector<reco::Muon> > (collections_.getParameter<edm::InputTag> ("muons"));
-#else
+#elif DATA_FORMAT_FROM_MINIAOD
   if (collections_.exists ("electrons"))
     tokens_.electrons = consumes<vector<pat::Electron> > (collections_.getParameter<edm::InputTag> ("electrons"));
   if (collections_.exists ("jets"))

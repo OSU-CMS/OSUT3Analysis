@@ -87,7 +87,7 @@ OSUMuonProducer::produce (edm::Event &event, const edm::EventSetup &setup)
       if(rho.isValid())
         muon.set_rho((float)(*rho));
 
-#if DATA_FORMAT != AOD
+#if DATA_FORMAT_FROM_MINIAOD
       if (!vertices->empty ())
         {
           const reco::Vertex &vtx = vertices->at (0);

@@ -21,7 +21,7 @@ namespace osu
         //       it is "MET::JetResUp" for the case of MET::Type1Smear
         //       See https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_14/DataFormats/PatCandidates/src/MET.cc#L208-L209
 
-#if DATA_FORMAT != AOD
+#if DATA_FORMAT_FROM_MINIAOD
         const double pt_JetResUp () const          { return this->shiftedPt(MET::JetResUp); }
         const double pt_JetEnUp () const           { return this->shiftedPt(MET::JetEnUp); }
         const double pt_MuonEnUp () const          { return this->shiftedPt(MET::MuonEnUp); }

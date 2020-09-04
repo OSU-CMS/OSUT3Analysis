@@ -57,7 +57,7 @@ osu::Met::Met (const TYPE(mets) &met, const edm::Handle<vector<pat::PackedCandid
   if (pfCandidates.isValid ()) {
       TVector2 metNoMu (met.px(), met.py());
 
-#if DATA_FORMAT != AOD
+#if DATA_FORMAT_FROM_MINIAOD
       TVector2 metNoMu_JetResUp          (met.shiftedP2(MET::JetResUp).px, met.shiftedP2(MET::JetResUp).py);
       TVector2 metNoMu_JetEnUp           (met.shiftedP2(MET::JetEnUp).px, met.shiftedP2(MET::JetEnUp).py);
       TVector2 metNoMu_ElectronEnUp      (met.shiftedP2(MET::ElectronEnUp).px, met.shiftedP2(MET::ElectronEnUp).py);
@@ -80,7 +80,7 @@ osu::Met::Met (const TYPE(mets) &met, const edm::Handle<vector<pat::PackedCandid
 
           metNoMu += muon;
 
-#if DATA_FORMAT != AOD
+#if DATA_FORMAT_FROM_MINIAOD
           metNoMu_JetResUp += muon;
           metNoMu_JetEnUp += muon;
           metNoMu_ElectronEnUp += muon;
@@ -100,7 +100,7 @@ osu::Met::Met (const TYPE(mets) &met, const edm::Handle<vector<pat::PackedCandid
       noMuPy_ = metNoMu.Py ();
       noMuPhi_ = metNoMu.Phi ();
 
-#if DATA_FORMAT != AOD
+#if DATA_FORMAT_FROM_MINIAOD
       noMuPt_JetResUp_ = metNoMu_JetResUp.Mod();
       noMuPt_JetEnUp_ = metNoMu_JetEnUp.Mod();
       noMuPt_ElectronEnUp_ = metNoMu_ElectronEnUp.Mod();

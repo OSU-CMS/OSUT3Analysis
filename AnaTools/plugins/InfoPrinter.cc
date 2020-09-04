@@ -495,7 +495,7 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
     return false;
   }
 
-#if DATA_FORMAT != AOD
+#if DATA_FORMAT_FROM_MINIAOD
   const edm::TriggerNames &triggerNames = event.triggerNames (*handles_.triggers);
   for (unsigned i = 0; i < triggerNames.size (); i++)
     {
