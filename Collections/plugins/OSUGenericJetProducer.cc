@@ -12,7 +12,7 @@
 #include "TRandom3.h"
 #endif
 
-template<class T> 
+template<class T>
 OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
@@ -158,12 +158,14 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
     {
 #ifndef STOPPPED_PTLS
       pl_->emplace_back (object, particles, cfg_);
-      T &jet = pl_->back ();
+
 #else // STOPPPED_PTLS
       pl_->emplace_back (object);
 #endif
 
 #if DATA_FORMAT_FROM_MINIAOD
+
+      T &jet = pl_->back ();
 
       // medianLog10(ipsig) CALC
       std::vector<double> ipsigVector;
@@ -287,7 +289,7 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
               break;
             }
           }
-            
+
         } // for genjets
 
         if(!isMatchedToGenJet) {

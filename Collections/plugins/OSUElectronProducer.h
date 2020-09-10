@@ -33,7 +33,9 @@ class OSUElectronProducer : public edm::EDProducer
     edm::EDGetTokenT<vector<reco::Conversion> > conversionsToken_;
     edm::EDGetTokenT<double> rhoToken_;
     edm::EDGetTokenT<edm::TriggerResults> triggersToken_;
+#if IS_VALID(trigobjs)
     edm::EDGetTokenT<vector<pat::TriggerObjectStandAlone> > trigobjsToken_;
+#endif
 
     edm::EDGetTokenT<edm::ValueMap<bool> > vidVetoIdMapToken_;
     edm::EDGetTokenT<edm::ValueMap<bool> > vidLooseIdMapToken_;

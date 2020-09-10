@@ -5,8 +5,8 @@
 #define  genjets_TYPE           INVALID_TYPE
 #define  jets_TYPE              reco::PFJet
 #define  bjets_TYPE             INVALID_TYPE
-#define  mcparticles_TYPE       INVALID_TYPE
-#define hardInteractionMcparticles_TYPE INVALID_TYPE
+#define  mcparticles_TYPE       reco::GenParticle
+#define  hardInteractionMcparticles_TYPE reco::GenParticle
 #define  mets_TYPE              reco::PFMET
 #define  muons_TYPE             reco::Muon
 #define  photons_TYPE           reco::Photon
@@ -32,8 +32,6 @@
 #define  bxlumis_INVALID
 #define  events_INVALID
 #define  genjets_INVALID
-#define  mcparticles_INVALID
-#define  hardInteractionMcparticles_INVALID
 #define  prescales_INVALID
 #define  superclusters_INVALID
 #define  trigobjs_INVALID
@@ -50,6 +48,7 @@
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
 #include "DataFormats/JetReco/interface/PFJet.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/METReco/interface/PFMET.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/EgammaCandidates/interface/Photon.h"

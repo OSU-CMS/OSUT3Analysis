@@ -1,6 +1,8 @@
 #ifndef OSU_MUON
 #define OSU_MUON
 
+#include "TVector2.h"
+
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 #include "OSUT3Analysis/Collections/interface/Met.h"
 

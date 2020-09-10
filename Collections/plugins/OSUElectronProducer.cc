@@ -34,7 +34,9 @@ OSUElectronProducer::OSUElectronProducer (const edm::ParameterSet &cfg) :
   conversionsToken_ = consumes<vector<reco::Conversion> > (conversions_);
   rhoToken_ = consumes<double> (rho_);
   triggersToken_ = consumes<edm::TriggerResults> (collections_.getParameter<edm::InputTag> ("triggers"));
+#if IS_VALID(trigobjs)
   trigobjsToken_ = consumes<vector<pat::TriggerObjectStandAlone> > (collections_.getParameter<edm::InputTag> ("trigobjs"));
+#endif
 
   vidVetoIdMapToken_   = consumes<edm::ValueMap<bool> > (vidVetoIdMap_);
   vidLooseIdMapToken_  = consumes<edm::ValueMap<bool> > (vidLooseIdMap_);
