@@ -468,6 +468,8 @@ datasets = [
   'HTo4Mu125_20_130mm',
   'HTo4Mu125_20_1300mm',
 
+  'Cosmics',
+
   #Sum of all backgrounds
    'Background',
 ]
@@ -2634,6 +2636,8 @@ nJobs = {
   'HTo4Mu125_20_13mm' : 15,
   'HTo4Mu125_20_130mm' : 15,
   'HTo4Mu125_20_1300mm' : 15,
+
+  'Cosmics': 999,
 }
 
 maxEvents = {
@@ -3946,6 +3950,7 @@ maxEvents = {
   'HTo4Mu125_20_130mm' : -1,
   'HTo4Mu125_20_1300mm' : -1,
 
+  'Cosmics' : -1,
 }
 
 # bgMC => background MC process
@@ -5318,6 +5323,7 @@ types = {
   'HTo4Mu125_20_130mm' : "signalMC",
   'HTo4Mu125_20_1300mm' : "signalMC",
 
+  'Cosmics' : "bgMC",
 }
 
 colors = {
@@ -6686,6 +6692,7 @@ colors = {
   'HTo4Mu125_20_130mm' : 2,
   'HTo4Mu125_20_1300mm' : 4,
 
+  'Cosmics' : 1,
 }
 
 style = {
@@ -8075,7 +8082,7 @@ labels = {
   'HTo4Mu125_20_130mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=130mm",
   'HTo4Mu125_20_1300mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=1300mm",
 
-
+  'Cosmics' : "Cosmic MC",
 }
 
 crossSections = {
@@ -8960,6 +8967,7 @@ crossSections = {
   'HTo4Mu125_20_130mm' : 43.93,
   'HTo4Mu125_20_1300mm' : 43.93,
 
+  'Cosmics' : 1.0,
 }
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
