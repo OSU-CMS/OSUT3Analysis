@@ -1,6 +1,8 @@
 #ifndef OSU_TAU
 #define OSU_TAU
 
+#include "TVector2.h"
+
 #include "OSUT3Analysis/Collections/interface/GenMatchable.h"
 #include "OSUT3Analysis/Collections/interface/Met.h"
 

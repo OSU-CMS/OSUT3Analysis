@@ -57,6 +57,7 @@ osu::Met::Met (const TYPE(mets) &met, const edm::Handle<vector<pat::PackedCandid
   if (pfCandidates.isValid ()) {
       TVector2 metNoMu (met.px(), met.py());
 
+#if DATA_FORMAT_FROM_MINIAOD
       TVector2 metNoMu_JetResUp          (met.shiftedP2(MET::JetResUp).px, met.shiftedP2(MET::JetResUp).py);
       TVector2 metNoMu_JetEnUp           (met.shiftedP2(MET::JetEnUp).px, met.shiftedP2(MET::JetEnUp).py);
       TVector2 metNoMu_ElectronEnUp      (met.shiftedP2(MET::ElectronEnUp).px, met.shiftedP2(MET::ElectronEnUp).py);
@@ -70,6 +71,7 @@ osu::Met::Met (const TYPE(mets) &met, const edm::Handle<vector<pat::PackedCandid
       TVector2 metNoMu_TauEnDown         (met.shiftedP2(MET::TauEnDown).px, met.shiftedP2(MET::TauEnDown).py);
       TVector2 metNoMu_UnclusteredEnDown (met.shiftedP2(MET::UnclusteredEnDown).px, met.shiftedP2(MET::UnclusteredEnDown).py);
       TVector2 metNoMu_PhotonEnDown      (met.shiftedP2(MET::PhotonEnDown).px, met.shiftedP2(MET::PhotonEnDown).py);
+#endif
 
       for (const auto &pfCandidate : *pfCandidates) {
           if (abs (pfCandidate.pdgId ()) != 13) continue;
@@ -78,6 +80,7 @@ osu::Met::Met (const TYPE(mets) &met, const edm::Handle<vector<pat::PackedCandid
 
           metNoMu += muon;
 
+#if DATA_FORMAT_FROM_MINIAOD
           metNoMu_JetResUp += muon;
           metNoMu_JetEnUp += muon;
           metNoMu_ElectronEnUp += muon;
@@ -89,6 +92,7 @@ osu::Met::Met (const TYPE(mets) &met, const edm::Handle<vector<pat::PackedCandid
           metNoMu_ElectronEnDown += muon;
           metNoMu_TauEnDown += muon;
           metNoMu_UnclusteredEnDown += muon;
+#endif
         }
 
       noMuPt_ = metNoMu.Mod ();
@@ -96,6 +100,7 @@ osu::Met::Met (const TYPE(mets) &met, const edm::Handle<vector<pat::PackedCandid
       noMuPy_ = metNoMu.Py ();
       noMuPhi_ = metNoMu.Phi ();
 
+#if DATA_FORMAT_FROM_MINIAOD
       noMuPt_JetResUp_ = metNoMu_JetResUp.Mod();
       noMuPt_JetEnUp_ = metNoMu_JetEnUp.Mod();
       noMuPt_ElectronEnUp_ = metNoMu_ElectronEnUp.Mod();
@@ -109,6 +114,7 @@ osu::Met::Met (const TYPE(mets) &met, const edm::Handle<vector<pat::PackedCandid
       noMuPt_TauEnDown_ = metNoMu_TauEnDown.Mod();
       noMuPt_UnclusteredEnDown_ = metNoMu_UnclusteredEnDown.Mod();
       noMuPt_PhotonEnDown_ = metNoMu_PhotonEnDown.Mod();
+#endif
 
     }
 }

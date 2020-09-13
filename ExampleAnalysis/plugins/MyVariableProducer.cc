@@ -4,18 +4,30 @@
 MyVariableProducer::MyVariableProducer(const edm::ParameterSet &cfg) :
   EventVariableProducer(cfg)
 {
-  if (collections_.exists ("electrons"))
-    tokens_.electrons = consumes<vector<pat::Electron> > (collections_.getParameter<edm::InputTag> ("electrons"));
-  if (collections_.exists ("jets"))
-    tokens_.jets = consumes<vector<pat::Jet> > (collections_.getParameter<edm::InputTag> ("jets"));
-  if (collections_.exists ("muons"))
-    tokens_.muons = consumes<vector<pat::Muon> > (collections_.getParameter<edm::InputTag> ("muons"));
+
   if (collections_.exists ("primaryvertexs"))
     tokens_.primaryvertexs = consumes<vector<reco::Vertex> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
   if (collections_.exists ("pileupinfos"))
     tokens_.pileupinfos = consumes<vector<PileupSummaryInfo> > (collections_.getParameter<edm::InputTag> ("pileupinfos"));
   if (collections_.exists ("triggers"))
     tokens_.triggers = consumes<edm::TriggerResults> (collections_.getParameter<edm::InputTag> ("triggers"));
+
+#if DATA_FORMAT_FROM_AOD
+  if (collections_.exists ("electrons"))
+    tokens_.electrons = consumes<vector<reco::GsfElectron> > (collections_.getParameter<edm::InputTag> ("electrons"));
+  if (collections_.exists ("jets"))
+    tokens_.jets = consumes<vector<reco::PFJet> > (collections_.getParameter<edm::InputTag> ("jets"));
+  if (collections_.exists ("muons"))
+    tokens_.muons = consumes<vector<reco::Muon> > (collections_.getParameter<edm::InputTag> ("muons"));
+#elif DATA_FORMAT_FROM_MINIAOD
+  if (collections_.exists ("electrons"))
+    tokens_.electrons = consumes<vector<pat::Electron> > (collections_.getParameter<edm::InputTag> ("electrons"));
+  if (collections_.exists ("jets"))
+    tokens_.jets = consumes<vector<pat::Jet> > (collections_.getParameter<edm::InputTag> ("jets"));
+  if (collections_.exists ("muons"))
+    tokens_.muons = consumes<vector<pat::Muon> > (collections_.getParameter<edm::InputTag> ("muons"));
+#endif
+
 }
 
 MyVariableProducer::~MyVariableProducer() {}
