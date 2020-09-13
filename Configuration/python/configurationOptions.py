@@ -1170,6 +1170,11 @@ composite_dataset_definitions = {
     'NoBPTX_2018C',
     'NoBPTX_2018D',
   ],
+  'NoBPTX_2016_2017_2018' : [
+    'NoBPTX_2016_postHIP',
+    'NoBPTX_2017',
+    'NoBPTX_2018',
+  ],
     'MET_2015' : [
         'MET_2015B',
         'MET_2015C',
@@ -5276,6 +5281,7 @@ types = {
     'NoBPTX_2018C' : 'data',
     'NoBPTX_2018D' : 'data',
     'NoBPTX_2018' : 'data',
+  'NoBPTX_2016_2017_2018' : 'data',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
@@ -6643,6 +6649,7 @@ colors = {
     'NoBPTX_2018C' : 1,
     'NoBPTX_2018D' : 1,
     'NoBPTX_2018' : 1,
+  'NoBPTX_2016_2017_2018' : 1,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 7,
@@ -8030,6 +8037,8 @@ labels = {
     'NoBPTX_2018C' : 'NoBPTX 2018C data',
     'NoBPTX_2018D' : 'NoBPTX 2018D data',
     'NoBPTX_2018' : 'NoBPTX 2018 data',
+
+  'NoBPTX_2016_2017_2018' : 'NoBPTX 2016-2018 data',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (m_{#tilde{g}} = 1200 GeV, m_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p4)",
