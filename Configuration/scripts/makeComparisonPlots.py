@@ -515,7 +515,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
                 makeRatio = functools.partial (ratioHistogram,Histogram, Reference)
                 if arguments.ratioRelErrMax is not -1: # it gets initialized to this dummy value of -1
                     makeRatio =  functools.partial (makeRatio, relErrMax = float(arguments.ratioRelErrMax))
-                if addOneToRatio is not -1: # it gets initialized to this dummy value of -1
+                if addOneToRatio != -1: # it gets initialized to this dummy value of -1
                     makeRatio = functools.partial (makeRatio, addOne = bool (addOneToRatio))
                 Comparison = makeRatio()
             elif makeDiffPlots:
@@ -542,7 +542,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
                 RatioYRange = 1.15
                 if arguments.ratioYRange:
                     RatioYRange = float(arguments.ratioYRange)
-                if not addOneToRatio:
+                if addOneToRatio == -1: # it gets initialized to this dummy value of -1
                     Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
                 else:
                     Comparison.GetYaxis().SetRangeUser(-1*RatioYRange + 1.0, RatioYRange + 1.0)
