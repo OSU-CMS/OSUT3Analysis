@@ -446,7 +446,7 @@ def MakeOneHist(dirName, histogramName):
         Canvas.cd(2)
         if makeRatioPlots:
             makeRatio = functools.partial (ratioHistogram,HistogramClones[0],HistogramClones[1])
-            if addOneToRatio is not -1: # it gets initialized to this dummy value of -1
+            if addOneToRatio != -1: # it gets initialized to this dummy value of -1
                 makeRatio = functools.partial (makeRatio, addOne = bool (addOneToRatio))
             if ratioRelErrMax is not -1: # it gets initialized to this dummy value of -1
                 makeRatio = functools.partial (makeRatio, relErrMax = float (ratioRelErrMax))
@@ -469,7 +469,7 @@ def MakeOneHist(dirName, histogramName):
             RatioYRange = 1.15
             if arguments.ratioYRange:
                 RatioYRange = float(arguments.ratioYRange)
-            if not addOneToRatio:
+            if addOneToRatio == -1: # it gets initialized to this dummy value of -1
                 Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
             else:
                 Comparison.GetYaxis().SetRangeUser(-1*RatioYRange + 1.0, RatioYRange + 1.0)
