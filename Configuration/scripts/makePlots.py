@@ -1165,9 +1165,9 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         BgSum = Stack.GetStack().Last()
         if makeRatioPlots:
             makeRatio = functools.partial (ratioHistogram, DataHistograms[0], BgSum)
-            if ratioRelErrMax is not -1: # it gets initialized to this dummy value of -1
+            if ratioRelErrMax != -1: # it gets initialized to this dummy value of -1
                 makeRatio = functools.partial (makeRatio, relErrMax = float (ratioRelErrMax))
-            if addOneToRatio is not -1: # it gets initialized to this dummy value of -1
+            if addOneToRatio != -1: # it gets initialized to this dummy value of -1
                 makeRatio = functools.partial (makeRatio, addOne = bool (addOneToRatio))
             Comparison = makeRatio ()
         elif makeDiffPlots:
@@ -1195,7 +1195,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             if 'ratioYRange' in paperHistogram:
                 RatioYRange = paperHistogram['ratioYRange']
 
-        if not addOneToRatio:
+        if addOneToRatio == -1: # it gets initialized to this dummy value of -1
             Comparison.GetYaxis().SetRangeUser(-1*RatioYRange, RatioYRange)
         else:
             Comparison.GetYaxis().SetRangeUser(-1*RatioYRange + 1.0, RatioYRange + 1.0)
