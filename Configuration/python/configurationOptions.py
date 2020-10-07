@@ -367,6 +367,18 @@ datasets = [
    'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCsc_Ntuple',
    'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCscRpc_Ntuple',
 
+   'NoBPTX_2016G',
+   'NoBPTX_2016H',
+
+   'NoBPTX_2017B',
+   'NoBPTX_2017C',
+   'NoBPTX_2017D',
+   'NoBPTX_2017E',
+   'NoBPTX_2017F',
+
+   'NoBPTX_2018A',
+   'NoBPTX_2018B',
+   'NoBPTX_2018C',
    'NoBPTX_2018D',
 
    #parked data 2018
@@ -455,6 +467,8 @@ datasets = [
   'HTo4Mu125_20_13mm',
   'HTo4Mu125_20_130mm',
   'HTo4Mu125_20_1300mm',
+
+  'Cosmics',
 
   #Sum of all backgrounds
    'Background',
@@ -1141,6 +1155,28 @@ composite_dataset_definitions = {
         'NoBPTX_2016G_PromptReco_OnlyControlTriggers_Ntuple',
         'NoBPTX_2016H_PromptReco_OnlyControlTriggers_Ntuple',
         ],
+  'NoBPTX_2016_postHIP' : [
+    'NoBPTX_2016G',
+    'NoBPTX_2016H',
+  ],
+  'NoBPTX_2017' : [
+    'NoBPTX_2017B',
+    'NoBPTX_2017C',
+    'NoBPTX_2017D',
+    'NoBPTX_2017E',
+    'NoBPTX_2017F',
+  ],
+  'NoBPTX_2018' : [
+    'NoBPTX_2018A',
+    'NoBPTX_2018B',
+    'NoBPTX_2018C',
+    'NoBPTX_2018D',
+  ],
+  'NoBPTX_2016_2017_2018' : [
+    'NoBPTX_2016_postHIP',
+    'NoBPTX_2017',
+    'NoBPTX_2018',
+  ],
     'MET_2015' : [
         'MET_2015B',
         'MET_2015C',
@@ -2549,6 +2585,18 @@ nJobs = {
     'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCsc_Ntuple' : 999,
     'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCscRpc_Ntuple' : 999,
 
+    'NoBPTX_2016G' : 176,
+    'NoBPTX_2016H' : 383,
+
+    'NoBPTX_2017B' : 28,
+    'NoBPTX_2017C' : 37,
+    'NoBPTX_2017D' : 22,
+    'NoBPTX_2017E' : 32,
+    'NoBPTX_2017F' : 30,
+
+    'NoBPTX_2018A' : 63,
+    'NoBPTX_2018B' : 184,
+    'NoBPTX_2018C' : 48,
     'NoBPTX_2018D' : 1657,
 
     #rpc study
@@ -2588,6 +2636,8 @@ nJobs = {
   'HTo4Mu125_20_13mm' : 15,
   'HTo4Mu125_20_130mm' : 15,
   'HTo4Mu125_20_1300mm' : 15,
+
+  'Cosmics': 999,
 }
 
 maxEvents = {
@@ -3848,6 +3898,18 @@ maxEvents = {
     'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCsc_Ntuple' : -1,
     'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCscRpc_Ntuple' : -1,
 
+    'NoBPTX_2016G' : -1,
+    'NoBPTX_2016H' : -1,
+
+    'NoBPTX_2017B' : -1,
+    'NoBPTX_2017C' : -1,
+    'NoBPTX_2017D' : -1,
+    'NoBPTX_2017E' : -1,
+    'NoBPTX_2017F' : -1,
+
+    'NoBPTX_2018A' : -1,
+    'NoBPTX_2018B' : -1,
+    'NoBPTX_2018C' : -1,
     'NoBPTX_2018D' : -1,
 
     #rpc study
@@ -3888,6 +3950,7 @@ maxEvents = {
   'HTo4Mu125_20_130mm' : -1,
   'HTo4Mu125_20_1300mm' : -1,
 
+  'Cosmics' : -1,
 }
 
 # bgMC => background MC process
@@ -5209,7 +5272,21 @@ types = {
     'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCsc_Ntuple' : 'data',
     'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCscRpc_Ntuple' : 'data',
 
+    'NoBPTX_2016_postHIP' : 'data',
+    'NoBPTX_2016G' : 'data',
+    'NoBPTX_2016H' : 'data',
+    'NoBPTX_2017' : 'data',
+    'NoBPTX_2017B' : 'data',
+    'NoBPTX_2017C' : 'data',
+    'NoBPTX_2017D' : 'data',
+    'NoBPTX_2017E' : 'data',
+    'NoBPTX_2017F' : 'data',
+    'NoBPTX_2018A' : 'data',
+    'NoBPTX_2018B' : 'data',
+    'NoBPTX_2018C' : 'data',
     'NoBPTX_2018D' : 'data',
+    'NoBPTX_2018' : 'data',
+    'NoBPTX_2016_2017_2018' : 'data',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "signalMC",
@@ -5246,6 +5323,7 @@ types = {
   'HTo4Mu125_20_130mm' : "signalMC",
   'HTo4Mu125_20_1300mm' : "signalMC",
 
+  'Cosmics' : "bgMC",
 }
 
 colors = {
@@ -6563,7 +6641,21 @@ colors = {
     'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCsc_Ntuple' : 1,
     'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCscRpc_Ntuple' : 2,
 
+    'NoBPTX_2016_postHIP' : 1,
+    'NoBPTX_2016G' : 1,
+    'NoBPTX_2016H' : 1,
+    'NoBPTX_2017' : 1,
+    'NoBPTX_2017B' : 1,
+    'NoBPTX_2017C' : 1,
+    'NoBPTX_2017D' : 1,
+    'NoBPTX_2017E' : 1,
+    'NoBPTX_2017F' : 1,
+    'NoBPTX_2018A' : 1,
+    'NoBPTX_2018B' : 1,
+    'NoBPTX_2018C' : 1,
     'NoBPTX_2018D' : 1,
+    'NoBPTX_2018' : 1,
+    'NoBPTX_2016_2017_2018' : 1,
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : 7,
@@ -6600,6 +6692,7 @@ colors = {
   'HTo4Mu125_20_130mm' : 2,
   'HTo4Mu125_20_1300mm' : 4,
 
+  'Cosmics' : 1,
 }
 
 style = {
@@ -7936,7 +8029,23 @@ labels = {
     'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCsc_Ntuple' : 'NoBPTX 2017 Cosmic data, DTs and CSCs',
     'NoBPTX_2017E_v1_PromptReco_CosmicTopAndBottom_DtCscRpc_Ntuple' : 'NoBPTX 2017 Cosmic data, DTs, CSCs, and RPCs',
 
+    'NoBPTX_2016_postHIP' : 'NoBPTX 2016G&H data',
+    'NoBPTX_2016G' : 'NoBPTX 2016G data',
+    'NoBPTX_2016H' : 'NoBPTX 2016H data',
+    'NoBPTX_2017' : 'NoBPTX 2017 data',
+    'NoBPTX_2017B' : 'NoBPTX 2017B data',
+    'NoBPTX_2017C' : 'NoBPTX 2017C data',
+    'NoBPTX_2017D' : 'NoBPTX 2017D data',
+    'NoBPTX_2017E' : 'NoBPTX 2017E data',
+    'NoBPTX_2017F' : 'NoBPTX 2017F data',
+
+    'NoBPTX_2018A' : 'NoBPTX 2018A data',
+    'NoBPTX_2018B' : 'NoBPTX 2018B data',
+    'NoBPTX_2018C' : 'NoBPTX 2018C data',
     'NoBPTX_2018D' : 'NoBPTX 2018D data',
+    'NoBPTX_2018' : 'NoBPTX 2018 data',
+
+    'NoBPTX_2016_2017_2018' : 'NoBPTX 2016-2018 data',
 
     #rpc study
     'GluinoToGChi0_1200_1000_noiseFrate0p4' : "#tilde{g} #rightarrow g#tilde{#chi}^{0} (m_{#tilde{g}} = 1200 GeV, m_{#tilde{#chi}^{0}} = 1000 GeV, Frate0p4)",
@@ -7973,7 +8082,7 @@ labels = {
   'HTo4Mu125_20_130mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=130mm",
   'HTo4Mu125_20_1300mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=1300mm",
 
-
+  'Cosmics' : "Cosmic MC",
 }
 
 crossSections = {
@@ -8858,6 +8967,7 @@ crossSections = {
   'HTo4Mu125_20_130mm' : 43.93,
   'HTo4Mu125_20_1300mm' : 43.93,
 
+  'Cosmics' : 1.0,
 }
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
