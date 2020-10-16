@@ -9104,7 +9104,7 @@ for index, sample in enumerate(signal_datasets):
 
     sourceCTau = 0.1 * 10**(math.ceil(math.log10(float(lifetime(sample)))))
     # special case
-    if float(lifetime(sample)) <= 0.1: sourceCTau = 0.1 * 1.0
+    if float(lifetime(sample)) <= 0.01: sourceCTau = 0.1 * 0.1
     if float(lifetime(sample)) > 1000.: sourceCTau = 100.0
     destinationCTau = 0.1 * float(lifetime(sample))
 
