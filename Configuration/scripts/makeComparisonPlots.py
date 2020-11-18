@@ -210,7 +210,7 @@ def MakeIntegralHist(hist, integrateDir):
         lowLimit += 1
         uppLimit -= 1
     if integrateDir is "left":
-        for i in range(0,nbins+1):  # start with underflow bin
+        for i in range(lowLimit,nbins+1):  # start with underflow bin
             integral += hist.GetBinContent(i)
             error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
             hist.SetBinContent(i, integral)
@@ -220,7 +220,7 @@ def MakeIntegralHist(hist, integrateDir):
             hist.SetBinContent(nbins, hist.GetBinContent(nbins) + hist.GetBinContent(nbins+1))
             hist.SetBinError  (nbins, math.sqrt(hist.GetBinError(nbins)*hist.GetBinError(nbins) + hist.GetBinError(nbins+1)*hist.GetBinError(nbins+1)))
     elif integrateDir is "right":
-        for i in xrange(nbins+1, 0, -1):  # start with overflow bin
+        for i in xrange(uppLimit, 0, -1):  # start with overflow bin
             integral += hist.GetBinContent(i)
             error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
             hist.SetBinContent(i, integral)
