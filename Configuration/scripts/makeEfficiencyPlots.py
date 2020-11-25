@@ -42,8 +42,10 @@ parser.add_option("--hist", action="store_true", dest="plot_hist", default=False
                                     help="plot as hollow histograms instead of error bar crosses")
 parser.add_option("--line-width", dest="line_width",
                                     help="set line width (default is 2)")
-parser.add_option("--NO", "--noOverUnderFlow", action="store_true", dest="noOverUnderFlow", default=False,
-                  help="Do not add the overflow and underflow entries to the last and first bins")
+parser.add_option("--NO", "--noOverFlow", action="store_true", dest="noOverFlow", default=False,
+                  help="Do not add the overflow entries to the last bin")
+parser.add_option("--NU", "--noUnderFlow", action="store_true", dest="noUnderFlow", default=False,
+                  help="Do not add the underflow entries to the first bin")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                   help="verbose output")
 
@@ -54,7 +56,8 @@ if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")  # Remove .py from end of config file first.
 
-noOverUnderFlow = arguments.noOverUnderFlow
+noOverFlow = arguments.noOverFlow
+noUnderFlow = arguments.noUnderFlow
 
 #### deal with conflicting arguments
 
@@ -250,20 +253,25 @@ def MakeOneHist(dirName, histogramName):
         DenHistogram.SetDirectory(0)
         inputFile.Close()
 
-        if not noOverUnderFlow:
-            nbinsN = Histogram.GetNbinsX()
-            Histogram.SetBinContent(1,      Histogram.GetBinContent(1)      + Histogram.GetBinContent(0))       # Add underflow
-            Histogram.SetBinContent(nbinsN, Histogram.GetBinContent(nbinsN) + Histogram.GetBinContent(nbinsN+1)) # Add overflow
-            # Set the errors to be the sum in quadrature
-            Histogram.SetBinError(1,      math.sqrt(math.pow(Histogram.GetBinError(1),     2) + math.pow(Histogram.GetBinError(0),       2)))
-            Histogram.SetBinError(nbinsN, math.sqrt(math.pow(Histogram.GetBinError(nbinsN),2) + math.pow(Histogram.GetBinError(nbinsN+1),2)))
+        nbinsN = Histogram.GetNbinsX()
+        nbinsD = DenHistogram.GetNbinsX()
+        if not noOverFlow:
+            # Add overflow
+            Histogram.SetBinContent(   nbinsN,    Histogram.GetBinContent(nbinsN) +    Histogram.GetBinContent(nbinsN+1))
+            DenHistogram.SetBinContent(nbinsD, DenHistogram.GetBinContent(nbinsD) + DenHistogram.GetBinContent(nbinsD+1))
 
-            nbinsD = DenHistogram.GetNbinsX()
-            DenHistogram.SetBinContent(1,      DenHistogram.GetBinContent(1)      + DenHistogram.GetBinContent(0))       # Add underflow
-            DenHistogram.SetBinContent(nbinsD, DenHistogram.GetBinContent(nbinsD) + DenHistogram.GetBinContent(nbinsD+1)) # Add overflow
             # Set the errors to be the sum in quadrature
-            DenHistogram.SetBinError(1,      math.sqrt(math.pow(DenHistogram.GetBinError(1),     2) + math.pow(DenHistogram.GetBinError(0),       2)))
+            Histogram.SetBinError(  nbinsN,     math.sqrt(math.pow(Histogram.GetBinError(nbinsN),2) +    math.pow(Histogram.GetBinError(nbinsN+1),2)))
             DenHistogram.SetBinError(nbinsD, math.sqrt(math.pow(DenHistogram.GetBinError(nbinsD),2) + math.pow(DenHistogram.GetBinError(nbinsD+1),2)))
+
+        if not noUnderFlow:
+            # Add underflow
+            Histogram.SetBinContent(   1,    Histogram.GetBinContent(1) +    Histogram.GetBinContent(0))
+            DenHistogram.SetBinContent(1, DenHistogram.GetBinContent(1) + DenHistogram.GetBinContent(0))
+
+            # Set the errors to be the sum in quadrature
+            Histogram.SetBinError(   1,    math.sqrt(math.pow(Histogram.GetBinError(1), 2) +    math.pow(Histogram.GetBinError(0), 2)))
+            DenHistogram.SetBinError(1, math.sqrt(math.pow(DenHistogram.GetBinError(1), 2) + math.pow(DenHistogram.GetBinError(0), 2)))
 
         if arguments.rebinFactor:
             RebinFactor = int(arguments.rebinFactor)

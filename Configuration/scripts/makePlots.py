@@ -49,8 +49,10 @@ parser.add_option("-c", "--cumulative", action="store_true", dest="makeCumulativ
                   help="Make cumulative plots")
 parser.add_option("--E0", action="store_true", dest="drawErrorsOnHists", default=False,
                   help="Draw error bars on unstacked histograms")
-parser.add_option("--NO", "--noOverUnderFlow", action="store_true", dest="noOverUnderFlow", default=False,
-                  help="Do not add the overflow and underflow entries to the last and first bins")
+parser.add_option("--NO", "--noOverFlow", action="store_true", dest="noOverFlow", default=False,
+                  help="Do not add the overflow entries to the last bin")
+parser.add_option("--NU", "--noUnderFlow", action="store_true", dest="noUnderFlow", default=False,
+                  help="Do not add the underflow entries to the first bin")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                   help="verbose output")
 parser.add_option("-P", "--paperConfig", dest="paperConfig",
@@ -472,10 +474,15 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
         if 'includeSystematics' in paperHistogram:
             includeSystematics = paperHistogram['includeSystematics']
     ###############################################
-    noOverUnderFlow = arguments.noOverUnderFlow
+    noOverFlow = arguments.noOverFlow
     if arguments.paperConfig:
-        if 'noOverUnderFlow' in paperHistogram:
-            noOverUnderFlow = paperHistogram['noOverUnderFlow']
+        if 'noOverFlow' in paperHistogram:
+            noOverFlow = paperHistogram['noOverFlow']
+    ###############################################
+    noUnderFlow = arguments.noUnderFlow
+    if arguments.paperConfig:
+        if 'noUnderFlow' in paperHistogram:
+            noUnderFlow = paperHistogram['noUnderFlow']
     ###############################################
     sortOrderByYields = arguments.sortOrderByYields
     if arguments.paperConfig:
@@ -726,13 +733,13 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
             yieldHist = Histogram.Integral()
             legLabel = legLabel + " (%.1f)" % yieldHist
 
-        if not noOverUnderFlow:
-            nbins = Histogram.GetNbinsX()
-            Histogram.SetBinContent(1,     Histogram.GetBinContent(1)     + Histogram.GetBinContent(0))       # Add underflow
+        nbins = Histogram.GetNbinsX()
+        if not noOverFlow:
             Histogram.SetBinContent(nbins, Histogram.GetBinContent(nbins) + Histogram.GetBinContent(nbins+1)) # Add overflow
-            # Set the errors to be the sum in quadrature
-            Histogram.SetBinError(1,     math.sqrt(math.pow(Histogram.GetBinError(1),    2) + math.pow(Histogram.GetBinError(0),      2)))
-            Histogram.SetBinError(nbins, math.sqrt(math.pow(Histogram.GetBinError(nbins),2) + math.pow(Histogram.GetBinError(nbins+1),2)))
+            Histogram.SetBinError(nbins, math.sqrt(math.pow(Histogram.GetBinError(nbins),2) + math.pow(Histogram.GetBinError(nbins+1),2))) # Set the errors to be the sum in quadrature
+        if not noUnderFlow:
+            Histogram.SetBinContent(1, Histogram.GetBinContent(1) + Histogram.GetBinContent(0)) # Add underflow
+            Histogram.SetBinError(1, math.sqrt(math.pow(Histogram.GetBinError(1), 2) + math.pow(Histogram.GetBinError(0), 2))) # Set the errors to be the sum in quadrature
 
         if arguments.verbose:
             print "Sample = " + sample + ", types[sample] = " + types[sample]
