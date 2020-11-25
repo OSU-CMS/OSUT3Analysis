@@ -318,19 +318,15 @@ def MakeIntegralHist(hist, integrateDir):
     integral = 0
     error = 0
     nbins = hist.GetNbinsX()
+    # always include underflow and overflow
     lowLimit = 0 # underflow bin
     uppLimit = nbins+1 # overflow bin
-    # exclude under/overflow if it's turned off
-    if arguments.noOverUnderFlow:
-        lowLimit += 1
-        uppLimit -= 1
     if integrateDir is "left":
         for i in range(lowLimit, nbins+1):
             integral += hist.GetBinContent(i)
             error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
             hist.SetBinContent(i, integral)
             hist.SetBinError  (i, error)
-        if not arguments.noOverUnderFlow:
             # Then include overflow bin in the last bin
             hist.SetBinContent(nbins, hist.GetBinContent(nbins) + hist.GetBinContent(nbins+1))
             hist.SetBinError  (nbins, math.sqrt(hist.GetBinError(nbins)*hist.GetBinError(nbins) + hist.GetBinError(nbins+1)*hist.GetBinError(nbins+1)))
@@ -340,7 +336,6 @@ def MakeIntegralHist(hist, integrateDir):
             error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
             hist.SetBinContent(i, integral)
             hist.SetBinError  (i, error)
-        if not arguments.noOverUnderFlow:
             # Then include underflow bin in the first bin
             hist.SetBinContent(1, hist.GetBinContent(1) + hist.GetBinContent(0))
             hist.SetBinError  (1, math.sqrt(hist.GetBinError(1)*hist.GetBinError(1) + hist.GetBinError(0)*hist.GetBinError(0)))
@@ -1707,4 +1702,3 @@ for key in inputFile.GetListOfKeys():
 
 outputFile.Close()
 print "Finished writing plots to", str(outputDir + "/" + outputFileName)
-
