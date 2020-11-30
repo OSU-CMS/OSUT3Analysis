@@ -46,6 +46,10 @@ parser.add_option("-g", "--generic", action="store_true", dest="generic", defaul
                   help="generic root file directory structure; does not assume that channel dir is in OSUAnalysis dir")
 parser.add_option("-s", "--signif", action="store_true", dest="makeSignificancePlots", default=False,
                                     help="Make significance plots")
+parser.add_option("--NO", "--noOverFlow", action="store_true", dest="noOverFlow", default=False,
+                  help="Do not add the overflow entries to the last bin")
+parser.add_option("--NU", "--noUnderFlow", action="store_true", dest="noUnderFlow", default=False,
+                  help="Do not add the underflow entries to the first bin")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                   help="verbose output")
 
@@ -57,6 +61,8 @@ if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 
+noOverFlow = arguments.noOverFlow
+noUnderFlow = arguments.noUnderFlow
 
 
 #### deal with conflicting arguments
@@ -200,8 +206,11 @@ def MakeIntegralHist(hist, integrateDir):
     integral = 0
     error = 0
     nbins = hist.GetNbinsX()
+    # always include underflow and overflow
+    lowLimit = 0 # underflow bin
+    uppLimit = nbins+1 # overflow bin
     if integrateDir is "left":
-        for i in range(0,nbins+1):  # start with underflow bin
+        for i in range(lowLimit,nbins+1):  # start with underflow bin
             integral += hist.GetBinContent(i)
             error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
             hist.SetBinContent(i, integral)
@@ -210,7 +219,7 @@ def MakeIntegralHist(hist, integrateDir):
             hist.SetBinContent(nbins, hist.GetBinContent(nbins) + hist.GetBinContent(nbins+1))
             hist.SetBinError  (nbins, math.sqrt(hist.GetBinError(nbins)*hist.GetBinError(nbins) + hist.GetBinError(nbins+1)*hist.GetBinError(nbins+1)))
     elif integrateDir is "right":
-        for i in xrange(nbins+1, 0, -1):  # start with overflow bin
+        for i in xrange(uppLimit, 0, -1):  # start with overflow bin
             integral += hist.GetBinContent(i)
             error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
             hist.SetBinContent(i, integral)
@@ -343,6 +352,14 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
             if integrateDir is "right":
                 yAxisLabel = unit + ", " + xAxisLabelVar + "> x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
 
+
+        nbins = Histogram.GetNbinsX()
+        if not noOverFlow:
+            Histogram.SetBinContent(nbins, Histogram.GetBinContent(nbins) + Histogram.GetBinContent(nbins+1)) # Add overflow
+            Histogram.SetBinError(nbins, math.sqrt(math.pow(Histogram.GetBinError(nbins),2) + math.pow(Histogram.GetBinError(nbins+1),2))) # Set the errors to be the sum in quadrature
+        if not noUnderFlow:
+            Histogram.SetBinContent(1, Histogram.GetBinContent(1) + Histogram.GetBinContent(0)) # Add underflow
+            Histogram.SetBinError(1, math.sqrt(math.pow(Histogram.GetBinError(1), 2) + math.pow(Histogram.GetBinError(0), 2))) # Set the errors to be the sum in quadrature
 
         if not arguments.makeFancy and not arguments.generic:
             fullTitle = Histogram.GetTitle()
