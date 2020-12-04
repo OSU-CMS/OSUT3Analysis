@@ -9105,11 +9105,11 @@ for index, sample in enumerate(signal_datasets):
 
     # source and destination CTau are in cm, while lifetime(sample) is in mm
     # LifetimeWeightProducer expects cm to cm
-    sourceCTau = 0.1 * 10**(math.ceil(math.log10(float(lifetime(sample)))))
+    sourceCTau = round(0.1 * 10**(math.ceil(math.log10(float(lifetime(sample))))), 5)
     # special case
-    if float(lifetime(sample)) <= 0.01: sourceCTau = 0.1 * 0.1
+    if float(lifetime(sample)) <= 0.01: sourceCTau = 0.01
     if float(lifetime(sample)) > 1000.: sourceCTau = 100.0
-    destinationCTau = 0.1 * float(lifetime(sample))
+    destinationCTau = round(0.1 * float(lifetime(sample)), 5)
 
     # set the default reweighting rules
     rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [destinationCTau], True)]
@@ -9117,11 +9117,11 @@ for index, sample in enumerate(signal_datasets):
     # set the non-default reweighting rules too
     # thus, for a reweighted (i.e. non-generated) sample, there is one rule and it is the default
     # but for the generated samples, there are many rules and only one is default
-    destinationCTaus = [float(0.1 * i * sourceCTau) for i in range(2, 11)]
+    destinationCTaus = [round(float(0.1 * i * sourceCTau), 5) for i in range(2, 11)]
     if sourceCTau == 0.01:
-        destinationCTaus.extend([0.001])
-    if sourceCTau == 100:
-        destinationCTaus.extend([float(1 * i * sourceCTau) for i in range(2, 11)])
+      destinationCTaus.append(float(0.001))
+    elif sourceCTau == 100:
+      destinationCTaus.extend([float(1 * i * sourceCTau) for i in range(2, 11)])
     if destinationCTau == sourceCTau:
       rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
 
