@@ -2,12 +2,18 @@
 #include <unordered_set>
 #include <sstream>
 
+#include <iostream>
+
 #include "OSUT3Analysis/AnaTools/plugins/LifetimeWeightProducer.h"
+
+
 
 LifetimeWeightProducer::LifetimeWeightProducer(const edm::ParameterSet &cfg) :
   EventVariableProducer   (cfg),
   reweightingRules_       (cfg.getParameter<edm::VParameterSet> ("reweightingRules")),
-  requireLastNotFirstCopy_(cfg.getParameter<bool> ("requireLastNotFirstCopy"))
+  requireLastNotFirstCopy_(cfg.getParameter<bool> ("requireLastNotFirstCopy")),
+  requireLastAndFirstCopy_(cfg.getParameter<bool> ("requireLastAndFirstCopy")),
+  specialRHadronsForDispLeptons_(cfg.getParameter<bool> ("specialRHadronsForDispLeptons"))
 {
   mcparticlesToken_ = consumes<vector<TYPE(hardInteractionMcparticles)> >(collections_.getParameter<edm::InputTag>("hardInteractionMcparticles"));
 
@@ -27,14 +33,13 @@ LifetimeWeightProducer::LifetimeWeightProducer(const edm::ParameterSet &cfg) :
 
     suffix.str("");
     for(unsigned int iPdgId = 0; iPdgId < pdgIds_.back().size(); iPdgId++) {
-      suffix << "_" << pdgIds_.back()[iPdgId] << "_"
-             << srcCTau_.back()[iPdgId] << "cmTo";
-      if(dstCTau_.back()[iPdgId] < 1.0) {
-        suffix << "0p" << dstCTau_.back()[iPdgId] * 10 << "cm";
-      }
-      else {
-        suffix<< dstCTau_.back()[iPdgId] << "cm";
-      }
+      suffix << "_" << pdgIds_.back()[iPdgId]
+             << "_" << srcCTau_.back()[iPdgId]
+             << "cmTo" << dstCTau_.back()[iPdgId]
+             << "cm";
+      string suffix_s = suffix.str();
+      replace(suffix_s.begin(), suffix_s.end(), '.', 'p');
+      suffix.str(suffix_s);
     }
 
     weights_.push_back(1.0);
@@ -85,16 +90,29 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event, const edm::EventSe
       // for ISR recoil in later steps. So only the last copy is desired. A particle that's both
       // a last and first copy means it is a decay product created after the boost is applied,
       // e.g. a neutralino from a chargino decay, and we've already added the mother chargino.
-      if(requireLastNotFirstCopy_) {
+      // For the Displaced SUSY sample, the final stops that we want (with some lifetime) are both last and first copies:
+      // they are stops that appear AFTER the stop r-hadrons in the chain.
+      if(requireLastNotFirstCopy_) { //require last, but not first copy (for disappearing tracks)
         if(!mcparticle.isLastCopy()) continue;
-        if(mcparticle.statusFlags().isFirstCopy()) continue;
+	 if(mcparticle.statusFlags().isFirstCopy()) continue;
+      }
+      else if(requireLastAndFirstCopy_) { //require last AND first copy (for Displaced SUSY)
+        if(!mcparticle.isLastCopy()) continue;
+	 if(!(mcparticle.statusFlags().isFirstCopy())) continue;
       }
 
       double cTau;
       for(unsigned int iPdgId = 0; iPdgId < pdgIds_[iRule].size(); iPdgId++) {
+
         if(abs(mcparticle.pdgId()) == abs(pdgIds_[iRule][iPdgId]) &&
-           (requireLastNotFirstCopy_ || isOriginalParticle(mcparticle, mcparticle.pdgId())) &&
-           (cTau = getCTau(mcparticle)) > 0.0) {
+           (requireLastNotFirstCopy_ || requireLastAndFirstCopy_ || isOriginalParticle(mcparticle, mcparticle.pdgId())) &&
+	    (cTau = getCTau(mcparticle)) > 0.0) {
+
+	  //cout << "Actually using a particle!" << endl;
+	  //cout << "\tpdgId = " << mcparticle.pdgId() << endl;
+	  //cout << "\tmother id = " << mcparticle.motherRef()->pdgId() << endl;
+	  //cout << "\tcTau = " << cTau << endl;
+
           cTaus[iPdgId].push_back(cTau);
           TVector3 x(mcparticle.vx(), mcparticle.vy(), mcparticle.vz());
           TVector3 y = getEndVertex(mcparticle);
@@ -148,6 +166,7 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event, const edm::EventSe
   // Save the weights
   for(unsigned int iRule = 0; iRule < weights_.size(); iRule++) {
     (*eventvariables)[weightNames_[iRule]] = weights_[iRule];
+    //cout << "Saving weight named: " << weightNames_[iRule] << endl;
     if(isDefaultRule_[iRule]) {
       (*eventvariables)["lifetimeWeight"] = weights_[iRule];
     }
@@ -170,10 +189,20 @@ LifetimeWeightProducer::getCTau(const TYPE(hardInteractionMcparticles) &mcpartic
 {
 #ifndef STOPPPED_PTLS
   math::XYZPoint v0 = mcparticle.vertex();
-  math::XYZPoint v1;
+  math::XYZPoint v1 = v0;
   double boost = 1.0 /(mcparticle.p4().Beta() * mcparticle.p4().Gamma());
 
-  getFinalPosition(mcparticle, mcparticle.pdgId(), true, v1);
+  //for Displaced SUSY, find v1 when particle mother has a different pdgid
+  if(specialRHadronsForDispLeptons_ && !mcparticle.motherRef().isNull()) {
+    if(mcparticle.pdgId() != mcparticle.motherRef()->pdgId()) {
+      v1 = mcparticle.motherRef()->vertex();
+    }
+  }
+  else {
+    getFinalPosition(mcparticle, mcparticle.pdgId(), true, v1);
+  }
+
+  //cout<<"v0 is: "<<v0<<", v1 is: "<<v1<<endl;
   return((v1 - v0).r() * boost);
 #else
   return 0.0;
