@@ -9003,6 +9003,7 @@ InputCondorArguments = {}
 #     lifetimeWeight_1000024_100cmTo20cm
 # and you can choose which to apply as an event weight when addChannel is called.
 # This way one dataset, with many rules, can simultaneously give you many datasets.
+# Notice that LifetimeWeightProducer expects cm to cm.
 #
 # There is also the list of booleans isDefaultRule, where if isDefaultRule[iRule]
 # is True, then rule iRule will also be stored in eventvariables as "lifetimeWeight"
@@ -9054,14 +9055,14 @@ def lifetime(sample):
     lt = sample[start:end]
     return lt.replace("p",".")
 
-# generate list of masses
+# generate list of masses in GeV
 masses = [str(i*100) for i in range(1, 19)]
-# generate list of lifetimes
+# generate list of lifetimes in mm
 lifetimes = ["%g" % (0.01*i*(pow(10, j))) for j in range(6) for i in range(1, 10)]
 lifetimes.append("10000")
 lifetimes = [lt.replace(".", "p") for lt in lifetimes]
 
-# generate list of sample names from masses, lifetimes
+# generate list of sample names from masses, lifetimes (mm)
 signal_datasets = ["stopToLB%s_%smm" % (m,ctau) for m in masses for ctau in lifetimes]
 signal_datasets.extend(["stopToLD%s_%smm" % (m,ctau) for m in masses for ctau in lifetimes])
 
@@ -9102,13 +9103,27 @@ for index, sample in enumerate(signal_datasets):
     colors[sample] = 20 + index
     crossSections[sample] = signal_crossSections[mass(sample)]
 
+    # source and destination CTau are in cm, while lifetime(sample) is in mm
+    # LifetimeWeightProducer expects cm to cm
     sourceCTau = 0.1 * 10**(math.ceil(math.log10(float(lifetime(sample)))))
     # special case
     if float(lifetime(sample)) <= 0.01: sourceCTau = 0.1 * 0.1
     if float(lifetime(sample)) > 1000.: sourceCTau = 100.0
     destinationCTau = 0.1 * float(lifetime(sample))
 
+    # set the default reweighting rules
     rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [destinationCTau], True)]
+
+    # set the non-default reweighting rules too
+    # thus, for a reweighted (i.e. non-generated) sample, there is one rule and it is the default
+    # but for the generated samples, there are many rules and only one is default
+    destinationCTaus = [float(0.1 * i * sourceCTau) for i in range(2, 11)]
+    if sourceCTau == 0.01:
+        destinationCTaus.extend([0.001])
+    if sourceCTau == 100:
+        destinationCTaus.extend([float(1 * i * sourceCTau) for i in range(2, 11)])
+    if destinationCTau == sourceCTau:
+      rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
 
 ################################################################################
 ### code to set relevant parameters for disappearing tracks signal samples,  ###
