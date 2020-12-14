@@ -262,6 +262,7 @@ def add_channels (process,
         'binsX', 'binsY', 'binsZ',
         'indexX', 'indexY', 'indexZ',
         'inputVariables',
+        'weight',
     ]
 
     # find all cuts with invalid attributes
