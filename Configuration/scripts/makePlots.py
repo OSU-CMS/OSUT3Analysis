@@ -198,6 +198,7 @@ dir_y_bottom = 0.0
 dir_x_right  = ts_x_right
 dir_y_top    = ts_y_bottom
 
+###############################################
 noOverFlow = arguments.noOverFlow
 if arguments.paperConfig:
     if 'noOverFlow' in paperHistogram:
@@ -208,6 +209,10 @@ if arguments.paperConfig:
     if 'noUnderFlow' in paperHistogram:
         noUnderFlow = paperHistogram['noUnderFlow']
 ###############################################
+if not noOverFlow:
+    print "Adding overflow to last bins, in 1D and 2D histograms"
+if not noUnderFlow:
+    print "Adding underflow to last bins, in 1D and 2D histograms"
 
 
 ##########################################################################################################################################
