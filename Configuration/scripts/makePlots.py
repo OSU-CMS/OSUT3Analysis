@@ -198,6 +198,22 @@ dir_y_bottom = 0.0
 dir_x_right  = ts_x_right
 dir_y_top    = ts_y_bottom
 
+###############################################
+noOverFlow = arguments.noOverFlow
+if arguments.paperConfig:
+    if 'noOverFlow' in paperHistogram:
+        noOverFlow = paperHistogram['noOverFlow']
+###############################################
+noUnderFlow = arguments.noUnderFlow
+if arguments.paperConfig:
+    if 'noUnderFlow' in paperHistogram:
+        noUnderFlow = paperHistogram['noUnderFlow']
+###############################################
+if not noOverFlow:
+    print "Adding overflow to last bins, in 1D and 2D histograms"
+if not noUnderFlow:
+    print "Adding underflow to last bins, in 1D and 2D histograms"
+
 
 ##########################################################################################################################################
 
@@ -473,16 +489,6 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     if arguments.paperConfig:
         if 'includeSystematics' in paperHistogram:
             includeSystematics = paperHistogram['includeSystematics']
-    ###############################################
-    noOverFlow = arguments.noOverFlow
-    if arguments.paperConfig:
-        if 'noOverFlow' in paperHistogram:
-            noOverFlow = paperHistogram['noOverFlow']
-    ###############################################
-    noUnderFlow = arguments.noUnderFlow
-    if arguments.paperConfig:
-        if 'noUnderFlow' in paperHistogram:
-            noUnderFlow = paperHistogram['noUnderFlow']
     ###############################################
     sortOrderByYields = arguments.sortOrderByYields
     if arguments.paperConfig:
@@ -1392,6 +1398,23 @@ def MakeTwoDHist(pathToDir,histogramName):
         else:
             histoTitle = ""
 
+        nbinsX = Histogram.GetNbinsX()
+        nbinsY = Histogram.GetNbinsY()
+        if not noOverFlow:
+            Histogram.SetBinContent(nbinsX, 1, Histogram.GetBinContent(nbinsX, 1) + Histogram.GetBinContent(nbinsX+1, 1)) # Add overflow to (last x bin, first y bin)
+            Histogram.SetBinError(nbinsX, 1, math.sqrt(math.pow(Histogram.GetBinError(nbinsX, 1),2) + math.pow(Histogram.GetBinError(nbinsX+1, 1),2))) # Set the errors to be the sum in quadrature
+            Histogram.SetBinContent(1, nbinsY, Histogram.GetBinContent(1, nbinsY) + Histogram.GetBinContent(1, nbinsY+1)) # Add overflow to (first x bin, last y bin)
+            Histogram.SetBinError(1, nbinsY, math.sqrt(math.pow(Histogram.GetBinError(1, nbinsY),2) + math.pow(Histogram.GetBinError(1, nbinsY+1),2))) # Set the errors to be the sum in quadrature
+            Histogram.SetBinContent(nbinsX, nbinsY, Histogram.GetBinContent(nbinsX, nbinsY) + Histogram.GetBinContent(nbinsX+1, nbinsY+1)) # Add overflow to (last x bin, last y bin)
+            Histogram.SetBinError(nbinsX, nbinsY, math.sqrt(math.pow(Histogram.GetBinError(nbinsX, nbinsY),2) + math.pow(Histogram.GetBinError(nbinsX+1, nbinsY+1),2))) # Set the errors to be the sum in quadrature
+        if not noUnderFlow:
+            Histogram.SetBinContent(1, 1, Histogram.GetBinContent(1, 1) + Histogram.GetBinContent(0, 0)) # Add underflow to (first x bin, first y bin)
+            Histogram.SetBinError(1, 1, math.sqrt(math.pow(Histogram.GetBinError(1, 1), 2) + math.pow(Histogram.GetBinError(0, 1), 2))) # Set the errors to be the sum in quadrature
+            Histogram.SetBinContent(1, nbinsY, Histogram.GetBinContent(1, nbinsY) + Histogram.GetBinContent(0, nbinsY)) # Add underflow to (first x bin, last y bin)
+            Histogram.SetBinError(1, nbinsY, math.sqrt(math.pow(Histogram.GetBinError(1, nbinsY), 2) + math.pow(Histogram.GetBinError(0, nbinsY), 2))) # Set the errors to be the sum in quadrature
+            Histogram.SetBinContent(nbinsX, 1, Histogram.GetBinContent(nbinsX, 1) + Histogram.GetBinContent(nbinsX, 0)) # Add underflow to (first x bin, last y bin)
+            Histogram.SetBinError(nbinsX, 1, math.sqrt(math.pow(Histogram.GetBinError(nbinsX, 1), 2) + math.pow(Histogram.GetBinError(nbinsX, 0), 2))) # Set the errors to be the sum in quadrature
+
         if( types[sample] == "bgMC"):
 
             numBgMCSamples += 1
@@ -1437,6 +1460,11 @@ def MakeTwoDHist(pathToDir,histogramName):
             SignalMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
             SignalMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
             SignalMCHistograms[0].Draw("colz")
+        elif(numBgMCSamples is not 0):
+            BgMCHistograms[0].SetTitle(histoTitle)
+            BgMCHistograms[0].GetXaxis().SetTitle(xAxisLabel)
+            BgMCHistograms[0].GetYaxis().SetTitle(yAxisLabel)
+            BgMCHistograms[0].Draw("colz")
 
     else:
         if(numBgMCSamples is not 0):
