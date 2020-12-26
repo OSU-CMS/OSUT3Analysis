@@ -9125,6 +9125,94 @@ for index, sample in enumerate(signal_datasets):
     if destinationCTau == sourceCTau:
       rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000006], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
 
+###################################################################################
+### code to set relevant parameters for displaced leptons HToSS signal samples, ###
+### which are a scan in the plane of H mass, S mass, and S lifetime             ###
+###################################################################################
+
+def massH(sample):
+    start = sample.find("HToSSTo4L")+9
+    end = sample.find("_") #finds first occurance of "_"
+    return sample[start:end]
+
+def massS(sample):
+    start = sample.find("_")+1
+    end = sample.find("_",14,20) #finds occurance of "_" in between 14th and 20th positions
+    return sample[start:end]
+
+def lifetimeS(sample):
+    start = sample.find("_",14,20)+1
+    end = sample.find("mm")
+    lt = sample[start:end]
+    return lt.replace("p",".")
+
+# generate list of masses in GeV
+massesH = ["110","125","150","200","300","400","450","500","600","750","800","900","1000"]
+massesS = ["10","20","30","50"] #minimum list of S masses that exist for every H mass
+
+# generate full list of lifetimes (generated+reweighted) in mm
+lifetimesS = ["%g" % (0.1*i*(pow(10, j))) for j in range(7) for i in range(1, 10)]
+lifetimesS.append("1000000")
+lifetimesS = [lt.replace(".", "p") for lt in lifetimesS]
+
+# generate list of sample names from masses, lifetimes (mm)
+signal_datasetsH = ["HToSSTo4L%s_%s_%smm" % (mH,mS,ctau) for mH in massesH for mS in massesS for ctau in lifetimesS]
+# add 150 GeV S mass for mH>=300 GeV, add 350 GeV S mass for mH>=750 GeV
+for mH in massesH:
+  if int(mH)>=300:
+    for ctau in lifetimesS:
+      signal_datasetsH.append("HToSSTo4L"+mH+"_150_"+ctau+"mm")
+  if int(mH)>=750:
+    for ctau in lifetimesS:
+      signal_datasetsH.append("HToSSTo4L"+mH+"_350_"+ctau+"mm")
+
+datasets.extend(signal_datasetsH)
+composite_dataset_definitions['HToSSSignal'] = signal_datasetsH
+
+#FIXME: dummy values for the moment
+signal_crossSectionsH = {
+    '110'  : 1521.11,
+    '125'  : 1521.11,
+    '150'  : 249.409,
+    '200'  : 64.5085,
+    '300'  : 8.51615,
+    '400'  : 1.83537,
+    '450'  : 1.83537,
+    '500'  : 0.51848,
+    '600'  : 0.174599,
+    '750'  : 0.0670476,
+    '800'  : 0.0283338,
+    '900'  : 0.0128895,
+    '1000' : 0.00615134,
+}
+
+for index, sample in enumerate(signal_datasetsH):
+    nJobs[sample] = 99
+    maxEvents[sample] = -1
+    types[sample] = 'signalMC'
+    labels[sample] = "H#rightarrow SS#rightarrow 4l, M_{H}=%s GeV, M_{S}=%s GeV, c#tau_{S}=%s mm" % (massH(sample), massS(sample), lifetimeS(sample))
+    colors[sample] = 20 + index
+    crossSections[sample] = signal_crossSectionsH[massH(sample)]
+
+    # source and destination CTau are in cm, while lifetime(sample) is in mm
+    # LifetimeWeightProducer expects cm to cm
+    sourceCTau = round(0.1 * 10**(math.ceil(math.log10(float(lifetimeS(sample))))),5)
+    # special case
+    if float(lifetimeS(sample)) <= 0.1: sourceCTau = 0.1
+    destinationCTau = round(0.1 * float(lifetimeS(sample)),5)
+
+    # set the default reweighting rules
+    rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([9000006], [sourceCTau], [destinationCTau], True)]
+
+    # set the non-default reweighting rules too
+    # thus, for a reweighted (i.e. non-generated) sample, there is one rule and it is the default
+    # but for the generated samples, there are many rules and only one is default
+    destinationCTaus = [round(float(0.1 * i * sourceCTau), 5) for i in range(2, 11)]
+    if sourceCTau == 0.1:
+      destinationCTaus.append(float(0.01))
+    if destinationCTau == sourceCTau:
+      rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([9000006], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
+
 ################################################################################
 ### code to set relevant parameters for disappearing tracks signal samples,  ###
 ### which are a scan in the plane of chargino mass and lifetime              ###
