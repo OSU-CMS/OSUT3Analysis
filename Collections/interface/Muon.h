@@ -60,6 +60,9 @@ namespace osu
         const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
 
+        const bool hasValidHitInPixelLayer(const uint16_t layer) const;
+        const int layerOfFirstValidPixelHit () const;
+
         const double metMinusOnePt () const;
         const double metMinusOnePx () const;
         const double metMinusOnePy () const;

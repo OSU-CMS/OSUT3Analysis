@@ -17,7 +17,7 @@ namespace osu
         Electron (const TYPE(electrons) &, const edm::Handle<vector<osu::Mcparticle> > &);
         Electron (const TYPE(electrons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &);
         Electron (const TYPE(electrons) &, const edm::Handle<vector<osu::Mcparticle> > &, const edm::ParameterSet &, const osu::Met &);
-        
+
         const float rho() const;
         const float AEff () const;
         const double pfdRhoIsoCorr () const;
@@ -38,6 +38,9 @@ namespace osu
         const int missingInnerHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
+
+	const bool hasValidHitInPixelLayer(const uint16_t layer) const;
+	const int layerOfFirstValidPixelHit () const;
 
         const bool passesTightID_noIsolation_LegacySpring15 () const;
 
