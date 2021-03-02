@@ -5,9 +5,13 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
-
 #include "OSUT3Analysis/Collections/interface/Photon.h"
+
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(11,2,0)
+#include "CommonTools/Egamma/interface/EffectiveAreas.h"
+#else
+#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
+#endif
 
 class OSUPhotonProducer : public edm::EDProducer
 {

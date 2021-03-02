@@ -1,7 +1,12 @@
 #include "TVector2.h"
 
 #include "OSUT3Analysis/Collections/interface/Electron.h"
+
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(11,2,0)
+#include "CommonTools/Egamma/interface/ConversionTools.h"
+#else
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
+#endif
 
 #if IS_VALID(electrons)
 
