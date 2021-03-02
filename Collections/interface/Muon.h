@@ -60,7 +60,17 @@ namespace osu
         const int missingMiddleHitsFromTrackerLayersWithoutMeasurements () const;
         const int missingOuterHitsFromTrackerLayersWithoutMeasurements () const;
 
-        const bool hasValidHitInPixelLayer(const uint16_t layer) const;
+        const bool hasValidHitInPixelBarrelLayer(const uint16_t layer) const;
+        const bool hasValidHitInPixelBarrelLayer1() const { return hasValidHitInPixelBarrelLayer(1); };
+        const bool hasValidHitInPixelBarrelLayer2() const { return hasValidHitInPixelBarrelLayer(2); };
+        const bool hasValidHitInPixelBarrelLayer3() const { return hasValidHitInPixelBarrelLayer(3); };
+        const bool hasValidHitInPixelBarrelLayer4() const { return hasValidHitInPixelBarrelLayer(4); };
+
+        const bool hasValidHitInPixelEndcapLayer(const uint16_t layer) const;
+        const bool hasValidHitInPixelEndcapLayer1() const { return hasValidHitInPixelEndcapLayer(1); };
+        const bool hasValidHitInPixelEndcapLayer2() const { return hasValidHitInPixelEndcapLayer(2); };
+        const bool hasValidHitInPixelEndcapLayer3() const { return hasValidHitInPixelEndcapLayer(3); };
+
         const int layerOfFirstValidPixelHit () const;
 
         const double metMinusOnePt () const;
