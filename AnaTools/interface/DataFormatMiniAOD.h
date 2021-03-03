@@ -29,15 +29,14 @@
 #define  prescales_TYPE         pat::PackedTriggerPrescales
 #define  generatorweights_TYPE  GenEventInfoProduct
 
-#define  bxlumis_INVALID
-#define  events_INVALID
-#define  tracks_INVALID
-#define  secondaryTracks_INVALID
-
-#define  cschits_INVALID
-#define  cscsegs_INVALID
-#define  dtsegs_INVALID
-#define  rpchits_INVALID
+#define  bxlumis_INVALID         1
+#define  events_INVALID          1
+#define  tracks_INVALID          1
+#define  secondaryTracks_INVALID 1
+#define  cschits_INVALID         1
+#define  cscsegs_INVALID         1
+#define  dtsegs_INVALID          1
+#define  rpchits_INVALID         1
 
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 #include "DataFormats/Common/interface/TriggerResults.h"

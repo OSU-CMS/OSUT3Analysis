@@ -1,7 +1,12 @@
 #include "TVector2.h"
 
 #include "OSUT3Analysis/Collections/interface/Electron.h"
+
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(11,2,0)
+#include "CommonTools/Egamma/interface/ConversionTools.h"
+#else
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
+#endif
 
 #if IS_VALID(electrons)
 
@@ -232,6 +237,62 @@ const int
 osu::Electron::missingOuterHitsFromTrackerLayersWithoutMeasurements () const
 {
   return (this->gsfTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
+}
+
+const bool
+osu::Electron::hasValidHitInPixelBarrelLayer (const uint16_t layer) const
+{
+
+  const reco::HitPattern &p = this->gsfTrack()->hitPattern();
+
+  // Loop over TRACK_HITS
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  for (int i = 0; i < p.numberOfAllHits(reco::HitPattern::TRACK_HITS); i++) {
+#else
+  for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
+#endif
+    uint16_t hit = p.getHitPattern(reco::HitPattern::TRACK_HITS, i);
+    if(reco::HitPattern::pixelBarrelHitFilter(hit) &&
+       reco::HitPattern::getLayer(hit) == layer &&
+       reco::HitPattern::validHitFilter(hit)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+const bool
+osu::Electron::hasValidHitInPixelEndcapLayer (const uint16_t layer) const
+{
+
+  const reco::HitPattern &p = this->gsfTrack()->hitPattern();
+
+  // Loop over TRACK_HITS
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  for (int i = 0; i < p.numberOfAllHits(reco::HitPattern::TRACK_HITS); i++) {
+#else
+  for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
+#endif
+    uint16_t hit = p.getHitPattern(reco::HitPattern::TRACK_HITS, i);
+    if(reco::HitPattern::pixelEndcapHitFilter(hit) &&
+       reco::HitPattern::getLayer(hit) == layer &&
+       reco::HitPattern::validHitFilter(hit)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+const int
+osu::Electron::layerOfFirstValidPixelHit () const
+{
+  if(hasValidHitInPixelBarrelLayer1() || hasValidHitInPixelEndcapLayer1()) return 1;
+  else if(hasValidHitInPixelBarrelLayer2() || hasValidHitInPixelEndcapLayer2()) return 2;
+  else if(hasValidHitInPixelBarrelLayer3() || hasValidHitInPixelEndcapLayer3()) return 3;
+  else if(hasValidHitInPixelBarrelLayer4()) return 4;
+  else return 0;
 }
 
 const float

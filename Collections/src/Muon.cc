@@ -227,6 +227,62 @@ osu::Muon::missingOuterHitsFromTrackerLayersWithoutMeasurements () const
   return (this->innerTrack ()->hitPattern ().trackerLayersWithoutMeasurement (reco::HitPattern::MISSING_OUTER_HITS));
 }
 
+const bool
+osu::Muon::hasValidHitInPixelBarrelLayer (const uint16_t layer) const
+{
+
+  const reco::HitPattern &p = this->innerTrack()->hitPattern();
+
+  // Loop over TRACK_HITS
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  for (int i = 0; i < p.numberOfAllHits(reco::HitPattern::TRACK_HITS); i++) {
+#else
+  for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
+#endif
+    uint16_t hit = p.getHitPattern(reco::HitPattern::TRACK_HITS, i);
+    if(reco::HitPattern::pixelBarrelHitFilter(hit) &&
+       reco::HitPattern::getLayer(hit) == layer &&
+       reco::HitPattern::validHitFilter(hit)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+const bool
+osu::Muon::hasValidHitInPixelEndcapLayer (const uint16_t layer) const
+{
+
+  const reco::HitPattern &p = this->innerTrack()->hitPattern();
+
+  // Loop over TRACK_HITS
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(9,4,0)
+  for (int i = 0; i < p.numberOfAllHits(reco::HitPattern::TRACK_HITS); i++) {
+#else
+  for (int i = 0; i < p.numberOfHits(reco::HitPattern::TRACK_HITS); i++) {
+#endif
+    uint16_t hit = p.getHitPattern(reco::HitPattern::TRACK_HITS, i);
+    if(reco::HitPattern::pixelEndcapHitFilter(hit) &&
+       reco::HitPattern::getLayer(hit) == layer &&
+       reco::HitPattern::validHitFilter(hit)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+const int
+osu::Muon::layerOfFirstValidPixelHit () const
+{
+  if(hasValidHitInPixelBarrelLayer1() || hasValidHitInPixelEndcapLayer1()) return 1;
+  else if(hasValidHitInPixelBarrelLayer2() || hasValidHitInPixelEndcapLayer2()) return 2;
+  else if(hasValidHitInPixelBarrelLayer3() || hasValidHitInPixelEndcapLayer3()) return 3;
+  else if(hasValidHitInPixelBarrelLayer4()) return 4;
+  else return 0;
+}
+
 const double
 osu::Muon::metMinusOnePt () const
 {
