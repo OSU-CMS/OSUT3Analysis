@@ -1295,12 +1295,6 @@ def MakeTwoDHist(pathToDir,histogramName):
         LumiLabel.SetTextAlign(32)
         LumiLabel.SetTextFont(42)
 
-        if makeRatioPlots:
-            ts_y_bottom  = 0.96
-            ts_y_top     = 1.0
-            dir_y_top    = ts_y_bottom
-            dir_y_bottom = 0.92
-
         TimeLabel = TPaveLabel(ts_x_left,ts_y_bottom,ts_x_right, ts_y_top,TimeText,"NDC")
         TimeLabel.SetTextAlign(12)  # 12 = 10 (left-justify horizontal) + 2 (center-justify vertical)
         TimeLabel.SetTextSize(0.55)
