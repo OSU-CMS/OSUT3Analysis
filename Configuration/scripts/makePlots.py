@@ -212,7 +212,7 @@ if arguments.paperConfig:
 if not noOverFlow:
     print "Adding overflow to last bins, in 1D and 2D histograms"
 if not noUnderFlow:
-    print "Adding underflow to last bins, in 1D and 2D histograms"
+    print "Adding underflow to first bins, in 1D and 2D histograms"
 
 
 ##########################################################################################################################################
@@ -1295,11 +1295,10 @@ def MakeTwoDHist(pathToDir,histogramName):
         LumiLabel.SetTextAlign(32)
         LumiLabel.SetTextFont(42)
 
-        if makeRatioPlots:
-            ts_y_bottom  = 0.96
-            ts_y_top     = 1.0
-            dir_y_top    = ts_y_bottom
-            dir_y_bottom = 0.92
+        ts_y_bottom  = 0.96
+        ts_y_top     = 1.0
+        dir_y_top    = ts_y_bottom
+        dir_y_bottom = 0.92
 
         TimeLabel = TPaveLabel(ts_x_left,ts_y_bottom,ts_x_right, ts_y_top,TimeText,"NDC")
         TimeLabel.SetTextAlign(12)  # 12 = 10 (left-justify horizontal) + 2 (center-justify vertical)
@@ -1398,22 +1397,39 @@ def MakeTwoDHist(pathToDir,histogramName):
         else:
             histoTitle = ""
 
+
         nbinsX = Histogram.GetNbinsX()
         nbinsY = Histogram.GetNbinsY()
+
         if not noOverFlow:
-            Histogram.SetBinContent(nbinsX, 1, Histogram.GetBinContent(nbinsX, 1) + Histogram.GetBinContent(nbinsX+1, 1)) # Add overflow to (last x bin, first y bin)
-            Histogram.SetBinError(nbinsX, 1, math.sqrt(math.pow(Histogram.GetBinError(nbinsX, 1),2) + math.pow(Histogram.GetBinError(nbinsX+1, 1),2))) # Set the errors to be the sum in quadrature
-            Histogram.SetBinContent(1, nbinsY, Histogram.GetBinContent(1, nbinsY) + Histogram.GetBinContent(1, nbinsY+1)) # Add overflow to (first x bin, last y bin)
-            Histogram.SetBinError(1, nbinsY, math.sqrt(math.pow(Histogram.GetBinError(1, nbinsY),2) + math.pow(Histogram.GetBinError(1, nbinsY+1),2))) # Set the errors to be the sum in quadrature
-            Histogram.SetBinContent(nbinsX, nbinsY, Histogram.GetBinContent(nbinsX, nbinsY) + Histogram.GetBinContent(nbinsX+1, nbinsY+1)) # Add overflow to (last x bin, last y bin)
+            Histogram.SetBinContent(nbinsX, nbinsY, Histogram.GetBinContent(nbinsX, nbinsY) + Histogram.GetBinContent(nbinsX+1, nbinsY+1)) # Add (x-overflow, y-overflow) to (last x bin, last y bin)
             Histogram.SetBinError(nbinsX, nbinsY, math.sqrt(math.pow(Histogram.GetBinError(nbinsX, nbinsY),2) + math.pow(Histogram.GetBinError(nbinsX+1, nbinsY+1),2))) # Set the errors to be the sum in quadrature
+
+            Histogram.SetBinContent(nbinsX, 1, Histogram.GetBinContent(nbinsX, 1) + Histogram.GetBinContent(nbinsX+1, 0)) # Add (x-overflow, y-underflow) to (last x bin, first y bin)
+            Histogram.SetBinError(nbinsX, 1, math.sqrt(math.pow(Histogram.GetBinError(nbinsX, 1),2) + math.pow(Histogram.GetBinError(nbinsX+1, 0),2))) # Set the errors to be the sum in quadrature
+
+            for b in range(1,nbinsY+1):
+                Histogram.SetBinContent(nbinsX, b, Histogram.GetBinContent(nbinsX, b) + Histogram.GetBinContent(nbinsX+1, b)) # Add (x-overflow, y-normal) to (last x bin, normal y bin)
+                Histogram.SetBinError(nbinsX, b, math.sqrt(math.pow(Histogram.GetBinError(nbinsX, b),2) + math.pow(Histogram.GetBinError(nbinsX+1, b),2))) # Set the errors to be the sum in quadrature
+
+            for b in range(1,nbinsX+1):
+                Histogram.SetBinContent(b, nbinsY, Histogram.GetBinContent(b, nbinsY) + Histogram.GetBinContent(b, nbinsY+1)) # Add (x-normal, y-overflow) to (normal x bin, last y bin)
+                Histogram.SetBinError(b, nbinsY, math.sqrt(math.pow(Histogram.GetBinError(b, nbinsY),2) + math.pow(Histogram.GetBinError(b, nbinsY+1),2))) # Set the errors to be the sum in quadrature
+
+
         if not noUnderFlow:
-            Histogram.SetBinContent(1, 1, Histogram.GetBinContent(1, 1) + Histogram.GetBinContent(0, 0)) # Add underflow to (first x bin, first y bin)
+            Histogram.SetBinContent(1, 1, Histogram.GetBinContent(1, 1) + Histogram.GetBinContent(0, 0)) # Add (x-underflow, y-underflow) to (first x bin, first y bin)
             Histogram.SetBinError(1, 1, math.sqrt(math.pow(Histogram.GetBinError(1, 1), 2) + math.pow(Histogram.GetBinError(0, 1), 2))) # Set the errors to be the sum in quadrature
-            Histogram.SetBinContent(1, nbinsY, Histogram.GetBinContent(1, nbinsY) + Histogram.GetBinContent(0, nbinsY)) # Add underflow to (first x bin, last y bin)
-            Histogram.SetBinError(1, nbinsY, math.sqrt(math.pow(Histogram.GetBinError(1, nbinsY), 2) + math.pow(Histogram.GetBinError(0, nbinsY), 2))) # Set the errors to be the sum in quadrature
-            Histogram.SetBinContent(nbinsX, 1, Histogram.GetBinContent(nbinsX, 1) + Histogram.GetBinContent(nbinsX, 0)) # Add underflow to (first x bin, last y bin)
-            Histogram.SetBinError(nbinsX, 1, math.sqrt(math.pow(Histogram.GetBinError(nbinsX, 1), 2) + math.pow(Histogram.GetBinError(nbinsX, 0), 2))) # Set the errors to be the sum in quadrature
+
+            Histogram.SetBinContent(1, nbinsY, Histogram.GetBinContent(1, nbinsY) + Histogram.GetBinContent(0, nbinsY+1)) # Add (x-underflow, y-overflow) to (first x bin, last y bin)
+            Histogram.SetBinError(1, nbinsY, math.sqrt(math.pow(Histogram.GetBinError(1, nbinsY),2) + math.pow(Histogram.GetBinError(0, nbinsY+1),2))) # Set the errors to be the sum in quadrature
+
+            for b in range(1,nbinsY+1):
+                Histogram.SetBinContent(1, b, Histogram.GetBinContent(1, b) + Histogram.GetBinContent(0, b)) # Add (x-underflow, y-normal) to (first x bin, normal y bin)
+                Histogram.SetBinError(1, b, math.sqrt(math.pow(Histogram.GetBinError(1, b), 2) + math.pow(Histogram.GetBinError(0, b),2))) # Set the errors to be the sum in quadrature
+            for b in range(1,nbinsX+1):
+                Histogram.SetBinContent(b, 1, Histogram.GetBinContent(b, 1) + Histogram.GetBinContent(b, 0)) # Add (x-normal, y-underflow) to (normal x bin, first y bin)
+                Histogram.SetBinError(b, 1, math.sqrt(math.pow(Histogram.GetBinError(b, 1), 2) + math.pow(Histogram.GetBinError(b, 0),2))) # Set the errors to be the sum in quadrature
 
         if( types[sample] == "bgMC"):
 

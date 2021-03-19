@@ -327,7 +327,7 @@ osu::Electron::electronPVIndex () const
 const float
 osu::Electron::dEtaInSeed () const
 {
-  return this->superCluster().isNonnull() && this->superCluster()->seed().isNonnull() ?
+  return this->superCluster().isNonnull() && this->superCluster()->seed().isNonnull() ? 
     this->deltaEtaSuperClusterTrackAtVtx() - this->superCluster()->eta() + this->superCluster()->seed()->eta() : INVALID_VALUE;
 }
 
@@ -422,7 +422,7 @@ osu::Electron::set_passesTightID_noIsolation_LegacySpring15 (const reco::BeamSpo
 
 }
 
-void
+void 
 osu::Electron::set_passesVID_vetoID (const bool flag)
 {
   passesVID_vetoID_ = flag;
@@ -434,7 +434,7 @@ osu::Electron::passesVID_vetoID () const
   return passesVID_vetoID_;
 }
 
-void
+void 
 osu::Electron::set_passesVID_looseID (const bool flag)
 {
   passesVID_looseID_ = flag;
@@ -446,7 +446,7 @@ osu::Electron::passesVID_looseID () const
   return passesVID_looseID_;
 }
 
-void
+void 
 osu::Electron::set_passesVID_mediumID (const bool flag)
 {
   passesVID_mediumID_ = flag;
@@ -458,7 +458,7 @@ osu::Electron::passesVID_mediumID () const
   return passesVID_mediumID_;
 }
 
-void
+void 
 osu::Electron::set_passesVID_tightID (const bool flag)
 {
   passesVID_tightID_ = flag;

@@ -57,7 +57,7 @@ osu::Muon::Muon (const TYPE(muons) &muon, const edm::Handle<vector<osu::Mcpartic
   metNoMuMinusOnePt_       (INVALID_VALUE),
   metNoMuMinusOnePx_       (INVALID_VALUE),
   metNoMuMinusOnePy_       (INVALID_VALUE),
-  metNoMuMinusOnePhi_      (INVALID_VALUE)
+  metNoMuMinusOnePhi_      (INVALID_VALUE) 
 {
 }
 
@@ -331,7 +331,7 @@ osu::Muon::metNoMuMinusOnePhi () const
   return metNoMuMinusOnePhi_;
 }
 
-const bool
+const bool 
 osu::Muon::get_hltMatch (const string name) const
 {
   return hltMatches_.find(name)->second;
