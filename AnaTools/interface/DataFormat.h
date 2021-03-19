@@ -49,7 +49,7 @@
 
 #define XSTR(x) STR(x)
 #define STR(x) #x
-#define IS_VALID(x) !(defined (x##_INVALID))
+#define IS_VALID(x) (x##_INVALID != 1)
 #define EQ_VALID(s,x) (strcmp (XSTR(x##_TYPE), XSTR(INVALID_TYPE)) && !strcmp (s.c_str (), XSTR(x)))
 
 #define TYPE(x) x##_TYPE

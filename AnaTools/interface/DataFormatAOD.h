@@ -29,18 +29,17 @@
 #define  prescales_TYPE       INVALID_TYPE
 #define  generatorweights_TYPE  GenEventInfoProduct
 
-#define  bxlumis_INVALID
-#define  events_INVALID
-#define  genjets_INVALID
-#define  prescales_INVALID
-#define  superclusters_INVALID
-#define  trigobjs_INVALID
-#define  bjets_INVALID
-
-#define  cschits_INVALID
-#define  cscsegs_INVALID
-#define  dtsegs_INVALID
-#define  rpchits_INVALID
+#define  bxlumis_INVALID       1
+#define  events_INVALID        1
+#define  genjets_INVALID       1
+#define  prescales_INVALID     1
+#define  superclusters_INVALID 1
+#define  trigobjs_INVALID      1
+#define  bjets_INVALID         1
+#define  cschits_INVALID       1
+#define  cscsegs_INVALID       1
+#define  dtsegs_INVALID        1
+#define  rpchits_INVALID       1
 
 
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
