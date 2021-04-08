@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 use strict;
-use Mysql;
+use DBI;
 use Getopt::Long;
 use File::Copy;
 use Term::ANSIColor;
@@ -20,8 +20,9 @@ sub uploadConfig;
 sub locationExists;
 sub getLocation;
 sub mergeDatasets;
+sub printDatasetInfo;
 
-our $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or die "Failed to connect to Tier 3, stopped";
+our $db = DBI->connect ("DBI:mysql:ntuple:cmshead.mps.ohio-state.edu", "osuT3User") or die "Failed to connect to the Tier 3, stopped";
 
 my %opt;
 Getopt::Long::Configure ("bundling");
@@ -31,7 +32,7 @@ my $argc = @ARGV;
 printHelp ($ARGV[0]) if $opt{"help"};
 printHelp () if $argc != 2 && $ARGV[0] ne "createOther" && $ARGV[0] ne "merge";
 printHelp () if $argc != 3 && $ARGV[0] eq "merge";
-printHelp () if $ARGV[0] ne "create" && $ARGV[0] ne "createOther" && $ARGV[0] ne "update" && $ARGV[0] ne "finish" && $ARGV[0] ne "deprecate" && $ARGV[0] ne "uploadRelease" && $ARGV[0] ne "downloadRelease" && $ARGV[0] ne "deleteEntry" && $ARGV[0] ne "uploadConfig" && $ARGV[0] ne "merge";
+printHelp () if $ARGV[0] ne "create" && $ARGV[0] ne "createOther" && $ARGV[0] ne "update" && $ARGV[0] ne "finish" && $ARGV[0] ne "deprecate" && $ARGV[0] ne "uploadRelease" && $ARGV[0] ne "downloadRelease" && $ARGV[0] ne "deleteEntry" && $ARGV[0] ne "uploadConfig" && $ARGV[0] ne "merge" && $ARGV[0] ne "info";
 if ($ARGV[0] eq "create" && !$opt{"location"})
   {
     print "The directory containing the ntuples must be given!\n";
@@ -77,6 +78,11 @@ elsif ($ARGV[0] eq "createOther")
 elsif ($ARGV[0] eq "merge")
   {
     mergeDatasets ($ARGV[1], $ARGV[2]);
+  }
+elsif ($ARGV[0] eq "info")
+  {
+    my $info = printDatasetInfo ($ARGV[1]);
+    print $info
   }
 else
   {
@@ -127,19 +133,18 @@ getDataset ($$;$)
   my ($command, $dataset, $idToExclude) = @_;
   $idToExclude = -1 unless (defined $idToExclude);
 
-  my $results;
   my $queryDataset = $dataset;
   $queryDataset =~ s/\*/%/g;
   $queryDataset =~ s/(.*)/%$1%/g;
   my $query = "select id,dataset,user,creationTime,status from ntuple where dataset like '$queryDataset' and id!=$idToExclude order by creationTime";
-  $db->selectdb ("ntuple");
-  $results = $db->query ($query);
-  if ($results->numrows () == 1)
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
+  if ($queryCommand->rows () == 1)
     {
-      my @row = $results->fetchrow ();
+      my @row = $queryCommand->fetchrow ();
       return ($row[0], $row[1]);
     }
-  if ($results->numrows () == 0)
+  if ($queryCommand->rows () == 0)
     {
       if ($command ne "deleteEntry" && $command ne "deprecate" && $command ne "merge")
         {
@@ -161,9 +166,9 @@ getDataset ($$;$)
   print "Found multiple database entries matching\n";
   print "\"$dataset\":\n";
   print "( 0) new\n" if $command ne "deleteEntry" && $command ne "deprecate" && $command ne "merge";
-  for (my $i = 1; $i <= $results->numrows (); $i++)
+  for (my $i = 1; $i <= $queryCommand->rows (); $i++)
     {
-      my @row = $results->fetchrow ();
+      my @row = $queryCommand->fetchrow ();
       $row[3] =~ s/([^ ]*) [^ ]*/$1/g;
       $id{"$i"} = $row[0];
       $fullDataset{"$i"} = $row[1];
@@ -330,14 +335,14 @@ dbUpdate
   $release = addSlashes ($release);
   $globalTag = addSlashes ($globalTag);
 
-  my $results;
   my $query;
+  my $queryCommand;
   if ($id < 0)
     {
       $query = "select id from ntuple where dataset='$dataset'";
-      $db->selectdb ("ntuple");
-      $results = $db->query ($query);
-      if ($results->numrows ())
+      $queryCommand = $db->prepare ($query);
+      $queryCommand->execute ();
+      if ($queryCommand->rows ())
         {
           print "This dataset already exists in the database. Create anyway? (y/N): ";
           my $response = <STDIN>;
@@ -347,11 +352,11 @@ dbUpdate
         }
 
       $query = "select max(id) from ntuple";
-      $db->selectdb ("ntuple");
-      $results = $db->query ($query);
-      my @row = $results->fetchrow ();
+      $queryCommand = $db->prepare ($query);
+      $queryCommand->execute ();
+      my @row = $queryCommand->fetchrow ();
       my $id = 1;
-      $id = $row[0] + 1 if $results->numrows ();
+      $id = $row[0] + 1 if $queryCommand->rows ();
 
       my $columns = "(id, dataset, creationTime, lastUpdateTime, lastUpdateUser, user, format, location, fileList, nFiles, sizeInGB, status, comment, pset, crabCfg, jsonFile, lumiSummary, version, globalTag";
       $columns .= ", crossSectionInPicobarn" if $xSection;
@@ -371,9 +376,9 @@ dbUpdate
       if ($name)
         {
           $query = "select id from ntuple where dataset='$name'";
-          $db->selectdb ("ntuple");
-          $results = $db->query ($query);
-          if ($results->numrows ())
+          $queryCommand = $db->prepare ($query);
+          $queryCommand->execute ();
+          if ($queryCommand->rows ())
             {
               print "This dataset already exists in the database. Use this name anyway? (y/N): ";
               my $response = <STDIN>;
@@ -416,9 +421,8 @@ dbUpdate
       $values =~ s/^, //;
       $query = "update ntuple set $values where id=$id";
     }
-  $results = $db->query ($query);
-
-  return $results;
+  $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
 }
 
 sub
@@ -431,10 +435,8 @@ dbUpdateOther
   $comment = addSlashes ($comment);
 
   my $query = "update other set lastUpdateTime=now(), lastUpdateUser='$user', comment='$comment'  where id=$id";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
-
-  return $results;
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
 }
 
 sub
@@ -443,8 +445,8 @@ dbDelete
   my $id = shift;
 
   my $query = "delete from ntuple where id=$id";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
 }
 
 sub
@@ -453,8 +455,8 @@ dbDeleteOther
   my $id = shift;
 
   my $query = "delete from other where id=$id";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
 }
 
 sub
@@ -691,11 +693,11 @@ uploadRelease
   my $recipe = join ("", @recipe);
 
   my $query = "select max(id) from ntupleRelease";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
-  my @row = $results->fetchrow ();
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
+  my @row = $queryCommand->fetchrow ();
   my $id = 1;
-  $id = $row[0] + 1 if $results->numrows ();
+  $id = $row[0] + 1 if $queryCommand->rows ();
 
   $name = addSlashes ($name);
   $pset = addSlashes ($pset);
@@ -706,8 +708,8 @@ uploadRelease
   $recipe = addSlashes ($recipe);
 
   my $query = "insert into ntupleRelease (id, name, pset, user, pending, format, cmsswRelease, comment, recipe) values ($id, '$name', '$pset', '$user', 1, '$format', '$cmsswRelease', '$comment', '$recipe')";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
 }
 
 sub
@@ -717,16 +719,16 @@ downloadRelease
   my $pyConfigName = shift;
 
   my $query = "select id,pset from ntupleRelease where name='$release'";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
-  if ($results->numrows () != 1)
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
+  if ($queryCommand->rows () != 1)
     {
       print "Ntuple release \"$release\" not found!\n";
       exit;
     }
   if ($pyConfigName)
     {
-      my @row = $results->fetchrow ();
+      my @row = $queryCommand->fetchrow ();
       open (PY_CONFIG, ">$pyConfigName");
       print PY_CONFIG $row[1];
       close (PY_CONFIG);
@@ -764,19 +766,19 @@ dbOtherCreate
   my $location = join ("<br />", @$listOfFiles);
 
   my $query = "select max(id) from other";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
-  my @row = $results->fetchrow ();
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
+  my @row = $queryCommand->fetchrow ();
   my $id = 1;
-  $id = $row[0] + 1 if $results->numrows ();
+  $id = $row[0] + 1 if $queryCommand->rows ();
 
   $user = addSlashes ($user);
   $location = addSlashes ($location);
   $comment = addSlashes ($comment);
 
   $query = "insert into other (id, creationTime, lastUpdateTime, lastUpdateUser, user, location, nFiles, sizeInGB, comment) values ($id, now(), now(), '$userAndHost', '$user', '$location', $nFiles, $size, '$comment')";
-  $db->selectdb ("ntuple");
-  $results = $db->query ($query);
+  $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
 
   print "ID $id\n";
 }
@@ -798,9 +800,9 @@ uploadConfig
   if ($release)
     {
       my $query = "select id from ntupleRelease where name='$release' and pending=0 and available=1";
-      $db->selectdb ("ntuple");
-      my $results = $db->query ($query);
-      if ($results->numrows () != 1)
+      my $queryCommand = $db->prepare ($query);
+      $queryCommand->execute ();
+      if ($queryCommand->rows () != 1)
         {
           print "Ntuple release \"$release\" not found!\n";
           exit;
@@ -812,11 +814,11 @@ uploadConfig
   my $pset = join ("", @pset);
 
   my $query = "select max(id) from ntupleConfig";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
-  my @row = $results->fetchrow ();
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
+  my @row = $queryCommand->fetchrow ();
   my $id = 1;
-  $id = $row[0] + 1 if $results->numrows ();
+  $id = $row[0] + 1 if $queryCommand->rows ();
 
   $name = addSlashes ($name);
   $user = addSlashes ($user);
@@ -825,8 +827,8 @@ uploadConfig
   $comment = addSlashes ($comment);
 
   my $query = "insert into ntupleConfig (id, name, pset, user, pending, ntupleRelease, comment) values ($id, '$name', '$pset', '$user', 1, '$release', '$comment')";
-  $db->selectdb ("ntuple");
-  $results = $db->query ($query);
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
 }
 
 sub
@@ -841,9 +843,9 @@ locationExists
   for (my $i = 0; $i < 3; $i++)
     {
       my $query = "select id from ntuple where location like '$location$slash' and id!=$id";
-      $db->selectdb ("ntuple");
-      my $results = $db->query ($query);
-      return 1 if $results->numrows ();
+      my $queryCommand = $db->prepare ($query);
+      $queryCommand->execute ();
+      return 1 if $queryCommand->rows ();
       $slash .= "/";
     }
 
@@ -860,9 +862,9 @@ locationExists
   for (my $i = 0; $i < 3; $i++)
     {
       my $query = "select id from ntuple where location like '$location$slash' and id!=$id";
-      $db->selectdb ("ntuple");
-      my $results = $db->query ($query);
-      return 1 if $results->numrows ();
+      my $queryCommand = $db->prepare ($query);
+      $queryCommand->execute ();
+      return 1 if $queryCommand->rows ();
       $slash .= "/";
     }
 
@@ -875,9 +877,9 @@ getLocation
   my $id = shift;
 
   my $query = "select location,nFiles,sizeInGB,fileList from ntuple where id=$id";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
-  my @row = $results->fetchrow ();
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
+  my @row = $queryCommand->fetchrow ();
 
   return ($row[0], $row[1], $row[2], $row[3]);
 }
@@ -888,11 +890,22 @@ getInfo
   my $id = shift;
 
   my $query = "select status,comment,jsonFile,lumiSummary,currentStatus,workingDirectory from ntuple where id=$id";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
-  my @row = $results->fetchrow ();
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
+  my @row = $queryCommand->fetchrow ();
 
   return ($row[0], $row[1], $row[2], $row[3], $row[4], $row[5]);
+}
+
+sub
+printDatasetInfo
+{
+  my $dataset = shift;
+  my $query = "select * from ntuple where dataset='$dataset'";
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
+
+  return $queryCommand->fetchrow ();
 }
 
 sub
@@ -951,8 +964,10 @@ mergeDatasets
   $dstLumiSummary = addSlashes (join ("", @dstLumiSummary));
 
   my $query = "update ntuple set location='$dstLocation',nFiles=$dstNFiles,sizeInGB=$dstSize,fileList='$dstFileList',comment='$dstComment',jsonFile='$dstJSONFile',lumiSummary='$dstLumiSummary',currentStatus='$dstCurrentStatus',workingDirectory='$dstWorkingDirectory',hfLumiInInversePicobarn=NULL,pixelLumiInInversePicobarn=NULL where id=$dstID";
-  $db->selectdb ("ntuple");
-  my $results = $db->query ($query);
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
+
   $query = "delete from ntuple where id=$srcID";
-  my $results = $db->query ($query);
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
 }

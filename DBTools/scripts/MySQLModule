@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 use strict;
-use Mysql;
+use DBI;
 use File::Copy;
 use POSIX;
 use Term::ANSIColor;
@@ -15,7 +15,7 @@ sub getLocation;
 our $db;
 do
   {
-    $db = Mysql->connect ("cmshead.mps.ohio-state.edu", "ntuple", "osuT3User") or print "Failed to connect to the Tier 3, trying again...\n";
+    $db = DBI->connect ("DBI:mysql:ntuple:cmshead.mps.ohio-state.edu", "osuT3User") or print "Failed to connect to the Tier 3, trying again...\n";
   }
 while (!$db);
 my $dataset;
@@ -42,8 +42,8 @@ getLocation
   $queryDataset =~ s/\*/%/g;
   $queryDataset =~ s/(.*)/%$1%/g;
   my $query = "select dataset,user,creationTime,location,nFiles,status,crossSectionInPicobarn,higherOrderCrossSectionInPicobarn,fileList from ntuple where dataset like '$queryDataset' order by creationTime";
-  $db->selectdb ("ntuple");
-  $results = $db->query ($query);
+  my $queryCommand = $db->prepare ($query);
+  $queryCommand->execute ();
 
   my $fileMode = '>';
   if ($append)
@@ -51,9 +51,9 @@ getLocation
       $fileMode = '>>';
     }
 
-  if ($results->numrows () == 1)
+  if ($queryCommand->rows () == 1)
     {
-      my @row = $results->fetchrow ();
+      my @row = $queryCommand->fetchrow ();
       my @files = split (/\n/, $row[8]);
       $row[7] += 0;
       open(my $tmpfile, $fileMode, $outfile);
@@ -72,10 +72,10 @@ getLocation
       if ($length) {
       for (my $i = 0; $i < $length; $i++)
           {
-             next if @files->[$i] eq ".";
-             next if @files->[$i] eq "..";
-             next if !(@files->[$i] =~ m/\.root$/);
-             print $tmpfile "'" . $prefix . abs_path (@files->[$i]) . "'";
+             next if @files[$i] eq ".";
+             next if @files[$i] eq "..";
+             next if !(@files[$i] =~ m/\.root$/);
+             print $tmpfile "'" . $prefix . abs_path (@files[$i]) . "'";
              print $tmpfile "," if $i + 1 != $length;
              print $tmpfile "\n";
           }
@@ -85,7 +85,7 @@ getLocation
       print $tmpfile "listOfSecondaryFiles += []\n" if $append;
       return
    }
-  if ($results->numrows () == 0)
+  if ($queryCommand->rows () == 0)
     {
       open(my $tmpfile, $fileMode, $outfile);
       print $tmpfile "#Dataset does not exist on the Tier 3!";
@@ -94,9 +94,9 @@ getLocation
   my %map;
   print "Found multiple datasets matching\n";
   print "\"$dataset\":\n";
-  for (my $i = 1; $i <= $results->numrows (); $i++)
+  for (my $i = 1; $i <= $queryCommand->rows (); $i++)
     {
-      my @row = $results->fetchrow ();
+      my @row = $queryCommand->fetchrow ();
       $row[2] =~ s/([^ ]*) [^ ]*/$1/g;
       my @files = split (/\n/, $row[8]);
       $map{"$i"} = [$row[0], $row[3], $row[4], $row[5], $row[7], \@files] if $row[7];
