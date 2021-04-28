@@ -113,6 +113,7 @@ datasets = [
    'EGamma_2018B',
    'EGamma_2018C',
    'EGamma_2018D',
+   'DoubleEG_2016_2017_2018',
    'DoubleMu_2015',
    'DoubleMu_2015D',
    'DoubleMu_2016B',
@@ -135,6 +136,7 @@ datasets = [
    'DoubleMu_2018B',
    'DoubleMu_2018C',
    'DoubleMu_2018D',
+   'DoubleMu_2016_2017_2018',
    'MuonEG_2015D',
    'MuonEG_2015',
    'MuonEG_2016B',
@@ -157,6 +159,7 @@ datasets = [
    'MuonEG_2018B',
    'MuonEG_2018C',
    'MuonEG_2018D',
+   'MuonEG_2016_2017_2018',
    'MET_2015',
    'MET_2015D',
    'MET_2016',
@@ -460,6 +463,28 @@ datasets = [
   'stopToLB800_500mm_2021',
   'stopToLB800_500mm_2023',
   'stopToLB800_500mm_2024',
+
+    'stopToLB200_0p01mm_withCloudModel',
+    'stopToLB200_0p1mm_withCloudModel',
+    'stopToLB200_1mm_withCloudModel',
+    'stopToLB200_10mm_withCloudModel',
+    'stopToLB200_100mm_withCloudModel',
+    'stopToLB200_1000mm_withCloudModel',
+    'stopToLB200_10000mm_withCloudModel',
+    'stopToLB1000_0p01mm_withCloudModel',
+    'stopToLB1000_0p1mm_withCloudModel',
+    'stopToLB1000_1mm_withCloudModel',
+    'stopToLB1000_10mm_withCloudModel',
+    'stopToLB1000_100mm_withCloudModel',
+    'stopToLB1000_1000mm_withCloudModel',
+    'stopToLB1000_10000mm_withCloudModel',
+    'stopToLB1800_0p01mm_withCloudModel',
+    'stopToLB1800_0p1mm_withCloudModel',
+    'stopToLB1800_1mm_withCloudModel',
+    'stopToLB1800_10mm_withCloudModel',
+    'stopToLB1800_100mm_withCloudModel',
+    'stopToLB1800_1000mm_withCloudModel',
+    'stopToLB1800_10000mm_withCloudModel',
 
   'HTo4Mu125_50_50mm',
   'HTo4Mu125_50_500mm',
@@ -2630,6 +2655,28 @@ nJobs = {
   'stopToLB800_500mm_2023' : 5,
   'stopToLB800_500mm_2024' : 5,
 
+    'stopToLB200_0p01mm_withCloudModel' : 99,
+    'stopToLB200_0p1mm_withCloudModel' : 99,
+    'stopToLB200_1mm_withCloudModel' : 99,
+    'stopToLB200_10mm_withCloudModel' : 99,
+    'stopToLB200_100mm_withCloudModel' : 99,
+    'stopToLB200_1000mm_withCloudModel' : 99,
+    'stopToLB200_10000mm_withCloudModel' : 99,
+    'stopToLB1000_0p01mm_withCloudModel' : 99,
+    'stopToLB1000_0p1mm_withCloudModel' : 99,
+    'stopToLB1000_1mm_withCloudModel' : 99,
+    'stopToLB1000_10mm_withCloudModel' : 99,
+    'stopToLB1000_100mm_withCloudModel' : 99,
+    'stopToLB1000_1000mm_withCloudModel' : 99,
+    'stopToLB1000_10000mm_withCloudModel' : 99,
+    'stopToLB1800_0p01mm_withCloudModel' : 99,
+    'stopToLB1800_0p1mm_withCloudModel' : 99,
+    'stopToLB1800_1mm_withCloudModel' : 99,
+    'stopToLB1800_10mm_withCloudModel' : 99,
+    'stopToLB1800_100mm_withCloudModel' : 99,
+    'stopToLB1800_1000mm_withCloudModel' : 99,
+    'stopToLB1800_10000mm_withCloudModel' : 99,
+
   'HTo4Mu125_50_50mm' : 15,
   'HTo4Mu125_50_500mm' : 15,
   'HTo4Mu125_50_5000mm' : 15,
@@ -3943,6 +3990,28 @@ maxEvents = {
   'stopToLB800_500mm_2023' : -1,
   'stopToLB800_500mm_2024' : -1,
 
+    'stopToLB200_0p01mm_withCloudModel' : -1,
+    'stopToLB200_0p1mm_withCloudModel' : -1,
+    'stopToLB200_1mm_withCloudModel' : -1,
+    'stopToLB200_10mm_withCloudModel' : -1,
+    'stopToLB200_100mm_withCloudModel' : -1,
+    'stopToLB200_1000mm_withCloudModel' : -1,
+    'stopToLB200_10000mm_withCloudModel' : -1,
+    'stopToLB1000_0p01mm_withCloudModel' : -1,
+    'stopToLB1000_0p1mm_withCloudModel' : -1,
+    'stopToLB1000_1mm_withCloudModel' : -1,
+    'stopToLB1000_10mm_withCloudModel' : -1,
+    'stopToLB1000_100mm_withCloudModel' : -1,
+    'stopToLB1000_1000mm_withCloudModel' : -1,
+    'stopToLB1000_10000mm_withCloudModel' : -1,
+    'stopToLB1800_0p01mm_withCloudModel' : -1,
+    'stopToLB1800_0p1mm_withCloudModel' : -1,
+    'stopToLB1800_1mm_withCloudModel' : -1,
+    'stopToLB1800_10mm_withCloudModel' : -1,
+    'stopToLB1800_100mm_withCloudModel' : -1,
+    'stopToLB1800_1000mm_withCloudModel' : -1,
+    'stopToLB1800_10000mm_withCloudModel' : -1,
+
   'HTo4Mu125_50_50mm' : -1,
   'HTo4Mu125_50_500mm' : -1,
   'HTo4Mu125_50_5000mm' : -1,
@@ -4260,6 +4329,7 @@ types = {
     'EGamma_2018B'          : "data",
     'EGamma_2018C'          : "data",
     'EGamma_2018D'          : "data",
+    'DoubleEG_2016_2017_2018' : "data",
 
     'DoubleMu_2015B'        : "data",
     'DoubleMu_2015C'        : "data",
@@ -4286,6 +4356,7 @@ types = {
     'DoubleMu_2018B'        : "data",
     'DoubleMu_2018C'        : "data",
     'DoubleMu_2018D'        : "data",
+    'DoubleMu_2016_2017_2018' : "data",
 
     'MuonEG_2015B'        : "data",
     'MuonEG_2015C'        : "data",
@@ -4312,6 +4383,7 @@ types = {
     'MuonEG_2018B'        : "data",
     'MuonEG_2018C'        : "data",
     'MuonEG_2018D'        : "data",
+    'MuonEG_2016_2017_2018' : "data",
 
     ###########################################################################
     #RECO stored on T3
@@ -5316,6 +5388,28 @@ types = {
   'stopToLB800_500mm_2023' : "signalMC",
   'stopToLB800_500mm_2024' : "signalMC",
 
+    'stopToLB200_0p01mm_withCloudModel' : "signalMC",
+    'stopToLB200_0p1mm_withCloudModel' : "signalMC",
+    'stopToLB200_1mm_withCloudModel' : "signalMC",
+    'stopToLB200_10mm_withCloudModel' : "signalMC",
+    'stopToLB200_100mm_withCloudModel' : "signalMC",
+    'stopToLB200_1000mm_withCloudModel' : "signalMC",
+    'stopToLB200_10000mm_withCloudModel' : "signalMC",
+    'stopToLB1000_0p01mm_withCloudModel' : "signalMC",
+    'stopToLB1000_0p1mm_withCloudModel' : "signalMC",
+    'stopToLB1000_1mm_withCloudModel' : "signalMC",
+    'stopToLB1000_10mm_withCloudModel' : "signalMC",
+    'stopToLB1000_100mm_withCloudModel' : "signalMC",
+    'stopToLB1000_1000mm_withCloudModel' : "signalMC",
+    'stopToLB1000_10000mm_withCloudModel' : "signalMC",
+    'stopToLB1800_0p01mm_withCloudModel' : "signalMC",
+    'stopToLB1800_0p1mm_withCloudModel' : "signalMC",
+    'stopToLB1800_1mm_withCloudModel' : "signalMC",
+    'stopToLB1800_10mm_withCloudModel' : "signalMC",
+    'stopToLB1800_100mm_withCloudModel' : "signalMC",
+    'stopToLB1800_1000mm_withCloudModel' : "signalMC",
+    'stopToLB1800_10000mm_withCloudModel' : "signalMC",
+
   'HTo4Mu125_50_50mm' : "signalMC",
   'HTo4Mu125_50_500mm' : "signalMC",
   'HTo4Mu125_50_5000mm' : "signalMC",
@@ -5627,6 +5721,7 @@ colors = {
     'EGamma_2018B'          : 1,
     'EGamma_2018C'          : 1,
     'EGamma_2018D'          : 1,
+    'DoubleEG_2016_2017_2018'         : 1,
 
     'DoubleMu_2015B'        : 1,
     'DoubleMu_2015C'        : 1,
@@ -5653,6 +5748,7 @@ colors = {
     'DoubleMu_2018B'        : 1,
     'DoubleMu_2018C'        : 1,
     'DoubleMu_2018D'        : 1,
+    'DoubleMu_2016_2017_2018'         : 1,
 
     'MuonEG_2015B'        : 1,
     'MuonEG_2015C'        : 1,
@@ -5679,6 +5775,7 @@ colors = {
     'MuonEG_2018B'        : 1,
     'MuonEG_2018C'        : 1,
     'MuonEG_2018D'        : 1,
+    'MuonEG_2016_2017_2018'         : 1,
 
     ###########################################################################
     #RECO stored on T3
@@ -6685,6 +6782,28 @@ colors = {
   'stopToLB800_500mm_2023' : 2,
   'stopToLB800_500mm_2024' : 4,
 
+    'stopToLB200_0p01mm_withCloudModel' : 1,
+    'stopToLB200_0p1mm_withCloudModel' : 1,
+    'stopToLB200_1mm_withCloudModel' : 1,
+    'stopToLB200_10mm_withCloudModel' : 1,
+    'stopToLB200_100mm_withCloudModel' : 1,
+    'stopToLB200_1000mm_withCloudModel' : 1,
+    'stopToLB200_10000mm_withCloudModel' : 1,
+    'stopToLB1000_0p01mm_withCloudModel' : 1,
+    'stopToLB1000_0p1mm_withCloudModel' : 1,
+    'stopToLB1000_1mm_withCloudModel' : 1,
+    'stopToLB1000_10mm_withCloudModel' : 1,
+    'stopToLB1000_100mm_withCloudModel' : 1,
+    'stopToLB1000_1000mm_withCloudModel' : 1,
+    'stopToLB1000_10000mm_withCloudModel' : 1,
+    'stopToLB1800_0p01mm_withCloudModel' : 1,
+    'stopToLB1800_0p1mm_withCloudModel' : 1,
+    'stopToLB1800_1mm_withCloudModel' : 1,
+    'stopToLB1800_10mm_withCloudModel' : 1,
+    'stopToLB1800_100mm_withCloudModel' : 1,
+    'stopToLB1800_1000mm_withCloudModel' : 1,
+    'stopToLB1800_10000mm_withCloudModel' : 1,
+
   'HTo4Mu125_50_50mm' : 1,
   'HTo4Mu125_50_500mm' : 2,
   'HTo4Mu125_50_5000mm' : 4,
@@ -7006,6 +7125,7 @@ labels = {
     'DoubleEG_2017E'        : "DoubleEG 2017E data",
     'DoubleEG_2017F'        : "DoubleEG 2017F data",
     'DoubleEG_2017'         : "Double Electron 2017 data",
+    'DoubleEG_2016_2017_2018' : "Data",
 
     'EGamma_2018'         : "EGamma 2018 data",
     'EGamma_2018A'        : "EGamma 2018A data",
@@ -7038,6 +7158,7 @@ labels = {
     'DoubleMu_2018B'        : "Double Muon 2018B data",
     'DoubleMu_2018C'        : "Double Muon 2018C data",
     'DoubleMu_2018D'        : "Double Muon 2018D data",
+    'DoubleMu_2016_2017_2018' : "Data",
 
     'MuonEG_2015'         : "MuonEG 2015 data",
     'MuonEG_2015B'        : "MuonEG 2015B data",
@@ -7064,6 +7185,7 @@ labels = {
     'MuonEG_2018B'         : "Electron Muon 2018B data",
     'MuonEG_2018C'         : "Electron Muon 2018C data",
     'MuonEG_2018D'         : "Electron Muon 2018D data",
+    'MuonEG_2016_2017_2018' : "Data",
 
     ###########################################################################
     #RECO stored on T3
@@ -8075,6 +8197,28 @@ labels = {
   'stopToLB800_500mm_2023' : "#tilde{t}#tilde{t}#rightarrow lb lb, M=800 GeV, c#tau=500 mm, 2023",
   'stopToLB800_500mm_2024' : "#tilde{t}#tilde{t}#rightarrow lb lb, M=800 GeV, c#tau=500 mm, 2024",
 
+    'stopToLB200_0p01mm_withCloudModel'   : "#tilde{t}#tilde{t}#rightarrow lb lb, M=200 GeV, c#tau=0.01 mm, with cloud model",
+    'stopToLB200_0p1mm_withCloudModel'    : "#tilde{t}#tilde{t}#rightarrow lb lb, M=200 GeV, c#tau=0.1 mm, with cloud model",
+    'stopToLB200_1mm_withCloudModel'      : "#tilde{t}#tilde{t}#rightarrow lb lb, M=200 GeV, c#tau=1 mm, with cloud model",
+    'stopToLB200_10mm_withCloudModel'     : "#tilde{t}#tilde{t}#rightarrow lb lb, M=200 GeV, c#tau=10 mm, with cloud model",
+    'stopToLB200_100mm_withCloudModel'    : "#tilde{t}#tilde{t}#rightarrow lb lb, M=200 GeV, c#tau=100 mm, with cloud model",
+    'stopToLB200_1000mm_withCloudModel'   : "#tilde{t}#tilde{t}#rightarrow lb lb, M=200 GeV, c#tau=1000 mm, with cloud model",
+    'stopToLB200_10000mm_withCloudModel'  : "#tilde{t}#tilde{t}#rightarrow lb lb, M=200 GeV, c#tau=10000 mm, with cloud model",
+    'stopToLB1000_0p01mm_withCloudModel'  : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1000 GeV, c#tau=0.01 mm, with cloud model",
+    'stopToLB1000_0p1mm_withCloudModel'   : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1000 GeV, c#tau=0.1 mm, with cloud model",
+    'stopToLB1000_1mm_withCloudModel'     : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1000 GeV, c#tau=1 mm, with cloud model",
+    'stopToLB1000_10mm_withCloudModel'    : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1000 GeV, c#tau=10 mm, with cloud model",
+    'stopToLB1000_100mm_withCloudModel'   : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1000 GeV, c#tau=100 mm, with cloud model",
+    'stopToLB1000_1000mm_withCloudModel'  : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1000 GeV, c#tau=1000 mm, with cloud model",
+    'stopToLB1000_10000mm_withCloudModel' : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1000 GeV, c#tau=10000 mm, with cloud model",
+    'stopToLB1800_0p01mm_withCloudModel'  : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1800 GeV, c#tau=0.01 mm, with cloud model",
+    'stopToLB1800_0p1mm_withCloudModel'   : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1800 GeV, c#tau=0.1 mm, with cloud model",
+    'stopToLB1800_1mm_withCloudModel'     : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1800 GeV, c#tau=1 mm, with cloud model",
+    'stopToLB1800_10mm_withCloudModel'    : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1800 GeV, c#tau=10 mm, with cloud model",
+    'stopToLB1800_100mm_withCloudModel'   : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1800 GeV, c#tau=100 mm, with cloud model",
+    'stopToLB1800_1000mm_withCloudModel'  : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1800 GeV, c#tau=1000 mm, with cloud model",
+    'stopToLB1800_10000mm_withCloudModel' : "#tilde{t}#tilde{t}#rightarrow lb lb, M=1800 GeV, c#tau=10000 mm, with cloud model",
+
   'HTo4Mu125_50_50mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=50 GeV, c#tau=50mm",
   'HTo4Mu125_50_500mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=50 GeV, c#tau=500mm",
   'HTo4Mu125_50_5000mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=50 GeV, c#tau=5000mm",
@@ -8951,6 +9095,28 @@ crossSections = {
   'stopToLB800_500mm_2023' : 0.0283338,
   'stopToLB800_500mm_2024' : 0.0283338,
 
+    'stopToLB200_0p01mm_withCloudModel'   : 64.5085,
+    'stopToLB200_0p1mm_withCloudModel'    : 64.5085,
+    'stopToLB200_1mm_withCloudModel'      : 64.5085,
+    'stopToLB200_10mm_withCloudModel'     : 64.5085,
+    'stopToLB200_100mm_withCloudModel'    : 64.5085,
+    'stopToLB200_1000mm_withCloudModel'   : 64.5085,
+    'stopToLB200_10000mm_withCloudModel'  : 64.5085,
+    'stopToLB1000_0p01mm_withCloudModel'  : 0.00615134,
+    'stopToLB1000_0p1mm_withCloudModel'   : 0.00615134,
+    'stopToLB1000_1mm_withCloudModel'     : 0.00615134,
+    'stopToLB1000_10mm_withCloudModel'    : 0.00615134,
+    'stopToLB1000_100mm_withCloudModel'   : 0.00615134,
+    'stopToLB1000_1000mm_withCloudModel'  : 0.00615134,
+    'stopToLB1000_10000mm_withCloudModel' : 0.00615134,
+    'stopToLB1800_0p01mm_withCloudModel'  : 0.0000467492,
+    'stopToLB1800_0p1mm_withCloudModel'   : 0.0000467492,
+    'stopToLB1800_1mm_withCloudModel'     : 0.0000467492,
+    'stopToLB1800_10mm_withCloudModel'    : 0.0000467492,
+    'stopToLB1800_100mm_withCloudModel'   : 0.0000467492,
+    'stopToLB1800_1000mm_withCloudModel'  : 0.0000467492,
+    'stopToLB1800_10000mm_withCloudModel' : 0.0000467492,
+
   # ggF H cross section from here: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageAt1314TeV2014 (43.93 pb)
   # BR for ZD-->ll from table 2 here: https://arxiv.org/pdf/1412.0018.pdf
   #'HTo4Mu125_50_50mm' : 0.743158, #43.93pb * (0.244/2)^2 br for 2 ZD(50)->mumu
@@ -9147,42 +9313,73 @@ def lifetimeS(sample):
     return lt.replace("p",".")
 
 # generate list of masses in GeV
-massesH = ["110","125","150","200","300","400","450","500","600","750","800","900","1000"]
-massesS = ["10","20","30","50"] #minimum list of S masses that exist for every H mass
+#massesH = ["110","125","150","200","300","400","450","500","600","750","800","900","1000"]
+massesH = ["125","300","400","600","800","1000"]
+#massesS = ["10","20","30","50"] #minimum list of S masses that exist for every H mass
+massesS = []
 
 # generate full list of lifetimes (generated+reweighted) in mm
-lifetimesS = ["%g" % (0.1*i*(pow(10, j))) for j in range(7) for i in range(1, 10)]
-lifetimesS.append("1000000")
+#lifetimesS = ["%g" % (0.1*i*(pow(10, j))) for j in range(7) for i in range(1, 10)]
+#lifetimesS.append("1000000")
+lifetimesS = ["%g" % (0.1*i*(pow(10, j))) for j in range(6) for i in range(1, 10)]
+lifetimesS.append("100000")
 lifetimesS = [lt.replace(".", "p") for lt in lifetimesS]
 
 # generate list of sample names from masses, lifetimes (mm)
 signal_datasetsH = ["HToSSTo4L%s_%s_%smm" % (mH,mS,ctau) for mH in massesH for mS in massesS for ctau in lifetimesS]
 # add 150 GeV S mass for mH>=300 GeV, add 350 GeV S mass for mH>=750 GeV
 for mH in massesH:
-  if int(mH)>=300:
+  if int(mH)==125:
     for ctau in lifetimesS:
+      signal_datasetsH.append("HToSSTo4L"+mH+"_30_"+ctau+"mm")
+  elif int(mH)==300:
+    for ctau in lifetimesS:
+      signal_datasetsH.append("HToSSTo4L"+mH+"_20_"+ctau+"mm")
+      signal_datasetsH.append("HToSSTo4L"+mH+"_50_"+ctau+"mm")
       signal_datasetsH.append("HToSSTo4L"+mH+"_150_"+ctau+"mm")
-  if int(mH)>=750:
+  elif int(mH)==400:
     for ctau in lifetimesS:
+      signal_datasetsH.append("HToSSTo4L"+mH+"_50_"+ctau+"mm")
+      signal_datasetsH.append("HToSSTo4L"+mH+"_150_"+ctau+"mm")
+  elif int(mH)==600:
+    for ctau in lifetimesS:
+      signal_datasetsH.append("HToSSTo4L"+mH+"_50_"+ctau+"mm")
+      signal_datasetsH.append("HToSSTo4L"+mH+"_150_"+ctau+"mm")
+  elif int(mH)==800:
+    for ctau in lifetimesS:
+      signal_datasetsH.append("HToSSTo4L"+mH+"_50_"+ctau+"mm")
+      signal_datasetsH.append("HToSSTo4L"+mH+"_150_"+ctau+"mm")
+      signal_datasetsH.append("HToSSTo4L"+mH+"_250_"+ctau+"mm")
+  elif int(mH)==1000:
+    for ctau in lifetimesS:
+      signal_datasetsH.append("HToSSTo4L"+mH+"_30_"+ctau+"mm")
+      signal_datasetsH.append("HToSSTo4L"+mH+"_150_"+ctau+"mm")
       signal_datasetsH.append("HToSSTo4L"+mH+"_350_"+ctau+"mm")
+
+  #if int(mH)>=300:
+  #  for ctau in lifetimesS:
+  #    signal_datasetsH.append("HToSSTo4L"+mH+"_150_"+ctau+"mm")
+  #if int(mH)>=750:
+  #  for ctau in lifetimesS:
+  #    signal_datasetsH.append("HToSSTo4L"+mH+"_350_"+ctau+"mm")
 
 datasets.extend(signal_datasetsH)
 composite_dataset_definitions['HToSSSignal'] = signal_datasetsH
 
 #from powheg + pythia:
 signal_crossSectionsH = {
-    '110'  : 26.722390956061719,
+    #'110'  : 26.722390956061719,
     '125'  : 21.459897483726280,
-    '150'  : 15.614146187994139,
-    '200'  : 8.7322438914694018,
+    #'150'  : 15.614146187994139,
+    #'200'  : 8.7322438914694018,
     '300'  : 4.9382937444987762,
     '400'  : 5.0403083882366619,
-    '450'  : 3.7768002561767382,
-    '500'  : 2.5884317279268005,
+    #'450'  : 3.7768002561767382,
+    #'500'  : 2.5884317279268005,
     '600'  : 1.1784666241700483,
-    '750'  : 0.41086256828334200,
+    #'750'  : 0.41086256828334200,
     '800'  : 0.30253991148407361,
-    '900'  : 0.17493668485618005,
+    #'900'  : 0.17493668485618005,
     '1000' : 0.10770210813460095,
 }
 
@@ -9212,6 +9409,96 @@ for index, sample in enumerate(signal_datasetsH):
       destinationCTaus.append(float(0.01))
     if destinationCTau == sourceCTau:
       rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([9000006], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
+
+############################################################################################
+### code to set relevant parameters for GMSB selectron, smuons, and stau signal samples, ###
+### which are a scan in the plane of slepton (selectron+smuon)/ stau mass and lifetime   ###
+############################################################################################
+
+import math
+
+def massSl(sample):
+    start = sample.find("sleptons")+8
+    end = sample.find("_")
+    return sample[start:end]
+
+def massSt(sample):
+    start = sample.find("staus")+5
+    end = sample.find("_")
+    return sample[start:end]
+
+# generate list of masses in GeV
+massesSl = ["50"]
+massesSl.extend(str(i*100) for i in range(1, 11))
+massesSt = [str(i*50) for i in range(1,11)]
+
+# lifetimes are the same as lifetimes for stopToLB/LD samples (in mm)
+
+# generate list of sample names from masses, lifetimes (mm)
+signal_datasetsSlSt = ["sleptons%s_%smm" % (m,ctau) for m in massesSl for ctau in lifetimes]
+signal_datasetsSlSt.extend(["staus%s_%smm" % (m,ctau) for m in massesSt for ctau in lifetimes])
+
+datasets.extend(signal_datasetsSlSt)
+composite_dataset_definitions['SleptonStauSignal'] = signal_datasetsSlSt
+
+signal_crossSectionsSlSt = {
+    '50'  : 5.368,
+    '100' : 0.3657,
+    '150' : 0.08712,
+    '200' : 0.03031,
+    '250' : 0.01292,
+    '300' : 0.006254,
+    '350' : 0.002931,
+    '400' : 0.001859,
+    '450' : 0.001216,
+    '500' : 0.0006736,
+    '600' : 0.0002763,
+    '700' : 0.0001235,
+    '800' : 5.863e-05,
+    '900' : 2.918e-05,
+    '1000' : 1.504e-05,
+}
+
+for index, sample in enumerate(signal_datasetsSlSt):
+    nJobs[sample] = 99
+    maxEvents[sample] = -1
+    types[sample] = 'signalMC'
+    if index < 605: #found empirically
+      labels[sample] = "#tilde{e}#tilde{e} (#tilde{#mu}#tilde{#mu}) #rightarrow e(#mu)#tilde{G} e(#mu)#tilde{G}, M=%s GeV, c#tau=%s mm" % (massSl(sample), lifetime(sample))
+      crossSections[sample] = signal_crossSectionsSlSt[massSl(sample)]
+    else:
+      labels[sample] = "#tilde{t}#tilde{t}#rightarrow t#tilde{G} t#tilde{G}, M=%s GeV, c#tau=%s mm" % (massSt(sample), lifetime(sample))
+      crossSections[sample] = signal_crossSectionsSlSt[massSt(sample)]
+    colors[sample] = 20 + index
+
+    # source and destination CTau are in cm, while lifetime(sample) is in mm
+    # LifetimeWeightProducer expects cm to cm
+    sourceCTau = round(0.1 * 10**(math.ceil(math.log10(float(lifetime(sample))))), 5)
+    # special case
+    if float(lifetime(sample)) <= 0.01: sourceCTau = 0.01
+    destinationCTau = round(0.1 * float(lifetime(sample)), 5)
+
+    # set the default reweighting rules
+    rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000011], [sourceCTau], [destinationCTau], True),
+                                           lifetimeReweightingRule([1000013], [sourceCTau], [destinationCTau], True),
+                                           lifetimeReweightingRule([1000015], [sourceCTau], [destinationCTau], True),
+                                           lifetimeReweightingRule([2000011], [sourceCTau], [destinationCTau], True),
+                                           lifetimeReweightingRule([2000013], [sourceCTau], [destinationCTau], True),
+                                           lifetimeReweightingRule([2000015], [sourceCTau], [destinationCTau], True)]
+
+    # set the non-default reweighting rules too
+    # thus, for a reweighted (i.e. non-generated) sample, there is one rule and it is the default
+    # but for the generated samples, there are many rules and only one is default
+    destinationCTaus = [round(float(0.1 * i * sourceCTau), 5) for i in range(2, 11)]
+    if sourceCTau == 0.01:
+      destinationCTaus.append(float(0.001))
+    if destinationCTau == sourceCTau:
+      rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000011], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
+      rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([1000013], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
+      rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([1000015], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
+      rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([2000011], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
+      rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([2000013], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
+      rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([2000015], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
 
 ################################################################################
 ### code to set relevant parameters for disappearing tracks signal samples,  ###
