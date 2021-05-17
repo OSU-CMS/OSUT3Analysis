@@ -9467,7 +9467,7 @@ for index, sample in enumerate(signal_datasetsSlSt):
       labels[sample] = "#tilde{e}#tilde{e} (#tilde{#mu}#tilde{#mu}) #rightarrow e(#mu)#tilde{G} e(#mu)#tilde{G}, M=%s GeV, c#tau=%s mm" % (massSl(sample), lifetime(sample))
       crossSections[sample] = signal_crossSectionsSlSt[massSl(sample)]
     else:
-      labels[sample] = "#tilde{t}#tilde{t}#rightarrow t#tilde{G} t#tilde{G}, M=%s GeV, c#tau=%s mm" % (massSt(sample), lifetime(sample))
+      labels[sample] = "#tilde{#tau}#tilde{#tau}#rightarrow #tau#tilde{G} #tau#tilde{G}, M=%s GeV, c#tau=%s mm" % (massSt(sample), lifetime(sample))
       crossSections[sample] = signal_crossSectionsSlSt[massSt(sample)]
     colors[sample] = 20 + index
 
