@@ -9441,7 +9441,8 @@ signal_datasetsSlSt.extend(["staus%s_%smm" % (m,ctau) for m in massesSt for ctau
 datasets.extend(signal_datasetsSlSt)
 composite_dataset_definitions['SleptonStauSignal'] = signal_datasetsSlSt
 
-signal_crossSectionsSlSt = {
+#the true cross sections for selectrons, smuons, and staus
+signal_crossSectionsSl = {
     '50'  : 5.368,
     '100' : 0.3657,
     '150' : 0.08712,
@@ -9456,7 +9457,31 @@ signal_crossSectionsSlSt = {
     '700' : 0.0001235,
     '800' : 5.863e-05,
     '900' : 2.918e-05,
-    '1000' : 1.504e-05,
+    '1000': 1.504e-05,
+}
+
+#stau samples have a lepton filter applied to them
+#(only select taus that decay to electrons and muons)
+#so need to multiply the cross section by (BF tau-->electron/muon)^2,
+#i.e. (.1782+.1739)^2 = 0.124
+#because the filter only accepts events in which both taus decay leptonically,
+#and call this the new "cross section" below:
+signal_crossSectionsSt = {
+    '50'  : 0.6656,
+    '100' : 0.04535,
+    '150' : 0.01080,
+    '200' : 0.003758,
+    '250' : 0.001602,
+    '300' : 0.0007755,
+    '350' : 0.0003634,
+    '400' : 0.0002305,
+    '450' : 0.0001508,
+    '500' : 0.00008353,
+    '600' : 0.00003426,
+    '700' : 0.00001531,
+    '800' : 7.270e-06,
+    '900' : 3.618e-06,
+    '1000': 1.865e-06,
 }
 
 for index, sample in enumerate(signal_datasetsSlSt):
@@ -9465,10 +9490,10 @@ for index, sample in enumerate(signal_datasetsSlSt):
     types[sample] = 'signalMC'
     if index < 605: #found empirically
       labels[sample] = "#tilde{e}#tilde{e} (#tilde{#mu}#tilde{#mu}) #rightarrow e(#mu)#tilde{G} e(#mu)#tilde{G}, M=%s GeV, c#tau=%s mm" % (massSl(sample), lifetime(sample))
-      crossSections[sample] = signal_crossSectionsSlSt[massSl(sample)]
+      crossSections[sample] = signal_crossSectionsSl[massSl(sample)]
     else:
       labels[sample] = "#tilde{#tau}#tilde{#tau}#rightarrow #tau#tilde{G} #tau#tilde{G}, M=%s GeV, c#tau=%s mm" % (massSt(sample), lifetime(sample))
-      crossSections[sample] = signal_crossSectionsSlSt[massSt(sample)]
+      crossSections[sample] = signal_crossSectionsSt[massSt(sample)]
     colors[sample] = 20 + index
 
     # source and destination CTau are in cm, while lifetime(sample) is in mm
