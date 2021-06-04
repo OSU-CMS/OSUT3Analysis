@@ -9332,6 +9332,7 @@ for mH in massesH:
   if int(mH)==125:
     for ctau in lifetimesS:
       signal_datasetsH.append("HToSSTo4L"+mH+"_30_"+ctau+"mm")
+      signal_datasetsH.append("HToSSTo4L"+mH+"_50_"+ctau+"mm")
   elif int(mH)==300:
     for ctau in lifetimesS:
       signal_datasetsH.append("HToSSTo4L"+mH+"_20_"+ctau+"mm")
