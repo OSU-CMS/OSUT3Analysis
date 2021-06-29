@@ -9274,7 +9274,7 @@ for index, sample in enumerate(signal_datasets):
     sourceCTau = round(0.1 * 10**(math.ceil(math.log10(float(lifetime(sample))))), 5)
     # special case
     if float(lifetime(sample)) <= 0.01: sourceCTau = 0.01
-    if float(lifetime(sample)) > 1000.: sourceCTau = 100.0
+    elif float(lifetime(sample)) > 1000.0: sourceCTau = 100.0
     destinationCTau = round(0.1 * float(lifetime(sample)), 5)
 
     # set the default reweighting rules
@@ -9502,6 +9502,7 @@ for index, sample in enumerate(signal_datasetsSlSt):
     sourceCTau = round(0.1 * 10**(math.ceil(math.log10(float(lifetime(sample))))), 5)
     # special case
     if float(lifetime(sample)) <= 0.01: sourceCTau = 0.01
+    elif float(lifetime(sample)) > 1000.0: sourceCTau = 100.0
     destinationCTau = round(0.1 * float(lifetime(sample)), 5)
 
     # set the default reweighting rules
@@ -9518,6 +9519,8 @@ for index, sample in enumerate(signal_datasetsSlSt):
     destinationCTaus = [round(float(0.1 * i * sourceCTau), 5) for i in range(2, 11)]
     if sourceCTau == 0.01:
       destinationCTaus.append(float(0.001))
+    elif sourceCTau == 100:
+      destinationCTaus.extend([float(1 * i * sourceCTau) for i in range(2, 11)])
     if destinationCTau == sourceCTau:
       rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000011], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
       rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([1000013], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
