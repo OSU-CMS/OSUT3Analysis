@@ -22,5 +22,8 @@ LifetimeWeightProducer = cms.EDFilter ("LifetimeWeightProducer",
         ) for r in rules]),
     requireLastNotFirstCopy = cms.bool(False),
     requireLastAndFirstCopy = cms.bool(False),
-    specialRHadronsForDispLeptons = cms.bool(False)
+    specialRHadronsForDispLeptons = cms.bool(False),
+    moreThanOneLLPType = cms.bool(False),
+    dummyPdgId = cms.string(""),
+    multiplePdgIds = cms.vint32(),
 )

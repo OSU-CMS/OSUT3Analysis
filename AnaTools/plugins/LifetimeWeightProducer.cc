@@ -13,7 +13,10 @@ LifetimeWeightProducer::LifetimeWeightProducer(const edm::ParameterSet &cfg) :
   reweightingRules_       (cfg.getParameter<edm::VParameterSet> ("reweightingRules")),
   requireLastNotFirstCopy_(cfg.getParameter<bool> ("requireLastNotFirstCopy")),
   requireLastAndFirstCopy_(cfg.getParameter<bool> ("requireLastAndFirstCopy")),
-  specialRHadronsForDispLeptons_(cfg.getParameter<bool> ("specialRHadronsForDispLeptons"))
+  specialRHadronsForDispLeptons_(cfg.getParameter<bool> ("specialRHadronsForDispLeptons")),
+  moreThanOneLLPType_(cfg.getParameter<bool> ("moreThanOneLLPType")),
+  dummyPdgId_(cfg.getParameter<std::string> ("dummyPdgId")),
+  multiplePdgIds_(cfg.getParameter<vector<int>> ("multiplePdgIds"))
 {
   mcparticlesToken_ = consumes<vector<TYPE(hardInteractionMcparticles)> >(collections_.getParameter<edm::InputTag>("hardInteractionMcparticles"));
 
@@ -32,18 +35,31 @@ LifetimeWeightProducer::LifetimeWeightProducer(const edm::ParameterSet &cfg) :
            pdgIds_.back().size() == dstCTau_.back().size());
 
     suffix.str("");
-    for(unsigned int iPdgId = 0; iPdgId < pdgIds_.back().size(); iPdgId++) {
-      suffix << "_" << pdgIds_.back()[iPdgId]
-             << "_" << srcCTau_.back()[iPdgId]
-             << "cmTo" << dstCTau_.back()[iPdgId]
-             << "cm";
+
+    if(moreThanOneLLPType_){
+      suffix << "_" << dummyPdgId_
+	     << "_" << srcCTau_.back()[0]
+	     << "cmTo" << dstCTau_.back()[0]
+	     << "cm";
       string suffix_s = suffix.str();
       replace(suffix_s.begin(), suffix_s.end(), '.', 'p');
       suffix.str(suffix_s);
     }
+    else{
+      for(unsigned int iPdgId = 0; iPdgId < pdgIds_.back().size(); iPdgId++) {
+	suffix << "_" << pdgIds_.back()[iPdgId]
+	       << "_" << srcCTau_.back()[iPdgId]
+	       << "cmTo" << dstCTau_.back()[iPdgId]
+	       << "cm";
+	string suffix_s = suffix.str();
+	replace(suffix_s.begin(), suffix_s.end(), '.', 'p');
+	suffix.str(suffix_s);
+      }
+    }
 
     weights_.push_back(1.0);
     weightNames_.push_back("lifetimeWeight" + suffix.str());
+    //cout<<"weightNames_ are: lifetimeWeight"<<suffix.str()<<endl;
   }
 
 }
@@ -53,6 +69,9 @@ LifetimeWeightProducer::~LifetimeWeightProducer() {
 
 void
 LifetimeWeightProducer::AddVariables(const edm::Event &event, const edm::EventSetup &setup) {
+
+  //cout<<endl;
+  //cout<<"event is: "<<event.id().event()<<endl;
 
 #ifndef STOPPPED_PTLS
   for(unsigned int iRule = 0; iRule < weights_.size(); iRule++) weights_[iRule] = 1.0;
@@ -101,26 +120,50 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event, const edm::EventSe
 	 if(!(mcparticle.statusFlags().isFirstCopy())) continue;
       }
 
+      //cout<<"ctau is: "<<getCTau(mcparticle)<<endl;
+
       double cTau;
       for(unsigned int iPdgId = 0; iPdgId < pdgIds_[iRule].size(); iPdgId++) {
 
-        if(abs(mcparticle.pdgId()) == abs(pdgIds_[iRule][iPdgId]) &&
-           (requireLastNotFirstCopy_ || requireLastAndFirstCopy_ || isOriginalParticle(mcparticle, mcparticle.pdgId())) &&
-	    (cTau = getCTau(mcparticle)) > 0.0) {
+	if(moreThanOneLLPType_){
+	  for(unsigned int i=0; i<multiplePdgIds_.size(); i++){
+	    if(abs(mcparticle.pdgId()) == abs(multiplePdgIds_[i]) &&
+	       (requireLastNotFirstCopy_ || requireLastAndFirstCopy_ || isOriginalParticle(mcparticle, mcparticle.pdgId())) &&
+	       (cTau = getCTau(mcparticle)) > 0.0) {
 
-	  //cout << "Actually using a particle!" << endl;
-	  //cout << "\tpdgId = " << mcparticle.pdgId() << endl;
-	  //cout << "\tmother id = " << mcparticle.motherRef()->pdgId() << endl;
-	  //cout << "\tcTau = " << cTau << endl;
+	      //cout << "Actually using a particle!" << endl;
+	      //cout << "\tpdgId = " << mcparticle.pdgId() << endl;
+	      //cout << "\tmother id = " << mcparticle.motherRef()->pdgId() << endl;
+	      //cout << "\tcTau = " << cTau << endl;
 
-          cTaus[iPdgId].push_back(cTau);
-          TVector3 x(mcparticle.vx(), mcparticle.vy(), mcparticle.vz());
-          TVector3 y = getEndVertex(mcparticle);
-          decayLengths[iPdgId].push_back((x - y).Mag());
-          betaFactors[iPdgId].push_back(mcparticle.p4().Beta());
-          gammaFactors[iPdgId].push_back(mcparticle.p4().Gamma());
-        }
-      }
+	      cTaus[iPdgId].push_back(cTau);
+	      TVector3 x(mcparticle.vx(), mcparticle.vy(), mcparticle.vz());
+	      TVector3 y = getEndVertex(mcparticle);
+	      decayLengths[iPdgId].push_back((x - y).Mag());
+	      betaFactors[iPdgId].push_back(mcparticle.p4().Beta());
+	      gammaFactors[iPdgId].push_back(mcparticle.p4().Gamma());
+	    }
+	  }//end of loop over multiplePdgIds
+	}//end if moreThanOneLLPType_
+	else{
+	  if(abs(mcparticle.pdgId()) == abs(pdgIds_[iRule][iPdgId]) &&
+	     (requireLastNotFirstCopy_ || requireLastAndFirstCopy_ || isOriginalParticle(mcparticle, mcparticle.pdgId())) &&
+	     (cTau = getCTau(mcparticle)) > 0.0) {
+
+	    //cout << "Actually using a particle!" << endl;
+	    //cout << "\tpdgId = " << mcparticle.pdgId() << endl;
+	    //cout << "\tmother id = " << mcparticle.motherRef()->pdgId() << endl;
+	    //cout << "\tcTau = " << cTau << endl;
+
+	    cTaus[iPdgId].push_back(cTau);
+	    TVector3 x(mcparticle.vx(), mcparticle.vy(), mcparticle.vz());
+	    TVector3 y = getEndVertex(mcparticle);
+	    decayLengths[iPdgId].push_back((x - y).Mag());
+	    betaFactors[iPdgId].push_back(mcparticle.p4().Beta());
+	    gammaFactors[iPdgId].push_back(mcparticle.p4().Gamma());
+	  }
+	}//end of else
+      }//end of loop over iPdgId
 
     } // for mcparticles
 
@@ -166,7 +209,7 @@ LifetimeWeightProducer::AddVariables(const edm::Event &event, const edm::EventSe
   // Save the weights
   for(unsigned int iRule = 0; iRule < weights_.size(); iRule++) {
     (*eventvariables)[weightNames_[iRule]] = weights_[iRule];
-    //cout << "Saving weight named: " << weightNames_[iRule] << endl;
+    //cout << "Saving weight of "<<weights_[iRule]<<" named: " << weightNames_[iRule] << endl;
     if(isDefaultRule_[iRule]) {
       (*eventvariables)["lifetimeWeight"] = weights_[iRule];
     }

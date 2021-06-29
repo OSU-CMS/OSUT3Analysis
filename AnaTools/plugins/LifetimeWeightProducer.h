@@ -17,7 +17,10 @@ class LifetimeWeightProducer : public EventVariableProducer {
         edm::VParameterSet reweightingRules_;
         bool requireLastNotFirstCopy_;
         bool requireLastAndFirstCopy_;
-	 bool specialRHadronsForDispLeptons_;
+	bool specialRHadronsForDispLeptons_;
+	bool moreThanOneLLPType_;
+	std::string dummyPdgId_;
+	vector<int> multiplePdgIds_;
 
         vector<vector<double> > srcCTau_;
         vector<vector<double> > dstCTau_;
