@@ -9506,12 +9506,8 @@ for index, sample in enumerate(signal_datasetsSlSt):
     destinationCTau = round(0.1 * float(lifetime(sample)), 5)
 
     # set the default reweighting rules
-    rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000011], [sourceCTau], [destinationCTau], True),
-                                           lifetimeReweightingRule([1000013], [sourceCTau], [destinationCTau], True),
-                                           lifetimeReweightingRule([1000015], [sourceCTau], [destinationCTau], True),
-                                           lifetimeReweightingRule([2000011], [sourceCTau], [destinationCTau], True),
-                                           lifetimeReweightingRule([2000013], [sourceCTau], [destinationCTau], True),
-                                           lifetimeReweightingRule([2000015], [sourceCTau], [destinationCTau], True)]
+    # since we need rules for multiple pdgids (1000011, 1000013, 1000015, 2000011, 2000013, 2000015), set one dummy pdgid of 0000010 and fix it all in LifetimeWeightProducer
+    rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([0000010], [sourceCTau], [destinationCTau], True)]
 
     # set the non-default reweighting rules too
     # thus, for a reweighted (i.e. non-generated) sample, there is one rule and it is the default
@@ -9522,12 +9518,7 @@ for index, sample in enumerate(signal_datasetsSlSt):
     elif sourceCTau == 100:
       destinationCTaus.extend([float(1 * i * sourceCTau) for i in range(2, 11)])
     if destinationCTau == sourceCTau:
-      rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([1000011], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
-      rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([1000013], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
-      rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([1000015], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
-      rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([2000011], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
-      rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([2000013], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
-      rulesForLifetimeReweighting[sample].extend(lifetimeReweightingRule([2000015], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus)
+      rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([0000010], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
 
 ################################################################################
 ### code to set relevant parameters for disappearing tracks signal samples,  ###
