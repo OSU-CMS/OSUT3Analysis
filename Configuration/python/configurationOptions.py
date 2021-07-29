@@ -9398,6 +9398,8 @@ for index, sample in enumerate(signal_datasetsH):
     # special case
     if float(lifetimeS(sample)) <= 0.1: sourceCTau = 0.1
     destinationCTau = round(0.1 * float(lifetimeS(sample)),5)
+    if(massH(sample)=="125" and massS(sample)=="30"):
+      if float(lifetimeS(sample)) > 1000.0: sourceCTau = 100.0
 
     # set the default reweighting rules
     rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([9000006], [sourceCTau], [destinationCTau], True)]
@@ -9408,6 +9410,8 @@ for index, sample in enumerate(signal_datasetsH):
     destinationCTaus = [round(float(0.1 * i * sourceCTau), 5) for i in range(2, 11)]
     if sourceCTau == 0.1:
       destinationCTaus.append(float(0.01))
+    elif (sourceCTau == 100 and massH(sample)=="125" and massS(sample)=="30"):
+      destinationCTaus.extend([float(1 * i * sourceCTau) for i in range(2, 11)])
     if destinationCTau == sourceCTau:
       rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([9000006], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
 
