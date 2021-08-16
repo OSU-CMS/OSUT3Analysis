@@ -12,6 +12,7 @@
 <use  name="DataFormats/TauReco"/>
 <use  name="DataFormats/TrackReco"/>
 <use  name="DataFormats/VertexReco"/>
+<use  name="FWCore/MessageLogger"/>
 <use  name="FWCore/ParameterSet"/>
 <use  name="RecoEgamma/EgammaTools"/>
 <use  name="SimDataFormats/PileupSummaryInfo"/>
