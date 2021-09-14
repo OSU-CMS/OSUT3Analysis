@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import os
 import re
@@ -68,14 +68,14 @@ noUnderFlow = arguments.noUnderFlow
 #### deal with conflicting arguments
 
 if arguments.makeRatioPlots and arguments.makeDiffPlots:
-    print "You have requested both ratio and difference plots.  Will make just ratio plots instead"
+    print("You have requested both ratio and difference plots.  Will make just ratio plots instead")
     arguments.makeRatioPlots = False
 
 if arguments.makeSignificancePlots and arguments.makeRatioPlots:
-    print "You have asked to make a ratio plot and significance plots. This is a very strange request.  Will skip making the ratio plot."
+    print("You have asked to make a ratio plot and significance plots. This is a very strange request.  Will skip making the ratio plot.")
     arguments.makeRatioPlots = False
 if arguments.makeSignificancePlots and arguments.makeDiffPlots:
-    print "You have asked to make a difference plot and significance plots. This is a very strange request.  Will skip making the difference plot."
+    print("You have asked to make a difference plot and significance plots. This is a very strange request.  Will skip making the difference plot.")
     arguments.makeDiffPlots = False
 
 from OSUT3Analysis.Configuration.histogramUtilities import ratioHistogram
@@ -201,7 +201,7 @@ fillList = [
 def MakeIntegralHist(hist, integrateDir):
     # return the integrated histogram, in the direction specified
     # integrateDir values: "left", "right", "none"
-    if integrateDir is "none":
+    if integrateDir == "none":
         return hist  # do nothing
     integral = 0
     error = 0
@@ -209,7 +209,7 @@ def MakeIntegralHist(hist, integrateDir):
     # always include underflow and overflow
     lowLimit = 0 # underflow bin
     uppLimit = nbins+1 # overflow bin
-    if integrateDir is "left":
+    if integrateDir == "left":
         for i in range(lowLimit,nbins+1):  # start with underflow bin
             integral += hist.GetBinContent(i)
             error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
@@ -218,7 +218,7 @@ def MakeIntegralHist(hist, integrateDir):
             # Then include overflow bin in the last bin
             hist.SetBinContent(nbins, hist.GetBinContent(nbins) + hist.GetBinContent(nbins+1))
             hist.SetBinError  (nbins, math.sqrt(hist.GetBinError(nbins)*hist.GetBinError(nbins) + hist.GetBinError(nbins+1)*hist.GetBinError(nbins+1)))
-    elif integrateDir is "right":
+    elif integrateDir == "right":
         for i in xrange(uppLimit, 0, -1):  # start with overflow bin
             integral += hist.GetBinContent(i)
             error = math.sqrt(error*error + hist.GetBinError(i)*hist.GetBinError(i)) # sum errors in quadrature
@@ -240,7 +240,7 @@ def MakeIntegralHist(hist, integrateDir):
 def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
 
     if arguments.verbose:
-        print "Creating histogram", histogramName, "in directory", histogramDirectory
+        print("Creating histogram", histogramName, "in directory", histogramDirectory)
 
     HeaderLabel = TPaveLabel(header_x_left,header_y_bottom,header_x_right,header_y_top,HeaderText,"NDC")
     HeaderLabel.SetTextAlign(32)
@@ -277,9 +277,9 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
     Legend.SetFillStyle(0)
 
     canvasName = histogramName
-    if integrateDir is "left":
+    if integrateDir == "left":
         canvasName += "_CumulativeLeft"
-    elif integrateDir is "right":
+    elif integrateDir == "right":
         canvasName += "_CumulativeRight"
     Canvas = TCanvas(canvasName)
     Histograms = []
@@ -304,18 +304,18 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
         else:
             HistogramObj = inputFile.Get(source['channel'] + "Plotter/" + histogramDirectory + "/" + histogramName)
         if not HistogramObj:
-            print "WARNING:  Could not find histogram " + source['channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."
+            print("WARNING:  Could not find histogram " + source['channel'] + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue.")
             return
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
         inputFile.Close()
         Histogram.Sumw2()
         if arguments.verbose:
-            print "  Got histogram", Histogram.GetName(), "from file", dataset_file
+            print("  Got histogram", Histogram.GetName(), "from file", dataset_file)
         if arguments.rebinFactor:
             RebinFactor = int(arguments.rebinFactor)
             #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
-            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") is -1:
+            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") == -1:
                 Histogram.Rebin(RebinFactor)
 
         # correct bin contents of object multiplcity plots
@@ -335,7 +335,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
             yAxisLabel = Histogram.GetYaxis().GetTitle()
         else:
 
-            if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
+            if unitBeginIndex != -1 and unitEndIndex != -1: #x axis has a unit
                 yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
                 xAxisLabelVar = xAxisLabel[0:unitBeginIndex]
             else:
@@ -347,9 +347,9 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
                 unit = "Efficiency"
             else:
                 unit = "Yield"
-            if integrateDir is "left":
+            if integrateDir == "left":
                 yAxisLabel = unit + ", " + xAxisLabelVar + "< x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
-            if integrateDir is "right":
+            if integrateDir == "right":
                 yAxisLabel = unit + ", " + xAxisLabelVar + "> x (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " bin width)"
 
 
@@ -378,10 +378,10 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
             Histogram.SetMarkerColor(colors[colorList[colorIndex]])
             Histogram.SetLineColor(colors[colorList[colorIndex]])
             colorIndex = colorIndex + 1
-            if colorIndex is len(colorList):
+            if colorIndex == len(colorList):
                 colorIndex = 0
                 markerStyleIndex = markerStyleIndex + 1
-                if markerStyleIndex is len(markerStyleList):
+                if markerStyleIndex == len(markerStyleList):
                     markerStyleIndex = 0
                     fillIndex = fillIndex + 1
 
@@ -479,7 +479,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
     for histogram in Histograms:
         histogram.SetTitle(histoTitle)
         if arguments.verbose:
-            print "  Drawing hist " + histogram.GetName() + ", with plotting_options = " + plotting_options + ", with mean = " + str(histogram.GetMean()) + ", with color = " + str(histogram.GetLineColor())
+            print("  Drawing hist " + histogram.GetName() + ", with plotting_options = " + plotting_options + ", with mean = " + str(histogram.GetMean()) + ", with color = " + str(histogram.GetLineColor()))
         histogram.Draw(plotting_options)
         histogram.GetXaxis().SetTitle(xAxisLabel)
         histogram.GetYaxis().SetTitle(yAxisLabel)
@@ -489,7 +489,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
             histogram.SetMinimum(yAxisMin)
         if makeRatioPlots or makeDiffPlots:
             histogram.GetXaxis().SetLabelSize(0)
-        if histCounter is 0:
+        if histCounter == 0:
             plotting_options = plotting_options + " SAME"
         histCounter = histCounter + 1
 
@@ -525,12 +525,12 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
             Reference = Histograms[RefIndex]
 
         for Histogram in Histograms:
-            if Histogram is Reference:
+            if Histogram == Reference:
                 continue
 
             if makeRatioPlots:
                 makeRatio = functools.partial (ratioHistogram,Histogram, Reference)
-                if arguments.ratioRelErrMax is not -1: # it gets initialized to this dummy value of -1
+                if arguments.ratioRelErrMax != -1: # it gets initialized to this dummy value of -1
                     makeRatio =  functools.partial (makeRatio, relErrMax = float(arguments.ratioRelErrMax))
                 if addOneToRatio != -1: # it gets initialized to this dummy value of -1
                     makeRatio = functools.partial (makeRatio, addOne = bool (addOneToRatio))
@@ -589,7 +589,7 @@ def MakeOneDHist(histogramDirectory, histogramName,integrateDir):
     outputFile.cd(histogramDirectory)
     Canvas.Write()
     if arguments.verbose:
-        print "  Finished writing canvas: ", Canvas.GetName()
+        print("  Finished writing canvas: ", Canvas.GetName())
 
     if arguments.savePDFs:
         Canvas.SaveAs("comparison_histograms_pdfs/"+histogramName+".pdf")
@@ -612,7 +612,7 @@ def LoopOverKeys(currentDir, testFile, outputFile):
 
         if (key.GetClassName() == "TDirectoryFile"):
             if arguments.verbose:
-                print "Looping over directory: ", key.GetName()
+                print("Looping over directory: ", key.GetName())
             if currentDir == "":
                 histDir = key.GetName()
             else:
@@ -667,7 +667,7 @@ else:
         if (key.GetClassName() != "TDirectoryFile"):
             continue
         if arguments.verbose:
-            print "Checking key: ", key.GetName()
+            print("Checking key: ", key.GetName())
 
         histogramDirectory = key.GetName()
         outputFile.cd()
@@ -680,4 +680,4 @@ else:
 
 testFile.Close()
 outputFile.Close()
-print "Finished writing " + outputFile.GetName()
+print("Finished writing " + outputFile.GetName())

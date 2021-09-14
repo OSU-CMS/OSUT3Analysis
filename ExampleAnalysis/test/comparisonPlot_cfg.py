@@ -1,14 +1,14 @@
-#! /usr/bn/env python
-intLumi = 16146.2 # 2016G,H only 
+#! /usr/bn/env python3
+intLumi = 16146.2 # 2016G,H only
 
 ###################
 # 'color' options #
 ###################
 ## 'black'
-## 'red'  
+## 'red'
 ## 'green'
 ## 'purple'
-## 'blue'  
+## 'blue'
 ## 'yellow'
 ## default: cycle through list
 

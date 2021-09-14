@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Fits an exponential function to a histogram in a specified file.
 # Reports the fitted parameters and prints the plot.
@@ -35,7 +35,7 @@ if not arguments.nobatch:
 inputFile = TFile(arguments.infile, "READ")
 hist = inputFile.Get(arguments.histName).Clone()
 if not hist:
-    print "Could not find TH1 " + arguments.histName + " in " + inputFile
+    print("Could not find TH1 " + arguments.histName + " in " + inputFile)
 
 if arguments.rebinFactor:
     hist.Rebin(int(arguments.rebinFactor))
@@ -48,22 +48,22 @@ if arguments.lo:
     lo = float(arguments.lo)
 if arguments.hi:
     hi = float(arguments.hi)
-print "lo = " + str(lo)
+print("lo = " + str(lo))
 myfunc = TF1("myfunc", "expo", lo, hi)
 can = TCanvas()
 hist.Fit("myfunc", "R")   # Fit in range
 hist.Draw("pe")
 can.SetLogy(1)
 
-print "Fit function:  exp([0]+[1]*x) in range (" + str(lo) + "," + str(hi) + ")"
-print "Fitted parameters:  [0] = " + str(myfunc.GetParameter(0))
-print "Fitted parameters:  [1] = " + str(myfunc.GetParameter(1))
+print("Fit function:  exp([0]+[1]*x) in range (" + str(lo) + "," + str(hi) + ")")
+print("Fitted parameters:  [0] = " + str(myfunc.GetParameter(0)))
+print("Fitted parameters:  [1] = " + str(myfunc.GetParameter(1)))
 
 ctau      =  -1.0 /  myfunc.GetParameter(1)
 ctauErrHi = (-1.0 / (myfunc.GetParameter(1) + myfunc.GetParError(1))) - ctau
 ctauErrLo = (-1.0 / (myfunc.GetParameter(1) - myfunc.GetParError(1))) - ctau
 
-print "Fitted parameters:  ctau = -1./[1] = " + str(ctau) + "; ctau error =  + " + str(ctauErrHi) + " - " + str(ctauErrLo)
+print("Fitted parameters:  ctau = -1./[1] = " + str(ctau) + "; ctau error =  + " + str(ctauErrHi) + " - " + str(ctauErrLo))
 
 histName = arguments.histName
 histName = histName[histName.rfind('/')+1:]  # strip off anything before the last '/'
@@ -88,13 +88,6 @@ can.Write()
 outputFile.Close()
 outfilePdf = outfileRoot.replace(".root", ".pdf")
 can.SaveAs(outfilePdf)
-print "Saved plot in " + outfilePdf + " and " + outfileRoot
+print("Saved plot in " + outfilePdf + " and " + outfileRoot)
 
-print "Finished doExpoFit.py"
-
-
-
-
-
-
-
+print("Finished doExpoFit.py")

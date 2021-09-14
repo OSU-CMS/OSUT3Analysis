@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import os
 import math
@@ -94,7 +94,7 @@ class Table(object):
             return len(self.contents[0])
     def maxColWidth(self, col):
         if col >= len(self.contents):
-            print "ERROR:  Cannot find maximum column width for column index", col, "because the table only contains", len(self.contents), "columns."
+            print("ERROR:  Cannot find maximum column width for column index", col, "because the table only contains", len(self.contents), "columns.")
             return 0
         maxWidth = -1
         for r in range(self.numRows()):
@@ -104,9 +104,9 @@ class Table(object):
 
     def addColumn(self, col):
         if self.numRows() > 0 and len(col) != self.numRows():
-            print "ERROR: Cannot add column with length", len(col), "to table with", self.numRows(), " rows."
-            print "Printing column contents: ", col
-            print "Printing table contents: "
+            print("ERROR: Cannot add column with length", len(col), "to table with", self.numRows(), " rows.")
+            print("Printing column contents: ", col)
+            print("Printing table contents: ")
             self.printToFile()
             return
         newcol = copy.deepcopy(col)
@@ -119,7 +119,7 @@ class Table(object):
                 self.contents.append(newcol)
             return
         if len(col) != self.numCols():
-            print "ERROR: Cannot add row with length", len(row), "to table with", self.numCols(), " columns."
+            print("ERROR: Cannot add row with length", len(row), "to table with", self.numCols(), " columns.")
             return
         else:
             for c in range(self.numCols()):
@@ -176,8 +176,8 @@ class Table(object):
             tableFormat += "|"
             vlinesToPrint.remove(self.numCols()+1)
         if len(vlinesToPrint) != 0:
-            print "WARNING: Found additional vline's that were not printed:"
-            print vlinesToPrint
+            print("WARNING: Found additional vline's that were not printed:")
+            print(vlinesToPrint)
         fout.write("\\begin{table}[htbp] \n")
         fout.write("\\begin{center} \n")
         fout.write("\\begin{tabular}{" + tableFormat + "}\n")
@@ -207,9 +207,9 @@ class Table(object):
             fout.write("\hline \n")
             hlinesToPrint.remove(self.numRows())
         if len(hlinesToPrint) != 0:
-            print "WARNING: Found additional hline's that were not printed:"
-            print hlinesToPrint
-            print "   self.numRows() = ", self.numRows()
+            print("WARNING: Found additional hline's that were not printed:")
+            print(hlinesToPrint)
+            print("   self.numRows() = ", self.numRows())
 
         # Close table:
         fout.write("\\end{tabular} \n")
@@ -228,7 +228,7 @@ class Table(object):
             for c in range(self.numCols()):
                 for r in range(self.numRows()):
                     if replacement in self.contents[c][r]:
-#                        print replacement, "->", replacements[replacement], ":", self.contents[c][r], "->", self.contents[c][r].replace(replacement,replacements[replacement])
+#                        print(replacement, "->", replacements[replacement], ":", self.contents[c][r], "->", self.contents[c][r].replace(replacement,replacements[replacement]))
                         self.contents[c][r] = self.contents[c][r].replace(replacement,replacements[replacement])
 
 
@@ -332,17 +332,17 @@ class CFTable(object):
         table.contents[-1][0] = "\\multicolumn{" + str(len(self.datasets)) + "}{r}{" + self.type + "}"
         table.initializeJustification()
         table.hlines = [1, 2, table.numRows()]
-        #print "Debug:  print all aliases for numRows = ", table.numRows
+        #print("Debug:  print all aliases for numRows = ", table.numRows)
         #for r in range(table.numRows()):
-            #print r, ": ", table.contents[0][r]
+            #print(r, ": ", table.contents[0][r])
         table.makeAllReplacements(replacements)
-        #print "Debug:  print all aliases after replacement 1"
+        #print("Debug:  print all aliases after replacement 1")
         #for r in range(table.numRows()):
-            #print r, ": ", table.contents[0][r]
+            #print(r, ": ", table.contents[0][r])
         #table.makeAllReplacements(secondary_replacements)
-        #print "Debug:  print all aliases after replacement 2"
+        #print("Debug:  print all aliases after replacement 2")
         #for r in range(table.numRows()):
-            #print r, ": ", table.contents[0][r]
+            #print(r, ": ", table.contents[0][r])
         return table
     def printErrors(self, toprint):
         for d in self.datasets:
@@ -356,7 +356,7 @@ class CFTable(object):
 
 def fillTableCuts(table, dataset_file):
     if len(table.cutNames) != 0:
-        print "WARNING: Cuts already defined for table; will not add cuts for channel", table.channel
+        print("WARNING: Cuts already defined for table; will not add cuts for channel", table.channel)
         return
     inputFile = TFile(dataset_file)
     cutFlow = inputFile.Get(table.channel + "/cutFlow")
@@ -376,7 +376,7 @@ def getLumiWt(dataset_file):
             words = filter(None, words) # Remove empty entries.
             lumiWt = float(words[-1].rstrip(".\n"))  # Strip off the end-line and period from the last word in the line.
     if lumiWt <= 0:
-        print "ERROR:  Found invalid lumiWt from file:", mergeLogName
+        print("ERROR:  Found invalid lumiWt from file:", mergeLogName)
         exit(0)
     return lumiWt
 
@@ -384,8 +384,8 @@ def fillTableColumn(table, dataset_file, dataset, hist_name="cutFlow"):
     inputFile = TFile(dataset_file)
     cutFlow = inputFile.Get(table.channel + "/" + hist_name)
     if cutFlow.GetNbinsX() != len(table.cutNames):
-        print "ERROR:  cutFlow.GetNbinsX() = ", cutFlow.GetNbinsX(), " does not equal len(table.cutNames) = ", len(table.cutNames)
-        print "Will skip channel", table.channel, " from file ", dataset_file
+        print("ERROR:  cutFlow.GetNbinsX() = ", cutFlow.GetNbinsX(), " does not equal len(table.cutNames) = ", len(table.cutNames))
+        print("Will skip channel", table.channel, " from file ", dataset_file)
         return
     newcol = CFColumn(dataset)
     newcol.label = getLabel(dataset)
@@ -407,7 +407,7 @@ def makeTableEff(table):
     tableEff = copy.deepcopy(table)
     for c in reversed(range(len(tableEff.datasets))):  # Go backwards to allow removal of columns.
         col = tableEff.datasets[c]
-        if col.dataset is "diff" or col.dataset is "ratio":
+        if col.dataset == "diff" or col.dataset == "ratio":
             # The difference and ratio do not make sense in the efficiency table.
             del tableEff.datasets[c]
             continue
@@ -423,7 +423,7 @@ def makeTableMargEff(table):
     tableMargEff = copy.deepcopy(table)
     for c in reversed(range(len(tableMargEff.datasets))):  # Go backwards to allow removal of columns.
         col = tableMargEff.datasets[c]
-        if col.dataset is "diff" or col.dataset is "ratio":
+        if col.dataset == "diff" or col.dataset == "ratio":
             # The difference and ratio do not make sense in the efficiency table.
             del tableMargEff.datasets[c]
             continue
@@ -440,7 +440,7 @@ def makeTableIndivEff(table):
     tableIndivEff = copy.deepcopy(table)
     for c in reversed(range(len(tableIndivEff.datasets))):  # Go backwards to allow removal of columns.
         col = tableIndivEff.datasets[c]
-        if col.dataset is "diff" or col.dataset is "ratio":
+        if col.dataset == "diff" or col.dataset == "ratio":
             # The difference and ratio do not make sense in the efficiency table.
             del tableIndivEff.datasets[c]
             continue
@@ -464,8 +464,8 @@ def addExtraColumn(table, option):
         sig  = CFCell()
         for d in table.datasets:   # Loop over datasets
             if d.type == "signalMC":
-                if sig.val != 0 and option is "signif":
-                    print "Warning:  table contains more than one signal sample; will calculate signif with only the first."
+                if sig.val != 0 and option == "signif":
+                    print("Warning:  table contains more than one signal sample; will calculate signif with only the first.")
                 else:
                     sig = d.yields[i]
             elif d.type == "bgMC":
@@ -474,15 +474,15 @@ def addExtraColumn(table, option):
                 data += d.yields[i]
         # Perform calculation, and add cell to the column.
         newcell = CFCell()
-        if option is "total":
+        if option == "total":
             newcell = bkgd
-        elif option is "diff":
+        elif option == "diff":
             newcell = data - bkgd
-        elif option is "ratio":
+        elif option == "ratio":
             # Define:  ratio = (data - bkgd) / bkgd = (data / bkgd) - 1.0
             newcell = data / bkgd
             newcell.val -= 1.0
-        elif option is "signif":
+        elif option == "signif":
             x  =  sig.val
             y  = bkgd.val
             dx =  sig.err
@@ -512,7 +512,7 @@ def makePdf(condor_dir,texfile):
     os.system(command)
     os.system(command)
     if (arguments.verbose):
-        print "Finished running: " + command
+        print("Finished running: " + command)
     os.unlink ("%saux" % (texfile.rstrip("tex")))
     os.unlink ("%slog" % (texfile.rstrip("tex")))
 
@@ -542,14 +542,14 @@ def getProcessedDatasets(condor_dir, datasets):
         fileName = condor_dir + "/" + dataset + ".root"
         if not os.path.exists(fileName):
             if (arguments.verbose):
-                print "Couldn't find output file for",dataset,"dataset",fileName,"fileName"
+                print("Couldn't find output file for",dataset,"dataset",fileName,"fileName")
             continue
         testFile = TFile(fileName)
         if not (testFile.IsZombie()):
             processed_datasets.append(dataset)
         if arguments.verbose:
-            print "Opening testFile: ", fileName
-    if len(processed_datasets) is 0:
+            print("Opening testFile: ", fileName)
+    if len(processed_datasets) == 0:
         sys.exit("Can't find any output root files for the given list of datasets")
     return processed_datasets
 
@@ -699,7 +699,7 @@ if arguments.inputFile:
     processed_datasets = []
     labels = { dataset : dataset }
 if arguments.verbose:
-    print "Will process the following channels: ", channels, " in the datasets ", processed_datasets
+    print("Will process the following channels: ", channels, " in the datasets ", processed_datasets)
 
 writeTexFileHeader(texfile)
 labels["total"]  = "total bkgd"
@@ -749,5 +749,4 @@ for channel in channels: # loop over final states, which each have their own dir
 closeTexFile(texfile)
 makePdf(outputDir,texfile)
 
-print "Finished writing cutFlow to " + outputDir + "/" + outputFileName + "{.tex,.pdf}"
-
+print("Finished writing cutFlow to " + outputDir + "/" + outputFileName + "{.tex,.pdf}")

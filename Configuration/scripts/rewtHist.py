@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # rewtHist.py
 # Reweights a specified histogram for a list of datasets by the weights specified in a weight histogram.
@@ -53,23 +53,23 @@ condor_dir = set_condor_output_dir(arguments)
 def rewtOneHist(dataset, hwts):
     fileName = condor_dir + "/" + dataset + ".root"
     if not os.path.exists(fileName):
-        print "WARNING: didn't find ",fileName
+        print("WARNING: didn't find ",fileName)
         return
-    print "About to reweight histogram in " + fileName
+    print("About to reweight histogram in " + fileName)
     inFile = TFile(fileName, "UPDATE")
     if inFile.IsZombie() or not inFile.GetNkeys():
         return
     inFile.cd()
     h = inFile.Get(str(arguments.histToBeReWeighted)).Clone()
     if not h:
-        print "  Could not find hist named " + arguments.histToBeReWeighted + " in " + inFile.GetName()
+        print("  Could not find hist named " + arguments.histToBeReWeighted + " in " + inFile.GetName())
         return
     h.SetDirectory(0)
     newName = h.GetName() + str(arguments.suffixRename)
     h.SetName(newName)
     dir = arguments.histToBeReWeighted
     dir = dir[:dir.rfind("/")]
-    print "Will write hist to directory " + dir
+    print("Will write hist to directory " + dir)
     inFile.cd(dir)
     tdir = inFile.GetDirectory(dir)
     tdir.Delete(newName + ";*")
@@ -87,7 +87,7 @@ def rewtOneHist(dataset, hwts):
 ########################################################################################
 ########################################################################################
 
-print "Will take weights from hist " + str(arguments.weightsHist) + " in " + str(arguments.fileWithWtHist)
+print("Will take weights from hist " + str(arguments.weightsHist) + " in " + str(arguments.fileWithWtHist))
 
 fileWithWtHist = TFile(str(arguments.fileWithWtHist))
 hwts = fileWithWtHist.Get(arguments.weightsHist)
@@ -100,9 +100,4 @@ for dataset in datasets:
     rewtOneHist(dataset, hwts)
 
 
-print "Finished rewtHist.py successfully."
-
-
-
-
-
+print("Finished rewtHist.py successfully.")

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import os
 import fileinput
@@ -80,7 +80,7 @@ def makeReplacements(line):
 #### check which bgMC input datasets have valid output files
 ## processed_datasets = []
 ## for dataset in datasets:
-##     if types[dataset] is not "bgMC":
+##     if types[dataset] != "bgMC":
 ##         continue
 ##     fileName = condor_dir + "/" + dataset + ".root"
 ##     if not os.path.exists(fileName):
@@ -89,7 +89,7 @@ def makeReplacements(line):
 ##     if not (testFile.IsZombie()):
 ##         processed_datasets.append(dataset)
 
-## if len(processed_datasets) is 0:
+## if len(processed_datasets) == 0:
 ##     sys.exit("Can't find any output root files for the given list of datasets")
 
 
@@ -159,7 +159,7 @@ fout.write (headerLine.rstrip(" & ")+endLine+newLine+hLine)
 
 # for dataset in processed_datasets:
 for dataset in datasets:
-    if types[dataset] is not "bgMC":
+    if types[dataset] != "bgMC":
         continue
 
     datasetLines = ""
@@ -252,6 +252,3 @@ if arguments.replacements:
 
 fout.write("\\end{tabular}}")
 fout.close()
-
-
-

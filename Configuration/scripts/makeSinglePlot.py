@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import os
 import re
@@ -135,7 +135,7 @@ for histogram in input_histograms:
 
     fullTitle = Histogram.GetTitle()
     splitTitle = fullTitle.split(":")
-#    print splitTitle
+#    print(splitTitle)
     Histogram.SetTitle(splitTitle[1].lstrip(" "))
 
     Histogram.SetMarkerColor(histogram['color'])
@@ -159,7 +159,7 @@ for histogram in input_histograms:
 
 
 makeRatioPlots = arguments.makeRatioPlots
-if len(Histograms) is not 2:
+if len(Histograms) != 2:
     makeRatioPlots = False
 
 Canvas = TCanvas(re.sub (r".root$", r"", outputFileName))
@@ -191,7 +191,7 @@ for Histogram in Histograms:
     if makeRatioPlots or makeDiffPlots:
         Histogram.GetXaxis().SetLabelSize(0)
 
-    if counter is 0:
+    if counter == 0:
         Histogram.SetMaximum(1.1*finalMax)
         Histogram.SetMinimum(0.0001)
         Histogram.Draw(plotting_options)
@@ -230,8 +230,8 @@ Canvas.Write()
 if arguments.plot_savePdf:
     pdfFileName = outputFileName.replace(".root", ".pdf")
     Canvas.SaveAs(pdfFileName)
-    print "Saved file:  " + pdfFileName
+    print("Saved file:  " + pdfFileName)
 
 
 outputFile.Close()
-print "Saved plot in file: " + outputFileName
+print("Saved plot in file: " + outputFileName)

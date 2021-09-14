@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import os
 import re
@@ -44,14 +44,14 @@ for sample in datasets:
     fileName = condor_dir + "/" + sample + ".root"
 
     if not os.path.exists(fileName):
-        print "WARNING: didn't find ",fileName
+        print("WARNING: didn't find ",fileName)
         continue
     testFile = TFile(fileName)
     if testFile.IsZombie() or not testFile.GetNkeys():
         continue
     processed_datasets.append(sample)
 
-if len(processed_datasets) is 0:
+if len(processed_datasets) == 0:
     sys.exit("No datasets have been processed")
 
 
@@ -207,5 +207,3 @@ for dataset in processed_datasets:
                         ##############################################
 
     inputFile.Close()
-
-

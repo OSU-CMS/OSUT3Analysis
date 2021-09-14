@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import os
 import re
@@ -64,7 +64,7 @@ newLine = " \n"
 
 def getSystematicError(sample):
     errorSquared = 0.0
-    if types[sample] is "data":
+    if types[sample] == "data":
         return 0.0
 
     # add uncertainty on normalization method
@@ -92,7 +92,7 @@ def getSystematicError(sample):
     for uncertainty in external_systematic_uncertainties:
         input_file_path = os.environ['CMSSW_BASE'] + "/src/" + external_systematics_directory + "systematic_values__" + uncertainty + ".txt"
         if not os.path.exists(input_file_path):
-            print "   skipping",uncertainty,"systematic for the",channel,"channel"
+            print("   skipping",uncertainty,"systematic for the",channel,"channel")
             return 0
 
         input_file = open(input_file_path)
@@ -101,9 +101,9 @@ def getSystematicError(sample):
             dataset = line[0]
             if dataset != sample:
                 continue
-            if len(line) is 2: #just one error
+            if len(line) == 2: #just one error
                 error = float(line[1]) - 1
-            elif len(line) is 3: #asymmetric +- errors (we'll take the bigger one)
+            elif len(line) == 3: #asymmetric +- errors (we'll take the bigger one)
                 minus_error = float(line[1]) - 1
                 plus_error = float(line[2]) - 1
                 if abs(minus_error) > abs(plus_error):
@@ -129,8 +129,8 @@ for dataset in datasets:
         processed_datasets.append(dataset)
 
 #### exit if no datasets found
-if len(processed_datasets) is 0:
-    print datasets
+if len(processed_datasets) == 0:
+    print(datasets)
     sys.exit("Can't find any output root files for the given list of datasets")
 
 
@@ -171,7 +171,7 @@ for sample in processed_datasets:
         if not arguments.inputHistogram:
             cutFlowHistogram = inputFile.Get(channel+"/cutFlow")
             if not cutFlowHistogram:
-                print "WARNING: didn't find cutflow for ", sample, "dataset in", channel, "channel"
+                print("WARNING: didn't find cutflow for ", sample, "dataset in", channel, "channel")
                 continue
             yield_ = cutFlowHistogram.GetBinContent(cutFlowHistogram.GetNbinsX())
             statError_ = cutFlowHistogram.GetBinError(cutFlowHistogram.GetNbinsX())
@@ -180,7 +180,7 @@ for sample in processed_datasets:
             newChannel = channel.replace("CutFlow","")
             inputHistogram = inputFile.Get(newChannel + "/" + arguments.inputHistogram)
             if not inputHistogram:
-                print "WARNING: didn't find input histogram for ", sample, "dataset in", newChannel, "channel"
+                print("WARNING: didn't find input histogram for ", sample, "dataset in", newChannel, "channel")
                 continue
             statError_ = Double(0.0)
             yield_ = inputHistogram.IntegralAndError(0, inputHistogram.GetNbinsX()+1, statError_)
@@ -193,14 +193,14 @@ for sample in processed_datasets:
         else:
             sysError_ = 0.0
         roundedNumbersDictionary = roundingNumbers(yield_,statError_,sysError_)
-        if types[sample] is "data":
+        if types[sample] == "data":
             yields[sample][channel] = str(int(yield_))
         else:
             yields[sample][channel] = str(roundedNumbersDictionary['central_value'])
         stat_errors[sample][channel] = str(roundedNumbersDictionary['stat_error'])
         sys_errors[sample][channel] = str(roundedNumbersDictionary['syst_error'])
 
-        if types[sample] is "bgMC":
+        if types[sample] == "bgMC":
             bgMCSum[channel] = bgMCSum[channel] + yield_
             bgMCStatErrSquared[channel] = bgMCStatErrSquared[channel] + statError_*statError_
             bgMCSysErrSquared[channel] = bgMCSysErrSquared[channel] + sysError_*sysError_
@@ -226,7 +226,7 @@ for channel in channels:
     #write a line for each background sample
     bgMCcounter = 0
     for sample in processed_datasets_channels[channel]:
-        if types[sample] is not "bgMC":
+        if types[sample] != "bgMC":
             continue
 
         bgMCcounter = bgMCcounter + 1
@@ -239,7 +239,7 @@ for channel in channels:
         fout.write(line)
 
     #write a line with the sum of the backgrounds
-    if bgMCcounter is not 0:
+    if bgMCcounter != 0:
         roundedNumbersDictionary = roundingNumbers(bgMCSum[channel], math.sqrt(bgMCStatErrSquared[channel]),math.sqrt(bgMCSysErrSquared[channel]))
         bgMCSum_ = str(roundedNumbersDictionary['central_value'])
         bgMCStatErr_ = str(roundedNumbersDictionary['stat_error'])
@@ -252,7 +252,7 @@ for channel in channels:
 
     #write a line for each data sample
     for sample in processed_datasets_channels[channel]:
-        if types[sample] is not "data":
+        if types[sample] != "data":
             continue
 
         label =  "Observation"
@@ -262,7 +262,7 @@ for channel in channels:
     #write a line for each signal sample
     signalCounter = 0
     for sample in processed_datasets_channels[channel]:
-        if types[sample] is not "signalMC":
+        if types[sample] != "signalMC":
             continue
         signalCounter += 1
         rawlabel = labels[sample]
@@ -292,7 +292,4 @@ for channel in channels:
         #os.system("rm %s" % outputFile)
         os.unlink ("%saux" % (outputFile.rstrip("tex")))
         os.unlink ("%slog" % (outputFile.rstrip("tex")))
-        print "Finished writing cutFlow to " + outputFile + " and compiling pdf"
-
-
-
+        print("Finished writing cutFlow to " + outputFile + " and compiling pdf")

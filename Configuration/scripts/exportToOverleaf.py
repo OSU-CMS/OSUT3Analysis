@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from distutils.spawn import find_executable
 import sys, os, re, subprocess, tempfile, shutil, tarfile
@@ -29,9 +29,9 @@ def executeCommand (command, stdout, stderr):
     if status:
         stdout.close ()
         stderr.close ()
-        print "\n\nERROR: A Git command failed. Please check the output in:"
-        print "  " + os.path.realpath (stdout.name)
-        print "  " + os.path.realpath (stderr.name)
+        print("\n\nERROR: A Git command failed. Please check the output in:")
+        print("  " + os.path.realpath (stdout.name))
+        print("  " + os.path.realpath (stderr.name))
         sys.exit (executeCommand.exitCode)
 
     executeCommand.exitCode += 1
@@ -44,16 +44,16 @@ def executeCommand (command, stdout, stderr):
 #-------------------------------------------------------------------------------
 tdrIsSetup = (find_executable ("tdr") is not None)
 if not tdrIsSetup:
-    print "Please setup TDR environment before executing."
+    print("Please setup TDR environment before executing.")
     sys.exit (1)
 
 if os.path.exists (".git"):
-    print "This is already a Git repository."
-    print "Has this project already been exported? Quitting."
+    print("This is already a Git repository.")
+    print("Has this project already been exported? Quitting.")
     sys.exit (2)
 
 if len (sys.argv) < 2:
-    print "Usage: " + os.path.basename (sys.argv[0]) + " OVERLEAF_GIT_LINK"
+    print("Usage: " + os.path.basename (sys.argv[0]) + " OVERLEAF_GIT_LINK")
     sys.exit (0)
 overleafRepo = sys.argv[1]
 ################################################################################
@@ -69,7 +69,7 @@ documentType = "UNKNOWN"
 if re.match (r".*\/(notes|papers)\/[^/]*\/trunk", cwd):
     cadiNumber = re.sub (r".*\/(notes|papers)\/([^/]*)\/trunk", r"\2", cwd)
 else:
-    print "Please change to the \"trunk\" directory of some note/paper before executing."
+    print("Please change to the \"trunk\" directory of some note/paper before executing.")
     sys.exit (3)
 
 if re.match (r".*\/notes\/[^/]*\/trunk", cwd):
@@ -81,18 +81,18 @@ else:
     documentType = "PAPER"
 
 if os.path.exists (cadiNumber + "_temp.tex"):
-    print "There already exists a \"" + cadiNumber + "_temp.tex\"."
-    print "Has this project already been exported? Quitting."
+    print("There already exists a \"" + cadiNumber + "_temp.tex\".")
+    print("Has this project already been exported? Quitting.")
     sys.exit (4)
 
-print "Document is of type " + documentType + " with number " + cadiNumber + ".\n"
+print("Document is of type " + documentType + " with number " + cadiNumber + ".\n")
 ################################################################################
 
 ################################################################################
 # Run the tdr command with the --export option and copy the resulting tarball
 # to a temporary directory and name it export.tgz.
 #-------------------------------------------------------------------------------
-print "Exporting document with requisite files...",
+print("Exporting document with requisite files...",)
 sys.stdout.flush ()
 tmpDir = re.sub (r"Removing all contents of temporary directory: (.*)", r"\1", subprocess.check_output (["tdr", "clean"])).strip ().rstrip ()
 if os.path.exists (tmpDir):
@@ -108,13 +108,13 @@ for line in tdrOutput.splitlines ():
     shutil.copy (exportName, exportDir + "/export.tgz")
     break
 os.chdir (exportDir)
-print " Done."
+print(" Done.")
 ################################################################################
 
 ################################################################################
 # Extract files from tarball and copy missing files back to original directory.
 #-------------------------------------------------------------------------------
-print "Extracting export tarball and copying back requisite files...",
+print("Extracting export tarball and copying back requisite files...",)
 sys.stdout.flush ()
 export = tarfile.open ("export.tgz")
 export.extractall ()
@@ -127,7 +127,7 @@ for f in os.listdir ("."):
         shutil.copy (f, cwd)
 shutil.rmtree (exportDir)
 os.chdir (cwd)
-print " Done."
+print(" Done.")
 ################################################################################
 
 ################################################################################
@@ -136,7 +136,7 @@ print " Done."
 # main file within the temp file with an \input{} command of the original main
 # document file.
 #-------------------------------------------------------------------------------
-print "Reformatting temp document file...",
+print("Reformatting temp document file...",)
 sys.stdout.flush ()
 mainFile = open (cadiNumber + ".tex", "r")
 tempFile = open (cadiNumber + "_temp.tex", "r")
@@ -164,7 +164,7 @@ for lineInTemp in temp:
 newTempFile.close ()
 os.remove (cadiNumber + "_temp.tex")
 shutil.move (newTempFileName, cadiNumber + "_temp.tex")
-print " Done."
+print(" Done.")
 ################################################################################
 
 ################################################################################
@@ -180,9 +180,9 @@ gitignore.close ()
 ################################################################################
 
 ################################################################################
-# Push the files to our blank 
+# Push the files to our blank
 #-------------------------------------------------------------------------------
-print "Pushing to Overleaf git repository...",
+print("Pushing to Overleaf git repository...",)
 sys.stdout.flush ()
 gitOutName = createTempFile (suffix = ".out", prefix = "git_")
 gitErrName = createTempFile (suffix = ".err", prefix = "git_")
@@ -201,7 +201,7 @@ gitOut.close ()
 gitErr.close ()
 os.remove (gitOutName)
 os.remove (gitErrName)
-print " Done."
+print(" Done.")
 ################################################################################
 
-print "\nProject successfully exported to Overleaf."
+print("\nProject successfully exported to Overleaf.")

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from optparse import OptionParser
 from OSUT3Analysis.Configuration.processingUtilities import *
@@ -36,7 +36,7 @@ from OSUT3Analysis.Configuration.mergeUtilities import *
 ###############################################################################
 CondorDir = ''
 if arguments.condorDir == "":
-    print "No working directory is given, aborting."
+    print("No working directory is given, aborting.")
     sys.exit()
 else:
     CondorDir = os.getcwd() + '/condor/' + arguments.condorDir
@@ -59,16 +59,16 @@ if arguments.localConfig:
     split_datasets = split_composite_datasets(datasets, composite_dataset_definitions)
     IntLumi = intLumi
     if arguments.Dataset:
-        print "ERROR:  The -d and -l options cannot be used simultaneously."
+        print("ERROR:  The -d and -l options cannot be used simultaneously.")
         exit(0)
 
 if not arguments.localConfig:
     if arguments.Dataset == "":
-        print "There are no datasets to merge!"
+        print("There are no datasets to merge!")
     else:
         split_datasets.append(arguments.Dataset)
 
-if arguments.IntLumi is not "":
+if arguments.IntLumi != "":
     IntLumi = float(arguments.IntLumi)
 
 # Remove duplicates
@@ -80,40 +80,40 @@ if "optional_dict_ntupleEff" not in locals () and "optional_dict_ntupleEff" not 
 
 currentCondorSubArgumentsSet = {}
 if arguments.verbose:
-    print "List of datasets: ", split_datasets
+    print("List of datasets: ", split_datasets)
 if not arguments.compositeOnly and not arguments.UseCondor:
     for dataSet in split_datasets:
         mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir, optional_dict_ntupleEff, verbose = arguments.verbose, skipMerging = arguments.skipMerging)
 
 if arguments.UseCondor:
     # Make necessary files for condor and submit condor jobs.
-    print '......................Using Condor!...........................'
+    print('......................Using Condor!...........................')
     currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
     GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
     MakeSubmissionScriptForMerging(CondorDir, currentCondorSubArgumentsSet, split_datasets)
     MakeMergingConfigForCondor(CondorDir, OutputDir, split_datasets, IntLumi, optional_dict_ntupleEff)
     os.chdir(CondorDir)
     if arguments.NotToExecute:
-        print 'Configuration files created in ' + str(CondorDir) + ' directory but no jobs submitted.\n'
+        print('Configuration files created in ' + str(CondorDir) + ' directory but no jobs submitted.\n')
     else:
         os.system('condor_submit condorMerging.sub')
 else:
     os.chdir(CondorDir)
     for dataSet_component in composite_datasets:
-        print "................Merging composite dataset " + dataSet_component + " ................"
+        print("................Merging composite dataset " + dataSet_component + " ................")
         memberList = []
         for dataset in composite_dataset_definitions[dataSet_component]:
             if not os.path.exists(dataset + '.root'):
-                print dataset + '.root does not exist, component dataset ' + dataSet_component + ' wont be complete!'
+                print(dataset + '.root does not exist, component dataset ' + dataSet_component + ' wont be complete!')
                 continue
             memberList.append(dataset + '.root')
         InputFileString = " ".join (memberList)
         os.system('mergeTFileServiceHistograms -i ' + InputFileString + ' -o ' + OutputDir + "/" + dataSet_component + '.root')
-        print 'Finish merging composite dataset ' + dataSet_component
-        print "...............................................................\n"
+        print('Finish merging composite dataset ' + dataSet_component)
+        print("...............................................................\n")
 
 if arguments.UseCondor:
-    print "After all condor merging jobs have finished, rerun mergeOut.py with the -C option to merge composite datasets."
+    print("After all condor merging jobs have finished, rerun mergeOut.py with the -C option to merge composite datasets.")
 elif not arguments.compositeOnly:
-    print "Next time, consider using the -c option to send the merging jobs to the condor queue."
-print "Finished mergeOut.py."
+    print("Next time, consider using the -c option to send the merging jobs to the condor queue.")
+print("Finished mergeOut.py.")
