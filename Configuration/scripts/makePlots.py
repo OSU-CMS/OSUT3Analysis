@@ -178,8 +178,7 @@ topLeft_y_offset  = 0.04
 
 #set the text for the fancy heading
 #HeaderText = "CMS Preliminary: " + LumiText + " at #sqrt{s} = 8 TeV"
-#HeaderText = LumiText + " (13 TeV)"
-HeaderText = "(13 TeV)"
+HeaderText = LumiText + " (13 TeV)"
 
 #position for header
 header_x_left    = 0.602535
@@ -560,8 +559,7 @@ def MakeOneDHist(pathToDir,histogramName,integrateDir):
     CMSLabel.SetFillStyle(0)
 
     if makeFancy:
-        #LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,"CMS Preliminary","NDC")
-        LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,"CMS #bf{#it{Internal}}","NDC")
+        LumiLabel = TPaveLabel(topLeft_x_left,topLeft_y_bottom,topLeft_x_right,topLeft_y_top,"CMS Preliminary","NDC")
         LumiLabel.SetTextFont(62)
         LumiLabel.SetTextSize(0.8)
         LumiLabel.SetTextAlign(12)
