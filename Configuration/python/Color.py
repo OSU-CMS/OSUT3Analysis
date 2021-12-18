@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # define some constants with meaningful names for the ANSI color codes
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors

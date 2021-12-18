@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import os
 import re
@@ -45,20 +45,20 @@ if arguments.localConfig:
 
 #### deal with conflicting arguments
 if arguments.normalizeToData and arguments.normalizeToUnitArea:
-    print "Conflicting normalizations requsted, will normalize to unit area"
+    print("Conflicting normalizations requsted, will normalize to unit area")
     arguments.normalizeToData = False
 if arguments.normalizeToData and arguments.noStack:
-    print "You have asked to scale non-stacked backgrounds to data.  This is a very strange request.  Will normalize to unit area instead"
+    print("You have asked to scale non-stacked backgrounds to data.  This is a very strange request.  Will normalize to unit area instead")
     arguments.normalizeToData = False
     arguments.normalizeToUnitArea = True
 if arguments.makeRatioPlots and arguments.makeDiffPlots:
-    print "You have requested both ratio and difference plots.  Will make just ratio plots instead"
+    print("You have requested both ratio and difference plots.  Will make just ratio plots instead")
     arguments.makeRatioPlots = False
 if arguments.makeRatioPlots and arguments.noStack:
-    print "You have asked to make a ratio plot and to not stack the backgrounds.  This is a very strange request.  Will skip making the ratio plot."
+    print("You have asked to make a ratio plot and to not stack the backgrounds.  This is a very strange request.  Will skip making the ratio plot.")
     arguments.makeRatioPlots = False
 if arguments.makeDiffPlots and arguments.noStack:
-    print "You have asked to make a difference plot and to not stack the backgrounds.  This is a very strange request.  Will skip making the difference plot."
+    print("You have asked to make a difference plot and to not stack the backgrounds.  This is a very strange request.  Will skip making the difference plot.")
     arguments.makeDiffPlots = False
 
 
@@ -136,11 +136,11 @@ header_y_top     = 0.9947552
 def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
 
     if not dataHist:
-        print "Error:  trying to run ratioHistogram but dataHist is invalid"
+        print("Error:  trying to run ratioHistogram but dataHist is invalid")
         return
 
     if not mcHist:
-        print "Error:  trying to run ratioHistogram but mcHist is invalid"
+        print("Error:  trying to run ratioHistogram but mcHist is invalid")
         return
 
     def groupR(group):
@@ -163,9 +163,9 @@ def ratioHistogram( dataHist, mcHist, relErrMax=0.10):
         return regroup(groups[:iLo] + [groups[iLo]+groups[iHi]] + groups[iHi+1:])
 
     #don't rebin the histograms of the number of a given object (except for the pileup ones)
-    if ((dataHist.GetName().find("num") is not -1 and dataHist.GetName().find("Primaryvertexs") is -1) or
-        dataHist.GetName().find("CutFlow")  is not -1 or
-        dataHist.GetName().find("GenMatch") is not -1):
+    if ((dataHist.GetName().find("num") != -1 and dataHist.GetName().find("Primaryvertexs") == -1) or
+        dataHist.GetName().find("CutFlow")  != -1 or
+        dataHist.GetName().find("GenMatch") != -1):
         ratio = dataHist.Clone()
         ratio.Add(mcHist,-1)
         ratio.Divide(mcHist)
@@ -277,7 +277,7 @@ def MakeOneDHist(pathToDir,distribution):
     if arguments.rebinFactor:
         RebinFactor = int(arguments.rebinFactor)
         #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
-        if Target.GetNbinsX() >= RebinFactor*5 and Target.GetName().find("GenMatch") is -1:
+        if Target.GetNbinsX() >= RebinFactor*5 and Target.GetName().find("GenMatch") == -1:
             Target.Rebin(RebinFactor)
 
 
@@ -297,7 +297,7 @@ def MakeOneDHist(pathToDir,distribution):
         inputFile = TFile(dataset_file)
         HistogramObj = inputFile.Get(pathToDir+"/"+distribution['channel']+"/"+distribution['name'])
         if not HistogramObj:
-            print "WARNING:  Could not find histogram " + pathToDir + "/" + distribution['channel'] + "/" + distribution['name'] + " in file " + dataset_file + ".  Will skip it and continue."
+            print("WARNING:  Could not find histogram " + pathToDir + "/" + distribution['channel'] + "/" + distribution['name'] + " in file " + dataset_file + ".  Will skip it and continue.")
             continue
         Histogram = HistogramObj.Clone()
         Histogram.SetDirectory(0)
@@ -305,14 +305,14 @@ def MakeOneDHist(pathToDir,distribution):
         if arguments.rebinFactor:
             RebinFactor = int(arguments.rebinFactor)
             #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
-            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetName().find("GenMatch") is -1:
+            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetName().find("GenMatch") == -1:
                 Histogram.Rebin(RebinFactor)
 
         xAxisLabel = Histogram.GetXaxis().GetTitle()
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
 
-        if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
+        if unitBeginIndex != -1 and unitEndIndex != -1: #x axis has a unit
             yAxisLabel = "Entries / " + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex]
         else:
             yAxisLabel = "Entries per bin (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
@@ -415,9 +415,9 @@ def MakeOneDHist(pathToDir,distribution):
                 # perform new fit
                 for k in range (0, distribution['iterations'] - 1):
                     if j == -1:
-                        print "Scale down " + labels[FittingHistogramDatasets[i]] + " iteration " + str (k + 1) + "..."
+                        print("Scale down " + labels[FittingHistogramDatasets[i]] + " iteration " + str (k + 1) + "...")
                     if j == 1:
-                        print "Scale up " + labels[FittingHistogramDatasets[i]] + " iteration " + str (k + 1) + "..."
+                        print("Scale up " + labels[FittingHistogramDatasets[i]] + " iteration " + str (k + 1) + "...")
                     Target.Fit ("fit", "QEMR0")
                 Target.Fit ("fit", "VEMR0")
 
@@ -433,7 +433,7 @@ def MakeOneDHist(pathToDir,distribution):
         func.FixParameter (i, 0)
     # do the fit to get the central values
     for i in range (0, distribution['iterations'] - 1):
-        print "Iteration " + str (i + 1) + "..."
+        print("Iteration " + str (i + 1) + "...")
         Target.Fit ("fit", "QEMR0")
     Target.Fit ("fit", "VEMR0")
 
@@ -536,7 +536,7 @@ def MakeOneDHist(pathToDir,distribution):
             if i == 1:
                 Legend.AddEntry(ErrorHisto,"Stat. Errors","F")
             for Histogram in HistogramsToFit:
-                if Histogram is not HistogramsToFit[0]:
+                if Histogram != HistogramsToFit[0]:
                     ErrorHisto.Add(Histogram)
 
         if i == 0:
@@ -568,7 +568,7 @@ def MakeOneDHist(pathToDir,distribution):
 
         ### finding the maximum value of anything going on the canvas, so we know how to set the y-axis
         finalMax = 0
-        if numFittingSamples is not 0 and not arguments.noStack:
+        if numFittingSamples != 0 and not arguments.noStack:
             finalMax = ErrorHisto.GetMaximum() + ErrorHisto.GetBinError(ErrorHisto.GetMaximumBin())
         else:
             for bgMCHist in HistogramsToFit:
@@ -614,7 +614,7 @@ def MakeOneDHist(pathToDir,distribution):
         y_max = 0.9
         entry_height = 0.05
 
-        if(numFittingSamples is not 0): #then draw the data & bgMC legend
+        if(numFittingSamples != 0): #then draw the data & bgMC legend
 
             numExtraEntries = 2 # count the target and (lack of) title
             Legend.SetX1NDC(x_left)

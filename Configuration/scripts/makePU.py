@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -34,7 +34,7 @@ for sample in datasets:
     if not (testFile.IsZombie()):
         processed_datasets.append(sample)
 
-if len(processed_datasets) is 0:
+if len(processed_datasets) == 0:
     sys.exit("No datasets have been processed")
 
 #### open first input file and re-make its directory structure in the output file
@@ -55,6 +55,6 @@ for sample in processed_datasets: # loop over different samples as listed in con
         outputFile.cd()
         Histogram.Write (sample)
     else:
-        print rootDirectory+"/pileup does not exist in " + condor_dir + "/" + sample + ".root"
+        print(rootDirectory+"/pileup does not exist in " + condor_dir + "/" + sample + ".root")
         continue
 outputFile.Close()

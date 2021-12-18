@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import subprocess
@@ -11,7 +11,7 @@ def logsWithMatches(logs, matchingStrings, vetoStrings = None):
   for log in logs:
     f = open(log)
     s = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
-    
+
     isMatched = True
     if not vetoStrings is None:
       for v in vetoStrings:
@@ -82,10 +82,10 @@ def printJobs(logs, desc):
       jobRanges[dataset] = [jobNumber];
     else:
       jobRanges[dataset].append(jobNumber)
-  print desc
+  print(desc)
   for dataset in jobRanges:
     jobRanges[dataset].sort()
-    print dataset + ': ' + concatenateJobNumbers(jobRanges[dataset])
+    print(dataset + ': ' + concatenateJobNumbers(jobRanges[dataset]))
   print
 
 parser = OptionParser("usage: %prog [options] workDirectory")
@@ -106,7 +106,7 @@ if not len(args) == 1:
 workDir = args[0]
 
 if not os.path.isdir(workDir):
-  print "ERROR: " + workDir + " is not a directory."
+  print("ERROR: " + workDir + " is not a directory.")
   sys.exit()
 
 logs = subprocess.check_output('find ' + workDir + ' -type f -regex ".*\/condor_[^/]*\.log$"', shell = True).split('\n')[:-1]
@@ -152,14 +152,14 @@ runningFraction    = float(len(running))    / nTotal * 100.0
 queuedFraction     = float(len(queued))     / nTotal * 100.0
 
 print
-print 'Job summary: ' + workDir
+print('Job summary: ' + workDir)
 print
-print 'Jobs finished successfully:', len(successful), '/',  int(nTotal), '(' + "{0:.2f}".format(successfulFraction) + '%)'
-print 'Jobs failed:               ', len(failed),     '/',  int(nTotal), '(' + "{0:.2f}".format(failedFraction) + '%)'
-print 'Jobs removed by system:    ', len(removed),    '/',  int(nTotal), '(' + "{0:.2f}".format(removedFraction) + '%)'
-print 'Jobs aborted by user:      ', len(aborted),    '/',  int(nTotal), '(' + "{0:.2f}".format(abortedFraction) + '%)'
-print 'Jobs running:              ', len(running),    '/',  int(nTotal), '(' + "{0:.2f}".format(runningFraction) + '%)'
-print 'Jobs queued:               ', len(queued),     '/',  int(nTotal), '(' + "{0:.2f}".format(queuedFraction) + '%)'
+print('Jobs finished successfully:', len(successful), '/',  int(nTotal), '(' + "{0:.2f}".format(successfulFraction) + '%)')
+print('Jobs failed:               ', len(failed),     '/',  int(nTotal), '(' + "{0:.2f}".format(failedFraction) + '%)')
+print('Jobs removed by system:    ', len(removed),    '/',  int(nTotal), '(' + "{0:.2f}".format(removedFraction) + '%)')
+print('Jobs aborted by user:      ', len(aborted),    '/',  int(nTotal), '(' + "{0:.2f}".format(abortedFraction) + '%)')
+print('Jobs running:              ', len(running),    '/',  int(nTotal), '(' + "{0:.2f}".format(runningFraction) + '%)')
+print('Jobs queued:               ', len(queued),     '/',  int(nTotal), '(' + "{0:.2f}".format(queuedFraction) + '%)')
 print
 
 if options.printSuccess or options.printAll:
@@ -176,6 +176,6 @@ if options.printAborted or options.printAll:
 
 if options.printRunning or options.printAll:
   printJobs(running, "Running jobs:")
-  
+
 if options.printQueued or options.printAll:
   printJobs(queued, "Queued jobs:")

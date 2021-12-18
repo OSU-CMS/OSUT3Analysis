@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import os
 import re
@@ -62,13 +62,13 @@ noUnderFlow = arguments.noUnderFlow
 #### deal with conflicting arguments
 
 if arguments.makeRatioPlots or arguments.makeDiffPlots:
-    if len(input_sources) is not 2:
-        print "You need to have exactly two input sources to produce ratio or difference plots, turning them off"
+    if len(input_sources) != 2:
+        print("You need to have exactly two input sources to produce ratio or difference plots, turning them off")
         arguments.makeRatioPlots = False
         arguments.makeDiffPlots = False
 
 if arguments.makeRatioPlots and arguments.makeDiffPlots:
-    print "You have requested both ratio and difference plots.  Will make just ratio plots instead"
+    print("You have requested both ratio and difference plots.  Will make just ratio plots instead")
     arguments.makeRatioPlots = False
 
 
@@ -239,10 +239,10 @@ def MakeOneHist(dirName, histogramName):
         else:   # Default is to use the same condor directory
             DenHistogramObj = inputFile.Get(source['den_channel'] + "Plotter/" + dirName + "/" + histogramName)
         if not NumHistogramObj:
-            print "WARNING:  Could not find histogram " + source['num_channel'] + "Plotter/" + dirName + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."
+            print("WARNING:  Could not find histogram " + source['num_channel'] + "Plotter/" + dirName + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue.")
             return
         if not DenHistogramObj:
-            print "WARNING:  Could not find histogram " + source['den_channel'] + "Plotter/" + dirName + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue."
+            print("WARNING:  Could not find histogram " + source['den_channel'] + "Plotter/" + dirName + "/" + histogramName + " in file " + dataset_file + ".  Will skip it and continue.")
             return
 
         Histogram = NumHistogramObj.Clone()
@@ -276,7 +276,7 @@ def MakeOneHist(dirName, histogramName):
         if arguments.rebinFactor:
             RebinFactor = int(arguments.rebinFactor)
             #don't rebin histograms which will have less than 5 bins or any gen-matching histograms
-            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") is -1 and not Histogram.Class().InheritsFrom("TH2"):
+            if Histogram.GetNbinsX() >= RebinFactor*5 and Histogram.GetTitle().find("GenMatch") == -1 and not Histogram.Class().InheritsFrom("TH2"):
                 Histogram.Rebin(RebinFactor)
                 DenHistogram.Rebin(RebinFactor)
 
@@ -284,7 +284,7 @@ def MakeOneHist(dirName, histogramName):
         unitBeginIndex = xAxisLabel.find("[")
         unitEndIndex = xAxisLabel.find("]")
 
-        if unitBeginIndex is not -1 and unitEndIndex is not -1: #x axis has a unit
+        if unitBeginIndex != -1 and unitEndIndex != -1: #x axis has a unit
             yAxisLabel = "#epsilon_{ " + cutName + "} (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " " + xAxisLabel[unitBeginIndex+1:unitEndIndex] + " width)"
         else:
             yAxisLabel = "#epsilon_{ " + cutName + "} (" + str(Histogram.GetXaxis().GetBinWidth(1)) + " width)"
@@ -316,7 +316,7 @@ def MakeOneHist(dirName, histogramName):
         if not arguments.makeFancy:
             fullTitle = Histogram.GetTitle()
             splitTitle = fullTitle.split(":")
-            #    print splitTitle
+            #    print(splitTitle)
             if len(splitTitle) > 1:
                 histoTitle = splitTitle[1].lstrip(" ")
             else:
@@ -331,7 +331,7 @@ def MakeOneHist(dirName, histogramName):
             Histogram.SetMarkerColor(colors[colorList[colorIndex]])
             Histogram.SetLineColor(colors[colorList[colorIndex]])
             colorIndex = colorIndex + 1
-            if colorIndex is len(colorList):
+            if colorIndex == len(colorList):
                 colorIndex = 0
 
         markerStyle = 20
@@ -445,7 +445,7 @@ def MakeOneHist(dirName, histogramName):
                 histogram.SetMaximum(finalMax)
                 histogram.SetMinimum(yAxisMin)
 
-        if histCounter is 0:
+        if histCounter == 0:
             if histogram.InheritsFrom("TH1"):
                 plotting_options = plotting_options + " SAME"
             elif histogram.InheritsFrom("TEfficiency"):
@@ -473,9 +473,9 @@ def MakeOneHist(dirName, histogramName):
             makeRatio = functools.partial (ratioHistogram,HistogramClones[0],HistogramClones[1])
             if addOneToRatio != -1: # it gets initialized to this dummy value of -1
                 makeRatio = functools.partial (makeRatio, addOne = bool (addOneToRatio))
-            if ratioRelErrMax is not -1: # it gets initialized to this dummy value of -1
+            if ratioRelErrMax != -1: # it gets initialized to this dummy value of -1
                 makeRatio = functools.partial (makeRatio, relErrMax = float (ratioRelErrMax))
-            if dontRebinRatio is True:
+            if dontRebinRatio == True:
                 makeRatio = functools.partial (makeRatio, dontRebinRatio)
             Comparison = makeRatio ()
         elif makeDiffPlots:
@@ -544,11 +544,11 @@ first_input = input_sources[0]
 #### use the first input file as a template and make comparison versions of all its histograms
 testFile = TFile("condor/" + first_input['condor_dir'] + "/" + first_input['dataset'] + ".root")
 if arguments.verbose:
-    print "Opened testFile: ", testFile.GetName()
+    print("Opened testFile: ", testFile.GetName())
 rootDirectory = first_input['num_channel'] + "Plotter"
 testFile.cd(rootDirectory)
 if arguments.verbose:
-    print "Going to rootDirectory: ", rootDirectory
+    print("Going to rootDirectory: ", rootDirectory)
 
 if arguments.savePDFs:
     try:
@@ -560,14 +560,14 @@ if arguments.savePDFs:
 
 for key in gDirectory.GetListOfKeys(): # Loop over directories in same way as in makePlots.py
     if arguments.verbose:
-        print "  Checking key: ", key.GetName()
+        print("  Checking key: ", key.GetName())
 
     if (key.GetClassName() != "TDirectoryFile"):
         continue
 
     level2Directory = rootDirectory + "/" + key.GetName()
     if arguments.verbose:
-        print "  Checking directory: ", level2Directory
+        print("  Checking directory: ", level2Directory)
     outputFile.cd()
     outputFile.mkdir(key.GetName())
     outputFile.cd(key.GetName())
@@ -575,13 +575,13 @@ for key in gDirectory.GetListOfKeys(): # Loop over directories in same way as in
     for key2 in gDirectory.GetListOfKeys():
         if re.match ('TH1', key2.GetClassName()): #found a 1D histogram
             if arguments.verbose:
-                print "    Will make 1D histogram: ", key2.GetName()
+                print("    Will make 1D histogram: ", key2.GetName())
             MakeOneHist(key.GetName(), key2.GetName())
         if arguments.draw2DPlots and re.match ('TH2', key2.GetClassName()):  # make 2D histograms
             if arguments.verbose:
-                print "    Will make 2D histogram: ", key2.GetName()
+                print("    Will make 2D histogram: ", key2.GetName())
             MakeOneHist(key.GetName(), key2.GetName())
 
 testFile.Close()
 outputFile.Close()
-print "Finished writing " + outputFile.GetName()
+print("Finished writing " + outputFile.GetName())

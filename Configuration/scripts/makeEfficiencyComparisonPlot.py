@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ### this script has been done to overlaid on the same canva multiple efficency's curves. It uses the asymmetryc errors.
 
@@ -142,7 +142,7 @@ for Histogram in Histograms:
     Histogram.Draw(plotting_options)
 #    Histogram.GetXaxis().SetTitle(xAxisLabel)
     Histogram.GetYaxis().SetTitle("cut efficiency")
-    if counter is 0:
+    if counter == 0:
         if Histogram.InheritsFrom("TGraph"):
             plotting_options = "P"
     counter = counter+1
@@ -161,8 +161,8 @@ Canvas.Write()
 if arguments.plot_savePdf:
     pdfFileName = outputFileName.replace(".root", ".pdf")
     Canvas.SaveAs(pdfFileName)
-    print "Saved file:  " + pdfFileName
+    print("Saved file:  " + pdfFileName)
 
 
 outputFile.Close()
-print "Saved plot in file: " + outputFileName
+print("Saved plot in file: " + outputFileName)

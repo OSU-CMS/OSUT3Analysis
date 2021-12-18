@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Script to merge skim output files into a single file.
 
@@ -25,7 +25,7 @@ parser.add_option("-v", "--verbose", dest="verbose", action="store_true", defaul
 ###############################################################################
 CondorDir = ''
 if arguments.condorDir == "":
-    print "No working directory is given, aborting."
+    print("No working directory is given, aborting.")
     sys.exit()
 else:
     condorDir = os.getcwd() + '/condor/' + arguments.condorDir
@@ -42,7 +42,7 @@ if arguments.localConfig:
 elif arguments.dataset != "":
     split_datasets.append(arguments.dataset)
 else:
-    print "There are no datasets to merge!"
+    print("There are no datasets to merge!")
 
 
 ###############################################################################
@@ -51,7 +51,7 @@ else:
 for dataset in split_datasets:
     directory = condorDir + '/' + dataset
     if not os.path.exists(directory):
-        print directory + " does not exist, will skip it and continue!"
+        print(directory + " does not exist, will skip it and continue!")
         continue
     os.chdir(directory)
 
@@ -68,8 +68,7 @@ for dataset in split_datasets:
         command = command[:-1]  # Remove trailing comma
         command += '" outputFile="' + channel + 'merged/skimMerged.root"'
         if arguments.verbose:
-            print "command = ", command
+            print("command = ", command)
         os.makedirs (directory + "/" + channel + "merged")
         os.system(command)
-        print "Created condor/" + arguments.condorDir + "/" + dataset + "/" + channel + "merged/skimMerged.root"
-
+        print("Created condor/" + arguments.condorDir + "/" + dataset + "/" + channel + "merged/skimMerged.root")

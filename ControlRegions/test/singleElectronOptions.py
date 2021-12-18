@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 config_file = "singleElectronAnalyzer_cfg.py"
 #intLumi = 19183. # Full SingleElectron
@@ -36,4 +36,3 @@ datasets = [
     'QCD_ElectronEnriched',
 
 ]
-

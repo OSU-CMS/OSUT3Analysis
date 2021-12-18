@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys, time
 import OSUT3Analysis.Configuration.Color
@@ -28,20 +28,20 @@ class ProgressIndicator:
   def printProgress (self, finished = False):
     if (time.time () - self._timeOfLastPrint) > self._minTimeIntervalForPrinting or finished:
       if not self._isPrinted:
-        print self._title,
+        print(self._title,)
         if self._title:
-          print ": ",
+          print (": ",)
 
         self._isPrinted = True
       else:
         titleLength = len (self._title) + 2
         if self._title:
           titleLength += 2
-        print A_COLUMN (titleLength),
+        print(A_COLUMN (titleLength),)
 
-      print str ("%.2f" % round (self._percentDone, 2)).rjust (self._percentDonePadding) + "%",
+      print (str ("%.2f" % round (self._percentDone, 2)).rjust (self._percentDonePadding) + "%",)
       if finished:
-        print ""
+        print ("")
 
       sys.stdout.flush ()
       self._timeOfLastPrint = time.time ()

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 import math
 # For jobs with input datasets, normal cases: cmsRun config_cfg.py True 671 $(Process) /DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM DYJetsToLL_50_MiniAOD
@@ -6,7 +7,7 @@ if len (sys.argv) == 7 and sys.argv[2] == "True":
   Label = str(sys.argv[6])
   jobNumber = int (sys.argv[4])
   if int (sys.argv[3]) != 0 and sys.argv[5] != "NULL":
-    exec("import datasetInfo_" + Label +"_cfg as datasetInfo")
+    exec("import datasetInfo_" + Label +"_cfg as datasetInfo", globals(), globals())
     filesPerJob = int (math.floor (len (datasetInfo.listOfFiles) / nJobs))
     residualLength = int(len(datasetInfo.listOfFiles)%nJobs)
     if jobNumber < residualLength:
@@ -32,7 +33,7 @@ def getSiblings (fileName, dataset):
     from dbs.apis.dbsClient import DbsApi
     from CRABClient.ClientUtilities import DBSURLS
   except ImportError:
-    print "getSiblings() relies on CRAB. Please set up the environment for CRAB before using."
+    print("getSiblings() relies on CRAB. Please set up the environment for CRAB before using.")
     sys.exit (1)
 
   dbsurl_global = DBSURLS["reader"].get ("global", "global")

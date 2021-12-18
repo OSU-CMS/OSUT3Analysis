@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Merge several pdf's into one
 # Usage:
@@ -8,7 +8,7 @@ import os
 import sys
 
 if len(sys.argv) < 3:
-    print "Error:  Must specify as arguments the output merged file and source files."
+    print("Error:  Must specify as arguments the output merged file and source files.")
     exit(0)
 
 command = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="
@@ -20,8 +20,7 @@ for i in range(2,len(sys.argv)):
 #    sources.append(sys.argv[i])
     command += " " + sys.argv[i]
 
-print "command = ", command
+print("command = ", command)
 
 os.system(command)
-print "Finished merging files to ", merged
-
+print("Finished merging files to ", merged)

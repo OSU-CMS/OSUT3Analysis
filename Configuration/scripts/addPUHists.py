@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # addPUHists.py
 # Takes the histograms from pu.root for the dataset(s) and condor directory specified in the local options file,
@@ -32,7 +32,7 @@ parser.add_option("-i", "--inputFile", dest="inputFile", default = "", help="Spe
 parser.add_option("--delete", dest="delete", action="store_true", default=False, help="Delete given datasets in the pu.root")
 (arguments, args) = parser.parse_args()
 
-from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TArrow, THStack, TIter, TKey, TGraphErrors, Double
+from ROOT import TFile, gROOT, gStyle, gDirectory, TStyle, THStack, TH1F, TCanvas, TString, TLegend, TArrow, THStack, TIter, TKey, TGraphErrors
 
 def copyOneFile(dataset):
     # If the input and output files are defined outside the loop, histograms after the first instance are not found.
@@ -40,30 +40,30 @@ def copyOneFile(dataset):
 
     fin  = TFile(condor_dir+"/pu.root", "READ");
     fout = TFile(os.environ['CMSSW_BASE']+"/src/OSUT3Analysis/Configuration/data/pu.root", "UPDATE");
-    print "Copying histogram " + dataset + " from " + fin.GetName() + " to " + fout.GetName()
+    print("Copying histogram " + dataset + " from " + fin.GetName() + " to " + fout.GetName())
 
     fin.cd()
     h = fin.Get(dataset)
     if not h:
-        print "  Could not find hist named " + dataset + " in " + fin.GetName()
+        print("  Could not find hist named " + dataset + " in " + fin.GetName())
         return
 
     fout.cd()
     if dataset != h.GetName():
-        # print "  Resetting name from " + h.GetName() + " to " + dataset
+        # print("  Resetting name from " + h.GetName() + " to " + dataset)
         h.SetName(dataset)
 
     # Check if the histogram already exists in the destination file
     h2 = fout.Get(dataset)
     if h2:
-        print "  The histogram " + h2.GetName() + " already exists in the destination file."
+        print("  The histogram " + h2.GetName() + " already exists in the destination file.")
         overwrite = raw_input("  Do you want to overwrite it? (y/n): ")
         if not (overwrite is "y"):
-            print "  Will not overwrite existing histogram."
+            print("  Will not overwrite existing histogram.")
             return # Only overwrite if the user enters "y"
 
         # delete all previously existing instances of the histogram
-        print "  Will overwrite existing histogram."
+        print("  Will overwrite existing histogram.")
         fout.Delete(dataset+";*")
 
     h.Write()
@@ -91,7 +91,7 @@ def copyAndRenameOneFile(fout, datasets):
                 h2 = fout.Get(dataset)
         else:
                 Name = str(dataset)
-    print " Will use the existing " + str(h2.GetName()) + " pu distribution as the pu distribution for " + Name
+    print(" Will use the existing " + str(h2.GetName()) + " pu distribution as the pu distribution for " + Name)
     h2.SetName(Name)
     fout.cd()
     h2.Write()
@@ -101,19 +101,19 @@ def addDataDistribution(fout, inputFile):
     fin = TFile(inputFile)
     h1 = fin.Get('pileup')
     if not (h1):
-        print fin + " does not have pileup histograms"
+        print(fin + " does not have pileup histograms")
         return
     else:
         h2 = fout.Get(str(inputFile.split('.')[0]))
         if h2:
-            print "  The histogram " + h2.GetName() + " already exists in the destination file."
+            print("  The histogram " + h2.GetName() + " already exists in the destination file.")
             overwrite = raw_input("  Do you want to overwrite it? (y/n): ")
             if not (overwrite is "y"):
-                print "  Will not overwrite existing histogram."
+                print("  Will not overwrite existing histogram.")
                 return # Only overwrite if the user enters "y"
 
         # delete all previously existing instances of the histogram
-            print "  Will overwrite existing histogram."
+            print("  Will overwrite existing histogram.")
             fout.Delete(str(inputFile.split('.')[0])+";*")
         h1.SetName(str(inputFile.split('.')[0]))
         fout.cd()
@@ -156,9 +156,4 @@ elif arguments.inputFile:
     addDataDistribution(fout, str(arguments.inputFile))
 
 
-print "Finished addPUHists.py successfully."
-
-
-
-
-
+print("Finished addPUHists.py successfully.")

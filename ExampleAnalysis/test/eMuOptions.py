@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
@@ -101,4 +101,3 @@ options['labels'] = labels
 
 #add_stops (options, [200,300,400,500,600,700,800,900], [0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0,30.0,40.0,50.0,60.0,70.0,80.0,90.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0,1000.0],[100])
 add_stops (options, [500], [1.0,10.0,100.0],[100])
-

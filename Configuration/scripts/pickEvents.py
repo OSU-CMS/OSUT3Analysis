@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import re
 from OSUT3Analysis.Configuration.configurationOptions import *
@@ -35,7 +35,7 @@ RedirectorDic = {'Infn':'xrootd.ba.infn.it','FNAL':'cmsxrootd.fnal.gov','Global'
 def createEventList():
     files = os.popen('ls skim*root -1 2>/dev/null').read().split('\n')
     files.extend (os.popen('ls emptySkim*root -1 2>/dev/null').read().split('\n'))
-    print "Files = ", files
+    print("Files = ", files)
     eventList = ""
     nEventsTot = 0
     for f in files:
@@ -44,15 +44,15 @@ def createEventList():
         nEvents = -1
         logFileUtil = os.popen('edmFileUtil    -f ' + f).read().split(' ')  # First get number of events
         if arguments.verbose:
-            print "Debug: logFileUtil = ", logFileUtil
+            print("Debug: logFileUtil = ", logFileUtil)
         for i in range(len(logFileUtil)-1, -1, -1):  # Iterate backwards over the words in the output.
             if "events" in logFileUtil[i]:
                 nEvents = int(logFileUtil[i-1])  # The number of events comes immediately before the word "events"
         if arguments.verbose:
-            print "Debug:  nEvents = ", nEvents, "file = ", f, " nEventsTot = ", nEventsTot, ", maxEvents = ", arguments.maxEvents
+            print("Debug:  nEvents = ", nEvents, "file = ", f, " nEventsTot = ", nEventsTot, ", maxEvents = ", arguments.maxEvents)
         if nEvents < 0:
-            print "ERROR: Failed to find valid number of events for file: ", f
-            print "Will exit prematurely."
+            print("ERROR: Failed to find valid number of events for file: ", f)
+            print("Will exit prematurely.")
             exit(0)
         if nEventsTot > int(arguments.maxEvents) and int(arguments.maxEvents) > 0:
             break
@@ -65,7 +65,7 @@ def createEventList():
             words = filter(None, words) # Remove empty elements
             # Content of lines corresponding to a valid event is in the format:
             # Run           Lumi          Event    TTree Entry
-            # print "Debug:  checking line=", line, "words=", words
+            # print("Debug:  checking line=", line, "words=", words)
             if len(words) == 4:
                 run  = words[0]
                 lumi = words[1]
@@ -73,9 +73,9 @@ def createEventList():
                 eventList += run + ":" + lumi + ":" + evt + "\n"
                 nFoundEvts += 1
                 if arguments.verbose:
-                    print "Debug:  filling words for line: ", line, ", run = ", run, "lumi = ", lumi
+                    print("Debug:  filling words for line: ", line, ", run = ", run, "lumi = ", lumi)
         if int(arguments.maxEvents) < 0 and nFoundEvts != nEvents:
-            print "ERROR:  Number of found events = ", nFoundEvts, " does not match number of expected events = ", nEvents, ".  Please investigate."
+            print("ERROR:  Number of found events = ", nFoundEvts, " does not match number of expected events = ", nEvents, ".  Please investigate.")
             exit(0)
         nEventsTot += nEvents
     fout = open("pickevents.txt", "w")
@@ -91,34 +91,34 @@ def runEdmPickEvents(dataset):
         datasetName = datasetName.replace(orig, new)
     if arguments.parent:
         query = 'das_client.py --query="parent dataset=' + datasetName + ' instance=prod/phys03" --limit=0'
-        print "Executing query:  ", query
+        print("Executing query:  ", query)
         datasets = os.popen(query).read().split('\n')
         datasetName = datasets[0]
-        print "Will use dataset: ", datasetName
+        print("Will use dataset: ", datasetName)
     cmd = 'edmPickEvents.py "' + datasetName + '" pickevents.txt --printInteractive > pickevents.src'
     if arguments.verbose:
-        print "Running command: ", cmd
+        print("Running command: ", cmd)
     os.system(cmd)
     redirector = RedirectorDic[arguments.Redirector]
     # Replace "/store/" with, e.g., root://cmsxrootd.fnal.gov///store/
     os.system('sed -i "s_/store/_root://' + redirector + '///store/_g" pickevents.src')
     if arguments.noExecute:
-        print "Created command file: " + os.getcwd() + "/pickevents.src"
+        print("Created command file: " + os.getcwd() + "/pickevents.src")
     else:
         os.system("source pickevents.src")
-        print "Created and executed command file: " + os.getcwd() + "/pickevents.src"
+        print("Created and executed command file: " + os.getcwd() + "/pickevents.src")
 
 
 def doOneDirectory(directory):
     if not os.path.exists(directory):
-        print directory + " does not exist, will skip it and continue!"
+        print(directory + " does not exist, will skip it and continue!")
         return
     os.chdir(directory)
     createEventList()
     if not arguments.eventsOnly:
         runEdmPickEvents(dataset)
     else:
-        print "Created event list: " + os.getcwd() + "/pickevents.txt"
+        print("Created event list: " + os.getcwd() + "/pickevents.txt")
 
 
 
@@ -127,7 +127,7 @@ def doOneDirectory(directory):
 ###############################################################################
 CondorDir = ''
 if arguments.condorDir == "":
-    print "No working directory is given, aborting."
+    print("No working directory is given, aborting.")
     sys.exit()
 else:
     condorDir = os.getcwd() + '/condor/' + arguments.condorDir
@@ -142,7 +142,7 @@ if arguments.localConfig:
     composite_datasets = get_composite_datasets(datasets, composite_dataset_definitions)
     split_datasets   = split_composite_datasets(datasets, composite_dataset_definitions)
 else:
-    print "There are no datasets specified!"
+    print("There are no datasets specified!")
     exit(0)
 
 
@@ -155,4 +155,3 @@ for dataset in split_datasets:
     p = Process(target=doOneDirectory, args=(directory,))
     p.start()
     p.join()
-

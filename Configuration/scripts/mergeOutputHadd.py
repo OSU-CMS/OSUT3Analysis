@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Script to merge the output of root files that do not contain cutflow histograms.
 # This is much simpler than mergeOutput.py:  it only runs hadd for the histograms in the specified datasets.
@@ -54,10 +54,10 @@ for dataset in datasets:
     numberOfInputFiles = len(files)
     for i in range(0,numberOfInputFiles):
         inputFiles.append(path + "/" + files[i])
-    print "Number of input files is: " + str(numberOfInputFiles)
+    print("Number of input files is: " + str(numberOfInputFiles))
     mergeEvery = 500
     numberOfPartialFiles = int(math.ceil(1.0*numberOfInputFiles/mergeEvery))
-    print "Number of Partial Files is: " + str(numberOfPartialFiles)
+    print("Number of Partial Files is: " + str(numberOfPartialFiles))
     outputFiles = []
     for i in range(0,numberOfPartialFiles):
         partialListOfInputFiles = inputFiles[(i*mergeEvery):((i+1)*mergeEvery)]
@@ -69,8 +69,8 @@ for dataset in datasets:
     rmCommand = "rm partial*.root"
     subprocess.call(rmCommand,shell=True)
 
-print "Merge complete"
+print("Merge complete")
 if missing_directories:
-    print "The following directories were not found and the corresponding datasets were skipped:"
+    print("The following directories were not found and the corresponding datasets were skipped:")
     for path in missing_directories:
-        print path
+        print(path)

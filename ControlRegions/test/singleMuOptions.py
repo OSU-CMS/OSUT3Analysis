@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 config_file = "singleMuAnalyzer_cfg.py"
 #intLumi = 19417.  # Full SingleMu
@@ -36,4 +36,3 @@ datasets = [
     'QCD_MuEnriched',
 
 ]
-

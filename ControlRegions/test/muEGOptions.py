@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 config_file = "muEGAnalyzer_cfg.py"
 intLumi = 19487.  # MuEG
@@ -35,4 +35,3 @@ datasets = [
 ##     'QCD_MuEnriched',
 
 ]
-

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Utilities for management of ROOT files.
 
@@ -25,5 +25,3 @@ def filterKey(self, key, currentpath, keylist):
 
 TFile.filterKey = filterKey
 TFile.GetAllKeys = GetAllKeys
-
-

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import subprocess
 import re
@@ -61,7 +62,7 @@ def set_condor_submit_dir(arguments):
         now = datetime.datetime.now()
         date_hash = now.strftime("%Y_%m_%d_%H:%M:%S")
         condor_dir = "condor/condor_%s" % date_hash
-    #print "Condor submit directory set to ",condor_dir
+    #print("Condor submit directory set to ",condor_dir)
     return condor_dir
 
 def set_condor_output_dir(arguments):
@@ -70,13 +71,13 @@ def set_condor_output_dir(arguments):
     else: #get most recent condor submission directory
         dir_list = []
         for directory in os.listdir("./condor/"):
-            if directory.find("condor_") is not -1:
+            if directory.find("condor_") != -1:
                 dir_list.append(directory)
-        if len(dir_list) is 0:
+        if len(dir_list) == 0:
             sys.exit("Cannot find last condor working directory")
         dir_list.sort(reverse=True)
         condor_dir = "condor/%s" % dir_list[0]
-    #print "Condor output directory set to ",condor_dir
+    #print("Condor output directory set to ",condor_dir)
     return condor_dir
 
 def set_commandline_arguments(parser):
@@ -202,9 +203,9 @@ def set_skim_tags (inputFileName, collections):
             inputFileName = inputFileName[5:]
         inputTagPickleName = os.path.dirname (os.path.realpath (inputFileName)) + '/SkimInputTags.pkl'
     if not os.path.isfile (inputTagPickleName):
-        print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the skim directory."
-        print "Input file is", inputFileName
-        print "Be sure that you have run mergeOut.py."
+        print("ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the skim directory.")
+        print("Input file is", inputFileName)
+        print("Be sure that you have run mergeOut.py.")
         if inputFileName.startswith ('root:'):
             shutil.rmtree (tmpDir)
         sys.exit(1)
@@ -229,8 +230,8 @@ def add_channels (process,
                   ignoreSkimmedCollections = False,
                   forceNonEmptySkim = False):
     if skim is not None:
-        print "# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated."
-        print "# Please remove from your config files."
+        print("# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated.")
+        print("# Please remove from your config files.")
 
     ############################################################################
     # If there are only two arguments, then channels is actually an
@@ -313,9 +314,9 @@ def add_channels (process,
         if osusub.batchMode:
             fileName = osusub.secondaryRunList[0]
         if fileName is None:
-            print "ERROR:  The input file appears to be an empty skim file but no secondary files were found."
-            print "Input file is", primaryFileName
-            print "This should not be."
+            print("ERROR:  The input file appears to be an empty skim file but no secondary files were found.")
+            print("Input file is", primaryFileName)
+            print("This should not be.")
             sys.exit(1)
         rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
     elif rootFile.startswith ("skim_"):
@@ -326,7 +327,7 @@ def add_channels (process,
     if makeEmptySkim:
         # If we deliberately ignore this by user flag, just print a message
         if ignoreSkimmedCollections:
-            print "INFO: user has set ignoreSkimmedCollections, meaning that the original data collections will be used instead of skimmed framework collections."
+            print("INFO: user has set ignoreSkimmedCollections, meaning that the original data collections will be used instead of skimmed framework collections.")
         else:
             set_skim_tags (fileName, collections)
 
@@ -418,7 +419,7 @@ def add_channels (process,
             print ("WARNING [add_channels]: The '" +
                    channelName +
                    "' channel has been added more than once")
-            print "  Skipping this channel!"
+            print("  Skipping this channel!")
             continue
 
         ########################################################################
@@ -549,7 +550,7 @@ def add_channels (process,
         # Add keep statements for all collections except uservariables and
         # eventvariables.
         ########################################################################
-        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables" and a is not "eventvariables"]:
+        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a != "uservariables" and a != "eventvariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep *_"
             outputCommand += collectionTag.getModuleLabel ()
@@ -584,7 +585,7 @@ def add_channels (process,
             if hasattr (collections, collection):
                 usedCollections.insert (0, collection)
         for collection in usedCollections:
-            if collection is "uservariables" or collection is "eventvariables":
+            if collection == "uservariables" or collection == "eventvariables":
                 newInputTags = cms.VInputTag()
                 if hasattr (collections, collection):
                     inputTags = getattr (collections, collection)
@@ -692,7 +693,7 @@ def add_channels (process,
         for collection in cutCollections:
             # Temporary fix for user-defined variables
             # For the moment, they won't be filtered
-            if collection is "uservariables" or collection is "eventvariables":
+            if collection == "uservariables" or collection == "eventvariables":
                 continue
             filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
             objectSelector = cms.EDFilter (filterName,
@@ -908,8 +909,8 @@ def set_input(process, input_string):
     # print a warning if the input source has already been set
     sourceType =  type(process.source).__name__
     if sourceType != 'NoneType':
-        print "WARNING [set_input]: There are multiple calls to set_input!"
-        print "  The previous input source will be overwritten!"
+        print("WARNING [set_input]: There are multiple calls to set_input!")
+        print("  The previous input source will be overwritten!")
 
     # initialize the process source
     datasetInfo = cms.PSet ()
@@ -941,13 +942,13 @@ def set_input(process, input_string):
     # print error and exit if the input is invalid
     if not isValidFileOrDir and not isValidDataset and not isAAAFile:
         if input_string in composite_dataset_definitions.keys():
-            print "ERROR [set_input]: '" + input_string + "' is a composite dataset"
-            print "  Composite datasets should not processed interactively",
-            print "because their components won't have the proper relative weights."
-            print "  No files have been added to process.source.fileNames"
+            print("ERROR [set_input]: '" + input_string + "' is a composite dataset")
+            print("  Composite datasets should not processed interactively")
+            print("because their components won't have the proper relative weights.")
+            print("  No files have been added to process.source.fileNames")
         else:
-            print "ERROR [set_input]: '" + input_string + "' is not a valid root file, directory, or dataset name."
-            print "  No files have been added to process.source.fileNames"
+            print("ERROR [set_input]: '" + input_string + "' is not a valid root file, directory, or dataset name.")
+            print("  No files have been added to process.source.fileNames")
         return
 
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import time
 import os
@@ -24,7 +24,7 @@ if arguments.localConfig:
     sys.path.append(os.getcwd())
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
 else:
-    print "No local config specified, shame on you"
+    print("No local config specified, shame on you")
     sys.exit(0)
 
 GausHist = TH1D("Gaus","Gaus",GausBins[0],GausBins[1],GausBins[2])
@@ -39,17 +39,17 @@ for i in range(0,numTrial):
     PoisHist.Fill(np.random.poisson(Lam))
     ConvHist.Fill(np.random.poisson(Lam) + np.random.normal(mu,sigma))
 
-print "The mean value is " + str(ConvHist.GetMean())
+print("The mean value is " + str(ConvHist.GetMean()))
 meanBin = ConvHist.FindBin(ConvHist.GetMean())
 rightInt = ConvHist.Integral(meanBin, ConvHist.GetNbinsX() + 1)
 for n in range(meanBin, ConvHist.GetNbinsX() + 1):
     if ConvHist.Integral(meanBin, n)/rightInt >= CLs:
-        print str(CLs) + "% Upper Limit is " + str(ConvHist.GetBinCenter(n-1))
+        print(str(CLs) + "% Upper Limit is " + str(ConvHist.GetBinCenter(n-1)))
         break
 leftInt = ConvHist.Integral(0, meanBin-1)
 for n in range(0, meanBin):
     if ConvHist.Integral(0, n)/leftInt >= 1 - CLs:
-        print str(CLs) + "% Lower Limit is " + str(ConvHist.GetBinCenter(n-1))
+        print(str(CLs) + "% Lower Limit is " + str(ConvHist.GetBinCenter(n-1)))
         break
 
 outPutFile.cd()
