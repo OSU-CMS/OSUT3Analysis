@@ -32,7 +32,7 @@ def getSiblings (fileName, dataset):
     from dbs.apis.dbsClient import DbsApi
     from CRABClient.ClientUtilities import DBSURLS
   except ImportError:
-    print "getSiblings() relies on CRAB. Please set up the environment for CRAB before using."
+    print("getSiblings() relies on CRAB. Please set up the environment for CRAB before using.")
     sys.exit (1)
 
   dbsurl_global = DBSURLS["reader"].get ("global", "global")

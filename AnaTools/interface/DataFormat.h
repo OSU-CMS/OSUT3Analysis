@@ -14,7 +14,7 @@
 #define AOD_2017_CUSTOM      0b110 // 6 (unused)
 #define MINI_AOD_2017_CUSTOM 0b111 // 7
 
-#define DATA_FORMAT MINI_AOD_2017
+#define DATA_FORMAT MINI_AOD_2017_CUSTOM
 
 #define DATA_FORMAT_FROM_MINIAOD (DATA_FORMAT & 0b1) == 1
 #define DATA_FORMAT_FROM_AOD (DATA_FORMAT & 0b1) == 0
@@ -41,7 +41,7 @@
 
 #elif DATA_FORMAT_IS_CUSTOM
 
-  #include "CustomDataFormat.h"  // Define collections in an external header file.
+  #include "DisappTrks/StandardAnalysis/interface/CustomDataFormat.h"
 
 #else
   #error "Data format is not valid."

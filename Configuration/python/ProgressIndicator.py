@@ -28,20 +28,20 @@ class ProgressIndicator:
   def printProgress (self, finished = False):
     if (time.time () - self._timeOfLastPrint) > self._minTimeIntervalForPrinting or finished:
       if not self._isPrinted:
-        print self._title,
+        print(self._title, end=' ')
         if self._title:
-          print ": ",
+          print(": ", end=' ')
 
         self._isPrinted = True
       else:
         titleLength = len (self._title) + 2
         if self._title:
           titleLength += 2
-        print A_COLUMN (titleLength),
+        print(A_COLUMN (titleLength), end=' ')
 
-      print str ("%.2f" % round (self._percentDone, 2)).rjust (self._percentDonePadding) + "%",
+      print(str ("%.2f" % round (self._percentDone, 2)).rjust (self._percentDonePadding) + "%", end=' ')
       if finished:
-        print ""
+        print("")
 
       sys.stdout.flush ()
       self._timeOfLastPrint = time.time ()

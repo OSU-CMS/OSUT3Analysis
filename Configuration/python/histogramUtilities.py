@@ -27,7 +27,7 @@ def getYield(sample,condor_dir,channel):
     inputFile = TFile(dataset_file)
     cutFlowHistogram = inputFile.Get(channel + "/cutFlow")
     if not cutFlowHistogram:
-        print "ERROR: didn't find cutflow histogram ", channel+str("/cutFlow"), "in file ", dataset_file
+        print("ERROR: didn't find cutflow histogram ", channel+str("/cutFlow"), "in file ", dataset_file)
         return 0
     yield_     = float(cutFlowHistogram.GetBinContent(cutFlowHistogram.GetNbinsX()))
     statError_ = float(cutFlowHistogram.GetBinError  (cutFlowHistogram.GetNbinsX()))
@@ -41,7 +41,7 @@ def getYieldInBin(sample,condor_dir,channel,ibin):
     inputFile = TFile(dataset_file)
     cutFlowHistogram = inputFile.Get(channel + "/cutFlow")
     if not cutFlowHistogram:
-        print "WARNING: didn't find cutflow histogram ", channel, "CutFlow in file ", dataset_file
+        print("WARNING: didn't find cutflow histogram ", channel, "CutFlow in file ", dataset_file)
         return 0
     yield_     = float(cutFlowHistogram.GetBinContent(ibin))
     statError_ = float(cutFlowHistogram.GetBinError  (ibin))
@@ -54,7 +54,7 @@ def getFirstBinWithLabel(sample,condor_dir,channel,label):
     inputFile = TFile(dataset_file)
     cutFlowHistogram = inputFile.Get(channel + "/cutFlow")
     if not cutFlowHistogram:
-        print "WARNING: didn't find cutflow histogram ", channel, "CutFlow in file ", dataset_file
+        print("WARNING: didn't find cutflow histogram ", channel, "CutFlow in file ", dataset_file)
         return 0
     # Get the appropriate bin
     ibin = -1
@@ -63,7 +63,7 @@ def getFirstBinWithLabel(sample,condor_dir,channel,label):
             ibin = i
             break
     if ibin < 0:
-        print "ERROR:  could not find bin with label containing", label, "for channel", channel
+        print("ERROR:  could not find bin with label containing", label, "for channel", channel)
     inputFile.Close()
     return ibin
 
@@ -72,7 +72,7 @@ def getNumEvents(sample,condor_dir,channel):  # Use in place of getYield if the 
     inputFile = TFile(dataset_file)
     numEvtHistogram = inputFile.Get("OSUAnalysis/"+channel+"/numEvents")
     if not numEvtHistogram:
-        print "WARNING: didn't find cutflow histogram ", channel, "CutFlow in file ", dataset_file
+        print("WARNING: didn't find cutflow histogram ", channel, "CutFlow in file ", dataset_file)
         return 0
     statError_ = Double(0.0)
     yield_ = numEvtHistogram.IntegralAndError(1, numEvtHistogram.GetNbinsX(), statError_)
@@ -85,7 +85,7 @@ def getHistIntegral(sample,condor_dir,channel,hist,xlo,xhi):
     inputFile = TFile(dataset_file)
     histogram = inputFile.Get(channel+"/"+hist)
     if not histogram:
-        print "WARNING: didn't find histogram ", channel + "/" + hist, " in file ", dataset_file
+        print("WARNING: didn't find histogram ", channel + "/" + hist, " in file ", dataset_file)
         return 0
     Nxbins = histogram.GetNbinsX()
     xmax   = histogram.GetBinContent(Nxbins)
@@ -161,7 +161,7 @@ def getUpperLimit(sample,condor_dir,channel):
     inputFile = TFile(dataset_file)
     cutFlowHistogram = inputFile.Get("OSUAnalysis/"+channel+"CutFlowUpperLimit")
     if not cutFlowHistogram:
-        print "WARNING: didn't find cutflow histogram ", channel, "CutFlow in file ", dataset_file
+        print("WARNING: didn't find cutflow histogram ", channel, "CutFlow in file ", dataset_file)
         return 0
     limit = float(cutFlowHistogram.GetBinContent(cutFlowHistogram.GetNbinsX()))
     inputFile.Close()
@@ -172,7 +172,7 @@ def getTruthYield(sample,condor_dir,channel,truthParticle):
     inputFile = TFile(dataset_file)
     matchHistogram = inputFile.Get("OSUAnalysis/"+channel+"/trackGenMatchId")
     if not matchHistogram:
-        print "WARNING: didn't find match histogram ", channel, "/trackGenMatchId in file ", dataset_file
+        print("WARNING: didn't find match histogram ", channel, "/trackGenMatchId in file ", dataset_file)
         return 0
 
     idx = -1
@@ -180,7 +180,7 @@ def getTruthYield(sample,condor_dir,channel,truthParticle):
         if truthParticle == matchHistogram.GetXaxis().GetBinLabel(i):
             idx = i
     if idx < 0:
-        print "Error:  could not find bin with label " + truthParticle
+        print("Error:  could not find bin with label " + truthParticle)
         yield_ = -1
         statError_ = -1
     else:
@@ -204,7 +204,7 @@ def getHist(sample,condor_dir,channel,hist):
     inputFile = TFile(dataset_file)
     h0 = inputFile.Get(channel + "/" + hist)
     if not h0:
-        print "ERROR [getHist]: didn't find histogram ", channel+str("/")+hist, "in file", dataset_file
+        print("ERROR [getHist]: didn't find histogram ", channel+str("/")+hist, "in file", dataset_file)
         return 0
     h = h0.Clone()
     h.SetDirectory(0)

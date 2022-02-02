@@ -16,30 +16,30 @@ def addCuts(cutVPset, cutsToAdd):
 
 def addSingleCut(cutVPset, cutToAdd, previousExistingCut):
     # Add cutToAdd immediately after previousExistingCut
-    for i in xrange(0, len(cutVPset)):
+    for i in range(0, len(cutVPset)):
         if cutsAreEqual(cutVPset[i], previousExistingCut):
             cutVPset.insert(i+1, cutToAdd) # Use i+1 to put cutToAdd afterward
             return
-    print '[addSingleCut] Warning: previousExistingCut not found in VPSet with cutString:', previousExistingCut.cutString
+    print('[addSingleCut] Warning: previousExistingCut not found in VPSet with cutString:', previousExistingCut.cutString)
 
 def replaceSingleCut(cutVPset, replacementCut, cutToBeReplaced):
     # Add replacementCut in the same position as cutToBeReplaced
-    for i in xrange(len(cutVPset) - 1, -1, -1):
+    for i in range(len(cutVPset) - 1, -1, -1):
         if cutsAreEqual(cutVPset[i], cutToBeReplaced):
             del cutVPset[i]
             cutVPset.insert(i, replacementCut)
             return
-    print '[replaceSingleCut] Warning: cutToBeReplaced not found in VPSet with cutString:', cutToBeReplaced.cutString
+    print('[replaceSingleCut] Warning: cutToBeReplaced not found in VPSet with cutString:', cutToBeReplaced.cutString)
 
 def removeCuts(cutVPset, cutsToRemove):
     for cut in cutsToRemove:
-        for i in xrange(len(cutVPset) - 1, -1, -1):  # iterate backwards to avoid error
+        for i in range(len(cutVPset) - 1, -1, -1):  # iterate backwards to avoid error
             if cutsAreEqual(cutVPset[i], cut):
                 del cutVPset[i]
 
 def printCuts(cutVPset):  # For debugging
-    for i in xrange(len(cutVPset)):
-        print cutVPset[i].cutString
+    for i in range(len(cutVPset)):
+        print(cutVPset[i].cutString)
 
 
 ##################################################

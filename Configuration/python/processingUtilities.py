@@ -24,13 +24,13 @@ def GetCompleteOrderedArgumentsSet(InputArguments, currentCondorSubArgumentsSet)
     NewArguments = copy.deepcopy(InputArguments)
     for argument in InputArguments:
         for index in currentCondorSubArgumentsSet:
-            if currentCondorSubArgumentsSet[index].has_key(argument):
+            if argument in currentCondorSubArgumentsSet[index]:
                 currentCondorSubArgumentsSet[index][argument] = InputArguments[argument]
                 NewArguments.pop(argument)
                 break
     for newArgument in NewArguments:
-        currentCondorSubArgumentsSet.setdefault(len(currentCondorSubArgumentsSet.keys()) + 1, {newArgument : NewArguments[newArgument]})
-    currentCondorSubArgumentsSet.setdefault(len(currentCondorSubArgumentsSet.keys()) + 1, {'Queue': ''})
+        currentCondorSubArgumentsSet.setdefault(len(list(currentCondorSubArgumentsSet.keys())) + 1, {newArgument : NewArguments[newArgument]})
+    currentCondorSubArgumentsSet.setdefault(len(list(currentCondorSubArgumentsSet.keys())) + 1, {'Queue': ''})
 
 def get_date_time_stamp():
     # Return a string that encodes the date and time
@@ -202,9 +202,9 @@ def set_skim_tags (inputFileName, collections):
             inputFileName = inputFileName[5:]
         inputTagPickleName = os.path.dirname (os.path.realpath (inputFileName)) + '/SkimInputTags.pkl'
     if not os.path.isfile (inputTagPickleName):
-        print "ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the skim directory."
-        print "Input file is", inputFileName
-        print "Be sure that you have run mergeOut.py."
+        print("ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the skim directory.")
+        print("Input file is", inputFileName)
+        print("Be sure that you have run mergeOut.py.")
         if inputFileName.startswith ('root:'):
             shutil.rmtree (tmpDir)
         sys.exit(1)
@@ -229,8 +229,8 @@ def add_channels (process,
                   ignoreSkimmedCollections = False,
                   forceNonEmptySkim = False):
     if skim is not None:
-        print "# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated."
-        print "# Please remove from your config files."
+        print("# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated.")
+        print("# Please remove from your config files.")
 
     ############################################################################
     # If there are only two arguments, then channels is actually an
@@ -269,7 +269,7 @@ def add_channels (process,
     exceptionString = ""
     for selection in channels:
         for cut in selection.cuts:
-            attributes = [a for a in cut.__dict__.keys() if not a.startswith('_')]
+            attributes = [a for a in list(cut.__dict__.keys()) if not a.startswith('_')]
             invalidAttributes = list(set(attributes) - set(validCutAttributes))
             if invalidAttributes:
                 name = cut.alias if hasattr(cut, 'alias') else cut.cutString
@@ -279,7 +279,7 @@ def add_channels (process,
     # find all hists with invalid attributes
     for histogramSet in histogramSets:
         for hist in histogramSet.histograms:
-            attributes = [a for a in hist.__dict__.keys() if not a.startswith('_')]
+            attributes = [a for a in list(hist.__dict__.keys()) if not a.startswith('_')]
             invalidAttributes = list(set(attributes) - set(validHistAttributes))
             if invalidAttributes:
                 name = str(hist.name)[12:-2]
@@ -313,9 +313,9 @@ def add_channels (process,
         if osusub.batchMode:
             fileName = osusub.secondaryRunList[0]
         if fileName is None:
-            print "ERROR:  The input file appears to be an empty skim file but no secondary files were found."
-            print "Input file is", primaryFileName
-            print "This should not be."
+            print("ERROR:  The input file appears to be an empty skim file but no secondary files were found.")
+            print("Input file is", primaryFileName)
+            print("This should not be.")
             sys.exit(1)
         rootFile = fileName.split("/")[-1]  # e.g., skim_0.root
     elif rootFile.startswith ("skim_"):
@@ -326,7 +326,7 @@ def add_channels (process,
     if makeEmptySkim:
         # If we deliberately ignore this by user flag, just print a message
         if ignoreSkimmedCollections:
-            print "INFO: user has set ignoreSkimmedCollections, meaning that the original data collections will be used instead of skimmed framework collections."
+            print("INFO: user has set ignoreSkimmedCollections, meaning that the original data collections will be used instead of skimmed framework collections.")
         else:
             set_skim_tags (fileName, collections)
 
@@ -415,10 +415,10 @@ def add_channels (process,
         # So we'll print a warning and skip this channel.
         ########################################################################
         if hasattr (process, channelName):
-            print ("WARNING [add_channels]: The '" +
+            print(("WARNING [add_channels]: The '" +
                    channelName +
-                   "' channel has been added more than once")
-            print "  Skipping this channel!"
+                   "' channel has been added more than once"))
+            print("  Skipping this channel!")
             continue
 
         ########################################################################
@@ -908,8 +908,8 @@ def set_input(process, input_string):
     # print a warning if the input source has already been set
     sourceType =  type(process.source).__name__
     if sourceType != 'NoneType':
-        print "WARNING [set_input]: There are multiple calls to set_input!"
-        print "  The previous input source will be overwritten!"
+        print("WARNING [set_input]: There are multiple calls to set_input!")
+        print("  The previous input source will be overwritten!")
 
     # initialize the process source
     datasetInfo = cms.PSet ()
@@ -933,21 +933,21 @@ def set_input(process, input_string):
         pass
     isValidFileOrDir = "No such file or directory" not in fileType
 
-    isValidDataset = input_string in dataset_names.keys()
+    isValidDataset = input_string in list(dataset_names.keys())
     # if the file starts with "root:" it's a AAA file
     isAAAFile = input_string.startswith("root:")
 
 
     # print error and exit if the input is invalid
     if not isValidFileOrDir and not isValidDataset and not isAAAFile:
-        if input_string in composite_dataset_definitions.keys():
-            print "ERROR [set_input]: '" + input_string + "' is a composite dataset"
-            print "  Composite datasets should not processed interactively",
-            print "because their components won't have the proper relative weights."
-            print "  No files have been added to process.source.fileNames"
+        if input_string in list(composite_dataset_definitions.keys()):
+            print("ERROR [set_input]: '" + input_string + "' is a composite dataset")
+            print("  Composite datasets should not processed interactively", end=' ')
+            print("because their components won't have the proper relative weights.")
+            print("  No files have been added to process.source.fileNames")
         else:
-            print "ERROR [set_input]: '" + input_string + "' is not a valid root file, directory, or dataset name."
-            print "  No files have been added to process.source.fileNames"
+            print("ERROR [set_input]: '" + input_string + "' is not a valid root file, directory, or dataset name.")
+            print("  No files have been added to process.source.fileNames")
         return
 
 
