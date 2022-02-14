@@ -18,7 +18,7 @@ from OSUT3Analysis.Configuration.CollectionProducer_cff import *
 from OSUT3Analysis.Configuration.LifetimeWeightProducer_cff import *
 from OSUT3Analysis.Configuration.ISRWeightProducer_cff import *
 from OSUT3Analysis.Configuration.PUScalingFactorProducer_cff import *
-from OSUT3Analysis.Configuration.L1PrefiringWeightProducer_cff import *
+from OSUT3Analysis.Configuration.L1PrefiringWeightProducerOSU_cff import *
 
 def GetCompleteOrderedArgumentsSet(InputArguments, currentCondorSubArgumentsSet):
     NewArguments = copy.deepcopy(InputArguments)
@@ -459,9 +459,9 @@ def add_channels (process,
                 elif module in globals ():
                     setattr (process, module, globals ()[module])
                     setattr (getattr (process, module), "collections", collections)
-                if module == 'L1PrefiringWeightProducer' and hasattr (process, 'prefiringweight'):
+                if module == 'L1PrefiringWeightProducerOSU' and hasattr (process, 'prefiringweight'):
                     # copy the DataEra from the CMSSW producer to the framework producer, to check that it is valid
-                    setattr (process.L1PrefiringWeightProducer, 'DataEra', process.prefiringweight.DataEra)
+                    setattr (process.L1PrefiringWeightProducerOSU, 'DataEra', process.prefiringweight.DataEra)
                 variableProducerPath += getattr (process, module)
             ########################################################################
 

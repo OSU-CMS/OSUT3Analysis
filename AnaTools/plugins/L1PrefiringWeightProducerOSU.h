@@ -1,14 +1,14 @@
-#ifndef L1_PREFIRING_WEIGHT_PRODUCER
-#define L1_PREFIRING_WEIGHT_PRODUCER
+#ifndef L1_PREFIRING_WEIGHT_PRODUCER_OSU
+#define L1_PREFIRING_WEIGHT_PRODUCER_OSU
 
 #include "OSUT3Analysis/AnaTools/interface/EventVariableProducer.h"
 #include "OSUT3Analysis/AnaTools/interface/ValueLookupTree.h"
 
-class L1PrefiringWeightProducer : public EventVariableProducer
+class L1PrefiringWeightProducerOSU : public EventVariableProducer
   {
     public:
-        L1PrefiringWeightProducer (const edm::ParameterSet &);
-        ~L1PrefiringWeightProducer ();
+        L1PrefiringWeightProducerOSU (const edm::ParameterSet &);
+        ~L1PrefiringWeightProducerOSU ();
 
     private:
         const std::string dataera_;
