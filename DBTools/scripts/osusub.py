@@ -1468,7 +1468,9 @@ if not arguments.Resubmit:
             GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
         userConfig = 'userConfig_' + Label + '_cfg.py'
         shutil.copy (Config, WorkDir + "/" + userConfig)
-        exec('import ' + re.sub (r"(.*)\.py$", r"\1", Config) + ' as temPset')
+        tmpDir = re.sub(r"(.*)\.py$", r"\1", Config)
+        tmpDir = tmpDir.replace("/", ".")
+        exec('import ' + tmpDir + ' as temPset')
 
         MakeSpecificConfig('', WorkDir, SkimDir, Label, SkimChannelNames, '', temPset, lpcCAF)
 
