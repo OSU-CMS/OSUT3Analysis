@@ -70,9 +70,9 @@ def set_condor_output_dir(arguments):
     else: #get most recent condor submission directory
         dir_list = []
         for directory in os.listdir("./condor/"):
-            if directory.find("condor_") is not -1:
+            if directory.find("condor_") != -1:
                 dir_list.append(directory)
-        if len(dir_list) is 0:
+        if len(dir_list) == 0:
             sys.exit("Cannot find last condor working directory")
         dir_list.sort(reverse=True)
         condor_dir = "condor/%s" % dir_list[0]
@@ -228,7 +228,7 @@ def add_channels (process,
                   branchSets = None,
                   ignoreSkimmedCollections = False,
                   forceNonEmptySkim = False):
-    if skim is not None:
+    if skim != None:
         print("# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated.")
         print("# Please remove from your config files.")
 
@@ -237,7 +237,7 @@ def add_channels (process,
     # AddChannelArguments object that needs to be unpacked.
     ############################################################################
     standAloneAnalyzers = []
-    if histogramSets is None:
+    if histogramSets == None:
         variableProducers       =  channels.variableProducers
         weights                 =  channels.weights
         scalingfactorproducers  =  channels.scalingfactorproducers
@@ -312,7 +312,7 @@ def add_channels (process,
             fileName = process.source.secondaryFileNames[0]
         if osusub.batchMode:
             fileName = osusub.secondaryRunList[0]
-        if fileName is None:
+        if fileName == None:
             print("ERROR:  The input file appears to be an empty skim file but no secondary files were found.")
             print("Input file is", primaryFileName)
             print("This should not be.")
@@ -474,7 +474,7 @@ def add_channels (process,
             # verify this collection hasn't already been added
             isDuplicate = False
             for inputTag in collections.uservariables:
-                if inputTag.getModuleLabel() is module:
+                if inputTag.getModuleLabel() == module:
                     isDuplicate = True
                     break
             if not isDuplicate:
@@ -549,7 +549,7 @@ def add_channels (process,
         # Add keep statements for all collections except uservariables and
         # eventvariables.
         ########################################################################
-        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a is not "uservariables" and a is not "eventvariables"]:
+        for collection in [a for a in dir (collections) if not a.startswith('_') and not callable (getattr (collections, a)) and a != "uservariables" and a != "eventvariables"]:
             collectionTag = getattr (collections, collection)
             outputCommand = "keep *_"
             outputCommand += collectionTag.getModuleLabel ()
@@ -584,7 +584,7 @@ def add_channels (process,
             if hasattr (collections, collection):
                 usedCollections.insert (0, collection)
         for collection in usedCollections:
-            if collection is "uservariables" or collection is "eventvariables":
+            if collection == "uservariables" or collection == "eventvariables":
                 newInputTags = cms.VInputTag()
                 if hasattr (collections, collection):
                     inputTags = getattr (collections, collection)
@@ -692,7 +692,7 @@ def add_channels (process,
         for collection in cutCollections:
             # Temporary fix for user-defined variables
             # For the moment, they won't be filtered
-            if collection is "uservariables" or collection is "eventvariables":
+            if collection == "uservariables" or collection == "eventvariables":
                 continue
             filterName = collection[0].upper () + collection[1:-1] + "ObjectSelector"
             objectSelector = cms.EDFilter (filterName,
@@ -789,7 +789,7 @@ def add_channels (process,
         ########################################################################
         # Add a tree-making module for this channel to the path.
         ########################################################################
-        if branchSets is not None and len(branchSets):
+        if branchSets != None and len(branchSets):
             treeMaker = cms.EDAnalyzer ("TreeMaker",
                 collections = filteredCollections,
                 branchSets  = branchSets,
