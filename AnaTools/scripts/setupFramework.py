@@ -2,6 +2,7 @@
 
 import sys
 import os
+import subprocess
 from optparse import OptionParser
 
 # define some constants with meaningful names for the ANSI color codes
@@ -129,4 +130,15 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_8_0_"):
     if int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 32 and not os.path.isfile(os.environ["CMSSW_BASE"] + "/src/L1Prefiring/EventWeightProducer/python/L1ECALPrefiringWeightProducer_cfi.py"):
         print ""
         print "If your analysis needs to correct for L1 ECAL prefiring issue, please run the following before recompling:"
+
         print A_BRIGHT_RED + "  git cms-merge-topic lathomas:L1Prefiring_8_0_32" + A_RESET
+
+# Set up the BuildFile
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_"):
+    for r,directory,fileNames in os.walk("./"):
+       for fin in fileNames:
+           if fin != "BuildFile.xml":
+               continue
+           buildFile = os.path.join(r,fin)
+	   subprocess.call(["sed -i -e 's/RecoEgamma\/EgammaTools/CommonTools\/Egamma/g' {0}".format(buildFile)],shell=True)
+	   print("Resetting the BuildFile:{0}".format(buildFile))
