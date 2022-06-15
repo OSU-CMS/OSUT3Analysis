@@ -37,7 +37,7 @@ def roundingNumbers(central_value,stat_error,syst_error):
 
 def modifyByPrecision(input, origin, originRounded):
         output = 0
-        if input is origin:
+        if input == origin:
                 if not origin < 10:
                         output = int(input)
                 elif not origin < 1:
@@ -46,8 +46,8 @@ def modifyByPrecision(input, origin, originRounded):
                         output = decimal.Decimal(str(input)).quantize(decimal.Decimal("0"))
                 else:
                         for n in range(1,100):
-                                    if int(int(originRounded*math.pow(10,n))/(originRounded*math.pow(10,n))) is 1 and int(originRounded*math.pow(10,n)) is not 0:
-                                                if int(originRounded*math.pow(10,n)) is 0:
+                                    if int(int(originRounded*math.pow(10,n))/(originRounded*math.pow(10,n))) == 1 and int(originRounded*math.pow(10,n)) != 0:
+                                                if int(originRounded*math.pow(10,n)) == 0:
                                                         output = decimal.Decimal(originRounded).quantize(decimal.Decimal(str(base/10)))
                                                 else:
                                                         output = originRounded
@@ -57,7 +57,7 @@ def modifyByPrecision(input, origin, originRounded):
                                 output = round(input,1)
                 else:
                         for n in range(1,100):
-                                if int(originRounded*math.pow(10,n)) is not 0:
+                                if int(originRounded*math.pow(10,n)) != 0:
                                                 base = math.pow(10,-n-1)
                                                 output = decimal.Decimal(str(input)).quantize(decimal.Decimal(str(base)))
                                                 break
@@ -67,7 +67,7 @@ def modifyByPrecision(input, origin, originRounded):
                 else:
                         for n in range(0,100):
                                 precision = 0
-                                if int(originRounded/math.pow(10,n)) is 0:
+                                if int(originRounded/math.pow(10,n)) == 0:
                                         precision = math.pow(10,n-2)
                                         output = int((int(input/precision))*precision)
                                         break
@@ -101,7 +101,7 @@ def plainTextString(inputString):
 def formatNumber(inputNumber):
     inputList = list(inputNumber)
     decimalIndex = inputNumber.find(".")
-    if decimalIndex is not -1:# found decimal point
+    if decimalIndex != -1:# found decimal point
         numDigitsAboveOne = decimalIndex
         numDigitsBelowOne = len(inputList) - numDigitsAboveOne - 1
     else: # didn't find a decimal point
@@ -112,18 +112,18 @@ def formatNumber(inputNumber):
 
     for index in range(numDigitsAboveOne): #print digits > 1
         outputString = outputString + inputList[index]
-        if (numDigitsAboveOne - index - 1) % 3 is 0 and (numDigitsAboveOne - index - 1) is not 0:
+        if (numDigitsAboveOne - index - 1) % 3 == 0 and (numDigitsAboveOne - index - 1) != 0:
             outputString = outputString + "\;"
-    if decimalIndex is not -1: #print "." if needed
+    if decimalIndex != -1: #print "." if needed
         outputString = outputString + "."
     for index in range(numDigitsBelowOne): #print digits < 1
         outputString = outputString + inputList[index+numDigitsAboveOne+1]
-        if (index+1) % 3 is 0 and (numDigitsBelowOne - index -1) is not 0:
+        if (index+1) % 3 == 0 and (numDigitsBelowOne - index -1) != 0:
             outputString = outputString + "\;"
 
     outputString = outputString + "$"
 
-    if outputString.find('$$') is not -1:
+    if outputString.find('$$') != -1:
         outputString = '$0$'
 
     return outputString

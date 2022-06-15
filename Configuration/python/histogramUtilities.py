@@ -128,9 +128,9 @@ def ratioHistogram( dataHist, mcHist, dontRebinRatio=False, addOne=False, relErr
         return regroup(groups[:iLo] + [groups[iLo]+groups[iHi]] + groups[iHi+1:])
 
     #don't rebin the histograms of the number of a given object (except for the pileup ones)
-    if ((dataHist.GetName().find("num") is not -1 and dataHist.GetName().find("Primaryvertexs") is -1) or
-        dataHist.GetName().find("CutFlow")  is not -1 or
-        dataHist.GetName().find("GenMatch") is not -1 or
+    if ((dataHist.GetName().find("num") != -1 and dataHist.GetName().find("Primaryvertexs") == -1) or
+        dataHist.GetName().find("CutFlow")  != -1 or
+        dataHist.GetName().find("GenMatch") != -1 or
         dontRebinRatio):
         ratio = dataHist.Clone()
         ratio.Add(mcHist,-1)
