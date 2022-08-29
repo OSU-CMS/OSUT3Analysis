@@ -223,6 +223,8 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
 #if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks,
                    const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
+#elif DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022
+                   const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
 #else
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
 #endif
@@ -267,14 +269,16 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   set_primaryPFIsolations(pfCandidates);
   set_additionalPFIsolations(pfCandidates, lostTracks);
 
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
   // if the tracks collection itself is CandidateTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() != "candidateTrackProducer") {
     maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
     if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
   }
   else dRToMatchedCandidateTrack_ = INVALID_VALUE;
+#endif
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
   // if the tracks collection itself is IsolatedTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() != "isolatedTracks") {
     maxDeltaR_isolatedTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForIsolatedTrackMatching");
@@ -293,6 +297,7 @@ osu::DisappearingTrack::~DisappearingTrack ()
   eleVtx_dzCuts_endcap_.clear();
 }
 
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
 const edm::Ref<vector<CandidateTrack> > &
 osu::DisappearingTrack::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &candidateTracks, edm::Ref<vector<CandidateTrack> > &matchedCandidateTrack, double &dRToMatchedCandidateTrack) const
 {
@@ -307,8 +312,9 @@ osu::DisappearingTrack::findMatchedCandidateTrack (const edm::Handle<vector<Cand
   }
   return matchedCandidateTrack;
 }
+#endif
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && (DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022)
 const edm::Ref<vector<pat::IsolatedTrack> > &
 osu::DisappearingTrack::findMatchedIsolatedTrack (const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks, edm::Ref<vector<pat::IsolatedTrack> > &matchedIsolatedTrack, double &dRToMatchedIsolatedTrack) const
 {
@@ -465,7 +471,7 @@ osu::DisappearingTrack::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)>
   }
 }
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && (DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022)
 void
 osu::DisappearingTrack::set_isoTrackIsolation (const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) {
   if(isolatedTracks.isValid()) {
@@ -487,7 +493,7 @@ osu::DisappearingTrack::set_isoTrackIsolation (const edm::Handle<vector<pat::Iso
 }
 #endif
 
-#if DATA_FORMAT_IS_2017 // only makes sense with phase1 pixel upgrade
+#if DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022// only makes sense with phase1 pixel upgrade
 // This could be in TrackBase, but is fairly specialized to the disappearing tracks search
 const bool
 osu::DisappearingTrack::isAllowedThreeLayerHitPattern() const {
@@ -673,6 +679,9 @@ osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack (const TYPE(tracks) 
                                                              const edm::Handle<vector<CandidateTrack> > &candidateTracks,
                                                              const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
   osu::DisappearingTrack(track, particles, pfCandidates, lostTracks, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, candidateTracks, isolatedTracks) {}
+#elif DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022
+                                                             const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
+  osu::DisappearingTrack(track, particles, pfCandidates, lostTracks, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, isolatedTracks) {}
 #else
                                                              const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
   osu::DisappearingTrack(track, particles, pfCandidates, lostTracks, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, candidateTracks) {}

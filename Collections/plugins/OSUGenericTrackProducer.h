@@ -63,7 +63,7 @@ template<class T>
     edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexToken_;
 
     edm::EDGetTokenT<vector<pat::PackedCandidate> > lostTracksToken_;
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
     edm::EDGetTokenT<vector<pat::IsolatedTrack> > isolatedTracksToken_;
 #endif
 
