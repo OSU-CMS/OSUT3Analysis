@@ -5,14 +5,18 @@
 // bit 1: 2017 flag (0=not 2017, 1=2017 -- only relevant for MINIAOD in 2017)
 // bit 2: custom flag (0=not custom, 1=custom)
 
-#define AOD                  0b000 // 0
-#define MINI_AOD             0b001 // 1
-#define AOD_2017             0b010 // 2 (unused)
-#define MINI_AOD_2017        0b011 // 3
-#define AOD_CUSTOM           0b100 // 4
-#define MINI_AOD_CUSTOM      0b101 // 5
-#define AOD_2017_CUSTOM      0b110 // 6 (unused)
-#define MINI_AOD_2017_CUSTOM 0b111 // 7
+#define AOD                  0b0000 // 0
+#define MINI_AOD             0b0001 // 1
+#define AOD_2017             0b0010 // 2 (unused)
+#define MINI_AOD_2017        0b0011 // 3
+#define AOD_CUSTOM           0b0100 // 4
+#define MINI_AOD_CUSTOM      0b0101 // 5
+#define AOD_2017_CUSTOM      0b0110 // 6 (unused)
+#define MINI_AOD_2017_CUSTOM 0b0111 // 7
+#define AOD_2022             0b1000 // 8
+#define MINI_AOD_2022        0b1001 // 9 
+#define AOD_2022_CUSTOM      0b1100 // 12
+#define MINI_AOD_2022_CUSTOM 0b1101 // 13
 
 #define DATA_FORMAT MINI_AOD_2017_CUSTOM
 
@@ -20,8 +24,9 @@
 #define DATA_FORMAT_FROM_AOD (DATA_FORMAT & 0b1) == 0
 #define DATA_FORMAT_IS_2017 ((DATA_FORMAT >> 1) & 0b1) == 1
 #define DATA_FORMAT_IS_CUSTOM ((DATA_FORMAT >> 2) & 0b1) == 1
+#define DATA_FORMAT_IS_2022 ((DATA_FORMAT >> 3) & 0b1) == 1
 
-#define DATA_FORMAT_IS_VALID (DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD_2017 || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD_CUSTOM || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_2017_CUSTOM || DATA_FORMAT == MINI_AOD_2017_CUSTOM)
+#define DATA_FORMAT_IS_VALID (DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD_2017 || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD_CUSTOM || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_2017_CUSTOM || DATA_FORMAT == MINI_AOD_2017_CUSTOM || DATA_FORMAT == MINI_AOD_2022)
 
 #define INVALID_TYPE void *
 
@@ -34,6 +39,10 @@
 #elif DATA_FORMAT == MINI_AOD_2017
 
   #include "OSUT3Analysis/AnaTools/interface/DataFormatMiniAOD2017.h" 
+
+#elif DATA_FORMAT == MINI_AOD_2022
+
+  #include "OSUT3Analysis/AnaTools/interface/DataFormatMiniAOD2022.h"
 
 #elif DATA_FORMAT == AOD
 
