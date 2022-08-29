@@ -957,7 +957,7 @@ osu::TrackBase::lastLayerWithValidHit () const
 }
 
 /******************************************************************************/
-#if DATA_FORMAT != MINI_AOD_2017
+#if DATA_FORMAT != MINI_AOD_2017 && DATA_FORMAT != MINI_AOD_2022_CUSTOM
 const double
 osu::TrackBase::innerP () const
 {
@@ -1000,7 +1000,7 @@ osu::TrackBase::bremEnergy () const
 const bool
 osu::TrackBase::isBadGsfTrack (const reco::GsfTrack &track) const
 {
-#if DATA_FORMAT == MINI_AOD_2017
+#if DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_2022_CUSTOM
   return true;
 #else
 
@@ -1288,6 +1288,8 @@ const bool
 osu::TrackBase::inTOBCrack () const
 {
 #if DATA_FORMAT == MINI_AOD_2017
+  double fabsLambda = fabs(M_PI_2 - this->theta());
+#elif DATA_FORMAT == MINI_AOD_2022_CUSTOM
   double fabsLambda = fabs(M_PI_2 - this->theta());
 #else
   double fabsLambda = fabs(this->lambda());

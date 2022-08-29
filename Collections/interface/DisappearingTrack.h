@@ -18,7 +18,7 @@
 #include <assert.h>
 #include "DisappTrks/CandidateTrackProducer/interface/CandidateTrack.h"
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
 #include "DataFormats/PatCandidates/interface/IsolatedTrack.h"
 #endif
 
@@ -68,15 +68,20 @@ namespace osu {
 #if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
                         const edm::Handle<vector<CandidateTrack> > &,
                         const edm::Handle<vector<pat::IsolatedTrack> > &);
+#elif DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022
+                        const edm::Handle<vector<pat::IsolatedTrack> > &);
 #else
                         const edm::Handle<vector<CandidateTrack> > &);
 #endif
 
       ~DisappearingTrack ();
 
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
       const edm::Ref<vector<CandidateTrack> > matchedCandidateTrack () const { return matchedCandidateTrack_; };
       const double dRToMatchedCandidateTrack () const { return (IS_INVALID(dRToMatchedCandidateTrack_)) ? MAX_DR : dRToMatchedCandidateTrack_; };
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#endif
+
+#if DATA_FORMAT_FROM_MINIAOD && (DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022)
       const edm::Ref<vector<pat::IsolatedTrack> > matchedIsolatedTrack () const { return matchedIsolatedTrack_; };
       const double dRToMatchedIsolatedTrack () const { return (IS_INVALID(dRToMatchedIsolatedTrack_)) ? MAX_DR : dRToMatchedIsolatedTrack_; };
 #endif
@@ -102,7 +107,7 @@ namespace osu {
       const float deltaRToClosestTau ()              const { return (IS_INVALID(deltaRToClosestTau_))            ? MAX_DR : deltaRToClosestTau_; };
       const float deltaRToClosestTauHad ()           const { return (IS_INVALID(deltaRToClosestTauHad_))         ? MAX_DR : deltaRToClosestTauHad_; };
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022)
       void set_isoTrackIsolation(const edm::Handle<vector<pat::IsolatedTrack> > &);
 #endif
 
@@ -124,7 +129,7 @@ namespace osu {
       const float pfPhotonIsoDR03 ()       const { return this->pfPhotonIsoDR03_; };
       const float pfPUPhotonIsoDR03 ()     const { return this->pfPUPhotonIsoDR03_; };
 
-#if DATA_FORMAT_IS_2017 // only makes sense with phase1 pixel upgrade
+#if DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 // only makes sense with phase1 pixel upgrade
       // This could be in TrackBase, but is fairly specialized to the disappearing tracks search
       const bool isAllowedThreeLayerHitPattern() const;
 #endif
@@ -135,18 +140,20 @@ namespace osu {
 
     private:
       const edm::Ref<vector<CandidateTrack> > &findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &, edm::Ref<vector<CandidateTrack> > &, double &) const;
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
       const edm::Ref<vector<pat::IsolatedTrack> > &findMatchedIsolatedTrack (const edm::Handle<vector<pat::IsolatedTrack> > &, edm::Ref<vector<pat::IsolatedTrack> > &, double &) const;
 #endif
 
       void set_primaryPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &);
       void set_additionalPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &, const edm::Handle<vector<pat::PackedCandidate> > &);
 
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
       edm::Ref<vector<CandidateTrack> > matchedCandidateTrack_;
       double dRToMatchedCandidateTrack_;
       double maxDeltaR_candidateTrackMatching_;
+#endif
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
       edm::Ref<vector<pat::IsolatedTrack> > matchedIsolatedTrack_;      
       double dRToMatchedIsolatedTrack_;
       double maxDeltaR_isolatedTrackMatching_;
@@ -217,6 +224,8 @@ namespace osu {
                                  const bool,
 #if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
                                  const edm::Handle<vector<CandidateTrack> > &,
+                                 const edm::Handle<vector<pat::IsolatedTrack> > &);
+#elif DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022
                                  const edm::Handle<vector<pat::IsolatedTrack> > &);
 #else
                                  const edm::Handle<vector<CandidateTrack> > &);

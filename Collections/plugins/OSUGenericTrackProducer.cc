@@ -41,12 +41,15 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
 
   lostTracksToken_ = consumes<vector<pat::PackedCandidate> > (cfg.getParameter<edm::InputTag> ("lostTracks"));
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
   isolatedTracksToken_ = consumes<vector<pat::IsolatedTrack> > (cfg.getParameter<edm::InputTag> ("isolatedTracks"));
 #endif
 
+#if !DATA_FORMAT_IS_2022
   candidateTracksToken_ = consumes<vector<CandidateTrack> > (cfg.getParameter<edm::InputTag> ("candidateTracks"));
 #endif
+
+#endif //ifdef DISAPP_TRKS
 
   const edm::ParameterSet &fiducialMaps = cfg.getParameter<edm::ParameterSet> ("fiducialMaps");
   const vector<edm::ParameterSet> &electronFiducialMaps = fiducialMaps.getParameter<vector<edm::ParameterSet> > ("electrons");
@@ -69,7 +72,7 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   // disappearing track ntuples.
   tracksToken_ = consumes<vector<reco::Track> > (edm::InputTag ("generalTracks", "", "RECO"));
 
-#if DATA_FORMAT_FROM_MINIAOD
+#if DATA_FORMAT_FROM_MINIAOD && !DATA_FORMAT_IS_2022
   stringstream ss;
   for (const auto &electronFiducialMap : electronFiducialMaps)
     {
@@ -187,13 +190,14 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   edm::Handle<vector<pat::PackedCandidate> > lostTracks;
   event.getByToken (lostTracksToken_, lostTracks);
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
   edm::Handle<vector<pat::IsolatedTrack> > isolatedTracks;
   event.getByToken (isolatedTracksToken_, isolatedTracks);
 #endif
-
+#if !DATA_FORMAT_IS_2022
   edm::Handle<vector<CandidateTrack> > candidateTracks;
   event.getByToken (candidateTracksToken_, candidateTracks);
+#endif
 #endif // DISAPP_TRKS
 
 #endif // DATA_FORMAT_FROM_MINIAOD
@@ -217,6 +221,8 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
                          !event.isRealData (),
 #if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
                          candidateTracks,
+                         isolatedTracks);
+#elif DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022
                          isolatedTracks);
 #else
                          candidateTracks);
@@ -242,7 +248,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 
 // in the specific case of TYPE(tracks)==CandidateTracks (where DATA_FORMAT is xyz_CUSTOM)
 // and running over CandidateTracks ntuples, then generalTracks and RecHits may be available
-#if DATA_FORMAT_IS_CUSTOM
+#if DATA_FORMAT_IS_CUSTOM && !DATA_FORMAT_IS_2022
       // Calculate the associated calorimeter energy for the disappearing tracks search.
 
       // this could be removed; if CandidateTrackProdcuer sets these,
@@ -300,7 +306,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
         track.set_minDeltaRToMuons(muons, vertices);
         track.set_minDeltaRToTaus(taus);
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
         track.set_isoTrackIsolation(isolatedTracks);
 #endif
 
