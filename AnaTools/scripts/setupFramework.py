@@ -28,7 +28,7 @@ A_BRIGHT_WHITE    =  "\033[1;37m"
 
 A_RESET           =  "\033[0m"
 
-supported_formats = ["AOD", "MINI_AOD", "MINI_AOD_2017"]
+supported_formats = ["AOD", "MINI_AOD", "MINI_AOD_2017", "MINI_AOD_2022"]
 
 parser = OptionParser()
 parser.add_option("-f", "--format", dest="data_format",
