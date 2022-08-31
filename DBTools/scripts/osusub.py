@@ -270,7 +270,7 @@ def getLatestJsonFile():
                     nameSplit = json.split('_')
                     if 'P_Golden' in arguments.JSONType:
                         if 'Golden.json' not in nameSplit: continue
-                    if nameSplit[2].startswith(era): continue
+                    if nameSplit[2].startswith('era'): continue
                     if float(nameSplit[3]) - float(nameSplit[2]) > runRange:
                             runRange = float(nameSplit[3]) - float(nameSplit[2])
                             bestJson = json
@@ -280,7 +280,7 @@ def getLatestJsonFile():
                     nameSplit = json.split('_')
                     if 'P_Golden' in arguments.JSONType:
                         if 'Golden.json' not in nameSplit: continue
-                    if nameSplit[2].startswith(era): continue #FIXME we may want these JSON files? naming of JSON files for run3 not decided
+                    if nameSplit[2].startswith('era'): continue #FIXME we may want these JSON files? naming of JSON files for run3 not decided
                     if float(nameSplit[3]) - float(nameSplit[2]) == runRange:
                         bestJsons.append(json)
 
