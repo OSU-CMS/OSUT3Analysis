@@ -1241,7 +1241,7 @@ composite_dataset_definitions = {
       'MET_2018D',
     ],
     'MET_2022' : [
-        'MET_2022A',
+      'MET_2022A',
     ],
     'JetHT_2018' : [
       'JetHT_2018A',
