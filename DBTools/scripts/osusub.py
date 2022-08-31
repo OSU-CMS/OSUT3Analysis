@@ -562,8 +562,14 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("rm -f " + os.environ["CMSSW_VERSION"] + ".tar.gz\n")
     SubmitScript.write ("SCRAM_ARCH=" + os.environ["SCRAM_ARCH"] + "\n")
     SubmitScript.write ("cd " + os.environ["CMSSW_VERSION"] + "/src/\n")
-    SubmitScript.write ("scramv1 b ProjectRename\n")
+    if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_"):
+        SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw/" + os.environ["CMSSW_VERSION"] + "/external/" + os.environ["SCRAM_ARCH"] + "/lib\n")
+        SubmitScript.write ("echo $LD_LIBRARY_PATH\n")
+    SubmitScript.write ("echo $CMSSW_BASE \n")
+    SubmitScript.write ("echo $PWD \n")
+    SubmitScript.write ("scram b ProjectRename\n")
     SubmitScript.write ("eval `scramv1 runtime -sh`\n")
+    SubmitScript.write ("echo $CMSSW_BASE \n")
     SubmitScript.write ("cd -\n\n")
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_"):
