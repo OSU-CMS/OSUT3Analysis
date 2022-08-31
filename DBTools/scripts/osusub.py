@@ -181,6 +181,13 @@ def getLatestJsonFile():
                 userDecision = input('You are using a 2018 JSON file while not in CMSSW_10_2_X. Are you sure you want to continue? (Type "y" for yes and "n" for no.)')
                 if userDecision == "n":
                     sys.exit(1)
+        elif re.search('22$', arguments.JSONType):
+            collisionsType = 'Collisions22'
+            jsonMatchingPhrase = 'Collisions2022'
+            if not os.environ['CMSSW_VERSION'].startswith ("CMSSW_12_4_"):
+                userDecision = input('You are using a 2022 JSON file while not in CMSSW_12_4_X. Are you sure you want to continue? (Type "y" for yes and "n" for no.)')
+                if userDecision == "n":
+                    sys.exit(1)
         else:
             collisionType = 'Collisions15'
             jsonMatchingPhrase = 'Collisions15_25ns_JSON'
@@ -202,10 +209,12 @@ def getLatestJsonFile():
             tmpDir = tempfile.mkdtemp ()
             if re.search('17$', arguments.JSONType) or re.search('18$', arguments.JSONType):
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/' + collisionType + '/13TeV/PromptReco/ -O ' + tmpDir + '/jsonList.txt', shell = True)
+            elif re.search('22$', arguments.JSONType):
+                subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions22/ -O ' + tmpDir + '/jsonList.txt', shell = True)
             else:
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/' + collisionType + '/13TeV/ -O ' + tmpDir + '/jsonList.txt', shell = True)
             subprocess.call('grep "Cert" ' + tmpDir + '/jsonList.txt > ' + tmpDir + '/CertList.txt', shell = True)
-            Tmp = open(tmpDir + '/CertList.txt','r+w')
+            Tmp = open(tmpDir + '/CertList.txt','r+')
             jsonFileList = []
 
             for line in Tmp:
@@ -216,21 +225,34 @@ def getLatestJsonFile():
                         startIndex = i + 1
                     if line[i:i+4] == 'txt"':
                         endIndex = i + 3
+                    if line[i:i+5] == 'json"':
+                        endIndex = i + 4
                 if startIndex <= endIndex:
                     jsonFileList.append(line[startIndex: endIndex])
             Tmp.close ()
 
             jsonFileFiltered = []
             for fileName in jsonFileList:
+                print("jsonFileList:", fileName, jsonMatchingPhrase, arguments.JSONType[-2:], type(arguments.JSONType[-2:])) #mcarrigan
                 if jsonMatchingPhrase in fileName:
                     if 'P_Golden' in arguments.JSONType:
-                        if re.search('JSON_?(v[0-9]+)?\.txt', fileName):
-                            jsonFileFiltered.append(fileName)
+                        if arguments.JSONType[-2:] == '22':
+                            print("Looking for golden 22")
+                            if re.search('(v[0-9]+)?\.json', fileName):
+                                jsonFileFiltered.append(fileName)
+                        else:
+                            if re.search('JSON_?(v[0-9]+)?\.txt', fileName):
+                                jsonFileFiltered.append(fileName)
                     else:
                         if arguments.JSONType[-2:] == '16' or arguments.JSONType[-2:] == '17' or arguments.JSONType[-2:] == '18':
                             if re.search('JSON_' + arguments.JSONType[2:-2] + '(_v[0-9]+)?\.txt', fileName):
                                 jsonFileFiltered.append(fileName)
+                        elif arguments.JSONType[-2:] == '22':
+                            print("looking for 22", arguments.JSONType[2:-2])
+                            if re.search(arguments.JSONType[2:-2] + '(_v[0-9]+)?\.json', fileName):
+                                jsonFileFiltered.append(fileName)
                         else:
+                            print("not 22", arguments.JSONType[-2:])
                             if re.search('JSON_' + arguments.JSONType[2:] + '(_v[0-9]+)?\.txt', fileName):
                                 jsonFileFiltered.append(fileName)
 
@@ -243,18 +265,38 @@ def getLatestJsonFile():
                 print(A_BRIGHT_RED + "Warning!!!!!!!!!!!Could not find wanted JSON file" + A_RESET)
                 print("#######################################################")
 
-            for json in jsonFileFiltered:
-                nameSplit = json.split('_')
-                if len(nameSplit[1].split('-')) > 1:
-                    if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) > runRange:
-                        runRange = float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0])
-                        bestJson = json
+            if arguments.JSONType[-2:] == '22':
+                for json in jsonFileFiltered:
+                    nameSplit = json.split('_')
+                    if 'P_Golden' in arguments.JSONType:
+                        if 'Golden.json' not in nameSplit: continue
+                    if nameSplit[2].startswith('era'): continue
+                    if float(nameSplit[3]) - float(nameSplit[2]) > runRange:
+                            runRange = float(nameSplit[3]) - float(nameSplit[2])
+                            bestJson = json
+                            print("Json 2022, run range: ", runRange, "Best json:", bestJson)
 
-            for json in jsonFileFiltered:
-                nameSplit = json.split('_')
-                if len(nameSplit[1].split('-')) > 1:
-                    if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) == runRange:
+                for json in jsonFileFiltered:
+                    nameSplit = json.split('_')
+                    if 'P_Golden' in arguments.JSONType:
+                        if 'Golden.json' not in nameSplit: continue
+                    if nameSplit[2].startswith('era'): continue #FIXME we may want these JSON files? naming of JSON files for run3 not decided
+                    if float(nameSplit[3]) - float(nameSplit[2]) == runRange:
                         bestJsons.append(json)
+
+            else:
+                for json in jsonFileFiltered:
+                    nameSplit = json.split('_')
+                    if len(nameSplit[1].split('-')) > 1:
+                        if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) > runRange:
+                            runRange = float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0])
+                            bestJson = json
+
+                for json in jsonFileFiltered:
+                    nameSplit = json.split('_')
+                    if len(nameSplit[1].split('-')) > 1:
+                        if float(nameSplit[1].split('-')[1]) - float(nameSplit[1].split('-')[0]) == runRange:
+                            bestJsons.append(json)
 
             versionNumber = 0
             ultimateJson = ''
@@ -273,6 +315,9 @@ def getLatestJsonFile():
 
             if re.search('17$', arguments.JSONType) or re.search('18$', arguments.JSONType):
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/' + collisionType + '/13TeV/PromptReco/' + ultimateJson + ' -O ' + tmpDir + '/' + ultimateJson, shell = True)
+            elif re.search('22$', arguments.JSONType):
+                print("trying to get ultimate json", ultimateJson)
+                subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions22/' + ultimateJson + ' -O ' + tmpDir + '/' + ultimateJson, shell = True)
             else:
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson, shell = True)
             shutil.move (tmpDir + "/" + ultimateJson, ultimateJson)
@@ -814,7 +859,8 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     InitializeAAA = ""
     if UseAAA:
         if FileType == 'OSUT3Ntuple' or FileType == 'Dataset':
-            if not hasattr (Dataset, "__iter__"):
+            #if not hasattr (Dataset, "__iter__"):
+            if not isinstance(Dataset, list):
                 AcquireAwesomeAAA(Dataset, datasetInfoName, 'AAAFileList.txt', datasetRead, crossSection, False)
             else:
                 append = False
@@ -1264,7 +1310,6 @@ RunOverRemoteSkim = RunOverSkim and 'root://' in arguments.SkimDirectory
 ###############################################################################
 split_datasets = []
 
-
 if arguments.localConfig:
     exec("from " + re.sub (r".py$", r"", arguments.localConfig) + " import *")
     split_datasets = split_composite_datasets(datasets, composite_dataset_definitions)
@@ -1323,6 +1368,7 @@ split_datasets = list(set(split_datasets))
 currentCondorSubArgumentsSet = {}
 #Check whether the user wants to resubmit the failed condor jobs.
 if not arguments.Resubmit:
+
     #Loop over the datasets in split_datasets.
     if split_datasets:
         SubmissionDir = os.getcwd()

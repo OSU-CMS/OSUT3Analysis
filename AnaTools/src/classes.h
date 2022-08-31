@@ -40,6 +40,9 @@ namespace {
      vector<vector<bool> > booldummy2;
      edm::Wrapper<vector<vector<bool> > > booldummy3;
 
+     UserVariable uservariable0;
+     std::vector<UserVariable> uservariable1;
+
      pair<const string, vector<UserVariable> > uservariabledummy0;
      pair<const string, double > eventvariabledummy0;
    };

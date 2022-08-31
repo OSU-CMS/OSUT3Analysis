@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-
-import os
+mport os
 
 config_file = "standardConfig_cfg.py"
 
