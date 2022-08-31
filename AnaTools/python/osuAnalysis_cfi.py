@@ -5,7 +5,7 @@ import copy
 ##### Define the datatier being used ####
 #########################################
 
-dataFormat = "MINI_AOD_2017_CUSTOM"
+dataFormat = "MINI_AOD_2022_CUSTOM"
 
 ###########################################################
 ##### Set up the standard input collections in miniAOD ####
@@ -43,6 +43,12 @@ collectionMapMiniAOD2017 = copy.deepcopy(collectionMap)
 collectionMapMiniAOD2017.tracks          = cms.InputTag ('isolatedTracks', '')
 collectionMapMiniAOD2017.secondaryTracks = cms.InputTag ('isolatedTracks', '')
 collectionMapMiniAOD2017.trigobjs        = cms.InputTag  ('slimmedPatTrigger') # Thanks MINIAOD for changing names!
+
+#########################################################################
+##### Set up the standard input collections in 2022 miniAOD ####
+#########################################################################
+
+collectionMapMiniAOD2022 = copy.deepcopy(collectionMapMiniAOD2017)
 
 ###########################################################
 ##### Set up the standard input collections in AOD ####
