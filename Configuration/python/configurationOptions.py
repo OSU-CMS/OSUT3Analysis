@@ -1,4 +1,6 @@
-mport os
+#!/usr/bin/env python
+
+import os
 
 config_file = "standardConfig_cfg.py"
 
@@ -1239,7 +1241,7 @@ composite_dataset_definitions = {
       'MET_2018D',
     ],
     'MET_2022' : [
-        'MET_2022A',
+      'MET_2022A',
     ],
     'JetHT_2018' : [
       'JetHT_2018A',
@@ -1444,7 +1446,7 @@ nJobs = {
     'MET_2018B' : 295,
     'MET_2018C' : 315,
     'MET_2018D' : 1625,
-    'MET_2022A' : 100,
+    'MET_2022A' : 10,
 
   'JetHT_2018A' : 2852,
   'JetHT_2018B' : 1448,
@@ -2775,7 +2777,7 @@ maxEvents = {
     'MET_2018B' : -1,
     'MET_2018C' : -1,
     'MET_2018D' : -1,
-    'MET_2022A' : -1,
+    'MET_2022A' : 100,
 
     'JetHT_2018A' : -1,
     'JetHT_2018B' : -1,
