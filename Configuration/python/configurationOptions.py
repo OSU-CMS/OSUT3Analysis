@@ -183,6 +183,8 @@ datasets = [
    'MET_2018C',
    'MET_2018D',
    'MET_2022A',
+   'MET_2022B',
+   'MET_2022C',
    'JetHT_2018A',
    'JetHT_2018B',
    'JetHT_2018C',
@@ -1242,6 +1244,8 @@ composite_dataset_definitions = {
     ],
     'MET_2022' : [
       'MET_2022A',
+      'MET_2022B',
+      'MET_2022C',
     ],
     'JetHT_2018' : [
       'JetHT_2018A',
@@ -1447,6 +1451,8 @@ nJobs = {
     'MET_2018C' : 315,
     'MET_2018D' : 1625,
     'MET_2022A' : 10,
+    'MET_2022B' : 10,
+    'MET_2022C' : 10,
 
   'JetHT_2018A' : 2852,
   'JetHT_2018B' : 1448,
@@ -2777,7 +2783,9 @@ maxEvents = {
     'MET_2018B' : -1,
     'MET_2018C' : -1,
     'MET_2018D' : -1,
-    'MET_2022A' : 100,
+    'MET_2022A' : -1,
+    'MET_2022B' : -1,
+    'MET_2022C' : -1,
 
     'JetHT_2018A' : -1,
     'JetHT_2018B' : -1,
@@ -4126,6 +4134,8 @@ types = {
     'MET_2018C'        : "data",
     'MET_2018D'        : "data",
     'MET_2022A'        : "data",
+    'MET_2022B'        : "data",
+    'MET_2022C'        : "data",
 
     'JetHT_2018'         : "data",
     'JetHT_2018A'        : "data",
@@ -5522,6 +5532,8 @@ colors = {
     'MET_2018C'        : 1,
     'MET_2018D'        : 1,
     'MET_2022A'        : 1,
+    'MET_2022B'        : 1,
+    'MET_2022C'        : 1,
 
     'JetHT_2018'         : 1,
     'JetHT_2018A'        : 1,
@@ -6929,6 +6941,8 @@ labels = {
     'MET_2018C'        : "MET_2018C data",
     'MET_2018D'        : "MET_2018D data",
     'MET_2022A'        : "MET_2022A data",
+    'MET_2022B'        : "MET_2022B data",
+    'MET_2022C'        : "MET_2022C data",
 
     'JetHT_2018'         : "JetHT 2018 data",
     'JetHT_2018A'        : "JetHT 2018A data",
