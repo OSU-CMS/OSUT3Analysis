@@ -67,6 +67,9 @@ datasets = [
    'SingleMu_2018B',
    'SingleMu_2018C',
    'SingleMu_2018D',
+   'SingleMu_2022A',
+   'SingleMu_2022B',
+   'SingleMu_2022C',
    'SingleEle_2015',
    'SingleEle_2015D',
    'SingleEle_2016B',
@@ -183,6 +186,7 @@ datasets = [
    'MET_2018C',
    'MET_2018D',
    'MET_2022A',
+   'MET_2022C',
    'JetHT_2018A',
    'JetHT_2018B',
    'JetHT_2018C',
@@ -704,6 +708,11 @@ composite_dataset_definitions = {
       'SingleMu_2018B',
       'SingleMu_2018C',
       'SingleMu_2018D',
+    ],
+    'SingleMu_2022' : [
+      'SingleMu_2022A',
+      'SingleMu_2022B',
+      'SingleMu_2022C',
     ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
@@ -1242,6 +1251,7 @@ composite_dataset_definitions = {
     ],
     'MET_2022' : [
       'MET_2022A',
+      'MET_2022C',
     ],
     'JetHT_2018' : [
       'JetHT_2018A',
@@ -1447,6 +1457,7 @@ nJobs = {
     'MET_2018C' : 315,
     'MET_2018D' : 1625,
     'MET_2022A' : 10,
+    'MET_2022C' : 10,
 
   'JetHT_2018A' : 2852,
   'JetHT_2018B' : 1448,
@@ -1579,6 +1590,9 @@ nJobs = {
     'SingleMu_2018B'   : 1200,
     'SingleMu_2018C'   : 1101,
     'SingleMu_2018D'   : 5028,
+    'SingleMu_2022A'   : 10,
+    'SingleMu_2022B'   : 10,
+    'SingleMu_2022C'   : 10,
 
     # set number of jobs to correpond to roughly 100k events/job
     'SingleEle_2015D' : 1000,
@@ -2778,6 +2792,7 @@ maxEvents = {
     'MET_2018C' : -1,
     'MET_2018D' : -1,
     'MET_2022A' : 100,
+    'MET_2022C' : 1000,
 
     'JetHT_2018A' : -1,
     'JetHT_2018B' : -1,
@@ -2914,6 +2929,10 @@ maxEvents = {
     'SingleMu_2018B'        : -1,
     'SingleMu_2018C'        : -1,
     'SingleMu_2018D'        : -1,
+    'SingleMu_2022'         : 1000,
+    'SingleMu_2022A'        : 1000,
+    'SingleMu_2022B'        : 1000,
+    'SingleMu_2022C'        : 1000,
 
     'SingleEle_2015D'        : -1,
     'SingleEle_2016B'        : -1,
@@ -4126,6 +4145,7 @@ types = {
     'MET_2018C'        : "data",
     'MET_2018D'        : "data",
     'MET_2022A'        : "data",
+    'MET_2022C'        : "data",
 
     'JetHT_2018'         : "data",
     'JetHT_2018A'        : "data",
@@ -4282,6 +4302,10 @@ types = {
     'SingleMu_2018B'        : "data",
     'SingleMu_2018C'        : "data",
     'SingleMu_2018D'        : "data",
+    'SingleMu_2022'         : "data",
+    'SingleMu_2022A'        : "data",
+    'SingleMu_2022B'        : "data",
+    'SingleMu_2022C'        : "data",
 
     'SingleEle_2015D'   : "data",
     'SingleEle_2016B'   : "data",
@@ -5522,6 +5546,7 @@ colors = {
     'MET_2018C'        : 1,
     'MET_2018D'        : 1,
     'MET_2022A'        : 1,
+    'MET_2022C'        : 1,
 
     'JetHT_2018'         : 1,
     'JetHT_2018A'        : 1,
@@ -5677,6 +5702,10 @@ colors = {
     'SingleMu_2018B'        : 1,
     'SingleMu_2018C'        : 1,
     'SingleMu_2018D'        : 1,
+    'SingleMu_2022'         : 1,
+    'SingleMu_2022A'        : 1,
+    'SingleMu_2022B'        : 1,
+    'SingleMu_2022C'        : 1,
 
     'SingleEle_2015D'        : 1,
     'SingleEle_2016B'        : 1,
@@ -6929,6 +6958,7 @@ labels = {
     'MET_2018C'        : "MET_2018C data",
     'MET_2018D'        : "MET_2018D data",
     'MET_2022A'        : "MET_2022A data",
+    'MET_2022C'        : "MET_2022C data",
 
     'JetHT_2018'         : "JetHT 2018 data",
     'JetHT_2018A'        : "JetHT 2018A data",
@@ -7085,6 +7115,11 @@ labels = {
     'SingleMu_2018B'        : "SingleMuon 2018B data",
     'SingleMu_2018C'        : "SingleMuon 2018C data",
     'SingleMu_2018D'        : "SingleMuon 2018D data",
+    'SingleMu_2022'         : "SingleMuon 2022 data",
+    'SingleMu_2022A'        : "SingleMuon 2022A data",
+    'SingleMu_2022B'        : "SingleMuon 2022B data",
+    'SingleMu_2022C'        : "SingleMuon 2022C data",
+
 
     'SingleEle_2015B'        : "SingleElectron 2015B data",
     'SingleEle_2015C'        : "SingleElectron 2015C data",

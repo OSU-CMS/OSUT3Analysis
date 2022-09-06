@@ -13,6 +13,7 @@ import tempfile
 import shutil
 import subprocess
 import tarfile
+import importlib.util
 from math import *
 from array import *
 from optparse import OptionParser
@@ -776,7 +777,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
             else:
                 ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("' +  Label + '")\n')
         else:
-            ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n')
+            ConfigFile.write('pset.process.PUScalingFactorProducer.dataset = cms.string("MuonEG_2015D")\n') #FIXME for Run3 PU scaling
     ConfigFile.write('\n')
     if Dataset != '':
         ConfigFile.write('pset.process.source.fileNames = cms.untracked.vstring (osusub.runList)\n')
@@ -800,7 +801,18 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("    for fileName in osusub.runList:\n")
         ConfigFile.write("      siblings.extend (osusub.getSiblings (fileName, \"" + sibling_datasets[Label] + "\"))\n")
         ConfigFile.write("  except:\n")
-        ConfigFile.write("    print \"No valid grid proxy. Not adding sibling files.\"\n")
+        ConfigFile.write("    print(\"No valid grid proxy. Not adding sibling files.\")\n")
+        ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
+
+    # If the dataset has a Run3 skim sibling defined and not run over skim, add the corresponding files to the secondary file names
+    if not RunOverSkim and ("run3_skim_sibling_datasets" in locals() or "run3_skim_sibling_datasets" in globals()) and Label in run3_skim_sibling_datasets:
+        ConfigFile.write("\nsiblings = []\n")
+        ConfigFile.write("if osusub.batchMode:\n")
+        ConfigFile.write("  try:\n")
+        ConfigFile.write("    for fileName in osusub.runList:\n")
+        ConfigFile.write("      siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[Label] + "\"))\n")
+        ConfigFile.write("  except:\n")
+        ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     ConfigFile.write('process = pset.process\n')
@@ -1051,6 +1063,88 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         if RunOverSkim:
             datasetRead['numberOfEvents'] = datasetInfo.skimNumberOfEvents
         datasetRead['secondaryCollections'] = secondaryCollectionModifications
+
+    if FileType == 'Dataset':
+        if not UseAAA and not RunOverRemoteSkim:
+            print("Performance not defined for Dataset input Format")
+
+        secondaryCollectionModifications = []
+        if RunOverRemoteSkim:
+            SkimDirectory = arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel
+            inputFiles = GetListOfRemoteRootFiles(SkimDirectory)
+            if inputFiles is None:
+                print("Reading from the remote directory failed for remote dataset " + Label + ". Does it exist? Will skip it and continue.")
+                datasetRead['numberOfFiles'] = 0
+                return datasetRead
+            numInputFiles = len(inputFiles)
+            secondaryCollections = RemoteSecondaryCollectionInstance(inputFiles)
+            # Copy the relevant files from the remote skim directory.
+            try:
+                subprocess.call('xrdcp ' + SkimDirectory + '/' + os.path.basename(datasetInfoName) + ' ' + datasetInfoName, shell = True)
+            except subprocess.CalledProcessError:
+                print("Could not copy info file " + datasetInfoName + " from remote directory. Will skip this dataset and continue.")
+                datasetRead['numberOfFiles'] = 0
+                return datasetRead
+            try:
+                subprocess.call('xrdcp ' + SkimDirectory + '/OriginalNumberOfEvents.txt' + ' ' + Directory + '/OriginalNumberOfEvents.txt', shell = True)
+            except subprocess.CalledProcessError:
+                print("Could not copy OriginalNumberOfEvents.txt from remote directory. Will skip this dataset and continue.")
+                datasetRead['numberOfFiles'] = 0
+                return datasetRead
+            try:
+                subprocess.call('xrdcp ' + SkimDirectory + '/SkimNumberOfEvents.txt' + ' ' + Directory + '/SkimNumberOfEvents.txt', shell = True)
+            except subprocess.CalledProcessError:
+                print("Could not copy SkimNumberOfEvents.txt from remote directory. Will skip this dataset and continue.")
+                datasetRead['numberOfFiles'] = 0
+                return datasetRead
+            # Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
+            SkimModifier(Label, Directory, crossSection, True)
+            if not numInputFiles:
+                print("No input skim files found for remote dataset " + Label + ". Will skip it and continue")
+                datasetRead['numberOfFiles'] = numInputFiles
+                return datasetRead
+        elif RunOverSkim:
+            numInputFiles = len(glob.glob(Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel + "/*.root"))
+            if not numInputFiles:
+                print("No input skim files found for dataset " + Label + ".  Will skip it and continue")
+                datasetRead['numberOfFiles'] = numInputFiles
+                return datasetRead
+            SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/'
+            secondaryCollectionModifications = SecondaryCollectionInstance(SkimDirectory, arguments.SkimChannel)
+            #Copy the datasetInfo file from the skim directory.
+            shutil.copy (SkimDirectory + 'datasetInfo_' + Label + '_cfg.py', datasetInfoName)
+            #Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
+            SkimModifier(Label, Directory, crossSection)
+            InitializeAAA = ""
+
+        sys.path.append(Directory)
+        datasetSpec = importlib.util.spec_from_file_location('datasetInfo_' + Label +'_cfg', Directory + '/' + 'datasetInfo_' + Label +'_cfg.py')
+        datasetInfo = importlib.util.module_from_spec(datasetSpec)
+        sys.modules['datasetInfo_' + Label +'_cfg'] = datasetInfo
+        datasetSpec.loader.exec_module(datasetInfo)
+
+        #print(Directory in sys.path) # To be removed
+        #print('import datasetInfo_' + Label +'_cfg as datasetInfo', Directory) # To be removed
+        #exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
+        #print(locals())
+        #print(type(datasetInfo))
+
+        if not UseAAA and InitializeAAA == "" and not RunOverSkim:
+            status = datasetInfo.status
+            continueForNonPresentDataset = True
+            if not status == 'present':
+                userDecision = input('The dataset you selected is not marked as present on Tier3, do you still want to continue?(Type "y" for yes and "n" for no.)')
+                if userDecision == "n":
+                    continueForNonPresentDataset = False
+            if not continueForNonPresentDataset:
+                return
+        datasetRead['realDatasetName'] = datasetInfo.datasetName if hasattr (datasetInfo, "datasetName") else DatasetName
+        datasetRead['numberOfFiles'] = len(datasetInfo.listOfFiles)
+        if RunOverSkim:
+            datasetRead['numberOfEvents'] = datasetInfo.skimNumberOfEvents
+        datasetRead['secondaryCollections'] = secondaryCollectionModifications
+
+
     return  datasetRead
 
 def MakeBatchJobFile(WorkDir, Queue, NumberOfJobs):
@@ -1368,7 +1462,6 @@ split_datasets = list(set(split_datasets))
 currentCondorSubArgumentsSet = {}
 #Check whether the user wants to resubmit the failed condor jobs.
 if not arguments.Resubmit:
-
     #Loop over the datasets in split_datasets.
     if split_datasets:
         SubmissionDir = os.getcwd()
@@ -1414,6 +1507,22 @@ if not arguments.Resubmit:
                         print('Directory "' + str(SkimDir) + '" already exists. Please remove it and resubmit. For now dataset "' + str(dataset) + '" will be skipped.')
                         continue
             elif arguments.FileType == 'UserList':
+                WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
+                SkimDir = HadoopDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']]) if HadoopDir else ''
+                if os.path.exists(WorkDir):
+                    print('Directory "' + str(WorkDir) + '" already exists.  Please remove it and resubmit.')
+                    continue
+                else:
+                    os.mkdir (WorkDir)
+                if SkimDir:
+                    if not MakeSkimDirectory(SkimDir, lpcCAF):
+                        print('Directory "' + str(SkimDir) + '" already exists. Please remove it and resubmit. For now dataset "' + str(dataset) + '" will be skipped.')
+                        continue
+            elif arguments.FileType == 'Dataset':
+                if dataset in dataset_names:
+                    DatasetName = dataset_names[dataset]
+                else:
+                    print(str(dataset) + ' has not been registered on T3. Will try to find it on DAS.')
                 WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
                 SkimDir = HadoopDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']]) if HadoopDir else ''
                 if os.path.exists(WorkDir):
