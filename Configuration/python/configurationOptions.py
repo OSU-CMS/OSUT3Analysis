@@ -186,6 +186,7 @@ datasets = [
    'MET_2018C',
    'MET_2018D',
    'MET_2022A',
+   'MET_2022B',
    'MET_2022C',
    'JetHT_2018A',
    'JetHT_2018B',
