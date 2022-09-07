@@ -67,6 +67,9 @@ datasets = [
    'SingleMu_2018B',
    'SingleMu_2018C',
    'SingleMu_2018D',
+   'SingleMu_2022A',
+   'SingleMu_2022B',
+   'SingleMu_2022C',
    'SingleEle_2015',
    'SingleEle_2015D',
    'SingleEle_2016B',
@@ -706,6 +709,11 @@ composite_dataset_definitions = {
       'SingleMu_2018B',
       'SingleMu_2018C',
       'SingleMu_2018D',
+    ],
+    'SingleMu_2022' : [
+      'SingleMu_2022A',
+      'SingleMu_2022B',
+      'SingleMu_2022C',
     ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
@@ -1585,6 +1593,9 @@ nJobs = {
     'SingleMu_2018B'   : 1200,
     'SingleMu_2018C'   : 1101,
     'SingleMu_2018D'   : 5028,
+    'SingleMu_2022A'   : 10,
+    'SingleMu_2022B'   : 10,
+    'SingleMu_2022C'   : 10,
 
     # set number of jobs to correpond to roughly 100k events/job
     'SingleEle_2015D' : 1000,
@@ -2922,6 +2933,10 @@ maxEvents = {
     'SingleMu_2018B'        : -1,
     'SingleMu_2018C'        : -1,
     'SingleMu_2018D'        : -1,
+    'SingleMu_2022'         : 1000,
+    'SingleMu_2022A'        : 1000,
+    'SingleMu_2022B'        : 1000,
+    'SingleMu_2022C'        : 1000,
 
     'SingleEle_2015D'        : -1,
     'SingleEle_2016B'        : -1,
@@ -4292,6 +4307,10 @@ types = {
     'SingleMu_2018B'        : "data",
     'SingleMu_2018C'        : "data",
     'SingleMu_2018D'        : "data",
+    'SingleMu_2022'         : "data",
+    'SingleMu_2022A'        : "data",
+    'SingleMu_2022B'        : "data",
+    'SingleMu_2022C'        : "data",
 
     'SingleEle_2015D'   : "data",
     'SingleEle_2016B'   : "data",
@@ -5689,6 +5708,10 @@ colors = {
     'SingleMu_2018B'        : 1,
     'SingleMu_2018C'        : 1,
     'SingleMu_2018D'        : 1,
+    'SingleMu_2022'         : 1,
+    'SingleMu_2022A'        : 1,
+    'SingleMu_2022B'        : 1,
+    'SingleMu_2022C'        : 1,
 
     'SingleEle_2015D'        : 1,
     'SingleEle_2016B'        : 1,
@@ -7099,6 +7122,11 @@ labels = {
     'SingleMu_2018B'        : "SingleMuon 2018B data",
     'SingleMu_2018C'        : "SingleMuon 2018C data",
     'SingleMu_2018D'        : "SingleMuon 2018D data",
+    'SingleMu_2022'         : "SingleMuon 2022 data",
+    'SingleMu_2022A'        : "SingleMuon 2022A data",
+    'SingleMu_2022B'        : "SingleMuon 2022B data",
+    'SingleMu_2022C'        : "SingleMuon 2022C data",
+
 
     'SingleEle_2015B'        : "SingleElectron 2015B data",
     'SingleEle_2015C'        : "SingleElectron 2015C data",
