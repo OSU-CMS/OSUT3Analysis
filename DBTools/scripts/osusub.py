@@ -71,6 +71,8 @@ parser.add_option("--forceRutgersMode", action="store_true", dest="forceRutgersM
 
 (arguments, args) = parser.parse_args()
 
+print('The parser output is {0}'.format(arguments.Dataset))
+
 #Examples:
 #1. Submit generic jobs(-g). "Generic" means jobs that are not using OSUT3Analysis.cc as the analyzer. But it can still use whatever in the configurationOptions.py. This ELOG explains why we need 'g': https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/13
 #   1.1 Generate GEN-SIM step MC samples.
@@ -267,7 +269,7 @@ def getLatestJsonFile():
                 print("#######################################################")
 
             if arguments.JSONType[-2:] == '22':
-                for json in jsonFileFiltered:
+                '''for json in jsonFileFiltered:
                     nameSplit = json.split('_')
                     if 'P_Golden' in arguments.JSONType:
                         if 'Golden.json' not in nameSplit: continue
@@ -275,15 +277,29 @@ def getLatestJsonFile():
                     if float(nameSplit[3]) - float(nameSplit[2]) > runRange:
                             runRange = float(nameSplit[3]) - float(nameSplit[2])
                             bestJson = json
-                            print("Json 2022, run range: ", runRange, "Best json:", bestJson)
+                            print("Json 2022, run range: ", runRange, "Best json:", bestJson)'''
+
+                #Uses the Dataset to determine which era is needed for json file
+                era_needed = 'Golden'
+                if '2022A' in arguments.Dataset: era_needed = 'eraA'
+                if '2022B' in arguments.Dataset: era_needed = 'eraB'
+                if '2022C' in arguments.Dataset: era_needed = 'eraC'
+                if '2022D' in arguments.Dataset: era_needed = 'eraD'
 
                 for json in jsonFileFiltered:
                     nameSplit = json.split('_')
                     if 'P_Golden' in arguments.JSONType:
                         if 'Golden.json' not in nameSplit: continue
-                    if nameSplit[2].startswith('era'): continue #FIXME we may want these JSON files? naming of JSON files for run3 not decided
-                    if float(nameSplit[3]) - float(nameSplit[2]) == runRange:
+
+                    #The following three lines were commented to test picking json files for specified eras
+                    #if nameSplit[2].startswith('era'): continue #FIXME we may want these JSON files? naming of JSON files for run3 not decided
+                    #if float(nameSplit[3]) - float(nameSplit[2]) == runRange:
+                    #    bestJsons.append(json)
+
+                    #This adds the era-specific json file to bestJsons.
+                    if era_needed in nameSplit[2]:
                         bestJsons.append(json)
+                        print('Found matching json = {0}'.format(json))
 
             else:
                 for json in jsonFileFiltered:
@@ -306,6 +322,7 @@ def getLatestJsonFile():
                 ultimateJson = bestJsons[0]
             else:
                 for bestJson in bestJsons:
+
                     nameSplit = bestJson.split('_')
                     if nameSplit[len(nameSplit) - 1][0] == 'v':
                         versionString =  nameSplit[len(nameSplit) - 1].split('.')[0]
