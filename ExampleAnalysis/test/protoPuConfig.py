@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # to be run with osusub.py (see https://twiki.cern.ch/twiki/bin/view/CMS/OSUT3AnalysisTutorial)
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Usage: getDatasetJSON.py /DATA/SET/NAME
 # The output is a JSON file called DATA_SET_NAME.txt containing the lumi
