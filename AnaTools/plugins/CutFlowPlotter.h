@@ -3,7 +3,7 @@
 
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/stream/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -13,7 +13,7 @@
 
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
-class CutFlowPlotter : public edm::EDAnalyzer
+class CutFlowPlotter : public edm::stream::EDAnalyzer<>
 {
   public:
     CutFlowPlotter (const edm::ParameterSet &);

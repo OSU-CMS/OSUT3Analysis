@@ -1,7 +1,7 @@
 #ifndef MET_PRODUCER
 #define MET_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
@@ -9,7 +9,7 @@
 
 #include "OSUT3Analysis/Collections/interface/Met.h"
 
-class OSUMetProducer : public edm::EDProducer
+class OSUMetProducer : public edm::stream::EDProducer<>
 {
   public:
     OSUMetProducer (const edm::ParameterSet &);

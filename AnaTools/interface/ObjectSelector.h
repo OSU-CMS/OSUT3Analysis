@@ -5,7 +5,7 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 
-#include "FWCore/Framework/interface/EDFilter.h"
+#include "FWCore/Framework/interface/stream/EDFilter.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -15,7 +15,7 @@
 #define EXIT_CODE 2
 
 template<class T, class TO>
-class ObjectSelector : public edm::EDFilter
+class ObjectSelector : public edm::stream::EDFilter<>
 {
   public:
     ObjectSelector (const edm::ParameterSet &);
