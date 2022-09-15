@@ -1,13 +1,16 @@
 #ifndef TRACK_PRODUCER
 #define TRACK_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
+#include "FWCore/Utilities/interface/EDGetToken.h"
+#include "FWCore/Utilities/interface/ESGetToken.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
 #include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
 #include "CondFormats/EcalObjects/interface/EcalChannelStatus.h"
@@ -24,7 +27,7 @@
 #define IS_INVALID(x) (x <= INVALID_VALUE + 1)
 
 template<class T>
-  class OSUGenericTrackProducer : public edm::EDProducer
+  class OSUGenericTrackProducer : public edm::stream::EDProducer<>
 {
   public:
     OSUGenericTrackProducer (const edm::ParameterSet &);
@@ -89,6 +92,12 @@ template<class T>
 
     edm::ESHandle<CaloGeometry> caloGeometry_;
     edm::ESHandle<EcalChannelStatus> ecalStatus_;
+    //const CaloGeometry& caloGeometry_;
+    //const EcalChannelStatus& ecalStatus_;
+
+    edm::ESGetToken<CaloGeometry, CaloGeometryRecord> caloGeometryToken_;
+    edm::ESGetToken<EcalChannelStatus, EcalChannelStatusRcd> ecalStatusToken_;
+
     bool insideCone(TYPE(tracks)& track, const DetId& id, const double dR);
     GlobalPoint getPosition( const DetId& id);
 
