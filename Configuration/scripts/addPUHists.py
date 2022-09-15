@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # addPUHists.py
 # Takes the histograms from pu.root for the dataset(s) and condor directory specified in the local options file,

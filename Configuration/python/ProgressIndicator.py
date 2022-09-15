@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys, time
 import OSUT3Analysis.Configuration.Color

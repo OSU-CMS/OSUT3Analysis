@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 
@@ -2796,7 +2796,7 @@ maxEvents = {
     'MET_2018D' : -1,
     'MET_2022A' : -1,
     'MET_2022B' : -1,
-    'MET_2022C' : -1,
+    'MET_2022C' : 1000,
 
     'JetHT_2018A' : -1,
     'JetHT_2018B' : -1,
