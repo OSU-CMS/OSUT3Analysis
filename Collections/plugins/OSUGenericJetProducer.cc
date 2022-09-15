@@ -9,6 +9,7 @@ template<class T>
 OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
+  jetCorrectionPayloadName_ (cfg.getParameter<string> ("jetCorrectionPayload")),
   jetResolutionPayload_ (cfg.getParameter<string> ("jetResolutionPayload")),
   jetResSFPayload_      (cfg.getParameter<string> ("jetResSFPayload")),
   jetResFromGlobalTag_  (cfg.getParameter<bool> ("jetResFromGlobalTag")),
@@ -36,8 +37,9 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
 #endif
 
 #if CMSSW_VERSION_CODE >= CMSSW_VERSION(12,4,0)
-  jetResolutionToken_ = esConsumes(edm::ESInputTag("", jetResolutionPayload_));
-  jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", jetResolutionPayload_));
+  JetCorrParToken_ = esConsumes(edm::ESInputTag("", jetCorrectionPayloadName_));
+  jetResolutionToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs_pt"));
+  jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs"));
 #endif
 
 }
@@ -58,9 +60,11 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
 #if DATA_FORMAT_FROM_MINIAOD
   // get JetCorrector parameters to get the jec uncertainty
-  edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
-  setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
-  JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"];
+  //edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
+  //setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
+  const JetCorrectorParametersCollection &JetCorParColl = setup.getData(JetCorrParToken_);
+
+  JetCorrectorParameters const & JetCorPar = JetCorParColl["Uncertainty"];
   JetCorrectionUncertainty * jecUnc = new JetCorrectionUncertainty(JetCorPar);
 
   // Get jet energy resolution and scale factors
