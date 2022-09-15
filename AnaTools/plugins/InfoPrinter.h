@@ -8,7 +8,7 @@
 
 #include "FWCore/Common/interface/TriggerNames.h"
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/stream/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -17,7 +17,7 @@
 
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
-class InfoPrinter : public edm::EDAnalyzer
+class InfoPrinter : public edm::stream::EDAnalyzer<>
 {
   public:
     InfoPrinter (const edm::ParameterSet &);

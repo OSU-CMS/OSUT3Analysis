@@ -1,14 +1,14 @@
 #ifndef EVENTVARIABLE_PRODUCER
 #define EVENTVARIABLE_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "OSUT3Analysis/Collections/interface/Eventvariable.h"
 
-class EventvariableProducer : public edm::EDProducer
+class EventvariableProducer : public edm::stream::EDProducer<>
 {
   public:
     EventvariableProducer (const edm::ParameterSet &);
