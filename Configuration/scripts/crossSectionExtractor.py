@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Script to extract the cross sections and filter efficiencies from MC samples.
 # Produces output file, configurationOptionsXsecs.py, with content that can be
 # appended to configurationOptions.py in the crossSections section.

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import py_compile
 import imp
 import sys
@@ -58,7 +58,7 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
 ###############################################################################
 def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLumi, optional_dict_ntupleEff):
     MergeScript = open(Directory + '/merge.py','w')
-    MergeScript.write('#!/usr/bin/env python\n')
+    MergeScript.write('#!/usr/bin/env python3\n')
     MergeScript.write('from OSUT3Analysis.Configuration.mergeUtilities import *\n')
     MergeScript.write('datasets = [\n')
     for dataset in split_datasets:

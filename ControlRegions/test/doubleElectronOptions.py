@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 config_file = "doubleElectronAnalyzer_cfg.py"
 intLumi = 19709.  # DoubleElectron

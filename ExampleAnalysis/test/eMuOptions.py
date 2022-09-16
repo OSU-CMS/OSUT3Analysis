@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *

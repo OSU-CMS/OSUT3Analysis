@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Utilities for applying cuts.
 
 import FWCore.ParameterSet.Config as cms

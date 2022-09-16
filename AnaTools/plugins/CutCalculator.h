@@ -3,7 +3,7 @@
 
 #include <unordered_set>
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -12,7 +12,7 @@
 
 // Declaration of the CutCalculator EDProducer which produces various flags
 // indicating whether the event and each object passed the user-defined cuts.
-class CutCalculator : public edm::EDProducer
+class CutCalculator : public edm::stream::EDProducer<>
 {
   public:
     CutCalculator (const edm::ParameterSet &);

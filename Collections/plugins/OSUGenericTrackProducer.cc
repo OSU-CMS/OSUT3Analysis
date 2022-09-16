@@ -5,7 +5,6 @@
 
 #include "OSUT3Analysis/Collections/plugins/OSUGenericTrackProducer.h"
 
-#include "Geometry/Records/interface/CaloGeometryRecord.h"
 #include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
 #include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
 
@@ -17,7 +16,11 @@ template<class T>
 OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_ (cfg),
-  useEraByEraFiducialMaps_ (cfg.getParameter<bool> ("useEraByEraFiducialMaps"))
+  useEraByEraFiducialMaps_ (cfg.getParameter<bool> ("useEraByEraFiducialMaps")),
+  //caloGeometryToken_ (esConsumes<CaloGeometry, CaloGeometryRecord>()),
+  caloGeometryToken_ (esConsumes<edm::Transition::BeginRun>()),
+  //ecalStatusToken_ (esConsumes<EcalChannelStatus, EcalChannelStatusRcd>())
+  ecalStatusToken_ (esConsumes<edm::Transition::BeginRun>())
 {
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
@@ -71,6 +74,9 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   // Get the general tracks collection explicitly. This is to fix a bug in the
   // disappearing track ntuples.
   tracksToken_ = consumes<vector<reco::Track> > (edm::InputTag ("generalTracks", "", "RECO"));
+
+  //caloGeometryToken_  = esConsumes();
+  //ecalStatusToken_    = esConsumes();
 
 #if DATA_FORMAT_FROM_MINIAOD && !DATA_FORMAT_IS_2022
   stringstream ss;
@@ -139,6 +145,13 @@ OSUGenericTrackProducer<T>::beginRun (const edm::Run &run, const edm::EventSetup
 template<class T> void 
 OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &setup)
 {
+  //caloGeometry_ = setup.getHandle(caloGeometryToken_);
+  //ecalStatus_   = setup.getHandle(ecalStatusToken_);
+
+
+  //if( !ecalStatus_.isValid() )  throw "Failed to get ECAL channel status!";
+  //if( !caloGeometry_.isValid()   )  throw "Failed to get the caloGeometry_!";
+
   edm::Handle<vector<TYPE(tracks)> > collection;
   if (!event.getByToken (token_, collection))
     {
@@ -452,8 +465,12 @@ OSUGenericTrackProducer<T>::extractFiducialMap (const edm::ParameterSet &cfg, Et
 template<class T> void 
 OSUGenericTrackProducer<T>::envSet (const edm::EventSetup& iSetup)
 {
-  iSetup.get<EcalChannelStatusRcd> ().get(ecalStatus_);
-  iSetup.get<CaloGeometryRecord>   ().get(caloGeometry_);
+  caloGeometry_ = iSetup.getHandle(caloGeometryToken_);
+  ecalStatus_   = iSetup.getHandle(ecalStatusToken_);
+
+  // Old style, deprecated
+  //iSetup.get<EcalChannelStatusRcd> ().get(ecalStatus_);
+  //iSetup.get<CaloGeometryRecord>   ().get(caloGeometry_);
 
   if( !ecalStatus_.isValid() )  throw "Failed to get ECAL channel status!";
   if( !caloGeometry_.isValid()   )  throw "Failed to get the caloGeometry_!";

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Script to merge the output of root files that do not contain cutflow histograms.
 # This is much simpler than mergeOutput.py:  it only runs hadd for the histograms in the specified datasets.
