@@ -183,6 +183,43 @@ void createElectronFile_2018() {
 
 }
 
+// https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun3 (In progress)
+void createElectronFile_2022() {
+
+  // Get/declare files
+  // No veto ID SF available for 2022
+
+  TFile * fID_tight = new TFile("electron2022/2022_ElectronTight.root");
+  TFile * fID_medium = new TFile("electron2022/2022_ElectronMedium.root");
+  TFile * fID_loose = new TFile("electron2022/2022_ElectronLoose.root");
+  TFile * fReco = new TFile("electron2022/egammaEffi.txt_EGM2D_updatedAll.root");
+
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID_tight->Get("EGamma_SF2D");
+  TH2D * id_medium = (TH2D*)fID_medium->Get("EGamma_SF2D");
+  TH2D * id_loose = (TH2D*)fID_loose->Get("EGamma_SF2D");
+  TH2D * reco = (TH2D*)fReco->Get("EGamma_SF2D");
+
+  // Write output
+
+  id_tight->Write("electronID2022Tight");
+  id_medium->Write("electronID2022Medium");
+  id_loose->Write("electronID2022Loose");
+  reco->Write("electronReco2022");
+
+  fOutput->Close();
+
+  fID_tight->Close();
+  fID_medium->Close();
+  fID_loose->Close();
+  fReco->Close();
+
+}
+
+
 // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffsRun2#Results_for_CMSSW_7_6_X_dataset
 void createMuonSFFile_2015() {
 
@@ -454,6 +491,104 @@ void createMuonSFFile_2018() {
   fTrigBefore->Close();
   fTrigAfter->Close();
 }
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2022
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiEXO-MUODocumentationRun2
+void createMuonSFFile_2022() {
+
+  // Get/declare files
+
+  TFile * fID = new TFile("muon2022/RunABCD_SF_ID.json.root");
+  TFile * fIso = new TFile("muon2022/RunABCD_SF_ISO.json.root");
+  TFile * fTrigBefore = new TFile("muon2022/EfficienciesAndSF_2022Data_BeforeMuonHLTUpdate.root");
+  TFile * fTrigAfter = new TFile("muon2022/EfficienciesAndSF_2022Data_AfterMuonHLTUpdate.root");
+
+  TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID->Get("NUM_TightID_DEN_genTracks");
+  TH2D * id_medium = (TH2D*)fID->Get("NUM_MediumID_DEN_genTracks");
+  TH2D * id_loose = (TH2D*)fID->Get("NUM_LooseID_DEN_genTracks");
+
+  TH2D * iso_looseRel_looseID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_LooseID");
+  TH2D * iso_looseRel_mediumID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_MediumID");
+  TH2D * iso_looseRel_tightID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_TightIDandIPCut");
+  TH2D * iso_tightRel_mediumID = (TH2D*)fIso->Get("NUM_TightRelIso_DEN_MediumID");
+  TH2D * iso_tightRel_tightID = (TH2D*)fIso->Get("NUM_TightRelIso_DEN_TightIDandIPCut");
+
+  TH2D * muIsolatedTriggerBefore = (TH2D*)fTrigBefore->Get("IsoMu24_PtEtaBins/pt_abseta_ratio");
+  TH2D * muNonisolatedTriggerBefore = (TH2D*)fTrigBefore->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/pt_abseta_ratio");
+
+  TH2D * muIsolatedTriggerAfter = (TH2D*)fTrigAfter->Get("IsoMu24_PtEtaBins/pt_abseta_ratio");
+  TH2D * muNonisolatedTriggerAfter = (TH2D*)fTrigAfter->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/pt_abseta_ratio");
+
+  // Lumi-weighted average trigger SFs
+  double totalIntLumi = 59.613; //total 2022 golden json integrated lumi [/fb]
+  double beforeIntLumi = 8.936; //2022 golden json integrated lumi before muon HLT update [/fb]
+  double IntLumiA = 13.955; //2022A golden json integrated lumi [/fb]
+
+  const double fracBeforeIntLumiABCD = 1.0*beforeIntLumi/totalIntLumi;
+  const double fracAfterIntLumiABCD = 1.0*(totalIntLumi-beforeIntLumi)/totalIntLumi;
+  const double fracBeforeIntLumiA = 1.0*beforeIntLumi/IntLumiA;
+  const double fracAfterIntLumiA = 1.0*(IntLumiA-beforeIntLumi)/IntLumiA;
+
+  TH2D * muIsolatedTriggerBeforeScaledABCD = (TH2D*)muIsolatedTriggerBefore->Clone();
+  muIsolatedTriggerBeforeScaledABCD->Scale(fracBeforeIntLumiABCD);
+  TH2D * muIsolatedTriggerAfterScaledABCD = (TH2D*)muIsolatedTriggerAfter->Clone();
+  muIsolatedTriggerAfterScaledABCD->Scale(fracAfterIntLumiABCD);
+  TH2D muIsolatedTriggerLumiWeightedAveABCD = (*muIsolatedTriggerBeforeScaledABCD) + (*muIsolatedTriggerAfterScaledABCD);
+
+  TH2D * muNonisolatedTriggerBeforeScaledABCD = (TH2D*)muNonisolatedTriggerBefore->Clone();
+  muNonisolatedTriggerBeforeScaledABCD->Scale(fracBeforeIntLumiABCD);
+  TH2D * muNonisolatedTriggerAfterScaledABCD = (TH2D*)muNonisolatedTriggerAfter->Clone();
+  muNonisolatedTriggerAfterScaledABCD->Scale(fracAfterIntLumiABCD);
+  TH2D muNonisolatedTriggerLumiWeightedAveABCD = (*muNonisolatedTriggerBeforeScaledABCD) + (*muNonisolatedTriggerAfterScaledABCD);
+
+  TH2D * muIsolatedTriggerBeforeScaledA = (TH2D*)muIsolatedTriggerBefore->Clone();
+  muIsolatedTriggerBeforeScaledA->Scale(fracBeforeIntLumiA);
+  TH2D * muIsolatedTriggerAfterScaledA = (TH2D*)muIsolatedTriggerAfter->Clone();
+  muIsolatedTriggerAfterScaledA->Scale(fracAfterIntLumiA);
+  TH2D muIsolatedTriggerLumiWeightedAveA = (*muIsolatedTriggerBeforeScaledA) + (*muIsolatedTriggerAfterScaledA);
+
+  TH2D * muNonisolatedTriggerBeforeScaledA = (TH2D*)muNonisolatedTriggerBefore->Clone();
+  muNonisolatedTriggerBeforeScaledA->Scale(fracBeforeIntLumiA);
+  TH2D * muNonisolatedTriggerAfterScaledA = (TH2D*)muNonisolatedTriggerAfter->Clone();
+  muNonisolatedTriggerAfterScaledA->Scale(fracAfterIntLumiA);
+  TH2D muNonisolatedTriggerLumiWeightedAveA = (*muNonisolatedTriggerBeforeScaledA) + (*muNonisolatedTriggerAfterScaledA);
+
+
+  // Write output
+
+  id_tight->Write("muonID2022Tight");
+  id_medium->Write("muonID2022Medium");
+  id_loose->Write("muonID2022Loose");
+
+  iso_looseRel_looseID->Write("muonIso2022LooseLooseID");
+  iso_looseRel_mediumID->Write("muonIso2022LooseMediumID");
+  iso_looseRel_tightID->Write("muonIso2022LooseTightID");
+  iso_tightRel_mediumID->Write("muonIso2022TightMediumID");
+  iso_tightRel_tightID->Write("muonIso2022TightTightID");
+
+  muIsolatedTriggerBefore->Write("muonTrigger2022IsoMu24BeforeMuonHLTUpdate");
+  muNonisolatedTriggerBefore->Write("muonTrigger2022Mu50OROldMu100ORTkMu100BeforeMuonHLTUpdate");
+  muIsolatedTriggerAfter->Write("muonTrigger2022IsoMu24AfterMuonHLTUpdate");
+  muNonisolatedTriggerAfter->Write("muonTrigger2022Mu50OROldMu100ORTkMu100AfterMuonHLTUpdate");
+
+  muIsolatedTriggerLumiWeightedAveABCD.Write("muonTrigger2022IsoMu24LumiWeightedAveABCD");
+  muNonisolatedTriggerLumiWeightedAveABCD.Write("muonTrigger2022Mu50OROldMu100ORTkMu100LumiWeightedAveABCD");
+  muIsolatedTriggerLumiWeightedAveA.Write("muonTrigger2022IsoMu24LumiWeightedAveA");
+  muNonisolatedTriggerLumiWeightedAveA.Write("muonTrigger2022Mu50OROldMu100ORTkMu100LumiWeightedAveA");
+
+  fOutput->Close();
+
+  fID->Close();
+  fIso->Close();
+  fTrigBefore->Close();
+  fTrigAfter->Close();
+}
+
+
 
 void recreateLeptonSFs() {
   createElectronFile_2015();
