@@ -8,7 +8,7 @@
 #include "TString.h"
 #include "TStopwatch.h"
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/stream/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -22,7 +22,7 @@
 
 using namespace std;
 
-class TriggerEfficiencyAnalyzer : public edm::EDAnalyzer
+class TriggerEfficiencyAnalyzer : public edm::stream::EDAnalyzer<>
   {
     public:
       TriggerEfficiencyAnalyzer (const edm::ParameterSet &);

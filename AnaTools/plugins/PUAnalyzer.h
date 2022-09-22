@@ -10,7 +10,7 @@
 #include "TROOT.h"
 #include "TStyle.h"
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/stream/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/Run.h"
 #include "FWCore/Framework/interface/EventSetup.h"
@@ -22,7 +22,7 @@
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
-class PUAnalyzer : public edm::EDAnalyzer
+class PUAnalyzer : public edm::stream::EDAnalyzer<>
 {
  public:
   PUAnalyzer (const edm::ParameterSet &);

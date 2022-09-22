@@ -21,7 +21,7 @@
 
 // user include files
 #include <typeinfo>
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -36,7 +36,7 @@ using namespace std;
 // class declaration
 //
 
-class OriginalFormatProducer : public edm::EDProducer {
+class OriginalFormatProducer : public edm::stream::EDProducer<> {
 public:
   explicit OriginalFormatProducer (const edm::ParameterSet&);
   ~OriginalFormatProducer ();

@@ -1,14 +1,14 @@
 #ifndef CSCSEG_PRODUCER
 #define CSCSEG_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "OSUT3Analysis/Collections/interface/Cscseg.h"
 
-class OSUCscsegProducer : public edm::EDProducer
+class OSUCscsegProducer : public edm::stream::EDProducer<>
 {
   public:
     OSUCscsegProducer (const edm::ParameterSet &);
