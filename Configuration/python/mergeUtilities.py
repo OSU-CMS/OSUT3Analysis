@@ -11,6 +11,7 @@ import shutil
 import math
 import socket
 import tempfile
+import importlib.util
 from threading import Thread, Lock, Semaphore
 from multiprocessing import cpu_count
 from OSUT3Analysis.Configuration.configurationOptions import *
@@ -68,7 +69,7 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLu
     MergeScript.write('dataset = datasets[Index]\n\n')
     MergeScript.write('IntLumi = ' + str(IntLumi) + '\n')
     MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd(), "", ' + str (optional_dict_ntupleEff) + ', ' + str (NTHREADS_FOR_BATCH_MERGING) + ')\n') # use 8 CPU cores by default
-    MergeScript.write("print 'Finished merging dataset ' + dataset\n")
+    MergeScript.write("print( 'Finished merging dataset ' + dataset\n)")
     MergeScript.close()
     os.chmod (Directory + '/merge.py', 0o755)
 
@@ -160,7 +161,7 @@ def MakeFilesForSkimDirectoryEOS(Member, Directory, DirectoryOut, TotalNumber, S
     shutil.rmtree(tmpDir)
 
     listOfSkimFiles = subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov', 'ls', os.path.realpath(DirectoryOut + '/' + Member)])
-    listOfSkimFiles = [x for x in listOfSkimFiles.split('\n') if x.endswith('.root')]
+    listOfSkimFiles = [x for x in listOfSkimFiles.split(b'\n') if x.endswith(b'.root')]
     for skimFile in listOfSkimFiles:
         index = os.path.basename(skimFile).split('.')[0].split('_')[1]
         if index in BadIndices:
@@ -170,8 +171,10 @@ def MakeFilesForSkimDirectoryEOS(Member, Directory, DirectoryOut, TotalNumber, S
 
 def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove, lpcCAF = False):
     for Member in os.listdir(Directory):
+        if Member.startswith("__"):
+            continue
         if os.path.isfile(os.path.join(Directory, Member)):
-            continue;
+            continue
         try:
             os.makedirs (DirectoryOut + '/' + Member)
         except OSError:
@@ -342,7 +345,8 @@ def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbo
     if verbose:
         print("Executing: ", cmd)
     try:
-        localThreadLog += subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+        print(cmd)
+        localThreadLog += str(subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT))
     except subprocess.CalledProcessError as e:
         localThreadLog += e.output
     semaphore.release ()
@@ -416,11 +420,12 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
         if lpcCAF and os.path.realpath(channel).startswith('/eos/uscms'):
             print('Testing skim files in: root://cmseos.fnal.gov/' + os.path.realpath(channel))
             listOfSkimFiles = subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov', 'ls', os.path.realpath(channel)])
-            listOfSkimFiles = ['root://cmseos.fnal.gov/' + x for x in listOfSkimFiles.split('\n') if x.endswith('.root')]
+            listOfSkimFiles = ["root://cmseos.fnal.gov/" + x.decode("utf-8") for x in listOfSkimFiles.split(b'\n') if x.endswith(b'.root')]
         else:
             print('Testing skim files in:', os.path.realpath(channel))
             listOfSkimFiles = glob.glob(channel + '/*.root')
         for skimFile in listOfSkimFiles:
+            print(skimFile)
             # don't check for good skims of jobs we already know are bad
             index = os.path.basename(skimFile).split('.')[0].split('_')[1]
             if index in BadIndices:
@@ -463,7 +468,13 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
     if not len(GoodRootFiles):
         print("For dataset", dataSet, ": Unfortunately there are no good root files to merge!\n")
         return
-    exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
+    print(os.getcwd())
+
+    datasetSpec = importlib.util.spec_from_file_location('datasetInfo_' + dataSet +'_cfg', 'datasetInfo_' + dataSet +'_cfg.py')
+    datasetInfo = importlib.util.module_from_spec(datasetSpec)
+    sys.modules['datasetInfo_' + dataSet +'_cfg'] = datasetInfo
+    datasetSpec.loader.exec_module(datasetInfo)
+    #exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
 
     NumberOfEvents = GetNumberOfEvents(GoodRootFiles)
     TotalNumber = NumberOfEvents['TotalNumber']
