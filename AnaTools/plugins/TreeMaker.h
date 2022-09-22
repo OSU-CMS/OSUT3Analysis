@@ -4,7 +4,7 @@
 #include <tuple>
 #include <unordered_set>
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/stream/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -15,7 +15,7 @@
 
 #include "TTree.h"
 
-class TreeMaker : public edm::EDAnalyzer
+class TreeMaker : public edm::stream::EDAnalyzer<>
 {
     public:
 
