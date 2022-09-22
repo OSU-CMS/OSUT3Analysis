@@ -377,11 +377,11 @@ def MakeSkimDirectory(SkimDir, lpcCAF):
     # return True only if a new directory is created, otherwise we will skip the dataset in the submission
     if lpcCAF and os.path.realpath(SkimDir).startswith('/eos/uscms'):
         try:
-            msg = subprocess.check_output(['xrd', 'cmseos.fnal.gov', 'existdir', os.path.realpath(SkimDir)])
+            msg = subprocess.check_output(['xrdfs', 'cmseos.fnal.gov', 'ls', os.path.realpath(SkimDir)])
             return False
         except:
             try:
-                msg = subprocess.check_output(['xrd', 'cmseos.fnal.gov', 'mkdir', os.path.realpath(SkimDir)])
+                msg = subprocess.check_output(['xrdfs', 'cmseos.fnal.gov', 'mkdir', os.path.realpath(SkimDir)])
                 return True
             except subprocess.CalledProcessError as e:
                 print('Creating directory "' + str(SkimDir) + '" failed with error:')
@@ -1048,7 +1048,11 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             InitializeAAA = ""
 
         sys.path.append(Directory)
-        exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
+        datasetSpec = importlib.util.spec_from_file_location('datasetInfo_' + Label +'_cfg', Directory + '/' + 'datasetInfo_' + Label +'_cfg.py')
+        datasetInfo = importlib.util.module_from_spec(datasetSpec)
+        sys.modules['datasetInfo_' + Label +'_cfg'] = datasetInfo
+        datasetSpec.loader.exec_module(datasetInfo)
+        #exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
         if not UseAAA and InitializeAAA == "" and not RunOverSkim:
             status = datasetInfo.status
             continueForNonPresentDataset = True
@@ -1359,18 +1363,18 @@ if arguments.skimToHadoop:
     if lpcCAF and os.path.realpath(arguments.skimToHadoop).startswith('/eos/uscms'):
         # check if the xrootd path exists
         try:
-            msg = subprocess.check_output(['xrd', 'cmseos.fnal.gov', 'existdir', os.path.realpath(arguments.skimToHadoop)])
+            msg = subprocess.check_output(['xrdfs', 'cmseos.fnal.gov', 'ls', os.path.realpath(arguments.skimToHadoop)])
         except:
             print('The directory', arguments.skimToHadoop, 'does not exist. Aborting.')
             sys.exit(1)
         HadoopDir = arguments.skimToHadoop + '/' + arguments.condorDir
         # if needed, create the job directory
         try:
-            msg = subprocess.check_output(['xrd', 'cmseos.fnal.gov', 'existdir', os.path.realpath(HadoopDir)])
+            msg = subprocess.check_output(['xrdfs', 'cmseos.fnal.gov', 'ls', os.path.realpath(HadoopDir)])
             print('Directory "' + str(HadoopDir) + '" already exists. Will proceed with job submission.')
         except:
             try:
-                msg = subprocess.check_output(['xrd', 'cmseos.fnal.gov', 'mkdir', os.path.realpath(HadoopDir)])
+                msg = subprocess.check_output(['xrdfs', 'cmseos.fnal.gov', 'mkdir', os.path.realpath(HadoopDir)])
             except subprocess.CalledProcessError as e:
                 print('Creating directory "' + str(HadoopDir) + '" failed with error:')
                 print(e)
