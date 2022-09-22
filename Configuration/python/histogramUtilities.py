@@ -4,7 +4,7 @@
 
 from array import *
 import math
-from ROOT import TFile, TH1F, TMath, Double, TH1D, TGraphAsymmErrors
+from ROOT import TFile, TH1F, TMath, TH1D, TGraphAsymmErrors# , Double
 
 def getEfficiency(passes, passesError, total, totalError):
     passesHist = TH1D ("passes", "", 1, 0.0, 1.0)
@@ -16,8 +16,10 @@ def getEfficiency(passes, passesError, total, totalError):
     totalHist.SetBinError (1, totalError)
 
     g = TGraphAsymmErrors (passesHist, totalHist)
-    x = Double (0.0)
-    y = Double (0.0)
+    #x = Double (0.0)
+    #y = Double (0.0)
+    x = 0.0
+    y = 0.0
     g.GetPoint (0, x, y)
 
     return (y, g.GetErrorYlow (0), g.GetErrorYhigh (0))
@@ -74,7 +76,8 @@ def getNumEvents(sample,condor_dir,channel):  # Use in place of getYield if the 
     if not numEvtHistogram:
         print("WARNING: didn't find cutflow histogram ", channel, "CutFlow in file ", dataset_file)
         return 0
-    statError_ = Double(0.0)
+    #statError_ = Double(0.0)
+    statError_ = 0.0
     yield_ = numEvtHistogram.IntegralAndError(1, numEvtHistogram.GetNbinsX(), statError_)
     inputFile.Close()
     return (yield_, statError_)
@@ -94,7 +97,8 @@ def getHistIntegral(sample,condor_dir,channel,hist,xlo,xhi):
     if xhi > xmax:
         # print "xhi is outside the range of the histogram, will include all the overflow instead"
         xhiBin = histogram.GetXaxis().FindBin(float(xhi))
-    intError = Double (0.0)
+    #intError = Double (0.0)
+    intError = 0.0
     integral = histogram.IntegralAndError(xloBin, xhiBin, intError)
 
     inputFile.Close()
