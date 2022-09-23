@@ -163,7 +163,7 @@ def MakeFilesForSkimDirectoryEOS(Member, Directory, DirectoryOut, TotalNumber, S
     listOfSkimFiles = subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov', 'ls', os.path.realpath(DirectoryOut + '/' + Member)])
     listOfSkimFiles = [x for x in listOfSkimFiles.split(b'\n') if x.endswith(b'.root')]
     for skimFile in listOfSkimFiles:
-        index = os.path.basename(skimFile).split('.')[0].split('_')[1]
+        index = os.path.basename(skimFile).split(b'.')[0].split(b'_')[1]
         if index in BadIndices:
             continue
         GetSkimInputTags(skimFile, xrootdDestination)
@@ -226,23 +226,23 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
 def GetSkimInputTags(File, xrootdDestination = ""):
     print("Getting skim input tags...")
     if xrootdDestination != "":
-        eventContent = subprocess.check_output (["edmDumpEventContent", "--all", "root://cmseos.fnal.gov/" + File[len('/eos/uscms'):]])
+        eventContent = subprocess.check_output (["edmDumpEventContent", "--all", "root://cmseos.fnal.gov/" + File[len('/eos/uscms'):].decode("utf-8")])
     else:
-        eventContent = subprocess.check_output (["edmDumpEventContent", "--all", os.getcwd () + "/" + File])
+        eventContent = subprocess.check_output (["edmDumpEventContent", "--all", os.getcwd () + "/" + File.decode("utf-8")])
     parsing = False
     cppTypes = []
     inputTags = {}
 
     # First get all of the collections in the output skim file.
     for line in eventContent.splitlines ():
-        if line.find ("----------") == 0:  # all of the collections will be after a line containing "---------"
+        if line.find (b'----------') == 0:  # all of the collections will be after a line containing "---------"
             parsing = True
             continue
         if not parsing:
             continue
         splitLine = line.split ()
         cppTypes.append (splitLine[0])
-        inputTags[splitLine[0]] = cms.InputTag (splitLine[1][1:-1], splitLine[2][1:-1], splitLine[3][1:-1])
+        inputTags[splitLine[0]] = cms.InputTag (splitLine[1][1:-1].decode("utf-8"), splitLine[2][1:-1].decode("utf-8"), splitLine[3][1:-1].decode("utf-8"))
 
     collectionTypes = subprocess.check_output (["getCollectionType"] + cppTypes)
     # Save only the collections for which there is a valid type, and only framework collections
@@ -262,7 +262,8 @@ def GetSkimInputTags(File, xrootdDestination = ""):
         tmpDir = tempfile.mkdtemp()
         outfile = os.path.join(tmpDir, 'SkimInputTags.pkl')
         fout = open (outfile, 'w')
-        pickle.dump (inputTags, fout)
+        dumpedString = pickle.dumps (inputTags).decode('latin-1')
+        fout.write(dumpedString)
         fout.close()
         try:
             subprocess.check_output(['xrdcp', '-f', outfile, xrootdDestination])
@@ -273,7 +274,8 @@ def GetSkimInputTags(File, xrootdDestination = ""):
         if os.path.exists("SkimInputTags.pkl"):
             os.remove("SkimInputTags.pkl")
         fout = open ("SkimInputTags.pkl", "w")
-        pickle.dump (inputTags, fout)
+        dumpedString = pickle.dumps (inputTags).decode('latin-1')
+        fout.write(dumpedString)
         fout.close ()
 
 ###############################################################################
@@ -345,7 +347,6 @@ def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbo
     if verbose:
         print("Executing: ", cmd)
     try:
-        print(cmd)
         localThreadLog += str(subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT))
     except subprocess.CalledProcessError as e:
         localThreadLog += e.output
@@ -538,7 +539,8 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
         if verbose:
             print("Executing: ", cmd)
         try:
-            log += subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+            msg = subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+            log += msg.decode("utf-8")
         except subprocess.CalledProcessError as e:
             log += e.output
     
