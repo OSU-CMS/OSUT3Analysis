@@ -140,5 +140,5 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_"):
            if fin != "BuildFile.xml":
                continue
            buildFile = os.path.join(r,fin)
-	   subprocess.call(["sed -i -e 's/RecoEgamma\/EgammaTools/CommonTools\/Egamma/g' {0}".format(buildFile)],shell=True)
-	   print("Resetting the BuildFile:{0}".format(buildFile))
+	    subprocess.call(["sed -i -e 's/RecoEgamma\/EgammaTools/CommonTools\/Egamma/g' {0}".format(buildFile)],shell=True)
+	    print("Resetting the BuildFile:{0}".format(buildFile))
