@@ -1,14 +1,14 @@
 #ifndef TRIGOBJ_PRODUCER
 #define TRIGOBJ_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "OSUT3Analysis/Collections/interface/Trigobj.h"
 
-class OSUTrigobjProducer : public edm::EDProducer
+class OSUTrigobjProducer : public edm::stream::EDProducer<>
 {
   public:
     OSUTrigobjProducer (const edm::ParameterSet &);

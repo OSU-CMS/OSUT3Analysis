@@ -1,7 +1,7 @@
 #ifndef MUON_PRODUCER
 #define MUON_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -9,7 +9,7 @@
 #include "TRandom3.h"
 
 
-class OSUMuonProducer : public edm::EDProducer
+class OSUMuonProducer : public edm::stream::EDProducer<>
 {
   public:
     OSUMuonProducer (const edm::ParameterSet &);
