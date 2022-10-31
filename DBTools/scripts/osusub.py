@@ -54,7 +54,7 @@ parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", de
 parser.add_option("-L", "--Label", dest="Label", default = "", help="Give the dataset a short label.")
 parser.add_option("-s", "--SkimDirectory", dest="SkimDirectory", default = "", help="Specicy the location of the skim.")
 parser.add_option("-a", "--SkimChannel", dest="SkimChannel", default = "", help="Determine the skim channel to run over.")
-parser.add_option("-R", "--Requirements", dest="Requirements", default = "", help="Requirements to be added to condor.sub submssion script, e.g. 'Memory > 1900'.")
+parser.add_option("-R", "--Requirements", dest="Requirements", default = "", help="Requirements to be added to condor.sub submssion script, e.g. 'request_memory=3000MB request_cpus=4'.")
 parser.add_option("-x", "--crossSection", dest="crossSection", default = "", help="Provide cross section to the given dataset.")
 parser.add_option("-A", "--UseAAA", dest="UseAAA", action="store_true", default = False, help="Use AAA.")
 parser.add_option("-P", "--UseGridProxy", dest="UseGridProxy", action="store_true", default = False, help="Use X509 grid proxy.")
@@ -71,35 +71,33 @@ parser.add_option("--forceRutgersMode", action="store_true", dest="forceRutgersM
 
 (arguments, args) = parser.parse_args()
 
-print('The parser output is {0}'.format(arguments.Dataset))
-
 #Examples:
 #1. Submit generic jobs(-g). "Generic" means jobs that are not using OSUT3Analysis.cc as the analyzer. But it can still use whatever in the configurationOptions.py. This ELOG explains why we need 'g': https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/13
 #   1.1 Generate GEN-SIM step MC samples.
 #       It is the only case where the user does not need inputfiles. You should use a command like this:
-#       osusub.py -c Config.py -n 100 -m 10000 -U -f process.FEVTDEBUGoutput.fileName -R "Memory > 1900" -r -w WorkingDirectory -g -L Label
+#       osusub.py -c Config.py -n 100 -m 10000 -U -f process.FEVTDEBUGoutput.fileName -R "request_memory=3000MB request_cpus=4" -r -w WorkingDirectory -g -L Label
 #       Notice that the argument following -f should be the one you have in your Config.py. -L will give your job a short label for the beauty of simplicity.
 #   1.2 Run generic cmssw jobs with some inputs.
 #       This includes running DIGI, HLT, RECO steps in MC generation or any standalone analyzers.
 #       There are several categories:
 #           1. Most general way: run over a list of files.
 #               Any input files can be included in this list. It can be even a mixture of files from different sources. Example:
-#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -g -d ListOfFiles -t UserList -A(if you are using files via xrootd)
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "request_memory=3000MB request_cpus=4" -w WorkingDirectory -g -L Label -g -d ListOfFiles -t UserList -A(if you are using files via xrootd)
 #           The rest of the special cases can be done automatically.
 #           2. Run over files in a given directory.
-#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label -g --inputDirectory inputDirectory -d dataset(here just a title) -t UserDir
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "request_memory=3000MB request_cpus=4" -w WorkingDirectory -g -L Label -g --inputDirectory inputDirectory -d dataset(here just a title) -t UserDir
 #           3. Run over a dataset(s) on T3.
 #               For a single dataset:
 #               osusub.py -d dataset(name shown in configurationOptions.py) -c Config.py -m -1 -n 100 -w WorkingDirectory -g
 #               Notice this dataset does not have to be available on T3. As long as it is added into the configurationOptions.py, osusub.py will automatically search for it via das_client.py.
 #               For a list of datasets:
 #               You will need the localConfig.py. Example:
-#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -g
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "request_memory=3000MB request_cpus=4" -g
 #           4. Run over a dataset which has not been registered in configurationOptions.py.
 #               osusub.py -d /A/B/C(exact name shown on DAS) -c Config.py -A -m -1 -n 100 -w WorkingDirectory -g
 #               In this case the lable will be A with all the '-' in 'A' changed to '_'.
 #           5. Run over a skim.
-#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -g -s SkimDirectory -a SkimChannel
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "request_memory=3000MB request_cpus=4" -g -s SkimDirectory -a SkimChannel
 #           6. Run over files in a given remote directory using xrootd
 #               osusub.py -t OSUT3Ntuple -l Config.py -w WorkingDirectory -P -J R_Golden17 -s "root://cmsxrootd-site.fnal.gov//store/user/lpclonglived/DisappTrks/skim/2017/tauTagSkim" -a TauTagSkim
 #   Notice: Maybe in some generic jobs you want to also produce skimmed ntuples and histograms in the same time. For this case, osusub.py can not handle yet. But is is fairly straight forward. Just make --fileName a list of output modules(--fileNames).
@@ -110,14 +108,14 @@ print('The parser output is {0}'.format(arguments.Dataset))
 #               Notice this dataset does not have to be available on T3. As long as it is added into the configurationOptions.py, osusub.py will automatically search for it via das_client.py.
 #               For a list of datasets:
 #               You will need the localConfig.py. Example:
-#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900"
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "request_memory=3000MB request_cpus=4"
 #           2.2 Run over files in a given directory.
-#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "Memory > 1900" -w WorkingDirectory -g -L Label --inputDirectory inputDirectory -d dataset(here just a title) -t UserDir
+#               osusub.py -c Config.py -n 100 -m 10000 -f process.FEVTDEBUGHLToutput.fileName -R "request_memory=3000MB request_cpus=4" -w WorkingDirectory -g -L Label --inputDirectory inputDirectory -d dataset(here just a title) -t UserDir
 #           2.3 Run over a dataset which has not been registered in configurationOptions.py.
 #               osusub.py -d /A/B/C(exact name shown on DAS) -c Config.py -A -m -1 -n 100 -w WorkingDirectory
 #               In this case the lable will be A with all the '-' in 'A' changed to '_'.
 #           2.4 Run over a skim.
-#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "Memory > 1900" -s SkimDirectory -a SkimChannel
+#               osusub.py -l localConfig.py -w WorkingDirctory -c Config.py -R "request_memory=3000MB request_cpus=4" -s SkimDirectory -a SkimChannel
 #3 Resubmit failed condor jobs.
 #    After merging the output files, mergeOut.py will generate a condor_resubmit.sub for each dataset if it detects non 0 exit code. Simple add --resubmit to the original osusub.py command and it will automatically resubmit the failed jobs.
 #
@@ -522,6 +520,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     filesToTransfer = []
     directoriesToTransfer = []
     SubmitFile.write("# Command line arguments:\n# " + GetCommandLineString() + "\n\n\n")
+
     for argument in sorted(currentCondorSubArgumentsSet):
         if 'Executable' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = condor.sh\n')
@@ -556,8 +555,17 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
                 else:
                     SubmitFile.write (SkimChannelNames[i] + ",")
             SubmitFile.write ("\n")
+        elif 'request' in ''.join(currentCondorSubArgumentsSet[argument].keys()):
+            if len(arguments.Requirements)>0: 
+                for req in arguments.Requirements.split():
+                    if req.split("=")[0] in ''.join(currentCondorSubArgumentsSet[argument].keys()):
+                        continue
+            else:
+                SubmitFile.write(list(currentCondorSubArgumentsSet[argument].keys())[0] + ' = ' + list(currentCondorSubArgumentsSet[argument].values())[0] + '\n')
         elif 'Requirements' in currentCondorSubArgumentsSet[argument] and arguments.Requirements:
-            SubmitFile.write('Requirements = ' + arguments.Requirements + '\n')
+            sub_requirements = arguments.Requirements.split()
+            for req in sub_requirements:
+                SubmitFile.write(req  +'\n')
         elif 'Queue' in currentCondorSubArgumentsSet[argument]:
             SubmitFile.write('Queue ' + str(NumberOfJobs) +'\n')
         else:

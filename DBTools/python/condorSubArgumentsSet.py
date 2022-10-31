@@ -30,4 +30,5 @@ else:
         8   :  {'Log'                    :  'condor_$(Process).log\n'},
         9   :  {'Transfer_Input_files'   :  ''},
         10  :  {'Transfer_Output_files'  :  ''},
+        11  :  {'Requirements'           :  ''},
     }
