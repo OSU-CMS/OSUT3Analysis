@@ -110,15 +110,15 @@ def getSiblings (fileName, dataset):
 def getRun3SkimSiblings (fileName, dataset):
   try:
     from dbs.apis.dbsClient import DbsApi
-    from CRABClient.ClientUtilities import DBSURLS
+    #from CRABClient.ClientUtilities import DBSURLS
   except ImportError:
     print("getSiblings() relies on CRAB. Please set up the environment for CRAB before using.")
     sys.exit (1)
 
-  dbsurl_global = DBSURLS["reader"].get ("global", "global")
-  dbsurl_phys03 = DBSURLS["reader"].get ("phys03", "phys03")
-  dbs3api_phys03 = DbsApi (url = dbsurl_phys03)
-  dbs3api_global = DbsApi (url = dbsurl_global)
+  #dbsurl_global = DBSURLS["reader"].get ("global", "global")
+  #dbsurl_phys03 = DBSURLS["reader"].get ("phys03", "phys03")
+  dbs3api_phys03 = DbsApi (url = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSReader')
+  dbs3api_global = DbsApi (url = 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader')
 
   # if there is an xrootd prefix, strip it
   if "/store/" in fileName:
@@ -130,7 +130,7 @@ def getRun3SkimSiblings (fileName, dataset):
   # if dataset is not a USER dataset, then assume the file comes from a USER dataset
   if "/USER" not in dataset:
     # first get the parents
-    parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
+    parents = dbs3api_global.listFileParents (logical_file_name = fileName)
 
     children = []
     for parent in parents:
@@ -139,8 +139,8 @@ def getRun3SkimSiblings (fileName, dataset):
 
      # put the children in a set
     for child in children:
-      for child_file_name in child["child_logical_file_name"]:
-        miniaod.add (child_file_name)
+      #for child_file_name in child["child_logical_file_name"]:
+      miniaod.add (child["child_logical_file_name"])
 
     # put the files of the target dataset in another set
     dataset = dbs3api_global.listFiles (dataset = dataset)
