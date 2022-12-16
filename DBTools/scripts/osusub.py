@@ -267,7 +267,7 @@ def getLatestJsonFile():
                 print("#######################################################")
 
             if arguments.JSONType[-2:] == '22':
-                '''for json in jsonFileFiltered:
+                for json in jsonFileFiltered:
                     nameSplit = json.split('_')
                     if 'P_Golden' in arguments.JSONType:
                         if 'Golden.json' not in nameSplit: continue
@@ -275,14 +275,15 @@ def getLatestJsonFile():
                     if float(nameSplit[3]) - float(nameSplit[2]) > runRange:
                             runRange = float(nameSplit[3]) - float(nameSplit[2])
                             bestJson = json
-                            print("Json 2022, run range: ", runRange, "Best json:", bestJson)'''
+                            print("Json 2022, run range: ", runRange, "Best json:", bestJson)
 
                 #Uses the Dataset to determine which era is needed for json file
-                era_needed = 'Golden'
+                '''era_needed = 'Golden'
                 if '2022A' in arguments.Dataset: era_needed = 'eraA'
                 if '2022B' in arguments.Dataset: era_needed = 'eraB'
                 if '2022C' in arguments.Dataset: era_needed = 'eraC'
                 if '2022D' in arguments.Dataset: era_needed = 'eraD'
+                '''
 
                 for json in jsonFileFiltered:
                     nameSplit = json.split('_')
@@ -290,14 +291,16 @@ def getLatestJsonFile():
                         if 'Golden.json' not in nameSplit: continue
 
                     #The following three lines were commented to test picking json files for specified eras
-                    #if nameSplit[2].startswith('era'): continue #FIXME we may want these JSON files? naming of JSON files for run3 not decided
-                    #if float(nameSplit[3]) - float(nameSplit[2]) == runRange:
-                    #    bestJsons.append(json)
+                    if nameSplit[2].startswith('era'): continue #FIXME we may want these JSON files? naming of JSON files for run3 not decided
+                    if float(nameSplit[3]) - float(nameSplit[2]) == runRange:
+                        bestJsons.append(json)
+                        
 
                     #This adds the era-specific json file to bestJsons.
-                    if era_needed in nameSplit[2]:
-                        bestJsons.append(json)
-                        print('Found matching json = {0}'.format(json))
+                    #if era_needed in nameSplit[2]:
+                    #    bestJsons.append(json)
+                    #    print('Found matching json = {0}'.format(json))
+                        
 
             else:
                 for json in jsonFileFiltered:
@@ -315,9 +318,10 @@ def getLatestJsonFile():
 
             versionNumber = 0
             ultimateJson = ''
-
+            print('the length of bestJsons is {0}'.format(len(bestJsons)))
             if len(bestJsons) == 1:
                 ultimateJson = bestJsons[0]
+                print('the single ultimateJson is {0}'.format(ultimateJson))
             else:
                 for bestJson in bestJsons:
 
@@ -328,6 +332,7 @@ def getLatestJsonFile():
                         if currentVersionNumber > versionNumber:
                             versionNumber = currentVersionNumber
                             ultimateJson = bestJson
+                            print('the ultimateJson is {0}'.format(ultimateJson))
 
             if re.search('17$', arguments.JSONType) or re.search('18$', arguments.JSONType):
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/' + collisionType + '/13TeV/PromptReco/' + ultimateJson + ' -O ' + tmpDir + '/' + ultimateJson, shell = True)
