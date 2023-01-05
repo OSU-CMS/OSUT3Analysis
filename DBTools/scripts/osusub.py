@@ -588,9 +588,12 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("rm -f " + os.environ["CMSSW_VERSION"] + ".tar.gz\n")
     SubmitScript.write ("SCRAM_ARCH=" + os.environ["SCRAM_ARCH"] + "\n")
     SubmitScript.write ("cd " + os.environ["CMSSW_VERSION"] + "/src/\n")
-    if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_"):
+    if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") and 'patch' not in os.environ["CMSSW_VERSION"]:
         SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw/" + os.environ["CMSSW_VERSION"] + "/external/" + os.environ["SCRAM_ARCH"] + "/lib\n")
         SubmitScript.write ("echo $LD_LIBRARY_PATH\n")
+    elif os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") and 'patch' in os.environ["CMSSW_VERSION"]:
+        SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw-patch/" + os.environ["CMSSW_VERSION"] + "/external/" + os.environ["SCRAM_ARCH"] + "/lib\n")
+        SubmitScript.write ("echo $LD_LIBRARY_PATH\n")        
     SubmitScript.write ("echo $CMSSW_BASE \n")
     SubmitScript.write ("echo $PWD \n")
     SubmitScript.write ("scram b ProjectRename\n")
@@ -836,12 +839,13 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     # If the dataset has a Run3 skim sibling defined and not run over skim, add the corresponding files to the secondary file names
-    if not RunOverSkim and ("run3_skim_sibling_datasets" in locals() or "run3_skim_sibling_datasets" in globals()) and Label in run3_skim_sibling_datasets:
+    labeled_era = Label + '_' +  Dataset.split('/')[2].split('-')[0].replace('Run', '')
+    if not RunOverSkim and ("run3_skim_sibling_datasets" in locals() or "run3_skim_sibling_datasets" in globals()) and labeled_era in run3_skim_sibling_datasets:
         ConfigFile.write("\nsiblings = []\n")
         ConfigFile.write("if osusub.batchMode:\n")
         ConfigFile.write("  try:\n")
         ConfigFile.write("    for fileName in osusub.runList:\n")
-        ConfigFile.write("      siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[Label] + "\"))\n")
+        ConfigFile.write("      siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[labeled_era] + "\"))\n")
         ConfigFile.write("  except:\n")
         ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
@@ -1508,12 +1512,13 @@ if not arguments.Resubmit:
         exec('import ' + re.sub (r"(.*)\.py$", r"\1", Config) + ' as temPset')
 
         for dataset in split_datasets:
+            print("Working on dataset:", dataset, split_datasets)
             currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
             EventsPerJob = -1
             DatasetName = dataset
             NumberOfJobs = int(arguments.NumberOfJobs)
             DatasetRead = {}
-            MaxEvents = arguments.MaxEvents
+            MaxEvents = int(arguments.MaxEvents)
             if arguments.localConfig:
                 if NumberOfJobs < 0:
                     NumberOfJobs = nJobs[dataset]  # If user has specified NumberOfJobs, use that value.
@@ -1572,6 +1577,7 @@ if not arguments.Resubmit:
             else:
                 WorkDir = CondorDir
                 SkimDir = HadoopDir
+            Label = dataset.split('/')[1] + '_' + (dataset.split('/')[2].split('-')[0]).replace('Run', '')
             dataset = SpecialStringModifier(dataset, ['/','.'], [['-','_']])
             crossSection = -1
             if dataset in crossSections:
