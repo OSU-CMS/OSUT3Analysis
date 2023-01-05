@@ -6,7 +6,8 @@ import importlib
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_"):
     samples = importlib.import_module("DisappTrks.StandardAnalysis.miniAOD_124X_Samples")
     dataset_names = getattr(samples, "dataset_names")
-    print(dataset_names)
+    run3_skim_sibling_datasets = getattr(samples, "run3_skim_sibling_datasets")
+
 
 config_file = "standardConfig_cfg.py"
 
