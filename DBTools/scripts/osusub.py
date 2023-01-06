@@ -843,11 +843,14 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     if not RunOverSkim and ("run3_skim_sibling_datasets" in locals() or "run3_skim_sibling_datasets" in globals()) and labeled_era in run3_skim_sibling_datasets:
         ConfigFile.write("\nsiblings = []\n")
         ConfigFile.write("if osusub.batchMode:\n")
-        ConfigFile.write("  try:\n")
+        #ConfigFile.write("  try:\n")
+        ConfigFile.write("  if osusub.skimListExists('" + labeled_era + "'):\n")
+        ConfigFile.write("    siblings.extend(osusub.getSiblingList('/store/user/mcarrigan/skim_lists/" + labeled_era + ".json', osusub.runList, '" + run3_skim_sibling_datasets[labeled_era] + "'))\n")
+        ConfigFile.write("  else:\n")
         ConfigFile.write("    for fileName in osusub.runList:\n")
         ConfigFile.write("      siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[labeled_era] + "\"))\n")
-        ConfigFile.write("  except:\n")
-        ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
+        #ConfigFile.write("  except:\n")
+        #ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     ConfigFile.write('process = pset.process\n')
