@@ -166,7 +166,7 @@ def getRun3SkimSiblings (fileName, dataset, inputUser=False):
   return list (miniaodSubset.intersection (miniaod))
 
 def skimListExists(dataset):
-  if os.path.exists('/store/user/mcarrigan/skim_lists/' + dataset + '.json'):
+  if os.path.exists(os.environ.get("CMSSW_BASE") + '/DisappTrks/Skims/data/' + dataset + '.json'):
     print("Skim list for {0} exists".format(dataset))
     return True
   else:
