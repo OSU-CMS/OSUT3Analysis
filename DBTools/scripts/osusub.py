@@ -739,6 +739,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
                                              # same channel.
     ConfigFile.write('osusub.randomNumberSuffix = ' + str (randomNumberSuffix) + '\n')
     ConfigFile.write('import re\n')
+    ConfigFile.write('import os\n')
     ConfigFile.write('import userConfig_' + Label + '_cfg as pset\n')
     if jsonFile != '':
         ConfigFile.write('import FWCore.PythonUtilities.LumiList as LumiList\n')
@@ -845,7 +846,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("if osusub.batchMode:\n")
         #ConfigFile.write("  try:\n")
         ConfigFile.write("  if osusub.skimListExists('" + labeled_era + "'):\n")
-        ConfigFile.write("    siblings.extend(osusub.getSiblingList('/store/user/mcarrigan/skim_lists/" + labeled_era + ".json', osusub.runList, '" + run3_skim_sibling_datasets[labeled_era] + "'))\n")
+        ConfigFile.write('''    siblings.extend(osusub.getSiblingList(os.environ.get('CMSSW_BASE') + "/src/DisappTrks/Skims/data/''' + labeled_era + '.json", osusub.runList, "' + run3_skim_sibling_datasets[labeled_era] + '"))\n')
         ConfigFile.write("  else:\n")
         ConfigFile.write("    for fileName in osusub.runList:\n")
         ConfigFile.write("      siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[labeled_era] + "\"))\n")
