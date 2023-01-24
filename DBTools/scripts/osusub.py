@@ -1581,7 +1581,11 @@ if not arguments.Resubmit:
             else:
                 WorkDir = CondorDir
                 SkimDir = HadoopDir
-            Label = dataset.split('/')[1] + '_' + (dataset.split('/')[2].split('-')[0]).replace('Run', '')
+            Label = ''
+            if arguments.FileType == 'UserDir':
+                Label = dataset
+            else:
+                Label = dataset.split('/')[1] + '_' + (dataset.split('/')[2].split('-')[0]).replace('Run', '')
             dataset = SpecialStringModifier(dataset, ['/','.'], [['-','_']])
             crossSection = -1
             if dataset in crossSections:
