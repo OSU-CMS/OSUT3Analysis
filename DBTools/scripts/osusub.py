@@ -234,11 +234,9 @@ def getLatestJsonFile():
 
             jsonFileFiltered = []
             for fileName in jsonFileList:
-                print("jsonFileList:", fileName, jsonMatchingPhrase, arguments.JSONType[-2:], type(arguments.JSONType[-2:])) #mcarrigan
                 if jsonMatchingPhrase in fileName:
                     if 'P_Golden' in arguments.JSONType:
                         if arguments.JSONType[-2:] == '22':
-                            print("Looking for golden 22")
                             if re.search('(v[0-9]+)?\.json', fileName):
                                 jsonFileFiltered.append(fileName)
                         else:
@@ -249,11 +247,9 @@ def getLatestJsonFile():
                             if re.search('JSON_' + arguments.JSONType[2:-2] + '(_v[0-9]+)?\.txt', fileName):
                                 jsonFileFiltered.append(fileName)
                         elif arguments.JSONType[-2:] == '22':
-                            print("looking for 22", arguments.JSONType[2:-2])
                             if re.search(arguments.JSONType[2:-2] + '(_v[0-9]+)?\.json', fileName):
                                 jsonFileFiltered.append(fileName)
                         else:
-                            print("not 22", arguments.JSONType[-2:])
                             if re.search('JSON_' + arguments.JSONType[2:] + '(_v[0-9]+)?\.txt', fileName):
                                 jsonFileFiltered.append(fileName)
 
@@ -289,11 +285,9 @@ def getLatestJsonFile():
 
                 for json in jsonFileFiltered:
                     nameSplit = json.split('_')
-                    print("era needed", era_needed, "json", json) #mcarrigan
                     if 'P_Golden' in arguments.JSONType:
                         if 'Golden.json' not in nameSplit: continue
                         if('era' not in nameSplit[2]): 
-                            print("appending", json, nameSplit[2])
                             bestJsons.append(json)
 
                     #The following three lines were commented to test picking json files for specified eras
@@ -304,7 +298,6 @@ def getLatestJsonFile():
                     #This adds the era-specific json file to bestJsons.
                     if era_needed in nameSplit[2]:
                         bestJsons.append(json)
-                        print('Found matching json = {0}'.format(json))
 
             else:
                 for json in jsonFileFiltered:
@@ -323,8 +316,6 @@ def getLatestJsonFile():
             versionNumber = 0
             ultimateJson = ''
 
-            print("BestJsons", bestJsons) #mcarrigan
-
             if len(bestJsons) == 1:
                 ultimateJson = bestJsons[0]
             else:
@@ -341,7 +332,6 @@ def getLatestJsonFile():
             if re.search('17$', arguments.JSONType) or re.search('18$', arguments.JSONType):
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/' + collisionType + '/13TeV/PromptReco/' + ultimateJson + ' -O ' + tmpDir + '/' + ultimateJson, shell = True)
             elif re.search('22$', arguments.JSONType):
-                print("trying to get ultimate json", ultimateJson)
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions22/' + ultimateJson + ' -O ' + tmpDir + '/' + ultimateJson, shell = True)
             else:
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson, shell = True)
@@ -853,7 +843,6 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     # If the dataset has a Run3 skim sibling defined and not run over skim, add the corresponding files to the secondary file names
     #if '/' in Label: labeled_era = Label + '_' +  Dataset.split('/')[2].split('-')[0].replace('Run', '')
     #else: labeled_era = Label
-    print("Labeled Era", labeled_era, "Label", Label, "Dataset", Dataset, RunOverSkim, "run3_skim_sibling_datasets" in locals(), "run3_skim_sibling_datasets" in globals(), labeled_era in run3_skim_sibling_datasets)
     if not RunOverSkim and ("run3_skim_sibling_datasets" in locals() or "run3_skim_sibling_datasets" in globals()) and labeled_era in run3_skim_sibling_datasets:
         ConfigFile.write("\nsiblings = []\n")
         ConfigFile.write("if osusub.batchMode:\n")
@@ -1529,7 +1518,6 @@ if not arguments.Resubmit:
         exec('import ' + re.sub (r"(.*)\.py$", r"\1", Config) + ' as temPset')
 
         for dataset in split_datasets:
-            print("Working on dataset:", dataset, split_datasets)
             currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
             EventsPerJob = -1
             DatasetName = dataset
@@ -1601,10 +1589,8 @@ if not arguments.Resubmit:
             if arguments.FileType == 'UserDir' or registered:
                 Label = dataset
             else:
-                print("Filetype", arguments.FileType, dataset, dataset.split('/')[1], dataset.split('/')[2].split('-')[0].replace('Run', ''))
-                Label = dataset.split('/')[1] + '_' + (dataset.split('/')[2].split('-')[0]).replace('Run', '') #mcarrigan
+                Label = dataset.split('/')[1] + '_' + (dataset.split('/')[2].split('-')[0]).replace('Run', '')
                 dataset = Label
-                print("Label", Label)
             dataset = SpecialStringModifier(dataset, ['/','.'], [['-','_']])
             crossSection = -1
             if dataset in crossSections:
@@ -1633,7 +1619,6 @@ if not arguments.Resubmit:
                 NumberOfJobs = NumberOfFiles
 
             RealMaxEvents = EventsPerJob*NumberOfJobs
-            print("dataset", dataset, "Label", Label)
             userConfig = 'userConfig_' + dataset + '_cfg.py'
             shutil.copy (Config, WorkDir + '/' + userConfig)
             if 'secondaryCollections' in DatasetRead:
