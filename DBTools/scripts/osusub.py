@@ -234,11 +234,9 @@ def getLatestJsonFile():
 
             jsonFileFiltered = []
             for fileName in jsonFileList:
-                print("jsonFileList:", fileName, jsonMatchingPhrase, arguments.JSONType[-2:], type(arguments.JSONType[-2:])) #mcarrigan
                 if jsonMatchingPhrase in fileName:
                     if 'P_Golden' in arguments.JSONType:
                         if arguments.JSONType[-2:] == '22':
-                            print("Looking for golden 22")
                             if re.search('(v[0-9]+)?\.json', fileName):
                                 jsonFileFiltered.append(fileName)
                         else:
@@ -249,11 +247,9 @@ def getLatestJsonFile():
                             if re.search('JSON_' + arguments.JSONType[2:-2] + '(_v[0-9]+)?\.txt', fileName):
                                 jsonFileFiltered.append(fileName)
                         elif arguments.JSONType[-2:] == '22':
-                            print("looking for 22", arguments.JSONType[2:-2])
                             if re.search(arguments.JSONType[2:-2] + '(_v[0-9]+)?\.json', fileName):
                                 jsonFileFiltered.append(fileName)
                         else:
-                            print("not 22", arguments.JSONType[-2:])
                             if re.search('JSON_' + arguments.JSONType[2:] + '(_v[0-9]+)?\.txt', fileName):
                                 jsonFileFiltered.append(fileName)
 
@@ -283,11 +279,16 @@ def getLatestJsonFile():
                 if '2022B' in arguments.Dataset: era_needed = 'eraB'
                 if '2022C' in arguments.Dataset: era_needed = 'eraC'
                 if '2022D' in arguments.Dataset: era_needed = 'eraD'
+                if '2022E' in arguments.Dataset: era_needed = 'eraE'
+                if '2022F' in arguments.Dataset: era_needed = 'eraF'
+                if '2022G' in arguments.Dataset: era_needed = 'eraG'
 
                 for json in jsonFileFiltered:
                     nameSplit = json.split('_')
                     if 'P_Golden' in arguments.JSONType:
                         if 'Golden.json' not in nameSplit: continue
+                        if('era' not in nameSplit[2]): 
+                            bestJsons.append(json)
 
                     #The following three lines were commented to test picking json files for specified eras
                     #if nameSplit[2].startswith('era'): continue #FIXME we may want these JSON files? naming of JSON files for run3 not decided
@@ -297,7 +298,6 @@ def getLatestJsonFile():
                     #This adds the era-specific json file to bestJsons.
                     if era_needed in nameSplit[2]:
                         bestJsons.append(json)
-                        print('Found matching json = {0}'.format(json))
 
             else:
                 for json in jsonFileFiltered:
@@ -332,7 +332,6 @@ def getLatestJsonFile():
             if re.search('17$', arguments.JSONType) or re.search('18$', arguments.JSONType):
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/' + collisionType + '/13TeV/PromptReco/' + ultimateJson + ' -O ' + tmpDir + '/' + ultimateJson, shell = True)
             elif re.search('22$', arguments.JSONType):
-                print("trying to get ultimate json", ultimateJson)
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions22/' + ultimateJson + ' -O ' + tmpDir + '/' + ultimateJson, shell = True)
             else:
                 subprocess.call('wget https://cms-service-dqmdc.web.cern.ch/CAF/certification/' + collisionType + '/13TeV/' + ultimateJson + ' -O ' + tmpDir + "/" + ultimateJson, shell = True)
@@ -730,6 +729,8 @@ def MakeCondorSubmitRelease(Directory):
 
 #It generates the config_cfg.py file for condor.sub to use. In this file it assign unique filenames to the outputs of all the jobs, both histogram outputs and skimmed ntuples.
 def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelNames,jsonFile, temPset, lpcCAF):
+    labeled_era = Label
+    #Label = Label.split('_')[0]
     ConfigFile = open(Directory + '/config_cfg.py','w')
     sys.path.append(Directory)
     ConfigFile.write('import FWCore.ParameterSet.Config as cms\n')
@@ -840,7 +841,8 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     # If the dataset has a Run3 skim sibling defined and not run over skim, add the corresponding files to the secondary file names
-    labeled_era = Label + '_' +  Dataset.split('/')[2].split('-')[0].replace('Run', '')
+    #if '/' in Label: labeled_era = Label + '_' +  Dataset.split('/')[2].split('-')[0].replace('Run', '')
+    #else: labeled_era = Label
     if not RunOverSkim and ("run3_skim_sibling_datasets" in locals() or "run3_skim_sibling_datasets" in globals()) and labeled_era in run3_skim_sibling_datasets:
         ConfigFile.write("\nsiblings = []\n")
         ConfigFile.write("if osusub.batchMode:\n")
@@ -1516,13 +1518,13 @@ if not arguments.Resubmit:
         exec('import ' + re.sub (r"(.*)\.py$", r"\1", Config) + ' as temPset')
 
         for dataset in split_datasets:
-            print("Working on dataset:", dataset, split_datasets)
             currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
             EventsPerJob = -1
             DatasetName = dataset
             NumberOfJobs = int(arguments.NumberOfJobs)
             DatasetRead = {}
             MaxEvents = int(arguments.MaxEvents)
+            registered = True
             if arguments.localConfig:
                 if NumberOfJobs < 0:
                     NumberOfJobs = nJobs[dataset]  # If user has specified NumberOfJobs, use that value.
@@ -1538,6 +1540,7 @@ if not arguments.Resubmit:
                 if dataset in dataset_names:
                     DatasetName = dataset_names[dataset]
                 else:
+                    registered = False
                     print(str(dataset) + ' has not been registered on T3. Will try to find it on DAS.')
                 WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
                 SkimDir = HadoopDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']]) if HadoopDir else ''
@@ -1566,6 +1569,7 @@ if not arguments.Resubmit:
                 if dataset in dataset_names:
                     DatasetName = dataset_names[dataset]
                 else:
+                    registered = False
                     print(str(dataset) + ' has not been registered on T3. Will try to find it on DAS.')
                 WorkDir = CondorDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']])
                 SkimDir = HadoopDir + '/' + SpecialStringModifier(dataset,['/'],[['-','_']]) if HadoopDir else ''
@@ -1582,10 +1586,11 @@ if not arguments.Resubmit:
                 WorkDir = CondorDir
                 SkimDir = HadoopDir
             Label = ''
-            if arguments.FileType == 'UserDir':
+            if arguments.FileType == 'UserDir' or registered:
                 Label = dataset
             else:
                 Label = dataset.split('/')[1] + '_' + (dataset.split('/')[2].split('-')[0]).replace('Run', '')
+                dataset = Label
             dataset = SpecialStringModifier(dataset, ['/','.'], [['-','_']])
             crossSection = -1
             if dataset in crossSections:
@@ -1623,7 +1628,7 @@ if not arguments.Resubmit:
                 if(types[dataset] == 'data'):
                     jsonFile = getLatestJsonFile()
                     shutil.move (jsonFile, WorkDir + "/" + jsonFile)
-            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'], WorkDir, SkimDir, dataset, SkimChannelNames, jsonFile, temPset, lpcCAF)
+            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'], WorkDir, SkimDir, Label, SkimChannelNames, jsonFile, temPset, lpcCAF)
 
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
