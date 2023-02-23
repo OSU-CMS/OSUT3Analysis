@@ -226,9 +226,9 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
 def GetSkimInputTags(File, xrootdDestination = ""):
     print("Getting skim input tags...")
     if xrootdDestination != "":
-        eventContent = subprocess.check_output (["edmDumpEventContent", "--all", "root://cmseos.fnal.gov/" + File[len('/eos/uscms'):].decode("utf-8")])
+        eventContent = subprocess.check_output (["edmDumpEventContent", "--all", "root://cmseos.fnal.gov/" + File[len('/eos/uscms'):]])
     else:
-        eventContent = subprocess.check_output (["edmDumpEventContent", "--all", os.getcwd () + "/" + File.decode("utf-8")])
+        eventContent = subprocess.check_output (["edmDumpEventContent", "--all", os.getcwd () + "/" + File])
     parsing = False
     cppTypes = []
     inputTags = {}

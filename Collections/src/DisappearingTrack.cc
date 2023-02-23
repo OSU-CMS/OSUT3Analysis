@@ -31,7 +31,8 @@ osu::DisappearingTrack::DisappearingTrack() :
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE) //mcarrigan
 {
 }
 
@@ -62,7 +63,9 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track) :
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE) //mcarrigan
+
 {
 }
 
@@ -94,7 +97,9 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE) //mcarrigan
+
 {
 }
 
@@ -126,7 +131,9 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE) //mcarrigan
+
 {
 }
 
@@ -162,7 +169,9 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE) //mcarrigan
+
 {
 }
 
@@ -203,7 +212,9 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE) //mcarrigan
+
 {
 }
 
@@ -254,7 +265,9 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE) //mcarrigan
+
 {
   eleVtx_d0Cuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_barrel");
   eleVtx_dzCuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_dzCuts_barrel");
