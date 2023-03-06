@@ -128,13 +128,6 @@ datasets = [
    'EGamma_2018B',
    'EGamma_2018C',
    'EGamma_2018D',
-   'EGamma_2022A',
-   'EGamma_2022B',
-   'EGamma_2022C',
-   'EGamma_2022D',
-   'EGamma_2022E',
-   'EGamma_2022F', 
-   'EGamma_2022G',  
    'DoubleEG_2016_2017_2018',
    'DoubleMu_2015',
    'DoubleMu_2015D',
@@ -518,6 +511,8 @@ datasets = [
   'HTo4Mu125_20_130mm',
   'HTo4Mu125_20_1300mm',
 
+  'AMSB_chargino_700GeV_100cm_124X',
+
   'Cosmics',
 
   #Sum of all backgrounds
@@ -799,15 +794,6 @@ composite_dataset_definitions = {
         'EGamma_2018B',
         'EGamma_2018C',
         'EGamma_2018D',
-    ],
-    'EGamma_2022' : [
-        'EGamma_2022A',
-        'EGamma_2022B',
-        'EGamma_2022C',
-        'EGamma_2022D',
-        'EGamma_2022E',
-        'EGamma_2022F', 
-        'EGamma_2022G',       
     ],
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
@@ -1668,14 +1654,6 @@ nJobs = {
     'EGamma_2018B' : 1540,
     'EGamma_2018C' : 1480,
     'EGamma_2018D' : 7390,
-
-    'EGamma_2022A' : 6,
-    'EGamma_2022B' : 112,
-    'EGamma_2022C' : 264,
-    'EGamma_2022D' : 33,
-    'EGamma_2022E' : 152,
-    'EGamma_2022F' : 465,
-    'EGamma_2022G' : 77,
 
     # set number of jobs to correpond to roughly 100k events/job
     'DoubleMu_2015B'  : 40,
@@ -2742,6 +2720,7 @@ nJobs = {
   'HTo4Mu125_20_130mm' : 15,
   'HTo4Mu125_20_1300mm' : 15,
 
+  'AMSB_chargino_700GeV_100cm_124X' : 9999,
   'Cosmics': 999,
 }
 
@@ -3023,14 +3002,6 @@ maxEvents = {
     'EGamma_2018B'          : -1,
     'EGamma_2018C'          : -1,
     'EGamma_2018D'          : -1,
-
-    'EGamma_2022A'          : -1,
-    'EGamma_2022B'          : -1,
-    'EGamma_2022C'          : -1,
-    'EGamma_2022D'          : -1,
-    'EGamma_2022E'          : -1,
-    'EGamma_2022F'          : -1,
-    'EGamma_2022G'          : -1,
 
     'DoubleMu_2015B'        : -1,
     'DoubleMu_2015C'        : -1,
@@ -4092,6 +4063,7 @@ maxEvents = {
   'HTo4Mu125_20_130mm' : -1,
   'HTo4Mu125_20_1300mm' : -1,
 
+  'AMSB_chargino_700GeV_100cm_124X' : -1,
   'Cosmics' : -1,
 }
 
@@ -4410,15 +4382,6 @@ types = {
     'EGamma_2018C'          : "data",
     'EGamma_2018D'          : "data",
     'DoubleEG_2016_2017_2018' : "data",
-
-    'EGamma_2022'           : "data",
-    'EGamma_2022A'          : "data",
-    'EGamma_2022B'          : "data",
-    'EGamma_2022C'          : "data",
-    'EGamma_2022D'          : "data",
-    'EGamma_2022E'          : "data",
-    'EGamma_2022F'          : "data",
-    'EGamma_2022G'          : "data",
 
     'DoubleMu_2015B'        : "data",
     'DoubleMu_2015C'        : "data",
@@ -5506,6 +5469,7 @@ types = {
   'HTo4Mu125_20_130mm' : "signalMC",
   'HTo4Mu125_20_1300mm' : "signalMC",
 
+  'AMSB_chargino_700GeV_100cm_124X' : "signalMC",
   'Cosmics' : "bgMC",
 }
 
@@ -5818,15 +5782,6 @@ colors = {
     'EGamma_2018C'          : 1,
     'EGamma_2018D'          : 1,
     'DoubleEG_2016_2017_2018'         : 1,
-
-    'EGamma_2022'           : 1,
-    'EGamma_2022A'          : 1,
-    'EGamma_2022B'          : 1,
-    'EGamma_2022C'          : 1,
-    'EGamma_2022D'          : 1,
-    'EGamma_2022E'          : 1,
-    'EGamma_2022F'          : 1,
-    'EGamma_2022G'          : 1,
 
     'DoubleMu_2015B'        : 1,
     'DoubleMu_2015C'        : 1,
@@ -6916,6 +6871,7 @@ colors = {
   'HTo4Mu125_20_130mm' : 2,
   'HTo4Mu125_20_1300mm' : 4,
 
+  'AMSB_chargino_700GeV_100cm_124X' : 1,
   'Cosmics' : 1,
 }
 
@@ -7245,15 +7201,6 @@ labels = {
     'EGamma_2018B'        : "EGamma 2018B data",
     'EGamma_2018C'        : "EGamma 2018C data",
     'EGamma_2018D'        : "EGamma 2018D data",
-
-    'EGamma_2022'         : "EGamma 2022 data", 
-    'EGamma_2022A'        : "EGamma 2022A data",
-    'EGamma_2022B'        : "EGamma 2022B data",
-    'EGamma_2022C'        : "EGamma 2022C data",
-    'EGamma_2022D'        : "EGamma 2022D data",
-    'EGamma_2022E'        : "EGamma 2022E data",
-    'EGamma_2022F'        : "EGamma 2022F data",
-    'EGamma_2022G'        : "EGamma 2022G data",
 
     'DoubleMu_2015'         : "Double Muon 2015 data",
     'DoubleMu_2015B'        : "DoubleMu 2015B data",
@@ -8348,6 +8295,7 @@ labels = {
   'HTo4Mu125_20_130mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=130mm",
   'HTo4Mu125_20_1300mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=1300mm",
 
+  'AMSB_chargino_700GeV_100cm_124X' : "AMSB_chargino_placeholder",
   'Cosmics' : "Cosmic MC",
 }
 
@@ -9255,6 +9203,7 @@ crossSections = {
   'HTo4Mu125_20_130mm' : 43.93,
   'HTo4Mu125_20_1300mm' : 43.93,
 
+  'AMSB_chargino_700GeV_100cm_124X' : 40.00,
   'Cosmics' : 1.0,
 }
 
