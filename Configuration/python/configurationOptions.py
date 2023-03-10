@@ -133,8 +133,8 @@ datasets = [
    'EGamma_2022C',
    'EGamma_2022D',
    'EGamma_2022E',
-   'EGamma_2022F', 
-   'EGamma_2022G',  
+   'EGamma_2022F',
+   'EGamma_2022G',
    'DoubleEG_2016_2017_2018',
    'DoubleMu_2015',
    'DoubleMu_2015D',
@@ -522,6 +522,8 @@ datasets = [
   'HTo4Mu125_20_130mm',
   'HTo4Mu125_20_1300mm',
 
+  'AMSB_chargino_700GeV_100cm_124X',
+
   'Cosmics',
 
   #Sum of all backgrounds
@@ -810,8 +812,8 @@ composite_dataset_definitions = {
         'EGamma_2022C',
         'EGamma_2022D',
         'EGamma_2022E',
-        'EGamma_2022F', 
-        'EGamma_2022G',       
+        'EGamma_2022F',
+        'EGamma_2022G',
     ],
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
@@ -2754,6 +2756,7 @@ nJobs = {
   'HTo4Mu125_20_130mm' : 15,
   'HTo4Mu125_20_1300mm' : 15,
 
+  'AMSB_chargino_700GeV_100cm_124X' : 9999,
   'Cosmics': 999,
 }
 
@@ -4108,6 +4111,7 @@ maxEvents = {
   'HTo4Mu125_20_130mm' : -1,
   'HTo4Mu125_20_1300mm' : -1,
 
+  'AMSB_chargino_700GeV_100cm_124X' : -1,
   'Cosmics' : -1,
 }
 
@@ -5526,6 +5530,7 @@ types = {
   'HTo4Mu125_20_130mm' : "signalMC",
   'HTo4Mu125_20_1300mm' : "signalMC",
 
+  'AMSB_chargino_700GeV_100cm_124X' : "signalMC",
   'Cosmics' : "bgMC",
 }
 
@@ -6941,6 +6946,7 @@ colors = {
   'HTo4Mu125_20_130mm' : 2,
   'HTo4Mu125_20_1300mm' : 4,
 
+  'AMSB_chargino_700GeV_100cm_124X' : 1,
   'Cosmics' : 1,
 }
 
@@ -7275,8 +7281,7 @@ labels = {
     'EGamma_2018B'        : "EGamma 2018B data",
     'EGamma_2018C'        : "EGamma 2018C data",
     'EGamma_2018D'        : "EGamma 2018D data",
-
-    'EGamma_2022'         : "EGamma 2022 data", 
+    'EGamma_2022'         : "EGamma 2022 data",
     'EGamma_2022A'        : "EGamma 2022A data",
     'EGamma_2022B'        : "EGamma 2022B data",
     'EGamma_2022C'        : "EGamma 2022C data",
@@ -8378,6 +8383,7 @@ labels = {
   'HTo4Mu125_20_130mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=130mm",
   'HTo4Mu125_20_1300mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=1300mm",
 
+  'AMSB_chargino_700GeV_100cm_124X' : "AMSB_chargino_placeholder",
   'Cosmics' : "Cosmic MC",
 }
 
@@ -9285,6 +9291,7 @@ crossSections = {
   'HTo4Mu125_20_130mm' : 43.93,
   'HTo4Mu125_20_1300mm' : 43.93,
 
+  'AMSB_chargino_700GeV_100cm_124X' : 40.00,
   'Cosmics' : 1.0,
 }
 
