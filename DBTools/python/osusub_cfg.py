@@ -138,14 +138,17 @@ def getRun3SkimSiblings (fileName, dataset, inputUser=False):
       parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
       for parent in parents:
         for parent_file_name in parent['parent_logical_file_name']:
-          grandparents.extend (dbs3api_global.listFileParents(logical_file_name = parent_file_name))
+          grandparents.extend (dbs3api_phys03.listFileParents(logical_file_name = parent_file_name))
       parents = grandparents
     else:
+      print("Getting user dataset, not grandparents")
       parents = dbs3api_global.listFileParents (logical_file_name = fileName)
+      print("parents: ", parents)
 
     children = []
     for parent in parents:
       for parent_file_name in parent["parent_logical_file_name"]:
+        print(parent_file_name)
         children.extend (dbs3api_global.listFileChildren (logical_file_name = parent_file_name))
 
      # put the children in a set

@@ -109,6 +109,7 @@ namespace osu {
 
 #if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022)
       void set_isoTrackIsolation(const edm::Handle<vector<pat::IsolatedTrack> > &);
+      void set_caloNewEMDRp5 (double value) { caloNewEMDRp5_  = value; }; //mcarrigan
 #endif
 
       const float pfElectronIsoDR03 ()    const { return this->pfElectronIsoDR03_; };
@@ -129,6 +130,10 @@ namespace osu {
       const float pfPhotonIsoDR03 ()       const { return this->pfPhotonIsoDR03_; };
       const float pfPUPhotonIsoDR03 ()     const { return this->pfPUPhotonIsoDR03_; };
 
+      //Calo energies
+      const float caloNewEMDRp5 ()  const { return this->caloNewEMDRp5_; }; //mcarrigan
+
+
 #if DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 // only makes sense with phase1 pixel upgrade
       // This could be in TrackBase, but is fairly specialized to the disappearing tracks search
       const bool isAllowedThreeLayerHitPattern() const;
@@ -146,6 +151,7 @@ namespace osu {
 
       void set_primaryPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &);
       void set_additionalPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &, const edm::Handle<vector<pat::PackedCandidate> > &);
+      void set_caloValues(); //mcarrigan
 
 #if DATA_FORMAT != MINI_AOD_2022_CUSTOM
       edm::Ref<vector<CandidateTrack> > matchedCandidateTrack_;
@@ -180,6 +186,9 @@ namespace osu {
       float pfChHadIsoDR03_, pfPUChHadIsoDR03_;
       float pfNeutralHadIsoDR03_, pfPUNeutralHadIsoDR03_;
       float pfPhotonIsoDR03_, pfPUPhotonIsoDR03_;
+
+      float caloNewEMDRp5_; //mcarrigan
+
   };
 
 #if IS_VALID(secondaryTracks)

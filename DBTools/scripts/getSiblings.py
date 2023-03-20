@@ -44,7 +44,7 @@ def getDBSSiblings(output_json):
     for ifile, filename in enumerate(input_files):
         if(filename['is_file_valid']): print('Input File: ' + filename['logical_file_name'])
         this_file = filename['logical_file_name']
-        siblings = getRun3SkimSiblings(this_file, dataset_sib, args.user)
+        siblings = getRun3SkimSiblings(this_file, dataset_sib, False)
         file_dict[this_file] = siblings
         print('Siblings: ')
         for sib in siblings:
