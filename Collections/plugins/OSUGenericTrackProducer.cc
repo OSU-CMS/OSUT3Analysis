@@ -261,7 +261,8 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 
 // in the specific case of TYPE(tracks)==CandidateTracks (where DATA_FORMAT is xyz_CUSTOM)
 // and running over CandidateTracks ntuples, then generalTracks and RecHits may be available
-#if DATA_FORMAT_IS_CUSTOM && !DATA_FORMAT_IS_2022
+//#if DATA_FORMAT_IS_CUSTOM && !DATA_FORMAT_IS_2022
+#if DATA_FORMAT_IS_CUSTOM || (DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022) //mcarrigan
       // Calculate the associated calorimeter energy for the disappearing tracks search.
 
       // this could be removed; if CandidateTrackProdcuer sets these,
@@ -294,8 +295,10 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
           }
 
           track.set_caloNewEMDRp5(eEM);
-          track.set_caloNewHadDRp5(eHad);
+          //track.set_caloNewHadDRp5(eHad);
         }
+#endif
+#if DATA_FORMAT_IS_CUSTOM && !DATA_FORMAT_IS_2022
 
       // this is called only for ntuples with generalTracks explicitly kept (really just signal),
       // to re-calculate the track isolations calculated wrong when ntuples were produces (thus "old" vs not-old)
