@@ -295,6 +295,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
           }
 
           track.set_caloNewEMDRp5(eEM);
+          std::cout << "In OSUGenericTrackProducer... setting the calo energy: " << eEM << std::endl;
           //track.set_caloNewHadDRp5(eHad);
         }
 #endif

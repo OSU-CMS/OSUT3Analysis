@@ -638,6 +638,53 @@ osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat
 
 }
 
+const double
+osu::DisappearingTrack::caloTotNoPU (double dR, RhoType rhoType, CaloType caloType) const
+{
+  // For reference, see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Accessing_PF_Isolation_from_AN1
+  double rho;
+  switch (rhoType) {
+  case All:
+    rho = rhoPUCorr();
+    break;
+  case Calo:
+    rho = rhoPUCorrCalo();
+    break;
+  case CentralCalo:
+    rho = rhoPUCorrCentralCalo();
+    break;
+  default:
+    throw cms::Exception("FatalError") << "Unkown or not implemented rho type requested, type:" << rhoType;
+  }
+  
+  double rawCaloTot = 0.0;
+  int intDR = dR * 10.0;
+  switch (caloType) {
+  case Sum:
+    if(intDR == 5) rawCaloTot = caloNewDRp5();
+    else if(intDR == 3) rawCaloTot = caloNewDRp3();
+    else if(intDR == 2) rawCaloTot = caloNewDRp2();
+    else if(intDR == 1) rawCaloTot = caloNewDRp1();
+    break;
+  case EM:
+    if(intDR == 5) rawCaloTot = caloNewEMDRp5();
+    else if(intDR == 3) rawCaloTot = caloNewEMDRp3();
+    else if(intDR == 2) rawCaloTot = caloNewEMDRp2();
+    else if(intDR == 1) rawCaloTot = caloNewEMDRp1();
+    break;
+  case Had:
+    if(intDR == 5) rawCaloTot = caloNewHadDRp5();
+    else if(intDR == 3) rawCaloTot = caloNewHadDRp3();
+    else if(intDR == 2) rawCaloTot = caloNewHadDRp2();
+    else if(intDR == 1) rawCaloTot = caloNewHadDRp1();
+    break; 
+  }
+  
+  double caloCorr = rho * TMath::Pi() * dR * dR;  // Define effective area as pi*r^2, where r is radius of DeltaR cone.
+  double caloTotNoPU = TMath::Max(0., rawCaloTot - caloCorr);
+  return caloTotNoPU;
+}
+
 #if IS_VALID(secondaryTracks)
 osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack() : 
   osu::DisappearingTrack() {}
