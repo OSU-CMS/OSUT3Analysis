@@ -16,6 +16,7 @@
 #include "CondFormats/EcalObjects/interface/EcalChannelStatus.h"
 #include "CondFormats/DataRecord/interface/EcalChannelStatusRcd.h"
 #include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/DeDxData.h"
 
 #include "OSUT3Analysis/Collections/interface/DisappearingTrack.h" // includes TrackBase.h
 
@@ -25,6 +26,13 @@
 // and remove these two lines:
 #define INVALID_VALUE (numeric_limits<int>::min ())
 #define IS_INVALID(x) (x <= INVALID_VALUE + 1)
+
+//define CaloEnergy struct
+struct CaloEnergy
+{
+  double eEM;
+  double eHad;
+};
 
 template<class T>
   class OSUGenericTrackProducer : public edm::stream::EDProducer<>
@@ -45,12 +53,16 @@ template<class T>
     edm::InputTag      EBRecHitsTag_;
     edm::InputTag      EERecHitsTag_;
     edm::InputTag      HBHERecHitsTag_;
+    edm::InputTag gt2dedxPixelTag_;
+    edm::InputTag gt2dedxStripTag_;
     edm::EDGetTokenT<vector<TYPE(tracks)> >      token_;
     edm::EDGetTokenT<vector<osu::Mcparticle> >   mcparticleToken_;
     edm::EDGetTokenT<vector<TYPE(jets)> >        jetsToken_;
     edm::EDGetTokenT<EBRecHitCollection>         EBRecHitsToken_;
     edm::EDGetTokenT<EERecHitCollection>         EERecHitsToken_;
     edm::EDGetTokenT<HBHERecHitCollection>       HBHERecHitsToken_;
+    edm::EDGetTokenT<edm::ValueMap<reco::DeDxData> > gt2dedxStripToken_;
+    edm::EDGetTokenT<edm::ValueMap<reco::DeDxData> > gt2dedxPixelToken_;
     edm::EDGetTokenT<vector<reco::GsfTrack> >    gsfTracksToken_;
 
 #ifdef DISAPP_TRKS
@@ -98,8 +110,8 @@ template<class T>
     edm::ESGetToken<CaloGeometry, CaloGeometryRecord> caloGeometryToken_;
     edm::ESGetToken<EcalChannelStatus, EcalChannelStatusRcd> ecalStatusToken_;
 
-    bool insideCone(TYPE(tracks)& track, const DetId& id, const double dR);
-    GlobalPoint getPosition( const DetId& id);
+    const bool insideCone(TYPE(tracks)& track, const DetId& id, const double dR) const;
+    const GlobalPoint getPosition( const DetId& id) const;
 
     int maskedEcalChannelStatusThreshold_;
     bool outputBadEcalChannels_;
@@ -107,8 +119,10 @@ template<class T>
     map<DetId, vector<double> > EcalAllDeadChannelsValMap_;
     map<DetId, vector<int> >    EcalAllDeadChannelsBitMap_;
 
-    const double getTrackIsolation (const reco::Track &, const vector<reco::Track> &, const bool, const bool, const double, const double = 1.0e-12) const;
-    const double getOldTrackIsolation (const reco::Track &, const vector<reco::Track> &, const bool, const double, const double = 1.0e-12) const;
+    const double getTrackIsolation (TYPE(tracks)&, const vector<reco::Track> &, const bool, const bool, const double, const double = 1.0e-12) const;
+    const double getOldTrackIsolation (TYPE(tracks)&, const vector<reco::Track> &, const bool, const double, const double = 1.0e-12) const;
+    const CaloEnergy calculateCaloE (TYPE(tracks)&, const EBRecHitCollection &, const EERecHitCollection &, const HBHERecHitCollection &, const double dR = 0.5) const;
+
 };
 
 #endif
