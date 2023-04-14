@@ -64,14 +64,18 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   EBRecHitsTag_    =  cfg.getParameter<edm::InputTag>  ("EBRecHits");
   EERecHitsTag_    =  cfg.getParameter<edm::InputTag>  ("EERecHits");
   HBHERecHitsTag_  =  cfg.getParameter<edm::InputTag>  ("HBHERecHits");
-  gt2dedxPixelTag_ =  cfg.getParameter<edm::InputTag>  ("dEdxDataPixel");
-  gt2dedxStripTag_ =  cfg.getParameter<edm::InputTag>  ("dEdxDataStrip");
+
 
   EBRecHitsToken_    =  consumes<EBRecHitCollection>    (EBRecHitsTag_);
   EERecHitsToken_    =  consumes<EERecHitCollection>    (EERecHitsTag_);
   HBHERecHitsToken_  =  consumes<HBHERecHitCollection>  (HBHERecHitsTag_);
+
+#if AOD_SKIM
+  gt2dedxPixelTag_ =  cfg.getParameter<edm::InputTag>  ("dEdxDataPixel");
+  gt2dedxStripTag_ =  cfg.getParameter<edm::InputTag>  ("dEdxDataStrip");
   gt2dedxPixelToken_    = consumes<edm::ValueMap<reco::DeDxData> > (gt2dedxPixelTag_);
   gt2dedxStripToken_    = consumes<edm::ValueMap<reco::DeDxData> > (gt2dedxStripTag_);
+#endif
 
   gsfTracksToken_ = consumes<vector<reco::GsfTrack> > (cfg.getParameter<edm::InputTag> ("gsfTracks"));
 
@@ -178,10 +182,12 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   edm::Handle<HBHERecHitCollection> HBHERecHits;
   event.getByToken(HBHERecHitsToken_, HBHERecHits);
 
+#if AOD_SKIM
   edm::Handle<edm::ValueMap<reco::DeDxData> > gt2dedxPixel;
   event.getByToken(gt2dedxPixelToken_, gt2dedxPixel);
   edm::Handle<edm::ValueMap<reco::DeDxData> > gt2dedxStrip;
   event.getByToken(gt2dedxStripToken_, gt2dedxStrip);
+#endif
 
   edm::Handle<vector<reco::GsfTrack> > gsfTracks;
   event.getByToken (gsfTracksToken_, gsfTracks);
@@ -271,7 +277,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 // in the specific case of TYPE(tracks)==CandidateTracks (where DATA_FORMAT is xyz_CUSTOM)
 // and running over CandidateTracks ntuples, then generalTracks and RecHits may be available
 //#if DATA_FORMAT_IS_CUSTOM && !DATA_FORMAT_IS_2022
-#if DATA_FORMAT_IS_CUSTOM || (DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022) //mcarrigan
+#if DATA_FORMAT_IS_CUSTOM || (DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022 && AOD_SKIM) //mcarrigan
       // Calculate the associated calorimeter energy for the disappearing tracks search.
 
       const CaloEnergy &caloE_0p5 = calculateCaloE(track, *EBRecHits, *EERecHits, *HBHERecHits, 0.5);
