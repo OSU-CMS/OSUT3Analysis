@@ -8408,7 +8408,7 @@ labels = {
   'HTo4Mu125_20_130mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=130mm",
   'HTo4Mu125_20_1300mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=1300mm",
 
-  'AMSB_chargino_700GeV_100cm_124X' : "AMSB_chargino_placeholder",
+  'AMSB_chargino_700GeV_100cm_124X' : "AMSB chargino placeholder",
   'Cosmics' : "Cosmic MC",
 }
 
