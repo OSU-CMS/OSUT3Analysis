@@ -1630,7 +1630,7 @@ if not arguments.Resubmit:
                 if(types[dataset] == 'data'):
                     jsonFile = getLatestJsonFile()
                     shutil.move (jsonFile, WorkDir + "/" + jsonFile)
-            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'], WorkDir, SkimDir, Label, SkimChannelNames, jsonFile, temPset, lpcCAF)
+            SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'], WorkDir, SkimDir, dataset, SkimChannelNames, jsonFile, temPset, lpcCAF)
 
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
