@@ -1591,7 +1591,9 @@ if not arguments.Resubmit:
             else:
                 Label = dataset.split('/')[1] + '_' + (dataset.split('/')[2].split('-')[0]).replace('Run', '')
                 dataset = Label
-            dataset = SpecialStringModifier(dataset, ['/','.'], [['-','_']])
+            #dataset = SpecialStringModifier(dataset, ['/','.'], [['-','_']])
+            dataset = SpecialStringModifier(dataset, ['/','.'], [['-','-']])
+
             crossSection = -1
             if dataset in crossSections:
                 crossSection = crossSections[dataset]
