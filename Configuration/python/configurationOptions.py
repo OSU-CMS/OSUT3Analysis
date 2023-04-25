@@ -79,9 +79,9 @@ datasets = [
    'SingleMu_2022B',
    'SingleMu_2022C',
    'SingleMu_2022D',
-   'SingleMu_2022A',
-   'SingleMu_2022B',
-   'SingleMu_2022C',
+   'SingleMu_2022E',
+   'SingleMu_2022F',
+   'SingleMu_2022G',
    'SingleEle_2015',
    'SingleEle_2015D',
    'SingleEle_2016B',
@@ -739,6 +739,11 @@ composite_dataset_definitions = {
       'SingleMu_2022A',
       'SingleMu_2022B',
       'SingleMu_2022C',
+      'SingleMu_2022D',
+      'SingleMu_2022E',
+      'SingleMu_2022F',
+      'SingleMu_2022G',
+
     ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
@@ -1638,6 +1643,10 @@ nJobs = {
     'SingleMu_2022A'   : 10,
     'SingleMu_2022B'   : 540,
     'SingleMu_2022C'   : 2020,
+    'SingleMu_2022D'   : 1000,  #FIXME These numbers for single muon are not just guesses
+    'SingleMu_2022E'   : 1000,
+    'SingleMu_2022F'   : 1000,
+    'SingleMu_2022G'   : 1000,
 
     # set number of jobs to correpond to roughly 100k events/job
     'SingleEle_2015D' : 1000,
@@ -2992,6 +3001,10 @@ maxEvents = {
     'SingleMu_2022A'        : -1,
     'SingleMu_2022B'        : -1,
     'SingleMu_2022C'        : -1,
+    'SingleMu_2022D'        : -1,
+    'SingleMu_2022E'        : -1,
+    'SingleMu_2022F'        : -1,
+    'SingleMu_2022G'        : -1,
 
     'SingleEle_2015D'        : -1,
     'SingleEle_2016B'        : -1,
@@ -4379,6 +4392,10 @@ types = {
     'SingleMu_2022A'        : "data",
     'SingleMu_2022B'        : "data",
     'SingleMu_2022C'        : "data",
+    'SingleMu_2022D'        : "data",
+    'SingleMu_2022E'        : "data",
+    'SingleMu_2022F'        : "data",
+    'SingleMu_2022G'        : "data",
 
     'SingleEle_2015D'   : "data",
     'SingleEle_2016B'   : "data",
@@ -5795,6 +5812,10 @@ colors = {
     'SingleMu_2022A'        : 1,
     'SingleMu_2022B'        : 1,
     'SingleMu_2022C'        : 1,
+    'SingleMu_2022D'        : 1,
+    'SingleMu_2022E'        : 1,
+    'SingleMu_2022F'        : 1,
+    'SingleMu_2022G'        : 1,
 
     'SingleEle_2015D'        : 1,
     'SingleEle_2016B'        : 1,
@@ -7224,6 +7245,10 @@ labels = {
     'SingleMu_2022A'        : "SingleMuon 2022A data",
     'SingleMu_2022B'        : "SingleMuon 2022B data",
     'SingleMu_2022C'        : "SingleMuon 2022C data",
+    'SingleMu_2022D'        : "SingleMuon 2022D data",
+    'SingleMu_2022E'        : "SingleMuon 2022E data",
+    'SingleMu_2022F'        : "SingleMuon 2022F data",
+    'SingleMu_2022G'        : "SingleMuon 2022G data",
 
 
     'SingleEle_2015B'        : "SingleElectron 2015B data",
@@ -8383,7 +8408,7 @@ labels = {
   'HTo4Mu125_20_130mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=130mm",
   'HTo4Mu125_20_1300mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=1300mm",
 
-  'AMSB_chargino_700GeV_100cm_124X' : "AMSB_chargino_placeholder",
+  'AMSB_chargino_700GeV_100cm_124X' : "AMSB chargino placeholder",
   'Cosmics' : "Cosmic MC",
 }
 

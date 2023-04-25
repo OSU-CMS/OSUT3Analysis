@@ -370,13 +370,16 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
         nThreadsActive = min(4, cpu_count() + 1)
 
     os.chdir(CondorDir)
-    directory = CondorDir + '/' + dataSet
+    if os.path.exists(CondorDir + '/' + dataSet):
+        directory = CondorDir + '/' + dataSet
+    else:
+        directory = CondorDir
     if not os.path.exists(directory):
         print(directory + " does not exist, will skip it and continue!")
         return
     if not OutputDir:
         OutputDir = CondorDir
-    directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory
+    directoryOut = OutputDir # Allow writing output to a different directory
     try:
         os.makedirs (directoryOut)
     except OSError:
