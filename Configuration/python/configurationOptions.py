@@ -42,6 +42,13 @@ datasets = [
    'Tau_2018B',
    'Tau_2018C',
    'Tau_2018D',
+   'Tau_2022A', 
+   'Tau_2022B',
+   'Tau_2022C',
+   'Tau_2022D',
+   'Tau_2022E',
+   'Tau_2022F',
+   'Tau_2022G',   
    'ZeroBias_2015',
    'ZeroBias_2015D',
    'ZeroBias_2016',
@@ -689,6 +696,15 @@ composite_dataset_definitions = {
       'Tau_2018B',
       'Tau_2018C',
       'Tau_2018D',
+    ],
+    'Tau_2022' : [
+        'Tau_2022A',
+        'Tau_2022B',
+        'Tau_2022C',
+        'Tau_2022D',
+        'Tau_2022E',
+        'Tau_2022F',
+        'Tau_2022G',
     ],
     'ZeroBias_2015' : [
         'ZeroBias_2015B',
@@ -1612,6 +1628,13 @@ nJobs = {
     'Tau_2018B'  :  1000,
     'Tau_2018C'  :  1000,
     'Tau_2018D'  :  1000,
+    'Tau_2022A'  :  1000,
+    'Tau_2022B'  :  1000,
+    'Tau_2022C'  :  1000,
+    'Tau_2022D'  :  1000,
+    'Tau_2022E'  :  1000,
+    'Tau_2022F'  :  1000,
+    'Tau_2022G'  :  1000,
 
     'ZeroBias_2015D'  :  1000,
     'ZeroBias_2016B'  :  1000,
@@ -1697,7 +1720,7 @@ nJobs = {
     'EGamma_2022C' : 264,
     'EGamma_2022D' : 33,
     'EGamma_2022E' : 152,
-    'EGamma_2022F' : 465,
+    'EGamma_2022F' : 1,
     'EGamma_2022G' : 77,
 
     # set number of jobs to correpond to roughly 100k events/job
@@ -2966,6 +2989,13 @@ maxEvents = {
     'Tau_2018B'       : -1,
     'Tau_2018C'       : -1,
     'Tau_2018D'       : -1,
+    'Tau_2022A'       : -1,
+    'Tau_2022B'       : -1,
+    'Tau_2022C'       : -1,
+    'Tau_2022D'       : -1,
+    'Tau_2022E'       : -1,
+    'Tau_2022F'       : -1,
+    'Tau_2022G'       : -1,
 
     'ZeroBias_2015D'       : -1,
     'ZeroBias_2016B'       : -1,
@@ -3061,7 +3091,7 @@ maxEvents = {
     'EGamma_2022C'          : -1,
     'EGamma_2022D'          : -1,
     'EGamma_2022E'          : -1,
-    'EGamma_2022F'          : -1,
+    'EGamma_2022F'          : 1000,
     'EGamma_2022G'          : -1,
 
     'DoubleMu_2015B'        : -1,
@@ -4354,7 +4384,14 @@ types = {
     'Tau_2016'     : "data",
     'Tau_2017'     : "data",
     'Tau_2018'     : "data",
-
+    'Tau_2022A'    : "data",
+    'Tau_2022B'    : "data",
+    'Tau_2022C'    : "data",
+    'Tau_2022D'    : "data",
+    'Tau_2022E'    : "data",
+    'Tau_2022F'    : "data",
+    'Tau_2022G'    : "data",
+    
     'ZeroBias_2015D'    : "data",
     'ZeroBias_2016B'    : "data",
     'ZeroBias_2016C'    : "data",
@@ -5775,6 +5812,13 @@ colors = {
     'Tau_2016'   :  1,
     'Tau_2017'   :  1,
     'Tau_2018'   :  1,
+    'Tau_2022A'  :  1,
+    'Tau_2022B'  :  1,
+    'Tau_2022C'  :  1,
+    'Tau_2022D'  :  1,
+    'Tau_2022E'  :  1,
+    'Tau_2022F'  :  1,
+    'Tau_2022G'  :  1,
 
     'ZeroBias_2015D'  :  1,
     'ZeroBias_2016B'  :  1,
@@ -7205,6 +7249,13 @@ labels = {
     'Tau_2016'   :  "Tau 2016 data",
     'Tau_2017'   :  "Tau 2017 data",
     'Tau_2018'   :  "Tau 2018 data",
+    'Tau_2022A'  :  "Tau 20022A data",
+    'Tau_2022B'  :  "Tau 20022B data",
+    'Tau_2022C'  :  "Tau 20022C data",
+    'Tau_2022D'  :  "Tau 20022D data",
+    'Tau_2022E'  :  "Tau 20022E data",
+    'Tau_2022F'  :  "Tau 20022F data",
+    'Tau_2022B'  :  "Tau 20022G data",
 
     'ZeroBias_2015D'  :  "ZeroBias 2015D data",
     'ZeroBias_2016B'  :  "ZeroBias 2016B data",
@@ -9724,7 +9775,7 @@ charginoColors = {
 }
 for charginoMass in range(100, 1200, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
-    for charginoRelease in ['76X', '80X', '94X', '102X']:
+    for charginoRelease in ['76X', '80X', '94X', '102X', '124X']:
       charginoDataset = 'AMSB_chargino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
       nJobs.update     ({ charginoDataset : 99 })
       maxEvents.update ({ charginoDataset : -1 })
@@ -9734,7 +9785,7 @@ for charginoMass in range(100, 1200, 100):
 # Higgsino
 for charginoMass in range(100, 1000, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
-    for charginoRelease in ['94X', '102X']:
+    for charginoRelease in ['94X', '102X', '124X']:
       charginoDataset = 'Higgsino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
       nJobs.update     ({ charginoDataset : 99 })
       maxEvents.update ({ charginoDataset : -1 })

@@ -65,9 +65,17 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   EERecHitsTag_    =  cfg.getParameter<edm::InputTag>  ("EERecHits");
   HBHERecHitsTag_  =  cfg.getParameter<edm::InputTag>  ("HBHERecHits");
 
+
   EBRecHitsToken_    =  consumes<EBRecHitCollection>    (EBRecHitsTag_);
   EERecHitsToken_    =  consumes<EERecHitCollection>    (EERecHitsTag_);
   HBHERecHitsToken_  =  consumes<HBHERecHitCollection>  (HBHERecHitsTag_);
+
+#if AOD_SKIM
+  gt2dedxPixelTag_ =  cfg.getParameter<edm::InputTag>  ("dEdxDataPixel");
+  gt2dedxStripTag_ =  cfg.getParameter<edm::InputTag>  ("dEdxDataStrip");
+  gt2dedxPixelToken_    = consumes<edm::ValueMap<reco::DeDxData> > (gt2dedxPixelTag_);
+  gt2dedxStripToken_    = consumes<edm::ValueMap<reco::DeDxData> > (gt2dedxStripTag_);
+#endif
 
   gsfTracksToken_ = consumes<vector<reco::GsfTrack> > (cfg.getParameter<edm::InputTag> ("gsfTracks"));
 
@@ -174,6 +182,13 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   edm::Handle<HBHERecHitCollection> HBHERecHits;
   event.getByToken(HBHERecHitsToken_, HBHERecHits);
 
+#if AOD_SKIM
+  edm::Handle<edm::ValueMap<reco::DeDxData> > gt2dedxPixel;
+  event.getByToken(gt2dedxPixelToken_, gt2dedxPixel);
+  edm::Handle<edm::ValueMap<reco::DeDxData> > gt2dedxStrip;
+  event.getByToken(gt2dedxStripToken_, gt2dedxStrip);
+#endif
+
   edm::Handle<vector<reco::GsfTrack> > gsfTracks;
   event.getByToken (gsfTracksToken_, gsfTracks);
 
@@ -262,12 +277,28 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 // in the specific case of TYPE(tracks)==CandidateTracks (where DATA_FORMAT is xyz_CUSTOM)
 // and running over CandidateTracks ntuples, then generalTracks and RecHits may be available
 //#if DATA_FORMAT_IS_CUSTOM && !DATA_FORMAT_IS_2022
-#if DATA_FORMAT_IS_CUSTOM || (DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022) //mcarrigan
+#if DATA_FORMAT_IS_CUSTOM || (DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022 && AOD_SKIM) //mcarrigan
       // Calculate the associated calorimeter energy for the disappearing tracks search.
+
+      const CaloEnergy &caloE_0p5 = calculateCaloE(track, *EBRecHits, *EERecHits, *HBHERecHits, 0.5);
+      track.set_caloNewEMDRp5 (caloE_0p5.eEM);
+      track.set_caloNewHadDRp5 (caloE_0p5.eHad);
+
+      const CaloEnergy &caloE_0p3 = calculateCaloE(track, *EBRecHits, *EERecHits, *HBHERecHits, 0.3);
+      track.set_caloNewEMDRp3 (caloE_0p3.eEM);
+      track.set_caloNewHadDRp3 (caloE_0p3.eHad);
+
+      const CaloEnergy &caloE_0p2 = calculateCaloE(track, *EBRecHits, *EERecHits, *HBHERecHits, 0.2);
+      track.set_caloNewEMDRp2 (caloE_0p2.eEM);
+      track.set_caloNewHadDRp2 (caloE_0p2.eHad);
+
+      const CaloEnergy &caloE_0p1 = calculateCaloE(track, *EBRecHits, *EERecHits, *HBHERecHits, 0.1);
+      track.set_caloNewEMDRp1 (caloE_0p1.eEM);
+      track.set_caloNewHadDRp1 (caloE_0p1.eHad);
 
       // this could be removed; if CandidateTrackProdcuer sets these,
       // then these values need not be recalculated -- and RecHits can all be dropped
-      if (EBRecHits.isValid () && EERecHits.isValid () && HBHERecHits.isValid ())
+      /*if (EBRecHits.isValid () && EERecHits.isValid () && HBHERecHits.isValid ())
         {
           double eEM = 0;
           double dR = 0.5;
@@ -295,10 +326,11 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
           }
 
           track.set_caloNewEMDRp5(eEM);
+          std::cout << "In OSUGenericTrackProducer... setting the calo energy: " << eEM << std::endl;
           //track.set_caloNewHadDRp5(eHad);
-        }
+        }*/
 #endif
-#if DATA_FORMAT_IS_CUSTOM && !DATA_FORMAT_IS_2022
+#if DATA_FORMAT_IS_CUSTOM //&& !DATA_FORMAT_IS_2022
 
       // this is called only for ntuples with generalTracks explicitly kept (really just signal),
       // to re-calculate the track isolations calculated wrong when ntuples were produces (thus "old" vs not-old)
@@ -333,8 +365,8 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   pl_.reset ();
 }
 
-template<class T> bool 
-OSUGenericTrackProducer<T>::insideCone(TYPE(tracks)& candTrack, const DetId& id, const double dR)
+template<class T> const bool 
+OSUGenericTrackProducer<T>::insideCone(TYPE(tracks)& candTrack, const DetId& id, const double dR) const
 {
    GlobalPoint idPosition = getPosition(id);
    if (idPosition.mag()<0.01) return false;
@@ -342,8 +374,8 @@ OSUGenericTrackProducer<T>::insideCone(TYPE(tracks)& candTrack, const DetId& id,
    return deltaR(candTrack, idPositionRoot) < dR;
 }
 
-template<class T> GlobalPoint 
-OSUGenericTrackProducer<T>::getPosition( const DetId& id)
+template<class T> const GlobalPoint 
+OSUGenericTrackProducer<T>::getPosition( const DetId& id) const
 {
    if ( ! caloGeometry_.isValid() ||
         ! caloGeometry_->getSubdetectorGeometry(id) ||
@@ -558,7 +590,7 @@ OSUGenericTrackProducer<T>::getChannelStatusMaps ()
 }
 
 template<class T> const double 
-OSUGenericTrackProducer<T>::getTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const bool noFakes, const double outerDeltaR, const double innerDeltaR) const
+OSUGenericTrackProducer<T>::getTrackIsolation (TYPE(tracks)& track, const vector<reco::Track> &tracks, const bool noPU, const bool noFakes, const double outerDeltaR, const double innerDeltaR) const
 {
   double sumPt = 0.0;
 
@@ -570,8 +602,14 @@ OSUGenericTrackProducer<T>::getTrackIsolation (const reco::Track &track, const v
                       t.hitPattern().trackerLayersWithMeasurement() < 5 ||
                       fabs(t.d0() / t.d0Error()) > 5.0))
         continue;
+#if DATA_FORMAT_IS_2022
+      if (noPU && track.dz() > 3.0 * hypot(track.dzError(), t.dzError()))
+        continue;
+#else
       if (noPU && track.dz(t.vertex()) > 3.0 * hypot(track.dzError(), t.dzError()))
         continue;
+#endif
+
 
       double dR = deltaR (track, t);
       if (dR < outerDeltaR && dR > innerDeltaR)
@@ -583,17 +621,25 @@ OSUGenericTrackProducer<T>::getTrackIsolation (const reco::Track &track, const v
 
 // this is actually a fix of a bugged function, normally it would be track. instead of t.
 template<class T> const double 
-OSUGenericTrackProducer<T>::getOldTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
+OSUGenericTrackProducer<T>::getOldTrackIsolation (TYPE(tracks)& track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
 {
   double sumPt = 0.0;
 
   for (const auto &t : tracks)
     {
+#ifdef DATA_FORMAT_IS_2022
+      if (noPU && (t.normalizedChi2() > 20.0 ||
+                   t.hitPattern().pixelLayersWithMeasurement() < 2 ||
+                   t.hitPattern().trackerLayersWithMeasurement() < 5 ||
+                   fabs(t.d0() / t.d0Error()) > 5.0 ||
+                   track.dz() > 3.0 * hypot(track.dzError(), t.dzError())))
+#else
       if (noPU && (t.normalizedChi2() > 20.0 ||
                    t.hitPattern().pixelLayersWithMeasurement() < 2 ||
                    t.hitPattern().trackerLayersWithMeasurement() < 5 ||
                    fabs(t.d0() / t.d0Error()) > 5.0 ||
                    track.dz(t.vertex()) > 3.0 * hypot(track.dzError(), t.dzError())))
+#endif
         continue;
 
       double dR = deltaR (track, t);
@@ -602,6 +648,29 @@ OSUGenericTrackProducer<T>::getOldTrackIsolation (const reco::Track &track, cons
     }
 
   return sumPt;
+}
+
+template<class T> const CaloEnergy
+OSUGenericTrackProducer<T>::calculateCaloE (TYPE(tracks)& track, const EBRecHitCollection &EBRecHits, const EERecHitCollection &EERecHits, const HBHERecHitCollection &HBHERecHits, const double dR) const
+{
+  double eEM = 0;
+  for (const auto &hit : EBRecHits) {
+    if (insideCone(track, hit.detid(), dR)) {
+      eEM += hit.energy();
+    }
+  }
+  for (const auto &hit : EERecHits) {
+    if (insideCone(track, hit.detid(), dR)) {
+      eEM += hit.energy();
+    }
+  }
+
+  double eHad = 0;
+  for (const auto &hit : HBHERecHits)
+    if (insideCone(track, hit.detid(), dR))
+      eHad += hit.energy();
+
+  return {eEM, eHad};
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
