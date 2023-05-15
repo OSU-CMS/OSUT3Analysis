@@ -447,7 +447,7 @@ def getPdgBins (categories):
     for category in categories:
         category = str (category)
         if not hasattr (pdgId, category):
-            print "WARNING: unknown category \"" + category + "\""
+            print("WARNING: unknown category \"" + category + "\"")
             continue
         ids = ids + getattr (pdgId, category)
     ids = sorted (list (set (ids)))

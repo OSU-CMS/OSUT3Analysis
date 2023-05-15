@@ -1,7 +1,7 @@
 #ifndef PHOTON_PRODUCER
 #define PHOTON_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -13,7 +13,7 @@
 #include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
 #endif
 
-class OSUPhotonProducer : public edm::EDProducer
+class OSUPhotonProducer : public edm::stream::EDProducer<>
 {
   public:
     OSUPhotonProducer (const edm::ParameterSet &);

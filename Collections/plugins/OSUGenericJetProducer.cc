@@ -5,21 +5,16 @@
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
-#if DATA_FORMAT_FROM_MINIAOD
-#include "JetMETCorrections/Modules/interface/JetResolution.h"
-#include "CondFormats/DataRecord/interface/JetResolutionRcd.h"
-#include "CondFormats/DataRecord/interface/JetResolutionScaleFactorRcd.h"
-#include "TRandom3.h"
-#endif
-
 template<class T>
 OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
+  jetCorrectionPayloadName_ (cfg.getParameter<string> ("jetCorrectionPayload")),
   jetResolutionPayload_ (cfg.getParameter<string> ("jetResolutionPayload")),
   jetResSFPayload_      (cfg.getParameter<string> ("jetResSFPayload")),
   jetResFromGlobalTag_  (cfg.getParameter<bool> ("jetResFromGlobalTag")),
   jetResNewPrescription_ (cfg.getParameter<bool> ("jetResNewPrescription")),
+
   cfg_         (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
@@ -40,6 +35,13 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   rhoToken_ = consumes<double> (rho_);
   primaryvertexsToken_ = consumes<vector<TYPE(primaryvertexs)> > (primaryvertexs_);
 #endif
+
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(12,4,0)
+  JetCorrParToken_ = esConsumes(edm::ESInputTag("", jetCorrectionPayloadName_));
+  jetResolutionToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs_pt"));
+  jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs"));
+#endif
+
 }
 
 template<class T> OSUGenericJetProducer<T>::~OSUGenericJetProducer ()
@@ -58,14 +60,18 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
 #if DATA_FORMAT_FROM_MINIAOD
   // get JetCorrector parameters to get the jec uncertainty
-  edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
-  setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
-  JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"];
+  //edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
+  //setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
+  const JetCorrectorParametersCollection &JetCorParColl = setup.getData(JetCorrParToken_);
+
+  JetCorrectorParameters const & JetCorPar = JetCorParColl["Uncertainty"];
   JetCorrectionUncertainty * jecUnc = new JetCorrectionUncertainty(JetCorPar);
 
   // Get jet energy resolution and scale factors
   // These are in the Global Tag for 80X but not for 76X,
   // Configuration/python/collectionProducer_cff.py looks at $CMSSW_BASE to set this choice
+
+#if CMSSW_VERSION_CODE < CMSSW_VERSION(12,4,0)
   JME::JetResolution jetEnergyResolution = (jetResFromGlobalTag_) ?
     JME::JetResolution::get(setup, "AK4PFchs_pt") :
     JME::JetResolution(jetResolutionPayload_);
@@ -73,6 +79,11 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   JME::JetResolutionScaleFactor jetEnergyResolutionSFs = (jetResFromGlobalTag_) ?
     JME::JetResolutionScaleFactor::get(setup, "AK4PFchs") :
     JME::JetResolutionScaleFactor(jetResSFPayload_);
+#else
+  // Un-verified: Modification made in CMSSW for Jet Energy Resolution, DB file used: https://github.com/cms-sw/cmssw/tree/CMSSW_12_4_X/JetMETCorrections/Modules/test (June 14, 2022)
+  JME::JetResolution jetEnergyResolution = JME::JetResolution::get(setup, jetResolutionToken_);
+  JME::JetResolutionScaleFactor jetEnergyResolutionSFs = JME::JetResolutionScaleFactor::get(setup, jetResolutionSFToken_);
+#endif
 
   JME::JetParameters jetResParams;
 

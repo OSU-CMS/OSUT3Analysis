@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import socket
 
@@ -30,4 +30,5 @@ else:
         8   :  {'Log'                    :  'condor_$(Process).log\n'},
         9   :  {'Transfer_Input_files'   :  ''},
         10  :  {'Transfer_Output_files'  :  ''},
+        11  :  {'Requirements'           :  ''},
     }

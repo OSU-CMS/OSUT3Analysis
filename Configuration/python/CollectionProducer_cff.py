@@ -140,6 +140,9 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VE
     collectionProducer.jets.jetResFromGlobalTag = cms.bool(True)
     collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_"):
+    collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFchs")
+
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
 
 collectionProducer.bjets = copy.deepcopy (collectionProducer.jets)
@@ -292,8 +295,8 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     maxDeltaRForGsfTrackMatching = cms.double (0.2), # if cutting on dRToMatchedGsfTrack, must set this to be greater than the cut threshold
 
     # these are only relavent for the disappearing tracks analysis
-    candidateTracks = cms.InputTag ("candidateTrackProducer", ""),
-    maxDeltaRForCandidateTrackMatching = cms.double (0.2), # if cutting on dRToMatchedCandidateTrack, must set this to be greater than the cut threshold
+    #candidateTracks = cms.InputTag ("candidateTrackProducer", ""),
+    #maxDeltaRForCandidateTrackMatching = cms.double (0.2), # if cutting on dRToMatchedCandidateTrack, must set this to be greater than the cut threshold
     maxDeltaRForIsolatedTrackMatching = cms.double (0.2), # if cutting on dRToMatchedIsolatedTrack, must set this to be greater than the cut threshold
 
     # The following three parameters are used to correct the missing outer hits

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Script to extract the ratio histogram from a given canvas, that was produced with makePlots.py or makeEfficiencyPlots.py
 # Ratio histogram is saved in specified output file.

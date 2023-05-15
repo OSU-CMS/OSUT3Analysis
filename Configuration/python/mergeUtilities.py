@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import py_compile
 import imp
 import sys
@@ -11,6 +11,7 @@ import shutil
 import math
 import socket
 import tempfile
+import importlib.util
 from threading import Thread, Lock, Semaphore
 from multiprocessing import cpu_count
 from OSUT3Analysis.Configuration.configurationOptions import *
@@ -29,28 +30,28 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
     SubmitFile = open(Directory + '/condorMerging.sub','w')
     wroteCPUs = False
     for argument in sorted(currentCondorSubArgumentsSet):
-        if currentCondorSubArgumentsSet[argument].has_key('Executable') and currentCondorSubArgumentsSet[argument]['Executable'] == "":
+        if 'Executable' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = merge.py\n')
-        elif currentCondorSubArgumentsSet[argument].has_key('Arguments') and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
+        elif 'Arguments' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
             SubmitFile.write('Arguments = $(Process) ' + '\n\n')
-        elif currentCondorSubArgumentsSet[argument].has_key('Transfer_Input_files') and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
+        elif 'Transfer_Input_files' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
              datasetInfoString = ''
              for dataset in split_datasets:
                  oneDataset = './' + dataset + '/datasetInfo_' + dataset +'_cfg.py'
                  if os.path.exists(os.path.join(Directory, oneDataset)):
                      datasetInfoString = datasetInfoString + oneDataset + ","
                  else:
-                     print "ERROR: ", os.path.join(Directory, oneDataset), "does not exist.  Will proceed to merge other datasets."
+                     print("ERROR: ", os.path.join(Directory, oneDataset), "does not exist.  Will proceed to merge other datasets.")
              SubmitFile.write('Transfer_Input_files = merge.py,' + datasetInfoString + '\n')
-        elif len (currentCondorSubArgumentsSet[argument].keys ()) > 0 and currentCondorSubArgumentsSet[argument].keys ()[0].lower () == "request_cpus":
+        elif len (list(currentCondorSubArgumentsSet[argument].keys ())) > 0 and list(currentCondorSubArgumentsSet[argument].keys ())[0].lower () == "request_cpus":
             SubmitFile.write ('request_cpus = ' + str (NTHREADS_FOR_BATCH_MERGING) + '\n') # explicitly request 8 CPU cores
             wroteCPUs = True
-        elif currentCondorSubArgumentsSet[argument].has_key('Queue'):
+        elif 'Queue' in currentCondorSubArgumentsSet[argument]:
             if not wroteCPUs:
                 SubmitFile.write ('request_cpus = ' + str (NTHREADS_FOR_BATCH_MERGING) + '\n') # explicitly request 8 CPU cores
             SubmitFile.write('Queue ' + str(len(split_datasets)) +'\n')
         else:
-            SubmitFile.write(currentCondorSubArgumentsSet[argument].keys()[0] + ' = ' + currentCondorSubArgumentsSet[argument].values()[0] + '\n')
+            SubmitFile.write(list(currentCondorSubArgumentsSet[argument].keys())[0] + ' = ' + list(currentCondorSubArgumentsSet[argument].values())[0] + '\n')
     SubmitFile.close()
 
 ###############################################################################
@@ -58,7 +59,7 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
 ###############################################################################
 def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLumi, optional_dict_ntupleEff):
     MergeScript = open(Directory + '/merge.py','w')
-    MergeScript.write('#!/usr/bin/env python\n')
+    MergeScript.write('#!/usr/bin/env python3\n')
     MergeScript.write('from OSUT3Analysis.Configuration.mergeUtilities import *\n')
     MergeScript.write('datasets = [\n')
     for dataset in split_datasets:
@@ -68,9 +69,9 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLu
     MergeScript.write('dataset = datasets[Index]\n\n')
     MergeScript.write('IntLumi = ' + str(IntLumi) + '\n')
     MergeScript.write('mergeOneDataset(dataset, IntLumi, os.getcwd(), "", ' + str (optional_dict_ntupleEff) + ', ' + str (NTHREADS_FOR_BATCH_MERGING) + ')\n') # use 8 CPU cores by default
-    MergeScript.write("print 'Finished merging dataset ' + dataset\n")
+    MergeScript.write("print( 'Finished merging dataset ' + dataset\n)")
     MergeScript.close()
-    os.chmod (Directory + '/merge.py', 0755)
+    os.chmod (Directory + '/merge.py', 0o755)
 
 ###############################################################################
 #                       Get the exit code of condor jobs.                     #
@@ -105,7 +106,7 @@ def GetNumberOfEvents(FilesSet):
     for histFile in FilesSet:
         ScoutFile = TFile(histFile)
         if ScoutFile.IsZombie():
-            print histFile + " is a bad root file."
+            print(histFile + " is a bad root file.")
             FilesSet.remove(histFile)
             continue
         randomChannelDirectory = ""
@@ -115,16 +116,16 @@ def GetNumberOfEvents(FilesSet):
                 continue
             randomChannelDirectory = key.GetName()
             channelName = randomChannelDirectory[0:len(randomChannelDirectory)-14]
-            if not NumberOfEvents['SkimNumber'].has_key(channelName):
+            if channelName not in NumberOfEvents['SkimNumber']:
                 NumberOfEvents['SkimNumber'][channelName] = 0
             OriginalCounterObj = ScoutFile.Get(randomChannelDirectory + "/eventCounter")
             SkimCounterObj = ScoutFile.Get(randomChannelDirectory + "/cutFlow")
             TotalNumberTmp = 0
             if not OriginalCounterObj:
-                print "Could not find eventCounter histogram in " + str(histFile) + " !"
+                print("Could not find eventCounter histogram in " + str(histFile) + " !")
                 continue
             elif not SkimCounterObj:
-                print "Could not find cutFlow histogram in " + str(histFile) + " !"
+                print("Could not find cutFlow histogram in " + str(histFile) + " !")
             else:
                 OriginalCounter = OriginalCounterObj.Clone()
                 OriginalCounter.SetDirectory(0)
@@ -148,7 +149,7 @@ def MakeFilesForSkimDirectoryEOS(Member, Directory, DirectoryOut, TotalNumber, S
     try:
         subprocess.check_output(['xrdcp', '-f', outfile, xrootdDestination])
     except subprocess.CalledProcessError as e:
-        print 'Failed to copy OriginalNumberOfEvents.txt:', e
+        print('Failed to copy OriginalNumberOfEvents.txt:', e)
     outfile = os.path.join(tmpDir, 'SkimNumberOfEvents.txt')
     fout = open(outfile, 'w')
     fout.write(str(SkimNumber[Member]) + '\n')
@@ -156,13 +157,13 @@ def MakeFilesForSkimDirectoryEOS(Member, Directory, DirectoryOut, TotalNumber, S
     try:
         subprocess.check_output(['xrdcp', '-f', outfile, xrootdDestination])
     except subprocess.CalledProcessError as e:
-        print 'Failed to copy SkimNumber.txt:', e
+        print('Failed to copy SkimNumber.txt:', e)
     shutil.rmtree(tmpDir)
 
     listOfSkimFiles = subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov', 'ls', os.path.realpath(DirectoryOut + '/' + Member)])
-    listOfSkimFiles = [x for x in listOfSkimFiles.split('\n') if x.endswith('.root')]
+    listOfSkimFiles = [x for x in listOfSkimFiles.split(b'\n') if x.endswith(b'.root')]
     for skimFile in listOfSkimFiles:
-        index = os.path.basename(skimFile).split('.')[0].split('_')[1]
+        index = os.path.basename(skimFile).split(b'.')[0].split(b'_')[1]
         if index in BadIndices:
             continue
         GetSkimInputTags(skimFile, xrootdDestination)
@@ -170,8 +171,10 @@ def MakeFilesForSkimDirectoryEOS(Member, Directory, DirectoryOut, TotalNumber, S
 
 def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove, lpcCAF = False):
     for Member in os.listdir(Directory):
+        if Member.startswith("__"):
+            continue
         if os.path.isfile(os.path.join(Directory, Member)):
-            continue;
+            continue
         try:
             os.makedirs (DirectoryOut + '/' + Member)
         except OSError:
@@ -213,7 +216,7 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
             try:
                 subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov', 'rm', skimFile[len('root://cmseos.fnal.gov/'):]])
             except subprocess.CalledProcessError as e:
-                print 'Failed to remove file', skimFile, ':', e
+                print('Failed to remove file', skimFile, ':', e)
         else:
             os.unlink(skimFile)
 
@@ -221,7 +224,7 @@ def MakeFilesForSkimDirectory(Directory, DirectoryOut, TotalNumber, SkimNumber, 
 #           Produce a pickle file containing the skim input tags.             #
 ###############################################################################
 def GetSkimInputTags(File, xrootdDestination = ""):
-    print "Getting skim input tags..."
+    print("Getting skim input tags...")
     if xrootdDestination != "":
         eventContent = subprocess.check_output (["edmDumpEventContent", "--all", "root://cmseos.fnal.gov/" + File[len('/eos/uscms'):]])
     else:
@@ -232,14 +235,14 @@ def GetSkimInputTags(File, xrootdDestination = ""):
 
     # First get all of the collections in the output skim file.
     for line in eventContent.splitlines ():
-        if line.find ("----------") == 0:  # all of the collections will be after a line containing "---------"
+        if line.find (b'----------') == 0:  # all of the collections will be after a line containing "---------"
             parsing = True
             continue
         if not parsing:
             continue
         splitLine = line.split ()
         cppTypes.append (splitLine[0])
-        inputTags[splitLine[0]] = cms.InputTag (splitLine[1][1:-1], splitLine[2][1:-1], splitLine[3][1:-1])
+        inputTags[splitLine[0]] = cms.InputTag (splitLine[1][1:-1].decode("utf-8"), splitLine[2][1:-1].decode("utf-8"), splitLine[3][1:-1].decode("utf-8"))
 
     collectionTypes = subprocess.check_output (["getCollectionType"] + cppTypes)
     # Save only the collections for which there is a valid type, and only framework collections
@@ -259,18 +262,20 @@ def GetSkimInputTags(File, xrootdDestination = ""):
         tmpDir = tempfile.mkdtemp()
         outfile = os.path.join(tmpDir, 'SkimInputTags.pkl')
         fout = open (outfile, 'w')
-        pickle.dump (inputTags, fout)
+        dumpedString = pickle.dumps (inputTags).decode('latin-1')
+        fout.write(dumpedString)
         fout.close()
         try:
             subprocess.check_output(['xrdcp', '-f', outfile, xrootdDestination])
         except subprocess.CalledProcessError as e:
-            print 'Failed to copy SkimInputTags.pkl:', e
+            print('Failed to copy SkimInputTags.pkl:', e)
         shutil.rmtree(tmpDir)
     else:
         if os.path.exists("SkimInputTags.pkl"):
             os.remove("SkimInputTags.pkl")
         fout = open ("SkimInputTags.pkl", "w")
-        pickle.dump (inputTags, fout)
+        dumpedString = pickle.dumps (inputTags).decode('latin-1')
+        fout.write(dumpedString)
         fout.close ()
 
 ###############################################################################
@@ -305,7 +310,7 @@ def MakeResubmissionScript(badIndices, originalSubmissionScript):
     for index in badIndices:
         resubScript.write ("rm -f condor_" + str(index) + ".*\n")
     resubScript.close ()
-    os.chmod ("condor_resubmit.sh", 0755)
+    os.chmod ("condor_resubmit.sh", 0o755)
 ###############################################################################
 #                       Determine whether a skim file is valid.               #
 ###############################################################################
@@ -340,9 +345,9 @@ def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbo
 
     semaphore.acquire ()
     if verbose:
-        print "Executing: ", cmd
+        print("Executing: ", cmd)
     try:
-        localThreadLog += subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+        localThreadLog += str(subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT))
     except subprocess.CalledProcessError as e:
         localThreadLog += e.output
     semaphore.release ()
@@ -365,13 +370,16 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
         nThreadsActive = min(4, cpu_count() + 1)
 
     os.chdir(CondorDir)
-    directory = CondorDir + '/' + dataSet
+    if os.path.exists(CondorDir + '/' + dataSet):
+        directory = CondorDir + '/' + dataSet
+    else:
+        directory = CondorDir
     if not os.path.exists(directory):
-        print directory + " does not exist, will skip it and continue!"
+        print(directory + " does not exist, will skip it and continue!")
         return
     if not OutputDir:
         OutputDir = CondorDir
-    directoryOut = OutputDir + "/" + dataSet  # Allow writing output to a different directory
+    directoryOut = OutputDir # Allow writing output to a different directory
     try:
         os.makedirs (directoryOut)
     except OSError:
@@ -379,18 +387,18 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
     log = "....................Merging dataset " + dataSet + " ....................\n"
     os.chdir(directory)
     if verbose:
-        print "Moved to directory: ", directory
+        print("Moved to directory: ", directory)
     ReturnValues = []
     StdErrErrors = []
     if os.path.islink(directory + '/hist.root'):
         os.unlink (directory + '/hist.root')
     # check to see if any jobs ran
     if not len(glob.glob('condor_*.log')):
-        print "no jobs were run for dataset '" + dataSet + "', will skip it and continue!"
+        print("no jobs were run for dataset '" + dataSet + "', will skip it and continue!")
         return
     LogFiles = os.popen('ls condor_*.log').readlines()
     if verbose:
-        print "parsing log files to find good jobs"
+        print("parsing log files to find good jobs")
 
     for i in range(0,len(LogFiles)):
         ReturnValues.append('condor_' + str(i) + '.log' + str(os.popen('grep -E "return value|condor_rm|Abnormal termination" condor_' + str(i)  + '.log | tail -1').readline().rstrip('\n')))
@@ -407,20 +415,21 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
         if 'was not found or could not be opened, and will be skipped.' in open(errFile).read():
             BadIndices.append(index)
             if verbose:
-                print "  job" + ' ' * (4-len(str(index))) + index + " had bad/skipped input file"
+                print("  job" + ' ' * (4-len(str(index))) + index + " had bad/skipped input file")
 
     # check for any corrupted skim output files
     skimDirs = [member for member in  os.listdir(os.getcwd()) if not os.path.isfile(member)]
     FilesToRemove = []
     for channel in skimDirs:
         if lpcCAF and os.path.realpath(channel).startswith('/eos/uscms'):
-            print 'Testing skim files in: root://cmseos.fnal.gov/' + os.path.realpath(channel)
+            print('Testing skim files in: root://cmseos.fnal.gov/' + os.path.realpath(channel))
             listOfSkimFiles = subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov', 'ls', os.path.realpath(channel)])
-            listOfSkimFiles = ['root://cmseos.fnal.gov/' + x for x in listOfSkimFiles.split('\n') if x.endswith('.root')]
+            listOfSkimFiles = ["root://cmseos.fnal.gov/" + x.decode("utf-8") for x in listOfSkimFiles.split(b'\n') if x.endswith(b'.root')]
         else:
-            print 'Testing skim files in:', os.path.realpath(channel)
+            print('Testing skim files in:', os.path.realpath(channel))
             listOfSkimFiles = glob.glob(channel + '/*.root')
         for skimFile in listOfSkimFiles:
+            print(skimFile)
             # don't check for good skims of jobs we already know are bad
             index = os.path.basename(skimFile).split('.')[0].split('_')[1]
             if index in BadIndices:
@@ -429,7 +438,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
             if not Valid:
                 BadIndices.append(index)
                 if verbose:
-                    print "  job" + ' ' * (4-len(str(index))) + index + " had bad skim output file"
+                    print("  job" + ' ' * (4-len(str(index))) + index + " had bad skim output file")
             if InvalidOrEmpty:
                 FilesToRemove.append (skimFile)
 
@@ -461,15 +470,21 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
     for i in GoodIndices:
         GoodRootFiles.append(GetGoodRootFiles(i))
     if not len(GoodRootFiles):
-        print "For dataset", dataSet, ": Unfortunately there are no good root files to merge!\n"
+        print("For dataset", dataSet, ": Unfortunately there are no good root files to merge!\n")
         return
-    exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
+    print(os.getcwd())
+
+    datasetSpec = importlib.util.spec_from_file_location('datasetInfo_' + dataSet +'_cfg', 'datasetInfo_' + dataSet +'_cfg.py')
+    datasetInfo = importlib.util.module_from_spec(datasetSpec)
+    sys.modules['datasetInfo_' + dataSet +'_cfg'] = datasetInfo
+    datasetSpec.loader.exec_module(datasetInfo)
+    #exec('import datasetInfo_' + dataSet + '_cfg as datasetInfo')
 
     NumberOfEvents = GetNumberOfEvents(GoodRootFiles)
     TotalNumber = NumberOfEvents['TotalNumber']
     SkimNumber = NumberOfEvents['SkimNumber']
     if verbose:
-        print "TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber
+        print("TotalNumber =", TotalNumber, ", SkimNumber =", SkimNumber)
     if not TotalNumber:
         MakeFilesForSkimDirectory(directory, directoryOut, TotalNumber, SkimNumber, BadIndices, FilesToRemove, lpcCAF)
         return
@@ -525,9 +540,10 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
         # merge the intermediate files produced by the threads above
         cmd = 'mergeTFileServiceHistograms -i ' + " ".join (outputFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root'
         if verbose:
-            print "Executing: ", cmd
+            print("Executing: ", cmd)
         try:
-            log += subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+            msg = subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+            log += msg.decode("utf-8")
         except subprocess.CalledProcessError as e:
             log += e.output
     
@@ -535,7 +551,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
         for outputFile in outputFiles:
             os.unlink (outputFile)
     else:
-        print '\nNot merging dataset histograms due to --skipMerging flag...\n'
+        print('\nNot merging dataset histograms due to --skipMerging flag...\n')
 
     log += "\nFinished merging dataset " + dataSet + ":\n"
     log += "    "+ str(len(GoodRootFiles)) + " good files are used for merging out of " + str(len(LogFiles)) + " submitted jobs.\n"

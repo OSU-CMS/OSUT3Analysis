@@ -1,7 +1,8 @@
 #ifndef JET_PRODUCER
 #define JET_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
+#include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/ESHandle.h"
@@ -15,8 +16,15 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 
+#if DATA_FORMAT_FROM_MINIAOD
+#include "JetMETCorrections/Modules/interface/JetResolution.h"
+#include "CondFormats/DataRecord/interface/JetResolutionRcd.h"
+#include "CondFormats/DataRecord/interface/JetResolutionScaleFactorRcd.h"
+#include "TRandom3.h"
+#endif
+
 template<class T>
-class OSUGenericJetProducer : public edm::EDProducer
+class OSUGenericJetProducer : public edm::stream::EDProducer<>
 {
  public:
   OSUGenericJetProducer (const edm::ParameterSet &);
@@ -36,6 +44,7 @@ class OSUGenericJetProducer : public edm::EDProducer
   edm::InputTag      rho_;
   edm::InputTag      primaryvertexs_;
 
+  string jetCorrectionPayloadName_;
   string jetResolutionPayload_;
   string jetResSFPayload_;
   bool jetResFromGlobalTag_;
@@ -48,6 +57,12 @@ class OSUGenericJetProducer : public edm::EDProducer
   edm::EDGetTokenT<vector<TYPE(genjets)> > genjetsToken_;
   edm::EDGetTokenT<double> rhoToken_;
   edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexsToken_;
+  edm::ESGetToken<JetCorrectorParametersCollection, JetCorrectionsRecord> JetCorrParToken_;
+
+  #if CMSSW_VERSION_CODE >= CMSSW_VERSION(12,4,0)
+  JME::JetResolution::Token  jetResolutionToken_;
+  JME::JetResolutionScaleFactor::Token jetResolutionSFToken_;
+  #endif
 
   edm::ParameterSet  cfg_;
   ////////////////////////////////////////////////////////////////////////////

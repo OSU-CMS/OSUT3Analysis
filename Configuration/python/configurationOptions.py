@@ -1,6 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
+import importlib
+
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_"):
+    samples = importlib.import_module("DisappTrks.StandardAnalysis.miniAOD_124X_Samples")
+    dataset_names = getattr(samples, "dataset_names")
+    run3_skim_sibling_datasets = getattr(samples, "run3_skim_sibling_datasets")
+
 
 config_file = "standardConfig_cfg.py"
 
@@ -35,6 +42,13 @@ datasets = [
    'Tau_2018B',
    'Tau_2018C',
    'Tau_2018D',
+   'Tau_2022A', 
+   'Tau_2022B',
+   'Tau_2022C',
+   'Tau_2022D',
+   'Tau_2022E',
+   'Tau_2022F',
+   'Tau_2022G',   
    'ZeroBias_2015',
    'ZeroBias_2015D',
    'ZeroBias_2016',
@@ -67,6 +81,14 @@ datasets = [
    'SingleMu_2018B',
    'SingleMu_2018C',
    'SingleMu_2018D',
+   'SingleMu_2022',
+   'SingleMu_2022A',
+   'SingleMu_2022B',
+   'SingleMu_2022C',
+   'SingleMu_2022D',
+   'SingleMu_2022E',
+   'SingleMu_2022F',
+   'SingleMu_2022G',
    'SingleEle_2015',
    'SingleEle_2015D',
    'SingleEle_2016B',
@@ -113,6 +135,13 @@ datasets = [
    'EGamma_2018B',
    'EGamma_2018C',
    'EGamma_2018D',
+   'EGamma_2022A',
+   'EGamma_2022B',
+   'EGamma_2022C',
+   'EGamma_2022D',
+   'EGamma_2022E',
+   'EGamma_2022F',
+   'EGamma_2022G',
    'DoubleEG_2016_2017_2018',
    'DoubleMu_2015',
    'DoubleMu_2015D',
@@ -182,6 +211,13 @@ datasets = [
    'MET_2018B',
    'MET_2018C',
    'MET_2018D',
+   'MET_2022A',
+   'MET_2022B',
+   'MET_2022C',
+   'MET_2022D',
+   'MET_2022E',
+   'MET_2022F',
+   'MET_2022G',
    'JetHT_2018A',
    'JetHT_2018B',
    'JetHT_2018C',
@@ -493,6 +529,8 @@ datasets = [
   'HTo4Mu125_20_130mm',
   'HTo4Mu125_20_1300mm',
 
+  'AMSB_chargino_700GeV_100cm_124X',
+
   'Cosmics',
 
   #Sum of all backgrounds
@@ -659,6 +697,15 @@ composite_dataset_definitions = {
       'Tau_2018C',
       'Tau_2018D',
     ],
+    'Tau_2022' : [
+        'Tau_2022A',
+        'Tau_2022B',
+        'Tau_2022C',
+        'Tau_2022D',
+        'Tau_2022E',
+        'Tau_2022F',
+        'Tau_2022G',
+    ],
     'ZeroBias_2015' : [
         'ZeroBias_2015B',
         'ZeroBias_2015C',
@@ -703,6 +750,16 @@ composite_dataset_definitions = {
       'SingleMu_2018B',
       'SingleMu_2018C',
       'SingleMu_2018D',
+    ],
+    'SingleMu_2022' : [
+      'SingleMu_2022A',
+      'SingleMu_2022B',
+      'SingleMu_2022C',
+      'SingleMu_2022D',
+      'SingleMu_2022E',
+      'SingleMu_2022F',
+      'SingleMu_2022G',
+
     ],
     'SingleEle_2015' : [
         'SingleEle_2015B',
@@ -769,6 +826,15 @@ composite_dataset_definitions = {
         'EGamma_2018B',
         'EGamma_2018C',
         'EGamma_2018D',
+    ],
+    'EGamma_2022' : [
+        'EGamma_2022A',
+        'EGamma_2022B',
+        'EGamma_2022C',
+        'EGamma_2022D',
+        'EGamma_2022E',
+        'EGamma_2022F',
+        'EGamma_2022G',
     ],
     'DoubleMu_2015' : [
         'DoubleMu_2015B',
@@ -1239,6 +1305,15 @@ composite_dataset_definitions = {
       'MET_2018C',
       'MET_2018D',
     ],
+    'MET_2022' : [
+      'MET_2022A',
+      'MET_2022B',
+      'MET_2022C',
+      'MET_2022D',
+      'MET_2022E',
+      'MET_2022F',
+      'MET_2022G',
+    ],
     'JetHT_2018' : [
       'JetHT_2018A',
       'JetHT_2018B',
@@ -1442,6 +1517,13 @@ nJobs = {
     'MET_2018B' : 295,
     'MET_2018C' : 315,
     'MET_2018D' : 1625,
+    'MET_2022A' : 10,
+    'MET_2022B' : 10,
+    'MET_2022C' : 170,
+    'MET_2022D' : 35,
+    'MET_2022E' : 147,
+    'MET_2022F' : 516,
+    'MET_2022G' : 85,
 
   'JetHT_2018A' : 2852,
   'JetHT_2018B' : 1448,
@@ -1546,6 +1628,13 @@ nJobs = {
     'Tau_2018B'  :  1000,
     'Tau_2018C'  :  1000,
     'Tau_2018D'  :  1000,
+    'Tau_2022A'  :  1000,
+    'Tau_2022B'  :  1000,
+    'Tau_2022C'  :  1000,
+    'Tau_2022D'  :  1000,
+    'Tau_2022E'  :  1000,
+    'Tau_2022F'  :  1000,
+    'Tau_2022G'  :  1000,
 
     'ZeroBias_2015D'  :  1000,
     'ZeroBias_2016B'  :  1000,
@@ -1574,6 +1663,13 @@ nJobs = {
     'SingleMu_2018B'   : 1200,
     'SingleMu_2018C'   : 1101,
     'SingleMu_2018D'   : 5028,
+    'SingleMu_2022A'   : 10,
+    'SingleMu_2022B'   : 540,
+    'SingleMu_2022C'   : 2020,
+    'SingleMu_2022D'   : 1000,  #FIXME These numbers for single muon are not just guesses
+    'SingleMu_2022E'   : 1000,
+    'SingleMu_2022F'   : 1000,
+    'SingleMu_2022G'   : 1000,
 
     # set number of jobs to correpond to roughly 100k events/job
     'SingleEle_2015D' : 1000,
@@ -1618,6 +1714,14 @@ nJobs = {
     'EGamma_2018B' : 1540,
     'EGamma_2018C' : 1480,
     'EGamma_2018D' : 7390,
+
+    'EGamma_2022A' : 6,
+    'EGamma_2022B' : 112,
+    'EGamma_2022C' : 264,
+    'EGamma_2022D' : 33,
+    'EGamma_2022E' : 152,
+    'EGamma_2022F' : 1,
+    'EGamma_2022G' : 77,
 
     # set number of jobs to correpond to roughly 100k events/job
     'DoubleMu_2015B'  : 40,
@@ -2684,6 +2788,7 @@ nJobs = {
   'HTo4Mu125_20_130mm' : 15,
   'HTo4Mu125_20_1300mm' : 15,
 
+  'AMSB_chargino_700GeV_100cm_124X' : 9999,
   'Cosmics': 999,
 }
 
@@ -2772,6 +2877,13 @@ maxEvents = {
     'MET_2018B' : -1,
     'MET_2018C' : -1,
     'MET_2018D' : -1,
+    'MET_2022A' : -1,
+    'MET_2022B' : -1,
+    'MET_2022C' : -1,
+    'MET_2022D' : -1,
+    'MET_2022E' : -1,
+    'MET_2022F' : -1,
+    'MET_2022G' : -1,
 
     'JetHT_2018A' : -1,
     'JetHT_2018B' : -1,
@@ -2877,6 +2989,13 @@ maxEvents = {
     'Tau_2018B'       : -1,
     'Tau_2018C'       : -1,
     'Tau_2018D'       : -1,
+    'Tau_2022A'       : -1,
+    'Tau_2022B'       : -1,
+    'Tau_2022C'       : -1,
+    'Tau_2022D'       : -1,
+    'Tau_2022E'       : -1,
+    'Tau_2022F'       : -1,
+    'Tau_2022G'       : -1,
 
     'ZeroBias_2015D'       : -1,
     'ZeroBias_2016B'       : -1,
@@ -2908,6 +3027,14 @@ maxEvents = {
     'SingleMu_2018B'        : -1,
     'SingleMu_2018C'        : -1,
     'SingleMu_2018D'        : -1,
+    'SingleMu_2022'         : -1,
+    'SingleMu_2022A'        : -1,
+    'SingleMu_2022B'        : -1,
+    'SingleMu_2022C'        : -1,
+    'SingleMu_2022D'        : -1,
+    'SingleMu_2022E'        : -1,
+    'SingleMu_2022F'        : -1,
+    'SingleMu_2022G'        : -1,
 
     'SingleEle_2015D'        : -1,
     'SingleEle_2016B'        : -1,
@@ -2958,6 +3085,14 @@ maxEvents = {
     'EGamma_2018B'          : -1,
     'EGamma_2018C'          : -1,
     'EGamma_2018D'          : -1,
+
+    'EGamma_2022A'          : -1,
+    'EGamma_2022B'          : -1,
+    'EGamma_2022C'          : -1,
+    'EGamma_2022D'          : -1,
+    'EGamma_2022E'          : -1,
+    'EGamma_2022F'          : 1000,
+    'EGamma_2022G'          : -1,
 
     'DoubleMu_2015B'        : -1,
     'DoubleMu_2015C'        : -1,
@@ -4019,6 +4154,7 @@ maxEvents = {
   'HTo4Mu125_20_130mm' : -1,
   'HTo4Mu125_20_1300mm' : -1,
 
+  'AMSB_chargino_700GeV_100cm_124X' : -1,
   'Cosmics' : -1,
 }
 
@@ -4119,6 +4255,13 @@ types = {
     'MET_2018B'        : "data",
     'MET_2018C'        : "data",
     'MET_2018D'        : "data",
+    'MET_2022A'        : "data",
+    'MET_2022B'        : "data",
+    'MET_2022C'        : "data",
+    'MET_2022D'        : "data",
+    'MET_2022E'        : "data",
+    'MET_2022F'        : "data",
+    'MET_2022G'        : "data",
 
     'JetHT_2018'         : "data",
     'JetHT_2018A'        : "data",
@@ -4241,7 +4384,14 @@ types = {
     'Tau_2016'     : "data",
     'Tau_2017'     : "data",
     'Tau_2018'     : "data",
-
+    'Tau_2022A'    : "data",
+    'Tau_2022B'    : "data",
+    'Tau_2022C'    : "data",
+    'Tau_2022D'    : "data",
+    'Tau_2022E'    : "data",
+    'Tau_2022F'    : "data",
+    'Tau_2022G'    : "data",
+    
     'ZeroBias_2015D'    : "data",
     'ZeroBias_2016B'    : "data",
     'ZeroBias_2016C'    : "data",
@@ -4275,6 +4425,14 @@ types = {
     'SingleMu_2018B'        : "data",
     'SingleMu_2018C'        : "data",
     'SingleMu_2018D'        : "data",
+    'SingleMu_2022'         : "data",
+    'SingleMu_2022A'        : "data",
+    'SingleMu_2022B'        : "data",
+    'SingleMu_2022C'        : "data",
+    'SingleMu_2022D'        : "data",
+    'SingleMu_2022E'        : "data",
+    'SingleMu_2022F'        : "data",
+    'SingleMu_2022G'        : "data",
 
     'SingleEle_2015D'   : "data",
     'SingleEle_2016B'   : "data",
@@ -4330,6 +4488,15 @@ types = {
     'EGamma_2018C'          : "data",
     'EGamma_2018D'          : "data",
     'DoubleEG_2016_2017_2018' : "data",
+
+    'EGamma_2022'           : "data",
+    'EGamma_2022A'          : "data",
+    'EGamma_2022B'          : "data",
+    'EGamma_2022C'          : "data",
+    'EGamma_2022D'          : "data",
+    'EGamma_2022E'          : "data",
+    'EGamma_2022F'          : "data",
+    'EGamma_2022G'          : "data",
 
     'DoubleMu_2015B'        : "data",
     'DoubleMu_2015C'        : "data",
@@ -5417,6 +5584,7 @@ types = {
   'HTo4Mu125_20_130mm' : "signalMC",
   'HTo4Mu125_20_1300mm' : "signalMC",
 
+  'AMSB_chargino_700GeV_100cm_124X' : "signalMC",
   'Cosmics' : "bgMC",
 }
 
@@ -5514,6 +5682,14 @@ colors = {
     'MET_2018B'        : 1,
     'MET_2018C'        : 1,
     'MET_2018D'        : 1,
+    'MET_2022A'        : 1,
+    'MET_2022B'        : 1,
+    'MET_2022C'        : 1,
+    'MET_2022D'        : 1,
+    'MET_2022E'        : 1,
+    'MET_2022F'        : 1,
+    'MET_2022G'        : 1,
+
 
     'JetHT_2018'         : 1,
     'JetHT_2018A'        : 1,
@@ -5636,6 +5812,13 @@ colors = {
     'Tau_2016'   :  1,
     'Tau_2017'   :  1,
     'Tau_2018'   :  1,
+    'Tau_2022A'  :  1,
+    'Tau_2022B'  :  1,
+    'Tau_2022C'  :  1,
+    'Tau_2022D'  :  1,
+    'Tau_2022E'  :  1,
+    'Tau_2022F'  :  1,
+    'Tau_2022G'  :  1,
 
     'ZeroBias_2015D'  :  1,
     'ZeroBias_2016B'  :  1,
@@ -5669,6 +5852,14 @@ colors = {
     'SingleMu_2018B'        : 1,
     'SingleMu_2018C'        : 1,
     'SingleMu_2018D'        : 1,
+    'SingleMu_2022'         : 1,
+    'SingleMu_2022A'        : 1,
+    'SingleMu_2022B'        : 1,
+    'SingleMu_2022C'        : 1,
+    'SingleMu_2022D'        : 1,
+    'SingleMu_2022E'        : 1,
+    'SingleMu_2022F'        : 1,
+    'SingleMu_2022G'        : 1,
 
     'SingleEle_2015D'        : 1,
     'SingleEle_2016B'        : 1,
@@ -5722,6 +5913,15 @@ colors = {
     'EGamma_2018C'          : 1,
     'EGamma_2018D'          : 1,
     'DoubleEG_2016_2017_2018'         : 1,
+
+    'EGamma_2022'           : 1,
+    'EGamma_2022A'          : 1,
+    'EGamma_2022B'          : 1,
+    'EGamma_2022C'          : 1,
+    'EGamma_2022D'          : 1,
+    'EGamma_2022E'          : 1,
+    'EGamma_2022F'          : 1,
+    'EGamma_2022G'          : 1,
 
     'DoubleMu_2015B'        : 1,
     'DoubleMu_2015C'        : 1,
@@ -6811,6 +7011,7 @@ colors = {
   'HTo4Mu125_20_130mm' : 2,
   'HTo4Mu125_20_1300mm' : 4,
 
+  'AMSB_chargino_700GeV_100cm_124X' : 1,
   'Cosmics' : 1,
 }
 
@@ -6920,6 +7121,14 @@ labels = {
     'MET_2018B'        : "MET_2018B data",
     'MET_2018C'        : "MET_2018C data",
     'MET_2018D'        : "MET_2018D data",
+    'MET_2022A'        : "MET_2022A data",
+    'MET_2022B'        : "MET_2022B data",
+    'MET_2022C'        : "MET_2022C data",
+    'MET_2022D'        : "MET_2022D data",
+    'MET_2022E'        : "MET_2022E data",
+    'MET_2022F'        : "MET_2022F data",
+    'MET_2022G'        : "MET_2022G data",
+
 
     'JetHT_2018'         : "JetHT 2018 data",
     'JetHT_2018A'        : "JetHT 2018A data",
@@ -7040,6 +7249,13 @@ labels = {
     'Tau_2016'   :  "Tau 2016 data",
     'Tau_2017'   :  "Tau 2017 data",
     'Tau_2018'   :  "Tau 2018 data",
+    'Tau_2022A'  :  "Tau 20022A data",
+    'Tau_2022B'  :  "Tau 20022B data",
+    'Tau_2022C'  :  "Tau 20022C data",
+    'Tau_2022D'  :  "Tau 20022D data",
+    'Tau_2022E'  :  "Tau 20022E data",
+    'Tau_2022F'  :  "Tau 20022F data",
+    'Tau_2022B'  :  "Tau 20022G data",
 
     'ZeroBias_2015D'  :  "ZeroBias 2015D data",
     'ZeroBias_2016B'  :  "ZeroBias 2016B data",
@@ -7076,6 +7292,15 @@ labels = {
     'SingleMu_2018B'        : "SingleMuon 2018B data",
     'SingleMu_2018C'        : "SingleMuon 2018C data",
     'SingleMu_2018D'        : "SingleMuon 2018D data",
+    'SingleMu_2022'         : "SingleMuon 2022 data",
+    'SingleMu_2022A'        : "SingleMuon 2022A data",
+    'SingleMu_2022B'        : "SingleMuon 2022B data",
+    'SingleMu_2022C'        : "SingleMuon 2022C data",
+    'SingleMu_2022D'        : "SingleMuon 2022D data",
+    'SingleMu_2022E'        : "SingleMuon 2022E data",
+    'SingleMu_2022F'        : "SingleMuon 2022F data",
+    'SingleMu_2022G'        : "SingleMuon 2022G data",
+
 
     'SingleEle_2015B'        : "SingleElectron 2015B data",
     'SingleEle_2015C'        : "SingleElectron 2015C data",
@@ -7132,6 +7357,14 @@ labels = {
     'EGamma_2018B'        : "EGamma 2018B data",
     'EGamma_2018C'        : "EGamma 2018C data",
     'EGamma_2018D'        : "EGamma 2018D data",
+    'EGamma_2022'         : "EGamma 2022 data",
+    'EGamma_2022A'        : "EGamma 2022A data",
+    'EGamma_2022B'        : "EGamma 2022B data",
+    'EGamma_2022C'        : "EGamma 2022C data",
+    'EGamma_2022D'        : "EGamma 2022D data",
+    'EGamma_2022E'        : "EGamma 2022E data",
+    'EGamma_2022F'        : "EGamma 2022F data",
+    'EGamma_2022G'        : "EGamma 2022G data",
 
     'DoubleMu_2015'         : "Double Muon 2015 data",
     'DoubleMu_2015B'        : "DoubleMu 2015B data",
@@ -8226,6 +8459,7 @@ labels = {
   'HTo4Mu125_20_130mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=130mm",
   'HTo4Mu125_20_1300mm' : "H#rightarrow XX#rightarrow 4#mu, M_H=125 GeV, M_X=20 GeV, c#tau=1300mm",
 
+  'AMSB_chargino_700GeV_100cm_124X' : "AMSB chargino placeholder",
   'Cosmics' : "Cosmic MC",
 }
 
@@ -9133,6 +9367,7 @@ crossSections = {
   'HTo4Mu125_20_130mm' : 43.93,
   'HTo4Mu125_20_1300mm' : 43.93,
 
+  'AMSB_chargino_700GeV_100cm_124X' : 40.00,
   'Cosmics' : 1.0,
 }
 
@@ -9185,7 +9420,7 @@ class lifetimeReweightingRule:
 
   def __init__(self, ids = [], srcs = [], dsts = [], isDefault = False):
     if len(ids) != len(srcs) or len(ids) != len(dsts):
-      print 'ids, srcs, and dsts must be of the same length when creating a lifetimeReweightingRule!'
+      print('ids, srcs, and dsts must be of the same length when creating a lifetimeReweightingRule!')
       return
     self.pdgIds = ids
     self.srcCTaus = srcs
@@ -9511,7 +9746,7 @@ for index, sample in enumerate(signal_datasetsSlSt):
 
     # set the default reweighting rules
     # since we need rules for multiple pdgids (1000011, 1000013, 1000015, 2000011, 2000013, 2000015), set one dummy pdgid of 0000010 and fix it all in LifetimeWeightProducer
-    rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([0000010], [sourceCTau], [destinationCTau], True)]
+    rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([0o000010], [sourceCTau], [destinationCTau], True)]
 
     # set the non-default reweighting rules too
     # thus, for a reweighted (i.e. non-generated) sample, there is one rule and it is the default
@@ -9522,7 +9757,7 @@ for index, sample in enumerate(signal_datasetsSlSt):
     elif sourceCTau == 100:
       destinationCTaus.extend([float(1 * i * sourceCTau) for i in range(2, 11)])
     if destinationCTau == sourceCTau:
-      rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([0000010], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
+      rulesForLifetimeReweighting[sample] = [lifetimeReweightingRule([0o000010], [sourceCTau], [d], (d == sourceCTau)) for d in destinationCTaus]
 
 ################################################################################
 ### code to set relevant parameters for disappearing tracks signal samples,  ###
@@ -9540,7 +9775,7 @@ charginoColors = {
 }
 for charginoMass in range(100, 1200, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
-    for charginoRelease in ['76X', '80X', '94X', '102X']:
+    for charginoRelease in ['76X', '80X', '94X', '102X', '124X']:
       charginoDataset = 'AMSB_chargino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
       nJobs.update     ({ charginoDataset : 99 })
       maxEvents.update ({ charginoDataset : -1 })
@@ -9550,7 +9785,7 @@ for charginoMass in range(100, 1200, 100):
 # Higgsino
 for charginoMass in range(100, 1000, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
-    for charginoRelease in ['94X', '102X']:
+    for charginoRelease in ['94X', '102X', '124X']:
       charginoDataset = 'Higgsino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
       nJobs.update     ({ charginoDataset : 99 })
       maxEvents.update ({ charginoDataset : -1 })

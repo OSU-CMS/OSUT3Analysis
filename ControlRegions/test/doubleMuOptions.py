@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 config_file = "doubleMuAnalyzer_cfg.py"
 intLumi = 19040.  # DoubleMu

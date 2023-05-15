@@ -1,14 +1,14 @@
 #ifndef CSCHIT_PRODUCER
 #define CSCHIT_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "OSUT3Analysis/Collections/interface/Cschit.h"
 
-class OSUCschitProducer : public edm::EDProducer
+class OSUCschitProducer : public edm::stream::EDProducer<>
 {
   public:
     OSUCschitProducer (const edm::ParameterSet &);

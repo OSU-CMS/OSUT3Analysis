@@ -5,7 +5,6 @@
 
 #include "OSUT3Analysis/Collections/plugins/OSUGenericTrackProducer.h"
 
-#include "Geometry/Records/interface/CaloGeometryRecord.h"
 #include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
 #include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
 
@@ -17,7 +16,11 @@ template<class T>
 OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_ (cfg),
-  useEraByEraFiducialMaps_ (cfg.getParameter<bool> ("useEraByEraFiducialMaps"))
+  useEraByEraFiducialMaps_ (cfg.getParameter<bool> ("useEraByEraFiducialMaps")),
+  //caloGeometryToken_ (esConsumes<CaloGeometry, CaloGeometryRecord>()),
+  caloGeometryToken_ (esConsumes<edm::Transition::BeginRun>()),
+  //ecalStatusToken_ (esConsumes<EcalChannelStatus, EcalChannelStatusRcd>())
+  ecalStatusToken_ (esConsumes<edm::Transition::BeginRun>())
 {
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
@@ -41,12 +44,15 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   primaryvertexToken_ = consumes<vector<TYPE(primaryvertexs)> > (collections_.getParameter<edm::InputTag> ("primaryvertexs"));
 
   lostTracksToken_ = consumes<vector<pat::PackedCandidate> > (cfg.getParameter<edm::InputTag> ("lostTracks"));
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
   isolatedTracksToken_ = consumes<vector<pat::IsolatedTrack> > (cfg.getParameter<edm::InputTag> ("isolatedTracks"));
 #endif
 
+#if !DATA_FORMAT_IS_2022
   candidateTracksToken_ = consumes<vector<CandidateTrack> > (cfg.getParameter<edm::InputTag> ("candidateTracks"));
 #endif
+
+#endif //ifdef DISAPP_TRKS
 
   const edm::ParameterSet &fiducialMaps = cfg.getParameter<edm::ParameterSet> ("fiducialMaps");
   const vector<edm::ParameterSet> &electronFiducialMaps = fiducialMaps.getParameter<vector<edm::ParameterSet> > ("electrons");
@@ -59,9 +65,17 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   EERecHitsTag_    =  cfg.getParameter<edm::InputTag>  ("EERecHits");
   HBHERecHitsTag_  =  cfg.getParameter<edm::InputTag>  ("HBHERecHits");
 
+
   EBRecHitsToken_    =  consumes<EBRecHitCollection>    (EBRecHitsTag_);
   EERecHitsToken_    =  consumes<EERecHitCollection>    (EERecHitsTag_);
   HBHERecHitsToken_  =  consumes<HBHERecHitCollection>  (HBHERecHitsTag_);
+
+#if AOD_SKIM
+  gt2dedxPixelTag_ =  cfg.getParameter<edm::InputTag>  ("dEdxDataPixel");
+  gt2dedxStripTag_ =  cfg.getParameter<edm::InputTag>  ("dEdxDataStrip");
+  gt2dedxPixelToken_    = consumes<edm::ValueMap<reco::DeDxData> > (gt2dedxPixelTag_);
+  gt2dedxStripToken_    = consumes<edm::ValueMap<reco::DeDxData> > (gt2dedxStripTag_);
+#endif
 
   gsfTracksToken_ = consumes<vector<reco::GsfTrack> > (cfg.getParameter<edm::InputTag> ("gsfTracks"));
 
@@ -69,7 +83,10 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   // disappearing track ntuples.
   tracksToken_ = consumes<vector<reco::Track> > (edm::InputTag ("generalTracks", "", "RECO"));
 
-#if DATA_FORMAT_FROM_MINIAOD
+  //caloGeometryToken_  = esConsumes();
+  //ecalStatusToken_    = esConsumes();
+
+#if DATA_FORMAT_FROM_MINIAOD && !DATA_FORMAT_IS_2022
   stringstream ss;
   for (const auto &electronFiducialMap : electronFiducialMaps)
     {
@@ -136,6 +153,13 @@ OSUGenericTrackProducer<T>::beginRun (const edm::Run &run, const edm::EventSetup
 template<class T> void 
 OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &setup)
 {
+  //caloGeometry_ = setup.getHandle(caloGeometryToken_);
+  //ecalStatus_   = setup.getHandle(ecalStatusToken_);
+
+
+  //if( !ecalStatus_.isValid() )  throw "Failed to get ECAL channel status!";
+  //if( !caloGeometry_.isValid()   )  throw "Failed to get the caloGeometry_!";
+
   edm::Handle<vector<TYPE(tracks)> > collection;
   if (!event.getByToken (token_, collection))
     {
@@ -157,6 +181,13 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   event.getByToken(EERecHitsToken_, EERecHits);
   edm::Handle<HBHERecHitCollection> HBHERecHits;
   event.getByToken(HBHERecHitsToken_, HBHERecHits);
+
+#if AOD_SKIM
+  edm::Handle<edm::ValueMap<reco::DeDxData> > gt2dedxPixel;
+  event.getByToken(gt2dedxPixelToken_, gt2dedxPixel);
+  edm::Handle<edm::ValueMap<reco::DeDxData> > gt2dedxStrip;
+  event.getByToken(gt2dedxStripToken_, gt2dedxStrip);
+#endif
 
   edm::Handle<vector<reco::GsfTrack> > gsfTracks;
   event.getByToken (gsfTracksToken_, gsfTracks);
@@ -187,13 +218,14 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   edm::Handle<vector<pat::PackedCandidate> > lostTracks;
   event.getByToken (lostTracksToken_, lostTracks);
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
   edm::Handle<vector<pat::IsolatedTrack> > isolatedTracks;
   event.getByToken (isolatedTracksToken_, isolatedTracks);
 #endif
-
+#if !DATA_FORMAT_IS_2022
   edm::Handle<vector<CandidateTrack> > candidateTracks;
   event.getByToken (candidateTracksToken_, candidateTracks);
+#endif
 #endif // DISAPP_TRKS
 
 #endif // DATA_FORMAT_FROM_MINIAOD
@@ -217,6 +249,8 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
                          !event.isRealData (),
 #if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
                          candidateTracks,
+                         isolatedTracks);
+#elif DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022
                          isolatedTracks);
 #else
                          candidateTracks);
@@ -242,12 +276,29 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 
 // in the specific case of TYPE(tracks)==CandidateTracks (where DATA_FORMAT is xyz_CUSTOM)
 // and running over CandidateTracks ntuples, then generalTracks and RecHits may be available
-#if DATA_FORMAT_IS_CUSTOM
+//#if DATA_FORMAT_IS_CUSTOM && !DATA_FORMAT_IS_2022
+#if DATA_FORMAT_IS_CUSTOM || (DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022 && AOD_SKIM) //mcarrigan
       // Calculate the associated calorimeter energy for the disappearing tracks search.
+
+      const CaloEnergy &caloE_0p5 = calculateCaloE(track, *EBRecHits, *EERecHits, *HBHERecHits, 0.5);
+      track.set_caloNewEMDRp5 (caloE_0p5.eEM);
+      track.set_caloNewHadDRp5 (caloE_0p5.eHad);
+
+      const CaloEnergy &caloE_0p3 = calculateCaloE(track, *EBRecHits, *EERecHits, *HBHERecHits, 0.3);
+      track.set_caloNewEMDRp3 (caloE_0p3.eEM);
+      track.set_caloNewHadDRp3 (caloE_0p3.eHad);
+
+      const CaloEnergy &caloE_0p2 = calculateCaloE(track, *EBRecHits, *EERecHits, *HBHERecHits, 0.2);
+      track.set_caloNewEMDRp2 (caloE_0p2.eEM);
+      track.set_caloNewHadDRp2 (caloE_0p2.eHad);
+
+      const CaloEnergy &caloE_0p1 = calculateCaloE(track, *EBRecHits, *EERecHits, *HBHERecHits, 0.1);
+      track.set_caloNewEMDRp1 (caloE_0p1.eEM);
+      track.set_caloNewHadDRp1 (caloE_0p1.eHad);
 
       // this could be removed; if CandidateTrackProdcuer sets these,
       // then these values need not be recalculated -- and RecHits can all be dropped
-      if (EBRecHits.isValid () && EERecHits.isValid () && HBHERecHits.isValid ())
+      /*if (EBRecHits.isValid () && EERecHits.isValid () && HBHERecHits.isValid ())
         {
           double eEM = 0;
           double dR = 0.5;
@@ -275,8 +326,11 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
           }
 
           track.set_caloNewEMDRp5(eEM);
-          track.set_caloNewHadDRp5(eHad);
-        }
+          std::cout << "In OSUGenericTrackProducer... setting the calo energy: " << eEM << std::endl;
+          //track.set_caloNewHadDRp5(eHad);
+        }*/
+#endif
+#if DATA_FORMAT_IS_CUSTOM //&& !DATA_FORMAT_IS_2022
 
       // this is called only for ntuples with generalTracks explicitly kept (really just signal),
       // to re-calculate the track isolations calculated wrong when ntuples were produces (thus "old" vs not-old)
@@ -300,7 +354,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
         track.set_minDeltaRToMuons(muons, vertices);
         track.set_minDeltaRToTaus(taus);
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
         track.set_isoTrackIsolation(isolatedTracks);
 #endif
 
@@ -311,8 +365,8 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   pl_.reset ();
 }
 
-template<class T> bool 
-OSUGenericTrackProducer<T>::insideCone(TYPE(tracks)& candTrack, const DetId& id, const double dR)
+template<class T> const bool 
+OSUGenericTrackProducer<T>::insideCone(TYPE(tracks)& candTrack, const DetId& id, const double dR) const
 {
    GlobalPoint idPosition = getPosition(id);
    if (idPosition.mag()<0.01) return false;
@@ -320,8 +374,8 @@ OSUGenericTrackProducer<T>::insideCone(TYPE(tracks)& candTrack, const DetId& id,
    return deltaR(candTrack, idPositionRoot) < dR;
 }
 
-template<class T> GlobalPoint 
-OSUGenericTrackProducer<T>::getPosition( const DetId& id)
+template<class T> const GlobalPoint 
+OSUGenericTrackProducer<T>::getPosition( const DetId& id) const
 {
    if ( ! caloGeometry_.isValid() ||
         ! caloGeometry_->getSubdetectorGeometry(id) ||
@@ -446,8 +500,12 @@ OSUGenericTrackProducer<T>::extractFiducialMap (const edm::ParameterSet &cfg, Et
 template<class T> void 
 OSUGenericTrackProducer<T>::envSet (const edm::EventSetup& iSetup)
 {
-  iSetup.get<EcalChannelStatusRcd> ().get(ecalStatus_);
-  iSetup.get<CaloGeometryRecord>   ().get(caloGeometry_);
+  caloGeometry_ = iSetup.getHandle(caloGeometryToken_);
+  ecalStatus_   = iSetup.getHandle(ecalStatusToken_);
+
+  // Old style, deprecated
+  //iSetup.get<EcalChannelStatusRcd> ().get(ecalStatus_);
+  //iSetup.get<CaloGeometryRecord>   ().get(caloGeometry_);
 
   if( !ecalStatus_.isValid() )  throw "Failed to get ECAL channel status!";
   if( !caloGeometry_.isValid()   )  throw "Failed to get the caloGeometry_!";
@@ -532,7 +590,7 @@ OSUGenericTrackProducer<T>::getChannelStatusMaps ()
 }
 
 template<class T> const double 
-OSUGenericTrackProducer<T>::getTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const bool noFakes, const double outerDeltaR, const double innerDeltaR) const
+OSUGenericTrackProducer<T>::getTrackIsolation (TYPE(tracks)& track, const vector<reco::Track> &tracks, const bool noPU, const bool noFakes, const double outerDeltaR, const double innerDeltaR) const
 {
   double sumPt = 0.0;
 
@@ -544,8 +602,14 @@ OSUGenericTrackProducer<T>::getTrackIsolation (const reco::Track &track, const v
                       t.hitPattern().trackerLayersWithMeasurement() < 5 ||
                       fabs(t.d0() / t.d0Error()) > 5.0))
         continue;
+#if DATA_FORMAT_IS_2022
+      if (noPU && track.dz() > 3.0 * hypot(track.dzError(), t.dzError()))
+        continue;
+#else
       if (noPU && track.dz(t.vertex()) > 3.0 * hypot(track.dzError(), t.dzError()))
         continue;
+#endif
+
 
       double dR = deltaR (track, t);
       if (dR < outerDeltaR && dR > innerDeltaR)
@@ -557,17 +621,25 @@ OSUGenericTrackProducer<T>::getTrackIsolation (const reco::Track &track, const v
 
 // this is actually a fix of a bugged function, normally it would be track. instead of t.
 template<class T> const double 
-OSUGenericTrackProducer<T>::getOldTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
+OSUGenericTrackProducer<T>::getOldTrackIsolation (TYPE(tracks)& track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
 {
   double sumPt = 0.0;
 
   for (const auto &t : tracks)
     {
+#ifdef DATA_FORMAT_IS_2022
+      if (noPU && (t.normalizedChi2() > 20.0 ||
+                   t.hitPattern().pixelLayersWithMeasurement() < 2 ||
+                   t.hitPattern().trackerLayersWithMeasurement() < 5 ||
+                   fabs(t.d0() / t.d0Error()) > 5.0 ||
+                   track.dz() > 3.0 * hypot(track.dzError(), t.dzError())))
+#else
       if (noPU && (t.normalizedChi2() > 20.0 ||
                    t.hitPattern().pixelLayersWithMeasurement() < 2 ||
                    t.hitPattern().trackerLayersWithMeasurement() < 5 ||
                    fabs(t.d0() / t.d0Error()) > 5.0 ||
                    track.dz(t.vertex()) > 3.0 * hypot(track.dzError(), t.dzError())))
+#endif
         continue;
 
       double dR = deltaR (track, t);
@@ -576,6 +648,29 @@ OSUGenericTrackProducer<T>::getOldTrackIsolation (const reco::Track &track, cons
     }
 
   return sumPt;
+}
+
+template<class T> const CaloEnergy
+OSUGenericTrackProducer<T>::calculateCaloE (TYPE(tracks)& track, const EBRecHitCollection &EBRecHits, const EERecHitCollection &EERecHits, const HBHERecHitCollection &HBHERecHits, const double dR) const
+{
+  double eEM = 0;
+  for (const auto &hit : EBRecHits) {
+    if (insideCone(track, hit.detid(), dR)) {
+      eEM += hit.energy();
+    }
+  }
+  for (const auto &hit : EERecHits) {
+    if (insideCone(track, hit.detid(), dR)) {
+      eEM += hit.energy();
+    }
+  }
+
+  double eHad = 0;
+  for (const auto &hit : HBHERecHits)
+    if (insideCone(track, hit.detid(), dR))
+      eHad += hit.energy();
+
+  return {eEM, eHad};
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

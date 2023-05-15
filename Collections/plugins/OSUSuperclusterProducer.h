@@ -1,14 +1,14 @@
 #ifndef SUPERCLUSTER_PRODUCER
 #define SUPERCLUSTER_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "OSUT3Analysis/Collections/interface/Supercluster.h"
 
-class OSUSuperclusterProducer : public edm::EDProducer
+class OSUSuperclusterProducer : public edm::stream::EDProducer<>
 {
   public:
     OSUSuperclusterProducer (const edm::ParameterSet &);

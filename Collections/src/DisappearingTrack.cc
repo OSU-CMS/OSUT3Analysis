@@ -31,7 +31,38 @@ osu::DisappearingTrack::DisappearingTrack() :
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE),
+  caloNewHadDRp5_                (INVALID_VALUE),
+  caloNewEMDRp3_                 (INVALID_VALUE),
+  caloNewHadDRp3_                (INVALID_VALUE),
+  caloNewEMDRp2_                 (INVALID_VALUE),
+  caloNewHadDRp2_                (INVALID_VALUE),
+  caloNewEMDRp1_                 (INVALID_VALUE),
+  caloNewHadDRp1_                (INVALID_VALUE),
+  rhoPUCorr_                     (INVALID_VALUE),
+  rhoPUCorrCalo_                 (INVALID_VALUE),
+  rhoPUCorrCentralCalo_          (INVALID_VALUE),
+  trackIsoDRp5_                  (INVALID_VALUE),
+  trackIsoDRp3_                  (INVALID_VALUE),
+  trackIsoDRp2_                  (INVALID_VALUE),
+  trackIsoDRp1_                  (INVALID_VALUE),
+  trackIsoNoPUDRp5_              (INVALID_VALUE),
+  trackIsoNoPUDRp3_              (INVALID_VALUE),
+  trackIsoNoPUDRp2_              (INVALID_VALUE),
+  trackIsoNoPUDRp1_              (INVALID_VALUE),
+  trackIsoNoFakesDRp5_           (INVALID_VALUE),
+  trackIsoNoFakesDRp3_           (INVALID_VALUE),
+  trackIsoNoFakesDRp2_           (INVALID_VALUE),
+  trackIsoNoFakesDRp1_           (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp5_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp3_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp2_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp1_       (INVALID_VALUE),
+  trackIsoOldNoPUDRp5_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp3_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp2_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp1_           (INVALID_VALUE)
 {
 }
 
@@ -62,7 +93,39 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track) :
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE),
+  caloNewHadDRp5_                (INVALID_VALUE),
+  caloNewEMDRp3_                 (INVALID_VALUE),
+  caloNewHadDRp3_                (INVALID_VALUE),
+  caloNewEMDRp2_                 (INVALID_VALUE),
+  caloNewHadDRp2_                (INVALID_VALUE),
+  caloNewEMDRp1_                 (INVALID_VALUE),
+  caloNewHadDRp1_                (INVALID_VALUE),
+  rhoPUCorr_                     (INVALID_VALUE),
+  rhoPUCorrCalo_                 (INVALID_VALUE),
+  rhoPUCorrCentralCalo_          (INVALID_VALUE),
+  trackIsoDRp5_                  (INVALID_VALUE),
+  trackIsoDRp3_                  (INVALID_VALUE),
+  trackIsoDRp2_                  (INVALID_VALUE),
+  trackIsoDRp1_                  (INVALID_VALUE),
+  trackIsoNoPUDRp5_              (INVALID_VALUE),
+  trackIsoNoPUDRp3_              (INVALID_VALUE),
+  trackIsoNoPUDRp2_              (INVALID_VALUE),
+  trackIsoNoPUDRp1_              (INVALID_VALUE),
+  trackIsoNoFakesDRp5_           (INVALID_VALUE),
+  trackIsoNoFakesDRp3_           (INVALID_VALUE),
+  trackIsoNoFakesDRp2_           (INVALID_VALUE),
+  trackIsoNoFakesDRp1_           (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp5_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp3_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp2_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp1_       (INVALID_VALUE),
+  trackIsoOldNoPUDRp5_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp3_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp2_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp1_           (INVALID_VALUE)
+
 {
 }
 
@@ -94,7 +157,39 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE),
+  caloNewHadDRp5_                (INVALID_VALUE),
+  caloNewEMDRp3_                 (INVALID_VALUE),
+  caloNewHadDRp3_                (INVALID_VALUE),
+  caloNewEMDRp2_                 (INVALID_VALUE),
+  caloNewHadDRp2_                (INVALID_VALUE),
+  caloNewEMDRp1_                 (INVALID_VALUE),
+  caloNewHadDRp1_                (INVALID_VALUE),
+  rhoPUCorr_                     (INVALID_VALUE),
+  rhoPUCorrCalo_                 (INVALID_VALUE),
+  rhoPUCorrCentralCalo_          (INVALID_VALUE),
+  trackIsoDRp5_                  (INVALID_VALUE),
+  trackIsoDRp3_                  (INVALID_VALUE),
+  trackIsoDRp2_                  (INVALID_VALUE),
+  trackIsoDRp1_                  (INVALID_VALUE),
+  trackIsoNoPUDRp5_              (INVALID_VALUE),
+  trackIsoNoPUDRp3_              (INVALID_VALUE),
+  trackIsoNoPUDRp2_              (INVALID_VALUE),
+  trackIsoNoPUDRp1_              (INVALID_VALUE),
+  trackIsoNoFakesDRp5_           (INVALID_VALUE),
+  trackIsoNoFakesDRp3_           (INVALID_VALUE),
+  trackIsoNoFakesDRp2_           (INVALID_VALUE),
+  trackIsoNoFakesDRp1_           (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp5_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp3_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp2_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp1_       (INVALID_VALUE),
+  trackIsoOldNoPUDRp5_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp3_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp2_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp1_           (INVALID_VALUE)
+
 {
 }
 
@@ -126,7 +221,38 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE),
+  caloNewHadDRp5_                (INVALID_VALUE),
+  caloNewEMDRp3_                 (INVALID_VALUE),
+  caloNewHadDRp3_                (INVALID_VALUE),
+  caloNewEMDRp2_                 (INVALID_VALUE),
+  caloNewHadDRp2_                (INVALID_VALUE),
+  caloNewEMDRp1_                 (INVALID_VALUE),
+  caloNewHadDRp1_                (INVALID_VALUE),
+  rhoPUCorr_                     (INVALID_VALUE),
+  rhoPUCorrCalo_                 (INVALID_VALUE),
+  rhoPUCorrCentralCalo_          (INVALID_VALUE),
+  trackIsoDRp5_                  (INVALID_VALUE),
+  trackIsoDRp3_                  (INVALID_VALUE),
+  trackIsoDRp2_                  (INVALID_VALUE),
+  trackIsoDRp1_                  (INVALID_VALUE),
+  trackIsoNoPUDRp5_              (INVALID_VALUE),
+  trackIsoNoPUDRp3_              (INVALID_VALUE),
+  trackIsoNoPUDRp2_              (INVALID_VALUE),
+  trackIsoNoPUDRp1_              (INVALID_VALUE),
+  trackIsoNoFakesDRp5_           (INVALID_VALUE),
+  trackIsoNoFakesDRp3_           (INVALID_VALUE),
+  trackIsoNoFakesDRp2_           (INVALID_VALUE),
+  trackIsoNoFakesDRp1_           (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp5_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp3_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp2_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp1_       (INVALID_VALUE),
+  trackIsoOldNoPUDRp5_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp3_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp2_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp1_           (INVALID_VALUE)
 {
 }
 
@@ -162,7 +288,39 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE),
+  caloNewHadDRp5_                (INVALID_VALUE),
+  caloNewEMDRp3_                 (INVALID_VALUE),
+  caloNewHadDRp3_                (INVALID_VALUE),
+  caloNewEMDRp2_                 (INVALID_VALUE),
+  caloNewHadDRp2_                (INVALID_VALUE),
+  caloNewEMDRp1_                 (INVALID_VALUE),
+  caloNewHadDRp1_                (INVALID_VALUE),
+  rhoPUCorr_                     (INVALID_VALUE),
+  rhoPUCorrCalo_                 (INVALID_VALUE),
+  rhoPUCorrCentralCalo_          (INVALID_VALUE),
+  trackIsoDRp5_                  (INVALID_VALUE),
+  trackIsoDRp3_                  (INVALID_VALUE),
+  trackIsoDRp2_                  (INVALID_VALUE),
+  trackIsoDRp1_                  (INVALID_VALUE),
+  trackIsoNoPUDRp5_              (INVALID_VALUE),
+  trackIsoNoPUDRp3_              (INVALID_VALUE),
+  trackIsoNoPUDRp2_              (INVALID_VALUE),
+  trackIsoNoPUDRp1_              (INVALID_VALUE),
+  trackIsoNoFakesDRp5_           (INVALID_VALUE),
+  trackIsoNoFakesDRp3_           (INVALID_VALUE),
+  trackIsoNoFakesDRp2_           (INVALID_VALUE),
+  trackIsoNoFakesDRp1_           (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp5_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp3_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp2_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp1_       (INVALID_VALUE),
+  trackIsoOldNoPUDRp5_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp3_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp2_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp1_           (INVALID_VALUE)
+
 {
 }
 
@@ -203,7 +361,39 @@ osu::DisappearingTrack::DisappearingTrack(const TYPE(tracks) &track,
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE),
+  caloNewHadDRp5_                (INVALID_VALUE),
+  caloNewEMDRp3_                 (INVALID_VALUE),
+  caloNewHadDRp3_                (INVALID_VALUE),
+  caloNewEMDRp2_                 (INVALID_VALUE),
+  caloNewHadDRp2_                (INVALID_VALUE),
+  caloNewEMDRp1_                 (INVALID_VALUE),
+  caloNewHadDRp1_                (INVALID_VALUE),
+  rhoPUCorr_                     (INVALID_VALUE),
+  rhoPUCorrCalo_                 (INVALID_VALUE),
+  rhoPUCorrCentralCalo_          (INVALID_VALUE),
+  trackIsoDRp5_                  (INVALID_VALUE),
+  trackIsoDRp3_                  (INVALID_VALUE),
+  trackIsoDRp2_                  (INVALID_VALUE),
+  trackIsoDRp1_                  (INVALID_VALUE),
+  trackIsoNoPUDRp5_              (INVALID_VALUE),
+  trackIsoNoPUDRp3_              (INVALID_VALUE),
+  trackIsoNoPUDRp2_              (INVALID_VALUE),
+  trackIsoNoPUDRp1_              (INVALID_VALUE),
+  trackIsoNoFakesDRp5_           (INVALID_VALUE),
+  trackIsoNoFakesDRp3_           (INVALID_VALUE),
+  trackIsoNoFakesDRp2_           (INVALID_VALUE),
+  trackIsoNoFakesDRp1_           (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp5_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp3_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp2_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp1_       (INVALID_VALUE),
+  trackIsoOldNoPUDRp5_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp3_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp2_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp1_           (INVALID_VALUE)
+
 {
 }
 
@@ -222,6 +412,8 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
                    const bool dropHits,
 #if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks,
+                   const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
+#elif DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022
                    const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
 #else
                    const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
@@ -252,7 +444,39 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   pfNeutralHadIsoDR03_           (INVALID_VALUE),
   pfPUNeutralHadIsoDR03_         (INVALID_VALUE),
   pfPhotonIsoDR03_               (INVALID_VALUE),
-  pfPUPhotonIsoDR03_             (INVALID_VALUE)
+  pfPUPhotonIsoDR03_             (INVALID_VALUE),
+  caloNewEMDRp5_                 (INVALID_VALUE),
+  caloNewHadDRp5_                (INVALID_VALUE),
+  caloNewEMDRp3_                 (INVALID_VALUE),
+  caloNewHadDRp3_                (INVALID_VALUE),
+  caloNewEMDRp2_                 (INVALID_VALUE),
+  caloNewHadDRp2_                (INVALID_VALUE),
+  caloNewEMDRp1_                 (INVALID_VALUE),
+  caloNewHadDRp1_                (INVALID_VALUE),
+  rhoPUCorr_                     (INVALID_VALUE),
+  rhoPUCorrCalo_                 (INVALID_VALUE),
+  rhoPUCorrCentralCalo_          (INVALID_VALUE),
+  trackIsoDRp5_                  (INVALID_VALUE),
+  trackIsoDRp3_                  (INVALID_VALUE),
+  trackIsoDRp2_                  (INVALID_VALUE),
+  trackIsoDRp1_                  (INVALID_VALUE),
+  trackIsoNoPUDRp5_              (INVALID_VALUE),
+  trackIsoNoPUDRp3_              (INVALID_VALUE),
+  trackIsoNoPUDRp2_              (INVALID_VALUE),
+  trackIsoNoPUDRp1_              (INVALID_VALUE),
+  trackIsoNoFakesDRp5_           (INVALID_VALUE),
+  trackIsoNoFakesDRp3_           (INVALID_VALUE),
+  trackIsoNoFakesDRp2_           (INVALID_VALUE),
+  trackIsoNoFakesDRp1_           (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp5_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp3_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp2_       (INVALID_VALUE),
+  trackIsoNoPUNoFakesDRp1_       (INVALID_VALUE),
+  trackIsoOldNoPUDRp5_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp3_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp2_           (INVALID_VALUE),
+  trackIsoOldNoPUDRp1_           (INVALID_VALUE)
+
 {
   eleVtx_d0Cuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_d0Cuts_barrel");
   eleVtx_dzCuts_barrel_ = cfg.getParameter<vector<double> > ("eleVtx_dzCuts_barrel");
@@ -267,14 +491,16 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   set_primaryPFIsolations(pfCandidates);
   set_additionalPFIsolations(pfCandidates, lostTracks);
 
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
   // if the tracks collection itself is CandidateTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() != "candidateTrackProducer") {
     maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
     if(candidateTracks.isValid()) findMatchedCandidateTrack(candidateTracks, matchedCandidateTrack_, dRToMatchedCandidateTrack_);
   }
   else dRToMatchedCandidateTrack_ = INVALID_VALUE;
+#endif
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
   // if the tracks collection itself is IsolatedTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() != "isolatedTracks") {
     maxDeltaR_isolatedTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForIsolatedTrackMatching");
@@ -293,6 +519,7 @@ osu::DisappearingTrack::~DisappearingTrack ()
   eleVtx_dzCuts_endcap_.clear();
 }
 
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
 const edm::Ref<vector<CandidateTrack> > &
 osu::DisappearingTrack::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &candidateTracks, edm::Ref<vector<CandidateTrack> > &matchedCandidateTrack, double &dRToMatchedCandidateTrack) const
 {
@@ -307,8 +534,9 @@ osu::DisappearingTrack::findMatchedCandidateTrack (const edm::Handle<vector<Cand
   }
   return matchedCandidateTrack;
 }
+#endif
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && (DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022)
 const edm::Ref<vector<pat::IsolatedTrack> > &
 osu::DisappearingTrack::findMatchedIsolatedTrack (const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks, edm::Ref<vector<pat::IsolatedTrack> > &matchedIsolatedTrack, double &dRToMatchedIsolatedTrack) const
 {
@@ -465,7 +693,7 @@ osu::DisappearingTrack::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)>
   }
 }
 
-#if DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2017
+#if DATA_FORMAT_FROM_MINIAOD && (DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022)
 void
 osu::DisappearingTrack::set_isoTrackIsolation (const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) {
   if(isolatedTracks.isValid()) {
@@ -487,7 +715,7 @@ osu::DisappearingTrack::set_isoTrackIsolation (const edm::Handle<vector<pat::Iso
 }
 #endif
 
-#if DATA_FORMAT_IS_2017 // only makes sense with phase1 pixel upgrade
+#if DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022// only makes sense with phase1 pixel upgrade
 // This could be in TrackBase, but is fairly specialized to the disappearing tracks search
 const bool
 osu::DisappearingTrack::isAllowedThreeLayerHitPattern() const {
@@ -619,6 +847,106 @@ osu::DisappearingTrack::set_additionalPFIsolations (const edm::Handle<vector<pat
 
 }
 
+const double
+osu::DisappearingTrack::caloTotNoPU (double dR, RhoType rhoType, CaloType caloType) const
+{
+  // For reference, see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Accessing_PF_Isolation_from_AN1
+  double rho;
+  switch (rhoType) {
+  case All:
+    rho = rhoPUCorr();
+    break;
+  case Calo:
+    rho = rhoPUCorrCalo();
+    break;
+  case CentralCalo:
+    rho = rhoPUCorrCentralCalo();
+    break;
+  default:
+    throw cms::Exception("FatalError") << "Unkown or not implemented rho type requested, type:" << rhoType;
+  }
+  
+  double rawCaloTot = 0.0;
+  int intDR = dR * 10.0;
+  switch (caloType) {
+  case Sum:
+    if(intDR == 5) rawCaloTot = caloNewDRp5();
+    else if(intDR == 3) rawCaloTot = caloNewDRp3();
+    else if(intDR == 2) rawCaloTot = caloNewDRp2();
+    else if(intDR == 1) rawCaloTot = caloNewDRp1();
+    break;
+  case EM:
+    if(intDR == 5) rawCaloTot = caloNewEMDRp5();
+    else if(intDR == 3) rawCaloTot = caloNewEMDRp3();
+    else if(intDR == 2) rawCaloTot = caloNewEMDRp2();
+    else if(intDR == 1) rawCaloTot = caloNewEMDRp1();
+    break;
+  case Had:
+    if(intDR == 5) rawCaloTot = caloNewHadDRp5();
+    else if(intDR == 3) rawCaloTot = caloNewHadDRp3();
+    else if(intDR == 2) rawCaloTot = caloNewHadDRp2();
+    else if(intDR == 1) rawCaloTot = caloNewHadDRp1();
+    break; 
+  }
+  
+  double caloCorr = rho * TMath::Pi() * dR * dR;  // Define effective area as pi*r^2, where r is radius of DeltaR cone.
+  double caloTotNoPU = TMath::Max(0., rawCaloTot - caloCorr);
+  return caloTotNoPU;
+}
+
+/*const double
+osu::DisappearingTrack::getTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const bool noFakes, const double outerDeltaR, const double innerDeltaR) const
+{
+  double sumPt = 0.0;
+
+  for (const auto &t : tracks)
+    {
+      if (noFakes && t.normalizedChi2 () > 20.0)
+        continue;
+      if (noFakes && t.hitPattern ().pixelLayersWithMeasurement () < 2)
+        continue;
+      if (noFakes && t.hitPattern ().trackerLayersWithMeasurement () < 5)
+        continue;
+      if (noFakes && fabs (t.d0 () / t.d0Error ()) > 5.0)
+        continue;
+
+      if (noPU && fabs( track.dz (t.vertex ())) > 3.0 * hypot (track.dzError (), t.dzError ()))
+        continue;
+
+      double dR = deltaR (track, t);
+      if (dR < outerDeltaR && dR > innerDeltaR)
+        sumPt += t.pt ();
+    }
+
+  return sumPt;
+}
+
+const double
+osu::DisappearingTrack::getOldTrackIsolation (const reco::Track &track, const vector<reco::Track> &tracks, const bool noPU, const double outerDeltaR, const double innerDeltaR) const
+{
+  double sumPt = 0.0;
+
+  for (const auto &t : tracks)
+    {
+      if (noPU && track.normalizedChi2 () > 20.0)
+        continue;
+      if (noPU && track.hitPattern ().pixelLayersWithMeasurement () < 2)
+        continue;
+      if (noPU && track.hitPattern ().trackerLayersWithMeasurement () < 5)
+        continue;
+      if (noPU && fabs (track.d0 () / track.d0Error ()) > 5.0)
+        continue;
+      if (noPU && track.dz (t.vertex ()) > 3.0 * hypot (track.dzError (), t.dzError ()))
+        continue;
+
+      double dR = deltaR (track, t);
+      if (dR < outerDeltaR && dR > innerDeltaR)
+        sumPt += t.pt ();
+    }
+
+  return sumPt;
+}*/
+
 #if IS_VALID(secondaryTracks)
 osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack() : 
   osu::DisappearingTrack() {}
@@ -673,6 +1001,9 @@ osu::SecondaryDisappearingTrack::SecondaryDisappearingTrack (const TYPE(tracks) 
                                                              const edm::Handle<vector<CandidateTrack> > &candidateTracks,
                                                              const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
   osu::DisappearingTrack(track, particles, pfCandidates, lostTracks, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, candidateTracks, isolatedTracks) {}
+#elif DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022
+                                                             const edm::Handle<vector<pat::IsolatedTrack> > &isolatedTracks) :
+  osu::DisappearingTrack(track, particles, pfCandidates, lostTracks, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, isolatedTracks) {}
 #else
                                                              const edm::Handle<vector<CandidateTrack> > &candidateTracks) :
   osu::DisappearingTrack(track, particles, pfCandidates, lostTracks, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits, candidateTracks) {}

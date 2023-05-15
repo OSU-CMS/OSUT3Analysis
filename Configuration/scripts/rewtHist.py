@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # rewtHist.py
 # Reweights a specified histogram for a list of datasets by the weights specified in a weight histogram.

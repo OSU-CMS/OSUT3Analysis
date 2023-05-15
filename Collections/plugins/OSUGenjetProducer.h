@@ -1,14 +1,14 @@
 #ifndef GENJET_PRODUCER
 #define GENJET_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "OSUT3Analysis/Collections/interface/Genjet.h"
 
-class OSUGenjetProducer : public edm::EDProducer
+class OSUGenjetProducer : public edm::stream::EDProducer<>
 {
   public:
     OSUGenjetProducer (const edm::ParameterSet &);

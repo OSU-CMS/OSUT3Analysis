@@ -1,14 +1,14 @@
 #ifndef TAU_PRODUCER
 #define TAU_PRODUCER
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "OSUT3Analysis/Collections/interface/Tau.h"
 
-class OSUTauProducer : public edm::EDProducer
+class OSUTauProducer : public edm::stream::EDProducer<>
 {
   public:
     OSUTauProducer (const edm::ParameterSet &);

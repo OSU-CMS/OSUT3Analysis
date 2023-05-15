@@ -6,11 +6,11 @@ import os
 if os.environ["CMSSW_VERSION"].startswith("CMSSW_10_2_") and int(os.environ["CMSSW_VERSION"].split("_")[3]) >= 10:
 	from PhysicsTools.PatUtils.l1ECALPrefiringWeightProducer_cfi import l1ECALPrefiringWeightProducer
 	prefiringweight = l1ECALPrefiringWeightProducer.clone(
-    	DataEra = cms.string("replaceMe"),
-    	UseJetEMPt = cms.bool(False),
-    	PrefiringRateSystematicUncty = cms.double(0.2),
-    	SkipWarnings = False
-    )
+	DataEra = cms.string("replaceMe"),
+	UseJetEMPt = cms.bool(False),
+	PrefiringRateSystematicUncty = cms.double(0.2),
+	SkipWarnings = False
+	)
 else:
 	prefiringweight = cms.EDProducer("L1ECALPrefiringWeightProducer",
 		ThePhotons = cms.InputTag("slimmedPhotons"),
@@ -23,4 +23,4 @@ else:
 
 # Call: variableProducers.extend(l1PrefiringWeightVariableProducers)
 # *order matters*
-l1PrefiringWeightVariableProducers = ['prefiringweight', 'L1PrefiringWeightProducer']
+l1PrefiringWeightVariableProducers = ['prefiringweight', 'L1PrefiringWeightProducerOSU']

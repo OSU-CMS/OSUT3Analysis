@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ### this script has been done to overlaid on the same canva multiple efficency's curves. It uses the asymmetryc errors.
 

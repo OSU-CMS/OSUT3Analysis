@@ -3,13 +3,13 @@
 
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/stream/EDAnalyzer.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
 #include <string>
 #include "TH1D.h"
 #include "TFile.h"
-class PDFWeightsPlotter : public edm::EDAnalyzer
+class PDFWeightsPlotter : public edm::stream::EDAnalyzer<>
   {
     public:
         PDFWeightsPlotter (const edm::ParameterSet &);

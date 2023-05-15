@@ -4,7 +4,7 @@
 #include <tuple>
 #include <unordered_set>
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/stream/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -17,7 +17,7 @@
 #include "TH2.h"
 #include "TH3.h"
 
-class Plotter : public edm::EDAnalyzer
+class Plotter : public edm::stream::EDAnalyzer<>
 {
     public:
 
