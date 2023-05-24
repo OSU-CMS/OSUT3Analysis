@@ -114,6 +114,45 @@ def getLocalSiblings(output_json):
     f_out.write(json_dict)
     f_out.close()
 
+def getSharedLumis(jsonFile):
+    from dbs.apis.dbsClient import DbsApi
+    #import FWCore.PythonUtilities.LumiList as myLumiList
+
+    dbs3api_in = DbsApi (url = 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader')
+    fin = open(jsonFile)
+    data = json.load(fin)
+    primaryFiles = list(data.keys())
+    secondaryFiles = list(data.values())
+
+    primaryLumis = list(dbs3api_in.listFileLumiArray (logical_file_name=primaryFiles))
+    secondaryLumis = list(dbs3api_in.listFileLumiArray (logical_file_name=secondaryFiles))
+
+    primaryRL = dict([(x['run_num'],x['lumi_section_num']) for x in primaryLumis])
+    secondaryRL = dict([(x['run_num'],x['lumi_section_num']) for x in secondaryLumis])
+
+    primaryLumiList = LumiList(runsAndLumis = primaryRL)
+    secondaryLumiList = LumiList(runsAndLumis = secondaryRL)
+
+    print("Primary List", primaryLumiList)
+    print("*******************************************************")
+    print("Secondary List", secondaryLumiList)
+
+    missingLumis = primaryLumiList - secondaryLumiList
+    #missingLumis = secondaryLumiList - primaryLumiList
+    print("****************** MISSING LUMIS *************************")
+    print(missingLumis)
+    print("**********************************************************")
+
+    sameLumis = primaryLumiList & secondaryLumiList
+    print(sameLumis)
+
+    print("Primary: {0}".format(primaryLumiList.getCompactList()))
+    print("Secondary: {0}".format(secondaryLumiList.getVLuminosityBlockRange()))
+
+    return sameLumis
+
+
+
 
 if __name__ == "__main__":
 
@@ -123,11 +162,16 @@ if __name__ == "__main__":
     parser.add_argument("-u", "--user", action="store_true", help="Use this option to use a user created dataset")
     parser.add_argument("-n", "--nameList", type=str, help="Name of the json file to output")
     parser.add_argument("-l", "--local", action="store_true", help="If input data is user created on the T3")
+    parser.add_argument("-b", "--lumiBlocks", action="store_true", help="Print out the lumis for the primary and secondary datasets")
 
     args = parser.parse_args()
 
     output_json = 'output.json'
     if args.nameList: output_json = args.nameList + '.json'
+
+    if args.lumiBlocks:
+        printLumiBlocks()
+        sys.exit(0)
 
     if not args.local:
         try:

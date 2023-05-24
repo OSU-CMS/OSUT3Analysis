@@ -194,3 +194,62 @@ def getSiblingList(sibList, runList, siblingDataset):
 
   return siblings
 
+def getSharedLumis(sibList='', primaryDataset='', secondaryDataset='', golden=''):
+
+    from dbs.apis.dbsClient import DbsApi
+    import FWCore.PythonUtilities.LumiList as LumiList
+
+    dbs3api_in = DbsApi (url = 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader')
+
+    if sibList != '':
+      fin = open(sibList)
+      data = json.load(fin)
+      primaryFiles = list(data.keys())
+      secondaryFiles = []
+      [secondaryFiles.append(j) for sub in data.values() for j in sub if j not in secondaryFiles]
+    
+    elif primaryDataset != '' and secondaryDataset != '':
+      input_files = dbs3api_in.listFiles (dataset = primaryDataset, detail=True)
+      primaryFiles = []
+      for ifile, filename in enumerate(input_files):
+          if(filename['is_file_valid']): primaryFiles.append(filename['logical_file_name'])
+
+      input_files = dbs3api_in.listFiles (dataset = secondaryDataset, detail=True)
+      secondaryFiles = []
+      for ifile, filename in enumerate(input_files):
+          if(filename['is_file_valid']): secondaryFiles.append(filename['logical_file_name'])    
+
+    else:
+      print("Need to provide either a json file of Skim and MINIAOD data or the primary and secondary datasets")
+      sys.exit(1)
+      
+    primaryLumis = list(dbs3api_in.listFileLumiArray (logical_file_name=primaryFiles))
+    secondaryLumis = list(dbs3api_in.listFileLumiArray (logical_file_name=secondaryFiles))
+
+    primaryRL = {}
+    for x in primaryLumis:
+      if x['run_num'] in primaryRL: 
+        for lumi in x['lumi_section_num']: primaryRL[x['run_num']].append(lumi)
+      else:
+        primaryRL[x['run_num']] = x['lumi_section_num']
+
+    secondaryRL = {}
+    for x in secondaryLumis:
+      if x['run_num'] in secondaryRL: 
+        for lumi in x['lumi_section_num']: secondaryRL[x['run_num']].append(lumi)
+      else:
+        secondaryRL[x['run_num']] = x['lumi_section_num']
+
+    primaryLumiList = LumiList.LumiList(runsAndLumis = primaryRL)
+    secondaryLumiList = LumiList.LumiList(runsAndLumis = secondaryRL)
+    sameLumis = primaryLumiList & secondaryLumiList
+
+    if golden != '':
+      #goldenLumiList = LumiList.LumiList(filename = golden)
+      sameLumis = golden & sameLumis
+
+    return sameLumis
+
+if __name__ == "__main__":
+
+  lumis = getSharedLumis("../../../DisappTrks/Skims/data/EGamma_2022D.json")
