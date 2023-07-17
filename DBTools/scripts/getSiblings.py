@@ -90,7 +90,6 @@ def getLocalSiblings(output_json):
             subList = []
     inputLumiBlocks = subprocess.run(['python3 getLumiBlock.py sibling '+ ' '.join(subList)], shell=True)
 
-
     input_fin = open('input.json', 'r')
     sib_fin = open('sibling.json', 'r')
     inputLumiBlocks = json.load(input_fin)
@@ -100,7 +99,9 @@ def getLocalSiblings(output_json):
     dict_out = {}
 
     for filename, [run, lumi] in inputLumiBlocks.items():
+        filename = 'file:' + filename
         for sibname, [sibRun, sibLumi] in siblingLumiBlocks.items():
+            sibname = 'file:' + sibname
             if run == sibRun and lumi == sibLumi:
                 if filename in dict_out:
                     dict_out[filename] = dict_out[filename].append(sibname)
@@ -116,6 +117,9 @@ def getLocalSiblings(output_json):
 
 
 if __name__ == "__main__":
+
+    if os.path.exists('input.json'): os.system('rm input.json')
+    if os.path.exists('sibling.json'): os.system('rm sibling.json')
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--inputDataset", type=str, help="Input dataset to get siblings of")
