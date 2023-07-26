@@ -109,7 +109,7 @@ def getSiblings (fileName, dataset):
   return list (miniaodSubset.intersection (miniaod))
 
 # Function for getting Run3 skim sibling of a given file from a given dataset
-def getRun3SkimSiblings (fileName, dataset, inputUser=False):
+def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
   try:
     from dbs.apis.dbsClient import DbsApi
     #from CRABClient.ClientUtilities import DBSURLS
@@ -132,7 +132,7 @@ def getRun3SkimSiblings (fileName, dataset, inputUser=False):
   # if dataset is not a USER dataset, then assume the file comes from a USER dataset
   if "/USER" not in dataset:
     # first get the parents
-    if inputUser:
+    if inputUser == 'allUser':
       #if dataset was created by user then the parents will be AOD files -> Need to get grandparents (RAW) to find MINIAOD siblings
       grandparents = []
       parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
@@ -140,16 +140,18 @@ def getRun3SkimSiblings (fileName, dataset, inputUser=False):
         for parent_file_name in parent['parent_logical_file_name']:
           grandparents.extend (dbs3api_phys03.listFileParents(logical_file_name = parent_file_name))
       parents = grandparents
+    elif inputUser == 'user':
+      print("Getting user dataset, not grandparents")
+      parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
     else:
       print("Getting user dataset, not grandparents")
       parents = dbs3api_global.listFileParents (logical_file_name = fileName)
-      print("parents: ", parents)
 
     children = []
     for parent in parents:
       for parent_file_name in parent["parent_logical_file_name"]:
-        print(parent_file_name)
         children.extend (dbs3api_global.listFileChildren (logical_file_name = parent_file_name))
+
 
      # put the children in a set
     for child in children:
