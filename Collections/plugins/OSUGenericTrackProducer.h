@@ -61,6 +61,9 @@ template<class T>
     edm::EDGetTokenT<EBRecHitCollection>         EBRecHitsToken_;
     edm::EDGetTokenT<EERecHitCollection>         EERecHitsToken_;
     edm::EDGetTokenT<HBHERecHitCollection>       HBHERecHitsToken_;
+    edm::EDGetTokenT<double>  rhoToken_;
+    edm::EDGetTokenT<double>  rhoCaloToken_;
+    edm::EDGetTokenT<double>  rhoCentralCaloToken_;
     edm::EDGetTokenT<edm::ValueMap<reco::DeDxData> > gt2dedxStripToken_;
     edm::EDGetTokenT<edm::ValueMap<reco::DeDxData> > gt2dedxPixelToken_;
     edm::EDGetTokenT<vector<reco::GsfTrack> >    gsfTracksToken_;

@@ -65,6 +65,9 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   EERecHitsTag_    =  cfg.getParameter<edm::InputTag>  ("EERecHits");
   HBHERecHitsTag_  =  cfg.getParameter<edm::InputTag>  ("HBHERecHits");
 
+  rhoToken_             = consumes<double>  (cfg.getParameter<edm::InputTag> ("rhoTag"));
+  rhoCaloToken_         = consumes<double>  (cfg.getParameter<edm::InputTag> ("rhoCaloTag"));
+  rhoCentralCaloToken_  = consumes<double>  (cfg.getParameter<edm::InputTag> ("rhoCentralCaloTag"));
 
   EBRecHitsToken_    =  consumes<EBRecHitCollection>    (EBRecHitsTag_);
   EERecHitsToken_    =  consumes<EERecHitCollection>    (EERecHitsTag_);
@@ -182,6 +185,13 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   edm::Handle<HBHERecHitCollection> HBHERecHits;
   event.getByToken(HBHERecHitsToken_, HBHERecHits);
 
+  edm::Handle<double> rhoHandle;
+  event.getByToken (rhoToken_, rhoHandle );
+  edm::Handle<double> rhoCaloHandle;
+  event.getByToken (rhoCaloToken_, rhoCaloHandle );
+  edm::Handle<double> rhoCentralCaloHandle;
+  event.getByToken (rhoCentralCaloToken_, rhoCentralCaloHandle );
+
 #if AOD_SKIM
   edm::Handle<edm::ValueMap<reco::DeDxData> > gt2dedxPixel;
   event.getByToken(gt2dedxPixelToken_, gt2dedxPixel);
@@ -279,6 +289,10 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 //#if DATA_FORMAT_IS_CUSTOM && !DATA_FORMAT_IS_2022
 #if DATA_FORMAT_IS_CUSTOM || (DATA_FORMAT_FROM_MINIAOD && DATA_FORMAT_IS_2022 && AOD_SKIM) //mcarrigan
       // Calculate the associated calorimeter energy for the disappearing tracks search.
+
+      track.set_rhoPUCorr(*rhoHandle);
+      track.set_rhoPUCorrCalo(*rhoCaloHandle);
+      track.set_rhoPUCorrCentralCalo(*rhoCentralCaloHandle);
 
       const CaloEnergy &caloE_0p5 = calculateCaloE(track, *EBRecHits, *EERecHits, *HBHERecHits, 0.5);
       track.set_caloNewEMDRp5 (caloE_0p5.eEM);
