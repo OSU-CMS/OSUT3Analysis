@@ -9,6 +9,7 @@ import copy
 import pickle
 import tempfile
 import shutil
+import json
 import FWCore.ParameterSet.Modules
 from optparse import OptionParser
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
@@ -191,25 +192,25 @@ def get_collections (cuts):
     ############################################################################
 
 def set_skim_tags (inputFileName, collections):
-    # If we are running over a skim via XrootD, get SkimInputTags.pkl via XrootD
+    # If we are running over a skim via XrootD, get SkimInputTags.json via XrootD
     if inputFileName.startswith ('root:'):
         tmpDir = tempfile.mkdtemp ()
-        subprocess.call('xrdcp ' + os.path.dirname(inputFileName) + '/SkimInputTags.pkl ' + tmpDir + '/SkimInputTags.pkl', shell = True)
-        inputTagPickleName = tmpDir + '/SkimInputTags.pkl'
-    # Otherwise get SkimInputTags.pkl via the regular file system
+        subprocess.call('xrdcp ' + os.path.dirname(inputFileName) + '/SkimInputTags.json ' + tmpDir + '/SkimInputTags.json', shell = True)
+        inputTagPickleName = tmpDir + '/SkimInputTags.json'
+    # Otherwise get SkimInputTags.json via the regular file system
     else:
         if inputFileName.startswith ('file:'):
             inputFileName = inputFileName[5:]
-        inputTagPickleName = os.path.dirname (os.path.realpath (inputFileName)) + '/SkimInputTags.pkl'
+        inputTagPickleName = os.path.dirname (os.path.realpath (inputFileName)) + '/SkimInputTags.json'
     if not os.path.isfile (inputTagPickleName):
-        print("ERROR:  The input file appears to be a skim file but no SkimInputTags.pkl file found in the skim directory.")
+        print("ERROR:  The input file appears to be a skim file but no SkimInputTags.json file found in the skim directory.")
         print("Input file is", inputFileName)
         print("Be sure that you have run mergeOut.py.")
         if inputFileName.startswith ('root:'):
             shutil.rmtree (tmpDir)
         sys.exit(1)
     fin = open (inputTagPickleName)
-    inputTags = pickle.load (fin)
+    inputTags = json.load (fin) #.decode("utf8") #mcarrigan 8/8/23
     fin.close ()
     if inputFileName.startswith ('root:'):
         shutil.rmtree (tmpDir)
@@ -290,7 +291,7 @@ def add_channels (process,
         raise AttributeError(exceptionString)
 
     ############################################################################
-    # Check the directory of the first input file for SkimInputTags.pkl. If it
+    # Check the directory of the first input file for SkimInputTags.json. If it
     # exists, update the input tags with those stored in the pickle file.
     ############################################################################
     makeEmptySkim = False
@@ -303,7 +304,7 @@ def add_channels (process,
 
     # If we are running over an empty skim, get the file name from the
     # secondary files. The secondary files should be a full skim with
-    # SkimInputTags.pkl in the same directory.
+    # SkimInputTags.json in the same directory.
     if rootFile.startswith ("emptySkim_"):
         makeEmptySkim = True
         primaryFileName = fileName
