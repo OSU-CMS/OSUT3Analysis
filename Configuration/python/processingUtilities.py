@@ -215,9 +215,10 @@ def set_skim_tags (inputFileName, collections):
     if inputFileName.startswith ('root:'):
         shutil.rmtree (tmpDir)
     print("Input tags read in")
+    print("Collections: ", collections)
     for tag in inputTags:
         print("Tag {0}, {1}".format(tag, inputTags[tag]))
-        setattr (collections, tag, inputTags[tag])
+        setattr (collections, tag, eval(inputTags[tag]))
 
 #def add_channels (process, channels, histogramSets, weights, scalingfactorproducers, collections, variableProducers, skim = True, branchSets):
 def add_channels (process,
