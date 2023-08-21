@@ -322,13 +322,9 @@ def SkimFileValidator(skimFile):
             FileToTest = TFile(skimFile)
             Valid = True
         except:
-            print('Zombie!!!!')
+            print('{0} is a zombie!!!! Skipping merge and adding to resubmit list'.format(skimFile))
             Valid = False
-    #print('file opened.  now checking for zombie')
-    #Valid = True
-    #if FileToTest.IsZombie():
-     #   Valid = False
-     #   print('file is a zombie!!!')
+   
     for TreeToTest in ['MetaData', 'ParameterSets', 'Parentage', 'Events', 'LuminosityBlocks', 'Runs']:
         Valid = Valid and (FileToTest.Get(TreeToTest) != None)
     InvalidOrEmpty = not Valid or not FileToTest.Get ("Events").GetEntries ()

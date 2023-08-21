@@ -49,7 +49,6 @@ except OSError:
 ###############################################################################
 #Check whether the necessary arguments or the local config are given correctly#
 ###############################################################################
-print('Skip status is {0}'.format(arguments.skipMerging))
 split_datasets = []
 composite_datasets = []
 IntLumi = 0.0
