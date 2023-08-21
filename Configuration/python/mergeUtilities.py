@@ -318,8 +318,17 @@ def SkimFileValidator(skimFile):
     if skimFile.startswith('root://'):
         FileToTest = TNetXNGFile(skimFile)
     else:
-        FileToTest = TFile(skimFile)
-    Valid = True
+        try:
+            FileToTest = TFile(skimFile)
+            Valid = True
+        except:
+            print('Zombie!!!!')
+            Valid = False
+    #print('file opened.  now checking for zombie')
+    #Valid = True
+    #if FileToTest.IsZombie():
+     #   Valid = False
+     #   print('file is a zombie!!!')
     for TreeToTest in ['MetaData', 'ParameterSets', 'Parentage', 'Events', 'LuminosityBlocks', 'Runs']:
         Valid = Valid and (FileToTest.Get(TreeToTest) != None)
     InvalidOrEmpty = not Valid or not FileToTest.Get ("Events").GetEntries ()
