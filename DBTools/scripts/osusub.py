@@ -686,6 +686,10 @@ def MakeCondorSubmitRelease(Directory):
         "*.C",
         #"*.cpp",
         "test",
+        "*.root",
+        "crab",
+        "*.sif",
+        ".nfs*"
     )
     cwd = os.getcwd ()
     os.chdir (Directory + "/..")
