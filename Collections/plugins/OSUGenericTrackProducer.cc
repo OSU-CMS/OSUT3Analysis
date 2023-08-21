@@ -153,6 +153,7 @@ OSUGenericTrackProducer<T>::beginRun (const edm::Run &run, const edm::EventSetup
 template<class T> void 
 OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &setup)
 {
+
   //caloGeometry_ = setup.getHandle(caloGeometryToken_);
   //ecalStatus_   = setup.getHandle(ecalStatusToken_);
 
@@ -273,6 +274,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 
 #ifdef DISAPP_TRKS
       T &track = pl_->back ();
+//#endif //temp mcarrigan
 
 // in the specific case of TYPE(tracks)==CandidateTracks (where DATA_FORMAT is xyz_CUSTOM)
 // and running over CandidateTracks ntuples, then generalTracks and RecHits may be available
@@ -296,9 +298,10 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       track.set_caloNewEMDRp1 (caloE_0p1.eEM);
       track.set_caloNewHadDRp1 (caloE_0p1.eHad);
 
+
       // this could be removed; if CandidateTrackProdcuer sets these,
-      // then these values need not be recalculated -- and RecHits can all be dropped
-      /*if (EBRecHits.isValid () && EERecHits.isValid () && HBHERecHits.isValid ())
+      // then these values need not be recalculated -- and RecHits can all be dropped*/
+      if (EBRecHits.isValid () && EERecHits.isValid () && HBHERecHits.isValid ())
         {
           double eEM = 0;
           double dR = 0.5;
@@ -328,28 +331,27 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
           track.set_caloNewEMDRp5(eEM);
           std::cout << "In OSUGenericTrackProducer... setting the calo energy: " << eEM << std::endl;
           //track.set_caloNewHadDRp5(eHad);
-        }*/
+        }
 #endif
-#if DATA_FORMAT_IS_CUSTOM //&& !DATA_FORMAT_IS_2022
+#if DATA_FORMAT_IS_CUSTOM || DATA_FORMAT_IS_2022
 
       // this is called only for ntuples with generalTracks explicitly kept (really just signal),
       // to re-calculate the track isolations calculated wrong when ntuples were produces (thus "old" vs not-old)
-      if (tracks.isValid ())
+      if (isolatedTracks.isValid ())
         {
-          track.set_trackIsoDRp3 (getTrackIsolation (track, *tracks, false, false, 0.3));
-          track.set_trackIsoDRp5 (getTrackIsolation (track, *tracks, false, false, 0.5));
-          track.set_trackIsoNoPUDRp3 (getTrackIsolation (track, *tracks, true, false, 0.3));
-          track.set_trackIsoNoPUDRp5 (getTrackIsolation (track, *tracks, true, false, 0.5));
-          track.set_trackIsoNoFakesDRp3 (getTrackIsolation (track, *tracks, false, true, 0.3));
-          track.set_trackIsoNoFakesDRp5 (getTrackIsolation (track, *tracks, false, true, 0.5));
-          track.set_trackIsoNoPUNoFakesDRp3 (getTrackIsolation (track, *tracks, true, true, 0.3));
-          track.set_trackIsoNoPUNoFakesDRp5 (getTrackIsolation (track, *tracks, true, true, 0.5));
+          track.set_trackIsoDRp3 (getTrackIsolation (track, *isolatedTracks, false, false, 0.3));
+          track.set_trackIsoDRp5 (getTrackIsolation (track, *isolatedTracks, false, false, 0.5));
+          track.set_trackIsoNoPUDRp3 (getTrackIsolation (track, *isolatedTracks, true, false, 0.3));
+          track.set_trackIsoNoPUDRp5 (getTrackIsolation (track, *isolatedTracks, true, false, 0.5));
+          track.set_trackIsoNoFakesDRp3 (getTrackIsolation (track, *isolatedTracks, false, true, 0.3));
+          track.set_trackIsoNoFakesDRp5 (getTrackIsolation (track, *isolatedTracks, false, true, 0.5));
+          track.set_trackIsoNoPUNoFakesDRp3 (getTrackIsolation (track, *isolatedTracks, true, true, 0.3));
+          track.set_trackIsoNoPUNoFakesDRp5 (getTrackIsolation (track, *isolatedTracks, true, true, 0.5));
 
-          track.set_trackIsoOldNoPUDRp3 (getOldTrackIsolation (track, *tracks, true, 0.3));
-          track.set_trackIsoOldNoPUDRp5 (getOldTrackIsolation (track, *tracks, true, 0.5));
+          //track.set_trackIsoOldNoPUDRp3 (getOldTrackIsolation (track, *tracks, true, 0.3));
+          //track.set_trackIsoOldNoPUDRp5 (getOldTrackIsolation (track, *tracks, true, 0.5));
         }
 #endif // DATA_FORMAT_IS_CUSTOM
-
         track.set_minDeltaRToElectrons(electrons, vertices, eleVIDVetoIdMap, eleVIDLooseIdMap, eleVIDMediumIdMap, eleVIDTightIdMap);
         track.set_minDeltaRToMuons(muons, vertices);
         track.set_minDeltaRToTaus(taus);
@@ -359,7 +361,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 #endif
 
 #endif // DISAPP_TRKS
-    }
+  }
 
   event.put (std::move (pl_), collection_.instance ());
   pl_.reset ();
@@ -590,17 +592,16 @@ OSUGenericTrackProducer<T>::getChannelStatusMaps ()
 }
 
 template<class T> const double 
-OSUGenericTrackProducer<T>::getTrackIsolation (TYPE(tracks)& track, const vector<reco::Track> &tracks, const bool noPU, const bool noFakes, const double outerDeltaR, const double innerDeltaR) const
+OSUGenericTrackProducer<T>::getTrackIsolation (TYPE(tracks)& track, const vector<TYPE(tracks)> &tracks, const bool noPU, const bool noFakes, const double outerDeltaR, const double innerDeltaR) const
 {
   double sumPt = 0.0;
-
   for (const auto &t : tracks)
     {
-
-      if (noFakes && (t.normalizedChi2() > 20.0 ||
-                      t.hitPattern().pixelLayersWithMeasurement() < 2 ||
-                      t.hitPattern().trackerLayersWithMeasurement() < 5 ||
-                      fabs(t.d0() / t.d0Error()) > 5.0))
+      //if (noFakes && (t.normalizedChi2() > 20.0 ||
+      if (noFakes &&
+            (t.hitPattern().pixelLayersWithMeasurement() < 2 ||
+            t.hitPattern().trackerLayersWithMeasurement() < 5 ||
+            fabs(t.dxy() / t.dxyError()) > 5.0))
         continue;
 #if DATA_FORMAT_IS_2022
       if (noPU && track.dz() > 3.0 * hypot(track.dzError(), t.dzError()))
@@ -652,7 +653,7 @@ OSUGenericTrackProducer<T>::getOldTrackIsolation (TYPE(tracks)& track, const vec
 
 template<class T> const CaloEnergy
 OSUGenericTrackProducer<T>::calculateCaloE (TYPE(tracks)& track, const EBRecHitCollection &EBRecHits, const EERecHitCollection &EERecHits, const HBHERecHitCollection &HBHERecHits, const double dR) const
-{
+{ 
   double eEM = 0;
   for (const auto &hit : EBRecHits) {
     if (insideCone(track, hit.detid(), dR)) {
@@ -666,9 +667,11 @@ OSUGenericTrackProducer<T>::calculateCaloE (TYPE(tracks)& track, const EBRecHitC
   }
 
   double eHad = 0;
-  for (const auto &hit : HBHERecHits)
-    if (insideCone(track, hit.detid(), dR))
+  for (const auto &hit : HBHERecHits) {
+    if (insideCone(track, hit.detid(), dR)) {
       eHad += hit.energy();
+    }
+  }
 
   return {eEM, eHad};
 }

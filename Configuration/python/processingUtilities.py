@@ -210,7 +210,7 @@ def set_skim_tags (inputFileName, collections):
             shutil.rmtree (tmpDir)
         sys.exit(1)
     fin = open (inputTagPickleName)
-    inputTags = json.load (fin) #.decode("utf8") #mcarrigan 8/8/23
+    inputTags = json.load (fin)
     fin.close ()
     if inputFileName.startswith ('root:'):
         shutil.rmtree (tmpDir)
