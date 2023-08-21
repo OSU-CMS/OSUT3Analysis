@@ -12,6 +12,7 @@ import math
 import socket
 import tempfile
 import importlib.util
+import json
 from threading import Thread, Lock, Semaphore
 from multiprocessing import cpu_count
 from OSUT3Analysis.Configuration.configurationOptions import *
@@ -241,17 +242,19 @@ def GetSkimInputTags(File, xrootdDestination = ""):
         if not parsing:
             continue
         splitLine = line.split ()
-        cppTypes.append (splitLine[0])
-        inputTags[splitLine[0]] = cms.InputTag (splitLine[1][1:-1].decode("utf-8"), splitLine[2][1:-1].decode("utf-8"), splitLine[3][1:-1].decode("utf-8"))
-
+        cppTypes.append (splitLine[0].decode("utf-8"))
+        #print("Event content: ", line)
+        inputTags[splitLine[0].decode("utf-8")] = cms.InputTag (splitLine[1][1:-1].decode("utf-8"), splitLine[2][1:-1].decode("utf-8"), splitLine[3][1:-1].decode("utf-8"))
+    
     collectionTypes = subprocess.check_output (["getCollectionType"] + cppTypes)
     # Save only the collections for which there is a valid type, and only framework collections
     # Future jobs on this skim will use the user's collectionMap collections, overwritten only for framework collections
     for i in range (0, len (cppTypes)):
-        if cppTypes[i] not in inputTags:
+        if cppTypes[i] not in inputTags.keys():
             continue
-        collectionType = collectionTypes.splitlines ()[i]
-        if collectionType == "INVALID_TYPE":
+        collectionType = collectionTypes.splitlines ()[i].decode('utf-8')
+        #if collectionType == "INVALID_TYPE": #mcarrigan 8/10/23
+        if "INVALID_TYPE" in str(collectionType):
             inputTags.pop (cppTypes[i])
         else:
             thisTag = inputTags.pop (cppTypes[i])
@@ -260,21 +263,22 @@ def GetSkimInputTags(File, xrootdDestination = ""):
 
     if xrootdDestination != "":
         tmpDir = tempfile.mkdtemp()
-        outfile = os.path.join(tmpDir, 'SkimInputTags.pkl')
+        outfile = os.path.join(tmpDir, 'SkimInputTags.json')
         fout = open (outfile, 'w')
-        dumpedString = pickle.dumps (inputTags).decode('latin-1')
+        dumpedString = json.dumps(inputTags).decode('latin-1') #mcarrigan 8/8/23
         fout.write(dumpedString)
         fout.close()
         try:
             subprocess.check_output(['xrdcp', '-f', outfile, xrootdDestination])
         except subprocess.CalledProcessError as e:
-            print('Failed to copy SkimInputTags.pkl:', e)
+            print('Failed to copy SkimInputTags.json:', e)
         shutil.rmtree(tmpDir)
     else:
-        if os.path.exists("SkimInputTags.pkl"):
-            os.remove("SkimInputTags.pkl")
-        fout = open ("SkimInputTags.pkl", "w")
-        dumpedString = pickle.dumps (inputTags).decode('latin-1')
+        if os.path.exists("SkimInputTags.json"):
+            os.remove("SkimInputTags.json")
+        fout = open ("SkimInputTags.json", "w")
+        inputTags = dict((str(k), str(v)) for k,v in inputTags.items())
+        dumpedString = json.dumps(inputTags) #.decode('latin-1') #mcarrigan
         fout.write(dumpedString)
         fout.close ()
 

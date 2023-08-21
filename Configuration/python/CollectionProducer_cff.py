@@ -261,7 +261,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     fiducialMaps = cms.PSet (
         electrons = cms.VPSet (
             cms.PSet (
-                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_mc.root"),
+                #histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_mc.root"),
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
                 thresholdForVeto = cms.double (0.0), # in sigma
@@ -270,7 +270,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
         ),
         muons = cms.VPSet (
             cms.PSet (
-                histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_mc.root"),
+                #histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_mc.root"),
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
                 thresholdForVeto = cms.double (0.0), # in sigma
@@ -338,9 +338,11 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
     elif "Run2018" in osusub.dataset:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2018_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2018_data.root")
-    else:
+    elif "Run2015" in osusub.dataset:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2015_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2015_data.root")
+    else:
+        print("No fiducial map hist file")
     # determine which era this dataset is in
     if "_201" in osusub.datasetLabel:
         collectionProducer.tracks.fiducialMaps.electrons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])

@@ -686,7 +686,7 @@ def MakeCondorSubmitRelease(Directory):
         "*.C",
         #"*.cpp",
         "test",
-        "*.root",
+        #"*.root", #TODO should not include root files but needed for fiducial maps currently
         "crab",
         "*.sif",
         ".nfs*"
