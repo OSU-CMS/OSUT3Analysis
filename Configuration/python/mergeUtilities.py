@@ -322,8 +322,13 @@ def SkimFileValidator(skimFile):
     if skimFile.startswith('root://'):
         FileToTest = TNetXNGFile(skimFile)
     else:
-        FileToTest = TFile(skimFile)
-    Valid = True
+        try:
+            FileToTest = TFile(skimFile)
+            Valid = True
+        except:
+            print('{0} is a zombie!!!! Skipping merge and adding to resubmit list'.format(skimFile))
+            Valid = False
+   
     for TreeToTest in ['MetaData', 'ParameterSets', 'Parentage', 'Events', 'LuminosityBlocks', 'Runs']:
         Valid = Valid and (FileToTest.Get(TreeToTest) != None)
     InvalidOrEmpty = not Valid or not FileToTest.Get ("Events").GetEntries ()
