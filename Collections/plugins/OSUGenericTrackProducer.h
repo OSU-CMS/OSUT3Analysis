@@ -61,6 +61,9 @@ template<class T>
     edm::EDGetTokenT<EBRecHitCollection>         EBRecHitsToken_;
     edm::EDGetTokenT<EERecHitCollection>         EERecHitsToken_;
     edm::EDGetTokenT<HBHERecHitCollection>       HBHERecHitsToken_;
+    edm::EDGetTokenT<double>  rhoToken_;
+    edm::EDGetTokenT<double>  rhoCaloToken_;
+    edm::EDGetTokenT<double>  rhoCentralCaloToken_;
     edm::EDGetTokenT<edm::ValueMap<reco::DeDxData> > gt2dedxStripToken_;
     edm::EDGetTokenT<edm::ValueMap<reco::DeDxData> > gt2dedxPixelToken_;
     edm::EDGetTokenT<vector<reco::GsfTrack> >    gsfTracksToken_;
@@ -119,7 +122,7 @@ template<class T>
     map<DetId, vector<double> > EcalAllDeadChannelsValMap_;
     map<DetId, vector<int> >    EcalAllDeadChannelsBitMap_;
 
-    const double getTrackIsolation (TYPE(tracks)&, const vector<reco::Track> &, const bool, const bool, const double, const double = 1.0e-12) const;
+    const double getTrackIsolation (TYPE(tracks)&, const vector<TYPE(tracks)> &, const bool, const bool, const double, const double = 1.0e-12) const;
     const double getOldTrackIsolation (TYPE(tracks)&, const vector<reco::Track> &, const bool, const double, const double = 1.0e-12) const;
     const CaloEnergy calculateCaloE (TYPE(tracks)&, const EBRecHitCollection &, const EERecHitCollection &, const HBHERecHitCollection &, const double dR = 0.5) const;
 
