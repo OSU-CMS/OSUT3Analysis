@@ -710,7 +710,6 @@ def MakeCondorSubmitRelease(Directory):
         subprocess.call ("scram project CMSSW " + os.environ["CMSSW_VERSION"], shell = True, stdout = DEVNULL, stderr = DEVNULL)
         os.chdir (os.environ["CMSSW_VERSION"])
         for directory in directoriesToCopy:
-            print("copying directory:", directory)
             while os.path.isdir (directory):
                 try:
                     shutil.rmtree (directory, ignore_errors = True)
