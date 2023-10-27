@@ -3,12 +3,24 @@ import sys
 import json
 import argparse
 import psutil
+import ROOT as r
 from OSUT3Analysis.DBTools.osusub_cfg import getRun3SkimSiblings
 from FWCore.PythonUtilities.LumiList   import LumiList
 from DataFormats.FWLite import Lumis, Handle
 from multiprocessing import Process, Queue
 import subprocess
 import numpy as np
+
+r.gInterpreter.Declare(
+    '''
+    #include "getEvents.h"
+
+    void dummyWrapper(){
+        getEvents();
+    }
+    '''
+)
+r.gSystem.Load('./getEvents_cpp.so')
 
 # class used to get the secondary files (siblings) of the primary input files
 class getSiblings():
@@ -94,6 +106,8 @@ class getSiblings():
         else:
             self.getDBSSiblings(self.dictName)
 
+    
+
     #function to get siblings from DBS
     def getDBSSiblings(self, output_json):
         print("getting dbs siblings")
@@ -105,19 +119,39 @@ class getSiblings():
         print('Input dataset: {}'.format(self.dataset_in))
 
         for ifile, filename in enumerate(self.inputFileList):
+            if not filename == '/store/data/Run2022D/Muon/MINIAOD/27Jun2023-v2/80000/db2c623b-346f-4c2e-b061-c8b8728df070.root': continue #debugging
+            #if not filename =='/store/data/Run2022D/Muon/AOD/EXODisappTrk-27Jun2023-v2/80000/97236e0a-68e6-4b34-8a24-53f2a101f34d.root': continue
+            primaryEvents = r.getEventsInFile(filename)
+            primaryEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in primaryEvents])
+            print(primaryEvents[:10])
             if args.prod == 'allUser':
                 siblings = getRun3SkimSiblings(filename, self.dataset_sib, args.prod)
             else:
                 siblings = getRun3SkimSiblings(filename, self.dataset_sib, args.prod)
             file_dict[filename] = siblings
             print('Siblings: ')
+            siblingEvents = []
             for sib in siblings:
                 print('\t', sib)
+                if len(siblingEvents) == 0: 
+                    siblingEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in r.getEventsInFile(sib)])
+                else: 
+                    siblingEvents = np.concatenate((siblingEvents, np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in r.getEventsInFile(sib)])))
 
         json_dict = json.dumps(file_dict)
         f_out = open(output_json, 'w')
         f_out.write(json_dict)
         f_out.close()
+        print(siblingEvents[:10])
+        sharedEvents = np.intersect1d(primaryEvents, siblingEvents)
+        print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(len(primaryEvents), len(siblingEvents), len(sharedEvents)))
+        
+        print("type: ", type(sharedEvents), type(sharedEvents[0]))
+        np.savetxt('testEvents.txt', sharedEvents, fmt='%s', delimiter=',')
+        #fout = open('testEvents.txt', 'w')
+        #fout.write(str(sharedEvents))
+        #fout.close()
+
     
     #save a json dictionary to a given file
     def saveToJson(self, dict_out, saveFile):
