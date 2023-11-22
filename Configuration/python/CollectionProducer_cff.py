@@ -287,6 +287,10 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),
     HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),
 
+    rhoTag             =  cms.InputTag  ("fixedGridRhoFastjetAll"),
+    rhoCaloTag         =  cms.InputTag  ("fixedGridRhoFastjetAllCalo"),
+    rhoCentralCaloTag  =  cms.InputTag  ("fixedGridRhoFastjetCentralCalo"),
+
     pfCandidates   = cms.InputTag ('packedPFCandidates',  '',  ''),
     lostTracks     = cms.InputTag ('lostTracks', '', ''),
     isolatedTracks = cms.InputTag ('isolatedTracks', '', ''),
