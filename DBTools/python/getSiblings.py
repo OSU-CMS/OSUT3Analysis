@@ -10,6 +10,8 @@ from DataFormats.FWLite import Lumis, Handle
 from multiprocessing import Process, Queue
 import subprocess
 import numpy as np
+import math
+import importlib
 
 r.gInterpreter.Declare(
     '''
@@ -27,11 +29,29 @@ class getSiblings():
 
     def __init__(self):
 
+        #if all datasets are not local set APIs
+        if args.prod != 'allLocal':
+            self.setAPIs()
+
+
+
         #require input dataset
         if args.inputDataset:
             self.dataset_in = args.inputDataset
+            #set the file lists
+            if args.siblingJSON and not args.inputJSON:
+                self.setFileLists(listType = 'input')
+            if args.inputJSON and not args.siblingJSON:
+                self.setFileLists(listType = 'sibling')
+            if not args.siblingJSON and not args.inputJSON:
+                self.setFileLists()
+        elif args.inputFiles:
+            if args.jobNumber==None or args.totalJobs==None:
+                print("Need to specify the job number and total jobs")
+                sys.exit(2)
+            self.inputFileList = self.getFilesFromList(args.jobNumber, args.totalJobs)
         else:
-            print("Need to specify the input dataset")
+            print("Need to specify the input dataset (-i) or input files (-f)")
             sys.exit(2)
 
         #require sibling dataset
@@ -44,23 +64,13 @@ class getSiblings():
         #name of output json file
         if args.nameList:
             self.dictName = args.nameList
-        else:
+        elif args.inputDataset:
             self.dictName = self.dataset_in.split('/')[1] + '_' + self.dataset_in.split('/')[2].split('-')[0].replace('Run', '')
+        else:
+            self.dictName = 'default.json'
 
         if not self.dictName.endswith('.json'):
             self.dictName += '.json'
-
-        #if all datasets are not local set APIs
-        if args.prod != 'allLocal':
-            self.setAPIs()
-        
-        #set the file lists
-        if args.siblingJSON and not args.inputJSON:
-            self.setFileLists(listType = 'input')
-        if args.inputJSON and not args.siblingJSON:
-            self.setFileLists(listType = 'sibling')
-        if not args.siblingJSON and not args.inputJSON:
-            self.setFileLists()
 
     #get list of files for datasets
     def setFileLists(self, listType=''):
@@ -106,26 +116,19 @@ class getSiblings():
         else:
             self.getDBSSiblings(self.dictName)
 
-    
-
     #function to get siblings from DBS
-    def getDBSSiblings(self, output_json, filelist=None):
+    def getDBSSiblings(self, output_json):
         print("getting dbs siblings")
 
         file_dict = {}
 
-        inputFiles = None
-
-        if not filelist:
-            print("Output JSON file will be called {0}".format(self.dictName))
-            print('Input dataset: {}'.format(self.dataset_in))
-            inputFiles = self.inputFileList
-        else:
-            inputFiles = filelist
+        print("Output JSON file will be called {0}".format(self.dictName))
+        #print('Input dataset: {}'.format(self.dataset_in))
+        inputFiles = self.inputFileList
 
         for ifile, filename in enumerate(inputFiles):
             #if not filename == '/store/data/Run2022D/Muon/MINIAOD/27Jun2023-v2/80000/db2c623b-346f-4c2e-b061-c8b8728df070.root': continue #debugging
-            if not filename =='/store/data/Run2022D/Muon/AOD/EXODisappTrk-27Jun2023-v2/80000/97236e0a-68e6-4b34-8a24-53f2a101f34d.root': continue
+            #if not filename =='/store/data/Run2022D/Muon/AOD/EXODisappTrk-27Jun2023-v2/80000/97236e0a-68e6-4b34-8a24-53f2a101f34d.root': continue
             primaryEvents = r.getEventsInFile(filename)
             primaryEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in primaryEvents])
             print(primaryEvents[:10])
@@ -147,12 +150,11 @@ class getSiblings():
         sharedEvents = np.intersect1d(primaryEvents, siblingEvents)
         print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(len(primaryEvents), len(siblingEvents), len(sharedEvents)))
         
-        if not filelist:
-            json_dict = json.dumps(file_dict)
-            f_out = open(output_json, 'w')
-            f_out.write(json_dict)
-            f_out.close()     
-            np.savetxt('testEvents.txt', sharedEvents, fmt='%s', delimiter=',')
+        json_dict = json.dumps(file_dict)
+        f_out = open(output_json, 'w')
+        f_out.write(json_dict)
+        f_out.close()     
+        np.savetxt('testEvents.txt', sharedEvents, fmt='%s', delimiter=',')
 
     
     #save a json dictionary to a given file
@@ -273,6 +275,25 @@ class getSiblings():
         f_out.write(json_dict)
         f_out.close()
 
+    def getFilesFromList(self, jobNumber, nJobs):
+        sys.path.append(os.getcwd())
+
+        Label = args.inputFiles
+        datasetInfo = importlib.import_module('datasetInfo_' + Label +'_cfg', package=None)
+
+        #exec("import datasetInfo_" + Label +"_cfg as datasetInfo")
+
+        filesPerJob = int(1) #int (math.floor (len (datasetInfo.listOfFiles) / nJobs))
+        residualLength = int(10) #int(len(datasetInfo.listOfFiles)%nJobs)
+        if jobNumber < residualLength:
+            runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + jobNumber):(jobNumber * filesPerJob + filesPerJob + jobNumber + 1)]
+        else:
+            runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + residualLength):(jobNumber * filesPerJob + residualLength + filesPerJob)]
+    
+        print(runList)
+        return runList
+
+
 
 if __name__ == "__main__":
 
@@ -283,6 +304,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--inputDataset", type=str, help="Input dataset to get siblings of")
+    parser.add_argument("-f", "--inputFiles", type=str, help="Input file list to get siblings from")
+    parser.add_argument("-j", "--jobNumber", type=int, help="Job number to run from the input file list")
+    parser.add_argument("-t", "--totalJobs", type=int, help="Total number of jobs condor is running over")
     parser.add_argument("-s", "--siblingDataset", type=str, help="Sibling dataset to get sibling files from")
     parser.add_argument("-n", "--nameList", type=str, help="Name of the json file to output")
     parser.add_argument("-l", "--lumiMatching", action="store_true", help="Force lumi matched siblings instead of siblings listed in DAS")
