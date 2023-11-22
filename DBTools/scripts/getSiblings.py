@@ -41,7 +41,6 @@ class getSiblings():
         #if all datasets are not local set APIs
         if args.prod != 'allLocal':
             self.setAPIs()
-        
         #set the file lists
         if args.siblingJSON and not args.inputJSON:
             self.setFileLists(listType = 'input')
@@ -53,19 +52,19 @@ class getSiblings():
     #get list of files for datasets
     def setFileLists(self, listType=''):
         if args.prod == 'allLocal':
-            if listType == 'input' or listType == '': 
+            if listType == 'input' or listType == '':
                 self.inputFileList = self.getLocalFileList(self.dataset_in)
-            if listType == 'sibling' or listType == '': 
+            if listType == 'sibling' or listType == '':
                 self.siblingFileList = self.getLocalFileList(self.dataset_sib)
         elif args.prod == 'local':
-            if listType == 'input' or listType == '': 
+            if listType == 'input' or listType == '':
                 self.inputFileList = self.getLocalFileList(self.dataset_in)
-            if listType == 'sibling' or listType == '': 
+            if listType == 'sibling' or listType == '':
                 self.siblingFileList = self.getFileList(self.dataset_sib, self.dbsapi_out)
         else:
-            if listType == 'input' or listType == '': 
+            if listType == 'input' or listType == '':
                 self.inputFileList = self.getFileList(self.dataset_in, self.dbsapi_in)
-            if listType == 'sibling' or listType == '': 
+            if listType == 'sibling' or listType == '':
                 self.siblingFileList = self.getFileList(self.dataset_sib, self.dbsapi_out)
 
     #get the dbs api for a given dataset
@@ -118,7 +117,7 @@ class getSiblings():
         f_out = open(output_json, 'w')
         f_out.write(json_dict)
         f_out.close()
-    
+
     #save a json dictionary to a given file
     def saveToJson(self, dict_out, saveFile):
         if os.path.exists(os.getcwd() + '/' + saveFile + '.json'):
@@ -169,13 +168,13 @@ class getSiblings():
             f_in = open(saveFile + '.json', 'r')
             json_dict = json.load(f_in)
             f_in.close()
-        
+
         runsLumisDict = {}
         for ifile, filename in enumerate(filelist):
             if ifile % 100 ==0: print("Working on {}".format(ifile))
             mylumis = api.listFileLumiArray(logical_file_name=filename)
             runsLumisDict[filename] = mylumis[0]['lumi_section_num']
-        
+
         self.saveToJson(runsLumisDict, saveFile)
 
     #get list of files from DBS
@@ -196,9 +195,9 @@ class getSiblings():
     #match files using lumi blocks
     def getLumiMatching(self, output_json, prod, inputJSON=None, sibJSON=None):
         if not inputJSON:
-            if prod != 'local' and prod != 'allLocal': 
+            if prod != 'local' and prod != 'allLocal':
                 self.getLumiBlocksDBS(self.inputFileList, self.dbsapi_in, 'input') #special case when forcing lumi matching on non local
-            else: 
+            else:
                 print("getting lumi blocks for input files")
                 self.getLumiBlocks(self.inputFileList, 'input')
             input_fin = open('input.json', 'r')
@@ -206,9 +205,9 @@ class getSiblings():
             input_fin = open(inputJSON, 'r')
 
         if not sibJSON:
-            if prod != 'allLocal': 
+            if prod != 'allLocal':
                 self.getLumiBlocksDBS(self.siblingFileList, self.dbsapi_out, 'sibling') #special case when dataset is not local
-            else: 
+            else:
                 self.getLumiBlocks(self.siblingFileList, 'sibling')
             sib_fin = open('sibling.json', 'r')
         else:
@@ -224,7 +223,7 @@ class getSiblings():
             lumis_in = np.array(inputLumiBlocks[inputFile])
             for sibFile in siblingLumiBlocks.keys():
                 lumis_sib = np.array(siblingLumiBlocks[sibFile])
-                if np.intersect1d(lumis_in, lumis_sib).size > 0: 
+                if np.intersect1d(lumis_in, lumis_sib).size > 0:
                     if inputFile in dict_out.keys():
                         dict_out[inputFile].append(sibFile)
                     else:
@@ -253,7 +252,7 @@ if __name__ == "__main__":
     parser.add_argument("--siblingJSON", type=str, help="Name of sibling JSON file to use for matching")
     parser.add_argument("--inputJSON", type=str, help="Name of input JSON file to use for matching")
     parser.add_argument("-p", "--prod", type=str, default='global', help="Select DAS prod type or local, Options: \n"+
-                                                                        "\tglobal: both datasets are global \n" + 
+                                                                        "\tglobal: both datasets are global \n" +
                                                                         "\tuser: input dataset is produced by user (phys03)\n" +
                                                                         "\tallUser: input and sibling datasets are produced by user (phys03)\n" +
                                                                         "\tlocal: input dataset is produced/stored locally on T3 (will do lumi matching)\n" +
@@ -268,6 +267,6 @@ if __name__ == "__main__":
     #if input and sibling jsons exist and will not be used, remove them
     if os.path.exists('input.json') and args.inputJSON != 'input.json': os.system('rm input.json')
     if os.path.exists('sibling.json') and args.siblingJSON != 'sibling.json': os.system('rm sibling.json')
-    
+
     mysiblings = getSiblings()
     mysiblings.getSiblings()

@@ -667,7 +667,7 @@ OSUGenericTrackProducer<T>::getOldTrackIsolation (TYPE(tracks)& track, const vec
 
 template<class T> const CaloEnergy
 OSUGenericTrackProducer<T>::calculateCaloE (TYPE(tracks)& track, const EBRecHitCollection &EBRecHits, const EERecHitCollection &EERecHits, const HBHERecHitCollection &HBHERecHits, const double dR) const
-{ 
+{
   double eEM = 0;
   for (const auto &hit : EBRecHits) {
     if (insideCone(track, hit.detid(), dR)) {

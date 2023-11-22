@@ -245,7 +245,6 @@ def GetSkimInputTags(File, xrootdDestination = ""):
         cppTypes.append (splitLine[0].decode("utf-8"))
         #print("Event content: ", line)
         inputTags[splitLine[0].decode("utf-8")] = cms.InputTag (splitLine[1][1:-1].decode("utf-8"), splitLine[2][1:-1].decode("utf-8"), splitLine[3][1:-1].decode("utf-8"))
-    
     collectionTypes = subprocess.check_output (["getCollectionType"] + cppTypes)
     # Save only the collections for which there is a valid type, and only framework collections
     # Future jobs on this skim will use the user's collectionMap collections, overwritten only for framework collections
@@ -328,7 +327,6 @@ def SkimFileValidator(skimFile):
         except:
             print('{0} is a zombie!!!! Skipping merge and adding to resubmit list'.format(skimFile))
             Valid = False
-   
     for TreeToTest in ['MetaData', 'ParameterSets', 'Parentage', 'Events', 'LuminosityBlocks', 'Runs']:
         Valid = Valid and (FileToTest.Get(TreeToTest) != None)
     InvalidOrEmpty = not Valid or not FileToTest.Get ("Events").GetEntries ()

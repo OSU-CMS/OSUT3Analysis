@@ -748,7 +748,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     ConfigFile.write('import userConfig_' + Label + '_cfg as pset\n')
     if jsonFile != '':
         ConfigFile.write('import FWCore.PythonUtilities.LumiList as LumiList\n')
-        ConfigFile.write('myLumis = LumiList.LumiList(filename = \'' + str(jsonFile) + '\').getCMSSWString().split(\',\')\n')
+        ConfigFile.write('myLumis = LumiList.LumiList(filename = \'' + str(jsonFile) + '\')\n')#.getCMSSWString().split(\',\')\n')
     ConfigFile.write('\n')
     if not Generic:
         if len(SkimChannelNames) == 0:
@@ -828,7 +828,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     #If there are no input datasets, one needs a positive MaxEvents.
     if jsonFile != '':
         ConfigFile.write('pset.process.source.lumisToProcess = cms.untracked.VLuminosityBlockRange()\n')
-        ConfigFile.write('pset.process.source.lumisToProcess.extend(myLumis)\n')
+        #ConfigFile.write('pset.process.source.lumisToProcess.extend(myLumis)\n')
     ConfigFile.write('pset.process.source.skipBadFiles = cms.untracked.bool (True)\n')
     if EventsPerJob > 0:
         ConfigFile.write('pset.process.maxEvents.input = cms.untracked.int32 (' + str(EventsPerJob) + ')\n')
@@ -853,12 +853,17 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         #ConfigFile.write("  try:\n")
         ConfigFile.write("  if osusub.skimListExists('" + labeled_era + "'):\n")
         ConfigFile.write('''    siblings.extend(osusub.getSiblingList(os.environ.get('CMSSW_BASE') + "/src/DisappTrks/Skims/data/''' + labeled_era + '.json", osusub.runList, "' + run3_skim_sibling_datasets[labeled_era] + '"))\n')
+        ConfigFile.write('''    myLumis = osusub.getSharedLumis(sibList=os.environ.get('CMSSW_BASE') + "/src/DisappTrks/Skims/data/''' + labeled_era + '.json", golden=myLumis)\n')
+
         ConfigFile.write("  else:\n")
         ConfigFile.write("    for fileName in osusub.runList:\n")
         ConfigFile.write("      siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[labeled_era] + "\"))\n")
+        ConfigFile.write("      myLumis = osusub.getSharedLumis(primaryDataset='" + Dataset + "', secondaryDataset='" + run3_skim_sibling_datasets[labeled_era] + "', golden=myLumis) \n")
         #ConfigFile.write("  except:\n")
         #ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
+        ConfigFile.write("myLumis = myLumis.getCMSSWString().split(',')\n")
+        ConfigFile.write("pset.process.source.lumisToProcess.extend(myLumis)\n")
 
     ConfigFile.write('process = pset.process\n')
     if arguments.Process:
