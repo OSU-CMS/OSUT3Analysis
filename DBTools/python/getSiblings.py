@@ -122,8 +122,6 @@ class getSiblings():
 
         file_dict = {}
 
-        print("Output JSON file will be called {0}".format(self.dictName))
-        #print('Input dataset: {}'.format(self.dataset_in))
         inputFiles = self.inputFileList
 
         for ifile, filename in enumerate(inputFiles):
@@ -279,10 +277,8 @@ class getSiblings():
         Label = args.inputFiles
         datasetInfo = importlib.import_module('datasetInfo_' + Label +'_cfg', package=None)
 
-        #exec("import datasetInfo_" + Label +"_cfg as datasetInfo")
-
-        filesPerJob = int(1) #int (math.floor (len (datasetInfo.listOfFiles) / nJobs))
-        residualLength = int(10) #int(len(datasetInfo.listOfFiles)%nJobs)
+        filesPerJob = int (math.floor (len (datasetInfo.listOfFiles) / nJobs))
+        residualLength = int(len(datasetInfo.listOfFiles)%nJobs)
         if jobNumber < residualLength:
             runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + jobNumber):(jobNumber * filesPerJob + filesPerJob + jobNumber + 1)]
         else:
