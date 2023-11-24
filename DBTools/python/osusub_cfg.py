@@ -127,8 +127,6 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
     print("getSiblings() relies on CRAB. Please set up the environment for CRAB before using.")
     sys.exit (1)
 
-  #dbsurl_global = DBSURLS["reader"].get ("global", "global")
-  #dbsurl_phys03 = DBSURLS["reader"].get ("phys03", "phys03")
   dbs3api_phys03 = DbsApi (url = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSReader')
   dbs3api_global = DbsApi (url = 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader')
 
@@ -151,10 +149,8 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
           grandparents.extend (dbs3api_phys03.listFileParents(logical_file_name = parent_file_name))
       parents = grandparents
     elif inputUser == 'user':
-      #print("Getting user dataset, not grandparents")
       parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
     else:
-      #print("Getting user dataset, not grandparents")
       parents = dbs3api_global.listFileParents (logical_file_name = fileName)
 
     children = []
@@ -165,7 +161,6 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
 
      # put the children in a set
     for child in children:
-      #for child_file_name in child["child_logical_file_name"]:
       miniaod.add (child["child_logical_file_name"])
 
     # put the files of the target dataset in another set
