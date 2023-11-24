@@ -2,8 +2,9 @@ import sys
 import math
 import os
 import json
+
 # For jobs with input datasets, normal cases: cmsRun config_cfg.py True 671 $(Process) /DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM DYJetsToLL_50_MiniAOD
-if len (sys.argv) == 7 and sys.argv[2] == "True":
+if len (sys.argv) >= 7 and sys.argv[2] == "True":
   nJobs = float (sys.argv[3])
   Label = str(sys.argv[6])
   jobNumber = int (sys.argv[4])
@@ -16,9 +17,18 @@ if len (sys.argv) == 7 and sys.argv[2] == "True":
     else:
         runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + residualLength):(jobNumber * filesPerJob + residualLength + filesPerJob)]
     secondaryRunList = datasetInfo.listOfSecondaryFiles
+
+  #this is where we need a function to get the sibling list and get an event mask
+  if len(sys.argv) >= 8:
+    print("Using event mask")
+    events = open(sys.argv[7], 'r').readlines()
+    eventMask = events
+
   dataset = sys.argv[5]
   datasetLabel = sys.argv[6]
   batchMode = True
+
+
 
 # For jobs without inputs such as MC generation: cmsRun config_cfg.py True 20 $(Process)  Stop200ToEMu_1000mm_GEN_745
 elif len (sys.argv) == 5 and sys.argv[2] == "True":
@@ -141,10 +151,10 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
           grandparents.extend (dbs3api_phys03.listFileParents(logical_file_name = parent_file_name))
       parents = grandparents
     elif inputUser == 'user':
-      print("Getting user dataset, not grandparents")
+      #print("Getting user dataset, not grandparents")
       parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
     else:
-      print("Getting user dataset, not grandparents")
+      #print("Getting user dataset, not grandparents")
       parents = dbs3api_global.listFileParents (logical_file_name = fileName)
 
     children = []
@@ -195,4 +205,3 @@ def getSiblingList(sibList, runList, siblingDataset):
       siblings.extend(getRun3SkimSiblings(filename, siblingDataset))
 
   return siblings
-

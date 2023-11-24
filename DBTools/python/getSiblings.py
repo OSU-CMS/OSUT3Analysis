@@ -127,8 +127,6 @@ class getSiblings():
         inputFiles = self.inputFileList
 
         for ifile, filename in enumerate(inputFiles):
-            #if not filename == '/store/data/Run2022D/Muon/MINIAOD/27Jun2023-v2/80000/db2c623b-346f-4c2e-b061-c8b8728df070.root': continue #debugging
-            #if not filename =='/store/data/Run2022D/Muon/AOD/EXODisappTrk-27Jun2023-v2/80000/97236e0a-68e6-4b34-8a24-53f2a101f34d.root': continue
             primaryEvents = r.getEventsInFile(filename)
             primaryEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in primaryEvents])
             print(primaryEvents[:10])
@@ -154,7 +152,7 @@ class getSiblings():
         f_out = open(output_json, 'w')
         f_out.write(json_dict)
         f_out.close()     
-        np.savetxt('testEvents.txt', sharedEvents, fmt='%s', delimiter=',')
+        np.savetxt('eventList.txt', sharedEvents, fmt='%s', delimiter=',')
 
     
     #save a json dictionary to a given file
