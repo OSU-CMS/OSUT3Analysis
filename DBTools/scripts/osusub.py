@@ -524,7 +524,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         if 'Executable' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = condor.sh\n')
         elif 'Arguments' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
-            SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
+            SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + ' eventList.txt \n\n')
         elif 'Transfer_Input_files' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
             FilesToTransfer = os.environ["CMSSW_VERSION"] + '.tar.gz,condor.sh,config_cfg.py,userConfig_' + Label + '_cfg.py'
             if Dataset != '':
@@ -849,20 +849,28 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     # If the dataset has a Run3 skim sibling defined and not run over skim, add the corresponding files to the secondary file names
-    #if '/' in Label: labeled_era = Label + '_' +  Dataset.split('/')[2].split('-')[0].replace('Run', '')
-    #else: labeled_era = Label
     if not RunOverSkim and ("run3_skim_sibling_datasets" in locals() or "run3_skim_sibling_datasets" in globals()) and labeled_era in run3_skim_sibling_datasets:
         ConfigFile.write("\nsiblings = []\n")
         ConfigFile.write("if osusub.batchMode:\n")
-        #ConfigFile.write("  try:\n")
-        ConfigFile.write("  if osusub.skimListExists('" + labeled_era + "'):\n")
-        ConfigFile.write('''    siblings.extend(osusub.getSiblingList(os.environ.get('CMSSW_BASE') + "/src/DisappTrks/Skims/data/''' + labeled_era + '.json", osusub.runList, "' + run3_skim_sibling_datasets[labeled_era] + '"))\n')
-        ConfigFile.write("  else:\n")
-        ConfigFile.write("    for fileName in osusub.runList:\n")
-        ConfigFile.write("      siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[labeled_era] + "\"))\n")
-        #ConfigFile.write("  except:\n")
-        #ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
+        ConfigFile.write("  try:\n")
+        #ConfigFile.write("  if osusub.skimListExists('" + labeled_era + "'):\n")
+        ConfigFile.write("    if os.path.exists('default.json'):\n")
+        #ConfigFile.write('''    siblings.extend(osusub.getSiblingList(os.environ.get('CMSSW_BASE') + "/src/DisappTrks/Skims/data/''' + labeled_era + '.json", osusub.runList, "' + run3_skim_sibling_datasets[labeled_era] + '"))\n')
+        ConfigFile.write('      siblings.extend(osusub.getSiblingList("default.json",  osusub.runList, "' + run3_skim_sibling_datasets[labeled_era] + '"))\n')
+        ConfigFile.write("    else:\n")
+        ConfigFile.write("      for fileName in osusub.runList:\n")
+        ConfigFile.write("        siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[labeled_era] + "\"))\n")
+        ConfigFile.write("  except:\n")
+        ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
+    
+    #if ...: make this an if statement for running over no cuts
+    ConfigFile.write('\nif hasattr(osusub, eventMask):\n')
+    ConfigFile.write('  try:\n')
+    ConfigFile.write('    eventRange = cms.untracked.VEventRange(osusub.eventMask)\n')
+    ConfigFile.write('    pset.process.source.eventsToProcess = eventRange\n')
+    ConfigFile.write('  except Exception as e:\n')
+    ConfigFile.write('    print("Error", e)\n')
 
     ConfigFile.write('process = pset.process\n')
     if arguments.Process:
