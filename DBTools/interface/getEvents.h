@@ -24,3 +24,4 @@ struct runInfo {
 
 std::vector<runInfo> getEventsInFile(std::string filename);
 
+int getEvents();
