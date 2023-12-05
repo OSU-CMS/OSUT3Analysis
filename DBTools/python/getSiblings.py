@@ -124,10 +124,13 @@ class getSiblings():
 
         inputFiles = self.inputFileList
 
+        primaryEventsTotal = np.array([])
+        siblingEventsTotal = np.array([])
+
         for ifile, filename in enumerate(inputFiles):
+            if not filename.startswith('root://'): filename = 'root://cms-xrd-global.cern.ch:/' + filename
             primaryEvents = r.getEventsInFile(filename)
             primaryEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in primaryEvents])
-            print(primaryEvents[:10])
             if args.prod == 'allUser':
                 siblings = getRun3SkimSiblings(filename, self.dataset_sib, args.prod)
             else:
@@ -136,21 +139,26 @@ class getSiblings():
             print('Siblings: ')
             siblingEvents = []
             for sib in siblings:
+                if not sib.startswith("root://"):
+                    sib  = 'root://cms-xrd-global.cern.ch:/' + sib
                 print('\t', sib)
                 if len(siblingEvents) == 0: 
                     siblingEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in r.getEventsInFile(sib)])
                 else: 
                     siblingEvents = np.concatenate((siblingEvents, np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in r.getEventsInFile(sib)])))
-
-        print(siblingEvents[:10])
-        sharedEvents = np.intersect1d(primaryEvents, siblingEvents)
-        print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(len(primaryEvents), len(siblingEvents), len(sharedEvents)))
+            
+            primaryEventsTotal = np.concatenate((primaryEventsTotal, primaryEvents))
+            siblingEventsTotal = np.concatenate((siblingEventsTotal, siblingEvents))
+        
+        #print(siblingEvents[:10])
+        sharedEvents = np.intersect1d(primaryEventsTotal, siblingEventsTotal)
+        print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(len(primaryEventsTotal), len(siblingEventsTotal), len(sharedEvents)))
         
         json_dict = json.dumps(file_dict)
         f_out = open(output_json, 'w')
         f_out.write(json_dict)
         f_out.close()     
-        np.savetxt('eventList.txt', sharedEvents, fmt='%s', delimiter=',')
+        np.savetxt('eventList_{0}.txt'.format(args.jobNumber), sharedEvents, fmt='%s', delimiter=',')
 
     
     #save a json dictionary to a given file
