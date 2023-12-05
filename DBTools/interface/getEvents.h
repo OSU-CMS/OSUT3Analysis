@@ -9,16 +9,17 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <stdexcept>
 
 struct runInfo {
-    runInfo(int runNum_, int lumiBlock_, int event_){
+    runInfo(unsigned int runNum_, unsigned int lumiBlock_, unsigned int event_){
         runNum = runNum_;
         lumiBlock = lumiBlock_;
         event = event_;
     }
-    int runNum;
-    int lumiBlock;
-    int event;
+    unsigned int runNum;
+    unsigned int lumiBlock;
+    unsigned int event;
 };
 
 

@@ -524,7 +524,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         if 'Executable' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = condor.sh\n')
         elif 'Arguments' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
-            SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + ' eventList.txt \n\n')
+            SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + ' eventList_$(Process).txt \n\n')
         elif 'Transfer_Input_files' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
             FilesToTransfer = os.environ["CMSSW_VERSION"] + '.tar.gz,condor.sh,config_cfg.py,userConfig_' + Label + '_cfg.py'
             if Dataset != '':
@@ -546,6 +546,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             SubmitFile.write ('Transfer_Output_files = ')
             if os.path.realpath (Directory).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/", "/cms/")):
                 filesToTransfer.append ("hist_${Process}.root")
+                filesToTransfer.append ("eventList_${Process}.txt") #should have if statement for using event list
             else:
                 SubmitFile.write ("hist_$(Process).root,")
             for i in range (0, len (SkimChannelNames)):
@@ -865,7 +866,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
     
     #if ...: make this an if statement for running over no cuts
-    ConfigFile.write('\nif hasattr(osusub, eventMask):\n')
+    ConfigFile.write('\nif hasattr(osusub, "eventMask"):\n')
     ConfigFile.write('  try:\n')
     ConfigFile.write('    eventRange = cms.untracked.VEventRange(osusub.eventMask)\n')
     ConfigFile.write('    pset.process.source.eventsToProcess = eventRange\n')
@@ -903,7 +904,7 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
     text = ('listOfFiles = [\n' if not append else 'listOfFiles += [\n')
     for f in inputFiles:
         if arguments.Redirector != "":
-            f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
+            f = 'root://' + RedirectorDic[arguments.Redirector] + ':/' + f
         text += '"' + f + '",\n'
     text += ']\n'
     text += ('listOfSecondaryFiles = []\n' if not append else 'listOfSecondaryFiles += []\n')
@@ -976,7 +977,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         else:
             for f in inputFiles:
                 if arguments.Redirector != "":
-                    f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
+                    f = 'root://' + RedirectorDic[arguments.Redirector] + ':/' + f
                 text += '"' + f + '",\n'
             text += ']\n'
         text += 'listOfSecondaryFiles = []\n'
@@ -1014,7 +1015,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         else:
             for f in inputFiles:
                 if arguments.Redirector != "":
-                    f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
+                    f = 'root://' + RedirectorDic[arguments.Redirector] + ':/' + f
                 text += '"' + f + '",\n'
             text += ']\n'
         text += 'listOfSecondaryFiles = []\n'
