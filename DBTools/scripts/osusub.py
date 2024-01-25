@@ -1371,7 +1371,7 @@ def copyDatasetInfoToTempFile (f, tempdir):
 #    Get the host name to determine whether you are using lxplus or OSU T3.   #
 ###############################################################################
 hostname = socket.getfqdn()
-remoteAccessT3 = ('interactive' not in hostname)
+remoteAccessT3 = ('cms-in' not in hostname)
 lxbatch = ('cern.ch' in hostname)
 lpcCAF = ('fnal.gov' in hostname)
 rutgers = ('rutgers.edu' in hostname or arguments.forceRutgersMode)
