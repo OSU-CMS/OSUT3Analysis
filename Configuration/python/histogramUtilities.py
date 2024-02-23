@@ -6,6 +6,8 @@ from array import *
 import math
 from ROOT import TFile, TH1F, TMath, TH1D, TGraphAsymmErrors# , Double
 
+from ctypes import c_double # see https://root-forum.cern.ch/t/issue-with-using-integralanderror-with-pyroot/53182/2
+
 def getEfficiency(passes, passesError, total, totalError):
     passesHist = TH1D ("passes", "", 1, 0.0, 1.0)
     totalHist = TH1D ("total", "", 1, 0.0, 1.0)
@@ -18,8 +20,10 @@ def getEfficiency(passes, passesError, total, totalError):
     g = TGraphAsymmErrors (passesHist, totalHist)
     #x = Double (0.0)
     #y = Double (0.0)
-    x = 0.0
-    y = 0.0
+    # x = 0.0
+    # y = 0.0
+    x = c_double (0.0) # see https://root-forum.cern.ch/t/issue-with-using-integralanderror-with-pyroot/53182/2
+    y = c_double (0.0) # see https://root-forum.cern.ch/t/issue-with-using-integralanderror-with-pyroot/53182/2
     g.GetPoint (0, x, y)
 
     return (y, g.GetErrorYlow (0), g.GetErrorYhigh (0))
