@@ -68,6 +68,7 @@ parser.add_option("--redirector", dest="Redirector", default = "", help="Setup t
 parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  # See https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/65
 parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help="Specify the directory containing input files. Wildcards allowed.")
 parser.add_option("--forceRutgersMode", action="store_true", dest="forceRutgersMode", default = False, help="Force Rutgers mode for getSiblings to work properly.")
+parser.add_option("--mergeSkim", action="store_true", help="Option to create good events list and merge the AOD skim with miniAOD")
 
 (arguments, args) = parser.parse_args()
 
@@ -524,7 +525,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         if 'Executable' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = condor.sh\n')
         elif 'Arguments' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
-            SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + ' eventList_$(Process).txt \n\n')
+            if arguments.mergeSkim:
+                SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + ' eventList_$(Process).txt \n\n')
+            else:
+                SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
         elif 'Transfer_Input_files' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
             FilesToTransfer = os.environ["CMSSW_VERSION"] + '.tar.gz,condor.sh,config_cfg.py,userConfig_' + Label + '_cfg.py'
             if Dataset != '':
@@ -546,7 +550,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             SubmitFile.write ('Transfer_Output_files = ')
             if os.path.realpath (Directory).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/", "/cms/")):
                 filesToTransfer.append ("hist_${Process}.root")
-                filesToTransfer.append ("eventList_${Process}.txt") #should have if statement for using event list
+                if arguments.mergeSkim: filesToTransfer.append ("eventList_${Process}.txt") #should have if statement for using event list
             else:
                 SubmitFile.write ("hist_$(Process).root,")
             for i in range (0, len (SkimChannelNames)):
@@ -612,9 +616,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("chmod 600 /tmp/" + os.path.basename (proxy) + "\n")
         SubmitScript.write ("X509_USER_PROXY=/tmp/" + os.path.basename (proxy) + "\n\n")
     
-    siblingDataset = run3_skim_sibling_datasets[Label]
-    print("sibling dataset", siblingDataset)
-    SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4\n'.format(os.environ['CMSSW_BASE'], siblingDataset))
+    if arguments.mergeSkim:
+        siblingDataset = run3_skim_sibling_datasets[Label]
+        print("sibling dataset", siblingDataset)
+        SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4\n'.format(os.environ['CMSSW_BASE'], siblingDataset))
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
@@ -854,9 +859,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("\nsiblings = []\n")
         ConfigFile.write("if osusub.batchMode:\n")
         ConfigFile.write("  try:\n")
-        #ConfigFile.write("  if osusub.skimListExists('" + labeled_era + "'):\n")
         ConfigFile.write("    if os.path.exists('default.json'):\n")
-        #ConfigFile.write('''    siblings.extend(osusub.getSiblingList(os.environ.get('CMSSW_BASE') + "/src/DisappTrks/Skims/data/''' + labeled_era + '.json", osusub.runList, "' + run3_skim_sibling_datasets[labeled_era] + '"))\n')
         ConfigFile.write('      siblings.extend(osusub.getSiblingList("default.json",  osusub.runList, "' + run3_skim_sibling_datasets[labeled_era] + '"))\n')
         ConfigFile.write("    else:\n")
         ConfigFile.write("      for fileName in osusub.runList:\n")
@@ -866,12 +869,13 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
     
     #if ...: make this an if statement for running over no cuts
-    ConfigFile.write('\nif hasattr(osusub, "eventMask"):\n')
-    ConfigFile.write('  try:\n')
-    ConfigFile.write('    eventRange = cms.untracked.VEventRange(osusub.eventMask)\n')
-    ConfigFile.write('    pset.process.source.eventsToProcess = eventRange\n')
-    ConfigFile.write('  except Exception as e:\n')
-    ConfigFile.write('    print("Error", e)\n')
+    if arguments.mergeSkim:
+        ConfigFile.write('\nif hasattr(osusub, "eventMask"):\n')
+        ConfigFile.write('  try:\n')
+        ConfigFile.write('    eventRange = cms.untracked.VEventRange(osusub.eventMask)\n')
+        ConfigFile.write('    pset.process.source.eventsToProcess = eventRange\n')
+        ConfigFile.write('  except Exception as e:\n')
+        ConfigFile.write('    print("Error", e)\n')
 
     ConfigFile.write('process = pset.process\n')
     if arguments.Process:
