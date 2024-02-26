@@ -259,6 +259,7 @@ def add_channels (process,
         'alias',
         'numberRequired',
         'isVeto',
+        'arbitration',
     ]
     validHistAttributes = [
         'name',
