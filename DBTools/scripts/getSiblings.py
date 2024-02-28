@@ -124,8 +124,6 @@ class getSiblings():
             inputFiles = filelist
 
         for ifile, filename in enumerate(inputFiles):
-            #if not filename == '/store/data/Run2022D/Muon/MINIAOD/27Jun2023-v2/80000/db2c623b-346f-4c2e-b061-c8b8728df070.root': continue #debugging
-            if not filename =='/store/data/Run2022D/Muon/AOD/EXODisappTrk-27Jun2023-v2/80000/97236e0a-68e6-4b34-8a24-53f2a101f34d.root': continue
             primaryEvents = r.getEventsInFile(filename)
             primaryEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in primaryEvents])
             print(primaryEvents[:10])
