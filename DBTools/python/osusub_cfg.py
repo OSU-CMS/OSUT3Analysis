@@ -153,6 +153,10 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
     else:
       parents = dbs3api_global.listFileParents (logical_file_name = fileName)
 
+    if dataset.endswith('AODSIM'):
+        parentList = [y for x in parents for y in x['parent_logical_file_name']]
+        return parentList
+
     children = []
     for parent in parents:
       for parent_file_name in parent["parent_logical_file_name"]:
