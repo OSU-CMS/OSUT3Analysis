@@ -186,7 +186,7 @@ def getLatestJsonFile():
         elif re.search('22$', arguments.JSONType):
             collisionsType = 'Collisions22'
             jsonMatchingPhrase = 'Collisions2022'
-            if not os.environ['CMSSW_VERSION'].startswith ("CMSSW_12_4_"):
+            if not os.environ['CMSSW_VERSION'].startswith ("CMSSW_12_4_") and not os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
                 userDecision = input('You are using a 2022 JSON file while not in CMSSW_12_4_X. Are you sure you want to continue? (Type "y" for yes and "n" for no.)')
                 if userDecision == "n":
                     sys.exit(1)
@@ -592,10 +592,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("rm -f " + os.environ["CMSSW_VERSION"] + ".tar.gz\n")
     SubmitScript.write ("SCRAM_ARCH=" + os.environ["SCRAM_ARCH"] + "\n")
     SubmitScript.write ("cd " + os.environ["CMSSW_VERSION"] + "/src/\n")
-    if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") and 'patch' not in os.environ["CMSSW_VERSION"]:
+    if (os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_")) and 'patch' not in os.environ["CMSSW_VERSION"]:
         SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw/" + os.environ["CMSSW_VERSION"] + "/external/" + os.environ["SCRAM_ARCH"] + "/lib\n")
         SubmitScript.write ("echo $LD_LIBRARY_PATH\n")
-    elif os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") and 'patch' in os.environ["CMSSW_VERSION"]:
+    elif (os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_")) and 'patch' in os.environ["CMSSW_VERSION"]:
         SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw-patch/" + os.environ["CMSSW_VERSION"] + "/external/" + os.environ["SCRAM_ARCH"] + "/lib\n")
         SubmitScript.write ("echo $LD_LIBRARY_PATH\n")        
     SubmitScript.write ("echo $CMSSW_BASE \n")

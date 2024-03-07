@@ -140,7 +140,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VE
     collectionProducer.jets.jetResFromGlobalTag = cms.bool(True)
     collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
     collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFchs")
 
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
