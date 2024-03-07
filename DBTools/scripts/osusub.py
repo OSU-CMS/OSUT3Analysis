@@ -1617,7 +1617,7 @@ if not arguments.Resubmit:
             if float(arguments.NumberOfFilesPerJob) > 0:
                 NumberOfJobs = int(math.ceil(NumberOfFiles/float(arguments.NumberOfFilesPerJob)))
             if MaxEvents > 0:
-                EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs))
+                EventsPerJob = int(math.ceil(int(MaxEvents)/NumberOfJobs))
             if RunOverSkim:
                 NumberOfEvents = int(DatasetRead['numberOfEvents'])
                 if arguments.NumberOfEventsPerJob > 0:
