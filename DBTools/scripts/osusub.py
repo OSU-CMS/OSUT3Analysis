@@ -1536,7 +1536,8 @@ if not arguments.Resubmit:
                      DatasetName = dataset_names[dataset]
                 else:
                      DatasetName = dataset
-                MaxEvents = maxEvents[dataset]
+                if MaxEvents < 0:
+                    MaxEvents = maxEvents[dataset]  # If user has specified MaxEvents, use that value.
 
             GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
 
