@@ -29,6 +29,10 @@ class getSiblings():
 
     def __init__(self):
 
+        self.numSharedEvents = 0
+        self.numPrimaryEvents = 0
+        self.numSiblingEvents = 0
+
         #if all datasets are not local set APIs
         if args.prod != 'allLocal':
             self.setAPIs()
@@ -124,10 +128,14 @@ class getSiblings():
 
         inputFiles = self.inputFileList
 
-        primaryEventsTotal = np.array([])
-        siblingEventsTotal = np.array([])
+        #primaryEventsTotal = np.array([])
+        #siblingEventsTotal = np.array([])
+        sharedEvents = np.array([])
 
         for ifile, filename in enumerate(inputFiles):
+
+            if args.totalEvents != -1 and self.numSharedEvents >= args.totalEvents / args.totalJobs: break
+
             if not filename.startswith('root://'): filename = 'root://cms-xrd-global.cern.ch:/' + filename
             primaryEvents = r.getEventsInFile(filename)
             primaryEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in primaryEvents])
@@ -147,12 +155,19 @@ class getSiblings():
                 else: 
                     siblingEvents = np.concatenate((siblingEvents, np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in r.getEventsInFile(sib)])))
             
-            primaryEventsTotal = np.concatenate((primaryEventsTotal, primaryEvents))
-            siblingEventsTotal = np.concatenate((siblingEventsTotal, siblingEvents))
-        
+            #primaryEventsTotal = np.concatenate((primaryEventsTotal, primaryEvents))
+            #siblingEventsTotal = np.concatenate((siblingEventsTotal, siblingEvents))
+            thisSharedEvents = np.intersect1d(primaryEvents, siblingEvents)
+            sharedEvents = np.concatenate((sharedEvents, thisSharedEvents))
+            self.numSharedEvents += len(thisSharedEvents)
+            self.numPrimaryEvents += len(primaryEvents)
+            self.numSiblingEvents += len(siblingEvents)
+
         #print(siblingEvents[:10])
-        sharedEvents = np.intersect1d(primaryEventsTotal, siblingEventsTotal)
-        print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(len(primaryEventsTotal), len(siblingEventsTotal), len(sharedEvents)))
+        #sharedEvents = np.intersect1d(primaryEventsTotal, siblingEventsTotal)
+        #self.numEvents += len(sharedEvents)
+
+        print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(self.numPrimaryEvents, self.numSiblingEvents, self.numSharedEvents))
         
         json_dict = json.dumps(file_dict)
         f_out = open(output_json, 'w')
@@ -309,6 +324,7 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--inputFiles", type=str, help="Input file list to get siblings from")
     parser.add_argument("-j", "--jobNumber", type=int, help="Job number to run from the input file list")
     parser.add_argument("-t", "--totalJobs", type=int, help="Total number of jobs condor is running over")
+    parser.add_argument("-m", "--totalEvents", type=int, help="Total number of events for jobs to run over", default=-1)
     parser.add_argument("-s", "--siblingDataset", type=str, help="Sibling dataset to get sibling files from")
     parser.add_argument("-n", "--nameList", type=str, help="Name of the json file to output")
     parser.add_argument("-l", "--lumiMatching", action="store_true", help="Force lumi matched siblings instead of siblings listed in DAS")
