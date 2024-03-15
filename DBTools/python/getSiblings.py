@@ -140,10 +140,10 @@ class getSiblings():
             if not filename.startswith('root://'): filename = 'root://cms-xrd-global.cern.ch:/' + filename
             primaryEvents = r.getEventsInFile(filename)
             primaryEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in primaryEvents])
-            if args.prod == 'allUser':
-                siblings = getRun3SkimSiblings(filename, self.dataset_sib, args.prod)
-            else:
-                siblings = getRun3SkimSiblings(filename, self.dataset_sib, args.prod)
+
+            print("Input File: {} with {} events".format(filename, len(primaryEvents)))
+
+            siblings = getRun3SkimSiblings(filename, self.dataset_sib, args.prod)
             file_dict[filename] = siblings
             print('Siblings: ')
             siblingEvents = []
@@ -156,17 +156,13 @@ class getSiblings():
                 else: 
                     siblingEvents = np.concatenate((siblingEvents, np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in r.getEventsInFile(sib)])))
             
-            #primaryEventsTotal = np.concatenate((primaryEventsTotal, primaryEvents))
-            #siblingEventsTotal = np.concatenate((siblingEventsTotal, siblingEvents))
             thisSharedEvents = np.intersect1d(primaryEvents, siblingEvents)
             sharedEvents = np.concatenate((sharedEvents, thisSharedEvents))
             self.numSharedEvents += len(thisSharedEvents)
             self.numPrimaryEvents += len(primaryEvents)
             self.numSiblingEvents += len(siblingEvents)
 
-        #print(siblingEvents[:10])
-        #sharedEvents = np.intersect1d(primaryEventsTotal, siblingEventsTotal)
-        #self.numEvents += len(sharedEvents)
+        if args.eventsPerJob != -1: sharedEvents = sharedEvents[:args.eventsPerJob]
 
         print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(self.numPrimaryEvents, self.numSiblingEvents, self.numSharedEvents))
         
@@ -320,7 +316,7 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--inputFiles", type=str, help="Input file list to get siblings from")
     parser.add_argument("-j", "--jobNumber", type=int, help="Job number to run from the input file list")
     parser.add_argument("-t", "--totalJobs", type=int, help="Total number of jobs condor is running over")
-    parser.add_argument("-m", "--eventsPerJob", type=int, help="Total number of events for jobs to run over", default=-1)
+    parser.add_argument("-m", "--eventsPerJob", type=int, help="Total number of events for jobs to run over (note this is a maximum but may return fewer if there are fewer events in filelist)", default=-1)
     parser.add_argument("-s", "--siblingDataset", type=str, help="Sibling dataset to get sibling files from")
     parser.add_argument("-n", "--nameList", type=str, help="Name of the json file to output")
     parser.add_argument("-l", "--lumiMatching", action="store_true", help="Force lumi matched siblings instead of siblings listed in DAS")
