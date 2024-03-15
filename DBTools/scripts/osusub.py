@@ -619,7 +619,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     if arguments.mergeSkim:
         siblingDataset = run3_skim_sibling_datasets[Label]
         print("sibling dataset", siblingDataset)
-        SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, MaxEvents))
+        SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")

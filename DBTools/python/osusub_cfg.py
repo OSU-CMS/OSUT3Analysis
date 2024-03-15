@@ -119,7 +119,7 @@ def getSiblings (fileName, dataset):
   return list (miniaodSubset.intersection (miniaod))
 
 # Function for getting Run3 skim sibling of a given file from a given dataset
-def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
+def getRun3SkimSiblings (fileName, dataset, inputUser='global', grandparents=False):
   try:
     from dbs.apis.dbsClient import DbsApi
     #from CRABClient.ClientUtilities import DBSURLS
@@ -150,6 +150,13 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
       parents = grandparents
     elif inputUser == 'user':
       parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
+    elif grandparents:
+      grandparents = []
+      parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
+      for parent in parents:
+        for parent_file_name in parent['parent_logical_file_name']:
+          grandparents.extend (dbs3api_global.listFileParents(logical_file_name = parent_file_name))
+      parents = grandparents
     else:
       parents = dbs3api_global.listFileParents (logical_file_name = fileName)
 
@@ -162,22 +169,27 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
       for parent_file_name in parent["parent_logical_file_name"]:
         children.extend (dbs3api_global.listFileChildren (logical_file_name = parent_file_name))
 
-
      # put the children in a set
     for child in children:
       miniaod.add (child["child_logical_file_name"])
 
     # put the files of the target dataset in another set
-    dataset = dbs3api_global.listFiles (dataset = dataset)
-    for f in dataset:
+    t_dataset = dbs3api_global.listFiles (dataset = dataset)
+    for f in t_dataset:
       miniaodSubset.add (f["logical_file_name"])
 
   # if dataset is a USER dataset, then assume the file comes from a MINIAOD dataset
   else:
     print("No USER dataset is expected in Run3 analysis. Please double check the input dataset !!!")
  
-  # return the intersection of the two sets
-  return list (miniaodSubset.intersection (miniaod))
+  # get the intersection of the two sets
+  output = list (miniaodSubset.intersection (miniaod))
+
+  if len(output) == 0 and not grandparents:
+    print("No files found, checking grandparents...")
+    output = getRun3SkimSiblings(fileName, dataset, inputUser, grandparents=True)
+
+  return output
 
 def skimListExists(dataset):
   if os.path.exists(os.environ.get("CMSSW_BASE") + '/src/DisappTrks/Skims/data/' + dataset + '.json'):
