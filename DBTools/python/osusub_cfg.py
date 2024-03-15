@@ -195,10 +195,16 @@ def getSiblingList(sibList, runList, siblingDataset):
   fin = open(sibList, 'r')
   data = json.load(fin)
 
+  aux_int = 0
+
   for filename in runList:
+    # Introducing a break for cases where the number of siblings is smaller than the number of inputs
+    # e.g.: when setting a given number of events, runList will be longer than data
+    if aux_int == len(data): break
     if filename in data.keys():
       print("{0} in dictionary".format(filename))
       siblings.extend(data[filename])
+      aux_int = aux_int + 1
     else:
       print("{0} not in dictionary, trying to get the siblings with function".format(filename))
       siblings.extend(getRun3SkimSiblings(filename, siblingDataset))

@@ -69,6 +69,7 @@ parser.add_option("--extend", dest="Extend", action="store_true", default = Fals
 parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help="Specify the directory containing input files. Wildcards allowed.")
 parser.add_option("--forceRutgersMode", action="store_true", dest="forceRutgersMode", default = False, help="Force Rutgers mode for getSiblings to work properly.")
 parser.add_option("--mergeSkim", action="store_true", help="Option to create good events list and merge the AOD skim with miniAOD")
+parser.add_option("--lumiMatch", action="store_true", help="mergeSkim works when doing lumi matching or event masking; this sets lumiMatch off (use event matching) or on (use lumi matching) for any cases; default is event masking")
 
 (arguments, args) = parser.parse_args()
 
@@ -525,7 +526,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         if 'Executable' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = condor.sh\n')
         elif 'Arguments' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
-            if arguments.mergeSkim:
+            if arguments.mergeSkim and not arguments.lumiMatch:
                 SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + ' eventList_$(Process).txt \n\n')
             else:
                 SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
@@ -550,7 +551,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             SubmitFile.write ('Transfer_Output_files = ')
             if os.path.realpath (Directory).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/", "/cms/")):
                 filesToTransfer.append ("hist_${Process}.root")
-                if arguments.mergeSkim: filesToTransfer.append ("eventList_${Process}.txt") #should have if statement for using event list
+                if arguments.mergeSkim and not arguments.lumiMatch: filesToTransfer.append ("eventList_${Process}.txt") #should have if statement for using event list
             else:
                 SubmitFile.write ("hist_$(Process).root,")
             for i in range (0, len (SkimChannelNames)):
@@ -619,7 +620,8 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     if arguments.mergeSkim:
         siblingDataset = run3_skim_sibling_datasets[Label]
         print("sibling dataset", siblingDataset)
-        SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, MaxEvents))
+        if arguments.UseAAA: SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
+        else: SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -p allLocal -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
@@ -869,7 +871,7 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
     
     #if ...: make this an if statement for running over no cuts
-    if arguments.mergeSkim:
+    if arguments.mergeSkim and not arguments.lumiMatch:
         ConfigFile.write('\nif hasattr(osusub, "eventMask"):\n')
         ConfigFile.write('  try:\n')
         ConfigFile.write('    eventRange = cms.untracked.VEventRange(osusub.eventMask)\n')

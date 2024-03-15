@@ -19,11 +19,12 @@ std::vector<runInfo> getEventsInFile(std::string filename){
                         
             fwlite::Event ev(myfile);
 
-
             for(ev.toBegin(); !ev.atEnd(); ++ev){
                 runInfo thisInfo((unsigned int)ev.eventAuxiliary().run(), (unsigned int)ev.eventAuxiliary().luminosityBlock(), (unsigned int)ev.eventAuxiliary().event());
                 thisRun.push_back(thisInfo);
             }
+
+            myfile->Close();
 
             return thisRun;
         }

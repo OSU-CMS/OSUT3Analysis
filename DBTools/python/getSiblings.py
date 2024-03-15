@@ -29,6 +29,7 @@ class getSiblings():
 
     def __init__(self):
 
+        self.numEvents = 0
         self.numSharedEvents = 0
         self.numPrimaryEvents = 0
         self.numSiblingEvents = 0
@@ -36,8 +37,6 @@ class getSiblings():
         #if all datasets are not local set APIs
         if args.prod != 'allLocal':
             self.setAPIs()
-
-
 
         #require input dataset
         if args.inputDataset:
@@ -59,8 +58,10 @@ class getSiblings():
             sys.exit(2)
 
         #require sibling dataset
+        print(args.siblingDataset)
         if args.siblingDataset:
             self.dataset_sib = args.siblingDataset
+            if not args.siblingJSON:self.setFileLists(listType = 'sibling')
         else:
             print("Need to specify the sibling dataset")
             sys.exit(2)
@@ -134,7 +135,7 @@ class getSiblings():
 
         for ifile, filename in enumerate(inputFiles):
 
-            if args.totalEvents != -1 and self.numSharedEvents >= args.totalEvents / args.totalJobs: break
+            if args.eventsPerJob != -1 and self.numSharedEvents >= args.eventsPerJob: break
 
             if not filename.startswith('root://'): filename = 'root://cms-xrd-global.cern.ch:/' + filename
             primaryEvents = r.getEventsInFile(filename)
@@ -191,33 +192,29 @@ class getSiblings():
         f_out.close()
 
     #script taken from CMSSW and made into function
-    def getLumiBlocks(self, filelist, saveFile, local=True):
+    def getLumiBlocks(self, filelist, local=True, isInput=True, inputDict=None):
         list_ = []
         for ifile, filename in enumerate(filelist):
             if not local: filename = 'root://cmsxrootd.fnal.gov:/' + filename
             list_.append(filename)
 
-        handle, lable = None, None
-
-        json_dict = {}
-
-        if os.path.exists(os.getcwd() + '/' + saveFile + '.json'):
-            f_in = open(saveFile + '.json', 'r')
-            json_dict = json.load(f_in)
-            f_in.close()
+        self.numEvents = 0
+        events = 0
 
         runsLumisDict = {}
         for ifile, filename in enumerate(list_):
-            if ifile % 10==0:
-                self.saveToJson(runsLumisDict, saveFile)
-                runsLumisDict.clear()
-            lumis = Lumis (filename)
-            delivered = recorded = 0
-            for i, lum in enumerate(lumis):
-                runList = runsLumisDict.setdefault (filename, [])
-                runList.append( lum.aux().id().luminosityBlock() )
+            # Don't need to look into all sibling files, so break whenever it has all lumis
+            if not isInput and len(runsLumisDict) == len(inputDict): break
+            # If number of events is high enough, break
+            if isInput and args.eventsPerJob != -1 and self.numEvents >= args.eventsPerJob: break
+            events = r.getEventsInFile(filename)
+            lumis = list(set([x.lumiBlock for x in events]))
+            # If lumis is not in the input dict, skip and don't add it to sibling dict
+            if not isInput and lumis not in list(inputDict.values()): continue
+            runsLumisDict[filename] = lumis
+            if isInput: self.numEvents += len(np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events]))
 
-        self.saveToJson(runsLumisDict, saveFile)
+        return runsLumisDict
 
     #function to get lumi blocks from a file list using DBS
     def getLumiBlocksDBS(self, filelist, api, saveFile):
@@ -247,7 +244,8 @@ class getSiblings():
         fileList = []
         for filename in os.listdir(dataDir):
             if not filename.endswith('root'): continue
-            fileList.append(dataDir + filename)
+            if not (dataDir + filename).startswith('file:'): fileList.append('file:' + dataDir + filename)
+            else: fileList.append(dataDir + filename)
         return fileList
 
     #match files using lumi blocks
@@ -257,22 +255,20 @@ class getSiblings():
                 self.getLumiBlocksDBS(self.inputFileList, self.dbsapi_in, 'input') #special case when forcing lumi matching on non local
             else: 
                 print("getting lumi blocks for input files")
-                self.getLumiBlocks(self.inputFileList, 'input')
-            input_fin = open('input.json', 'r')
+                inputLumiBlocks = self.getLumiBlocks(self.inputFileList)
         else:
             input_fin = open(inputJSON, 'r')
+            inputLumiBlocks = json.load(input_fin)
 
         if not sibJSON:
             if prod != 'allLocal': 
                 self.getLumiBlocksDBS(self.siblingFileList, self.dbsapi_out, 'sibling') #special case when dataset is not local
             else: 
-                self.getLumiBlocks(self.siblingFileList, 'sibling')
-            sib_fin = open('sibling.json', 'r')
+                print("getting lumi blocks for sibling files")
+                siblingLumiBlocks = self.getLumiBlocks(self.siblingFileList, isInput=False, inputDict=inputLumiBlocks)
         else:
             sib_fin = open(sibJSON, 'r')
-
-        inputLumiBlocks = json.load(input_fin)
-        siblingLumiBlocks = json.load(sib_fin)
+            siblingLumiBlocks = json.load(sib_fin)
 
         dict_out = {}
 
@@ -307,7 +303,7 @@ class getSiblings():
         else:
             runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + residualLength):(jobNumber * filesPerJob + residualLength + filesPerJob)]
     
-        print(runList)
+        print("This is the run list:\n",runList)
         return runList
 
 
@@ -324,7 +320,7 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--inputFiles", type=str, help="Input file list to get siblings from")
     parser.add_argument("-j", "--jobNumber", type=int, help="Job number to run from the input file list")
     parser.add_argument("-t", "--totalJobs", type=int, help="Total number of jobs condor is running over")
-    parser.add_argument("-m", "--totalEvents", type=int, help="Total number of events for jobs to run over", default=-1)
+    parser.add_argument("-m", "--eventsPerJob", type=int, help="Total number of events for jobs to run over", default=-1)
     parser.add_argument("-s", "--siblingDataset", type=str, help="Sibling dataset to get sibling files from")
     parser.add_argument("-n", "--nameList", type=str, help="Name of the json file to output")
     parser.add_argument("-l", "--lumiMatching", action="store_true", help="Force lumi matched siblings instead of siblings listed in DAS")
