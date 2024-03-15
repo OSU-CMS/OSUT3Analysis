@@ -39,37 +39,6 @@ std::vector<runInfo> getEventsInFile(std::string filename){
 
 }
 
-/*void getMiniAODFile(){
-
-    std::string json;
-
-    std::string fin = "Muon_2022E.json";
-    ifstream t(fin);
-    std::stringstream buffer;
-    buffer << t.rdbuf();
-    json = buffer.str();
-
-    Json::Reader reader;
-    Json::Value jsonRoot;
-    bool parseSuccess = reader.parse(json, jsonRoot, false);
-    if(parseSuccess){
-        std::cout << "success" << std::endl;
-        for (const auto& entry : jsonRoot.getMemberNames()) {
-            std::string key = entry;
-            std::cout << entry << std::endl;
-            std::vector<runInfo> thisAOD = getEventsInFile(key);
-            std::cout << "Entries: " << thisAOD.size() << std::endl;
-            for(auto& entry: thisAOD){
-                std::cout << entry.runNum << ", " << entry.event << ", "<< entry.lumiBlock << std::endl;
-            }
-        }
-
-    }
-    else{
-        std::cout <<"failed" << std::endl;
-    }
-}*/
-
 int getEvents(){
 
     gSystem->Load("libFWCoreFWLite.so");
