@@ -217,6 +217,9 @@ def getSiblingList(sibList, runList, siblingDataset):
       print("{0} in dictionary".format(filename))
       siblings.extend(data[filename])
       aux_int = aux_int + 1
+    # Sometimes a file is not in the dictionary, because its sibling doesn't exist, but it is still
+    # part of runList; if the file is local, it should just be skipped, otherwise try to get with function
+    elif filename.startswith("file:"): continue
     else:
       print("{0} not in dictionary, trying to get the siblings with function".format(filename))
       siblings.extend(getRun3SkimSiblings(filename, siblingDataset))
