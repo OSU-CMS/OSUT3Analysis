@@ -70,6 +70,8 @@ parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help=
 parser.add_option("--forceRutgersMode", action="store_true", dest="forceRutgersMode", default = False, help="Force Rutgers mode for getSiblings to work properly.")
 parser.add_option("--mergeSkim", action="store_true", help="Option to create good events list and merge the AOD skim with miniAOD")
 parser.add_option("--lumiMatch", action="store_true", help="mergeSkim works when doing lumi matching or event masking; this sets lumiMatch off (use event matching) or on (use lumi matching) for any cases; default is event masking")
+parser.add_option("--localSkim", type=str, default=None, help="If AOD skim files are local pass the local destination using this option")
+
 
 (arguments, args) = parser.parse_args()
 
@@ -854,6 +856,8 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("      siblings.extend (osusub.getSiblings (fileName, \"" + sibling_datasets[Label] + "\"))\n")
         ConfigFile.write("  except:\n")
         ConfigFile.write("    print(\"No valid grid proxy. Not adding sibling files.\")\n")
+        if arguments.localSkim != None:
+            ConfigFile.write("siblings = ['file:{0}{1}'.format(" + arguments.localSkim + ", sib.split('/')[-1]) for sib in siblings] \n")
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     # If the dataset has a Run3 skim sibling defined and not run over skim, add the corresponding files to the secondary file names
@@ -868,6 +872,8 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("        siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[labeled_era] + "\"))\n")
         ConfigFile.write("  except:\n")
         ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
+        if arguments.localSkim != None:
+            ConfigFile.write("siblings = ['file:{0}{1}'.format(\'" + arguments.localSkim + "\', sib.split('/')[-1]) for sib in siblings] \n")
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
     
     #if ...: make this an if statement for running over no cuts
