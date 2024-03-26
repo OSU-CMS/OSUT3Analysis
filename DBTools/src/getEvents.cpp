@@ -33,8 +33,10 @@ std::vector<runInfo> getEventsInFile(std::string filename){
         }
     }
 
+    // This tells the user that the given dataset has some faulty root file;
+    // These files names are written so that the user can decide what to do about them
     std::string errMesg = "Failed to open file after 5 attempts";
-    if(success==false) throw std::runtime_error(errMesg);
+    if(success==false) std::cout << errMesg << std::endl;
     return thisRun;
 
 }

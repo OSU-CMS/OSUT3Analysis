@@ -222,6 +222,12 @@ def getSiblingList(sibList, runList, siblingDataset):
     elif filename.startswith("file:"): continue
     else:
       print("{0} not in dictionary, trying to get the siblings with function".format(filename))
+      sibLenBefore = len(siblings)
       siblings.extend(getRun3SkimSiblings(filename, siblingDataset))
+      sibLenAfter = len(siblings)
+      # This is the same break for smaller number of inputs, but for DAS files. If this is not used
+      # then the function call in the config_cfg.py (created inside the condor folder) will skip over
+      # and unfortunately run over the whole runList; it is not unwanted, it is just slower
+      if sibLenBefore != sibLenAfter: aux_int = aux_int + 1
 
   return siblings
