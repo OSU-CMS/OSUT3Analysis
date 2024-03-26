@@ -68,6 +68,10 @@ parser.add_option("--redirector", dest="Redirector", default = "", help="Setup t
 parser.add_option("--extend", dest="Extend", action="store_true", default = False, help="Use unique random seeds for this job")  # See https://cmshead.mps.ohio-state.edu:8080/OSUT3Analysis/65
 parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help="Specify the directory containing input files. Wildcards allowed.")
 parser.add_option("--forceRutgersMode", action="store_true", dest="forceRutgersMode", default = False, help="Force Rutgers mode for getSiblings to work properly.")
+parser.add_option("--mergeSkim", action="store_true", help="Option to create good events list and merge the AOD skim with miniAOD")
+parser.add_option("--lumiMatch", action="store_true", help="mergeSkim works when doing lumi matching or event masking; this sets lumiMatch off (use event matching) or on (use lumi matching) for any cases; default is event masking")
+parser.add_option("--localSkim", type=str, default=None, help="If AOD skim files are local pass the local destination using this option")
+
 
 (arguments, args) = parser.parse_args()
 
@@ -524,7 +528,10 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         if 'Executable' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Executable'] == "":
             SubmitFile.write('Executable = condor.sh\n')
         elif 'Arguments' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
-            SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
+            if arguments.mergeSkim and not arguments.lumiMatch:
+                SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + ' eventList_$(Process).txt \n\n')
+            else:
+                SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
         elif 'Transfer_Input_files' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
             FilesToTransfer = os.environ["CMSSW_VERSION"] + '.tar.gz,condor.sh,config_cfg.py,userConfig_' + Label + '_cfg.py'
             if Dataset != '':
@@ -546,6 +553,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             SubmitFile.write ('Transfer_Output_files = ')
             if os.path.realpath (Directory).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/", "/cms/")):
                 filesToTransfer.append ("hist_${Process}.root")
+                if arguments.mergeSkim and not arguments.lumiMatch: filesToTransfer.append ("eventList_${Process}.txt") #should have if statement for using event list
             else:
                 SubmitFile.write ("hist_$(Process).root,")
             for i in range (0, len (SkimChannelNames)):
@@ -610,6 +618,12 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("mv -f " + os.path.basename (proxy) + " /tmp/\n")
         SubmitScript.write ("chmod 600 /tmp/" + os.path.basename (proxy) + "\n")
         SubmitScript.write ("X509_USER_PROXY=/tmp/" + os.path.basename (proxy) + "\n\n")
+    
+    if arguments.mergeSkim:
+        siblingDataset = run3_skim_sibling_datasets[Label]
+        print("sibling dataset", siblingDataset)
+        if arguments.UseAAA: SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
+        else: SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -p allLocal -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
@@ -842,23 +856,34 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("      siblings.extend (osusub.getSiblings (fileName, \"" + sibling_datasets[Label] + "\"))\n")
         ConfigFile.write("  except:\n")
         ConfigFile.write("    print(\"No valid grid proxy. Not adding sibling files.\")\n")
+        if arguments.localSkim != None:
+            ConfigFile.write("siblings = ['file:{0}{1}'.format(" + arguments.localSkim + ", sib.split('/')[-1]) for sib in siblings] \n")
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     # If the dataset has a Run3 skim sibling defined and not run over skim, add the corresponding files to the secondary file names
-    #if '/' in Label: labeled_era = Label + '_' +  Dataset.split('/')[2].split('-')[0].replace('Run', '')
-    #else: labeled_era = Label
     if not RunOverSkim and ("run3_skim_sibling_datasets" in locals() or "run3_skim_sibling_datasets" in globals()) and labeled_era in run3_skim_sibling_datasets:
         ConfigFile.write("\nsiblings = []\n")
         ConfigFile.write("if osusub.batchMode:\n")
-        #ConfigFile.write("  try:\n")
-        ConfigFile.write("  if osusub.skimListExists('" + labeled_era + "'):\n")
-        ConfigFile.write('''    siblings.extend(osusub.getSiblingList(os.environ.get('CMSSW_BASE') + "/src/DisappTrks/Skims/data/''' + labeled_era + '.json", osusub.runList, "' + run3_skim_sibling_datasets[labeled_era] + '"))\n')
-        ConfigFile.write("  else:\n")
-        ConfigFile.write("    for fileName in osusub.runList:\n")
-        ConfigFile.write("      siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[labeled_era] + "\"))\n")
-        #ConfigFile.write("  except:\n")
-        #ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
+        ConfigFile.write("  try:\n")
+        ConfigFile.write("    if os.path.exists('default.json'):\n")
+        ConfigFile.write('      siblings.extend(osusub.getSiblingList("default.json",  osusub.runList, "' + run3_skim_sibling_datasets[labeled_era] + '"))\n')
+        ConfigFile.write("    else:\n")
+        ConfigFile.write("      for fileName in osusub.runList:\n")
+        ConfigFile.write("        siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[labeled_era] + "\"))\n")
+        ConfigFile.write("  except:\n")
+        ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
+        if arguments.localSkim != None:
+            ConfigFile.write("siblings = ['file:{0}{1}'.format(\'" + arguments.localSkim + "\', sib.split('/')[-1]) for sib in siblings] \n")
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
+    
+    #if ...: make this an if statement for running over no cuts
+    if arguments.mergeSkim and not arguments.lumiMatch:
+        ConfigFile.write('\nif hasattr(osusub, "eventMask"):\n')
+        ConfigFile.write('  try:\n')
+        ConfigFile.write('    eventRange = cms.untracked.VEventRange(osusub.eventMask)\n')
+        ConfigFile.write('    pset.process.source.eventsToProcess = eventRange\n')
+        ConfigFile.write('  except Exception as e:\n')
+        ConfigFile.write('    print("Error", e)\n')
 
     ConfigFile.write('process = pset.process\n')
     if arguments.Process:
@@ -891,7 +916,7 @@ def AcquireAwesomeAAA(Dataset, datasetInfoName, AAAFileList, datasetRead, crossS
     text = ('listOfFiles = [\n' if not append else 'listOfFiles += [\n')
     for f in inputFiles:
         if arguments.Redirector != "":
-            f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
+            f = 'root://' + RedirectorDic[arguments.Redirector] + ':/' + f
         text += '"' + f + '",\n'
     text += ']\n'
     text += ('listOfSecondaryFiles = []\n' if not append else 'listOfSecondaryFiles += []\n')
@@ -964,7 +989,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         else:
             for f in inputFiles:
                 if arguments.Redirector != "":
-                    f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
+                    f = 'root://' + RedirectorDic[arguments.Redirector] + ':/' + f
                 text += '"' + f + '",\n'
             text += ']\n'
         text += 'listOfSecondaryFiles = []\n'
@@ -1002,7 +1027,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
         else:
             for f in inputFiles:
                 if arguments.Redirector != "":
-                    f = 'root://' + RedirectorDic[arguments.Redirector] + '/' + f
+                    f = 'root://' + RedirectorDic[arguments.Redirector] + ':/' + f
                 text += '"' + f + '",\n'
             text += ']\n'
         text += 'listOfSecondaryFiles = []\n'

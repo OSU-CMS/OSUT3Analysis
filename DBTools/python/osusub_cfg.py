@@ -2,8 +2,9 @@ import sys
 import math
 import os
 import json
+
 # For jobs with input datasets, normal cases: cmsRun config_cfg.py True 671 $(Process) /DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM DYJetsToLL_50_MiniAOD
-if len (sys.argv) == 7 and sys.argv[2] == "True":
+if len (sys.argv) >= 7 and sys.argv[2] == "True":
   nJobs = float (sys.argv[3])
   Label = str(sys.argv[6])
   jobNumber = int (sys.argv[4])
@@ -16,9 +17,18 @@ if len (sys.argv) == 7 and sys.argv[2] == "True":
     else:
         runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + residualLength):(jobNumber * filesPerJob + residualLength + filesPerJob)]
     secondaryRunList = datasetInfo.listOfSecondaryFiles
+
+  #this is where we need a function to get the sibling list and get an event mask
+  if len(sys.argv) >= 8:
+    print("Using event mask")
+    events = open(sys.argv[7], 'r').readlines()
+    eventMask = events
+
   dataset = sys.argv[5]
   datasetLabel = sys.argv[6]
   batchMode = True
+
+
 
 # For jobs without inputs such as MC generation: cmsRun config_cfg.py True 20 $(Process)  Stop200ToEMu_1000mm_GEN_745
 elif len (sys.argv) == 5 and sys.argv[2] == "True":
@@ -109,7 +119,7 @@ def getSiblings (fileName, dataset):
   return list (miniaodSubset.intersection (miniaod))
 
 # Function for getting Run3 skim sibling of a given file from a given dataset
-def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
+def getRun3SkimSiblings (fileName, dataset, inputUser='global', grandparents=False):
   try:
     from dbs.apis.dbsClient import DbsApi
     #from CRABClient.ClientUtilities import DBSURLS
@@ -117,8 +127,6 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
     print("getSiblings() relies on CRAB. Please set up the environment for CRAB before using.")
     sys.exit (1)
 
-  #dbsurl_global = DBSURLS["reader"].get ("global", "global")
-  #dbsurl_phys03 = DBSURLS["reader"].get ("phys03", "phys03")
   dbs3api_phys03 = DbsApi (url = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSReader')
   dbs3api_global = DbsApi (url = 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader')
 
@@ -141,34 +149,47 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
           grandparents.extend (dbs3api_phys03.listFileParents(logical_file_name = parent_file_name))
       parents = grandparents
     elif inputUser == 'user':
-      print("Getting user dataset, not grandparents")
       parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
+    elif grandparents:
+      grandparents = []
+      parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
+      for parent in parents:
+        for parent_file_name in parent['parent_logical_file_name']:
+          grandparents.extend (dbs3api_global.listFileParents(logical_file_name = parent_file_name))
+      parents = grandparents
     else:
-      print("Getting user dataset, not grandparents")
       parents = dbs3api_global.listFileParents (logical_file_name = fileName)
+
+    if dataset.endswith('AODSIM'):
+        parentList = [y for x in parents for y in x['parent_logical_file_name']]
+        return parentList
 
     children = []
     for parent in parents:
       for parent_file_name in parent["parent_logical_file_name"]:
         children.extend (dbs3api_global.listFileChildren (logical_file_name = parent_file_name))
 
-
      # put the children in a set
     for child in children:
-      #for child_file_name in child["child_logical_file_name"]:
       miniaod.add (child["child_logical_file_name"])
 
     # put the files of the target dataset in another set
-    dataset = dbs3api_global.listFiles (dataset = dataset)
-    for f in dataset:
+    t_dataset = dbs3api_global.listFiles (dataset = dataset)
+    for f in t_dataset:
       miniaodSubset.add (f["logical_file_name"])
 
   # if dataset is a USER dataset, then assume the file comes from a MINIAOD dataset
   else:
     print("No USER dataset is expected in Run3 analysis. Please double check the input dataset !!!")
  
-  # return the intersection of the two sets
-  return list (miniaodSubset.intersection (miniaod))
+  # get the intersection of the two sets
+  output = list (miniaodSubset.intersection (miniaod))
+
+  if len(output) == 0 and not grandparents:
+    print("No files found, checking grandparents...")
+    output = getRun3SkimSiblings(fileName, dataset, inputUser, grandparents=True)
+
+  return output
 
 def skimListExists(dataset):
   if os.path.exists(os.environ.get("CMSSW_BASE") + '/src/DisappTrks/Skims/data/' + dataset + '.json'):
@@ -186,13 +207,27 @@ def getSiblingList(sibList, runList, siblingDataset):
   fin = open(sibList, 'r')
   data = json.load(fin)
 
+  aux_int = 0
+
   for filename in runList:
+    # Introducing a break for cases where the number of siblings is smaller than the number of inputs
+    # e.g.: when setting a given number of events, runList will be longer than data
+    if aux_int == len(data): break
     if filename in data.keys():
       print("{0} in dictionary".format(filename))
       siblings.extend(data[filename])
+      aux_int = aux_int + 1
+    # Sometimes a file is not in the dictionary, because its sibling doesn't exist, but it is still
+    # part of runList; if the file is local, it should just be skipped, otherwise try to get with function
+    elif filename.startswith("file:"): continue
     else:
       print("{0} not in dictionary, trying to get the siblings with function".format(filename))
+      sibLenBefore = len(siblings)
       siblings.extend(getRun3SkimSiblings(filename, siblingDataset))
+      sibLenAfter = len(siblings)
+      # This is the same break for smaller number of inputs, but for DAS files. If this is not used
+      # then the function call in the config_cfg.py (created inside the condor folder) will skip over
+      # and unfortunately run over the whole runList; it is not unwanted, it is just slower
+      if sibLenBefore != sibLenAfter: aux_int = aux_int + 1
 
   return siblings
-

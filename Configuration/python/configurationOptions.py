@@ -1704,7 +1704,7 @@ nJobs = {
     'Muon_2022C'   : 2020,
     'Muon_2022D'   : 1000,  #FIXME These numbers for single muon are not just guesses
     'Muon_2022E'   : 1000,
-    'Muon_2022F'   : 1000,
+    'Muon_2022F'   : 6960,
     'Muon_2022G'   : 1000,
 
     # set number of jobs to correpond to roughly 100k events/job
