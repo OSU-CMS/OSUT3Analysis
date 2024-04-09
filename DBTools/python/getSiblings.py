@@ -119,7 +119,60 @@ class getSiblings():
         if args.prod == 'local' or args.prod == 'allLocal' or args.lumiMatching:
             self.getLumiMatching(self.dictName, args.prod, args.inputJSON, args.siblingJSON)
         else:
-            self.getDBSSiblings(self.dictName)
+            self.getDBSSiblings_v2(self.dictName)
+
+    def getDBSSiblings_v2(self, output_json):
+        print("getting dbs siblings, modified file")
+
+        file_dict = {}
+
+        inputFiles = self.inputFileList
+
+        #primaryEventsTotal = np.array([])
+        #siblingEventsTotal = np.array([])
+        sharedEvents = np.array([])
+
+        for ifile, filename in enumerate(inputFiles):
+            if not filename.startswith('root://'): inputFiles[ifile] = 'root://cms-xrd-global.cern.ch:/' + filename
+
+        siblings = getRun3SkimSiblings(filename, self.dataset_sib, args.prod)
+        file_dict["secondaryFiles"] = siblings
+
+
+        primaryEvents = np.array([])
+        for ifile, filename in enumerate(inputFiles):
+
+            #if args.eventsPerJob != -1 and self.numSharedEvents >= args.eventsPerJob: break
+
+            events = r.getEventsInFile(filename)
+            tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
+            primaryEvents = np.concatenate((primaryEvents, tmpEvents))
+
+            #print("Input File: {} with {} events".format(filename, len(primaryEvents)))
+
+        secondaryEvents = np.array([])
+        for ifile, filename in enumerate(siblings):
+            if not filename.startswith("root://"): 
+                filename = 'root://cms-xrd-global.cern.ch:/' + filename
+            events = r.getEventsInFile(filename)
+            tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
+            secondaryEvents = np.concatenate((secondaryEvents, tmpEvents))
+
+            
+        sharedEvents = np.intersect1d(primaryEvents, secondaryEvents)
+        self.numSharedEvents = len(sharedEvents)
+        self.numPrimaryEvents = len(primaryEvents)
+        self.numSiblingEvents = len(secondaryEvents)
+
+        if args.eventsPerJob != -1: sharedEvents = sharedEvents[:args.eventsPerJob]
+
+        print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(self.numPrimaryEvents, self.numSiblingEvents, self.numSharedEvents))
+        
+        json_dict = json.dumps(file_dict)
+        f_out = open(output_json, 'w')
+        f_out.write(json_dict)
+        f_out.close()     
+        np.savetxt('eventList_{0}.txt'.format(args.jobNumber), sharedEvents, fmt='%s', delimiter=',')
 
     #function to get siblings from DBS
     def getDBSSiblings(self, output_json):

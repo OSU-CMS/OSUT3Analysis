@@ -137,42 +137,38 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global', grandparents=Fal
 
   miniaod = set ([])
   miniaodSubset = set ([])
+
+  #First we will get the parents (or grandparents) of the input files
   # if dataset is not a USER dataset, then assume the file comes from a USER dataset
   if "/USER" not in dataset:
     # first get the parents
-    if inputUser == 'allUser':
+    if inputUser == 'allUser' or grandparents:
       #if dataset was created by user then the parents will be AOD files -> Need to get grandparents (RAW) to find MINIAOD siblings
       grandparents = []
       parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
-      for parent in parents:
-        for parent_file_name in parent['parent_logical_file_name']:
-          grandparents.extend (dbs3api_phys03.listFileParents(logical_file_name = parent_file_name))
+      parents = [y for x in parents for y in x['parent_logical_file_name'] ]
+      grandparents.extend (dbs3api_phys03.listFileParents(logical_file_name = parents))
       parents = grandparents
     elif inputUser == 'user':
       parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
-    elif grandparents:
-      grandparents = []
-      parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
-      for parent in parents:
-        for parent_file_name in parent['parent_logical_file_name']:
-          grandparents.extend (dbs3api_global.listFileParents(logical_file_name = parent_file_name))
-      parents = grandparents
     else:
       parents = dbs3api_global.listFileParents (logical_file_name = fileName)
 
-    if dataset.endswith('AODSIM'):
-        parentList = [y for x in parents for y in x['parent_logical_file_name']]
-        return parentList
+    #get list of only the parent file names
+    parents = [y for x in parents for y in x['parent_logical_file_name']]
 
+    if dataset.endswith('AODSIM'):
+        return parents
+
+    #Next we will get the children of all the parent files
     children = []
-    for parent in parents:
-      for parent_file_name in parent["parent_logical_file_name"]:
-        children.extend (dbs3api_global.listFileChildren (logical_file_name = parent_file_name))
+    children.extend (dbs3api_global.listFileChildren (logical_file_name = parents))
 
      # put the children in a set
     for child in children:
       miniaod.add (child["child_logical_file_name"])
 
+    #Now we will get a complete list of files in the dataset we want to find matches to
     # put the files of the target dataset in another set
     t_dataset = dbs3api_global.listFiles (dataset = dataset)
     for f in t_dataset:
@@ -182,6 +178,7 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global', grandparents=Fal
   else:
     print("No USER dataset is expected in Run3 analysis. Please double check the input dataset !!!")
  
+  #finally we get the intersection of sibling files with the files in the dataset we want
   # get the intersection of the two sets
   output = list (miniaodSubset.intersection (miniaod))
 
