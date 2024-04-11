@@ -22,6 +22,7 @@ from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 from OSUT3Analysis.DBTools.condorSubArgumentsSet import *
+from OSUT3Analysis.DBTools.getSiblings import *
 
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
@@ -676,6 +677,14 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("exit 0\n")
     SubmitScript.close ()
     os.chmod (Directory + "/condor.sh", 0o755)
+
+def MakeSiblingFileList(primaryDataset, siblingDataset):
+
+    outputFile = primaryDataset[1:].replace('/', '_') + '.json'
+    cmd = 'python3 {}/src/OSUT3Analysis/DBTools/python/getSiblings.py -n {} -s {} -i {}'.format(os.environ["CMSSW_BASE"], outputFile, siblingDataset, primaryDataset)
+    print(cmd)
+    out = subprocess.call(cmd, shell=True)
+    print(out)
 
 def MakeCondorSubmitRelease(Directory):
     # list of directories copied from $CMSSW_BASE; note that src/ is a special
@@ -1662,6 +1671,10 @@ if not arguments.Resubmit:
                     shutil.move (jsonFile, WorkDir + "/" + jsonFile)
             SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'], WorkDir, SkimDir, dataset, SkimChannelNames, jsonFile, temPset, lpcCAF)
 
+            if (arguments.mergeSkim):
+                print("Making sibling file list 1")
+                MakeSiblingFileList(DatasetRead['realDatasetName'], run3_skim_sibling_datasets[dataset])
+
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
             else:
@@ -1714,6 +1727,10 @@ if not arguments.Resubmit:
         exec('import ' + tmpDir + ' as temPset')
 
         MakeSpecificConfig('', WorkDir, SkimDir, Label, SkimChannelNames, '', temPset, lpcCAF)
+
+        if(arguments.mergeSkim):
+            print("Making sibling file list")
+            MakeSiblingFileList(DatasetRead['realDatasetName'], siblingDataset)
 
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)

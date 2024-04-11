@@ -12,6 +12,7 @@ import subprocess
 import numpy as np
 import math
 import importlib
+import ast
 
 r.gInterpreter.Declare(
     '''
@@ -34,65 +35,70 @@ class getSiblings():
         self.numPrimaryEvents = 0
         self.numSiblingEvents = 0
 
-        #if all datasets are not local set APIs
-        if args.prod != 'allLocal':
-            self.setAPIs()
+        self.dataset_in = None
+        self.dataset_sib = None
 
-        #require input dataset
-        if args.inputDataset:
-            self.dataset_in = args.inputDataset
-            #set the file lists
-            if args.siblingJSON and not args.inputJSON:
-                self.setFileLists(listType = 'input')
-            if args.inputJSON and not args.siblingJSON:
-                self.setFileLists(listType = 'sibling')
-            if not args.siblingJSON and not args.inputJSON:
-                self.setFileLists()
-        elif args.inputFiles:
-            if args.jobNumber==None or args.totalJobs==None:
-                print("Need to specify the job number and total jobs")
+        if not args.eventList:
+
+            #if all datasets are not local set APIs
+            if args.prod != 'allLocal':
+                self.setAPIs()
+
+            #require input dataset
+            if args.inputDataset:
+                self.dataset_in = args.inputDataset
+                #set the file lists
+                if args.siblingJSON and not args.inputJSON:
+                    self.setFileLists(listType = 'input')
+                if args.inputJSON and not args.siblingJSON:
+                    self.setFileLists(listType = 'sibling')
+                if not args.siblingJSON and not args.inputJSON:
+                    self.setFileLists()
+            elif args.inputFiles:
+                if args.jobNumber==None or args.totalJobs==None:
+                    print("Need to specify the job number and total jobs")
+                    sys.exit(2)
+                self.inputFileList = self.getFilesFromList(args.jobNumber, args.totalJobs)
+            else:
+                print("Need to specify the input dataset (-i) or input files (-f)")
                 sys.exit(2)
-            self.inputFileList = self.getFilesFromList(args.jobNumber, args.totalJobs)
-        else:
-            print("Need to specify the input dataset (-i) or input files (-f)")
-            sys.exit(2)
 
-        #require sibling dataset
-        print(args.siblingDataset)
-        if args.siblingDataset:
-            self.dataset_sib = args.siblingDataset
-            if not args.siblingJSON:self.setFileLists(listType = 'sibling')
-        else:
-            print("Need to specify the sibling dataset")
-            sys.exit(2)
+            #require sibling dataset
+            print(args.siblingDataset)
+            if args.siblingDataset:
+                self.dataset_sib = args.siblingDataset
+                if not args.siblingJSON:self.setFileLists(listType = 'sibling')
+            else:
+                print("Need to specify the sibling dataset")
+                sys.exit(2)
 
-        #name of output json file
-        if args.nameList:
-            self.dictName = args.nameList
-        elif args.inputDataset:
-            self.dictName = self.dataset_in.split('/')[1] + '_' + self.dataset_in.split('/')[2].split('-')[0].replace('Run', '')
-        else:
-            self.dictName = 'default.json'
+            #name of output json file
+            if args.nameList:
+                self.dictName = args.nameList
+            elif args.inputDataset:
+                self.dictName = self.dataset_in.split('/')[1] + '_' + self.dataset_in.split('/')[2].split('-')[0].replace('Run', '')
+            else:
+                self.dictName = 'default.json'
 
-        if not self.dictName.endswith('.json'):
-            self.dictName += '.json'
+            if not self.dictName.endswith('.json'):
+                self.dictName += '.json'
 
     #get list of files for datasets
     def setFileLists(self, listType=''):
         if args.prod == 'allLocal':
-            if listType == 'input' or listType == '': 
+            if listType == 'input': 
                 self.inputFileList = self.getLocalFileList(self.dataset_in)
-            if listType == 'sibling' or listType == '': 
+            if listType == 'sibling': 
                 self.siblingFileList = self.getLocalFileList(self.dataset_sib)
         elif args.prod == 'local':
-            if listType == 'input' or listType == '': 
+            if listType == 'input': 
                 self.inputFileList = self.getLocalFileList(self.dataset_in)
-            if listType == 'sibling' or listType == '': 
+            if listType == 'sibling': 
                 self.siblingFileList = self.getFileList(self.dataset_sib, self.dbsapi_out)
         else:
-            if listType == 'input' or listType == '': 
+            if listType == 'input': 
                 self.inputFileList = self.getFileList(self.dataset_in, self.dbsapi_in)
-            if listType == 'sibling' or listType == '': 
+            if listType == 'sibling': 
                 self.siblingFileList = self.getFileList(self.dataset_sib, self.dbsapi_out)
 
     #get the dbs api for a given dataset
@@ -119,7 +125,60 @@ class getSiblings():
         if args.prod == 'local' or args.prod == 'allLocal' or args.lumiMatching:
             self.getLumiMatching(self.dictName, args.prod, args.inputJSON, args.siblingJSON)
         else:
-            self.getDBSSiblings_v2(self.dictName)
+            #self.getDBSSiblings_v2(self.dictName)
+            dataset1 = self.getDASInfo(self.dataset_in)
+            dataset2 = self.getDASInfo(self.dataset_sib)
+            self.findMatches(dataset1, dataset2, self.dictName)
+
+    def getDASInfo(self, dataset):
+        cmd = 'dasgoclient -query="file,run,lumi dataset={0}" -json'.format(dataset)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+        output, error = process.communicate()
+
+        miniaod = output.decode()
+
+        test = ast.literal_eval(miniaod)
+        files = [x['file'][0]['name'] for x in test]
+        lumis = [[x['lumi'][0]['number']] if isinstance(x['lumi'][0]['number'], int) else x['lumi'][0]['number'] for x in test]
+        runs = [[x['run'][0]['run_number']] if isinstance(x['run'][0]['run_number'], int) else x['run'][0]['run_number'] for x in test]
+
+        miniDict = {}
+
+        for f, l, r in zip(files, lumis, runs):
+            miniDict[f] = {'lumis': l, 'runs': r}
+
+        print("miniDict", miniDict)
+
+        return miniDict
+
+    def findMatches(self, input1, input2, jsonName='default.json'):
+
+        siblings = {}
+        for filename1, infos1 in input1.items():
+            print("Finding siblings for {}".format(filename1))
+            sibs = []
+            for filename2, infos2 in input2.items():
+                if len(np.intersect1d(infos1['runs'], infos2['runs'])) == 0: continue
+                if len(np.intersect1d(infos1['lumis'], infos2['lumis'])) != 0:
+                    sibs.append(filename2)
+            
+            siblings[filename1] = sibs
+
+        with open(jsonName, 'w') as fout:
+            json.dump(siblings, fout)
+
+        return siblings
+
+    def getEventList(self, fileJson):
+
+        fin = open(fileJson, 'r')
+        f_dict = json.load(fin)
+
+        siblingFiles = np.array([])
+        for filename in self.inputFileList:
+            siblingFiles = np.concatentate((siblingFiles, f_dict[filename]))
+
+        
 
     def getDBSSiblings_v2(self, output_json):
         print("getting dbs siblings, modified file")
@@ -356,7 +415,6 @@ class getSiblings():
         return runList
 
 
-
 if __name__ == "__main__":
 
     #both files are real datasets -> global/global
@@ -375,6 +433,7 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--lumiMatching", action="store_true", help="Force lumi matched siblings instead of siblings listed in DAS")
     parser.add_argument("--siblingJSON", type=str, help="Name of sibling JSON file to use for matching")
     parser.add_argument("--inputJSON", type=str, help="Name of input JSON file to use for matching")
+    parser.add_argument("--eventList", type=str, default=None, help="Option to get event list, argument is input json file")
     parser.add_argument("-p", "--prod", type=str, default='global', help="Select DAS prod type or local, Options: \n"+
                                                                         "\tglobal: both datasets are global \n" + 
                                                                         "\tuser: input dataset is produced by user (phys03)\n" +
@@ -393,4 +452,8 @@ if __name__ == "__main__":
     if os.path.exists('sibling.json') and args.siblingJSON != 'sibling.json': os.system('rm sibling.json')
     
     mysiblings = getSiblings()
-    mysiblings.getSiblings()
+
+    if args.eventList:
+        mysiblings.getEventList(args.eventList)
+    else:
+        mysiblings.getSiblings()
