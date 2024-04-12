@@ -28,7 +28,7 @@ r.gSystem.Load('libOSUT3AnalysisDBTools.so')
 # class used to get the secondary files (siblings) of the primary input files
 class getSiblings():
 
-    def __init__(self):
+    def __init__(self, inputJSON, secondaryJSON, label):
 
         self.numEvents = 0
         self.numSharedEvents = 0
@@ -38,7 +38,15 @@ class getSiblings():
         self.dataset_in = None
         self.dataset_sib = None
 
-        if not args.eventList:
+        self.inputJSON = inputJSON
+        self.secondaryJSON = secondaryJSON
+        self.label = label
+
+        self.nJobs = -1
+        self.jobNumber = -1
+        self.eventsPerJob = -1
+
+        '''     if not args.eventList:
 
             #if all datasets are not local set APIs
             if args.prod != 'allLocal':
@@ -119,18 +127,19 @@ class getSiblings():
         elif args.prod == 'allUser':
             self.dbsapi_in = DbsApi (url = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSReader')
             self.dbsapi_out = DbsApi (url = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSReader')
+    '''
 
     #main function for getting siblings using either lumi matching or DBS
     def getSiblings(self):
         if args.prod == 'local' or args.prod == 'allLocal' or args.lumiMatching:
             self.getLumiMatching(self.dictName, args.prod, args.inputJSON, args.siblingJSON)
         else:
-            #self.getDBSSiblings_v2(self.dictName)
-            dataset1 = self.getDASInfo(self.dataset_in)
-            dataset2 = self.getDASInfo(self.dataset_sib)
-            self.findMatches(dataset1, dataset2, self.dictName)
+            self.getFilesFromList(args.jobNumber, args.totalJobs)
+            self.findMatches()
+            self.getEventList()
 
-    def getDASInfo(self, dataset):
+    @staticmethod
+    def getDASInfo(dataset, jsonName=None):
         cmd = 'dasgoclient -query="file,run,lumi dataset={0}" -json'.format(dataset)
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
         output, error = process.communicate()
@@ -147,40 +156,79 @@ class getSiblings():
         for f, l, r in zip(files, lumis, runs):
             miniDict[f] = {'lumis': l, 'runs': r}
 
-        print("miniDict", miniDict)
+        if jsonName:
+            with open(jsonName, 'w') as fout:
+                json.dump(miniDict, fout)
 
         return miniDict
 
-    def findMatches(self, input1, input2, jsonName='default.json'):
+    def findMatches(self, jsonName='default.json'):
 
+        jsonName = self.label + '.json'
+        
         siblings = {}
-        for filename1, infos1 in input1.items():
-            print("Finding siblings for {}".format(filename1))
-            sibs = []
-            for filename2, infos2 in input2.items():
-                if len(np.intersect1d(infos1['runs'], infos2['runs'])) == 0: continue
-                if len(np.intersect1d(infos1['lumis'], infos2['lumis'])) != 0:
-                    sibs.append(filename2)
-            
-            siblings[filename1] = sibs
+        #open primary json file and get runs, lumis
+        with open(self.inputJSON) as primary_fin:
+            primary_dict = json.load(primary_fin)
+
+            #open secondary json and find matches
+            with open(self.secondaryJSON) as secondary_fin:
+                secondary_dict = json.load(secondary_fin)
+
+                for p_file, primary_info in primary_dict.items():
+                    print("checking in dictionary for ", p_file)
+                    if p_file not in self.inputFiles: continue
+                    print("Finding matches for", p_file)
+                    sibs = []
+                    for s_file, secondary_info in secondary_dict.items():
+                        if len(np.intersect1d(primary_info['runs'], secondary_info['runs'])) == 0: continue
+                        if len(np.intersect1d(primary_info['lumis'], secondary_info['lumis'])) != 0:
+                            sibs.append(s_file)
+                    
+                    siblings[p_file] = sibs
 
         with open(jsonName, 'w') as fout:
             json.dump(siblings, fout)
 
-        return siblings
+        self.siblingDict = siblings
 
-    def getEventList(self, fileJson):
+    def getEventList(self):
 
-        fin = open(fileJson, 'r')
-        f_dict = json.load(fin)
+        primaryEvents = np.array([])
+        for filename in self.siblingDict.keys():
+            if not filename in self.inputFiles: continue
+            if self.eventsPerJob != -1 and self.numSharedEvents >= self.eventsPerJob: break
+            print("getting entries for file", filename)
+            if not filename.startswith("root://"): 
+                filename = 'root://cms-xrd-global.cern.ch:/' + filename
+            events = r.getEventsInFile(filename)
+            tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
+            primaryEvents = np.concatenate((primaryEvents, tmpEvents))
 
-        siblingFiles = np.array([])
-        for filename in self.inputFileList:
-            siblingFiles = np.concatentate((siblingFiles, f_dict[filename]))
+        secondaryEvents = np.array([])
+        for primaryFile, secondaryList in self.siblingDict.items():
+            if not primaryFile in self.inputFiles: continue
+            print("Primary File {} \n \n {}".format(primaryFile, secondaryList))
+            for filename in secondaryList:
+                if not filename.startswith("root://"): 
+                    filename = 'root://cms-xrd-global.cern.ch:/' + filename
+                events = r.getEventsInFile(filename)
+                tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
+                secondaryEvents = np.concatenate((secondaryEvents, tmpEvents))
+        
+        sharedEvents = np.intersect1d(primaryEvents, secondaryEvents)
+        self.numSharedEvents = len(sharedEvents)
+        self.numPrimaryEvents = len(primaryEvents)
+        self.numSiblingEvents = len(secondaryEvents)
 
+        if self.eventsPerJob != -1: sharedEvents = sharedEvents[:self.eventsPerJob]
+
+        print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(self.numPrimaryEvents, self.numSiblingEvents, self.numSharedEvents))
+            
+        np.savetxt('eventList_{0}.txt'.format(self.jobNumber), sharedEvents, fmt='%s', delimiter=',')
         
 
-    def getDBSSiblings_v2(self, output_json):
+    '''    def getDBSSiblings_v2(self, output_json):
         print("getting dbs siblings, modified file")
 
         file_dict = {}
@@ -282,7 +330,7 @@ class getSiblings():
         f_out = open(output_json, 'w')
         f_out.write(json_dict)
         f_out.close()     
-        np.savetxt('eventList_{0}.txt'.format(args.jobNumber), sharedEvents, fmt='%s', delimiter=',')
+        np.savetxt('eventList_{0}.txt'.format(args.jobNumber), sharedEvents, fmt='%s', delimiter=',')'''
 
     
     #save a json dictionary to a given file
@@ -324,7 +372,7 @@ class getSiblings():
 
         return runsLumisDict
 
-    #function to get lumi blocks from a file list using DBS
+    '''    #function to get lumi blocks from a file list using DBS
     def getLumiBlocksDBS(self, filelist, api, saveFile):
         json_dict = {}
         if os.path.exists(os.getcwd() + '/' + saveFile + '.json'):
@@ -345,7 +393,7 @@ class getSiblings():
         files = api.listFiles (dataset = dataset, detail=True)
         names = [x['logical_file_name'] for x in files if x['is_file_valid']]
         if debug: return names[:10] #for debugging
-        else: return names
+        else: return names'''
 
     #get list of local files
     def getLocalFileList(self, dataDir):
@@ -401,8 +449,16 @@ class getSiblings():
     def getFilesFromList(self, jobNumber, nJobs):
         sys.path.append(os.getcwd())
 
-        Label = args.inputFiles
+        self.jobNumber = jobNumber
+        self.nJobs = nJobs
+
+        Label = self.label
         datasetInfo = importlib.import_module('datasetInfo_' + Label +'_cfg', package=None)
+
+        #If no job number or number of jobs is passed use the full file list
+        if jobNumber == -1 or nJobs == -1:
+            self.inputFiles = datasetInfo.listOfFiles
+            return
 
         filesPerJob = int (math.floor (len (datasetInfo.listOfFiles) / nJobs))
         residualLength = int(len(datasetInfo.listOfFiles)%nJobs)
@@ -412,7 +468,8 @@ class getSiblings():
             runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + residualLength):(jobNumber * filesPerJob + residualLength + filesPerJob)]
     
         print("This is the run list:\n",runList)
-        return runList
+        
+        self.inputFiles = runList
 
 
 if __name__ == "__main__":
@@ -423,16 +480,16 @@ if __name__ == "__main__":
     #both files are only local -> noAPI/noAPI
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--inputDataset", type=str, help="Input dataset to get siblings of")
+    parser.add_argument("-L", "--inputDataset", type=str, help="Input dataset to get siblings of")
     parser.add_argument("-f", "--inputFiles", type=str, help="Input file list to get siblings from")
-    parser.add_argument("-j", "--jobNumber", type=int, help="Job number to run from the input file list")
-    parser.add_argument("-t", "--totalJobs", type=int, help="Total number of jobs condor is running over")
+    parser.add_argument("-j", "--jobNumber", type=int, help="Job number to run from the input file list", default=-1)
+    parser.add_argument("-t", "--totalJobs", type=int, help="Total number of jobs condor is running over", default=-1)
     parser.add_argument("-m", "--eventsPerJob", type=int, help="Total number of events for jobs to run over (note this is a maximum but may return fewer if there are fewer events in filelist)", default=-1)
-    parser.add_argument("-s", "--siblingDataset", type=str, help="Sibling dataset to get sibling files from")
+    parser.add_argument("--siblingDataset", type=str, help="Sibling dataset to get sibling files from")
     parser.add_argument("-n", "--nameList", type=str, help="Name of the json file to output")
     parser.add_argument("-l", "--lumiMatching", action="store_true", help="Force lumi matched siblings instead of siblings listed in DAS")
-    parser.add_argument("--siblingJSON", type=str, help="Name of sibling JSON file to use for matching")
-    parser.add_argument("--inputJSON", type=str, help="Name of input JSON file to use for matching")
+    parser.add_argument("-s", "--siblingJSON", type=str, help="Name of sibling JSON file to use for matching", required=True)
+    parser.add_argument("-i", "--inputJSON", type=str, help="Name of primary dataset JSON file to use for matching", required=True)
     parser.add_argument("--eventList", type=str, default=None, help="Option to get event list, argument is input json file")
     parser.add_argument("-p", "--prod", type=str, default='global', help="Select DAS prod type or local, Options: \n"+
                                                                         "\tglobal: both datasets are global \n" + 
@@ -451,9 +508,9 @@ if __name__ == "__main__":
     if os.path.exists('input.json') and args.inputJSON != 'input.json': os.system('rm input.json')
     if os.path.exists('sibling.json') and args.siblingJSON != 'sibling.json': os.system('rm sibling.json')
     
-    mysiblings = getSiblings()
+    mysiblings = getSiblings(args.inputJSON, args.siblingJSON, args.inputDataset)
 
-    if args.eventList:
-        mysiblings.getEventList(args.eventList)
-    else:
-        mysiblings.getSiblings()
+    if args.eventsPerJob:
+        mysiblings.eventsPerJob = args.eventsPerJob
+
+    mysiblings.getSiblings()

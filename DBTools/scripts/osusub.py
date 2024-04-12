@@ -623,8 +623,13 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     if arguments.mergeSkim:
         siblingDataset = run3_skim_sibling_datasets[Label]
         print("sibling dataset", siblingDataset)
-        if arguments.UseAAA: SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
-        else: SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -p allLocal -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
+        if arguments.UseAAA: 
+            #SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
+            SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -i {1} -s {2} -t $3 -j $4 -L {3} -m {4}\n'.format(os.environ['CMSSW_BASE'], jsonLumis[0], jsonLumis[1], Label, EventsPerJob))
+
+        else: 
+            #SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -p allLocal -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
+            SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -i {1} -s {2} -t $3 -j $4 -L {3} -p allLocal -m {4}\n'.format(os.environ['CMSSW_BASE'], jsonLumis[0], jsonLumis[1], Label, EventsPerJob))
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
@@ -678,13 +683,14 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.close ()
     os.chmod (Directory + "/condor.sh", 0o755)
 
-def MakeSiblingFileList(primaryDataset, siblingDataset):
+def MakeSiblingFileList(primaryDataset, siblingDataset, workDir):
 
-    outputFile = primaryDataset[1:].replace('/', '_') + '.json'
-    cmd = 'python3 {}/src/OSUT3Analysis/DBTools/python/getSiblings.py -n {} -s {} -i {}'.format(os.environ["CMSSW_BASE"], outputFile, siblingDataset, primaryDataset)
-    print(cmd)
-    out = subprocess.call(cmd, shell=True)
-    print(out)
+    primaryJson = workDir + '/' + primaryDataset[1:].replace('/', '_') + '.json'
+    siblingJson = workDir + '/' + siblingDataset[1:].replace('/', '_') + '.json'
+    getSiblings.getDASInfo(primaryDataset, jsonName=primaryJson)
+    getSiblings.getDASInfo(siblingDataset, jsonName=siblingJson)
+
+    return [primaryJson, siblingJson]
 
 def MakeCondorSubmitRelease(Directory):
     # list of directories copied from $CMSSW_BASE; note that src/ is a special
@@ -1673,7 +1679,7 @@ if not arguments.Resubmit:
 
             if (arguments.mergeSkim):
                 print("Making sibling file list 1")
-                MakeSiblingFileList(DatasetRead['realDatasetName'], run3_skim_sibling_datasets[dataset])
+                jsonLumis = MakeSiblingFileList(DatasetRead['realDatasetName'], run3_skim_sibling_datasets[dataset], WorkDir)
 
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
@@ -1693,7 +1699,7 @@ if not arguments.Resubmit:
                     cmd = "LD_LIBRARY_PATH= condor_submit condor.sub"
                     if os.path.isfile (os.path.basename (proxy)):
                         os.chmod (os.path.basename (proxy), 0o644)
-                    subprocess.call(cmd, shell = True)
+                    #subprocess.call(cmd, shell = True) #TODO temporary while debugging
                     if os.path.isfile (os.path.basename (proxy)):
                         os.chmod (os.path.basename (proxy), 0o600)
                 os.chdir(SubmissionDir)
@@ -1730,7 +1736,7 @@ if not arguments.Resubmit:
 
         if(arguments.mergeSkim):
             print("Making sibling file list")
-            MakeSiblingFileList(DatasetRead['realDatasetName'], siblingDataset)
+            jsonLumis = MakeSiblingFileList(DatasetRead['realDatasetName'], siblingDataset, WorkDir)
 
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
