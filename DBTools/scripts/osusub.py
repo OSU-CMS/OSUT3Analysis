@@ -526,13 +526,13 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             SubmitFile.write('Executable = condor.sh\n')
         elif 'Arguments' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
             if arguments.mergeSkim:
-                SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + ' eventList_$(Process).txt \n\n')
+                SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + SpecialStringModifier(Label,['/'],[['-','_']]) + ' eventList_$(Process).txt \n\n')
             else:
-                SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + Label + '\n\n')
+                SubmitFile.write('Arguments = config_cfg.py True ' + str(NumberOfJobs) + ' $(Process) ' + Dataset + ' ' + SpecialStringModifier(Label,['/'],[['-','_']]) + '\n\n')
         elif 'Transfer_Input_files' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Transfer_Input_files'] == "":
-            FilesToTransfer = os.environ["CMSSW_VERSION"] + '.tar.gz,condor.sh,config_cfg.py,userConfig_' + Label + '_cfg.py'
+            FilesToTransfer = os.environ["CMSSW_VERSION"] + '.tar.gz,condor.sh,config_cfg.py,userConfig_' + SpecialStringModifier(Label,['/'],[['-','_']]) + '_cfg.py'
             if Dataset != '':
-                FilesToTransfer += ',datasetInfo_' + Label + '_cfg.py'
+                FilesToTransfer += ',datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) + '_cfg.py'
             if UseGridProxy:
                 if rutgers:
                     shutil.copy (proxy, Directory + "/" + os.path.basename (proxy))
@@ -592,11 +592,19 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("rm -f " + os.environ["CMSSW_VERSION"] + ".tar.gz\n")
     SubmitScript.write ("SCRAM_ARCH=" + os.environ["SCRAM_ARCH"] + "\n")
     SubmitScript.write ("cd " + os.environ["CMSSW_VERSION"] + "/src/\n")
-    if (os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_")) and 'patch' not in os.environ["CMSSW_VERSION"]:
+    if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") and 'patch' not in os.environ["CMSSW_VERSION"]:
         SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw/" + os.environ["CMSSW_VERSION"] + "/external/" + os.environ["SCRAM_ARCH"] + "/lib\n")
         SubmitScript.write ("echo $LD_LIBRARY_PATH\n")
-    elif (os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_")) and 'patch' in os.environ["CMSSW_VERSION"]:
+    elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_") and 'patch' not in os.environ["CMSSW_VERSION"]:
+        # TODO: Line below should be changed once the architecture is changed
+        SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/el8_amd64_gcc11/cms/cmssw/" + os.environ["CMSSW_VERSION"] + "/external/el8_amd64_gcc11/lib\n")# + os.environ["SCRAM_ARCH"] + "/lib\n")
+        SubmitScript.write ("echo $LD_LIBRARY_PATH\n")
+    elif os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") and 'patch' in os.environ["CMSSW_VERSION"]:
         SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw-patch/" + os.environ["CMSSW_VERSION"] + "/external/" + os.environ["SCRAM_ARCH"] + "/lib\n")
+        SubmitScript.write ("echo $LD_LIBRARY_PATH\n")
+    elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_") and 'patch' in os.environ["CMSSW_VERSION"]:
+        # TODO: Line below should be changed once the architecture is changed
+        SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/el8_amd64_gcc11/cms/cmssw-patch/" + os.environ["CMSSW_VERSION"] + "/external/el8_amd64_gcc11/lib\n")# + os.environ["SCRAM_ARCH"] + "/lib\n")
         SubmitScript.write ("echo $LD_LIBRARY_PATH\n")        
     SubmitScript.write ("echo $CMSSW_BASE \n")
     SubmitScript.write ("echo $PWD \n")
@@ -622,7 +630,12 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4\n'.format(os.environ['CMSSW_BASE'], siblingDataset))
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
-    SubmitScript.write (cmsRunExecutable + " $@\n")
+    # TODO: Lines below should be changed once the architecture is set correctly
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
+        SubmitScript.write ("/cvmfs/cms.cern.ch/el8_amd64_gcc11/cms/cmssw/CMSSW_13_0_13/bin/el8_amd64_gcc11/cmsRun $@\n")
+    else:
+        SubmitScript.write (cmsRunExecutable + " $@\n")
+    # SubmitScript.write (cmsRunExecutable + " $@\n")
     SubmitScript.write ("RunStatus=$?\n")
     SubmitScript.write ("if [ $RunStatus -ne 0 ]\n")
     SubmitScript.write ("then\n")
@@ -755,14 +768,14 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
     ConfigFile.write('osusub.randomNumberSuffix = ' + str (randomNumberSuffix) + '\n')
     ConfigFile.write('import re\n')
     ConfigFile.write('import os\n')
-    ConfigFile.write('import userConfig_' + Label + '_cfg as pset\n')
+    ConfigFile.write('import userConfig_' + SpecialStringModifier(Label,['/'],[['-','_']]) + '_cfg as pset\n')
     if jsonFile != '':
         ConfigFile.write('import FWCore.PythonUtilities.LumiList as LumiList\n')
         ConfigFile.write('myLumis = LumiList.LumiList(filename = \'' + str(jsonFile) + '\').getCMSSWString().split(\',\')\n')
     ConfigFile.write('\n')
     if not Generic:
         if len(SkimChannelNames) == 0:
-            SkimChannelNames = SkimChannelFinder('userConfig_' + Label + '_cfg', Directory, temPset)
+            SkimChannelNames = SkimChannelFinder('userConfig_' + SpecialStringModifier(Label,['/'],[['-','_']]) + '_cfg', Directory, temPset)
             for channelName in SkimChannelNames:
                 if not channelName == '':
                     if not SkimDirectory and not os.path.exists(Directory + '/' + channelName):
@@ -775,9 +788,9 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
 
                     # Create an extra copy in the skim directory, in case a user later wants to run over this skim remotely via xrootd
                     if lpcCAF and os.path.realpath(Directory + '/' + channelName + '/').startswith('/eos/uscms'):
-                        subprocess.call('xrdcp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py root://cmseos.fnal.gov/' + os.path.realpath(Directory + '/' + channelName + '/'), shell = True)
+                        subprocess.call('xrdcp ' + Directory + '/datasetInfo_' + SpecialStringModifier(dataset,['/'],[['-','_']]) + '_cfg.py root://cmseos.fnal.gov/' + os.path.realpath(Directory + '/' + channelName + '/'), shell = True)
                     else:
-                        subprocess.call('cp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
+                        subprocess.call('cp ' + Directory + '/datasetInfo_' + SpecialStringModifier(dataset,['/'],[['-','_']]) + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
         else:
             for channelName in SkimChannelNames:
                 if not channelName == '':
@@ -791,9 +804,9 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
 
                     # Create an extra copy in the skim directory, in case a user later wants to run over this skim remotely via xrootd
                     if lpcCAF and os.path.realpath(Directory + '/' + channelName + '/').startswith('/eos/uscms'):
-                        subprocess.call('xrdcp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py root://cmseos.fnal.gov/' + os.path.realpath(Directory + '/' + channelName + '/'), shell = True)
+                        subprocess.call('xrdcp ' + Directory + '/datasetInfo_' + SpecialStringModifier(dataset,['/'],[['-','_']]) + '_cfg.py root://cmseos.fnal.gov/' + os.path.realpath(Directory + '/' + channelName + '/'), shell = True)
                     else:
-                        subprocess.call('cp ' + Directory + '/datasetInfo_' + dataset + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
+                        subprocess.call('cp ' + Directory + '/datasetInfo_' + SpecialStringModifier(dataset,['/'],[['-','_']]) + '_cfg.py ' + Directory + '/' + channelName + '/', shell = True)
 
     ConfigFile.write('fileName = \'hist_\' + str (osusub.jobNumber) + \'.root\'\n')
     ConfigFile.write('pset.' + arguments.FileName + ' = fileName\n')
@@ -928,7 +941,7 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
     datasetRead = {}
     datasetRead['useAAA'] = UseAAA
     runList = []
-    datasetInfoName = Directory + '/datasetInfo_' + Label + '_cfg.py'
+    datasetInfoName = Directory + '/datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) + '_cfg.py'
     SkimExists = RunOverSkim and os.path.isdir (Condor + arguments.SkimDirectory + '/' + Label + '/' + arguments.SkimChannel)
     InitializeAAA = ""
     if UseAAA:
@@ -1104,15 +1117,15 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/'
             secondaryCollectionModifications = SecondaryCollectionInstance(SkimDirectory, arguments.SkimChannel)
             #Copy the datasetInfo file from the skim directory.
-            shutil.copy (SkimDirectory + 'datasetInfo_' + Label + '_cfg.py', datasetInfoName)
+            shutil.copy (SkimDirectory + 'datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) + '_cfg.py', datasetInfoName)
             #Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
             SkimModifier(Label, Directory, crossSection)
             InitializeAAA = ""
 
         sys.path.append(Directory)
-        datasetSpec = importlib.util.spec_from_file_location('datasetInfo_' + Label +'_cfg', Directory + '/' + 'datasetInfo_' + Label +'_cfg.py')
+        datasetSpec = importlib.util.spec_from_file_location('datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) +'_cfg', Directory + '/' + 'datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) +'_cfg.py')
         datasetInfo = importlib.util.module_from_spec(datasetSpec)
-        sys.modules['datasetInfo_' + Label +'_cfg'] = datasetInfo
+        sys.modules['datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) +'_cfg'] = datasetInfo
         datasetSpec.loader.exec_module(datasetInfo)
         #exec('import datasetInfo_' + Label +'_cfg as datasetInfo')
         if not UseAAA and InitializeAAA == "" and not RunOverSkim:
@@ -1178,15 +1191,15 @@ def MakeFileList(Dataset, FileType, Directory, Label, UseAAA, crossSection):
             SkimDirectory = Condor + str(arguments.SkimDirectory) + '/' + str(Label) + '/'
             secondaryCollectionModifications = SecondaryCollectionInstance(SkimDirectory, arguments.SkimChannel)
             #Copy the datasetInfo file from the skim directory.
-            shutil.copy (SkimDirectory + 'datasetInfo_' + Label + '_cfg.py', datasetInfoName)
+            shutil.copy (SkimDirectory + 'datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) + '_cfg.py', datasetInfoName)
             #Modidy the datasetInfo file copied so that it can be used by the jobs running over skims. Also update the crossSection here.
             SkimModifier(Label, Directory, crossSection)
             InitializeAAA = ""
 
         sys.path.append(Directory)
-        datasetSpec = importlib.util.spec_from_file_location('datasetInfo_' + Label +'_cfg', Directory + '/' + 'datasetInfo_' + Label +'_cfg.py')
+        datasetSpec = importlib.util.spec_from_file_location('datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) +'_cfg', Directory + '/' + 'datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) +'_cfg.py')
         datasetInfo = importlib.util.module_from_spec(datasetSpec)
-        sys.modules['datasetInfo_' + Label +'_cfg'] = datasetInfo
+        sys.modules['datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) +'_cfg'] = datasetInfo
         datasetSpec.loader.exec_module(datasetInfo)
 
         #print(Directory in sys.path) # To be removed
@@ -1258,7 +1271,7 @@ def SkimModifier(Label, Directory, crossSection, isRemote = False):
         OriginalNumberOfEvents = os.popen('cat ' + SkimDirectory + '/OriginalNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/OriginalNumberOfEvents.txt') else 0.0
         SkimNumberOfEvents     = os.popen('cat ' + SkimDirectory + '/SkimNumberOfEvents.txt').read().split()[0] if os.path.isfile (SkimDirectory + '/SkimNumberOfEvents.txt') else 0.0
 
-    infoFile = Directory + '/datasetInfo_' + Label + '_cfg.py'
+    infoFile = Directory + '/datasetInfo_' + SpecialStringModifier(Label,['/'],[['-','_']]) + '_cfg.py'
     fin = open(infoFile, "r")
     orig = fin.read()
     fin.close()
@@ -1642,7 +1655,7 @@ if not arguments.Resubmit:
                 NumberOfJobs = NumberOfFiles
 
             RealMaxEvents = EventsPerJob*NumberOfJobs
-            userConfig = 'userConfig_' + dataset + '_cfg.py'
+            userConfig = 'userConfig_' + SpecialStringModifier(dataset,['/'],[['-','_']]) + '_cfg.py'
             shutil.copy (Config, WorkDir + '/' + userConfig)
             if 'secondaryCollections' in DatasetRead:
                 ModifyUserConfigForSecondaryCollections(WorkDir + '/' + userConfig, DatasetRead['secondaryCollections'])
@@ -1698,7 +1711,7 @@ if not arguments.Resubmit:
         SkimDir = HadoopDir
         if arguments.localConfig:
             GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
-        userConfig = 'userConfig_' + Label + '_cfg.py'
+        userConfig = 'userConfig_' + SpecialStringModifier(Label,['/'],[['-','_']]) + '_cfg.py'
         shutil.copy (Config, WorkDir + "/" + userConfig)
         tmpDir = re.sub(r"(.*)\.py$", r"\1", Config)
         tmpDir = tmpDir.replace("/", ".")
