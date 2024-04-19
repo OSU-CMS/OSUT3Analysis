@@ -34,6 +34,8 @@ class getSiblings():
         self.numSharedEvents = 0
         self.numPrimaryEvents = 0
         self.numSiblingEvents = 0
+        self.sharedEvents = np.array([])
+
 
         self.dataset_in = None
         self.dataset_sib = None
@@ -45,6 +47,8 @@ class getSiblings():
         self.nJobs = -1
         self.jobNumber = -1
         self.eventsPerJob = -1
+
+        self.local=False
 
         '''     if not args.eventList:
 
@@ -132,15 +136,18 @@ class getSiblings():
     #main function for getting siblings using either lumi matching or DBS
     def getSiblings(self):
         if args.prod == 'local' or args.prod == 'allLocal' or args.lumiMatching:
-            self.getLumiMatching(self.dictName, args.prod, args.inputJSON, args.siblingJSON)
+            #self.getLumiMatching(self.dictName, args.prod, args.inputJSON, args.siblingJSON)
+            print("Running local option...")
+            self.local = True
+            self.getFilesFromList(args.jobNumber, args.totalJobs)
+            self.findMatches()
         else:
             self.getFilesFromList(args.jobNumber, args.totalJobs)
             self.findMatches()
-            self.getEventList()
 
     @staticmethod
     def getDASInfo(dataset, jsonName=None):
-        cmd = 'dasgoclient -query="file,run,lumi dataset={0}" -json'.format(dataset)
+        cmd = 'dasgoclient -query="file,run,lumi,events dataset={0}" -json'.format(dataset)
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
         output, error = process.communicate()
 
@@ -162,9 +169,38 @@ class getSiblings():
 
         return miniDict
 
+    @staticmethod
+    def getLocalInfo(dataset, jsonName=None):
+
+        miniDict = {}
+
+        for filename in os.listdir(dataset):
+            if not filename.endswith('.root'): continue
+            print("Working on file", dataset+filename)
+            lumi_list = []
+            run_list = []
+
+            fin = r.TFile.Open(dataset + filename, 'read')
+            lumis = fin.Get("LuminosityBlocks")
+            for i, ilumi in enumerate(lumis):
+                lumis.GetEntry(i)
+                lumi_list.append(lumis.LuminosityBlockAuxiliary.luminosityBlock())
+                run_list.append(lumis.LuminosityBlockAuxiliary.run())
+
+            fin.Close()
+            miniDict[dataset+filename] = {'lumis': lumi_list, 'runs': run_list}
+
+        if jsonName:
+            with open(jsonName, 'w') as fout:
+                json.dump(miniDict, fout)
+
+        return miniDict
+
     def findMatches(self, jsonName='default.json'):
 
         jsonName = self.label + '.json'
+
+        eventCount = 0
         
         siblings = {}
         #open primary json file and get runs, lumis
@@ -176,7 +212,7 @@ class getSiblings():
                 secondary_dict = json.load(secondary_fin)
 
                 for p_file, primary_info in primary_dict.items():
-                    print("checking in dictionary for ", p_file)
+                    print("checking in dictionary for ", p_file, p_file in self.inputFiles)
                     if p_file not in self.inputFiles: continue
                     print("Finding matches for", p_file)
                     sibs = []
@@ -186,46 +222,48 @@ class getSiblings():
                             sibs.append(s_file)
                     
                     siblings[p_file] = sibs
+                    print("siblings for file are", sibs)
+                    self.getEventList(p_file, sibs)
+
+                    if self.eventsPerJob != -1 and len(self.sharedEvents) > self.eventsPerJob:
+                        break                        
+
+        np.savetxt('eventList_{0}.txt'.format(self.jobNumber), self.sharedEvents, fmt='%s', delimiter=',')
+        print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(self.numPrimaryEvents, self.numSiblingEvents, self.numSharedEvents))
+
 
         with open(jsonName, 'w') as fout:
             json.dump(siblings, fout)
 
         self.siblingDict = siblings
 
-    def getEventList(self):
+    def getEventList(self, primaryFile, siblings):
 
         primaryEvents = np.array([])
-        for filename in self.siblingDict.keys():
-            if not filename in self.inputFiles: continue
-            if self.eventsPerJob != -1 and self.numSharedEvents >= self.eventsPerJob: break
-            print("getting entries for file", filename)
-            if not filename.startswith("root://"): 
+        if not primaryFile in self.inputFiles: 
+            print("File is missing from input file list")
+            return
+        #if self.eventsPerJob != -1 and self.numSharedEvents >= self.eventsPerJob: break
+        print("getting entries for file", primaryFile)
+        if not primaryFile.startswith("root://") and not self.local: 
+            primaryFile = 'root://cms-xrd-global.cern.ch:/' + primaryFile
+        events = r.getEventsInFile(primaryFile)
+        tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
+        primaryEvents = np.concatenate((primaryEvents, tmpEvents))
+
+        secondaryEvents = np.array([])
+        for filename in siblings:
+            if not filename.startswith("root://") and not self.local: 
                 filename = 'root://cms-xrd-global.cern.ch:/' + filename
             events = r.getEventsInFile(filename)
             tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
-            primaryEvents = np.concatenate((primaryEvents, tmpEvents))
-
-        secondaryEvents = np.array([])
-        for primaryFile, secondaryList in self.siblingDict.items():
-            if not primaryFile in self.inputFiles: continue
-            print("Primary File {} \n \n {}".format(primaryFile, secondaryList))
-            for filename in secondaryList:
-                if not filename.startswith("root://"): 
-                    filename = 'root://cms-xrd-global.cern.ch:/' + filename
-                events = r.getEventsInFile(filename)
-                tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
-                secondaryEvents = np.concatenate((secondaryEvents, tmpEvents))
+            secondaryEvents = np.concatenate((secondaryEvents, tmpEvents))
         
-        sharedEvents = np.intersect1d(primaryEvents, secondaryEvents)
-        self.numSharedEvents = len(sharedEvents)
-        self.numPrimaryEvents = len(primaryEvents)
-        self.numSiblingEvents = len(secondaryEvents)
-
-        if self.eventsPerJob != -1: sharedEvents = sharedEvents[:self.eventsPerJob]
-
-        print("There are {0} miniAOD events, and {1} AOD events, {2} shared events".format(self.numPrimaryEvents, self.numSiblingEvents, self.numSharedEvents))
-            
-        np.savetxt('eventList_{0}.txt'.format(self.jobNumber), sharedEvents, fmt='%s', delimiter=',')
+        this_sharedEvents = np.intersect1d(primaryEvents, secondaryEvents)
+        self.sharedEvents = np.concatenate((self.sharedEvents, this_sharedEvents))
+        self.numSharedEvents = len(self.sharedEvents)
+        self.numPrimaryEvents += len(primaryEvents)
+        self.numSiblingEvents += len(secondaryEvents)
         
 
     '''    def getDBSSiblings_v2(self, output_json):
@@ -467,6 +505,10 @@ class getSiblings():
         else:
             runList = datasetInfo.listOfFiles[(jobNumber * filesPerJob + residualLength):(jobNumber * filesPerJob + residualLength + filesPerJob)]
     
+        #local files need to have the file prefix removed
+        if runList[0].startswith('file:'):
+            runList = [x.split('file:')[1] for x in runList]
+
         print("This is the run list:\n",runList)
         
         self.inputFiles = runList

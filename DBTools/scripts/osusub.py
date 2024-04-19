@@ -518,7 +518,7 @@ def GetListOfRemoteRootFiles(Path):
     return fileList
 
 #It generates the condor.sub file for each dataset.
-def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile):
+def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile, jsonLumis=None):
     SubmitFile = open(Directory + '/condor.sub','w')
     cmsRunExecutable = os.popen('which cmsRun').read().rstrip()
     filesToTransfer = []
@@ -546,6 +546,11 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
                     FilesToTransfer += ',' + proxy
             if jsonFile != '':
                 FilesToTransfer += ',' + jsonFile
+            if arguments.mergeSkim:
+                if not isinstance(jsonLumis, list) or len(jsonLumis) != 2:
+                    print("Error there is no json lumi list passed to function MakeCondorSubmitScript needed to run mergeSkim. Exiting...")
+                    sys.exit(1)
+                FilesToTransfer += ',' + jsonLumis[0] + ',' + jsonLumis[1]
             SubmitFile.write('should_transfer_files   = YES\n')
             SubmitFile.write('Transfer_Input_files = ' + FilesToTransfer + '\n')
             if UseGridProxy and not rutgers:
@@ -685,10 +690,24 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
 
 def MakeSiblingFileList(primaryDataset, siblingDataset, workDir):
 
-    primaryJson = workDir + '/' + primaryDataset[1:].replace('/', '_') + '.json'
-    siblingJson = workDir + '/' + siblingDataset[1:].replace('/', '_') + '.json'
-    getSiblings.getDASInfo(primaryDataset, jsonName=primaryJson)
-    getSiblings.getDASInfo(siblingDataset, jsonName=siblingJson)
+    if arguments.lumiMatch:
+
+        primaryDataset = primaryDataset.split('FilesInDirectory:')[1]
+        print("Primary dataset:", primaryDataset)
+        print("Secondary dataset:", siblingDataset)
+
+        primaryJson = 'primaryJson.json'
+        siblingJson = 'secondaryJson.json'
+
+        getSiblings.getLocalInfo(primaryDataset, jsonName=primaryJson)
+        getSiblings.getLocalInfo(siblingDataset, jsonName=siblingJson)
+    else:
+
+        primaryJson = workDir + '/' + primaryDataset[1:].replace('/', '_') + '.json'
+        siblingJson = workDir + '/' + siblingDataset[1:].replace('/', '_') + '.json'
+
+        getSiblings.getDASInfo(primaryDataset, jsonName=primaryJson)
+        getSiblings.getDASInfo(siblingDataset, jsonName=siblingJson)
 
     return [primaryJson, siblingJson]
 
@@ -1684,7 +1703,7 @@ if not arguments.Resubmit:
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
             else:
-                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile)
+                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile, jsonLumis)
                 MakeCondorSubmitRelease(WorkDir)
             if not arguments.NotToExecute:
                 os.chdir(os.path.realpath(WorkDir))
@@ -1699,7 +1718,7 @@ if not arguments.Resubmit:
                     cmd = "LD_LIBRARY_PATH= condor_submit condor.sub"
                     if os.path.isfile (os.path.basename (proxy)):
                         os.chmod (os.path.basename (proxy), 0o644)
-                    #subprocess.call(cmd, shell = True) #TODO temporary while debugging
+                    subprocess.call(cmd, shell = True)
                     if os.path.isfile (os.path.basename (proxy)):
                         os.chmod (os.path.basename (proxy), 0o600)
                 os.chdir(SubmissionDir)
@@ -1734,6 +1753,7 @@ if not arguments.Resubmit:
 
         MakeSpecificConfig('', WorkDir, SkimDir, Label, SkimChannelNames, '', temPset, lpcCAF)
 
+        jsonLumis = None
         if(arguments.mergeSkim):
             print("Making sibling file list")
             jsonLumis = MakeSiblingFileList(DatasetRead['realDatasetName'], siblingDataset, WorkDir)
@@ -1741,7 +1761,7 @@ if not arguments.Resubmit:
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
         else:
-            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'')
+            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'', jsonLumis)
             MakeCondorSubmitRelease(WorkDir)
         if not arguments.NotToExecute:
             os.chdir(os.path.realpath(WorkDir))
