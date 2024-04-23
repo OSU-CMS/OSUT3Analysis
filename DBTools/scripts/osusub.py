@@ -22,6 +22,7 @@ from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 from OSUT3Analysis.DBTools.condorSubArgumentsSet import *
+from OSUT3Analysis.DBTools.getSiblings import *
 
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
@@ -517,7 +518,7 @@ def GetListOfRemoteRootFiles(Path):
     return fileList
 
 #It generates the condor.sub file for each dataset.
-def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile):
+def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile, jsonLumis=None):
     SubmitFile = open(Directory + '/condor.sub','w')
     cmsRunExecutable = os.popen('which cmsRun').read().rstrip()
     filesToTransfer = []
@@ -545,6 +546,11 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
                     FilesToTransfer += ',' + proxy
             if jsonFile != '':
                 FilesToTransfer += ',' + jsonFile
+            if arguments.mergeSkim:
+                if not isinstance(jsonLumis, list) or len(jsonLumis) != 2:
+                    print("Error there is no json lumi list passed to function MakeCondorSubmitScript needed to run mergeSkim. Exiting...")
+                    sys.exit(1)
+                FilesToTransfer += ',' + jsonLumis[0] + ',' + jsonLumis[1]
             SubmitFile.write('should_transfer_files   = YES\n')
             SubmitFile.write('Transfer_Input_files = ' + FilesToTransfer + '\n')
             if UseGridProxy and not rutgers:
@@ -622,8 +628,13 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     if arguments.mergeSkim:
         siblingDataset = run3_skim_sibling_datasets[Label]
         print("sibling dataset", siblingDataset)
-        if arguments.UseAAA: SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
-        else: SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -p allLocal -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
+        if arguments.UseAAA: 
+            #SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
+            SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -i {1} -s {2} -t $3 -j $4 -L {3} -m {4}\n'.format(os.environ['CMSSW_BASE'], jsonLumis[0], jsonLumis[1], Label, EventsPerJob))
+
+        else: 
+            #SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -p allLocal -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
+            SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -i {1} -s {2} -t $3 -j $4 -L {3} -p allLocal -m {4}\n'.format(os.environ['CMSSW_BASE'], jsonLumis[0], jsonLumis[1], Label, EventsPerJob))
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     SubmitScript.write (cmsRunExecutable + " $@\n")
@@ -676,6 +687,30 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("exit 0\n")
     SubmitScript.close ()
     os.chmod (Directory + "/condor.sh", 0o755)
+
+def MakeSiblingFileList(primaryDataset, siblingDataset, workDir):
+
+    if arguments.lumiMatch:
+
+        primaryDataset = primaryDataset.split('FilesInDirectory:')[1]
+        print("Primary dataset:", primaryDataset)
+        print("Secondary dataset:", siblingDataset)
+
+        primaryJson = 'primaryJson.json'
+        siblingJson = 'secondaryJson.json'
+
+        getSiblings.getLocalInfo(primaryDataset, jsonName=primaryJson)
+        getSiblings.getLocalInfo(siblingDataset, jsonName=siblingJson)
+    
+    else:
+
+        primaryJson = workDir + '/' + primaryDataset[1:].replace('/', '_') + '.json'
+        siblingJson = workDir + '/' + siblingDataset[1:].replace('/', '_') + '.json'
+
+        getSiblings.getDASInfo(primaryDataset, jsonName=primaryJson)
+        getSiblings.getDASInfo(siblingDataset, jsonName=siblingJson)
+
+    return [primaryJson, siblingJson]
 
 def MakeCondorSubmitRelease(Directory):
     # list of directories copied from $CMSSW_BASE; note that src/ is a special
@@ -1662,10 +1697,14 @@ if not arguments.Resubmit:
                     shutil.move (jsonFile, WorkDir + "/" + jsonFile)
             SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'], WorkDir, SkimDir, dataset, SkimChannelNames, jsonFile, temPset, lpcCAF)
 
+            if (arguments.mergeSkim):
+                print("Making sibling file list 1")
+                jsonLumis = MakeSiblingFileList(DatasetRead['realDatasetName'], run3_skim_sibling_datasets[dataset], WorkDir)
+
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
             else:
-                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile)
+                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile, jsonLumis)
                 MakeCondorSubmitRelease(WorkDir)
             if not arguments.NotToExecute:
                 os.chdir(os.path.realpath(WorkDir))
@@ -1715,10 +1754,15 @@ if not arguments.Resubmit:
 
         MakeSpecificConfig('', WorkDir, SkimDir, Label, SkimChannelNames, '', temPset, lpcCAF)
 
+        jsonLumis = None
+        if(arguments.mergeSkim):
+            print("Making sibling file list")
+            jsonLumis = MakeSiblingFileList(DatasetRead['realDatasetName'], siblingDataset, WorkDir)
+
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
         else:
-            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'')
+            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'', jsonLumis)
             MakeCondorSubmitRelease(WorkDir)
         if not arguments.NotToExecute:
             os.chdir(os.path.realpath(WorkDir))

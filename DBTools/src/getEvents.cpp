@@ -7,7 +7,7 @@ std::vector<runInfo> getEventsInFile(std::string filename){
     std::vector<runInfo> thisRun = {};
 
     TString fileIn = filename;
-    //std::cout << "Opening file " << fileIn << std::endl;
+    //std::cout << "Opening file " << filename << std::endl;
 
     int attempts=0;
     bool success=false;
