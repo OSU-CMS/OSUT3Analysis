@@ -701,6 +701,7 @@ def MakeSiblingFileList(primaryDataset, siblingDataset, workDir):
 
         getSiblings.getLocalInfo(primaryDataset, jsonName=primaryJson)
         getSiblings.getLocalInfo(siblingDataset, jsonName=siblingJson)
+    
     else:
 
         primaryJson = workDir + '/' + primaryDataset[1:].replace('/', '_') + '.json'
