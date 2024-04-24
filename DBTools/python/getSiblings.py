@@ -97,20 +97,13 @@ class getSiblings():
             lumi_list = []
             run_list = []
 
-            ''' fin = r.TFile.Open(dataset + filename, 'read')
-            lumis = fin.Get("LuminosityBlocks")
-            for i, ilumi in enumerate(lumis):
-                lumis.GetEntry(i)
-                lumi_list.append(lumis.LuminosityBlockAuxiliary.luminosityBlock())
-                run_list.append(lumis.LuminosityBlockAuxiliary.run())'''
-            
+           
             events = r.getEventsInFile(dataset+filename)
 
             for event in events:
                 lumi_list.append(event.lumiBlock)
                 run_list.append(event.runNum)
 
-            #fin.Close()
             miniDict[dataset+filename] = {'lumis': lumi_list, 'runs': run_list}
 
         if jsonName:
@@ -120,8 +113,6 @@ class getSiblings():
         return miniDict
 
     def findMatches(self, jsonName='default.json'):
-
-        #jsonName = self.label + '.json'
 
         eventCount = 0
         

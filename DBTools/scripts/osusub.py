@@ -1704,7 +1704,10 @@ if not arguments.Resubmit:
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
             else:
-                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile, jsonLumis)
+                if arguments.mergeSkim:
+                    MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile, jsonLumis)
+                else:
+                    MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile)
                 MakeCondorSubmitRelease(WorkDir)
             if not arguments.NotToExecute:
                 os.chdir(os.path.realpath(WorkDir))
@@ -1762,7 +1765,10 @@ if not arguments.Resubmit:
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
         else:
-            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'', jsonLumis)
+            if arguments.mergeSkim:
+                MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'', jsonLumis)
+            else:
+                MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'')
             MakeCondorSubmitRelease(WorkDir)
         if not arguments.NotToExecute:
             os.chdir(os.path.realpath(WorkDir))
