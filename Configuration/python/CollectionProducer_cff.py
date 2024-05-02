@@ -108,6 +108,14 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2"):
     collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight")
     collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt")
 
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_"):
+    collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID_RunIIIWinter22_V1_veto")
+    collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID_RunIIIWinter22_V1_loose")
+    collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID_RunIIIWinter22_V1_medium")
+    collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID_RunIIIWinter22_V1_tight")
+    collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Run3_Winter22/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_122X.txt")
+    
+
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
@@ -227,6 +235,14 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_10_2"):
     collectionProducer.photons.effAreasNeutralHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfNeutralHadrons_90percentBased_V2.txt")
     collectionProducer.photons.effAreasPhotonPayload        = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfPhotons_90percentBased_V2.txt")
 
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_"):
+    collectionProducer.photons.vidLooseIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID_RunIIIWinter22_122X_V1_loose")
+    collectionProducer.photons.vidMediumIdMap = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID_RunIIIWinter22_122X_V1_medium")
+    collectionProducer.photons.vidTightIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID_RunIIIWinter22_122X_V1_tight")
+    collectionProducer.photons.effAreasChargedHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Run3_Winter22/effectiveArea_ChgHadronIso_95percentBased.txt")
+    collectionProducer.photons.effAreasNeutralHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Run3_Winter22/effectiveArea_NeuHadronIso_95percentBased.txt")
+    collectionProducer.photons.effAreasPhotonPayload        = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Run3_Winter22/effectiveArea_PhotonIso_95percentBased.txt")
+
 copyConfiguration (collectionProducer.photons, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
@@ -326,6 +342,12 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     eleVtx_d0Cuts_endcap = cms.vdouble(0.222, 0.118, 0.0739, 0.0351),
     eleVtx_dzCuts_endcap = cms.vdouble(0.921, 0.822, 0.602, 0.417),
 )
+
+print("This is the electron vidVetoIDMap", collectionProducer.tracks.eleVIDVetoIdMap)
+print("This is the electron vidLooseMap", collectionProducer.tracks.eleVIDLooseIdMap)
+print("This is the electron vidMediumMap", collectionProducer.tracks.eleVIDMediumIdMap)
+print("This is the electron vidTightMap", collectionProducer.tracks.eleVIDTightIdMap)
+
 
 # if running over data, switch to the data fiducial map files
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
