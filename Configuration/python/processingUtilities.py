@@ -231,7 +231,8 @@ def add_channels (process,
                   skim = None,
                   branchSets = None,
                   ignoreSkimmedCollections = False,
-                  forceNonEmptySkim = False):
+                  forceNonEmptySkim = False,
+                  isCRAB = False):
     if skim != None:
         print("# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated.")
         print("# Please remove from your config files.")
@@ -396,7 +397,8 @@ def add_channels (process,
         if not hasattr (add_channels, "originalName"):
             add_channels.originalName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.
             outputName = add_channels.originalName
-            suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
+            if not isCRAB: suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
+            else: suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "")
             outputName = outputName.replace(".root", suffix + ".root")
             process.TFileService.fileName = cms.string(outputName)
             if os.path.islink (add_channels.originalName):
@@ -850,11 +852,14 @@ def add_channels (process,
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
 
+        outFileName = ""
+        if not isCRAB: outFileName = channelName + "/" + skimFilePrefix + suffix + ".root"
+        else: outFileName = skimFilePrefix + suffix + ".root"
         poolOutputModule = cms.OutputModule ("PoolOutputModule",
             overrideInputFileSplitLevels = cms.untracked.bool (True),
             splitLevel = cms.untracked.int32 (0),
             eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
-            fileName = cms.untracked.string (channelName + "/" + skimFilePrefix + suffix + ".root"),
+            fileName = cms.untracked.string (outFileName),
             SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
             outputCommands = cms.untracked.vstring (outputCommands),
             dropMetaData = cms.untracked.string ("ALL"),
