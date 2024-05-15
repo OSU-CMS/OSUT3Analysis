@@ -109,10 +109,10 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2"):
     collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt")
 
 if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_"):
-    collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID_RunIIIWinter22_V1_veto")
-    collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID_RunIIIWinter22_V1_loose")
-    collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID_RunIIIWinter22_V1_medium")
-    collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID_RunIIIWinter22_V1_tight")
+    collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-veto")
+    collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-loose")
+    collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-medium")
+    collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-tight")
     collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Run3_Winter22/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_122X.txt")
     
 
@@ -236,9 +236,9 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_10_2"):
     collectionProducer.photons.effAreasPhotonPayload        = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfPhotons_90percentBased_V2.txt")
 
 if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_"):
-    collectionProducer.photons.vidLooseIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID_RunIIIWinter22_122X_V1_loose")
-    collectionProducer.photons.vidMediumIdMap = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID_RunIIIWinter22_122X_V1_medium")
-    collectionProducer.photons.vidTightIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID_RunIIIWinter22_122X_V1_tight")
+    collectionProducer.photons.vidLooseIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-RunIIIWinter22-122X-V1-loose")
+    collectionProducer.photons.vidMediumIdMap = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-RunIIIWinter22-122X-V1-medium")
+    collectionProducer.photons.vidTightIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-RunIIIWinter22-122X-V1-tight")
     collectionProducer.photons.effAreasChargedHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Run3_Winter22/effectiveArea_ChgHadronIso_95percentBased.txt")
     collectionProducer.photons.effAreasNeutralHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Run3_Winter22/effectiveArea_NeuHadronIso_95percentBased.txt")
     collectionProducer.photons.effAreasPhotonPayload        = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Run3_Winter22/effectiveArea_PhotonIso_95percentBased.txt")
