@@ -22,6 +22,7 @@ from OSUT3Analysis.Configuration.configurationOptions import *
 from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 from OSUT3Analysis.DBTools.condorSubArgumentsSet import *
+from OSUT3Analysis.DBTools.getSiblings import *
 
 parser = OptionParser()
 parser = set_commandline_arguments(parser)
@@ -69,6 +70,9 @@ parser.add_option("--extend", dest="Extend", action="store_true", default = Fals
 parser.add_option("--inputDirectory", dest="inputDirectory", default = "", help="Specify the directory containing input files. Wildcards allowed.")
 parser.add_option("--forceRutgersMode", action="store_true", dest="forceRutgersMode", default = False, help="Force Rutgers mode for getSiblings to work properly.")
 parser.add_option("--mergeSkim", action="store_true", help="Option to create good events list and merge the AOD skim with miniAOD")
+parser.add_option("--lumiMatch", action="store_true", help="mergeSkim works when doing lumi matching or event masking; this sets lumiMatch off (use event matching) or on (use lumi matching) for any cases; default is event masking")
+parser.add_option("--localSkim", type=str, default=None, help="If AOD skim files are local pass the local destination using this option")
+
 
 (arguments, args) = parser.parse_args()
 
@@ -514,7 +518,7 @@ def GetListOfRemoteRootFiles(Path):
     return fileList
 
 #It generates the condor.sub file for each dataset.
-def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile):
+def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelNames, UseGridProxy, jsonFile, jsonLumis=None):
     SubmitFile = open(Directory + '/condor.sub','w')
     cmsRunExecutable = os.popen('which cmsRun').read().rstrip()
     filesToTransfer = []
@@ -542,6 +546,11 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
                     FilesToTransfer += ',' + proxy
             if jsonFile != '':
                 FilesToTransfer += ',' + jsonFile
+            if arguments.mergeSkim:
+                if not isinstance(jsonLumis, list) or len(jsonLumis) != 2:
+                    print("Error there is no json lumi list passed to function MakeCondorSubmitScript needed to run mergeSkim. Exiting...")
+                    sys.exit(1)
+                FilesToTransfer += ',' + jsonLumis[0] + ',' + jsonLumis[1]
             SubmitFile.write('should_transfer_files   = YES\n')
             SubmitFile.write('Transfer_Input_files = ' + FilesToTransfer + '\n')
             if UseGridProxy and not rutgers:
@@ -550,7 +559,7 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
             SubmitFile.write ('Transfer_Output_files = ')
             if os.path.realpath (Directory).startswith (("/data/users/", "/mnt/hadoop/se/store/", "/eos/uscms/store/", "/cms/")):
                 filesToTransfer.append ("hist_${Process}.root")
-                if arguments.mergeSkim: filesToTransfer.append ("eventList_${Process}.txt") #should have if statement for using event list
+                if arguments.mergeSkim and not arguments.lumiMatch: filesToTransfer.append ("eventList_${Process}.txt") #should have if statement for using event list
             else:
                 SubmitFile.write ("hist_$(Process).root,")
             for i in range (0, len (SkimChannelNames)):
@@ -627,7 +636,13 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     if arguments.mergeSkim:
         siblingDataset = run3_skim_sibling_datasets[Label]
         print("sibling dataset", siblingDataset)
-        SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4\n'.format(os.environ['CMSSW_BASE'], siblingDataset))
+        if arguments.UseAAA: 
+            #SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
+            SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -i {1} -s {2} -t $3 -j $4 -L {3} -m {4}\n'.format(os.environ['CMSSW_BASE'], jsonLumis[0], jsonLumis[1], Label, EventsPerJob))
+
+        else: 
+            #SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -f $6 -s {1} -t $3 -j $4 -p allLocal -m {2}\n'.format(os.environ['CMSSW_BASE'], siblingDataset, EventsPerJob))
+            SubmitScript.write('python3 {0}/src/OSUT3Analysis/DBTools/python/getSiblings.py -i {1} -s {2} -t $3 -j $4 -L {3} -p allLocal -m {4}\n'.format(os.environ['CMSSW_BASE'], jsonLumis[0], jsonLumis[1], Label, EventsPerJob))
 
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     # TODO: Lines below should be changed once the architecture is set correctly
@@ -685,6 +700,30 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("exit 0\n")
     SubmitScript.close ()
     os.chmod (Directory + "/condor.sh", 0o755)
+
+def MakeSiblingFileList(primaryDataset, siblingDataset, workDir):
+
+    if arguments.lumiMatch:
+
+        primaryDataset = primaryDataset.split('FilesInDirectory:')[1]
+        print("Primary dataset:", primaryDataset)
+        print("Secondary dataset:", siblingDataset)
+
+        primaryJson = 'primaryJson.json'
+        siblingJson = 'secondaryJson.json'
+
+        getSiblings.getLocalInfo(primaryDataset, jsonName=primaryJson)
+        getSiblings.getLocalInfo(siblingDataset, jsonName=siblingJson)
+    
+    else:
+
+        primaryJson = workDir + '/' + primaryDataset[1:].replace('/', '_') + '.json'
+        siblingJson = workDir + '/' + siblingDataset[1:].replace('/', '_') + '.json'
+
+        getSiblings.getDASInfo(primaryDataset, jsonName=primaryJson)
+        getSiblings.getDASInfo(siblingDataset, jsonName=siblingJson)
+
+    return [primaryJson, siblingJson]
 
 def MakeCondorSubmitRelease(Directory):
     # list of directories copied from $CMSSW_BASE; note that src/ is a special
@@ -865,6 +904,8 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("      siblings.extend (osusub.getSiblings (fileName, \"" + sibling_datasets[Label] + "\"))\n")
         ConfigFile.write("  except:\n")
         ConfigFile.write("    print(\"No valid grid proxy. Not adding sibling files.\")\n")
+        if arguments.localSkim != None:
+            ConfigFile.write("siblings = ['file:{0}{1}'.format(" + arguments.localSkim + ", sib.split('/')[-1]) for sib in siblings] \n")
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     # If the dataset has a Run3 skim sibling defined and not run over skim, add the corresponding files to the secondary file names
@@ -879,10 +920,12 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("        siblings.extend (osusub.getRun3SkimSiblings (fileName, \"" + run3_skim_sibling_datasets[labeled_era] + "\"))\n")
         ConfigFile.write("  except:\n")
         ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
+        if arguments.localSkim != None:
+            ConfigFile.write("siblings = ['file:{0}{1}'.format(\'" + arguments.localSkim + "\', sib.split('/')[-1]) for sib in siblings] \n")
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
     
     #if ...: make this an if statement for running over no cuts
-    if arguments.mergeSkim:
+    if arguments.mergeSkim and not arguments.lumiMatch:
         ConfigFile.write('\nif hasattr(osusub, "eventMask"):\n')
         ConfigFile.write('  try:\n')
         ConfigFile.write('    eventRange = cms.untracked.VEventRange(osusub.eventMask)\n')
@@ -1401,7 +1444,7 @@ def copyDatasetInfoToTempFile (f, tempdir):
 #    Get the host name to determine whether you are using lxplus or OSU T3.   #
 ###############################################################################
 hostname = socket.getfqdn()
-remoteAccessT3 = ('interactive' not in hostname)
+remoteAccessT3 = ('cms-in' not in hostname)
 lxbatch = ('cern.ch' in hostname)
 lpcCAF = ('fnal.gov' in hostname)
 rutgers = ('rutgers.edu' in hostname or arguments.forceRutgersMode)
@@ -1566,7 +1609,8 @@ if not arguments.Resubmit:
                      DatasetName = dataset_names[dataset]
                 else:
                      DatasetName = dataset
-                MaxEvents = maxEvents[dataset]
+                if MaxEvents < 0:
+                    MaxEvents = maxEvents[dataset]  # If user has specified MaxEvents, use that value.
 
             GetCompleteOrderedArgumentsSet(InputCondorArguments, currentCondorSubArgumentsSet)
 
@@ -1646,7 +1690,7 @@ if not arguments.Resubmit:
             if float(arguments.NumberOfFilesPerJob) > 0:
                 NumberOfJobs = int(math.ceil(NumberOfFiles/float(arguments.NumberOfFilesPerJob)))
             if MaxEvents > 0:
-                EventsPerJob = int(math.ceil(int(arguments.MaxEvents)/NumberOfJobs))
+                EventsPerJob = int(math.ceil(int(MaxEvents)/NumberOfJobs))
             if RunOverSkim:
                 NumberOfEvents = int(DatasetRead['numberOfEvents'])
                 if arguments.NumberOfEventsPerJob > 0:
@@ -1666,10 +1710,17 @@ if not arguments.Resubmit:
                     shutil.move (jsonFile, WorkDir + "/" + jsonFile)
             SkimChannelNames = MakeSpecificConfig(DatasetRead['realDatasetName'], WorkDir, SkimDir, dataset, SkimChannelNames, jsonFile, temPset, lpcCAF)
 
+            if (arguments.mergeSkim):
+                print("Making sibling file list 1")
+                jsonLumis = MakeSiblingFileList(DatasetRead['realDatasetName'], run3_skim_sibling_datasets[dataset], WorkDir)
+
             if lxbatch:
                 MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
             else:
-                MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile)
+                if arguments.mergeSkim:
+                    MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile, jsonLumis)
+                else:
+                    MakeCondorSubmitScript(DatasetRead['realDatasetName'],NumberOfJobs,WorkDir,dataset, SkimChannelNames, UseGridProxy, jsonFile)
                 MakeCondorSubmitRelease(WorkDir)
             if not arguments.NotToExecute:
                 os.chdir(os.path.realpath(WorkDir))
@@ -1719,10 +1770,18 @@ if not arguments.Resubmit:
 
         MakeSpecificConfig('', WorkDir, SkimDir, Label, SkimChannelNames, '', temPset, lpcCAF)
 
+        jsonLumis = None
+        if(arguments.mergeSkim):
+            print("Making sibling file list")
+            jsonLumis = MakeSiblingFileList(DatasetRead['realDatasetName'], siblingDataset, WorkDir)
+
         if lxbatch:
             MakeBatchJobFile(WorkDir, Queue, NumberOfJobs)
         else:
-            MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'')
+            if arguments.mergeSkim:
+                MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'', jsonLumis)
+            else:
+                MakeCondorSubmitScript('',NumberOfJobs,WorkDir,Label, SkimChannelNames, UseGridProxy,'')
             MakeCondorSubmitRelease(WorkDir)
         if not arguments.NotToExecute:
             os.chdir(os.path.realpath(WorkDir))

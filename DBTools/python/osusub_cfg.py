@@ -119,7 +119,7 @@ def getSiblings (fileName, dataset):
   return list (miniaodSubset.intersection (miniaod))
 
 # Function for getting Run3 skim sibling of a given file from a given dataset
-def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
+def getRun3SkimSiblings (fileName, dataset, inputUser='global', grandparents=False):
   try:
     from dbs.apis.dbsClient import DbsApi
     #from CRABClient.ClientUtilities import DBSURLS
@@ -137,43 +137,56 @@ def getRun3SkimSiblings (fileName, dataset, inputUser='global'):
 
   miniaod = set ([])
   miniaodSubset = set ([])
+
+  #First we will get the parents (or grandparents) of the input files
   # if dataset is not a USER dataset, then assume the file comes from a USER dataset
   if "/USER" not in dataset:
     # first get the parents
-    if inputUser == 'allUser':
+    if inputUser == 'allUser' or grandparents:
       #if dataset was created by user then the parents will be AOD files -> Need to get grandparents (RAW) to find MINIAOD siblings
       grandparents = []
       parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
-      for parent in parents:
-        for parent_file_name in parent['parent_logical_file_name']:
-          grandparents.extend (dbs3api_phys03.listFileParents(logical_file_name = parent_file_name))
+      parents = [y for x in parents for y in x['parent_logical_file_name'] ]
+      grandparents.extend (dbs3api_phys03.listFileParents(logical_file_name = parents))
       parents = grandparents
     elif inputUser == 'user':
       parents = dbs3api_phys03.listFileParents (logical_file_name = fileName)
     else:
       parents = dbs3api_global.listFileParents (logical_file_name = fileName)
 
-    children = []
-    for parent in parents:
-      for parent_file_name in parent["parent_logical_file_name"]:
-        children.extend (dbs3api_global.listFileChildren (logical_file_name = parent_file_name))
+    #get list of only the parent file names
+    parents = [y for x in parents for y in x['parent_logical_file_name']]
 
+    if dataset.endswith('AODSIM'):
+        return parents
+
+    #Next we will get the children of all the parent files
+    children = []
+    children.extend (dbs3api_global.listFileChildren (logical_file_name = parents))
 
      # put the children in a set
     for child in children:
       miniaod.add (child["child_logical_file_name"])
 
+    #Now we will get a complete list of files in the dataset we want to find matches to
     # put the files of the target dataset in another set
-    dataset = dbs3api_global.listFiles (dataset = dataset)
-    for f in dataset:
+    t_dataset = dbs3api_global.listFiles (dataset = dataset)
+    for f in t_dataset:
       miniaodSubset.add (f["logical_file_name"])
 
   # if dataset is a USER dataset, then assume the file comes from a MINIAOD dataset
   else:
     print("No USER dataset is expected in Run3 analysis. Please double check the input dataset !!!")
  
-  # return the intersection of the two sets
-  return list (miniaodSubset.intersection (miniaod))
+  #finally we get the intersection of sibling files with the files in the dataset we want
+  # get the intersection of the two sets
+  output = list (miniaodSubset.intersection (miniaod))
+
+  if len(output) == 0 and not grandparents:
+    print("No files found, checking grandparents...")
+    output = getRun3SkimSiblings(fileName, dataset, inputUser, grandparents=True)
+
+  return output
 
 def skimListExists(dataset):
   if os.path.exists(os.environ.get("CMSSW_BASE") + '/src/DisappTrks/Skims/data/' + dataset + '.json'):
@@ -191,12 +204,27 @@ def getSiblingList(sibList, runList, siblingDataset):
   fin = open(sibList, 'r')
   data = json.load(fin)
 
+  aux_int = 0
+
   for filename in runList:
+    # Introducing a break for cases where the number of siblings is smaller than the number of inputs
+    # e.g.: when setting a given number of events, runList will be longer than data
+    if aux_int == len(data): break
     if filename in data.keys():
       print("{0} in dictionary".format(filename))
       siblings.extend(data[filename])
+      aux_int = aux_int + 1
+    # Sometimes a file is not in the dictionary, because its sibling doesn't exist, but it is still
+    # part of runList; if the file is local, it should just be skipped, otherwise try to get with function
+    elif filename.startswith("file:"): continue
     else:
       print("{0} not in dictionary, trying to get the siblings with function".format(filename))
+      sibLenBefore = len(siblings)
       siblings.extend(getRun3SkimSiblings(filename, siblingDataset))
+      sibLenAfter = len(siblings)
+      # This is the same break for smaller number of inputs, but for DAS files. If this is not used
+      # then the function call in the config_cfg.py (created inside the condor folder) will skip over
+      # and unfortunately run over the whole runList; it is not unwanted, it is just slower
+      if sibLenBefore != sibLenAfter: aux_int = aux_int + 1
 
   return siblings
