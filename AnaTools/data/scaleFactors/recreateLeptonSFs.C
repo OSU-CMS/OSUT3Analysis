@@ -187,12 +187,11 @@ void createElectronFile_2018() {
 void createElectronFile_2022() {
 
   // Get/declare files
-  // No veto ID SF available for 2022
 
-  TFile * fID_tight = new TFile("electron2022/2022_ElectronTight.root");
-  TFile * fID_medium = new TFile("electron2022/2022_ElectronMedium.root");
-  TFile * fID_loose = new TFile("electron2022/2022_ElectronLoose.root");
-  TFile * fReco = new TFile("electron2022/egammaEffi.txt_EGM2D_updatedAll.root");
+  TFile * fID_tight = new TFile("electron2022/egammaEffi.txt_EGM2D_ID_loose.root");
+  TFile * fID_medium = new TFile("electron2022/egammaEffi.txt_EGM2D_ID_medium.root");
+  TFile * fID_loose = new TFile("electron2022/egammaEffi.txt_EGM2D_ID_tight.root");
+  TFile * fReco = new TFile("electron2022/egammaEffi.txt_EGM2D_RECO.root");
 
   TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
 
@@ -596,7 +595,8 @@ void recreateLeptonSFs() {
   createElectronFile_2017();
   createElectronFile_2017_v2();
   createElectronFile_2018();
-
+  createElectronFile_2022();
+  
   createMuonSFFile_2015();
   createMuonSFFile_2016();
   createMuonSFFile_2017();
