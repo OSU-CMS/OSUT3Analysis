@@ -2,10 +2,9 @@ import json
 from array import array
 from ROOT import TFile, TH2D
 
-# https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2018
+# https://twiki.cern.ch/twiki/bin/view/CMS/MuonRun32022
 
-files = ['RunEFG_SF_ID.json', 'RunEFG_SF_ISO.json']
-# files = ['old_RunEFG_SF_ISO.json']
+files = ['RunEFG_SF_ID.json', 'RunEFG_SF_ISO.json', 'RunEFG_SF_Trig.json']
 
 # each contains keys like NUM_<id>_DEN_genTracks, NUM_<iso>_DEN_<id>
 

@@ -491,71 +491,31 @@ void createMuonSFFile_2018() {
   fTrigAfter->Close();
 }
 
-// https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2022
-// https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiEXO-MUODocumentationRun2
+// https://twiki.cern.ch/twiki/bin/view/CMS/MuonRun32022
 void createMuonSFFile_2022() {
 
   // Get/declare files
 
-  TFile * fID = new TFile("muon2022/RunABCD_SF_ID.json.root");
-  TFile * fIso = new TFile("muon2022/RunABCD_SF_ISO.json.root");
-  TFile * fTrigBefore = new TFile("muon2022/EfficienciesAndSF_2022Data_BeforeMuonHLTUpdate.root");
-  TFile * fTrigAfter = new TFile("muon2022/EfficienciesAndSF_2022Data_AfterMuonHLTUpdate.root");
+  TFile * fID = new TFile("muon2022/RunEFG_SF_ID.json.root");
+  TFile * fIso = new TFile("muon2022/RunEFG_SF_ISO.json.root");
+  TFile * fTrig = new TFile("muon2022/RunEFG_SF_Trig.json.root");
 
   TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
 
   // Get inputs
 
-  TH2D * id_tight = (TH2D*)fID->Get("NUM_TightID_DEN_genTracks");
-  TH2D * id_medium = (TH2D*)fID->Get("NUM_MediumID_DEN_genTracks");
-  TH2D * id_loose = (TH2D*)fID->Get("NUM_LooseID_DEN_genTracks");
+  TH2D * id_tight = (TH2D*)fID->Get("NUM_TightID_DEN_TrackerMuons");
+  TH2D * id_medium = (TH2D*)fID->Get("NUM_MediumID_DEN_TrackerMuons");
+  TH2D * id_loose = (TH2D*)fID->Get("NUM_LooseID_DEN_TrackerMuons");
 
-  TH2D * iso_looseRel_looseID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_LooseID");
-  TH2D * iso_looseRel_mediumID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_MediumID");
-  TH2D * iso_looseRel_tightID = (TH2D*)fIso->Get("NUM_LooseRelIso_DEN_TightIDandIPCut");
-  TH2D * iso_tightRel_mediumID = (TH2D*)fIso->Get("NUM_TightRelIso_DEN_MediumID");
-  TH2D * iso_tightRel_tightID = (TH2D*)fIso->Get("NUM_TightRelIso_DEN_TightIDandIPCut");
+  TH2D * iso_looseRel_looseID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_LooseID");
+  TH2D * iso_looseRel_mediumID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_MediumID");
+  TH2D * iso_looseRel_tightID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_TightID");
+  TH2D * iso_tightRel_mediumID = (TH2D*)fIso->Get("NUM_TightPFIso_DEN_MediumID");
+  TH2D * iso_tightRel_tightID = (TH2D*)fIso->Get("NUM_TightPFIso_DEN_TightID");
 
-  TH2D * muIsolatedTriggerBefore = (TH2D*)fTrigBefore->Get("IsoMu24_PtEtaBins/pt_abseta_ratio");
-  TH2D * muNonisolatedTriggerBefore = (TH2D*)fTrigBefore->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/pt_abseta_ratio");
-
-  TH2D * muIsolatedTriggerAfter = (TH2D*)fTrigAfter->Get("IsoMu24_PtEtaBins/pt_abseta_ratio");
-  TH2D * muNonisolatedTriggerAfter = (TH2D*)fTrigAfter->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/pt_abseta_ratio");
-
-  // Lumi-weighted average trigger SFs
-  double totalIntLumi = 59.613; //total 2022 golden json integrated lumi [/fb]
-  double beforeIntLumi = 8.936; //2022 golden json integrated lumi before muon HLT update [/fb]
-  double IntLumiA = 13.955; //2022A golden json integrated lumi [/fb]
-
-  const double fracBeforeIntLumiABCD = 1.0*beforeIntLumi/totalIntLumi;
-  const double fracAfterIntLumiABCD = 1.0*(totalIntLumi-beforeIntLumi)/totalIntLumi;
-  const double fracBeforeIntLumiA = 1.0*beforeIntLumi/IntLumiA;
-  const double fracAfterIntLumiA = 1.0*(IntLumiA-beforeIntLumi)/IntLumiA;
-
-  TH2D * muIsolatedTriggerBeforeScaledABCD = (TH2D*)muIsolatedTriggerBefore->Clone();
-  muIsolatedTriggerBeforeScaledABCD->Scale(fracBeforeIntLumiABCD);
-  TH2D * muIsolatedTriggerAfterScaledABCD = (TH2D*)muIsolatedTriggerAfter->Clone();
-  muIsolatedTriggerAfterScaledABCD->Scale(fracAfterIntLumiABCD);
-  TH2D muIsolatedTriggerLumiWeightedAveABCD = (*muIsolatedTriggerBeforeScaledABCD) + (*muIsolatedTriggerAfterScaledABCD);
-
-  TH2D * muNonisolatedTriggerBeforeScaledABCD = (TH2D*)muNonisolatedTriggerBefore->Clone();
-  muNonisolatedTriggerBeforeScaledABCD->Scale(fracBeforeIntLumiABCD);
-  TH2D * muNonisolatedTriggerAfterScaledABCD = (TH2D*)muNonisolatedTriggerAfter->Clone();
-  muNonisolatedTriggerAfterScaledABCD->Scale(fracAfterIntLumiABCD);
-  TH2D muNonisolatedTriggerLumiWeightedAveABCD = (*muNonisolatedTriggerBeforeScaledABCD) + (*muNonisolatedTriggerAfterScaledABCD);
-
-  TH2D * muIsolatedTriggerBeforeScaledA = (TH2D*)muIsolatedTriggerBefore->Clone();
-  muIsolatedTriggerBeforeScaledA->Scale(fracBeforeIntLumiA);
-  TH2D * muIsolatedTriggerAfterScaledA = (TH2D*)muIsolatedTriggerAfter->Clone();
-  muIsolatedTriggerAfterScaledA->Scale(fracAfterIntLumiA);
-  TH2D muIsolatedTriggerLumiWeightedAveA = (*muIsolatedTriggerBeforeScaledA) + (*muIsolatedTriggerAfterScaledA);
-
-  TH2D * muNonisolatedTriggerBeforeScaledA = (TH2D*)muNonisolatedTriggerBefore->Clone();
-  muNonisolatedTriggerBeforeScaledA->Scale(fracBeforeIntLumiA);
-  TH2D * muNonisolatedTriggerAfterScaledA = (TH2D*)muNonisolatedTriggerAfter->Clone();
-  muNonisolatedTriggerAfterScaledA->Scale(fracAfterIntLumiA);
-  TH2D muNonisolatedTriggerLumiWeightedAveA = (*muNonisolatedTriggerBeforeScaledA) + (*muNonisolatedTriggerAfterScaledA);
-
+  TH2D * muIsolatedTrigger = (TH2D*)fTrig->Get("NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight");
+  TH2D * muNonisolatedTrigger = (TH2D*)fTrig->Get("NUM_Mu50_or_CascadeMu100_or_HighPtTkMu100_DEN_CutBasedIdTrkHighPt_and_TkIsoLoose");
 
   // Write output
 
@@ -569,22 +529,14 @@ void createMuonSFFile_2022() {
   iso_tightRel_mediumID->Write("muonIso2022TightMediumID");
   iso_tightRel_tightID->Write("muonIso2022TightTightID");
 
-  muIsolatedTriggerBefore->Write("muonTrigger2022IsoMu24BeforeMuonHLTUpdate");
-  muNonisolatedTriggerBefore->Write("muonTrigger2022Mu50OROldMu100ORTkMu100BeforeMuonHLTUpdate");
-  muIsolatedTriggerAfter->Write("muonTrigger2022IsoMu24AfterMuonHLTUpdate");
-  muNonisolatedTriggerAfter->Write("muonTrigger2022Mu50OROldMu100ORTkMu100AfterMuonHLTUpdate");
-
-  muIsolatedTriggerLumiWeightedAveABCD.Write("muonTrigger2022IsoMu24LumiWeightedAveABCD");
-  muNonisolatedTriggerLumiWeightedAveABCD.Write("muonTrigger2022Mu50OROldMu100ORTkMu100LumiWeightedAveABCD");
-  muIsolatedTriggerLumiWeightedAveA.Write("muonTrigger2022IsoMu24LumiWeightedAveA");
-  muNonisolatedTriggerLumiWeightedAveA.Write("muonTrigger2022Mu50OROldMu100ORTkMu100LumiWeightedAveA");
+  muIsolatedTrigger->Write("muonTrigger2022IsoMu24");
+  muNonisolatedTrigger->Write("muonTrigger2022Mu50");
 
   fOutput->Close();
 
   fID->Close();
   fIso->Close();
-  fTrigBefore->Close();
-  fTrigAfter->Close();
+  fTrig->Close();
 }
 
 
@@ -601,4 +553,5 @@ void recreateLeptonSFs() {
   createMuonSFFile_2016();
   createMuonSFFile_2017();
   createMuonSFFile_2018();
+  createMuonSFFile_2022();
 }
