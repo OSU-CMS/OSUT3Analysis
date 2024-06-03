@@ -280,6 +280,7 @@ def add_channels (process,
             if invalidAttributes:
                 name = cut.alias if hasattr(cut, 'alias') else cut.cutString
                 name = str(name)[12:-2]
+                print("Invalid attribute {} \n List of valid attributes \n\t {}".format(invalidAttributes, validCutAttributes))
                 exceptionString += "\ncut '{}' has invalid attributes: {}".format(name, invalidAttributes)
 
     # find all hists with invalid attributes
