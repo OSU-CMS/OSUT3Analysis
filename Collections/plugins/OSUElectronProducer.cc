@@ -109,8 +109,6 @@ OSUElectronProducer::produce (edm::Event &event, const edm::EventSetup &setup)
     {
       ++iEle;
 
-      cout << "Electron " << iEle << "/" << collection->size() << ", pt: " << object.pt() << "pass VID: " << (*vidTightIdMap)[(*collection).refAt(iEle)] << ", id map: " << (*vidVetoIdMap)[(*collection).refAt(iEle)] << std::endl;
-
       pl_->emplace_back (object, particles, cfg_, met->at (0));
       osu::Electron &electron = pl_->back ();
 
