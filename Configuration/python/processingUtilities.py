@@ -527,6 +527,9 @@ def add_channels (process,
         #in the outputCommands
         ########################################################################
         for collection in dir(collectionProducer):
+            if collection == "jets" and isCRAB:
+                collectionProducer.jets.jetResolutionPayload = cms.string("Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt")
+                collectionProducer.jets.jetResSFPayload = cms.string("Fall15_25nsV2_MC_SF_AK4PFchs.txt")
             if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer) or isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDFilter):
                 dic = vars(getattr(collectionProducer,collection))
                 for p in dic:
@@ -721,6 +724,9 @@ def add_channels (process,
         ########################################################################
         if len(scalingfactorproducers):
             for module in scalingfactorproducers:
+                if isCRAB:
+                    module["electronFile"] = cms.string('electronSFs.root')
+                    module["muonFile"] = cms.string('muonSFs.root')
                 # Here we try to add the original producer as specified in the config files.
                 objectProducer = cms.EDFilter (str(module['name']),
                                         # Use filteredCollections, the ones selected by the objectSelectors
@@ -851,6 +857,9 @@ def add_channels (process,
         if makeEmptySkim and not forceNonEmptySkim:
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
+
+        if hasattr(process, 'EventJetVarProducer') and isCRAB:
+            process.EventJetVarProducer.isCRAB = cms.bool(True)
 
         outFileName = ""
         if not isCRAB: outFileName = channelName + "/" + skimFilePrefix + suffix + ".root"
