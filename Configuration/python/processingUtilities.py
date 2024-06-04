@@ -231,7 +231,8 @@ def add_channels (process,
                   skim = None,
                   branchSets = None,
                   ignoreSkimmedCollections = False,
-                  forceNonEmptySkim = False):
+                  forceNonEmptySkim = False,
+                  isCRAB = False):
     if skim != None:
         print("# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated.")
         print("# Please remove from your config files.")
@@ -259,6 +260,7 @@ def add_channels (process,
         'alias',
         'numberRequired',
         'isVeto',
+        'arbitration',
     ]
     validHistAttributes = [
         'name',
@@ -278,6 +280,7 @@ def add_channels (process,
             if invalidAttributes:
                 name = cut.alias if hasattr(cut, 'alias') else cut.cutString
                 name = str(name)[12:-2]
+                print("Invalid attribute {} \n List of valid attributes \n\t {}".format(invalidAttributes, validCutAttributes))
                 exceptionString += "\ncut '{}' has invalid attributes: {}".format(name, invalidAttributes)
 
     # find all hists with invalid attributes
@@ -395,7 +398,8 @@ def add_channels (process,
         if not hasattr (add_channels, "originalName"):
             add_channels.originalName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.
             outputName = add_channels.originalName
-            suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
+            if not isCRAB: suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
+            else: suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "")
             outputName = outputName.replace(".root", suffix + ".root")
             process.TFileService.fileName = cms.string(outputName)
             if os.path.islink (add_channels.originalName):
@@ -524,6 +528,9 @@ def add_channels (process,
         #in the outputCommands
         ########################################################################
         for collection in dir(collectionProducer):
+            if collection == "jets" and isCRAB:
+                collectionProducer.jets.jetResolutionPayload = cms.string("Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt")
+                collectionProducer.jets.jetResSFPayload = cms.string("Fall15_25nsV2_MC_SF_AK4PFchs.txt")
             if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer) or isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDFilter):
                 dic = vars(getattr(collectionProducer,collection))
                 for p in dic:
@@ -718,6 +725,9 @@ def add_channels (process,
         ########################################################################
         if len(scalingfactorproducers):
             for module in scalingfactorproducers:
+                if isCRAB:
+                    module["electronFile"] = cms.string('electronSFs.root')
+                    module["muonFile"] = cms.string('muonSFs.root')
                 # Here we try to add the original producer as specified in the config files.
                 objectProducer = cms.EDFilter (str(module['name']),
                                         # Use filteredCollections, the ones selected by the objectSelectors
@@ -849,11 +859,17 @@ def add_channels (process,
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
 
+        if hasattr(process, 'EventJetVarProducer') and isCRAB:
+            process.EventJetVarProducer.isCRAB = cms.bool(True)
+
+        outFileName = ""
+        if not isCRAB: outFileName = channelName + "/" + skimFilePrefix + suffix + ".root"
+        else: outFileName = skimFilePrefix + suffix + ".root"
         poolOutputModule = cms.OutputModule ("PoolOutputModule",
             overrideInputFileSplitLevels = cms.untracked.bool (True),
             splitLevel = cms.untracked.int32 (0),
             eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
-            fileName = cms.untracked.string (channelName + "/" + skimFilePrefix + suffix + ".root"),
+            fileName = cms.untracked.string (outFileName),
             SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
             outputCommands = cms.untracked.vstring (outputCommands),
             dropMetaData = cms.untracked.string ("ALL"),
@@ -1004,6 +1020,9 @@ def customizeMINIAODElectronVID(process, collections, usedCollections):
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
         my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff']
+    
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_"):
+        my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Winter22_122X_V1_cff']
 
     # Setup all the desired modules to be run
     for idmod in my_id_modules:
@@ -1053,6 +1072,9 @@ def customizeMINIAODPhotonVID(process, collections, usedCollections):
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
         my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V2_cff']
+
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_"):
+        my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_RunIIIWinter22_122X_V1_cff']
 
     # Setup all the desired modules to be run
     for idmod in my_id_modules:

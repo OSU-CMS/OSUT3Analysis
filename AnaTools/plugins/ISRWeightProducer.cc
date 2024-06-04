@@ -58,6 +58,7 @@ ISRWeightProducer::AddVariables (const edm::Event &event, const edm::EventSetup 
                  << "; would cause a seg fault." << endl;
             exit(1);
           }
+          clog << "[ISRWeightProducer]: Producing ISR weights with histogram: " << weightHist << endl;
           w->SetDirectory(0);
           weights_.push_back (w);
         }

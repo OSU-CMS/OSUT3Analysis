@@ -7,7 +7,7 @@ std::vector<runInfo> getEventsInFile(std::string filename){
     std::vector<runInfo> thisRun = {};
 
     TString fileIn = filename;
-    //std::cout << "Opening file " << fileIn << std::endl;
+    //std::cout << "Opening file " << filename << std::endl;
 
     int attempts=0;
     bool success=false;
@@ -19,11 +19,12 @@ std::vector<runInfo> getEventsInFile(std::string filename){
                         
             fwlite::Event ev(myfile);
 
-
             for(ev.toBegin(); !ev.atEnd(); ++ev){
                 runInfo thisInfo((unsigned int)ev.eventAuxiliary().run(), (unsigned int)ev.eventAuxiliary().luminosityBlock(), (unsigned int)ev.eventAuxiliary().event());
                 thisRun.push_back(thisInfo);
             }
+
+            myfile->Close();
 
             return thisRun;
         }
@@ -32,42 +33,13 @@ std::vector<runInfo> getEventsInFile(std::string filename){
         }
     }
 
+    // This tells the user that the given dataset has some faulty root file;
+    // These files names are written so that the user can decide what to do about them
     std::string errMesg = "Failed to open file after 5 attempts";
-    if(success==false) throw std::runtime_error(errMesg);
+    if(success==false) std::cout << errMesg << std::endl;
     return thisRun;
 
 }
-
-/*void getMiniAODFile(){
-
-    std::string json;
-
-    std::string fin = "Muon_2022E.json";
-    ifstream t(fin);
-    std::stringstream buffer;
-    buffer << t.rdbuf();
-    json = buffer.str();
-
-    Json::Reader reader;
-    Json::Value jsonRoot;
-    bool parseSuccess = reader.parse(json, jsonRoot, false);
-    if(parseSuccess){
-        std::cout << "success" << std::endl;
-        for (const auto& entry : jsonRoot.getMemberNames()) {
-            std::string key = entry;
-            std::cout << entry << std::endl;
-            std::vector<runInfo> thisAOD = getEventsInFile(key);
-            std::cout << "Entries: " << thisAOD.size() << std::endl;
-            for(auto& entry: thisAOD){
-                std::cout << entry.runNum << ", " << entry.event << ", "<< entry.lumiBlock << std::endl;
-            }
-        }
-
-    }
-    else{
-        std::cout <<"failed" << std::endl;
-    }
-}*/
 
 int getEvents(){
 
