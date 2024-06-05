@@ -606,14 +606,14 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
         SubmitScript.write ("echo $LD_LIBRARY_PATH\n")
     elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_") and 'patch' not in os.environ["CMSSW_VERSION"]:
         # TODO: Line below should be changed once the architecture is changed
-        SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/el8_amd64_gcc11/cms/cmssw/" + os.environ["CMSSW_VERSION"] + "/external/el8_amd64_gcc11/lib\n")# + os.environ["SCRAM_ARCH"] + "/lib\n")
+        SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/" + os.environ["SCRAM_ARCH"] + "/cms/cmssw/" + os.environ["CMSSW_VERSION"] + "/external/" + os.environ["SCRAM_ARCH"] + "/lib\n")
         SubmitScript.write ("echo $LD_LIBRARY_PATH\n")
     elif os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") and 'patch' in os.environ["CMSSW_VERSION"]:
         SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw-patch/" + os.environ["CMSSW_VERSION"] + "/external/" + os.environ["SCRAM_ARCH"] + "/lib\n")
         SubmitScript.write ("echo $LD_LIBRARY_PATH\n")
     elif os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_") and 'patch' in os.environ["CMSSW_VERSION"]:
         # TODO: Line below should be changed once the architecture is changed
-        SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/el8_amd64_gcc11/cms/cmssw-patch/" + os.environ["CMSSW_VERSION"] + "/external/el8_amd64_gcc11/lib\n")# + os.environ["SCRAM_ARCH"] + "/lib\n")
+        SubmitScript.write ("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/cvmfs/cms.cern.ch/" + os.environ["SCRAM_ARCH"] + "/cms/cmssw-patch/" + os.environ["CMSSW_VERSION"] + "/external/" + os.environ["SCRAM_ARCH"] + "/lib\n")# + os.environ["SCRAM_ARCH"] + "/lib\n")
         SubmitScript.write ("echo $LD_LIBRARY_PATH\n")        
     SubmitScript.write ("echo $CMSSW_BASE \n")
     SubmitScript.write ("echo $PWD \n")
@@ -647,7 +647,8 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
     SubmitScript.write ("(>&2 echo \"Arguments passed to this script are: $@\")\n")
     # TODO: Lines below should be changed once the architecture is set correctly
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
-        SubmitScript.write ("/cvmfs/cms.cern.ch/el8_amd64_gcc11/cms/cmssw/CMSSW_13_0_13/bin/el8_amd64_gcc11/cmsRun $@\n")
+        #SubmitScript.write ("/cvmfs/cms.cern.ch/el8_amd64_gcc11/cms/cmssw/CMSSW_13_0_13/bin/el8_amd64_gcc11/cmsRun $@\n")
+        SubmitScript.write ("/cvmfs/cms.cern.ch/" + os.environ["SCRAM_ARCH"] + "/cms/cmssw/CMSSW_13_0_13/bin/" + os.environ["SCRAM_ARCH"] + "/cmsRun $@\n")
     else:
         SubmitScript.write (cmsRunExecutable + " $@\n")
     # SubmitScript.write (cmsRunExecutable + " $@\n")
