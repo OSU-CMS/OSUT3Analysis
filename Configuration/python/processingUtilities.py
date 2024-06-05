@@ -859,8 +859,10 @@ def add_channels (process,
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
 
-        if hasattr(process, 'EventJetVarProducer') and isCRAB:
-            process.EventJetVarProducer.isCRAB = cms.bool(True)
+        if hasattr(process, 'EventJetVarProducer'):
+            if isCRAB: process.EventJetVarProducer.isCRAB = cms.bool(True)
+            else: process.EventJetVarProducer.isCRAB = cms.bool(False)
+
 
         outFileName = ""
         if not isCRAB: outFileName = channelName + "/" + skimFilePrefix + suffix + ".root"
