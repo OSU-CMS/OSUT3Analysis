@@ -142,10 +142,3 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") or os.environ["CMSSW_VE
             buildFile = os.path.join(r,fin)
             subprocess.call(["sed -i -e 's/RecoEgamma\/EgammaTools/CommonTools\/Egamma/g' {0}".format(buildFile)],shell=True)
             print("Resetting the BuildFile:{0}".format(buildFile))
-
-    # check that necessary merge-topics have been done
-    if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or  os.environ["CMSSW_VERSION"].startswith("CMSSW_13_"):
-        if not os.path.isfile(os.environ["CMSSW_BASE"] + "/src/RecoEgamma/ElectronIdentification/python/Identification/cutBasedElectronID_Winter22_122X_V1_cff.py"):
-            print( "")
-            print( "If using electrons, please run the following before recompiling:" )
-            print( A_BRIGHT_RED + "  git cms-addpkg RecoEgamma/ElectronIdentification" + A_RESET )
