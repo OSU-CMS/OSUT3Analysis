@@ -280,6 +280,7 @@ def add_channels (process,
             if invalidAttributes:
                 name = cut.alias if hasattr(cut, 'alias') else cut.cutString
                 name = str(name)[12:-2]
+                print("Invalid attribute {} \n List of valid attributes \n\t {}".format(invalidAttributes, validCutAttributes))
                 exceptionString += "\ncut '{}' has invalid attributes: {}".format(name, invalidAttributes)
 
     # find all hists with invalid attributes
@@ -858,8 +859,10 @@ def add_channels (process,
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
 
-        if hasattr(process, 'EventJetVarProducer') and isCRAB:
-            process.EventJetVarProducer.isCRAB = cms.bool(True)
+        if hasattr(process, 'EventJetVarProducer'):
+            if isCRAB: process.EventJetVarProducer.isCRAB = cms.bool(True)
+            else: process.EventJetVarProducer.isCRAB = cms.bool(False)
+
 
         outFileName = ""
         if not isCRAB: outFileName = channelName + "/" + skimFilePrefix + suffix + ".root"
@@ -1019,6 +1022,9 @@ def customizeMINIAODElectronVID(process, collections, usedCollections):
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
         my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff']
+    
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_"):
+        my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Winter22_122X_V1_cff']
 
     # Setup all the desired modules to be run
     for idmod in my_id_modules:
@@ -1068,6 +1074,9 @@ def customizeMINIAODPhotonVID(process, collections, usedCollections):
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
         my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V2_cff']
+
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_"):
+        my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_RunIIIWinter22_122X_V1_cff']
 
     # Setup all the desired modules to be run
     for idmod in my_id_modules:

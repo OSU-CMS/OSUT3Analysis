@@ -3,7 +3,7 @@
 import os
 import importlib
 
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
     samples = importlib.import_module("DisappTrks.StandardAnalysis.miniAOD_124X_Samples")
     dataset_names = getattr(samples, "dataset_names")
     run3_skim_sibling_datasets = getattr(samples, "run3_skim_sibling_datasets")
