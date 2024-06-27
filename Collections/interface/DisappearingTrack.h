@@ -20,6 +20,7 @@
 
 #if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
 #include "DataFormats/PatCandidates/interface/IsolatedTrack.h"
+#include "OSUT3Analysis/Collections/interface/Met.h"
 #endif
 
 #if IS_VALID(tracks)
@@ -113,6 +114,11 @@ namespace osu {
 #if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022)
       void set_isoTrackIsolation(const edm::Handle<vector<pat::IsolatedTrack> > &);
       //void set_caloNewEMDRp5 (double value) { caloNewEMDRp5_  = value; }; //mcarrigan
+      void set_deepSetsScore(float value) { deepSetsElectronScore_ = value; };
+      void set_fakeTrackScore(float value) { fakeTrackScore_ = value; };
+
+      const float deepSetsScore () const { return this->deepSetsElectronScore_; };
+      const float fakeTrackScore() const { return this->fakeTrackScore_; };
 #endif
 
       const float pfElectronIsoDR03 ()    const { return this->pfElectronIsoDR03_; };
@@ -338,6 +344,9 @@ namespace osu {
       // This could be in TrackBase, but is fairly specialized to the disappearing tracks search
       const bool isAllowedThreeLayerHitPattern() const;
 #endif
+#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
+      const edm::Ref<vector<pat::IsolatedTrack> > &findMatchedIsolatedTrack (const edm::Handle<vector<pat::IsolatedTrack> > &, edm::Ref<vector<pat::IsolatedTrack> > &, double &) const;
+#endif
 
     protected:
       vector<double> eleVtx_d0Cuts_barrel_, eleVtx_d0Cuts_endcap_;
@@ -345,9 +354,6 @@ namespace osu {
 
     private:
       const edm::Ref<vector<CandidateTrack> > &findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &, edm::Ref<vector<CandidateTrack> > &, double &) const;
-#if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
-      const edm::Ref<vector<pat::IsolatedTrack> > &findMatchedIsolatedTrack (const edm::Handle<vector<pat::IsolatedTrack> > &, edm::Ref<vector<pat::IsolatedTrack> > &, double &) const;
-#endif
 
       void set_primaryPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &);
       void set_additionalPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &, const edm::Handle<vector<pat::PackedCandidate> > &);
@@ -363,6 +369,9 @@ namespace osu {
       edm::Ref<vector<pat::IsolatedTrack> > matchedIsolatedTrack_;      
       double dRToMatchedIsolatedTrack_;
       double maxDeltaR_isolatedTrackMatching_;
+
+      float deepSetsElectronScore_;
+      float fakeTrackScore_;
 #endif
 
       float deltaRToClosestElectron_;

@@ -79,6 +79,8 @@ namespace osu
       const bool isFiducialMuonTrack() const     { return isFiducialMuonTrack_; };
       const bool isFiducialECALTrack() const     { return isFiducialECALTrack_; };
 
+      const bool isDeepSetsElectronTrack() const { return isDeepSetsElectronTrack_; };
+
       const double maxSigmaForFiducialElectronTrack() const { return maxSigmaForFiducialElectronTrack_; };
       const double maxSigmaForFiducialMuonTrack() const     { return maxSigmaForFiducialMuonTrack_; };
 
@@ -250,6 +252,8 @@ namespace osu
 
       bool isFiducialElectronTrack_;
       bool isFiducialMuonTrack_;
+
+      bool isDeepSetsElectronTrack_;
 
       double maxSigmaForFiducialElectronTrack_;
       double maxSigmaForFiducialMuonTrack_;

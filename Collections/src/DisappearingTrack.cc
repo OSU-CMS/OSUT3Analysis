@@ -573,7 +573,7 @@ osu::DisappearingTrack::set_minDeltaRToElectrons (const edm::Handle<edm::View<TY
   for(const auto &ele : *electrons) {
     ++iEle;
     dR = deltaR(*this, ele);
-
+    
     if(dR < deltaRToClosestElectron_ || deltaRToClosestElectron_ < 0.0) deltaRToClosestElectron_ = dR;
 
     bool passesVeto_dxy   = false, passesVeto_dz   = false;
