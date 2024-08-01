@@ -297,7 +297,6 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
   edm::Handle<vector<osu::Met> > met;
   event.getByToken (metToken_, met);
 
-  getGeometries(setup);
   getChannelStatusMaps();
 
 #endif
@@ -478,6 +477,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       //std::cout << "Number of tracks: " << trackInfos_.size() << "event: " << eventNumber_ << std::endl;
 
       getRecHits(event);
+      //std::cout << "There are " << recHitInfos_.size() << " rec hits in this event" << std::endl;
 
       // account for pileup in track ecalo
       double caloCorr = (*rhoCentralCaloHandle) * 2. * M_PI_2 * 0.5 * 0.5;
@@ -500,112 +500,115 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 
       tensorflow::Tensor inputDS(tensorflow::DT_FLOAT, {100,4}); //deep sets input tensors
       tensorflow::Tensor inputTrackDS(tensorflow::DT_FLOAT, {1,4});
-
-      std::vector<float> v_networkScoresDS_;
       
       input_ = tensorflow::Tensor(tensorflow::DT_FLOAT, tensorflow::TensorShape{1 , 96}); //fake tracks input tensors
       //input_ = tensorflow::Tensor(tensorflow::DT_FLOAT, tensorflow::TensorShape{1 , 176});
-
-      std::vector<float> v_networkScores_;
       
-      int track_num = 0;
-
       ////////////////////////////////////////////////////////////////
       //Deep Sets 
       ////////////////////////////////////////////////////////////////
-      inputTrackDS.matrix<float>()(0, 0) = nPV_;
-      inputTrackDS.matrix<float>()(0, 1) = trackInfo.eta;
-      inputTrackDS.matrix<float>()(0, 2) = trackInfo.phi;
-      inputTrackDS.matrix<float>()(0, 3) = trackInfo.nValidPixelHits;
-      std::vector<std::vector<double>> recHitsNearTrack;
-      for (auto &hit : recHitInfos_){
-        std::vector<double> hitNearTrack;
-        double dEta = trackInfo.eta - hit.eta;
-        double dPhi = trackInfo.phi - hit.phi;
-        if( fabs(dPhi) > TMath::Pi() ){
-          dPhi -= round(dPhi/(2* TMath::Pi()))*2*TMath::Pi();
+      float scoreDS = 0.0;
+
+      //only check for deep sets score if there are rec hits around the track
+      if (recHitInfos_.size() > 0){
+
+        inputTrackDS.matrix<float>()(0, 0) = nPV_;
+        inputTrackDS.matrix<float>()(0, 1) = trackInfo.eta;
+        inputTrackDS.matrix<float>()(0, 2) = trackInfo.phi;
+        inputTrackDS.matrix<float>()(0, 3) = trackInfo.nValidPixelHits;
+        std::vector<std::vector<double>> recHitsNearTrack;
+        for (auto &hit : recHitInfos_){
+          std::vector<double> hitNearTrack;
+          double dEta = trackInfo.eta - hit.eta;
+          double dPhi = trackInfo.phi - hit.phi;
+          if( fabs(dPhi) > TMath::Pi() ){
+            dPhi -= round(dPhi/(2* TMath::Pi()))*2*TMath::Pi();
+          }
+          //std::cout << "deta: " << dEta << ", dphi: " << dPhi << std::endl;
+
+          if (fabs(dEta) >= EtaRange_ or fabs(dPhi) >= PhiRange_)
+          {
+            continue;
+          }
+          int detIndex = getDetectorIndex(hit.detType);
+          double energy = 1;
+          if (detIndex != 2)
+          {
+            energy = hit.energy;
+          }
+          hitNearTrack.push_back(dEta);
+          hitNearTrack.push_back(dPhi);
+          hitNearTrack.push_back(energy);
+          hitNearTrack.push_back(detIndex);
+
+          recHitsNearTrack.push_back(hitNearTrack);
+
+          //std::cout << "Pushed back track " << recHitsNearTrack.size() << std::endl;
         }
-        if (fabs(dEta) >= EtaRange_ or fabs(dPhi) >= PhiRange_)
-        {
-          continue;
+
+        std::sort(recHitsNearTrack.begin(),recHitsNearTrack.end(),
+                  [](const std::vector<double>& a, const std::vector<double>& b) {
+                    return a[2] > b[2];
+                  });
+
+        //std::cout << "Sorted tracks " << std::endl;
+        int numRecHits = (int)recHitsNearTrack.size();
+      
+        for (int iHit = 0; iHit < min(maxHits_, numRecHits); iHit++) {
+          inputDS.matrix<float>()(iHit, 0) = recHitsNearTrack.at(iHit)[0];
+          inputDS.matrix<float>()(iHit, 1) = recHitsNearTrack.at(iHit)[1];
+          inputDS.matrix<float>()(iHit, 2) = recHitsNearTrack.at(iHit)[2];
+          inputDS.matrix<float>()(iHit, 3) = recHitsNearTrack.at(iHit)[3];
         }
-        int detIndex = getDetectorIndex(hit.detType);
-        double energy = 1;
-        if (detIndex != 2)
-        {
-          energy = hit.energy;
+
+        //std::cout << "Set available tracks" << std::endl;
+        //std::cout << "There are " << numRecHits << " out of max " << maxHits_ << std::endl;
+
+        if (numRecHits < maxHits_) {
+          //std::cout << "Setting extra rec hits as empty" << std::endl;
+          for (int iHit = numRecHits; iHit < maxHits_; iHit++) {
+            //std::cout << "hit " << iHit << " set to 0" << std::endl;
+            inputDS.matrix<float>()(iHit, 0) = 0;
+            inputDS.matrix<float>()(iHit, 1) = 0;
+            inputDS.matrix<float>()(iHit, 2) = 0;
+            inputDS.matrix<float>()(iHit, 3) = 0;
+          }
         }
-        hitNearTrack.push_back(dEta);
-        hitNearTrack.push_back(dPhi);
-        hitNearTrack.push_back(energy);
-        hitNearTrack.push_back(detIndex);
+        //std::cout << "Filled out buffer" << std::endl;
+      //}
 
-        recHitsNearTrack.push_back(hitNearTrack);
+      /*for(int iHit=0; iHit < numRecHits; iHit++){
+        std::cout << "----------------------------------------" << std::endl;
+        std::cout << "Rec Hit " << iHit << std::endl;
+        std::cout << "\t dEta: " << recHitsNearTrack.at(iHit)[0] << std::endl;
+        std::cout << "\t dPhi: " << recHitsNearTrack.at(iHit)[1] << std::endl;
+        std::cout << "\t energy: " << recHitsNearTrack.at(iHit)[2] << std::endl;
+        std::cout << "\t detID: " << recHitsNearTrack.at(iHit)[3] << std::endl;
+        std::cout << "--------------------------------------------" << std::endl;
+      }*/
 
-        std::cout << "Pushed back track " << recHitsNearTrack.size() << std::endl;
-      }
+      /*std::cout << "Deep Sets Inputs: \n";
+      std::cout << "\t nPV: " << inputTrackDS.matrix<float>()(0, 0) << std::endl;
+      std::cout << "\t eta: " << inputTrackDS.matrix<float>()(0, 1) << std::endl;
+      std::cout << "\t phi: " << inputTrackDS.matrix<float>()(0, 2) << std::endl;
+      std::cout << "\t nValidPixelHits: " << inputTrackDS.matrix<float>()(0, 3) << std::endl;
+      
+      for(int iHit = 0; iHit < inputDS.dim_size(0); iHit++){
+        std::cout << "\t Hit " << iHit << std::endl;
+        std::cout << "\t\t dEta: " << inputDS.matrix<float>()(iHit, 0) << std::endl;
+        std::cout << "\t\t dPhi: " << inputDS.matrix<float>()(iHit, 1) << std::endl;
+        std::cout << "\t\t energy: " << inputDS.matrix<float>()(iHit, 2) << std::endl;
+        std::cout << "\t\t detID: " << inputDS.matrix<float>()(iHit, 3) << std::endl;
+      }*/
 
-      std::sort(recHitsNearTrack.begin(),recHitsNearTrack.end(),
-                [](const std::vector<double>& a, const std::vector<double>& b) {
-                  return a[2] > b[2];
-                });
+      std::vector<tensorflow::Tensor> outputsDS;
+      tensorflow::run(sessionDS_, {{inputTensorNameDS_, inputDS},{inputTrackTensorNameDS_, inputTrackDS}}, {outputTensorNameDS_}, &outputsDS);
 
-      std::cout << "Sorted tracks " << std::endl;
-      int numRecHits = (int)recHitsNearTrack.size();
-    
-      for (int iHit = 0; iHit < min(maxHits_, numRecHits); iHit++) {
-        inputDS.matrix<float>()(iHit, 0) = recHitsNearTrack.at(iHit)[0];
-        inputDS.matrix<float>()(iHit, 1) = recHitsNearTrack.at(iHit)[1];
-        inputDS.matrix<float>()(iHit, 2) = recHitsNearTrack.at(iHit)[2];
-        inputDS.matrix<float>()(iHit, 3) = recHitsNearTrack.at(iHit)[3];
-      }
-
-      std::cout << "Set available tracks" << std::endl;
-      std::cout << "There are " << numRecHits << " out of max " << maxHits_ << std::endl;
-
-      if (numRecHits < maxHits_) {
-        //std::cout << "Setting extra rec hits as empty" << std::endl;
-        for (int iHit = numRecHits; iHit < maxHits_; iHit++) {
-          //std::cout << "hit " << iHit << " set to 0" << std::endl;
-          inputDS.matrix<float>()(iHit, 0) = 0;
-          inputDS.matrix<float>()(iHit, 1) = 0;
-          inputDS.matrix<float>()(iHit, 2) = 0;
-          inputDS.matrix<float>()(iHit, 3) = 0;
-        }
-      }
-      //std::cout << "Filled out buffer" << std::endl;
-    //}
-
-    /*for(int iHit=0; iHit < numRecHits; iHit++){
-      std::cout << "----------------------------------------" << std::endl;
-      std::cout << "Rec Hit " << iHit << std::endl;
-      std::cout << "\t dEta: " << recHitsNearTrack.at(iHit)[0] << std::endl;
-      std::cout << "\t dPhi: " << recHitsNearTrack.at(iHit)[1] << std::endl;
-      std::cout << "\t energy: " << recHitsNearTrack.at(iHit)[2] << std::endl;
-      std::cout << "\t detID: " << recHitsNearTrack.at(iHit)[3] << std::endl;
-      std::cout << "--------------------------------------------" << std::endl;
-    }*/
-
-    std::cout << "Deep Sets Inputs: \n";
-    std::cout << "\t nPV: " << inputTrackDS.matrix<float>()(0, 0) << std::endl;
-    std::cout << "\t eta: " << inputTrackDS.matrix<float>()(0, 1) << std::endl;
-    std::cout << "\t phi: " << inputTrackDS.matrix<float>()(0, 2) << std::endl;
-    std::cout << "\t nValidPixelHits: " << inputTrackDS.matrix<float>()(0, 3) << std::endl;
-    
-    for(int iHit = 0; iHit < inputDS.dim_size(0); iHit++){
-      std::cout << "\t Hit " << iHit << std::endl;
-      std::cout << "\t\t dEta: " << inputDS.matrix<float>()(iHit, 0) << std::endl;
-      std::cout << "\t\t dPhi: " << inputDS.matrix<float>()(iHit, 1) << std::endl;
-      std::cout << "\t\t energy: " << inputDS.matrix<float>()(iHit, 2) << std::endl;
-      std::cout << "\t\t detID: " << inputDS.matrix<float>()(iHit, 3) << std::endl;
+      // print the output
+      //std::cout << "Deep Sets Score: " << outputsDS[0].matrix<float>()(0, 0) << std::endl << std::endl;
+      scoreDS = outputsDS[0].matrix<float>()(0,0);
     }
 
-    std::vector<tensorflow::Tensor> outputsDS;
-    tensorflow::run(sessionDS_, {{inputTensorNameDS_, inputDS},{inputTrackTensorNameDS_, inputTrackDS}}, {outputTensorNameDS_}, &outputsDS);
-
-    // print the output
-    //std::cout << " -> " << outputsDS[0].matrix<float>()(0, 0) << std::endl << std::endl;
-    float scoreDS = outputsDS[0].matrix<float>()(0,0);
     track.set_deepSetsScore(scoreDS);
 
     ///////////////////////////////////////////////////////////////////
@@ -650,7 +653,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
     input_.tensor<float, 2>()(0, 30) = (closest_vtx.second)[1];
     input_.tensor<float, 2>()(0, 31) = (closest_vtx.second)[2];
 
-    std::cout << "Hit map size " << hitMap.size() <<"x" << hitMap[0].size() << std::endl;
+    //std::cout << "Hit map size " << hitMap.size() <<"x" << hitMap[0].size() << std::endl;
 
     for(unsigned int i=0; i<hitMap.size(); i++){
         for(unsigned int j=0; j<hitMap[i].size(); j++){
@@ -664,7 +667,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       //cout << "converting to tanh " << i << std::endl;
     }
 
-    std::cout << "Inputs: " << std::endl;
+    /*std::cout << "Inputs: " << std::endl;
     std::cout << "nPV: " << input_.tensor<float, 2>()(0, 0) << std::endl;
     std::cout << "trackIso: " << input_.tensor<float, 2>()(0, 1) << std::endl;
     std::cout << "eta: " << input_.tensor<float, 2>()(0, 2) << std::endl;
@@ -703,7 +706,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       std::cout << "HitSize " << x << ": " << input_.tensor<float, 2>()(0, 33+4*x) << std::endl;
       std::cout << "HitSizeX " << x << ": " << input_.tensor<float, 2>()(0, 34+4*x) << std::endl;
       std::cout << "HitSizeY " << x << ": " << input_.tensor<float, 2>()(0, 35+4*x) << std::endl;
-    }
+    }*/
 
 
     std::vector<tensorflow::Tensor> outputs;

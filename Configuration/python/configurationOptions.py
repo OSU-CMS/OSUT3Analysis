@@ -569,6 +569,8 @@ datasets = [
 
   'Cosmics',
 
+  'DYJetsToLL_M50_merged',
+
   #Sum of all backgrounds
    'Background',
 ]
@@ -2862,6 +2864,8 @@ nJobs = {
   'WtoMuNu_M100to200' : 300,
   'WtoMuNu_M200to500' : 300,
   'WtoMuNu_M500to1000' : 300,
+
+  'DYJetsToLL_M50_merged' : 1904,
 }
 
 maxEvents = {
@@ -4264,6 +4268,8 @@ maxEvents = {
   'WtoMuNu_M100to200' : -1,
   'WtoMuNu_M200to500' : -1,
   'WtoMuNu_M500to1000' : -1,
+
+  'DYJetsToLL_M50_merged' : -1,
 }
 
 # bgMC => background MC process
@@ -5730,7 +5736,10 @@ types = {
   'WtoMuNu_M100to200' : "bgMC",
   'WtoMuNu_M200to500' : "bgMC",
   'WtoMuNu_M500to1000' : "bgMC",
+
+  'DYJetsToLL_M50_merged' : 'bgMC', 
 }
+
 
 colors = {
     ############################################################################
@@ -7193,6 +7202,8 @@ colors = {
   'WtoMuNu_M100to200' : 1,
   'WtoMuNu_M200to500' : 1,
   'WtoMuNu_M500to1000' : 1,
+
+  'DYJetsToLL_M50_merged': 1,
 }
 
 style = {
@@ -8677,6 +8688,8 @@ labels = {
   'WtoMuNu_M100to200' : "W#rightarrow#mu#nu - M 100 to 200",
   'WtoMuNu_M200to500' : "W#rightarrow#mu#nu - M 200 to 500",
   'WtoMuNu_M500to1000' : "W#rightarrow#mu#nu - M 500 to 1000",
+
+  'DYJetsToLL_M50_merged': 'DY Jets to LL - M50',
 }
 
 crossSections = {

@@ -287,8 +287,8 @@ template<class T>
     vector<string> signalTriggerNames, metFilterNames;
 
     // recHits range
-    double EtaRange_;
-    double PhiRange_;
+    double EtaRange_ = 0.25;
+    double PhiRange_ = 0.25;
     int maxHits_ = 100;
 
 };
