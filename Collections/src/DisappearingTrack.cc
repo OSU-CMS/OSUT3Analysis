@@ -683,11 +683,15 @@ osu::DisappearingTrack::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)>
 
     if(dR < deltaRToClosestTau_ || deltaRToClosestTau_ < 0.0) deltaRToClosestTau_ = dR;
 
-    passesDecayModeReconstruction = (tau.isTauIDAvailable("decayModeFinding") && tau.tauID("decayModeFinding") > 0.5);
+    // passesDecayModeReconstruction = (tau.isTauIDAvailable("decayModeFinding") && tau.tauID("decayModeFinding") > 0.5);
 
-    passesLightFlavorRejection = (tau.isTauIDAvailable("againstElectronLooseMVA5") && tau.tauID("againstElectronLooseMVA5") > 0.5);
-    passesLightFlavorRejection = passesLightFlavorRejection || (tau.isTauIDAvailable("againstElectronLooseMVA6") && tau.tauID("againstElectronLooseMVA6") > 0.5);
-    passesLightFlavorRejection = passesLightFlavorRejection && (tau.isTauIDAvailable("againstMuonLoose3") && tau.tauID("againstMuonLoose3") > 0.5);
+    // passesLightFlavorRejection = (tau.isTauIDAvailable("againstElectronLooseMVA5") && tau.tauID("againstElectronLooseMVA5") > 0.5);
+    // passesLightFlavorRejection = passesLightFlavorRejection || (tau.isTauIDAvailable("againstElectronLooseMVA6") && tau.tauID("againstElectronLooseMVA6") > 0.5);
+    // passesLightFlavorRejection = passesLightFlavorRejection && (tau.isTauIDAvailable("againstMuonLoose3") && tau.tauID("againstMuonLoose3") > 0.5);
+
+    passesDecayModeReconstruction = tau.isTauIDAvailable("decayModeFindingNewDMs") && (tau.tauID("decayModeFindingNewDMs"));
+
+    passesLightFlavorRejection = (tau.isTauIDAvailable("byVVVLooseDeepTau2017v2p1VSe") && tau.isTauIDAvailable("byVVVLooseDeepTau2018v2p5VSe") && tau.isTauIDAvailable("byVLooseDeepTau2017v2p1VSmu") && tau.isTauIDAvailable("byVLooseDeepTau2018v2p5VSmu")) && (tau.tauID("byVVVLooseDeepTau2017v2p1VSe") || tau.tauID("byVVVLooseDeepTau2018v2p5VSe")) && (tau.tauID("byVLooseDeepTau2017v2p1VSmu") || tau.tauID("byVLooseDeepTau2018v2p5VSmu"));
 
     if(passesDecayModeReconstruction && passesLightFlavorRejection && (dR < deltaRToClosestTauHad_  || deltaRToClosestTauHad_  < 0.0)) {
       deltaRToClosestTauHad_ = dR;
@@ -890,7 +894,7 @@ osu::DisappearingTrack::caloTotNoPU (double dR, RhoType rhoType, CaloType caloTy
     else if(intDR == 1) rawCaloTot = caloNewHadDRp1();
     break; 
   }
-  
+
   double caloCorr = rho * TMath::Pi() * dR * dR;  // Define effective area as pi*r^2, where r is radius of DeltaR cone.
   double caloTotNoPU = TMath::Max(0., rawCaloTot - caloCorr);
   return caloTotNoPU;
