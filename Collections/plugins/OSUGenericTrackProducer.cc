@@ -20,7 +20,9 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   //caloGeometryToken_ (esConsumes<CaloGeometry, CaloGeometryRecord>()),
   caloGeometryToken_ (esConsumes<edm::Transition::BeginRun>()),
   //ecalStatusToken_ (esConsumes<EcalChannelStatus, EcalChannelStatusRcd>())
-  ecalStatusToken_ (esConsumes<edm::Transition::BeginRun>())
+  ecalStatusToken_ (esConsumes<edm::Transition::BeginRun>()),
+  trackerTopologyToken_ (esConsumes<edm::Transition::BeginRun>())
+
 {
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
@@ -365,12 +367,12 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
           //track.set_trackIsoOldNoPUDRp5 (getOldTrackIsolation (track, *tracks, true, 0.5));
         }
 #endif // DATA_FORMAT_IS_CUSTOM
-        track.set_minDeltaRToElectrons(electrons, vertices, eleVIDVetoIdMap, eleVIDLooseIdMap, eleVIDMediumIdMap, eleVIDTightIdMap);
-        track.set_minDeltaRToMuons(muons, vertices);
-        track.set_minDeltaRToTaus(taus);
+      track.set_minDeltaRToElectrons(electrons, vertices, eleVIDVetoIdMap, eleVIDLooseIdMap, eleVIDMediumIdMap, eleVIDTightIdMap);
+      track.set_minDeltaRToMuons(muons, vertices);
+      track.set_minDeltaRToTaus(taus);
 
 #if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
-        track.set_isoTrackIsolation(isolatedTracks);
+      track.set_isoTrackIsolation(isolatedTracks);
 #endif
 
 #endif // DISAPP_TRKS
@@ -517,6 +519,8 @@ OSUGenericTrackProducer<T>::envSet (const edm::EventSetup& iSetup)
 {
   caloGeometry_ = iSetup.getHandle(caloGeometryToken_);
   ecalStatus_   = iSetup.getHandle(ecalStatusToken_);
+  trackerTopology_ = iSetup.getHandle(trackerTopologyToken_);
+
 
   // Old style, deprecated
   //iSetup.get<EcalChannelStatusRcd> ().get(ecalStatus_);
@@ -687,6 +691,719 @@ OSUGenericTrackProducer<T>::calculateCaloE (TYPE(tracks)& track, const EBRecHitC
   }
 
   return {eEM, eHad};
+}
+
+template<class T> int
+OSUGenericTrackProducer<T>::countGoodPrimaryVertices(const vector<reco::Vertex> &vertices) const
+{
+  int n = 0;
+  for(const auto &v : vertices) {
+    if(v.isValid() && v.ndof() >= 4 && fabs(v.z()) < 24.0 && hypot(v.x(), v.y()) < 2.0) n++;
+  }
+  return n;
+}
+
+template<class T> int
+OSUGenericTrackProducer<T>::countGoodJets(const vector<pat::Jet> &jets) const
+{
+  int n = 0;
+  vector<double> goodJetPhis;
+
+  for(const auto &jet : jets) {
+    // let's not deal with jet smearing for now...
+    if(jet.pt() <= 110) continue;
+    if(fabs(jet.eta()) >= 2.4) continue;
+    if(!anatools::jetPassesTightLepVeto(jet)) continue;
+
+    n++;
+  }
+  return n;
+}
+
+template<class T> double
+OSUGenericTrackProducer<T>::getMaxDijetDeltaPhi(const vector<pat::Jet> &jets) const
+{
+  vector<double> goodJetPhis;
+  for(const auto &jet : jets) {
+    if(jet.pt() > 30 && fabs(jet.eta()) < 4.5 && anatools::jetPassesTightLepVeto(jet)) goodJetPhis.push_back(jet.phi());
+  }
+
+  double maxDeltaPhi = -999.;
+  for(unsigned int i = 0; i < goodJetPhis.size(); i++) {
+    for(unsigned int j = 0; j < goodJetPhis.size(); j++) {
+      if(i == j) continue;
+      double dPhi = fabs(deltaPhi(goodJetPhis[i], goodJetPhis[j]));
+      if(dPhi > maxDeltaPhi) maxDeltaPhi = dPhi;
+    }
+  }
+
+  return maxDeltaPhi;
+}
+
+template<class T> double
+OSUGenericTrackProducer<T>::getLeadingJetMetPhi(const vector<pat::Jet> &jets, const pat::MET &met) const
+{
+  double deltaPhiMetJetLeading = 999.;
+  double ptJetLeading = -1;
+
+  for(const auto &jet : jets) {
+    if(jet.pt() > 30 && 
+       fabs(jet.eta()) < 4.5 && 
+       anatools::jetPassesTightLepVeto(jet)) {
+      if(jet.pt() > ptJetLeading) {
+        ptJetLeading = jet.pt();
+        deltaPhiMetJetLeading = fabs(deltaPhi(jet, met));
+      }
+    }
+  }
+
+  return deltaPhiMetJetLeading;
+}
+
+template<class T> vector<pat::Electron>
+OSUGenericTrackProducer<T>::getTagElectrons(const edm::Event &event,
+                                           const edm::TriggerResults &triggers,
+                                           const vector<pat::TriggerObjectStandAlone> &trigObjs,
+                                           const reco::Vertex &vertex,
+                                           const edm::View<pat::Electron> &electrons)
+{
+  vector<pat::Electron> tagElectrons;
+
+  for(const auto &electron : electrons) {
+    if(electron.pt() <= (is2017_ ? 35 : 32)) continue;
+
+    if(!anatools::isMatchedToTriggerObject(event,
+                                           triggers,
+                                           electron,
+                                           trigObjs,
+                                           "hltEgammaCandidates::HLT", 
+                                           (is2017_ ? "hltEle35noerWPTightGsfTrackIsoFilter" : "hltEle32WPTightGsfTrackIsoFilter"))) {
+      continue; // cutElectronMatchToTrigObj
+    }
+
+    if(fabs(electron.eta()) >= 2.1) continue;
+    if(!electron.electronID(is2017_ ? "cutBasedElectronID-Fall17-94X-V1-tight" : "cutBasedElectronID-Fall17-94X-V2-tight")) continue;
+    
+    if(fabs(electron.superCluster()->eta()) <= 1.479) {
+      if(fabs(electron.gsfTrack()->dxy(vertex.position())) >= 0.05) continue;
+      if(fabs(electron.gsfTrack()->dz(vertex.position())) >= 0.10) continue;
+    }
+    else {
+      if(fabs(electron.gsfTrack()->dxy(vertex.position())) >= 0.10) continue;
+      if(fabs(electron.gsfTrack()->dz(vertex.position())) >= 0.20) continue;
+    }
+
+    tagElectrons.push_back(electron);
+  }
+
+  return tagElectrons;
+}
+
+template <class T> vector<pat::Muon>
+OSUGenericTrackProducer<T>::getTagMuons(const edm::Event &event,
+                                       const edm::TriggerResults &triggers,
+                                       const vector<pat::TriggerObjectStandAlone> &trigObjs,
+                                       const reco::Vertex &vertex,
+                                       const vector<pat::Muon> &muons)
+{
+  vector<pat::Muon> tagMuons;
+
+  for(const auto &muon : muons) {
+    if(muon.pt() <= (is2017_ ? 29 : 26)) continue;
+    if(fabs(muon.eta()) >= 2.1) continue;
+    if(!muon.isTightMuon(vertex)) continue;
+
+    double iso = muon.pfIsolationR04().sumNeutralHadronEt +
+                 muon.pfIsolationR04().sumPhotonEt +
+                 -0.5 * muon.pfIsolationR04().sumPUPt;
+    iso = muon.pfIsolationR04().sumChargedHadronPt + max(0.0, iso);
+    if(iso / muon.pt() >= 0.15) continue;
+
+    if(!anatools::isMatchedToTriggerObject(event,
+                                           triggers,
+                                           muon,
+                                           trigObjs,
+                                           (is2017_ ? "hltIterL3MuonCandidates::HLT" : "hltHighPtTkMuonCands::HLT"),
+                                           (is2017_ ? "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07" : "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07"))) {
+      continue; // cutMuonMatchToTrigObj
+    }
+    
+    tagMuons.push_back(muon);
+  }
+
+  return tagMuons;
+}
+
+template<class T> TrackInfo
+OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
+                              const reco::Vertex &pv, 
+                              const vector<pat::Jet> &jets,
+                              const edm::View<pat::Electron> &electrons,
+                              const vector<pat::Muon> &muons,
+                              const vector<pat::Tau> &taus,
+                              const vector<pat::Electron> &tagElectrons,
+                              const vector<pat::Muon> &tagMuons,
+                              const pat::MET &met,
+                              const edm::Handle<vector<pat::IsolatedTrack> > tracks, 
+                              const edm::Handle<reco::DeDxHitInfoAss> isoTrk2dedxHitInfo,
+                              const edm::Handle<edm::ValueMap<reco::DeDxData> > dEdxStrip,
+                              const edm::Handle<edm::ValueMap<reco::DeDxData> > dEdxPixel)
+{
+  //for(vector<pat::IsolatedTrack>::const_iterator it_track = tracks->begin(); it_track != tracks->end(); it_track++) {
+
+  //pat::IsolatedTrack track = tracks.at(iTrack);    
+  TrackInfo info;
+  
+  //apply track pt cut
+  if(minTrackPt_ > 0 && track.pt() <= minTrackPt_) return info;
+
+  info.trackIso = 0.0;
+  for(const auto &t : *tracks) {
+    const auto theptinv2 = 1 / pow(track.pt(),2);
+    float dz_track = (track.vz() - t.vz()) - ((track.vx() - t.vx()) * track.px() + (track.vy() - t.vy()) * track.py()) * track.pz() * theptinv2;
+    if(fabs(dz_track) > 3.0 * hypot(track.dzError(), t.dzError())) continue;
+    double dR = deltaR(track, t);
+    if(dR < 0.3 && dR > 1.0e-12) info.trackIso += t.pt();
+  }
+
+  // apply relative track isolation cut
+  if(maxRelTrackIso_ > 0 && info.trackIso / track.pt() >= maxRelTrackIso_) return info;
+
+  info.px = track.px();
+  info.py = track.py();
+  info.pz = track.pz();
+  info.vx = track.vx();
+  info.vy = track.vy();
+  info.vz = track.vz();
+  info.eta = track.eta();
+  info.pt = track.pt();
+  //info.ptError = track.ptError();
+  info.phi = track.phi();
+  info.charge = track.charge();
+
+  info.dEdxInfo.clear();
+
+  edm::Ref<vector<pat::IsolatedTrack> > matchedIsolatedTrack;
+  double dRToMatchedIsolatedTrack = 0.01;
+  track.findMatchedIsolatedTrack(tracks, matchedIsolatedTrack, dRToMatchedIsolatedTrack);
+
+  /*if(dRToMatchedIsolatedTrack == INVALID_VALUE) {
+    info.dEdxInfo.push_back(TrackDeDxInfo());
+  }
+  else {
+    if(isoTrk2dedxHitInfo->contains(matchedIsolatedTrack.id())) {
+      const reco::DeDxHitInfo * hitInfo = (*isoTrk2dedxHitInfo)[matchedIsolatedTrack].get();
+      if(hitInfo == nullptr) {
+        //edm::LogWarning ("disappTrks_DeDxHitInfoVarProducer") << "Encountered a null DeDxHitInfo object from a pat::IsolatedTrack? Skipping this track...";
+        continue;
+      }*/
+
+  //edm::Ref<vector<pat::IsolatedTrack> > matchedIsolatedTrack = edm::Ref<vector<pat::IsolatedTrack> >(tracks, track);
+
+  if(isoTrk2dedxHitInfo->contains(matchedIsolatedTrack.id())) {
+    const reco::DeDxHitInfo * hitInfo = (*isoTrk2dedxHitInfo)[matchedIsolatedTrack].get();
+    if(hitInfo == nullptr) {
+      //edm::LogWarning ("disappTrks_DeDxHitInfoVarProducer") << "Encountered a null DeDxHitInfo object from a pat::IsolatedTrack? Skipping this track...";
+      return info;
+    }
+
+    for(unsigned int iHit = 0; iHit < hitInfo->size(); iHit++) {
+      bool isPixel = (hitInfo->pixelCluster(iHit) != nullptr);
+      bool isStrip = (hitInfo->stripCluster(iHit) != nullptr);
+      if(!isPixel && !isStrip) continue; // probably shouldn't happen
+      if(isPixel && isStrip) continue;
+      
+      //subdet Id = {1, pbx}, {2, pxf}, {3, tib}, {4, tid}, {5, tob}, {6, tec}
+      int subDet = hitInfo->detId(iHit).subdetId();
+      if(subDet == PixelSubdetector::PixelBarrel) subDet = 1;
+      else if (subDet == PixelSubdetector::PixelEndcap) subDet = 2;
+      else if(subDet == StripSubdetector::TIB) subDet = 3;  //N.B. in CMSSW_11 StripSubdetector -> SiStripSubdetector
+      else if (subDet == StripSubdetector::TID) subDet = 4;
+      else if (subDet == StripSubdetector::TOB) subDet = 5;
+      else if (subDet == StripSubdetector::TEC) subDet = 6;
+
+      float norm = isPixel ? 3.61e-06 : 3.61e-06 * 265;
+
+      info.dEdxInfo.push_back(
+        TrackDeDxInfo(subDet,
+                      norm * hitInfo->charge(iHit) / hitInfo->pathlength(iHit),
+                      isPixel ? hitInfo->pixelCluster(iHit)->size()  : -1,
+                      isPixel ? hitInfo->pixelCluster(iHit)->sizeX() : -1,
+                      isPixel ? hitInfo->pixelCluster(iHit)->sizeY() : -1,
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(12,4,0)
+                      isStrip ? deDxTools::shapeSelection(*(hitInfo->stripCluster(iHit))) : false,
+#else
+                      isStrip ? deDxTools::shapeSelection(*(hitInfo->stripCluster(iHit))) : false,
+#endif
+                      hitInfo->pos(iHit).x(),
+                      hitInfo->pos(iHit).y(),
+                      hitInfo->pos(iHit).z(),
+                      trackerTopology_->layer(hitInfo->detId(iHit)))); // gives layer within sub detector
+    }
+  } // if isoTrk in association map
+  else {
+    info.dEdxInfo.push_back(TrackDeDxInfo()); // if somehow the matched isoTrk isn't in the hitInfo?
+  }
+  //} //if dRToMatchedIsoTrk != invalid
+
+  /*edm::Ref<vector<reco::Track> > matchedGenTrack;
+  double dRToMatchedGenTrack;
+  findMatchedGenTrack(genTracks, matchedGenTrack, dRToMatchedGenTrack, track);
+  if(dRToMatchedGenTrack == INVALID_VALUE){
+    info.dEdxPixel = -10;
+    info.numMeasurementsPixel = -10;
+    info.numSatMeasurementsPixel = -10;
+    info.dEdxStrip = -10;
+    info.numMeasurementsStrip = -10;
+    info.numSatMeasurementsStrip = -10;
+  }
+  else{
+    const reco::DeDxData &dEdxDataPixel = (*dEdxPixel)[matchedGenTrack];
+    const reco::DeDxData &dEdxDataStrip = (*dEdxStrip)[matchedGenTrack];
+
+    info.dEdxPixel = dEdxDataPixel.dEdx();
+    info.numMeasurementsPixel = dEdxDataPixel.numberOfMeasurements();
+    info.numSatMeasurementsPixel = dEdxDataPixel.numberOfSaturatedMeasurements();
+    info.dEdxStrip = dEdxDataStrip.dEdx();
+    info.numMeasurementsStrip = dEdxDataStrip.numberOfMeasurements();
+    info.numSatMeasurementsStrip = dEdxDataStrip.numberOfSaturatedMeasurements();
+  }*/
+
+  info.dEdxPixel = track.dEdxPixel();
+  info.dEdxStrip = track.dEdxStrip();
+  info.numMeasurementsPixel = track.hitPattern().numberOfValidPixelHits();
+  info.numMeasurementsStrip = track.hitPattern().numberOfValidStripHits();
+
+
+  info.dRMinJet = -1;
+  for(const auto &jet : jets) {
+    if(jet.pt() > 30 &&
+        fabs(jet.eta()) < 4.5 &&
+        (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
+          || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0))) {
+      double dR = deltaR(track, jet);
+      if(info.dRMinJet < 0 || dR < info.dRMinJet) info.dRMinJet = dR;
+    }
+  }
+
+  bool inTOBCrack = (fabs(track.dz()) < 0.5 && fabs(M_PI_2 - track.theta()) < 1.0e-3);
+  bool inECALCrack = (fabs(track.eta()) >= 1.42 && fabs(track.eta()) <= 1.65);
+  bool inDTWheelGap = (fabs(track.eta()) >= 0.15 && fabs(track.eta()) <= 0.35);
+  bool inCSCTransitionRegion = (fabs(track.eta()) >= 1.55 && fabs(track.eta()) <= 1.85);
+  info.inGap = (inTOBCrack || inECALCrack || inDTWheelGap || inCSCTransitionRegion);
+
+  info.dRMinBadEcalChannel = minDRBadEcalChannel(track);
+
+  info.nValidPixelHits        = track.hitPattern().numberOfValidPixelHits();
+  info.nValidHits             = track.hitPattern().numberOfValidHits();
+  info.numberOfValidMuonHits  = track.hitPattern().numberOfValidMuonHits();
+  info.missingInnerHits       = track.hitPattern().trackerLayersWithoutMeasurement(reco::HitPattern::MISSING_INNER_HITS);
+  info.missingMiddleHits      = track.hitPattern().trackerLayersWithoutMeasurement(reco::HitPattern::TRACK_HITS);
+  info.missingOuterHits       = track.hitPattern().trackerLayersWithoutMeasurement(reco::HitPattern::MISSING_OUTER_HITS);
+  info.nLayersWithMeasurement = track.hitPattern().trackerLayersWithMeasurement();
+  info.pixelLayersWithMeasurement = track.hitPattern().pixelLayersWithMeasurement();
+
+  // d0 wrt pv (2d) = (vertex - pv) cross p / |p|
+  info.d0 = ((track.vx() - pv.x()) * track.py() - (track.vy() - pv.y()) * track.px()) / track.pt(); 
+
+  // dz wrt pv (2d) = (v_z - pv_z) - p_z * [(vertex - pv) dot p / |p|^2]
+  info.dz = track.vz() - pv.z() -
+    ((track.vx() - pv.x()) * track.px() + (track.vy() - pv.y()) * track.py()) * track.pz() / track.pt() / track.pt();
+
+  //info.normalizedChi2 = track.normalizedChi2();
+  info.highPurityFlag = track.isHighPurityTrack();
+
+  info.deltaRToClosestElectron = -1;
+  for(const auto &electron : electrons) {
+    double thisDR = deltaR(electron, track);
+    if(info.deltaRToClosestElectron < 0 || thisDR < info.deltaRToClosestElectron) info.deltaRToClosestElectron = thisDR;
+  }
+
+  info.deltaRToClosestMuon = -1;
+  for(const auto &muon : muons) {
+    double thisDR = deltaR(muon, track);
+    if(info.deltaRToClosestMuon < 0 || thisDR < info.deltaRToClosestMuon) info.deltaRToClosestMuon = thisDR;
+  }
+
+  info.deltaRToClosestTauHad = -1;
+  for(const auto &tau : taus) {
+    if(tau.isTauIDAvailable("againstElectronLooseMVA5")) {
+      if(tau.tauID("decayModeFinding") <= 0.5 ||
+          tau.tauID("againstElectronLooseMVA5") <= 0.5 ||
+          tau.tauID("againstMuonLoose3") <= 0.5) {
+        continue;
+      }
+    }
+    else if(tau.isTauIDAvailable("againstElectronLooseMVA6")) {
+      if(tau.tauID("decayModeFinding") <= 0.5 ||
+          tau.tauID("againstElectronLooseMVA6") <= 0.5 ||
+          tau.tauID("againstMuonLoose3") <= 0.5) {
+        continue;
+      }
+    }
+    else {
+      continue;
+    }
+
+    double thisDR = deltaR(tau, track);
+    if(info.deltaRToClosestTauHad < 0 || thisDR < info.deltaRToClosestTauHad) info.deltaRToClosestTauHad = thisDR;
+  }
+
+  info.passesProbeSelection = isProbeTrack(info);
+
+  info.deltaRToClosestTagElectron = -1;
+  info.deltaRToClosestTagMuon = -1;
+
+  info.isTagProbeElectron = 0;
+  info.isTagProbeTauToElectron = 0;
+
+  info.isTagProbeMuon = 0;
+  info.isTagProbeTauToMuon = 0;
+
+  if(info.passesProbeSelection) {
+    for(const auto &tag : tagElectrons) {
+      double thisDR = deltaR(tag, track);
+      if(info.deltaRToClosestTagElectron < 0 || thisDR < info.deltaRToClosestTagElectron) {
+        info.deltaRToClosestTagElectron = thisDR;
+      }
+      info.isTagProbeElectron |= isTagProbeElePair(track, tag);
+      info.isTagProbeTauToElectron |= isTagProbeTauToElePair(track, tag, met);
+    }
+
+    for(const auto &tag : tagMuons) {
+      double thisDR = deltaR(tag, track);
+      if(info.deltaRToClosestTagMuon < 0 || thisDR < info.deltaRToClosestTagMuon) {
+        info.deltaRToClosestTagMuon = thisDR;
+      }
+      info.isTagProbeMuon |= isTagProbeMuonPair(track, tag);
+      info.isTagProbeTauToMuon |= isTagProbeTauToMuonPair(track, tag, met);
+    }
+  }
+
+  info.ecalo = 0; // calculated in getRecHits
+
+    //trackInfos_.push_back(info);
+  //}
+
+  return info;
+}
+
+template<class T> const bool
+OSUGenericTrackProducer<T>::isProbeTrack(const TrackInfo info) const
+{
+  if(info.pt <= 30 ||
+     fabs(info.eta) >= 2.1 ||
+     // skip fiducial sElectrons
+     info.nValidPixelHits < 4 ||
+     info.nValidHits < 4 ||
+     info.missingInnerHits != 0 ||
+     info.missingMiddleHits != 0 ||
+     info.trackIso / info.pt >= 0.05 ||
+     fabs(info.d0) >= 0.02 ||
+     fabs(info.dz) >= 0.5 ||
+     // skip lepton vetoes
+     fabs(info.dRMinJet) <= 0.5) {
+    return false;
+  }
+
+  return true;
+}
+
+template<class T> const double
+OSUGenericTrackProducer<T>::minDRBadEcalChannel(const pat::IsolatedTrack &track) const
+{
+   double trackEta = track.eta(), trackPhi = track.phi();
+
+   double min_dist = -1;
+   DetId min_detId;
+
+   map<DetId, vector<int> >::const_iterator bitItor;
+   for(bitItor = EcalAllDeadChannelsBitMap_.begin(); bitItor != EcalAllDeadChannelsBitMap_.end(); bitItor++) {
+      DetId maskedDetId = bitItor->first;
+      map<DetId, std::vector<double> >::const_iterator valItor = EcalAllDeadChannelsValMap_.find(maskedDetId);
+      if(valItor == EcalAllDeadChannelsValMap_.end()){ 
+        cout << "Error cannot find maskedDetId in EcalAllDeadChannelsValMap_ ?!" << endl;
+        continue;
+      }
+
+      double eta = (valItor->second)[0], phi = (valItor->second)[1];
+      double dist = reco::deltaR(eta, phi, trackEta, trackPhi);
+
+      if(min_dist > dist || min_dist < 0) {
+        min_dist = dist;
+        min_detId = maskedDetId;
+      }
+   }
+
+   return min_dist;
+}
+
+template<class T> const unsigned int
+OSUGenericTrackProducer<T>::isTagProbeElePair(const pat::IsolatedTrack &probe, const pat::Electron &tag) const 
+{
+  TLorentzVector t(tag.px(), tag.py(), tag.pz(), tag.energy());
+  TLorentzVector p(probe.px(), 
+                   probe.py(), 
+                   probe.pz(), 
+                   sqrt(probe.px() * probe.px() + 
+                        probe.py() * probe.py() + 
+                        probe.pz() * probe.pz() + 
+                        0.000510998928 * 0.000510998928)); // energyOfElectron()
+
+  if(fabs((t + p).M() - 91.1876) >= 10.0) return 0b00;
+  return (tag.charge() * probe.charge() < 0) ? 0b01 : 0b10;
+}
+
+template<class T> const unsigned int
+OSUGenericTrackProducer<T>::isTagProbeTauToElePair(const pat::IsolatedTrack &probe, 
+                                                  const pat::Electron &tag, 
+                                                  const pat::MET &met) const 
+{
+  double dPhi = deltaPhi(tag.phi(), probe.phi());
+  if(sqrt(2.0 * tag.pt() * probe.pt() * (1 - cos(dPhi))) >= 40) return false; // cutElectronLowMT
+
+  TLorentzVector t(tag.px(), tag.py(), tag.pz(), tag.energy());
+  TLorentzVector p(probe.px(), 
+                   probe.py(), 
+                   probe.pz(), 
+                   sqrt(probe.px() * probe.px() + 
+                        probe.py() * probe.py() + 
+                        probe.pz() * probe.pz() + 
+                        0.000510998928 * 0.000510998928)); // energyOfElectron()
+
+  double invMass = (t + p).M();
+
+  if(invMass <= 91.1876 - 50 || invMass >= 91.1876 - 15) return 0b00;
+  return (tag.charge() * probe.charge() < 0) ? 0b01 : 0b10;
+}
+
+template<class T> const unsigned int
+OSUGenericTrackProducer<T>::isTagProbeMuonPair(const pat::IsolatedTrack &probe, const pat::Muon &tag) const 
+{
+  TLorentzVector t(tag.px(), tag.py(), tag.pz(), tag.energy());
+  TLorentzVector p(probe.px(), 
+                   probe.py(), 
+                   probe.pz(), 
+                   sqrt(probe.px() * probe.px() + 
+                        probe.py() * probe.py() + 
+                        probe.pz() * probe.pz() + 
+                        0.1056583715 * 0.1056583715)); // energyOfMuon()
+
+  if(fabs((t + p).M() - 91.1876) >= 10.0) return 0b00;
+  return (tag.charge() * probe.charge() < 0) ? 0b01 : 0b10;
+}
+
+template<class T>const unsigned int
+OSUGenericTrackProducer<T>::isTagProbeTauToMuonPair(const pat::IsolatedTrack &probe, 
+                                                   const pat::Muon &tag, 
+                                                   const pat::MET &met) const 
+{
+  double dPhi = deltaPhi(tag.phi(), probe.phi());
+  if(sqrt(2.0 * tag.pt() * probe.pt() * (1 - cos(dPhi))) >= 40) return false; // cutMuonLowMT
+
+  TLorentzVector t(tag.px(), tag.py(), tag.pz(), tag.energy());
+  TLorentzVector p(probe.px(), 
+                   probe.py(), 
+                   probe.pz(), 
+                   sqrt(probe.px() * probe.px() + 
+                        probe.py() * probe.py() + 
+                        probe.pz() * probe.pz() + 
+                        0.1056583715 * 0.1056583715)); // energyOfMuon()
+
+  double invMass = (t + p).M();
+
+  if(invMass <= 91.1876 - 50 || invMass >= 91.1876 - 15) return 0b00;
+  return (tag.charge() * probe.charge() < 0) ? 0b01 : 0b10;
+}
+
+template<class T> void 
+OSUGenericTrackProducer<T>::getRecHits(const edm::Event &event)
+{
+  recHitInfos_.clear();
+
+  edm::Handle<EBRecHitCollection> EBRecHits;
+  event.getByToken(EBRecHitsToken_, EBRecHits);
+  for(const auto &hit : *EBRecHits) {
+    GlobalPoint pos = getPosition(hit.detid());
+    recHitInfos_.push_back(RecHitInfo(pos.eta(), pos.phi(), hit.energy(), -999., DetType::EB));
+
+    for(auto &info : trackInfos_) {
+      double dR2 = deltaR2(pos.eta(), pos.phi(), info.eta, info.phi);
+      if(dR2 < 0.5*0.5) info.ecalo += hit.energy();
+    }
+  }
+
+  edm::Handle<EERecHitCollection> EERecHits;
+  event.getByToken(EERecHitsToken_, EERecHits);
+  for(const auto &hit : *EERecHits) {
+    GlobalPoint pos = getPosition(hit.detid());
+    recHitInfos_.push_back(RecHitInfo(pos.eta(), pos.phi(), hit.energy(), -999., DetType::EE));
+
+    for(auto &info : trackInfos_) {
+      double dR2 = deltaR2(pos.eta(), pos.phi(), info.eta, info.phi);
+      if(dR2 < 0.5*0.5) info.ecalo += hit.energy();
+    }
+  }
+
+  /*edm::Handle<ESRecHitCollection> ESRecHits;
+  event.getByToken(ESRecHitsToken_, ESRecHits);
+  for(const auto &hit : *ESRecHits) {
+    math::XYZVector pos = getPosition(hit.detid());
+    recHitInfos_.push_back(RecHitInfo(pos.eta(), pos.phi(), hit.energy(), -999., DetType::ES));
+  }*/
+
+  edm::Handle<HBHERecHitCollection> HBHERecHits;
+  event.getByToken(HBHERecHitsToken_, HBHERecHits);
+  for(const auto &hit : *HBHERecHits) {
+    GlobalPoint pos = getPosition(hit.detid());
+    recHitInfos_.push_back(RecHitInfo(pos.eta(), pos.phi(), hit.energy(), -999., DetType::HCAL));
+
+    for(auto &info : trackInfos_) {
+      double dR2 = deltaR2(pos.eta(), pos.phi(), info.eta, info.phi);
+      if(dR2 < 0.5*0.5) info.ecalo += hit.energy();
+    }
+  }
+}
+
+template<class T> int
+OSUGenericTrackProducer<T>::getDetectorIndex(const int detectorIndex) const
+{
+  if(detectorIndex == DetType::EB or detectorIndex == DetType::EE)
+  {
+    return 0;
+  }
+  else if (detectorIndex == DetType::HCAL)
+  {
+    return 1;
+  }
+  else if (detectorIndex >= DetType::CSC and detectorIndex <= DetType::RPC)
+  {
+    return 2;
+  }
+  else
+  {
+    return -1;
+  }
+  
+}
+
+template<class T> std::vector<std::vector<double>>
+OSUGenericTrackProducer<T>::getHitMap(const vector<TrackDeDxInfo> trackDeDxInfos) const {
+
+  //hit.hitLayerId, hit.charge, hit.subDet, hit.pixelHitSize, 
+  //hit.pixelHitSizeX, hit.pixelHitSizeY, hit.stripShapeSelection, hit.hitPosX, hit.hitPosY]
+
+  int hitsWanted = 16;
+  int numHitVar = 4; //9 for full
+  int numHits = 0;
+  bool newLayer = true;
+  std::vector<std::vector<double>> layerHits(hitsWanted, vector<double>(numHitVar));
+
+  for(auto &hit : trackDeDxInfos){
+
+    newLayer = true;
+
+    //std::cout << "Get Hit Map, sub detector: " << hit.subDet << ", layer: " << hit.hitLayerId << ", energy: " << hit.charge << ", num hits: " << numHits<< std::endl;
+
+    //if(numHits == hitsWanted-1) break; //check if greater hits then break
+
+    for(int i=0; i < numHits; i++){
+      //check to see if this detector/layer already has a hit
+      if(hit.subDet == layerHits[i][2] && hit.hitLayerId == layerHits[i][0]){
+        newLayer = false;
+        //check if the hit has more energy, want to have max energy hit in detector/layer
+        if(hit.charge > layerHits[i][1]){
+          /*std::vector<double> thisLayer = {(double)hit.hitLayerId, (double)hit.charge, (double)hit.subDet, (double)hit.pixelHitSize, (double)hit.pixelHitSizeX, (double)hit.pixelHitSizeY,
+                                          (double)hit.stripShapeSelection, (double)hit.hitPosX, (double)hit.hitPosY};*/
+          std::vector<double> thisLayer = {(double)hit.charge, (double)hit.pixelHitSize, (double)hit.pixelHitSizeX, (double)hit.pixelHitSizeY};
+          layerHits[i] = thisLayer;
+        }
+        break;
+      }
+    } //end loop over existing hits
+    if(newLayer && numHits < hitsWanted-1){
+      /*std::vector<double> thisLayer = {(double)hit.hitLayerId, (double)hit.charge, (double)hit.subDet, (double)hit.pixelHitSize, (double)hit.pixelHitSizeX, (double)hit.pixelHitSizeY,
+                                      (double)hit.stripShapeSelection, (double)hit.hitPosX, (double)hit.hitPosY};*/
+      std::vector<double> thisLayer = {(double)hit.charge, (double)hit.pixelHitSize, (double)hit.pixelHitSizeX, (double)hit.pixelHitSizeY};
+
+      layerHits[numHits] = thisLayer;
+      numHits++;
+    }
+    
+  }//end loop over dedxInfos
+
+  return layerHits;
+
+}
+
+template<class T> std::pair<double, double>
+OSUGenericTrackProducer<T>::getMaxHits(const vector<TrackDeDxInfo> trackDeDxInfos) const {
+
+  double maxEnergy = 0;
+  double totalEnergy = 0;
+
+  for(auto &hit : trackDeDxInfos){
+    totalEnergy += hit.charge;
+    if(hit.charge > maxEnergy) maxEnergy = hit.charge;
+  }
+
+  std::pair<double, double> hitEnergy(maxEnergy, totalEnergy);
+  return hitEnergy;
+}
+
+//std::bitset<29> 
+template<class T> unsigned long
+OSUGenericTrackProducer<T>::encodeLayers(const std::vector<std::vector<double>> layerHits) const {
+  
+  //number of layers in each sub detector {pbx, pex, TIB, TOB, TID, TEC}
+  int numLayers[6] = {4, 3, 4, 6, 3, 9};
+
+  std::bitset<29> encodedHits;
+
+
+  for(unsigned int i=0; i < layerHits.size(); i++){
+    
+    int thisLayer = layerHits[i][0];
+    int thisDet = layerHits[i][2];
+    int bit = thisLayer-1;
+
+    for(int det = 0; det < thisDet-1; det++){
+      bit += numLayers[det];
+    }
+
+    std::bitset<29> thisHit = 1<<bit;
+    encodedHits = encodedHits | thisHit;
+
+  }
+
+  unsigned long encodedHitsInt = encodedHits.to_ulong();
+
+  return encodedHitsInt;
+
+}
+
+template<class T> std::pair<std::array<double, 3>, std::array<double, 3>>
+OSUGenericTrackProducer<T>::getClosestVertices(const std::vector<VertexInfo> v_info, float track_vz, float track_vx, float track_vy) const {
+
+  std::array<double, 3> d0 {{10e3, 10e3, 10e3}};
+  std::array<double, 3> dz {{10e3, 10e3, 10e3}};
+
+  for(auto &info : v_info){
+    float deltaZ = abs(info.vertex.Z() - track_vz);
+    float delta0 = abs(sqrt(pow(info.vertex.X()-track_vx,2) + pow(info.vertex.Y()-track_vy,2)));
+    //std::cout << "delta0: " << delta0 << " , deltaZ: " << deltaZ << std::endl;
+    int size = sizeof(dz)/sizeof(dz[0]);
+    //std::cout << "size: " << size << std::endl;
+    if(abs(deltaZ) < abs(dz[size-1])) dz[size-1] = deltaZ;
+    std::sort(dz.begin(), dz.end(), [](float i, float j){ return abs(i) < abs(j); });
+    if(abs(delta0) < abs(d0[size-1])) d0[size-1] = delta0;
+    std::sort(d0.begin(), d0.end(), [](float i, float j){ return abs(i) < abs(j); });
+    //std::cout << "d0: " << d0[0] << " " << d0[1] << " " << d0[2] << ", dz: " << dz[0] << " " << dz[1] << " " << dz[2] << std::endl;
+  }
+
+  std::pair<std::array<double, 3>, std::array<double, 3>> closestVertices(dz, d0);
+  return closestVertices;
+
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

@@ -573,7 +573,7 @@ osu::DisappearingTrack::set_minDeltaRToElectrons (const edm::Handle<edm::View<TY
   for(const auto &ele : *electrons) {
     ++iEle;
     dR = deltaR(*this, ele);
-
+    
     if(dR < deltaRToClosestElectron_ || deltaRToClosestElectron_ < 0.0) deltaRToClosestElectron_ = dR;
 
     bool passesVeto_dxy   = false, passesVeto_dz   = false;
@@ -612,7 +612,8 @@ osu::DisappearingTrack::set_minDeltaRToElectrons (const edm::Handle<edm::View<TY
       passesTight_dz  = (ele_dz < eleVtx_dzCuts_endcap_[3]);
     }
 
-    if((*vidVetoMap)  [(*electrons).refAt(iEle)] &&
+    if((*vidVetoMap)  [ele.core()] &&
+
        passesVeto_dxy &&
        passesVeto_dz &&
        (dR < deltaRToClosestVetoElectron_   || deltaRToClosestVetoElectron_   < 0.0)) {
@@ -620,6 +621,7 @@ osu::DisappearingTrack::set_minDeltaRToElectrons (const edm::Handle<edm::View<TY
     }
 
     if((*vidLooseMap) [(*electrons).refAt(iEle)] &&
+
        passesLoose_dxy &&
        passesLoose_dz &&
        (dR < deltaRToClosestLooseElectron_  || deltaRToClosestLooseElectron_  < 0.0)) {

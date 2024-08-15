@@ -15,7 +15,7 @@
 <use  name="FWCore/MessageLogger"/>
 <use  name="FWCore/ParameterSet"/>
 <use  name="FWCore/Utilities"/>
-<use  name="RecoEgamma/EgammaTools"/>
+<use  name="CommonTools/Egamma"/>
 <use  name="SimDataFormats/PileupSummaryInfo"/>
 <flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
 <export>
