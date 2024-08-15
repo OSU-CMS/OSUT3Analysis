@@ -368,7 +368,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     inputTensorName = cms.string("Input_input"),
     outputTensorName = cms.string("sequential/Output_xyz/Sigmoid"),
 
-    graphPathDS = cms.string(os.path.join(dataDir, "graph_electron.pb")),
+    graphPathDS = cms.string(os.path.join(dataDir, "graph.pb")),
     inputTensorNameDS = cms.string("input"),
     inputTrackTensorNameDS = cms.string("input_track"),
     outputTensorNameDS = cms.string("model_1/output_xyz/Softmax")

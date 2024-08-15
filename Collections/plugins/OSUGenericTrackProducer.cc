@@ -543,7 +543,6 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 
           recHitsNearTrack.push_back(hitNearTrack);
 
-          //std::cout << "Pushed back track " << recHitsNearTrack.size() << std::endl;
         }
 
         std::sort(recHitsNearTrack.begin(),recHitsNearTrack.end(),
@@ -555,10 +554,10 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
         int numRecHits = (int)recHitsNearTrack.size();
       
         for (int iHit = 0; iHit < min(maxHits_, numRecHits); iHit++) {
-          inputDS.matrix<float>()(iHit, 0) = recHitsNearTrack.at(iHit)[0];
-          inputDS.matrix<float>()(iHit, 1) = recHitsNearTrack.at(iHit)[1];
-          inputDS.matrix<float>()(iHit, 2) = recHitsNearTrack.at(iHit)[2];
-          inputDS.matrix<float>()(iHit, 3) = recHitsNearTrack.at(iHit)[3];
+          inputDS.matrix<float>()(iHit, 0) = (float)recHitsNearTrack.at(iHit)[0];
+          inputDS.matrix<float>()(iHit, 1) = (float)recHitsNearTrack.at(iHit)[1];
+          inputDS.matrix<float>()(iHit, 2) = (float)recHitsNearTrack.at(iHit)[2];
+          inputDS.matrix<float>()(iHit, 3) = (float)recHitsNearTrack.at(iHit)[3];
         }
 
         //std::cout << "Set available tracks" << std::endl;
@@ -580,10 +579,10 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       /*for(int iHit=0; iHit < numRecHits; iHit++){
         std::cout << "----------------------------------------" << std::endl;
         std::cout << "Rec Hit " << iHit << std::endl;
-        std::cout << "\t dEta: " << recHitsNearTrack.at(iHit)[0] << std::endl;
-        std::cout << "\t dPhi: " << recHitsNearTrack.at(iHit)[1] << std::endl;
-        std::cout << "\t energy: " << recHitsNearTrack.at(iHit)[2] << std::endl;
-        std::cout << "\t detID: " << recHitsNearTrack.at(iHit)[3] << std::endl;
+        std::cout << "\t dEta: " << recHitsNearTrack.at(iHit)[0] << //std::endl;
+        std::cout << "\t dPhi: " << recHitsNearTrack.at(iHit)[1] << //std::endl;
+        std::cout << "\t energy: " << recHitsNearTrack.at(iHit)[2] //<< std::endl;
+        std::cout << "\t detID: " << recHitsNearTrack.at(iHit)[3] //<< std::endl;
         std::cout << "--------------------------------------------" << std::endl;
       }*/
 
@@ -591,14 +590,14 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       std::cout << "\t nPV: " << inputTrackDS.matrix<float>()(0, 0) << std::endl;
       std::cout << "\t eta: " << inputTrackDS.matrix<float>()(0, 1) << std::endl;
       std::cout << "\t phi: " << inputTrackDS.matrix<float>()(0, 2) << std::endl;
-      std::cout << "\t nValidPixelHits: " << inputTrackDS.matrix<float>()(0, 3) << std::endl;
+      std::cout << "\t nValidPixelHits: " << inputTrackDS.matrix<float>()(0, 3) << std::endl;*/
       
-      for(int iHit = 0; iHit < inputDS.dim_size(0); iHit++){
-        std::cout << "\t Hit " << iHit << std::endl;
-        std::cout << "\t\t dEta: " << inputDS.matrix<float>()(iHit, 0) << std::endl;
-        std::cout << "\t\t dPhi: " << inputDS.matrix<float>()(iHit, 1) << std::endl;
-        std::cout << "\t\t energy: " << inputDS.matrix<float>()(iHit, 2) << std::endl;
-        std::cout << "\t\t detID: " << inputDS.matrix<float>()(iHit, 3) << std::endl;
+      /*for(int iHit = 0; iHit < inputDS.dim_size(0); iHit++){
+        std::cout << "\t Hit " << iHit <<
+        ", dEta: " << inputDS.matrix<float>()(iHit, 0) << //<< std::endl;
+        ", dPhi: " << inputDS.matrix<float>()(iHit, 1) << //<< std::endl;
+        ", energy: " << inputDS.matrix<float>()(iHit, 2) << //<< std::endl;
+        ", detID: " << inputDS.matrix<float>()(iHit, 3) << std::endl; //<< std::endl;
       }*/
 
       std::vector<tensorflow::Tensor> outputsDS;
@@ -606,7 +605,9 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 
       // print the output
       //std::cout << "Deep Sets Score: " << outputsDS[0].matrix<float>()(0, 0) << std::endl << std::endl;
-      scoreDS = outputsDS[0].matrix<float>()(0,0);
+      scoreDS = outputsDS[0].matrix<float>()(0,1);
+      //std::cout << "Deep Sets: run: " << event.eventAuxiliary().run() << ", lumi block: " << event.eventAuxiliary().luminosityBlock() << ", event: " << event.eventAuxiliary().event() << " score: " << scoreDS << ", " << outputsDS[0].matrix<float>()(0,1) << ", eta: " << trackInfo.eta << ", phi: " << trackInfo.phi << std::endl;
+
     }
 
     track.set_deepSetsScore(scoreDS);
