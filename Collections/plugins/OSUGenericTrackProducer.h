@@ -37,6 +37,30 @@
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
 #include "OSUT3Analysis/Collections/interface/DisappearingTrack.h" // includes TrackBase.h
 
+#include "DataFormats/TrackReco/interface/DeDxHit.h"
+#include "DataFormats/TrackReco/interface/DeDxHitInfo.h"
+#include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
+#include "RecoTracker/DeDx/interface/DeDxTools.h"
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+
+
+#include "DisappTrksML/TreeMaker/interface/Infos.h"
+#include "OSUT3Analysis/Collections/interface/Met.h"
+
+#include "FWCore/Framework/interface/ESHandle.h"
+#include "Geometry/CaloGeometry/interface/CaloGeometry.h"
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
+#include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
+#include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
+
+#include "CondFormats/EcalObjects/interface/EcalChannelStatus.h"
+#include "CondFormats/DataRecord/interface/EcalChannelStatusRcd.h"
+
+#include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
+#include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
+
 // FIXME:  Once OSUT3Analysis works with ROOT6, i.e., releases > CMSSW_7_4_5_ROOT5,
 // then uncomment the following line:
 // #include "OSUT3Analysis/AnaTools/interface/DataFormat.h"
@@ -57,17 +81,25 @@ struct CacheData {
   CacheData() : graphDef(nullptr), graphDefDS(nullptr) {}
   std::atomic<tensorflow::GraphDef*> graphDef;
   std::atomic<tensorflow::GraphDef*> graphDefDS;
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/updateTensorflowProducer
 };
 
 template<class T>
-  class OSUGenericTrackProducer : public edm::stream::EDProducer<>
+  class OSUGenericTrackProducer : public edm::stream::EDProducer<edm::GlobalCache<CacheData> >
 {
   public:
-    OSUGenericTrackProducer (const edm::ParameterSet &);
+    OSUGenericTrackProducer (const edm::ParameterSet &, const CacheData*);
     ~OSUGenericTrackProducer ();
 
     static std::unique_ptr<CacheData> initializeGlobalCache(const edm::ParameterSet&);
+<<<<<<< HEAD
+    static void globalEndJob(const CacheData*);
+
+=======
+>>>>>>> origin/updateTensorflowProducer
 
     void beginRun (const edm::Run &, const edm::EventSetup &);
     void produce (edm::Event &, const edm::EventSetup &);
@@ -142,14 +174,20 @@ template<class T>
     edm::ESHandle<CaloGeometry> caloGeometry_;
     edm::ESHandle<EcalChannelStatus> ecalStatus_;
     edm::ESHandle<TrackerTopology> trackerTopology_;
+<<<<<<< HEAD
+=======
 
     //const CaloGeometry& caloGeometry_;
     //const EcalChannelStatus& ecalStatus_;
+>>>>>>> origin/updateTensorflowProducer
 
     edm::ESGetToken<CaloGeometry, CaloGeometryRecord> caloGeometryToken_;
     edm::ESGetToken<EcalChannelStatus, EcalChannelStatusRcd> ecalStatusToken_;
     edm::ESGetToken<TrackerTopology, TrackerTopologyRcd> trackerTopologyToken_;
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/updateTensorflowProducer
 
     const bool insideCone(TYPE(tracks)& track, const DetId& id, const double dR) const;
     const GlobalPoint getPosition( const DetId& id) const;
@@ -164,6 +202,12 @@ template<class T>
     const double getOldTrackIsolation (TYPE(tracks)&, const vector<reco::Track> &, const bool, const double, const double = 1.0e-12) const;
     const CaloEnergy calculateCaloE (TYPE(tracks)&, const EBRecHitCollection &, const EERecHitCollection &, const HBHERecHitCollection &, const double dR = 0.5) const;
 
+<<<<<<< HEAD
+
+    //functions and constants for machine learning
+
+=======
+>>>>>>> origin/updateTensorflowProducer
     int countGoodPrimaryVertices(const vector<reco::Vertex> &) const;
     int countGoodJets(const vector<pat::Jet> &) const;
     double getMaxDijetDeltaPhi(const vector<pat::Jet> &) const;
@@ -280,8 +324,13 @@ template<class T>
     vector<string> signalTriggerNames, metFilterNames;
 
     // recHits range
+<<<<<<< HEAD
+    double EtaRange_ = 0.25;
+    double PhiRange_ = 0.25;
+=======
     double EtaRange_;
     double PhiRange_;
+>>>>>>> origin/updateTensorflowProducer
     int maxHits_ = 100;
 
 };

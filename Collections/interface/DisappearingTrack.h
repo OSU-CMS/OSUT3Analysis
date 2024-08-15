@@ -117,7 +117,7 @@ namespace osu {
       void set_deepSetsScore(float value) { deepSetsElectronScore_ = value; };
       void set_fakeTrackScore(float value) { fakeTrackScore_ = value; };
 
-      const float deepSetsScore () const { return this->deepSetsElectronScore_; };
+      const float deepSetsElectronScore () const { return this->deepSetsElectronScore_; };
       const float fakeTrackScore() const { return this->fakeTrackScore_; };
 #endif
 
