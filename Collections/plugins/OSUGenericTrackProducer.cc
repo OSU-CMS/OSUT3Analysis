@@ -432,12 +432,12 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
           //track.set_trackIsoOldNoPUDRp5 (getOldTrackIsolation (track, *tracks, true, 0.5));
         }
 #endif // DATA_FORMAT_IS_CUSTOM
-        track.set_minDeltaRToElectrons(electrons, vertices, eleVIDVetoIdMap, eleVIDLooseIdMap, eleVIDMediumIdMap, eleVIDTightIdMap);
-        track.set_minDeltaRToMuons(muons, vertices);
-        track.set_minDeltaRToTaus(taus);
+      track.set_minDeltaRToElectrons(electrons, vertices, eleVIDVetoIdMap, eleVIDLooseIdMap, eleVIDMediumIdMap, eleVIDTightIdMap);
+      track.set_minDeltaRToMuons(muons, vertices);
+      track.set_minDeltaRToTaus(taus);
 
 #if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
-        track.set_isoTrackIsolation(isolatedTracks);
+      track.set_isoTrackIsolation(isolatedTracks);
 #endif
 
       //////////////////////////////////////
@@ -1265,8 +1265,6 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
 
       float norm = isPixel ? 3.61e-06 : 3.61e-06 * 265;
 
-      //std::cout << "Hit: " << iHit << " , det ID: " << hitInfo->detId(iHit) << std::endl;
-
       info.dEdxInfo.push_back(
         TrackDeDxInfo(subDet,
                       norm * hitInfo->charge(iHit) / hitInfo->pathlength(iHit),
@@ -1281,7 +1279,6 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
                       hitInfo->pos(iHit).x(),
                       hitInfo->pos(iHit).y(),
                       hitInfo->pos(iHit).z(),
-                      //0)); 
                       trackerTopology_->layer(hitInfo->detId(iHit)))); // gives layer within sub detector
     }
   } // if isoTrk in association map

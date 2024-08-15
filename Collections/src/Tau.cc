@@ -129,11 +129,23 @@ osu::Tau::~Tau ()
 const bool
 osu::Tau::passesDecayModeReconstruction () const
 {
-  if (this->isTauIDAvailable ("decayModeFinding"))
-    return (this->tauID ("decayModeFinding") > 0.5);
+  // This were the selections used for Run 2; they were changed in Run 3 to use the DeepTau selections and a
+  // distinct decay mode ID https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendationForRun3
+  // The new IDs can be found in https://github.com/cms-sw/cmssw/blob/388ec50d980a31e7edb67eba169d45743d6623f5/Validation/RecoTau/python/RecoTauValidationMiniAOD_cfi.py (not sure if it is updated, though)
+
+  // if (this->isTauIDAvailable ("decayModeFinding"))
+  //   return (this->tauID ("decayModeFinding") > 0.5);
+  // else
+  //   {
+  //     edm::LogWarning ("osu_Tau") << "Tau ID \"decayModeFinding\" unavailable.";
+  //     return false;
+  //   }
+
+  if (this->isTauIDAvailable ("decayModeFindingNewDMs"))
+    return (this->tauID ("decayModeFindingNewDMs") > 0.5);
   else
     {
-      edm::LogWarning ("osu_Tau") << "Tau ID \"decayModeFinding\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau ID \"decayModeFindingNewDMs\" unavailable.";
       return false;
     }
 }
@@ -143,21 +155,43 @@ osu::Tau::passesLightFlavorRejection () const
 {
   bool flag = true;
 
-  if (this->isTauIDAvailable ("againstElectronLooseMVA5"))
-    flag = flag && (this->tauID ("againstElectronLooseMVA5") > 0.5);
-  else if (this->isTauIDAvailable ("againstElectronLooseMVA6"))
-    flag = flag && (this->tauID ("againstElectronLooseMVA6") > 0.5);
+  // This were the selections used for Run 2; they were changed in Run 3 to use the DeepTau selections and a
+  // distinct decay mode ID https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendationForRun3
+  // The new IDs can be found in https://github.com/cms-sw/cmssw/blob/388ec50d980a31e7edb67eba169d45743d6623f5/Validation/RecoTau/python/RecoTauValidationMiniAOD_cfi.py (not sure if it is updated, though)
+
+  // if (this->isTauIDAvailable ("againstElectronLooseMVA5"))
+  //   flag = flag && (this->tauID ("againstElectronLooseMVA5") > 0.5);
+  // else if (this->isTauIDAvailable ("againstElectronLooseMVA6"))
+  //   flag = flag && (this->tauID ("againstElectronLooseMVA6") > 0.5);
+  // else
+  //   {
+  //     edm::LogWarning ("osu_Tau") << "Tau IDs \"againstElectronLooseMVA5\" and \"againstElectronLooseMVA6\" unavailable.";
+  //     flag = flag && false;
+  //   }
+
+  // if (this->isTauIDAvailable ("againstMuonLoose3"))
+  //   flag = flag && (this->tauID ("againstMuonLoose3") > 0.5);
+  // else
+  //   {
+  //     edm::LogWarning ("osu_Tau") << "Tau ID \"againstMuonLoose3\" unavailable.";
+  //     flag = flag && false;
+  //   }
+
+  if (this->isTauIDAvailable ("byVVVLooseDeepTau2017v2p1VSe") && this->isTauIDAvailable ("byVVVLooseDeepTau2018v2p5VSe"))
+    flag = flag && ((this->tauID ("byVVVLooseDeepTau2017v2p1VSe") > 0.5) || (this->tauID ("byVVVLooseDeepTau2018v2p5VSe") > 0.5));
   else
     {
-      edm::LogWarning ("osu_Tau") << "Tau IDs \"againstElectronLooseMVA5\" and \"againstElectronLooseMVA6\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau IDs \"byVVVLooseDeepTau2017v2p1VSe\" and \"byVVVLooseDeepTau2018v2p5VSe\" unavailable.";
       flag = flag && false;
     }
 
-  if (this->isTauIDAvailable ("againstMuonLoose3"))
-    flag = flag && (this->tauID ("againstMuonLoose3") > 0.5);
+  // againstMuonLoose3 still exists as a tau ID, but will follow the recommentdation to use DeepTau
+  // This should probably be checked with Tau POG experts
+  if (this->isTauIDAvailable ("byVLooseDeepTau2017v2p1VSmu") && this->isTauIDAvailable ("byVLooseDeepTau2018v2p5VSmu"))
+    flag = flag && ((this->tauID ("byVLooseDeepTau2017v2p1VSmu") > 0.5) || (this->tauID ("byVLooseDeepTau2018v2p5VSmu") > 0.5));
   else
     {
-      edm::LogWarning ("osu_Tau") << "Tau ID \"againstMuonLoose3\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau ID \"byVLooseDeepTau2017v2p1VSmu\" and \"byVLooseDeepTau2018v2p5VSmu\" unavailable.";
       flag = flag && false;
     }
 

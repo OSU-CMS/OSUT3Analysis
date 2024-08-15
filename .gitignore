@@ -1,5 +1,6 @@
-#*#
+*.png
 *.pyc
+#*#
 */test/*.root
 */test/condor
 */test/limits
