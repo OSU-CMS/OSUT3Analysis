@@ -507,6 +507,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       ////////////////////////////////////////////////////////////////
       //Deep Sets 
       ////////////////////////////////////////////////////////////////
+
       float scoreDS = 0.0;
 
       //only check for deep sets score if there are rec hits around the track

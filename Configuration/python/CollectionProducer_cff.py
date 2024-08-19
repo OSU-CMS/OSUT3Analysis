@@ -114,7 +114,6 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERS
     collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-medium")
     collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-tight")
     collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Run3_Winter22/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_122X.txt")
-    
 
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
@@ -374,10 +373,10 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     outputTensorNameDS = cms.string("model_1/output_xyz/Softmax")
 )
 
-print("This is the electron vidVetoIDMap", collectionProducer.tracks.eleVIDVetoIdMap)
+'''print("This is the electron vidVetoIDMap", collectionProducer.tracks.eleVIDVetoIdMap)
 print("This is the electron vidLooseMap", collectionProducer.tracks.eleVIDLooseIdMap)
 print("This is the electron vidMediumMap", collectionProducer.tracks.eleVIDMediumIdMap)
-print("This is the electron vidTightMap", collectionProducer.tracks.eleVIDTightIdMap)
+print("This is the electron vidTightMap", collectionProducer.tracks.eleVIDTightIdMap)'''
 
 
 # if running over data, switch to the data fiducial map files

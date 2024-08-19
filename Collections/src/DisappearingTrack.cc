@@ -612,7 +612,7 @@ osu::DisappearingTrack::set_minDeltaRToElectrons (const edm::Handle<edm::View<TY
       passesTight_dz  = (ele_dz < eleVtx_dzCuts_endcap_[3]);
     }
 
-    if((*vidVetoMap)  [ele.core()] &&
+    if((*vidVetoMap)[(*electrons).refAt(iEle)] &&
 
        passesVeto_dxy &&
        passesVeto_dz &&
