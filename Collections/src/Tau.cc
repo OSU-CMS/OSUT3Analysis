@@ -177,21 +177,21 @@ osu::Tau::passesLightFlavorRejection () const
   //     flag = flag && false;
   //   }
 
-  if (this->isTauIDAvailable ("byVVVLooseDeepTau2017v2p1VSe") && this->isTauIDAvailable ("byVVVLooseDeepTau2018v2p5VSe"))
-    flag = flag && ((this->tauID ("byVVVLooseDeepTau2017v2p1VSe") > 0.5) || (this->tauID ("byVVVLooseDeepTau2018v2p5VSe") > 0.5));
+  if (this->isTauIDAvailable ("byVVVLooseDeepTau2018v2p5VSe"))
+    flag = flag && (this->tauID ("byVVVLooseDeepTau2018v2p5VSe") > 0.5);
   else
     {
-      edm::LogWarning ("osu_Tau") << "Tau IDs \"byVVVLooseDeepTau2017v2p1VSe\" and \"byVVVLooseDeepTau2018v2p5VSe\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau IDs \"byVVVLooseDeepTau2018v2p5VSe\" unavailable.";
       flag = flag && false;
     }
 
-  // againstMuonLoose3 still exists as a tau ID, but will follow the recommentdation to use DeepTau
+  // againstMuonLoose3 still exists as a tau ID, but will follow the recommendation to use DeepTau
   // This should probably be checked with Tau POG experts
-  if (this->isTauIDAvailable ("byVLooseDeepTau2017v2p1VSmu") && this->isTauIDAvailable ("byVLooseDeepTau2018v2p5VSmu"))
-    flag = flag && ((this->tauID ("byVLooseDeepTau2017v2p1VSmu") > 0.5) || (this->tauID ("byVLooseDeepTau2018v2p5VSmu") > 0.5));
+  if (this->isTauIDAvailable ("byVLooseDeepTau2018v2p5VSmu"))
+    flag = flag && (this->tauID ("byVLooseDeepTau2018v2p5VSmu") > 0.5);
   else
     {
-      edm::LogWarning ("osu_Tau") << "Tau ID \"byVLooseDeepTau2017v2p1VSmu\" and \"byVLooseDeepTau2018v2p5VSmu\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau ID \"byVLooseDeepTau2018v2p5VSmu\" unavailable.";
       flag = flag && false;
     }
 
