@@ -114,7 +114,6 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERS
     collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-medium")
     collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-tight")
     collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Run3_Winter22/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_122X.txt")
-    
 
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
@@ -283,7 +282,7 @@ collectionProducer.taus = cms.EDProducer ("OSUTauProducer",
 copyConfiguration (collectionProducer.taus, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
-
+dataDir = os.getenv('CMSSW_BASE') + '/src/OSUT3Analysis/Configuration/data/machineLearning/'
 collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     fiducialMaps = cms.PSet (
         electrons = cms.VPSet (
@@ -352,12 +351,32 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     eleVtx_dzCuts_barrel = cms.vdouble(0.472, 0.41, 0.373, 0.0466),
     eleVtx_d0Cuts_endcap = cms.vdouble(0.222, 0.118, 0.0739, 0.0351),
     eleVtx_dzCuts_endcap = cms.vdouble(0.921, 0.822, 0.602, 0.417),
+
+    mets = cms.InputTag ('mets', '', ''),
+    triggers       = cms.InputTag("TriggerResults", "", "HLT"),
+    triggerObjects = cms.InputTag("slimmedPatTrigger"),
+    isoTrk2dedxHitInfo = cms.InputTag("isolatedTracks", ""),
+    pileupInfo = cms.InputTag ("addPileupInfo"),
+    dEdxPixel = cms.InputTag ("dedxPixelHarmonic2", ""),
+    dEdxStrip = cms.InputTag ("dedxHarmonic2", "",),
+    minGenParticlePt = cms.double(-1),
+    minTrackPt       = cms.double(20.0),
+    maxRelTrackIso   = cms.double(-1.0),
+
+    graphPath = cms.string(os.path.join(dataDir, "graph_oct25.pb")),
+    inputTensorName = cms.string("Input_input"),
+    outputTensorName = cms.string("sequential/Output_xyz/Sigmoid"),
+
+    graphPathDS = cms.string(os.path.join(dataDir, "graph.pb")),
+    inputTensorNameDS = cms.string("input"),
+    inputTrackTensorNameDS = cms.string("input_track"),
+    outputTensorNameDS = cms.string("model_1/output_xyz/Softmax")
 )
 
-print("This is the electron vidVetoIDMap", collectionProducer.tracks.eleVIDVetoIdMap)
+'''print("This is the electron vidVetoIDMap", collectionProducer.tracks.eleVIDVetoIdMap)
 print("This is the electron vidLooseMap", collectionProducer.tracks.eleVIDLooseIdMap)
 print("This is the electron vidMediumMap", collectionProducer.tracks.eleVIDMediumIdMap)
-print("This is the electron vidTightMap", collectionProducer.tracks.eleVIDTightIdMap)
+print("This is the electron vidTightMap", collectionProducer.tracks.eleVIDTightIdMap)'''
 
 
 # if running over data, switch to the data fiducial map files

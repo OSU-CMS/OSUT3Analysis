@@ -13,7 +13,7 @@
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
 template<class T> 
-OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cfg) :
+OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cfg, const CacheData* cacheData) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   cfg_ (cfg),
   useEraByEraFiducialMaps_ (cfg.getParameter<bool> ("useEraByEraFiducialMaps")),
@@ -21,7 +21,18 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   caloGeometryToken_ (esConsumes<edm::Transition::BeginRun>()),
   //ecalStatusToken_ (esConsumes<EcalChannelStatus, EcalChannelStatusRcd>())
   ecalStatusToken_ (esConsumes<edm::Transition::BeginRun>()),
-  trackerTopologyToken_ (esConsumes<edm::Transition::BeginRun>())
+  trackerTopologyToken_ (esConsumes<edm::Transition::BeginRun>()),
+
+  graphPath_(cfg.getParameter<std::string>("graphPath")),
+  graphPathDS_(cfg.getParameter<std::string>("graphPathDS")),
+  inputTensorName_(cfg.getParameter<std::string>("inputTensorName")),
+  outputTensorName_(cfg.getParameter<std::string>("outputTensorName")),
+  inputTensorNameDS_(cfg.getParameter<std::string>("inputTensorNameDS")),
+  outputTensorNameDS_(cfg.getParameter<std::string>("outputTensorNameDS")),
+  inputTrackTensorNameDS_ (cfg.getParameter<std::string>("inputTrackTensorNameDS")),
+
+  session_(tensorflow::createSession(cacheData->graphDef, 4)),
+  sessionDS_(tensorflow::createSession(cacheData->graphDefDS, 4))
 
 {
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
@@ -48,6 +59,20 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   lostTracksToken_ = consumes<vector<pat::PackedCandidate> > (cfg.getParameter<edm::InputTag> ("lostTracks"));
 #if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
   isolatedTracksToken_ = consumes<vector<pat::IsolatedTrack> > (cfg.getParameter<edm::InputTag> ("isolatedTracks"));
+  //metToken_ = consumes<vector<osu::Met> > (cfg.getParameter<edm::InputTag> ("mets"));
+  metToken_ = consumes<vector<osu::Met> > (collections_.getParameter<edm::InputTag> ("mets"));
+
+  triggersToken_ = consumes<edm::TriggerResults> (cfg.getParameter<edm::InputTag> ("triggers"));
+  trigObjsToken_ = consumes<vector<pat::TriggerObjectStandAlone> > (cfg.getParameter<edm::InputTag> ("triggerObjects"));
+  isoTrk2dedxHitInfoToken_ = consumes<reco::DeDxHitInfoAss> (cfg.getParameter<edm::InputTag> ("isoTrk2dedxHitInfo"));
+  pileupInfoToken_ = consumes<edm::View<PileupSummaryInfo> > (cfg.getParameter<edm::InputTag>("pileupInfo"));
+  gt2dedxPixelTag_ =  cfg.getParameter<edm::InputTag>  ("dEdxPixel");
+  gt2dedxStripTag_ =  cfg.getParameter<edm::InputTag>  ("dEdxStrip");
+  gt2dedxPixelToken_    = consumes<edm::ValueMap<reco::DeDxData> > (gt2dedxPixelTag_);
+  gt2dedxStripToken_    = consumes<edm::ValueMap<reco::DeDxData> > (gt2dedxStripTag_);
+  minGenParticlePt_ =  cfg.getParameter<double> ("minGenParticlePt");
+  minTrackPt_       =  cfg.getParameter<double> ("minTrackPt");
+  maxRelTrackIso_   =  cfg.getParameter<double> ("maxRelTrackIso");
 #endif
 
 #if !DATA_FORMAT_IS_2022
@@ -146,6 +171,36 @@ OSUGenericTrackProducer<T>::~OSUGenericTrackProducer ()
 {
 }
 
+template<class T> std::unique_ptr<CacheData> 
+OSUGenericTrackProducer<T>::initializeGlobalCache(const edm::ParameterSet& config) {
+  // this method is supposed to create, initialize and return a CacheData instance
+ 
+  std::unique_ptr<CacheData> cache = std::make_unique<CacheData>();
+
+  // load the graph def and save it
+  std::string graphPath = config.getParameter<std::string>("graphPath");
+  if (!graphPath.empty()) {
+    graphPath = edm::FileInPath(graphPath).fullPath();
+    cache->graphDef = tensorflow::loadGraphDef(graphPath);
+  }
+
+  std::string graphPathDS = config.getParameter<std::string>("graphPathDS");
+  if (!graphPathDS.empty()) {
+    graphPathDS = edm::FileInPath(graphPathDS).fullPath();
+    cache->graphDefDS = tensorflow::loadGraphDef(graphPathDS);
+  }
+
+  return cache;
+}
+
+template<class T> void 
+OSUGenericTrackProducer<T>::globalEndJob(const CacheData* cacheData) {
+  // reset the graphDef
+  if (cacheData->graphDef != nullptr) {
+    delete cacheData->graphDef;
+  }
+}
+
 template<class T> void 
 OSUGenericTrackProducer<T>::beginRun (const edm::Run &run, const edm::EventSetup& setup)
 {
@@ -158,13 +213,6 @@ OSUGenericTrackProducer<T>::beginRun (const edm::Run &run, const edm::EventSetup
 template<class T> void 
 OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-
-  //caloGeometry_ = setup.getHandle(caloGeometryToken_);
-  //ecalStatus_   = setup.getHandle(ecalStatusToken_);
-
-
-  //if( !ecalStatus_.isValid() )  throw "Failed to get ECAL channel status!";
-  //if( !caloGeometry_.isValid()   )  throw "Failed to get the caloGeometry_!";
 
   edm::Handle<vector<TYPE(tracks)> > collection;
   if (!event.getByToken (token_, collection))
@@ -234,6 +282,23 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 #if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
   edm::Handle<vector<pat::IsolatedTrack> > isolatedTracks;
   event.getByToken (isolatedTracksToken_, isolatedTracks);
+  edm::Handle<edm::TriggerResults> triggers;
+  event.getByToken (triggersToken_, triggers);
+  edm::Handle<vector<pat::TriggerObjectStandAlone> > trigObjs;
+  event.getByToken (trigObjsToken_, trigObjs);
+  edm::Handle<reco::DeDxHitInfoAss> isoTrk2dedxHitInfo;
+  event.getByToken(isoTrk2dedxHitInfoToken_, isoTrk2dedxHitInfo);
+  edm::Handle<edm::ValueMap<reco::DeDxData> > gt2dedxPixel;
+  event.getByToken(gt2dedxPixelToken_, gt2dedxPixel);
+  edm::Handle<edm::ValueMap<reco::DeDxData> > gt2dedxStrip;
+  event.getByToken(gt2dedxStripToken_, gt2dedxStrip);
+  edm::Handle<edm::View<PileupSummaryInfo> > pileupInfos;
+  event.getByToken(pileupInfoToken_, pileupInfos);
+  edm::Handle<vector<osu::Met> > met;
+  event.getByToken (metToken_, met);
+
+  getChannelStatusMaps();
+
 #endif
 #if !DATA_FORMAT_IS_2022
   edm::Handle<vector<CandidateTrack> > candidateTracks;
@@ -374,6 +439,287 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 #if DATA_FORMAT_FROM_MINIAOD && ( DATA_FORMAT_IS_2017 || DATA_FORMAT_IS_2022 )
       track.set_isoTrackIsolation(isolatedTracks);
 #endif
+
+      //////////////////////////////////////
+      //Set the deep sets and fake NN values
+      //////////////////////////////////////
+
+      const reco::Vertex &pv = vertices->at(0);
+      nPV_ = vertices->size();
+      numGoodPVs_ = countGoodPrimaryVertices(*vertices);
+
+
+      vertexInfos_.clear();
+      for(auto vertex : *vertices){
+        VertexInfo info;
+        
+        TLorentzVector vertex_pos(vertex.x(), vertex.y(), vertex.z(), vertex.t());
+        TLorentzVector vertex_err(vertex.xError(), vertex.yError(), vertex.zError(), vertex.tError());
+        info.vertex = vertex_pos;
+        info.vertex_error = vertex_err;
+        info.chi2 = vertex.chi2();
+        info.ndof = vertex.ndof();
+        info.isValid = vertex.isValid();     
+
+        vertexInfos_.push_back(info);
+      }
+
+      numGoodJets_      = countGoodJets(*jets);
+      dijetDeltaPhiMax_ = getMaxDijetDeltaPhi(*jets);
+      leadingJetMetPhi_ = getLeadingJetMetPhi(*jets, met->at(0));
+
+      vector<pat::Electron> tagElectrons = getTagElectrons(event, *triggers, *trigObjs, pv, *electrons);
+      vector<pat::Muon> tagMuons = getTagMuons(event, *triggers, *trigObjs, pv, *muons);
+
+      auto trackInfo = getTrackInfo(track, pv, *jets, *electrons, *muons, *taus, tagElectrons, tagMuons, met->at(0), isolatedTracks, isoTrk2dedxHitInfo, gt2dedxStrip, gt2dedxPixel);
+
+      //if(trackInfos_.size() == 0) return; // only fill tree with passing tracks
+      //std::cout << "Number of tracks: " << trackInfos_.size() << "event: " << eventNumber_ << std::endl;
+
+      getRecHits(event);
+      //std::cout << "There are " << recHitInfos_.size() << " rec hits in this event" << std::endl;
+
+      // account for pileup in track ecalo
+      double caloCorr = (*rhoCentralCaloHandle) * 2. * M_PI_2 * 0.5 * 0.5;
+      trackInfo.ecalo -= caloCorr;
+      if (trackInfo.ecalo < 0) trackInfo.ecalo = 0;
+
+      // Get pileup vertex z positions
+      if(pileupInfos.isValid()) {
+        edm::View<PileupSummaryInfo>::const_iterator iterPU;
+        for(edm::View<PileupSummaryInfo>::const_iterator iterPU = pileupInfos->begin(); iterPU != pileupInfos->end(); iterPU++) {
+          // Out of time pileup is also saved -> need to require 0th bunch crossing (in time bunch crossing)
+          if(iterPU->getBunchCrossing() == 0){ 
+            pileupZPosition_ = iterPU->getPU_zpositions();
+            numTruePV_ = iterPU->getTrueNumInteractions();
+          }
+        }
+      }
+
+      // Define input tensors for all networks 
+
+      tensorflow::Tensor inputDS(tensorflow::DT_FLOAT, {100,4}); //deep sets input tensors
+      tensorflow::Tensor inputTrackDS(tensorflow::DT_FLOAT, {1,4});
+      
+      input_ = tensorflow::Tensor(tensorflow::DT_FLOAT, tensorflow::TensorShape{1 , 96}); //fake tracks input tensors
+      //input_ = tensorflow::Tensor(tensorflow::DT_FLOAT, tensorflow::TensorShape{1 , 176});
+      
+      ////////////////////////////////////////////////////////////////
+      //Deep Sets 
+      ////////////////////////////////////////////////////////////////
+
+      float scoreDS = 0.0;
+
+      //only check for deep sets score if there are rec hits around the track
+      if (recHitInfos_.size() > 0){
+
+        inputTrackDS.matrix<float>()(0, 0) = nPV_;
+        inputTrackDS.matrix<float>()(0, 1) = trackInfo.eta;
+        inputTrackDS.matrix<float>()(0, 2) = trackInfo.phi;
+        inputTrackDS.matrix<float>()(0, 3) = trackInfo.nValidPixelHits;
+        std::vector<std::vector<double>> recHitsNearTrack;
+        for (auto &hit : recHitInfos_){
+          std::vector<double> hitNearTrack;
+          double dEta = trackInfo.eta - hit.eta;
+          double dPhi = trackInfo.phi - hit.phi;
+          if( fabs(dPhi) > TMath::Pi() ){
+            dPhi -= round(dPhi/(2* TMath::Pi()))*2*TMath::Pi();
+          }
+          //std::cout << "deta: " << dEta << ", dphi: " << dPhi << std::endl;
+
+          if (fabs(dEta) >= EtaRange_ or fabs(dPhi) >= PhiRange_)
+          {
+            continue;
+          }
+          int detIndex = getDetectorIndex(hit.detType);
+          double energy = 1;
+          if (detIndex != 2)
+          {
+            energy = hit.energy;
+          }
+          hitNearTrack.push_back(dEta);
+          hitNearTrack.push_back(dPhi);
+          hitNearTrack.push_back(energy);
+          hitNearTrack.push_back(detIndex);
+
+          recHitsNearTrack.push_back(hitNearTrack);
+
+        }
+
+        std::sort(recHitsNearTrack.begin(),recHitsNearTrack.end(),
+                  [](const std::vector<double>& a, const std::vector<double>& b) {
+                    return a[2] > b[2];
+                  });
+
+        //std::cout << "Sorted tracks " << std::endl;
+        int numRecHits = (int)recHitsNearTrack.size();
+      
+        for (int iHit = 0; iHit < min(maxHits_, numRecHits); iHit++) {
+          inputDS.matrix<float>()(iHit, 0) = (float)recHitsNearTrack.at(iHit)[0];
+          inputDS.matrix<float>()(iHit, 1) = (float)recHitsNearTrack.at(iHit)[1];
+          inputDS.matrix<float>()(iHit, 2) = (float)recHitsNearTrack.at(iHit)[2];
+          inputDS.matrix<float>()(iHit, 3) = (float)recHitsNearTrack.at(iHit)[3];
+        }
+
+        //std::cout << "Set available tracks" << std::endl;
+        //std::cout << "There are " << numRecHits << " out of max " << maxHits_ << std::endl;
+
+        if (numRecHits < maxHits_) {
+          //std::cout << "Setting extra rec hits as empty" << std::endl;
+          for (int iHit = numRecHits; iHit < maxHits_; iHit++) {
+            //std::cout << "hit " << iHit << " set to 0" << std::endl;
+            inputDS.matrix<float>()(iHit, 0) = 0;
+            inputDS.matrix<float>()(iHit, 1) = 0;
+            inputDS.matrix<float>()(iHit, 2) = 0;
+            inputDS.matrix<float>()(iHit, 3) = 0;
+          }
+        }
+        //std::cout << "Filled out buffer" << std::endl;
+      //}
+
+      /*for(int iHit=0; iHit < numRecHits; iHit++){
+        std::cout << "----------------------------------------" << std::endl;
+        std::cout << "Rec Hit " << iHit << std::endl;
+        std::cout << "\t dEta: " << recHitsNearTrack.at(iHit)[0] << //std::endl;
+        std::cout << "\t dPhi: " << recHitsNearTrack.at(iHit)[1] << //std::endl;
+        std::cout << "\t energy: " << recHitsNearTrack.at(iHit)[2] //<< std::endl;
+        std::cout << "\t detID: " << recHitsNearTrack.at(iHit)[3] //<< std::endl;
+        std::cout << "--------------------------------------------" << std::endl;
+      }*/
+
+      /*std::cout << "Deep Sets Inputs: \n";
+      std::cout << "\t nPV: " << inputTrackDS.matrix<float>()(0, 0) << std::endl;
+      std::cout << "\t eta: " << inputTrackDS.matrix<float>()(0, 1) << std::endl;
+      std::cout << "\t phi: " << inputTrackDS.matrix<float>()(0, 2) << std::endl;
+      std::cout << "\t nValidPixelHits: " << inputTrackDS.matrix<float>()(0, 3) << std::endl;*/
+      
+      /*for(int iHit = 0; iHit < inputDS.dim_size(0); iHit++){
+        std::cout << "\t Hit " << iHit <<
+        ", dEta: " << inputDS.matrix<float>()(iHit, 0) << //<< std::endl;
+        ", dPhi: " << inputDS.matrix<float>()(iHit, 1) << //<< std::endl;
+        ", energy: " << inputDS.matrix<float>()(iHit, 2) << //<< std::endl;
+        ", detID: " << inputDS.matrix<float>()(iHit, 3) << std::endl; //<< std::endl;
+      }*/
+
+      std::vector<tensorflow::Tensor> outputsDS;
+      tensorflow::run(sessionDS_, {{inputTensorNameDS_, inputDS},{inputTrackTensorNameDS_, inputTrackDS}}, {outputTensorNameDS_}, &outputsDS);
+
+      // print the output
+      //std::cout << "Deep Sets Score: " << outputsDS[0].matrix<float>()(0, 0) << std::endl << std::endl;
+      scoreDS = outputsDS[0].matrix<float>()(0,1);
+      //std::cout << "Deep Sets: run: " << event.eventAuxiliary().run() << ", lumi block: " << event.eventAuxiliary().luminosityBlock() << ", event: " << event.eventAuxiliary().event() << " score: " << scoreDS << ", " << outputsDS[0].matrix<float>()(0,1) << ", eta: " << trackInfo.eta << ", phi: " << trackInfo.phi << std::endl;
+
+    }
+
+    track.set_deepSetsScore(scoreDS);
+
+    ///////////////////////////////////////////////////////////////////
+    // Fake Track Netowork
+    ///////////////////////////////////////////////////////////////////
+
+    std::vector<std::vector<double>> hitMap = getHitMap(trackInfo.dEdxInfo);   
+    std::pair<double, double> maxHits = getMaxHits(trackInfo.dEdxInfo);
+    unsigned long encodedLayers = encodeLayers(hitMap);
+    std::pair<std::array<double, 3>, std::array<double, 3>> closest_vtx = getClosestVertices(vertexInfos_, trackInfo.vz, trackInfo.vx, trackInfo.vy);
+
+    input_.tensor<float, 2>()(0, 0) = nPV_;
+    input_.tensor<float, 2>()(0, 1) = trackInfo.trackIso;
+    input_.tensor<float, 2>()(0, 2) = trackInfo.eta;
+    input_.tensor<float, 2>()(0, 3) = trackInfo.phi;
+    input_.tensor<float, 2>()(0, 4) = trackInfo.nValidPixelHits;
+    input_.tensor<float, 2>()(0, 5) = trackInfo.nValidHits;
+    input_.tensor<float, 2>()(0, 6) = trackInfo.missingOuterHits;
+    input_.tensor<float, 2>()(0, 7) = trackInfo.dEdxPixel;
+    input_.tensor<float, 2>()(0, 8) = trackInfo.dEdxStrip;
+    input_.tensor<float, 2>()(0, 9) = trackInfo.numMeasurementsPixel;
+    input_.tensor<float, 2>()(0, 10) = trackInfo.numMeasurementsStrip;
+    input_.tensor<float, 2>()(0, 11) = trackInfo.numSatMeasurementsPixel;
+    input_.tensor<float, 2>()(0, 12) = trackInfo.numSatMeasurementsStrip;
+    input_.tensor<float, 2>()(0, 13) = trackInfo.dRMinJet;
+    input_.tensor<float, 2>()(0, 14) = trackInfo.ecalo;
+    input_.tensor<float, 2>()(0, 15) = trackInfo.pt;
+    input_.tensor<float, 2>()(0, 16) = trackInfo.d0;
+    input_.tensor<float, 2>()(0, 17) = trackInfo.dz;
+    input_.tensor<float, 2>()(0, 18) = trackInfo.charge; //need to create function to get total rec hit energy
+    input_.tensor<float, 2>()(0, 19) = trackInfo.deltaRToClosestElectron;
+    input_.tensor<float, 2>()(0, 20) = trackInfo.deltaRToClosestMuon;
+    input_.tensor<float, 2>()(0, 21) = trackInfo.deltaRToClosestTauHad;
+    input_.tensor<float, 2>()(0, 22) = trackInfo.normalizedChi2;
+    input_.tensor<float, 2>()(0, 23) = maxHits.second;
+    input_.tensor<float, 2>()(0, 24) = maxHits.first;
+    input_.tensor<float, 2>()(0, 25) = encodedLayers;
+    input_.tensor<float, 2>()(0, 26) = (closest_vtx.first)[0];
+    input_.tensor<float, 2>()(0, 27) = (closest_vtx.first)[1];
+    input_.tensor<float, 2>()(0, 28) = (closest_vtx.first)[2];
+    input_.tensor<float, 2>()(0, 29) = (closest_vtx.second)[0];
+    input_.tensor<float, 2>()(0, 30) = (closest_vtx.second)[1];
+    input_.tensor<float, 2>()(0, 31) = (closest_vtx.second)[2];
+
+    //std::cout << "Hit map size " << hitMap.size() <<"x" << hitMap[0].size() << std::endl;
+
+    for(unsigned int i=0; i<hitMap.size(); i++){
+        for(unsigned int j=0; j<hitMap[i].size(); j++){
+            //if(hitMap[i][j] != 0) input_.tensor<float, 2>()(0,23+j+i*hitMap[i].size()) = hitMap[i][j]; 
+            input_.tensor<float, 2>()(0,32+j+i*hitMap[i].size()) = hitMap[i][j]; 
+        } 
+    }
+
+    for(unsigned int i=0; i<input_.shape().dim_size(1); ++i){
+      input_.tensor<float, 2>()(0, i) = tanh(input_.tensor<float, 2>()(0, i));
+      //cout << "converting to tanh " << i << std::endl;
+    }
+
+    /*std::cout << "Inputs: " << std::endl;
+    std::cout << "nPV: " << input_.tensor<float, 2>()(0, 0) << std::endl;
+    std::cout << "trackIso: " << input_.tensor<float, 2>()(0, 1) << std::endl;
+    std::cout << "eta: " << input_.tensor<float, 2>()(0, 2) << std::endl;
+    std::cout << "phi: " << input_.tensor<float, 2>()(0, 3) << std::endl;
+    std::cout << "validPixelHits: " << input_.tensor<float, 2>()(0, 4) << std::endl;
+    std::cout << "validHits: " << input_.tensor<float, 2>()(0, 5) << std::endl;
+    std::cout << "missingOuterHits: " << input_.tensor<float, 2>()(0, 6) << std::endl;
+    std::cout << "dedxPixel: " << input_.tensor<float, 2>()(0, 7) << std::endl;
+    std::cout << "dedxStrip: " << input_.tensor<float, 2>()(0, 8) << std::endl;
+    std::cout << "numMeasurementsPixel: " << input_.tensor<float, 2>()(0, 9) << std::endl;
+    std::cout << "numMeasurementsStrip: " << input_.tensor<float, 2>()(0, 10) << std::endl;    
+    std::cout << "numSatPixel: " << input_.tensor<float, 2>()(0, 11) << std::endl;
+    std::cout << "numSatStrip: " << input_.tensor<float, 2>()(0, 12) << std::endl;
+    std::cout << "drMinJet: " << input_.tensor<float, 2>()(0, 13) << std::endl;
+    std::cout << "Ecalo: " << input_.tensor<float, 2>()(0, 14) << std::endl;
+    std::cout << "PT: " << input_.tensor<float, 2>()(0, 15) << std::endl;
+    std::cout << "d0: " << input_.tensor<float, 2>()(0, 16) << std::endl;
+    std::cout << "dz: " << input_.tensor<float, 2>()(0, 17) << std::endl;
+    std::cout << "totalCharge: " << input_.tensor<float, 2>()(0, 18) << std::endl;
+    std::cout << "drElectron: " << input_.tensor<float, 2>()(0, 19) << std::endl;
+    std::cout << "drMuon: " << input_.tensor<float, 2>()(0, 20) << std::endl;
+    std::cout << "drTau: " << input_.tensor<float, 2>()(0, 21) << std::endl;
+    std::cout << "normChi2: " << input_.tensor<float, 2>()(0, 22) << std::endl;
+    std::cout << "sumEnergy: " << input_.tensor<float, 2>()(0, 23) << std::endl;
+    std::cout << "diffEnergy: " << input_.tensor<float, 2>()(0, 24) << std::endl;
+    std::cout << "encodedLayers: " << input_.tensor<float, 2>()(0, 25) << std::endl;
+    std::cout << "dz1: " << input_.tensor<float, 2>()(0, 26) << std::endl;
+    std::cout << "dz2: " << input_.tensor<float, 2>()(0, 27) << std::endl;
+    std::cout << "dz3: " << input_.tensor<float, 2>()(0, 28) << std::endl;
+    std::cout << "d01: " << input_.tensor<float, 2>()(0, 29) << std::endl;
+    std::cout << "d02: " << input_.tensor<float, 2>()(0, 30) << std::endl;
+    std::cout << "d03: " << input_.tensor<float, 2>()(0, 31) << std::endl;
+
+    for (int x=0; x < 16; ++x){
+      std::cout << "charge " << x << ": " << input_.tensor<float, 2>()(0, 32+4*x) << std::endl;
+      std::cout << "HitSize " << x << ": " << input_.tensor<float, 2>()(0, 33+4*x) << std::endl;
+      std::cout << "HitSizeX " << x << ": " << input_.tensor<float, 2>()(0, 34+4*x) << std::endl;
+      std::cout << "HitSizeY " << x << ": " << input_.tensor<float, 2>()(0, 35+4*x) << std::endl;
+    }*/
+
+
+    std::vector<tensorflow::Tensor> outputs;
+    tensorflow::run(session_, {{inputTensorName_, input_}}, {outputTensorName_}, &outputs);
+    /*std::cout << "Inputs " << input_.DebugString() << std::endl;*/
+    /*std::cout << " -> " << outputs[0].tensor<float, 2>()(0, 0) << " " << outputs[0].tensor<float, 2>()(0, 1)  << " " << outputs[0].DebugString() << std::endl;
+    std::cout << "and " << outputs[0].tensor<float, 2>()(1, 0) << " " << outputs[0].tensor<float, 2>()(1, 1) << std::endl;
+    std::cout << "output tensor size: " << outputs[0].shape().dims() << " " << outputs[0].shape().dim_size(1) << std::endl;*/
+
+    float score = outputs[0].matrix<float>()(0,0);
+    track.set_fakeTrackScore(score);
 
 #endif // DISAPP_TRKS
   }
@@ -521,13 +867,9 @@ OSUGenericTrackProducer<T>::envSet (const edm::EventSetup& iSetup)
   ecalStatus_   = iSetup.getHandle(ecalStatusToken_);
   trackerTopology_ = iSetup.getHandle(trackerTopologyToken_);
 
-
-  // Old style, deprecated
-  //iSetup.get<EcalChannelStatusRcd> ().get(ecalStatus_);
-  //iSetup.get<CaloGeometryRecord>   ().get(caloGeometry_);
-
   if( !ecalStatus_.isValid() )  throw "Failed to get ECAL channel status!";
   if( !caloGeometry_.isValid()   )  throw "Failed to get the caloGeometry_!";
+  if( !trackerTopology_.isValid() ) throw "Failed to get the trackerTopology_!";
 }
 
 template<class T> int 
