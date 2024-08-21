@@ -180,13 +180,13 @@ OSUGenericTrackProducer<T>::initializeGlobalCache(const edm::ParameterSet& confi
   // load the graph def and save it
   std::string graphPath = config.getParameter<std::string>("graphPath");
   if (!graphPath.empty()) {
-    graphPath = edm::FileInPath(graphPath).fullPath();
+    graphPath = edm::FileInPath(graphPath.c_str()).fullPath();
     cache->graphDef = tensorflow::loadGraphDef(graphPath);
   }
 
   std::string graphPathDS = config.getParameter<std::string>("graphPathDS");
   if (!graphPathDS.empty()) {
-    graphPathDS = edm::FileInPath(graphPathDS).fullPath();
+    graphPathDS = edm::FileInPath(graphPathDS.c_str()).fullPath();
     cache->graphDefDS = tensorflow::loadGraphDef(graphPathDS);
   }
 
