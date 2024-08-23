@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import math
-
+from ctypes import c_double
 # a SimpleMeasurement is a real number with an uncertainty (possibly asymmetric)
 class SimpleMeasurement:
     _nan = float ("nan")
@@ -14,8 +14,12 @@ class SimpleMeasurement:
     _printUncertainty = True
 
     def __init__ (self, centralValue = None, uncertaintyDown = None, uncertaintyUp = None):
+        if isinstance(uncertaintyDown, c_double): uncertaintyDown = uncertaintyDown.value
+        if isinstance(uncertaintyUp, c_double): uncertaintyUp = uncertaintyUp.value
+        if isinstance(centralValue, c_double): centralValue = centralValue.value
+
         self._centralValue = float (centralValue)
-        if uncertaintyDown is not None:
+        if uncertaintyDown is not None: 
             self._uncertaintyDown = float (uncertaintyDown)
         if uncertaintyUp is not None:
             self._uncertaintyUp = float (uncertaintyUp)
@@ -153,6 +157,8 @@ class SimpleMeasurement:
     def __eq__ (self, other):
         if hasattr (other, "centralValue"):
             return (self._centralValue == other.centralValue ())
+        elif other is None:
+            return False
         else:
             return (self._centralValue == float (other))
 
