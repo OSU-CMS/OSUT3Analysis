@@ -116,7 +116,7 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   //caloGeometryToken_  = esConsumes();
   //ecalStatusToken_    = esConsumes();
 
-#if DATA_FORMAT_FROM_MINIAOD && !DATA_FORMAT_IS_2022
+#if DATA_FORMAT_FROM_MINIAOD
   stringstream ss;
   for (const auto &electronFiducialMap : electronFiducialMaps)
     {
