@@ -531,6 +531,9 @@ def add_channels (process,
             if collection == "jets" and isCRAB:
                 collectionProducer.jets.jetResolutionPayload = cms.string("Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt")
                 collectionProducer.jets.jetResSFPayload = cms.string("Fall15_25nsV2_MC_SF_AK4PFchs.txt")
+            if collection == "tracks" and isCRAB:
+                collectionProducer.tracks.graphPath = cms.string('OSUT3Analysis/Collections/data/graph_oct25.pb')
+                collectionProducer.tracks.graphPathDS = cms.string('OSUT3Analysis/Collections/data/graph.pb')
             if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer) or isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDFilter):
                 dic = vars(getattr(collectionProducer,collection))
                 for p in dic:
@@ -866,7 +869,8 @@ def add_channels (process,
 
         outFileName = ""
         if not isCRAB: outFileName = channelName + "/" + skimFilePrefix + suffix + ".root"
-        else: outFileName = skimFilePrefix + suffix + ".root"
+        else: outFileName = skimFilePrefix + "_" + channelName + ".root"
+
         poolOutputModule = cms.OutputModule ("PoolOutputModule",
             overrideInputFileSplitLevels = cms.untracked.bool (True),
             splitLevel = cms.untracked.int32 (0),
@@ -876,6 +880,10 @@ def add_channels (process,
             outputCommands = cms.untracked.vstring (outputCommands),
             dropMetaData = cms.untracked.string ("ALL"),
         )
+        if isCRAB:
+            poolOutputModule.dataset = cms.untracked.PSet(
+                filterName = cms.untracked.string(channelName)
+            )
         add_channels.endPath += poolOutputModule
         setattr (process, channelName + "PoolOutputModule", poolOutputModule)
         ########################################################################
