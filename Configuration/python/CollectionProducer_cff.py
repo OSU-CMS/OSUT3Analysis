@@ -282,7 +282,7 @@ collectionProducer.taus = cms.EDProducer ("OSUTauProducer",
 copyConfiguration (collectionProducer.taus, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
-dataDir = os.environ['CMSSW_BASE'] + '/src/OSUT3Analysis/Configuration/data/machineLearning/'
+dataDir = os.environ['CMSSW_BASE'] + '/src/OSUT3Analysis/Collections/data/'
 fakeGraphFile = "graph_oct25.pb"
 deepSetsGraphFile = "graph.pb"
 fakePath = os.path.join(dataDir, fakeGraphFile)
