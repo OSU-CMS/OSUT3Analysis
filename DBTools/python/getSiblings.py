@@ -117,6 +117,7 @@ class getSiblings():
         eventCount = 0
         
         siblings = {}
+        print("searching json files", self.inputJSON, self.secondaryJSON)
         #open primary json file and get runs, lumis
         with open(self.inputJSON) as primary_fin:
             primary_dict = json.load(primary_fin)
@@ -124,21 +125,25 @@ class getSiblings():
             #open secondary json and find matches
             with open(self.secondaryJSON) as secondary_fin:
                 secondary_dict = json.load(secondary_fin)
-
+		
+                print(primary_dict.keys())
                 for inputFile in self.inputFiles:
-                    if inputFile not in primary_dict.keys():
-                        continue
+                    print("input file:", inputFile)
                     p_file = inputFile
+                    if inputFile.startswith('root://'): 
+                        p_file = inputFile.split(':/')[-1]
+                    if p_file not in primary_dict.keys(): continue
                     primary_info = primary_dict[p_file]
-                    if p_file not in self.inputFiles: continue
+                    #if p_file not in self.inputFiles: continue
+                    print(p_file)
                     sibs = []
                     for s_file, secondary_info in secondary_dict.items():
                         if len(np.intersect1d(primary_info['runs'], secondary_info['runs'])) == 0: continue
                         if len(np.intersect1d(primary_info['lumis'], secondary_info['lumis'])) != 0:
                             sibs.append(s_file)
                     
-                    siblings[p_file] = sibs
-                    self.getEventList(p_file, sibs)
+                    siblings[inputFile] = sibs
+                    self.getEventList(inputFile, sibs)
 
                     if self.eventsPerJob != -1 and len(self.sharedEvents) > self.eventsPerJob:
                         break                        
@@ -166,8 +171,8 @@ class getSiblings():
 
         secondaryEvents = np.array([])
         for filename in siblings:
-            if not filename.startswith("root://") and not self.local: 
-                filename = 'root://cms-xrd-global.cern.ch:/' + filename
+            #if not filename.startswith("root://") and not self.local: 
+            #    filename = 'root://cms-xrd-global.cern.ch:/' + filename
             events = r.getEventsInFile(filename)
             tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
             secondaryEvents = np.concatenate((secondaryEvents, tmpEvents))

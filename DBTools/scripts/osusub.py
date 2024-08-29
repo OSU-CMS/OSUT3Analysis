@@ -704,8 +704,8 @@ def MakeCondorSubmitScript(Dataset,NumberOfJobs,Directory,Label, SkimChannelName
 def MakeSiblingFileList(primaryDataset, siblingDataset, workDir):
 
     if arguments.lumiMatch:
-
-        primaryDataset = primaryDataset.split('FilesInDirectory:')[1]
+        if primaryDataset.startswith('FilesInDirectory'): 
+            primaryDataset = primaryDataset.split('FilesInDirectory:')[1]
         print("Primary dataset:", primaryDataset)
         print("Secondary dataset:", siblingDataset)
 

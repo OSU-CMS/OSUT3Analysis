@@ -29,7 +29,10 @@ def getEfficiency(passes, passesError, total, totalError):
     return (y, g.GetErrorYlow (0), g.GetErrorYhigh (0))
 
 def getYield(sample,condor_dir,channel):
-    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    if condor_dir.endswith('.root'):
+        dataset_file = condor_dir
+    else:
+        dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     cutFlowHistogram = inputFile.Get(channel + "/cutFlow")
     if not cutFlowHistogram:
@@ -43,7 +46,10 @@ def getYield(sample,condor_dir,channel):
 
 
 def getYieldInBin(sample,condor_dir,channel,ibin):
-    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    if condor_dir.endswith('.root'):
+        dataset_file = condor_dir
+    else:
+        dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     cutFlowHistogram = inputFile.Get(channel + "/cutFlow")
     if not cutFlowHistogram:
@@ -56,7 +62,10 @@ def getYieldInBin(sample,condor_dir,channel,ibin):
 
 
 def getFirstBinWithLabel(sample,condor_dir,channel,label):
-    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    if condor_dir.endswith('.root'):
+        dataset_file = condor_dir
+    else:
+        dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     cutFlowHistogram = inputFile.Get(channel + "/cutFlow")
     if not cutFlowHistogram:
@@ -74,7 +83,10 @@ def getFirstBinWithLabel(sample,condor_dir,channel,label):
     return ibin
 
 def getNumEvents(sample,condor_dir,channel):  # Use in place of getYield if the cutflow histogram is not available
-    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    if condor_dir.endswith('.root'):
+        dataset_file = condor_dir
+    else:
+        dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     numEvtHistogram = inputFile.Get("OSUAnalysis/"+channel+"/numEvents")
     if not numEvtHistogram:
@@ -87,8 +99,11 @@ def getNumEvents(sample,condor_dir,channel):  # Use in place of getYield if the 
     return (yield_, statError_)
 
 def getHistIntegral(sample,condor_dir,channel,hist,xlo,xhi):
+    if condor_dir.endswith('.root'):
+        dataset_file = condor_dir
+    else:
+        dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
     # Modeled on getHistIntegrals.py
-    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     histogram = inputFile.Get(channel+"/"+hist)
     if not histogram:
@@ -165,7 +180,10 @@ def ratioHistogram( dataHist, mcHist, dontRebinRatio=False, addOne=False, relErr
 
 
 def getUpperLimit(sample,condor_dir,channel):
-    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    if condor_dir.endswith('.root'):
+        dataset_file = condor_dir
+    else:
+        dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     cutFlowHistogram = inputFile.Get("OSUAnalysis/"+channel+"CutFlowUpperLimit")
     if not cutFlowHistogram:
@@ -176,7 +194,10 @@ def getUpperLimit(sample,condor_dir,channel):
     return (limit)
 
 def getTruthYield(sample,condor_dir,channel,truthParticle):
-    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    if condor_dir.endswith('.root'):
+        dataset_file = condor_dir
+    else:
+        dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     matchHistogram = inputFile.Get("OSUAnalysis/"+channel+"/trackGenMatchId")
     if not matchHistogram:
@@ -208,7 +229,10 @@ def getRawEvts(num, err):
     return N
 
 def getHist(sample,condor_dir,channel,hist):
-    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    if condor_dir.endswith('.root'):
+        dataset_file = condor_dir
+    else:
+        dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     h0 = inputFile.Get(channel + "/" + hist)
     if not h0:
