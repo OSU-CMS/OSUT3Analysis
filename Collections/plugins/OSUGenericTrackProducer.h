@@ -172,6 +172,22 @@ template<class T>
     edm::ESGetToken<EcalChannelStatus, EcalChannelStatusRcd> ecalStatusToken_;
     edm::ESGetToken<TrackerTopology, TrackerTopologyRcd> trackerTopologyToken_;
 
+    TrackInfo trackInfo;
+    vector<pat::Electron> tagElectrons;
+    vector<pat::Muon> tagMuons;
+
+    tensorflow::Tensor inputDS;
+    tensorflow::Tensor inputTrackDS;
+    std::vector<tensorflow::Tensor> outputsDS;
+    std::vector<tensorflow::Tensor> outputs;
+
+    float scoreDS = 0.0;
+    float score = 0.0;
+    std::vector<std::vector<double>> hitMap;
+    std::pair<double, double> maxHits;
+    unsigned long encodedLayers;
+    std::pair<std::array<double, 3>, std::array<double, 3>> closest_vtx;
+
     const bool insideCone(TYPE(tracks)& track, const DetId& id, const double dR) const;
     const GlobalPoint getPosition( const DetId& id) const;
 

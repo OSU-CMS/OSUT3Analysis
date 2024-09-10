@@ -398,6 +398,9 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
     elif "Run2015" in osusub.dataset:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2015_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2015_data.root")
+    elif "Run2022" in osusub.dataset:
+        collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2022F_data.root")
+        collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2022F_data.root")
     else:
         print("No fiducial map hist file")
     # determine which era this dataset is in

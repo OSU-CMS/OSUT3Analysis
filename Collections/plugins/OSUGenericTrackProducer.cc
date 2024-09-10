@@ -199,6 +199,9 @@ OSUGenericTrackProducer<T>::globalEndJob(const CacheData* cacheData) {
   if (cacheData->graphDef != nullptr) {
     delete cacheData->graphDef;
   }
+  if (cacheData->graphDefDS != nullptr) {
+    delete cacheData->graphDefDS;
+  }
 }
 
 template<class T> void 
@@ -468,10 +471,10 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       dijetDeltaPhiMax_ = getMaxDijetDeltaPhi(*jets);
       leadingJetMetPhi_ = getLeadingJetMetPhi(*jets, met->at(0));
 
-      vector<pat::Electron> tagElectrons = getTagElectrons(event, *triggers, *trigObjs, pv, *electrons);
-      vector<pat::Muon> tagMuons = getTagMuons(event, *triggers, *trigObjs, pv, *muons);
+      tagElectrons = getTagElectrons(event, *triggers, *trigObjs, pv, *electrons);
+      tagMuons = getTagMuons(event, *triggers, *trigObjs, pv, *muons);
 
-      auto trackInfo = getTrackInfo(track, pv, *jets, *electrons, *muons, *taus, tagElectrons, tagMuons, met->at(0), isolatedTracks, isoTrk2dedxHitInfo, gt2dedxStrip, gt2dedxPixel);
+      trackInfo = getTrackInfo(track, pv, *jets, *electrons, *muons, *taus, tagElectrons, tagMuons, met->at(0), isolatedTracks, isoTrk2dedxHitInfo, gt2dedxStrip, gt2dedxPixel);
 
       //if(trackInfos_.size() == 0) return; // only fill tree with passing tracks
       //std::cout << "Number of tracks: " << trackInfos_.size() << "event: " << eventNumber_ << std::endl;
@@ -498,8 +501,8 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
 
       // Define input tensors for all networks 
 
-      tensorflow::Tensor inputDS(tensorflow::DT_FLOAT, {100,4}); //deep sets input tensors
-      tensorflow::Tensor inputTrackDS(tensorflow::DT_FLOAT, {1,4});
+      inputDS = tensorflow::Tensor(tensorflow::DT_FLOAT, {100,4}); //deep sets input tensors
+      inputTrackDS = tensorflow::Tensor(tensorflow::DT_FLOAT, {1,4});
       
       input_ = tensorflow::Tensor(tensorflow::DT_FLOAT, tensorflow::TensorShape{1 , 96}); //fake tracks input tensors
       //input_ = tensorflow::Tensor(tensorflow::DT_FLOAT, tensorflow::TensorShape{1 , 176});
@@ -508,7 +511,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       //Deep Sets 
       ////////////////////////////////////////////////////////////////
 
-      float scoreDS = 0.0;
+      scoreDS = 0.0;
 
       //only check for deep sets score if there are rec hits around the track
       if (recHitInfos_.size() > 0){
@@ -601,7 +604,6 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
         ", detID: " << inputDS.matrix<float>()(iHit, 3) << std::endl; //<< std::endl;
       }*/
 
-      std::vector<tensorflow::Tensor> outputsDS;
       tensorflow::run(sessionDS_, {{inputTensorNameDS_, inputDS},{inputTrackTensorNameDS_, inputTrackDS}}, {outputTensorNameDS_}, &outputsDS);
 
       // print the output
@@ -617,10 +619,12 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
     // Fake Track Netowork
     ///////////////////////////////////////////////////////////////////
 
-    std::vector<std::vector<double>> hitMap = getHitMap(trackInfo.dEdxInfo);   
-    std::pair<double, double> maxHits = getMaxHits(trackInfo.dEdxInfo);
-    unsigned long encodedLayers = encodeLayers(hitMap);
-    std::pair<std::array<double, 3>, std::array<double, 3>> closest_vtx = getClosestVertices(vertexInfos_, trackInfo.vz, trackInfo.vx, trackInfo.vy);
+    score = 0.0;
+
+    hitMap = getHitMap(trackInfo.dEdxInfo);   
+    maxHits = getMaxHits(trackInfo.dEdxInfo);
+    encodedLayers = encodeLayers(hitMap);
+    closest_vtx = getClosestVertices(vertexInfos_, trackInfo.vz, trackInfo.vx, trackInfo.vy);
 
     input_.tensor<float, 2>()(0, 0) = nPV_;
     input_.tensor<float, 2>()(0, 1) = trackInfo.trackIso;
@@ -711,14 +715,13 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
     }*/
 
 
-    std::vector<tensorflow::Tensor> outputs;
     tensorflow::run(session_, {{inputTensorName_, input_}}, {outputTensorName_}, &outputs);
     /*std::cout << "Inputs " << input_.DebugString() << std::endl;*/
     /*std::cout << " -> " << outputs[0].tensor<float, 2>()(0, 0) << " " << outputs[0].tensor<float, 2>()(0, 1)  << " " << outputs[0].DebugString() << std::endl;
     std::cout << "and " << outputs[0].tensor<float, 2>()(1, 0) << " " << outputs[0].tensor<float, 2>()(1, 1) << std::endl;
     std::cout << "output tensor size: " << outputs[0].shape().dims() << " " << outputs[0].shape().dim_size(1) << std::endl;*/
 
-    float score = outputs[0].matrix<float>()(0,0);
+    score = outputs[0].matrix<float>()(0,0);
     track.set_fakeTrackScore(score);
 
 #endif // DISAPP_TRKS
