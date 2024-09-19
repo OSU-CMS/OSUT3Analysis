@@ -5,13 +5,16 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
-#include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "OSUT3Analysis/Collections/interface/Jet.h"
 
+#if CMSSW_VERSION_CODE >= CMSSW_VERSION(11,2,0)
+#include "JetMETCorrections/JetCorrector/interface/JetCorrector.h"
+#else
 #include "JetMETCorrections/Objects/interface/JetCorrector.h"
+#endif
 #include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"

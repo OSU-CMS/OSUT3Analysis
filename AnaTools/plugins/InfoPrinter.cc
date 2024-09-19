@@ -501,7 +501,7 @@ InfoPrinter::printAllTriggers (const edm::Event &event)
     {
       string name = triggerNames.triggerName (i);
       bool pass = handles_.triggers->accept (i);
-      unsigned prescale = handles_.prescales->getPrescaleForIndex (i);
+      unsigned prescale = handles_.prescales->getPrescaleForIndex<double>(i);
 
       triggers[name] = make_pair (pass, prescale);
     }

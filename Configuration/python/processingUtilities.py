@@ -280,6 +280,7 @@ def add_channels (process,
             if invalidAttributes:
                 name = cut.alias if hasattr(cut, 'alias') else cut.cutString
                 name = str(name)[12:-2]
+                print("Invalid attribute {} \n List of valid attributes \n\t {}".format(invalidAttributes, validCutAttributes))
                 exceptionString += "\ncut '{}' has invalid attributes: {}".format(name, invalidAttributes)
 
     # find all hists with invalid attributes
@@ -530,6 +531,9 @@ def add_channels (process,
             if collection == "jets" and isCRAB:
                 collectionProducer.jets.jetResolutionPayload = cms.string("Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt")
                 collectionProducer.jets.jetResSFPayload = cms.string("Fall15_25nsV2_MC_SF_AK4PFchs.txt")
+            if collection == "tracks" and isCRAB:
+                collectionProducer.tracks.graphPath = cms.string('OSUT3Analysis/Collections/data/graph_oct25.pb')
+                collectionProducer.tracks.graphPathDS = cms.string('OSUT3Analysis/Collections/data/graph.pb')
             if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer) or isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDFilter):
                 dic = vars(getattr(collectionProducer,collection))
                 for p in dic:
@@ -858,12 +862,15 @@ def add_channels (process,
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
 
-        if hasattr(process, 'EventJetVarProducer') and isCRAB:
-            process.EventJetVarProducer.isCRAB = cms.bool(True)
+        if hasattr(process, 'EventJetVarProducer'):
+            if isCRAB: process.EventJetVarProducer.isCRAB = cms.bool(True)
+            else: process.EventJetVarProducer.isCRAB = cms.bool(False)
+
 
         outFileName = ""
         if not isCRAB: outFileName = channelName + "/" + skimFilePrefix + suffix + ".root"
-        else: outFileName = skimFilePrefix + suffix + ".root"
+        else: outFileName = skimFilePrefix + "_" + channelName + ".root"
+
         poolOutputModule = cms.OutputModule ("PoolOutputModule",
             overrideInputFileSplitLevels = cms.untracked.bool (True),
             splitLevel = cms.untracked.int32 (0),
@@ -873,6 +880,10 @@ def add_channels (process,
             outputCommands = cms.untracked.vstring (outputCommands),
             dropMetaData = cms.untracked.string ("ALL"),
         )
+        if isCRAB:
+            poolOutputModule.dataset = cms.untracked.PSet(
+                filterName = cms.untracked.string(channelName)
+            )
         add_channels.endPath += poolOutputModule
         setattr (process, channelName + "PoolOutputModule", poolOutputModule)
         ########################################################################
@@ -1019,6 +1030,9 @@ def customizeMINIAODElectronVID(process, collections, usedCollections):
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
         my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff']
+    
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_"):
+        my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Winter22_122X_V1_cff']
 
     # Setup all the desired modules to be run
     for idmod in my_id_modules:
@@ -1068,6 +1082,9 @@ def customizeMINIAODPhotonVID(process, collections, usedCollections):
 
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
         my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V2_cff']
+
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_"):
+        my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_RunIIIWinter22_122X_V1_cff']
 
     # Setup all the desired modules to be run
     for idmod in my_id_modules:
