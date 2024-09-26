@@ -47,6 +47,7 @@ class getSiblings():
         self.nJobs = -1
         self.jobNumber = -1
         self.eventsPerJob = -1
+        self.redirector = None
 
         self.local=False
 
@@ -59,6 +60,7 @@ class getSiblings():
             self.getFilesFromList(args.jobNumber, args.totalJobs)
             self.findMatches()
         else:
+            print("Running default option...")
             self.getFilesFromList(args.jobNumber, args.totalJobs)
             self.findMatches()
 
@@ -126,19 +128,27 @@ class getSiblings():
                 secondary_dict = json.load(secondary_fin)
 
                 for inputFile in self.inputFiles:
-                    if inputFile not in primary_dict.keys():
-                        continue
                     p_file = inputFile
+                    if 'root://' in inputFile: 
+                        self.redirector = 'root://'+inputFile.split('://')[1]
+                        p_file = '/'+inputFile.split('://')[-1]
+                        print("saving redirector as", self.redirector)
+                    #print("looking for file", p_file)
+                    if p_file not in primary_dict.keys():
+                        continue
+                    #print("found file ", p_file)
                     primary_info = primary_dict[p_file]
-                    if p_file not in self.inputFiles: continue
+                    if p_file not in self.inputFiles and inputFile not in self.inputFiles: continue
                     sibs = []
+                    #print("looking for siblings")
                     for s_file, secondary_info in secondary_dict.items():
                         if len(np.intersect1d(primary_info['runs'], secondary_info['runs'])) == 0: continue
                         if len(np.intersect1d(primary_info['lumis'], secondary_info['lumis'])) != 0:
                             sibs.append(s_file)
-                    
+                   
+                    #print("There are {} siblings".format(len(sibs))) 
                     siblings[p_file] = sibs
-                    self.getEventList(p_file, sibs)
+                    self.getEventList(inputFile, sibs)
 
                     if self.eventsPerJob != -1 and len(self.sharedEvents) > self.eventsPerJob:
                         break                        
@@ -160,12 +170,14 @@ class getSiblings():
             return
         if not primaryFile.startswith("root://") and not self.local: 
             primaryFile = 'root://cms-xrd-global.cern.ch:/' + primaryFile
+        print("getting primary file events")
         events = r.getEventsInFile(primaryFile)
         tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
         primaryEvents = np.concatenate((primaryEvents, tmpEvents))
 
         secondaryEvents = np.array([])
-        for filename in siblings:
+        for ifile, filename in enumerate(siblings):
+            print("getting secondary file events", filename)
             if not filename.startswith("root://") and not self.local: 
                 filename = 'root://cms-xrd-global.cern.ch:/' + filename
             events = r.getEventsInFile(filename)
@@ -180,6 +192,7 @@ class getSiblings():
 
 
     def getFilesFromList(self, jobNumber, nJobs):
+        print("getting files from list")
         sys.path.append(os.getcwd())
 
         self.jobNumber = jobNumber
@@ -191,6 +204,7 @@ class getSiblings():
         #If no job number or number of jobs is passed use the full file list
         if jobNumber == -1 or nJobs == -1:
             self.inputFiles = datasetInfo.listOfFiles
+            print("Using full file list")
             return
 
         filesPerJob = int (math.floor (len (datasetInfo.listOfFiles) / nJobs))
@@ -204,7 +218,7 @@ class getSiblings():
         if runList[0].startswith('file:'):
             runList = [x.split('file:')[1] for x in runList]
 
-        #print("This is the run list:\n",runList)
+        print("This is the run list:\n",runList)
         
         self.inputFiles = runList
 
