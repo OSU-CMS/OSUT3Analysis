@@ -127,6 +127,9 @@ class getSiblings():
             with open(self.secondaryJSON) as secondary_fin:
                 secondary_dict = json.load(secondary_fin)
 
+                secondary_dataset = self.secondaryJSON.split('/')[-1].split('-')[0]
+                eventsDir = '/data/users/mcarrigan/condor/EventLists/' + secondary_dataset
+
                 for inputFile in self.inputFiles:
                     p_file = inputFile
                     if 'root://' in inputFile: 
@@ -148,7 +151,8 @@ class getSiblings():
                    
                     #print("There are {} siblings".format(len(sibs))) 
                     siblings[p_file] = sibs
-                    self.getEventList(inputFile, sibs)
+
+                    self.getEventList(inputFile, sibs, eventsDir)
 
                     if self.eventsPerJob != -1 and len(self.sharedEvents) > self.eventsPerJob:
                         break                        
@@ -162,7 +166,7 @@ class getSiblings():
 
         self.siblingDict = siblings
 
-    def getEventList(self, primaryFile, siblings):
+    def getEventList(self, primaryFile, siblings, eventsDir):
 
         primaryEvents = np.array([])
         if not primaryFile in self.inputFiles: 
@@ -177,11 +181,18 @@ class getSiblings():
 
         secondaryEvents = np.array([])
         for ifile, filename in enumerate(siblings):
-            print("getting secondary file events", filename)
-            if not filename.startswith("root://") and not self.local: 
-                filename = 'root://cms-xrd-global.cern.ch:/' + filename
-            events = r.getEventsInFile(filename)
-            tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
+            fileStr = filename.split('/')[-1]
+            filePath = '/'.join([eventsDir,fileStr+'.npz'])
+            print("Looking for event list for file", filePath, filename)
+            if os.path.exists(filePath):
+                print("found event list!")
+                tmpEvents = np.load(filePath)['eventList']
+            else:
+                print("getting secondary file events", filename)
+                if not filename.startswith("root://") and not self.local: 
+                    filename = 'root://cms-xrd-global.cern.ch:/' + filename
+                events = r.getEventsInFile(filename)
+                tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
             secondaryEvents = np.concatenate((secondaryEvents, tmpEvents))
         
         this_sharedEvents = np.intersect1d(primaryEvents, secondaryEvents)
