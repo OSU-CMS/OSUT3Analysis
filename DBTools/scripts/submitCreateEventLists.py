@@ -2,6 +2,8 @@ import os
 import argparse
 import json
 import shutil
+from OSUT3Analysis.DBTools.getSiblings import *
+import sys
 
 def writeCondorSub(exe, nJobs, outDir, jsonFile, requirements, wrapper, cmssw):
     f = open('run.sub', 'w')
@@ -34,6 +36,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-j", "--json", type=str, help="Input json of dataset to get events from")
+    parser.add_argument('-d', '--dataset', type=str, help="Dataset to get json from")
     args = parser.parse_args()
 
     jsonFile = '/home/mcarrigan/scratch0/disTracksML/CMSSW_13_0_13/src/DisappTrks/BackgroundEstimation/test/debugMuonSkim/Muon_Run2022E-EXODisappTrk-27Jun2023-v1_AOD.json'
@@ -44,6 +47,11 @@ if __name__ == "__main__":
 
     if args.json:
         jsonFile = args.json
+
+    if args.dataset:
+        jsonFile = args.dataset.replace('/', '_')[1:]
+        getSiblings.getDASInfo(args.dataset, jsonName = '{}.json'.format(jsonFile))
+        jsonFile = '{}.json'.format(args.dataset)
 
     outputDir = '/abyss/users/mcarrigan/log/DisappTrks/EventLists_{}'.format(jsonFile.split('/')[-1].split('.')[0])
 
