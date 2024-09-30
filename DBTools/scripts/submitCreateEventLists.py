@@ -51,7 +51,7 @@ if __name__ == "__main__":
     if args.dataset:
         jsonFile = args.dataset.replace('/', '_')[1:]
         getSiblings.getDASInfo(args.dataset, jsonName = '{}.json'.format(jsonFile))
-        jsonFile = '{}.json'.format(args.dataset)
+        jsonFile = '{}.json'.format(jsonFile)
 
     outputDir = '/abyss/users/mcarrigan/log/DisappTrks/EventLists_{}'.format(jsonFile.split('/')[-1].split('.')[0])
 
