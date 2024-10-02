@@ -7,6 +7,7 @@ import sys
 
 def writeCondorSub(exe, nJobs, outDir, jsonFile, requirements, wrapper, cmssw):
     f = open('run.sub', 'w')
+    uid = os.getuid()
     submitLines = """
     Universe = vanilla
     Rank = TARGET.IsLocalSlot
@@ -23,9 +24,9 @@ def writeCondorSub(exe, nJobs, outDir, jsonFile, requirements, wrapper, cmssw):
     transfer_input_files = {1}, {2}, {7}
     transfer_output_files = ""
     getenv = true
-    x509userproxy = /tmp/x509up_u1009
+    x509userproxy = /tmp/x509up_u{9}
     queue {0}
-    """.format(nJobs,exe,jsonFile,outDir,requirements[0],requirements[1],requirements[2],wrapper, cmssw)
+    """.format(nJobs,exe,jsonFile,outDir,requirements[0],requirements[1],requirements[2],wrapper, cmssw, uid)
 
     f.write(submitLines)
     f.close()    
