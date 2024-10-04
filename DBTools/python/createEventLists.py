@@ -45,10 +45,13 @@ if __name__ == "__main__":
 
     #for filename in secondary_dict.keys():
     if not filename.startswith('root://'): filename = 'root://cmsxrootd.fnal.gov:/' + filename
+    print("Getting events for", filename)
     events = r.getEventsInFile(filename)
+    events = sorted(events, key=lambda x: (x.runNum, x.lumiBlock, x.event))
     tmpEvents = np.array([str(x.runNum)+':'+str(x.lumiBlock)+':'+str(x.event) for x in events])
     print(tmpEvents, len(tmpEvents))
     fileStr = filename.split('/')[-1]
     outputFile = outputPath + fileStr
     np.savez(outputFile, eventList=tmpEvents)
+    print("saved file {} with {} events".format(outputFile, len(tmpEvents)))
     #break

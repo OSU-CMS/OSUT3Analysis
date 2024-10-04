@@ -198,7 +198,7 @@ def skimListExists(dataset):
 
 def getSiblingList(sibList, runList, siblingDataset):
   
-  print("Trying to get sibling list")
+  print("Trying to get sibling list from", sibList)
   siblings = []
   
   fin = open(sibList, 'r')

@@ -1811,7 +1811,7 @@ nJobs = {
 
     'EGamma_2022A' : 6,
     'EGamma_2022B' : 112,
-    'EGamma_2022C' : 200,
+    'EGamma_2022C' : 3354,
     'EGamma_2022D' : 33,
     'EGamma_2022E' : 800,
     'EGamma_2022F' : 1000,

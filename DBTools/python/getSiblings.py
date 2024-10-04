@@ -74,12 +74,14 @@ class getSiblings():
 
         test = ast.literal_eval(miniaod)
         files = [x['file'][0]['name'] for x in test]
+        events = [len(x['events'][0]['number']) if 'events' in list(x.keys()) else 0 for x in test]
         lumis = [[x['lumi'][0]['number']] if isinstance(x['lumi'][0]['number'], int) else x['lumi'][0]['number'] for x in test]
         runs = [[x['run'][0]['run_number']] if isinstance(x['run'][0]['run_number'], int) else x['run'][0]['run_number'] for x in test]
 
         miniDict = {}
 
-        for f, l, r in zip(files, lumis, runs):
+        for f, l, r, e in zip(files, lumis, runs, events):
+            if e == 0: continue
             miniDict[f] = {'lumis': l, 'runs': r}
 
         if jsonName:

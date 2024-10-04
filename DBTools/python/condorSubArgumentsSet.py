@@ -10,7 +10,7 @@ if lpcCAF:
     CondorSubArgumentsSet = {
         1   :  {'Executable'             :  ''},
         2   :  {'Universe'               :  'vanilla'},
-        3   :  {'request_memory '        : '2048MB'},
+        3   :  {'request_memory '        : '4092MB'},
         4   :  {'Arguments'              :  ''},
         5   :  {'Output'                 :  'condor_$(Process).out'},
         6   :  {'Error'                  :  'condor_$(Process).err'},
@@ -23,7 +23,7 @@ else:
         1   :  {'Executable'             :  ''},
         2   :  {'Universe'               :  'vanilla'},
         3   :  {'Getenv'                 :  'True'},
-        4   :  {'request_memory '        : '2048MB'},
+        4   :  {'request_memory '        : '4092MB'},
         5   :  {'Arguments'              :  ''},
         6   :  {'Output'                 :  'condor_$(Process).out'},
         7   :  {'Error'                  :  'condor_$(Process).err'},
