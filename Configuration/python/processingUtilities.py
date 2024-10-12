@@ -528,12 +528,6 @@ def add_channels (process,
         #in the outputCommands
         ########################################################################
         for collection in dir(collectionProducer):
-            if collection == "jets" and isCRAB:
-                collectionProducer.jets.jetResolutionPayload = cms.string("Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt")
-                collectionProducer.jets.jetResSFPayload = cms.string("Fall15_25nsV2_MC_SF_AK4PFchs.txt")
-            if collection == "tracks" and isCRAB:
-                collectionProducer.tracks.graphPath = cms.string('OSUT3Analysis/Collections/data/graph_oct25.pb')
-                collectionProducer.tracks.graphPathDS = cms.string('OSUT3Analysis/Collections/data/graph.pb')
             if isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDProducer) or isinstance(getattr(collectionProducer,collection) ,FWCore.ParameterSet.Modules.EDFilter):
                 dic = vars(getattr(collectionProducer,collection))
                 for p in dic:
@@ -728,9 +722,6 @@ def add_channels (process,
         ########################################################################
         if len(scalingfactorproducers):
             for module in scalingfactorproducers:
-                if isCRAB:
-                    module["electronFile"] = cms.string('electronSFs.root')
-                    module["muonFile"] = cms.string('muonSFs.root')
                 # Here we try to add the original producer as specified in the config files.
                 objectProducer = cms.EDFilter (str(module['name']),
                                         # Use filteredCollections, the ones selected by the objectSelectors
@@ -862,11 +853,6 @@ def add_channels (process,
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
 
-        if hasattr(process, 'EventJetVarProducer'):
-            if isCRAB: process.EventJetVarProducer.isCRAB = cms.bool(True)
-            else: process.EventJetVarProducer.isCRAB = cms.bool(False)
-
-
         outFileName = ""
         if not isCRAB: outFileName = channelName + "/" + skimFilePrefix + suffix + ".root"
         else: outFileName = skimFilePrefix + "_" + channelName + ".root"
@@ -879,11 +865,10 @@ def add_channels (process,
             SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
             outputCommands = cms.untracked.vstring (outputCommands),
             dropMetaData = cms.untracked.string ("ALL"),
-        )
-        if isCRAB:
-            poolOutputModule.dataset = cms.untracked.PSet(
+            dataset = cms.untracked.PSet(
                 filterName = cms.untracked.string(channelName)
-            )
+            ),
+        )
         add_channels.endPath += poolOutputModule
         setattr (process, channelName + "PoolOutputModule", poolOutputModule)
         ########################################################################

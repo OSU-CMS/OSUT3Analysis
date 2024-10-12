@@ -23,8 +23,6 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   ecalStatusToken_ (esConsumes<edm::Transition::BeginRun>()),
   trackerTopologyToken_ (esConsumes<edm::Transition::BeginRun>()),
 
-  graphPath_(cfg.getParameter<std::string>("graphPath")),
-  graphPathDS_(cfg.getParameter<std::string>("graphPathDS")),
   inputTensorName_(cfg.getParameter<std::string>("inputTensorName")),
   outputTensorName_(cfg.getParameter<std::string>("outputTensorName")),
   inputTensorNameDS_(cfg.getParameter<std::string>("inputTensorNameDS")),
@@ -178,13 +176,13 @@ OSUGenericTrackProducer<T>::initializeGlobalCache(const edm::ParameterSet& confi
   std::unique_ptr<CacheData> cache = std::make_unique<CacheData>();
 
   // load the graph def and save it
-  std::string graphPath = config.getParameter<std::string>("graphPath");
+  std::string graphPath = config.getParameter<edm::FileInPath>("graphPath").fullPath();
   if (!graphPath.empty()) {
     graphPath = edm::FileInPath(graphPath.c_str()).fullPath();
     cache->graphDef = tensorflow::loadGraphDef(graphPath);
   }
 
-  std::string graphPathDS = config.getParameter<std::string>("graphPathDS");
+  std::string graphPathDS = config.getParameter<edm::FileInPath>("graphPathDS").fullPath();
   if (!graphPathDS.empty()) {
     graphPathDS = edm::FileInPath(graphPathDS.c_str()).fullPath();
     cache->graphDefDS = tensorflow::loadGraphDef(graphPathDS);

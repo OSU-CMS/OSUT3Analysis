@@ -7,10 +7,10 @@ ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet
 {
 
   if (cfg.exists ("electronFile"))
-    electronFile_ = cfg.getParameter<string>("electronFile");
+    electronFile_ = cfg.getParameter<edm::FileInPath>("electronFile").fullPath();
 
   if (cfg.exists ("muonFile"))
-    muonFile_ = cfg.getParameter<string>("muonFile");
+    muonFile_ = cfg.getParameter<edm::FileInPath>("muonFile").fullPath();
 
   if (cfg.exists ("trackFile"))
     trackFile_ = cfg.getParameter<string>("trackFile");
