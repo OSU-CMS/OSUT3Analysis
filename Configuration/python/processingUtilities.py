@@ -231,8 +231,7 @@ def add_channels (process,
                   skim = None,
                   branchSets = None,
                   ignoreSkimmedCollections = False,
-                  forceNonEmptySkim = False,
-                  isCRAB = False):
+                  forceNonEmptySkim = False):
     if skim != None:
         print("# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated.")
         print("# Please remove from your config files.")
@@ -398,8 +397,7 @@ def add_channels (process,
         if not hasattr (add_channels, "originalName"):
             add_channels.originalName = str(process.TFileService.fileName.pythonValue()).replace("'", "")  # Remove quotes.
             outputName = add_channels.originalName
-            if not isCRAB: suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
-            else: suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "")
+            suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
             outputName = outputName.replace(".root", suffix + ".root")
             process.TFileService.fileName = cms.string(outputName)
             if os.path.islink (add_channels.originalName):
@@ -853,9 +851,11 @@ def add_channels (process,
             skimFilePrefix = "emptySkim"
             outputCommands.append ("drop *")
 
-        outFileName = ""
-        if not isCRAB: outFileName = channelName + "/" + skimFilePrefix + suffix + ".root"
-        else: outFileName = skimFilePrefix + "_" + channelName + ".root"
+        # channelName folders ARE NOT created locally, to accommodate running stuff with CRAB
+        # Running jobs with osusub is unchanged so that other utilities don't break
+        outFileName = channelName + "/" + skimFilePrefix + suffix + ".root"
+        if not osusub.batchMode: outFileName = skimFilePrefix + "_" + channelName + "_" + get_date_time_stamp() + ".root"
+        print(outFileName)
 
         poolOutputModule = cms.OutputModule ("PoolOutputModule",
             overrideInputFileSplitLevels = cms.untracked.bool (True),
