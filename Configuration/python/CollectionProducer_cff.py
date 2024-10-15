@@ -137,8 +137,8 @@ copyConfiguration (collectionProducer.genjets, collectionProducer.genMatchables)
 
 collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
     rho = cms.InputTag("fixedGridRhoFastjetAll", "", ""),
-    jetResolutionPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
-    jetResSFPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
+    jetResolutionPayload = cms.FileInPath("OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
+    jetResSFPayload = cms.FileInPath("OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
     jetResFromGlobalTag = cms.bool(False),
     jetResNewPrescription = cms.bool(False),
 )
@@ -282,12 +282,6 @@ collectionProducer.taus = cms.EDProducer ("OSUTauProducer",
 copyConfiguration (collectionProducer.taus, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
-dataDir = os.environ['CMSSW_BASE'] + '/src/OSUT3Analysis/Collections/data/'
-fakeGraphFile = "graph_oct25.pb"
-deepSetsGraphFile = "graph.pb"
-fakePath = os.path.join(dataDir, fakeGraphFile)
-deepSetsPath = os.path.join(dataDir, deepSetsGraphFile)
-
 collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     fiducialMaps = cms.PSet (
         electrons = cms.VPSet (
@@ -368,11 +362,11 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     minTrackPt       = cms.double(20.0),
     maxRelTrackIso   = cms.double(-1.0),
 
-    graphPath = cms.string(fakePath),
+    graphPath = cms.FileInPath('OSUT3Analysis/Collections/data/graph_oct25.pb'),
     inputTensorName = cms.string("Input_input"),
     outputTensorName = cms.string("sequential/Output_xyz/Sigmoid"),
 
-    graphPathDS = cms.string(deepSetsPath),
+    graphPathDS = cms.FileInPath('OSUT3Analysis/Collections/data/graph.pb'),
     inputTensorNameDS = cms.string("input"),
     inputTrackTensorNameDS = cms.string("input_track"),
     outputTensorNameDS = cms.string("model_1/output_xyz/Softmax")

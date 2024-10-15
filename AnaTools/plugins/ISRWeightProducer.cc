@@ -7,7 +7,7 @@ ISRWeightProducer::ISRWeightProducer (const edm::ParameterSet &cfg) :
   pdgIds_                  (cfg.getParameter<vector<int> >    ("pdgIds")),
   motherIdsToReject_       (cfg.getParameter<vector<int> >    ("motherIdsToReject")),
   requireLastNotFirstCopy_ (cfg.getParameter<bool>            ("requireLastNotFirstCopy")),
-  weightFile_              (cfg.getParameter<string>          ("weightFile")),
+  weightFile_              (cfg.getParameter<edm::FileInPath>          ("weightFile").fullPath()),
   weightHist_              (cfg.getParameter<vector<string> > ("weightHist")),
   weights_                 ({})
 {

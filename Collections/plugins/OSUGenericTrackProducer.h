@@ -271,9 +271,6 @@ template<class T>
     std::pair<std::array<double, 3>, std::array<double, 3>> getClosestVertices(const std::vector<VertexInfo>, float track_vz, float track_vx, float track_vy) const;
     int getDetectorIndex(const int) const;
 
-    std::string graphPath_;
-    std::string graphPathDS_;
-
     std::string inputTensorName_;
     std::string outputTensorName_;
     std::string inputTensorNameDS_;

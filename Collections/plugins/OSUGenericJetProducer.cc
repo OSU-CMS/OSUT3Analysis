@@ -10,8 +10,8 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
   jetCorrectionPayloadName_ (cfg.getParameter<string> ("jetCorrectionPayload")),
-  jetResolutionPayload_ (cfg.getParameter<string> ("jetResolutionPayload")),
-  jetResSFPayload_      (cfg.getParameter<string> ("jetResSFPayload")),
+  jetResolutionPayload_ (cfg.getParameter<edm::FileInPath> ("jetResolutionPayload").fullPath()),
+  jetResSFPayload_      (cfg.getParameter<edm::FileInPath> ("jetResSFPayload").fullPath()),
   jetResFromGlobalTag_  (cfg.getParameter<bool> ("jetResFromGlobalTag")),
   jetResNewPrescription_ (cfg.getParameter<bool> ("jetResNewPrescription")),
 

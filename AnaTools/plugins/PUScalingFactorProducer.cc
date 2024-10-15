@@ -3,7 +3,7 @@
 
 PUScalingFactorProducer::PUScalingFactorProducer(const edm::ParameterSet &cfg) :
    EventVariableProducer(cfg),
-   PU_               (cfg.getParameter<string>("PU")),
+   PU_               (cfg.getParameter<edm::FileInPath>("PU").fullPath()),
    dataset_          (cfg.getParameter<string>("dataset")),
    target_           (cfg.getParameter<string>("target")),
    targetUp_         ((cfg.exists("targetUp"))   ? cfg.getParameter<string>("targetUp")   : ""),
