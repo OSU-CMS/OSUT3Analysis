@@ -147,13 +147,13 @@ if __name__ == "__main__":
 
     writeCondorSub(script, nJobs, outputDir, jsonFile, requirements, wrapper, cmssw)
 
-    '''if not args.resubmit:
+    if not args.resubmit:
         shutil.copy(script, outputDir)
         shutil.copy('run.sub', outputDir)
         shutil.copy(jsonFile, outputDir)
-        shutil.copy('eventListWrapper.sh', outputDir)'''
+        shutil.copy('eventListWrapper.sh', outputDir)
 
-    #os.system('condor_submit run.sub')
+    os.system('condor_submit run.sub')
 
 
 
