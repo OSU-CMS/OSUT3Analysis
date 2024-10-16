@@ -52,7 +52,6 @@ def checkFailures(jsonFile, logDir):
 
     #loop over output files to check for issues
     for filename in os.listdir(logDir):
-        needsResubmit = False
         if not filename.endswith('.out'): continue
 
         #get run number
@@ -62,24 +61,23 @@ def checkFailures(jsonFile, logDir):
         thisFileName = files[int(runNum)]
         eventListDir = '/data/users/mcarrigan/condor/EventLists/{}/{}.npz'.format(outputDir, thisFileName)
         if not os.path.exists(eventListDir):
-            needsResubmit = True
+            resubmitJobs.append(runNum)
             print("Output file {} does not exist".format(eventListDir), runNum)
+            continue
         
         if checkEmpty(eventListDir):
-            needsResubmit = True
+            resubmitJobs.append(runNum)
             print("Output file {} is empty".format(eventListDir), runNum)
+            continue
 
 
         #check if there are any file open failures
         with open('/'.join([logDir, filename]), 'r') as fin:
             for line in fin:
                 if 'Failed to open file after 5 attempts' in line:
-                    needsResubmit = True
+                    resubmitJobs.append(runNum)
                     print("File {} had trouble opening root files".format(filename), runNum)
                     break
-
-        if needsResubmit:
-            resubmitJobs.append(runNum)
 
 
     resubmitScript = logDir + '/resubmit.sub'
