@@ -491,7 +491,7 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   set_primaryPFIsolations(pfCandidates);
   set_additionalPFIsolations(pfCandidates, lostTracks);
 
-#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM && DATA_FORMAT != MINI_AOD_ONLY_2022_CUSTOM
   // if the tracks collection itself is CandidateTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() != "candidateTrackProducer") {
     maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
@@ -519,7 +519,7 @@ osu::DisappearingTrack::~DisappearingTrack ()
   eleVtx_dzCuts_endcap_.clear();
 }
 
-#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM && DATA_FORMAT != MINI_AOD_ONLY_2022_CUSTOM
 const edm::Ref<vector<CandidateTrack> > &
 osu::DisappearingTrack::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &candidateTracks, edm::Ref<vector<CandidateTrack> > &matchedCandidateTrack, double &dRToMatchedCandidateTrack) const
 {

@@ -80,7 +80,7 @@ namespace osu {
       enum RhoType { All, Calo, CentralCalo };
       enum CaloType { Sum, EM, Had };
 
-#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM && DATA_FORMAT != MINI_AOD_ONLY_2022_CUSTOM
       const edm::Ref<vector<CandidateTrack> > matchedCandidateTrack () const { return matchedCandidateTrack_; };
       const double dRToMatchedCandidateTrack () const { return (IS_INVALID(dRToMatchedCandidateTrack_)) ? MAX_DR : dRToMatchedCandidateTrack_; };
 #endif
@@ -359,7 +359,7 @@ namespace osu {
       void set_additionalPFIsolations(const edm::Handle<vector<pat::PackedCandidate> > &, const edm::Handle<vector<pat::PackedCandidate> > &);
       void set_caloValues(); //mcarrigan
 
-#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM && DATA_FORMAT != MINI_AOD_ONLY_2022_CUSTOM
       edm::Ref<vector<CandidateTrack> > matchedCandidateTrack_;
       double dRToMatchedCandidateTrack_;
       double maxDeltaR_candidateTrackMatching_;
