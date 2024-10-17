@@ -907,6 +907,8 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("    print(\"No valid grid proxy. Not adding sibling files.\")\n")
         if arguments.localSkim != None:
             ConfigFile.write("siblings = ['file:{0}{1}'.format(" + arguments.localSkim + ", sib.split('/')[-1]) for sib in siblings] \n")
+        elif arguments.Redirector != "":
+            ConfigFile.write("siblings = ['root://{0}:/{1}'.format(\'" + RedirectorDic[arguments.Redirector] + "\', sib) for sib in siblings] \n")
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
 
     # If the dataset has a Run3 skim sibling defined and not run over skim, add the corresponding files to the secondary file names
@@ -923,6 +925,8 @@ def MakeSpecificConfig(Dataset, Directory, SkimDirectory, Label, SkimChannelName
         ConfigFile.write("    print( \"No valid grid proxy. Not adding sibling files.\")\n" )
         if arguments.localSkim != None:
             ConfigFile.write("siblings = ['file:{0}{1}'.format(\'" + arguments.localSkim + "\', sib.split('/')[-1]) for sib in siblings] \n")
+        elif arguments.Redirector != "":
+            ConfigFile.write("siblings = ['root://{0}:/{1}'.format(\'" + RedirectorDic[arguments.Redirector] + "\', sib) for sib in siblings] \n")
         ConfigFile.write("pset.process.source.secondaryFileNames.extend(siblings)\n\n")
     
     #if ...: make this an if statement for running over no cuts
