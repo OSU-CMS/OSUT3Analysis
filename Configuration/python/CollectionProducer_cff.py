@@ -149,6 +149,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VE
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
     collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFchs")
+    collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
 
@@ -312,6 +313,14 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),
     HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),
 
+    # ONLY UNCOMMENT THIS IF USING MINIAOD ONLY EVENTS PROCESSING AND NOT USING
+    # DEEPSETS; DEEPSETS USE THE OLD COLLECTIONS ABOVE TO GET THE CALO IMAGE
+    # WHEN USING MINIAOD ONLY THE ECALO CUT CAN BE CHANGED TO THE CALO JET BASED
+    # CALCULATION
+    # EBRecHits          =  cms.InputTag  ("reducedEgamma", "reducedEBRecHits"),
+    # EERecHits          =  cms.InputTag  ("reducedEgamma", "reducedEERecHits"),
+    # HBHERecHits        =  cms.InputTag  ("slimmedHcalRecHits", "reducedHcalRecHits"),
+
     rhoTag             =  cms.InputTag  ("fixedGridRhoFastjetAll"),
     rhoCaloTag         =  cms.InputTag  ("fixedGridRhoFastjetAllCalo"),
     rhoCentralCaloTag  =  cms.InputTag  ("fixedGridRhoFastjetCentralCalo"),
@@ -403,9 +412,10 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
         collectionProducer.tracks.fiducialMaps.muons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
 
 # For 94X/102X which use electron VIDs, define the vertexing requirements for veto electrons
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
     # Cut values are ordered by ID, as: veto, loose, medium, tight
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later
+    # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun3#Working_points_for_Run3_v1_ID_tr
     collectionProducer.tracks.eleVtx_d0Cuts_barrel = cms.vdouble(0.05, 0.05, 0.05, 0.05)
     collectionProducer.tracks.eleVtx_dzCuts_barrel = cms.vdouble(0.10, 0.10, 0.10, 0.10)
     collectionProducer.tracks.eleVtx_d0Cuts_endcap = cms.vdouble(0.10, 0.10, 0.10, 0.10)
