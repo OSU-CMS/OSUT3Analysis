@@ -143,7 +143,7 @@ namespace osu
       void PrintTrackHitCategoryPatterns(const reco::HitPattern::HitCategory category) const;
       void PrintTrackHitPatternInfo() const;
 
-#if DATA_FORMAT != MINI_AOD_2017 && DATA_FORMAT != MINI_AOD_2022_CUSTOM
+#if DATA_FORMAT != MINI_AOD_2017 && DATA_FORMAT != MINI_AOD_2022_CUSTOM && DATA_FORMAT != MINI_AOD_ONLY_2022_CUSTOM
       const double innerP() const;
       const double outerP() const;
       const double fbrem() const;

@@ -1,6 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 from OSUT3Analysis.Configuration.configurationOptions import *
+from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat
 import copy
 import os
 
@@ -313,14 +314,6 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     EERecHits          =  cms.InputTag  ("reducedEcalRecHitsEE"),
     HBHERecHits        =  cms.InputTag  ("reducedHcalRecHits", "hbhereco"),
 
-    # ONLY UNCOMMENT THIS IF USING MINIAOD ONLY EVENTS PROCESSING AND NOT USING
-    # DEEPSETS; DEEPSETS USE THE OLD COLLECTIONS ABOVE TO GET THE CALO IMAGE
-    # WHEN USING MINIAOD ONLY THE ECALO CUT CAN BE CHANGED TO THE CALO JET BASED
-    # CALCULATION
-    # EBRecHits          =  cms.InputTag  ("reducedEgamma", "reducedEBRecHits"),
-    # EERecHits          =  cms.InputTag  ("reducedEgamma", "reducedEERecHits"),
-    # HBHERecHits        =  cms.InputTag  ("slimmedHcalRecHits", "reducedHcalRecHits"),
-
     rhoTag             =  cms.InputTag  ("fixedGridRhoFastjetAll"),
     rhoCaloTag         =  cms.InputTag  ("fixedGridRhoFastjetAllCalo"),
     rhoCentralCaloTag  =  cms.InputTag  ("fixedGridRhoFastjetCentralCalo"),
@@ -410,6 +403,9 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
     if "_201" in osusub.datasetLabel:
         collectionProducer.tracks.fiducialMaps.electrons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
         collectionProducer.tracks.fiducialMaps.muons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
+    if "_202" in osusub.datasetLabel:
+        collectionProducer.tracks.fiducialMaps.electrons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_202'):])
+        collectionProducer.tracks.fiducialMaps.muons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_202'):])
 
 # For 94X/102X which use electron VIDs, define the vertexing requirements for veto electrons
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
@@ -420,6 +416,11 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VE
     collectionProducer.tracks.eleVtx_dzCuts_barrel = cms.vdouble(0.10, 0.10, 0.10, 0.10)
     collectionProducer.tracks.eleVtx_d0Cuts_endcap = cms.vdouble(0.10, 0.10, 0.10, 0.10)
     collectionProducer.tracks.eleVtx_dzCuts_endcap = cms.vdouble(0.20, 0.20, 0.20, 0.20)
+
+if dataFormat == 'MINI_AOD_ONLY_2022_CUSTOM':
+    collectionProducer.tracks.EBRecHits   =  cms.InputTag  ("reducedEgamma", "reducedEBRecHits")
+    collectionProducer.tracks.EERecHits   =  cms.InputTag  ("reducedEgamma", "reducedEERecHits")
+    collectionProducer.tracks.HBHERecHits =  cms.InputTag  ("slimmedHcalRecHits", "reducedHcalRecHits")
 
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------

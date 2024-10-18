@@ -4,21 +4,24 @@
 // bit 0: datatier flag (0=AOD, 1=MINIAOD)
 // bit 1: 2017 flag (0=not 2017, 1=2017 -- only relevant for MINIAOD in 2017)
 // bit 2: custom flag (0=not custom, 1=custom)
+// bit 3: 2022 flag (0=not 2022, 1=2022)
+// bit 4: only flag (0=not only MiniAOD, 1=only MiniAOD)
 
-#define AOD                  0b0000 // 0
-#define MINI_AOD             0b0001 // 1
-#define AOD_2017             0b0010 // 2 (unused)
-#define MINI_AOD_2017        0b0011 // 3
-#define AOD_CUSTOM           0b0100 // 4
-#define MINI_AOD_CUSTOM      0b0101 // 5
-#define AOD_2017_CUSTOM      0b0110 // 6 (unused)
-#define MINI_AOD_2017_CUSTOM 0b0111 // 7
-#define AOD_2022             0b1000 // 8
-#define MINI_AOD_2022        0b1001 // 9 
-#define AOD_2022_CUSTOM      0b1100 // 12
-#define MINI_AOD_2022_CUSTOM 0b1101 // 13
+#define AOD                       0b00000 // 0
+#define MINI_AOD                  0b00001 // 1
+#define AOD_2017                  0b00010 // 2 (unused)
+#define MINI_AOD_2017             0b00011 // 3
+#define AOD_CUSTOM                0b00100 // 4
+#define MINI_AOD_CUSTOM           0b00101 // 5
+#define AOD_2017_CUSTOM           0b00110 // 6 (unused)
+#define MINI_AOD_2017_CUSTOM      0b00111 // 7
+#define AOD_2022                  0b01000 // 8
+#define MINI_AOD_2022             0b01001 // 9
+#define AOD_2022_CUSTOM           0b01100 // 12
+#define MINI_AOD_2022_CUSTOM      0b01101 // 13
+#define MINI_AOD_ONLY_2022_CUSTOM 0b11101 // 15
 
-#define DATA_FORMAT MINI_AOD_2022_CUSTOM
+#define DATA_FORMAT MINI_AOD_ONLY_2022_CUSTOM
 
 #define DATA_FORMAT_FROM_MINIAOD (DATA_FORMAT & 0b1) == 1
 #define DATA_FORMAT_FROM_AOD (DATA_FORMAT & 0b1) == 0
@@ -26,7 +29,7 @@
 #define DATA_FORMAT_IS_CUSTOM ((DATA_FORMAT >> 2) & 0b1) == 1
 #define DATA_FORMAT_IS_2022 ((DATA_FORMAT >> 3) & 0b1) == 1
 
-#define DATA_FORMAT_IS_VALID (DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD_2017 || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD_CUSTOM || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_2017_CUSTOM || DATA_FORMAT == MINI_AOD_2017_CUSTOM || DATA_FORMAT == MINI_AOD_2022 || DATA_FORMAT == MINI_AOD_2022_CUSTOM)
+#define DATA_FORMAT_IS_VALID (DATA_FORMAT == AOD || DATA_FORMAT == MINI_AOD || DATA_FORMAT == AOD_2017 || DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == AOD_CUSTOM || DATA_FORMAT == MINI_AOD_CUSTOM || DATA_FORMAT == AOD_2017_CUSTOM || DATA_FORMAT == MINI_AOD_2017_CUSTOM || DATA_FORMAT == MINI_AOD_2022 || DATA_FORMAT == MINI_AOD_2022_CUSTOM || DATA_FORMAT == MINI_AOD_ONLY_2022 || DATA_FORMAT == MINI_AOD_ONLY_2022_CUSTOM)
 
 #define INVALID_TYPE void *
 
