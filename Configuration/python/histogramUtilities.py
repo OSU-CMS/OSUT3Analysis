@@ -207,8 +207,10 @@ def getRawEvts(num, err):
     N = round(math.pow(num,2) / math.pow(err,2)) if err else 0
     return N
 
-def getHist(sample,condor_dir,channel,hist):
-    dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+def getHist(sample,condor_dir,channel,hist,condorLinked=True):
+    dataset_file = ''
+    if condorLinked: dataset_file = "condor/%s/%s.root" % (condor_dir,sample)
+    else: dataset_file = "%s/%s.root" % (condor_dir,sample)
     inputFile = TFile(dataset_file)
     h0 = inputFile.Get(channel + "/" + hist)
     if not h0:
