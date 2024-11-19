@@ -1321,9 +1321,9 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
   info.dRMinJet = -1;
   for(const auto &jet : jets) {
     if(jet.pt() > 30 &&
-        fabs(jet.eta()) < 4.5 &&
-        (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
-          || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0))) {
+       fabs(jet.eta()) < 4.5 &&
+       anatools::jetPassesTightLepVeto(jet) // This automatically uses the correct jet ID criteria
+      ) {
       double dR = deltaR(track, jet);
       if(info.dRMinJet < 0 || dR < info.dRMinJet) info.dRMinJet = dR;
     }

@@ -1,4 +1,5 @@
 #include "OSUT3Analysis/Collections/interface/TrackBase.h"
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h" // Needed to include anatools::jetPassesTightLepVeto; doesn't work if added in TrackBase.h
 
 #if IS_VALID(tracks)
 
@@ -189,8 +190,8 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track,
 #else
       if(jet.pt() > 30 &&
          fabs(jet.eta()) < 4.5 &&
-         (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
-            || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0)))
+         anatools::jetPassesTightLepVeto(jet) // This automatically uses the correct jet ID criteria
+        )
 #endif
       {
         double dR = deltaR(*this, jet);
