@@ -8749,8 +8749,8 @@ labels = {
 
   #Run3 2022EE
   'WToLNu_4Jets_2022EE' : "W#rightarrowl#nu",
-  'DYto2L_4jets_M10to50_2022EE' : "Z#rightarrowll M(5to50)",
-  'DYJetsToLL_M50_2022EE' : "Z#rightarrowll M(10to50)",
+  'DYto2L_4jets_M10to50_2022EE' : "Z#rightarrowll M(10to50)",
+  'DYJetsToLL_M50_2022EE' : "Z#rightarrowll M(50)",
   'TbarBtoLminusNuB_2022EE' : "#bar{t}b#rightarrowl#nub",
   'TBbartoLplusNuBbar_2022EE' : "t#bar{b}#rightarrowl#nu#bar{b}",
   'TbarQtoLNu_2022EE' : "#bar{t}q#rightarrowl#nu",
