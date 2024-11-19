@@ -101,8 +101,7 @@ def getHistIntegral(sample,condor_dir,channel,hist,xlo,xhi):
     if xhi > xmax:
         # print "xhi is outside the range of the histogram, will include all the overflow instead"
         xhiBin = histogram.GetXaxis().FindBin(float(xhi))
-    #intError = Double (0.0)
-    intError = 0.0
+    intError = c_double(0.0)
     integral = histogram.IntegralAndError(xloBin, xhiBin, intError)
 
     inputFile.Close()

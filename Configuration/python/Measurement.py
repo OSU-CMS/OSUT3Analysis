@@ -10,8 +10,8 @@ class SimpleMeasurement:
     _uncertaintyDown = _nan
     _uncertaintyUp = _nan
     _printTeX = False
-    _maxSigFigsInUncertainty = 2
-    _printLongFormat = False
+    _maxSigFigsInUncertainty = 4
+    _printLongFormat = True
     _printUncertainty = True
 
     def __init__ (self, centralValue = None, uncertaintyDown = None, uncertaintyUp = None):

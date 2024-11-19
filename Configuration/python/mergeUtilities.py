@@ -20,7 +20,8 @@ from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 from OSUT3Analysis.DBTools.condorSubArgumentsSet import *
 import FWCore.ParameterSet.Config as cms
-from ROOT import TFile, TNetXNGFile
+from ROOT import TFile, TNetXNGFile, gErrorIgnoreLevel, kError
+
 
 NTHREADS_FOR_BATCH_MERGING = 1
 
@@ -580,3 +581,39 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
     fin = open (flogName)
     shutil.copyfileobj (fin, sys.stdout)
     fin.close ()
+
+def getFilesFromCrab(inputDir, inputStr=None, countEvents=False):
+
+    fileList = []
+    totalEvents = 0
+
+    gErrorIgnoreLevel = kError
+
+    for filename in os.listdir(inputDir):
+        if not filename.endswith('.root'): continue
+        if inputStr is not None and not filename.startswith(inputStr): continue
+
+        filePath = '/'.join([inputDir, filename])
+        try:
+            fin = TFile.Open(filePath, 'READ')
+            iszombie = fin.IsZombie()
+            if iszombie:
+                print("File {} is a zombie file, skipping...".format(filePath))
+                continue
+            
+            fileList.append(filePath)
+
+            if countEvents:
+                for key in fin.GetListOfKeys():
+                    if key.GetClassName() == "TDirectoryFile":
+                        directory = key.ReadObj()
+                        if 'eventCounter' in directory.GetListOfKeys():
+                            events = directory.Get("eventCounter").GetBinContent(1)
+                            totalEvents += events
+                            break
+            fin.Close()
+        except:
+            print("Unable to open and check file {}".format(filePath))
+
+        
+    return fileList, totalEvents

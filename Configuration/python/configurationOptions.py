@@ -573,6 +573,11 @@ datasets = [
   'AMSB_chargino_100GeV_100cm_124X',
   'AMSB_chargino_Pythia700GeV_100cm_124X',
   'AMSB_chargino_Pythia100GeV_100cm_124X',
+  'AMSB_wino_700GeV_10cm_2022EE',
+  'AMSB_wino_700GeV_100cm_2022EE',
+  'AMSB_wino_700GeV_1000cm_2022EE',
+  'AMSB_wino_700GeV_10000cm_2022EE',
+
 
   'Cosmics',
 
@@ -2886,6 +2891,11 @@ nJobs = {
   'AMSB_chargino_100GeV_100cm_124X' : 9999,
   'AMSB_chargino_Pythia700GeV_100cm_124X' : 9999,
   'AMSB_chargino_Pythia100GeV_100cm_124X' : 9999,
+  'AMSB_wino_700GeV_10cm_2022EE' : 9999,
+  'AMSB_wino_700GeV_100cm_2022EE' : 9999,
+  'AMSB_wino_700GeV_1000cm_2022EE' : 9999,
+  'AMSB_wino_700GeV_10000cm_2022EE' : 9999,
+
   'Cosmics': 999,
 
   #Run3 2022EE
@@ -4297,6 +4307,11 @@ maxEvents = {
   'AMSB_chargino_100GeV_100cm_124X' : -1,
   'AMSB_chargino_Pythia700GeV_100cm_124X' : -1,
   'AMSB_chargino_Pythia100GeV_100cm_124X' : -1,
+  'AMSB_wino_700GeV_10cm_2022EE' : -1,
+  'AMSB_wino_700GeV_100cm_2022EE' : -1,
+  'AMSB_wino_700GeV_1000cm_2022EE' : -1,
+  'AMSB_wino_700GeV_10000cm_2022EE' : -1,
+
   'Cosmics' : -1,
 
   #Run3 2022EE
@@ -5772,6 +5787,11 @@ types = {
   'AMSB_chargino_100GeV_100cm_124X' : "signalMC",
   'AMSB_chargino_Pythia700GeV_100cm_124X' : "signalMC",
   'AMSB_chargino_Pythia100GeV_100cm_124X' : "signalMC",
+  'AMSB_wino_700GeV_10cm_2022EE' : "signalMC",
+  'AMSB_wino_700GeV_100cm_2022EE' : "signalMC",
+  'AMSB_wino_700GeV_1000cm_2022EE' : "signalMC",
+  'AMSB_wino_700GeV_10000cm_2022EE' : "signalMC",
+
   'Cosmics' : "bgMC",
 
   #Run3 2022EE
@@ -7245,6 +7265,11 @@ colors = {
   'AMSB_chargino_100GeV_100cm_124X' : 1,
   'AMSB_chargino_Pythia700GeV_100cm_124X' : 1,
   'AMSB_chargino_Pythia100GeV_100cm_124X' : 1,
+  'AMSB_wino_700GeV_10cm_2022EE' : 1,
+  'AMSB_wino_700GeV_100cm_2022EE' : 1,
+  'AMSB_wino_700GeV_1000cm_2022EE' : 1,
+  'AMSB_wino_700GeV_10000cm_2022EE' : 1,
+
   'Cosmics' : 1,
 
   #Run3 2022EE
@@ -8745,6 +8770,11 @@ labels = {
   'AMSB_chargino_100GeV_100cm_124X' : "AMSB chargino placeholder",
   'AMSB_chargino_Pythia700GeV_100cm_124X' : "AMSB chargino placeholder",
   'AMSB_chargino_Pythia100GeV_100cm_124X' : "AMSB chargino placeholder",
+  'AMSB_wino_700GeV_10cm_2022EE' : "AMSB chargino placeholder",
+  'AMSB_wino_700GeV_100cm_2022EE' : "AMSB chargino placeholder",
+  'AMSB_wino_700GeV_1000cm_2022EE' : "AMSB chargino placeholder",
+  'AMSB_wino_700GeV_10000cm_2022EE' : "AMSB chargino placeholder",
+
   'Cosmics' : "Cosmic MC",
 
   #Run3 2022EE
@@ -8796,6 +8826,50 @@ labels = {
 
   'DYJetsToLL_M50_merged': 'DY Jets to LL - M50',
 }
+
+eventCounts = {
+
+    'WToLNu_4Jets_2022EE' : 348442033,
+    'DYto2L_4jets_M10to50_2022EE' : 520098100, 
+    'DYJetsToLL_M50_2022EE' : 94947242,
+    'TbarBtoLminusNuB_2022EE' : 2762668,
+    'TBbartoLplusNuBbar_2022EE' : 4469700,
+    'TbarQtoLNu_2022EE' : 19537644,
+    'TQbartoLNu_2022EE' : 32667420,
+    'TbarWplusto2L2Nu_2022EE' : 8576050,
+    'TbarWplustoLNu2Q_2022EE' : 17273607,
+    'TWminusto2L2Nu_2022EE' : 8581640,
+    'TWminustoLNu2Q_2022EE' : 15859351,
+    'WW_2022EE' : 53619680,
+    'WZ_2022EE' : 26887398,
+    'ZZ_2022EE' : 4043040,
+    'TTto2L2Nu_2022EE' : 85777130,
+    'TTtoLNu2Q_2022EE' : 270699232,
+    'TTto4Q_2022EE' : 182664317,
+    'QCD_PT15to30_2022EE' : 3998528,
+    'QCD_PT30to50_2022EE' : 3998508,
+    'QCD_PT50to80_2022EE' : 19907875,
+    'QCD_PT80to120_2022EE' : 29904828,
+    'QCD_PT120to170_2022EE' : 27792681,
+    'QCD_PT170to300_2022EE' : 28829984,
+    'QCD_PT300to470_2022EE' : 56016158,
+    'QCD_PT470to600_2022EE' : 26933590,
+    'QCD_PT600to800_2022EE' : 65322580,
+    'QCD_PT800to1000_2022EE' : 38576235,
+    'QCD_PT1000to1400_2022EE' : 19335155,
+    'QCD_PT1400to1800_2022EE' : 5690478,
+    'QCD_PT1800to2400_2022EE' : 2914410,
+    'QCD_PT2400to3200_2022EE' : 1900526,
+    'QCD_PT3200_2022EE' : 799436,
+    'Zto2Nu_4Jets_HT100to200_2022EE' : 106149804,
+    'Zto2Nu_4Jets_HT200to400_2022EE' : 67339696,
+    'Zto2Nu_4Jets_HT400to800_2022EE' : 7096747,
+    'Zto2Nu_4Jets_HT800to1500_2022EE' : 1658103,
+    'Zto2Nu_4Jets_HT1500to2500_2022EE' : 1790534,
+    'Zto2Nu_4Jets_HT2500_2022EE' : 1651711
+
+}
+
 
 crossSections = {
     # Cross sections for samples stored on T3 should be registered in database.
@@ -9705,6 +9779,11 @@ crossSections = {
   'AMSB_chargino_100GeV_100cm_124X' : 40.00,
   'AMSB_chargino_Pythia700GeV_100cm_124X' : 40.00,
   'AMSB_chargino_Pythia100GeV_100cm_124X' : 40.00,
+  'AMSB_wino_700GeV_10cm_2022EE': 0.01629414,
+  'AMSB_wino_700GeV_100cm_2022EE': 0.01629414,
+  'AMSB_wino_700GeV_1000cm_2022EE': 0.01629414,
+  'AMSB_wino_700GeV_10000cm_2022EE': 0.01629414,
+
   'Cosmics' : 1.0,
 
   #Run3 2022EE; need to get correct values with GEN or EXO MC&I
