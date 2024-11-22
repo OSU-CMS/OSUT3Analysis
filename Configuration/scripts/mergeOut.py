@@ -66,7 +66,7 @@ if arguments.dir is not None:
     #    print("There is no ntuples file for {}, either use the hist files to get event counts or add a new list of event counts".format(os.environ.get("CMSSW_BASE")))
     
     filesToMerge, totalEvents = getFilesFromCrab(arguments.dir, arguments.fileStr)
-    print(filesToMerge)
+    #print(filesToMerge)
     if arguments.IntLumi: 
         # If you are specifiying a luminosity value, you are running over MC and should
         # run this block of code
@@ -100,15 +100,14 @@ if arguments.dir is not None:
     else:
         outputFile = '{}/{}.root'.format(arguments.dir, arguments.Dataset)
 
-    # FIXME: Clean up implementation so values are set better (get rid of 0.0 for intLumi and {} in
-    # MakeMergingConfigForCondor and GetCompleteOrderedArgumentsSet
     if arguments.UseCondor:
         print( '......................Using Condor!...........................' )
         IntLumi = 0.0
+        Weight = 1.0
         currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
         GetCompleteOrderedArgumentsSet({}, currentCondorSubArgumentsSet)
-        MakeSubmissionScriptForMerging(CondorDir, currentCondorSubArgumentsSet, arguments.Dataset)
-        MakeMergingConfigForCondorCrab(filesToMerge, OutputDir, arguments.Dataset, Weight, filesPerJob=100, verbose=True)
+        number_of_jobs = MakeMergingConfigForCondorCrab(filesToMerge, OutputDir, arguments.Dataset, Weight, filesPerJob=2, verbose=True)
+        MakeSubmissionScriptForMergingCrab(CondorDir, filesToMerge, number_of_jobs, currentCondorSubArgumentsSet)
         os.chdir(OutputDir)
         if arguments.NotToExecute:
             print( 'Configuration files created in ' + str(OutputDir) + ' directory but no jobs submitted.\n' )

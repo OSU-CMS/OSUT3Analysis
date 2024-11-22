@@ -56,6 +56,26 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
             SubmitFile.write(list(currentCondorSubArgumentsSet[argument].keys())[0] + ' = ' + list(currentCondorSubArgumentsSet[argument].values())[0] + '\n')
     SubmitFile.close()
 
+def MakeSubmissionScriptForMergingCrab(directory, input_file_list, number_of_jobs, currentCondorSubArgumentsSet):
+    SubmitFile = open(directory + '/condorMerging.sub', 'w')
+    SubmitFile.write('Transfer_Input_files = merge.py\n')
+    wroteCPUs = False
+    for argument in sorted(currentCondorSubArgumentsSet):
+        if 'Executable' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Executable'] == "":
+            SubmitFile.write('Executable = merge.py\n')
+        elif 'Arguments' in currentCondorSubArgumentsSet[argument] and currentCondorSubArgumentsSet[argument]['Arguments'] == "":
+            SubmitFile.write('Arguments = $(Process) ' + '\n\n')
+        elif len (list(currentCondorSubArgumentsSet[argument].keys ())) > 0 and list(currentCondorSubArgumentsSet[argument].keys ())[0].lower () == "request_cpus":
+            SubmitFile.write ('request_cpus = ' + str (NTHREADS_FOR_BATCH_MERGING) + '\n') # explicitly request 8 CPU cores
+            wroteCPUs = True
+        elif 'Queue' in currentCondorSubArgumentsSet[argument]:
+            if not wroteCPUs:
+                SubmitFile.write ('request_cpus = ' + str (NTHREADS_FOR_BATCH_MERGING) + '\n') # explicitly request 8 CPU cores
+        else:
+            SubmitFile.write(list(currentCondorSubArgumentsSet[argument].keys())[0] + ' = ' + list(currentCondorSubArgumentsSet[argument].values())[0] + '\n')
+    SubmitFile.write('Queue ' + str(number_of_jobs) +'\n')
+    SubmitFile.close()
+    
 ###############################################################################
 #                 Make the configuration for condor to run over.              #
 ###############################################################################
@@ -102,6 +122,7 @@ def MakeMergingConfigForCondorCrab(input_files, output_directory,
     MergeScript.write("print( f'Finished merging file selection {Index}')")
     MergeScript.close()
     os.chmod (output_directory + '/merge.py', 0o755)
+    return group_size
 
 ###############################################################################
 #                       Get the exit code of condor jobs.                     #
@@ -387,12 +408,13 @@ def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbo
     try:
         localThreadLog += str(subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT))
     except subprocess.CalledProcessError as e:
-        localThreadLog += e.output
+        localThreadLog += e.output.encode()
     semaphore.release ()
 
     lock.acquire ()
     threadLog += localThreadLog
     outputFiles.append (outputDir + '/' + outputFile)
+    print(outputFiles)
     lock.release ()
 
 def mergeOutputFiles(nThreadsActive, ):
@@ -445,7 +467,7 @@ def mergeCrabFiles(rootFiles, OutputDir, dataSet, Weight, verbose ,nThreadsActiv
     semaphore = Semaphore (nThreadsActive)
 
     # start threads, each of which merges some fraction of the input files
-    filesPerThread = 100 # to be adjusted if need be
+    filesPerThread = 2 # to be adjusted if need be
     nThreadTarget = nThreadsActive
     nFiles = len (rootFiles)
     nThreads = int (math.ceil (float (nFiles) / float (filesPerThread)))
@@ -455,6 +477,7 @@ def mergeCrabFiles(rootFiles, OutputDir, dataSet, Weight, verbose ,nThreadsActiv
     threads = []
     for i in range (0, nThreads):
         fileSubset = rootFiles[(i * filesPerThread):((i + 1) * filesPerThread)]
+        print(fileSubset)
         if len (fileSubset):
             threads.append (Thread (target = MergeIntermediateFile, args = (fileSubset, OutputDir, dataSet, Weight, i, verbose)))
             threads[-1].start ()
@@ -473,8 +496,8 @@ def mergeCrabFiles(rootFiles, OutputDir, dataSet, Weight, verbose ,nThreadsActiv
         log += e.output
 
     # remove the intermediate files produced by the threads above
-    for outputFile in outputFiles:
-        os.unlink (outputFile)
+    # for outputFile in outputFiles:
+    #     os.unlink (outputFile)
 
 def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntupleEff = {}, nThreadsActive = cpu_count () + 1, verbose = False, skipMerging = False):
     global threadLog
