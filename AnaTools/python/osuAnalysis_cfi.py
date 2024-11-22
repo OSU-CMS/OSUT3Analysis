@@ -5,7 +5,7 @@ import copy
 ##### Define the datatier being used ####
 #########################################
 
-dataFormat = "MINI_AOD_ONLY_2022_CUSTOM"
+dataFormat = "MINI_AOD_2022_CUSTOM"
 
 ###########################################################
 ##### Set up the standard input collections in miniAOD ####

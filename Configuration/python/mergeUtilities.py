@@ -59,7 +59,7 @@ def MakeSubmissionScriptForMerging(Directory, currentCondorSubArgumentsSet, spli
 ###############################################################################
 #                 Make the configuration for condor to run over.              #
 ###############################################################################
-def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLumi, optional_dict_ntupleEff):
+def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLumi, optional_dict_ntupleEff, isCrab=False):
     MergeScript = open(Directory + '/merge.py','w')
     MergeScript.write('#!/usr/bin/env python3\n')
     MergeScript.write('from OSUT3Analysis.Configuration.mergeUtilities import *\n')
@@ -74,6 +74,34 @@ def MakeMergingConfigForCondor(Directory, OutputDirectory, split_datasets, IntLu
     MergeScript.write("print( 'Finished merging dataset ' + dataset\n)")
     MergeScript.close()
     os.chmod (Directory + '/merge.py', 0o755)
+
+def MakeMergingConfigForCondorCrab(input_files, output_directory,
+                                   dataset, weight, filesPerJob, verbose):
+    # Split files into sections
+    group_size = len(input_files) // filesPerJob
+    remainder = len(input_files) % filesPerJob
+
+    groups = []
+    start = 0
+
+    for i in range(filesPerJob):
+        end = start + group_size + (1 if i < remainder else 0)
+        groups.append(input_files[start:end])
+        start = end
+    
+    # Write output to condor submission script
+    MergeScript = open(output_directory + '/merge.py','w')
+    MergeScript.write('#!/usr/bin/env python3\n')
+    MergeScript.write('from OSUT3Analysis.Configuration.mergeUtilities import *\n')
+    MergeScript.write('input_files = [\n')
+    for fileSet in groups:
+        MergeScript.write(f"{fileSet},\n")
+    MergeScript.write("]\n")
+    MergeScript.write('Index = int(sys.argv[1])\n\n')
+    MergeScript.write(f"mergeCrabFiles(input_files[Index], \'{output_directory}\', '{dataset}', {weight}, {verbose})\n")
+    MergeScript.write("print( f'Finished merging file selection {Index}')")
+    MergeScript.close()
+    os.chmod (output_directory + '/merge.py', 0o755)
 
 ###############################################################################
 #                       Get the exit code of condor jobs.                     #
@@ -367,9 +395,87 @@ def MergeIntermediateFile (files, outputDir, dataset, weight, threadIndex, verbo
     outputFiles.append (outputDir + '/' + outputFile)
     lock.release ()
 
+def mergeOutputFiles(nThreadsActive, ):
+    threadLog = ""
+    outputFiles = []
+    semaphore = Semaphore (nThreadsActive)
+
+    # start threads, each of which merges some fraction of the input files
+    filesPerThread = 100 # to be adjusted if need be
+    nThreadTarget = nThreadsActive
+    nFiles = len (GoodRootFiles)
+    nThreads = int (math.ceil (float (nFiles) / float (filesPerThread)))
+    if nThreads < nThreadTarget:
+        nThreads = min (nThreadTarget, nFiles)
+        filesPerThread = int (math.ceil (float (nFiles) / float (nThreads)))
+    threads = []
+    for i in range (0, nThreads):
+        fileSubset = GoodRootFiles[(i * filesPerThread):((i + 1) * filesPerThread)]
+        if len (fileSubset):
+            threads.append (Thread (target = MergeIntermediateFile, args = (fileSubset, OutputDir, dataSet, Weight, i, verbose)))
+            threads[-1].start ()
+    for thread in threads:
+        thread.join ()
+    log += threadLog
+
+    # merge the intermediate files produced by the threads above
+    cmd = 'mergeTFileServiceHistograms -i ' + " ".join (outputFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root'
+    if verbose:
+        print("Executing: ", cmd)
+    try:
+        msg = subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+        log += msg.decode("utf-8")
+    except subprocess.CalledProcessError as e:
+        log += e.output
+
+    # remove the intermediate files produced by the threads above
+    for outputFile in outputFiles:
+        os.unlink (outputFile)
 ###############################################################################
 #                       Main function to do merging work.                     #
 ###############################################################################
+def mergeCrabFiles(rootFiles, OutputDir, dataSet, Weight, verbose ,nThreadsActive= cpu_count () + 1):
+    global threadLog
+    global outputFiles
+    global semaphore
+
+    log = ""
+    threadLog = ""
+    outputFiles = [] 
+    semaphore = Semaphore (nThreadsActive)
+
+    # start threads, each of which merges some fraction of the input files
+    filesPerThread = 100 # to be adjusted if need be
+    nThreadTarget = nThreadsActive
+    nFiles = len (rootFiles)
+    nThreads = int (math.ceil (float (nFiles) / float (filesPerThread)))
+    if nThreads < nThreadTarget:
+        nThreads = min (nThreadTarget, nFiles)
+        filesPerThread = int (math.ceil (float (nFiles) / float (nThreads)))
+    threads = []
+    for i in range (0, nThreads):
+        fileSubset = rootFiles[(i * filesPerThread):((i + 1) * filesPerThread)]
+        if len (fileSubset):
+            threads.append (Thread (target = MergeIntermediateFile, args = (fileSubset, OutputDir, dataSet, Weight, i, verbose)))
+            threads[-1].start ()
+    for thread in threads:
+        thread.join ()
+    log += threadLog
+
+    # merge the intermediate files produced by the threads above
+    cmd = 'mergeTFileServiceHistograms -i ' + " ".join (outputFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root'
+    if verbose:
+        print("Executing: ", cmd)
+    try:
+        msg = subprocess.check_output (cmd.split (), stderr = subprocess.STDOUT)
+        log += msg.decode("utf-8")
+    except subprocess.CalledProcessError as e:
+        log += e.output
+
+    # remove the intermediate files produced by the threads above
+    for outputFile in outputFiles:
+        os.unlink (outputFile)
+
 def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntupleEff = {}, nThreadsActive = cpu_count () + 1, verbose = False, skipMerging = False):
     global threadLog
     global outputFiles
@@ -403,6 +509,8 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
     if os.path.islink(directory + '/hist.root'):
         os.unlink (directory + '/hist.root')
     # check to see if any jobs ran
+    # GOTCHA: There is a dependency on having ran the dataset through condor previously.
+    # This is not true if we process on crab first and then run this merge script.
     if not len(glob.glob('condor_*.log')):
         print("no jobs were run for dataset '" + dataSet + "', will skip it and continue!")
         return
@@ -526,9 +634,9 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
 
     if not skipMerging:
         threadLog = ""
-        outputFiles = []
+        outputFiles = [] 
         semaphore = Semaphore (nThreadsActive)
-    
+
         # start threads, each of which merges some fraction of the input files
         filesPerThread = 100 # to be adjusted if need be
         nThreadTarget = nThreadsActive
@@ -546,7 +654,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
         for thread in threads:
             thread.join ()
         log += threadLog
-    
+
         # merge the intermediate files produced by the threads above
         cmd = 'mergeTFileServiceHistograms -i ' + " ".join (outputFiles) + ' -o ' + OutputDir + "/" + dataSet + '.root'
         if verbose:
@@ -556,7 +664,7 @@ def mergeOneDataset(dataSet, IntLumi, CondorDir, OutputDir="", optional_dict_ntu
             log += msg.decode("utf-8")
         except subprocess.CalledProcessError as e:
             log += e.output
-    
+
         # remove the intermediate files produced by the threads above
         for outputFile in outputFiles:
             os.unlink (outputFile)

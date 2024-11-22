@@ -60,48 +60,69 @@ except OSError:
 if arguments.dir is not None:
     from DisappTrks.StandardAnalysis.IntegratedLuminosity_cff import *
     from OSUT3Analysis.Configuration.configurationOptions import crossSections
-    if "CMSSW_12" in os.environ.get("CMSSW_BASE") or "CMSSW_13" in os.environ.get("CMSSW_BASE"):
-        from DisappTrks.StandardAnalysis.miniAOD_124X_Ntuples import *
-    else:
-        print("There is no ntuples file for {}, either use the hist files to get event counts or add a new list of event counts".format(os.environ.get("CMSSW_BASE")))
+    #if "CMSSW_12" in os.environ.get("CMSSW_BASE") or "CMSSW_13" in os.environ.get("CMSSW_BASE"):
+        #from DisappTrks.StandardAnalysis.miniAOD_124X_Ntuples import *
+    #else:
+    #    print("There is no ntuples file for {}, either use the hist files to get event counts or add a new list of event counts".format(os.environ.get("CMSSW_BASE")))
     
     filesToMerge, totalEvents = getFilesFromCrab(arguments.dir, arguments.fileStr)
+    print(filesToMerge)
+    if arguments.IntLumi: 
+        # If you are specifiying a luminosity value, you are running over MC and should
+        # run this block of code
+        print(arguments.IntLumi)
+        if arguments.IntLumi in lumi.keys():
+            print(f"Error: did not find dataset {arguments.IntLumi} in luminosity file")
+            sys.exit(1)
 
-    print(arguments.IntLumi)
-    if arguments.IntLumi not in lumi.keys():
-        print(f"Error: did not find dataset {arguments.IntLumi} in luminosity file")
-        sys.exit(1)
-    targetLumi = lumi[arguments.IntLumi]
-    
-    if arguments.Dataset not in crossSections.keys():
-        print(f"Error: did not find dataset {arguments.Dataset} in cross sections file")
-        sys.exit(1)
-    crossSection = crossSections[arguments.Dataset]
+        if arguments.Dataset not in crossSections.keys():
+            print(f"Error: did not find dataset {arguments.Dataset} in cross sections file")
+            sys.exit(1)
+        crossSection = crossSections[arguments.Dataset]
 
-    if arguments.Dataset not in eventCounts.keys():
-        print(f"Error: did not find dataset {arguments.Dataset} in event counts file")
-        sys.exit(1)
-    totalEvents = eventCounts[arguments.Dataset]
+        if arguments.Dataset not in eventCounts.keys():
+            print(f"Error: did not find dataset {arguments.Dataset} in event counts file")
+            sys.exit(1)
+        totalEvents = eventCounts[arguments.Dataset]
 
-    print(f"Target Lumi ({arguments.IntLumi}): {targetLumi}")
-    print(f"Cross section ({arguments.Dataset}): {crossSection}")
-    print(f"Total Events ({arguments.Dataset}): {totalEvents}")
+        print(f"Target Lumi ({arguments.IntLumi}): {targetLumi}")
+        print(f"Cross section ({arguments.Dataset}): {crossSection}")
+        print(f"Total Events ({arguments.Dataset}): {totalEvents}")
 
-    Weight = float(targetLumi)*float(crossSection)/float(totalEvents)
-    weightString = MakeWeightsString(Weight, filesToMerge)
+        Weight = float(targetLumi)*float(crossSection)/float(totalEvents)
+        weightString = MakeWeightsString(Weight, filesToMerge)
 
-    print(weightString)
+        print(weightString)
 
     if arguments.outputDirectory:
         outputFile = arguments.outputDirectory
+        print(f"Outputfile is {outputFile}")
     else:
         outputFile = '{}/{}.root'.format(arguments.dir, arguments.Dataset)
 
-    cmd = 'mergeTFileServiceHistograms -i ' + " ".join (filesToMerge) + ' -o ' + outputFile + ' -w ' + weightString
-    print(cmd)
+    # FIXME: Clean up implementation so values are set better (get rid of 0.0 for intLumi and {} in
+    # MakeMergingConfigForCondor and GetCompleteOrderedArgumentsSet
+    if arguments.UseCondor:
+        print( '......................Using Condor!...........................' )
+        IntLumi = 0.0
+        currentCondorSubArgumentsSet = copy.deepcopy(CondorSubArgumentsSet)
+        GetCompleteOrderedArgumentsSet({}, currentCondorSubArgumentsSet)
+        MakeSubmissionScriptForMerging(CondorDir, currentCondorSubArgumentsSet, arguments.Dataset)
+        MakeMergingConfigForCondorCrab(filesToMerge, OutputDir, arguments.Dataset, Weight, filesPerJob=100, verbose=True)
+        os.chdir(OutputDir)
+        if arguments.NotToExecute:
+            print( 'Configuration files created in ' + str(OutputDir) + ' directory but no jobs submitted.\n' )
+        else:
+            os.system('condor_submit condorMerging.sub')
+        
+    # Don't include a weight in the merge command if the data is not MC
+    if not arguments.UseCondor:
+        cmd = ('mergeTFileServiceHistograms -i ' + " ".join (filesToMerge) +
+            ' -o ' + outputFile)
+        print(cmd)
+        os.system(cmd)
 
-    os.system(cmd)
-
+    print("Merge Finished")
     sys.exit(0)
 
 ###############################################################################

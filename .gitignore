@@ -11,3 +11,4 @@
 .*
 __init__.py
 hist.root
+DataFormat.h
