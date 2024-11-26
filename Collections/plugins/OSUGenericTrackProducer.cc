@@ -1167,7 +1167,7 @@ OSUGenericTrackProducer<T>::getTagMuons(const edm::Event &event,
                                            muon,
                                            trigObjs,
                                            (is2017_ ? "hltIterL3MuonCandidates::HLT" : "hltHighPtTkMuonCands::HLT"),
-                                           (is2017_ ? "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07" : "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07"))) {
+                                           (is2017_ ? "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07" : "hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p08"))) {
       continue; // cutMuonMatchToTrigObj
     }
     
@@ -1200,14 +1200,14 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
   //apply track pt cut
   if(minTrackPt_ > 0 && track.pt() <= minTrackPt_) return info;
 
-  info.trackIso = 0.0;
-  for(const auto &t : *tracks) {
-    const auto theptinv2 = 1 / pow(track.pt(),2);
-    float dz_track = (track.vz() - t.vz()) - ((track.vx() - t.vx()) * track.px() + (track.vy() - t.vy()) * track.py()) * track.pz() * theptinv2;
-    if(fabs(dz_track) > 3.0 * hypot(track.dzError(), t.dzError())) continue;
-    double dR = deltaR(track, t);
-    if(dR < 0.3 && dR > 1.0e-12) info.trackIso += t.pt();
-  }
+  info.trackIso = track.pfIsolationDR03().chargedHadronIso();
+  // for(const auto &t : *tracks) {
+  //   const auto theptinv2 = 1 / pow(track.pt(),2);
+  //   float dz_track = (track.vz() - t.vz()) - ((track.vx() - t.vx()) * track.px() + (track.vy() - t.vy()) * track.py()) * track.pz() * theptinv2;
+  //   if(fabs(dz_track) > 3.0 * hypot(track.dzError(), t.dzError())) continue;
+  //   double dR = deltaR(track, t);
+  //   if(dR < 0.3 && dR > 1.0e-12) info.trackIso += t.pt();
+  // }
 
   // apply relative track isolation cut
   if(maxRelTrackIso_ > 0 && info.trackIso / track.pt() >= maxRelTrackIso_) return info;
@@ -1370,17 +1370,29 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
 
   info.deltaRToClosestTauHad = -1;
   for(const auto &tau : taus) {
-    if(tau.isTauIDAvailable("againstElectronLooseMVA5")) {
-      if(tau.tauID("decayModeFinding") <= 0.5 ||
-          tau.tauID("againstElectronLooseMVA5") <= 0.5 ||
-          tau.tauID("againstMuonLoose3") <= 0.5) {
+    // if(tau.isTauIDAvailable("againstElectronLooseMVA5")) {
+    //   if(tau.tauID("decayModeFinding") <= 0.5 ||
+    //       tau.tauID("againstElectronLooseMVA5") <= 0.5 ||
+    //       tau.tauID("againstMuonLoose3") <= 0.5) {
+    //     continue;
+    //   }
+    // }
+    // else if(tau.isTauIDAvailable("againstElectronLooseMVA6")) {
+    //   if(tau.tauID("decayModeFinding") <= 0.5 ||
+    //       tau.tauID("againstElectronLooseMVA6") <= 0.5 ||
+    //       tau.tauID("againstMuonLoose3") <= 0.5) {
+    //     continue;
+    //   }
+    // }
+    if(tau.isTauIDAvailable("byVVVLooseDeepTau2018v2p5VSe")) {
+      if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
+          tau.tauID("byVVVLooseDeepTau2018v2p5VSe") <= 0.5) {
         continue;
       }
     }
-    else if(tau.isTauIDAvailable("againstElectronLooseMVA6")) {
-      if(tau.tauID("decayModeFinding") <= 0.5 ||
-          tau.tauID("againstElectronLooseMVA6") <= 0.5 ||
-          tau.tauID("againstMuonLoose3") <= 0.5) {
+    else if(tau.isTauIDAvailable("byVLooseDeepTau2018v2p5VSmu")) {
+      if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
+          tau.tauID("byVLooseDeepTau2018v2p5VSmu") <= 0.5) {
         continue;
       }
     }
