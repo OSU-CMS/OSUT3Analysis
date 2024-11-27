@@ -1125,7 +1125,8 @@ OSUGenericTrackProducer<T>::getTagElectrons(const edm::Event &event,
     }
 
     if(fabs(electron.eta()) >= 2.1) continue;
-    if(!electron.electronID(is2017_ ? "cutBasedElectronID-Fall17-94X-V1-tight" : "cutBasedElectronID-Fall17-94X-V2-tight")) continue;
+    // if(!electron.electronID(is2017_ ? "cutBasedElectronID-Fall17-94X-V1-tight" : "cutBasedElectronID-Fall17-94X-V2-tight")) continue;
+    if(!electron.electronID("cutBasedElectronID-RunIIIWinter22-V1-tight")) continue;
     
     if(fabs(electron.superCluster()->eta()) <= 1.479) {
       if(fabs(electron.gsfTrack()->dxy(vertex.position())) >= 0.05) continue;
