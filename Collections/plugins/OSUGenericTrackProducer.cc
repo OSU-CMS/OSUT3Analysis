@@ -1415,6 +1415,8 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
     }
 
 #elif DATA_FORMAT_IS_2022
+    // The Tau IDs is done like this so that the 2018v2p5 algorithm has priority over the 2017v2p1, which is the recommendation from the Tau POG
+    // The 2018v2p5 doesn't exist in the PromptReco files, but exist in the rereco MiniAOD
     if(tau.isTauIDAvailable("byVVVLooseDeepTau2018v2p5VSe")) {
       if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
           tau.tauID("byVVVLooseDeepTau2018v2p5VSe") <= 0.5) {
