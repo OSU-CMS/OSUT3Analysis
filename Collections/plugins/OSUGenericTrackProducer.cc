@@ -1176,15 +1176,28 @@ OSUGenericTrackProducer<T>::getTagMuons(const edm::Event &event,
     iso = muon.pfIsolationR04().sumChargedHadronPt + max(0.0, iso);
     if(iso / muon.pt() >= 0.15) continue;
 
+#if DATA_FORMAT_IS_2017
     if(!anatools::isMatchedToTriggerObject(event,
                                            triggers,
                                            muon,
                                            trigObjs,
                                            (is2017_ ? "hltIterL3MuonCandidates::HLT" : "hltHighPtTkMuonCands::HLT"),
-                                           (is2017_ ? "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07" : "hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p08"))) {
+                                           (is2017_ ? "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07" : "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07"))) {
       continue; // cutMuonMatchToTrigObj
     }
-    
+
+#elif DATA_FORMAT_IS_2022
+    if(!anatools::isMatchedToTriggerObject(event,
+                                           triggers,
+                                           muon,
+                                           trigObjs,
+                                           "hltIterL3MuonCandidates::HLT",
+                                           "hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered")) {
+      continue; // cutMuonMatchToTrigObj
+    }
+
+#endif
+
     tagMuons.push_back(muon);
   }
 
