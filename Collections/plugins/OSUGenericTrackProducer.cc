@@ -1397,35 +1397,56 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
 
   info.deltaRToClosestTauHad = -1;
   for(const auto &tau : taus) {
-    // if(tau.isTauIDAvailable("againstElectronLooseMVA5")) {
-    //   if(tau.tauID("decayModeFinding") <= 0.5 ||
-    //       tau.tauID("againstElectronLooseMVA5") <= 0.5 ||
-    //       tau.tauID("againstMuonLoose3") <= 0.5) {
-    //     continue;
-    //   }
-    // }
-    // else if(tau.isTauIDAvailable("againstElectronLooseMVA6")) {
-    //   if(tau.tauID("decayModeFinding") <= 0.5 ||
-    //       tau.tauID("againstElectronLooseMVA6") <= 0.5 ||
-    //       tau.tauID("againstMuonLoose3") <= 0.5) {
-    //     continue;
-    //   }
-    // }
+
+#if DATA_FORMAT_IS_2017
+    if(tau.isTauIDAvailable("againstElectronLooseMVA5")) {
+      if(tau.tauID("decayModeFinding") <= 0.5 ||
+          tau.tauID("againstElectronLooseMVA5") <= 0.5 ||
+          tau.tauID("againstMuonLoose3") <= 0.5) {
+        continue;
+      }
+    }
+    else if(tau.isTauIDAvailable("againstElectronLooseMVA6")) {
+      if(tau.tauID("decayModeFinding") <= 0.5 ||
+          tau.tauID("againstElectronLooseMVA6") <= 0.5 ||
+          tau.tauID("againstMuonLoose3") <= 0.5) {
+        continue;
+      }
+    }
+
+#elif DATA_FORMAT_IS_2022
     if(tau.isTauIDAvailable("byVVVLooseDeepTau2018v2p5VSe")) {
       if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
           tau.tauID("byVVVLooseDeepTau2018v2p5VSe") <= 0.5) {
         continue;
       }
     }
-    else if(tau.isTauIDAvailable("byVLooseDeepTau2018v2p5VSmu")) {
+    else if(tau.isTauIDAvailable("byVVVLooseDeepTau2017v2p1VSe")) {
       if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
-          tau.tauID("byVLooseDeepTau2018v2p5VSmu") <= 0.5) {
+          tau.tauID("byVVVLooseDeepTau2017v2p1VSe") <= 0.5) {
         continue;
       }
     }
     else {
       continue;
     }
+    if(tau.isTauIDAvailable("byVLooseDeepTau2018v2p5VSmu")) {
+      if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
+          tau.tauID("byVLooseDeepTau2018v2p5VSmu") <= 0.5) {
+        continue;
+      }
+    }
+    else if(tau.isTauIDAvailable("byVLooseDeepTau2017v2p1VSmu")) {
+      if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
+          tau.tauID("byVLooseDeepTau2017v2p1VSmu") <= 0.5) {
+        continue;
+      }
+    }
+    else {
+      continue;
+    }
+
+#endif
 
     double thisDR = deltaR(tau, track);
     if(info.deltaRToClosestTauHad < 0 || thisDR < info.deltaRToClosestTauHad) info.deltaRToClosestTauHad = thisDR;

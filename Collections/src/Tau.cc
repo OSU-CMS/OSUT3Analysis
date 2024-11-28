@@ -179,9 +179,11 @@ osu::Tau::passesLightFlavorRejection () const
 
   if (this->isTauIDAvailable ("byVVVLooseDeepTau2018v2p5VSe"))
     flag = flag && (this->tauID ("byVVVLooseDeepTau2018v2p5VSe") > 0.5);
+  else if (this->isTauIDAvailable ("byVVVLooseDeepTau2017v2p1VSe"))
+    flag = flag && (this->tauID ("byVVVLooseDeepTau2017v2p1VSe") > 0.5);
   else
     {
-      edm::LogWarning ("osu_Tau") << "Tau IDs \"byVVVLooseDeepTau2018v2p5VSe\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau IDs \"byVVVLooseDeepTau2017v2p1VSe\" and \"byVVVLooseDeepTau2018v2p5VSe\" unavailable.";
       flag = flag && false;
     }
 
@@ -189,9 +191,11 @@ osu::Tau::passesLightFlavorRejection () const
   // This should probably be checked with Tau POG experts
   if (this->isTauIDAvailable ("byVLooseDeepTau2018v2p5VSmu"))
     flag = flag && (this->tauID ("byVLooseDeepTau2018v2p5VSmu") > 0.5);
+  else if (this->isTauIDAvailable ("byVLooseDeepTau2017v2p1VSmu"))
+    flag = flag && (this->tauID ("byVLooseDeepTau2017v2p1VSmu") > 0.5);
   else
     {
-      edm::LogWarning ("osu_Tau") << "Tau ID \"byVLooseDeepTau2018v2p5VSmu\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau ID \"byVLooseDeepTau2017v2p1VSmu\" and \"byVLooseDeepTau2018v2p5VSmu\" unavailable.";
       flag = flag && false;
     }
 
