@@ -1227,14 +1227,18 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
   //apply track pt cut
   if(minTrackPt_ > 0 && track.pt() <= minTrackPt_) return info;
 
+#if DATA_FORMAT_IS_2017
+  info.trackIso = 0.0;
+  for(const auto &t : *tracks) {
+    const auto theptinv2 = 1 / pow(track.pt(),2);
+    float dz_track = (track.vz() - t.vz()) - ((track.vx() - t.vx()) * track.px() + (track.vy() - t.vy()) * track.py()) * track.pz() * theptinv2;
+    if(fabs(dz_track) > 3.0 * hypot(track.dzError(), t.dzError())) continue;
+    double dR = deltaR(track, t);
+    if(dR < 0.3 && dR > 1.0e-12) info.trackIso += t.pt();
+  }
+#elif DATA_FORMAT_IS_2022
   info.trackIso = track.pfIsolationDR03().chargedHadronIso();
-  // for(const auto &t : *tracks) {
-  //   const auto theptinv2 = 1 / pow(track.pt(),2);
-  //   float dz_track = (track.vz() - t.vz()) - ((track.vx() - t.vx()) * track.px() + (track.vy() - t.vy()) * track.py()) * track.pz() * theptinv2;
-  //   if(fabs(dz_track) > 3.0 * hypot(track.dzError(), t.dzError())) continue;
-  //   double dR = deltaR(track, t);
-  //   if(dR < 0.3 && dR > 1.0e-12) info.trackIso += t.pt();
-  // }
+#endif
 
   // apply relative track isolation cut
   if(maxRelTrackIso_ > 0 && info.trackIso / track.pt() >= maxRelTrackIso_) return info;
