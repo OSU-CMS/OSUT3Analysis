@@ -111,6 +111,8 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   // disappearing track ntuples.
   tracksToken_ = consumes<vector<reco::Track> > (edm::InputTag ("generalTracks", "", "RECO"));
 
+  muonTriggerFilter_ = cfg.getParameter<std::string> ("muonTriggerFilter");
+
   //caloGeometryToken_  = esConsumes();
   //ecalStatusToken_    = esConsumes();
 
@@ -1187,12 +1189,13 @@ OSUGenericTrackProducer<T>::getTagMuons(const edm::Event &event,
     }
 
 #elif DATA_FORMAT_IS_2022
+
     if(!anatools::isMatchedToTriggerObject(event,
                                            triggers,
                                            muon,
                                            trigObjs,
                                            "hltIterL3MuonCandidates::HLT",
-                                           "hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered")) {
+                                           muonTriggerFilter_)) {
       continue; // cutMuonMatchToTrigObj
     }
 

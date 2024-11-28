@@ -322,6 +322,8 @@ template<class T>
     double PhiRange_ = 0.25;
     int maxHits_ = 100;
 
+    std::string muonTriggerFilter_;
+
 };
 
 #endif
