@@ -469,7 +469,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       dijetDeltaPhiMax_ = getMaxDijetDeltaPhi(*jets);
       leadingJetMetPhi_ = getLeadingJetMetPhi(*jets, met->at(0));
 
-      tagElectrons = getTagElectrons(event, *triggers, *trigObjs, pv, *electrons);
+      tagElectrons = getTagElectrons(event, *triggers, *trigObjs, pv, *electrons, eleVIDTightIdMap);
       tagMuons = getTagMuons(event, *triggers, *trigObjs, pv, *muons);
 
       trackInfo = getTrackInfo(track, pv, *jets, *electrons, *muons, *taus, tagElectrons, tagMuons, met->at(0), isolatedTracks, isoTrk2dedxHitInfo, gt2dedxStrip, gt2dedxPixel);
@@ -1108,11 +1108,18 @@ OSUGenericTrackProducer<T>::getTagElectrons(const edm::Event &event,
                                            const edm::TriggerResults &triggers,
                                            const vector<pat::TriggerObjectStandAlone> &trigObjs,
                                            const reco::Vertex &vertex,
-                                           const edm::View<pat::Electron> &electrons)
+                                           const edm::View<pat::Electron> &electrons,
+                                           const edm::Handle<edm::ValueMap<bool>> &eleVIDTightIdMap)
 {
   vector<pat::Electron> tagElectrons;
 
+  // Using the same implementation in OSUT3Analysis/Collections/plugins/OSUElectronProducer.cc to access electrons vid map in Run 3
+  unsigned iEle = -1;
+
   for(const auto &electron : electrons) {
+
+    ++iEle;
+
     if(electron.pt() <= (is2017_ ? 35 : 32)) continue;
 
     if(!anatools::isMatchedToTriggerObject(event,
@@ -1125,9 +1132,15 @@ OSUGenericTrackProducer<T>::getTagElectrons(const edm::Event &event,
     }
 
     if(fabs(electron.eta()) >= 2.1) continue;
-    // if(!electron.electronID(is2017_ ? "cutBasedElectronID-Fall17-94X-V1-tight" : "cutBasedElectronID-Fall17-94X-V2-tight")) continue;
-    if(!electron.electronID("cutBasedElectronID-RunIIIWinter22-V1-tight")) continue;
-    
+
+#if DATA_FORMAT_IS_2017
+    if(!electron.electronID(is2017_ ? "cutBasedElectronID-Fall17-94X-V1-tight" : "cutBasedElectronID-Fall17-94X-V2-tight")) continue;
+
+#elif DATA_FORMAT_IS_2022
+    if(eleVIDTightIdMap.isValid()) {if(!((*eleVIDTightIdMap)[(electrons).refAt(iEle)])) continue;}
+
+#endif
+
     if(fabs(electron.superCluster()->eta()) <= 1.479) {
       if(fabs(electron.gsfTrack()->dxy(vertex.position())) >= 0.05) continue;
       if(fabs(electron.gsfTrack()->dz(vertex.position())) >= 0.10) continue;

@@ -228,7 +228,8 @@ template<class T>
                                         const edm::TriggerResults &,
                                         const vector<pat::TriggerObjectStandAlone> &,
                                         const reco::Vertex &,
-                                        const edm::View<pat::Electron> &);
+                                        const edm::View<pat::Electron> &,
+                                        const edm::Handle<edm::ValueMap<bool>> &);
 
     vector<pat::Muon> getTagMuons(const edm::Event &,
                                 const edm::TriggerResults &,
