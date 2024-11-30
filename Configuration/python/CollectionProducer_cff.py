@@ -371,7 +371,9 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     graphPathDS = cms.FileInPath('OSUT3Analysis/Collections/data/graph.pb'),
     inputTensorNameDS = cms.string("input"),
     inputTrackTensorNameDS = cms.string("input_track"),
-    outputTensorNameDS = cms.string("model_1/output_xyz/Softmax")
+    outputTensorNameDS = cms.string("model_1/output_xyz/Softmax"),
+
+    muonTriggerFilter = cms.string("hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered")
 )
 
 '''print("This is the electron vidVetoIDMap", collectionProducer.tracks.eleVIDVetoIdMap)
