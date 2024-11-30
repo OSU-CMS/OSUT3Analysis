@@ -111,6 +111,8 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   // disappearing track ntuples.
   tracksToken_ = consumes<vector<reco::Track> > (edm::InputTag ("generalTracks", "", "RECO"));
 
+  muonTriggerFilter_ = cfg.getParameter<std::string> ("muonTriggerFilter");
+
   //caloGeometryToken_  = esConsumes();
   //ecalStatusToken_    = esConsumes();
 
@@ -469,7 +471,7 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
       dijetDeltaPhiMax_ = getMaxDijetDeltaPhi(*jets);
       leadingJetMetPhi_ = getLeadingJetMetPhi(*jets, met->at(0));
 
-      tagElectrons = getTagElectrons(event, *triggers, *trigObjs, pv, *electrons);
+      tagElectrons = getTagElectrons(event, *triggers, *trigObjs, pv, *electrons, eleVIDTightIdMap);
       tagMuons = getTagMuons(event, *triggers, *trigObjs, pv, *muons);
 
       trackInfo = getTrackInfo(track, pv, *jets, *electrons, *muons, *taus, tagElectrons, tagMuons, met->at(0), isolatedTracks, isoTrk2dedxHitInfo, gt2dedxStrip, gt2dedxPixel);
@@ -1108,11 +1110,18 @@ OSUGenericTrackProducer<T>::getTagElectrons(const edm::Event &event,
                                            const edm::TriggerResults &triggers,
                                            const vector<pat::TriggerObjectStandAlone> &trigObjs,
                                            const reco::Vertex &vertex,
-                                           const edm::View<pat::Electron> &electrons)
+                                           const edm::View<pat::Electron> &electrons,
+                                           const edm::Handle<edm::ValueMap<bool>> &eleVIDTightIdMap)
 {
   vector<pat::Electron> tagElectrons;
 
+  // Using the same implementation in OSUT3Analysis/Collections/plugins/OSUElectronProducer.cc to access electrons vid map in Run 3
+  unsigned iEle = -1;
+
   for(const auto &electron : electrons) {
+
+    ++iEle;
+
     if(electron.pt() <= (is2017_ ? 35 : 32)) continue;
 
     if(!anatools::isMatchedToTriggerObject(event,
@@ -1125,8 +1134,15 @@ OSUGenericTrackProducer<T>::getTagElectrons(const edm::Event &event,
     }
 
     if(fabs(electron.eta()) >= 2.1) continue;
+
+#if DATA_FORMAT_IS_2017
     if(!electron.electronID(is2017_ ? "cutBasedElectronID-Fall17-94X-V1-tight" : "cutBasedElectronID-Fall17-94X-V2-tight")) continue;
-    
+
+#elif DATA_FORMAT_IS_2022
+    if(eleVIDTightIdMap.isValid()) {if(!((*eleVIDTightIdMap)[(electrons).refAt(iEle)])) continue;}
+
+#endif
+
     if(fabs(electron.superCluster()->eta()) <= 1.479) {
       if(fabs(electron.gsfTrack()->dxy(vertex.position())) >= 0.05) continue;
       if(fabs(electron.gsfTrack()->dz(vertex.position())) >= 0.10) continue;
@@ -1162,6 +1178,7 @@ OSUGenericTrackProducer<T>::getTagMuons(const edm::Event &event,
     iso = muon.pfIsolationR04().sumChargedHadronPt + max(0.0, iso);
     if(iso / muon.pt() >= 0.15) continue;
 
+#if DATA_FORMAT_IS_2017
     if(!anatools::isMatchedToTriggerObject(event,
                                            triggers,
                                            muon,
@@ -1170,7 +1187,20 @@ OSUGenericTrackProducer<T>::getTagMuons(const edm::Event &event,
                                            (is2017_ ? "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07" : "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07"))) {
       continue; // cutMuonMatchToTrigObj
     }
-    
+
+#elif DATA_FORMAT_IS_2022
+
+    if(!anatools::isMatchedToTriggerObject(event,
+                                           triggers,
+                                           muon,
+                                           trigObjs,
+                                           "hltIterL3MuonCandidates::HLT",
+                                           muonTriggerFilter_)) {
+      continue; // cutMuonMatchToTrigObj
+    }
+
+#endif
+
     tagMuons.push_back(muon);
   }
 
@@ -1200,6 +1230,7 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
   //apply track pt cut
   if(minTrackPt_ > 0 && track.pt() <= minTrackPt_) return info;
 
+#if DATA_FORMAT_IS_2017
   info.trackIso = 0.0;
   for(const auto &t : *tracks) {
     const auto theptinv2 = 1 / pow(track.pt(),2);
@@ -1208,6 +1239,9 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
     double dR = deltaR(track, t);
     if(dR < 0.3 && dR > 1.0e-12) info.trackIso += t.pt();
   }
+#elif DATA_FORMAT_IS_2022
+  info.trackIso = track.pfIsolationDR03().chargedHadronIso();
+#endif
 
   // apply relative track isolation cut
   if(maxRelTrackIso_ > 0 && info.trackIso / track.pt() >= maxRelTrackIso_) return info;
@@ -1370,6 +1404,8 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
 
   info.deltaRToClosestTauHad = -1;
   for(const auto &tau : taus) {
+
+#if DATA_FORMAT_IS_2017
     if(tau.isTauIDAvailable("againstElectronLooseMVA5")) {
       if(tau.tauID("decayModeFinding") <= 0.5 ||
           tau.tauID("againstElectronLooseMVA5") <= 0.5 ||
@@ -1384,9 +1420,42 @@ OSUGenericTrackProducer<T>::getTrackInfo(const T &track,
         continue;
       }
     }
+
+#elif DATA_FORMAT_IS_2022
+    // The Tau IDs is done like this so that the 2018v2p5 algorithm has priority over the 2017v2p1, which is the recommendation from the Tau POG
+    // The 2018v2p5 doesn't exist in the PromptReco files, but exist in the rereco MiniAOD
+    if(tau.isTauIDAvailable("byVVVLooseDeepTau2018v2p5VSe")) {
+      if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
+          tau.tauID("byVVVLooseDeepTau2018v2p5VSe") <= 0.5) {
+        continue;
+      }
+    }
+    else if(tau.isTauIDAvailable("byVVVLooseDeepTau2017v2p1VSe")) {
+      if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
+          tau.tauID("byVVVLooseDeepTau2017v2p1VSe") <= 0.5) {
+        continue;
+      }
+    }
     else {
       continue;
     }
+    if(tau.isTauIDAvailable("byVLooseDeepTau2018v2p5VSmu")) {
+      if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
+          tau.tauID("byVLooseDeepTau2018v2p5VSmu") <= 0.5) {
+        continue;
+      }
+    }
+    else if(tau.isTauIDAvailable("byVLooseDeepTau2017v2p1VSmu")) {
+      if(tau.tauID("decayModeFindingNewDMs") <= 0.5 ||
+          tau.tauID("byVLooseDeepTau2017v2p1VSmu") <= 0.5) {
+        continue;
+      }
+    }
+    else {
+      continue;
+    }
+
+#endif
 
     double thisDR = deltaR(tau, track);
     if(info.deltaRToClosestTauHad < 0 || thisDR < info.deltaRToClosestTauHad) info.deltaRToClosestTauHad = thisDR;
