@@ -350,7 +350,7 @@ def combineRecoPlots():
         xedges.append(x_)
         for biny in range(yaxis_low.GetNbins()+1):
             y_ = yaxis_low.GetBinUpEdge(biny)
-            if binx == 0: 
+            if binx == 0:
                 yedges.append(y_)
             if biny!=yaxis_low.GetNbins() and binx!=xaxis.GetNbins():
                 value = h_sf_low.GetBinContent(h_sf_low.FindBin(x_+0.01, y_+0.01))

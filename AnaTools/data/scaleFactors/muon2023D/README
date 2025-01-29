@@ -1,0 +1,10 @@
+This explains how to extract SFs for muons, using SFs from 2022EE campaign.
+
+All information for the three types of SFs is available in https://twiki.cern.ch/twiki/bin/view/CMS/MuonRun3_2023
+The needed input JSON file can be found in https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/MUO/2023_Summer23BPix?ref_type=heads
+
+The step-by-step is the following:
+- Download the compressed file muon_Z.json.gz
+- Execute script accessJSONinfo.py; it will give you cleaner JSONs of the SFs per type
+- Execute script rootifyJSON.py; it will give you ROOT files containing the pt vs abseta SFs
+- Execute macro recreateLeptonSFs.C in directory above; it will produce a muonSF_new.root file that will replace the old muonSFs.root
