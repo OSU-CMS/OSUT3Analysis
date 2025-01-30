@@ -9711,8 +9711,8 @@ crossSections = {
   'WToLNu_4Jets_2022EE' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
   'DYto2L_4jets_M10to50_2022EE' : 20950.0, # From XSDB
   'DYJetsToLL_M50_2022EE' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
-  'TbarBtoLminusNuB_2022EE' : 1.18, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; still incomplete and just used the value of the sum divided by 2 and the W->lnu BR
-  'TBbartoLplusNuBbar_2022EE' : 1.18, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; still incomplete and just used the value of the sum divided by 2 and the W->lnu BR
+  'TbarBtoLminusNuB_2022EE' : 1.35, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TBbartoLplusNuBbar_2022EE' : 2.30, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
   'TbarQtoLNu_2022EE' : 26.18, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
   'TQbartoLNu_2022EE' : 43.91, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
   'TbarWplusto2L2Nu_2022EE' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
@@ -10152,7 +10152,7 @@ charginoColors = {
 }
 for charginoMass in range(100, 1200, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
-    for charginoRelease in ['76X', '80X', '94X', '102X', '124X']:
+    for charginoRelease in ['76X', '80X', '94X', '102X', '124X', '130X']:
       charginoDataset = 'AMSB_chargino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
       nJobs.update     ({ charginoDataset : 99 })
       maxEvents.update ({ charginoDataset : -1 })
@@ -10162,7 +10162,7 @@ for charginoMass in range(100, 1200, 100):
 # Higgsino
 for charginoMass in range(100, 1000, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
-    for charginoRelease in ['94X', '102X', '124X']:
+    for charginoRelease in ['94X', '102X', '124X', '130X']:
       charginoDataset = 'Higgsino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
       nJobs.update     ({ charginoDataset : 99 })
       maxEvents.update ({ charginoDataset : -1 })
