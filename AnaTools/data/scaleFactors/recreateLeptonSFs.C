@@ -184,14 +184,14 @@ void createElectronFile_2018() {
 }
 
 // https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun3 (In progress)
-void createElectronFile_2022() {
+void createElectronFile_2022CD() {
 
   // Get/declare files
 
-  TFile * fID_tight = new TFile("electron2022/egammaEffi.txt_EGM2D_ID_loose.root");
-  TFile * fID_medium = new TFile("electron2022/egammaEffi.txt_EGM2D_ID_medium.root");
-  TFile * fID_loose = new TFile("electron2022/egammaEffi.txt_EGM2D_ID_tight.root");
-  TFile * fReco = new TFile("electron2022/egammaEffi.txt_EGM2D_RECO.root");
+  TFile * fID_tight = new TFile("electron2022CD/egammaEffi_LooseID.txt_EGM2D.root");
+  TFile * fID_medium = new TFile("electron2022CD/egammaEffi_MediumID.txt_EGM2D.root");
+  TFile * fID_loose = new TFile("electron2022CD/egammaEffi_TightID.txt_EGM2D.root");
+  TFile * fReco = new TFile("electron2022CD/egammaEffi.txt_EGM2D_RECO.root");
 
   TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
 
@@ -204,16 +204,134 @@ void createElectronFile_2022() {
 
   // Write output
 
-  id_tight->Write("electronID2022Tight");
-  id_medium->Write("electronID2022Medium");
-  id_loose->Write("electronID2022Loose");
-  reco->Write("electronReco2022");
+  id_tight->Write("electronID2022CDTight");
+  id_medium->Write("electronID2022CDMedium");
+  id_loose->Write("electronID2022CDLoose");
+  reco->Write("electronReco2022CD");
 
   fOutput->Close();
 
   fID_tight->Close();
   fID_medium->Close();
   fID_loose->Close();
+  fReco->Close();
+
+}
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun3 (In progress)
+void createElectronFile_2022EFG() {
+
+  // Get/declare files
+
+  TFile * fID_tight = new TFile("electron2022EFG/egammaEffi.txt_EGM2D_ID_loose.root");
+  TFile * fID_medium = new TFile("electron2022EFG/egammaEffi.txt_EGM2D_ID_medium.root");
+  TFile * fID_loose = new TFile("electron2022EFG/egammaEffi.txt_EGM2D_ID_tight.root");
+  TFile * fReco = new TFile("electron2022EFG/egammaEffi.txt_EGM2D_RECO.root");
+
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID_tight->Get("EGamma_SF2D");
+  TH2D * id_medium = (TH2D*)fID_medium->Get("EGamma_SF2D");
+  TH2D * id_loose = (TH2D*)fID_loose->Get("EGamma_SF2D");
+  TH2D * reco = (TH2D*)fReco->Get("EGamma_SF2D");
+
+  // Write output
+
+  id_tight->Write("electronID2022EFGTight");
+  id_medium->Write("electronID2022EFGMedium");
+  id_loose->Write("electronID2022EFGLoose");
+  reco->Write("electronReco2022EFG");
+
+  fOutput->Close();
+
+  fID_tight->Close();
+  fID_medium->Close();
+  fID_loose->Close();
+  fReco->Close();
+
+}
+
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun3 (In progress)
+void createElectronFile_2023C() {
+
+  // Get/declare files
+
+  TFile * fID_tight = new TFile("electron2023C/egammaEffi_LooseID.txt_EGM2D.root");
+  TFile * fID_medium = new TFile("electron2023C/egammaEffi_MediumID.txt_EGM2D.root");
+  TFile * fID_loose = new TFile("electron2023C/egammaEffi_TightID.txt_EGM2D.root");
+  TFile * fReco = new TFile("electron2023C/egammaEffi.txt_EGM2D_RECO.root");
+
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID_tight->Get("EGamma_SF2D");
+  TH2D * id_medium = (TH2D*)fID_medium->Get("EGamma_SF2D");
+  TH2D * id_loose = (TH2D*)fID_loose->Get("EGamma_SF2D");
+  TH2D * reco = (TH2D*)fReco->Get("EGamma_SF2D");
+
+  // Write output
+
+  id_tight->Write("electronID2023CTight");
+  id_medium->Write("electronID2023CMedium");
+  id_loose->Write("electronID2023CLoose");
+  reco->Write("electronReco2023C");
+
+  fOutput->Close();
+
+  fID_tight->Close();
+  fID_medium->Close();
+  fID_loose->Close();
+  fReco->Close();
+
+}
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun3 (In progress)
+void createElectronFile_2023D() {
+
+  // Get/declare files
+
+  TFile * fID_tight_noHole = new TFile("electron2023D/NoHole_egammaEffi_LooseID.txt_EGM2D.root");
+  TFile * fID_medium_noHole = new TFile("electron2023D/NoHole_egammaEffi_MediumID.txt_EGM2D.root");
+  TFile * fID_loose_noHole = new TFile("electron2023D/NoHole_egammaEffi_TightID.txt_EGM2D.root");
+  TFile * fID_tight_Hole = new TFile("electron2023D/Hole_egammaEffi_LooseID.txt_EGM2D.root");
+  TFile * fID_medium_Hole = new TFile("electron2023D/Hole_egammaEffi_MediumID.txt_EGM2D.root");
+  TFile * fID_loose_Hole = new TFile("electron2023D/Hole_egammaEffi_TightID.txt_EGM2D.root");
+  TFile * fReco = new TFile("electron2023D/egammaEffi.txt_EGM2D_RECO.root");
+
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight_noHole = (TH2D*)fID_tight_noHole->Get("EGamma_SF2D");
+  TH2D * id_medium_noHole = (TH2D*)fID_medium_noHole->Get("EGamma_SF2D");
+  TH2D * id_loose_noHole = (TH2D*)fID_loose_noHole->Get("EGamma_SF2D");
+  TH2D * id_tight_Hole = (TH2D*)fID_tight_Hole->Get("EGamma_SF2D");
+  TH2D * id_medium_Hole = (TH2D*)fID_medium_Hole->Get("EGamma_SF2D");
+  TH2D * id_loose_Hole = (TH2D*)fID_loose_Hole->Get("EGamma_SF2D");
+  TH2D * reco = (TH2D*)fReco->Get("EGamma_SF2D");
+
+  // Write output
+
+  id_tight_noHole->Write("NoHoleElectronID2023DTight");
+  id_medium_noHole->Write("NoHoleElectronID2023DMedium");
+  id_loose_noHole->Write("NoHoleElectronID2023DLoose");
+  id_tight_Hole->Write("HoleElectronID2023DTight");
+  id_medium_Hole->Write("HoleElectronID2023DMedium");
+  id_loose_Hole->Write("HoleElectronID2023DLoose");
+  reco->Write("electronReco2023D");
+
+  fOutput->Close();
+
+  fID_tight_noHole->Close();
+  fID_medium_noHole->Close();
+  fID_loose_noHole->Close();
+  fID_tight_Hole->Close();
+  fID_medium_Hole->Close();
+  fID_loose_Hole->Close();
   fReco->Close();
 
 }
@@ -492,13 +610,13 @@ void createMuonSFFile_2018() {
 }
 
 // https://twiki.cern.ch/twiki/bin/view/CMS/MuonRun32022
-void createMuonSFFile_2022() {
+void createMuonSFFile_2022CD() {
 
   // Get/declare files
 
-  TFile * fID = new TFile("muon2022/RunEFG_SF_ID.json.root");
-  TFile * fIso = new TFile("muon2022/RunEFG_SF_ISO.json.root");
-  TFile * fTrig = new TFile("muon2022/RunEFG_SF_Trig.json.root");
+  TFile * fID = new TFile("muon2022CD/RunCD_SF_ID.json.root");
+  TFile * fIso = new TFile("muon2022CD/RunCD_SF_ISO.json.root");
+  TFile * fTrig = new TFile("muon2022CD/RunCD_SF_Trig.json.root");
 
   TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
 
@@ -519,18 +637,162 @@ void createMuonSFFile_2022() {
 
   // Write output
 
-  id_tight->Write("muonID2022Tight");
-  id_medium->Write("muonID2022Medium");
-  id_loose->Write("muonID2022Loose");
+  id_tight->Write("muonID2022CDTight");
+  id_medium->Write("muonID2022CDMedium");
+  id_loose->Write("muonID2022CDLoose");
 
-  iso_looseRel_looseID->Write("muonIso2022LooseLooseID");
-  iso_looseRel_mediumID->Write("muonIso2022LooseMediumID");
-  iso_looseRel_tightID->Write("muonIso2022LooseTightID");
-  iso_tightRel_mediumID->Write("muonIso2022TightMediumID");
-  iso_tightRel_tightID->Write("muonIso2022TightTightID");
+  iso_looseRel_looseID->Write("muonIso2022CDLooseLooseID");
+  iso_looseRel_mediumID->Write("muonIso2022CDLooseMediumID");
+  iso_looseRel_tightID->Write("muonIso2022CDLooseTightID");
+  iso_tightRel_mediumID->Write("muonIso2022CDTightMediumID");
+  iso_tightRel_tightID->Write("muonIso2022CDTightTightID");
 
-  muIsolatedTrigger->Write("muonTrigger2022IsoMu24");
-  muNonisolatedTrigger->Write("muonTrigger2022Mu50");
+  muIsolatedTrigger->Write("muonTrigger2022CDIsoMu24");
+  muNonisolatedTrigger->Write("muonTrigger2022CDMu50");
+
+  fOutput->Close();
+
+  fID->Close();
+  fIso->Close();
+  fTrig->Close();
+}
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/MuonRun32022
+void createMuonSFFile_2022EFG() {
+
+  // Get/declare files
+
+  TFile * fID = new TFile("muon2022EFG/RunEFG_SF_ID.json.root");
+  TFile * fIso = new TFile("muon2022EFG/RunEFG_SF_ISO.json.root");
+  TFile * fTrig = new TFile("muon2022EFG/RunEFG_SF_Trig.json.root");
+
+  TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID->Get("NUM_TightID_DEN_TrackerMuons");
+  TH2D * id_medium = (TH2D*)fID->Get("NUM_MediumID_DEN_TrackerMuons");
+  TH2D * id_loose = (TH2D*)fID->Get("NUM_LooseID_DEN_TrackerMuons");
+
+  TH2D * iso_looseRel_looseID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_LooseID");
+  TH2D * iso_looseRel_mediumID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_MediumID");
+  TH2D * iso_looseRel_tightID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_TightID");
+  TH2D * iso_tightRel_mediumID = (TH2D*)fIso->Get("NUM_TightPFIso_DEN_MediumID");
+  TH2D * iso_tightRel_tightID = (TH2D*)fIso->Get("NUM_TightPFIso_DEN_TightID");
+
+  TH2D * muIsolatedTrigger = (TH2D*)fTrig->Get("NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight");
+  TH2D * muNonisolatedTrigger = (TH2D*)fTrig->Get("NUM_Mu50_or_CascadeMu100_or_HighPtTkMu100_DEN_CutBasedIdTrkHighPt_and_TkIsoLoose");
+
+  // Write output
+
+  id_tight->Write("muonID2022EFGTight");
+  id_medium->Write("muonID2022EFGMedium");
+  id_loose->Write("muonID2022EFGLoose");
+
+  iso_looseRel_looseID->Write("muonIso2022EFGLooseLooseID");
+  iso_looseRel_mediumID->Write("muonIso2022EFGLooseMediumID");
+  iso_looseRel_tightID->Write("muonIso2022EFGLooseTightID");
+  iso_tightRel_mediumID->Write("muonIso2022EFGTightMediumID");
+  iso_tightRel_tightID->Write("muonIso2022EFGTightTightID");
+
+  muIsolatedTrigger->Write("muonTrigger2022EFGIsoMu24");
+  muNonisolatedTrigger->Write("muonTrigger2022EFGMu50");
+
+  fOutput->Close();
+
+  fID->Close();
+  fIso->Close();
+  fTrig->Close();
+}
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/MuonRun3_2023
+void createMuonSFFile_2023C() {
+
+  // Get/declare files
+
+  TFile * fID = new TFile("muon2023C/RunC_SF_ID.json.root");
+  TFile * fIso = new TFile("muon2023C/RunC_SF_ISO.json.root");
+  TFile * fTrig = new TFile("muon2023C/RunC_SF_Trig.json.root");
+
+  TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID->Get("NUM_TightID_DEN_TrackerMuons");
+  TH2D * id_medium = (TH2D*)fID->Get("NUM_MediumID_DEN_TrackerMuons");
+  TH2D * id_loose = (TH2D*)fID->Get("NUM_LooseID_DEN_TrackerMuons");
+
+  TH2D * iso_looseRel_looseID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_LooseID");
+  TH2D * iso_looseRel_mediumID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_MediumID");
+  TH2D * iso_looseRel_tightID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_TightID");
+  TH2D * iso_tightRel_mediumID = (TH2D*)fIso->Get("NUM_TightPFIso_DEN_MediumID");
+  TH2D * iso_tightRel_tightID = (TH2D*)fIso->Get("NUM_TightPFIso_DEN_TightID");
+
+  TH2D * muIsolatedTrigger = (TH2D*)fTrig->Get("NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight");
+  TH2D * muNonisolatedTrigger = (TH2D*)fTrig->Get("NUM_Mu50_or_CascadeMu100_or_HighPtTkMu100_DEN_CutBasedIdTrkHighPt_and_TkIsoLoose");
+
+  // Write output
+
+  id_tight->Write("muonID2023CTight");
+  id_medium->Write("muonID2023CMedium");
+  id_loose->Write("muonID2023CLoose");
+
+  iso_looseRel_looseID->Write("muonIso2023CLooseLooseID");
+  iso_looseRel_mediumID->Write("muonIso2023CLooseMediumID");
+  iso_looseRel_tightID->Write("muonIso2023CLooseTightID");
+  iso_tightRel_mediumID->Write("muonIso2023CTightMediumID");
+  iso_tightRel_tightID->Write("muonIso2023CTightTightID");
+
+  muIsolatedTrigger->Write("muonTrigger2023CIsoMu24");
+  muNonisolatedTrigger->Write("muonTrigger2023CMu50");
+
+  fOutput->Close();
+
+  fID->Close();
+  fIso->Close();
+  fTrig->Close();
+}
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/MuonRun3_2023
+void createMuonSFFile_2023D() {
+
+  // Get/declare files
+
+  TFile * fID = new TFile("muon2023D/RunD_SF_ID.json.root");
+  TFile * fIso = new TFile("muon2023D/RunD_SF_ISO.json.root");
+  TFile * fTrig = new TFile("muon2023D/RunD_SF_Trig.json.root");
+
+  TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID->Get("NUM_TightID_DEN_TrackerMuons");
+  TH2D * id_medium = (TH2D*)fID->Get("NUM_MediumID_DEN_TrackerMuons");
+  TH2D * id_loose = (TH2D*)fID->Get("NUM_LooseID_DEN_TrackerMuons");
+
+  TH2D * iso_looseRel_looseID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_LooseID");
+  TH2D * iso_looseRel_mediumID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_MediumID");
+  TH2D * iso_looseRel_tightID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_TightID");
+  TH2D * iso_tightRel_mediumID = (TH2D*)fIso->Get("NUM_TightPFIso_DEN_MediumID");
+  TH2D * iso_tightRel_tightID = (TH2D*)fIso->Get("NUM_TightPFIso_DEN_TightID");
+
+  TH2D * muIsolatedTrigger = (TH2D*)fTrig->Get("NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight");
+  TH2D * muNonisolatedTrigger = (TH2D*)fTrig->Get("NUM_Mu50_or_CascadeMu100_or_HighPtTkMu100_DEN_CutBasedIdTrkHighPt_and_TkIsoLoose");
+
+  // Write output
+
+  id_tight->Write("muonID2023DTight");
+  id_medium->Write("muonID2023DMedium");
+  id_loose->Write("muonID2023DLoose");
+
+  iso_looseRel_looseID->Write("muonIso2023DLooseLooseID");
+  iso_looseRel_mediumID->Write("muonIso2023DLooseMediumID");
+  iso_looseRel_tightID->Write("muonIso2023DLooseTightID");
+  iso_tightRel_mediumID->Write("muonIso2023DTightMediumID");
+  iso_tightRel_tightID->Write("muonIso2023DTightTightID");
+
+  muIsolatedTrigger->Write("muonTrigger2023DIsoMu24");
+  muNonisolatedTrigger->Write("muonTrigger2023DMu50");
 
   fOutput->Close();
 
@@ -547,11 +809,17 @@ void recreateLeptonSFs() {
   createElectronFile_2017();
   createElectronFile_2017_v2();
   createElectronFile_2018();
-  createElectronFile_2022();
+  createElectronFile_2022CD();
+  createElectronFile_2022EFG();
+  createElectronFile_2023C();
+  createElectronFile_2023D();
   
   createMuonSFFile_2015();
   createMuonSFFile_2016();
   createMuonSFFile_2017();
   createMuonSFFile_2018();
-  createMuonSFFile_2022();
+  createMuonSFFile_2022CD();
+  createMuonSFFile_2022EFG();
+  createMuonSFFile_2023C();
+  createMuonSFFile_2023D();
 }

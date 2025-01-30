@@ -31,7 +31,8 @@ class ObjectScalingFactorProducer : public EventVariableProducer
         bool doMuSF_;
         bool doTrackSF_;
         void AddVariables(const edm::Event &, const edm::EventSetup &);
-              vector<ScaleFactor> scaleFactors_;
+        vector<ScaleFactor> scaleFactors_;
+        bool alreadyErasedName_; // This is used in the 2023D version case
 
 };
 #endif
