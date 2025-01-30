@@ -10152,7 +10152,7 @@ charginoColors = {
 }
 for charginoMass in range(100, 1200, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
-    for charginoRelease in ['76X', '80X', '94X', '102X', '124X']:
+    for charginoRelease in ['76X', '80X', '94X', '102X', '124X', '130X']:
       charginoDataset = 'AMSB_chargino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
       nJobs.update     ({ charginoDataset : 99 })
       maxEvents.update ({ charginoDataset : -1 })
@@ -10162,7 +10162,7 @@ for charginoMass in range(100, 1200, 100):
 # Higgsino
 for charginoMass in range(100, 1000, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
-    for charginoRelease in ['94X', '102X', '124X']:
+    for charginoRelease in ['94X', '102X', '124X', '130X']:
       charginoDataset = 'Higgsino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
       nJobs.update     ({ charginoDataset : 99 })
       maxEvents.update ({ charginoDataset : -1 })
