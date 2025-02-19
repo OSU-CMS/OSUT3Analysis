@@ -483,7 +483,7 @@ datasets = [
    'Zto2Nu_4Jets_HT1500to2500_2022EE',
    'Zto2Nu_4Jets_HT2500_2022EE',
 
-    #QCD MuEnriched
+   #QCD MuEnriched
    'QCD_MuEnriched_20toInf',
    'QCD_MuEnriched_15to20',
    'QCD_MuEnriched_20to30',
@@ -3230,7 +3230,7 @@ maxEvents = {
     'EGamma_2022C'          : -1,
     'EGamma_2022D'          : -1,
     'EGamma_2022E'          : -1,
-    'EGamma_2022F'          : 1000,
+    'EGamma_2022F'          : -1,
     'EGamma_2022G'          : -1,
 
     'DoubleMu_2015B'        : -1,
@@ -9708,6 +9708,46 @@ crossSections = {
   'Cosmics' : 1.0,
 
   #Run3 2022EE; need to get correct values with GEN or EXO MC&I
+  'WToLNu_4Jets_2022' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'DYto2L_4jets_M10to50_2022' : 20950.0, # From XSDB
+  'DYJetsToLL_M50_2022' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'TbarBtoLminusNuB_2022' : 1.35, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TBbartoLplusNuBbar_2022' : 2.30, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarQtoLNu_2022' : 26.18, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TQbartoLNu_2022' : 43.91, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarWplusto2L2Nu_2022' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TbarWplustoLNu2Q_2022' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminusto2L2Nu_2022' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminustoLNu2Q_2022' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'WW_2022' : 80.23, # From XSDB
+  'WZ_2022' : 29.1, # From XSDB
+  'ZZ_2022' : 12.75, # From XSDB
+  'TTto2L2Nu_2022' : 98.88, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTtoLNu2Q_2022' : 407.43, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTto4Q_2022' : 419.69, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'QCD_PT15to30_2022' : 1301000000.0, # From XSDB
+  'QCD_PT30to50_2022' : 113300000.0, # From XSDB
+  'QCD_PT50to80_2022' : 16760000.0, # From XSDB
+  'QCD_PT80to120_2022' : 2534000.0, # From XSDB
+  'QCD_PT120to170_2022' : 445800.0, # From XSDB
+  'QCD_PT170to300_2022' : 113700.0, # From XSDB
+  'QCD_PT300to470_2022' : 7559.0, # From XSDB
+  'QCD_PT470to600_2022' : 626.4, # From XSDB
+  'QCD_PT600to800_2022' : 178.6, # From XSDB
+  'QCD_PT800to1000_2022' : 30.57, # From XSDB
+  'QCD_PT1000to1400_2022' : 8.92, # From XSDB
+  'QCD_PT1400to1800_2022' : 0.8103, # From XSDB
+  'QCD_PT1800to2400_2022' : 0.1148, # From XSDB
+  'QCD_PT2400to3200_2022' : 0.007542, # From XSDB
+  'QCD_PT3200_2022' : 0.0002331, # From XSDB
+  'Zto2Nu_4Jets_HT100to200_2022' : 314.03, # From XSDB
+  'Zto2Nu_4Jets_HT200to400_2022' : 87.15, # From XSDB
+  'Zto2Nu_4Jets_HT400to800_2022' : 15.13, # From XSDB
+  'Zto2Nu_4Jets_HT800to1500_2022' : 1.56, # From XSDB
+  'Zto2Nu_4Jets_HT1500to2500_2022' : 0.113, # From XSDB
+  'Zto2Nu_4Jets_HT2500_2022' : 0.0077, # From XSDB
+
+  #Run3 2022EE; need to get correct values with GEN or EXO MC&I
   'WToLNu_4Jets_2022EE' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
   'DYto2L_4jets_M10to50_2022EE' : 20950.0, # From XSDB
   'DYJetsToLL_M50_2022EE' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
@@ -9746,6 +9786,48 @@ crossSections = {
   'Zto2Nu_4Jets_HT800to1500_2022EE' : 1.56, # From XSDB
   'Zto2Nu_4Jets_HT1500to2500_2022EE' : 0.113, # From XSDB
   'Zto2Nu_4Jets_HT2500_2022EE' : 0.0077, # From XSDB
+
+  #Run3 2022EE; need to get correct values with GEN or EXO MC&I
+  'WToLNu_4Jets_2023' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'DYto2L_4jets_M10to50_2023' : 20950.0, # From XSDB
+  'DYJetsToLL_M50_2023' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'TbarBtoLminusNuB_2023' : 1.35, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TBbartoLplusNuBbar_2023' : 2.30, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarQtoLNu_2023' : 26.18, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TQbartoLNu_2023' : 43.91, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarWplusto2L2Nu_2023' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TbarWplustoLNu2Q_2023' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminusto2L2Nu_2023' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminustoLNu2Q_2023' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'WW_2023' : 80.23, # From XSDB
+  'WZ_2023' : 29.1, # From XSDB
+  'ZZ_2023' : 12.75, # From XSDB
+  'TTto2L2Nu_2023' : 98.88, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTtoLNu2Q_2023' : 407.43, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTto4Q_2023' : 419.69, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'QCD_PT15to30_2023' : 1301000000.0, # From XSDB
+  'QCD_PT30to50_2023' : 113300000.0, # From XSDB
+  'QCD_PT50to80_2023' : 16760000.0, # From XSDB
+  'QCD_PT80to120_2023' : 2534000.0, # From XSDB
+  'QCD_PT120to170_2023' : 445800.0, # From XSDB
+  'QCD_PT170to300_2023' : 113700.0, # From XSDB
+  'QCD_PT300to470_2023' : 7559.0, # From XSDB
+  'QCD_PT470to600_2023' : 626.4, # From XSDB
+  'QCD_PT600to800_2023' : 178.6, # From XSDB
+  'QCD_PT800to1000_2023' : 30.57, # From XSDB
+  'QCD_PT1000to1400_2023' : 8.92, # From XSDB
+  'QCD_PT1400to1800_2023' : 0.8103, # From XSDB
+  'QCD_PT1800to2400_2023' : 0.1148, # From XSDB
+  'QCD_PT2400to3200_2023' : 0.007542, # From XSDB
+  'QCD_PT3200_2023' : 0.0002331, # From XSDB
+  'Zto2Nu_4Jets_HT100to200_2023' : 314.03, # From XSDB
+  'Zto2Nu_4Jets_HT200to400_2023' : 87.15, # From XSDB
+  'Zto2Nu_4Jets_HT400to800_2023' : 15.13, # From XSDB
+  'Zto2Nu_4Jets_HT800to1500_2023' : 1.56, # From XSDB
+  'Zto2Nu_4Jets_HT1500to2500_2023' : 0.113, # From XSDB
+  'Zto2Nu_4Jets_HT2500_2023' : 0.0077, # From XSDB
+
+
 }
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
@@ -10150,7 +10232,7 @@ charginoColors = {
   1000  : 600,
   10000 : 1,
 }
-for charginoMass in range(100, 1200, 100):
+for charginoMass in range(100, 1300, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
     for charginoRelease in ['76X', '80X', '94X', '102X', '124X', '130X']:
       charginoDataset = 'AMSB_chargino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
@@ -10160,7 +10242,7 @@ for charginoMass in range(100, 1200, 100):
       colors.update    ({ charginoDataset : charginoColors[charginoCTau] })
       labels.update    ({ charginoDataset : "AMSB %d GeV #tilde{#chi}^{#pm} (c#tau = %d cm)" % (charginoMass, charginoCTau) })
 # Higgsino
-for charginoMass in range(100, 1000, 100):
+for charginoMass in range(100, 1100, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
     for charginoRelease in ['94X', '102X', '124X', '130X']:
       charginoDataset = 'Higgsino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
