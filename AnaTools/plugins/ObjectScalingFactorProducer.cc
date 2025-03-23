@@ -28,10 +28,12 @@ ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet
     sf.sfType = sfDef.getParameter<string> ("sfType");
     sf.version = sfDef.getParameter<string> ("version");
     sf.wp = sfDef.exists("wp") ? sf.wp = sfDef.getParameter<string> ("wp") : "";
+    sf.prefix = sfDef.exists("prefix") ? sf.prefix = sfDef.getParameter<string> ("prefix") : "";
     sf.additionalSystematic = sfDef.exists("additionalSystematic") ? sfDef.getParameter<double> ("additionalSystematic") : -1;
     sf.additionalSystematic = sfDef.exists("additionalSystematicBelow20GeV") ? sfDef.getParameter<double> ("additionalSystematicBelow20GeV") : -1;
     sf.additionalSystematic = sfDef.exists("additionalSystematicAbove80GeV") ? sfDef.getParameter<double> ("additionalSystematicAbove80GeV") : -1;
     sf.outputVariable = string(anatools::singular(sf.inputCollection)) + string(sf.sfType) + string(sf.version) + string(sf.wp);
+    if(sf.version == "2023D" && sf.prefix != "") sf.outputVariable = string(sf.prefix) + string(anatools::capitalize(anatools::singular(sf.inputCollection))) + string(sf.sfType) + string(sf.version) + string(sf.wp);
 
     if (!sfDef.exists ("eras")){
       sf.inputPlots.push_back(sf.outputVariable);
@@ -48,6 +50,8 @@ ObjectScalingFactorProducer::ObjectScalingFactorProducer(const edm::ParameterSet
     scaleFactors_.push_back(sf);
 
   }
+
+  alreadyErasedName_ = false;
 
   anatools::getAllTokens (collections_, consumesCollector (), tokens_);
 }
@@ -112,6 +116,13 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event, const edm::E
          exit(1);
       }
 
+      TH2F * plot2023DNoHole;
+      if(sf.version == "2023D" && sf.prefix != "" && !alreadyErasedName_) {
+        plot2023DNoHole = (TH2F*)electronInputFile->Get(((sf.inputPlots[0]).erase(0,2)).c_str());
+        alreadyErasedName_ = true;
+      }
+      else plot2023DNoHole = (TH2F*)electronInputFile->Get(sf.inputPlots[0].c_str()); // This is just a placeholder; it will get deleted at the end
+
       float xMin = plot->GetXaxis()->GetBinCenter(1);
       float xMax = plot->GetXaxis()->GetBinCenter(plot->GetNbinsX());
       float yMin = plot->GetYaxis()->GetBinCenter(1);
@@ -128,8 +139,18 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event, const edm::E
          if(pt < yMin) pt = yMin;
          if(pt > yMax) pt = yMax;
 
-               float sfValue = plot->GetBinContent(plot->FindBin(eta, pt));
-               float sfError = plot->GetBinError(plot->FindBin(eta, pt));
+         float sfValue = plot->GetBinContent(plot->FindBin(eta, pt));
+         float sfError = plot->GetBinError(plot->FindBin(eta, pt));
+
+         if(sf.version == "2023D" && sf.prefix != ""){
+          if(eta > -1.5 && eta < 0.0){
+            float phi = electron1.phi();
+            if(phi > -1.2 && phi < -0.8){
+              sfValue = plot2023DNoHole->GetBinContent(plot2023DNoHole->FindBin(eta, pt));
+              sfError = plot2023DNoHole->GetBinError(plot2023DNoHole->FindBin(eta, pt));
+            }
+          }
+         }
 
          // for 80X Moriond series (https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_efficiencies_and_scale)
          // special systematic recommendation for pt<20 and pt>80
@@ -141,6 +162,7 @@ ObjectScalingFactorProducer::AddVariables (const edm::Event &event, const edm::E
          sfDown *= sfValue - sfError;
       } // end loop over electrons
       delete plot;
+      delete plot2023DNoHole;
     }
 
     // muons are split up into eras, so loop over any provided

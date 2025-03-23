@@ -126,6 +126,7 @@ struct ScaleFactor
   double additionalSystematic;
   double additionalSystematicBelow20GeV;
   double additionalSystematicAbove80GeV;
+  string prefix;
   vector<string> inputPlots;
   vector<double> inputLumis;
   string outputVariable;

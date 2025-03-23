@@ -1,0 +1,22 @@
+This readme describes the files currently available and how to create/use them
+
+Since Run3 there are two file options for scale factors ROOT, JSON
+
+JSON files can be downloaded from
+https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/EGM/2023_Summer23
+
+While ROOT files are avialable on EOS with paths described on twiki
+https://twiki.cern.ch/twiki/bin/view/CMS/EgammSFandSSRun3#Scale_factors_and_corrections_fo (note* jsons listed match with version on gitlab)
+
+Loose: /eos/cms/store/group/phys_egamma/ScaleFactors/Data2023/ForPrompt23C/tnpEleID/passingCutBasedLoose122XV1/egammaEffi.txt_EGM2D.root
+Medium: /eos/cms/store/group/phys_egamma/ScaleFactors/Data2023/ForPrompt23C/tnpEleID/passingCutBasedVeto122XV1/egammaEffi.txt_EGM2D.root
+Tight: /eos/cms/store/group/phys_egamma/ScaleFactors/Data2023/ForPrompt23C/tnpEleID/passingCutBasedMedium122XV1/egammaEffi.txt_EGM2D.root
+Veto: /eos/cms/store/group/phys_egamma/ScaleFactors/Data2023/ForPrompt23C/tnpEleID/passingCutBasedTight122XV1/egammaEffi.txt_EGM2D.root
+Reco Low PT: /eos/cms/store/group/phys_egamma/validation/web/Run3_egm_reco_SF/SF_prompt_2023_19012024/lowpT/Run3_2023C_New_lowpT_mergeEta_Added_symmetrizationsystEta_29052024/passingRECO/egammaEffi.txt_EGM2D.root
+Reco Med PT: /eos/cms/store/group/phys_egamma/validation/web/Run3_egm_reco_SF/SF_prompt_2023_19012024/midpT/Run3_2023C_New_midpT2_eta/passingRECO/egammaEffi.txt_EGM2D.root
+Reco High PT: /eos/cms/store/group/phys_egamma/validation/web/Run3_egm_reco_SF/SF_prompt_2023_19012024/highpT/Run3_2023C_New_highpt1_eta/passingRECO/egammaEffi.txt_EGM2D.root
+
+
+Because RECO SFs are broken up by PT ranges it is necessary to combine them into one plot. This can be done using the accessJSONInfo.py function combineRecoPlots().
+
+Once that step is complete the script recreateLeptonSFs.C can be used to create the final root file to be used by the analysis.

@@ -405,9 +405,6 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
     if "_201" in osusub.datasetLabel:
         collectionProducer.tracks.fiducialMaps.electrons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
         collectionProducer.tracks.fiducialMaps.muons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
-    if "_202" in osusub.datasetLabel:
-        collectionProducer.tracks.fiducialMaps.electrons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_202'):])
-        collectionProducer.tracks.fiducialMaps.muons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_202'):])
 
 # For 94X/102X which use electron VIDs, define the vertexing requirements for veto electrons
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
