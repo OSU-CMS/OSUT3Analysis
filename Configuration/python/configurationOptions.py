@@ -9906,6 +9906,45 @@ crossSections = {
   'Zto2Nu_4Jets_HT1500to2500_2023' : 0.113, # From XSDB
   'Zto2Nu_4Jets_HT2500_2023' : 0.0077, # From XSDB
 
+  #Run3 2022EE; need to get correct values with GEN or EXO MC&I
+  'WToLNu_4Jets_2023PostBPix' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'DYto2L_4jets_M10to50_2023PostBPix' : 20950.0, # From XSDB
+  'DYJetsToLL_M50_2023PostBPix' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'TbarBtoLminusNuB_2023PostBPix' : 1.35, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TBbartoLplusNuBbar_2023PostBPix' : 2.30, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarQtoLNu_2023PostBPix' : 26.18, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TQbartoLNu_2023PostBPix' : 43.91, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarWplusto2L2Nu_2023PostBPix' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TbarWplustoLNu2Q_2023PostBPix' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminusto2L2Nu_2023PostBPix' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminustoLNu2Q_2023PostBPix' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'WW_2023PostBPix' : 80.23, # From XSDB
+  'WZ_2023PostBPix' : 29.1, # From XSDB
+  'ZZ_2023PostBPix' : 12.75, # From XSDB
+  'TTto2L2Nu_2023PostBPix' : 98.88, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTtoLNu2Q_2023PostBPix' : 407.43, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTto4Q_2023PostBPix' : 419.69, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'QCD_PT15to30_2023PostBPix' : 1301000000.0, # From XSDB
+  'QCD_PT30to50_2023PostBPix' : 113300000.0, # From XSDB
+  'QCD_PT50to80_2023PostBPix' : 16760000.0, # From XSDB
+  'QCD_PT80to120_2023PostBPix' : 2534000.0, # From XSDB
+  'QCD_PT120to170_2023PostBPix' : 445800.0, # From XSDB
+  'QCD_PT170to300_2023PostBPix' : 113700.0, # From XSDB
+  'QCD_PT300to470_2023PostBPix' : 7559.0, # From XSDB
+  'QCD_PT470to600_2023PostBPix' : 626.4, # From XSDB
+  'QCD_PT600to800_2023PostBPix' : 178.6, # From XSDB
+  'QCD_PT800to1000_2023PostBPix' : 30.57, # From XSDB
+  'QCD_PT1000to1400_2023PostBPix' : 8.92, # From XSDB
+  'QCD_PT1400to1800_2023PostBPix' : 0.8103, # From XSDB
+  'QCD_PT1800to2400_2023PostBPix' : 0.1148, # From XSDB
+  'QCD_PT2400to3200_2023PostBPix' : 0.007542, # From XSDB
+  'QCD_PT3200_2023PostBPix' : 0.0002331, # From XSDB
+  'Zto2Nu_4Jets_HT100to200_2023PostBPix' : 314.03, # From XSDB
+  'Zto2Nu_4Jets_HT200to400_2023PostBPix' : 87.15, # From XSDB
+  'Zto2Nu_4Jets_HT400to800_2023PostBPix' : 15.13, # From XSDB
+  'Zto2Nu_4Jets_HT800to1500_2023PostBPix' : 1.56, # From XSDB
+  'Zto2Nu_4Jets_HT1500to2500_2023PostBPix' : 0.113, # From XSDB
+  'Zto2Nu_4Jets_HT2500_2023PostBPix' : 0.0077, # From XSDB
 
 }
 
