@@ -491,7 +491,7 @@ osu::DisappearingTrack::DisappearingTrack (const TYPE(tracks) &track,
   set_primaryPFIsolations(pfCandidates);
   set_additionalPFIsolations(pfCandidates, lostTracks);
 
-#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM && DATA_FORMAT != MINI_AOD_ONLY_2022_CUSTOM
   // if the tracks collection itself is CandidateTracks, don't bother with matching this to itself
   if(cfg.getParameter<edm::ParameterSet>("collections").getParameter<edm::InputTag>("tracks").label() != "candidateTrackProducer") {
     maxDeltaR_candidateTrackMatching_ = cfg.getParameter<double> ("maxDeltaRForCandidateTrackMatching");
@@ -519,7 +519,7 @@ osu::DisappearingTrack::~DisappearingTrack ()
   eleVtx_dzCuts_endcap_.clear();
 }
 
-#if DATA_FORMAT != MINI_AOD_2022_CUSTOM
+#if DATA_FORMAT != MINI_AOD_2022_CUSTOM && DATA_FORMAT != MINI_AOD_ONLY_2022_CUSTOM
 const edm::Ref<vector<CandidateTrack> > &
 osu::DisappearingTrack::findMatchedCandidateTrack (const edm::Handle<vector<CandidateTrack> > &candidateTracks, edm::Ref<vector<CandidateTrack> > &matchedCandidateTrack, double &dRToMatchedCandidateTrack) const
 {
@@ -573,7 +573,7 @@ osu::DisappearingTrack::set_minDeltaRToElectrons (const edm::Handle<edm::View<TY
   for(const auto &ele : *electrons) {
     ++iEle;
     dR = deltaR(*this, ele);
-
+    
     if(dR < deltaRToClosestElectron_ || deltaRToClosestElectron_ < 0.0) deltaRToClosestElectron_ = dR;
 
     bool passesVeto_dxy   = false, passesVeto_dz   = false;
@@ -612,7 +612,8 @@ osu::DisappearingTrack::set_minDeltaRToElectrons (const edm::Handle<edm::View<TY
       passesTight_dz  = (ele_dz < eleVtx_dzCuts_endcap_[3]);
     }
 
-    if((*vidVetoMap)  [(*electrons).refAt(iEle)] &&
+    if((*vidVetoMap)[(*electrons).refAt(iEle)] &&
+
        passesVeto_dxy &&
        passesVeto_dz &&
        (dR < deltaRToClosestVetoElectron_   || deltaRToClosestVetoElectron_   < 0.0)) {
@@ -620,6 +621,7 @@ osu::DisappearingTrack::set_minDeltaRToElectrons (const edm::Handle<edm::View<TY
     }
 
     if((*vidLooseMap) [(*electrons).refAt(iEle)] &&
+
        passesLoose_dxy &&
        passesLoose_dz &&
        (dR < deltaRToClosestLooseElectron_  || deltaRToClosestLooseElectron_  < 0.0)) {
@@ -681,11 +683,40 @@ osu::DisappearingTrack::set_minDeltaRToTaus(const edm::Handle<vector<TYPE(taus)>
 
     if(dR < deltaRToClosestTau_ || deltaRToClosestTau_ < 0.0) deltaRToClosestTau_ = dR;
 
+#if DATA_FORMAT_IS_2017
     passesDecayModeReconstruction = (tau.isTauIDAvailable("decayModeFinding") && tau.tauID("decayModeFinding") > 0.5);
 
     passesLightFlavorRejection = (tau.isTauIDAvailable("againstElectronLooseMVA5") && tau.tauID("againstElectronLooseMVA5") > 0.5);
     passesLightFlavorRejection = passesLightFlavorRejection || (tau.isTauIDAvailable("againstElectronLooseMVA6") && tau.tauID("againstElectronLooseMVA6") > 0.5);
     passesLightFlavorRejection = passesLightFlavorRejection && (tau.isTauIDAvailable("againstMuonLoose3") && tau.tauID("againstMuonLoose3") > 0.5);
+
+#elif DATA_FORMAT_IS_2022
+    passesDecayModeReconstruction = tau.isTauIDAvailable("decayModeFindingNewDMs") && (tau.tauID("decayModeFindingNewDMs"));
+
+    passesLightFlavorRejection = true;
+
+    // The Tau IDs is done like this so that the 2018v2p5 algorithm has priority over the 2017v2p1, which is the recommendation from the Tau POG
+    // The 2018v2p5 doesn't exist in t > 0.5he PromptReco files, but exist in the rereco MiniAOD
+    if(tau.isTauIDAvailable("byVVVLooseDeepTau2018v2p5VSe")) {
+      passesLightFlavorRejection = passesLightFlavorRejection && (tau.tauID("byVVVLooseDeepTau2018v2p5VSe") > 0.5);
+    }
+    else if(tau.isTauIDAvailable("byVVVLooseDeepTau2017v2p1VSe")) {
+      passesLightFlavorRejection = passesLightFlavorRejection && (tau.tauID("byVVVLooseDeepTau2017v2p1VSe") > 0.5);
+    }
+    else {
+      passesLightFlavorRejection = passesLightFlavorRejection && false;
+    }
+
+    if(tau.isTauIDAvailable("byVLooseDeepTau2018v2p5VSmu")) {
+      passesLightFlavorRejection = passesLightFlavorRejection && (tau.tauID("byVLooseDeepTau2018v2p5VSmu") > 0.5);
+    }
+    else if(tau.isTauIDAvailable("byVLooseDeepTau2017v2p1VSmu")) {
+      passesLightFlavorRejection = passesLightFlavorRejection && (tau.tauID("byVLooseDeepTau2017v2p1VSmu") > 0.5);
+    }
+    else {
+      passesLightFlavorRejection = passesLightFlavorRejection && false;
+    }
+#endif
 
     if(passesDecayModeReconstruction && passesLightFlavorRejection && (dR < deltaRToClosestTauHad_  || deltaRToClosestTauHad_  < 0.0)) {
       deltaRToClosestTauHad_ = dR;
@@ -888,7 +919,7 @@ osu::DisappearingTrack::caloTotNoPU (double dR, RhoType rhoType, CaloType caloTy
     else if(intDR == 1) rawCaloTot = caloNewHadDRp1();
     break; 
   }
-  
+
   double caloCorr = rho * TMath::Pi() * dR * dR;  // Define effective area as pi*r^2, where r is radius of DeltaR cone.
   double caloTotNoPU = TMath::Max(0., rawCaloTot - caloCorr);
   return caloTotNoPU;

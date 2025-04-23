@@ -2,7 +2,7 @@
 
 #define VARIABLE_PRODUCER
 
-#include "FWCore/Framework/interface/EDFilter.h"
+#include "FWCore/Framework/interface/stream/EDFilter.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -10,7 +10,7 @@
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
-class VariableProducer : public edm::EDFilter
+class VariableProducer : public edm::stream::EDFilter<>
   {
     public:
       VariableProducer (const edm::ParameterSet &);

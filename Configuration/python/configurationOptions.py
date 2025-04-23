@@ -3,7 +3,7 @@
 import os
 import importlib
 
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
     samples = importlib.import_module("DisappTrks.StandardAnalysis.miniAOD_124X_Samples")
     dataset_names = getattr(samples, "dataset_names")
     run3_skim_sibling_datasets = getattr(samples, "run3_skim_sibling_datasets")
@@ -444,39 +444,46 @@ datasets = [
    'Diboson_50ns',
 
    #Run3 2022EE
-   'WToLNu_4Jets_PostEE', # LO dataset
-   'WToLNu_2Jets_PostEE', # NLO dataset
-   'DYJetsToLL_M50_PostEE',
-   'WW_PostEE',
-   'WZ_PostEE',
-   'ZZ_PostEE',
-   'TTto2L2Nu_PostEE',
-   'TTtoLNu2Q_PostEE',
-   'TTto4Q_PostEE',
-   'QCD_PT15to30_PostEE',
-   'QCD_PT30to50_PostEE',
-   'QCD_PT50to80_PostEE',
-   'QCD_PT80to120_PostEE',
-   'QCD_PT120to170_PostEE',
-   'QCD_PT170to300_PostEE',
-   'QCD_PT300to470_PostEE',
-   'QCD_PT470to600_PostEE',
-   'QCD_PT600to800_PostEE',
-   'QCD_PT800to1000_PostEE',
-   'QCD_PT1000to1400_PostEE',
-   'QCD_PT1400to1800_PostEE',
-   'QCD_PT1800to2400_PostEE',
-   'QCD_PT2400to3200_PostEE',
-   'Zto2Nu_4Jets_HT100to200_PostEE',
-   'Zto2Nu_4Jets_HT200to400_PostEE',
-   'Zto2Nu_4Jets_HT400to800_PostEE',
-   'Zto2Nu_4Jets_HT800to1500_PostEE',
-   'Zto2Nu_4Jets_HT1500to2500_PostEE',
-   'WtoMuNu_M100to200', # Very off-shell W; not very useful
-   'WtoMuNu_M200to500', # Very off-shell W; not very useful
-   'WtoMuNu_M500to1000', # Very off-shell W; not very useful
+   'WToLNu_4Jets_2022EE',
+   'DYto2L_4jets_M10to50_2022EE',
+   'DYJetsToLL_M50_2022EE',
+   'TbarBtoLminusNuB_2022EE', # single top s-channel
+   'TBbartoLplusNuBbar_2022EE', # single top s-channel
+   'TbarQtoLNu_2022EE', # single top t-channel
+   'TQbartoLNu_2022EE', # single top t-channel
+   'TbarWplusto2L2Nu_2022EE', # single top tW
+   'TbarWplustoLNu2Q_2022EE', # single top tW
+   'TWminusto2L2Nu_2022EE', # single top tW
+   'TWminustoLNu2Q_2022EE', # single top tW
+   'WW_2022EE',
+   'WZ_2022EE',
+   'ZZ_2022EE',
+   'TTto2L2Nu_2022EE',
+   'TTtoLNu2Q_2022EE',
+   'TTto4Q_2022EE',
+   'QCD_PT15to30_2022EE',
+   'QCD_PT30to50_2022EE',
+   'QCD_PT50to80_2022EE',
+   'QCD_PT80to120_2022EE',
+   'QCD_PT120to170_2022EE',
+   'QCD_PT170to300_2022EE',
+   'QCD_PT300to470_2022EE',
+   'QCD_PT470to600_2022EE',
+   'QCD_PT600to800_2022EE',
+   'QCD_PT800to1000_2022EE',
+   'QCD_PT1000to1400_2022EE',
+   'QCD_PT1400to1800_2022EE',
+   'QCD_PT1800to2400_2022EE',
+   'QCD_PT2400to3200_2022EE',
+   'QCD_PT3200_2022EE',
+   'Zto2Nu_4Jets_HT100to200_2022EE',
+   'Zto2Nu_4Jets_HT200to400_2022EE',
+   'Zto2Nu_4Jets_HT400to800_2022EE',
+   'Zto2Nu_4Jets_HT800to1500_2022EE',
+   'Zto2Nu_4Jets_HT1500to2500_2022EE',
+   'Zto2Nu_4Jets_HT2500_2022EE',
 
-    #QCD MuEnriched
+   #QCD MuEnriched
    'QCD_MuEnriched_20toInf',
    'QCD_MuEnriched_15to20',
    'QCD_MuEnriched_20to30',
@@ -566,8 +573,15 @@ datasets = [
   'AMSB_chargino_100GeV_100cm_124X',
   'AMSB_chargino_Pythia700GeV_100cm_124X',
   'AMSB_chargino_Pythia100GeV_100cm_124X',
+  'AMSB_wino_700GeV_10cm_2022EE',
+  'AMSB_wino_700GeV_100cm_2022EE',
+  'AMSB_wino_700GeV_1000cm_2022EE',
+  'AMSB_wino_700GeV_10000cm_2022EE',
+
 
   'Cosmics',
+
+  'DYJetsToLL_M50_merged',
 
   #Sum of all backgrounds
    'Background',
@@ -578,6 +592,10 @@ composite_dataset_definitions = {
         'DYJetsToLL_50',
         'DYJetsToLL_10to50',
     ],
+    'DYJetsToLL2022EE' : [
+        'DYto2L_4jets_M10to50_2022EE',
+        'DYJetsToLL_M50_2022EE',
+    ],
     'ZJetsToNuNu' : [
         'ZJetsToNuNu_HT100to200',
         'ZJetsToNuNu_HT200to400',
@@ -587,6 +605,14 @@ composite_dataset_definitions = {
         'ZJetsToNuNu_HT1200to2500',
         'ZJetsToNuNu_HT600toInf',
         'ZJetsToNuNu_HT2500toInf',
+    ],
+    'ZJetsToNuNu2022EE' : [
+        'Zto2Nu_4Jets_HT100to200_2022EE',
+        'Zto2Nu_4Jets_HT200to400_2022EE',
+        'Zto2Nu_4Jets_HT400to800_2022EE',
+        'Zto2Nu_4Jets_HT800to1500_2022EE',
+        'Zto2Nu_4Jets_HT1500to2500_2022EE',
+        'Zto2Nu_4Jets_HT2500_2022EE',
     ],
     'DYJetsToLL_50ns' : [
         'DYJetsToLL_50_50ns',
@@ -617,6 +643,11 @@ composite_dataset_definitions = {
         'WG',
         'ZG'
     ],
+    'Diboson2022EE' : [
+        'WW_2022EE',
+        'WZ_2022EE',
+        'ZZ_2022EE',
+    ],
     'Diboson_Incl' : [  # Inclusive samples, where available
         'WWToLNuQQ',
         'WWToLNuLNu',
@@ -641,10 +672,25 @@ composite_dataset_definitions = {
         'SingleTop_tW',
         'SingleTop_tbarW',
     ],
+    'SingleTop2022EE' : [
+        'TbarBtoLminusNuB_2022EE',
+        'TBbartoLplusNuBbar_2022EE',
+        'TbarQtoLNu_2022EE',
+        'TQbartoLNu_2022EE',
+        'TbarWplusto2L2Nu_2022EE',
+        'TbarWplustoLNu2Q_2022EE',
+        'TWminusto2L2Nu_2022EE',
+        'TWminustoLNu2Q_2022EE',
+    ],
     'TTJets_Lept' : [
         'TTJets_DiLept',
         'TTJets_SingleLeptFromT',
         'TTJets_SingleLeptFromTbar',
+    ],
+    'TT2022EE' : [
+        'TTto2L2Nu_2022EE',
+        'TTtoLNu2Q_2022EE',
+        'TTto4Q_2022EE',
     ],
     'QCD' : [
         'QCD_5to10',
@@ -664,6 +710,23 @@ composite_dataset_definitions = {
         'QCD_1800to2400',
         'QCD_2400to3200',
         'QCD_3200toInf',
+    ],
+    'QCD2022EE' : [
+        'QCD_PT15to30_2022EE',
+        'QCD_PT30to50_2022EE',
+        'QCD_PT50to80_2022EE',
+        'QCD_PT80to120_2022EE',
+        'QCD_PT120to170_2022EE',
+        'QCD_PT170to300_2022EE',
+        'QCD_PT300to470_2022EE',
+        'QCD_PT470to600_2022EE',
+        'QCD_PT600to800_2022EE',
+        'QCD_PT800to1000_2022EE',
+        'QCD_PT1000to1400_2022EE',
+        'QCD_PT1400to1800_2022EE',
+        'QCD_PT1800to2400_2022EE',
+        'QCD_PT2400to3200_2022EE',
+        'QCD_PT3200_2022EE',
     ],
     'QCD_MuEnriched' : [
         #'QCD_MuEnriched_20toInf',
@@ -1558,7 +1621,7 @@ nJobs = {
     'JetMET_2022C' : 170,
     'JetMET_2022D' : 35,
     'MET_2022E' : 147,
-    'MET_2022F' : 516,
+    'MET_2022F' : 1992,
     'MET_2022G' : 85,
 
   'JetHT_2018A' : 2852,
@@ -2828,40 +2891,54 @@ nJobs = {
   'AMSB_chargino_100GeV_100cm_124X' : 9999,
   'AMSB_chargino_Pythia700GeV_100cm_124X' : 9999,
   'AMSB_chargino_Pythia100GeV_100cm_124X' : 9999,
+  'AMSB_wino_700GeV_10cm_2022EE' : 9999,
+  'AMSB_wino_700GeV_100cm_2022EE' : 9999,
+  'AMSB_wino_700GeV_1000cm_2022EE' : 9999,
+  'AMSB_wino_700GeV_10000cm_2022EE' : 9999,
+
   'Cosmics': 999,
 
   #Run3 2022EE
-  'WToLNu_4Jets_PostEE' : 300,
-  'WToLNu_2Jets_PostEE' : 300,
-  'DYJetsToLL_M50_PostEE' : 300,
-  'WW_PostEE' : 300,
-  'WZ_PostEE' : 300,
-  'ZZ_PostEE' : 300,
-  'TTto2L2Nu_PostEE' : 300,
-  'TTtoLNu2Q_PostEE' : 300,
-  'TTto4Q_PostEE' : 300,
-  'QCD_PT15to30_PostEE' : 300,
-  'QCD_PT30to50_PostEE' : 300,
-  'QCD_PT50to80_PostEE' : 300,
-  'QCD_PT80to120_PostEE' : 300,
-  'QCD_PT120to170_PostEE' : 300,
-  'QCD_PT170to300_PostEE' : 300,
-  'QCD_PT300to470_PostEE' : 300,
-  'QCD_PT470to600_PostEE' : 300,
-  'QCD_PT600to800_PostEE' : 300,
-  'QCD_PT800to1000_PostEE' : 300,
-  'QCD_PT1000to1400_PostEE' : 300,
-  'QCD_PT1400to1800_PostEE' : 300,
-  'QCD_PT1800to2400_PostEE' : 300,
-  'QCD_PT2400to3200_PostEE' : 300,
-  'Zto2Nu_4Jets_HT100to200_PostEE' : 300,
-  'Zto2Nu_4Jets_HT200to400_PostEE' : 300,
-  'Zto2Nu_4Jets_HT400to800_PostEE' : 300,
-  'Zto2Nu_4Jets_HT800to1500_PostEE' : 300,
-  'Zto2Nu_4Jets_HT1500to2500_PostEE' : 300,
-  'WtoMuNu_M100to200' : 300,
-  'WtoMuNu_M200to500' : 300,
-  'WtoMuNu_M500to1000' : 300,
+  'WToLNu_4Jets_2022EE' : 9999,
+  'DYto2L_4jets_M10to50_2022EE' : 9999,
+  'DYJetsToLL_M50_2022EE' : 9999,
+  'TbarBtoLminusNuB_2022EE' : 9999,
+  'TBbartoLplusNuBbar_2022EE' : 9999,
+  'TbarQtoLNu_2022EE' : 9999,
+  'TQbartoLNu_2022EE' : 9999,
+  'TbarWplusto2L2Nu_2022EE' : 9999,
+  'TbarWplustoLNu2Q_2022EE' : 9999,
+  'TWminusto2L2Nu_2022EE' : 9999,
+  'TWminustoLNu2Q_2022EE' : 9999,
+  'WW_2022EE' : 9999,
+  'WZ_2022EE' : 9999,
+  'ZZ_2022EE' : 9999,
+  'TTto2L2Nu_2022EE' : 9999,
+  'TTtoLNu2Q_2022EE' : 9999,
+  'TTto4Q_2022EE' : 9999,
+  'QCD_PT15to30_2022EE' : 9999,
+  'QCD_PT30to50_2022EE' : 9999,
+  'QCD_PT50to80_2022EE' : 9999,
+  'QCD_PT80to120_2022EE' : 9999,
+  'QCD_PT120to170_2022EE' : 9999,
+  'QCD_PT170to300_2022EE' : 9999,
+  'QCD_PT300to470_2022EE' : 9999,
+  'QCD_PT470to600_2022EE' : 9999,
+  'QCD_PT600to800_2022EE' : 9999,
+  'QCD_PT800to1000_2022EE' : 9999,
+  'QCD_PT1000to1400_2022EE' : 9999,
+  'QCD_PT1400to1800_2022EE' : 9999,
+  'QCD_PT1800to2400_2022EE' : 9999,
+  'QCD_PT2400to3200_2022EE' : 9999,
+  'QCD_PT3200_2022EE' : 9999,
+  'Zto2Nu_4Jets_HT100to200_2022EE' : 9999,
+  'Zto2Nu_4Jets_HT200to400_2022EE' : 9999,
+  'Zto2Nu_4Jets_HT400to800_2022EE' : 9999,
+  'Zto2Nu_4Jets_HT800to1500_2022EE' : 9999,
+  'Zto2Nu_4Jets_HT1500to2500_2022EE' : 9999,
+  'Zto2Nu_4Jets_HT2500_2022EE' : 9999,
+
+  'DYJetsToLL_M50_merged' : 1904,
 }
 
 maxEvents = {
@@ -3163,7 +3240,7 @@ maxEvents = {
     'EGamma_2022C'          : -1,
     'EGamma_2022D'          : -1,
     'EGamma_2022E'          : -1,
-    'EGamma_2022F'          : 1000,
+    'EGamma_2022F'          : -1,
     'EGamma_2022G'          : -1,
 
     'DoubleMu_2015B'        : -1,
@@ -4230,40 +4307,54 @@ maxEvents = {
   'AMSB_chargino_100GeV_100cm_124X' : -1,
   'AMSB_chargino_Pythia700GeV_100cm_124X' : -1,
   'AMSB_chargino_Pythia100GeV_100cm_124X' : -1,
+  'AMSB_wino_700GeV_10cm_2022EE' : -1,
+  'AMSB_wino_700GeV_100cm_2022EE' : -1,
+  'AMSB_wino_700GeV_1000cm_2022EE' : -1,
+  'AMSB_wino_700GeV_10000cm_2022EE' : -1,
+
   'Cosmics' : -1,
 
   #Run3 2022EE
-  'WToLNu_4Jets_PostEE' : -1,
-  'WToLNu_2Jets_PostEE' : -1,
-  'DYJetsToLL_M50_PostEE' : -1,
-  'WW_PostEE' : -1,
-  'WZ_PostEE' : -1,
-  'ZZ_PostEE' : -1,
-  'TTto2L2Nu_PostEE' : -1,
-  'TTtoLNu2Q_PostEE' : -1,
-  'TTto4Q_PostEE' : -1,
-  'QCD_PT15to30_PostEE' : -1,
-  'QCD_PT30to50_PostEE' : -1,
-  'QCD_PT50to80_PostEE' : -1,
-  'QCD_PT80to120_PostEE' : -1,
-  'QCD_PT120to170_PostEE' : -1,
-  'QCD_PT170to300_PostEE' : -1,
-  'QCD_PT300to470_PostEE' : -1,
-  'QCD_PT470to600_PostEE' : -1,
-  'QCD_PT600to800_PostEE' : -1,
-  'QCD_PT800to1000_PostEE' : -1,
-  'QCD_PT1000to1400_PostEE' : -1,
-  'QCD_PT1400to1800_PostEE' : -1,
-  'QCD_PT1800to2400_PostEE' : -1,
-  'QCD_PT2400to3200_PostEE' : -1,
-  'Zto2Nu_4Jets_HT100to200_PostEE' : -1,
-  'Zto2Nu_4Jets_HT200to400_PostEE' : -1,
-  'Zto2Nu_4Jets_HT400to800_PostEE' : -1,
-  'Zto2Nu_4Jets_HT800to1500_PostEE' : -1,
-  'Zto2Nu_4Jets_HT1500to2500_PostEE' : -1,
-  'WtoMuNu_M100to200' : -1,
-  'WtoMuNu_M200to500' : -1,
-  'WtoMuNu_M500to1000' : -1,
+  'WToLNu_4Jets_2022EE' : -1,
+  'DYto2L_4jets_M10to50_2022EE' : -1,
+  'DYJetsToLL_M50_2022EE' : -1,
+  'TbarBtoLminusNuB_2022EE' : -1,
+  'TBbartoLplusNuBbar_2022EE' : -1,
+  'TbarQtoLNu_2022EE' : -1,
+  'TQbartoLNu_2022EE' : -1,
+  'TbarWplusto2L2Nu_2022EE' : -1,
+  'TbarWplustoLNu2Q_2022EE' : -1,
+  'TWminusto2L2Nu_2022EE' : -1,
+  'TWminustoLNu2Q_2022EE' : -1,
+  'WW_2022EE' : -1,
+  'WZ_2022EE' : -1,
+  'ZZ_2022EE' : -1,
+  'TTto2L2Nu_2022EE' : -1,
+  'TTtoLNu2Q_2022EE' : -1,
+  'TTto4Q_2022EE' : -1,
+  'QCD_PT15to30_2022EE' : -1,
+  'QCD_PT30to50_2022EE' : -1,
+  'QCD_PT50to80_2022EE' : -1,
+  'QCD_PT80to120_2022EE' : -1,
+  'QCD_PT120to170_2022EE' : -1,
+  'QCD_PT170to300_2022EE' : -1,
+  'QCD_PT300to470_2022EE' : -1,
+  'QCD_PT470to600_2022EE' : -1,
+  'QCD_PT600to800_2022EE' : -1,
+  'QCD_PT800to1000_2022EE' : -1,
+  'QCD_PT1000to1400_2022EE' : -1,
+  'QCD_PT1400to1800_2022EE' : -1,
+  'QCD_PT1800to2400_2022EE' : -1,
+  'QCD_PT2400to3200_2022EE' : -1,
+  'QCD_PT3200_2022EE' : -1,
+  'Zto2Nu_4Jets_HT100to200_2022EE' : -1,
+  'Zto2Nu_4Jets_HT200to400_2022EE' : -1,
+  'Zto2Nu_4Jets_HT400to800_2022EE' : -1,
+  'Zto2Nu_4Jets_HT800to1500_2022EE' : -1,
+  'Zto2Nu_4Jets_HT1500to2500_2022EE' : -1,
+  'Zto2Nu_4Jets_HT2500_2022EE' : -1,
+
+  'DYJetsToLL_M50_merged' : -1,
 }
 
 # bgMC => background MC process
@@ -5696,41 +5787,56 @@ types = {
   'AMSB_chargino_100GeV_100cm_124X' : "signalMC",
   'AMSB_chargino_Pythia700GeV_100cm_124X' : "signalMC",
   'AMSB_chargino_Pythia100GeV_100cm_124X' : "signalMC",
+  'AMSB_wino_700GeV_10cm_2022EE' : "signalMC",
+  'AMSB_wino_700GeV_100cm_2022EE' : "signalMC",
+  'AMSB_wino_700GeV_1000cm_2022EE' : "signalMC",
+  'AMSB_wino_700GeV_10000cm_2022EE' : "signalMC",
+
   'Cosmics' : "bgMC",
 
   #Run3 2022EE
-  'WToLNu_4Jets_PostEE' : "bgMC",
-  'WToLNu_2Jets_PostEE' : "bgMC",
-  'DYJetsToLL_M50_PostEE' : "bgMC",
-  'WW_PostEE' : "bgMC",
-  'WZ_PostEE' : "bgMC",
-  'ZZ_PostEE' : "bgMC",
-  'TTto2L2Nu_PostEE' : "bgMC",
-  'TTtoLNu2Q_PostEE' : "bgMC",
-  'TTto4Q_PostEE' : "bgMC",
-  'QCD_PT15to30_PostEE' : "bgMC",
-  'QCD_PT30to50_PostEE' : "bgMC",
-  'QCD_PT50to80_PostEE' : "bgMC",
-  'QCD_PT80to120_PostEE' : "bgMC",
-  'QCD_PT120to170_PostEE' : "bgMC",
-  'QCD_PT170to300_PostEE' : "bgMC",
-  'QCD_PT300to470_PostEE' : "bgMC",
-  'QCD_PT470to600_PostEE' : "bgMC",
-  'QCD_PT600to800_PostEE' : "bgMC",
-  'QCD_PT800to1000_PostEE' : "bgMC",
-  'QCD_PT1000to1400_PostEE' : "bgMC",
-  'QCD_PT1400to1800_PostEE' : "bgMC",
-  'QCD_PT1800to2400_PostEE' : "bgMC",
-  'QCD_PT2400to3200_PostEE' : "bgMC",
-  'Zto2Nu_4Jets_HT100to200_PostEE' : "bgMC",
-  'Zto2Nu_4Jets_HT200to400_PostEE' : "bgMC",
-  'Zto2Nu_4Jets_HT400to800_PostEE' : "bgMC",
-  'Zto2Nu_4Jets_HT800to1500_PostEE' : "bgMC",
-  'Zto2Nu_4Jets_HT1500to2500_PostEE' : "bgMC",
-  'WtoMuNu_M100to200' : "bgMC",
-  'WtoMuNu_M200to500' : "bgMC",
-  'WtoMuNu_M500to1000' : "bgMC",
+  'WToLNu_4Jets_2022EE' : "bgMC",
+  'DYto2L_4jets_M10to50_2022EE' : "bgMC",
+  'DYJetsToLL_M50_2022EE' : "bgMC",
+  'TbarBtoLminusNuB_2022EE' : "bgMC",
+  'TBbartoLplusNuBbar_2022EE' : "bgMC",
+  'TbarQtoLNu_2022EE' : "bgMC",
+  'TQbartoLNu_2022EE' : "bgMC",
+  'TbarWplusto2L2Nu_2022EE' : "bgMC",
+  'TbarWplustoLNu2Q_2022EE' : "bgMC",
+  'TWminusto2L2Nu_2022EE' : "bgMC",
+  'TWminustoLNu2Q_2022EE' : "bgMC",
+  'WW_2022EE' : "bgMC",
+  'WZ_2022EE' : "bgMC",
+  'ZZ_2022EE' : "bgMC",
+  'TTto2L2Nu_2022EE' : "bgMC",
+  'TTtoLNu2Q_2022EE' : "bgMC",
+  'TTto4Q_2022EE' : "bgMC",
+  'QCD_PT15to30_2022EE' : "bgMC",
+  'QCD_PT30to50_2022EE' : "bgMC",
+  'QCD_PT50to80_2022EE' : "bgMC",
+  'QCD_PT80to120_2022EE' : "bgMC",
+  'QCD_PT120to170_2022EE' : "bgMC",
+  'QCD_PT170to300_2022EE' : "bgMC",
+  'QCD_PT300to470_2022EE' : "bgMC",
+  'QCD_PT470to600_2022EE' : "bgMC",
+  'QCD_PT600to800_2022EE' : "bgMC",
+  'QCD_PT800to1000_2022EE' : "bgMC",
+  'QCD_PT1000to1400_2022EE' : "bgMC",
+  'QCD_PT1400to1800_2022EE' : "bgMC",
+  'QCD_PT1800to2400_2022EE' : "bgMC",
+  'QCD_PT2400to3200_2022EE' : "bgMC",
+  'QCD_PT3200_2022EE' : "bgMC",
+  'Zto2Nu_4Jets_HT100to200_2022EE' : "bgMC",
+  'Zto2Nu_4Jets_HT200to400_2022EE' : "bgMC",
+  'Zto2Nu_4Jets_HT400to800_2022EE' : "bgMC",
+  'Zto2Nu_4Jets_HT800to1500_2022EE' : "bgMC",
+  'Zto2Nu_4Jets_HT1500to2500_2022EE' : "bgMC",
+  'Zto2Nu_4Jets_HT2500_2022EE' : "bgMC",
+
+  'DYJetsToLL_M50_merged' : 'bgMC', 
 }
+
 
 colors = {
     ############################################################################
@@ -7159,40 +7265,61 @@ colors = {
   'AMSB_chargino_100GeV_100cm_124X' : 1,
   'AMSB_chargino_Pythia700GeV_100cm_124X' : 1,
   'AMSB_chargino_Pythia100GeV_100cm_124X' : 1,
+  'AMSB_wino_700GeV_10cm_2022EE' : 1,
+  'AMSB_wino_700GeV_100cm_2022EE' : 1,
+  'AMSB_wino_700GeV_1000cm_2022EE' : 1,
+  'AMSB_wino_700GeV_10000cm_2022EE' : 1,
+
   'Cosmics' : 1,
 
   #Run3 2022EE
-  'WToLNu_4Jets_PostEE' : 1,
-  'WToLNu_2Jets_PostEE' : 1,
-  'DYJetsToLL_M50_PostEE' : 1,
-  'WW_PostEE' : 1,
-  'WZ_PostEE' : 1,
-  'ZZ_PostEE' : 1,
-  'TTto2L2Nu_PostEE' : 1,
-  'TTtoLNu2Q_PostEE' : 1,
-  'TTto4Q_PostEE' : 1,
-  'QCD_PT15to30_PostEE' : 1,
-  'QCD_PT30to50_PostEE' : 1,
-  'QCD_PT50to80_PostEE' : 1,
-  'QCD_PT80to120_PostEE' : 1,
-  'QCD_PT120to170_PostEE' : 1,
-  'QCD_PT170to300_PostEE' : 1,
-  'QCD_PT300to470_PostEE' : 1,
-  'QCD_PT470to600_PostEE' : 1,
-  'QCD_PT600to800_PostEE' : 1,
-  'QCD_PT800to1000_PostEE' : 1,
-  'QCD_PT1000to1400_PostEE' : 1,
-  'QCD_PT1400to1800_PostEE' : 1,
-  'QCD_PT1800to2400_PostEE' : 1,
-  'QCD_PT2400to3200_PostEE' : 1,
-  'Zto2Nu_4Jets_HT100to200_PostEE' : 1,
-  'Zto2Nu_4Jets_HT200to400_PostEE' : 1,
-  'Zto2Nu_4Jets_HT400to800_PostEE' : 1,
-  'Zto2Nu_4Jets_HT800to1500_PostEE' : 1,
-  'Zto2Nu_4Jets_HT1500to2500_PostEE' : 1,
-  'WtoMuNu_M100to200' : 1,
-  'WtoMuNu_M200to500' : 1,
-  'WtoMuNu_M500to1000' : 1,
+  'WToLNu_4Jets_2022EE' : 852,
+  'DYto2L_4jets_M10to50_2022EE' : 410,
+  'DYJetsToLL_M50_2022EE' : 410,
+  'TbarBtoLminusNuB_2022EE' : 905,
+  'TBbartoLplusNuBbar_2022EE' : 905,
+  'TbarQtoLNu_2022EE' : 908,
+  'TQbartoLNu_2022EE' : 907,
+  'TbarWplusto2L2Nu_2022EE': 910,
+  'TbarWplustoLNu2Q_2022EE': 910,
+  'TWminusto2L2Nu_2022EE' : 909,
+  'TWminustoLNu2Q_2022EE' : 909,
+  'WW_2022EE' : 390,
+  'WZ_2022EE' : 393,
+  'ZZ_2022EE' : 397,
+  'TTto2L2Nu_2022EE' : 873,
+  'TTtoLNu2Q_2022EE' : 872,
+  'TTto4Q_2022EE' : 871,
+  'QCD_PT15to30_2022EE' : 623,
+  'QCD_PT30to50_2022EE' : 623,
+  'QCD_PT50to80_2022EE' : 623,
+  'QCD_PT80to120_2022EE' : 623,
+  'QCD_PT120to170_2022EE' : 623,
+  'QCD_PT170to300_2022EE' : 623,
+  'QCD_PT300to470_2022EE' : 623,
+  'QCD_PT470to600_2022EE' : 623,
+  'QCD_PT600to800_2022EE' : 623,
+  'QCD_PT800to1000_2022EE' : 623,
+  'QCD_PT1000to1400_2022EE' : 623,
+  'QCD_PT1400to1800_2022EE' : 623,
+  'QCD_PT1800to2400_2022EE' : 623,
+  'QCD_PT2400to3200_2022EE' : 623,
+  'QCD_PT3200_2022EE' : 623,
+  'Zto2Nu_4Jets_HT100to200_2022EE' : 831,
+  'Zto2Nu_4Jets_HT200to400_2022EE' : 831,
+  'Zto2Nu_4Jets_HT400to800_2022EE' : 831,
+  'Zto2Nu_4Jets_HT800to1500_2022EE' : 831,
+  'Zto2Nu_4Jets_HT1500to2500_2022EE' : 831,
+  'Zto2Nu_4Jets_HT2500_2022EE' : 831,
+
+  'DYJetsToLL2022EE' : 410,
+  'SingleTop2022EE' : 607,
+  'TT2022EE' : 870,
+  'Diboson2022EE' : 800,
+  'ZJetsToNuNu2022EE' : 831,
+  'QCD2022EE' : 623,
+
+  'DYJetsToLL_M50_merged': 1,
 }
 
 style = {
@@ -8643,41 +8770,106 @@ labels = {
   'AMSB_chargino_100GeV_100cm_124X' : "AMSB chargino placeholder",
   'AMSB_chargino_Pythia700GeV_100cm_124X' : "AMSB chargino placeholder",
   'AMSB_chargino_Pythia100GeV_100cm_124X' : "AMSB chargino placeholder",
+  'AMSB_wino_700GeV_10cm_2022EE' : "AMSB chargino placeholder",
+  'AMSB_wino_700GeV_100cm_2022EE' : "AMSB chargino placeholder",
+  'AMSB_wino_700GeV_1000cm_2022EE' : "AMSB chargino placeholder",
+  'AMSB_wino_700GeV_10000cm_2022EE' : "AMSB chargino placeholder",
+
   'Cosmics' : "Cosmic MC",
 
   #Run3 2022EE
-  'WToLNu_4Jets_PostEE' : "W#rightarrowl#nu",
-  'WToLNu_2Jets_PostEE' : "W#rightarrowl#nu",
-  'DYJetsToLL_M50_PostEE' : "Z#rightarrowll M(50)",
-  'WW_PostEE' : "WW",
-  'WZ_PostEE' : "WZ",
-  'ZZ_PostEE' : "ZZ",
-  'TTto2L2Nu_PostEE' : "T#barT#rightarrow2l2#nu",
-  'TTtoLNu2Q_PostEE' : "T#barT#rightarrowl#nu2q",
-  'TTto4Q_PostEE' : "T#barT#rightarrow4q",
-  'QCD_PT15to30_PostEE' : "QCD PT 15 to 30",
-  'QCD_PT30to50_PostEE' : "QCD PT 30 to 50",
-  'QCD_PT50to80_PostEE' : "QCD PT 50 to 80",
-  'QCD_PT80to120_PostEE' : "QCD PT 80 to 120",
-  'QCD_PT120to170_PostEE' : "QCD PT 120 to 170",
-  'QCD_PT170to300_PostEE' : "QCD PT 170 to 300",
-  'QCD_PT300to470_PostEE' : "QCD PT 300 to 470",
-  'QCD_PT470to600_PostEE' : "QCD PT 470 to 600",
-  'QCD_PT600to800_PostEE' : "QCD PT 600 to 800",
-  'QCD_PT800to1000_PostEE' : "QCD PT 800 to 1000",
-  'QCD_PT1000to1400_PostEE' : "QCD PT 1000 to 1400",
-  'QCD_PT1400to1800_PostEE' : "QCD PT 1400 to 1800",
-  'QCD_PT1800to2400_PostEE' : "QCD PT 1800 to 2400",
-  'QCD_PT2400to3200_PostEE' : "QCD PT 2400 to 3200",
-  'Zto2Nu_4Jets_HT100to200_PostEE' : "Z#rightarrow2#nu - HT 100 to 200",
-  'Zto2Nu_4Jets_HT200to400_PostEE' : "Z#rightarrow2#nu - HT 200 to 400",
-  'Zto2Nu_4Jets_HT400to800_PostEE' : "Z#rightarrow2#nu - HT 400 to 800",
-  'Zto2Nu_4Jets_HT800to1500_PostEE' : "Z#rightarrow2#nu - HT 800 to 1500",
-  'Zto2Nu_4Jets_HT1500to2500_PostEE' : "Z#rightarrow2#nu - HT 1500 to 2500",
-  'WtoMuNu_M100to200' : "W#rightarrow#mu#nu - M 100 to 200",
-  'WtoMuNu_M200to500' : "W#rightarrow#mu#nu - M 200 to 500",
-  'WtoMuNu_M500to1000' : "W#rightarrow#mu#nu - M 500 to 1000",
+  'WToLNu_4Jets_2022EE' : "W#rightarrowl#nu",
+  'DYto2L_4jets_M10to50_2022EE' : "Z#rightarrowll M(10to50)",
+  'DYJetsToLL_M50_2022EE' : "Z#rightarrowll M(50)",
+  'TbarBtoLminusNuB_2022EE' : "#bar{t}b#rightarrowl#nub",
+  'TBbartoLplusNuBbar_2022EE' : "t#bar{b}#rightarrowl#nu#bar{b}",
+  'TbarQtoLNu_2022EE' : "#bar{t}q#rightarrowl#nu",
+  'TQbartoLNu_2022EE' : "t#bar{q}#rightarrowl#nu",
+  'TbarWplusto2L2Nu_2022EE': "#bar{t}W#rightarrow2l2#nu",
+  'TbarWplustoLNu2Q_2022EE': "#bar{t}W#rightarrowl#nu2q",
+  'TWminusto2L2Nu_2022EE' : "tW#rightarrow2l2#nu",
+  'TWminustoLNu2Q_2022EE' : "tW#rightarrowl#nu2q",
+  'WW_2022EE' : "WW",
+  'WZ_2022EE' : "WZ",
+  'ZZ_2022EE' : "ZZ",
+  'TTto2L2Nu_2022EE' : "t#bar{t} (fully leptonic)",
+  'TTtoLNu2Q_2022EE' : "t#bar{t} (semi-leptonic)",
+  'TTto4Q_2022EE' : "t#bar{t} (fully hadronic)",
+  'QCD_PT15to30_2022EE' : "QCD 15<#hat{p}_{T}<30 GeV",
+  'QCD_PT30to50_2022EE' : "QCD 30<#hat{p}_{T}<50 GeV",
+  'QCD_PT50to80_2022EE' : "QCD 50<#hat{p}_{T}<80 GeV",
+  'QCD_PT80to120_2022EE' : "QCD 80<#hat{p}_{T}<120 GeV",
+  'QCD_PT120to170_2022EE' : "QCD 120<#hat{p}_{T}<170 GeV",
+  'QCD_PT170to300_2022EE' : "QCD 170<#hat{p}_{T}<300 GeV",
+  'QCD_PT300to470_2022EE' : "QCD 300<#hat{p}_{T}<470 GeV",
+  'QCD_PT470to600_2022EE' : "QCD 470<#hat{p}_{T}<600 GeV",
+  'QCD_PT600to800_2022EE' : "QCD 600<#hat{p}_{T}<800 GeV",
+  'QCD_PT800to1000_2022EE' : "QCD 800<#hat{p}_{T}<1000 GeV",
+  'QCD_PT1000to1400_2022EE' : "QCD 1000<#hat{p}_{T}<1400 GeV",
+  'QCD_PT1400to1800_2022EE' : "QCD 1400<#hat{p}_{T}<1800 GeV",
+  'QCD_PT1800to2400_2022EE' : "QCD 1800<#hat{p}_{T}<2400 GeV",
+  'QCD_PT2400to3200_2022EE' : "QCD 2400<#hat{p}_{T}<3200 GeV",
+  'QCD_PT3200_2022EE' : "QCD #hat{p}_{T}>3200 GeV",
+  'Zto2Nu_4Jets_HT100to200_2022EE' : "Z#rightarrow#nu#bar{#nu} (100<H_{T}<200 GeV)",
+  'Zto2Nu_4Jets_HT200to400_2022EE' : "Z#rightarrow#nu#bar{#nu} (200<H_{T}<400 GeV)",
+  'Zto2Nu_4Jets_HT400to800_2022EE' : "Z#rightarrow#nu#bar{#nu} (400<H_{T}<800 GeV)",
+  'Zto2Nu_4Jets_HT800to1500_2022EE' : "Z#rightarrow#nu#bar{#nu} (800<H_{T}<1500 GeV)",
+  'Zto2Nu_4Jets_HT1500to2500_2022EE' : "Z#rightarrow#nu#bar{#nu} (1500<H_{T}<2500 GeV)",
+  'Zto2Nu_4Jets_HT2500_2022EE' : "Z#rightarrow#nu#bar{#nu} (H_{T}>2500 GeV)",
+
+  'DYJetsToLL2022EE' : "Z#rightarrowll",
+  'SingleTop2022EE' : "Single top",
+  'TT2022EE' : "t#bar{t}",
+  'Diboson2022EE' : "Diboson",
+  'ZJetsToNuNu2022EE' : "Z#rightarrow#nu#bar{#nu}",
+  'QCD2022EE' : "QCD",
+
+  'DYJetsToLL_M50_merged': 'DY Jets to LL - M50',
 }
+
+eventCounts = {
+
+    'WToLNu_4Jets_2022EE' : 348442033,
+    'DYto2L_4jets_M10to50_2022EE' : 520098100, 
+    'DYJetsToLL_M50_2022EE' : 94947242,
+    'TbarBtoLminusNuB_2022EE' : 2762668,
+    'TBbartoLplusNuBbar_2022EE' : 4469700,
+    'TbarQtoLNu_2022EE' : 19537644,
+    'TQbartoLNu_2022EE' : 32667420,
+    'TbarWplusto2L2Nu_2022EE' : 8576050,
+    'TbarWplustoLNu2Q_2022EE' : 17273607,
+    'TWminusto2L2Nu_2022EE' : 8581640,
+    'TWminustoLNu2Q_2022EE' : 15859351,
+    'WW_2022EE' : 53619680,
+    'WZ_2022EE' : 26887398,
+    'ZZ_2022EE' : 4043040,
+    'TTto2L2Nu_2022EE' : 85777130,
+    'TTtoLNu2Q_2022EE' : 270699232,
+    'TTto4Q_2022EE' : 182664317,
+    'QCD_PT15to30_2022EE' : 3998528,
+    'QCD_PT30to50_2022EE' : 3998508,
+    'QCD_PT50to80_2022EE' : 19907875,
+    'QCD_PT80to120_2022EE' : 29904828,
+    'QCD_PT120to170_2022EE' : 27792681,
+    'QCD_PT170to300_2022EE' : 28829984,
+    'QCD_PT300to470_2022EE' : 56016158,
+    'QCD_PT470to600_2022EE' : 26933590,
+    'QCD_PT600to800_2022EE' : 65322580,
+    'QCD_PT800to1000_2022EE' : 38576235,
+    'QCD_PT1000to1400_2022EE' : 19335155,
+    'QCD_PT1400to1800_2022EE' : 5690478,
+    'QCD_PT1800to2400_2022EE' : 2914410,
+    'QCD_PT2400to3200_2022EE' : 1900526,
+    'QCD_PT3200_2022EE' : 799436,
+    'Zto2Nu_4Jets_HT100to200_2022EE' : 106149804,
+    'Zto2Nu_4Jets_HT200to400_2022EE' : 67339696,
+    'Zto2Nu_4Jets_HT400to800_2022EE' : 7096747,
+    'Zto2Nu_4Jets_HT800to1500_2022EE' : 1658103,
+    'Zto2Nu_4Jets_HT1500to2500_2022EE' : 1790534,
+    'Zto2Nu_4Jets_HT2500_2022EE' : 1651711
+
+}
+
 
 crossSections = {
     # Cross sections for samples stored on T3 should be registered in database.
@@ -9587,40 +9779,173 @@ crossSections = {
   'AMSB_chargino_100GeV_100cm_124X' : 40.00,
   'AMSB_chargino_Pythia700GeV_100cm_124X' : 40.00,
   'AMSB_chargino_Pythia100GeV_100cm_124X' : 40.00,
+  'AMSB_wino_700GeV_10cm_2022EE': 0.01629414,
+  'AMSB_wino_700GeV_100cm_2022EE': 0.01629414,
+  'AMSB_wino_700GeV_1000cm_2022EE': 0.01629414,
+  'AMSB_wino_700GeV_10000cm_2022EE': 0.01629414,
+
   'Cosmics' : 1.0,
 
   #Run3 2022EE; need to get correct values with GEN or EXO MC&I
-  'WToLNu_4Jets_PostEE' : 42.0,
-  'WToLNu_2Jets_PostEE' : 42.0,
-  'DYJetsToLL_M50_PostEE' : 42.0,
-  'WW_PostEE' : 42.0,
-  'WZ_PostEE' : 42.0,
-  'ZZ_PostEE' : 42.0,
-  'TTto2L2Nu_PostEE' : 42.0,
-  'TTtoLNu2Q_PostEE' : 42.0,
-  'TTto4Q_PostEE' : 42.0,
-  'QCD_PT15to30_PostEE' : 42.0,
-  'QCD_PT30to50_PostEE' : 42.0,
-  'QCD_PT50to80_PostEE' : 42.0,
-  'QCD_PT80to120_PostEE' : 42.0,
-  'QCD_PT120to170_PostEE' : 42.0,
-  'QCD_PT170to300_PostEE' : 42.0,
-  'QCD_PT300to470_PostEE' : 42.0,
-  'QCD_PT470to600_PostEE' : 42.0,
-  'QCD_PT600to800_PostEE' : 42.0,
-  'QCD_PT800to1000_PostEE' : 42.0,
-  'QCD_PT1000to1400_PostEE' : 42.0,
-  'QCD_PT1400to1800_PostEE' : 42.0,
-  'QCD_PT1800to2400_PostEE' : 42.0,
-  'QCD_PT2400to3200_PostEE' : 42.0,
-  'Zto2Nu_4Jets_HT100to200_PostEE' : 42.0,
-  'Zto2Nu_4Jets_HT200to400_PostEE' : 42.0,
-  'Zto2Nu_4Jets_HT400to800_PostEE' : 42.0,
-  'Zto2Nu_4Jets_HT800to1500_PostEE' : 42.0,
-  'Zto2Nu_4Jets_HT1500to2500_PostEE' : 42.0,
-  'WtoMuNu_M100to200' : 42.0,
-  'WtoMuNu_M200to500' : 42.0,
-  'WtoMuNu_M500to1000' : 42.0,
+  'WToLNu_4Jets_2022' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'DYto2L_4jets_M10to50_2022' : 20950.0, # From XSDB
+  'DYJetsToLL_M50_2022' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'TbarBtoLminusNuB_2022' : 1.35, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TBbartoLplusNuBbar_2022' : 2.30, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarQtoLNu_2022' : 26.18, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TQbartoLNu_2022' : 43.91, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarWplusto2L2Nu_2022' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TbarWplustoLNu2Q_2022' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminusto2L2Nu_2022' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminustoLNu2Q_2022' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'WW_2022' : 80.23, # From XSDB
+  'WZ_2022' : 29.1, # From XSDB
+  'ZZ_2022' : 12.75, # From XSDB
+  'TTto2L2Nu_2022' : 98.88, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTtoLNu2Q_2022' : 407.43, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTto4Q_2022' : 419.69, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'QCD_PT15to30_2022' : 1301000000.0, # From XSDB
+  'QCD_PT30to50_2022' : 113300000.0, # From XSDB
+  'QCD_PT50to80_2022' : 16760000.0, # From XSDB
+  'QCD_PT80to120_2022' : 2534000.0, # From XSDB
+  'QCD_PT120to170_2022' : 445800.0, # From XSDB
+  'QCD_PT170to300_2022' : 113700.0, # From XSDB
+  'QCD_PT300to470_2022' : 7559.0, # From XSDB
+  'QCD_PT470to600_2022' : 626.4, # From XSDB
+  'QCD_PT600to800_2022' : 178.6, # From XSDB
+  'QCD_PT800to1000_2022' : 30.57, # From XSDB
+  'QCD_PT1000to1400_2022' : 8.92, # From XSDB
+  'QCD_PT1400to1800_2022' : 0.8103, # From XSDB
+  'QCD_PT1800to2400_2022' : 0.1148, # From XSDB
+  'QCD_PT2400to3200_2022' : 0.007542, # From XSDB
+  'QCD_PT3200_2022' : 0.0002331, # From XSDB
+  'Zto2Nu_4Jets_HT100to200_2022' : 314.03, # From XSDB
+  'Zto2Nu_4Jets_HT200to400_2022' : 87.15, # From XSDB
+  'Zto2Nu_4Jets_HT400to800_2022' : 15.13, # From XSDB
+  'Zto2Nu_4Jets_HT800to1500_2022' : 1.56, # From XSDB
+  'Zto2Nu_4Jets_HT1500to2500_2022' : 0.113, # From XSDB
+  'Zto2Nu_4Jets_HT2500_2022' : 0.0077, # From XSDB
+
+  #Run3 2022EE; need to get correct values with GEN or EXO MC&I
+  'WToLNu_4Jets_2022EE' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'DYto2L_4jets_M10to50_2022EE' : 20950.0, # From XSDB
+  'DYJetsToLL_M50_2022EE' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'TbarBtoLminusNuB_2022EE' : 1.35, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TBbartoLplusNuBbar_2022EE' : 2.30, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarQtoLNu_2022EE' : 26.18, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TQbartoLNu_2022EE' : 43.91, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarWplusto2L2Nu_2022EE' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TbarWplustoLNu2Q_2022EE' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminusto2L2Nu_2022EE' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminustoLNu2Q_2022EE' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'WW_2022EE' : 80.23, # From XSDB
+  'WZ_2022EE' : 29.1, # From XSDB
+  'ZZ_2022EE' : 12.75, # From XSDB
+  'TTto2L2Nu_2022EE' : 98.88, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTtoLNu2Q_2022EE' : 407.43, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTto4Q_2022EE' : 419.69, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'QCD_PT15to30_2022EE' : 1301000000.0, # From XSDB
+  'QCD_PT30to50_2022EE' : 113300000.0, # From XSDB
+  'QCD_PT50to80_2022EE' : 16760000.0, # From XSDB
+  'QCD_PT80to120_2022EE' : 2534000.0, # From XSDB
+  'QCD_PT120to170_2022EE' : 445800.0, # From XSDB
+  'QCD_PT170to300_2022EE' : 113700.0, # From XSDB
+  'QCD_PT300to470_2022EE' : 7559.0, # From XSDB
+  'QCD_PT470to600_2022EE' : 626.4, # From XSDB
+  'QCD_PT600to800_2022EE' : 178.6, # From XSDB
+  'QCD_PT800to1000_2022EE' : 30.57, # From XSDB
+  'QCD_PT1000to1400_2022EE' : 8.92, # From XSDB
+  'QCD_PT1400to1800_2022EE' : 0.8103, # From XSDB
+  'QCD_PT1800to2400_2022EE' : 0.1148, # From XSDB
+  'QCD_PT2400to3200_2022EE' : 0.007542, # From XSDB
+  'QCD_PT3200_2022EE' : 0.0002331, # From XSDB
+  'Zto2Nu_4Jets_HT100to200_2022EE' : 314.03, # From XSDB
+  'Zto2Nu_4Jets_HT200to400_2022EE' : 87.15, # From XSDB
+  'Zto2Nu_4Jets_HT400to800_2022EE' : 15.13, # From XSDB
+  'Zto2Nu_4Jets_HT800to1500_2022EE' : 1.56, # From XSDB
+  'Zto2Nu_4Jets_HT1500to2500_2022EE' : 0.113, # From XSDB
+  'Zto2Nu_4Jets_HT2500_2022EE' : 0.0077, # From XSDB
+
+  #Run3 2022EE; need to get correct values with GEN or EXO MC&I
+  'WToLNu_4Jets_2023' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'DYto2L_4jets_M10to50_2023' : 20950.0, # From XSDB
+  'DYJetsToLL_M50_2023' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'TbarBtoLminusNuB_2023' : 1.35, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TBbartoLplusNuBbar_2023' : 2.30, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarQtoLNu_2023' : 26.18, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TQbartoLNu_2023' : 43.91, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarWplusto2L2Nu_2023' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TbarWplustoLNu2Q_2023' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminusto2L2Nu_2023' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminustoLNu2Q_2023' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'WW_2023' : 80.23, # From XSDB
+  'WZ_2023' : 29.1, # From XSDB
+  'ZZ_2023' : 12.75, # From XSDB
+  'TTto2L2Nu_2023' : 98.88, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTtoLNu2Q_2023' : 407.43, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTto4Q_2023' : 419.69, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'QCD_PT15to30_2023' : 1301000000.0, # From XSDB
+  'QCD_PT30to50_2023' : 113300000.0, # From XSDB
+  'QCD_PT50to80_2023' : 16760000.0, # From XSDB
+  'QCD_PT80to120_2023' : 2534000.0, # From XSDB
+  'QCD_PT120to170_2023' : 445800.0, # From XSDB
+  'QCD_PT170to300_2023' : 113700.0, # From XSDB
+  'QCD_PT300to470_2023' : 7559.0, # From XSDB
+  'QCD_PT470to600_2023' : 626.4, # From XSDB
+  'QCD_PT600to800_2023' : 178.6, # From XSDB
+  'QCD_PT800to1000_2023' : 30.57, # From XSDB
+  'QCD_PT1000to1400_2023' : 8.92, # From XSDB
+  'QCD_PT1400to1800_2023' : 0.8103, # From XSDB
+  'QCD_PT1800to2400_2023' : 0.1148, # From XSDB
+  'QCD_PT2400to3200_2023' : 0.007542, # From XSDB
+  'QCD_PT3200_2023' : 0.0002331, # From XSDB
+  'Zto2Nu_4Jets_HT100to200_2023' : 314.03, # From XSDB
+  'Zto2Nu_4Jets_HT200to400_2023' : 87.15, # From XSDB
+  'Zto2Nu_4Jets_HT400to800_2023' : 15.13, # From XSDB
+  'Zto2Nu_4Jets_HT800to1500_2023' : 1.56, # From XSDB
+  'Zto2Nu_4Jets_HT1500to2500_2023' : 0.113, # From XSDB
+  'Zto2Nu_4Jets_HT2500_2023' : 0.0077, # From XSDB
+
+  #Run3 2022EE; need to get correct values with GEN or EXO MC&I
+  'WToLNu_4Jets_2023PostBPix' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'DYto2L_4jets_M10to50_2023PostBPix' : 20950.0, # From XSDB
+  'DYJetsToLL_M50_2023PostBPix' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'TbarBtoLminusNuB_2023PostBPix' : 1.35, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TBbartoLplusNuBbar_2023PostBPix' : 2.30, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarQtoLNu_2023PostBPix' : 26.18, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TQbartoLNu_2023PostBPix' : 43.91, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarWplusto2L2Nu_2023PostBPix' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TbarWplustoLNu2Q_2023PostBPix' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminusto2L2Nu_2023PostBPix' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminustoLNu2Q_2023PostBPix' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'WW_2023PostBPix' : 80.23, # From XSDB
+  'WZ_2023PostBPix' : 29.1, # From XSDB
+  'ZZ_2023PostBPix' : 12.75, # From XSDB
+  'TTto2L2Nu_2023PostBPix' : 98.88, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTtoLNu2Q_2023PostBPix' : 407.43, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTto4Q_2023PostBPix' : 419.69, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'QCD_PT15to30_2023PostBPix' : 1301000000.0, # From XSDB
+  'QCD_PT30to50_2023PostBPix' : 113300000.0, # From XSDB
+  'QCD_PT50to80_2023PostBPix' : 16760000.0, # From XSDB
+  'QCD_PT80to120_2023PostBPix' : 2534000.0, # From XSDB
+  'QCD_PT120to170_2023PostBPix' : 445800.0, # From XSDB
+  'QCD_PT170to300_2023PostBPix' : 113700.0, # From XSDB
+  'QCD_PT300to470_2023PostBPix' : 7559.0, # From XSDB
+  'QCD_PT470to600_2023PostBPix' : 626.4, # From XSDB
+  'QCD_PT600to800_2023PostBPix' : 178.6, # From XSDB
+  'QCD_PT800to1000_2023PostBPix' : 30.57, # From XSDB
+  'QCD_PT1000to1400_2023PostBPix' : 8.92, # From XSDB
+  'QCD_PT1400to1800_2023PostBPix' : 0.8103, # From XSDB
+  'QCD_PT1800to2400_2023PostBPix' : 0.1148, # From XSDB
+  'QCD_PT2400to3200_2023PostBPix' : 0.007542, # From XSDB
+  'QCD_PT3200_2023PostBPix' : 0.0002331, # From XSDB
+  'Zto2Nu_4Jets_HT100to200_2023PostBPix' : 314.03, # From XSDB
+  'Zto2Nu_4Jets_HT200to400_2023PostBPix' : 87.15, # From XSDB
+  'Zto2Nu_4Jets_HT400to800_2023PostBPix' : 15.13, # From XSDB
+  'Zto2Nu_4Jets_HT800to1500_2023PostBPix' : 1.56, # From XSDB
+  'Zto2Nu_4Jets_HT1500to2500_2023PostBPix' : 0.113, # From XSDB
+  'Zto2Nu_4Jets_HT2500_2023PostBPix' : 0.0077, # From XSDB
+
 }
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
@@ -10025,9 +10350,9 @@ charginoColors = {
   1000  : 600,
   10000 : 1,
 }
-for charginoMass in range(100, 1200, 100):
+for charginoMass in range(100, 1300, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
-    for charginoRelease in ['76X', '80X', '94X', '102X', '124X']:
+    for charginoRelease in ['76X', '80X', '94X', '102X', '124X', '130X']:
       charginoDataset = 'AMSB_chargino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
       nJobs.update     ({ charginoDataset : 99 })
       maxEvents.update ({ charginoDataset : -1 })
@@ -10035,9 +10360,9 @@ for charginoMass in range(100, 1200, 100):
       colors.update    ({ charginoDataset : charginoColors[charginoCTau] })
       labels.update    ({ charginoDataset : "AMSB %d GeV #tilde{#chi}^{#pm} (c#tau = %d cm)" % (charginoMass, charginoCTau) })
 # Higgsino
-for charginoMass in range(100, 1000, 100):
+for charginoMass in range(100, 1100, 100):
   for charginoCTau in [1, 10, 100, 1000, 10000]:
-    for charginoRelease in ['94X', '102X', '124X']:
+    for charginoRelease in ['94X', '102X', '124X', '130X']:
       charginoDataset = 'Higgsino_{0}GeV_{1}cm_{2}'.format(charginoMass, charginoCTau, charginoRelease)
       nJobs.update     ({ charginoDataset : 99 })
       maxEvents.update ({ charginoDataset : -1 })

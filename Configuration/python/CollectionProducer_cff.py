@@ -1,6 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 import OSUT3Analysis.DBTools.osusub_cfg as osusub
 from OSUT3Analysis.Configuration.configurationOptions import *
+from OSUT3Analysis.AnaTools.osuAnalysis_cfi import dataFormat
 import copy
 import os
 
@@ -108,6 +109,13 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2"):
     collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight")
     collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt")
 
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_"):
+    collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-veto")
+    collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-loose")
+    collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-medium")
+    collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-tight")
+    collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Run3_Winter22/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_122X.txt")
+
 copyConfiguration (collectionProducer.electrons, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
@@ -130,8 +138,8 @@ copyConfiguration (collectionProducer.genjets, collectionProducer.genMatchables)
 
 collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
     rho = cms.InputTag("fixedGridRhoFastjetAll", "", ""),
-    jetResolutionPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
-    jetResSFPayload = cms.string(os.environ['CMSSW_BASE'] + "/src/OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
+    jetResolutionPayload = cms.FileInPath("OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
+    jetResSFPayload = cms.FileInPath("OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
     jetResFromGlobalTag = cms.bool(False),
     jetResNewPrescription = cms.bool(False),
 )
@@ -140,8 +148,9 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VE
     collectionProducer.jets.jetResFromGlobalTag = cms.bool(True)
     collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
     collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFchs")
+    collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
 
@@ -190,6 +199,17 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
         if x.name.value() == "HLT_IsoMu24_v":
             x.collection = cms.string("hltIterL3MuonCandidates::HLT")
             x.filter = cms.string("hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07")
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
+    for x in collectionProducer.muons.hltMatchingInfo:
+        if x.name.value() == "HLT_IsoMu20_v":
+            x.collection = cms.string("hltIterL3MuonCandidates::HLT")
+            x.filter = cms.string("hltL3crIsoL1sMu18L1f0L2f10QL3f20QL3trkIsoFiltered")
+        if x.name.value() == "HLT_IsoMu24_v":
+            x.collection = cms.string("hltIterL3MuonCandidates::HLT")
+            x.filter = cms.string("hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered")
+        if x.name.value() == "HLT_IsoMu27_v":
+            x.collection = cms.string("hltIterL3MuonCandidates::HLT")
+            x.filter = cms.string("hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered")
 copyConfiguration (collectionProducer.muons, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
@@ -227,6 +247,14 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_10_2"):
     collectionProducer.photons.effAreasNeutralHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfNeutralHadrons_90percentBased_V2.txt")
     collectionProducer.photons.effAreasPhotonPayload        = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfPhotons_90percentBased_V2.txt")
 
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_"):
+    collectionProducer.photons.vidLooseIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-RunIIIWinter22-122X-V1-loose")
+    collectionProducer.photons.vidMediumIdMap = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-RunIIIWinter22-122X-V1-medium")
+    collectionProducer.photons.vidTightIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-RunIIIWinter22-122X-V1-tight")
+    collectionProducer.photons.effAreasChargedHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Run3_Winter22/effectiveArea_ChgHadronIso_95percentBased.txt")
+    collectionProducer.photons.effAreasNeutralHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Run3_Winter22/effectiveArea_NeuHadronIso_95percentBased.txt")
+    collectionProducer.photons.effAreasPhotonPayload        = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Run3_Winter22/effectiveArea_PhotonIso_95percentBased.txt")
+
 copyConfiguration (collectionProducer.photons, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
@@ -256,7 +284,6 @@ collectionProducer.taus = cms.EDProducer ("OSUTauProducer",
 copyConfiguration (collectionProducer.taus, collectionProducer.genMatchables)
 
 #-------------------------------------------------------------------------------
-
 collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     fiducialMaps = cms.PSet (
         electrons = cms.VPSet (
@@ -325,7 +352,35 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
     eleVtx_dzCuts_barrel = cms.vdouble(0.472, 0.41, 0.373, 0.0466),
     eleVtx_d0Cuts_endcap = cms.vdouble(0.222, 0.118, 0.0739, 0.0351),
     eleVtx_dzCuts_endcap = cms.vdouble(0.921, 0.822, 0.602, 0.417),
+
+    mets = cms.InputTag ('mets', '', ''),
+    triggers       = cms.InputTag("TriggerResults", "", "HLT"),
+    triggerObjects = cms.InputTag("slimmedPatTrigger"),
+    isoTrk2dedxHitInfo = cms.InputTag("isolatedTracks", ""),
+    pileupInfo = cms.InputTag ("addPileupInfo"),
+    dEdxPixel = cms.InputTag ("dedxPixelHarmonic2", ""),
+    dEdxStrip = cms.InputTag ("dedxHarmonic2", "",),
+    minGenParticlePt = cms.double(-1),
+    minTrackPt       = cms.double(20.0),
+    maxRelTrackIso   = cms.double(-1.0),
+
+    graphPath = cms.FileInPath('OSUT3Analysis/Collections/data/graph_oct25.pb'),
+    inputTensorName = cms.string("Input_input"),
+    outputTensorName = cms.string("sequential/Output_xyz/Sigmoid"),
+
+    graphPathDS = cms.FileInPath('OSUT3Analysis/Collections/data/graph.pb'),
+    inputTensorNameDS = cms.string("input"),
+    inputTrackTensorNameDS = cms.string("input_track"),
+    outputTensorNameDS = cms.string("model_1/output_xyz/Softmax"),
+
+    muonTriggerFilter = cms.string("hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered")
 )
+
+'''print("This is the electron vidVetoIDMap", collectionProducer.tracks.eleVIDVetoIdMap)
+print("This is the electron vidLooseMap", collectionProducer.tracks.eleVIDLooseIdMap)
+print("This is the electron vidMediumMap", collectionProducer.tracks.eleVIDMediumIdMap)
+print("This is the electron vidTightMap", collectionProducer.tracks.eleVIDTightIdMap)'''
+
 
 # if running over data, switch to the data fiducial map files
 if osusub.batchMode and types[osusub.datasetLabel] == "data":
@@ -341,6 +396,9 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
     elif "Run2015" in osusub.dataset:
         collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2015_data.root")
         collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2015_data.root")
+    elif "Run2022" in osusub.dataset:
+        collectionProducer.tracks.fiducialMaps.electrons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_2022F_data.root")
+        collectionProducer.tracks.fiducialMaps.muons[0].histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_2022F_data.root")
     else:
         print("No fiducial map hist file")
     # determine which era this dataset is in
@@ -349,13 +407,19 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
         collectionProducer.tracks.fiducialMaps.muons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
 
 # For 94X/102X which use electron VIDs, define the vertexing requirements for veto electrons
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
     # Cut values are ordered by ID, as: veto, loose, medium, tight
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later
+    # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun3#Working_points_for_Run3_v1_ID_tr
     collectionProducer.tracks.eleVtx_d0Cuts_barrel = cms.vdouble(0.05, 0.05, 0.05, 0.05)
     collectionProducer.tracks.eleVtx_dzCuts_barrel = cms.vdouble(0.10, 0.10, 0.10, 0.10)
     collectionProducer.tracks.eleVtx_d0Cuts_endcap = cms.vdouble(0.10, 0.10, 0.10, 0.10)
     collectionProducer.tracks.eleVtx_dzCuts_endcap = cms.vdouble(0.20, 0.20, 0.20, 0.20)
+
+if dataFormat == 'MINI_AOD_ONLY_2022_CUSTOM':
+    collectionProducer.tracks.EBRecHits   =  cms.InputTag  ("reducedEgamma", "reducedEBRecHits")
+    collectionProducer.tracks.EERecHits   =  cms.InputTag  ("reducedEgamma", "reducedEERecHits")
+    collectionProducer.tracks.HBHERecHits =  cms.InputTag  ("slimmedHcalRecHits", "reducedHcalRecHits")
 
 copyConfiguration (collectionProducer.tracks, collectionProducer.genMatchables)
 #-------------------------------------------------------------------------------

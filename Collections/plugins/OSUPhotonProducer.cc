@@ -11,7 +11,7 @@ OSUPhotonProducer::OSUPhotonProducer (const edm::ParameterSet &cfg) :
   vidLooseIdMap_               (cfg.getParameter<edm::InputTag>     ("vidLooseIdMap")),
   vidMediumIdMap_              (cfg.getParameter<edm::InputTag>     ("vidMediumIdMap")),
   vidTightIdMap_               (cfg.getParameter<edm::InputTag>     ("vidTightIdMap")),
-  effectiveAreasChargedHadron_ ((cfg.getParameter<edm::FileInPath>  ("effAreasChargedHadronPayload")).fullPath()),
+  effectiveAreasChargedHadron_ ((cfg.getParameter<edm::FileInPath>  ("effAreasChargedHadronPayload")).fullPath(), false),
   effectiveAreasNeutralHadron_ ((cfg.getParameter<edm::FileInPath>  ("effAreasNeutralHadronPayload")).fullPath()),
   effectiveAreasPhoton_        ((cfg.getParameter<edm::FileInPath>  ("effAreasPhotonPayload")).fullPath())
 {

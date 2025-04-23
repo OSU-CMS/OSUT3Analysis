@@ -1,4 +1,5 @@
 #include "OSUT3Analysis/Collections/interface/TrackBase.h"
+#include "OSUT3Analysis/AnaTools/interface/CommonUtils.h" // Needed to include anatools::jetPassesTightLepVeto; doesn't work if added in TrackBase.h
 
 #if IS_VALID(tracks)
 
@@ -6,6 +7,7 @@ osu::TrackBase::TrackBase () :
   dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
+  isDeepSetsElectronTrack_ (true),
   maxSigmaForFiducialElectronTrack_ (-1.0),
   maxSigmaForFiducialMuonTrack_ (-1.0),
   matchedGsfTrack_ (),
@@ -28,6 +30,7 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track) :
   dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
+  isDeepSetsElectronTrack_ (true),
   maxSigmaForFiducialElectronTrack_ (-1.0),
   maxSigmaForFiducialMuonTrack_ (-1.0),
   matchedGsfTrack_ (),
@@ -51,6 +54,7 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track,
   dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
+  isDeepSetsElectronTrack_ (true),
   maxSigmaForFiducialElectronTrack_ (-1.0),
   maxSigmaForFiducialMuonTrack_ (-1.0),
   matchedGsfTrack_ (),
@@ -75,6 +79,7 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track,
   dRMinJet_ (INVALID_VALUE),
   isFiducialElectronTrack_ (true),
   isFiducialMuonTrack_ (true),
+  isDeepSetsElectronTrack_ (true),
   maxSigmaForFiducialElectronTrack_ (-1.0),
   maxSigmaForFiducialMuonTrack_ (-1.0),
   matchedGsfTrack_ (),
@@ -103,6 +108,7 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track,
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
   isFiducialElectronTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialElectronTrack_)),
   isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialMuonTrack_)),
+  isDeepSetsElectronTrack_ (true),
   EcalAllDeadChannelsValMap_ (NULL),
   EcalAllDeadChannelsBitMap_ (NULL),
   isFiducialECALTrack_ (!isCloseToBadEcalChannel (minDeltaRForFiducialTrack_)),
@@ -137,6 +143,7 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track,
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
   isFiducialElectronTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialElectronTrack_)),
   isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialMuonTrack_)),
+  isDeepSetsElectronTrack_ (true),
   EcalAllDeadChannelsValMap_ (EcalAllDeadChannelsValMap),
   EcalAllDeadChannelsBitMap_ (EcalAllDeadChannelsBitMap),
   isFiducialECALTrack_ (!isCloseToBadEcalChannel (minDeltaRForFiducialTrack_)),
@@ -183,8 +190,8 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track,
 #else
       if(jet.pt() > 30 &&
          fabs(jet.eta()) < 4.5 &&
-         (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
-            || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0)))
+         anatools::jetPassesTightLepVeto(jet) // This automatically uses the correct jet ID criteria
+        )
 #endif
       {
         double dR = deltaR(*this, jet);
@@ -957,7 +964,7 @@ osu::TrackBase::lastLayerWithValidHit () const
 }
 
 /******************************************************************************/
-#if DATA_FORMAT != MINI_AOD_2017 && DATA_FORMAT != MINI_AOD_2022_CUSTOM
+#if DATA_FORMAT != MINI_AOD_2017 && DATA_FORMAT != MINI_AOD_2022_CUSTOM && DATA_FORMAT != MINI_AOD_ONLY_2022_CUSTOM
 const double
 osu::TrackBase::innerP () const
 {
@@ -1000,7 +1007,7 @@ osu::TrackBase::bremEnergy () const
 const bool
 osu::TrackBase::isBadGsfTrack (const reco::GsfTrack &track) const
 {
-#if DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_2022_CUSTOM
+#if DATA_FORMAT == MINI_AOD_2017 || DATA_FORMAT == MINI_AOD_2022_CUSTOM || DATA_FORMAT == MINI_AOD_ONLY_2022_CUSTOM
   return true;
 #else
 
@@ -1289,7 +1296,7 @@ osu::TrackBase::inTOBCrack () const
 {
 #if DATA_FORMAT == MINI_AOD_2017
   double fabsLambda = fabs(M_PI_2 - this->theta());
-#elif DATA_FORMAT == MINI_AOD_2022_CUSTOM
+#elif DATA_FORMAT == MINI_AOD_2022_CUSTOM || DATA_FORMAT == MINI_AOD_ONLY_2022_CUSTOM
   double fabsLambda = fabs(M_PI_2 - this->theta());
 #else
   double fabsLambda = fabs(this->lambda());

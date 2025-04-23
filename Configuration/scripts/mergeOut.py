@@ -26,6 +26,8 @@ parser.add_option("-N", "--noExec", action="store_true", dest="NotToExecute", de
 parser.add_option("-O", "--output-dir", dest="outputDirectory", help="specify an output directory for output file, default is to use the Condor directory")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="verbose output")
 parser.add_option("-s", "--skipMerging", action="store_true", dest="skipMerging", default=False, help="skip merging of histogram files (only check and create resub scripts).")
+parser.add_option("-D", "--dir", default=None, type=str, help="Directory to perform merging on")
+parser.add_option("-f", "--fileStr", default=None, type=str, help="Option to pass a file string to be used when looking for root files to merge (files will be required to have file string)")
 
 (arguments, args) = parser.parse_args()
 
@@ -35,16 +37,72 @@ from OSUT3Analysis.Configuration.mergeUtilities import *
 #                           Getting the working directory.                    #
 ###############################################################################
 CondorDir = ''
-if arguments.condorDir == "":
+if arguments.condorDir == "" and arguments.dir is None:
     print("No working directory is given, aborting.")
     sys.exit()
+
 else:
-    CondorDir = os.getcwd() + '/condor/' + arguments.condorDir
-OutputDir = os.getcwd() + "/condor/" + arguments.outputDirectory if arguments.outputDirectory else CondorDir
+    if arguments.dir is not None:
+        CondorDir = arguments.dir
+        OutputDir = arguments.dir
+    else:
+        CondorDir = os.getcwd() + '/condor/' + arguments.condorDir
+        OutputDir = os.getcwd() + "/condor/" + arguments.outputDirectory if arguments.outputDirectory else CondorDir
 try:
     os.makedirs (OutputDir)
 except OSError:
     pass
+
+###############################################################################
+#If running over directory from CRAB merge here
+###############################################################################
+
+if arguments.dir is not None:
+    from DisappTrks.StandardAnalysis.IntegratedLuminosity_cff import *
+    from OSUT3Analysis.Configuration.configurationOptions import crossSections
+    if "CMSSW_12" in os.environ.get("CMSSW_BASE") or "CMSSW_13" in os.environ.get("CMSSW_BASE"):
+        from DisappTrks.StandardAnalysis.miniAOD_124X_Ntuples import *
+    else:
+        print("There is no ntuples file for {}, either use the hist files to get event counts or add a new list of event counts".format(os.environ.get("CMSSW_BASE")))
+    
+    filesToMerge, totalEvents = getFilesFromCrab(arguments.dir, arguments.fileStr)
+
+    print(arguments.IntLumi)
+    if arguments.IntLumi not in lumi.keys():
+        print(f"Error: did not find dataset {arguments.IntLumi} in luminosity file")
+        sys.exit(1)
+    targetLumi = lumi[arguments.IntLumi]
+    
+    if arguments.Dataset not in crossSections.keys():
+        print(f"Error: did not find dataset {arguments.Dataset} in cross sections file")
+        sys.exit(1)
+    crossSection = crossSections[arguments.Dataset]
+
+    if arguments.Dataset not in eventCounts.keys():
+        print(f"Error: did not find dataset {arguments.Dataset} in event counts file")
+        sys.exit(1)
+    totalEvents = eventCounts[arguments.Dataset]
+
+    print(f"Target Lumi ({arguments.IntLumi}): {targetLumi}")
+    print(f"Cross section ({arguments.Dataset}): {crossSection}")
+    print(f"Total Events ({arguments.Dataset}): {totalEvents}")
+
+    Weight = float(targetLumi)*float(crossSection)/float(totalEvents)
+    weightString = MakeWeightsString(Weight, filesToMerge)
+
+    print(weightString)
+
+    if arguments.outputDirectory:
+        outputFile = arguments.outputDirectory
+    else:
+        outputFile = '{}/{}.root'.format(arguments.dir, arguments.Dataset)
+
+    cmd = 'mergeTFileServiceHistograms -i ' + " ".join (filesToMerge) + ' -o ' + outputFile + ' -w ' + weightString
+    print(cmd)
+
+    os.system(cmd)
+
+    sys.exit(0)
 
 ###############################################################################
 #Check whether the necessary arguments or the local config are given correctly#

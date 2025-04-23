@@ -10,8 +10,8 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
   jetCorrectionPayloadName_ (cfg.getParameter<string> ("jetCorrectionPayload")),
-  jetResolutionPayload_ (cfg.getParameter<string> ("jetResolutionPayload")),
-  jetResSFPayload_      (cfg.getParameter<string> ("jetResSFPayload")),
+  jetResolutionPayload_ (cfg.getParameter<edm::FileInPath> ("jetResolutionPayload").fullPath()),
+  jetResSFPayload_      (cfg.getParameter<edm::FileInPath> ("jetResSFPayload").fullPath()),
   jetResFromGlobalTag_  (cfg.getParameter<bool> ("jetResFromGlobalTag")),
   jetResNewPrescription_ (cfg.getParameter<bool> ("jetResNewPrescription")),
 
@@ -273,7 +273,8 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
                                    jetEnergyResolutionSFs.getScaleFactor(jetResParams, Variation::UP),
                                    jetEnergyResolutionSFs.getScaleFactor(jetResParams, Variation::DOWN));
 
-      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Smearing_procedures
+      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Smearing_procedures for Run 2
+      // https://cms-jerc.web.cern.ch/JER/ for Run 3
       if(hasGenJets) {
         bool isMatchedToGenJet = false;
         for (const auto &genjet : *genjets) {
@@ -281,7 +282,8 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
           double dPt = jet.pt() - genjet.pt();
 
           if(jetResNewPrescription_) {
-            // https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_25/PhysicsTools/PatUtils/interface/SmearedJetProducerT.h#L237
+            // https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_25/PhysicsTools/PatUtils/interface/SmearedJetProducerT.h#L237 for Run 2
+            // https://github.com/cms-sw/cmssw/blob/CMSSW_13_0_13/PhysicsTools/PatUtils/interface/SmearedJetProducerT.h#L260 for Run 3
             if(dR < 0.2 && fabs(dPt) < 3.0 * jet.pt() * jet.jer()) {
               // smearFactor = 1 + (jet.jerSF() - 1.) * dPt / jet.pt();
               jet.set_smearedPt(    max(0.0, jet.pt() + (jet.jerSF()     - 1.) * dPt));

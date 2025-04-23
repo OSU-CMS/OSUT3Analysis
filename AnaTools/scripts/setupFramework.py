@@ -28,7 +28,7 @@ A_BRIGHT_WHITE    =  "\033[1;37m"
 
 A_RESET           =  "\033[0m"
 
-supported_formats = ["AOD", "MINI_AOD", "MINI_AOD_2017", "MINI_AOD_2022"]
+supported_formats = ["AOD", "MINI_AOD", "MINI_AOD_2017", "MINI_AOD_2022", "MINI_AOD_ONLY_2022"]
 
 parser = OptionParser()
 parser.add_option("-f", "--format", dest="data_format",
@@ -134,7 +134,7 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_8_0_"):
         print( A_BRIGHT_RED + "  git cms-merge-topic lathomas:L1Prefiring_8_0_32" + A_RESET)
 
 # Set up the BuildFile
-if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_"):
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
     for r,directory,fileNames in os.walk("./"):
        for fin in fileNames:
             if fin != "BuildFile.xml":

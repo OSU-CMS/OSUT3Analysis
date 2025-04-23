@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import math
+import ctypes
 
 # a SimpleMeasurement is a real number with an uncertainty (possibly asymmetric)
 class SimpleMeasurement:
@@ -9,19 +10,27 @@ class SimpleMeasurement:
     _uncertaintyDown = _nan
     _uncertaintyUp = _nan
     _printTeX = False
-    _maxSigFigsInUncertainty = 2
-    _printLongFormat = False
+    _maxSigFigsInUncertainty = 4
+    _printLongFormat = True
     _printUncertainty = True
 
     def __init__ (self, centralValue = None, uncertaintyDown = None, uncertaintyUp = None):
         self._centralValue = float (centralValue)
         if uncertaintyDown is not None:
+            if isinstance(uncertaintyDown, ctypes.c_double):
+                uncertaintyDown = uncertaintyDown.value
             self._uncertaintyDown = float (uncertaintyDown)
         if uncertaintyUp is not None:
+            if isinstance(uncertaintyUp, ctypes.c_double):
+                uncertaintyUp = uncertaintyUp.value
             self._uncertaintyUp = float (uncertaintyUp)
         if uncertaintyDown is not None and uncertaintyUp is None:
+            if isinstance(uncertaintyDown, ctypes.c_double):
+                uncertaintyDown = uncertaintyDown.value
             self._uncertaintyUp = float (uncertaintyDown)
         if uncertaintyUp is not None and uncertaintyDown is None:
+            if isinstance(uncertaintyUp, ctypes.c_double):
+                uncertaintyUp = uncertaintyUp.value
             self._uncertaintyDown = float (uncertaintyUp)
 
     ############################################################################
