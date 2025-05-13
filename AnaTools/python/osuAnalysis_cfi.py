@@ -16,15 +16,12 @@ collectionMap = cms.PSet (
     electrons                   =  cms.InputTag  ('slimmedElectrons',               ''),
     generatorweights            =  cms.InputTag  ('generator',                      ''),
     genjets                     =  cms.InputTag  ('slimmedGenJets',                 ''),
-    # jets                        =  cms.InputTag  ('slimmedJets',                    ''),
-    jets                        =  cms.InputTag  ('slimmedJetsPuppi',               ''),
-    # bjets                       =  cms.InputTag  ('slimmedJets',                    ''),
-    bjets                       =  cms.InputTag  ('slimmedJetsPuppi',               ''),
+    jets                        =  cms.InputTag  ('slimmedJets',                    ''),
+    bjets                       =  cms.InputTag  ('slimmedJets',                    ''),
     mcparticles                 =  cms.InputTag  ('packedGenParticles',             ''),
     hardInteractionMcparticles  =  cms.InputTag  ('prunedGenParticles',             ''),
     lostTracks                  =  cms.InputTag  ('lostTracks',                     ''),
-    # mets                        =  cms.InputTag  ('slimmedMETs',                    ''),
-    mets                        =  cms.InputTag  ('slimmedMETsPuppi',               ''),
+    mets                        =  cms.InputTag  ('slimmedMETs',                    ''),
     muons                       =  cms.InputTag  ('slimmedMuons',                   ''),
     photons                     =  cms.InputTag  ('slimmedPhotons',                 ''),
     pileupinfos                 =  cms.InputTag  ('slimmedAddPileupInfo',           ''),
@@ -52,6 +49,9 @@ collectionMapMiniAOD2017.trigobjs        = cms.InputTag  ('slimmedPatTrigger') #
 #########################################################################
 
 collectionMapMiniAOD2022 = copy.deepcopy(collectionMapMiniAOD2017)
+collectionMapMiniAOD2022.jets  = cms.InputTag ('slimmedJetsPuppi', '')
+collectionMapMiniAOD2022.bjets = cms.InputTag ('slimmedJetsPuppi', '')
+collectionMapMiniAOD2022.mets  = cms.InputTag ('slimmedMETsPuppi', '')
 
 ###########################################################
 ##### Set up the standard input collections in AOD ####
