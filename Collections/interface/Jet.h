@@ -19,7 +19,7 @@ namespace osu
         const int matchedToLepton () const;
         const float pfCombinedSecondaryVertexV2BJetTags () const;
         const float pfCombinedInclusiveSecondaryVertexV2BJetTags () const;
-        const float pileupJetId () const;
+        // const float pileupJetId () const; // Not available in Puppi jets
 
         const float jecUncertainty () const;
         const float jer () const;
@@ -38,7 +38,7 @@ namespace osu
         void set_matchedToLepton (float value) { matchedToLepton_  = value; }
         void set_pfCombinedSecondaryVertexV2BJetTags (float value) { pfCombinedSecondaryVertexV2BJetTags_ = value;}
         void set_pfCombinedInclusiveSecondaryVertexV2BJetTags (float value) { pfCombinedInclusiveSecondaryVertexV2BJetTags_ = value;}
-        void set_pileupJetId (float value) { pileupJetId_ = value;}
+        // void set_pileupJetId (float value) { pileupJetId_ = value;} // Not available in Puppi jets
 
         void set_jecUncertainty (float value) { jecUncertainty_ = value;}
         void set_jetPtResolution (float value) { jetPtResolution_ = value;}
@@ -61,7 +61,7 @@ namespace osu
         int matchedToLepton_;
         float pfCombinedSecondaryVertexV2BJetTags_;
         float pfCombinedInclusiveSecondaryVertexV2BJetTags_;
-        float pileupJetId_;
+        // float pileupJetId_; // Not available in Puppi jets
         float jecUncertainty_;
         float jetPtResolution_;
         float jetPtResolutionSF_;

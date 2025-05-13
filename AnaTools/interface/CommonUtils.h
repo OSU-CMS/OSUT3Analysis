@@ -286,8 +286,18 @@ anatools::jetPassesTightLepVeto (const T &jet)
     || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0));
 #else
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID#Recommendations_for_13_TeV_data
-  return (((jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8) && ((fabs(jet.eta())<=2.4 && jet.chargedHadronEnergyFraction()>0 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.90) || fabs(jet.eta())>2.4) && fabs(jet.eta())<=3.0)
-    || (jet.neutralEmEnergyFraction()<0.90 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0));
+
+  // Used for AK4CHS jets
+  // return ((jet.neutralHadronEnergyFraction()<0.99 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8 && jet.chargedHadronEnergyFraction()>0.01 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.80 && fabs(jet.eta())<=2.6 ) ||
+  // (jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.99 && jet.muonEnergyFraction()<0.8 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.80 && fabs(jet.eta())>2.6 && fabs(jet.eta())<=2.7) ||
+  // (jet.neutralHadronEnergyFraction()<0.99 && jet.neutralEmEnergyFraction()<0.99 && jet.neutralMultiplicity()>1 && fabs(jet.eta())>2.7 && fabs(jet.eta())<=3.0) ||
+  // (jet.neutralEmEnergyFraction()<0.40 && jet.neutralMultiplicity()>10 && fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0));
+
+  // Used for AK4PUPPI jets
+  return ((jet.neutralHadronEnergyFraction()<0.99 && jet.neutralEmEnergyFraction()<0.90 && (jet.chargedMultiplicity() + jet.neutralMultiplicity())>1 && jet.muonEnergyFraction()<0.8 && jet.chargedHadronEnergyFraction()>0.01 && jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.80 && fabs(jet.eta())<=2.6 ) ||
+  (jet.neutralHadronEnergyFraction()<0.90 && jet.neutralEmEnergyFraction()<0.99 && jet.muonEnergyFraction()<0.8 && jet.chargedEmEnergyFraction()<0.80 && fabs(jet.eta())>2.6 && fabs(jet.eta())<=2.7) ||
+  (jet.neutralHadronEnergyFraction()<0.99 && fabs(jet.eta())>2.7 && fabs(jet.eta())<=3.0) ||
+  (jet.neutralEmEnergyFraction()<0.40 && jet.neutralMultiplicity()>=2 && fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0));
 #endif
 }
 

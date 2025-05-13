@@ -38,8 +38,14 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
 
 #if CMSSW_VERSION_CODE >= CMSSW_VERSION(12,4,0)
   JetCorrParToken_ = esConsumes(edm::ESInputTag("", jetCorrectionPayloadName_));
-  jetResolutionToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs_pt"));
-  jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs"));
+
+  // Used for AK4CHS jets
+  // jetResolutionToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs_pt"));
+  // jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs"));
+
+  // Used for AK4Puppi jets
+  jetResolutionToken_ = esConsumes(edm::ESInputTag("", "AK4PFPuppi_pt"));
+  jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", "AK4PFPuppi"));
 #endif
 
 }
@@ -259,7 +265,7 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
       jet.set_pfCombinedInclusiveSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
-      jet.set_pileupJetId(jet.userFloat("pileupJetId:fullDiscriminant"));
+      // jet.set_pileupJetId(jet.userFloat("pileupJetId:fullDiscriminant")); // Not available in Puppi jets
 
       jecUnc->setJetEta(jet.eta());
       jecUnc->setJetPt(jet.pt());

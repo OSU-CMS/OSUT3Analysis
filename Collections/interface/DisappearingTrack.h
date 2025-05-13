@@ -159,6 +159,9 @@ namespace osu {
       const float caloNewHadDRp1 () const { return this->caloNewHadDRp1_; };
       const float caloNewDRp1 ()    const { return this->caloNewEMDRp1_ + this->caloNewHadDRp1_; };
 
+      //Calo energy for calo jets
+      const float caloTotFromCaloJet () const { return this->matchedCaloJetEmEnergy() + this->matchedCaloJetHadEnergy(); };
+
       //////////////////////////////////////
       // Get rhos
       //////////////////////////////////////
@@ -267,6 +270,11 @@ namespace osu {
       const float caloNewNoPUDRp1CentralCalo ()        const { return caloTotNoPU(0.1, CentralCalo, Sum); };
       const float caloNewNoPUDRp1CentralCaloJustEm ()  const { return caloTotNoPU(0.1, CentralCalo, EM); };
       const float caloNewNoPUDRp1CentralCaloJustHad () const { return caloTotNoPU(0.1, CentralCalo, Had); };
+
+      // New calculation that uses calo jet energy in dR < 0.3 cone (standard distance from calo jet to track).
+      const float caloNewFromCaloJetNoPUDRp3 ()                   const { return caloTotFromCaloJetNoPU(0.3, All); };
+      const float caloNewFromCaloJetNoPUDRp3Calo ()               const { return caloTotFromCaloJetNoPU(0.3, Calo); };
+      const float caloNewFromCaloJetNoPUDRp3CentralCalo ()        const { return caloTotFromCaloJetNoPU(0.3, CentralCalo); };
 
       //////////////////////////////////////
       // Set calo energies
@@ -399,6 +407,7 @@ namespace osu {
       //float caloNewEMDRp5_; //mcarrigan
       //Additions from CandidateTracks
       const double caloTotNoPU (double, RhoType = All, CaloType = Sum) const;
+      const double caloTotFromCaloJetNoPU (double, RhoType = All) const;
 
       float caloNewEMDRp5_;
       float caloNewHadDRp5_;
