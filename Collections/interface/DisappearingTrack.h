@@ -276,6 +276,11 @@ namespace osu {
       const float caloNewFromCaloJetNoPUDRp3Calo ()               const { return caloTotFromCaloJetNoPU(0.3, Calo); };
       const float caloNewFromCaloJetNoPUDRp3CentralCalo ()        const { return caloTotFromCaloJetNoPU(0.3, CentralCalo); };
 
+      // New calculation that uses calo jet energy in dR < 0.4 cone (standard size of a calo jet).
+      const float caloNewFromCaloJetNoPUDRp4 ()                   const { return caloTotFromCaloJetNoPU(0.4, All); };
+      const float caloNewFromCaloJetNoPUDRp4Calo ()               const { return caloTotFromCaloJetNoPU(0.4, Calo); };
+      const float caloNewFromCaloJetNoPUDRp4CentralCalo ()        const { return caloTotFromCaloJetNoPU(0.4, CentralCalo); };
+
       //////////////////////////////////////
       // Set calo energies
       //////////////////////////////////////
