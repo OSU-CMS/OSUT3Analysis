@@ -25,6 +25,7 @@ namespace osu
         const bool passesLooseCombinedIsolation () const;
         const bool passesMediumCombinedIsolation () const;
         const bool passesTightCombinedIsolation () const;
+        const bool passesJetDiscrimination () const;
 
         const bool passesTightMVAIsolation () const;
 
@@ -50,9 +51,11 @@ namespace osu
 
         const bool match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v () const;
         const bool match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v () const;
+        const bool match_HLT_IsoMu24_eta2p1_MediumDeepTauPFTauHPS20_eta2p1_SingleL1_v () const;
 
         void set_match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v (const bool);
         void set_match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v (const bool);
+        void set_match_HLT_IsoMu24_eta2p1_MediumDeepTauPFTauHPS20_eta2p1_SingleL1_v (const bool);
 
       private:
 
@@ -78,6 +81,7 @@ namespace osu
 
         bool match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v_;
         bool match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v_;
+        bool match_HLT_IsoMu24_eta2p1_MediumDeepTauPFTauHPS20_eta2p1_SingleL1_v_;
     };
 }
 

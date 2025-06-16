@@ -129,11 +129,23 @@ osu::Tau::~Tau ()
 const bool
 osu::Tau::passesDecayModeReconstruction () const
 {
-  if (this->isTauIDAvailable ("decayModeFinding"))
-    return (this->tauID ("decayModeFinding") > 0.5);
+  // This were the selections used for Run 2; they were changed in Run 3 to use the DeepTau selections and a
+  // distinct decay mode ID https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendationForRun3
+  // The new IDs can be found in https://github.com/cms-sw/cmssw/blob/388ec50d980a31e7edb67eba169d45743d6623f5/Validation/RecoTau/python/RecoTauValidationMiniAOD_cfi.py (not sure if it is updated, though)
+
+  // if (this->isTauIDAvailable ("decayModeFinding"))
+  //   return (this->tauID ("decayModeFinding") > 0.5);
+  // else
+  //   {
+  //     edm::LogWarning ("osu_Tau") << "Tau ID \"decayModeFinding\" unavailable.";
+  //     return false;
+  //   }
+
+  if (this->isTauIDAvailable ("decayModeFindingNewDMs"))
+    return (this->tauID ("decayModeFindingNewDMs") > 0.5);
   else
     {
-      edm::LogWarning ("osu_Tau") << "Tau ID \"decayModeFinding\" unavailable.";
+      edm::LogWarning ("osu_Tau") << "Tau ID \"decayModeFindingNewDMs\" unavailable.";
       return false;
     }
 }
@@ -143,6 +155,11 @@ osu::Tau::passesLightFlavorRejection () const
 {
   bool flag = true;
 
+  // These were the selections used for Run 2; they were changed in Run 3 to use the DeepTau selections and a
+  // distinct decay mode ID https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendationForRun3
+  // The new IDs can be found in https://github.com/cms-sw/cmssw/blob/388ec50d980a31e7edb67eba169d45743d6623f5/Validation/RecoTau/python/RecoTauValidationMiniAOD_cfi.py (not sure if it is updated, though)
+
+#if DATA_FORMAT_IS_2017
   if (this->isTauIDAvailable ("againstElectronLooseMVA5"))
     flag = flag && (this->tauID ("againstElectronLooseMVA5") > 0.5);
   else if (this->isTauIDAvailable ("againstElectronLooseMVA6"))
@@ -161,6 +178,52 @@ osu::Tau::passesLightFlavorRejection () const
       flag = flag && false;
     }
 
+#elif DATA_FORMAT_IS_2022
+  // The Tau IDs is done like this so that the 2018v2p5 algorithm has priority over the 2017v2p1, which is the recommendation from the Tau POG
+  // The 2018v2p5 doesn't exist in the PromptReco files, but exist in the rereco MiniAOD
+  if (this->isTauIDAvailable ("byVVVLooseDeepTau2018v2p5VSe"))
+    flag = flag && (this->tauID ("byVVVLooseDeepTau2018v2p5VSe") > 0.5);
+  else if (this->isTauIDAvailable ("byVVVLooseDeepTau2017v2p1VSe"))
+    flag = flag && (this->tauID ("byVVVLooseDeepTau2017v2p1VSe") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu_Tau") << "Tau IDs \"byVVVLooseDeepTau2017v2p1VSe\" and \"byVVVLooseDeepTau2018v2p5VSe\" unavailable.";
+      flag = flag && false;
+    }
+
+  // againstMuonLoose3 still exists as a tau ID, but will follow the recommendation to use DeepTau
+  // This should probably be checked with Tau POG experts
+  if (this->isTauIDAvailable ("byVLooseDeepTau2018v2p5VSmu"))
+    flag = flag && (this->tauID ("byVLooseDeepTau2018v2p5VSmu") > 0.5);
+  else if (this->isTauIDAvailable ("byVLooseDeepTau2017v2p1VSmu"))
+    flag = flag && (this->tauID ("byVLooseDeepTau2017v2p1VSmu") > 0.5);
+  else
+    {
+      edm::LogWarning ("osu_Tau") << "Tau ID \"byVLooseDeepTau2017v2p1VSmu\" and \"byVLooseDeepTau2018v2p5VSmu\" unavailable.";
+      flag = flag && false;
+    }
+#endif
+
+  return flag;
+}
+
+const bool 
+osu::Tau::passesJetDiscrimination () const
+{
+
+  bool flag = true;
+  #if DATA_FORMAT_IS_2022
+  if (this->isTauIDAvailable("byVVVLooseDeepTau2018v2p5VSjet"))
+    flag = flag && (this->tauID("byVVVLooseDeepTau2018v2p5VSjet") > 0.5);
+  else if (this->isTauIDAvailable("byVVVLooseDeepTau2017v2p1VSjet"))
+    flag = flag && (this->tauID("byVVVLooseDeepTau2017v2p1VSjet") > 0.5);
+  else
+  {
+    edm::LogWarning ("osu_Tau") << "Tau ID \"byVVVLooseDeepTau2018v2p5VSjet\" and \"byVVVLooseDeepTau2017v2p1VSjet\" unavailable.";
+    flag = flag && false;
+  }
+
+  #endif
   return flag;
 }
 
@@ -327,6 +390,12 @@ osu::Tau::match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v () const
   return match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v_;
 }
 
+const bool
+osu::Tau::match_HLT_IsoMu24_eta2p1_MediumDeepTauPFTauHPS20_eta2p1_SingleL1_v () const
+{
+  return match_HLT_IsoMu24_eta2p1_MediumDeepTauPFTauHPS20_eta2p1_SingleL1_v_;
+}
+
 void
 osu::Tau::set_match_HLT_LooseIsoPFTau50_Trk30_eta2p1_v (const bool flag)
 {
@@ -337,6 +406,12 @@ void
 osu::Tau::set_match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v (const bool flag)
 {
   match_HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_v_ = flag;
+}
+
+void
+osu::Tau::set_match_HLT_IsoMu24_eta2p1_MediumDeepTauPFTauHPS20_eta2p1_SingleL1_v (const bool flag)
+{
+  match_HLT_IsoMu24_eta2p1_MediumDeepTauPFTauHPS20_eta2p1_SingleL1_v_ = flag;
 }
 
 #endif
