@@ -149,7 +149,13 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VE
     collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
-    collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFchs")
+
+    # Used for AK4CHS jets
+    # collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFchs")
+
+    # Used for AK4PUPPI jets
+    collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFPuppi")
+
     collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)

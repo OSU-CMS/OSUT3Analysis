@@ -13,7 +13,7 @@ osu::Jet::Jet (const TYPE(jets) &jet) :
   matchedToLepton_                               (INVALID_VALUE),
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE),
-  pileupJetId_                                   (INVALID_VALUE),
+  // pileupJetId_                                   (INVALID_VALUE), // Not available in Puppi jets
   jecUncertainty_                                (INVALID_VALUE),
   jetPtResolution_                               (INVALID_VALUE),
   jetPtResolutionSF_                             (INVALID_VALUE),
@@ -34,7 +34,7 @@ osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> 
   matchedToLepton_                               (INVALID_VALUE),
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE),
-  pileupJetId_                                   (INVALID_VALUE),
+  // pileupJetId_                                   (INVALID_VALUE), // Not available in Puppi jets
   jecUncertainty_                                (INVALID_VALUE),
   jetPtResolution_                               (INVALID_VALUE),
   jetPtResolutionSF_                             (INVALID_VALUE),
@@ -55,7 +55,7 @@ osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> 
   matchedToLepton_                               (INVALID_VALUE),
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE),
-  pileupJetId_                                   (INVALID_VALUE),
+  // pileupJetId_                                   (INVALID_VALUE), // Not available in Puppi jets
   jecUncertainty_                                (INVALID_VALUE),
   jetPtResolution_                               (INVALID_VALUE),
   jetPtResolutionSF_                             (INVALID_VALUE),
@@ -89,11 +89,11 @@ osu::Jet::pfCombinedInclusiveSecondaryVertexV2BJetTags () const
   return pfCombinedInclusiveSecondaryVertexV2BJetTags_;
 }
 
-const float
-osu::Jet::pileupJetId () const
-{
-  return pileupJetId_;
-}
+// const float  // Not available in Puppi jets
+// osu::Jet::pileupJetId () const
+// {
+//   return pileupJetId_;
+// }
 
 const float
 osu::Jet::jecUncertainty () const

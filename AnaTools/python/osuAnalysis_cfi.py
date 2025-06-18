@@ -49,6 +49,9 @@ collectionMapMiniAOD2017.trigobjs        = cms.InputTag  ('slimmedPatTrigger') #
 #########################################################################
 
 collectionMapMiniAOD2022 = copy.deepcopy(collectionMapMiniAOD2017)
+collectionMapMiniAOD2022.jets  = cms.InputTag ('slimmedJetsPuppi', '')
+collectionMapMiniAOD2022.bjets = cms.InputTag ('slimmedJetsPuppi', '')
+collectionMapMiniAOD2022.mets  = cms.InputTag ('slimmedMETsPuppi', '')
 
 ###########################################################
 ##### Set up the standard input collections in AOD ####
