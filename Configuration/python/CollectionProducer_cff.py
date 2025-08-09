@@ -142,6 +142,9 @@ collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
     jetResSFPayload = cms.FileInPath("OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
     jetResFromGlobalTag = cms.bool(False),
     jetResNewPrescription = cms.bool(False),
+    jecjerFile = cms.FileInPath("OSUT3Analysis/Collections/data/JetEnergyCorrections/Summer22EE_AK4PFPuppi.root"),
+    dataPeriod = cms.string("Summer22EE"),
+    dataEra = cms.string("_RunF"),
 )
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
