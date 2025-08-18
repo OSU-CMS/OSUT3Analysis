@@ -40,27 +40,34 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
 #endif
 
 #if CMSSW_VERSION_CODE >= CMSSW_VERSION(12,4,0)
-  // Used when extracting the corrections from the global tag
-  // JetCorrParToken_ = esConsumes(edm::ESInputTag("", jetCorrectionPayloadName_));
+  // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
+  JetCorrParToken_ = esConsumes(edm::ESInputTag("", jetCorrectionPayloadName_));
 
   // Used for AK4CHS jets
   // jetResolutionToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs_pt"));
   // jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs"));
 
   // Used for AK4Puppi jets
-  // jetResolutionToken_ = esConsumes(edm::ESInputTag("", "AK4PFPuppi_pt"));
-  // jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", "AK4PFPuppi"));
+  // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
+  jetResolutionToken_ = esConsumes(edm::ESInputTag("", "AK4PFPuppi_pt"));
+  jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", "AK4PFPuppi"));
 #endif
 
   f_jecjer_ = TFile::Open(jecjerFile_.c_str(), "read");
-  jetEnergyScaleMCTruthHistName_ = "JECMCTruth_" + dataPeriod_ + dataEra_ + "_AK4PFPuppi";
-  jetEnergyScaleL2L3HistName_ = "JECL2L3_" + dataPeriod_ + dataEra_ + "_AK4PFPuppi";
+  jetEnergyScaleMCL2RelativeHistName_ = "JECL2MC_" + dataPeriod_ + "_AK4PFPuppi";
+  jetEnergyScaleMCL3AbsoluteHistName_ = "JECL3MC_" + dataPeriod_ + "_AK4PFPuppi";
+  jetEnergyScaleDATAL2RelativeHistName_ = "JECL2DATA_" + dataPeriod_ + dataEra_ + "_AK4PFPuppi";
+  jetEnergyScaleDATAL3AbsoluteHistName_ = "JECL3DATA_" + dataPeriod_ + dataEra_ + "_AK4PFPuppi";
+  jetEnergyScaleL2L3HistName_ = "JECL2L3DATA_" + dataPeriod_ + dataEra_ + "_AK4PFPuppi";
   jetEnergyScaleUncHistName_ = "JECUnc_" + dataPeriod_ + "_AK4PFPuppi";
   jetEnergyResSFNomHistName_ = "JERSFNom_" + dataPeriod_ + "_AK4PFPuppi";
   jetEnergyResSFUpHistName_ = "JERSFUp_" + dataPeriod_ + "_AK4PFPuppi";
   jetEnergyResSFDownHistName_ = "JERSFDown_" + dataPeriod_ + "_AK4PFPuppi";
   jetEnergyResPtResHistName_ = "JERPtRes_" + dataPeriod_ + "_AK4PFPuppi";
-  jetEnergyScaleMCTruthHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleMCTruthHistName_.c_str());
+  jetEnergyScaleMCL2RelativeHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleMCL2RelativeHistName_.c_str());
+  jetEnergyScaleMCL3AbsoluteHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleMCL3AbsoluteHistName_.c_str());
+  jetEnergyScaleDATAL2RelativeHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleDATAL2RelativeHistName_.c_str());
+  jetEnergyScaleDATAL3AbsoluteHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleDATAL3AbsoluteHistName_.c_str());
   jetEnergyScaleL2L3Hist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleL2L3HistName_.c_str());
   jetEnergyScaleUncHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleUncHistName_.c_str());
   jetEnergyResSFNomHist_ = (TH2D*)f_jecjer_->Get(jetEnergyResSFNomHistName_.c_str());
@@ -68,7 +75,10 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   jetEnergyResSFDownHist_ = (TH2D*)f_jecjer_->Get(jetEnergyResSFDownHistName_.c_str());
   jetEnergyResPtResHist_ = (TH3D*)f_jecjer_->Get(jetEnergyResPtResHistName_.c_str());
 
-  jetEnergyScaleMCTruthHist_->SetDirectory(0);
+  jetEnergyScaleMCL2RelativeHist_->SetDirectory(0);
+  jetEnergyScaleMCL3AbsoluteHist_->SetDirectory(0);
+  jetEnergyScaleDATAL2RelativeHist_->SetDirectory(0);
+  jetEnergyScaleDATAL3AbsoluteHist_->SetDirectory(0);
   jetEnergyScaleL2L3Hist_->SetDirectory(0);
   jetEnergyScaleUncHist_->SetDirectory(0);
   jetEnergyResSFNomHist_->SetDirectory(0);
@@ -82,7 +92,10 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
 
 template<class T> OSUGenericJetProducer<T>::~OSUGenericJetProducer ()
 {
-  delete jetEnergyScaleMCTruthHist_;
+  delete jetEnergyScaleMCL2RelativeHist_;
+  delete jetEnergyScaleMCL3AbsoluteHist_;
+  delete jetEnergyScaleDATAL2RelativeHist_;
+  delete jetEnergyScaleDATAL3AbsoluteHist_;
   delete jetEnergyScaleL2L3Hist_;
   delete jetEnergyScaleUncHist_;
   delete jetEnergyResSFNomHist_;
@@ -102,21 +115,22 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   event.getByToken (mcparticleToken_, particles);
 
 #if DATA_FORMAT_FROM_MINIAOD
-  // Used when extracting the corrections from the global tag
+  // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
   // get JetCorrector parameters to get the jec uncertainty
-  //edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
-  //setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
+  // edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
+  // setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
 
-  // const JetCorrectorParametersCollection &JetCorParColl = setup.getData(JetCorrParToken_);
+  const JetCorrectorParametersCollection &JetCorParColl = setup.getData(JetCorrParToken_);
 
-  // JetCorrectorParameters const & JetCorPar = JetCorParColl["Uncertainty"];
-  // JetCorrectionUncertainty * jecUnc = new JetCorrectionUncertainty(JetCorPar);
+  JetCorrectorParameters const & JetCorPar = JetCorParColl["Uncertainty"];
+  JetCorrectionUncertainty * jecUnc = new JetCorrectionUncertainty(JetCorPar);
 
   // Get jet energy resolution and scale factors
   // These are in the Global Tag for 80X but not for 76X,
   // Configuration/python/collectionProducer_cff.py looks at $CMSSW_BASE to set this choice
 
 #if CMSSW_VERSION_CODE < CMSSW_VERSION(12,4,0)
+  // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
   JME::JetResolution jetEnergyResolution = (jetResFromGlobalTag_) ?
     JME::JetResolution::get(setup, "AK4PFchs_pt") :
     JME::JetResolution(jetResolutionPayload_);
@@ -306,17 +320,20 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
       // jet.set_pileupJetId(jet.userFloat("pileupJetId:fullDiscriminant")); // Not available in Puppi jets
 
-      // Used when extracting the corrections from the global tag
+      // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
       // jecUnc->setJetEta(jet.eta());
       // jecUnc->setJetPt(jet.pt());
       // jet.set_jecUncertainty(jecUnc->getUncertainty(true));
 
-      Double_t JECMCTruth = jetEnergyScaleMCTruthHist_->GetBinContent(jetEnergyScaleMCTruthHist_->FindBin(jet.pt(), jet.eta()));
-      Double_t JECL2L3 = jetEnergyScaleL2L3Hist_->GetBinContent(jetEnergyScaleL2L3Hist_->FindBin(jet.pt(), jet.eta()));
+      Double_t JECMCL2Relative = jetEnergyScaleMCL2RelativeHist_->GetBinContent(jetEnergyScaleMCL2RelativeHist_->FindBin(jet.pt(), jet.eta()));
+      Double_t JECMCL3Absolute = jetEnergyScaleMCL3AbsoluteHist_->GetBinContent(jetEnergyScaleMCL3AbsoluteHist_->FindBin(jet.pt(), jet.eta()));
+      Double_t JECDATAL2Relative = jetEnergyScaleDATAL2RelativeHist_->GetBinContent(jetEnergyScaleDATAL2RelativeHist_->FindBin(jet.pt(), jet.eta()));
+      Double_t JECDATAL3Absolute = jetEnergyScaleDATAL3AbsoluteHist_->GetBinContent(jetEnergyScaleDATAL3AbsoluteHist_->FindBin(jet.pt(), jet.eta()));
+      Double_t JECDATAL2L3 = jetEnergyScaleL2L3Hist_->GetBinContent(jetEnergyScaleL2L3Hist_->FindBin(jet.pt(), jet.eta()));
       Double_t JECUnc = jetEnergyScaleUncHist_->GetBinContent(jetEnergyScaleUncHist_->FindBin(jet.pt(), jet.eta()));
 
-      jet.scaleEnergy(JECMCTruth);
-      if (event.isRealData()) jet.scaleEnergy(JECL2L3);
+      if (event.isRealData()) jet.scaleEnergy(JECDATAL2Relative * JECDATAL3Absolute * JECDATAL2L3);
+      else jet.scaleEnergy(JECMCL2Relative * JECMCL3Absolute);
       jet.set_jecUncertainty(JECUnc);
 
       Double_t JERSFNom = jetEnergyResSFNomHist_->GetBinContent(jetEnergyResSFNomHist_->FindBin(jet.pt(), jet.eta()));
@@ -324,7 +341,7 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
       Double_t JERSFDown = jetEnergyResSFDownHist_->GetBinContent(jetEnergyResSFDownHist_->FindBin(jet.pt(), jet.eta()));
       Double_t JERPtRes = jetEnergyResPtResHist_->GetBinContent(jetEnergyResPtResHist_->FindBin(jet.pt(), jet.eta(), (float)(*rho)));
 
-      // Used when extracting the corrections from the global tag
+      // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
       // jetResParams.setJetPt(jet.pt());
       // jetResParams.setJetEta(jet.eta());
       // jetResParams.setRho((float)(*rho));
@@ -446,7 +463,7 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   pl_.reset ();
 
 #if DATA_FORMAT_FROM_MINIAOD
-  // delete jecUnc;
+  delete jecUnc;
   delete rng;
 #endif
 }

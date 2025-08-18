@@ -73,20 +73,29 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   #endif
 
   TFile* f_jecjer_;
-  string jetEnergyScaleMCTruthHistName_;
+  string jetEnergyScaleMCL2RelativeHistName_;
+  string jetEnergyScaleMCL3AbsoluteHistName_;
+  string jetEnergyScaleDATAL2RelativeHistName_;
+  string jetEnergyScaleDATAL3AbsoluteHistName_;
   string jetEnergyScaleL2L3HistName_;
   string jetEnergyScaleUncHistName_;
   string jetEnergyResSFNomHistName_;
   string jetEnergyResSFUpHistName_;
   string jetEnergyResSFDownHistName_;
   string jetEnergyResPtResHistName_;
-  TH2D* jetEnergyScaleMCTruthHist_;
+
+  TH2D* jetEnergyScaleMCL2RelativeHist_;
+  TH2D* jetEnergyScaleMCL3AbsoluteHist_;
+  TH2D* jetEnergyScaleDATAL2RelativeHist_;
+  TH2D* jetEnergyScaleDATAL3AbsoluteHist_;
   TH2D* jetEnergyScaleL2L3Hist_;
   TH2D* jetEnergyScaleUncHist_;
   TH2D* jetEnergyResSFNomHist_;
   TH2D* jetEnergyResSFUpHist_;
   TH2D* jetEnergyResSFDownHist_;
   TH3D* jetEnergyResPtResHist_;
+
+
 
   edm::ParameterSet  cfg_;
   ////////////////////////////////////////////////////////////////////////////
