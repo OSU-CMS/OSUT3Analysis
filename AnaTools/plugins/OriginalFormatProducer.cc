@@ -25,6 +25,9 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Framework/interface/GetterOfProducts.h"
+#include "FWCore/Framework/interface/ProcessMatch.h"
+
 
 #include "OSUT3Analysis/AnaTools/interface/AnalysisTypes.h"
 
@@ -61,6 +64,8 @@ private:
   bool makeSecondaryTracks_;
   bool makeTrigobjs_;
   bool makeSuperclusters_;
+  std::string processName_;
+
 
 };
 
@@ -69,6 +74,8 @@ private:
 // constructors and destructor
 //
 OriginalFormatProducer::OriginalFormatProducer (const edm::ParameterSet& iConfig)
+  : processName_(iConfig.getParameter<std::string>("*"))
+
 {
   makeBeamspots_       = iConfig.getParameter<bool> ("makeBeamspots");
   makeElectrons_       = iConfig.getParameter<bool> ("makeElectrons");
@@ -116,8 +123,9 @@ OriginalFormatProducer::~OriginalFormatProducer ()
 template<typename Old, typename New> void
 OriginalFormatProducer::produceCollection (edm::Event& iEvent)
 {
-  vector<edm::Handle< vector < Old > > > oldObjVec;
-  iEvent.getManyByType(oldObjVec);
+  edm::GetterOfProducts<std::vector<Old>> getterOfProducts_(edm::ProcessMatch(processName_), this);
+  std::vector<edm::Handle<std::vector<Old>>> oldObjVec;
+  getterOfProducts_.fillHandles(iEvent, oldObjVec);
   if (oldObjVec.empty()) {
     return;
   } else if (oldObjVec.size() > 1) {

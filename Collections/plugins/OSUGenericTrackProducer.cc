@@ -5,6 +5,7 @@
 
 #include "OSUT3Analysis/Collections/plugins/OSUGenericTrackProducer.h"
 
+#include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
 #include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
 #include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
 
@@ -27,12 +28,14 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   outputTensorName_(cfg.getParameter<std::string>("outputTensorName")),
   inputTensorNameDS_(cfg.getParameter<std::string>("inputTensorNameDS")),
   outputTensorNameDS_(cfg.getParameter<std::string>("outputTensorNameDS")),
-  inputTrackTensorNameDS_ (cfg.getParameter<std::string>("inputTrackTensorNameDS")),
-
-  session_(tensorflow::createSession(cacheData->graphDef, 4)),
-  sessionDS_(tensorflow::createSession(cacheData->graphDefDS, 4))
-
+  inputTrackTensorNameDS_ (cfg.getParameter<std::string>("inputTrackTensorNameDS"))
 {
+
+  tensorflow::Options options;
+  options.setThreading(4);
+
+  session_ = tensorflow::createSession(cacheData->graphDef, options);
+  sessionDS_ = tensorflow::createSession(cacheData->graphDefDS, options);
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
   produces<vector<T> > (collection_.instance ());

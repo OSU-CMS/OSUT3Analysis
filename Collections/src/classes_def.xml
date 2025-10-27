@@ -1,10 +1,4 @@
 <lcgdict>
-  <class pattern="osu::*"/>
-  <class pattern="std::vector<osu::*>"/>
-  <class pattern="edm::Wrapper<osu::*>"/>
-  <class pattern="edm::Wrapper<std::vector<osu::*> >"/>
-  <class pattern="edm::Ref<std::vector<osu::*> >"/>
-
   <class name="std::map<DetId, std::vector<double> >"/>
   <class name="std::vector<std::map<DetId, std::vector<double> > >"/>
   <class name="edm::Wrapper<std::map<DetId, std::vector<double> > >"/>

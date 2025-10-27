@@ -39,7 +39,6 @@
 
 #include "DataFormats/TrackReco/interface/DeDxHit.h"
 #include "DataFormats/TrackReco/interface/DeDxHitInfo.h"
-#include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "RecoTracker/DeDx/interface/DeDxTools.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
