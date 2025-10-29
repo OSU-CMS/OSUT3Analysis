@@ -1,18 +1,157 @@
 <lcgdict>
-  <class name="std::map<DetId, std::vector<double> >"/>
-  <class name="std::vector<std::map<DetId, std::vector<double> > >"/>
-  <class name="edm::Wrapper<std::map<DetId, std::vector<double> > >"/>
-  <class name="edm::Wrapper<std::vector<std::map<DetId, std::vector<double> > > >"/>
-  <class name="edm::Ref<std::vector<std::map<DetId, std::vector<double> > > >"/>
+  <class name="osu::Beamspot"/>
+  <class name="std::vector<osu::Beamspot>"/>
+  <class name="edm::Wrapper<osu::Beamspot>"/>
+  <class name="edm::Wrapper<std::vector<osu::Beamspot> >"/>
+  <class name="edm::Ref<std::vector<osu::Beamspot> >"/>
 
-  <class name="std::map<DetId, std::vector<int> >"/>
-  <class name="std::vector<std::map<DetId, std::vector<int> > >"/>
-  <class name="edm::Wrapper<std::map<DetId, std::vector<int> > >"/>
-  <class name="edm::Wrapper<std::vector<std::map<DetId, std::vector<int> > > >"/>
-  <class name="edm::Ref<std::vector<std::map<DetId, std::vector<int> > > >"/>
+  <class name="osu::Bjet"/>
+  <class name="std::vector<osu::Bjet>"/>
+  <class name="edm::Wrapper<osu::Bjet>"/>
+  <class name="edm::Wrapper<std::vector<osu::Bjet> >"/>
+  <class name="edm::Ref<std::vector<osu::Bjet> >"/>
 
-  <exclusion>
-    <class name="osu::GenMatchable::GenMatchedParticle"/>
-    <class name="osu::GenMatchable::DRToGenMatchedParticle"/>
-  </exclusion>
+  <class name="std::vector<osu::Bxlumi>"/>
+  <class name="edm::Wrapper<osu::Bxlumi>"/>
+  <class name="edm::Wrapper<std::vector<osu::Bxlumi> >"/>
+  <class name="edm::Ref<std::vector<osu::Bxlumi> >"/>
+
+  <class name="std::vector<osu::Cschit>"/>
+  <class name="edm::Wrapper<osu::Cschit>"/>
+  <class name="edm::Wrapper<std::vector<osu::Cschit> >"/>
+  <class name="edm::Ref<std::vector<osu::Cschit> >"/>
+
+  <class name="std::vector<osu::Cscseg>"/>
+  <class name="edm::Wrapper<osu::Cscseg>"/>
+  <class name="edm::Wrapper<std::vector<osu::Cscseg> >"/>
+  <class name="edm::Ref<std::vector<osu::Cscseg> >"/>
+
+  <class name="std::vector<osu::Dtseg>"/>
+  <class name="edm::Wrapper<osu::Dtseg>"/>
+  <class name="edm::Wrapper<std::vector<osu::Dtseg> >"/>
+  <class name="edm::Ref<std::vector<osu::Dtseg> >"/>
+
+  <class name="osu::Electron"/>
+  <class name="std::vector<osu::Electron>"/>
+  <class name="edm::Wrapper<osu::Electron>"/>
+  <class name="edm::Wrapper<std::vector<osu::Electron> >"/>
+  <class name="edm::Ref<std::vector<osu::Electron> >"/>
+
+  <class name="std::vector<osu::Event>"/>
+  <class name="edm::Wrapper<osu::Event>"/>
+  <class name="edm::Wrapper<std::vector<osu::Event> >"/>
+  <class name="edm::Ref<std::vector<osu::Event> >"/>
+
+  <class name="osu::Eventvariable"/>
+  <class name="std::vector<osu::Eventvariable>"/>
+  <class name="edm::Wrapper<osu::Eventvariable>"/>
+  <class name="edm::Wrapper<std::vector<osu::Eventvariable> >"/>
+  <class name="edm::Ref<std::vector<osu::Eventvariable> >"/>
+
+  <class name="osu::Genjet"/>
+  <class name="std::vector<osu::Genjet>"/>
+  <class name="edm::Wrapper<osu::Genjet>"/>
+  <class name="edm::Wrapper<std::vector<osu::Genjet> >"/>
+  <class name="edm::Ref<std::vector<osu::Genjet> >"/>
+
+  <class name="osu::Jet"/>
+  <class name="std::vector<osu::Jet>"/>
+  <class name="edm::Wrapper<osu::Jet>"/>
+  <class name="edm::Wrapper<std::vector<osu::Jet> >"/>
+  <class name="edm::Ref<std::vector<osu::Jet> >"/>
+
+  <class name="osu::Mcparticle"/>
+  <class name="std::vector<osu::Mcparticle>"/>
+  <class name="edm::Wrapper<osu::Mcparticle>"/>
+  <class name="edm::Wrapper<std::vector<osu::Mcparticle> >"/>
+  <class name="edm::Ref<std::vector<osu::Mcparticle> >"/>
+
+  <class name="osu::HardInteractionMcparticle"/>
+  <class name="std::vector<osu::HardInteractionMcparticle>"/>
+  <class name="edm::Wrapper<osu::HardInteractionMcparticle>"/>
+  <class name="edm::Wrapper<std::vector<osu::HardInteractionMcparticle> >"/>
+  <class name="edm::Ref<std::vector<osu::HardInteractionMcparticle> >"/>
+
+  <class name="osu::Met"/>
+  <class name="std::vector<osu::Met>"/>
+  <class name="edm::Wrapper<osu::Met>"/>
+  <class name="edm::Wrapper<std::vector<osu::Met> >"/>
+  <class name="edm::Ref<std::vector<osu::Met> >"/>
+
+  <class name="osu::Muon"/>
+  <class name="std::vector<osu::Muon>"/>
+  <class name="edm::Wrapper<osu::Muon>"/>
+  <class name="edm::Wrapper<std::vector<osu::Muon> >"/>
+  <class name="edm::Ref<std::vector<osu::Muon> >"/>
+
+  <class name="osu::Photon"/>
+  <class name="std::vector<osu::Photon>"/>
+  <class name="edm::Wrapper<osu::Photon>"/>
+  <class name="edm::Wrapper<std::vector<osu::Photon> >"/>
+  <class name="edm::Ref<std::vector<osu::Photon> >"/>
+
+  <class name="osu::Primaryvertex"/>
+  <class name="std::vector<osu::Primaryvertex>"/>
+  <class name="edm::Wrapper<osu::Primaryvertex>"/>
+  <class name="edm::Wrapper<std::vector<osu::Primaryvertex> >"/>
+  <class name="edm::Ref<std::vector<osu::Primaryvertex> >"/>
+
+  <class name="std::vector<osu::Rpchit>"/>
+  <class name="edm::Wrapper<osu::Rpchit>"/>
+  <class name="edm::Wrapper<std::vector<osu::Rpchit> >"/>
+  <class name="edm::Ref<std::vector<osu::Rpchit> >"/>
+
+  <class name="osu::Supercluster"/>
+  <class name="std::vector<osu::Supercluster>"/>
+  <class name="edm::Wrapper<osu::Supercluster>"/>
+  <class name="edm::Wrapper<std::vector<osu::Supercluster> >"/>
+  <class name="edm::Ref<std::vector<osu::Supercluster> >"/>
+
+  <class name="osu::Tau"/>
+  <class name="std::vector<osu::Tau>"/>
+  <class name="edm::Wrapper<osu::Tau>"/>
+  <class name="edm::Wrapper<std::vector<osu::Tau> >"/>
+  <class name="edm::Ref<std::vector<osu::Tau> >"/>
+
+  <class name="osu::Track"/>
+  <class name="std::vector<osu::Track>"/>
+  <class name="edm::Wrapper<osu::Track>"/>
+  <class name="edm::Wrapper<std::vector<osu::Track> >"/>
+  <class name="edm::Ref<std::vector<osu::Track> >"/>
+
+  <class name="osu::SecondaryTrack"/>
+  <class name="std::vector<osu::SecondaryTrack>"/>
+  <class name="edm::Wrapper<osu::SecondaryTrack>"/>
+  <class name="edm::Wrapper<std::vector<osu::SecondaryTrack> >"/>
+  <class name="edm::Ref<std::vector<osu::SecondaryTrack> >"/>
+
+  <class name="osu::Trigobj"/>
+  <class name="std::vector<osu::Trigobj>"/>
+  <class name="edm::Wrapper<osu::Trigobj>"/>
+  <class name="edm::Wrapper<std::vector<osu::Trigobj> >"/>
+  <class name="edm::Ref<std::vector<osu::Trigobj> >"/>
+
+  <class name="osu::Uservariable"/>
+  <class name="std::vector<osu::Uservariable>"/>
+  <class name="edm::Wrapper<osu::Uservariable>"/>
+  <class name="edm::Wrapper<std::vector<osu::Uservariable> >"/>
+  <class name="edm::Ref<std::vector<osu::Uservariable> >"/>
+
+  <class name="osu::PileUpInfo"/>
+  <class name="std::vector<osu::PileUpInfo>"/>
+  <class name="edm::Wrapper<osu::PileUpInfo>"/>
+  <class name="edm::Wrapper<std::vector<osu::PileUpInfo> >"/>
+  <class name="edm::Ref<std::vector<osu::PileUpInfo> >"/>
+
+  <class name="map<DetId, std::vector<double> >"/>
+  <class name="std::vector<map<DetId, std::vector<double> > >"/>
+  <class name="edm::Wrapper<map<DetId, std::vector<double> > >"/>
+  <class name="edm::Wrapper<std::vector<map<DetId, std::vector<double> > > >"/>
+  <class name="edm::Ref<std::vector<map<DetId, std::vector<double> > > >"/>
+
+  <class name="map<DetId, std::vector<int> >"/>
+  <class name="std::vector<map<DetId, std::vector<int> > >"/>
+  <class name="edm::Wrapper<map<DetId, std::vector<int> > >"/>
+  <class name="edm::Wrapper<std::vector<map<DetId, std::vector<int> > > >"/>
+  <class name="edm::Ref<std::vector<map<DetId, std::vector<int> > > >"/>
 </lcgdict>
