@@ -15,16 +15,16 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   dataEra_ (cfg.getParameter<string> ("dataEra")),
   cfg_         (cfg)
 {
-  collection_ = collections_.getParameter<edm::InputTag> ("jets");
+  jets_ = collections_.getParameter<edm::InputTag> ("jets");
 #ifndef STOPPPED_PTLS
   electrons_ = collections_.getParameter<edm::InputTag> ("electrons");
   muons_ = collections_.getParameter<edm::InputTag> ("muons");
   genjets_ = collections_.getParameter<edm::InputTag> ("genjets");
   primaryvertexs_ = collections_.getParameter<edm::InputTag> ("primaryvertexs");
 #endif
-  produces<vector<T> > (collection_.instance ());
+  produces<vector<T> > (jets_.instance ());
 
-  token_ = consumes<vector<TYPE(jets)> > (collection_);
+  jetsToken_ = consumes<vector<TYPE(jets)> > (jets_);
 #ifndef STOPPPED_PTLS
   electronToken_ = consumes<vector<TYPE(electrons)> > (electrons_);
   muonToken_ = consumes<vector<TYPE(muons)> > (muons_);
@@ -88,8 +88,8 @@ template<class T> OSUGenericJetProducer<T>::~OSUGenericJetProducer ()
 template<class T> void
 OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(jets)> > collection;
-  if (!event.getByToken (token_, collection))
+  edm::Handle<vector<TYPE(jets)> > jets;
+  if (!event.getByToken (jetsToken_, jets))
     return;
 #ifndef STOPPPED_PTLS
   edm::Handle<vector<osu::Mcparticle> > particles;
@@ -174,7 +174,7 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
   pl_ = unique_ptr<vector<T> > (new vector<T> ());
 
-  for (const auto &object : *collection)
+  for (const auto &object : *jets)
     {
 #ifndef STOPPPED_PTLS
       pl_->emplace_back (object, particles, cfg_);
@@ -395,7 +395,7 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
 #endif
     }
-  event.put (std::move (pl_), collection_.instance ());
+  event.put (std::move (pl_), jets_.instance ());
   pl_.reset ();
 
 #if DATA_FORMAT_FROM_MINIAOD

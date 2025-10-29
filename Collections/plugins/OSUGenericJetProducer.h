@@ -42,7 +42,7 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   // Private variables initialized by the constructor.
   ////////////////////////////////////////////////////////////////////////////
   edm::ParameterSet  collections_;
-  edm::InputTag      collection_;
+  edm::InputTag      jets_;
   edm::InputTag      electrons_;
   edm::InputTag      muons_;
   edm::InputTag      genjets_;
@@ -54,7 +54,7 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   string dataPeriod_;
   string dataEra_;
 
-  edm::EDGetTokenT<vector<TYPE(jets)> > token_;
+  edm::EDGetTokenT<vector<TYPE(jets)> > jetsToken_;
   edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
   edm::EDGetTokenT<vector<TYPE(electrons)> > electronToken_;
   edm::EDGetTokenT<vector<TYPE(muons)> > muonToken_;
