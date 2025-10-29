@@ -101,9 +101,9 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 #if DATA_FORMAT_FROM_MINIAOD
   edm::Handle<vector<TYPE(genjets)>> genjets;
   edm::Handle<double> rho;
-  edm::Handle<vector<TYPE (electrons)>> electrons;
-  edm::Handle<vector<TYPE (muons)>> muons;
-  edm::Handle<vector<TYPE (primaryvertexs)>> primaryvertexs;
+  edm::Handle<vector<TYPE(electrons)>> electrons;
+  edm::Handle<vector<TYPE(muons)>> muons;
+  edm::Handle<vector<TYPE(primaryvertexs)>> primaryvertexs;
 
   if (!getEventHandles(event, genjets, rho, electrons, muons, primaryvertexs))
     return;
@@ -122,42 +122,42 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   for (const auto &object : *jets)
   {
 #ifndef STOPPPED_PTLS
-      outputJets_->emplace_back(object, particles, cfg_);
+    outputJets_->emplace_back(object, particles, cfg_);
 #else
-      outputJets_->emplace_back(object);
+    outputJets_->emplace_back(object);
 #endif
 
 #if DATA_FORMAT_FROM_MINIAOD
-      T &jet = outputJets_->back();
+    T &jet = outputJets_->back();
 
-      calculateMedianIPSig(jet);
-      calculateAlphaMax(jet, primaryvertexs);
-      applyBTagDiscriminators(jet);
-      applyJetEnergyCorrections(jet, event);
-      setJERScaleFactors(jet, rho);
+    calculateMedianIPSig(jet);
+    calculateAlphaMax(jet, primaryvertexs);
+    applyBTagDiscriminators(jet);
+    applyJetEnergyCorrections(jet, event);
+    setJERScaleFactors(jet, rho);
 
-      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Smearing_procedures for Run 2
-      // https://cms-jerc.web.cern.ch/JER/ for Run 3
-      if(hasGenJets)
+    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Smearing_procedures for Run 2
+    // https://cms-jerc.web.cern.ch/JER/ for Run 3
+    if(hasGenJets)
+    {
+      TYPE(genjets) matchedJet;
+      if(tryGetMatchedGenJet(jet, genjets, matchedJet))
       {
-        TYPE(genjets) matchedJet;
-        if(tryGetMatchedGenJet(jet, genjets, matchedJet))
-        {
-          smearJetPtMatched(jet, matchedJet);
-        }
-        else
-        {
-          smearJetPtUnmatched(jet);
-        }
+        smearJetPtMatched(jet, matchedJet);
       }
-      else {
-        jet.set_smearedPt(jet.pt());
-        jet.set_smearedPtUp(jet.pt());
-        jet.set_smearedPtDown(jet.pt());
+      else
+      {
+        smearJetPtUnmatched(jet);
       }
+    }
+    else
+    {
+      jet.set_smearedPt(jet.pt());
+      jet.set_smearedPtUp(jet.pt());
+      jet.set_smearedPtDown(jet.pt());
+    }
 
-      checkJetLeptonMatching(jet, goodElectrons, goodMuons);
-
+    checkJetLeptonMatching(jet, goodElectrons, goodMuons);
 #endif
   }
 
@@ -459,8 +459,8 @@ void OSUGenericJetProducer<T>::smearJetPtUnmatched(T &jet)
   }
   else {
     // if the SF < 1 the method doesn't work, so we just don't smear this jet
-    jet.set_smearedPt(    jet.pt());
-    jet.set_smearedPtUp(  jet.pt());
+    jet.set_smearedPt(jet.pt());
+    jet.set_smearedPtUp(jet.pt());
     jet.set_smearedPtDown(jet.pt());
   }
 
