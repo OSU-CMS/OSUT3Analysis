@@ -49,10 +49,6 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   edm::InputTag      rho_;
   edm::InputTag      primaryvertexs_;
 
-  string jetCorrectionPayloadName_;
-  string jetResolutionPayload_;
-  string jetResSFPayload_;
-  bool jetResFromGlobalTag_;
   bool jetResNewPrescription_;
   string jecjerFile_;
   string dataPeriod_;
@@ -65,12 +61,6 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   edm::EDGetTokenT<vector<TYPE(genjets)> > genjetsToken_;
   edm::EDGetTokenT<double> rhoToken_;
   edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexsToken_;
-  edm::ESGetToken<JetCorrectorParametersCollection, JetCorrectionsRecord> JetCorrParToken_;
-
-  #if CMSSW_VERSION_CODE >= CMSSW_VERSION(12,4,0)
-  JME::JetResolution::Token  jetResolutionToken_;
-  JME::JetResolutionScaleFactor::Token jetResolutionSFToken_;
-  #endif
 
   TFile* f_jecjer_;
   string jetEnergyScaleMCL2RelativeHistName_;

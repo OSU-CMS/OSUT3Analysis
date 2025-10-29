@@ -9,15 +9,10 @@ template<class T>
 OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
-  jetCorrectionPayloadName_ (cfg.getParameter<string> ("jetCorrectionPayload")),
-  jetResolutionPayload_ (cfg.getParameter<edm::FileInPath> ("jetResolutionPayload").fullPath()),
-  jetResSFPayload_      (cfg.getParameter<edm::FileInPath> ("jetResSFPayload").fullPath()),
-  jetResFromGlobalTag_  (cfg.getParameter<bool> ("jetResFromGlobalTag")),
   jetResNewPrescription_ (cfg.getParameter<bool> ("jetResNewPrescription")),
   jecjerFile_ (cfg.getParameter<edm::FileInPath> ("jecjerFile").fullPath()),
   dataPeriod_ (cfg.getParameter<string> ("dataPeriod")),
   dataEra_ (cfg.getParameter<string> ("dataEra")),
-
   cfg_         (cfg)
 {
   collection_ = collections_.getParameter<edm::InputTag> ("jets");
@@ -37,20 +32,6 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   genjetsToken_ = consumes<vector<TYPE(genjets)> > (genjets_);
   rhoToken_ = consumes<double> (rho_);
   primaryvertexsToken_ = consumes<vector<TYPE(primaryvertexs)> > (primaryvertexs_);
-#endif
-
-#if CMSSW_VERSION_CODE >= CMSSW_VERSION(12,4,0)
-  // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
-  JetCorrParToken_ = esConsumes(edm::ESInputTag("", jetCorrectionPayloadName_));
-
-  // Used for AK4CHS jets
-  // jetResolutionToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs_pt"));
-  // jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", "AK4PFchs"));
-
-  // Used for AK4Puppi jets
-  // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
-  jetResolutionToken_ = esConsumes(edm::ESInputTag("", "AK4PFPuppi_pt"));
-  jetResolutionSFToken_ = esConsumes(edm::ESInputTag("", "AK4PFPuppi"));
 #endif
 
   f_jecjer_ = TFile::Open(jecjerFile_.c_str(), "read");
@@ -115,37 +96,6 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   event.getByToken (mcparticleToken_, particles);
 
 #if DATA_FORMAT_FROM_MINIAOD
-  // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
-  // get JetCorrector parameters to get the jec uncertainty
-  // edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
-  // setup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParColl);
-
-  const JetCorrectorParametersCollection &JetCorParColl = setup.getData(JetCorrParToken_);
-
-  JetCorrectorParameters const & JetCorPar = JetCorParColl["Uncertainty"];
-  JetCorrectionUncertainty * jecUnc = new JetCorrectionUncertainty(JetCorPar);
-
-  // Get jet energy resolution and scale factors
-  // These are in the Global Tag for 80X but not for 76X,
-  // Configuration/python/collectionProducer_cff.py looks at $CMSSW_BASE to set this choice
-
-#if CMSSW_VERSION_CODE < CMSSW_VERSION(12,4,0)
-  // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
-  JME::JetResolution jetEnergyResolution = (jetResFromGlobalTag_) ?
-    JME::JetResolution::get(setup, "AK4PFchs_pt") :
-    JME::JetResolution(jetResolutionPayload_);
-
-  JME::JetResolutionScaleFactor jetEnergyResolutionSFs = (jetResFromGlobalTag_) ?
-    JME::JetResolutionScaleFactor::get(setup, "AK4PFchs") :
-    JME::JetResolutionScaleFactor(jetResSFPayload_);
-#else
-  // Un-verified: Modification made in CMSSW for Jet Energy Resolution, DB file used: https://github.com/cms-sw/cmssw/tree/CMSSW_12_4_X/JetMETCorrections/Modules/test (June 14, 2022)
-  JME::JetResolution jetEnergyResolution = JME::JetResolution::get(setup, jetResolutionToken_);
-  JME::JetResolutionScaleFactor jetEnergyResolutionSFs = JME::JetResolutionScaleFactor::get(setup, jetResolutionSFToken_);
-#endif
-
-  JME::JetParameters jetResParams;
-
   // get genjets for JER smearing matching
   edm::Handle<vector<TYPE(genjets)> > genjets;
   bool hasGenJets = event.getByToken (genjetsToken_, genjets);
@@ -320,11 +270,6 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
       jet.set_pfCombinedSecondaryVertexV2BJetTags(jet.bDiscriminator("pfCombinedSecondaryVertexV2BJetTags"));
       // jet.set_pileupJetId(jet.userFloat("pileupJetId:fullDiscriminant")); // Not available in Puppi jets
 
-      // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
-      // jecUnc->setJetEta(jet.eta());
-      // jecUnc->setJetPt(jet.pt());
-      // jet.set_jecUncertainty(jecUnc->getUncertainty(true));
-
       Double_t JECMCL2Relative = jetEnergyScaleMCL2RelativeHist_->GetBinContent(jetEnergyScaleMCL2RelativeHist_->FindBin(jet.pt(), jet.eta()));
       Double_t JECMCL3Absolute = jetEnergyScaleMCL3AbsoluteHist_->GetBinContent(jetEnergyScaleMCL3AbsoluteHist_->FindBin(jet.pt(), jet.eta()));
       Double_t JECDATAL2Relative = jetEnergyScaleDATAL2RelativeHist_->GetBinContent(jetEnergyScaleDATAL2RelativeHist_->FindBin(jet.pt(), jet.eta()));
@@ -340,15 +285,6 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
       Double_t JERSFUp = jetEnergyResSFUpHist_->GetBinContent(jetEnergyResSFUpHist_->FindBin(jet.pt(), jet.eta()));
       Double_t JERSFDown = jetEnergyResSFDownHist_->GetBinContent(jetEnergyResSFDownHist_->FindBin(jet.pt(), jet.eta()));
       Double_t JERPtRes = jetEnergyResPtResHist_->GetBinContent(jetEnergyResPtResHist_->FindBin(jet.pt(), jet.eta(), (float)(*rho)));
-
-      // Used when extracting the corrections from the global tag, but does nothing in 2022/3 analysis
-      // jetResParams.setJetPt(jet.pt());
-      // jetResParams.setJetEta(jet.eta());
-      // jetResParams.setRho((float)(*rho));
-      // jet.set_jetPtResolution(jetEnergyResolution.getResolution(jetResParams));
-      // jet.set_setJetPtResolutionSF(jetEnergyResolutionSFs.getScaleFactor(jetResParams),
-      //                              jetEnergyResolutionSFs.getScaleFactor(jetResParams, Variation::UP),
-      //                              jetEnergyResolutionSFs.getScaleFactor(jetResParams, Variation::DOWN));
 
       jet.set_jetPtResolution(JERPtRes);
       jet.set_setJetPtResolutionSF(JERSFNom, JERSFUp, JERSFDown);
@@ -463,7 +399,6 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   pl_.reset ();
 
 #if DATA_FORMAT_FROM_MINIAOD
-  delete jecUnc;
   delete rng;
 #endif
 }
