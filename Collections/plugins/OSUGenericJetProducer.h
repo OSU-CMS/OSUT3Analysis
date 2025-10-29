@@ -38,6 +38,42 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   void produce (edm::Event &, const edm::EventSetup &);
 
  private:
+#ifndef STOPPPED_PTLS
+#if DATA_FORMAT_FROM_MINIAOD
+  bool getEventHandles(
+    edm::Event &,
+    edm::Handle<vector<TYPE(genjets)>> &,
+    edm::Handle<double> &,
+    edm::Handle<vector<TYPE(electrons)>> &,
+    edm::Handle<vector<TYPE(muons)>> &,
+    edm::Handle<vector<TYPE(primaryvertexs)>> &
+  );
+
+  void buildGoodLeptonCollections(
+    edm::Handle<vector<TYPE(electrons)>>,
+    edm::Handle<vector<TYPE(muons)>>,
+    vector<const TYPE(electrons)*> &,
+    vector<const TYPE(muons)*> &
+  );
+
+  void applyBTagDiscriminators(T &);
+
+  void checkJetLeptonMatching(
+    T &,
+    vector<const TYPE(electrons)*> &,
+    vector<const TYPE(muons)*> &
+  );
+
+  void applyJetEnergyCorrections(T &, edm::Event &);
+  void setJERScaleFactors(T &, edm::Handle<double>);
+  void calculateMedianIPSig(T &);
+  void calculateAlphaMax(T &, edm::Handle<vector<TYPE(primaryvertexs)>>);
+  bool tryGetMatchedGenJet(T &, edm::Handle<vector<TYPE(genjets)>>, TYPE(genjets) &);
+  void smearJetPtMatched(T &, TYPE(genjets));
+  void smearJetPtUnmatched(T &);
+#endif // DATA_FORMAT_FROM_MINIAOD
+#endif // STOPPPED_PTLS
+
   ////////////////////////////////////////////////////////////////////////////
   // Private variables initialized by the constructor.
   ////////////////////////////////////////////////////////////////////////////
@@ -85,12 +121,12 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   TH2D* jetEnergyResSFDownHist_;
   TH3D* jetEnergyResPtResHist_;
 
-
+#if DATA_FORMAT_FROM_MINIAOD
+  TRandom3* rng_;
+#endif
 
   edm::ParameterSet  cfg_;
-  ////////////////////////////////////////////////////////////////////////////
 
-  // Payload for this EDFilter.
   unique_ptr<vector<T>> outputJets_;
 };
 
