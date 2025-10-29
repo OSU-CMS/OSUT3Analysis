@@ -172,20 +172,20 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 #endif // DATA_FORMAT_FROM_MINIAOD
 #endif // not STOPPPED_PTLS
 
-  pl_ = unique_ptr<vector<T> > (new vector<T> ());
+  outputJets_ = unique_ptr<vector<T>>(new vector<T>());
 
   for (const auto &object : *jets)
     {
 #ifndef STOPPPED_PTLS
-      pl_->emplace_back (object, particles, cfg_);
+      outputJets_->emplace_back(object, particles, cfg_);
 
 #else // STOPPPED_PTLS
-      pl_->emplace_back (object);
+      outputJets_->emplace_back(object);
 #endif
 
 #if DATA_FORMAT_FROM_MINIAOD
 
-      T &jet = pl_->back ();
+      T &jet = outputJets_->back();
 
       // medianLog10(ipsig) CALC
       std::vector<double> ipsigVector;
@@ -395,8 +395,8 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
 
 #endif
     }
-  event.put (std::move (pl_), jets_.instance ());
-  pl_.reset ();
+  event.put(std::move(outputJets_), jets_.instance());
+  outputJets_.reset();
 
 #if DATA_FORMAT_FROM_MINIAOD
   delete rng;

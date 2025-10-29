@@ -91,7 +91,7 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   ////////////////////////////////////////////////////////////////////////////
 
   // Payload for this EDFilter.
-  unique_ptr<vector<T> > pl_;
+  unique_ptr<vector<T>> outputJets_;
 };
 
 #endif
