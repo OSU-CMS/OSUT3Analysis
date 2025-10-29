@@ -69,9 +69,7 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   f_jecjer_->Close();
   delete f_jecjer_;
 
-#if DATA_FORMAT_FROM_MINIAOD
   rng_ = new TRandom3(0);
-#endif
 }
 
 template<class T> OSUGenericJetProducer<T>::~OSUGenericJetProducer ()
@@ -86,9 +84,7 @@ template<class T> OSUGenericJetProducer<T>::~OSUGenericJetProducer ()
   delete jetEnergyResSFUpHist_;
   delete jetEnergyResSFDownHist_;
   delete jetEnergyResPtResHist_;
-#if DATA_FORMAT_FROM_MINIAOD
   delete rng_;
-#endif
 }
 
 template<class T> void
@@ -168,10 +164,6 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   event.put(std::move(outputJets_), jets_.instance());
   outputJets_.reset();
 }
-
-#ifndef STOPPPED_PTLS
-
-#if DATA_FORMAT_FROM_MINIAOD
 
 template<class T>
 bool OSUGenericJetProducer<T>::getEventHandles(
@@ -483,10 +475,6 @@ void OSUGenericJetProducer<T>::smearJetPtUnmatched(T &jet)
     jet.set_smearedPtDown(newSmearFactor * jet.pt() * jet.jerSFDown() / jet.jerSF());
   }
 }
-
-#endif // DATA_FORMAT_FROM_MINIAOD
-
-#endif // STOPPPED_PTLS
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 typedef OSUGenericJetProducer<osu::Jet> OSUJetProducer;

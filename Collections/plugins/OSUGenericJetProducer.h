@@ -8,12 +8,10 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "TH2D.h" // Used for JEC/JER corrections
 #include "TH3D.h" // Used for JEC/JER corrections
+#include "TRandom3.h"
 
 #include "OSUT3Analysis/Collections/interface/Jet.h"
 
-#if DATA_FORMAT_FROM_MINIAOD
-#include "TRandom3.h"
-#endif
 
 template<class T>
 class OSUGenericJetProducer : public edm::stream::EDProducer<>
@@ -25,8 +23,6 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   void produce (edm::Event &, const edm::EventSetup &);
 
  private:
-#ifndef STOPPPED_PTLS
-#if DATA_FORMAT_FROM_MINIAOD
   bool getEventHandles(
     edm::Event &,
     edm::Handle<vector<TYPE(genjets)>> &,
@@ -58,8 +54,6 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   bool tryGetMatchedGenJet(T &, edm::Handle<vector<TYPE(genjets)>>, TYPE(genjets) &);
   void smearJetPtMatched(T &, TYPE(genjets));
   void smearJetPtUnmatched(T &);
-#endif // DATA_FORMAT_FROM_MINIAOD
-#endif // STOPPPED_PTLS
 
   ////////////////////////////////////////////////////////////////////////////
   // Private variables initialized by the constructor.
@@ -108,9 +102,7 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   TH2D* jetEnergyResSFDownHist_;
   TH3D* jetEnergyResPtResHist_;
 
-#if DATA_FORMAT_FROM_MINIAOD
   TRandom3* rng_;
-#endif
 
   edm::ParameterSet  cfg_;
 
