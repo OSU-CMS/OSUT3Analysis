@@ -5,26 +5,13 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "TH2D.h" // Used for JEC/JER corrections
 #include "TH3D.h" // Used for JEC/JER corrections
 
 #include "OSUT3Analysis/Collections/interface/Jet.h"
 
-#if CMSSW_VERSION_CODE >= CMSSW_VERSION(11,2,0)
-#include "JetMETCorrections/JetCorrector/interface/JetCorrector.h"
-#else
-#include "JetMETCorrections/Objects/interface/JetCorrector.h"
-#endif
-#include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
-#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
-#include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
-
 #if DATA_FORMAT_FROM_MINIAOD
-#include "JetMETCorrections/Modules/interface/JetResolution.h"
-#include "CondFormats/DataRecord/interface/JetResolutionRcd.h"
-#include "CondFormats/DataRecord/interface/JetResolutionScaleFactorRcd.h"
 #include "TRandom3.h"
 #endif
 
