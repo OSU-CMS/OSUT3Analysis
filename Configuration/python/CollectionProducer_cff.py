@@ -145,20 +145,15 @@ collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
     jecjerFile = cms.FileInPath("OSUT3Analysis/Collections/data/JetEnergyCorrections/Summer22EE_AK4PFPuppi.root"),
     dataPeriod = cms.string("Summer22EE"),
     dataEra = cms.string("_RunF"),
+    year = cms.string("CHANGEME"),
+    isData = cms.bool(False),
+    jecConfigFile = cms.FileInPath("CHANGEME")
 )
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
-    collectionProducer.jets.jetResFromGlobalTag = cms.bool(True)
     collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
-
-    # Used for AK4CHS jets
-    # collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFchs")
-
-    # Used for AK4PUPPI jets
-    collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFPuppi")
-
     collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
