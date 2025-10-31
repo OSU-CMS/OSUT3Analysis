@@ -5,14 +5,18 @@
 
 #include "OSUT3Analysis/AnaTools/interface/CommonUtils.h"
 
+
 template<class T>
 OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
   jetResNewPrescription_ (cfg.getParameter<bool> ("jetResNewPrescription")),
   jecjerFile_ (cfg.getParameter<edm::FileInPath> ("jecjerFile").fullPath()),
+  year_(cfg.getParameter<string>("year")),
   dataPeriod_ (cfg.getParameter<string> ("dataPeriod")),
   dataEra_ (cfg.getParameter<string> ("dataEra")),
+  isData_(cfg.getParameter<bool>("isData")),
+  jecConfigFile_(cfg.getParameter<edm::FileInPath>("jecConfigFile")),
   cfg_         (cfg)
 {
   jets_ = collections_.getParameter<edm::InputTag> ("jets");
@@ -34,34 +38,27 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   primaryvertexsToken_ = consumes<vector<TYPE(primaryvertexs)> > (primaryvertexs_);
 #endif
 
+  JecConfigReader::ConfigPaths paths;
+  paths.ak4 = jecConfigFile_.fullPath();
+  JecConfigReader::setConfigPaths(paths);
+
+  const auto jecTags = JecConfigReader::getTagsAK4(year_, isData_, dataEra_);
+  jecRefs_ = JecConfigReader::CorrectionRefs(jecTags);
+
   f_jecjer_ = TFile::Open(jecjerFile_.c_str(), "read");
-  jetEnergyScaleMCL2RelativeHistName_ = "JECL2MC_" + dataPeriod_ + "_AK4PFPuppi";
-  jetEnergyScaleMCL3AbsoluteHistName_ = "JECL3MC_" + dataPeriod_ + "_AK4PFPuppi";
-  jetEnergyScaleDATAL2RelativeHistName_ = "JECL2DATA_" + dataPeriod_ + dataEra_ + "_AK4PFPuppi";
-  jetEnergyScaleDATAL3AbsoluteHistName_ = "JECL3DATA_" + dataPeriod_ + dataEra_ + "_AK4PFPuppi";
-  jetEnergyScaleL2L3HistName_ = "JECL2L3DATA_" + dataPeriod_ + dataEra_ + "_AK4PFPuppi";
-  jetEnergyScaleUncHistName_ = "JECUnc_" + dataPeriod_ + "_AK4PFPuppi";
+  // jetEnergyScaleUncHistName_ = "JECUnc_" + dataPeriod_ + "_AK4PFPuppi";
   jetEnergyResSFNomHistName_ = "JERSFNom_" + dataPeriod_ + "_AK4PFPuppi";
   jetEnergyResSFUpHistName_ = "JERSFUp_" + dataPeriod_ + "_AK4PFPuppi";
   jetEnergyResSFDownHistName_ = "JERSFDown_" + dataPeriod_ + "_AK4PFPuppi";
   jetEnergyResPtResHistName_ = "JERPtRes_" + dataPeriod_ + "_AK4PFPuppi";
-  jetEnergyScaleMCL2RelativeHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleMCL2RelativeHistName_.c_str());
-  jetEnergyScaleMCL3AbsoluteHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleMCL3AbsoluteHistName_.c_str());
-  jetEnergyScaleDATAL2RelativeHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleDATAL2RelativeHistName_.c_str());
-  jetEnergyScaleDATAL3AbsoluteHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleDATAL3AbsoluteHistName_.c_str());
-  jetEnergyScaleL2L3Hist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleL2L3HistName_.c_str());
-  jetEnergyScaleUncHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleUncHistName_.c_str());
+
+  // jetEnergyScaleUncHist_ = (TH2D*)f_jecjer_->Get(jetEnergyScaleUncHistName_.c_str());
   jetEnergyResSFNomHist_ = (TH2D*)f_jecjer_->Get(jetEnergyResSFNomHistName_.c_str());
   jetEnergyResSFUpHist_ = (TH2D*)f_jecjer_->Get(jetEnergyResSFUpHistName_.c_str());
   jetEnergyResSFDownHist_ = (TH2D*)f_jecjer_->Get(jetEnergyResSFDownHistName_.c_str());
   jetEnergyResPtResHist_ = (TH3D*)f_jecjer_->Get(jetEnergyResPtResHistName_.c_str());
 
-  jetEnergyScaleMCL2RelativeHist_->SetDirectory(0);
-  jetEnergyScaleMCL3AbsoluteHist_->SetDirectory(0);
-  jetEnergyScaleDATAL2RelativeHist_->SetDirectory(0);
-  jetEnergyScaleDATAL3AbsoluteHist_->SetDirectory(0);
-  jetEnergyScaleL2L3Hist_->SetDirectory(0);
-  jetEnergyScaleUncHist_->SetDirectory(0);
+  // jetEnergyScaleUncHist_->SetDirectory(0);
   jetEnergyResSFNomHist_->SetDirectory(0);
   jetEnergyResSFUpHist_->SetDirectory(0);
   jetEnergyResSFDownHist_->SetDirectory(0);
@@ -74,12 +71,7 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
 
 template<class T> OSUGenericJetProducer<T>::~OSUGenericJetProducer ()
 {
-  delete jetEnergyScaleMCL2RelativeHist_;
-  delete jetEnergyScaleMCL3AbsoluteHist_;
-  delete jetEnergyScaleDATAL2RelativeHist_;
-  delete jetEnergyScaleDATAL3AbsoluteHist_;
-  delete jetEnergyScaleL2L3Hist_;
-  delete jetEnergyScaleUncHist_;
+  // delete jetEnergyScaleUncHist_;
   delete jetEnergyResSFNomHist_;
   delete jetEnergyResSFUpHist_;
   delete jetEnergyResSFDownHist_;
@@ -90,7 +82,7 @@ template<class T> OSUGenericJetProducer<T>::~OSUGenericJetProducer ()
 template<class T> void
 OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &setup)
 {
-  edm::Handle<vector<TYPE(jets)> > jets;
+  edm::Handle<vector<TYPE(jets)>> jets;
   if (!event.getByToken(jetsToken_, jets))
     return;
 
@@ -114,6 +106,18 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   vector<const TYPE(muons) *> goodMuons;
   buildGoodLeptonCollections(electrons, muons, goodElectrons, goodMuons);
 
+  JecApplication::EvalContext jecCtx{
+    .year = year_,
+    .refs = jecRefs_,
+    .isData = isData_,
+    .runNumber = std::nullopt,
+    .isDebug = false
+  };
+  if (isData_ && JecApplication::requiresRunBasedResidual(year_))
+  {
+    jecCtx.runNumber = static_cast<double>(event.id().run());
+  }
+
 #endif // DATA_FORMAT_FROM_MINIAOD
 #endif // not STOPPPED_PTLS
 
@@ -133,7 +137,7 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
     calculateMedianIPSig(jet);
     calculateAlphaMax(jet, primaryvertexs);
     applyBTagDiscriminators(jet);
-    applyJetEnergyCorrections(jet, event);
+    applyJetEnergyCorrections(jecCtx, jet, event);
     setJERScaleFactors(jet, rho);
 
     // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Smearing_procedures for Run 2
@@ -287,18 +291,27 @@ void OSUGenericJetProducer<T>::checkJetLeptonMatching(
 }
 
 template<class T>
-void OSUGenericJetProducer<T>::applyJetEnergyCorrections(T &jet, edm::Event &event)
+void OSUGenericJetProducer<T>::applyJetEnergyCorrections(JecApplication::EvalContext ctx, T &jet, edm::Event &event)
 {
-  Double_t JECMCL2Relative = jetEnergyScaleMCL2RelativeHist_->GetBinContent(jetEnergyScaleMCL2RelativeHist_->FindBin(jet.pt(), jet.eta()));
-  Double_t JECMCL3Absolute = jetEnergyScaleMCL3AbsoluteHist_->GetBinContent(jetEnergyScaleMCL3AbsoluteHist_->FindBin(jet.pt(), jet.eta()));
-  Double_t JECDATAL2Relative = jetEnergyScaleDATAL2RelativeHist_->GetBinContent(jetEnergyScaleDATAL2RelativeHist_->FindBin(jet.pt(), jet.eta()));
-  Double_t JECDATAL3Absolute = jetEnergyScaleDATAL3AbsoluteHist_->GetBinContent(jetEnergyScaleDATAL3AbsoluteHist_->FindBin(jet.pt(), jet.eta()));
-  Double_t JECDATAL2L3 = jetEnergyScaleL2L3Hist_->GetBinContent(jetEnergyScaleL2L3Hist_->FindBin(jet.pt(), jet.eta()));
-  Double_t JECUnc = jetEnergyScaleUncHist_->GetBinContent(jetEnergyScaleUncHist_->FindBin(jet.pt(), jet.eta()));
+  edm::Handle<double> hRho;
+  event.getByToken(rhoToken_, hRho);
+  const double rho = hRho.isValid() ? *hRho : 0.0;
 
-  if (event.isRealData()) jet.scaleEnergy(JECDATAL2Relative * JECDATAL3Absolute * JECDATAL2L3);
-  else jet.scaleEnergy(JECMCL2Relative * JECMCL3Absolute);
-  jet.set_jecUncertainty(JECUnc);
+  const double rawFactor = computeRawFactorFromMiniAOD(jet);
+  JecApplication::JesInputs inputs{
+    jet.pt(),
+    jet.eta(),
+    jet.phi(),
+    jet.jetArea(),
+    rho,
+    rawFactor
+  };
+
+  const double jesFactor = JecApplication::getJesCorrectionNom(ctx, inputs);
+  setP4Scaled(jet, jesFactor);
+
+  // Double_t JECUnc = jetEnergyScaleUncHist_->GetBinContent(jetEnergyScaleUncHist_->FindBin(jet.pt(), jet.eta()));
+  // jet.set_jecUncertainty(JECUnc);
 }
 
 template<class T>
@@ -309,6 +322,9 @@ void OSUGenericJetProducer<T>::setJERScaleFactors(T &jet, edm::Handle<double> rh
   Double_t JERSFDown = jetEnergyResSFDownHist_->GetBinContent(jetEnergyResSFDownHist_->FindBin(jet.pt(), jet.eta()));
   Double_t JERPtRes = jetEnergyResPtResHist_->GetBinContent(jetEnergyResPtResHist_->FindBin(jet.pt(), jet.eta(), (float)(*rho)));
 
+  // TODO: look into replacing the resolution SF with the scaled pt directly. How is the scaled Pt calcualted?
+  // Compare to what is in the JecApplication. We probably should just use the JecApplication to calcaulte this
+  // and store the pts instead of the scale factors
   jet.set_jetPtResolution(JERPtRes);
   jet.set_setJetPtResolutionSF(JERSFNom, JERSFUp, JERSFDown);
 }
@@ -474,6 +490,25 @@ void OSUGenericJetProducer<T>::smearJetPtUnmatched(T &jet)
     jet.set_smearedPtUp(  newSmearFactor * jet.pt() * jet.jerSFUp()   / jet.jerSF());
     jet.set_smearedPtDown(newSmearFactor * jet.pt() * jet.jerSFDown() / jet.jerSF());
   }
+}
+
+template<class T>
+double OSUGenericJetProducer<T>::computeRawFactorFromMiniAOD(const T& jet)
+{
+  const double ptCorr = jet.pt();
+  const double ptRaw = jet.correctedP4("Uncorrected").pt();
+  if (ptCorr <= 0.0) return 0.0;
+  const double rf = 1.0 - (ptRaw / ptCorr);
+  return std::min(std::max(rf, 0.0), 1.0);
+}
+
+template<class T>
+void OSUGenericJetProducer<T>::setP4Scaled(T& jet, double scale)
+{
+  const auto p4 = jet.p4();
+  const auto p4Scaled = reco::Particle::LorentzVector(
+    p4.px() * scale, p4.py() * scale, p4.pz() * scale, p4.energy() * scale);
+  jet.setP4(p4Scaled);
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

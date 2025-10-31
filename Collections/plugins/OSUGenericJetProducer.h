@@ -11,6 +11,8 @@
 #include "TRandom3.h"
 
 #include "OSUT3Analysis/Collections/interface/Jet.h"
+#include "OSUT3Analysis/Collections/interface/JecApplication.hpp"
+#include "OSUT3Analysis/Collections/interface/JecConfigReader.hpp"
 
 
 template<class T>
@@ -47,13 +49,15 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
     vector<const TYPE(muons)*> &
   );
 
-  void applyJetEnergyCorrections(T &, edm::Event &);
+  void applyJetEnergyCorrections(JecApplication::EvalContext, T &, edm::Event &);
   void setJERScaleFactors(T &, edm::Handle<double>);
   void calculateMedianIPSig(T &);
   void calculateAlphaMax(T &, edm::Handle<vector<TYPE(primaryvertexs)>>);
   bool tryGetMatchedGenJet(T &, edm::Handle<vector<TYPE(genjets)>>, TYPE(genjets) &);
   void smearJetPtMatched(T &, TYPE(genjets));
   void smearJetPtUnmatched(T &);
+  double computeRawFactorFromMiniAOD(const T& jet);
+  void setP4Scaled(T& jet, double scale);
 
   ////////////////////////////////////////////////////////////////////////////
   // Private variables initialized by the constructor.
@@ -68,8 +72,10 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
 
   bool jetResNewPrescription_;
   string jecjerFile_;
+  string year_;
   string dataPeriod_;
   string dataEra_;
+  bool isData_;
 
   edm::EDGetTokenT<vector<TYPE(jets)> > jetsToken_;
   edm::EDGetTokenT<vector<osu::Mcparticle> > mcparticleToken_;
@@ -80,27 +86,20 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexsToken_;
 
   TFile* f_jecjer_;
-  string jetEnergyScaleMCL2RelativeHistName_;
-  string jetEnergyScaleMCL3AbsoluteHistName_;
-  string jetEnergyScaleDATAL2RelativeHistName_;
-  string jetEnergyScaleDATAL3AbsoluteHistName_;
-  string jetEnergyScaleL2L3HistName_;
-  string jetEnergyScaleUncHistName_;
+  // string jetEnergyScaleUncHistName_;
   string jetEnergyResSFNomHistName_;
   string jetEnergyResSFUpHistName_;
   string jetEnergyResSFDownHistName_;
   string jetEnergyResPtResHistName_;
 
-  TH2D* jetEnergyScaleMCL2RelativeHist_;
-  TH2D* jetEnergyScaleMCL3AbsoluteHist_;
-  TH2D* jetEnergyScaleDATAL2RelativeHist_;
-  TH2D* jetEnergyScaleDATAL3AbsoluteHist_;
-  TH2D* jetEnergyScaleL2L3Hist_;
-  TH2D* jetEnergyScaleUncHist_;
+  // TH2D* jetEnergyScaleUncHist_;
   TH2D* jetEnergyResSFNomHist_;
   TH2D* jetEnergyResSFUpHist_;
   TH2D* jetEnergyResSFDownHist_;
   TH3D* jetEnergyResPtResHist_;
+
+  edm::FileInPath jecConfigFile_;
+  JecConfigReader::CorrectionRefs jecRefs_;
 
   TRandom3* rng_;
 
