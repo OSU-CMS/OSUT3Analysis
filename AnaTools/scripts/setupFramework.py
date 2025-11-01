@@ -134,7 +134,7 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_8_0_"):
         print( A_BRIGHT_RED + "  git cms-merge-topic lathomas:L1Prefiring_8_0_32" + A_RESET)
 
 # Set up the BuildFile
-if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
+if os.environ["CMSSW_VERSION"].startswith(("CMSSW_12_4_", "CMSSW_13_0_", "CMSSW_15_0_")):
     for r,directory,fileNames in os.walk("./"):
        for fin in fileNames:
             if fin != "BuildFile.xml":
