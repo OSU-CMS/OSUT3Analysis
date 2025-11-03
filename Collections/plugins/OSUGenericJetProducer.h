@@ -20,7 +20,6 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
 {
  public:
   OSUGenericJetProducer (const edm::ParameterSet &);
-  ~OSUGenericJetProducer ();
 
   void produce (edm::Event &, const edm::EventSetup &);
 
@@ -50,14 +49,14 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   );
 
   void applyJetEnergyCorrections(JecApplication::EvalContext, T &, edm::Event &);
+  void applySmearedJetEnergy(JecApplication::EvalContext, T &, edm::Event &);
   void setJERScaleFactors(T &, edm::Handle<double>);
   void calculateMedianIPSig(T &);
   void calculateAlphaMax(T &, edm::Handle<vector<TYPE(primaryvertexs)>>);
   bool tryGetMatchedGenJet(T &, edm::Handle<vector<TYPE(genjets)>>, TYPE(genjets) &);
-  void smearJetPtMatched(T &, TYPE(genjets));
-  void smearJetPtUnmatched(T &);
   double computeRawFactorFromMiniAOD(const T& jet);
   void setP4Scaled(T& jet, double scale);
+  double getJercFactor(JecApplication::EvalContext, T &, edm::Event &, JecConfigReader::SystKind, std::string);
 
   ////////////////////////////////////////////////////////////////////////////
   // Private variables initialized by the constructor.
@@ -70,10 +69,7 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   edm::InputTag      rho_;
   edm::InputTag      primaryvertexs_;
 
-  bool jetResNewPrescription_;
-  string jecjerFile_;
   string year_;
-  string dataPeriod_;
   string dataEra_;
   bool isData_;
 
@@ -85,23 +81,8 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   edm::EDGetTokenT<double> rhoToken_;
   edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexsToken_;
 
-  TFile* f_jecjer_;
-  // string jetEnergyScaleUncHistName_;
-  string jetEnergyResSFNomHistName_;
-  string jetEnergyResSFUpHistName_;
-  string jetEnergyResSFDownHistName_;
-  string jetEnergyResPtResHistName_;
-
-  // TH2D* jetEnergyScaleUncHist_;
-  TH2D* jetEnergyResSFNomHist_;
-  TH2D* jetEnergyResSFUpHist_;
-  TH2D* jetEnergyResSFDownHist_;
-  TH3D* jetEnergyResPtResHist_;
-
   edm::FileInPath jecConfigFile_;
   JecConfigReader::CorrectionRefs jecRefs_;
-
-  TRandom3* rng_;
 
   edm::ParameterSet  cfg_;
 
