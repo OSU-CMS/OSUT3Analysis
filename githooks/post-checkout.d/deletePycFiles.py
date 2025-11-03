@@ -12,10 +12,10 @@ is_branch_checkout = sys.argv[3]
 #.pyc instead of the .py source file. To avoid any confusion, you can delete
 #all .pyc files every time you check out a new branch using this post-checkout script:
 if is_branch_checkout == "0":
-    print "post-checkout: This is a file checkout. Nothing to do."
+    print("post-checkout: This is a file checkout. Nothing to do.")
     sys.exit(0)
 
-print "post-checkout: Deleting all '.pyc' files in working directory"
+print("post-checkout: Deleting all '.pyc' files in working directory")
 for root, dirs, files in os.walk('.'):
     for filename in files:
         ext = os.path.splitext(filename)[1]
