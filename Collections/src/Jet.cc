@@ -14,14 +14,11 @@ osu::Jet::Jet (const TYPE(jets) &jet) :
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE),
   // pileupJetId_                                   (INVALID_VALUE), // Not available in Puppi jets
-  jecUncertainty_                                (INVALID_VALUE),
-  jetPtResolution_                               (INVALID_VALUE),
-  jetPtResolutionSF_                             (INVALID_VALUE),
-  jetPtResolutionSFUp_                           (INVALID_VALUE),
-  jetPtResolutionSFDown_                         (INVALID_VALUE),
   smearedPt_                                     (INVALID_VALUE),
-  smearedPtUp_                                   (INVALID_VALUE),
-  smearedPtDown_                                 (INVALID_VALUE),
+  smearedPtJesSystUp_                            (INVALID_VALUE),
+  smearedPtJesSystDown_                          (INVALID_VALUE),
+  smearedPtJerSystUp_                            (INVALID_VALUE),
+  smearedPtJerSystDown_                          (INVALID_VALUE),
   alphamax_                                      (INVALID_VALUE),
   ipsig_                                         (INVALID_VALUE),
   log10ipsig_                                    (INVALID_VALUE),
@@ -35,14 +32,11 @@ osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> 
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE),
   // pileupJetId_                                   (INVALID_VALUE), // Not available in Puppi jets
-  jecUncertainty_                                (INVALID_VALUE),
-  jetPtResolution_                               (INVALID_VALUE),
-  jetPtResolutionSF_                             (INVALID_VALUE),
-  jetPtResolutionSFUp_                           (INVALID_VALUE),
-  jetPtResolutionSFDown_                         (INVALID_VALUE),
   smearedPt_                                     (INVALID_VALUE),
-  smearedPtUp_                                   (INVALID_VALUE),
-  smearedPtDown_                                 (INVALID_VALUE),
+  smearedPtJesSystUp_                            (INVALID_VALUE),
+  smearedPtJesSystDown_                          (INVALID_VALUE),
+  smearedPtJerSystUp_                            (INVALID_VALUE),
+  smearedPtJerSystDown_                          (INVALID_VALUE),
   alphamax_                                      (INVALID_VALUE),
   ipsig_                                         (INVALID_VALUE),
   log10ipsig_                                    (INVALID_VALUE),
@@ -56,14 +50,11 @@ osu::Jet::Jet (const TYPE(jets) &jet, const edm::Handle<vector<osu::Mcparticle> 
   pfCombinedSecondaryVertexV2BJetTags_           (INVALID_VALUE),
   pfCombinedInclusiveSecondaryVertexV2BJetTags_  (INVALID_VALUE),
   // pileupJetId_                                   (INVALID_VALUE), // Not available in Puppi jets
-  jecUncertainty_                                (INVALID_VALUE),
-  jetPtResolution_                               (INVALID_VALUE),
-  jetPtResolutionSF_                             (INVALID_VALUE),
-  jetPtResolutionSFUp_                           (INVALID_VALUE),
-  jetPtResolutionSFDown_                         (INVALID_VALUE),
   smearedPt_                                     (INVALID_VALUE),
-  smearedPtUp_                                   (INVALID_VALUE),
-  smearedPtDown_                                 (INVALID_VALUE),
+  smearedPtJesSystUp_                            (INVALID_VALUE),
+  smearedPtJesSystDown_                          (INVALID_VALUE),
+  smearedPtJerSystUp_                            (INVALID_VALUE),
+  smearedPtJerSystDown_                          (INVALID_VALUE),
   alphamax_                                      (INVALID_VALUE),
   ipsig_                                         (INVALID_VALUE),
   log10ipsig_                                    (INVALID_VALUE),
@@ -95,35 +86,6 @@ osu::Jet::pfCombinedInclusiveSecondaryVertexV2BJetTags () const
 //   return pileupJetId_;
 // }
 
-const float
-osu::Jet::jecUncertainty () const
-{
-  return jecUncertainty_;
-}
-
-const float
-osu::Jet::jer () const
-{
-  return jetPtResolution_;
-}
-
-const float
-osu::Jet::jerSF () const
-{
-  return jetPtResolutionSF_;
-}
-
-const float
-osu::Jet::jerSFUp () const
-{
-  return jetPtResolutionSFUp_;
-}
-
-const float
-osu::Jet::jerSFDown () const
-{
-  return jetPtResolutionSFDown_;
-}
 
 const float
 osu::Jet::smearedPt () const
@@ -132,15 +94,27 @@ osu::Jet::smearedPt () const
 }
 
 const float
-osu::Jet::smearedPtUp () const
+osu::Jet::smearedPtJesSystUp () const
 {
-  return smearedPtUp_;
+  return smearedPtJesSystUp_;
 }
 
 const float
-osu::Jet::smearedPtDown () const
+osu::Jet::smearedPtJesSystDown () const
 {
-  return smearedPtDown_;
+  return smearedPtJesSystDown_;
+}
+
+const float
+osu::Jet::smearedPtJerSystUp () const
+{
+  return smearedPtJerSystUp_;
+}
+
+const float
+osu::Jet::smearedPtJerSystDown () const
+{
+  return smearedPtJerSystDown_;
 }
 
 const float
