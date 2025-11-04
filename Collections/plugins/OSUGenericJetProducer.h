@@ -83,6 +83,7 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
 
   edm::FileInPath jecConfigFile_;
   JecConfigReader::CorrectionRefs jecRefs_;
+  string jesUncTag_;
 
   edm::ParameterSet  cfg_;
 
