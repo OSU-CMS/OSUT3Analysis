@@ -138,12 +138,6 @@ copyConfiguration (collectionProducer.genjets, collectionProducer.genMatchables)
 
 collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
     rho = cms.InputTag("fixedGridRhoFastjetAll", "", ""),
-    jetResolutionPayload = cms.FileInPath("OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
-    jetResSFPayload = cms.FileInPath("OSUT3Analysis/Collections/data/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
-    jetResFromGlobalTag = cms.bool(False),
-    jetResNewPrescription = cms.bool(False),
-    jecjerFile = cms.FileInPath("OSUT3Analysis/Collections/data/JetEnergyCorrections/Summer22EE_AK4PFPuppi.root"),
-    dataPeriod = cms.string("Summer22EE"),
     dataEra = cms.string("_RunF"),
     year = cms.string("CHANGEME"),
     isData = cms.bool(False),

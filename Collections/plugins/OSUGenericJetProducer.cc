@@ -72,8 +72,6 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   if (!getEventHandles(event, genjets, rho, electrons, muons, primaryvertexs))
     return;
 
-  bool hasGenJets = event.getByToken (genjetsToken_, genjets);
-
   vector<const TYPE(electrons) *> goodElectrons;
   vector<const TYPE(muons) *> goodMuons;
   buildGoodLeptonCollections(electrons, muons, goodElectrons, goodMuons);
