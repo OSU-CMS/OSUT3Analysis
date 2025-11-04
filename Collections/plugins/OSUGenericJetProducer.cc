@@ -41,6 +41,14 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
 
   const auto jecTags = JecConfigReader::getTagsAK4(year_, isData_, dataEra_);
   jecRefs_ = JecConfigReader::CorrectionRefs(jecTags);
+
+  // The total JES uncertainty tag has a name specific to the year/era,
+  // i.e. Summer19UL16APV_V7_MC_Total_AK4PFchs.
+  // We can get that tag without needing to build it from scratch via
+  // the following procedure.
+  const auto& cfgAK4 = JecConfigReader::getCfgAK4();
+  JecConfigReader::SystSetMapJES systTagNames = JecConfigReader::getSystTagNames(cfgAK4, year_);
+  jesUncTag_ = systTagNames["ForUncertaintyJESTotal"][0].first;
 }
 
 template<class T> void
@@ -353,7 +361,7 @@ double OSUGenericJetProducer<T>::getJercFactor(
   double jesSystFactor = 1.0;
   if (systKind == JecConfigReader::SystKind::JES)
   {
-    jesSystFactor = JecApplication::getJesCorrectionSyst(jecRefs_, "Total", systVar, jet.eta(), jet.pt(), false);
+    jesSystFactor = JecApplication::getJesCorrectionSyst(jecRefs_, jesUncTag_, systVar, jet.eta(), jet.pt(), false);
   }
 
   // Use pt after JES systematic corrections as input to JER corrections
