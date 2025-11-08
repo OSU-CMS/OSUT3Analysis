@@ -27,11 +27,7 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   outputTensorName_(cfg.getParameter<std::string>("outputTensorName")),
   inputTensorNameDS_(cfg.getParameter<std::string>("inputTensorNameDS")),
   outputTensorNameDS_(cfg.getParameter<std::string>("outputTensorNameDS")),
-  inputTrackTensorNameDS_ (cfg.getParameter<std::string>("inputTrackTensorNameDS")),
-
-  session_(tensorflow::createSession(cacheData->graphDef, 4)),
-  sessionDS_(tensorflow::createSession(cacheData->graphDefDS, 4))
-
+  inputTrackTensorNameDS_ (cfg.getParameter<std::string>("inputTrackTensorNameDS"))
 {
   collection_ = collections_.getParameter<edm::InputTag> ("tracks");
 
@@ -115,6 +111,11 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
 
   //caloGeometryToken_  = esConsumes();
   //ecalStatusToken_    = esConsumes();
+
+  tensorflow::Options opts;
+  opts.setThreading(4);
+  session_ = tensorflow::createSession(cacheData->graphDef, opts);
+  sessionDS_ = tensorflow::createSession(cacheData->graphDefDS, opts);
 
 #if DATA_FORMAT_FROM_MINIAOD
   stringstream ss;
