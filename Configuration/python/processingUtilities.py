@@ -598,8 +598,8 @@ def add_channels (process,
                     inputTags = cms.VInputTag()
                 for inputTag in inputTags:
                     eventvariableCollections = copy.deepcopy (collections)
-                    setattr (eventvariableCollections, collection, cms.InputTag ("",""))
-                    setattr (eventvariableCollections, collection,inputTag)
+                    setattr (eventvariableCollections, collection, cms.VInputTag ())
+                    setattr (eventvariableCollections, collection, cms.VInputTag (inputTag))
                     objectProducer = getattr (collectionProducer, collection).clone()
                     objectProducer.collections = eventvariableCollections
                     # Set the input tag for mcparticles to that produced by the
