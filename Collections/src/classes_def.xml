@@ -1,124 +1,105 @@
 <lcgdict>
   <class name="osu::Beamspot"/>
-  <class name="std::vector<osu::Beamspot>"/>
-  <class name="edm::Wrapper<osu::Beamspot>"/>
-  <class name="edm::Wrapper<std::vector<osu::Beamspot> >"/>
-  <class name="edm::Ref<std::vector<osu::Beamspot> >"/>
-
   <class name="osu::Bjet"/>
-  <class name="std::vector<osu::Bjet>"/>
-  <class name="edm::Wrapper<osu::Bjet>"/>
-  <class name="edm::Wrapper<std::vector<osu::Bjet> >"/>
-  <class name="edm::Ref<std::vector<osu::Bjet> >"/>
-
-  <class name="osu::Electron"/>
-  <class name="std::vector<osu::Electron>"/>
-  <class name="edm::Wrapper<osu::Electron>"/>
-  <class name="edm::Wrapper<std::vector<osu::Electron> >"/>
-  <class name="edm::Ref<std::vector<osu::Electron> >"/>
-
-  <class name="osu::Eventvariable"/>
-  <class name="std::vector<osu::Eventvariable>"/>
-  <class name="edm::Wrapper<osu::Eventvariable>"/>
-  <class name="edm::Wrapper<std::vector<osu::Eventvariable> >"/>
-  <class name="edm::Ref<std::vector<osu::Eventvariable> >"/>
-
-  <class name="osu::Genjet"/>
-  <class name="std::vector<osu::Genjet>"/>
-  <class name="edm::Wrapper<osu::Genjet>"/>
-  <class name="edm::Wrapper<std::vector<osu::Genjet> >"/>
-  <class name="edm::Ref<std::vector<osu::Genjet> >"/>
-
-  <class name="osu::Jet"/>
-  <class name="std::vector<osu::Jet>"/>
-  <class name="edm::Wrapper<osu::Jet>"/>
-  <class name="edm::Wrapper<std::vector<osu::Jet> >"/>
-  <class name="edm::Ref<std::vector<osu::Jet> >"/>
-
-  <class name="osu::Mcparticle"/>
-  <class name="std::vector<osu::Mcparticle>"/>
-  <class name="edm::Wrapper<osu::Mcparticle>"/>
-  <class name="edm::Wrapper<std::vector<osu::Mcparticle> >"/>
-  <class name="edm::Ref<std::vector<osu::Mcparticle> >"/>
-
-  <class name="osu::HardInteractionMcparticle"/>
-  <class name="std::vector<osu::HardInteractionMcparticle>"/>
-  <class name="edm::Wrapper<osu::HardInteractionMcparticle>"/>
-  <class name="edm::Wrapper<std::vector<osu::HardInteractionMcparticle> >"/>
-  <class name="edm::Ref<std::vector<osu::HardInteractionMcparticle> >"/>
-
-  <class name="osu::Met"/>
-  <class name="std::vector<osu::Met>"/>
-  <class name="edm::Wrapper<osu::Met>"/>
-  <class name="edm::Wrapper<std::vector<osu::Met> >"/>
-  <class name="edm::Ref<std::vector<osu::Met> >"/>
-
-  <class name="osu::Muon"/>
-  <class name="std::vector<osu::Muon>"/>
-  <class name="edm::Wrapper<osu::Muon>"/>
-  <class name="edm::Wrapper<std::vector<osu::Muon> >"/>
-  <class name="edm::Ref<std::vector<osu::Muon> >"/>
-
-  <class name="osu::Photon"/>
-  <class name="std::vector<osu::Photon>"/>
-  <class name="edm::Wrapper<osu::Photon>"/>
-  <class name="edm::Wrapper<std::vector<osu::Photon> >"/>
-  <class name="edm::Ref<std::vector<osu::Photon> >"/>
-
-  <class name="osu::Primaryvertex"/>
-  <class name="std::vector<osu::Primaryvertex>"/>
-  <class name="edm::Wrapper<osu::Primaryvertex>"/>
-  <class name="edm::Wrapper<std::vector<osu::Primaryvertex> >"/>
-  <class name="edm::Ref<std::vector<osu::Primaryvertex> >"/>
-
-  <class name="osu::Supercluster"/>
-  <class name="std::vector<osu::Supercluster>"/>
-  <class name="edm::Wrapper<osu::Supercluster>"/>
-  <class name="edm::Wrapper<std::vector<osu::Supercluster> >"/>
-  <class name="edm::Ref<std::vector<osu::Supercluster> >"/>
-
-  <class name="osu::Tau"/>
-  <class name="std::vector<osu::Tau>"/>
-  <class name="edm::Wrapper<osu::Tau>"/>
-  <class name="edm::Wrapper<std::vector<osu::Tau> >"/>
-  <class name="edm::Ref<std::vector<osu::Tau> >"/>
-
-  <class name="osu::TrackBase"/>
-  <class name="osu::Track"/>
-  <class name="std::vector<osu::Track>"/>
-  <class name="edm::Wrapper<osu::Track>"/>
-  <class name="edm::Wrapper<std::vector<osu::Track> >"/>
-  <class name="edm::Ref<std::vector<osu::Track> >"/>
-
   <class name="osu::DisappearingTrack"/>
-  <class name="std::vector<osu::DisappearingTrack>"/>
-  <class name="edm::Wrapper<osu::DisappearingTrack>"/>
-  <class name="edm::Wrapper<std::vector<osu::DisappearingTrack> >"/>
-  <class name="edm::Ref<std::vector<osu::DisappearingTrack> >"/>
-
-  <class name="osu::SecondaryTrack"/>
-  <class name="std::vector<osu::SecondaryTrack>"/>
-  <class name="edm::Wrapper<osu::SecondaryTrack>"/>
-  <class name="edm::Wrapper<std::vector<osu::SecondaryTrack> >"/>
-  <class name="edm::Ref<std::vector<osu::SecondaryTrack> >"/>
-
-  <class name="osu::Trigobj"/>
-  <class name="std::vector<osu::Trigobj>"/>
-  <class name="edm::Wrapper<osu::Trigobj>"/>
-  <class name="edm::Wrapper<std::vector<osu::Trigobj> >"/>
-  <class name="edm::Ref<std::vector<osu::Trigobj> >"/>
-
-  <class name="osu::Uservariable"/>
-  <class name="std::vector<osu::Uservariable>"/>
-  <class name="edm::Wrapper<osu::Uservariable>"/>
-  <class name="edm::Wrapper<std::vector<osu::Uservariable> >"/>
-  <class name="edm::Ref<std::vector<osu::Uservariable> >"/>
-
+  <class name="osu::Electron"/>
+  <class name="osu::Eventvariable"/>
+  <class name="osu::Genjet"/>
+  <class name="osu::HardInteractionMcparticle"/>
+  <class name="osu::Jet"/>
+  <class name="osu::Mcparticle"/>
+  <class name="osu::Met"/>
+  <class name="osu::Muon"/>
+  <class name="osu::Photon"/>
   <class name="osu::PileUpInfo"/>
+  <class name="osu::Primaryvertex"/>
+  <class name="osu::SecondaryDisappearingTrack"/>
+  <class name="osu::SecondaryTrackBase"/>
+  <class name="osu::Supercluster"/>
+  <class name="osu::Tau"/>
+  <class name="osu::TrackBase"/>
+  <class name="osu::Trigobj"/>
+  <class name="osu::Uservariable"/>
+
+  <class name="std::vector<osu::Beamspot>"/>
+  <class name="std::vector<osu::Bjet>"/>
+  <class name="std::vector<osu::DisappearingTrack>"/>
+  <class name="std::vector<osu::Electron>"/>
+  <class name="std::vector<osu::Eventvariable>"/>
+  <class name="std::vector<osu::Genjet>"/>
+  <class name="std::vector<osu::HardInteractionMcparticle>"/>
+  <class name="std::vector<osu::Jet>"/>
+  <class name="std::vector<osu::Mcparticle>"/>
+  <class name="std::vector<osu::Met>"/>
+  <class name="std::vector<osu::Muon>"/>
+  <class name="std::vector<osu::Photon>"/>
   <class name="std::vector<osu::PileUpInfo>"/>
+  <class name="std::vector<osu::Primaryvertex>"/>
+  <class name="std::vector<osu::SecondaryDisappearingTrack>"/>
+  <class name="std::vector<osu::Supercluster>"/>
+  <class name="std::vector<osu::Tau>"/>
+  <class name="std::vector<osu::Trigobj>"/>
+  <class name="std::vector<osu::Uservariable>"/>
+
+  <class name="edm::Wrapper<osu::Beamspot>"/>
+  <class name="edm::Wrapper<osu::Bjet>"/>
+  <class name="edm::Wrapper<osu::DisappearingTrack>"/>
+  <class name="edm::Wrapper<osu::Electron>"/>
+  <class name="edm::Wrapper<osu::Eventvariable>"/>
+  <class name="edm::Wrapper<osu::Genjet>"/>
+  <class name="edm::Wrapper<osu::HardInteractionMcparticle>"/>
+  <class name="edm::Wrapper<osu::Jet>"/>
+  <class name="edm::Wrapper<osu::Mcparticle>"/>
+  <class name="edm::Wrapper<osu::Met>"/>
+  <class name="edm::Wrapper<osu::Muon>"/>
+  <class name="edm::Wrapper<osu::Photon>"/>
   <class name="edm::Wrapper<osu::PileUpInfo>"/>
+  <class name="edm::Wrapper<osu::Primaryvertex>"/>
+  <class name="edm::Wrapper<osu::SecondaryDisappearingTrack>"/>
+  <class name="edm::Wrapper<osu::Supercluster>"/>
+  <class name="edm::Wrapper<osu::Tau>"/>
+  <class name="edm::Wrapper<osu::Trigobj>"/>
+  <class name="edm::Wrapper<osu::Uservariable>"/>
+
+  <class name="edm::Wrapper<std::vector<osu::Beamspot> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Bjet> >"/>
+  <class name="edm::Wrapper<std::vector<osu::DisappearingTrack> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Electron> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Eventvariable> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Genjet> >"/>
+  <class name="edm::Wrapper<std::vector<osu::HardInteractionMcparticle> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Jet> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Mcparticle> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Met> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Muon> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Photon> >"/>
   <class name="edm::Wrapper<std::vector<osu::PileUpInfo> >"/>
-  <class name="edm::Ref<std::vector<osu::PileUpInfo> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Primaryvertex> >"/>
+  <class name="edm::Wrapper<std::vector<osu::SecondaryDisappearingTrack> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Supercluster> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Tau> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Trigobj> >"/>
+  <class name="edm::Wrapper<std::vector<osu::Uservariable> >"/>
+
+  <class name="edm::Ref<std::vector<osu::Beamspot>, osu::Beamspot, edm::refhelper::FindUsingAdvance<std::vector<osu::Beamspot>, osu::Beamspot> >"/>
+  <class name="edm::Ref<std::vector<osu::Bjet>, osu::Bjet, edm::refhelper::FindUsingAdvance<std::vector<osu::Bjet>, osu::Bjet> >"/>
+  <class name="edm::Ref<std::vector<osu::DisappearingTrack>, osu::DisappearingTrack, edm::refhelper::FindUsingAdvance<std::vector<osu::DisappearingTrack>, osu::DisappearingTrack> >"/>
+  <class name="edm::Ref<std::vector<osu::Electron>, osu::Electron, edm::refhelper::FindUsingAdvance<std::vector<osu::Electron>, osu::Electron> >"/>
+  <class name="edm::Ref<std::vector<osu::Eventvariable>, osu::Eventvariable, edm::refhelper::FindUsingAdvance<std::vector<osu::Eventvariable>, osu::Eventvariable> >"/>
+  <class name="edm::Ref<std::vector<osu::Genjet>, osu::Genjet, edm::refhelper::FindUsingAdvance<std::vector<osu::Genjet>, osu::Genjet> >"/>
+  <class name="edm::Ref<std::vector<osu::HardInteractionMcparticle>, osu::HardInteractionMcparticle, edm::refhelper::FindUsingAdvance<std::vector<osu::HardInteractionMcparticle>, osu::HardInteractionMcparticle> >"/>
+  <class name="edm::Ref<std::vector<osu::Jet>, osu::Jet, edm::refhelper::FindUsingAdvance<std::vector<osu::Jet>, osu::Jet> >"/>
+  <class name="edm::Ref<std::vector<osu::Mcparticle>, osu::Mcparticle, edm::refhelper::FindUsingAdvance<std::vector<osu::Mcparticle>, osu::Mcparticle> >"/>
+  <class name="edm::Ref<std::vector<osu::Met>, osu::Met, edm::refhelper::FindUsingAdvance<std::vector<osu::Met>, osu::Met> >"/>
+  <class name="edm::Ref<std::vector<osu::Muon>, osu::Muon, edm::refhelper::FindUsingAdvance<std::vector<osu::Muon>, osu::Muon> >"/>
+  <class name="edm::Ref<std::vector<osu::Photon>, osu::Photon, edm::refhelper::FindUsingAdvance<std::vector<osu::Photon>, osu::Photon> >"/>
+  <class name="edm::Ref<std::vector<osu::PileUpInfo>, osu::PileUpInfo, edm::refhelper::FindUsingAdvance<std::vector<osu::PileUpInfo>, osu::PileUpInfo> >"/>
+  <class name="edm::Ref<std::vector<osu::Primaryvertex>, osu::Primaryvertex, edm::refhelper::FindUsingAdvance<std::vector<osu::Primaryvertex>, osu::Primaryvertex> >"/>
+  <class name="edm::Ref<std::vector<osu::SecondaryDisappearingTrack>, osu::SecondaryDisappearingTrack, edm::refhelper::FindUsingAdvance<std::vector<osu::SecondaryDisappearingTrack>, osu::SecondaryDisappearingTrack> >"/>
+  <class name="edm::Ref<std::vector<osu::Supercluster>, osu::Supercluster, edm::refhelper::FindUsingAdvance<std::vector<osu::Supercluster>, osu::Supercluster> >"/>
+  <class name="edm::Ref<std::vector<osu::Tau>, osu::Tau, edm::refhelper::FindUsingAdvance<std::vector<osu::Tau>, osu::Tau> >"/>
+  <class name="edm::Ref<std::vector<osu::Trigobj>, osu::Trigobj, edm::refhelper::FindUsingAdvance<std::vector<osu::Trigobj>, osu::Trigobj> >"/>
+  <class name="edm::Ref<std::vector<osu::Uservariable>, osu::Uservariable, edm::refhelper::FindUsingAdvance<std::vector<osu::Uservariable>, osu::Uservariable> >"/>
 
   <class name="std::map<DetId, std::vector<double> >"/>
   <class name="std::vector<std::map<DetId, std::vector<double> > >"/>
@@ -132,9 +113,37 @@
   <class name="edm::Wrapper<std::vector<std::map<DetId, std::vector<int> > > >"/>
   <class name="edm::Ref<std::vector<std::map<DetId, std::vector<int> > > >"/>
 
-  <class name="osu::GenMatchable<pat::Jet,0>"/>
-  <class name="osu::GenMatchable<reco::Track,0>"/>
-  <class name="osu::GenMatchable<pat::IsolatedTrack,0>"/>
+  <class name="osu::GenMatchable<pat::Electron, 11>"/>
+  <class name="osu::GenMatchable<pat::Electron, 11>::DRToGenMatchedParticle"/>
+  <class name="osu::GenMatchable<pat::Electron, 11>::GenMatchedParticle"/>
+
+  <class name="osu::GenMatchable<pat::IsolatedTrack, 0>"/>
+  <class name="osu::GenMatchable<pat::IsolatedTrack, 0>::DRToGenMatchedParticle"/>
+  <class name="osu::GenMatchable<pat::IsolatedTrack, 0>::GenMatchedParticle"/>
+
+  <class name="osu::GenMatchable<pat::Jet, 0>"/>
+  <class name="osu::GenMatchable<pat::Jet, 0>::DRToGenMatchedParticle"/>
+  <class name="osu::GenMatchable<pat::Jet, 0>::GenMatchedParticle"/>
+
+  <class name="osu::GenMatchable<pat::Muon, 13>"/>
+  <class name="osu::GenMatchable<pat::Muon, 13>::DRToGenMatchedParticle"/>
+  <class name="osu::GenMatchable<pat::Muon, 13>::GenMatchedParticle"/>
+
+  <class name="osu::GenMatchable<pat::Photon, 22>"/>
+  <class name="osu::GenMatchable<pat::Photon, 22>::DRToGenMatchedParticle"/>
+  <class name="osu::GenMatchable<pat::Photon, 22>::GenMatchedParticle"/>
+
+  <class name="osu::GenMatchable<pat::Tau, 15>"/>
+  <class name="osu::GenMatchable<pat::Tau, 15>::DRToGenMatchedParticle"/>
+  <class name="osu::GenMatchable<pat::Tau, 15>::GenMatchedParticle"/>
+
+  <class name="osu::GenMatchable<pat::TriggerObjectStandAlone, 0>"/>
+  <class name="osu::GenMatchable<pat::TriggerObjectStandAlone, 0>::DRToGenMatchedParticle"/>
+  <class name="osu::GenMatchable<pat::TriggerObjectStandAlone, 0>::GenMatchedParticle"/>
+
+  <class name="osu::GenMatchable<reco::GenJet, 0>"/>
+  <class name="osu::GenMatchable<reco::GenJet, 0>::DRToGenMatchedParticle"/>
+  <class name="osu::GenMatchable<reco::GenJet, 0>::GenMatchedParticle"/>
 
   <exclusion>
     <class name="osu::GenMatchable::GenMatchedParticle"/>
