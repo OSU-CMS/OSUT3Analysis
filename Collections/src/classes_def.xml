@@ -83,11 +83,18 @@
   <class name="edm::Wrapper<std::vector<osu::Tau> >"/>
   <class name="edm::Ref<std::vector<osu::Tau> >"/>
 
+  <class name="osu::TrackBase"/>
   <class name="osu::Track"/>
   <class name="std::vector<osu::Track>"/>
   <class name="edm::Wrapper<osu::Track>"/>
   <class name="edm::Wrapper<std::vector<osu::Track> >"/>
   <class name="edm::Ref<std::vector<osu::Track> >"/>
+
+  <class name="osu::DisappearingTrack"/>
+  <class name="std::vector<osu::DisappearingTrack>"/>
+  <class name="edm::Wrapper<osu::DisappearingTrack>"/>
+  <class name="edm::Wrapper<std::vector<osu::DisappearingTrack> >"/>
+  <class name="edm::Ref<std::vector<osu::DisappearingTrack> >"/>
 
   <class name="osu::SecondaryTrack"/>
   <class name="std::vector<osu::SecondaryTrack>"/>
@@ -124,6 +131,10 @@
   <class name="edm::Wrapper<std::map<DetId, std::vector<int> > >"/>
   <class name="edm::Wrapper<std::vector<std::map<DetId, std::vector<int> > > >"/>
   <class name="edm::Ref<std::vector<std::map<DetId, std::vector<int> > > >"/>
+
+  <class name="osu::GenMatchable<pat::Jet,0>"/>
+  <class name="osu::GenMatchable<reco::Track,0>"/>
+  <class name="osu::GenMatchable<pat::IsolatedTrack,0>"/>
 
   <exclusion>
     <class name="osu::GenMatchable::GenMatchedParticle"/>
