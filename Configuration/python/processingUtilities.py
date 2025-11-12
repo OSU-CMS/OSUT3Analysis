@@ -740,7 +740,7 @@ def add_channels (process,
                 channelPath += objectProducer
                 setattr (process, "objectProducer" + str (add_channels.producerIndex), objectProducer)
                 # Use the eventvariables producered in the above specific producers.
-                setattr(objectProducer.collections, "eventvariables" ,cms.InputTag ("objectProducer" + str (add_channels.producerIndex - 1), "eventvariables"))
+                setattr(objectProducer.collections, "eventvariables" ,cms.VInputTag ("objectProducer" + str (add_channels.producerIndex - 1), "eventvariables"))
                 if not hasattr (filteredCollections, "eventvariables"):
                     filteredCollections.eventvariables = cms.VInputTag ()
                 # Add the eventvariables produced in this module to the filteredCollections for the plotter after to use.
