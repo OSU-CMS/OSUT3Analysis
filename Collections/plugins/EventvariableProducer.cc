@@ -7,7 +7,8 @@
 EventvariableProducer::EventvariableProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections"))
 {
-  collection_ = collections_.getParameter<edm::InputTag> ("eventvariables");
+  std::vector<edm::InputTag> eventvariablesVector = collections_.getParameter<std::vector<edm::InputTag>> ("eventvariables");
+  collection_ = eventvariablesVector[0];
 
   produces<osu::Eventvariable> (collection_.instance ());
 
