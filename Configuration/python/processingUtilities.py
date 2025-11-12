@@ -1068,7 +1068,7 @@ def customizeMINIAODPhotonVID(process, collections, usedCollections):
     if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
         my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V2_cff']
 
-    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_"):
+    if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_15_"):
         my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_RunIIIWinter22_122X_V1_cff']
 
     # Setup all the desired modules to be run
