@@ -20,6 +20,7 @@ from OSUT3Analysis.Configuration.processingUtilities import *
 from OSUT3Analysis.Configuration.formattingUtilities import *
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_7_6_"):
     exec("from OSUT3Analysis.Configuration.miniAODV2_76X_Samples import *")
+#FIXME: Need to think about how to include CMSSW_15. This is for MC though so ignoring for now
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
     exec("from DisappTrks.StandardAnalysis.miniAOD_124X_Samples import *")
 

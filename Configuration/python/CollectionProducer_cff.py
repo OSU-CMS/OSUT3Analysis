@@ -109,7 +109,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2"):
     collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight")
     collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt")
 
-if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_"):
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_15_"):
     collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-veto")
     collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-loose")
     collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-medium")
