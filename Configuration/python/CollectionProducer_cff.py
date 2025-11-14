@@ -141,7 +141,7 @@ collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
     dataEra = cms.string("_RunF"),
     year = cms.string("CHANGEME"),
     isData = cms.bool(False),
-    jecConfigFile = cms.FileInPath("CHANGEME")
+    jecConfigFile = cms.FileInPath("OSUT3Analysis/Collections/data/JecConfigAK4.json")
 )
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
