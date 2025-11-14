@@ -18,6 +18,7 @@
 <use  name="CommonTools/Egamma"/>
 <use  name="SimDataFormats/PileupSummaryInfo"/>
 <use  name="CommonTools/Egamma"/>
+<use  name="correctionlib"/>
 <flags  CXXFLAGS="-mtune=core2 -march=core2 -O3 -pipe"/>
 <export>
   <lib  name="1"/>
