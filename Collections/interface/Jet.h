@@ -21,15 +21,12 @@ namespace osu
         const float pfCombinedInclusiveSecondaryVertexV2BJetTags () const;
         // const float pileupJetId () const; // Not available in Puppi jets
 
-        const float jecUncertainty () const;
-        const float jer () const;
-        const float jerSF () const;
-        const float jerSFUp () const;
-        const float jerSFDown () const;
         const float smearedPt () const;
-        const float smearedPtUp () const;
-        const float smearedPtDown () const;
-        
+        const float smearedPtJesSystUp () const;
+        const float smearedPtJesSystDown () const;
+        const float smearedPtJerSystUp () const;
+        const float smearedPtJerSystDown () const;
+
         const float alphamax () const;
         const float ipsig () const;
         const float log10ipsig () const;
@@ -40,19 +37,13 @@ namespace osu
         void set_pfCombinedInclusiveSecondaryVertexV2BJetTags (float value) { pfCombinedInclusiveSecondaryVertexV2BJetTags_ = value;}
         // void set_pileupJetId (float value) { pileupJetId_ = value;} // Not available in Puppi jets
 
-        void set_jecUncertainty (float value) { jecUncertainty_ = value;}
-        void set_jetPtResolution (float value) { jetPtResolution_ = value;}
-        void set_setJetPtResolutionSF (float value, float value_up, float value_down) {
-          jetPtResolutionSF_ = value;
-          jetPtResolutionSFUp_ = value_up;
-          jetPtResolutionSFDown_ = value_down;
-        }
-
         void set_smearedPt (float value) { smearedPt_ = value;}
-        void set_smearedPtUp (float value) { smearedPtUp_ = value;}
-        void set_smearedPtDown (float value) { smearedPtDown_ = value;}
-        void set_alphamax (float value) { alphamax_ = value;}
+        void set_smearedPtJesSystUp (float value) { smearedPtJesSystUp_ = value;}
+        void set_smearedPtJesSystDown (float value) { smearedPtJesSystDown_ = value;}
+        void set_smearedPtJerSystUp (float value) { smearedPtJerSystUp_ = value;}
+        void set_smearedPtJerSystDown (float value) { smearedPtJerSystDown_ = value;}
 
+        void set_alphamax (float value) { alphamax_ = value;}
         void set_ipsig (float value) { ipsig_ = value;}
         void set_log10ipsig (float value) { log10ipsig_ = value;}
         void set_medianlog10ipsig (float value) { medianlog10ipsig_ = value;}
@@ -62,14 +53,11 @@ namespace osu
         float pfCombinedSecondaryVertexV2BJetTags_;
         float pfCombinedInclusiveSecondaryVertexV2BJetTags_;
         // float pileupJetId_; // Not available in Puppi jets
-        float jecUncertainty_;
-        float jetPtResolution_;
-        float jetPtResolutionSF_;
-        float jetPtResolutionSFUp_;
-        float jetPtResolutionSFDown_;
         float smearedPt_;
-        float smearedPtUp_;
-        float smearedPtDown_;
+        float smearedPtJesSystUp_;
+        float smearedPtJesSystDown_;
+        float smearedPtJerSystUp_;
+        float smearedPtJerSystDown_;
         float alphamax_;
         float ipsig_;
         float log10ipsig_;
