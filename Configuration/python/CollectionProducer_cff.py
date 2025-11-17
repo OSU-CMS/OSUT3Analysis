@@ -138,7 +138,7 @@ copyConfiguration (collectionProducer.genjets, collectionProducer.genMatchables)
 
 collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
     rho = cms.InputTag("fixedGridRhoFastjetAll", "", ""),
-    dataEra = cms.string("_RunF"),
+    eraTag = cms.string(""),
     year = cms.string("CHANGEME"),
     isData = cms.bool(False),
     jecConfigFile = cms.FileInPath("OSUT3Analysis/Collections/data/JecConfigAK4.json")

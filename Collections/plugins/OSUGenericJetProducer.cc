@@ -11,7 +11,7 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   collections_ (cfg.getParameter<edm::ParameterSet> ("collections")),
   rho_         (cfg.getParameter<edm::InputTag>  ("rho")),
   year_(cfg.getParameter<string>("year")),
-  dataEra_ (cfg.getParameter<string> ("dataEra")),
+  dataEra_ (cfg.getParameter<string> ("eraTag")),
   isData_(cfg.getParameter<bool>("isData")),
   jecConfigFile_(cfg.getParameter<edm::FileInPath>("jecConfigFile")),
   cfg_         (cfg)
