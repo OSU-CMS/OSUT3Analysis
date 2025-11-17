@@ -109,7 +109,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2"):
     collectionProducer.electrons.vidTightIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight")
     collectionProducer.electrons.effAreasPayload = cms.FileInPath ("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt")
 
-if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_"):
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_15_"):
     collectionProducer.electrons.vidVetoIdMap    = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-veto")
     collectionProducer.electrons.vidLooseIdMap   = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-loose")
     collectionProducer.electrons.vidMediumIdMap  = cms.InputTag   ("egmGsfElectronIDs:cutBasedElectronID-RunIIIWinter22-V1-medium")
@@ -147,7 +147,14 @@ collectionProducer.jets = cms.EDProducer ("OSUJetProducer",
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_8_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
     collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_15_0_"):
+
+    # Used for AK4CHS jets
+    # collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFchs")
+
+    # Used for AK4PUPPI jets
+    collectionProducer.jets.jetCorrectionPayload = cms.string("AK4PFPuppi")
+
     collectionProducer.jets.jetResNewPrescription = cms.bool(True)
 
 copyConfiguration (collectionProducer.jets, collectionProducer.genMatchables)
@@ -197,7 +204,7 @@ if os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
         if x.name.value() == "HLT_IsoMu24_v":
             x.collection = cms.string("hltIterL3MuonCandidates::HLT")
             x.filter = cms.string("hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07")
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_15_0_"):
     for x in collectionProducer.muons.hltMatchingInfo:
         if x.name.value() == "HLT_IsoMu20_v":
             x.collection = cms.string("hltIterL3MuonCandidates::HLT")
@@ -245,7 +252,7 @@ if os.environ["CMSSW_VERSION"].startswith("CMSSW_10_2"):
     collectionProducer.photons.effAreasNeutralHadronPayload = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfNeutralHadrons_90percentBased_V2.txt")
     collectionProducer.photons.effAreasPhotonPayload        = cms.FileInPath ("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfPhotons_90percentBased_V2.txt")
 
-if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_"):
+if os.environ["CMSSW_VERSION"].startswith("CMSSW_12_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_13_") or os.environ["CMSSW_VERSION"].startswith("CMSSW_15_"):
     collectionProducer.photons.vidLooseIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-RunIIIWinter22-122X-V1-loose")
     collectionProducer.photons.vidMediumIdMap = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-RunIIIWinter22-122X-V1-medium")
     collectionProducer.photons.vidTightIdMap  = cms.InputTag ("egmPhotonIDs:cutBasedPhotonID-RunIIIWinter22-122X-V1-tight")
@@ -405,7 +412,7 @@ if osusub.batchMode and types[osusub.datasetLabel] == "data":
         collectionProducer.tracks.fiducialMaps.muons[0].era = cms.string (osusub.datasetLabel[osusub.datasetLabel.find('_201'):])
 
 # For 94X/102X which use electron VIDs, define the vertexing requirements for veto electrons
-if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_"):
+if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_12_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_13_0_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_15_0_"):
     # Cut values are ordered by ID, as: veto, loose, medium, tight
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_and_later
     # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun3#Working_points_for_Run3_v1_ID_tr
