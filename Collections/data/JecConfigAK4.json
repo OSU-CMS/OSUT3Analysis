@@ -709,7 +709,7 @@
     }
   },
   "2024": {
-    "jercJsonPath": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/latest/jet_jerc.json.gz",
+    "jercJsonPath": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-07-17/jet_jerc.json.gz",
     "tagNameL1FastJet": "Summer24Prompt24_V1_MC_L1FastJet_AK4PFPuppi",
     "tagNameL2Relative": "Summer24Prompt24_V1_MC_L2Relative_AK4PFPuppi",
     "tagNameL3Absolute": "Summer24Prompt24_V1_MC_L3Absolute_AK4PFPuppi",
