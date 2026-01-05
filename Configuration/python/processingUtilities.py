@@ -400,7 +400,6 @@ def add_channels (process,
             outputName = add_channels.originalName
             suffix = "_" + str(channels[0].name.pythonValue()).replace("'", "") + "_" + get_date_time_stamp()
             outputName = outputName.replace(".root", suffix + ".root")
-            print(f"Output file name: {outputName}")
             process.TFileService.fileName = cms.string(outputName)
             if os.path.islink (add_channels.originalName):
                 os.unlink (add_channels.originalName)
