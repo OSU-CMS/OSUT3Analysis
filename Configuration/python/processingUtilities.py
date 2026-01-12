@@ -231,7 +231,8 @@ def add_channels (process,
                   skim = None,
                   branchSets = None,
                   ignoreSkimmedCollections = False,
-                  forceNonEmptySkim = False):
+                  forceNonEmptySkim = False,
+                  createSkimFiles = True):
     if skim != None:
         print("# The \"skim\" parameter of add_channels is obsolete and will soon be deprecated.")
         print("# Please remove from your config files.")
@@ -857,20 +858,21 @@ def add_channels (process,
         if not osusub.batchMode: outFileName = skimFilePrefix + "_" + channelName + "_" + get_date_time_stamp() + ".root"
         print(outFileName)
 
-        poolOutputModule = cms.OutputModule ("PoolOutputModule",
-            overrideInputFileSplitLevels = cms.untracked.bool (True),
-            splitLevel = cms.untracked.int32 (0),
-            eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
-            fileName = cms.untracked.string (outFileName),
-            SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
-            outputCommands = cms.untracked.vstring (outputCommands),
-            dropMetaData = cms.untracked.string ("ALL"),
-            dataset = cms.untracked.PSet(
-                filterName = cms.untracked.string(channelName)
-            ),
-        )
-        add_channels.endPath += poolOutputModule
-        setattr (process, channelName + "PoolOutputModule", poolOutputModule)
+        if createSkimFiles:
+            poolOutputModule = cms.OutputModule ("PoolOutputModule",
+                overrideInputFileSplitLevels = cms.untracked.bool (True),
+                splitLevel = cms.untracked.int32 (0),
+                eventAutoFlushCompressedSize = cms.untracked.int32 (5242880),
+                fileName = cms.untracked.string (outFileName),
+                SelectEvents = cms.untracked.PSet (SelectEvents = SelectEvents),
+                outputCommands = cms.untracked.vstring (outputCommands),
+                dropMetaData = cms.untracked.string ("ALL"),
+                dataset = cms.untracked.PSet(
+                    filterName = cms.untracked.string(channelName)
+                ),
+            )
+            add_channels.endPath += poolOutputModule
+            setattr (process, channelName + "PoolOutputModule", poolOutputModule)
         ########################################################################
 
         setattr (process, channelName, channelPath)
