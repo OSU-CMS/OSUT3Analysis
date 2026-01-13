@@ -14,6 +14,7 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   dataEra_ (cfg.getParameter<string> ("eraTag")),
   isData_(cfg.getParameter<bool>("isData")),
   jecConfigFile_(cfg.getParameter<edm::FileInPath>("jecConfigFile")),
+  jecCorrectionsFile_(cfg.getParameter<edm::FileInPath>("jecCorrectionsFile")),
   cfg_         (cfg)
 {
   jets_ = collections_.getParameter<edm::InputTag> ("jets");
@@ -39,7 +40,10 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   paths.ak4 = jecConfigFile_.fullPath();
   JecConfigReader::setConfigPaths(paths);
 
-  const auto jecTags = JecConfigReader::getTagsAK4(year_, isData_, dataEra_);
+  auto jecTags = JecConfigReader::getTagsAK4(year_, isData_, dataEra_);
+  // The default jercJsonPath contains all corrections for all years, which
+  // uses up too much memory. Here point it to a trimmed JSON file
+  jecTags.jercJsonPath = std::string(jecCorrectionsFile_.fullPath());
   jecRefs_ = JecConfigReader::CorrectionRefs(jecTags);
 
   // The total JES uncertainty tag has a name specific to the year/era,
