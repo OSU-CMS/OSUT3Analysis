@@ -82,6 +82,7 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexsToken_;
 
   edm::FileInPath jecConfigFile_;
+  edm::FileInPath jecCorrectionsFile_;
   JecConfigReader::CorrectionRefs jecRefs_;
   string jesUncTag_;
 
