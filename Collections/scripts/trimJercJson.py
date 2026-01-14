@@ -27,8 +27,8 @@ def load_json(jec_config, year):
 
     return full_json
 
-def get_corr_by_name(corrections, name_parts):
-    return [c for c in corrections if all(part in c["name"] for part in name_parts)]
+def get_corr_by_name(corrections, name_part):
+    return [c for c in corrections if name_part in c["name"]]
 
 def trim_json(full_json, is_data):
     trimmed_json = {
@@ -38,20 +38,20 @@ def trim_json(full_json, is_data):
     }
 
     if is_data:
-        corrections = get_corr_by_name(full_json["corrections"], ["DATA"])
+        corrections = get_corr_by_name(full_json["corrections"], "DATA")
 
         # JecConfigReader always reads in these two for data and MC
-        corrections.append(get_corr_by_name(full_json["corrections"], ["MC", "PtResolution"])[0])
-        corrections.append(get_corr_by_name(full_json["corrections"], ["MC", "ScaleFactor"])[0])
+        corrections.append(get_corr_by_name(full_json["corrections"], "MC_PtResolution")[0])
+        corrections.append(get_corr_by_name(full_json["corrections"], "MC_ScaleFactor")[0])
     else:
         corrections = []
-        corrections.append(get_corr_by_name(full_json["corrections"], ["MC", "L1FastJet"])[0])
-        corrections.append(get_corr_by_name(full_json["corrections"], ["MC", "L2Relative"])[0])
-        corrections.append(get_corr_by_name(full_json["corrections"], ["MC", "L3Absolute"])[0])
-        corrections.append(get_corr_by_name(full_json["corrections"], ["MC", "L2L3Residual"])[0])
-        corrections.append(get_corr_by_name(full_json["corrections"], ["MC", "Total_AK4PFPuppi"])[0])
-        corrections.append(get_corr_by_name(full_json["corrections"], ["MC", "PtResolution"])[0])
-        corrections.append(get_corr_by_name(full_json["corrections"], ["MC", "ScaleFactor"])[0])
+        corrections.append(get_corr_by_name(full_json["corrections"], "MC_L1FastJet")[0])
+        corrections.append(get_corr_by_name(full_json["corrections"], "MC_L2Relative")[0])
+        corrections.append(get_corr_by_name(full_json["corrections"], "MC_L3Absolute")[0])
+        corrections.append(get_corr_by_name(full_json["corrections"], "MC_L2L3Residual")[0])
+        corrections.append(get_corr_by_name(full_json["corrections"], "MC_Total_AK4PFPuppi")[0])
+        corrections.append(get_corr_by_name(full_json["corrections"], "MC_PtResolution")[0])
+        corrections.append(get_corr_by_name(full_json["corrections"], "MC_ScaleFactor")[0])
 
     trimmed_json["corrections"] = corrections
     return trimmed_json
