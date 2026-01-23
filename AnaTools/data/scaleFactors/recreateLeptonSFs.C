@@ -801,6 +801,81 @@ void createMuonSFFile_2023D() {
   fTrig->Close();
 }
 
+void createElectronFile_2024(){
+  // Get/declare files
+
+  TFile * fID_loose = new TFile("electron2024/merged_EGamma_SF2D_Loose.root");
+  TFile * fID_medium = new TFile("electron2024/merged_EGamma_SF2D_Medium.root");
+  TFile * fID_tight = new TFile("electron2024/merged_EGamma_SF2D_Tight.root");
+  TFile * fID_veto = new TFile("electron2024/merged_EGamma_SF2D_Veto.root");
+
+  TFile * fReco = new TFile("electron2024/egammaEffi.txt_EGM2D_RECO.root");
+
+  TFile * fOutput = new TFile("electronSF_new.root", "UPDATE");
+
+    // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID_tight->Get("EGamma_SF2D");
+  TH2D * id_medium = (TH2D*)fID_medium->Get("EGamma_SF2D");
+  TH2D * id_loose = (TH2D*)fID_loose->Get("EGamma_SF2D");
+  TH2D * reco = (TH2D*)fReco->Get("EGamma_SF2D");
+  TH2D * id_veto = (TH2D*)fID_veto->Get("EGamma_SF2D");
+
+  fOutput->Close();
+
+  fID_tight->Close();
+  fID_medium->Close();
+  fID_loose->Close();
+  fID_veto->Close();
+  fReco->Close();
+
+
+}
+void createMuonSFFile_2024(){
+  // Get/declare files
+
+  TFile * fID = new TFile("muon2024/RunD_SF_ID.json.root");
+  TFile * fIso = new TFile("muon2024/RunD_SF_ISO.json.root");
+  TFile * fTrig = new TFile("muon2024/RunD_SF_Trig.json.root");
+
+  TFile * fOutput = new TFile("muonSF_new.root", "UPDATE");
+
+  // Get inputs
+
+  TH2D * id_tight = (TH2D*)fID->Get("NUM_TightID_DEN_TrackerMuons");
+  TH2D * id_medium = (TH2D*)fID->Get("NUM_MediumID_DEN_TrackerMuons");
+  TH2D * id_loose = (TH2D*)fID->Get("NUM_LooseID_DEN_TrackerMuons");
+
+  TH2D * iso_looseRel_looseID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_LooseID");
+  TH2D * iso_looseRel_mediumID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_MediumID");
+  TH2D * iso_looseRel_tightID = (TH2D*)fIso->Get("NUM_LoosePFIso_DEN_TightID");
+  TH2D * iso_tightRel_mediumID = (TH2D*)fIso->Get("NUM_TightPFIso_DEN_MediumID");
+  TH2D * iso_tightRel_tightID = (TH2D*)fIso->Get("NUM_TightPFIso_DEN_TightID");
+
+  TH2D * muIsolatedTrigger = (TH2D*)fTrig->Get("NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight");
+  TH2D * muNonisolatedTrigger = (TH2D*)fTrig->Get("NUM_Mu50_or_CascadeMu100_or_HighPtTkMu100_DEN_CutBasedIdTrkHighPt_and_TkIsoLoose");
+
+  // Write output
+
+  id_tight->Write("muonID2023DTight");
+  id_medium->Write("muonID2023DMedium");
+  id_loose->Write("muonID2023DLoose");
+
+  iso_looseRel_looseID->Write("muonIso2023DLooseLooseID");
+  iso_looseRel_mediumID->Write("muonIso2023DLooseMediumID");
+  iso_looseRel_tightID->Write("muonIso2023DLooseTightID");
+  iso_tightRel_mediumID->Write("muonIso2023DTightMediumID");
+  iso_tightRel_tightID->Write("muonIso2023DTightTightID");
+
+  muIsolatedTrigger->Write("muonTrigger2023DIsoMu24");
+  muNonisolatedTrigger->Write("muonTrigger2023DMu50");
+
+  fOutput->Close();
+
+  fID->Close();
+  fIso->Close();
+  fTrig->Close();
+}
 
 
 void recreateLeptonSFs() {
@@ -813,13 +888,14 @@ void recreateLeptonSFs() {
   createElectronFile_2022EFG();
   createElectronFile_2023C();
   createElectronFile_2023D();
-  
-  createMuonSFFile_2015();
-  createMuonSFFile_2016();
-  createMuonSFFile_2017();
-  createMuonSFFile_2018();
-  createMuonSFFile_2022CD();
-  createMuonSFFile_2022EFG();
-  createMuonSFFile_2023C();
-  createMuonSFFile_2023D();
+  createElectronFile_2024();
+
+  // createMuonSFFile_2015();
+  // createMuonSFFile_2016();
+  // createMuonSFFile_2017();
+  // createMuonSFFile_2018();
+  // createMuonSFFile_2022CD();
+  // createMuonSFFile_2022EFG();
+  // createMuonSFFile_2023C();
+  // createMuonSFFile_2023D();
 }
