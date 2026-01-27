@@ -14,6 +14,7 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
   dataEra_ (cfg.getParameter<string> ("eraTag")),
   isData_(cfg.getParameter<bool>("isData")),
   jecConfigFile_(cfg.getParameter<edm::FileInPath>("jecConfigFile")),
+  jerSmearConfigFile_(cfg.getParameter<edm::FileInPath>("jerSmearConfigFile")),
   cfg_         (cfg)
 {
   jets_ = collections_.getParameter<edm::InputTag> ("jets");
@@ -37,18 +38,14 @@ OSUGenericJetProducer<T>::OSUGenericJetProducer (const edm::ParameterSet &cfg) :
 
   JecConfigReader::ConfigPaths paths;
   paths.ak4 = jecConfigFile_.fullPath();
-  JecConfigReader::setConfigPaths(paths);
+  JecConfigReader::JecConfig::setDefaultPaths(paths);
+  JecConfigReader::JecConfig::setDefaultJerSmearPath(jerSmearConfigFile_.fullPath());
 
-  const auto jecTags = JecConfigReader::getTagsAK4(year_, isData_, dataEra_);
-  jecRefs_ = JecConfigReader::CorrectionRefs(jecTags);
+  jecCfg_ = &JecConfigReader::JecConfig::defaultInstance();
 
-  // The total JES uncertainty tag has a name specific to the year/era,
-  // i.e. Summer19UL16APV_V7_MC_Total_AK4PFchs.
-  // We can get that tag without needing to build it from scratch via
-  // the following procedure.
-  const auto& cfgAK4 = JecConfigReader::getCfgAK4();
-  JecConfigReader::SystSetMapJES systTagNames = JecConfigReader::getSystTagNames(cfgAK4, year_);
-  jesUncTag_ = systTagNames["ForUncertaintyJESTotal"][0].first;
+  if (!isData_) {
+    jesUncSets_ = jecCfg_->getJesUncSetsMcAK4Ref(year_);
+  }
 }
 
 template<class T> void
@@ -76,17 +73,18 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
   vector<const TYPE(muons) *> goodMuons;
   buildGoodLeptonCollections(electrons, muons, goodElectrons, goodMuons);
 
-  JecApplication::EvalContext jecCtx{
-    .year = year_,
-    .refs = jecRefs_,
-    .isData = isData_,
-    .runNumber = std::nullopt,
-    .isDebug = false
-  };
-  if (isData_ && JecApplication::requiresRunBasedResidual(year_))
-  {
-    jecCtx.runNumber = static_cast<double>(event.id().run());
-  }
+  JecApplication::Applier applier =
+    [&]() -> JecApplication::Applier {
+      if (isData_) {
+        std::optional<double> runNumber;
+        if (JecApplication::requiresRunBasedResidual(year_)) {
+          runNumber = static_cast<double>(event.id().run());
+        }
+        return JecApplication::Applier::DataAK4(*jecCfg_, year_, dataEra_, false, runNumber);
+      } else {
+        return JecApplication::Applier::McAK4(*jecCfg_, year_, false);
+      }
+    }();
 
 #endif // DATA_FORMAT_FROM_MINIAOD
 #endif // not STOPPPED_PTLS
@@ -108,8 +106,8 @@ OSUGenericJetProducer<T>::produce (edm::Event &event, const edm::EventSetup &set
     calculateAlphaMax(jet, primaryvertexs);
     applyBTagDiscriminators(jet);
 
-    applyJetEnergyCorrections(jecCtx, jet, event);
-    if (!isData_) applySmearedJetEnergy(jecCtx, jet, event);
+    applyJetEnergyCorrections(applier, jet, event);
+    if (!isData_) applySmearedJetEnergy(applier, jet, event);
 
     checkJetLeptonMatching(jet, goodElectrons, goodMuons);
 #endif
@@ -241,7 +239,7 @@ void OSUGenericJetProducer<T>::checkJetLeptonMatching(
 }
 
 template<class T>
-void OSUGenericJetProducer<T>::applyJetEnergyCorrections(JecApplication::EvalContext ctx, T &jet, edm::Event &event)
+void OSUGenericJetProducer<T>::applyJetEnergyCorrections(JecApplication::Applier& applier, T &jet, edm::Event &event)
 {
   edm::Handle<double> hRho;
   event.getByToken(rhoToken_, hRho);
@@ -257,7 +255,7 @@ void OSUGenericJetProducer<T>::applyJetEnergyCorrections(JecApplication::EvalCon
     rawFactor
   };
 
-  const double jesFactor = JecApplication::getJesCorrectionNom(ctx, inputs);
+  const double jesFactor = applier.jesFactorNominal(inputs);
   setP4Scaled(jet, jesFactor);
 }
 
@@ -345,10 +343,10 @@ void OSUGenericJetProducer<T>::calculateAlphaMax(T &jet, edm::Handle<vector<TYPE
 
 template<class T>
 double OSUGenericJetProducer<T>::getJercFactor(
-  JecApplication::EvalContext ctx,
+  JecApplication::Applier& applier,
   T &jet,
   edm::Event & event,
-  JecConfigReader::SystKind systKind,
+  std::string systKind,
   std::string systVar
 )
 {
@@ -357,12 +355,14 @@ double OSUGenericJetProducer<T>::getJercFactor(
   const double rho = hRho.isValid() ? *hRho : 0.0;
 
   double jesSystFactor = 1.0;
-  if (systKind == JecConfigReader::SystKind::JES)
+  if (systKind == "JES")
   {
-    jesSystFactor = JecApplication::getJesCorrectionSyst(jecRefs_, jesUncTag_, systVar, jet.eta(), jet.pt(), false);
+    auto iter = jesUncSets_.total.find("Total");
+    if (iter != jesUncSets_.total.end()) {
+      jesSystFactor = JecApplication::Applier::jesComponentSyst(iter->second, systVar, jet.eta(), jet.pt(), false);
+    }
   }
 
-  // Use pt after JES systematic corrections as input to JER corrections
   JecApplication::JesInputs jesInputs{
     jesSystFactor * jet.pt(),
     jet.eta(),
@@ -374,8 +374,7 @@ double OSUGenericJetProducer<T>::getJercFactor(
 
   JecApplication::JerInputs jerInputs{};
   jerInputs.event = event.id().event();
-  jerInputs.run = event.id().run();
-  jerInputs.lumi = event.id().luminosityBlock();
+  jerInputs.rho = rho;
 
   if (const auto* gj = jet.genJet())
   {
@@ -387,24 +386,24 @@ double OSUGenericJetProducer<T>::getJercFactor(
   }
 
   JecApplication::SystematicOptions options{};
-  options.jerVar = (systKind == JecConfigReader::SystKind::JER) ? systVar : "nom"; // Use nominal when doing JES syst
+  options.jerVar = (systKind == "JER") ? systVar : "nom";
 
-  double jerFactor = JecApplication::getJerCorrectionNomOrSyst(ctx, jesInputs, jerInputs, options);
+  double jerFactor = applier.jerFactor(jesInputs, jerInputs, options);
   return jerFactor * jesSystFactor;
 }
 
 template<class T>
-void OSUGenericJetProducer<T>::applySmearedJetEnergy(JecApplication::EvalContext ctx, T &jet, edm::Event &event)
+void OSUGenericJetProducer<T>::applySmearedJetEnergy(JecApplication::Applier& applier, T &jet, edm::Event &event)
 {
-  double jerFactor = getJercFactor(ctx, jet, event, JecConfigReader::SystKind::Nominal, "");
+  double jerFactor = getJercFactor(applier, jet, event, "Nominal", "");
 
   // JecApplication expects capital Up/Down for JES
-  double jesSystUpFactor = getJercFactor(ctx, jet, event, JecConfigReader::SystKind::JES, "Up");
-  double jesSystDownFactor = getJercFactor(ctx, jet, event, JecConfigReader::SystKind::JES, "Down");
+  double jesSystUpFactor = getJercFactor(applier, jet, event, "JES", "Up");
+  double jesSystDownFactor = getJercFactor(applier, jet, event, "JES", "Down");
 
   // JecApplication expects lowercase up/down for JER
-  double jerSystUpFactor = getJercFactor(ctx, jet, event, JecConfigReader::SystKind::JER, "up");
-  double jerSystDownFactor = getJercFactor(ctx, jet, event, JecConfigReader::SystKind::JER, "down");
+  double jerSystUpFactor = getJercFactor(applier, jet, event, "JER", "up");
+  double jerSystDownFactor = getJercFactor(applier, jet, event, "JER", "down");
 
   jet.set_smearedPt(jerFactor * jet.pt());
   jet.set_smearedPtJesSystUp(jesSystUpFactor * jet.pt());
