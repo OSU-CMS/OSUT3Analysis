@@ -6,13 +6,10 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "TH2D.h" // Used for JEC/JER corrections
-#include "TH3D.h" // Used for JEC/JER corrections
-#include "TRandom3.h"
 
 #include "OSUT3Analysis/Collections/interface/Jet.h"
-#include "OSUT3Analysis/Collections/interface/JecApplication.hpp"
-#include "OSUT3Analysis/Collections/interface/JecConfigReader.hpp"
+#include "OSUT3Analysis/Collections/interface/JecApplication.h"
+#include "OSUT3Analysis/Collections/interface/JecConfigReader.h"
 
 
 template<class T>
@@ -48,15 +45,15 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
     vector<const TYPE(muons)*> &
   );
 
-  void applyJetEnergyCorrections(JecApplication::EvalContext, T &, edm::Event &);
-  void applySmearedJetEnergy(JecApplication::EvalContext, T &, edm::Event &);
+  void applyJetEnergyCorrections(JecApplication::Applier&, T &, edm::Event &);
+  void applySmearedJetEnergy(JecApplication::Applier&, T &, edm::Event &);
   void setJERScaleFactors(T &, edm::Handle<double>);
   void calculateMedianIPSig(T &);
   void calculateAlphaMax(T &, edm::Handle<vector<TYPE(primaryvertexs)>>);
   bool tryGetMatchedGenJet(T &, edm::Handle<vector<TYPE(genjets)>>, TYPE(genjets) &);
   double computeRawFactorFromMiniAOD(const T& jet);
   void setP4Scaled(T& jet, double scale);
-  double getJercFactor(JecApplication::EvalContext, T &, edm::Event &, JecConfigReader::SystKind, std::string);
+  double getJercFactor(JecApplication::Applier&, T &, edm::Event &, std::string systKind, std::string systVar);
 
   ////////////////////////////////////////////////////////////////////////////
   // Private variables initialized by the constructor.
@@ -82,8 +79,9 @@ class OSUGenericJetProducer : public edm::stream::EDProducer<>
   edm::EDGetTokenT<vector<TYPE(primaryvertexs)> > primaryvertexsToken_;
 
   edm::FileInPath jecConfigFile_;
-  JecConfigReader::CorrectionRefs jecRefs_;
-  string jesUncTag_;
+  edm::FileInPath jerSmearConfigFile_;
+  JecConfigReader::JecConfig* jecCfg_{nullptr};
+  JecConfigReader::JesUncSetRefs jesUncSets_;
 
   edm::ParameterSet  cfg_;
 
