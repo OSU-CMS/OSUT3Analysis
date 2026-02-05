@@ -36,7 +36,6 @@ namespace {
      edm::Wrapper<vector<map<string, vector<vector<bool> > > > > mapcharbooldummy3;
 
      vector<bool> booldummy0;
-     edm::Wrapper<vector<bool> > booldummy1;
      vector<vector<bool> > booldummy2;
      edm::Wrapper<vector<vector<bool> > > booldummy3;
 
