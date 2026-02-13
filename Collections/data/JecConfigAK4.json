@@ -1108,7 +1108,7 @@
     }
   },
   "2025": {
-    "jercJsonPath": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/latest/jet_jerc.json.gz",
+    "jercJsonPath": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2025-10-27/jet_jerc.json.gz",
     "ApplyOnData": {
       "JesNominal": {
         "Era2025All": {
