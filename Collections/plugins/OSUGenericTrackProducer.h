@@ -154,13 +154,14 @@ template<class T>
 
     bool useEraByEraFiducialMaps_;
 
-    EtaPhiList electronVetoList_;
-    EtaPhiList muonVetoList_;
+    TH2D *electronFiducialSigmaMap_;
+    TH2D *muonFiducialSigmaMap_;
+    double thresholdForFiducialVeto_;
 
     // Payload for this EDFilter.
     unique_ptr<vector<T> > pl_;
 
-    void extractFiducialMap (const edm::ParameterSet &, EtaPhiList &, stringstream &) const;
+    void extractFiducialMap (const edm::ParameterSet &cfg, TH2D *&sigmaMap, double &thresholdForVeto, stringstream &ss) const;
     void envSet (const edm::EventSetup &);
     int getChannelStatusMaps ();
 
