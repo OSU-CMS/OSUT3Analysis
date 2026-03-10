@@ -155,6 +155,8 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
 template<class T> 
 OSUGenericTrackProducer<T>::~OSUGenericTrackProducer ()
 {
+  delete electronFiducialSigmaMap_;
+  delete muonFiducialSigmaMap_;
 }
 
 template<class T> std::unique_ptr<CacheData> 
