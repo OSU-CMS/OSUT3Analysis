@@ -235,9 +235,9 @@ osu::TrackBase::~TrackBase ()
 const bool
 osu::TrackBase::isFiducialTrack(const TH2D *sigmaMap, const double minDeltaR, const double thresholdForVeto, double &maxSigma) const
 {
-    maxSigma = -10000.0;
-
     if (!sigmaMap) return true;
+
+    maxSigma = -10000.0;
 
     const TAxis *xAxis = sigmaMap->GetXaxis();
     const TAxis *yAxis = sigmaMap->GetYaxis();
