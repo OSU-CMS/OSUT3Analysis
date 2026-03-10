@@ -19,28 +19,6 @@
 #define M_PI_2 1.57079632679489661923
 #endif
 
-struct EtaPhi {
-  double eta;
-  double phi;
-  double sigma;
-
-  EtaPhi(const double a, const double b, const double sigma = -1.0) :
-    eta(a),
-    phi(b),
-    sigma(sigma)
-  {
-  }
-};
-
-struct EtaPhiList : public vector<EtaPhi> {
-  double minDeltaR;
-
-  EtaPhiList() :
-    minDeltaR(0.0)
-  {
-  }
-};
-
 #if IS_VALID(tracks)
 
 namespace osu
