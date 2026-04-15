@@ -9786,7 +9786,7 @@ crossSections = {
 
   'Cosmics' : 1.0,
 
-  #Run3 2022EE; need to get correct values with GEN or EXO MC&I
+  # Run3 2022; need to get correct values with GEN or EXO MC&I
   'WToLNu_4Jets_2022' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
   'DYto2L_4jets_M10to50_2022' : 20950.0, # From XSDB
   'DYJetsToLL_M50_2022' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
@@ -9826,7 +9826,7 @@ crossSections = {
   'Zto2Nu_4Jets_HT1500to2500_2022' : 0.113, # From XSDB
   'Zto2Nu_4Jets_HT2500_2022' : 0.0077, # From XSDB
 
-  #Run3 2022EE; need to get correct values with GEN or EXO MC&I
+  # Run3 2022EE; need to get correct values with GEN or EXO MC&I
   'WToLNu_4Jets_2022EE' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
   'DYto2L_4jets_M10to50_2022EE' : 20950.0, # From XSDB
   'DYJetsToLL_M50_2022EE' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
@@ -9866,7 +9866,7 @@ crossSections = {
   'Zto2Nu_4Jets_HT1500to2500_2022EE' : 0.113, # From XSDB
   'Zto2Nu_4Jets_HT2500_2022EE' : 0.0077, # From XSDB
 
-  #Run3 2022EE; need to get correct values with GEN or EXO MC&I
+  # Run3 2023C; need to get correct values with GEN or EXO MC&I
   'WToLNu_4Jets_2023' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
   'DYto2L_4jets_M10to50_2023' : 20950.0, # From XSDB
   'DYJetsToLL_M50_2023' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
@@ -9906,7 +9906,7 @@ crossSections = {
   'Zto2Nu_4Jets_HT1500to2500_2023' : 0.113, # From XSDB
   'Zto2Nu_4Jets_HT2500_2023' : 0.0077, # From XSDB
 
-  #Run3 2022EE; need to get correct values with GEN or EXO MC&I
+  # Run3 2023D; need to get correct values with GEN or EXO MC&I
   'WToLNu_4Jets_2023PostBPix' : 64451.4, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
   'DYto2L_4jets_M10to50_2023PostBPix' : 20950.0, # From XSDB
   'DYJetsToLL_M50_2023PostBPix' : 6331.5, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
@@ -9946,6 +9946,50 @@ crossSections = {
   'Zto2Nu_4Jets_HT1500to2500_2023PostBPix' : 0.113, # From XSDB
   'Zto2Nu_4Jets_HT2500_2023PostBPix' : 0.0077, # From XSDB
 
+  # Run 3 2024
+  'WToENu_4Jets_2024' : 64451.4 / 3, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'WToMuNu_4Jets_2024' : 64451.4 / 3, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'WToTauNu_4Jets_2024' : 64451.4 / 3, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'DYto2E_4jets_M10to50_2024' : 20950.0 / 3, # From XSDB
+  'DYto2Mu_4jets_M10to50_2024' : 20950.0 / 3, # From XSDB
+  'DYto2Tau_4jets_M10to50_2024' : 20950.0 / 3, # From XSDB
+  'DYTo2E_M50_2024' : 6331.5 / 3, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'DYTo2Mu_M50_2024' : 6331.5 / 3, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'DYTo2Tau_M50_2024' : 6331.5 / 3, # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MATRIXCrossSectionsat13p6TeV
+  'TbarBtoLminusNuB_2024' : 1.35, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TBbartoLplusNuBbar_2024' : 2.30, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W->lnu BR
+  'TbarWplusto2L2Nu_2024' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TbarWplustoLNu2Q_2024' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminusto2L2Nu_2024' : 14.38, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'TWminustoLNu2Q_2024' : 29.63, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_t_channel_cross; used the W BR to estimate each decay probability
+  'WW_2024' : 80.23, # From XSDB
+  'WZ_2024' : 29.1, # From XSDB
+  'ZZ_2024' : 12.75, # From XSDB
+  'TTto2L2Nu_2024' : 98.88, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTtoLNu2Q_2024' : 407.43, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'TTto4Q_2024' : 419.69, # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
+  'QCD_PT15to20_2024' : 885700000.0, # From XSDB
+  'QCD_PT20to30_2024' : 415700000.0, # From XSDB
+  'QCD_PT30to50_2024' : 113300000.0, # From XSDB
+  'QCD_PT50to80_2024' : 16760000.0, # From XSDB
+  'QCD_PT80to120_2024' : 2534000.0, # From XSDB
+  'QCD_PT120to170_2024' : 445800.0, # From XSDB
+  'QCD_PT170to300_2024' : 113700.0, # From XSDB
+  'QCD_PT300to470_2024' : 7559.0, # From XSDB
+  'QCD_PT470to600_2024' : 626.4, # From XSDB
+  'QCD_PT600to800_2024' : 178.6, # From XSDB
+  'QCD_PT800to1000_2024' : 30.57, # From XSDB
+  'QCD_PT1000to1500_2024' : 9.306, # XSDB: https://xsecdb-xsdb-official.app.cern.ch/xsdb/?searchQuery=DAS=QCD_Bin-PT-1000to1500_TuneCP5_13p6TeV_pythia8
+  'QCD_PT1500to2000_2024' : 0.5015, # XSDB: https://xsecdb-xsdb-official.app.cern.ch/xsdb/?searchQuery=DAS=QCD_Bin-PT-1500to2000_TuneCP5_13p6TeV_pythia8
+  'QCD_PT2000to2500_2024' : 0.04264, # XSDB: https://xsecdb-xsdb-official.app.cern.ch/xsdb/?searchQuery=DAS=QCD_Bin-PT-2000to2500_TuneCP5_13p6TeV_pythia8
+  'QCD_PT2500to3000_2024' : 0.004454, # XSDB: https://xsecdb-xsdb-official.app.cern.ch/xsdb/?searchQuery=DAS=QCD_Bin-PT-2500to3000_TuneCP5_13p6TeV_pythia8
+  'QCD_PT3000_2024' : 0.0005539, # XSDB: https://xsecdb-xsdb-official.app.cern.ch/xsdb/?searchQuery=DAS=QCD_Bin-PT-2500to3000_TuneCP5_13p6TeV_pythia8
+  'Zto2Nu_4Jets_HT100to200_2024' : 314.03, # From XSDB
+  'Zto2Nu_4Jets_HT200to400_2024' : 87.15, # From XSDB
+  'Zto2Nu_4Jets_HT400to800_2024' : 15.13, # From XSDB
+  'Zto2Nu_4Jets_HT800to1500_2024' : 1.56, # From XSDB
+  'Zto2Nu_4Jets_HT1500to2500_2024' : 0.113, # From XSDB
+  'Zto2Nu_4Jets_HT2500_2024' : 0.0077, # From XSDB
 }
 
 if os.environ["CMSSW_VERSION"].startswith ("CMSSW_9_4_") or os.environ["CMSSW_VERSION"].startswith ("CMSSW_10_2_"):
