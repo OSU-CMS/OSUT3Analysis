@@ -97,17 +97,18 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track,
 {
 }
 
-osu::TrackBase::TrackBase (const TYPE(tracks) &track, 
-                   const edm::Handle<vector<osu::Mcparticle> > &particles, 
-                   const edm::ParameterSet &cfg, 
-                   const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
-                   const EtaPhiList &electronVetoList, 
-                   const EtaPhiList &muonVetoList) :
+osu::TrackBase::TrackBase (const TYPE(tracks) &track,
+                   const edm::Handle<vector<osu::Mcparticle> > &particles,
+                   const edm::ParameterSet &cfg,
+                   const edm::Handle<vector<reco::GsfTrack> > &gsfTracks,
+                   const TH2D *electronFiducialSigmaMap,
+                   const TH2D *muonFiducialSigmaMap,
+                   const double thresholdForFiducialVeto) :
   GenMatchable (track, particles, cfg),
   dRMinJet_ (INVALID_VALUE),
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
-  isFiducialElectronTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialElectronTrack_)),
-  isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialMuonTrack_)),
+  isFiducialElectronTrack_ (isFiducialTrack(electronFiducialSigmaMap, minDeltaRForFiducialTrack_, thresholdForFiducialVeto, maxSigmaForFiducialElectronTrack_)),
+  isFiducialMuonTrack_ (isFiducialTrack(muonFiducialSigmaMap, minDeltaRForFiducialTrack_, thresholdForFiducialVeto, maxSigmaForFiducialMuonTrack_)),
   isDeepSetsElectronTrack_ (true),
   EcalAllDeadChannelsValMap_ (NULL),
   EcalAllDeadChannelsBitMap_ (NULL),
@@ -127,22 +128,23 @@ osu::TrackBase::TrackBase (const TYPE(tracks) &track,
 
 }
 
-osu::TrackBase::TrackBase (const TYPE(tracks) &track, 
+osu::TrackBase::TrackBase (const TYPE(tracks) &track,
                    const edm::Handle<vector<osu::Mcparticle> > &particles,
-                   const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates, 
+                   const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates,
                    const edm::Handle<vector<TYPE(jets)> > &jets,
-                   const edm::ParameterSet &cfg, 
-                   const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
-                   const EtaPhiList &electronVetoList, 
-                   const EtaPhiList &muonVetoList, 
-                   const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, 
-                   const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
+                   const edm::ParameterSet &cfg,
+                   const edm::Handle<vector<reco::GsfTrack> > &gsfTracks,
+                   const TH2D *electronFiducialSigmaMap,
+                   const TH2D *muonFiducialSigmaMap,
+                   const double thresholdForFiducialVeto,
+                   const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap,
+                   const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap,
                    const bool dropHits) :
   GenMatchable (track, particles, cfg),
   dRMinJet_ (INVALID_VALUE),
   minDeltaRForFiducialTrack_ (cfg.getParameter<double> ("minDeltaRForFiducialTrack")),
-  isFiducialElectronTrack_ (isFiducialTrack (electronVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialElectronTrack_)),
-  isFiducialMuonTrack_ (isFiducialTrack (muonVetoList, minDeltaRForFiducialTrack_, maxSigmaForFiducialMuonTrack_)),
+  isFiducialElectronTrack_ (isFiducialTrack(electronFiducialSigmaMap, minDeltaRForFiducialTrack_, thresholdForFiducialVeto, maxSigmaForFiducialElectronTrack_)),
+  isFiducialMuonTrack_ (isFiducialTrack(muonFiducialSigmaMap, minDeltaRForFiducialTrack_, thresholdForFiducialVeto, maxSigmaForFiducialMuonTrack_)),
   isDeepSetsElectronTrack_ (true),
   EcalAllDeadChannelsValMap_ (EcalAllDeadChannelsValMap),
   EcalAllDeadChannelsBitMap_ (EcalAllDeadChannelsBitMap),
@@ -231,21 +233,52 @@ osu::TrackBase::~TrackBase ()
 }
 
 const bool
-osu::TrackBase::isFiducialTrack (const EtaPhiList &vetoList, const double minDeltaR, double &maxSigma) const
+osu::TrackBase::isFiducialTrack(const TH2D *sigmaMap, const double minDeltaR, const double thresholdForVeto, double &maxSigma) const
 {
-  const double minDR = max (minDeltaR, vetoList.minDeltaR); // use the given parameter unless the bin size from which the veto list is calculated is larger
-  bool isFiducial = true;
-  maxSigma = 0.0;
-  for (const auto &etaPhi : vetoList)
+    if (!sigmaMap) return true;
+
+    maxSigma = -10000.0;
+
+    const TAxis *xAxis = sigmaMap->GetXaxis();
+    const TAxis *yAxis = sigmaMap->GetYaxis();
+
+    const double binWidthEta = xAxis->GetBinWidth(1);
+    const double binWidthPhi = yAxis->GetBinWidth(1);
+    const double binRadius = hypot(0.5 * binWidthEta, 0.5 * binWidthPhi);
+    const double minDR = max(minDeltaR, binRadius);
+
+    bool isFiducial = true;
+
+    const int centralEtaBinIdx = xAxis->FindBin(this->eta());
+    const int centralPhiBinIdx = yAxis->FindBin(this->phi());
+    const int nEtaBins = (int)ceil(minDR / binWidthEta) + 1;
+    const int nPhiBins = (int)ceil(minDR / binWidthPhi) + 1;
+
+    for (int etaBinIdx = centralEtaBinIdx - nEtaBins; etaBinIdx <= centralEtaBinIdx + nEtaBins; ++etaBinIdx)
     {
-      if (deltaR (this->eta (), this->phi (), etaPhi.eta, etaPhi.phi) < minDR)
+        if (etaBinIdx < 1 || etaBinIdx > xAxis->GetNbins()) continue;
+
+        for (int phiBinIdx = centralPhiBinIdx - nPhiBins; phiBinIdx <= centralPhiBinIdx + nPhiBins; ++phiBinIdx)
         {
-          isFiducial = false;
-          if (etaPhi.sigma > maxSigma)
-            maxSigma = etaPhi.sigma;
+            int wrappedPhiBinIdx = phiBinIdx;
+            if (wrappedPhiBinIdx < 1) wrappedPhiBinIdx += yAxis->GetNbins();
+            if (wrappedPhiBinIdx > yAxis->GetNbins()) wrappedPhiBinIdx -= yAxis->GetNbins();
+
+            double sigma = sigmaMap->GetBinContent(etaBinIdx, wrappedPhiBinIdx);
+            if (std::isnan(sigma)) continue;
+
+            double binEta = xAxis->GetBinCenter(etaBinIdx);
+            double binPhi = yAxis->GetBinCenter(wrappedPhiBinIdx);
+
+            if (deltaR(this->eta(), this->phi(), binEta, binPhi) < minDR)
+            {
+                if (sigma > maxSigma) maxSigma = sigma;
+                if (sigma > thresholdForVeto) isFiducial = false;
+            }
         }
     }
-  return isFiducial;
+
+    return isFiducial;
 }
 
 const edm::Ref<vector<reco::GsfTrack> > &
@@ -1325,26 +1358,28 @@ osu::SecondaryTrackBase::SecondaryTrackBase(const TYPE(tracks) &secondaryTrack,
                                             const edm::ParameterSet &cfg) :
   osu::TrackBase(secondaryTrack, particles, cfg) {}
 
-osu::SecondaryTrackBase::SecondaryTrackBase(const TYPE(secondaryTracks) &secondaryTrack, 
-                                            const edm::Handle<vector<osu::Mcparticle> > &particles, 
-                                            const edm::ParameterSet &cfg, 
-                                            const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
-                                            const EtaPhiList &electronVetoList, 
-                                            const EtaPhiList &muonVetoList) :
-  osu::TrackBase(secondaryTrack, particles, cfg, gsfTracks, electronVetoList, muonVetoList) {}
+osu::SecondaryTrackBase::SecondaryTrackBase(const TYPE(secondaryTracks) &secondaryTrack,
+                                            const edm::Handle<vector<osu::Mcparticle> > &particles,
+                                            const edm::ParameterSet &cfg,
+                                            const edm::Handle<vector<reco::GsfTrack> > &gsfTracks,
+                                            const TH2D *electronFiducialSigmaMap,
+                                            const TH2D *muonFiducialSigmaMap,
+                                            const double thresholdForFiducialVeto) :
+  osu::TrackBase(secondaryTrack, particles, cfg, gsfTracks, electronFiducialSigmaMap, muonFiducialSigmaMap, thresholdForFiducialVeto) {}
 
-osu::SecondaryTrackBase::SecondaryTrackBase(const TYPE(tracks) &secondaryTrack, 
-                                            const edm::Handle<vector<osu::Mcparticle> > &particles, 
+osu::SecondaryTrackBase::SecondaryTrackBase(const TYPE(tracks) &secondaryTrack,
+                                            const edm::Handle<vector<osu::Mcparticle> > &particles,
                                             const edm::Handle<vector<pat::PackedCandidate> > &pfCandidates,
                                             const edm::Handle<vector<TYPE(jets)> > &jets,
-                                            const edm::ParameterSet &cfg, 
-                                            const edm::Handle<vector<reco::GsfTrack> > &gsfTracks, 
-                                            const EtaPhiList &electronVetoList, 
-                                            const EtaPhiList &muonVetoList, 
-                                            const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap, 
-                                            const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap, 
+                                            const edm::ParameterSet &cfg,
+                                            const edm::Handle<vector<reco::GsfTrack> > &gsfTracks,
+                                            const TH2D *electronFiducialSigmaMap,
+                                            const TH2D *muonFiducialSigmaMap,
+                                            const double thresholdForFiducialVeto,
+                                            const map<DetId, vector<double> > * const EcalAllDeadChannelsValMap,
+                                            const map<DetId, vector<int> > * const EcalAllDeadChannelsBitMap,
                                             const bool dropHits) :
-  osu::TrackBase(secondaryTrack, particles, pfCandidates, jets, cfg, gsfTracks, electronVetoList, muonVetoList, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits) {}
+  osu::TrackBase(secondaryTrack, particles, pfCandidates, jets, cfg, gsfTracks, electronFiducialSigmaMap, muonFiducialSigmaMap, thresholdForFiducialVeto, EcalAllDeadChannelsValMap, EcalAllDeadChannelsBitMap, dropHits) {}
 
 osu::SecondaryTrackBase::~SecondaryTrackBase() {}
 #endif // IS_VALID(secondaryTracks)

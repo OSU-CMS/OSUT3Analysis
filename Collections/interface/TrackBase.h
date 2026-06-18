@@ -4,6 +4,8 @@
 #include <random>
 #include <chrono>
 
+#include "TH2D.h"
+
 #include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 
@@ -16,28 +18,6 @@
 #ifndef M_PI_2
 #define M_PI_2 1.57079632679489661923
 #endif
-
-struct EtaPhi {
-  double eta;
-  double phi;
-  double sigma;
-
-  EtaPhi(const double a, const double b, const double sigma = -1.0) :
-    eta(a),
-    phi(b),
-    sigma(sigma)
-  {
-  }
-};
-
-struct EtaPhiList : public vector<EtaPhi> {
-  double minDeltaR;
-
-  EtaPhiList() :
-    minDeltaR(0.0)
-  {
-  }
-};
 
 #if IS_VALID(tracks)
 
@@ -52,22 +32,24 @@ namespace osu
       TrackBase(const TYPE(tracks) &, 
                 const edm::Handle<vector<osu::Mcparticle> > &, 
                 const edm::ParameterSet &);
-      TrackBase(const TYPE(tracks) &, 
-                const edm::Handle<vector<osu::Mcparticle> > &, 
-                const edm::ParameterSet &, 
-                const edm::Handle<vector<reco::GsfTrack> > &, 
-                const EtaPhiList &, 
-                const EtaPhiList &);
-      TrackBase(const TYPE(tracks) &, 
-                const edm::Handle<vector<osu::Mcparticle> > &, 
-                const edm::Handle<vector<pat::PackedCandidate> > &, 
+      TrackBase(const TYPE(tracks) &,
+                const edm::Handle<vector<osu::Mcparticle> > &,
+                const edm::ParameterSet &,
+                const edm::Handle<vector<reco::GsfTrack> > &,
+                const TH2D *,
+                const TH2D *,
+                const double);
+      TrackBase(const TYPE(tracks) &,
+                const edm::Handle<vector<osu::Mcparticle> > &,
+                const edm::Handle<vector<pat::PackedCandidate> > &,
                 const edm::Handle<vector<TYPE(jets)> > &,
-                const edm::ParameterSet &, 
-                const edm::Handle<vector<reco::GsfTrack> > &, 
-                const EtaPhiList &, 
-                const EtaPhiList &, 
-                const map<DetId, vector<double> > * const, 
-                const map<DetId, vector<int> > * const, 
+                const edm::ParameterSet &,
+                const edm::Handle<vector<reco::GsfTrack> > &,
+                const TH2D *,
+                const TH2D *,
+                const double,
+                const map<DetId, vector<double> > * const,
+                const map<DetId, vector<int> > * const,
                 const bool);
 
       ~TrackBase();
@@ -281,7 +263,7 @@ namespace osu
       float deltaRToClosestPFMuon_;
       float deltaRToClosestPFChHad_;
 
-      const bool isFiducialTrack(const EtaPhiList &, const double, double &) const;
+      const bool isFiducialTrack(const TH2D *sigmaMap, const double minDeltaR, const double thresholdForVeto, double &maxSigma) const;
       const edm::Ref<vector<reco::GsfTrack> > &findMatchedGsfTrack(const edm::Handle<vector<reco::GsfTrack> > &, edm::Ref<vector<reco::GsfTrack> > &, double &) const;
       const bool isBadGsfTrack(const reco::GsfTrack &) const;
       int isCloseToBadEcalChannel(const double &);
@@ -307,22 +289,24 @@ namespace osu
       SecondaryTrackBase(const TYPE(tracks) &, 
                          const edm::Handle<vector<osu::Mcparticle> > &, 
                          const edm::ParameterSet &);
-      SecondaryTrackBase(const TYPE(tracks) &, 
-                         const edm::Handle<vector<osu::Mcparticle> > &, 
-                         const edm::ParameterSet &, 
-                         const edm::Handle<vector<reco::GsfTrack> > &, 
-                         const EtaPhiList &, 
-                         const EtaPhiList &);
-      SecondaryTrackBase(const TYPE(tracks) &, 
-                         const edm::Handle<vector<osu::Mcparticle> > &, 
-                         const edm::Handle<vector<pat::PackedCandidate> > &, 
+      SecondaryTrackBase(const TYPE(tracks) &,
+                         const edm::Handle<vector<osu::Mcparticle> > &,
+                         const edm::ParameterSet &,
+                         const edm::Handle<vector<reco::GsfTrack> > &,
+                         const TH2D *,
+                         const TH2D *,
+                         const double);
+      SecondaryTrackBase(const TYPE(tracks) &,
+                         const edm::Handle<vector<osu::Mcparticle> > &,
+                         const edm::Handle<vector<pat::PackedCandidate> > &,
                          const edm::Handle<vector<TYPE(jets)> > &,
-                         const edm::ParameterSet &, 
-                         const edm::Handle<vector<reco::GsfTrack> > &, 
-                         const EtaPhiList &, 
-                         const EtaPhiList &, 
-                         const map<DetId, vector<double> > * const, 
-                         const map<DetId, vector<int> > * const, 
+                         const edm::ParameterSet &,
+                         const edm::Handle<vector<reco::GsfTrack> > &,
+                         const TH2D *,
+                         const TH2D *,
+                         const double,
+                         const map<DetId, vector<double> > * const,
+                         const map<DetId, vector<int> > * const,
                          const bool);
 
       ~SecondaryTrackBase();

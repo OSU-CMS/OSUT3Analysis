@@ -118,58 +118,45 @@ OSUGenericTrackProducer<T>::OSUGenericTrackProducer (const edm::ParameterSet &cf
   sessionDS_ = tensorflow::createSession(cacheData->graphDefDS, opts);
 
 #if DATA_FORMAT_FROM_MINIAOD
+  electronFiducialSigmaMap_ = nullptr;
+  muonFiducialSigmaMap_ = nullptr;
+
   stringstream ss;
   for (const auto &electronFiducialMap : electronFiducialMaps)
-    {
-      const edm::FileInPath &histFile = electronFiducialMap.getParameter<edm::FileInPath> ("histFile");
+  {
+      const edm::FileInPath &histFile = electronFiducialMap.getParameter<edm::FileInPath>("histFile");
 
       ss << "================================================================================" << endl;
-      ss << "calculating electron veto regions in (eta, phi)..." << endl;
-      ss << "extracting histograms from \"" << histFile.relativePath () << "\"..." << endl;
+      ss << "calculating electron sigma map in (eta, phi)..." << endl;
+      ss << "extracting histograms from \"" << histFile.relativePath() << "\"..." << endl;
       ss << "--------------------------------------------------------------------------------" << endl;
 
-      extractFiducialMap (electronFiducialMap, electronVetoList_, ss);
-
+      extractFiducialMap(electronFiducialMap, electronFiducialSigmaMap_, thresholdForFiducialVeto_, ss);
       ss << "================================================================================" << endl;
-    }
+  }
 
   for (const auto &muonFiducialMap : muonFiducialMaps)
-    {
-      const edm::FileInPath &histFile = muonFiducialMap.getParameter<edm::FileInPath> ("histFile");
+  {
+      const edm::FileInPath &histFile = muonFiducialMap.getParameter<edm::FileInPath>("histFile");
 
       ss << "================================================================================" << endl;
-      ss << "calculating muon veto regions in (eta, phi)..." << endl;
-      ss << "extracting histograms from \"" << histFile.relativePath () << "\"..." << endl;
+      ss << "calculating muon sigma map in (eta, phi)..." << endl;
+      ss << "extracting histograms from \"" << histFile.relativePath() << "\"..." << endl;
       ss << "--------------------------------------------------------------------------------" << endl;
 
-      extractFiducialMap (muonFiducialMap, muonVetoList_, ss);
-
+      extractFiducialMap(muonFiducialMap, muonFiducialSigmaMap_, thresholdForFiducialVeto_, ss);
       ss << "================================================================================" << endl;
-    }
+  }
 
-  sort (electronVetoList_.begin (), electronVetoList_.end (), [] (EtaPhi a, EtaPhi b) -> bool { return (a.eta < b.eta && a.phi < b.phi); });
-  sort (muonVetoList_.begin (), muonVetoList_.end (), [] (EtaPhi a, EtaPhi b) -> bool { return (a.eta < b.eta && a.phi < b.phi); });
-
-  ss << "================================================================================" << endl;
-  ss << "electron veto regions in (eta, phi)" << endl;
-  ss << "--------------------------------------------------------------------------------" << endl;
-  for (const auto &etaPhi : electronVetoList_)
-    ss << "(" << setw (10) << etaPhi.eta << "," << setw (10) << etaPhi.phi << ")" << endl;
-  ss << "================================================================================" << endl;
-
-  ss << "================================================================================" << endl;
-  ss << "muon veto regions in (eta, phi)" << endl;
-  ss << "--------------------------------------------------------------------------------" << endl;
-  for (const auto &etaPhi : muonVetoList_)
-    ss << "(" << setw (10) << etaPhi.eta << "," << setw (10) << etaPhi.phi << ")" << endl;
-  ss << "================================================================================";
-  edm::LogInfo ("OSUGenericTrackProducer") << ss.str ();
+  edm::LogInfo("OSUGenericTrackProducer") << ss.str();
 #endif // DATA_FORMAT_FROM_MINIAOD
 }
 
 template<class T> 
 OSUGenericTrackProducer<T>::~OSUGenericTrackProducer ()
 {
+  delete electronFiducialSigmaMap_;
+  delete muonFiducialSigmaMap_;
 }
 
 template<class T> std::unique_ptr<CacheData> 
@@ -324,8 +311,9 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
                          jets,
                          cfg_,
                          gsfTracks,
-                         electronVetoList_,
-                         muonVetoList_,
+                         electronFiducialSigmaMap_,
+                         muonFiducialSigmaMap_,
+                         thresholdForFiducialVeto_,
                          &EcalAllDeadChannelsValMap_,
                          &EcalAllDeadChannelsBitMap_,
                          !event.isRealData (),
@@ -338,16 +326,17 @@ OSUGenericTrackProducer<T>::produce (edm::Event &event, const edm::EventSetup &s
                          candidateTracks);
 #endif
 #elif DATA_FORMAT_FROM_MINIAOD
-      pl_->emplace_back (object, 
-                         particles, 
-                         pfCandidates, 
-                         jets, 
-                         cfg_, 
-                         gsfTracks, 
-                         electronVetoList_, 
-                         muonVetoList_, 
-                         &EcalAllDeadChannelsValMap_, 
-                         &EcalAllDeadChannelsBitMap_, 
+      pl_->emplace_back (object,
+                         particles,
+                         pfCandidates,
+                         jets,
+                         cfg_,
+                         gsfTracks,
+                         electronFiducialSigmaMap_,
+                         muonFiducialSigmaMap_,
+                         thresholdForFiducialVeto_,
+                         &EcalAllDeadChannelsValMap_,
+                         &EcalAllDeadChannelsBitMap_,
                          !event.isRealData ());
 #else
       pl_->emplace_back (object);
@@ -754,13 +743,13 @@ OSUGenericTrackProducer<T>::getPosition( const DetId& id) const
 }
 
 template<class T> void 
-OSUGenericTrackProducer<T>::extractFiducialMap (const edm::ParameterSet &cfg, EtaPhiList &vetoList, stringstream &ss) const
+OSUGenericTrackProducer<T>::extractFiducialMap (const edm::ParameterSet &cfg, TH2D *&sigmaMap, double &thresholdForVeto, stringstream &ss) const
 {
   const edm::FileInPath &histFile = cfg.getParameter<edm::FileInPath> ("histFile");
   const string &era = cfg.getParameter<string> ("era");
   const string &beforeVetoHistName = useEraByEraFiducialMaps_ ? cfg.getParameter<string> ("beforeVetoHistName") + era : cfg.getParameter<string> ("beforeVetoHistName");
   const string &afterVetoHistName  = useEraByEraFiducialMaps_ ? cfg.getParameter<string> ("afterVetoHistName")  + era : cfg.getParameter<string> ("afterVetoHistName");
-  const double &thresholdForVeto = cfg.getParameter<double> ("thresholdForVeto");
+  thresholdForVeto = cfg.getParameter<double> ("thresholdForFiducialVeto");
 
   edm::LogInfo ("OSUGenericTrackProducer") << "Attempting to extract \"" << beforeVetoHistName << "\" and \"" << afterVetoHistName << "\" from \"" << histFile.fullPath () << "\"...";
   TFile *fin = TFile::Open (histFile.fullPath ().c_str ());
@@ -796,9 +785,6 @@ OSUGenericTrackProducer<T>::extractFiducialMap (const edm::ParameterSet &cfg, Et
     {
       for (int j = 1; j <= beforeVetoHist->GetYaxis ()->GetNbins (); j++)
         {
-          double binRadius = hypot (0.5 * beforeVetoHist->GetXaxis ()->GetBinWidth (i), 0.5 * beforeVetoHist->GetYaxis ()->GetBinWidth (j));
-          (vetoList.minDeltaR < binRadius) && (vetoList.minDeltaR = binRadius);
-
           double contentBeforeVeto = beforeVetoHist->GetBinContent (i, j);
 
           if (!contentBeforeVeto) // skip bins that are empty in the before-veto histogram
@@ -837,26 +823,34 @@ OSUGenericTrackProducer<T>::extractFiducialMap (const edm::ParameterSet &cfg, Et
   }
 
   //////////////////////////////////////////////////////////////////////////////
-  // Then find the bins which are greater than the mean by more than
-  // thresholdForVeto sigma. Add the coordinates for these bins to the veto
-  // list.
+  // Build the sigma map: for each non-empty bin store its sigma value.
+  // Empty bins (no tags before veto) are marked NaN so isFiducialTrack can
+  // skip them. Hot spots (sigma > thresholdForVeto) are logged.
   //////////////////////////////////////////////////////////////////////////////
+  if (!sigmaMap)
+    sigmaMap = new TH2D(*afterVetoHist); // clone binning; contents will be overwritten
+
   for (int i = 1; i <= afterVetoHist->GetXaxis ()->GetNbins (); i++)
     {
       for (int j = 1; j <= afterVetoHist->GetYaxis ()->GetNbins (); j++)
         {
-          double content = afterVetoHist->GetBinContent (i, j),
-            //error = afterVetoHist->GetBinError (i, j),
-                 eta = afterVetoHist->GetXaxis ()->GetBinCenter (i),
-                 phi = afterVetoHist->GetYaxis ()->GetBinCenter (j);
-
-          content && ss << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << (content - meanInefficiency) / stdDevInefficiency << " sigma above mean of " << setw (10) << meanInefficiency;
-          if ((content - meanInefficiency) > thresholdForVeto * stdDevInefficiency)
+          if (beforeVetoHist->GetBinContent (i, j) == 0)
             {
-              vetoList.emplace_back (eta, phi, (content - meanInefficiency) / stdDevInefficiency);
-              ss << " * HOT SPOT *";
+              sigmaMap->SetBinContent (i, j, std::numeric_limits<double>::quiet_NaN());
+              continue;
             }
-          content && ss << endl;
+
+          double content = afterVetoHist->GetBinContent (i, j);
+          double sigma = (content - meanInefficiency) / stdDevInefficiency;
+          double eta = afterVetoHist->GetXaxis ()->GetBinCenter (i);
+          double phi = afterVetoHist->GetYaxis ()->GetBinCenter (j);
+
+          sigmaMap->SetBinContent (i, j, sigma);
+
+          ss << "(" << setw (10) << eta << ", " << setw (10) << phi << "): " << setw (10) << sigma << " sigma above mean of " << setw (10) << meanInefficiency;
+          if (sigma > thresholdForVeto)
+            ss << " * HOT SPOT *";
+          ss << endl;
         }
     }
   //////////////////////////////////////////////////////////////////////////////

@@ -297,7 +297,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
                 #histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/electronFiducialMap_mc.root"),
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
-                thresholdForVeto = cms.double (0.0), # in sigma
+                thresholdForFiducialVeto = cms.double (0.0), # in sigma
                 era = cms.string (''),
             ),
         ),
@@ -306,7 +306,7 @@ collectionProducer.tracks = cms.EDProducer ("OSUTrackProducer",
                 #histFile = cms.FileInPath ("OSUT3Analysis/Configuration/data/muonFiducialMap_mc.root"),
                 beforeVetoHistName = cms.string ("beforeVeto"), # must be eta on x-axis, phi on y-axis
                 afterVetoHistName = cms.string ("afterVeto"), # must be eta on x-axis, phi on y-axis
-                thresholdForVeto = cms.double (0.0), # in sigma
+                thresholdForFiducialVeto = cms.double (0.0), # in sigma
                 era = cms.string (''),
             ),
         )
